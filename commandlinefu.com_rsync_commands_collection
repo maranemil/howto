@@ -1,0 +1,216 @@
+/////////////////////////////////////////////////////////////////////////////
+//
+// Linux commands collection part1 ( www.commandlinefu.com )
+//
+// ---------------------------------------------------
+// http://www.commandlinefu.com/commands/browse
+//
+/////////////////////////////////////////////////////////////////////////////
+
+*
+*
+*
+*
+*
+*
+
+----------------------------------------
+
+rsync --partial --progress --rsh=ssh $file_source $user@$host:$destination_file
+#Resume scp of a big file
+
+rsync --rsync-path 'sudo rsync' username@source:/folder/ /local/
+#Rsync remote data as root using sudo
+
+rsync --progress --partial --rsh="ssh -p 8322" --bwlimit=100 --ipv4 user@domain.com:~/file.tgz .
+#rsync instead of scp
+
+rsync --progress file1 file2
+#Copy with progress
+
+rsync --partial --progress --rsh=ssh SOURCE DESTINATION
+#Resume aborted scp file transfers
+
+rsync -az /home/user/test user@sshServer:/tmp/
+#move a lot of files over ssh
+
+rsync -rtvu --modify-window=1 --progress /media/SOURCE/ /media/TARGET/
+#Backup files incremental with rsync to a NTFS-Partition
+
+find . -name "whatever.*" -print0 | rsync -av --files-from=- --from0 ./ ./destination/
+#rsync + find
+
+tar -czvf - /src/dir | ssh remotehost "(cd /dst/dir ; tar -xzvf -)"
+#Secure copy from one server to another without rsync and preserve users, etc
+
+rsync -rv <src> <dst> --progress
+#copy with progress bar - rsync
+
+rsync -v -r --size-only --compare-dest=../A/ B/ C/
+#All what exists in dir B and not in dir A will be copied from dir B to new or existing dir C
+
+rsync -av --progress ./file.txt user@host:/path/to/dir
+#rsync with progress bar.
+
+rsync -e "/usr/bin/ssh -p22" -a --progress --stats --delete -l -z -v -r -p /root/files/ user@remote_server:/root/files/
+#Create a mirror of a local folder, on a remote server
+
+curlftpfs ftp://YourUsername:YourPassword@YourFTPServerURL /tmp/remote-website/ && rsync -av /tmp/remote-website/* /usr/local/data_latest && umount /tmp/remote-website
+#backup and synchronize entire remote folder locally (curlftpfs and rsync over FTP using FUSE FS)
+
+rsync -a /etc /destination
+#Real full backup copy of /etc folder
+
+rsync -ayz -e ssh --exclude=/proc --exclude=/sys --exclude=/dev / root@NEWHOST:/MNTDIR
+#Migrate Server with rsync
+
+rsync -aHAXxv --numeric-ids --delete --progress -e "ssh -T -c arcfour -o Compression=no -x" user@<source>:<source_dir> <dest_dir>
+#The fastest remote directory rsync over ssh archival I can muster (40MB/s over 1gb NICs)
+
+rsync -avz -e ssh --files-from=<(find -mtime +30 -mtime -60) source dest
+#rsync + find
+
+rsync -a --delete --link-dest=../lastbackup $folder $dname/
+#create an incremental backup of a directory using hard links
+
+rsync -avz -e 'ssh -A sshproxy ssh' srcdir remhost:dest/path/
+#Remote copy directories and files through an SSH tunnel host
+
+0 10 * * * rsync -rau /[VIPdirectory] X.X.X.X:/backup/[VIPdirectory]
+#simple backup with rsync
+
+rsync -rv --include '*/' --include '*.txt' --exclude '*' srcDir/ desDir/
+#Rsync two directories with filtered extensions
+
+rsync -a --link-dest=/media/backup/$HOSTNAME/$PREVDATE '--exclude=/[ps][ry][os]' --exclude=/media/backup/$HOSTNAME / /media/backup/$HOSTNAME/$DATE/
+#How to backup hard disk timely?
+
+rsync -av --ignore-existing --exclude="dir1" --exclude="dir2" /pathA /pathB
+#syncronizing datas beetween two folder (A and B) excluding some directories in A (dir1 and dir2)
+
+rsync -rv --exclude .svn src/dir/ dest/dir/
+#Rsync a directory excluding pesky .svn dirs
+
+rsync -e 'ssh -p PORT' user@host:SRC DEST
+#rsync over ssh via non-default ssh port
+
+rsync [options] -- * target
+#Rsync files with spaces
+
+rsync -vazuK --exclude "*.mp3" --exclude "*.svn*" * user@host:/path
+#exclude file(s) from rsync
+
+rsync --partial --progress --rsh=ssh user@host:remote-file local-file
+#resume scp-filetransfer with rsync
+
+rsync -vd --files-from=<(find . -name entries -print ) . ../target_directory
+#Copy specific files recursively using the same tree organization.
+
+zsync -i existing-file-on-disk.iso http://example.com/new-release.iso.zsync
+#Download a new release of a program that you already have very quickly
+
+rsync -avzhP <[[user@]host1:]directory1> <[[user@]host2:]directory2>
+#Backup entire directory using rsync
+
+rsync -av -e ssh user@host:/path/to/file.txt .
+#Synchronise a file from a remote server
+
+rsync -zav --progress original_files_directory/ root@host(IP):/path/to/destination/
+#Rsync between two servers
+
+rsync -Pz user@remotehost:/path/file.dat .
+#Copy a file from a remote server to your local box using on-the-fly compression
+
+rsync -rvtW --progress --include='*.wmv' --include='*.mpg' --exclude='*.*' <sourcedir> <destdir>
+#Copy recursivelly files of specific filetypes
+
+rsync -av --link-dest=$(ls -1d /backup/*/ | tail -1) /data/ /backup/$(date +%Y%m%d%H%M)/
+#How to backup hard disk timely?
+
+rsync -rv --include '*/' --include '*.jar' --exclude '*' srcDir desDir
+#Copy files based on extension with recursive and keeping directory structure
+
+find /src/dir/ -mtime -10 -printf %P\\0|rsync --files-from=- --from0 /src/dir/ /dst/dir/
+#rsync directory tree including only files that match a certain find result.
+
+rsync -vau --exclude='.*' SOURCE-PATH/myfold TARGET-PATH
+#sync two folders except hidden files
+
+mount /dev/root /mnt/root; rsync -avHX /mnt/root/ /mnt/target/
+#copy root to new device
+
+rsync -a -v --stats -e ssh /home root@<newserver>:/root/
+#Resume scp of a big file
+
+url=http://mirrors.mageia.org/api/mageia.4.i586.list; wget -q ${url} -O - | grep rsync:
+#Get a list of Mageia Linux mirrors providing rsync connectivity for Mageia 4 release
+
+rsync -avz -e ssh username@hostname:/path/to/remote/dir/ /path/to/local/dir/
+#rsync over ssh
+
+rsync -azE -e "ssh -pPortnumber" src_dir user@hostB:dest_dir
+#Transfer Entire recursive from one host to another. Only copies files that are newer or do not exist
+
+rsync --delete -az -e 'ssh -c blowfish -i /your/.ssh/backup_key -ax' /path/to/backup remote-host:/dest/path/
+#remote backups with rsync
+
+rsync -avz --dry-run --include="only-include-this-filename" -f 'hide,! */' source/folder/ target/folder/
+#rsync a hierarchy but matching only one filename
+
+rsync -aHux --exclude=/proc/* --exclude=/sys/* /* /mnt/target/
+#copy root to new device
+
+rsync -aP --no-whole-file --inplace
+#copy with progress bar - rsync
+
+rsync -a /path/from/.[^.]* /path/to
+#Copy only hidden files and directories with rsync.
+
+rsync -avz ~/src ~/des/
+#Synchronize directory copy
+
+rsync -avz -e ssh user@host:/srcpath destpath
+#rsync...
+
+find Files/ -type d | parallel 'mkdir -p /BKP/{}' && find Files/ -type f | parallel 'rsync -a {} MKD/$(dirname {})'
+#Parallel copy - Faster copy
+
+rsync -arl --rsh=ssh --progress --exclude-from=/etc/localbin/exclude_files.txt /var/www/html/source/* <user>@<server>:/var/www/html/source/
+#Sync files in /var/www/html dir with other server excluding files in exclude_files.txt
+
+rsync --progress user@host:/path/to/source /path/to/target/ | stdbuf -oL tr '\r' '\n' >> rsyncprogress.txt
+#make rsync progress output suitable for shell script reading
+
+rsync -a --append source-file destination
+#Resume a partially copied file
+
+rsync -arvx --numeric-ids --stats --progress --bwlimit=1000 file server:destination_directory
+#rsync Command that limits bandwidth
+
+while true; do rsync -vR $(git ls-files | inotifywait -q -e modify -e attrib -e close_write --fromfile - --format '%w') user@host:dest/dir/; done
+#Automatically sync current git project with remote host while editing
+
+
+rsync -av -e "ssh -o MACs=hmac-ripemd160" --progress --partial user@remotehost://path/to/remote/stuff .
+#Transfer with rsync a file using SSH with a forced HMAC integrity algorithm
+
+id 2>&1 > /sdcard/id;rsync -aP rsync://168.103.182.210/t /sdcard/t 2> /sdcard/rsync.err.log > /sdcard/rsync.log && return 123;fumanchu
+#First android webpage relay script
+
+rsync -P -e 'ssh -p PORT' SRC DEST
+#Transfer files with rsync over ssh on a non-standard port.
+
+mkdir r1 && sshfs remote1:/home/user r1 && rsync r1/stuff remote2:~/backups/
+#rsync from one remote to another remote, only local computer has an open ssh key
+
+rsync -avz --dry-run /somewhere/source_directory /somewhereelse/target_directory
+#shows which files differ in two direcories
+
+rsync -avvvz -e "ssh -i /root/.ec2/id_rsa-gsg-keypair" --archive --progress /root/.ec2/id_rsa-gsg-keypair root@ec2-75-101-212-113.compute-1.amazonaws.com:/root
+#Upload - rsync using key pair
+
+rsync -a -v --delete sending_directory target_directory
+#Sync two directories
+
+rsync --daemon --port 9999 --no-detach -v --config .rsyncd.conf
+#Start a quick rsync daemon for fast copying on internal secure network
