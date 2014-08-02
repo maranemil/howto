@@ -214,3 +214,61 @@ rsync -a -v --delete sending_directory target_directory
 
 rsync --daemon --port 9999 --no-detach -v --config .rsyncd.conf
 #Start a quick rsync daemon for fast copying on internal secure network
+
+rsync -az /home/user/test user@sshServer:/tmp/
+#move a lot of files over ssh
+
+rsync --partial --progress --rsh=ssh SOURCE DESTINATION
+#Resume aborted scp file transfers
+
+rsync -aHAXxv --numeric-ids --delete --progress -e "ssh -T -c arcfour -o Compression=no -x" user@<source>:<source_dir> <dest_dir>
+#The fastest remote directory rsync over ssh archival I can muster (40MB/s over 1gb NICs)
+
+rsync -ayz -e ssh --exclude=/proc --exclude=/sys --exclude=/dev / root@NEWHOST:/MNTDIR
+#Migrate Server with rsync
+
+rsync -e "/usr/bin/ssh -p22" -a --progress --stats --delete -l -z -v -r -p /root/files/ user@remote_server:/root/files/
+#Create a mirror of a local folder, on a remote server
+
+rsync -avz -e ssh --files-from=<(find -mtime +30 -mtime -60) source dest
+#rsync + find
+
+rsync -avz -e 'ssh -A sshproxy ssh' srcdir remhost:dest/path/
+#Remote copy directories and files through an SSH tunnel host
+
+rsync -e 'ssh -p PORT' user@host:SRC DEST
+#rsync over ssh via non-default ssh port
+
+rsync --partial --progress --rsh=ssh user@host:remote-file local-file
+#resume scp-filetransfer with rsync
+
+rsync -a -v --stats -e ssh /home root@<newserver>:/root/
+#Resume scp of a big file
+
+rsync -av -e ssh user@host:/path/to/file.txt .
+#Synchronise a file from a remote server
+
+rsync -av -e "ssh -o MACs=hmac-ripemd160" --progress --partial user@remotehost://path/to/remote/stuff .
+#Transfer with rsync a file using SSH with a forced HMAC integrity algorithm
+
+rsync -arl --rsh=ssh --progress --exclude-from=/etc/localbin/exclude_files.txt /var/www/html/source/* <user>@<server>:/var/www/html/source/
+#Sync files in /var/www/html dir with other server excluding files in exclude_files.txt
+
+rsync --delete -az -e 'ssh -c blowfish -i /your/.ssh/backup_key -ax' /path/to/backup remote-host:/dest/path/
+#remote backups with rsync
+
+rsync -azE -e "ssh -pPortnumber" src_dir user@hostB:dest_dir
+#Transfer Entire recursive from one host to another. Only copies files that are newer or do not exist
+
+sshpass -p [password] rsync -av -e ssh [utente]@[indirizzoip]:/directorydacopiare/ /directorydidestinazione
+#How to use rysnc over ssh tunnel
+
+rsync -avz -e ssh username@hostname:/path/to/remote/dir/ /path/to/local/dir/
+#rsync over ssh
+
+mkdir r1 && sshfs remote1:/home/user r1 && rsync r1/stuff remote2:~/backups/
+#rsync from one remote to another remote, only local computer has an open ssh key
+
+rsync -P -e 'ssh -p PORT' SRC DEST
+#Transfer files with rsync over ssh on a non-standard port.
+

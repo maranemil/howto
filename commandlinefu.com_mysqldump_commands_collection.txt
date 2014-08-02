@@ -1,0 +1,47 @@
+/////////////////////////////////////////////////////////////////////////////
+//
+// Linux commands collection part1 ( www.commandlinefu.com )
+//
+// ---------------------------------------------------
+// http://www.commandlinefu.com/commands/browse
+//
+/////////////////////////////////////////////////////////////////////////////
+
+*
+*
+*
+*
+*
+*
+
+----------------------------------------
+
+mysqldump -q --skip-opt --force --log-error=dbname_error.log -uroot -pmysqlpassword dbname | ssh -C user@sshserver 'cd /path/to/backup/dir; cat > dbname.sql'
+#backup with mysqldump a really big mysql database to a remote machine over ssh
+
+mysqldump --add-drop-table --extended-insert --force --log-error=error.log -uUSER -pPASS OLD_DB_NAME | ssh -C user@newhost "mysql -uUSER -pPASS NEW_DB_NAME"
+#Copy a MySQL Database to a new Server via SSH with one command
+
+ssh user@host "mysqldump -h localhost -u mysqluser -pP@$$W3rD databasename | gzip -cf" | gunzip -c > database.sql
+#Get a MySQL DB dump from a remote machine
+
+for I in $(mysql -e 'show databases' -u root --password=root -s --skip-column-names); do mysqldump -u root --password=root $I | gzip -c | ssh user@server.com "cat > /remote/$I.sql.gz"; done
+#Backup all mysql databases to individual files on a remote server
+
+mysqldump -uUserName -pPassword tudb | ssh root@rootsvr.com "mysql -uUserName -pPassword -h mysql.rootsvr.com YourDBName"
+#Create MySQL-Dump, copy db to other Server and upload the db.
+
+ssh username@remotehost 'mysqldump -u <dbusername> -p<dbpassword> <dbname> tbl_name_1 tbl_name_2 tbl_name_3 | gzip -c -' | gzip -dc - | mysql -u <localusername> -p<localdbpassword> <localdbname>
+#A command to copy mysql tables from a remote host to current host via ssh.
+
+ssh username@remotehost 'mysqldump -u <dbusername> -p<dbpassword> <dbname> tbl_name_1 tbl_name_2 tbl_name_3' | mysql -u <localusername> -p<localdbpassword> <localdbname> < /dev/stdin
+#A command to copy mysql tables from a remote host to current host via ssh.
+
+mysqldump -u user -p --all-databases | ssh user@host dd of=/opt/all-databases.dump
+#Remote mysql dump all databases with ssh
+
+ssh -q ${SRC_HOST} "mysqldump --add-drop-database --create-options --databases wordpress | sed -r \"s/${OLD_URL}/${NEW_URL}/g\" | gzip -9" | ssh ${DST_HOST} "gunzip | mysql"
+#Migrate wordpress db between two hosts changing the URL on the fly with encryption and compression
+
+ssh <remoteuser>@<remoteserver> \ 'mysqldump -u <user> -p<password> <database>' \ | mysql -u <user> -p<password> <database>
+#Sync a remote mysql database to a local db via SSH
