@@ -1,0 +1,167 @@
+####################
+###### INSTAL ######
+####################
+
+sudo apt-get update
+sudo apt-get install vpnc
+#sudo apt-get update && sudo apt-get install vpnc resolvconf
+#apt-get install openvpn libssl-dev openssl
+#sudo apt-get install network-manager-vpnc
+
+#pcf2vpnc NETWORK.pcf NETWORK.conf
+#sudo vpnc --enable-1des /path/to/vpn/configs/NETWORK/NETWORK.conf
+#sudo apt-get install python-appindicator
+
+-------------
+#####################
+## Configuring vpnc #
+#####################
+
+Start by copying /etc/vpnc/default.conf into /etc/vpnc/lullavpn.conf
+
+IPSec gateway <gateway>
+IPSec ID <group-id>
+IPSec secret <group-psk>
+IKE Authmode hybrid
+Xauth username <username>
+Xauth password <password>
+
+---------------------------
+
+IPSec gateway 123.234.123
+IPSec ID lullavpn
+IPSec secret my-super-secret-shared-key
+# This VPN uses just a pre-shared key and no certificate, so set IKE
+# Authmode to "psk".
+# IKE Authmode hybrid
+IKE Authmode psk
+Xauth username robotic.coder
+Xauth password my-really-super-secret-password
+# By specifying local port as 0, we use a random source port for each
+# VPN connection, allowing multiple VPNs to be run at once.
+local port 0
+
+#####################
+## connect vpnc #####
+#####################
+
+Connecting and Disconnecting a VPN
+
+Connecting a specific VPN:
+sudo vpnc lullavpn.conf
+#sudo vpnc-connect
+
+To disconnect the VPN client:
+# vpnc-disconnect
+sudo vpnc-disconnect
+
+sudo killall vpnc
+
+tsclient
+
+#####################
+#### check vpnc #####
+#####################
+
+check Tunnel:
+
+sudo ifconfig
+# Returns:
+tun0      Link encap:UNSPEC  HWaddr 00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00
+          inet addr:77.44.77.33P-t-P:77.44.77.33  Mask:255.255.255.255
+          UP POINTOPOINT RUNNING NOARP MULTICAST  MTU:1412  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:500
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+
+ping 192.168.88.88
+# Returns:
+PING 192.168.88.88 (192.168.88.88) 56(84) bytes of data.
+64 bytes from 192.168.88.88: icmp_seq=1 ttl=64 time=0.064 ms
+
+Get more local stats:
+sudo traceroute  77.44.77.30
+sudo ip route show
+sudo ip addr show dev tun0
+sudo ip route show dev tun0
+sudo ip neigh show
+
+#sudo apt-get install nmap
+#sudo nmap -sn 10.0.0.0/8
+#sudo tcpdump -n -i tun0
+#ip route del default via 192.168.1.254
+#ip route add default via x.w.y.z
+#ip route del 10.8.0.1 dev tun0
+#ip route show dev tun0
+#ip addr show dev tun0
+
+------------------------
+#################################
+#### remote desktop & ssh #######
+#################################
+
+sudo ssh -N -D2000 <gateway-maschine>
+#ssh -R 3333:localhost:22 <gateway-maschine>
+#ssh -g -L4444:localhost:3333 localhost
+
+.....
+
+sudo apt-get install grdesktop
+sudo apt-get install rdesktop
+
+tsclient is not anymore available :(
+
+sudo apt-get install build-essential
+sudo apt-get build-dep tsclient
+sudo apt-get install tsclient
+sudo dpkg --force-all -i tsclient_0.150-4ubuntu2_i386.deb
+sudo dpkg --force-all -i tsclient_0.150-4ubuntu2_amd64.deb
+
+-----------------net
+
+apt-cache search cisco vpn
+sudo apt-get install openconnect network-manager-openconnect
+
+-----------------------------
+
+
+##############
+
+gpg pgp import & verify
+gpg --import keyfile
+
+##############################
+
+
+Related
+
+IPsec - Security Architecture for IP
+http://www.elektronik-kompendium.de/sites/net/0906191.htm
+
+SSL-VPN
+http://www.elektronik-kompendium.de/sites/net/1410151.htm
+
+L2TP over IPsec
+http://www.elektronik-kompendium.de/sites/net/1410061.htm
+
+
+#################################
+
+
+Load the kernel module.
+/sbin/modprobe tun
+
+Create the tunnel device
+cd /dev
+sudo MAKEDEV tun
+
+this will create /dev/net/tun .
+Use openvpn to create tun0 .
+sudo openvpn --mktun --dev tun0
+
+Optionally, edit /etc/network/interfaces, and bring up tun0 .
+sudo ifup tun0
+
+######################################
