@@ -165,3 +165,108 @@ Optionally, edit /etc/network/interfaces, and bring up tun0 .
 sudo ifup tun0
 
 ######################################
+
+http://www.debuntu.org/how-to-importexport-gpg-key-pair/
+http://serverquestions.com/questions/g0c5/routing-all-traffic-over-vpn-on-ubuntu-linux
+http://serverfault.com/questions/433405/route-outbound-connections-from-local-network-through-vpn
+http://unix.stackexchange.com/questions/137056/how-to-route-local-ip-subnet-to-vpnc-tunnel
+https://anothersysadmin.wordpress.com/2010/02/26/howto-poor-man-vpn-in-debianubuntu-with-openssh/
+http://sleepyhead.de/howto/?href=vpn
+
+
+dpkg -i teamviewer_i386.deb
+apt-get install -f
+apt-get update
+
+######################################
+
+sudo service network-manager start
+sudo service network-manager stop
+
+sysctl -w net.ipv4.ip_forward=1
+iptables -A FORWARD -o tun0 -i venet0 -j ACCEPT
+iptables -A FORWARD -o venet0 -i tun0 -j ACCEPT
+
+emil@MacBookPro:~$ route
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+default         dlink           0.0.0.0         UG    0      0        0 wlan0
+xxx.168.xxx.0   *               255.255.255.0   U     0      0        0 vmnet8
+xxx.200.xxx.0   *               255.255.0.0     U     0      0        0 tun0
+xxx.168.xxx.0   *               255.255.255.0   U     0      0        0 tun0
+xxx.168.xxx.0   *               255.255.255.0   U     0      0        0 virbr0
+xxx.168.xxx.0   *               255.255.255.0   U     9      0        0 wlan0
+xxx.168.xxx.0   *               255.255.255.0   U     0      0        0 vmnet1
+
+route add default gw xxx.xxx.xxx.xxx
+
+iptables -t nat -vL
+ip route
+ifconfig
+traceroute -m4 google.com
+
+
+root@Homeserver:~# route del default
+root@Homeserver:~# route add 10.8.0.10 dev tun0
+root@Homeserver:~# route add default gw 10.8.0.10
+root@Homeserver:~#
+root@Homeserver:~# ip route
+
+ip route add 192.168.1.0/24 via tun0
+
+-------------------------------
+###############################
+#####  On the Client   ########
+###############################
+
+#Generate an SSH keypair for root:
+sudo ssh-keygen -t rsa
+
+#Edit
+/etc/network/interfaces
+
+iface tun0 inet static
+pre-up ssh -S /var/run/ssh-myvpn-tunnel-control -M -f -w 0:0 5.6.7.8 true
+pre-up sleep 5
+address 10.254.254.2
+pointopoint 10.254.254.1
+netmask 255.255.255.252
+up route add -net 10.99.99.0 netmask 255.255.255.0 gw 10.254.254.1 tun0
+post-down ssh -S /var/run/ssh-myvpn-tunnel-control -O exit 5.6.7.8
+
+#Get servers SSH key fingerprint:
+$ sudo ssh <ip>
+----------------------------------------------
+###############################
+#####  On the server  #########
+###############################
+
+# Modify:
+/etc/ssh/sshd_config
+
+PermitTunnel point-to-point
+PermitRootLogin forced-commands-only
+
+#Add the following line in:
+/root/.ssh/authorized_keys:
+
+tunnel="0",command="/sbin/ifdown tun0;/sbin/ifup tun0" ssh-rsa AAAA ..snipped.. == root@server
+
+Add in:
+/etc/network/interfaces:
+
+iface tun0 inet static
+address 10.254.254.1
+netmask 255.255.255.252
+pointopoint 10.254.254.2
+
+#/etc/sysctl.conf: Make sure net.ipv4.conf.default.forwarding is set to 1
+net.ipv4.conf.default.forwarding=1
+
+# reboot and make it active:
+$ sudo sysctl net.ipv4.conf.default.forwarding=1
+
+# Using the VPN
+sudo ifup tun0
+ping -c <ip>
+sudo ifdown tun0
