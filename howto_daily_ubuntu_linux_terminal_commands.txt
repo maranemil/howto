@@ -15,6 +15,7 @@ sudo ln -s /home/emil/realpath/  /opt/some/htdocs/  	# make symlinks
 chown name:name -R /somefolder
 chmod +xrw -R /somefolder
 
+sudo truncate -s 0 filename     # clean content from big files
 
 
 #########################
@@ -60,6 +61,14 @@ update user set password=PASSWORD('your_new_password') where User='root';
 flush privileges;
 quit
 
+# mysql usual commands
+mysql> SHOW DATABASES;
+mysql> CREATE DATABASE x;
+mysql> DROP DATABASE x;
+mysql> TRUNCATE TABLE x;
+mysql> USE `x`;
+
+
 
 # update linux password
 sudo passwd user    # some user
@@ -72,4 +81,17 @@ sudo -u     # masquerade
 sudo reboot         # reboot
 sudo shutdown -r    # reboot
 
+# backups dumps
+mysqldump --all-databases --single-transaction --user=root --pass > all_databases.sql
+mysqldump --all-databases --single-transaction --set-gtid-purged=OFF --user=root --pass > all_databases.sql
+mysql -uroot -p < partial_database_backup.sql
+
+# clean ibdata1 file
+sudo /opt/lampp/xampp stop
+sudo rm -rf /opt/lampp/var/mysql/ibdata1
+sudo find / -name "ibdata1"
+#/opt/lampp/var/mysql/ibdata1
+#/var/lib/mysql/ibdata1
+sudo cp /var/lib/mysql/ibdata1 /opt/lampp/var/mysql/
+sudo /opt/lampp/xampp start
 
