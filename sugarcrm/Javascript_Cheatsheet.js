@@ -105,7 +105,6 @@ var someVar = element.toString().split('#YourString/');
 //---------------------------------------
 var someVar = element.toString().replace('x', '');
 
-
 //---------------------------------------
 // Select by value
 //---------------------------------------
