@@ -125,7 +125,14 @@ mysqldump --all-databases --single-transaction --user=root --pass > all_database
 mysqldump --all-databases --single-transaction --set-gtid-purged=OFF --user=root --pass > all_databases.sql
 mysql -uroot -p < partial_database_backup.sql
 
-# clean ibdata1 file
+
+######################################################
+##
+#### Clean ibdata1 file - because is to big
+#### DO BACKUP FROM ALL DB'S BOFORE THIS STEP!!!!!!!!
+##
+######################################################
+
 sudo /opt/lampp/xampp stop
 sudo rm -rf /opt/lampp/var/mysql/ibdata1
 sudo find / -name "ibdata1"
@@ -133,6 +140,37 @@ sudo find / -name "ibdata1"
 #/var/lib/mysql/ibdata1
 sudo cp /var/lib/mysql/ibdata1 /opt/lampp/var/mysql/
 sudo /opt/lampp/xampp start
+
+# check config
+sudo nano /opt/lampp/etc/my.cnf
+
+[client]
+port            = 3306
+socket          = /opt/lampp/var/mysql/mysql.sock
+
+# The MySQL server
+[mysqld]
+user            = nobody
+port            = 3306
+socket          = /opt/lampp/var/mysql/mysql.sock
+
+# Set rights for folders & files
+sudo chmod -R 755 /opt/lampp/
+sudo chown -R root:root /opt/lampp/mysql/
+
+#sudo chown nobody:nogroup ibdata1
+#sudo chmod -R 0777 ibdata1
+
+# Restart lampp
+sudo /opt/lampp/xampp restart
+
+# Check Processes
+pgrep mysql
+pgrep mysql | wc -l
+pgrep -l mysql
+
+
+
 
 
 ###########################
