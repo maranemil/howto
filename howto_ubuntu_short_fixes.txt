@@ -336,6 +336,47 @@ dstat -nt
 sudo apt-get -y install nethogs
 sudo netstat -nap | grep ntopng
 
+####################################################
+#
+# DEFCON 16: Nmap: Scanning the Internet
+#https://www.youtube.com/watch?v=Hk-21p2m8YY
+# Zenmap GUI / Ncat
+#
+####################################################
+
+nmap -iR 25000 -sL -n | grep "not scanned"
+| awk '{print $2}' | sort -n | uniq >! tp; head
+ -25000 tp >! 25M-IPs; rm tp
+
+nmap -sP -PS80 -n sun.com #
+nmap -sP -PA80 -n sun.com # detect if firewall
+
+nmap -n -sL -iR 500 -oN - | grep "not scanned" |
+| awk '{print $2}' | sort -n > 50K_IPs
+
+nmap -sP -T4 -iL 50K_IPs
+nmap -sP -PE -PP -PS21,22,23,80 -PA80,113,443 --source-port 53 -T4 -iL 50K_IPs
+
+nmap -sUV -F -T4 --top-ports 80 --port-ratio scanme.nmap.org
+
+nmap -min-rate 500 scanme.nmap.org
+
+nmap -S [srcip] -d --max-scan-delay 10 -oA logs/tcp-allports-%T-%D -iL
+tcp-allports-1M-IPs --max-retries 1 --randomize-hosts -p-
+-PS21,23,25,53,80,443 -T4 --min-hostgroup 256 --min-rate 175 -max-rate 300
+
+nmap --packet-trace -p 25,113 scanme.nmap.org
+nmap -traceroute scanme.nmap.org
+nmap --reason -T4 scanme.nmap.org
+nmap -A -T4 scanme.nmap.org
+
+nmap -T4 --max_rtt_timeout 200
+--initial_rtt_timeout 150
+--min_hostgroup 512 -max_retries 0
+-n -P0 -p80 -oG pb3.gnmap 192.168.1.1/20
+
+map -vv -n -sS -P0 -p 445 --ip-options "L 192.168.1.1"
+
 
 // ---------------------------------------------
 // Best status Tools
