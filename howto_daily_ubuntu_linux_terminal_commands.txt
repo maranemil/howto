@@ -142,8 +142,9 @@ mysqldum -u root -p dbname \
   --ignore-table=schema.tablename2    \
   --ignore-table=schema.tablename3 > mysqldump.sql
 
-
-Import csv into mysql
+---------------------------
+----  Import csv into mysql
+---------------------------
 mysql -u root -p --local-infile DatabaseName
 LOAD DATA LOCAL INFILE 'file.csv' INTO TABLE TableName FIELDS TERMINATED BY '^' LINES TERMINATED BY '\n';
 
@@ -154,9 +155,33 @@ Options Import:
 mysqlimport --fields-optionally-enclosed-by="\"" --fields-terminated-by=, --lines-terminated-by="\r\n" --user=root --password YOUR_TABLE YOUR_TABLE.csv
 mysqlimport --ignore-lines=1 --columns='head -n 1 YOUR_TABLE.csv' --ignore-lines=1 YOUR_TABLE YOUR_TABLE.csv
 
+---------------------------
+----  Export DB Table into csv
+---------------------------
+
+#mysql> use DBName; mysql> SET autocommit=0 ; source the_sql_file.sql ; COMMIT ;
+
+Export CSV directly from MySQL
+
+mysql -u root -p
+mysql> use DBName;
+mysql> SHOW TABLES;
+
+mysql> SELECT * INTO OUTFILE 'export.csv' FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' ESCAPED BY '\\' LINES TERMINATED BY '\n' FROM DBTable WHERE 1 LIMIT 10;
+mysql> SELECT * INTO OUTFILE 'export.csv' FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n' FROM DBTable WHERE 1 LIMIT 10;
+
+mysql> SELECT  orderNumber, status, orderDate, requiredDate, comments FROM  orders
+WHERE  status = 'Cancelled' INTO OUTFILE 'C:/tmp/cancelled_orders.csv' FIELDS ENCLOSED BY '"' TERMINATED BY ';' ESCAPED BY '"' LINES TERMINATED BY '\r\n';
+
+https://ariejan.net/2008/11/27/export-csv-directly-from-mysql/
+http://www.mysqltutorial.org/mysql-export-table-to-csv/
+
 -----------------------------------------------
 
+#################################
 # update linux password
+#################################
+
 sudo passwd user    # some user
 sudo passwd         # current user
 
