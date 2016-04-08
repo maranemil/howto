@@ -53,6 +53,20 @@ $('[data-fieldname="somefield_c"]').children().children().attr('readonly', true)
     }
 })
 
+// sugarCRM 7.X
+_renderFields: function(){
+	this._super('_renderFields');
+	var field = this.getField("field_a_c");
+	if(field && this.model.get("field_b_c") ) {
+		//if(field.tplName=="edit"){
+			//field.setMode('readonly');
+			field.setMode('disabled');
+			//field.setMode('edit');
+			//field.setMode('detail');
+		//}
+	}
+}
+
 
 //---------------------------------------
 // Search recursive in DOM
