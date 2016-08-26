@@ -993,5 +993,82 @@ sudo dpkg -i *.deb
 wget sourceforge.net/projects/openofficeorg.mirror/files/4.1.1/binaries/en-GB/Apache_OpenOffice_4.1.1_Linux_x86_install-deb_en-GB.tar.gz
 
 
+#####################################
+#
+# Install virtualbox
+#
+#####################################
+
+
+sudo apt-get update
+sudo apt-cache search virtualbox
+sudo apt-cache show virtualbox
+sudo apt-get install virtualbox
+-----------------
+sudo apt-get update
+#sudo apt-get install virtualbox-4.3
+#sudo apt-get install virtualbox-5.1
+#sudo apt-get install virtualbox-5.0
+sudo apt-get install virtualbox
+----------------
+sudo apt-get install dkms
+sudo apt-get install virtualbox virtualbox-qt virtualbox-dkms
+dkms status
+sudo apt-get install virtualbox-guest-x11
+sudo apt-get install virtualbox-guest-additions
+----------------
+cd /media
+sudo mkdir cdrom
+sudo mount /dev/cdrom /media/cdrom
+cd /media/cdrom
+sudo ./VBoxLinuxAdditions-x86.run
+
+#####################################
+#
+# Install old virtualbox
+#
+#####################################
+
+apt-get install bcc iasl xsltproc xalan libxalan110-dev uuid-dev zlib1g-dev libidl-dev libsdl1.2-dev libxcursor-dev libqt3-headers libqt3-mt-dev libasound2-dev libstdc++5 linux-headers-`uname -r` build-essential
+cd /tmp
+wget http://www.virtualbox.org/download/1.3.8/VirtualBox_1.3.8_Ubuntu_edgy_i386.deb
+dpkg -i VirtualBox_1.3.8_Ubuntu_edgy_i386.deb
+sudo su
+
+apt-get install bcc iasl xsltproc xalan libxalan110-dev uuid-dev zlib1g-dev libidl-dev libsdl1.2-dev libxcursor-dev libqt3-headers libqt3-mt-dev libasound2-dev libstdc++5 linux-headers-`uname -r` build-essential
+apt-get install subversion
+
+mkdir /usr/src/virtualbox
+cd /usr/src/virtualbox
+svn co http://virtualbox.org/svn/vbox/trunk vbox
+
+cd vbox
+./configure
+source ./env.sh
+kmk all
+cd out/linux.x86/release/bin/src
+make
+make install
+
+cd ../
+modprobe vboxdrv
+echo vboxdrv >> /etc/modules
+
+cp -prf *.so /usr/lib/
+mkdir /usr/local/virtualbox
+cp -prf * /usr/local/virtualbox/
+ln -s /usr/local/virtualbox/VirtualBox /usr/local/bin/VirtualBox
+ln -s /usr/local/virtualbox/VBoxSVC /usr/local/bin/VBoxSVC
+
+groupadd vboxusers
+usermod -G vboxusers -a falko
+
+chmod 660 /dev/vboxdrv
+chgrp vboxusers /dev/vboxdrv
+
+gedit /etc/udev/rules.d/40-permissions.rules
+
+# https://www.howtoforge.com/virtualbox_ubuntu
+
 
 
