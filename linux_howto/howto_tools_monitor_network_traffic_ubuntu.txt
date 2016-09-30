@@ -37,16 +37,15 @@ http://www.binarytides.com/linux-commands-monitor-network/
 
 #####################################
 #
-# tcpflow
+# tcpdump and iptables management
 #
 #####################################
 -------------------------------------
-sudo apt-get install tcpflow
+#sudo apt-get install tcpflow
 #tcpflow -p -c -i eth0 port 80
 
 sudo -i
 tcpdump -vvv -s 0 -l -n port 53  #
-tcpdump -vvv -s 0 -l -n port 80
 sudo tcpdump -i any -w /tmp/http.log &
 killall tcpdump
 tcpdump -A -r /tmp/http.log | less
@@ -64,4 +63,40 @@ specify a destination ip address
 sudo apt-get install wireshark
 sudo wireshark
 https://apps.ubuntu.com/cat/applications/wireshark/
+
+------------------------------------
+
+# Useful to detect DNS amplification
+tcpdump -nnni bond0 -c 100 -w sample.txt dst port 53
+
+# which bogus DNS resolvers are sending you an amplified attack.
+awk '{print $3}' sample.txt | cut -d '.' -f1-4 | sort | uniq -c | sort -nr
+
+# Network management
+sh int Te0/1 | i rate
+
+(INPUT/OUTPUT/FORWARD)
+iptables -A INPUT -p tcp -d 192.168.0.12 -m tcp ! --dport 53 -j DROP
+iptables -A INPUT -p udp -d 192.168.0.12 -m udp ! --dport 53 -j DROP
+iptables -A INPUT -m tcp -p tcp --dport 53 -j ACCEPT
+
+# Block All UDP Ports Through iptable Accept DNS
+iptables -A INPUT -p udp --sport 53 -j ACCEPT
+iptables -A INPUT -p udp --dport 53 -j ACCEPT
+iptables -A OUTPUT -p udp --sport 53 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
+
+iptables -A INPUT -p udp -j DROP
+iptables -A OUTPUT -p udp -j DROP
+
+netstat -tanpl | grep named
+netstat -tupln
+
+nmap -T4 -A -v stackoverflow.com
+nmap -T4 -A -v --dns-servers 8.8.8.8 scanme.nmap.org
+
+scan the IP address of your VPS for all UDP and TCP ports:
+nmap -sU -sS -p1-65535 <vps ip>
+tcpdump -i <interface name> host <public IP address of wifi router>
+13:23:32.805549 IP <wifi router>.2154 > <vps>.ssh
 
