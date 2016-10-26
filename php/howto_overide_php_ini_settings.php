@@ -221,6 +221,8 @@ function INISETSUGARCRM7()
 	ini_set('error_reporting', 'E_ERROR');
 	ini_set('display_errors', true);
 	ini_set('display_startup_errors', true);
+	ini_set('docref_root', false);
+	ini_set('docref_ext', false);
 	ini_set('html_errors', 'Off');
 	ini_set('ignore_repeated_errors', true);
 	ini_set('ignore_repeated_source', true);
