@@ -208,6 +208,81 @@ function INISET()
 }
 
 
+function INISETSUGARCRM7()
+{
+
+// --------------------------------------
+	ini_set('memory_limit', '2048M'); // 3 Gigabytes 500M 2G
+	ini_set('max_execution_time', 20);
+	ini_set('default_mimetype', 'text/html');
+	ini_set('short_open_tag', 'On');
+#ini_set('default_socket_timeout','45');
+// --------------------------------------
+	ini_set('error_reporting', 'E_ERROR');
+	ini_set('display_errors', true);
+	ini_set('display_startup_errors', true);
+	ini_set('html_errors', 'Off');
+	ini_set('ignore_repeated_errors', true);
+	ini_set('ignore_repeated_source', true);
+	ini_set('log_errors', false);
+#ini_set('log_errors_max_len', "1024");
+	ini_set('report_memleaks', false); // 'Off'
+	ini_set('track_vars', false);
+	ini_set('track_errors', 'Off');
+#ini_set('register_globals', 'Off');
+#ini_set('error_log', 'php-error.log');
+	ini_set('allow_call_time_pass_reference', 'Off');
+	ini_set('allow_url_include', 'Off');
+	ini_set('define_syslog_variables', false);
+#ini_set('magic_quotes_runtime',true);
+	ini_set('register_argc_argv', 'Off');
+// --------------------------------------
+	ini_set('zlib.output_handler', '');
+	ini_set('zlib.output_compression', 'Off');
+#ini_set('output_buffering', 4096);
+#ini_set('implicit_flush','Off');
+// --------------------------------------
+	ini_set('expose_php', 'Off');
+#ini_set('max_input_time', 30);
+// --------------------------------------
+	ini_set('mysql.default_port', '3306');
+	ini_set('mysql.allow_persistent', 'On');
+	ini_set('mysql.default_host', '127.0.0.1');
+	ini_set('mysql.trace_mode', false);
+	ini_set('mysql.cache_size', '15M'); // '2000'
+	ini_set('mysql.cache_type', '1');
+	ini_set('mysql.query_cache_min_res_unit', '4k');
+	ini_set('mysql.query_cache_type', '1');
+	ini_set('mysql.query_cache_size', '10M');
+	ini_set('mysql.query_cache_limit', '4M');
+	ini_set('mysql.query_cache_strip_comments', true);
+	ini_set('mysql.performance_schema', 'Off');
+	ini_set('mysql.innodb_stats_on_metadata', 'Off');
+#ini_set('mysql.innodb_sort_buffer_size','12M');
+#ini_set('mysql.innodb_online_alter_log_max_size','4M');
+	ini_set('mysql.connect_timeout', 15);
+	ini_set('mysql.max_connections', '300');
+	ini_set('mysql.default-storage-engine', 'InnoDB');
+#ini_set('mysql.thread_concurrency','12');
+	ini_set('mysql.log_warnings', 0);
+	ini_set('mysql.slow_query_log', 0);
+	ini_set('mysql.long_query_time', 0);
+#ini_set('mysql.slow_query_log_file','/var/lib/mysql/slowq.log');
+#ini_set('mysql.log-error','/var/log/mysqld.log');
+// --------------------------------------
+	ini_set('mysqli.allow_persistent', 'On');
+	ini_set('mysqli.default_port', '3306');
+	ini_set('mysqli.default_host', '127.0.0.1');
+// --------------------------------------
+	ini_set('mysqlnd.collect_statistics', 'Off');
+	ini_set('mysqlnd.collect_memory_statistics', 'Off');
+// --------------------------------------
+	ini_set('session.bug_compat_42', 'Off');
+	ini_set('session.bug_compat_warn', 'Off');
+	ini_set('session.cache_expire', '3600');
+
+}
+
 
 function INISET_V2()
 {
