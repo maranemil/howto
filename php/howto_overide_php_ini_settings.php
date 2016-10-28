@@ -283,6 +283,21 @@ function INISETSUGARCRM7()
 	ini_set('session.bug_compat_warn', 'Off');
 	ini_set('session.cache_expire', '3600');
 
+	ini_set('xdebug.dump_globals', 'Off');
+	ini_set('xdebug.dump_once', 0);
+	ini_set('xdebug.dump_undefined', 0);
+	ini_set('xdebug.default_enable', false);
+	ini_set('xdebug.auto_trace', false);
+	ini_set('xdebug.collect_vars', false);
+	ini_set('xdebug.collect_return', false);
+	ini_set('xdebug.collect_params', 'Off');
+	ini_set('xdebug.trace_options', false);
+	ini_set('xdebug.show_local_vars', false);
+	ini_set('xdebug.show_exception_trace', 0);
+	ini_set('xdebug.overload_var_dump', false);
+	ini_set('xdebug.remote_enable', false);
+	ini_set('xdebug.var_display_max_depth', 0);
+
 }
 
 
