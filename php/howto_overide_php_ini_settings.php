@@ -211,6 +211,15 @@ function INISET()
 function INISETSUGARCRM7()
 {
 
+	// exec( "nice nohup php -f index.php < /dev/null > output.txt 2>&1 &" );
+	// exec("renice +$priority ".getmypid());
+
+	// decrease niceness
+	proc_nice(19);
+
+	// kill child process to "reset" niceness
+	// posix_kill( getmypid(), 28 );
+
 // --------------------------------------
 	ini_set('memory_limit', '2048M'); // 3 Gigabytes 500M 2G
 	ini_set('max_execution_time', 20);
