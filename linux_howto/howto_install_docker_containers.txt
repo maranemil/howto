@@ -718,6 +718,118 @@ $ docker run --name=test-mysql mysql
 
 
 
+############################################################################################
+Docker am praktischen Beispiel – mit WordPress
+https://entwickler.de/online/docker-am-praktischen-beispiel-mit-wordpress-150107.html
+http://txt.fliglio.com/2013/11/creating-a-mysql-docker-container/
+############################################################################################
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Listing 1: Dockerfile MySQL
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+FROM ubuntu:14.04
+MAINTAINER Seva Dolgopolov
+
+# Get MySQL
+RUN apt-get update
+RUN apt-get install -y mysql-server-5.5
+
+# Remove pre-installed database
+RUN rm -rf /var/lib/mysql/*
+
+# Open MySQL to a world
+RUN sed -i -e"s/^bind-addresss*=s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
+
+# Script to pass MySQL
+ADD startup.sh /
+RUN chmod 755 /*.sh
+
+#define access data
+ENV DB_USER docker_user
+ENV DB_PASSWORD 1234
+ENV DB_NAME wordpress
+ENV VOLUME_HOME "/var/lib/mysql"
+
+# expose MySQL port to a network
+EXPOSE 3306
+
+# open to mount
+VOLUME ["/var/lib/mysql", "/var/log/mysql"]
+
+# start container
+CMD ["/bin/bash", "/startup.sh"]
+-------------
+docker run -d -v /data/mysql:/var/lib/mysql -v /data/log:/var/log/mysql -p 3306:3306 --name wordpress_mysql  wordpress/mysql
+-------------
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Listing 2: Dockerfile PHP
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+FROM ubuntu:14.04
+
+MAINTAINER Seva Dolgopolov
+
+# get php and mysql client
+RUN apt-get update
+RUN apt-get -yqq install php5-fpm php5-mysql
+RUN apt-get -yqq install mysql-client-5.5
+
+# create app document root
+RUN mkdir -p /var/www/app
+
+# add php fpm runtime config
+ADD <a class="elf-external elf-icon" href="http://www.conf" rel="nofollow">www.conf</a> /etc/php5/fpm/pool.d/
+
+# open to mount
+VOLUME ["/var/www/app", "/var/run/"]
+
+# start php
+ENTRYPOINT ["php5-fpm", "-F"]
+----------------------
+docker run -d --link wordpress_mysql:db --name wordpress_php -v /var/www/wordpress:/var/www/app  wordpress/php
+----------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Listing 3: Dockerfile nginx
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+FROM ubuntu:14.04
+
+MAINTAINER Seva Dolgopolov
+
+# get nginx
+RUN apt-get update
+RUN apt-get install -y nginx
+
+# add and activate host configuration
+ADD app.conf /etc/nginx/sites-available/
+RUN rm /etc/nginx/sites-enabled/default &&  ln -s /etc/nginx/sites-available/app.conf /etc/nginx/sites-enabled
+
+# let it be open on port 80
+EXPOSE 80
+
+# start nginx
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+docker run -d -p 80:80 --volumes-from wordpress_php --name wordpress_nginx  wordpress/nginx
+docker run -d -p 8080:80 --volumes-from wordpress_php --name wordpress_nginx  wordpress/nginx
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+############################################################################################
+http://severalnines.com/blog/mysql-docker-containers-understanding-basics
+############################################################################################
+
+Firing up a MySQL container
+First, you have to install Docker. In the Linux box:
+
+$ sudo apt-get install docker.io #Ubuntu/Debian
+$ yum install docker # RedHat/CentOS
+
+Then, use the following basic command to run a MySQL container:
+$ docker run --name=test-mysql mysql
+
+
+
+
+
+
 
 
 
