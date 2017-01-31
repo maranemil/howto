@@ -216,6 +216,13 @@ function INISETSUGARCRM7()
 
 	// decrease niceness
 	proc_nice(19);
+	echo memory_get_peak_usage();
+	// exec("service apache2 restart", $output); print_r($output);
+	// echo shell_exec('service httpd restart &');
+	// exec("/usr/bin/sudo /usr/bin/service apache2 restart");
+	// exec('/sbin/service apache2 restart');
+	// http://php.net/manual/en/features.gc.collecting-cycles.php
+	// http://php.net/manual/en/features.gc.performance-considerations.php
 
 	// kill child process to "reset" niceness
 	// posix_kill( getmypid(), 28 );
