@@ -18,7 +18,7 @@ howto
 
 - terminal commands collection
 
-##### css 
+##### CSS 
 
 - animation effects
 
