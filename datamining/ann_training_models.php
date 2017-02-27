@@ -26,6 +26,40 @@ $data[] = array("outlook" => "rain", "Temperature" => "71", "Humidity" => "80", 
 
 
 /*
+ *
+Weekend (Example)	Weather	Parents	Money	Decision (Category)
+W1	Sunny	Yes	Rich	Cinema
+W2	Sunny	No	Rich	Tennis
+W3	Windy	Yes	Rich	Cinema
+W4	Rainy	Yes	Poor	Cinema
+W5	Rainy	No	Rich	Stay in
+W6	Rainy	Yes	Poor	Cinema
+W7	Windy	No	Poor	Cinema
+W8	Windy	No	Rich	Shopping
+W9	Windy	Yes	Rich	Cinema
+W10	Sunny	No	Rich	Tennis
+
+Decision Tree Learning
+http://www.doc.ic.ac.uk/~sgc/teaching/pre2012/v231/lecture11.html
+
+outlook temperature humidity wind playtennis
+sunny hot high FALSE no
+sunny hot high TRUE no
+overcast hot high FALSE yes
+rainy mild high FALSE yes
+rainy cool normal FALSE yes
+rainy cool normal TRUE no
+overcast cool normal TRUE yes
+sunny mild high FALSE no
+sunny cool normal FALSE yes
+rainy mild normal FALSE yes
+sunny mild normal TRUE yes
+overcast mild high TRUE yes
+overcast hot normal FALSE yes
+rainy mild high TRUE no
+
+Decision Trees Assignment
+http://cs.carleton.edu/faculty/dmusican/cs321s10/decisiontree.html
 
 ------- Play Tennis Example -------
 
