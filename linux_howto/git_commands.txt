@@ -1,8 +1,126 @@
+##############################################################
+#
+#   install gitlab ce
+#   https://about.gitlab.com/downloads/#ubuntu1604
+#   https://about.gitlab.com/installation/
+#   https://www.linode.com/docs/applications/development/install-gitlab-on-ubuntu-14-04-trusty-tahr
+#   https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-gitlab-on-ubuntu-16-04
+#   https://www.digitalocean.com/community/tutorials/how-to-use-passwd-and-adduser-to-manage-passwords-on-a-linux-vps
+#
+##############################################################
+
+sudo apt-get install curl openssh-server ca-certificates postfix
+curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh | sudo bash
+sudo apt-get install gitlab-ce
+
+#sudo apt-get install git
+#sudo apt-get install postfix
+
+#curl -LJO https://packages.gitlab.com/gitlab/gitlab-ce/packages/ubuntu/xenial/gitlab-ce-XXX.deb/download
+#dpkg -i gitlab-ce-XXX.deb
+
+sudo gitlab-ctl reconfigure
+
+# go to localhost and login using root as user with your new passwd
+
+sudo ufw status
+sudo ufw allow http
+sudo ufw allow OpenSSH
+
+##############################################################
+#
+#   Command line instructions
+#
+##############################################################
+
+Git global setup
+
+git config --global user.name "Administrator"
+git config --global user.email "admin@example.com"
+
+Create a new repository
+
+git clone http://pc-X551CA/root/mytest.git
+cd mytest
+touch README.md
+git add README.md
+git commit -m "add README"
+git push -u origin master
+
+Existing folder
+
+cd existing_folder
+git init
+git remote add origin http://pc-X551CA/root/mytest.git
+git add .
+git commit
+git push -u origin master
+
+Existing Git repository
+
+cd existing_repo
+git remote add origin http://pc-X551CA/root/mytest.git
+git push -u origin --all
+git push -u origin --tags
+
+--------------------------------------------------------------
+
+
+sudo tail -1 /home/lime/.ssh/id_rsa.pub
+ssh -T git@localhost
+
+#add project in phpstorm
+git@pc-X551CA:root/mytest.git
+
+
+##############################################################
+#
+#   Apple Macbook pro running MacOS X
+#
+##############################################################
+
 #brew upgrade
 #brew update -v
 #brew --config
 
-------------
+##############################################################
+#
+#   Generate SSH KEY
+#   https://git-scm.com/book/be/v2/Git-on-the-Server-Generating-Your-SSH-Public-Key
+#   https://git-scm.com/book/de/v1/Git-auf-dem-Server-Einrichten-des-Servers
+#
+##############################################################
+
+
+sudo adduser git
+#sudo adduser user group
+#sudo deluser user group
+#sudo usermod -a -G groupName userName
+su git
+cd
+mkdir .ssh
+
+ssh-keygen -t rsa -b 4096 -C "test@some.com" 	# add ssh key
+eval "$(ssh-agent -s)"  						# Start the ssh-agent in the background
+ssh-add ~/.ssh/id_rsa  							# Add your SSH key to the ssh-agent
+cat /home/xyz/.ssh/id_rsa.pub  				    # print ssh key in terminal
+#sudo tail -1 /home/xyz/.ssh/id_rsa.pub         # print ssh key in terminal
+#xclip -sel clip < ~/.ssh/id_rsa.pub 			# copy ssh key to clipboard
+ssh -T git@github.com 							# test ssh connection
+ssh-keygen -p									# Start the SSH key creation process - Regenerate string in key
+
+
+https://help.github.com/articles/connecting-to-github-with-ssh/
+https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/
+https://help.github.com/articles/testing-your-ssh-connection/
+
+
+##############################################################
+#
+#   Check git branch
+#
+##############################################################
+
 ls -ld /usr/local
 ls -lA /usr/local
 find /usr/local -user root
@@ -11,12 +129,14 @@ git branch
 git status
 git stash -p
 git shelve
----------
+--------------------------------------------------------------
+
 $ git --version
 git version 1.7.5.4
 $ which git
 /usr/bin/git
-------
+
+--------------------------------------------------------------
 git add
 git commit -a
 git help status
@@ -24,8 +144,12 @@ git status -uno
 git status -s # short format
 git status -b # branch format
 
-------------------------
-# rebase stash
+
+##############################################################
+#
+#   rebase with stash and pull --rebase
+#
+##############################################################
 
 git status
 git stash
@@ -36,13 +160,14 @@ git pull -r
 #git pull --rebase
 git stash pop
 
----
+--------------------------------------------------------------
+
 git stash -u             	# This will stash everything, including unstaged files
 git stash pop stash@{1}  	# This will apply your original stash
 git stash drop 			# remove your "safe" stash.
 git stash drop [stash-id] 	# (default is the latest stash, see all with git stash list).
 
-----
+--------------------------------------------------------------
 
 usage: git stash list [<options>]
    or: git stash show [<stash>]
@@ -53,9 +178,8 @@ usage: git stash list [<options>]
                        [-u|--include-untracked] [-a|--all] [<message>]]
    or: git stash clear
 
+--------------------------------------------------------------
 
-
----
 # Show what git will be remove
 git clean -n
 
@@ -68,13 +192,18 @@ git clean --help
 # Finish
 git stash pop
 
------------------------------
+##############################################################
+#
+#   fix rebase error
+#
+##############################################################
 
-
-#rebase error
-#Cannot rebase: Your index contains uncommitted changes.
-#You have unstaged changes.
-#Please commit or stash them.
+--------------------------------------------------------------
+# rebase error
+# Cannot rebase: Your index contains uncommitted changes.
+# You have unstaged changes.
+# Please commit or stash them.
+--------------------------------------------------------------
 
 git status
 #git checkout -- <file name>
@@ -96,9 +225,11 @@ git fetch
 git rebase -p origin/master
 
 
------------------------------------
-
-#unstash
+##############################################################
+#
+#   unstash
+#
+##############################################################
 
 git stash show -p stash@{0} | git apply -R
 git stash show -p | git apply -R
@@ -110,17 +241,22 @@ $ git stash-unapply
 
 git stash branch testchanges
 
-------------------------------------------------
+##############################################################
+#
+#   config git
+#
+##############################################################
+
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
 
 git config core.fscache true 	# Enable the filesystem cache
 git config core.ignoreStat true # Avoid inspecting large working trees
-------------------------------------------------
+--------------------------------------------------------------
 
 git log --graph --all
 
-------------------------------------------------
+--------------------------------------------------------------
 
 git rm --cached .idea/*
 
@@ -147,8 +283,11 @@ git config --global alias.unignore 'update-index --no-skip-worktree'
 git config --global alias.ignored '!git ls-files -v | grep "^S"'
 
 ------------------------------------------------
-
-# remove
+##############################################################
+#
+#   remove cache
+#
+##############################################################
 
 git rm --cached file1 file2 dir/file3
 git rm --cached `git ls-files -i --exclude-from=.gitignore`
@@ -165,6 +304,7 @@ git clean -h
 git clean -xdn
 
 ----------------------------
+
 https://git-scm.com/book/en/v1/Git-Tools-Stashing
 https://git-scm.com/book/en/v1/Git-Tools-Stashing
 http://de.gitready.com/intermediate/2009/02/18/temporarily-ignoring-files.html
