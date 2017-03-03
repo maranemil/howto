@@ -303,6 +303,25 @@ sudo service nmbd restart
 
 # https://wiki.samba.org/index.php/Mounting_samba_shares_from_a_unix_client
 
+sudo apt install samba-common-bin
+testparm -v | grep admin
+
+ldap admin dn =
+administrative share = No
+admin users =
+
+
+/usr/share/doc/nautilus-share/examples/smb.conf
+
+sudo /etc/init.d/samba restart
+sudo /etc/init.d/smbd restart
+sudo initctl restart smbd
+
+http://www.linuxtopia.org/online_books/network_administration_guides/samba_reference_guide/24_locking_08.html
+
+
+
+
 ######################################################
 
 git pull --rebase
@@ -354,3 +373,17 @@ usage: git fetch [<options>] [<repository> [<refspec>...]]
     -u, --update-head-ok  allow updating of HEAD ref
     --progress            force progress reporting
     --depth <DEPTH>       deepen history of shallow clone
+
+
+##########################
+
+
+
+git show
+and undo the bad part by restoring the original symlink pathname into the file and git adding it. Or you could really get rid of the symlink properly with git rm, then create a new file and git add that. If you choose the first option, be aware that the content of a symlink is just a pathname. It's not a text file - it doesn't have a newline on the end. If you edit it with a text editor that adds a newline, you'll have a broken symlink (pointing to a file with a newline in its name).
+
+After you've done your git add, reinsert the fixed commit into its place in history:
+
+git commit --amend
+git rebase --continue
+If you changed multiple commits from pick to edit you'll have to repeat that procedure for each one. The final git rebase --continue will bring you back to the present.
