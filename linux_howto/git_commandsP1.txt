@@ -32,6 +32,38 @@ sudo ufw status
 sudo ufw allow http
 sudo ufw allow OpenSSH
 
+
+sudo gitlab-ctl status
+gitlab-ctl stop
+gitlab-ctl tail
+
+netstat -plnt | grep :8080
+curl -v http://127.0.0.1:8080
+sudo ufw status
+
+lsb_release -a
+
+sudo -u git -H editor /opt/gitlab/embedded/service/gitlab-shell/config.yml
+
+I'm not sure what changes if any I should make to the file(its in the default state)
+Some parts that may be relevant
+
+# GitLab user. git by default
+user: git
+
+# Url to gitlab instance. Used for api calls. Should end with a slash.
+gitlab_url: "http://127.0.0.1:8080"
+
+
+# vi /etc/gitlab/gitlab.rb   (change only these lines, uncomment if required)
+unicorn['port'] = 8081
+gitlab_git_http_server['auth_backend'] = "http://localhost:8081"
+
+# gitlab-ctl reconfigure  (to apply the changes)
+# gitlab-ctl restart
+# lsof -i:8081        (check whether unicorn has started properly)
+
+
 ##############################################################
 #
 #   Command line instructions
