@@ -109,6 +109,47 @@ https://intellij-support.jetbrains.com/hc/en-us/articles/206544519
 
 
 
+
+###########################################################################
+#
+#	PHPSTORM : external file changes sync may be slow
+#	Project files cannot be watched (are they under network mount?)"
+#
+###########################################################################
+
+cat /proc/sys/fs/inotify/max_user_watches  # 524288
+cat /proc/sys/fs/inotify/max_user_watches
+/etc/sysctl.d/60-jetbrains.conf # fs.inotify.max_user_watches = 524288
+
+# It can be raised by adding following line to the /etc/sysctl.conf file:
+fs.inotify.max_user_watches = 524288
+
+#and issuing this command to apply the change:
+sudo sysctl -p
+ps axf
+
+sudo chmod +x /opt/PhpStorm-163.10504.2/bin/fsnotifier
+sudo chmod +x /opt/PhpStorm-163.10504.2/bin/fsnotifier64
+
+/opt/PhpStorm-163.10504.2/bin$ ./fsnotifier64 --selftest
+
+............................................................
+
+ll /proc/sys/fs/inotify/
+max_queued_events
+max_user_instances
+max_user_watches
+
+............................................................
+
+caffeinate &
+umount -f /Volumes/$MOUNTDIR/
+umount -f /Users/$HOMEUSER/$MOUNTDIR
+mkdir /Users/$HOMEUSER/$MOUNTDIR
+sshfs $HOMEUSER@@SERVERADDR:/usr/$HOMEUSER/$MOUNTDIR /Users/$HOMEUSER/$MOUNTDIR
+
+
+
 ##############################################################
 #
 #	How can I completely remove the License Information
