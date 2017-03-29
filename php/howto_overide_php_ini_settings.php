@@ -208,7 +208,77 @@ function INISET()
 }
 
 
-function INISETSUGARCRM7()
+
+function INISET_V2()
+{
+
+// http://www.sssup.it/CSI/docs/php4/en-html-manual/function.ini-set.html
+
+   proc_nice(19);
+
+   set_time_limit(600);
+   ini_set('default_socket_timeout', 300);
+   ini_set('max_execution_time', '600');
+
+   ini_set('mysql.connect_timeout', 300);
+   ini_set('mysql.allow_persistent', 1);
+   ini_set('mysql.max_persistent', -1);
+   ini_set('mysql.max_links', -1);
+
+   ini_set('error_reporting', E_ERROR);
+   ini_set('display_errors', 'On');
+   ini_set('display_startup_errors', 'On');
+
+   ini_set('mysql.cache_size', 8000); // '2000'
+   ini_set('mysql.cache_type', "ON");
+
+   ini_set('mysql.query_cache_type', '1');
+   ini_set('mysql.query_cache_size', '256000');
+   ini_set('mysql.query_cache_limit', '32000');
+   ini_set('mysql.query_cache_wlock_invalidate', "OFF");
+   ini_set('mysql.query_cache_min_res_unit', '4096');
+   ini_set('mysql.query_cache_strip_comments', "ON");
+
+   ini_set('mysql.performance_schema', "OFF");
+   ini_set('mysql.innodb_stats_on_metadata', "OFF");
+
+#ini_set('mysqlnd.collect_statistics', "OFF");
+#ini_set('mysqlnd.collect_memory_statistics', "OFF");
+
+   ini_set('mysql.log_warnings', "OFF");
+   ini_set('mysql.slow_query_log', "OFF");
+   ini_set('mysql.long_query_time', "OFF");
+
+   ini_set('html_errors', 'Off');
+   ini_set('xdebug.default_enable', 'Off');
+   ini_set('ignore_repeated_errors', 'On');
+   ini_set('ignore_repeated_source', 'On');
+
+   ini_set('log_errors_max_len', 0);
+   ini_set('docref_root', 0);
+   ini_set('docref_ext', 'Off');
+
+   ini_set('track_vars', 'Off');
+   ini_set('track_errors', 'Off');
+
+#ini_set("soap.wsdl_cache_ttl", "86400");
+#ini_set("soap.wsdl_cache_enabled", 1);
+
+   ini_set('output_buffering', 4096);
+   ini_set('expose_php', 'Off');
+
+#echo ini_get("default_socket_timeout"); // 60 - 1min
+#echo "<br>";
+#echo ini_get("max_execution_time"); // 600 - 10min
+
+   return;
+}
+
+
+
+
+
+function INISET_SUGARCRM7()
 {
 
 	// exec( "nice nohup php -f index.php < /dev/null > output.txt 2>&1 &" );
