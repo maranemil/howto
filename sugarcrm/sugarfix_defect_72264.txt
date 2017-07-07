@@ -1,0 +1,77 @@
+
+##############################################################################
+#
+# FIX for Defect 72264: Opportunity Name Field Redirecting to Dashboard after Quote PDF Downloaded
+# https://web.sugarcrm.com/support/issues/6b3fea43-0c63-acf5-ef70-54c932bd3314
+#
+##############################################################################
+
+/custom/modules/Quotes/DetailView.js
+
+
+$( document ).ready(function() {
+
+	$('#opportunity_id').off("click");
+	$('#opportunity_id').live("click",function(event){
+		var opID = $('#opportunity_id').attr("data-id-value");
+		parent.SUGAR.App.router.navigate("#Opportunities/"+opID, {trigger:true});
+	});
+
+	$('#billing_account_id').off("click");
+	$('#billing_account_id').live("click",function(event){
+		var accID = $('#billing_account_id').attr("data-id-value");
+		parent.SUGAR.App.router.navigate("#Accounts/"+accID, {trigger:true});
+	});
+
+	$('#billing_contact_id').off("click");
+	$('#billing_contact_id').live("click",function(event){
+		var cntID = $('#billing_contact_id').attr("data-id-value");
+		parent.SUGAR.App.router.navigate("#Contacts/"+cntID, {trigger:true});
+	});
+
+	$('.detail.view').find('a').bind("click",function(event){
+
+		//event.stopPropagation();
+		//event.stopImmediatePropagation();
+		//event.preventDefault();
+		//event.isPropagationStopped()
+
+		// http://localhost/PhpstormProjects/sugar/#Products/b8fde690-dc2f-2737-a0b1-4c09dc4c13d0
+
+		var urlPG= $(this).attr("href");
+		if(urlPG.match(/Products/)){
+			var arUrlPG = urlPG.split("#")
+			var strUrl = arUrlPG[1];
+			parent.SUGAR.App.router.navigate(strUrl, {trigger:true});
+		}
+	});
+
+});
+
+
+-----------------------------------------------------
+
+custom/modules/Quotes/FixQuoteOpportunityLnk.php
+<?php
+class FixQuoteOpportunityLnk{
+
+	function FixQuoteOpportunityLnk(){
+		echo '<script src="custom/modules/Quotes/DetailView.js"></script>';
+	}
+}
+
+----------------------------------------------------
+
+custom/modules/Quotes/logic_hooks.php
+<?php
+// Do not store anything in this file that is not part of the array or the hook version.  This file will be automatically rebuilt in the future.
+$hook_version = 1;
+$hook_array = Array();
+// position, file, function
+$hook_array['after_ui_frame'] = Array();
+$hook_array['after_ui_frame'][] = Array(2,'FixQuoteOpportunityLnk',
+	'custom/modules/Quotes/FixQuoteOpportunityLnk.php',
+	'FixQuoteOpportunityLnk','FixQuoteOpportunityLnk',);
+
+
+

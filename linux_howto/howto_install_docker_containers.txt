@@ -1,0 +1,727 @@
+
+#########################
+# docker containers
+#########################
+
+docker pull ubuntu
+docker pull debian
+docker pull opensuse
+docker pull ubuntu-debootstrap
+docker pull neurodebian
+docker pull ubuntu-upstart
+
+docker run neurodebian:latest cat /etc/apt/sources.list.d/neurodebian.sources.list
+deb http://neuro.debian.net/debian wheezy main
+deb http://neuro.debian.net/debian data main
+#deb-src http://neuro.debian.net/debian-devel wheezy main
+
+docker pull mysql
+docker pull httpd
+docker pull elasticsearch
+docker pull mongo
+docker pull mongo-express
+docker pull redis
+docker pull nginx
+docker pull logstash
+docker pull kibana
+docker pull php
+docker pull mariadb
+docker pull cassandra
+docker pull couchdb
+docker pull percona
+docker pull r-base
+docker pull postgres
+docker pull couchbase
+docker pull docker-dev
+
+###########################################################
+# Run New ubuntu container with php7 apache2 mysql5.7
+# https://serversforhackers.com/getting-started-with-docker
+###########################################################
+
+docker run -t -i ubuntu /bin/bash  # get last ubuntu
+# root@9418e74ec186:/#
+apt-get update
+apt-get install -y git ack-grep vim curl wget tmux build-essential python-software-properties
+apt-get update
+apt-get upgrade
+apt-get install apache2
+
+apt search mysql
+apt-get install mysql-server-5.7 mysql-sandbox mysql-workbench
+
+apt search php
+apt-get install php7.0-dev php7.0 php7.0-common php7.0-curl php7.0-fpm php7.0-gd php7.0-mbstring php7.0-mcrypt php7.0-mysql php7.0-soap php7.0-sqlite3 php7.0-xml
+
+apt-get install phpunit
+
+apt search cakephp
+apt-get install cakephp cakephp-scripts
+
+apt search zend
+apt-get install libzend-framework-php libzend-framework-zendx-php #  a simple, straightforward, open-source software framework for PHP 5
+apt-get install php-zend-code php-zend-db php-zend-eventmanager
+apt-get install zend-hydrator php-zend-search php-zend-stdlib php-zend-xml php7.0-opcache zend-framework zend-framework-bin
+
+php -v # PHP 7.0.8-0ubuntu0.16.04.3 (cli) ( NTS ) with Zend OPcache v7.0.8-0ubuntu0.16.04.3, Copyright (c) 1999-2016, by Zend Technologies
+mysql --version # mysql  Ver 14.14 Distrib 5.7.16, for Linux (x86_64) using  EditLine wrapper
+apache2 -v # Server version: Apache/2.4.18 (Ubuntu) Server built:   2016-07-14T12:32:26
+
+// stop services
+sudo service mysql stop
+sudo service apache2 stop
+sudo service nginx stop
+
+// remove services
+sudo apt remove mysql-*
+sudo apt remove php*
+sudo apt remove apache*
+
+
+
+service apache2 start
+service mysql start
+mysql -u root -p
+show databases;
+
+#######################################
+# docker php apache2 mysql containers
+######################################
+
+docker pull httpd
+docker run -dit -p 80:80 --name my-apache-app2 -v "$PWD":/usr/local/apache2/htdocs/ httpd:2.4
+
+docker pull php
+docker run -it --rm --name my-running-script -v "$PWD":/usr/src/myapp -w /usr/src/myapp php:7.0-cli #php your-script.php
+
+docker ps -a
+docker ps
+CONTAINER ID        IMAGE               COMMAND              CREATED             STATUS              PORTS                NAMES
+fb2b06c45a18        httpd:2.4           "httpd-foreground"   35 minutes ago      Up 35 minutes       0.0.0.0:80->80/tcp   my-apache-app2
+
+docker port fb2b06c45a18
+docker inspect fb2b06c45a18
+docker inspect --format '{{ index (index .Config.Env) 1 }}' fb2b06c45a18
+
+docker volume create
+docker volume inspect 7e93f0f58b499d3ba2e0e4
+
+#export example:  docker save -o wheezy-apache.tar 55cf2176b4f2
+# http://slopjong.de/2014/09/17/install-and-run-a-web-server-in-a-docker-container/
+
+#########################################################################
+# sudo wget -qO- https://get.docker.com/gpg | sudo apt-key add -
+#########################################################################
+
+curl -fsSL https://get.docker.com/ | sh
+curl -sSL https://get.docker.com/ | sh
+
+sudo usermod -aG docker
+sudo service docker start
+sudo chkconfig docker on
+service docker status
+docker run hello-world
+
+
+systemctl unmask docker.service
+systemctl unmask docker.socket
+systemctl start docker.service
+sudo systemctl list-unit-files
+sudo sytemctl unmask docker.service
+
+
+sudo service docker stop
+sudo nohup docker daemon -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock &
+sudo docker info
+sudo usermod -aG docker
+
+
+sudo usermod -aG docker $(whoami)
+# sudo usermod -aG docker yourusername
+# sudo usermod -aG docker $USER
+# sudo usermod -aG docker ubuntu
+
+sudo service docker start
+sudo docker -d --storage-opt dm.basesize=20G
+
+locally:
+install -vm755 <(curl -L https://github.com/docker/machine/releases/download/v0.5.3/docker-machine_linux-amd64) $HOME/bin/docker-machine
+
+global:
+sudo bash -c 'install -vm755 <(curl -L https://github.com/docker/machine/releases/download/v0.5.3/docker-machine_linux-amd64) /usr/local/bin/docker-machine'
+
+sudo service docker stop
+ps aux | grep docker  # do this until you don't see /usr/bin/docker -d
+ps aux | grep docker
+/usr/bin/docker -d
+/etc/init.d/docker start
+
+docker run hello-world
+docker -v
+
+
+sudo apt-get update
+#sudo apt-get install docker-engine
+sudo service docker restart
+
+bash
+sudo groupadd docker
+sudo gpasswd -a ${USER} docker
+sudo service docker restart
+
+# sudo docker daemon
+
+
+sudo su
+docker run --name mynginx1 -P -d nginx
+
+
+sudo usermod -aG docker $USER
+su -l root
+sudo docker run -d dockerswarm/swarm:master join --advertise=192.168.1.105:2375 consul://192.168.1.103:8500
+
+
+sudo su -
+service docker start
+docker images
+docker ps
+# sudo -E docker run hello-world
+
+sudo systemctl stop docker
+sudo docker daemon &
+
+
+#eval $(docker-machine env default)
+printenv | grep DOCKER
+export DOCKER_HOST=tcp://192.168.99.100:2376
+export DOCKER_TLS_VERIFY=1
+export DOCKER_CERT_PATH=/Users/{userName}/.docker/machine/machines/default
+
+docker pull debian:jessie
+docker images
+docker run -ti 040bf8e08425
+docker run -p 8080:80 debian-apache:v1 /usr/sbin/apache2ctl -D FOREGROUND
+
+# https://docs.docker.com/engine/reference/run/
+# https://docs.docker.com/compose/reference/run/
+# https://docs.docker.com/engine/tutorials/dockerizing/
+
+docker run hello-world
+docker run [OPTIONS] IMAGE[:TAG|@DIGEST] [COMMAND] [ARG...]
+docker run -d -p 80:80 my_image service nginx start
+docker run -d -p 80:80 my_image nginx -g 'daemon off;'
+docker run --name my-redis -d redis
+docker run -d --name redis example/redis --bind 127.0.0.1
+docker inspect -f "{{ .State.StartedAt }}" my-container
+docker run --restart=on-failure:10 redis
+docker run -it -m 300M --memory-swap -1 ubuntu:14.04 /bin/bash
+docker run -it -m 300M ubuntu:14.04 /bin/bash
+docker run -it -m 300M --memory-swap 1G ubuntu:14.04 /bin/bash
+docker run -it -m 500M --memory-reservation 200M ubuntu:14.04 /bin/bash
+docker run -it --memory-reservation 1G ubuntu:14.04 /bin/bash
+docker run -it --oom-kill-disable ubuntu:14.04 /bin/bas
+docker run -it -m 100M --oom-kill-disable ubuntu:14.04 /bin/bash
+docker run -it -m 500M --kernel-memory 50M ubuntu:14.04 /bin/bash
+docker run -it --kernel-memory 50M ubuntu:14.04 /bin/bash
+docker run -it --memory-swappiness=0 ubuntu:14.04 /bin/bash
+docker run -it --cpu-period=50000 --cpu-quota=25000 ubuntu:14.04 /bin/bash
+docker run -it --cpuset-cpus="1,3" ubuntu:14.04 /bin/bash
+docker run -it --cpuset-cpus="0-2" ubuntu:14.04 /bin/bash
+docker run -it --cpuset-mems="1,3" ubuntu:14.04 /bin/bash
+docker run -it --cpuset-mems="0-2" ubuntu:14.04 /bin/bash
+docker run -it --name c1 --blkio-weight 300 ubuntu:14.04 /bin/bash
+docker run -it --name c2 --blkio-weight 600 ubuntu:14.04 /bin/bash
+docker run -it --device-read-bps /dev/sda:1mb ubuntu
+docker run -it --device-write-bps /dev/sda:1mb ubuntu
+docker run -ti --device-read-iops /dev/sda:1000 ubuntu
+docker run -ti --device-write-iops /dev/sda:1000 ubuntu
+docker run -it -m 300M ubuntu:14.04 /bin/bash
+
+#######################
+# Docker cheatsheet
+#######################
+
+docker image
+docker build
+docker ports
+docker volumes
+docker links
+
+docker-compose up
+docker-compose build
+docker-compose ps
+docker-compose start / stop
+docker-compose rm
+
+#######################
+#	Clean up containers
+#######################
+
+    $ docker kill $(docker ps -a -q)
+    $ docker rm   $(docker ps -a -q)
+
+#######################
+#	Lifecycle
+#######################
+
+    docker create creates a container but does not start it.
+    docker rename allows the container to be renamed.
+    docker run creates and starts a container in one operation.
+    docker rm deletes a container.
+    docker update updates a container's resource limits.
+
+#######################
+#	Starting and Stopping
+#######################
+
+    docker start starts a container so it is running.
+    docker stop stops a running container.
+    docker restart stops and starts a container.
+    docker pause pauses a running container, "freezing" it in place.
+    docker unpause will unpause a running container.
+    docker wait blocks until running container stops.
+    docker kill sends a SIGKILL to a running container.
+    docker attach will connect to a running container.
+
+#######################
+#	Info
+#######################
+
+docker ps shows running containers.
+docker logs gets logs from container. (You can use a custom log driver, but logs is only available for json-file and journald in 1.10).
+docker inspect looks at all the info on a container (including IP address).
+docker events gets events from container.
+docker port shows public facing port of container.
+docker top shows running processes in container.
+docker stats shows containers' resource usage statistics.
+docker diff shows changed files in the container's FS.
+
+docker ps -a shows running and stopped containers.
+docker stats --all shows a running list of containers.
+
+#######################
+#	Import / Export
+#######################
+
+    docker cp copies files or folders between a container and the local filesystem.
+    docker export turns container filesystem into tarball archive stream to STDOUT.
+
+#######################
+#	Executing Commands
+#######################
+
+    docker exec to execute a command in container.
+
+#######################
+#	Images Lifecycle
+#######################
+
+    docker images shows all images.
+    docker import creates an image from a tarball.
+    docker build creates image from Dockerfile.
+    docker commit creates image from a container, pausing it temporarily if it is running.
+    docker rmi removes an image.
+    docker load loads an image from a tar archive as STDIN, including images and tags (as of 0.7).
+    docker save saves an image to a tar archive stream to STDOUT with all parent layers, tags & versions (as of 0.7).
+
+#######################
+#	Info
+#######################
+
+    docker history shows history of image.
+    docker tag tags an image to a name (local or registry).
+
+#######################
+#	Networks  Lifecycle
+#######################
+
+    docker network create
+    docker network rm
+
+Info
+
+    docker network ls
+    docker network inspect
+
+Connection
+
+    docker network connect
+    docker network disconnect
+
+
+#######################
+#	Volumes Lifecycle
+#######################
+
+    docker volume create
+    docker volume rm
+
+Info
+
+    docker volume ls
+    docker volume inspect
+
+#######################
+#	docker-compose run
+#######################
+
+Usage: run [options] [-e KEY=VAL...] SERVICE [COMMAND] [ARGS...]
+
+Options:
+-d                    			Detached mode: Run container in the background, print	new container name.
+--name NAME           	Assign a name to the container
+--entrypoint CMD      	Override the entrypoint of the image.
+-e KEY=VAL            		Set an environment variable (can be used multiple times)
+-u, --user=""         		Run as specified username or uid
+--no-deps             		Don't start linked services.
+--rm                  			Remove container after run. Ignored in detached mode.
+-p, --publish=[]      		Publish a container's port(s) to the host
+--service-ports       		Run command with the service's ports enabled and mapped to the host.
+-T                    				Disable pseudo-tty allocation. By default `docker-compose run` allocates a TTY.
+-w, --workdir=""      	Working directory inside the container
+
+
+#######################
+#	https://github.com/wsargent/docker-cheat-sheet
+#######################
+
+Get IP address
+docker inspect $(dl) | grep IPAddress | cut -d '"' -f 4
+
+or install jq:
+docker inspect $(dl) | jq -r '.[0].NetworkSettings.IPAddress'
+
+or using a go template:
+docker inspect -f '{{ .NetworkSettings.IPAddress }}' <container_name>
+
+Get port mapping
+docker inspect -f '{{range $p, $conf := .NetworkSettings.Ports}} {{$p}} -> {{(index $conf 0).HostPort}} {{end}}' <containername>
+
+Find containers by regular expression
+for i in $(docker ps -a | grep "REGEXP_PATTERN" | cut -f1 -d" "); do echo $i; done
+
+Get Environment Settings
+docker run --rm ubuntu env
+
+Kill running containers
+docker kill $(docker ps -q)
+
+Delete old containers
+docker ps -a | grep 'weeks ago' | awk '{print $1}' | xargs docker rm
+
+Delete stopped containers
+docker rm -v $(docker ps -a -q -f status=exited)
+
+Delete dangling images
+docker rmi $(docker images -q -f dangling=true)
+
+Delete all images
+docker rmi $(docker images -q)
+
+Delete dangling volumes As of Docker 1.9:
+docker volume rm $(docker volume ls -q -f dangling=true)
+
+In 1.9.0, the filter dangling=false does not work - it is ignored and will list all volumes.
+Show image dependencies
+docker images -viz | dot -Tpng -o docker.png
+
+Slimming down Docker containers (see Intercity Blog)
+    Cleaning APT in a RUN layer
+This should be done in the same layer as other apt commands. Otherwise, the previous layers still persist the original information and your images will still be fat.
+
+RUN {apt commands} \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+    Flatten an image
+
+ID=$(docker run -d image-name /bin/bash)
+docker export $ID | docker import – flat-image-name
+
+    For backup
+
+ID=$(docker run -d image-name /bin/bash)
+(docker export $ID | gzip -c > image.tgz)
+gzip -dc image.tgz | docker import - flat-image-name
+
+Monitor system resource utilization for running containers
+
+To check the CPU, memory, and network I/O usage of a single container, you can use:
+docker stats <container>
+
+For all containers listed by id:
+docker stats $(docker ps -q)
+
+For all containers listed by name:
+docker stats $(docker ps --format '{{.Names}}')
+
+For all containers listed by image:
+docker ps -a -f ancestor=ubuntu
+
+##################################
+#	MySQL  - https://hub.docker.com/_/mysql/
+##################################
+
+docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag
+docker run --name some-app --link some-mysql:mysql -d application-that-uses-mysql
+docker run -it --link some-mysql:mysql --rm mysql sh -c 'exec mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD"'
+docker run -it --rm mysql mysql -hsome.mysql.host -usome-mysql-user -p
+docker exec -it some-mysql bash
+docker logs some-mysql
+docker run --name some-mysql -v /my/custom:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag
+docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+docker run -it --rm mysql:tag --verbose --help
+docker run --name some-mysql -v /my/own/datadir:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag
+docker exec some-mysql sh -c 'exec mysqldump --all-databases -uroot -p"$MYSQL_ROOT_PASSWORD"' > /some/path/on/your/host/all-databases.sql
+
+##################################
+#	https://hub.docker.com/_/httpd/
+# 	https://hub.docker.com/_/php/
+##################################
+
+Without a Dockerfile
+docker run -dit --name my-apache-app -v "$PWD":/usr/local/apache2/htdocs/ httpd:2.4
+
+With Dockerfile in your project
+FROM httpd:2.4
+COPY ./public-html/ /usr/local/apache2/htdocs/
+Then, run the commands to build and run the Docker image:
+
+docker build -t my-apache2 .
+docker run -dit --name my-running-app my-apache2
+
+
+docker build -t my-php-app .
+docker run -it --rm --name my-running-app my-php-app
+docker run -it --rm --name my-running-script -v "$PWD":/usr/src/myapp -w /usr/src/myapp php:7.0-cli php your-script.php
+
+docker build -t my-php-app .
+docker run -d --name my-running-app my-php-app
+
+
+########################################
+# https://hub.docker.com/_/couchbase/
+########################################
+
+docker run -d --name db -p 8091-8094:8091-8094 -p 11210:11210 couchbase
+Increase ULIMIT in Production Deployments : Couchbase Server normally expects the following changes to ulimits:
+
+ulimit -n 40960        # nofile: max number of open files
+ulimit -c unlimited    # core: max core file size
+ulimit -l unlimited    # memlock: maximum locked-in-memory address space
+
+docker run -d --ulimit nofile=40960:40960 --ulimit core=100000000:100000000 --ulimit memlock=100000000:100000000 --name db -p 8091-8094:8091-8094 -p 11210:11210 couchbase
+
+##############################################
+#	https://www.flockport.com/a-beginners-guide-to-docker/
+##############################################
+
+curl -sSL https://get.docker.com/ | sh
+docker run -i -t alpine /bin/ash
+apk update
+apk add nginx
+
+#service nginx start
+#rc-update add nginx default
+
+docker ps
+docker images
+docker run -d alpine/nginx nginx
+#docker -d alpine/nginx nginx -g "Daemon off;"
+docker exec -i -t nginxcontainerID /bin/sh
+docker inspect nginxcontainerID
+docker -d -p 80:80 alpine/nginx nginx
+
+apk update
+apk add php-fpm php-pear php-curl php-imap php-cli php-gd php-mcrypt php-mysql
+
+docker commit php-fpm containerIP alpine/phpfpm
+docker run -d alpine/phpfpm php-fpm -F
+docker exec phpfpmcontainerID netstat -tulpn
+docker run -i -t alpine /bin/ash
+
+apk update
+apk add mysql-server mysql-client
+
+docker run -d -v /var/lib/mysql:/var/lib/mysql alpine/mysql mysqld_safe
+docker run -d --volumes-from dbvol alpine/mysql mysqld_safe
+docker run -d --volumes-from dbvol alpine/mysql /bin/sh /usr/local/bin/start
+docker run --name wordpress -v /var/www/wordpress busybox true
+
+docker run -d --volumes-from wordpress --name phpfpm alpine/phpfpm php-fpm -F
+docker run -d --volumes-from dbvol --name mysql --link phpfpm alpine/mysql /bin/sh /usr/local/bin/start
+docker exec -i -t phpfpmcontainerID /bin/sh
+docker run -i -t alpine/nginx /bin/ash
+docker logs containerid
+docker run -d -p 80:80 --link phpfpm --volumes-from wordpress alpine/nginx nginx
+docker run -p 80:80 -d -v /Users/vagrant/site:/var/www/site mysite
+
+##############################################
+Docker DOKU
+##############################################
+
+https://docs.docker.com/engine/getstarted/step_six/
+https://docs.docker.com/engine/tutorials/dockerimages/
+https://hub.docker.com/_/mysql/
+https://hub.docker.com/r/vasansr/ubuntu-mysql/
+https://docs.docker.com/engine/reference/commandline/tag/
+https://docs.docker.com/engine/reference/commandline/run/
+https://docs.docker.com/engine/reference/commandline/deploy/
+https://docs.docker.com/engine/reference/commandline/export/
+https://docs.docker.com/engine/reference/commandline/images/
+
+
+##############################################
+Docker GUI
+##############################################
+
+https://shipyard-project.com/
+https://github.com/shipyard/shipyard
+
+http://linoxide.com/linux-how-to/setup-dockerui-web-interface-docker/
+
+url -sSL https://get.docker.com/ | sh
+zypper in docker
+pacman -S docker
+yaourt -S docker-git
+service docker start
+systemctl start docker
+docker run -d -p 9000:9000 --privileged -v /var/run/docker.sock:/var/run/docker.sock uifd/ui-for-docker # Installing DockerUI
+docker ps
+docker pull ubuntu
+
+##########################################
+Seven Graphical Interfaces to Docker
+##########################################
+https://blog.ouseful.info/2015/08/10/seven-graphical-interfaces-to-docker/
+http://www.infoworld.com/article/2839284/application-virtualization/10-open-source-tools-to-make-docker-even-more-powerful.html
+
+1. Kitematic
+2. Panamax
+3. Lorry.io
+4. docker ui
+5a. tutum Docker Cloud
+5b. Rancher
+6. docker Compose UI
+7. ImageLayers
+
+
+
+
+
+############################################################################################
+Docker am praktischen Beispiel – mit WordPress
+https://entwickler.de/online/docker-am-praktischen-beispiel-mit-wordpress-150107.html
+http://txt.fliglio.com/2013/11/creating-a-mysql-docker-container/
+############################################################################################
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Listing 1: Dockerfile MySQL
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+FROM ubuntu:14.04
+MAINTAINER Seva Dolgopolov
+
+# Get MySQL
+RUN apt-get update
+RUN apt-get install -y mysql-server-5.5
+
+# Remove pre-installed database
+RUN rm -rf /var/lib/mysql/*
+
+# Open MySQL to a world
+RUN sed -i -e"s/^bind-addresss*=s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
+
+# Script to pass MySQL
+ADD startup.sh /
+RUN chmod 755 /*.sh
+
+#define access data
+ENV DB_USER docker_user
+ENV DB_PASSWORD 1234
+ENV DB_NAME wordpress
+ENV VOLUME_HOME "/var/lib/mysql"
+
+# expose MySQL port to a network
+EXPOSE 3306
+
+# open to mount
+VOLUME ["/var/lib/mysql", "/var/log/mysql"]
+
+# start container
+CMD ["/bin/bash", "/startup.sh"]
+-------------
+docker run -d -v /data/mysql:/var/lib/mysql -v /data/log:/var/log/mysql -p 3306:3306 --name wordpress_mysql  wordpress/mysql
+-------------
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Listing 2: Dockerfile PHP
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+FROM ubuntu:14.04
+
+MAINTAINER Seva Dolgopolov
+
+# get php and mysql client
+RUN apt-get update
+RUN apt-get -yqq install php5-fpm php5-mysql
+RUN apt-get -yqq install mysql-client-5.5
+
+# create app document root
+RUN mkdir -p /var/www/app
+
+# add php fpm runtime config
+ADD <a class="elf-external elf-icon" href="http://www.conf" rel="nofollow">www.conf</a> /etc/php5/fpm/pool.d/
+
+# open to mount
+VOLUME ["/var/www/app", "/var/run/"]
+
+# start php
+ENTRYPOINT ["php5-fpm", "-F"]
+----------------------
+docker run -d --link wordpress_mysql:db --name wordpress_php -v /var/www/wordpress:/var/www/app  wordpress/php
+----------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Listing 3: Dockerfile nginx
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+FROM ubuntu:14.04
+
+MAINTAINER Seva Dolgopolov
+
+# get nginx
+RUN apt-get update
+RUN apt-get install -y nginx
+
+# add and activate host configuration
+ADD app.conf /etc/nginx/sites-available/
+RUN rm /etc/nginx/sites-enabled/default &&  ln -s /etc/nginx/sites-available/app.conf /etc/nginx/sites-enabled
+
+# let it be open on port 80
+EXPOSE 80
+
+# start nginx
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+docker run -d -p 80:80 --volumes-from wordpress_php --name wordpress_nginx  wordpress/nginx
+docker run -d -p 8080:80 --volumes-from wordpress_php --name wordpress_nginx  wordpress/nginx
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+############################################################################################
+http://severalnines.com/blog/mysql-docker-containers-understanding-basics
+############################################################################################
+
+Firing up a MySQL container
+First, you have to install Docker. In the Linux box:
+
+$ sudo apt-get install docker.io #Ubuntu/Debian
+$ yum install docker # RedHat/CentOS
+
+Then, use the following basic command to run a MySQL container:
+$ docker run --name=test-mysql mysql
+
+
+
+
+
+
+
+
+
+

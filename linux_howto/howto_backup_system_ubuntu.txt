@@ -1,0 +1,256 @@
+
+######################################################################
+#
+#	Disk Cloning
+# 	https://wiki.archlinux.org/index.php/disk_cloning
+#
+######################################################################
+
+Cloning a partition
+From physical disk /dev/sda, partition 1, to physical disk /dev/sdb, partition 1.
+
+# dd if=/dev/sda1 of=/dev/sdb1 bs=64K conv=noerror,sync
+
+Warning: If output file of= (sdb1 in the example) does not exist, dd will create a file with this name and will start filling up your root file system!
+
+
+Cloning an entire hard disk
+From physical disk /dev/sdX to physical disk /dev/sdY
+
+# dd if=/dev/sdX of=/dev/sdY bs=64K conv=noerror,sync
+
+
+Backing up the MBR
+
+The MBR is stored in the the first 512 bytes of the disk. It consist of 3 parts:
+
+    The first 446 bytes contain the boot loader.
+    The next 64 bytes contain the partition table (4 entries of 16 bytes each, one entry for each primary partition).
+    The last 2 bytes contain an identifier
+
+To save the MBR as mbr.img:
+
+# dd if=/dev/sdX of=/path/to/mbr_file.img bs=512 count=1
+
+To restore (be careful: this could destroy your existing partition table and with it access to all data on the disk):
+
+# dd if=/path/to/mbr_file.img of=/dev/sdX
+
+If you only want to restore the boot loader, but not the primary partition table entries, just restore the first 446 bytes of the MBR:
+
+# dd if=/path/to/mbr_file.img of=/dev/sdX bs=446 count=1
+
+To restore only the partition table, one must use:
+
+# dd if=/path/to/mbr_file.img of=/dev/sdX bs=1 skip=446 count=64
+
+You can also get the MBR from a full dd disk image:
+
+# dd if=/path/to/disk.img of=/path/to/mbr_file.img bs=512 count=1
+
+Create disk image
+
+1. Boot from a live media.
+
+2. Make sure no partitions are mounted from the source hard drive.
+
+3. Mount the external HD
+
+4. Backup the drive.
+
+# dd if=/dev/sdX conv=sync,noerror bs=64K | gzip -c  > /path/to/backup.img.gz
+
+If necessary (e.g. when the format of the external HD is FAT32) split the disk image in volumes (see also the split man pages).
+
+# dd if=/dev/sdX conv=sync,noerror bs=64K | gzip -c | split -a3 -b2G - /path/to/backup.img.gz
+
+If there is not enough disk space locally, you may send the image through ssh:
+
+# dd if=/dev/sdX conv=sync,noerror bs=64K | gzip -c | ssh user@local dd of=backup.img.gz
+
+5. Save extra information about the drive geometry necessary in order to interpret the partition table stored within the image. The most important of which is the cylinder size.
+
+# fdisk -l /dev/sdX > /path/to/list_fdisk.info
+
+Note: You may wish to use a block size (bs=) that is equal to the amount of cache on the HD you are backing up. For example, bs=8192K works for an 8 MiB cache. The 64 KiB mentioned in this article is better than the default bs=512 bytes, but it will run faster with a larger bs=.
+Restore system
+
+To restore your system:
+
+# gunzip -c /path/to/backup.img.gz | dd of=/dev/sdX
+
+When the image has been split, use the following instead:
+
+# cat /path/to/backup.img.gz* | gunzip -c | dd of=/dev/sdX
+
+
+
+Using ddrescue
+
+ddrescue is a tool designed for cloning and recovering data. It copies data from one file or block device (hard disc, cdrom, etc) to another, trying to rescue the good parts first in case of read errors, to maximize the recovered data.
+
+To clone a faulty or dying drive, run ddrescue twice. First round, copy every block without read error and log the errors to rescue.log.
+
+# ddrescue -f -n /dev/sdX /dev/sdY rescue.log
+
+Second round, copy only the bad blocks and try 3 times to read from the source before giving up.
+
+# ddrescue -d -f -r3 /dev/sdX /dev/sdY rescue.log
+
+Now you can check the file system for corruption and mount the new drive.
+
+# fsck -f /dev/sdY
+
+
+######################################################################
+#
+#	6 Examples to Backup Linux Using dd Command
+#	http://www.thegeekstuff.com/2010/10/dd-command-examples
+#
+######################################################################
+
+Example 1. Backup Entire Harddisk
+# dd if=/dev/sda of=/dev/sdb
+# dd if=/dev/sda of=/dev/sdb conv=noerror,sync
+
+Example 2. Create an Image of a Hard Disk
+# dd if=/dev/hda of=~/hdadisk.img
+
+Example 3. Restore using Hard Disk Image
+# dd if=hdadisk.img of=/dev/hdb
+
+Example 4. Creating a Floppy Image
+# dd if=/dev/fd0 of=myfloppy.img
+
+
+Example 5. Backup a Partition
+# dd if=/dev/hda1 of=~/partition1.img
+
+Example 6. CDROM Backup
+# dd if=/dev/cdrom of=tgsservice.iso bs=2048
+
+
+######################################################################
+#
+#	Systembackup mit dd
+#	https://freetux.wordpress.com/2007/12/23/systembackup-mit-dd/
+#
+######################################################################
+
+Unkomprimiertes Backup
+dd if=/dev/sda of=/media/sdb1/backup.img bs=1M
+
+Komprimiertes Backup
+dd if=/dev/sda bs=1M | gzip > /media/sdb1/backup.img.gz
+
+Zurückspielen eines Backups
+Ein unkomprimiertes Backup lässt sich mit
+dd if=/media/sdb1/backup.img of=/dev/sda bs=1M
+
+zurückspielen. Ein komprimiertes Backup hingegen mit
+gunzip -c /media/sdb1/backup.img | dd of=/dev/hda bs=1M
+
+######################################################################
+#
+#	GET DISK INFO
+#
+######################################################################
+
+df -h
+Dateisystem    Größe Benutzt Verf. Verw% Eingehängt auf
+udev            7,8G       0  7,8G    0% /dev
+tmpfs           1,6G    9,9M  1,6G    1% /run
+/dev/sda4        32G     25G  6,1G   80% /
+tmpfs           7,8G     69M  7,8G    1% /dev/shm
+tmpfs           5,0M    4,0K  5,0M    1% /run/lock
+tmpfs           7,8G       0  7,8G    0% /sys/fs/cgroup
+/dev/sda5       121G    100G   15G   87% /home
+/dev/sda1       197M     19M  179M   10% /boot/efi
+tmpfs           1,6G     64K  1,6G    1% /run/user/1000
+
+
+sudo parted -l /dev/sda
+Modell: ATA APPLE SSD SM0256 (scsi)
+Festplatte  /dev/sda:  251GB
+Sektorgröße (logisch/physisch): 512B/4096B
+Partitionstabelle: gpt
+Disk-Flags:
+
+Nummer  Anfang  Ende    Größe   Dateisystem     Name                  Flags
+ 1      20,5kB  210MB   210MB   fat32           EFI System Partition  boot, esp
+ 2      210MB   64,4GB  64,1GB  hfs+            Customer
+ 4      64,4GB  99,4GB  35,0GB  ext4
+ 5      99,4GB  231GB   132GB   ext4
+ 3      231GB   251GB   20,0GB  linux-swap(v1)  Swap
+
+######################################################################
+#
+#
+#
+#
+######################################################################
+
+dd if=/dev/sda of=/dev/sdb
+sudo cp /dev/sda /dev/sdb
+
+# dd if=/dev/sda of=/dev/sdb
+long wait...
+
+# dd if=/dev/sda of=/dev/sdb bs=1M
+slightly shorter wait...
+
+Here kitty, here kitty kitty!!!
+# cat /dev/sda > /dev/sdb
+Even the good old kitty can do it.
+
+Or you can do it over a network to another machine using netcat the networked kitty:
+
+Save image on a server:
+# nc -l -p 50000 | dd bs=1M of=pc.img
+
+On the PC:
+# dd bs=1M if=/dev/hda | gzip --fast | nc servername 50000
+
+Restore image on the PC:
+# nc -l -p 50000 | gunzip | dd bs=1M of=/dev/hda
+
+On the server:
+# dd bs=1M if=pc.img | nc pc.ip.addr.ess 50000
+
+######################################################################
+#
+#
+#
+#
+######################################################################
+
+sudo dd if=/dev/sda1 of=/dev/sdc1 bs=4096 conv=notrunc,noerror
+sudo dd if=/dev/sdb1 of=/dev/sdc2 bs=4096 conv=notrunc,noerror
+
+mkdir /somewhere
+mount /dev/sdd /somewhere
+dd conv=noerror if=/dev/sda of=/somewhere/entire-sda.img
+dd conv=noerror if=/dev/sdb of=/somewhere/entire-sdb.img
+
+# rsync -aAXv --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found"} / /path/to/backup/folder
+
+#
+http://www.thegeekstuff.com/2011/06/iptables-rules-examples/
+http://www.thegeekstuff.com/2009/03/8-essential-vim-editor-navigation-fundamentals/
+http://www.thegeekstuff.com/2010/01/awk-introduction-tutorial-7-awk-print-examples/
+http://www.thegeekstuff.com/linux-101-hacks-ebook/
+http://www.thegeekstuff.com/2009/03/15-practical-linux-find-command-examples/
+http://www.thegeekstuff.com/2011/12/linux-performance-monitoring-tools/
+http://www.thegeekstuff.com/2010/11/50-linux-commands/
+http://www.thegeekstuff.com/2010/12/50-unix-linux-sysadmin-tutorials/
+http://www.cwrm.at/index.php?content=sfdisk
+http://www.linuxquestions.org/questions/linux-newbie-8/learn-the-dd-command-362506/
+
+
+
+
+References:
+
+https://wiki.archlinux.org/index.php/full_system_backup_with_rsync
+https://www.linux.com/blog/how-full-encrypt-your-system-lvm-luks-cli
+https://www.linux.com/blog/how-full-encrypt-your-linux-system-lvm-luks

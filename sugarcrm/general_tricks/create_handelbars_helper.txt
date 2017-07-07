@@ -1,0 +1,184 @@
+###############################################################
+#
+#	Creating Conditionals Handlebars Helpers  in SugarCRM
+#
+###############################################################
+
+Create file custom/JavaScript/my-handlebar-helpers.js
+// ------------------------------------------------------------
+(function (app) {
+	app.events.on("app:init", function () {
+
+		Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
+			switch (operator) {
+				case'==':
+					return (v1 == v2) ? options.fn(this) : options.inverse(this);
+				case'===':
+					return (v1 === v2) ? options.fn(this) : options.inverse(this);
+				case'<':
+					return (v1 < v2) ? options.fn(this) : options.inverse(this);
+				case'<=':
+					return (v1 <= v2) ? options.fn(this) : options.inverse(this);
+				case'>':
+					return (v1 > v2) ? options.fn(this) : options.inverse(this);
+				case'>=':
+					return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+				case'&&':
+					return (v1 && v2) ? options.fn(this) : options.inverse(this);
+				case'||':
+					return (v1 || v2) ? options.fn(this) : options.inverse(this);
+				default:
+					return options.inverse(this);
+			}
+		});
+	});
+})(SUGAR.App);
+
+
+
+Add file /custom/Extension/application/Ext/JSGroupings/my-handlebar-helpers.php
+// ------------------------------------------------------------
+<?php
+
+//Loop through the groupings to find include/javascript/sugar_grp7.min.js
+foreach ($js_groupings as $key => $groupings)
+{
+    foreach  ($groupings as $file => $target)
+    {
+        if ($target == 'include/javascript/sugar_grp7.min.js')
+        {
+            //append the custom helper file
+            $js_groupings[$key]['custom/JavaScript/my-handlebar-helpers.js'] = 'include/javascript/sugar_grp7.min.js';
+        }
+
+        break;
+    }
+}
+
+
+
+Create New field type
+// ------------------------------------------------------------
+/custom/modules/<Module>/clients/base/fields/px-calculation
+/custom/modules/<Module>/clients/base/fields/px-calculation/detail.hbs
+
+{{#if value}}
+    {{#ifCond value '>' 0 }}
+        <span style="color: green"> {{value}} </span>
+    {{/ifCond}}
+
+    {{#ifCond value '<=' 0 }}
+        <span style="color: red"> {{value}} </span>
+    {{/ifCond}}
+{{/if}}
+
+
+
+/custom/modules/<Module>/clients/base/fields/px-calculation/edit.hbs
+// ------------------------------------------------------------
+<input class="input-large" tabindex="{{def.tabindex}}" maxlength="{{def.len}}" name="{{name}}"
+       type="text" value="{{value}}" placeholder=""/>
+{{#unless hideHelp}}
+    {{#if def.help}}
+        <p class="help-block">{{str def.help module}}</p>
+    {{/if}}
+{{/unless}}
+
+
+
+
+/custom/modules/<Module>/clients/base/fields/px-calculation/list.hbs
+// ------------------------------------------------------------
+{{#if value}}
+
+    {{#ifCond value '>' 0 }}
+        <span style="color: green"> {{value}} </span>
+    {{/ifCond}}
+
+    {{#ifCond value '<=' 0 }}
+        <span style="color: red"> {{value}} </span>
+    {{/ifCond}}
+
+{{else}}
+        <span style="color: blue">0</span>
+{{/if}}
+
+
+
+/custom/modules/<Module>/clients/base/fields/px-calculation/px-calculation.js
+// ------------------------------------------------------------
+
+({
+	initialize: function(options) {
+		this._super('initialize', [options]);
+	},
+	_render: function() {
+		this._super('_render');
+	},
+	format: function(value) {
+		return this._super('format', [value]);
+	},
+	unformat: function(value) {
+		return this._super('unformat', [value]);
+	},
+	getFieldElement: function () {
+		return this.$('a');
+	}
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ------------------------------------------------------------
+
+References:
+
+Handlebars in SugarCRM
+http://support.sugarcrm.com/Documentation/Sugar_Developer/Sugar_Developer_Guide_7.7/User_Interface/Handlebars/index.html
+
+Creating New Conditionals in Handlebars
+http://www.levihackwith.com/creating-new-conditionals-in-handlebars/
+
+Using Handlebars for Dynamic Content
+https://mandrill.zendesk.com/hc/en-us/articles/205582537-Using-Handlebars-for-Dynamic-Content
+
+Creating New Conditionals in Handlebars Compare
+http://doginthehat.com.au/2012/02/comparison-block-helper-for-handlebars-templates/
+
+How to do an "if equals" conditional comparison in Handlebars
+https://emberigniter.com/how-to-equals-conditional-comparison-handlebars/
+
+Handlebars iff Helper
+https://code-maven.com/handlebars-conditionals
+
+Handlebars Helpers
+http://handlebarsjs.com/builtin_helpers.html
+
+Handlebars relational operators examples
+https://gist.github.com/tracend/7522125
+
+With any helper a, b are values compared if a condition valudates
+
+    eq - equal to
+    ne - not equal to
+    lt - less than
+    gt - greater than
+    le - less than or equal to
+    ge - greater than or equal to
+
+
+
+
+
+
+

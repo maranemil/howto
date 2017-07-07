@@ -1,0 +1,84 @@
+####################################################
+####################################################
+##
+## Cross and Star Kaleidoscope with AviSynth 1
+##
+## baard1956
+## Published on Mar 16, 2015
+##
+####################################################
+####################################################
+
+#ARA_YT
+#Source of plugin: http://avisynth.org.ru/fizick.html
+loadplugin("K:\VD Filter Pack\Rotate.dll")
+
+#Source of image:
+#Ballet Beautiful Trailer https://www.youtube.com/watch?v=-_QYh...
+#Source of music:
+#poetico from Visions fugitives by Prokofiev, played by
+#Patrick Hemmerle https://www.youtube.com/watch?v=RSxSs...
+b=AviSource("K:\AviWerkmap\BAK_AA.avi").converttorgb32.convertfps(24)
+w=WAVSource("K:\AviWerkmap\Poetico_1_26_84.wav")
+
+#Looping
+b11=b.reverse
+b12=unalignedsplice(b,b11)
+#Two contrasting versions
+b101=b12.rgbadjust(1,0.75,1)
+b102=b12.rgbadjust(0.75,0.75,1.25)
+
+#Building the mask
+a101=blankclip(length=100,width=320,height=320,fps=24,color=$ffffff)
+a1011=a101.rotate(45, width=453, height=453).bicubicresize(640,640)
+
+#Building a black cross
+#a102=a.crop(0,0,-320,-320)
+a102=a1011.crop(0,0,-320,-320)
+a103=layer(a102.invert.converttorgb32(), a102.converttorgb32().resetmask.colorkeymask($000000,0), x=-94, y=-94)
+a104=layer(a103.converttorgb32(), a102.converttorgb32().resetmask.colorkeymask($000000,0), x=-160, y=-160)
+a111=a104.fliphorizontal
+a112=stackhorizontal(a104,a111)
+a113=a112.flipvertical
+a114=stackvertical(a112,a113)
+a117=a114.bicubicresize(320,320)
+a1171=a117.greyscale
+a1172=a1171.Levels(150,1,150,0,255)
+
+
+#Building the background, which will become an eight-pointed star
+d101=b101.rotate(angle=0,endangle=360).c�rop(220,52,-220,-108).bicubicresize
+(160,160)
+d102=d101.fliphorizontal
+d103=stackhorizontal(d101,d102)
+d104=d103.flipvertical
+d105=stackvertical(d103,d104)
+d106=layer(d105.converttorgb32(), a1172.converttorgb32().resetmask.colorkeymask($ffffff,0))
+
+#Filling the black cross
+e101=b102.rotate(angle=0,endangle=360).crop(220,52,-220,-108).bicubicresize
+(160,160)
+e102=e101.fliphorizontal
+e103=stackhorizontal(e101,e102)
+e104=e103.flipvertical
+e105=stackvertical(e103,e104).bicubicres�ize(320,320).rotate(45)
+e106=layer(e105.converttorgb32(), d106.converttorgb32().resetmask.colorkeymask($000000,0))
+
+#Expanding to 4x3 ratio, two options
+f101=stackhorizontal(e106,e106,e106,e106)
+f102=f101.flipvertical
+f103=stackvertical(f101,f102,f101).bicubicresize(640,480)
+f1031=stackvertical(f101,f102,f101).crop(160,120,-160,-120)
+f1032=f1031.bicubicresize(640,480)
+
+#Adjusting to 16x9 ratio, same two options, g101 seemed best to me
+g101=f103.crop(0,60,-0,-60)
+g102=f1032.crop(0,60,-0,-60)
+
+#Adding sound
+h11=unalignedsplice(g101,g101,g101,g101,g101,g101)
+h12=unalignedsplice(h11,h11)
+h13=h12.trim(0,2087)
+z1=audiodub(h13,w)
+
+return z1

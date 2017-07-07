@@ -1,0 +1,155 @@
+#####################################
+#
+# Run Ubuntu Screen on Samsung Galaxy 2
+#
+#####################################
+
+sudo apt-get update
+#sudo apt-get install gnome-core gnome-session-fallback
+sudo apt-get install vnc4server
+#sudo apt-get install xrdp #Microsoft's Remote Desktop Connection
+vncserver
+vncserver -kill :1
+cp ~/.vnc/xstartup ~/.vnc/xstartup.backup
+
+*
+*
+*
+
+
+sudo nano ~/.vnc/xstartup #Add script:
+
+----------start script---------
+#!/bin/sh
+def
+export XKL_XMODMAP_DISABLE=1
+unset SESSION_MANAGER
+unset DBUS_SESSION_BUS_ADDRESS
+
+gnome-panel &
+gnome-settings-daemon &
+metacity &
+nautilus &
+gnome-terminal &
+
+#unset SESSION_MANAGER
+#unset DBUS_SESSION_BUS_ADDRESS
+## exec /etc/X11/xinit/xinitrc
+#gnome-session --session=ubuntu-2d &
+##gnome-session --session=gnome-classic &
+
+#[ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup
+#[ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
+#xsetroot --solid grey
+#vncconfig --iconic &
+----------end script---------
+
+# 800x480 Original S2
+# 1024x768 Ubuntu
+# 1280x768 Perfect Ratio S2
+
+vncserver -geometry 1280x768 -depth 16
+#vncserver -geometry 1024x768 -depth 32
+vncserver -kill :1
+
+sudo ufw status
+sudo ufw allow 5901
+
+sudo apt-get install xtightvncviewer
+xtightvncviewer
+vncviewer 192.168.1.25:5901
+
+###############################
+#
+# Optional Scripts
+#
+###############################
+
+nano startvnc.sh #Add script
+--------------
+#!/bin/bash
+vncserver -geometry 1024x768 -depth 16
+-----------------
+sudo cp startvnc.sh /etc/init.d
+sudo update-rc.d startvnc.sh defaults
+sudo update-rc.d -f startvnc.sh remove
+
+sudo nano ~/.bash_profile
+
+### http://joshua14.homelinux.org/blog/?p=1480
+### http://onkea.com/ubuntu-vnc-grey-screen/
+### https://www.digitalocean.com/community/tutorials/how-to-setup-vnc-for-ubuntu-12
+
+
+Install VNC viewer on Android ***
+
+#######################################
+#
+# Other vnc server
+#
+#######################################
+
+sudo apt-get install tightvncserver
+sudo apt-get install preload
+sudo sed -i 's/sortstrategy = 3/sortstrategy = 0/g' /etc/preload.conf
+tightvncserver
+vncserver -kill :1
+
+nano vnc.sh #add
+-----
+#!/bin/sh
+vncserver :1 -geometry 1280x720 -depth 24
+-----
+
+chmod +x vnc.sh
+
+
+
+
+
+
+
+sudo nano /etc/init.d/vncboot
+----
+### BEGIN INIT INFO
+# Provides: vncserver
+# Required-Start: networking
+# Required-Stop:
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: Starts VNC
+# Description:
+### END INIT INFO
+
+export USER='pi'
+
+eval cd ~$USER
+
+# Check state
+case "$1" in
+  start)
+    su $USER -c '/usr/bin/vncserver :1 -geometry 1280x720 -depth 24'
+    echo "Starting vncserver for $USER"
+  ;;
+  stop)
+    pkill Xtightvnc
+    echo "vncserver stopped"
+  ;;
+  *)
+    echo "Usage: /etc/init.d/vncboot {start|stop}"
+    exit 1
+  ;;
+esac
+
+exit 0
+----
+sudo chmod 755 /etc/init.d/vncboot
+sudo update-rc.d vncboot defaults
+
+##### http://jankarres.de/2012/08/raspberry-pi-vnc-server-installieren/
+
+http://ubuntuforums.org/showthread.php?t=1327186
+http://superuser.com/questions/305725/linux-use-vnc-to-create-a-second-screen
+http://ubuntuforums.org/showthread.php?t=197964
+http://askubuntu.com/questions/28608/how-do-you-use-an-android-tablet-as-a-second-display
+

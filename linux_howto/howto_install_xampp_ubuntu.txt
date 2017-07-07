@@ -1,0 +1,133 @@
+#########################################################
+#
+# LAMPP XAMPP Linux Frequently Asked Questions
+# https://www.apachefriends.org/faq_linux.html
+#
+#########################################################
+
+# install XAMPP?
+# https://www.apachefriends.org/download.html
+# https://www.apachefriends.org/add-ons.html
+chmod 755 xampp-linux-*-installer.run
+sudo ./xampp-linux-*-installer.run
+
+# Start Stop
+sudo /opt/lampp/lampp start
+sudo /opt/lampp/lampp stop
+
+# Config
+cd /opt/lampp
+sudo ./manager-linux.run (or manager-linux-x64.run)
+
+# Check security
+sudo /opt/lampp/lampp security
+
+# Check Password
+sudo nano /opt/lampp/lib/xampp.users
+#xampp:JMX79zg3phVpk
+
+# Check Log
+tail -2 /opt/lampp/logs/error_log
+
+sudo /usr/sbin/setenforce 0
+
+# Add in startup
+sudo ln -s /opt/lampp/lampp /etc/init.d/lampp
+sudo update-rc.d lampp start 80 2 3 4 5 . stop 30 0 1 6 .
+
+#Activate  eaccelerator
+sudo nano /opt/lampp/etc/php.ini
+
+# and write in:
+extension="eaccelerator.so"
+eaccelerator.shm_size="16"
+eaccelerator.cache_dir="/opt/lampp/tmp/eaccelerator"
+eaccelerator.enable="1"
+eaccelerator.optimizer="1"
+eaccelerator.check_mtime="1"
+eaccelerator.debug="0"
+eaccelerator.filter=""
+eaccelerator.shm_max="0"
+eaccelerator.shm_ttl="0"
+eaccelerator.shm_prune_period="0"
+eaccelerator.shm_only="0"
+eaccelerator.compress="1"
+eaccelerator.compress_level="9"
+
+# Activate the OCI8/Oracle extension for PHP
+sudo /opt/lampp/lampp oci8
+
+# none of the images being displayed?
+#EnableMMAP off
+#EnableSendfile off
+
+# enable access to phpMyAdmin from the outside?
+<LocationMatch "^/(?i:(?:xampp|security|licenses|phpmyadmin|webalizer|server-status|server-info))">
+
+# Lampp backup
+sudo /opt/lampp/lampp backup
+#sudo /opt/lampp/lampp backup secret
+
+# Restore backup
+sudo sh xampp-backup-22-01-14.sh
+
+
+
+
+
+
+
+
+
+
+
+
+
+##################################################
+#
+# HOW TO FIX ibdata¹ Problem
+#
+##################################################
+
+###############################
+#	export dbs from xampp
+###############################
+
+mysqldump -u root -p --socket=/opt/lampp/var/mysql/mysql.sock dbname > dbname.sql
+
+###############################
+#	uninstall xampp
+###############################
+
+sudo chmod +x /opt/lampp/uninstall
+sudo /opt/lampp/uninstall
+
+###############################
+#	install xampp
+###############################
+
+#download xampp-linux-1.8.2-0-installer.run
+
+chmod 755 xampp-linux-*-installer.run
+sudo ./xampp-linux-*-installer.run
+
+###############################
+#	import dbs in xampp
+###############################
+
+mysql -u root -p --socket=/opt/lampp/var/mysql/mysql.sock
+create database dbname;
+connect dbname;
+source dbname.sql;
+
+###############################
+#	clear cache ram
+###############################
+
+sync && echo 3 | sudo tee /proc/sys/vm/drop_caches
+
+
+
+
+
+

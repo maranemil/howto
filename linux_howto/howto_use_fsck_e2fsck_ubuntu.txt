@@ -1,0 +1,161 @@
+##########################################
+#
+#   fsck /dev/sda2
+#   fsck from util-linux 2.26.2
+#   e2fsck 1.42.12 (29-Aug-2014)
+#
+##########################################
+
+sudo parted /dev/sda 'print'
+
+Number  Start   End     Size    Type      File system     Flags
+ 1      1049kB  14,7GB  14,7GB  primary   ext4            boot
+ 2      14,7GB  17,4GB  2672MB  extended
+ 5      14,7GB  17,4GB  2672MB  logical   linux-swap(v1)
+
+cat /etc/fstab
+
+# fsck -A
+# fsck -AR -y
+# fsck -AR -t ext2 -y
+# fsck -AR -t noext2 -y
+
+# mount | grep "/dev/sd*"
+# fsck -M /dev/sda7
+
+fsck /dev/sda6 -f
+sudo e2fsck /dev/sda5 -f
+
+# mount /dev/sda6 /mydata
+# cd /mydata
+# ls -li
+# ls -lrt
+
+# fsck -y /dev/sda6
+
+# fsck -n /dev/sda6
+# e2fsck -n /dev/sda5
+
+ e2fsck -b 8193 <device>
+ or
+ e2fsck -b 32768 <device>
+
+
+# Automatically Repair the Damaged Portions using Option -a
+# fsck -a -AR
+fsck -a /dev/sda6
+fsck -y /dev/sda6
+# e2fsck -y /dev/sda6
+
+
+
+#################################################################
+
+fsck /dev/sda1
+
+umount /home
+fsck /dev/sda2
+mount /home
+
+umount /dev/sdb1 #thumb drive
+sudo fsck /dev/sdb1
+
+sudo fdisk -l  #  list out all the partitions in the system.
+
+fsck -a /dev/sda1
+fsck -y /dev/sda1
+fsck -A
+fsck -M /dev/sdc1 # Exclude check on mounted filesystem
+
+fsck -t ext4 /dev/sdc1
+fsck -A -t ext4 -y
+
+Force fsck to run everytime during bootup
+sudo touch /forcefsck
+tune2fs -c 30 /dev/sdaX
+sudo tune2fs -i 10d /dev/sdaX
+
+Using fsck with a GUI
+sudo apt-get install gparted
+
+
+############################################################
+
+sudo dumpe2fs -h /dev/sdaX | grep -i "mount count"
+sudo tune2fs -l /dev/sdaX | grep -i "mount count"
+sudo tune2fs -C 20 /dev/sdaX
+sudo tune2fs -c 60 /dev/sdaX
+sudo tune2fs -l /dev/sdaX | grep -i "check"
+sudo tune2fs -T 201110132309 /dev/sdaX
+sudo tune2fs -i 3m /dev/sdaX
+
+/etc/fstab
+
+Fehler sollen automatisch korrigiert werden
+sudo nano /etc/default/rcS
+
+FSCKFIX=no
+FSCKFIX=yes
+
+sudo touch /forcefsck
+
+###################################################
+
+tune2fs -l /dev/sdbX | grep Last\ c 	# Last checked
+tune2fs -l /dev/sdbX | grep Mount	# Mount count
+tune2fs -l /dev/sdbX | grep Max		# Maximum mount count
+
+
+blkid | grep sdb1
+
+
+touch /forcefsck			# Force fsck for root partition
+tune2fs -c 1 /dev/sdb1			# set fsck after every 1 reboots
+tune2fs -c 10 /dev/sdb1			# set fsck after every 10 reboots
+
+
+tune2fs -c 1 /dev/sdb1			# Force fsck for all other non-root partitions
+tune2fs -c 5 /dev/sdb1			# check filesystem after every 5 reboots
+
+*** disable fsck run
+# tune2fs -c 0 /dev/sdb1
+OR
+# tune2fs -c -1 /dev/sdb1
+
+####################################
+
+shutdown -rF now
+
+Check the /etc/init/mountall.conf file, for example the file from Ubuntu 14.04 LTS
+
+
+script ***
+    . /etc/default/rcS || true
+    [ -f /forcefsck ] && force_fsck="--force-fsck"
+    [ "$FSCKFIX" = "yes" ] && fsck_fix="--fsck-fix"
+
+    # Doesn not work so well if mountall is responsible for mounting /proc, heh.
+    if [ -e /proc/cmdline ]; then
+        read line < /proc/cmdline
+        for arg in $line; do
+            case $arg in
+                -q|--quiet|-v|--verbose|--debug)
+                    debug_arg=$arg
+                    ;;
+            esac
+        done < /proc/cmdline
+    fi
+    # set $LANG so that messages appearing in plymouth are translated
+    if [ -r /etc/default/locale ]; then
+        . /etc/default/locale || true
+        export LANG LANGUAGE LC_MESSAGES LC_ALL
+    fi
+
+    exec mountall --daemon $force_fsck $fsck_fix $debug_arg
+script ***
+
+http://www.cyberciti.biz/faq/linux-force-fsck-on-the-next-reboot-or-boot-sequence/
+https://linuxconfig.org/how-to-force-fsck-to-check-filesystem-after-system-reboot-on-linux
+https://wiki.ubuntuusers.de/Dateisystemcheck/
+http://www.thegeekstuff.com/2012/08/fsck-command-examples/?utm_source=feedburner
+https://www.maketecheasier.com/check-repair-filesystem-fsck-linux/

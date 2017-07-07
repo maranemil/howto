@@ -1,0 +1,95 @@
+/**
+* Created by PhpStorm.
+* User: emil
+* Date: 05.02.16
+* Time: 13:08
+*/
+
+#################################################
+#
+# ELASTIC SEARCH HOWTO
+#
+#################################################
+
+
+https://www.elastic.co/guide/en/elasticsearch/guide/current/_cluster_health.html
+https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-health.html
+https://www.elastic.co/guide/en/elasticsearch/reference/1.4/_cluster_health.html
+https://www.elastic.co/guide/en/elasticsearch/reference/1.4/_installation.html
+
+
+
+GET Indexes Status --------------------------
+curl 'localhost:9200/_cat/indices?v'
+
+GET Health Status ---------------------------
+curl 'localhost:9200/_cat/health?v'
+
+# GET Nodes -----------------------------------
+curl 'localhost:9200/_cat/nodes?v'
+
+# GET cluster health --------------------------
+curl -XGET 'http://localhost:9200/_cluster/health?pretty=true'
+
+# GET cluster health indices --------------------------
+curl -XGET 'http://localhost:9200/_cluster/health?level=indices?pretty=true'
+
+# GET cluster health shards --------------------------
+curl -XGET 'http://localhost:9200/_cluster/health?level=shards?pretty=true'
+
+
+curl -XGET 'http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=50s'
+curl -XGET 'http://localhost:9200/_cluster/health/twitter?level=shards?pretty=true'
+curl -XGET 'http://localhost:9200/_cluster/health?wait_for_status=green'
+
+
+# CREATE INDEX
+curl -XPUT 'localhost:9200/customer?pretty'
+curl 'localhost:9200/_cat/indices?v'
+
+
+# CREATE DOCUMENT -------------------------------
+curl -XPUT 'localhost:9200/customer/external/1?pretty' -d ' { "name": "John Doe" }'
+curl -XGET 'localhost:9200/customer/external/1?pretty'
+
+
+# DEL INDEX ---------------------------------------
+curl -XDELETE 'localhost:9200/customer?pretty'
+curl 'localhost:9200/_cat/indices?v'
+
+
+# ALL IN ONE CRUD --------------------------------------
+curl -XPUT 'localhost:9200/customer'
+curl -XPUT 'localhost:9200/customer/external/1' -d ' { "name": "John Doe" }'
+curl 'localhost:9200/customer/external/1'
+curl -XDELETE 'localhost:9200/customer'
+
+
+# DELETE ALL INDEXES ----------------------------
+curl -XDELETE 'http://localhost:9200/_all'
+curl -XDELETE 'http://localhost:9200/*'
+
+
+# REMOVE OLD INDEXES
+https://github.com/imperialwicket/elasticsearch-logstash-index-mgmt
+
+
+# SUGAR CONF EXTRA SETTINGS FOR ELASTICSEARCH
+$sugar_config['search_engine']['max_bulk_query_threshold'] = 15000;
+$sugar_config['search_engine']['max_bulk_delete_threshold'] = 3000;
+$sugar_config['search_engine']['force_async_index'] = false;
+$sugar_config['search_engine']['max_bulk_threshold'] = 100;
+$sugar_config['cron']['max_cron_jobs'] = 500;
+$sugar_config['cron']['min_cron_interval'] = 0;
+http://developer.sugarcrm.com/2015/09/14/elasticsearch-indexing-jobs-in-sugar-7/
+
+
+
+# TESTS
+# curl -XPUT 'http://localhost:9200/twitter/tweet/1' -d '{ "user" : "kimchy", "post_date" : "2009-11-15T14:12:12", "message" : "trying out Elastic Search" }'
+# curl -XPUT localhost:9201/_cluster/settings -d '{ "persistent" : { "cluster.routing.allocation.disable_allocation" : true }}'
+# curl -XPOST 'localhost:9200/_cluster/reroute' -d '{ "commands" : [ { "move" : { "index" : "dd3b1dfc09ba7c3181c73ada72cac397", "shard" : 1, "from_node" : "<ID OF 9201 node>", "to_node" : "<ID of 9200 node>"}}]}'
+
+
+
+

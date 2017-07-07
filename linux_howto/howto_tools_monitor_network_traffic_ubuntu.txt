@@ -1,0 +1,443 @@
+sudo apt-get install nethogs  # ubuntu 15.04
+sudo nethogs wlan0
+sudo nethogs eth0
+
+
+sudo apt-get install speedometer # ubuntu 15.04
+sudo speedometer -r eth0 -t eth0
+sudo speedometer -r wlan0 -t wlan0
+sudo speedometer -l  -r wlan0 -t wlan0 -m $(( 1024 * 1024 * 3 / 2 ))
+
+
+
+How To Test Internet Speed Using Linux Command Line
+https://fossbytes.com/test-internet-speed-linux-command-line/
+sudo apt-get install python-pip
+pip install speedtest-cli
+speedtest-cli
+speedtest-cli -h
+speedtest-cli --bytes
+speedtest-cli --list
+speedtest-cli --server server_id
+
+
+sudo apt-get install iptraf
+sudo apt-get install iptraf iptraf-ng
+sudo iptraf
+
+
+sudo apt-get install iftop
+sudo iftop -n
+
+
+sudo apt-get install ifstat
+sudo ifstat
+sudo ifstat -t -i eth0 0.5
+
+
+sudo apt-get install netdiag
+sudo netload eth0
+
+
+tcpdump -i eth0
+ifconfig
+sudo netwatch -e eth0 -nt
+sudo trafshow -i eth0 tcp
+
+http://www.binarytides.com/linux-commands-monitor-network/
+
+
+#####################################
+#
+# tcpdump and iptables management
+#
+#####################################
+-------------------------------------
+#sudo apt-get install tcpflow
+#tcpflow -p -c -i eth0 port 80
+
+sudo -i
+tcpdump -vvv -s 0 -l -n port 53  # print DNS outgoing queries
+sudo tcpdump -i any -w /tmp/http.log &
+killall tcpdump
+tcpdump -A -r /tmp/http.log | less
+
+helpful flags (options):
+-i Specify an interface
+-i eth0
+tcp port xx
+tcp port 80
+dst 1.2.3.4
+specify a destination ip address
+
+sudo service apport start
+sudo service apport stop
+
+sudo tcpdump -i br0 -n | egrep "91.189.95.54|91.189.95.55"
+
+# Ubuntu keeps sending DNS queries to daisy
+sudo -s
+initctl stop network-manager
+echo 'manual' > /etc/init/network-manager.override
+sudo dpkg --remove whoopsie
+
+-------------------------------------
+
+sudo apt-get install wireshark
+sudo wireshark
+https://apps.ubuntu.com/cat/applications/wireshark/
+
+------------------------------------
+
+# Useful to detect DNS amplification
+tcpdump -nnni bond0 -c 100 -w sample.txt dst port 53
+
+# which bogus DNS resolvers are sending you an amplified attack.
+awk '{print $3}' sample.txt | cut -d '.' -f1-4 | sort | uniq -c | sort -nr
+
+# Network management
+sh int Te0/1 | i rate
+
+(INPUT/OUTPUT/FORWARD)
+iptables -A INPUT -p tcp -d 192.168.0.12 -m tcp ! --dport 53 -j DROP
+iptables -A INPUT -p udp -d 192.168.0.12 -m udp ! --dport 53 -j DROP
+iptables -A INPUT -m tcp -p tcp --dport 53 -j ACCEPT
+
+# Block All UDP Ports Through iptable Accept DNS
+iptables -A INPUT -p udp --sport 53 -j ACCEPT
+iptables -A INPUT -p udp --dport 53 -j ACCEPT
+iptables -A OUTPUT -p udp --sport 53 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
+
+iptables -A INPUT -p udp -j DROP
+iptables -A OUTPUT -p udp -j DROP
+
+netstat -tanpl | grep named
+netstat -tupln
+
+nmap -T4 -A -v stackoverflow.com
+nmap -T4 -A -v --dns-servers 8.8.8.8 scanme.nmap.org
+
+scan the IP address of your VPS for all UDP and TCP ports:
+nmap -sU -sS -p1-65535 <vps ip>
+tcpdump -i <interface name> host <public IP address of wifi router>
+13:23:32.805549 IP <wifi router>.2154 > <vps>.ssh
+
+###########################################################################
+
+How To Capture Packets with TCPDUMP?
+See the list of interfaces on which tcpdump can listen
+# /usr/sbin/tcpdump -D
+
+Listen on any available interface
+# /usr/sbin/tcpdump -i any
+
+Verbose Mode
+# /usr/sbin/tcpdump -v
+# /usr/sbin/tcpdump -vv
+# /usr/sbin/tcpdump -vvv
+# /usr/sbin/tcpdump -q
+
+Limit the capture to an number of  packets N
+# /usr/sbin/tcpdump -c N
+
+Display IP addresses and port numbers when capturing packets
+# /usr/sbin/tcpdump -n
+
+Capture any packets where the destination host is 192.168.0.1, display IP addresses and port numbers
+# /usr/sbin/tcpdump -n dst host 192.168.0.1
+
+Capture any packets where the source host is 192.168.0.1, display IP addresses and port numbers
+# /usr/sbin/tcpdump -n src host 192.168.0.1
+
+Capture any packets where the source or destination host is 192.168.0.1, display IP addresses and port numbers
+# /usr/sbin/tcpdump -n host 192.168.0.1
+
+Capture any packets where the destination network is 192.168.10.0/24, display IP addresses and port numbers
+# /usr/sbin/tcpdump -n dst net 192.168.10.0/24
+
+Capture any packets where the source network is 192.168.10.0/24, display IP addresses and port numbers
+# /usr/sbin/tcpdump -n src net 192.168.10.0/24
+
+Capture any packets where the source or destination network is 192.168.10.0/24,display IP addresses and port numbers
+# /usr/sbin/tcpdump -n net 192.168.10.0/24
+
+Capture any packets where the destination port is 23, display IP addresses and port numbers
+# /usr/sbin/tcpdump -n dst port 23
+
+Capture any packets where the destination port is is between 1 and 1023 inclusive, display IP addresses and port numbers
+# /usr/sbin/tcpdump -n dst portrange 1-1023
+
+Capture only TCP packets where the destination port is is between 1 and 1023 inclusive,display IP addresses and port numbers
+# /usr/sbin/tcpdump -n tcp dst portrange 1-1023
+
+Capture only UDP packets where the destination port is is between 1 and 1023 inclusive, display IP addresses and port numbers
+# /usr/sbin/tcpdump -n udp dst portrange 1-1023
+
+Capture any packets with destination IP 192.168.0.1 and destination port 23,display IP addresses and port numbers
+# /usr/sbin/tcpdump -n "dst host 192.168.0.1 and dst port 23"
+
+Capture any packets with destination IP 192.168.0.1 and destination port 80 or 443,display IP addresses and port numbers
+# /usr/sbin/tcpdump -n "dst host 192.168.0.1 and (dst port 80 or dst port 443)"
+
+Capture any ICMP packets
+# /usr/sbin/tcpdump -v icmp
+
+Capture any ARP packets
+# /usr/sbin/tcpdump -v arp
+
+Capture either ICMP or ARP packets
+# /usr/sbin/tcpdump -v "icmp or arp"
+
+Capture any packets that are broadcast or multicast
+# /usr/sbin/tcpdump -n "broadcast or multicast"
+
+Capture 500 bytes of data for each packet rather than the default of 68 bytes
+# /usr/sbin/tcpdump -s 500
+
+Capture all bytes of data within the packet
+# /usr/sbin/tcpdump -s 0
+
+Monitor all packets on eth1 interface
+# /usr/sbin/tcpdump -i eth1
+
+Monitor all traffic on port 80 ( HTTP )
+# /usr/sbin/tcpdump -i eth0 'port 80'
+
+Monitor all traffic on port 25 ( SMTP )
+# /usr/sbin/tcpdump -vv -x -X -s 1500 -i eth0 'port 25'
+
+Capture only N number of packets using tcpdump -c
+# /usr/sbin/tcpdump -c 2 -i eth0
+
+Display Captured Packets in ASCII using tcpdump -A
+# /usr/sbin/tcpdump -A -i eth0
+
+Display Captured Packets in HEX and ASCII using tcpdump -XX
+# /usr/sbin/tcpdump -XX -i eth0
+
+Capture the packets and write into a file using tcpdump -w
+# /usr/sbin/tcpdump -w data.pcap -i eth0
+.pcap is extension
+
+Reading the packets from a saved file using tcpdump -r
+# /usr/sbin/tcpdump -tttt -r data.pcap
+
+Capture packets with IP address using tcpdump -n
+# /usr/sbin/tcpdump -n -i eth0
+
+Capture packets with proper readable timestamp using tcpdump -tttt
+# /usr/sbin/tcpdump -n -tttt -i eth0
+
+Read packets longer than N bytes
+# /usr/sbin/tcpdump -w data.pcap greater 1024
+
+Read packets lesser than N bytes
+# /usr/sbin/tcpdump -w data1024.pcap  less 1024
+
+Receive only the packets of a specific protocol type
+# /usr/sbin/tcpdump -i eth0 arp
+
+Receive packets flows on a particular port using tcpdump port
+# /usr/sbin/tcpdump -i eth0 port 22
+
+Capture packets for particular destination IP and Port
+# /usr/sbin/tcpdump -w data.pcap -i eth0 dst 10.181.140.216 and port 22
+
+Capture TCP communication packets between two hosts
+# /usr/sbin/tcpdump -w data.pcap -i eth0 dst 16.181.170.246 and port 22
+
+Tcpdump Filter Packets – Capture all the packets other than arp and rarp
+# /usr/sbin/tcpdump -i eth0 not arp and not rarp
+
+http://linux-circles.blogspot.de/2012/11/how-to-capture-packets-with-tcpdump.html
+
+----------------------
+
+Tcpdump usage examples
+
+October 1, 2014
+In most cases you will need root permission to be able to capture packets on an interface. Using tcpdump (with root) to capture the packets and saving them to a file to analyze with Wireshark (using a regular account) is recommended over using Wireshark with a root account to capture packets on an "untrusted" interface. See the Wireshark security advisories for reasons why.
+
+See the list of interfaces on which tcpdump can listen:
+
+tcpdump -D
+Listen on interface eth0:
+
+tcpdump -i eth0
+Listen on any available interface (cannot be done in promiscuous mode. Requires Linux kernel 2.2 or greater):
+
+tcpdump -i any
+Be verbose while capturing packets:
+
+tcpdump -v
+Be more verbose while capturing packets:
+
+tcpdump -vv
+Be very verbose while capturing packets:
+
+tcpdump -vvv
+Be verbose and print the data of each packet in both hex and ASCII, excluding the link level header:
+
+tcpdump -v -X
+Be verbose and print the data of each packet in both hex and ASCII, also including the link level header:
+
+tcpdump -v -XX
+Be less verbose (than the default) while capturing packets:
+
+tcpdump -q
+Limit the capture to 100 packets:
+
+tcpdump -c 100
+Record the packet capture to a file called capture.cap:
+
+tcpdump -w capture.cap
+Record the packet capture to a file called capture.cap but display on-screen how many packets have been captured in real-time:
+
+tcpdump -v -w capture.cap
+Display the packets of a file called capture.cap:
+
+tcpdump -r capture.cap
+Display the packets using maximum detail of a file called capture.cap:
+
+tcpdump -vvv -r capture.cap
+Display IP addresses and port numbers instead of domain and service names when capturing packets (note: on some systems you need to specify -nn to display port numbers):
+
+tcpdump -n
+Capture any packets where the destination host is 192.168.1.1. Display IP addresses and port numbers:
+
+tcpdump -n dst host 192.168.1.1
+Capture any packets where the source host is 192.168.1.1. Display IP addresses and port numbers:
+
+tcpdump -n src host 192.168.1.1
+Capture any packets where the source or destination host is 192.168.1.1. Display IP addresses and port numbers:
+
+tcpdump -n host 192.168.1.1
+Capture any packets where the destination network is 192.168.1.0/24. Display IP addresses and port numbers:
+
+tcpdump -n dst net 192.168.1.0/24
+Capture any packets where the source network is 192.168.1.0/24. Display IP addresses and port numbers:
+
+tcpdump -n src net 192.168.1.0/24
+Capture any packets where the source or destination network is 192.168.1.0/24. Display IP addresses and port numbers:
+
+tcpdump -n net 192.168.1.0/24
+Capture any packets where the destination port is 23. Display IP addresses and port numbers:
+
+tcpdump -n dst port 23
+Capture any packets where the destination port is is between 1 and 1023 inclusive. Display IP addresses and port numbers:
+
+tcpdump -n dst portrange 1-1023
+Capture only TCP packets where the destination port is is between 1 and 1023 inclusive. Display IP addresses and port numbers:
+
+tcpdump -n tcp dst portrange 1-1023
+Capture only UDP packets where the destination port is is between 1 and 1023 inclusive. Display IP addresses and port numbers:
+
+tcpdump -n udp dst portrange 1-1023
+Capture any packets with destination IP 192.168.1.1 and destination port 23. Display IP addresses and port numbers:
+
+tcpdump -n "dst host 192.168.1.1 and dst port 23"
+Capture any packets with destination IP 192.168.1.1 and destination port 80 or 443. Display IP addresses and port numbers:
+
+tcpdump -n "dst host 192.168.1.1 and (dst port 80 or dst port 443)"
+Capture any ICMP packets:
+
+tcpdump -v icmp
+Capture any ARP packets:
+
+tcpdump -v arp
+Capture either ICMP or ARP packets:
+
+tcpdump -v "icmp or arp"
+Capture any packets that are broadcast or multicast:
+
+tcpdump -n "broadcast or multicast"
+Capture 500 bytes of data for each packet rather than the default of 68 bytes:
+
+tcpdump -s 500
+Capture all bytes of data within the packet:
+
+tcpdump -s 0
+
+http://www.rationallyparanoid.com/articles/tcpdump.html
+
+
+http://edoceo.com/cli/tcpdump
+
+The basic format of the tcpdump command is:
+
+~ # tcpdump [ options ] [ filter ]
+~ # tcpdump -A -i eth0 -vv 'port 80'
+~ # tcpdump -i eth0 -vv -x -X -s 1500 'port 80'
+Capturing Packets
+
+He are various methods to capture packets using tcpdump, output to terminal.
+
+All Packets by Interface
+
+Multiple -i arguments for each interface
+
+~ # tcpdump -i eth0
+~ # tcpdump -i eth1
+~ # tcpdump -i eth0 -i eth1
+~ # tcpdump -i eth0 -i eth1 -i lo
+By Host and/or Port
+
+~ # tcpdump -i eth0 'port 80'
+~ # tcpdump -i eth0 'host edoceo-demo.com and port 80'
+~ # tcpdump -i eth1 'port 5060'
+By Protocol
+
+~ # tcpdump -i eth0 'port 80'
+~ # tcpdump -i eth1 'port 5060'
+Displaying Output
+
+There are various output formats supported by tcpdump, they would be specified before the filter.
+
+ASCII Output
+
+~ # tcpdump -A -i eth0
+~ # tcpdump -A -i eth0 'port 80'
+More Packet Data
+
+Specific length, or zero to get entire packet
+
+~ # tcpdump -s 256 -i eth0
+~ # tcpdump -s 0 -i eth0
+~ # tcpdump -A -s 0 -i eth0 'port 80'
+Numeric Hosts/Ports
+
+~ # tcpdump -n -i eth0
+~ # tcpdump -A -n -i eth0 'port 80'
+Shorter Hosts/Ports
+
+~ # tcpdump -N -i eth0
+~ # tcpdump -A -N -i eth0 'port 80'
+Queiter
+
+Using -q supresses some protocol information, -t supresses timestamps.
+
+~ # tcpdump -q -i eth0
+~ # tcpdump -t -i eth0
+~ # tcpdump -A -n -q -i eth0 'port 80'
+~ # tcpdump -A -n -q -t -i eth0 'port 80'
+Very Verbose
+
+~ # tcpdump -v -i eth0
+~ # tcpdump -vv -i eth0
+~ # tcpdump -A -n -vv -i eth0 'port 80'
+Advanced Filtering
+
+Print only useful packets from the HTTP traffic
+
+~ # tcpdump -A -s 0 -q -t -i eth0 'port 80 and ( ((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12:2]&0xf0)>>2)) != 0)'
+Dump SIP Traffic §
+
+This is useful for debugging Asterisk or FreeSWITCH.
+
+tcpdump -nq -s 0 -A -vvv port 5060 and host 1.2.3.4
+See Also
+
+http://bencane.com/2014/10/13/quick-and-practical-reference-for-tcpdump/
+http://www.thegeekstuff.com/2010/08/tcpdump-command-examples/
+

@@ -1,0 +1,85 @@
+
+#####################################################
+#
+# Wi-Fi Fix for Asus Notebooks on Ubuntu
+#
+#####################################################
+
+- As root, create a file named e.g. asus-wifi.conf and put it in in /etc/modprobe.d/
+- Insert this line in it: options asus_nb_wmi wapf=1
+- Reboot and see if wifi works.
+
+// start stop network-manager
+sudo service network-manager stop
+sudo service network-manager start
+sudo service network-manager restart
+
+// start stop wifi
+sudo ifconfig wlan0 down
+sudo ifconfig wlan0 up
+
+// start stop ethernet card
+sudo ifconfig eth0 down
+sudo ifconfig eth0 up
+
+// get info about network configuration
+sudo ifconfig -a
+sudo rfkill list
+
+
+
+# alternatives ---------------
+
+ps -Af | grep -i network
+lsmod | grep asus
+lsmod | grep -e iwlwifi -e asus
+
+sudo modprobe -r asus_nb_wmi
+sudo modprobe asus_nb_wmi wapf=1
+sudo rfkill unblock all
+rfkill list all
+sudo modprobe iwlwifi && dmesg | grep iwl
+
+sudo -i
+echo "options asus_nb_wmi wapf=1" | sudo tee /etc/modprobe.d/asus_nb_wmi.conf
+echo "options asus_nb_wmi wapf=4" | sudo tee
+echo "blacklist acer_wmi" | sudo tee -a /etc/modprobe.d/blacklist.conf
+exit
+
+cat /etc/modprobe.d/asus.conf # add options asus_nb_wmi wapf=1
+dmesg | grep -i dmi
+
+
+
+
+#####################################################
+#
+# How to flush DNS cache in Linux / Windows / Mac
+#
+#####################################################
+
+# Windows
+
+ipconfig /flushdns
+netsh int tcp set global autotuninglevel=normal
+netsh interface tcp show heuristics
+netsh interface tcp set heuristics disabled
+
+# Mac
+
+lookupd -flushcache
+dscacheutil -flushcache # Mac OS X
+
+# Linux
+
+sudo apt-get install nscd
+/etc/rc.d/init.d/nscd restart
+
+sudo /etc/init.d/dns-clean restart
+sudo /etc/init.d/networking force-reload
+sudo /etc/init.d/nscd restart
+sudo /etc/init.d/dnsmasq restart
+sudo /etc/init.d/named restart
+
+http://fossbytes.com/speed-internet-using-command-prompt-cmd/
+http://ubuntuhandbook.org/index.php/2013/07/flush-dns-cache-ubuntu-13-04-12-10/

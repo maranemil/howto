@@ -1,0 +1,22 @@
+#################################################
+#
+# GITHUB Backup Repos ruby Bash Script
+#
+#################################################
+
+#!/bin/bash
+# Substitute variables here
+ORG_NAME="<ORG NAME>"
+ACCESS_TOKEN="<API KEY>"
+GITHUB_INSTANCE="<GITHUB INSTANCE>
+URL="https://${GITHUB_INSTANCE}/api/v3/orgs/${ORG_NAME}/repos?access_token=${ACCESS_TOKEN}"
+curl ${URL} | ruby -rjson -e 'JSON.load(STDIN.read).each {|repo| %x[git clone #{repo["ssh_url"]} ]}'
+
+# http://stackoverflow.com/questions/19576742/how-to-clone-all-repos-at-once-from-github
+
+
+# curl -u [[USERNAME]] -s https://api.github.com/orgs/[[ORGANIZATION]]/repos?per_page=200 | ruby -rubygems -e 'require "json"; JSON.load(STDIN.read).each { |repo| %x[git clone #{repo["ssh_url"]} ]}'
+# require "json" # bring in the Ruby json library
+# JSON.load(STDIN.read).each do |repo| # read from STDIN, parse into ruby Hash and iterate over each repo
+# 	 %x[git clone #{repo["ssh_url"]} ] # run a system command (re: "%x") of the style "git clone <ssh_url>"
+# end

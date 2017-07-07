@@ -1,0 +1,1231 @@
+
+#################################################################################
+#
+#  https://www.youtube.com/watch?v=MuUeGi-WpTk
+#
+#################################################################################
+
+# FILTER: AubtitleEx
+SubtitleEx("Test",x=160,y=120
+\ size=18, firstframe=0, lastframe=60,
+\ effects="bf(50,50)")
+
+# FILTER FadeIn FadeOut
+clip1
+clip2
+all = clip1.fadeout(15)+clip2.fadein(15)
+all
+
+# FILTER Dissolve
+clip1; clip2
+all = Dissolve(clip1,clip2,50)
+all
+
+# FILTER Zoom
+clip1
+Zoom(clip1,SrcX="180",SrcY="90",
+\ DstX="n", DstY="90", Factor="n",
+\ angle="0", height=180, width=320)
+
+#################################################################################
+#
+#   Filter Overlay FX
+#   https://www.youtube.com/watch?v=YtQ4QJ00OzI
+#
+#################################################################################
+
+overlay(sub,top, "subtract",  opacity=0.5 ) # geil
+overlay(sub,top, "subtract",  level=128 ) # geil
+overlay(sub,top, "difference",  opacity=1.0 ) # geil
+
+overlay(sub,top, "blend", opacity=0.5)
+overlay(sub,top, "add",  opacity=0.5 )
+overlay(sub,top, "subtract",  opacity=1.0 )
+overlay(sub,top, "multiply",  opacity=1.0 )
+overlay(sub,top, "chroma",  opacity=1.0 )
+overlay(sub,top, "luma",  opacity=1.0 )
+
+#################################################################################
+#
+#   Avisynth stabilization / anti-aliasing / sharpening / color correction
+#
+#################################################################################
+
+LimitedSharpenFaster(ss_x=1.5, ss_y=1.5, dest_x=last.width, dest_y=last.height, Smode=4, strength=50, radius=2, Lmode=1, wide=false, overshoot=1, edgemode=0, special=true, exborder=0)
+AntiAliasing(th_luma=1, th_croma=1, type="roberts", aath=48).AntiAliasing(th_luma=1, th_croma=1, type="roberts", aath=48).AntiAliasing(th_luma=1, th_croma=1, type="roberts", aath=48).AntiAliasing(th_luma=1, th_croma=1, type="roberts", aath=48)
+Tweak(hue=0.0, sat=1.2, bright=0, cont=1.0, coring=True, sse=False, startHue=0, endHue=360, maxSat=150, minSat=0, interp=16)
+ColorYUV(gain_y=0, off_y=0, gamma_y=0, cont_y=0, gain_u=0, off_u=0, gamma_u=0, cont_u=0, gain_v=7, off_v=0, gamma_v=0, cont_v=0, levels="", opt="", showyuv=false, analyze=false, autowhite=false, autogain=false)
+
+vectors=MSuper().MAnalyse(isb=false,blksize=8, overlap=0,search=8)
+globalmotion=DePanEstimate(range=1, trust=2.5)
+DepanStabilize(data=globalmotion,cutoff=0.5,mirror=0,prev=0,next=0,blur=50,pixaspect=1,subpixel=2,method=1)
+
+#################################################################################
+#
+#   Avisynth time delayed compositing Split Screen Demo
+#   https://www.youtube.com/watch?v=3eL9h7Nkrbc
+#
+#################################################################################
+
+main = DirectShowSource("test.wmv")
+ahead10 = DirectShowSource("test.wmv").reduceBy2().Trim(250,0)
+ahead20 = DirectShowSource("test.wmv").reduceBy2().Trim(500,0)
+mosaic = stackhorizontal(ahead10, ahead20)
+final = stackvertical(main, mosaic)
+return(final)
+
+#################################################################################
+#
+#   Split Screen Demo
+#   https://www.youtube.com/watch?v=dFgwowYZa5Y
+#
+#################################################################################
+
+a = QTInput("d:\1.MOV", color=2, audio=true)
+b = QTInput("d:\2.mov", color=2, audio=true)
+StackHorizontal(a,b).BilinearResize(1920,540)
+
+#################################################################################
+#
+#   3 Effects created with Virtualdub plugins and AviSynth Scripts
+#   https://www.youtube.com/watch?v=l3keXJqcMUE
+#
+#################################################################################
+
+# 1. Avisynth Shake Invert FX
+DirectShowSource("c:\Video\original.avi")
+Sharpen(0.76)
+Levels(24,1.251,135,199,24,true)
+fadein(25)
+fadeout(35)
+loop(12,189,190)
+Subtitle("AviSynth Shake Invert Effect", font="georgia", size=18, text_color=$E9E9E9, align=1)
+
+# 2. Avisynth Reverse FX
+AVISource("c:\Video\original.avi").Reverse()
+Subtitle("AviSynth Reverse Effect", font="georgia", size=18, text_color=$E9E9E9, align=1)
+
+# 3. Avisynth Split FX
+a = AVIsource("c:\Video\original.avi").ConvertToYUY2().BicubicResize(220,120)
+b = AVIsource("c:\Video\original.avi").ConvertToYUY2().BicubicResize(220,120)
+st = StackVertical(StackHorizontal(a,b,a),StackHorizontal(b,a,b),StackHorizontal(a,a,b)).BicubicResize(500,288)
+return st
+
+#################################################################################
+#
+#   Another Kaleidoscope Effect created with Virtualdub and AviSynth Script
+#   https://www.youtube.com/watch?v=wwFezLp5M1M
+#   Example Kaleidoscope
+#
+#################################################################################
+
+a=AVIsource("c:\Video\original5.avi").ConvertToRGB32().Crop(4, 0, 152, 240).BicubicResize(290,185)
+b=AVIsource("c:\Video\original5.avi").ConvertToRGB32().Crop(4, 0, 152, 240).FlipHorizontal().BicubicResize(290,185)
+c=AVIsource("c:\Video\original5.avi").ConvertToRGB32().Crop(4, 0, 152, 240).BicubicResize(290,185).FlipVertical()
+d=AVIsource("c:\Video\original5.avi").ConvertToRGB32().Crop(4, 0, 152, 240).FlipHorizontal().FlipVertical().BicubicResize(290,185)
+
+bg1 = StackVertical(StackHorizontal(a,b),StackHorizontal(c,d)).BicubicResize(480,270)
+bgall = StackVertical(StackHorizontal(bg1,bg1,bg1,bg1),StackHorizontal(bg1,bg1,bg1,bg1),StackHorizontal(bg1,bg1,bg1,bg1)).BicubicResize(960,540)
+return bgall
+
+#################################################################################
+#
+#   Kaleidoscope Effect created with Virtualdub and AviSynth Script
+#   https://www.youtube.com/watch?v=GrOGr4JJPao
+#
+#################################################################################
+
+Example Code:
+
+a=AVIsource("c:\Video\original4.avi").ConvertToRGB32().Crop(4, 0, 552, 440).BicubicResize(960,540)
+b=AVIsource("c:\Video\original4.avi").ConvertToRGB32().Crop(4, 0, 552, 440).FlipHorizontal().BicubicResize(960,540)
+c=AVIsource("c:\Video\original4.avi").ConvertToRGB32().Crop(4, 0, 552, 440).BicubicResize(960,540).FlipVertical()
+d=AVIsource("c:\Video\original4.avi").ConvertToRGB32().Crop(4, 0, 552, 440).FlipHorizontal().FlipVertical().BicubicResize(960,540)
+
+mk = Imagesource("c:\Video\ss.jpg").ConvertToRGB32() # load the image mask
+bg = StackVertical(StackHorizontal(a,b),StackHorizontal(c,d)).BicubicResize(1920,1080)
+top = AviSource("c:\Video\mask.avi").ConvertToRGB32().BilinearResize(1920,1080).Mask(mk).Invert() # white bg
+Layer(bg,top)
+
+#################################################################################
+#
+#   Alternative Way to create Kaleidoscop using avisynth and Virtualdub
+#   https://www.youtube.com/watch?v=yVUpRgDDcT0
+#
+#################################################################################
+
+#a=AVIsource("c:\Video\original3.avi").ConvertToRGB32().Crop(4, 0, 652, 740).BicubicResize(960,540)
+#b=AVIsource("c:\Video\original3.avi").ConvertToRGB32().Crop(4, 0, 652, 740).TurnRight().BicubicResize(960,540)
+#c=AVIsource("c:\Video\original3.avi").ConvertToRGB32().Crop(4, 0, 652, 740).TurnLeft().BicubicResize(960,540)
+#d=AVIsource("c:\Video\original3.avi").ConvertToRGB32().Crop(4, 0, 652, 740).TurnRight().TurnRight().BicubicResize(960,540)
+
+a=AVIsource("c:\Video\original1.avi").ConvertToRGB32().Crop(4, 0, 392, 240).BicubicResize(960,540)
+b=AVIsource("c:\Video\original1.avi").ConvertToRGB32().Crop(4, 0, 392, 240).TurnRight().BicubicResize(960,540)
+c=AVIsource("c:\Video\original1.avi").ConvertToRGB32().Crop(4, 0, 392, 240).Turn180().TurnRight().BicubicResize(960,540)
+d=AVIsource("c:\Video\original1.avi").ConvertToRGB32().Crop(4, 0, 392, 240).TurnRight().TurnRight().BicubicResize(960,540)
+
+bg = StackVertical(StackHorizontal(a,b),StackHorizontal(c,d)).BicubicResize(1920,1080)
+return bg
+
+#################################################################################
+#
+#   Creating Kaleidoscope Effect with Virtualdub/AviSynth and AviSynth Rotation Plugins
+#   https://www.youtube.com/watch?v=ltXuBaKuw7w
+#   Example code:
+#
+#################################################################################
+
+#loadplugin("c:\Video\rotate.dll") #Fizick's AviSynth plugins
+loadplugin("c:\Video\EffectsMany.dll") #vcmohan's Plugin Filters For AviSynth
+
+a=AVIsource("c:\Video\original4.avi").ConvertToRGB32().BicubicResize(240,185)
+b=AVIsource("c:\Video\original4.avi").ConvertToRGB32().FlipHorizontal().BicubicResize(240,185)
+c=AVIsource("c:\Video\original4.avi").ConvertToRGB32().BicubicResize(240,185).FlipVertical()
+d=AVIsource("c:\Video\original4.avi").ConvertToRGB32().FlipHorizontal().FlipVertical().BicubicResize(240,185)
+
+bg1 = StackVertical(StackHorizontal(a,b),StackHorizontal(c,d)).BicubicResize(480,270)
+
+cd1 = bg1
+cd2 = bg1.FlipHorizontal()
+cd3 = bg1.FlipVertical()
+cd4 = bg1.FlipHorizontal().FlipVertical()
+
+bg2 = StackVertical(StackHorizontal(cd1,cd2),StackHorizontal(cd3,cd4)).BicubicResize(960,540)
+
+#dd1 = bg2.Rotate(35).BicubicResize(960,540)
+dd1 = bg2.EffectRotation(last ,last, 350, 45).BicubicResize(960,540)
+
+dd2 = bg2.EffectRotation(last ,last, 350, 45).FlipHorizontal().BicubicResize(960,540)
+dd3 = bg2.EffectRotation(last ,last, 350, 45).FlipVertical().BicubicResize(960,540)
+dd4 = bg2.EffectRotation(last ,last, 350, 45).FlipHorizontal().FlipVertical().BicubicResize(960,540)
+
+bg3 = StackVertical(StackHorizontal(dd1,dd2),StackHorizontal(dd3,dd4)).BicubicResize(960,540)
+return bg3
+
+#1920 x 1080 / 960 x 540 / 480 x 270 / 240 x 185
+
+
+#################################################################################
+#
+#   Pentagonal Tiles with AviSynth 1
+#   https://www.youtube.com/watch?v=XHyd-vGssj8
+#
+#################################################################################
+
+Plugins
+Polygon: http://www.avisynth.nl/index.php/Exte...
+Rotate: http://www.avisynth.nl/index.php/Exte...
+
+Tile: http://www.fisme.science.uu.nl/toepas...
+
+Image: https://www.youtube.com/watch?v=vIeIq...
+Dorothée
+Music: https://www.youtube.com/watch?v=tzUy2...
+From Takemitsu, Piano Pieces for Children, performed by Megumi Fujita
+
+# PEN_DEF
+
+loadplugin("K:\\Polygon\polygon.dll")
+loadplugin("K:\VD Filter Pack\Rotate.dll")
+
+#making the mask
+poly=pg_define(100,0,300,0,400,200,200,300,0,200)#
+
+a=pg_draw(blankclip(200,400,300),poly)
+
+v11=a.Levels(150,1,150,0,255)# 1
+a2=a.turnright
+v12=a2.Levels(150,1,150,0,255)# 2
+a3=a2.turnright
+v13=a3.Levels(150,1,150,0,255)# 3
+a4=a3.turnright
+v14=a4.Levels(150,1,150,0,255)# 4
+
+#preparing the image and combinig it with the mask
+b1=AviSource("K:\AVIWerkmap\LUSSEN\LACIC.avi").converttorgb32
+b11=b1.rotate(-26.5)
+b2=b11.crop(60,0,-20,-60)#400,300
+c1=layer(b2.converttorgb32(), v11.converttorgb32().resetmask.colorkeymask
+($ffffff,0),x=0,y=0)# 1
+a5=b2.turnright
+c2=layer(a5.converttorgb32(), v12.converttorgb32().resetmask.colorkeymask($ffffff,0),x=0,y=0)# 2
+a6=a5.turnright
+c3=layer(a6.converttorgb32(), v13.converttorgb32().resetmask.colorkeymask($ffffff,0),x=0,y=0)# 3
+a7=a6.turnright
+c4=layer(a7.converttorgb32(), v14.converttorgb32().resetmask.colorkeymask($ffffff,0),x=0,y=0)# 4
+
+c11=c1.rgbadjust(1.5,1,0)#OK
+c12=c2.rgbadjust(1.5,0,1)#OK
+c13=c3.rgbadjust(0,1,1.5)#OK
+c14=c4.rgbadjust(1,0,1.5)#OK
+
+#preparing the building block
+d1=blankclip(b1).bicubicresize(800,800)
+d2=layer(d1.converttorgb32(), c11.converttorgb32().resetmask.colorkeymask($000000,0),x=200,y=100)# 1
+d3=layer(d2.converttorgb32(), c12.converttorgb32().resetmask.colorkeymask($000000,0),x=0,y=200)# 2
+d4=layer(d3.converttorgb32(), c13.converttorgb32().resetmask.colorkeymask($000000,0),x=200,y=400)# 3
+d5=layer(d4.converttorgb32(), c14.converttorgb32().resetmask.colorkeymask($000000,0),x=500,y=200)# 4
+d6=layer(d5.converttorgb32(), d5.converttorgb32().resetmask.colorkeymask($000000,0),x=-400,y=-400)# LT
+d7=layer(d6.converttorgb32(), d5.converttorgb32().resetmask.colorkeymask($000000,0),x=400,y=-400)# RT
+d8=layer(d7.converttorgb32(), d5.converttorgb32().resetmask.colorkeymask($000000,0),x=-400,y=400)# LB
+d9=layer(d8.converttorgb32(), d5.converttorgb32().resetmask.colorkeymask($000000,0),x=400,y=400)# RB
+d10=d9.bicubicresize(300,300)
+
+#preparing the clip and adding the sound
+e1=stackhorizontal(d10,d10,d10)
+e2=stackvertical(e1,e1)#900,600
+e3=e2.crop(0,90,-260,-150)#640,360
+e4=unalignedsplice(e3,e3,e3,e3)
+
+w=WAVSource("K:\AviWerkmap\takemitsu_0_50_21.wav")
+
+z4=audiodub(e4,w).trim(0,1498)
+
+return z4
+
+__END__
+z4=PEN_YT01
+
+
+
+#################################################################################
+#
+#   Mask Effect with AviSynth 2
+#   https://www.youtube.com/watch?v=ZgmW5q9aoqs
+#
+#################################################################################
+
+#dM15019TOTA TT_YT02
+
+#Source of image: https://www.youtube.com/watch?v=g2u1b...
+#Anastasia Panteleeva
+#Source of music: https://www.youtube.com/watch?v=4PkxD...
+#Bortkiewicz, Prelude opus 33 nr 5, played by Stephen Fierros
+
+#clips
+a=Import("K:\AviWerkmap\dM15019TTA.avs").converttorgb32.trim(0,365)
+b=AviSource("K:\AviWerkmap\dM15019_LUS3.avi").converttorgb32.trim(0,365)
+w=WAVSource("K:\AviWerkmap\bortprel_1_11_72.wav")
+
+#some color options
+a5=a.greyscale.rgbadjust(1.5,0.75,0)
+a6=a.rgbadjust(1.5,0.75,0)
+a7=a.rgbadjust(0,0.75,1)
+a8=a.rgbadjust(0.75,0.75,1.25)
+
+#making the mask
+b2=blankclip(a)
+b4=b2.bicubicresize(1280,720)
+#Video, Copy source frame to clipboard, make raster20.jpg
+
+c31=ImageSource("K:\AviWerkmap\raster20.jpg",end=49,fps=24)
+c32=c31.bicubicresize(640,360)
+c33=c32.greyscale
+c34=c33.Levels(150,1,150,0,255)
+v1=c34.rgbadjust(1,0,0).converttorgb32.convertfps("ntsc_video")
+#convertfps only necessary for this demonstration (step h15)
+
+#compositing
+h13=layer(a6.converttorgb32(), v1.converttorgb32().resetmask.colorkeymask($ff0000,0))
+h14=layer(b.converttorgb32(), h13.converttorgb32().resetmask.colorkeymask($000000,0))
+
+#splicing the elements and adding music
+h15=unalignedsplice(b,a,a6,v1,h13,h14,h14)
+h16=audiodub(h15,w)
+h17=h16.trim(0,2148)
+
+return h17
+
+__END__
+h17=TT_YT02
+
+
+
+#################################################################################
+#
+#   Cubistic Effect with AviSynth 5
+#   https://www.youtube.com/watch?v=_ATc4imW4Mo
+#
+#################################################################################
+
+
+#BRO_TEST_E dM15019_BRO11 demonstration V1 BRO_YT02
+
+#Source of image: https://www.youtube.com/watch?v=g2u1b...
+#Anastasia Panteleeva
+#Source of music: https://www.youtube.com/watch?v=6ZTBY...
+#Scriabin, Prelude opus 11 nr 10, played by Cubus
+
+loadPlugin("k:\VD Filter Pack\DGDecode.dll")
+
+#clips and different sizes
+aa=MPEG2Source("K:\2015\2015MPG\dM15019.d2v").converttorgb32.convertfps(24)
+a11=aa.trim(14067,14114)#48
+a12=a11.bicubicresize(480,270)
+a13=a11.bicubicresize(320,180)
+
+w=WAVSource("K:\AviWerkmap\scriprel_1_22_66.wav")
+
+#canvas
+aa2=blankclip(a11)
+
+#mask1
+c31=ImageSource("K:\AviWerkmap\bro253BW01.jpg",end=47,fps=24)
+c32=c31.bicubicresize(640,360)
+c33=c32.greyscale
+c34=c33.Levels(150,1,150,0,255)
+v1=c34.rgbadjust(1,0,0).converttorgb32
+
+h1=layer(aa2.converttorgb32(), a13.converttorgb32().resetmask.colorkeymask($000000,0), x=-130, y=220)
+h2=layer(h1.converttorgb32(), v1.converttorgb32().resetmask.colorkeymask($ff0000,0))
+
+p1=unalignedsplice(a11,v1,h1,h2)
+
+
+
+
+
+#################################################################################
+#
+#   Cubistic Effect with AviSynth 4
+#   https://www.youtube.com/watch?v=St7J5-nWIe4
+#
+#################################################################################
+
+
+#dM13079_CUB02 CUB2_YT
+
+#image: https://www.youtube.com/watch?v=p2jNx...
+#Anastasia Panteleeva
+#music: https://www.youtube.com/watch?v=CbULd...
+#Scriabin, prelude op 11 nr 22, performed by Cubus
+
+#clips, bb with a rotation of 5 degrees
+xx=Import("K:\AviWerkmap\dM13079CUB2.avs")
+bb=Import("K:\AviWerkmap\dM13079CUB2ROT.avs")
+
+w=WAVSource("k:\AviWerkmap\scriprel_1_29_87.wav")
+
+#mask
+c31=ImageSource("K:\AviWerkmap\par06.jpg",end=299,fps=24)
+c32=c31.bicubicresize(640,360)
+c33=c32.greyscale
+c34=c33.Levels(150,1,150,0,255)
+v=c34.rgbadjust(1,0,0)
+
+#animation
+Function myfunc(clip c1, clip c2, int x, int y, int w, int h)
+{
+w = w - w%2
+h = h - h%2
+my_c2 = BicubicResize(c2,w,h)
+Overlay(c1,my_c2,x,y)
+}
+
+c1 = c32.blankclip(300,color=$ff0000)#bg
+c2 = stackhorizontal(v,v)
+p1=Animate(0,299,"myfunc",c1,c2,-640,0,1280,360,c1,c2,640,0,1280,360)
+p2=p1.trim(0,149)
+p3=unalignedsplice(p2,p2,p2,p2,p2,p2,p2,p2)#1200
+p4=unalignedsplice(p3,p3,p3,p3,p3)#6000
+p5=p4.trim(0,2156)#2157
+
+#compositing
+h2=layer(bb.converttorgb32(), p5.converttorgb32().resetmask.colorkeymask($000000,0))
+h4=layer(xx.converttorgb32(), h2.converttorgb32().resetmask.colorkeymask($ff0000,1))
+
+z6=audiodub(h4,w)
+
+return z6
+
+__END__
+z6=dM13079_CUB02
+
+#################################################################################
+#
+#   Cubistic Effect with AviSynth 3
+#   https://www.youtube.com/watch?v=SWGU04XbNp8
+#
+#################################################################################
+
+#CUB_TEM_D dM13079_CUB01 CUB_YT
+
+#image: https://www.youtube.com/watch?v=p2jNx...
+#Anastasia Panteleeva
+#music: https://www.youtube.com/watch?v=CbULd...
+#Scriabin, prelude op 11 nr 22, performed by Cubus
+
+#clips, reedited to fit the music and bb with a rotation of 5 degrees
+xx=Import("K:\AviWerkmap\Scriabin_22_11.avs")
+bb=Import("K:\AviWerkmap\Scriabin_22_11_rot.avs")
+
+w=WAVSource("k:\AviWerkmap\scriprel_1_29_87.wav")
+
+#mask
+c31=ImageSource("K:\AviWerkmap\par04.jpg",end=299,fps=24)
+c32=c31.bicubicresize(640,360)
+c33=c32.greyscale
+c34=c33.Levels(150,1,150,0,255)
+v=c34.rgbadjust(1,0,0)
+
+#animation
+Function myfunc(clip c1, clip c2, int x, int y, int w, int h)
+{
+w = w - w%2
+h = h - h%2
+my_c2 = BicubicResize(c2,w,h)
+Overlay(c1,my_c2,x,y)
+}
+
+c1 = c32.blankclip(300,color=$ff0000)#bg
+c2 = stackhorizontal(v,v)
+p1=Animate(0,299,"myfunc",c1,c2,-640,0,1280,360,c1,c2,640,0,1280,360)
+p2=p1.trim(0,149)
+p3=unalignedsplice(p2,p2,p2,p2,p2,p2,p2,p2)#1200
+p4=unalignedsplice(p3,p3,p3,p3,p3)#6000
+p5=p4.trim(0,2156)#2157
+
+#compositing
+h2=layer(bb.converttorgb32(), p5.converttorgb32().resetmask.colorkeymask($000000,0))
+h4=layer(xx.converttorgb32(), h2.converttorgb32().resetmask.colorkeymask($ff0000,1))
+
+z6=audiodub(h4,w)
+
+return z6
+
+__END__
+z6=dM13079_CUB01
+
+
+#################################################################################
+#
+#   Cubistic Effect with AviSynth 2
+#   https://www.youtube.com/watch?v=VOpKT-064cU
+#
+#################################################################################
+
+#BRO_TEST_D
+#LACIC BRO_YT
+
+#image: https://www.youtube.com/watch?v=vIeIq...
+#Dorothée
+#music: https://www.youtube.com/watch?v=4PkxD...
+#Bortkiewicz, Prelude op 33 nr 5, performed by Stephen Ferrios
+
+#Loop from the video with color added
+a=AviSource("K:\AviWerkmap\LUSSEN\LACIC.avi")
+aa=a.rgbadjust(1.7,1.1,0.3)
+
+w=WAVSource("k:\AviWerkmap\bortprel_1_11_72.wav")
+
+#canvas
+aa2=blankclip(aa).bicubicresize(640,360)
+
+#mask1
+c31=ImageSource("K:\AviWerkmap\bro252BW1.jpg",end=299,fps=24)
+c32=c31.bicubicresize(640,360)
+c33=c32.greyscale
+c34=c33.Levels(150,1,150,0,255)
+v1=c34.rgbadjust(1,0,0)
+
+h1=layer(aa2.converttorgb32(), aa.converttorgb32().resetmask.colorkeymask($000000,0), x=-200, y=80)
+h2=layer(h1.converttorgb32(), v1.converttorgb32().resetmask.colorkeymask($ff0000,0))
+
+#mask2
+c41=ImageSource("K:\AviWerkmap\bro252BW2.jpg",end=299,fps=24)
+c42=c41.bicubicresize(640,360)
+c43=c42.greyscale
+c44=c43.Levels(150,1,150,0,255)
+v2=c44.rgbadjust(1,0,0)
+
+h3=layer(aa2.converttorgb32(), aa.converttorgb32().resetmask.colorkeymask($000000,0), x=-120, y=0)
+h4=layer(h3.converttorgb32(), v2.converttorgb32().resetmask.colorkeymask($ff0000,0))
+h5=layer(h2.converttorgb32(), h4.converttorgb32().resetmask.colorkeymask($000000,0))
+
+#mask3
+c51=ImageSource("K:\AviWerkmap\bro252BW3.jpg",end=299,fps=24)
+c52=c51.bicubicresize(640,360)
+c53=c52.greyscale
+c54=c53.Levels(150,1,150,0,255)
+v3=c54.rgbadjust(1,0,0)
+
+h6=layer(aa2.converttorgb32(), aa.converttorgb32().resetmask.colorkeymask($000000,0), x=0, y=-40)
+h7=layer(h6.converttorgb32(), v3.converttorgb32().resetmask.colorkeymask($ff0000,0))
+h8=layer(h5.converttorgb32(), h7.converttorgb32().resetmask.colorkeymask($000000,0))
+
+#mask4
+c61=ImageSource("K:\AviWerkmap\bro252BW4.jpg",end=299,fps=24)
+c62=c61.bicubicresize(640,360)
+c63=c62.greyscale
+c64=c63.Levels(150,1,150,0,255)
+v4=c64.rgbadjust(1,0,0)
+
+h9=layer(aa2.converttorgb32(), aa.converttorgb32().resetmask.colorkeymask($000000,0), x=140, y=0)
+h10=layer(h9.converttorgb32(), v4.converttorgb32().resetmask.colorkeymask($ff0000,0))
+h11=layer(h8.converttorgb32(), h10.converttorgb32().resetmask.colorkeymask($000000,0))
+
+#mask5
+c71=ImageSource("K:\AviWerkmap\bro252BW5.jpg",end=299,fps=24)
+c72=c71.bicubicresize(640,360)
+c73=c72.greyscale
+c74=c73.Levels(150,1,150,0,255)
+v5=c74.rgbadjust(1,0,0)
+
+h12=layer(aa2.converttorgb32(), aa.converttorgb32().resetmask.colorkeymask($000000,0), x=240, y=0)
+h13=layer(h12.converttorgb32(), v5.converttorgb32().resetmask.colorkeymask($ff0000,0))
+h14=layer(h11.converttorgb32(), h13.converttorgb32().resetmask.colorkeymask($000000,0))
+
+#mask6
+c81=ImageSource("K:\AviWerkmap\bro252BW6.jpg",end=299,fps=24)
+c82=c81.bicubicresize(640,360)
+c83=c82.greyscale
+c84=c83.Levels(150,1,150,0,255)
+v6=c84.rgbadjust(1,0,0)
+
+h15=layer(aa2.converttorgb32(), aa.converttorgb32().resetmask.colorkeymask($000000,0), x=220, y=0)
+h16=layer(h15.converttorgb32(), v6.converttorgb32().resetmask.colorkeymask($ff0000,0))
+h17=layer(h14.converttorgb32(), h16.converttorgb32().resetmask.colorkeymask($000000,0))
+
+k1=unalignedsplice(h17,h17,h17,h17,h17,h17).trim(0,2149)
+
+z6=audiodub(k1,w)
+
+return z6
+
+__END__
+z6=BRO_YT
+
+
+#################################################################################
+#
+#   Cubistic Effect with AviSynth 1
+#   https://www.youtube.com/watch?v=tqr12MgZaZs
+#
+#################################################################################
+
+Sources in the script below.
+
+#DIA_TEST_F
+#DEMOLUS_C DIA_YT
+
+#Image: https://www.youtube.com/watch?v=cV2Kg...
+#Démopole by Dorothée
+#Music: https://www.youtube.com/watch?v=XuVIu...
+#Bortkiewicz, Der Engel, performed by Alan Chan
+
+#A loop I created from the video
+a=AviSource("K:\AviWerkmap\DEMOLUS_C.avi").converttorgb32()
+
+#canvas
+b1=a.blankclip
+
+#Background left
+b21=layer(b1.converttorgb32(), a,x=-40,y=0)
+
+#Mask background left
+c31=ImageSource("K:\AviWerkmap\dia06BGL.jpg",end=299,fps=24)
+c32=c31.bicubicresize(640,360)
+c33=c32.greyscale
+c34=c33.Levels(150,1,150,0,255)
+v1=c34.rgbadjust(1,0,0)
+
+h1=layer(b21.converttorgb32(), v1.converttorgb32().resetmask.colorkeymask($ff0000,0))
+
+#First segment
+b22=layer(b1.converttorgb32(), a,x=15,y=-30)
+
+#Mask first segment
+c41=ImageSource("K:\AviWerkmap\dia06BW1.jpg",end=299,fps=24)
+c42=c41.bicubicresize(640,360)
+c43=c42.greyscale
+c44=c43.Levels(150,1,150,0,255)
+v2=c44.rgbadjust(1,0,0)
+
+h2=layer(b22.converttorgb32(), v2.converttorgb32().resetmask.colorkeymask($ff0000,0))
+h3=layer(h1.converttorgb32(), h2.converttorgb32().resetmask.colorkeymask($000000,0))
+
+#Second segment
+b23=layer(b1.converttorgb32(), a,x=60,y=-60)
+
+#Mask second segment
+c51=ImageSource("K:\AviWerkmap\dia06BW2.jpg",end=299,fps=24)
+c52=c51.bicubicresize(640,360)
+c53=c52.greyscale
+c54=c53.Levels(150,1,150,0,255)
+v3=c54.rgbadjust(1,0,0)
+
+h4=layer(b23.converttorgb32(), v3.converttorgb32().resetmask.colorkeymask($ff0000,0))
+h5=layer(h3.converttorgb32(), h4.converttorgb32().resetmask.colorkeymask($000000,0))
+
+#Third segment
+b24=layer(b1.converttorgb32(), a,x=105,y=-90)
+
+#Mask third segment
+c61=ImageSource("K:\AviWerkmap\dia06BW3.jpg",end=299,fps=24)
+c62=c61.bicubicresize(640,360)
+c63=c62.greyscale
+c64=c63.Levels(150,1,150,0,255)
+v4=c64.rgbadjust(1,0,0)
+
+h6=layer(b24.converttorgb32(), v4.converttorgb32().resetmask.colorkeymask($ff0000,0))
+h7=layer(h5.converttorgb32(), h6.converttorgb32().resetmask.colorkeymask($000000,0))
+
+#Bacjground right
+b25=layer(b1.converttorgb32(), a,x=150,y=0)
+
+#Mask background right
+c71=ImageSource("K:\AviWerkmap\dia06BGR.jpg",end=299,fps=24)
+c72=c71.bicubicresize(640,360)
+c73=c72.greyscale
+c74=c73.Levels(150,1,150,0,255)
+v5=c74.rgbadjust(1,0,0)
+
+h8=layer(b25.converttorgb32(), v5.converttorgb32().resetmask.colorkeymask($ff0000,0))
+h9=layer(h7.converttorgb32(), h8.converttorgb32().resetmask.colorkeymask($000000,0))
+
+k1=h9.crop(0,0,-0,-90).bicubicresize(640,360)#480x270 to 640x360
+k2=unalignedsplice(k1,k1)#3288 2:11:52
+
+#Sound
+w=WAVSource("k:\AviWerkmap\bortengel_1_52_25.wav")
+
+z6=audiodub(k2,w).trim(0,2806)
+
+return z6
+
+__END__
+z6=DIA_YT
+Category
+
+
+#################################################################################
+#
+#   Cross and Star Kaleidoscope with AviSynth 2
+#   https://www.youtube.com/watch?v=PGobYtsLKD8
+#
+#################################################################################
+
+#ARA_YT
+#Source of plugin: http://avisynth.org.ru/fizick.html
+loadplugin("K:\VD Filter Pack\Rotate.dll")
+
+#Source of image:
+#Ballet Beautiful Trailer https://www.youtube.com/watch?v=-_QYh...
+#Source of music:
+#poetico from Visions fugitives by Prokofiev, played by
+#Patrick Hemmerle https://www.youtube.com/watch?v=RSxSs...
+b=AviSource("K:\AviWerkmap\BAK_AA.avi").converttorgb32.convertfps(24)
+w=WAVSource("K:\AviWerkmap\Poetico_1_26_84.wav")
+
+#Looping
+b11=b.reverse
+b12=unalignedsplice(b,b11)
+#Two contrasting versions
+b101=b12.rgbadjust(1,0.75,1)
+b102=b12.rgbadjust(0.75,0.75,1.25)
+
+#Building the mask
+a101=blankclip(length=100,width=320,height=320,fps=24,color=$ffffff)
+a1011=a101.rotate(45, width=453, height=453).bicubicresize(640,640)
+
+#Building a white star
+#a102=a.crop(0,0,-320,-320)
+a102=a1011.crop(0,0,-320,-320)
+a103=layer(a102.invert.converttorgb32(), a102.converttorgb32
+
+().resetmask.colorkeymask($000000,0), x=-94, y=-94)
+a104=layer(a103.converttorgb32(), a102.converttorgb32
+
+().resetmask.colorkeymask($000000,0), x=-160, y=-160)
+a111=a104.fliphorizontal
+a112=stackhorizontal(a111,a104)
+a113=a112.flipvertical
+a114=stackvertical(a113,a112)
+a117=a114.bicubicresize(320,320)
+a1171=a117.greyscale
+a1172=a1171.Levels(150,1,150,0,255)
+
+#Filling the star
+d1000=b101.crop(50,0,-230,-0)
+d1001=d1000.rotate(angle=0,endangle=360).crop(52,52,-52,-52).bicubicresize
+
+(320,320)
+d1002=d1001.fliphorizontal
+d1003=stackhorizontal(d1001,d1002)
+d1004=d1003.flipvertical
+d1005=stackvertical(d1003,d1004).rotate(45)
+#Rotation necessitates another crop, but diagonal is more dynamic
+d1006=d1005.crop(100,100,-100,-100).bicubicresize(320,320)
+d1007=layer(d1006.converttorgb32(), a1172.converttorgb32
+
+().resetmask.colorkeymask($ffffff,0))#voorgrond
+
+#Filling the black with b102
+e1000=b102.crop(50,0,-230,-0)
+e1001=e1000.rotate(angle=0,endangle=360).crop(52,52,-52,-52).bicubicresize
+
+(320,320)
+e1002=e1001.fliphorizontal
+e1003=stackhorizontal(e1001,e1002)
+e1004=e1003.flipvertical
+e1005=stackvertical(e1003,e1004).rotate(45)
+e1006=e1005.crop(100,100,-100,-100).bicubicresize(320,320)
+e1007=layer(e1006.converttorgb32(), d1007.converttorgb32
+
+().resetmask.colorkeymask($000000,0))
+
+#Expanding to 4x3 ratio
+f1001=e1007.fliphorizontal
+f1002=stackhorizontal(e1007,f1001,e1007,f1001)
+f1003=f1002.flipvertical
+f1004=stackvertical(f1002,f1003,f1002).bicubicresize(640,480)
+
+#Adjusting to 16x9 ratio
+f1005=f1004.crop(0,60,-0,-60)
+
+#Adding sound
+h11=unalignedsplice(f1005,f1005,f1005,f1005,f1005,f1005)
+h12=unalignedsplice(h11,h11)
+h13=h12.trim(0,2087)
+z1=audiodub(h13,w)
+
+return z1
+
+
+
+#################################################################################
+#
+#   Cross and Star Kaleidoscope with AviSynth 1
+#   https://www.youtube.com/watch?v=n28IA-JNTYM
+#
+#################################################################################
+
+#ARA_YT
+#Source of plugin: http://avisynth.org.ru/fizick.html
+loadplugin("K:\VD Filter Pack\Rotate.dll")
+
+#Source of image:
+#Ballet Beautiful Trailer https://www.youtube.com/watch?v=-_QYh...
+#Source of music:
+#poetico from Visions fugitives by Prokofiev, played by
+#Patrick Hemmerle https://www.youtube.com/watch?v=RSxSs...
+b=AviSource("K:\AviWerkmap\BAK_AA.avi").converttorgb32.convertfps(24)
+w=WAVSource("K:\AviWerkmap\Poetico_1_26_84.wav")
+
+#Looping
+b11=b.reverse
+b12=unalignedsplice(b,b11)
+#Two contrasting versions
+b101=b12.rgbadjust(1,0.75,1)
+b102=b12.rgbadjust(0.75,0.75,1.25)
+
+#Building the mask
+a101=blankclip(length=100,width=320,height=320,fps=24,color=$ffffff)
+a1011=a101.rotate(45, width=453, height=453).bicubicresize(640,640)
+
+#Building a black cross
+#a102=a.crop(0,0,-320,-320)
+a102=a1011.crop(0,0,-320,-320)
+a103=layer(a102.invert.converttorgb32(), a102.converttorgb32
+().resetmask.colorkeymask($000000,0), x=-94, y=-94)
+a104=layer(a103.converttorgb32(), a102.converttorgb32
+().resetmask.colorkeymask($000000,0), x=-160, y=-160)
+a111=a104.fliphorizontal
+a112=stackhorizontal(a104,a111)
+a113=a112.flipvertical
+a114=stackvertical(a112,a113)
+a117=a114.bicubicresize(320,320)
+a1171=a117.greyscale
+a1172=a1171.Levels(150,1,150,0,255)
+
+#Building the background, which will become an eight-pointed star
+d101=b101.rotate(angle=0,endangle=360).crop(220,52,-220,-108).bicubicresize
+(160,160)
+d102=d101.fliphorizontal
+d103=stackhorizontal(d101,d102)
+d104=d103.flipvertical
+d105=stackvertical(d103,d104)
+d106=layer(d105.converttorgb32(), a1172.converttorgb32
+().resetmask.colorkeymask($ffffff,0))
+
+#Filling the black cross
+e101=b102.rotate(angle=0,endangle=360).crop(220,52,-220,-108).bicubicresize
+(160,160)
+e102=e101.fliphorizontal
+e103=stackhorizontal(e101,e102)
+e104=e103.flipvertical
+e105=stackvertical(e103,e104).bicubicresize(320,320).rotate(45)
+e106=layer(e105.converttorgb32(), d106.converttorgb32
+().resetmask.colorkeymask($000000,0))
+
+#Expanding to 4x3 ratio, two options
+f101=stackhorizontal(e106,e106,e106,e106)
+f102=f101.flipvertical
+f103=stackvertical(f101,f102,f101).bicubicresize(640,480)
+f1031=stackvertical(f101,f102,f101).crop(160,120,-160,-120)
+f1032=f1031.bicubicresize(640,480)
+
+#Adjusting to 16x9 ratio, same two options, g101 seemed best to me
+g101=f103.crop(0,60,-0,-60)
+g102=f1032.crop(0,60,-0,-60)
+
+#Adding sound
+h11=unalignedsplice(g101,g101,g101,g101,g101,g101)
+h12=unalignedsplice(h11,h11)
+h13=h12.trim(0,2087)
+z1=audiodub(h13,w)
+
+
+#################################################################################
+#
+#   Hexagons Example 9
+#   Kaleidoscopic Hexagons version 2 of the script
+#   https://www.youtube.com/watch?v=q4yYf0gtPTQ
+#   https://www.youtube.com/watch?v=mHW1jOezUtA
+#
+#################################################################################
+
+Source of image: one of the darker corners of my archive
+Source of music http://archive.org/details/RamseyLewi...
+Music: The "In" Crowd by Ramsey Lewis
+
+Version 2 uses short fragments of the source clip instead of a continuous loop. The build up of the hexagons was slightly changed, but it does not seem to make much difference. I wonder why some clips work better than others. Recently I downloaded a treshold filter for AviSynth, in the hope that it could eliminate the seams which show up occasionally. Tests had no success so far, but the filter was very useful for masks producing colour effects. So I included it in the script. To refine the cutouts I opened VD twice, so I could make adjustments and immediately evaluate the result. Try out rotations (90,180,270) to find the most interesting image. In addition, I added music for this one.
+
+A summary of the script, version 2
+hexv205script.avs
+#plugin for rotation, source http://avisynth.org.ru/fizick.html
+#plugin for binarize, source http://manao4.free.fr/MaskTools.htm
+loadplugin("K:\VD Filter Pack\Rotate.dll")
+loadplugin("K:\VD Filter Pack\masktools\mt_masktools.dll")
+
+#clips, a=source ruw 072 330-3925 = FADL
+#clip b=mask 180x156
+#c=white background 540x624, at least as many frames as the longest cutout
+#d=music
+
+a=AviSource("k:\aviwerkmap\FADL.avi")
+b=AviSource("k:\aviwerkmap\HEXMASK.avi")
+c=AviSource("k:\aviwerkmap\FADIX_WBG.avi")
+d=WAVSource("K:\AviWerkmap\InCrowd_2_35_72.wav")
+
+#ag1 through ag5 adjust colour and mask effect source clip
+ag1=a.grayscale.converttoyv12()
+ag2=ag1.mt_binarize(150,true)
+ag3=a.converttorgb32().rgbadjust(1,1,2)
+ag4=layer(a.converttorgb32(),ag2.converttorgb32().resetmask.colorkeymask($ffffff,0), x=0, y=0)
+ag5=layer(ag3.converttorgb32(),ag4.converttorgb32().resetmask.colorkeymask($000000,0), x=0, y=0)
+
+#bg1 choose cutout from source, the only choice until bg16
+bg1=ag5.trim(249,320).crop(135,12,-167,-10).bicubicresize(180,180)
+bg2=bg1.crop(0,24,0,0)
+bg3=layer(bg2.converttorgb32(), b.converttorgb32().resetmask.colorkeymask($000000,0), x=0, y=0)
+bg4=bg3.flipvertical
+bg5=stackvertical(bg3,bg4)
+#basic diamond is ready
+bg6=layer(c.converttorgb32(), bg5.converttorgb32().resetmask.colorkeymask($ffffff,0),
+x=180,y=312)
+#basic diamond in white background
+bg7=bg6.fliphorizontal
+bg8=bg7.converttorgb.rotate(60)
+bg9=bg7.converttorgb.rotate(300)
+#versions to get the symmetry right
+bg10=layer(bg8.converttorgb32(),bg6.converttorgb32().resetmask.colorkeymask($ffffff,0),
+x=0,y=0)
+#bg6 under bg8 gives worse seam
+bg11=layer(bg9.converttorgb(), bg10.converttorgb32().resetmask.colorkeymask($ffffff,0),
+x=0,y=0)
+#inexplicable white lines appear; bg10 under bg9 gives worse seam
+#making a six pointed star (flipvertical and layer) gives a nasty seam
+bg12=layer(bg11.converttorgb32(), bg6.converttorgb32().resetmask.colorkeymask
+($ffffff,0),x=-270, y=-156)
+bg13=layer(bg12.converttorgb32(), bg6.converttorgb32().resetmask.colorkeymask
+($ffffff,0),x=270, y=-156).crop(0,312,-0,-156)
+bg14=bg13.flipvertical
+bg15=stackvertical(bg14,bg13).trim(0,59)
+#basic building block is ready, choose number of blocks to stack and final size of image
+bg16=stackhorizontal(bg15,bg15)
+bg17=stackvertical(bg16,bg16).crop(220,72,-220,-72)
+
+[cg1 through cg17: second cutout]
+[dg1 through dg17: third cutout]
+[eg1 through eg17: fourth cutout]
+
+#fg1 choose a line to repeat, number of repetitions and final length, add music
+fg1=unalignedsplice(bg17,dg17,cg17,eg17,cg17,dg17,bg17,eg17)
+fg2=unalignedsplice(fg1,fg1,fg1,fg1,fg1,fg1).trim(0,3893)
+fg3=audiodub(fg2,d)
+
+return fg3
+__END__
+
+
+#################################################################################
+#
+#   A refinement in version 3 of the script
+#   https://www.youtube.com/watch?v=YIbX_phFkJ8
+#
+#################################################################################
+
+#bg1 choose cutout from source, the only choice until bg16
+#double crop and resize to avoid black corners; last rotation optional, try out
+
+bg1=a.trim(0,99).crop(0,140,-420,-0).converttorgb32().rotate(angle=0,endangle=-360).bicubicresize(300,300).crop(40,40,-40,-40).bicubicresize(180,180).rotate(0)
+bg2=bg1.crop(0,12,0,-12)
+
+
+#################################################################################
+#
+#   How to make the mask
+#   https://www.youtube.com/watch?v=KJ5GCwhnCoQ
+#
+#################################################################################
+
+#plugin for rotation, source http://avisynth.org.ru/fizick.html
+loadplugin("K:\VD Filter Pack\Rotate.dll")
+
+a=avisource("k:\aviwerkmap\HEXMASK_ROT.avi")
+
+#create blank clip, framerate irrelevant, will be determined by the background later on
+bg1=blankclip(length=100,width=600,height=600,color=$ffffff)
+#30 degree rotation
+#bg2=bg1.converttorgb32().rotate(30,color=$000000), skip bg2, see below
+#now comes the tricky part, for the triangle should fit the frame exactly
+#width should be 90
+bg3=a.crop(510,199,-0,-0)
+bg4=bg3.fliphorizontal
+bg5=stackhorizontal(bg3,bg4)
+#height should be 156
+bg6=bg5.crop(0,182,-0,-63)#183,66
+
+return bg6
+__END__
+bg5=HEXMASK_ALT
+test with HEXV302 very successful, even better than the original HEXMASK
+VD rotate2 (-30) instead of bg2 = HEXMASK_ROT
+Plugin produces seams, VD rotate2 does not!
+
+#plugin for rotation, source http://avisynth.org.ru/fizick.html
+loadplugin("K:\VD Filter Pack\Rotate.dll")
+
+a=avisource("k:\aviwerkmap\HEXCLIP_ROT.avi").trim(0,99)
+b=avisource("k:\aviwerkmap\BETE_04.avi").trim(0,99)
+
+#choose cutout
+bg1=b.crop(420,52,-0,-128) #result 180x180
+#120 degree rotation, find size with VD rotate2, expand
+bg2=bg1.converttorgb32().rotate(120,width=246,height=246,color=$ffffff)
+#crop from the right to get 60 degree angle
+bg3=bg2.crop(90,0,-0,-0)
+#rotate 30 degrees to get a 60 degree top angle, check with VD rotate2, expand (-30)
+#for some reason this does not work, result VD = HEXCLIP_ROT
+#sorry, VD (-30) = Rotate (30), which does work
+#bg4=bg3.converttorgb32().rotate(30,width=258,height=291,color=$ffffff)
+#now crop to 180x156
+bg5=a.crop(33,0,-45,-135)
+
+return bg5
+__END__
+bg5=HEXCLIP_ALT
+test HEXCLIP_ALT with hexclipalttest horrible, lines all over the frame
+bg5 with a = HEXCLIP_AMT
+test HEXCLIP_AMT with hexclipalttest much better, but still inferior
+Conclusion: finding the mask was difficult, but the mask can be used for any clip and any size of cutout. Working without a mask is difficult all over again for each new clip. The mask makes my scripts universally applicable.
+hexmaskalttest with HEXMASK = first part of video
+hexmaskalttest with HEXMASK_ALT = second part of video
+hexclipalttest with HEXCLIP_ALT = third part of video
+hexclipalttest with HEXCLIP_AMT = fourth part of video
+
+
+
+#################################################################################
+#
+#   Kaleidoscopic Hexagons version 3 of the script
+#   https://www.youtube.com/watch?v=ZADulnaenoQ
+#
+#################################################################################
+
+#image https://www.youtube.com/watch?v=jOzgV...
+#music https://www.youtube.com/watch?v=f_ldF...
+#Prokoviev, Visions fugitives op 22 nr 8, played by Anna Vavilova
+
+#plugin for rotation, source http://avisynth.org.ru/fizick.html
+loadplugin("K:\VD Filter Pack\Rotate.dll")
+
+#clips, a=source FLOW
+#clip b=mask 180x156
+#c=white background 540x624, at least as many frames as the longest cutout
+#d=music
+
+a=AviSource("k:\aviwerkmap\FLOW.avi")
+b=AviSource("k:\aviwerkmap\HEXMASK.avi")
+c=AviSource("k:\aviwerkmap\FADIX_WBG.avi")
+d=WAVSource("K:\AviWerkmap\visions08_1_31_97.wav")
+
+#bg1 choose cutout from source, the only choice until bg16
+#double crop and resize to avoid black corners, try out a lot
+bg1=a.trim(361,760).crop(33,0,-87,-0).converttorgb32().rotate(angle=0,endangle=-360).bicubicresize(450,450).crop(75,75,-75,-75).bicubicresize(180,180)
+bg2=bg1.crop(0,24,-0,-0)
+bg3=layer(bg2.converttorgb32(), b.converttorgb32().resetmask.colorkeymask($000000,0), x=0, y=0)
+bg4=bg3.flipvertical
+bg5=stackvertical(bg3,bg4)
+#basic diamond is ready
+bg6=layer(c.converttorgb32(), bg5.converttorgb32().resetmask.colorkeymask($ffffff,0), x=180,y=312)
+#basic diamond in white background
+bg7=bg6.fliphorizontal
+bg8=bg7.converttorgb.rotate(60)
+bg9=bg7.converttorgb.rotate(300)
+#versions to get the symmetry right
+bg10=layer(bg8.converttorgb32(),bg6.converttorgb32().resetmask.colorkeymask($ffffff,0), x=0,y=0)
+#bg6 under bg8 gives worse seam
+bg11=layer(bg9.converttorgb(), bg10.converttorgb32().resetmask.colorkeymask($ffffff,0), x=0,y=0)
+#inexplicable white lines appear; bg10 under bg9 gives worse seam
+#making a six pointed star (flipvertical and layer) gives a nasty seam
+bg12=layer(bg11.converttorgb32(), bg6.converttorgb32().resetmask.colorkeymask($ffffff,0),x=-270, y=-156)
+bg13=layer(bg12.converttorgb32(), bg6.converttorgb32().resetmask.colorkeymask($ffffff,0),x=270, y=-156).crop(0,312,-0,-156)
+bg14=bg13.flipvertical
+bg15=stackvertical(bg14,bg13).trim(0,299)
+#basic building block is ready, choose number of blocks to stack and final size of image
+bg16=stackhorizontal(bg15,bg15)
+bg17=stackvertical(bg16,bg16).crop(220,72,-220,-72)
+
+#fg1 through fg3 choose number of repetitions and final length, add music
+fg1=unalignedsplice(bg17,bg17,bg17,bg17,bg17)
+fg2=unalignedsplice(fg1,fg1,fg1,fg1,fg1).trim(0,2299)
+fg3=audiodub(fg2,d)
+
+return fg3
+__END__
+fg3 = HEXV301_MUS
+
+
+
+#################################################################################
+#
+#   Kaleidoscopic Hexagons with AviSynth and VirtualDub
+#   https://www.youtube.com/watch?v=c9b8sqFW8q8
+#
+#################################################################################
+
+#plugin for rotation, source http://avisynth.org.ru/fizick.html
+loadplugin("K:\VD Filter Pack\Rotate.dll")
+
+#clips, a=source clip b=mask 180x156 29.97fps 101 frames
+#c=white background 540x624 29.97fps 101 frames
+
+a=AviSource("k:\aviwerkmap\HEXZWART.avi")
+b=AviSource("k:\aviwerkmap\HEXMASK.avi")
+c=AviSource("k:\aviwerkmap\HEXWIT.avi")
+
+#script; bg1 choose cut out from source, the only choice until bg15
+bg1=a.crop(108,28,-110,-72).bicubicresize(180,180)
+bg2=bg1.crop(0,24,0,0)
+bg3=layer(bg2.converttorgb32(), b.converttorgb32().resetmask.colorkeymask($000000,0), x=0, y=0)
+bg4=bg3.flipvertical
+bg5=stackvertical(bg3,bg4)
+bg6=layer(c.converttorgb32(), bg5.converttorgb32().resetmask.colorkeymask($ffffff,0), x=180,y=312)
+bg7=bg6.converttorgb32().rotate(60).fliphorizontal
+bg8=layer(bg7.converttorgb32(), bg6.converttorgb32().resetmask.colorkeymask($ffffff,0), x=0,y=0)
+bg9=bg8.converttorgb32().rotate(120)
+bg10=layer(bg9.converttorgb32(), bg8.converttorgb32().resetmask.colorkeymask($ffffff,0), x=0,y=0)
+bg11=layer(bg10.converttorgb32(), bg6.converttorgb32().resetmask.colorkeymask($ffffff,0),x=-270, y=-156)
+bg12=layer(bg11.converttorgb32(), bg6.converttorgb32().resetmask.colorkeymask($ffffff,0),x=270, y=-156).crop(0,312,-0,-156)
+bg13=bg12.flipvertical
+bg14=stackvertical(bg13,bg12)
+#bg15, bg16 choose number of blocks to stack and final size of image
+bg15=stackhorizontal(bg14,bg14,bg14)
+bg16=stackvertical(bg15,bg15,bg15).bicubicresize(810,468)
+#bg17, bg18 create continuous loop and choose number of loops
+bg17=bg16.reverse
+bg18=unalignedsplice(bg16,bg17,bg16,bg17)
+return bg18
+
+
+
+#################################################################################
+#
+#   Mixing 2 videos using Virtualdub and AviSynth Scripts with Fadein FadeOut
+#   https://www.youtube.com/watch?v=_lVPfrpAVbY
+#
+#################################################################################
+
+
+a=DirectShowSource("c:\Video\original3.avi",fps=60,convertfps=true).ConvertToYUY2().Tweak(hue=0, bright=-10, cont=1.2,sat=0.75 ).BicubicResize(1920,1080)
+b=DirectShowSource("c:\Video\original1.avi",fps=60,convertfps=true).ConvertToYUY2().Tweak(hue=0, bright=-10, cont=1.2,sat=0.75 ).BicubicResize(1920,1080)
+
+sm = a.BicubicResize(1920,1080)
+sn = b.BicubicResize(1920,1080)
+
+st = Dissolve( SelectEvery(sm, 12, 20) ,SelectEvery(sn, 12, 20) , 30).BicubicResize(1920,1080) # mix
+return st.SpatialSoften(2,3,3)
+
+
+
+
+#################################################################################
+#
+#   3 Tile Effects created with Virtualdub and AviSynth Scripts
+#   https://www.youtube.com/watch?v=UxsRjKedy2E
+#
+#################################################################################
+
+# 1. Example Tile 1+2
+
+a = AVIsource("c:\Video\original1.avi").ConvertToYUY2().BicubicResize(440,120)
+b = AVIsource("c:\Video\original2.avi").ConvertToYUY2().BicubicResize(220,120)
+c = AVIsource("c:\Video\original3.avi").ConvertToYUY2().BicubicResize(220,120)
+
+st = StackVertical(a,StackHorizontal(c,b)).BicubicResize(720,460)
+Return st
+
+------------------------
+
+# 2. Example Tile 2+1
+
+a=AVIsource("c:\Video\original1.avi").ConvertToYUY2().BicubicResize(240,120)
+b=AVIsource("c:\Video\original2.avi").ConvertToYUY2().BicubicResize(240,120)
+c=AVIsource("c:\Video\original3.avi").ConvertToYUY2().BicubicResize(480,240)
+
+
+st = StackHorizontal(StackVertical(a,b),c).BicubicResize(720,460)
+return st
+
+-------------------------
+
+# 3. Example Tile + Blur + Loop + Sharpen + Reverse +subtitle
+
+a = AVIsource("c:\Video\original1.avi").ConvertToYUY2().BicubicResize(440,120).Blur(0.58).Loop(20,20,39).Reverse().subtitle("original1.avi", font="georgia", size=12, text_color=$E9E9E9, align=1)
+b = AVIsource("c:\Video\original2.avi").ConvertToYUY2().AddBorders(0, 126, 0, 126, $000000).Loop(20,20,39).BicubicResize(220,120).Sharpen(0.5).subtitle("original2.avi", font="georgia", size=12, text_color=$E9E9E9, align=1)
+c = AVIsource("c:\Video\original3.avi").ConvertToYUY2().BicubicResize(220,120).Sharpen(0.5).Loop(20,20,39).subtitle("original3.avi", font="georgia", size=12, text_color=$E9E9E9, align=1)
+
+#st = StackVertical(a,StackHorizontal(c,b)).BicubicResize(720,460)
+st = StackVertical(a,StackHorizontal(c,b)).BilinearResize(720,460)
+Return st
+
+
+#################################################################################
+#
+#   Tile 3D Effect based on 3droundabout.com Example created with Virtualdub and AviSynth Script
+#   https://www.youtube.com/watch?v=Si_F3ZQATrE
+#
+#################################################################################
+
+
+a=AVIsource("c:\Video\original3.avi").ConvertToYUY2().BicubicResize(1280,720)
+b=AVIsource("c:\Video\original3.avi").ConvertToYUY2().Crop(240, 240, 640, 640).Tweak(hue=0, bright=-10, cont=1.2,sat=0.75 ).BicubicResize(640,720)
+c=AVIsource("c:\Video\original3.avi").ConvertToYUY2().Crop(0, 0, 440, 440).BicubicResize(640,360)
+d=AVIsource("c:\Video\original3.avi").ConvertToYUY2().Crop(230, 230, 340, 340).BicubicResize(640,360)
+e=AVIsource("c:\Video\original3.avi").ConvertToYUY2().Crop(310, 310, 340, 340).BicubicResize(640,360)
+
+st = StackVertical(StackHorizontal(a,b),StackHorizontal(c,d,e)).BicubicResize(1920,1080)
+return st
+
+Reference Page:
+http://3droundabout.com/2011/06/2873/...
+
+Big Size Container Vid: 1920 x 1080
+
+Vid 1: 1280 x 720
+Vid 2: 640 x 720
+Vid 3: 640 x 360
+Vid 4: 640 x 360
+Vid 5: 640 x 360

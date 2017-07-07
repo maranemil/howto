@@ -1,0 +1,72 @@
+#Nginx - disable autostart
+sudo update-rc.d -f nginx disable
+------------------------------------------------
+#Apache - disable autostart
+sudo update-rc.d -f apache2 remove
+sudo update-rc.d -f apache2 disable
+sudo update-rc.d apache2 disable
+------------------------------------------------
+# mySQL - disable autostart
+echo "manual" >> /etc/init/mysql.override
+#or
+sudo nano /etc/init/mysql.conf
+#Comment out next code:
+
+#start on (net-device-up
+          #and local-filesystems
+          #and runlevel [2345])
+------------------------------------------------
+
+
+
+#add elastic search to startup
+sudo update-rc.d elasticsearch defaults
+
+#add mysql to startup
+sudo update-rc.d mysql defaults
+
+########################################
+#start lampp ubuntu startup
+########################################
+
+1. Create a script in init.d called lampp
+sudo gedit /etc/init.d/lampp
+
+2. Paste this code on the script and save Code:
+
+#!/bin/bash
+/opt/lampp/lampp start
+
+3. Give -x permissions to the file
+sudo chmod +x /etc/init.d/lampp
+
+4. Use update-rc.d to install init scripts to all runlevel by typing
+sudo update-rc.d lampp defaults
+
+Alternative
+Option 1:
+# sudo gedit /etc/rc.local
+/opt/lampp/lampp start
+
+Option 2:
+# ln -s /opt/lampp/lampp /etc/init.d/lampp
+
+########################################
+## check ubuntu integrity
+########################################
+
+sudo apt-get install debsums
+sudo debsums_init
+sudo debsums -c
+
+Code:
+while [ true ]; do CY=$(date +%y); CM=$(date +%m); if [ -n "$PY" ] && [ -n "$PM" ]; then echo "Ubuntu ${CY}.${CM} is the worst release ever"; echo "I'm going back to ${PY}.${PM}"; fi; PY="$CY"; PM="$CM"; sleep 182d; done
+
+
+sudo apt-get clean
+sudo apt-get update
+sudo debsums -cs
+sudo apt-get -f install
+
+
+

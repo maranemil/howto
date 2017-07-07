@@ -1,0 +1,901 @@
+
+##################################
+#
+#	php7 strict_types
+#
+##################################
+
+declare(strict_types=1);
+$bar = (boolean) $foo;  	// $bar is a boolean
+$bar = (string) $foo; 		// $bar is a string
+$bar = (float) $foo; 		// $bar is a float
+$bar = (int) $foo; 		// $bar is a integer
+
+try {
+    factorial("5");
+} catch (TypeError $e) {
+/*
+// } catch (\TypeError $e) {
+// } catch (\Error $e) {
+// } catch (ParseError $e) {
+*/
+    echo 'Error: '.$e->getMessage();
+}
+
+function stringTest(string $string) {
+    echo $string;
+}
+
+
+// https://gist.github.com/ThijsFeryn/70ca08ad9cbbd65f622c#file-9_throwable-php
+// Exception
+try {
+    throw new Exception("Bla");
+} catch (Error $e) {
+    echo "Error: ".$e->getMessage().PHP_EOL;
+} catch (Exception $e) {
+    echo "Exception: ".$e->getMessage().PHP_EOL;
+}
+
+
+#################################
+#
+#   DEPLOYING PHP 7
+#
+#################################
+
+http://talks.php.net/afup15#/php7perfdetail
+http://talks.php.net/taiwan15#/
+
+--enable-opcache-file
+opcache.enable_cli = 1
+opcache.file_cache_only = 1
+
+phan -a test.php
+ps ef -o command,vsize,rss,size -C php-fpm
+
+-------------------------------------------------------
+
+zval size reduced from 24 to 16 bytes
+Hashtable size reduced from 72 to 56 bytes
+Hashtable bucket size reduced from 72 to 32 bytes
+Immutable array optimization
+$a = [];
+for($i=0; $i < 100000;$i++) {
+    $a[] = ['abc','def','ghi','jkl','mno','pqr'];
+}
+echo memory_get_usage(true);
+
+// PHP 5.x  109M
+// PHP 7.0   42M no opcache
+// PHP 7.0    6M with opcache enabled
+
+----------------------------------------------------------
+
+Install Vagrant and Virtualbox
+Then:
+$ git clone https://github.com/rlerdorf/php7dev.git
+
+$ cd php7dev
+
+$ vagrant up
+... (takes a bit - it is downloading 1.5G)
+
+$ vagrant ssh
+It will NAT, DHCP and also has a fixed address of 192.168.7.7
+
+------------------------------------------------------------
+
+$ cd php-src
+$ git checkout PHP-5.6
+$ git pull -r
+$ make distclean
+$ ./buildconf -f
+$ ./cn56
+$ make
+$ sudo make install
+
+------------------------------------------------------------
+
+C API FOR THE WEB
+void Cos(void) {
+    Stack *s;
+    char temp[64];
+
+    s = Pop();
+    if(!s) {
+        Error("Stack error in cos");
+        return;
+    }
+    sprintf(temp,"%f",cos(s->douval));
+    Push(temp,DNUMBER);
+}
+AND YOU COULD THEN USE IT LIKE THIS:
+
+<html><head><title>Cos Example</title></head>
+<body><h1>Cos Example</h1>
+<?echo Cos($input)>
+</body></html>
+
+------------------------------------------------------------
+
+zval size reduced from 24 to 16 bytes
+Hashtable size reduced from 72 to 56 bytes
+Hashtable bucket size reduced from 72 to 32 bytes
+Immutable array optimization
+$a = [];
+for($i=0; $i < 100000;$i++) $a[] = ['abc'];
+echo memory_get_usage(true);
+// PHP 5.x  43M
+// PHP 7.0  6M
+
+------------------------------------------------------------
+
+TEST BOX SPECS
+
+Gigabyte Z87X-UD3H i7-4771 4 cores @ 3.50GHz w/ 16G of Ram @ 1600MHz
+Hyperthreading enabled for a total of 8 virtual cores
+Toshiba THNSNHH256GBST SSD
+Linux debian 3.16.0-4-amd64 #1 SMP Debian 3.16.7-ckt9-2 (2015-04-13) x86_64 GNU/Linux
+MySQL 5.6.24
+nginx-1.6.2 + php-fpm for all tests unless indicated otherwise
+Quiet local 100Mbps network
+siege benchmark tool run from a separate machine
+
+------------------------------------------------------------
+
+https://github.com/php/presentations
+
+
+#################################
+#
+#   PHP7 and Beyond 2015
+#
+#################################
+
+Deploying PHP 7
+
+$ make clean
+$ make -j8 prof-gen
+...
+$ sapi/cgi/php-cgi -T 1000 /var/www/wordpress/index.php > /dev/null
+$ make prof-clean
+$ make -j8 prof-use
+# http://talks.php.net/show/dublin16/1
+# http://talks.php.net/show/dublin16/7
+
+sudo apt-get  install php-mysqlnd # mysqlnd  php -i | grep mysqlnd
+http://php.net/manual/de/book.mysqlnd.php
+
+php-fpm # PHP-FPM - A simple and robust FastCGI Process Manager for PHP
+monolog.git # Monolog - Logging for PHP
+
+------------------------------------------------------------------
+
+http://talks.php.net/show/dublin16/1
+
+✔ engine improvements
+
+• 100%+ performance gain on most real-world applications
+• Lower memory usage, sometimes drastically lower
+
+✔ Persistent secondary file-based cache for OPCache
+
+
+; --enable-opcache-file
+; php.ini
+opcache.file_cache=/var/tmp
+
+; php-cli.ini
+opcache.enable_cli=1
+opcache.file_cache=/var/tmp
+opcache.file_cache_only=1
+$ time composer >/dev/null
+real	0m0.040s
+user	0m0.032s
+sys	0m0.004s
+
+$ time composer >/dev/null
+real	0m0.019s
+user	0m0.016s
+sys	0m0.000s
+
+$ time php -d opcache.enable=0 /usr/local/bin/composer >/dev/null
+real	0m0.033s
+user	0m0.032s
+sys	0m0.000s
+
+/var/tmp
+├── 7eeb6fe88104116c27c5650ddd83abf0
+│   └── usr
+│       └── local
+│           └── bin
+│               └── composer.bin
+└── 7eeb6fe88104116c27c5650ddd83abf0phar:
+    └── usr
+        └── local
+            └── bin
+                └── composer
+                    ├── bin
+                    │   └── composer.bin
+                    ├── src
+                    │   ├── bootstrap.php.bin
+                    │   └── Composer
+                    │       ├── Command
+                    │       │   ├── AboutCommand.php.bin
+                    │       │   ├── ArchiveCommand.php.bin
+                    │       │   ├── ClearCacheCommand.php.bin
+                    │       │   ├── Command.php.bin
+                    │       │   ├── ConfigCommand.php.bin
+                    │       │   ├── CreateProjectCommand.php.bin
+                    │       │   ├── DependsCommand.php.bin
+                    │       │   ├── DiagnoseCommand.php.bin
+                    │       │   ├── DumpAutoloadCommand.php.bin
+                    │       │   ├── GlobalCommand.php.bin
+                    │       │   ├── Helper
+                    │       │   │   └── DialogHelper.php.bin
+                    │       │   ├── HomeCommand.php.bin
+                    │       │   ├── InitCommand.php.bin
+                    │       │   ├── InstallCommand.php.bin
+                    │       │   ├── LicensesCommand.php.bin
+                    │       │   ├── RemoveCommand.php.bin
+                    │       │   ├── RequireCommand.php.bin
+                    │       │   ├── RunScriptCommand.php.bin
+                    │       │   ├── SearchCommand.php.bin
+                    │       │   ├── SelfUpdateCommand.php.bin
+                    │       │   ├── ShowCommand.php.bin
+                    │       │   ├── StatusCommand.php.bin
+                    │       │   ├── UpdateCommand.php.bin
+                    │       │   └── ValidateCommand.php.bin
+                    │       ├── Composer.php.bin
+                    │       ├── Console
+                    │       │   └── Application.php.bin
+                    │       ├── Factory.php.bin
+                    │       ├── IO
+                    │       │   ├── BaseIO.php.bin
+                    │       │   ├── ConsoleIO.php.bin
+                    │       │   └── IOInterface.php.bin
+                    │       ├── Package
+                    │       │   ├── BasePackage.php.bin
+                    │       │   └── PackageInterface.php.bin
+                    │       ├── Script
+                    │       │   └── ScriptEvents.php.bin
+                    │       └── Util
+                    │           └── ErrorHandler.php.bin
+                    └── vendor
+                        ├── autoload.php.bin
+                        ├── composer
+                        │   ├── autoload_classmap.php.bin
+                        │   ├── autoload_namespaces.php.bin
+                        │   ├── autoload_psr4.php.bin
+                        │   ├── autoload_real.php.bin
+                        │   └── ClassLoader.php.bin
+                        └── symfony
+                            └── console
+                                └── Symfony
+                                    └── Component
+                                        └── Console
+                                            ├── Application.php.bin
+                                            ├── Command
+                                            │   ├── Command.php.bin
+                                            │   ├── HelpCommand.php.bin
+                                            │   └── ListCommand.php.bin
+                                            ├── Descriptor
+                                            │   ├── ApplicationDescription.php.bin
+                                            │   ├── DescriptorInterface.php.bin
+                                            │   ├── Descriptor.php.bin
+                                            │   ├── JsonDescriptor.php.bin
+                                            │   ├── MarkdownDescriptor.php.bin
+                                            │   ├── TextDescriptor.php.bin
+                                            │   └── XmlDescriptor.php.bin
+                                            ├── Formatter
+                                            │   ├── OutputFormatterInterface.php.bin
+                                            │   ├── OutputFormatter.php.bin
+                                            │   ├── OutputFormatterStyleInterface.php.bin
+                                            │   ├── OutputFormatterStyle.php.bin
+                                            │   └── OutputFormatterStyleStack.php.bin
+                                            ├── Helper
+                                            │   ├── DebugFormatterHelper.php.bin
+                                            │   ├── DescriptorHelper.php.bin
+                                            │   ├── DialogHelper.php.bin
+                                            │   ├── FormatterHelper.php.bin
+                                            │   ├── HelperInterface.php.bin
+                                            │   ├── Helper.php.bin
+                                            │   ├── HelperSet.php.bin
+                                            │   ├── InputAwareHelper.php.bin
+                                            │   ├── ProcessHelper.php.bin
+                                            │   ├── ProgressHelper.php.bin
+                                            │   ├── QuestionHelper.php.bin
+                                            │   ├── TableHelper.php.bin
+                                            │   ├── Table.php.bin
+                                            │   └── TableStyle.php.bin
+                                            ├── Input
+                                            │   ├── ArgvInput.php.bin
+                                            │   ├── ArrayInput.php.bin
+                                            │   ├── InputArgument.php.bin
+                                            │   ├── InputAwareInterface.php.bin
+                                            │   ├── InputDefinition.php.bin
+                                            │   ├── InputInterface.php.bin
+                                            │   ├── InputOption.php.bin
+                                            │   └── Input.php.bin
+                                            └── Output
+                                                ├── ConsoleOutputInterface.php.bin
+                                                ├── ConsoleOutput.php.bin
+                                                ├── NullOutput.php.bin
+                                                ├── OutputInterface.php.bin
+                                                ├── Output.php.bin
+                                                └── StreamOutput.php.bin
+
+32 directories, 87 files
+
+✔ Abstract Syntax Tree!!
+
+
+<?php
+echo substr("abc", [1,2]);
+ % phan -a test.php
+AST_STMT_LIST @ 1
+    0: AST_STMT_LIST @ 2
+        0: AST_ECHO @ 2
+            0: AST_CALL @ 2
+                0: AST_NAME @ 2
+                    flags: NAME_NOT_FQ (1)
+                    0: "substr"
+                1: AST_ARG_LIST @ 2
+                    0: "abc"
+                    1: AST_ARRAY @ 2
+                        0: AST_ARRAY_ELEM @ 2
+                            flags: 0
+                            0: 1
+                            1: null
+                        1: AST_ARRAY_ELEM @ 2
+                            flags: 0
+                            0: 2
+                            1: null
+% phan test.php
+test.php:2 TypeError arg#2(start) is int[] but substr() takes int
+
+✔ Exceptions on Fatals
+
+
+function call_method($obj) {
+    $obj->method();
+}
+call_method(null);
+ Fatal error: Uncaught Error: Call to a member function method() on null in file:2
+Stack trace:
+#0 file(4): call_method(NULL)
+#1 {main}
+  thrown in file on line 2
+
+<?php
+try {
+    call_method(null);
+} catch (Error $e) {
+    echo "Caught Exception: {$e->getMessage()}\n";
+}
+ Caught Exception: Call to a member function method() on null
+
+PHP 7 Exception Hierarchy
+
+
+Throwable
+➥ Exception implements Throwable
+➥ Error implements Throwable
+➥ TypeError extends Error
+➥ ParseError extends Error
+
+✔ Return Types
+
+
+function get_config(): array {
+    return 42;
+}
+get_config();
+ Fatal error: Uncaught TypeError: Return value of get_config() must be
+of the type array, integer returned in file:2
+Stack trace:
+#0 file(4): get_config()
+#1 {main}
+  thrown in file on line 2
+
+✔ Coercive Scalar Types
+
+
+function logmsg(string $msg, int $level, float $severity) {
+    var_dump($msg);      // string(1) "1"
+    var_dump($level);    // int(2)
+    var_dump($severity); // float(3)
+}
+logmsg(1, "2.5 bananas", 3);
+ Notice: A non well formed numeric value encountered in file on line 2
+✔ Strict Scalar Types
+
+
+declare(strict_types=1);
+...
+logmsg(1, "2.5", 3);
+ Fatal error: Uncaught TypeError: Argument 1 passed to logmsg() must be of the
+type string, integer given, called in file on line 7 and defined in file:3
+Stack trace:
+#0 file(7): logmsg(1, '2.5', 3)
+#1 {main}
+  thrown in file on line 2
+
+✔ Anonymous Classes
+
+
+<?php
+return new class($controller) implements Page {
+    public function __construct($controller) {
+        /* ... */
+    }
+    /* ... */
+};
+
+class MyObject extends MyStuff {
+    public function getInterface() {
+        return new class implements MyInterface {
+            /* ... */
+        };
+    }
+}
+
+✔ Coalesce Operator
+
+
+<?php
+$a = NULL;
+$b = 0;
+$c = 2;
+
+echo $a ?? $b; // 0
+echo $c ?? $b; // 2
+echo $a ?? $b ?? $c; // 0
+echo $a ?? $x ?? $c; // 2
+
+✔ Spaceship Operator
+
+
+
+<?php
+
+function cmp_php5($a, $b) {
+    return ($a < $b) ? -1 : (($a >$b) ? 1 : 0);
+}
+
+function cmp_php7($a, $b) {
+    return $a <=> $b;
+}
+
+✔ Zero-cost Assertions
+
+
+<?php
+function test($arg) {
+    assert($arg > 20 && $arg < 110, "$arg is invalid");
+}
+ini_set('zend.assertions',0); test(16);
+ini_set('zend.assertions',1); test(17);
+ini_set('assert.exception',1); test(18);
+ Warning: assert(): 17 is invalid failed in file on line 2
+Fatal error: Uncaught AssertionError: 18 is invalid in file:2
+Stack trace:
+#0 file(2): assert(false, '18 is invalid')
+#1 file(6): test(18)
+#2 {main}
+  thrown in file on line 2
+; Completely skip compiling assert() calls
+; (can only be set in php.ini)
+zend.assertions = -1
+
+✔ Added Closure::call()
+
+
+<?php
+$f = function () {
+    return $this->n;
+};
+class MyClass {
+    private $n = 42;
+}
+$myC = new MyClass;
+$c = $f->bindTo($myC, "MyClass");
+$c();
+
+<?php
+$f = function () {
+    return $this->n;
+};
+class MyClass {
+    private $n = 42;
+}
+$myC = new MyClass;
+$f->call($myC);
+
+✔ Removal of many deprecated features
+     (Your PHP4 code will break!)
+
+
+- ext/ereg (use ext/pcre instead)
+- preg_replace() eval modifier (use preg_replace_callback() instead)
+- ext/mysql (use ext/mysqli or ext/pdo_mysql instead)
+- Assignment of new by reference
+- Scoped calls of non-static methods from incompatible $this context
+
+- dl() in php-fpm
+- set_magic_quotes_runtime() and magic_quotes_runtime()
+- set_socket_blocking() (use stream_set_blocking() instead)
+- mcrypt_generic_end() (use mcrypt_generic_deinit() instead)
+- mcrypt_ecb, mcrypt_cbc, mcrypt_cfb and mcrypt_ofb
+  (use mcrypt_encrypt() and mcrypt_decrypt() instead)
+- datefmt_set_timezone_id() and IntlDateFormatter::setTimeZoneID()
+  (use datefmt_set_timezone() or IntlDateFormatter::setTimeZone() instead)
+
+- xsl.security_prefs (use XsltProcessor::setSecurityPrefs() instead)
+- iconv.input_encoding, iconv.output_encoding, iconv.internal_encoding,
+  mbstring.http_input, mbstring.http_output and mbstring.internal_encoding
+  (use php.input_encoding, php.internal_encoding and php.output_encoding instead)
+
+- $is_dst parameter of the mktime() and gmmktime() functions
+- # style comments in ini files (use ; style comments instead)
+- String category names in setlocale() (use LC_* constants instead)
+- Unsafe curl file uploads (use CurlFile instead)
+- PDO::PGSQL_ATTR_DISABLE_NATIVE_PREPARED_STATEMENT driver option
+  (use PDO::ATTR_EMULATE_PREPARES instead)
+- CN_match and SNI_server_name stream context option (use peer_name instead)
+
+✔ New reserved words:
+
+bool
+int
+float
+string
+null
+false
+true
+resource
+object
+mixed
+numeric
+
+✔ 64-bit integer support on Windows
+
+✔ Cleanup edge-case integer overflow/underflow
+
+✔ Support for strings with length >= 2^31 bytes in 64 bit builds.
+
+✔ Parse error on invalid numeric literals
+
+
+<?php
+$mask = 0855;  // Parse error: Invalid numeric literal
+
+✔ Uniform variable syntax
+
+
+<?php
+// left-to-right
+$this->$belongs_to['column']
+// vs.
+$this->{$belongs_to['column']}
+
+// support missing combinations of operations
+$foo()['bar']()
+[$obj1, $obj2][0]->prop
+getStr(){0}
+
+// support nested ::
+$foo['bar']::$baz
+$foo::$bar::$baz
+$foo->bar()::baz()
+
+// support nested ()
+foo()()
+$foo->bar()()
+Foo::bar()()
+$foo()()
+
+// support operations on arbitrary (...) expressions
+(...)['foo']
+(...)->foo
+(...)->foo()
+(...)::$foo
+(...)::foo()
+(...)()
+
+// two more practical examples for the last point
+(function() { ... })()
+($obj->closure)()
+
+// support all operations on dereferencable scalars
+// (not very useful)
+"string"->toLower()
+[$obj, 'method']()
+'Foo'::$bar
+
+✔ Unicode Codepoint Escape Syntax
+
+
+<?php
+echo "\u{202E}Right-to-left text";
+
+echo " \u{26BD}";
+Output
+\u{202E}Right-to-left text \u{26BD}
+✔ ICU IntlChar class added to intl extension
+
+
+✔ CSPRNG
+
+
+<?php
+$int   = random_int(-500, 500);
+$bytes = random_bytes(10);
+
+var_dump( $int );
+var_dump( bin2hex($bytes) );
+Output
+
+--------------------------------------------------------------------
+
+http://talks.php.net/show/dublin16/3
+
+JIT?
+
+
+Improve CPU cache usage
+
+Step 1: Decrease overall data
+Step 2: Better data locality and less indirections
+Step 3: Save the world!
+
+zval size reduced from 24 to 16 bytes
+Hashtable size reduced from 72 to 56 bytes
+Hashtable bucket size reduced from 72 to 32 bytes
+Immutable array optimization
+
+<?php
+$a = [];
+for($i=0; $i < 100000;$i++) {
+    $a[] = ['abc','def','ghi','jkl','mno','pqr'];
+}
+echo memory_get_usage(true);
+
+// PHP 5.x  109M
+// PHP 7.0   42M no opcache
+// PHP 7.0    6M with opcache enabled
+
+New memory allocator similar to jemalloc
+Faster hashtable iteration API
+Array duplication optimization
+PCRE JIT enabled by default
+Precomputed string hashes
+Fast ZPP (ZendParseParameters) implementation
+Faster stack-allocated zvals (instead of heap)
+Optimized VM calling
+Global register variables with gcc 4.8+
+plus hundreds of micro-optimizations
+
+HugePage support in Opcache
+
+./configure --enable-huge-code-pages
+opcache.memory_consumption=256
+opcache.huge_code_pages=1
+% sysctl -w vm.nr_hugepages=256
+% service php-fpm start
+% cat /proc/meminfo | grep Huge
+HugePages_Total:     256
+HugePages_Free:      231
+HugePages_Rsvd:      119
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+
+JIT?
+
+---------------------------------------------------------------------------
+http://talks.php.net/show/dublin16/5
+
+Test Box Specs
+Gigabyte Z87X-UD3H i7-4771 4 cores @ 3.50GHz w/ 16G of Ram @ 1600MHz
+Hyperthreading enabled for a total of 8 virtual cores
+Toshiba THNSNHH256GBST SSD
+Linux debian 3.16.0-4-amd64 #1 SMP Debian 3.16.7-ckt11-1+deb8u5 (2015-10-09) x86_64 GNU/Linux
+MySQL 5.6.27
+nginx-1.6.2 + php-fpm for all tests unless indicated otherwise
+Quiet local 100Mbps network
+siege benchmark tool run from a separate machine
+
+All versions of PHP compiled locally using gcc-4.9.2 -O2
+
+configure flags
+./configure --disable-debug       --with-apxs2=/usr/bin/apxs2 \
+            --enable-zend-signals --with-gd \
+            --without-pear        --with-jpeg-dir=/usr \
+            --with-png-dir=/usr   --with-vpx-dir=/usr \
+            --with-t1lib=/usr     --with-freetype-dir=/usr \
+            --enable-exif         --enable-gd-native-ttf \
+            --with-zlib           --with-mysql=/usr \
+            --with-gmp            --with-zlib-dir=/usr \
+            --with-gettext        --with-kerberos \
+            --with-imap-ssl       --with-mcrypt=/usr/local \
+            --with-iconv          --enable-sockets \
+            --with-openssl        --with-pspell \
+            --with-pdo-sqlite     --with-pdo-mysql=mysqlnd \
+            --enable-soap         --enable-xmlreader \
+            --enable-phar=shared  --with-xsl \
+            --enable-ftp          --enable-cgi \
+            --with-curl=/usr      --with-tidy \
+            --with-xmlrpc         --enable-mbstring \
+            --enable-sysvsem      --enable-sysvshm \
+            --enable-shmop        --with-readline \
+            --enable-pcntl        --enable-fpm \
+            --enable-intl         --enable-zip \
+            --with-imap           --with-mysqli=mysqlnd \
+            --enable-calendar     --prefix=/usr/local \
+            --enable-huge-code-pages \
+            --with-mysql-sock=/var/run/mysqld/mysqld.sock \
+            --with-config-file-scan-dir=/etc/php7/conf.d \
+            --with-config-file-path=/etc/php7
+
+php.ini
+[PHP]
+zend.multibyte=On
+date.timezone="America/Los_Angeles"
+display_startup_errors=On
+zend.enable_gc=Off
+include_path="/usr/local/lib/php"
+default_charset="UTF-8"
+error_reporting=-1
+
+variables_order=GPCS
+sendmail_path=""
+
+max_execution_time=60
+memory_limit=512M
+post_max_size=1024M
+cgi.force_redirect=0
+cgi.fix_pathinfo=1
+
+magic_quotes=0
+magic_quotes_gpc=0
+user_ini.filename=
+realpath_cache_size=2M
+cgi.check_shebang_line=0
+
+max_input_vars=1000
+max_file_uploads=50
+
+zend_extension=opcache.so
+opcache.enable=1
+opcache.memory_consumption=256
+opcache.interned_strings_buffer=8
+opcache.max_accelerated_files=10000
+opcache.revalidate_freq=60
+opcache.fast_shutdown=1
+opcache.enable_cli=1
+opcache.huge_code_pages=1
+
+php-fpm.d/www.conf
+[www]
+user = www-data
+group = www-data
+listen = /var/run/php-fpm.sock
+listen.owner = www-data
+listen.group = www-data
+listen.mode = 0660
+
+pm = static
+pm.max_children = 10
+pm.status_path = /status
+ping.path = /ping
+ping.response = pong
+
+nginx.conf
+user www-data;
+worker_processes 4;
+pid /var/run/nginx.pid;
+
+events {
+        worker_connections 768;
+}
+
+http {
+        sendfile on;
+        tcp_nopush on;
+        tcp_nodelay on;
+        keepalive_timeout 65;
+        types_hash_max_size 2048;
+
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+
+        access_log /var/log/nginx/access.log;
+        error_log /var/log/nginx/error.log;
+
+        gzip on;
+        gzip_disable "msie6";
+
+        include /etc/nginx/conf.d/*.conf;
+        include /etc/nginx/sites-enabled/*;
+}
+
+php.conf
+location ~ \.php {
+  include                  fastcgi_params;
+  fastcgi_keep_conn        on;
+  fastcgi_index            index.php;
+  fastcgi_split_path_info  ^(.+\.php)(/.+)$;
+  fastcgi_param PATH_INFO  $fastcgi_path_info;
+  fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+  fastcgi_intercept_errors on;
+  fastcgi_pass             unix:/var/run/php-fpm.sock;
+}
+hhvm.conf
+location ~ \.php$ {
+  include           fastcgi_params;
+  fastcgi_keep_conn on;
+  fastcgi_pass      unix:/var/run/hhvm/server.sock;
+  fastcgi_index     index.php;
+  fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+}
+
+sites-enabled/wordpress
+server {
+    listen 80;
+    server_name wordpress;
+    root /var/www/wordpress;
+    access_log /var/log/nginx/wordpress-access.log;
+    error_log /var/log/nginx/wordpress-error.log;
+
+    location / {
+        index     index.html index.htm index.php;
+        autoindex on;
+    }
+
+    location ~ /\.  { return 403; }
+
+    include backend.conf;
+}
+
+HipHop VM 3.10.1 (rel) from http://dl.hhvm.com/ubuntu
+
+server.ini
+pid = /var/run/hhvm/pid
+hhvm.server.file_socket = /var/run/hhvm/server.sock
+hhvm.server.type = fastcgi
+hhvm.server.default_document = index.php
+hhvm.log.use_log_file = true
+hhvm.log.file = /var/log/hhvm/error.log
+hhvm.repo.central.path = /var/run/hhvm/hhvm.hhbc
+php.ini
+session.save_handler = files
+session.save_path = /var/lib/php5
+session.gc_maxlifetime = 1440
+
+hhvm.log.level = Warning
+hhvm.log.always_log_unhandled_exceptions = true
+hhvm.log.runtime_error_reporting_level = 8191
+hhvm.mysql.typed_results = false
+
+---------------------------------------------------------------------
+http://talks.php.net/show/dublin16/7
+
+$ make clean
+$ make -j8 prof-gen
+...
+$ sapi/cgi/php-cgi -T 1000 /var/www/wordpress/index.php > /dev/null
+$ make prof-clean
+$ make -j8 prof-use
+
+---------------------------------------------------------------------
+
+.htaccess!!
+# If FastCGI is enabled- HTTP AUTH:
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L]
+
+
+
+
+

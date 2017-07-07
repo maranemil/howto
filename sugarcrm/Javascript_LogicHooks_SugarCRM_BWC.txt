@@ -1,0 +1,171 @@
+########################################################
+#
+# Example Logic Hook BWC modul "after_ui_frame"
+#
+########################################################
+
+/*
+*
+*
+*
+*
+*/
+
+/* custom/modules/Quotes/MyImplemetation.php
+----------------------------------------------------------------------------*/
+
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+class MyImplemetation{
+
+	function MyImplemetation(){
+		echo '<script src="custom/modules/Quotes/MyImplemetation.js"></script>';
+		echo '<style>/*.view:nth-child(6) table  { display: none !important;} */</style>';
+	}
+}
+
+/*
+*
+*
+*
+*
+*/
+
+/*  custom/modules/Quotes/MyImplemetation.js
+----------------------------------------------------------------------------*/
+
+YAHOO.util.Event.onDOMReady(function (ev) {
+//$(document).ready(function () {
+
+	setTimeout(function () {
+
+		// removeFromValidate('EditView', 'opportunity_name');
+		// addToValidate('EditView', 'opportunity_name', 'varchar', false,'Please Select Valid Value' );
+
+		var opportunity_id = $('#opportunity_id').attr("value"); // Other
+		//console.log("oooo ID 3 - " + opportunity_id + ' ' + new Date().getTime());
+		if(opportunity_id){
+			MyImplemetation(opportunity_id);
+		}
+
+		$(document).on("mouseout", "#opportunity_name", function (e) { // keydown keypress keyup
+			setTimeout(function () {
+				var opportunity_id = $('#opportunity_id').attr("value"); // Other
+				//console.log("oooo ID 3 - " + opportunity_id + ' ' + new Date().getTime());
+				MyImplemetation(opportunity_id);
+			}, 700)
+		});
+
+		$( document ).on( "keyup","#opportunity_name",function(e){ // keydown keypress keyup
+		     if(e.keyCode == 13) {
+		        // Enter
+			setTimeout(function () {
+				var opportunity_id = $('#opportunity_id').attr("value"); // Other
+		        	MyImplemetation(opportunity_id);
+			}, 700)
+		     }
+		 });
+
+
+	}, 1200);
+
+	function MyImplemetation(oppId){
+		//console.log(oppId)
+
+		var OppSel = oppId  || {value: ""};
+		//console.log(TaskSel)
+
+		if( action_sugar_grp1 == 'ajaxui' ){
+			//console.log("ajaxui")
+		}
+		else  if (action_sugar_grp1 =="EditView" ) {
+			//var recordID = $('input[name="record"]').attr("value") || {value: ""};
+			if( OppSel){
+				var AjaxUrlOpp = "index.php?module=Quotes&action=MySpecialFunction&to_pdf=true&sugar_body_only=true";
+				AjaxUrlOpp += "&opp_id=" + encodeURIComponent(OppSel);
+				YAHOO.util.Connect.asyncRequest("GET", AjaxUrlOpp, callbackOppRequest, "");
+			}
+		}
+	}
+
+	String.prototype.replaceAll = function(target, replacement) {
+		return this.split(target).join(replacement);
+	};
+
+	var callbackOppRequest = {
+		success: function (o) {
+			try {
+				res = eval("(" + o.responseText + ")");
+
+				if(res.success=="true"){
+
+					// Reset Selects
+					$("#somefield_c option:selected").removeAttr("selected");
+
+					var objSelBU = res.somefield_c;
+					if(objSelBU.indexOf(",")!=-1){
+						var objSelBUAr = objSelBU.split(",");
+						$.each(objSelBUAr,function(index,element){
+							var ValSel = $.trim(element.replaceAll("^",""));
+							$("#somefield_c option[value='" + ValSel + "']").prop("selected", true);
+						});
+					}
+					else{
+						var ValSel = $.trim(objSelBU.replaceAll("^",""));
+						$("#somefield_c option[value='" + ValSel + "']").prop("selected", true);
+					}
+
+					// {"success":false,"somefield_c":"^SomeVar^,^SomeVar^"}
+				}
+
+			} catch (err) {	}
+		}
+	};
+
+//});
+});
+
+/*
+*
+*
+*
+*
+*/
+
+/*
+ custom/modules/Quotes/MySpecialFunction.php
+---------------------------------------------------------------*/
+
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+$return_data = array('success' => 'false');
+
+if (!empty($_REQUEST['opp_id'])){
+
+	global $db;
+
+	$sSQL = "SELECT somefield_c FROM opportunities
+	 LEFT JOIN opportunities_cstm ON opportunities_cstm.id_c = opportunities.id
+	 WHERE id = '".$_REQUEST['opp_id']."' LIMIT 1 ";
+	$res = $db->pQuery($sSQL);
+	$oppCstmData = $db->fetchRow($res);
+
+	$return_data['somefield_c'] = '';
+	if (!empty($oppCstmData) && $oppCstmData["somefield_c"]!=""){
+		$return_data['somefield_c']  = $oppCstmData["somefield_c"];
+		$return_data['success'] = 'true';
+	}
+}
+echo json_encode($return_data);
+die();
+
+/*
+*
+*
+*
+*
+*/
+
+
+
+

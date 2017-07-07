@@ -1,0 +1,570 @@
+http://www.cyberciti.biz/
+https://plus.google.com/+CybercitiBiz/posts
+
+
+##################################################################################
+#
+# Linux / UNIX: Finding and locating files
+#
+##################################################################################
+
+# Finding all set user id files
+find / -perm +u=s
+find / -perm +4000
+
+
+# Finding all set group id files
+find / -perm +g=s
+find / -perm +2000
+
+
+#Finding all large directories
+find / -type d -size +50k
+find / -type f -size +20000k
+find / -type f -size +20000k -exec ls -lh {} \; | awk '{ print $8 ": " $5 }'
+
+sudo find / -name '*' -size +1G
+# ''Optionally'': sudo find / -name '*' -size +500M
+
+
+# Syntax for Debian / Ubuntu Linux
+find {/path/to/directory} -type f -size +{file-size-in-kb}k -exec ls -lh {} \; | awk '{ print $8 ": " $5 }'
+
+
+# Search in current directory:
+$ find . -type f -size +10000k -exec ls -lh {} \; | awk '{ print $8 ": " $5 }'
+
+
+find ~ -size -500b
+find $HOME -size -500b
+find / -size 20
+
+
+# Perl hack: To display large files
+ du -k | sort -n | perl -ne 'if ( /^(\d+)\s+(.*$)/){$l=log($1+.1);$m=int($l/log(1024)); printf  ("%6.1f\t%s\t%25s  %s\n",($1/(2**(10*$m))),(("K","M","G","T","P")[$m]),"*"x (1.5*$l),$2);}'
+
+
+# find out top 10 largest file/directories:
+du -a /var | sort -n -r | head -n 10
+find . -type f -exec wc -c {} \; | sort -nr | head
+
+
+
+# human readable output try:
+$ cd /path/to/some/where
+$ du -hsx * | sort -rh | head -10
+
+
+## Find the largest file in a directory and its subdirectories using the find command
+## Warning: only works with GNU find ##
+
+find /path/to/dir/ -printf '%s %p\n'| sort -nr | head -10
+find . -type f -printf '%s %p\n'| sort -nr | head -10
+find . -printf '%s %p\n'| sort -nr | head -10
+
+
+# skip directories and only display files, type:
+find /path/to/search/ -type f -printf '%s %p\n'| sort -nr | head -10
+find /path/to/search/ -type f -iname "*.mp4" -printf '%s %p\n'| sort -nr | head -10
+
+
+# Wiew Log File?
+tail -f /var/log/messagess
+less /var/log/messagess
+more /var/log/messagess
+
+
+# Search Log File?
+Use the grep command as follows:
+grep 'search-string' /var/log/messages
+egrep 'word1|word2' /var/log/messages
+grep --color 'search-wrod2' /var/log/boot.msg
+
+
+# view log files at shell prompt Use tail, more, less and grep command.
+tail -f /var/log/apport.log
+more /var/log/xorg.0.log
+cat /var/log/mysql.err
+less /var/log/messages
+grep -i fail /var/log/boot
+
+
+# Truncate Command
+sudo truncate -s0 error_log
+truncate -s 0 /ftpusers/ftp.upload.log
+truncate -s 0 filename.txt
+ls -lh filename.txt
+cp /dev/null largefile.txt
+cat /dev/null > largefile.txt
+
+
+Find and remove large files that are open but have been deleted on Linux or Unix:
+## Works on Linux/Unix/OSX/BSD etc ##
+lsof -nP | grep '(deleted)'
+
+
+## Only works on Linux ##
+find /proc/*/fd -ls | grep  '(deleted)'
+
+
+# Chrck Space
+df
+df -h
+df -i
+df -i /ftpusers/
+
+
+# largest directories or files eating disk space on a Unix-like systesm:
+du -a /ftpusers/tmp | sort -n -r | head -n 10
+du -cks * | sort -rn | head
+
+
+##################################################################################
+#
+# Creating a large file on a Linux using fallocate command
+# The following command will create 1G file:
+#
+##################################################################################
+
+fallocate -l 1G test.img
+fallocate -l 1000M file.out
+dd if=/dev/zero of=test.img bs=1024 count=0 seek=$[1024*100]
+dd if=/dev/zero of=1g.img bs=1 count=0 seek=1G
+dd if=/dev/zero of=1g.bin bs=1G count=1
+
+# Verify new disk image with the ls command:
+$ ls -lh test.img
+$ ls -lh 1g.img
+$ stat 1g.img
+
+# Verify file size/blocks:
+stat 1g.bin
+$ du -h 1g.im
+
+
+
+##################################################################################
+#
+# Becoming human
+# Pass the -h or -H (and other options) command line option to GNU or BSD utilities
+# to get output of command commands like ls, df, du, in human-understandable formats:
+#
+##################################################################################
+
+ls -lh
+# print sizes in human readable format (e.g., 1K 234M 2G)
+df -h
+df -k
+# show output in bytes, KB, MB, or GB
+free -b
+free -k
+free -m
+free -g
+
+# print sizes in human readable format (e.g., 1K 234M 2G)
+du -h
+
+# get file system perms in human readable format
+stat -c %A /boot
+
+# Translate rwx Permissions into Octal Format in Linux
+stat -c '%n %a' *	# add_emails.sh 755
+stat -c '%n %A' * 	# add_emails.sh -rwxr-xr-x
+
+# compare human readable numbers
+sort -h -a file
+
+# display the CPU information in human readable format on a Linux
+lscpu
+lscpu -e
+lscpu -e=cpu,node
+
+# Show the  size of each file but in a more human readable way
+tree -h
+tree -h /boot
+tree -h > filetree.txt  #save folder structure in plane .txt file
+
+
+##################################################################################
+#
+# How do I fix mess created by accidentally untarred files in the current dir?
+# So I accidentally untar a tarball in /var/www/html/ directory instead of
+# /home/projects/www/current. It created mess in /var/www/html/. The easiest way to fix this mess:
+#
+###################################################################################
+
+cd /var/www/html/
+/bin/rm -f "$(tar ztf /path/to/file.tar.gz)"
+
+###################################################################################
+#
+# Want to run the same command again?
+# Just type !!. For example:
+#
+###################################################################################
+
+/myhome/dir/script/name arg1 arg2
+
+# To run the same command again
+!!
+
+## To run the last command again as root user
+sudo !!
+
+
+###################################################################################
+#
+# List all files or directories on your system
+# To see all of the directories on your system, run:
+#
+###################################################################################
+find / -type d | less
+
+# List all directories in your $HOME
+find $HOME -type d -ls | less
+
+To see all of the files, run:
+
+find / -type f | less
+
+# List all files in your $HOME
+find $HOME -type f -ls | less
+
+
+###################################################################################
+#
+# copy file into multiple directories
+#
+###################################################################################
+
+Instead of running:
+
+cp /path/to/file /usr/dir1
+cp /path/to/file /var/dir2
+cp /path/to/file /nas/dir3
+
+Run the following command to copy file into multiple dirs:
+
+echo /usr/dir1 /var/dir2 /nas/dir3 |  xargs -n 1 cp -v /path/to/file
+
+
+
+###################################################################################
+#
+# Quickly find differences between two directories
+#
+###################################################################################
+
+The diff command compare files line by line. It can also compare two directories:
+
+ls -l /tmp/r
+ls -l /tmp/s
+# Compare two folders using diff ##
+diff /tmp/r/ /tmp/s/
+
+
+###################################################################################
+#
+# Force sort by size option
+#
+###################################################################################
+
+You need to pass the -S or --sort=size option as follows:
+$ ls -S
+$ ls -S -l
+$ ls --sort=size -l
+$ ls --sort=size *.avi
+$ ls -S -l *.avi
+
+see largest file first before sorting the operands in lexicographical order. The following command will sort file size in reverse order:
+$ ls -l -S | sort -k 5 -n
+$ ls -lSr
+
+Sort output and print sizes in human readable format (e.g., 1K 234M 2G)
+Pass the -h option to the ls command as follows:
+$ ls -lSh
+$ ls -l -S -h *.avi
+$ ls -l -S -h ~/Downloads/*.mp4 | more
+
+# Search specific files extensions:
+ls -l /etc/{*.conf,*.rc,*.sh}
+OR
+ls -l /etc/*.{conf,rc,sh}
+
+
+du -xak . | sort -n | tail -100
+
+
+
+###################################################################################
+#
+# To search a long list similar commands (e.g. ssh) on a Linux/OSX/Unix/*BSD box:
+#
+###################################################################################
+
+alias hgrep='history | grep'
+hgrep ssh
+
+history > history.txt #save history in plane txt file, last 1000 commands
+
+###################################################################################
+#
+# See list files of a Debian/Ubuntu/Mint Linux package without install
+#
+###################################################################################
+
+
+apt-file list PKG_NAME
+
+
+###################################################################################
+#
+# Use vim to edit files over the network using ssh on a Linux/Unix/OSX/BSD:
+#
+###################################################################################
+
+vim scp://user@server//home/user/fileNameHere
+
+###################################################################################
+##
+## 	Strip out comments and blank lines:
+##
+###################################################################################
+
+egrep -v '^#|^$'  httpd.conf
+egrep -v '^#|^$'  /etc/squid.conf | more
+
+###################################################################################
+##
+##	Disable user's login without disabling the a/c on Linux:
+##
+###################################################################################
+## lock
+
+passwd -l nixcraft
+
+
+###################################################################################
+##
+## 	Scan my router IP 192.168.1.254 ##
+##
+###################################################################################
+
+for p in {1..1023}; do (echo >/dev/tcp/192.168.1.254/$p) >/dev/null 2>&1 && echo "$p open"; done
+
+
+###################################################################################
+##
+## 	Linux and Unix Port Scanning With netcat [nc] Command
+##
+###################################################################################
+
+c -z -v host-name-here port-range
+nc -z -v host-name-here ssh
+nc -z -v host-name-here 22
+nc -w 1 -z -v server-name-here port-Number-her
+
+## scan 1 to 1023 ports ##
+nc -zv vip-1.vsnl.nixcraft.in 1-1023</code>
+
+You can scan individual port too:
+
+nc -zv v.txvip1 443
+nc -zv v.txvip1 80
+nc -zv v.txvip1 22
+nc -zv v.txvip1 21
+nc -zv v.txvip1 smtp
+nc -zvn v.txvip1 ftp
+
+## really fast scanner with 1 timeout value ##
+netcat -v -z -n -w 1 v.txvip1 1-1023
+
+Where,
+-z : Port scanning mode i.e. zero I/O mode.
+-v : Be verbose [use twice -vv to be more verbose].
+-n : Use numeric-only IP addresses i.e. do not use DNS to resolve ip addresses.
+-w 1 : Set time out value to 1.
+
+$ netcat -z -vv www.cyberciti.biz http
+$ netcat -z -vv google.com https
+$ netcat -v -z -n -w 1 192.168.1.254 1-1023
+
+###################################################################################
+##
+## 	Linux Rsync with progress
+##
+###################################################################################
+
+rsync command
+
+rsync --ignore-existing  --recursive  --progress  --size-only /Source /Destination
+
+You need to use the --progress or -P option which show progress during file transfer. The syntax is as follows:
+
+
+rsync --progress source dest
+rsync -P source dest
+rsync [options] --progress source dest
+rsync -av --progress /path/to/*.mp3 /nfs
+rsync -av --progress /path/to/*.avi -e user@remote.example.com:/data
+
+###############################################################
+## The following only works with the latest version of rsync ##
+###############################################################
+
+rsync -av --info=progress2 source dest
+rsync -av --info=progress2 /path/to/*.avi -e user@remote.example.com:/data
+
+## See the pv command below for more info & syntax ##
+rsync -av -P /foo/*.tar.gz nixcraft@server1.cyberciti.biz:~
+rsync -av --progress /foo/*.tar.gz nixcraft@server1.cyberciti.biz:~
+rsync -av --progress root@nas01:/tmp/*Office* .
+
+## progress is what you are looking for. (incase anyone gets this in a google search like i did)
+rsync -zru --update --progress /path/to/source /path/to/dest
+
+## The --info=progress2 option shows statistics based on the whole transfer, rather than individual files.
+rsync -av --info=progress2 root@nas01:/tmp/*Office*
+
+# If you have 42 files in /tmp/software and you would like to copy them to /nas10, enter:
+rsync -vrltD --stats --human-readable /tmp/software /nas10 | pv -lep -s 42
+rsync -vrltD --stats --human-readable /tmp/software /nas10 | pv -lep -s 42 >/dev/null
+
+
+
+Other Examples
+rsync -rav --ignore-existing -e ssh username@192.168.1.40:/home/username/Videos/ ./ | pv -pteabl -s $FCNT >/dev/null
+
+FCNT=$(rsync -r --dry-run --ignore-existing --stats --human-readable -e ssh username@192.168.1.40:/home/username/Videos/ ./ | grep -E 'Number of files transferred: ([0-9]+)' | grep -o -E '[0-9]+'); let FCNT+=5
+
+
+
+###################################################################################
+##
+## Get mysql php versions in terminal
+##
+###################################################################################
+
+# get mysql version (stackoverflow)
+mysql -V | awk '{print $5}' | awk 'gsub(",$","")'
+
+#mysql -V | grep -Eo "\d+\.\d+\.\d+"
+#mysql -V | awk -F'[ ,]+' '{print $5}'
+#mysql -V | awk '{sub(/,$/,"",$5);print $5}'
+#mysql -V | awk '{print $5 }' | tr -d ,
+
+
+# Show "Max" settings for PHP  (http://www.commandlinefu.com/)
+php -i|grep -i max
+
+#Find the location of the currently loaded php.ini file
+ php --ini
+
+# get php version
+php -i | grep 'PHP Version'
+
+
+Syntax highlight PHP source
+php -s source.php > source.html
+
+
+## This line will set the $path variable.
+path=$(php -i|grep php.ini | awk 'NR==2{print $5}')
+## This one expects to read the value of $path from standard input
+## so it sets it to empty unless input is given.
+read path
+
+
+
+###################################################################################
+##
+## How do list packages/applications depends upon vulnerable Glibc?
+##
+###################################################################################
+
+Type the following lsof command:
+lsof | grep libc | awk '{print $1}' | sort | uniq
+
+Fix the GHOST vulnerability on a Ubuntu Linux
+Type the following apt-get command as the root user:
+
+sudo apt-get clean
+sudo apt-get update
+sudo apt-get upgrade
+
+
+###################################################################################
+##
+## Search Text in files
+##
+###################################################################################
+
+find / -type f -iname '*.txt' -exec grep -i '/opt/lampp/' {} +
+find / -type f -iname 'php.ini' -exec grep -i 'timezone' {} +
+find /home/ -type f -iname '*.txt' -exec grep -i 'Neu-WE' {} +
+
+find "path" -type f -exec grep -i "pattern" {} +
+find "path" -type f -iname "*.txt" -exec grep -i "pattern" {} +
+find "path" -type f -iname "*.txt" -exec grep -H 'Linux123' {} +
+find /path -name '*.pdf' -exec sh -c 'pdftotext "{}" - | grep --with-filename --label="{}" --color "your pattern"' \;
+find . -name '*.pdf' -exec echo {} \; -exec pdftotext {} - \; | grep "pattern\|pdf"
+find . -name '*.pdf' | xargs -P 5 -I % pdftotext % - | grep --with-filename --label="{}" --color "pattern"
+
+
+# get version from file
+cat index.html | grep latest= | awk -F= {'print $3'} | awk -F\' {'print $1'}
+
+
+# get one line with php versionin terminal
+php -i | grep 'PHP Version' | awk '{print $4; exit}'
+php -i | grep 'PHP Version' | awk  -F\' {'print $1;exit'}
+php -i | grep 'PHP Version' | awk 'NR==1 {print $4}'
+
+
+
+### Find php filess with whitespace at the begining of file
+---------------------------------------------------------------
+find . -type f -name '*.php' -exec grep -Hin ' <?php' /dev/null {} + | grep 'php:1:'
+find . -type f -name '*.php' -exec grep -Hin '\s<?php' /dev/null {} + | grep 'php:1:'
+grep -Hin -v -R "^<?php" . --include \*.php | grep "php:1: <?php"
+
+### Find php files with whitespace at the end of file
+---------------------------------------------------------------
+find . -type f -name '*.php' -exec awk 'END {print $0 "____ , ____" FILENAME}' {} \; | grep -iHn '?> '
+
+
+
+###################################################################################
+##
+## 	7 different ways to print the last line of a file in Linux
+##	http://www.theunixschool.com/2012/05/7-different-ways-to-print-last-line-of.html
+##
+###################################################################################
+
+cat file
+tail -1 file
+awk 'END{print}' file
+sed -n '$p' file
+sed '$!d' file
+perl -ne '$x=$_;END{print $x;}' file
+tac file | head -1
+
+SHELL
+
+#!/bin/bash
+ while read line
+	do x=$line
+		done < file
+	echo $x
+
+
+##############################################
+##
+## Correct Wrong Typed Passwd
+‪## ‎bash‬ ‪#‎unix‬ ‪#‎linux‬ ‪#‎tips‬ #nixCraft #
+##
+##############################################
+
+If you know you typed a command or password wrong,
+- you can use ctrl + u to delete the whole line
+- or ctrl + w to delete just a word.

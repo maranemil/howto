@@ -1,0 +1,864 @@
+##############################################
+#
+# FFMPEG Capture Screen
+#
+##############################################
+
+ffmpeg -video_size 1024x768 -framerate 25 -f x11grab -i :0.0+100,200 output.mp4  # vid
+ffmpeg -video_size 1024x768 -framerate 25 -f x11grab -i :0.0+100,200 -f alsa -ac 2 -i hw:0 output.mkv # vid + aud io
+ffmpeg -video_size 1024x768 -framerate 25 -f x11grab -i :0.0+100,200 -f pulse -ac 2 -i default output.mkv # vid + audio pulse
+
+# https://trac.ffmpeg.org/wiki/Capture/Desktop
+# http://ubuntuhandbook.org/index.php/2016/11/install-simple-screen-recorder-0-3-8-in-ubuntu-16-04-16-10/
+# https://wiki.ubuntuusers.de/SimpleScreenRecorder/
+
+sudo apt-get install libavcodec-extra
+sudo add-apt-repository ppa:maarten-baert/simplescreenrecorder
+sudo apt update
+sudo apt install simplescreenrecorder simplescreenrecorder-lib # install
+
+#sudo apt-get install simplescreenrecorder
+#sudo apt-get install simplescreenrecorder-lib:i386
+
+sudo apt remove simplescreenrecorder simplescreenrecorder-lib # remove
+
+##############################################
+#
+# FFMPEG EFFECTS
+#
+##############################################
+
+# resize http://randombio.com/linuxsetup141.html
+ffmpeg -i input.mp4 -vf scale=320:240 output.mp4
+ffmpeg -i input.mp4 -vf scale=640:480 output.mp4
+ffmpeg -i input.mkv -vf scale=-1:720 -c:v libx264 -crf 0 -preset veryslow -c:a copy output.mkv
+ffmpeg -i input.mkv -vf scale=-1:720 -c:v libx264 -crf 18 -preset veryslow -c:a copy output.mkv
+
+ffmpeg -i input.jpg -vf scale=w=320:h=240:force_original_aspect_ratio=decrease output_320.png
+ffmpeg -i input.jpg -vf scale=320:-1 output_320.png
+ffmpeg -i input.mp4 -vf scale=640:-1 -strict -2 output.mp4 # ok
+
+# compress v2
+ffmpeg -i input.mp4 -c:v libx264 -crf 18 -b:v 500K -c:a aac -strict -2 -preset ultrafast output.mp4
+
+# compress v1
+ffmpeg -i input.mp4 -c:v libx264 -crf 24 -b:v 1M -c:a aac -strict -2 -preset ultrafast output.mp4
+
+# saturation
+ffmpeg -i input.mp4  -vf eq=1:0:1.3:1:1:0.9:1:1 -c:v libx264 -strict -2 -threads 2 -preset ultrafast output.mp4 -y
+ffplay -i input.mp4  -vf eq=1:0:2.9:1:1:1.1:1:1
+
+# bw - black and white
+ffmpeg -i input.mp4 -vf eq=1:0:0:1:1:1:1:1 -strict -2 -threads 2 -preset ultrafast  output.mp4
+
+# compress & rotate 180
+ffmpeg -i input.MP4 -c:v libx264 -crf 20 -b:v 1M -c:a aac -strict -2 -threads 2 -vf "transpose=2,transpose=2" -preset ultrafast output.mp4
+
+# cut video
+ffmpeg -i input.MP4 -ss 00:05:05 -t 00:30:10 -c copy -threads 2 -preset ultrafast  cut_video.mp4
+
+# speed up 4x (setpts=0.5*PTS) or 2x (setpts=0.25*PTS)
+ffmpeg -i output.mp4 -r 16 -filter:v "setpts=0.25*PTS" -strict -2 -preset ultrafast output2.mp4
+
+# speed down
+ffmpeg -i input.mkv -filter:v "setpts=2.0*PTS" output.mkv
+
+# quadruple the audio speed:
+ffmpeg -i input.mkv -filter:a "atempo=2.0,atempo=2.0" -vn output.mkv
+
+# saturation speed up 4x
+ffmpeg -i input.mp4  -vf eq=1:0:1.9:1:1:0.9:1:1 -c:v libx264 -strict -2 -threads 2 -preset ultrafast -filter:v "setpts=0.25*PTS" output.mp4 -y
+ ffplay -i GOPR0186cr.mp4 -vf "eq=1:0:2.9:1:1:1.1:1:1","setpts=0.25*PTS"
+
+
+# mirror fx https://trac.ffmpeg.org/wiki/FancyFilteringExamples
+ ffmpeg -i input.mp4 -vf "crop=iw/2:ih:0:0,split[left][tmp];[tmp]hflip[right];[left][right] hstack" -strict -2 output.mp4
+
+
+# speedup fast move
+ffplay -i GOPR0186cr.mp4 -vf "fps=fps=115"
+ffplay -i GOPR0186cr.mp4 -vf "setpts=N/(125*TB)"
+ffplay -i GOPR0186cr.mp4 -vf "setpts='1/(65*TB) * (N + 0.05 * sin(N*2*PI/25))'"
+
+
+https://ffmpeg.org/ffmpeg-filters.html#Video-Filters
+# crop
+ffmpeg -i GOPR0186cr.mp4 -vf: "crop=480:270:200:100" -c:a copy  -qp 0 output.mp4
+ffplay -i GOPR0186cr.mp4 -vf: "crop=480:270:200:100"
+ffplay -i GOPR0186cr.mp4 -vf "crop=iw-60:ih"
+
+# niceee mirror
+http://randombio.com/linuxsetup141.html
+ffplay -i GOPR0186cr.mp4 -vf "split [main][tmp]; [tmp] crop=iw:ih/2:0:0, vflip [flip]; [main][flip] overlay=0:H/2"
+ffmpeg -i inputmovie -vf "split [main][tmp]; [tmp] crop=iw:ih/2:0:0, vflip [flip]; [main][flip] overlay=0:H/2" outputmovie
+
+# overlay
+ffplay -i GOPR0186cr.mp4 -vf "split [main][tmp]; [tmp] lutyuv="y=val*5" [tmp2]; [main][tmp2] overlay"
+ffmpeg -i DSC_6881.MOV -vf "split [main][tmp]; [tmp] lutyuv="y=val*5" [tmp2]; [main][tmp2] overlay" output.avi
+
+# ----
+ffplay -i GOPR0186cr.mp4 -vf "split [main][tmp]; [tmp] lutyuv=y=gammaval(0.6) [tmp2]; [main][tmp2] overlay"
+
+# invert colors
+ffplay -i GOPR0186cr.mp4 -vf "split [main][tmp]; [tmp] lutrgb="r=negval:g=negval:b=negval" [tmp2]; [main][tmp2] overlay"
+
+# red filter
+ffplay -i GOPR0186cr.mp4 -vf "colorbalance=rs=.7"
+
+# red noise
+ffplay -i GOPR0186cr.mp4 -vf "colorlevels=rimax=0.002:gimax=0.902:bimax=0.902"
+ffplay -i GOPR0186cr.mp4 -vf lutrgb="g=0:b=0"
+
+# blue filter
+ffplay -i GOPR0186cr.mp4 -vf "colorlevels=rimin=0.858:gimin=0.058:bimin=0.058"
+ffplay -i GOPR0186cr.mp4 -vf "colorlevels=rimin=0.439:gimin=0.039:bimin=0.039:rimax=0.96:gimax=0.96:bimax=0.96"
+ffplay -i GOPR0186cr.mp4 -vf "colorlevels=romin=0.1:gomin=0.1:bomin=0.9"
+
+# grey scale
+ffplay -i GOPR0186cr.mp4 -vf "colorchannelmixer=.3:.4:.3:0:.3:.4:.3:0:.3:.4:.3"
+ffplay -i GOPR0186cr.mp4 -vf lutyuv="u=128:v=128"
+
+# crop jumping effect trembling
+ffplay -i GOPR0186cr.mp4 -vf "crop=in_w/2:in_h/2:(in_w-out_w)/2+((in_w-out_w)/2)*sin(n/10):(in_h-out_h)/2 +((in_h-out_h)/2)*sin(n/7)"
+ffplay -i GOPR0186cr.mp4 -vf "crop=in_w/2:in_h/2:(in_w-out_w)/2+((in_w-out_w)/2)*sin(t*10):(in_h-out_h)/2 +((in_h-out_h)/2)*sin(t*13)"
+
+# crop
+ffplay -i GOPR0186cr.mp4 -vf "crop=in_w/2:in_h/2:y:10+10*sin(n/10)"
+ffplay -i xperimet.mp4 -vf "scale=720:480,crop=in_w/2:in_h/1"
+
+# instagram color
+ffplay -i GOPR0186cr.mp4 -vf "curves=vintage"
+
+# draw a box
+ffplay -i GOPR0186cr.mp4 -vf "drawbox=10:20:200:60:red@0.5"
+ffplay -i GOPR0186cr.mp4 -vf "drawbox=x=10:y=10:w=100:h=100:color=pink@0.5:t=max"
+
+# draw a grid
+ffplay -i GOPR0186cr.mp4 -vf "drawgrid=width=100:height=100:thickness=2:color=red@0.5"
+ffplay -i GOPR0186cr.mp4 -vf "drawgrid=w=iw/3:h=ih/3:t=2:c=white@0.5"
+
+# fadein + fadeout
+ffplay -i GOPR0186cr.mp4 -vf fade=in:0:30
+ffplay -i GOPR0186cr.mp4 -vf "fade=in:0:25, fade=out:35:25"
+
+# emboss
+ffplay -i GOPR0186cr.mp4 -vf "fftfilt=dc_Y=128:weight_Y='squish(1-(Y+X)/100)'"
+ffplay -i GOPR0186cr.mp4 -vf "format=gray,geq=lum_expr='(p(X,Y)+(256-p(X-4,Y-4)))/2'"
+
+# blury
+ffplay -i GOPR0186cr.mp4 -vf "fftfilt=dc_Y=0:weight_Y='squish((Y+X)/100-1)'"
+
+# noisy
+ffplay -i GOPR0186cr.mp4 -vf "fftfilt=dc_Y=0:weight_Y='1+squish(1-(Y+X)/100)'"
+ffplay -i GOPR0186cr.mp4 -vf lutyuv="y=2*val"
+
+# mega noisy
+ffplay -i GOPR0186cr.mp4 -vf noise=alls=80:allf=t+u
+
+# rotate flip horizontaly
+ffplay -i GOPR0186cr.mp4 -vf "geq=p(W-X\,Y)"
+ffplay -i GOPR0186cr.mp4 -vf "hflip"
+
+# rainbow fx
+ffplay -i GOPR0186cr.mp4 -vf "geq=r='X/W*r(X,Y)':g='(1-X/W)*g(X,Y)':b='(H-Y)/H*b(X,Y)'"
+
+# hue
+ffplay -i GOPR0186cr.mp4 -vf "hue=h=90:s=6"
+
+# hue rainbow
+ffplay -i GOPR0186cr.mp4 -vf hue="H=2*PI*t: s=sin(2*PI*t)+1"
+
+# deshake
+ffplay input.avi -vf 'split[a][b]; [a]pad=iw*2:ih[src]; [b]deshake[filt]; [src][filt]overlay=w'
+ffplay input.avi -vf 'split[b], pad=iw*2[src], [b]deshake, [src]overlay=w'
+
+# reverse
+Warning: This filter requires memory to buffer the entire clip, so trimming is suggested.
+trim=end=5,reverse
+
+# rotate
+ffplay -i GOPR0186cr.mp4 -vf  rotate=PI/6
+ffplay -i GOPR0186cr.mp4 -vf  rotate=-PI/6
+ffplay -i GOPR0186cr.mp4 -vf rotate=45*PI/180
+
+#scale resize
+ffplay -i GOPR0186cr.mp4 -vf scale=w=200:h=100
+ffplay -i GOPR0186cr.mp4 -vf scale=200:100
+ffplay -i GOPR0186cr.mp4 -vf scale=w=2*iw:h=2*ih # 2x double
+ffplay -i GOPR0186cr.mp4 -vf scale=w=iw/2:h=ih/2 # 0,5x half
+ffplay -i GOPR0186cr.mp4 -vf scale=160:120
+
+# stereo - mix left and right
+ffplay -i GOPR0186cr.mp4 -vf stereo3d=sbsl:aybd
+ffplay -i GOPR0186cr.mp4 -vf stereo3d=abl:sbsr,stereo3d=sbsl:aybd
+ffplay -i GOPR0186cr.mp4 -vf stereo3d=abl:sbsr,stereo3d=sbsl:aybd,"geq=r='X/W*r(X,Y)':g='(1-X/W)*g(X,Y)':b='(H-Y)/H*b(X,Y)'"
+
+# stereo - mix left and right + flip - kaleidoscope
+ffplay -i GOPR0186cr.mp4 -vf rotate=PI/6,stereo3d=abl:sbsr,stereo3d=sbsl:aybd,"split [main][tmp]; [tmp] crop=iw:ih/2:0:0, vflip [flip]; [main][flip] overlay=0:H/2","crop=iw/2:ih:0:0,split[left][tmp];[tmp]hflip[right];[left][right] hstack",scale=720:460
+
+ffplay -i GOPR0186cr.mp4 -vf rotate=PI/6,rotate=PI/180,stereo3d=abl:sbsr,stereo3d=sbsl:aybd,"split [main][tmp]; [tmp] crop=iw:ih/2:0:0, vflip [flip]; [main][flip] overlay=0:H/2","crop=iw/2:ih:0:0,split[left][tmp];[tmp]hflip[right];[left][right] hstack",scale=320:460
+
+ffmpeg -i GOPR0186cr.mp4 -vf rotate=PI/6,rotate=PI/180,stereo3d=abl:sbsr,stereo3d=sbsl:aybd,"split [main][tmp]; [tmp] crop=iw:ih/2:0:0, vflip [flip]; [main][flip] overlay=0:H/2","crop=iw/2:ih:0:0,split[left][tmp];[tmp]hflip[right];[left][right] hstack",scale=720:460 -strict -2 xperimet.mp4
+
+# thumbnail
+ffmpeg -i in.avi -vf thumbnail,scale=300:200 -frames:v 1 out.png
+
+# trim
+ffmpeg -i INPUT -vf trim=60:120
+ffmpeg -i INPUT -vf trim=duration=1
+
+# vertically flip
+ffmpeg -i in.avi -vf "vflip"
+
+# zoom zoompan
+ffplay -i GOPR0186cr.mp4 -vf "zoompan=z='min(zoom+0.0015,1.5)':d=700:x='if(gte(zoom,1.5),x,x+1/a)':y='if(gte(zoom,1.5),y,y+1)':s=640x360"
+ffplay -i GOPR0186cr.mp4 -vf "zoompan=z='min(zoom+0.0015,1.5)':d=700:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
+ffplay -i GOPR0186cr.mp4 -vf "zoompan=z='min(max(zoom,pzoom)+0.0015,1.5)':d=1:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
+
+# select 5th frame
+ffplay -i GOPR0186cr.mp4 -vf select='not(mod(n\,5))'
+
+
+
+
+# AviSynth
+ffmpeg -i "script.avs" -acodec copy -vcodec copy output.mp4
+
+# mirror fx + max saturation
+ffmpeg -i input.mp4 -strict -2 -vf eq=1:0:2.9:1:1:1.1:1:1  output.mp4
+ffmpeg -i input.mp4 -vf "crop=iw/2:ih:0:0,split[left][tmp];[tmp]hflip[right];[left][right] hstack" -strict -2 -preset ultrafast output.mp4
+
+# green filter
+ffmpeg -i input.mp4 -vcodec mjpeg -pix_fmt yuvj422p -q:v 0 -an output.mp4
+
+# invert colors
+ffmpeg -i daymusic.mp4 -vf lutrgb="r=negval:g=negval:b=negval" -preset ultrafast -strict -2 daymusicinvert.mp4
+
+# add watermark
+
+Top Left Corner
+ffmpeg -i input.avi -vf "movie=file.png [watermark]; [in][watermark] overlay=10:10 [out]" output.flv
+
+Top Right Corner
+ffmpeg –i input.avi -vf "movie=watermarklogo.png [watermark]; [in][watermark] overlay=main_w-overlay_w-10:10 [out]" output.flv
+
+Bottom Left Corner
+ffmpeg –i input.avi -vf "movie=watermarklogo.png [watermark]; [in][watermark] overlay=10:main_h-overlay_h-10 [out]" output.flv
+
+Bottom Right Corner
+ffmpeg –i input.avi -vf "movie=watermarklogo.png [watermark]; [in][watermark] overlay=main_w-overlay_w-10:main_h-overlay_h-10 [out]" output.flv
+
+# Rotate Videos 90
+ffmpeg -i input.avi -vf transpose=1 output.avi
+
+# Text Watermarks To Videos
+ffmpeg -i input.mp4 -vf drawtext="fontfile=/usr/share/fonts/truetype/freefont/FreeSans.ttf: text='YOUR TEXT HERE':fontcolor=red@1.0:fontsize=70:x=00: y=40" -y output.mp4
+
+# record your screen
+ffmpeg -f x11grab -follow_mouse 100 -r 25 -s vga -i :0.0 filename.avi
+ffmpeg -f x11grab -s 800x600 -r 25 -i :0.0 -qscale 5 filename.avi
+ffmpeg -f x11grab -follow_mouse centered -show_region 1 -r 25 -s vga -i :0.0 filename.avi
+ffmpeg -f x11grab -s wxga -r 25 -i :0.0 -sameq  video.mp4
+
+# Audio To A Static Picture
+ffmpeg -i audio.mp3 -loop_input -f image2 -i file.jpg -t 188 output.mp4
+
+# Adjust Audio/Video Volume
+ffmpeg -i input.avi -vol 100  output.avi
+ffmpeg -i input.mp3 -vol 100 -ab 128 output.mp3
+
+# Insert A Video Inside Another Video
+ffmpeg -i video1.mp4 -vf "movie=video2.mp4:seek_point=5, scale=200:-1, setpts=PTS-STARTPTS [movie]; [in] setpts=PTS-STARTPTS, [movie] overlay=270:240 [out]" output.mp4
+
+# Add a Rectangle To A Video
+ffmpeg -i input.avi -vf "drawbox=500:150:600:400:orange@0.9" -sameq -y output.avi
+
+# mix 2 videos
+ffmpeg -i input.mp4 -i input.mp4 -filter_complex "[0:v:0]pad=iw*2:ih[bg]; [bg][1:v:0]overlay=w" -strict -2 output.mp4
+
+ffmpeg -i input1 -i input2 -filter_complex "[0:v]setpts=PTS-STARTPTS, pad=iw*2:ih[bg]; [1:v]setpts=PTS-STARTPTS[fg]; [bg][fg]overlay=w" output
+
+ffmpeg -i input1 -i input2 -filter_complex "[0:v]setpts=PTS-STARTPTS, pad=iw*2:ih[bg]; [1:v]setpts=PTS-STARTPTS[fg]; [bg][fg]overlay=w; amerge,pan=stereo:c0<c0+c2:c1<c1+c3" -strict -2 -preset ultrafast output.mp4
+
+
+
+# merging video and audio, with audio re-encoding
+ffmpeg -i video.mp4 -i audio.wav -c:v copy -c:a aac -strict experimental -t 00:11:10 output.mp4
+ffmpeg -i video.mp4 -i audio.wav -c copy output.mkv
+ffmpeg -i video.mp4 -i audio.wav -c:v copy -c:a aac -strict experimental  -map 0:v:0 -map 1:a:0 output.mp4 #ok
+
+extracting frames from video
+ffmpeg -ss 00:00:26.000 -i dance.mp4 -t 00:00:03.000 -r 6 jpg2/dance_%04d.jpg
+
+make video from images
+ffmpeg -f image2 -r 1/3 -i "P1190%03d.JPG" -c:v libx264 -r 30 my_pictures.mp4
+
+make thumb img
+ffmpeg  -itsoffset (time) -i video.avi -vcodec mjpeg -vframes 1 -an -f rawvideo -s (WIDTHxHEIGHT) thumb.jpg
+
+
+#fade in/out
+ffmpeg \
+-loop 1 -t 5 -i input0.png \
+-loop 1 -t 5 -i input1.png \
+-loop 1 -t 5 -i input2.png \
+-loop 1 -t 5 -i input3.png \
+-loop 1 -t 5 -i input4.png \
+-filter_complex \
+"[0:v]fade=t=out:st=4:d=1[v0]; \record your screen
+ [1:v]fade=t=in:st=0:d=1,fade=t=out:st=4:d=1[v1]; \
+ [2:v]fade=t=in:st=0:d=1,fade=t=out:st=4:d=1[v2]; \
+ [3:v]fade=t=in:st=0:d=1,fade=t=out:st=4:d=1[v3]; \
+ [4:v]fade=t=in:st=0:d=1,fade=t=out:st=4:d=1[v4]; \
+ [v0][v1][v2][v3][v4]concat=n=5:v=1:a=0,format=yuv420p[v]" -map "[v]" out.mp4
+
+
+
+# crossfade
+ffmpeg \
+-loop 1 -t 1 -i 001.png \
+-loop 1 -t 1 -i 002.png \
+-loop 1 -t 1 -i 003.png \
+-loop 1 -t 1 -i 004.png \
+-loop 1 -t 1 -i 005.png \
+-filter_complex \
+"[1:v][0:v]blend=all_expr='A*(if(gte(T,0.5),1,T/0.5))+B*(1-(if(gte(T,0.5),1,T/0.5)))'[b1v]; \
+ [2:v][1:v]blend=all_expr='A*(if(gte(T,0.5),1,T/0.5))+B*(1-(if(gte(T,0.5),1,T/0.5)))'[b2v]; \
+ [3:v][2:v]blend=all_expr='A*(if(gte(T,0.5),1,T/0.5))+B*(1-(if(gte(T,0.5),1,T/0.5)))'[b3v]; \
+ [4:v][3:v]blend=all_expr='A*(if(gte(T,0.5),1,T/0.5))+B*(1-(if(gte(T,0.5),1,T/0.5)))'[b4v]; \
+ [0:v][b1v][1:v][b2v][2:v][b3v][3:v][b4v][4:v]concat=n=9:v=1:a=0,format=yuv420p[v]" -map "[v]" out.mp4
+
+
+#melt
+melt -verbose \
+-profile atsc_720p_25 \
+001.png out=50 \
+002.png out=75 -mix 25 -mixer luma \
+003.png out=75 -mix 25 -mixer luma \
+004.png out=75 -mix 25 -mixer luma \
+005.png out=75 -mix 25 -mixer luma \
+-consumer avformat:output.mp4 vcodec=libx264 an=1
+
+
+#mix 2 files
+ffmpeg -i first.ogg -i second.ogg \
+-filter_complex \
+"color=black:WxH:d=Video1Length+Video2Length-FadeDuration[base]; \
+ [0:v]setpts=PTS-STARTPTS[v0]; \
+ [1:v]format=yuva420p,fade=in:st=0:d=FadeDuration:alpha=1, \
+      setpts=PTS-STARTPTS+((Video1Length-FadeDuration)/TB)[v1]; \
+ [base][v0]overlay[tmp]; \
+ [tmp][v1]overlay,format=yuv420p[fv]; \
+ [0:a][1:a]acrossfade=d=Frecord your screenadeDuration[fa]" \
+-map [fv] -map [fa]
+output.ogg
+
+
+# add text
+ffmpeg -i input.mp4 -vf \
+"format=yuv444p, \
+ drawbox=y=ih/PHI:color=black@0.4:width=iw:height=48:t=max, \
+ drawtext=fontfile=OpenSans-Regular.ttf:text='Title of this Video':fontcolor=white:fontsize=24:x=(w-tw)/2:y=(h/PHI)+th, \
+ format=yuv420p" \
+-c:v libx264 -c:a copy -movflags +faststart output.mp4
+
+# add text
+ffmpeg -i input.mp4 -vf drawtext="fontfile=/path/to/font.ttf: \
+text='Stack Overflow': fontcolor=white: fontsize=24: box=1: boxcolor=black@0.5: \
+boxborderw=5: x=(w-text_w)/2: y=(h-text_h)/2" -codec:a copy output.mp4
+
+# add text
+ffmpeg -i input -filter:v "drawtext=fontsize=30:box=1:fontfile=/usr/share/fonts/TTF/Vera.ttf:text='Stack Overflow':x=(w-text_w)/2:y=(h-text_h-line_h)/2" output
+
+# add text
+ffmpeg -f video4linux2 -i /dev/video0 -s 640x480 -r 30 -vf \
+"drawtext=fontfile=/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans-Bold.ttf: \
+text='\%T': fontcolor=white@0.8: x=7: y=460" -vcodec libx264 -vb 2000k \
+-preset ultrafast -f mp4 output.mp4
+
+ffmpeg -f video4linux2 -input_format mjpeg -s 1280x720 -i /dev/video0 \
+-vf "drawtext=fontfile=/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf: \
+text='%{localtime\:%T}': fontcolor=white@0.8: x=7: y=700" -vcodec libx264 \
+-preset veryfast -f mp4 -pix_fmt yuv420p -y output.mp4
+
+ffmpeg -i i.mp4 -i watermarkfile.png -filter_complex \
+"[0:v]drawtext=fontfile=/path/to/fonts/FreeSans.ttf:text='TESTING':fontcolor=black@1.0:fontsize=36:x=00:y=40[text]; \
+[text][1:v]overlay[filtered]" -map "[filtered]" \
+-map 0:a -codec:v libx264 -codec:a copy output.mp4
+
+
+https://trac.ffmpeg.org/wiki/Scaling%20(resizing)%20with%20ffmpeg
+http://www.upubuntu.com/2012/10/some-useful-ffmpeg-commands.html
+https://manned.org/ffmpeg-filters/61c961a5
+https://github.com/uclartsoftware/video-and-image-cli
+http://www.bogotobogo.com/FFMpeg/ffmpeg_fade_in_fade_out_transitions_effects_filters.php
+
+
+#######################################
+#
+# mp4 to mp3 convert
+#
+#######################################
+
+sudo apt-get install ffmpeg
+for f in *.mp4; do ffmpeg -i "$f" -vn -c:a libmp3lame -ar 44100 -ac 2 -ab 192k "${f/%mp4/mp3}"; done
+
+--------------------------------------
+#!/bin/bash
+for f in *.mp4
+do
+    name=`echo "$f" | sed -e "s/.mp4$//g"`
+    ffmpeg -i "$f" -vn -ar 44100 -ac 2 -ab 192k -f mp3 "$name.mp3"
+done
+--------------------------------------
+#!/bin/bash
+for i in *.m4a; do
+    avconv -i "$i" -vn -acodec libmp3lame -ac 2 -ab 160k -ar 48000 "`basename "$i" .m4a`.mp3"
+done
+--------------------------------------
+ffmpeg -i video.mp4 -f mp3 -ab 192000 -vn music.mp3
+aptitude search codecname
+
+--------------------------------------
+sudo apt-get install soundconverter
+
+soundconverter -b -m "audio/mpeg" -s ".mp3" /PFAD/ZUR/DATEI/DATEI
+soundconverter -b -m "audio/mpeg" -s ".mp3" /PFAD/ZUM/VERZEICHNIS/VERZEICHNIS/*.DATEIENDUNG
+--------------------------------------
+sudo add-apt-repository ppa:ffmulticonverter/stable
+sudo apt-get update
+sudo apt-get install ffmulticonverter
+--------------------------------------
+for f in *.mp4; do name=`echo "$f" | sed -e "s/.mp4$//g"` && ffmpeg -i "$f" -vn -acodec copy "$name.m4a"; done
+
+
+
+##############################################
+#
+# Convert webm in mp4
+#
+##############################################
+
+sudo add-apt-repository ppa:jon-severinsson/ffmpeg
+sudo apt-get update
+sudo apt-get install ffmpeg
+
+
+# "-sameq" waS replaced with "-qscale 0"
+ffmpeg -i filename.webm -qscale 0 outfile.mp4
+
+ffmpeg -fflags +genpts -i 1.webm -r 24 1.mp4
+
+ffmpeg -i input.webm -c:v libx264 -crf 20 -c:a aac -strict experimental out.mp4
+ffmpeg -i file.webm file.mp4
+ffmpeg -i movie.webm movie.mp4
+ffmpeg -i movie.webm -vcodec libx264 movie.mp4
+ffmpeg -i movie.webm -vcodec libx264 -qscale 0 movie.mp4
+
+-------------------------------------------
+
+## WEBM:
+ffmpeg -i movie.file -vcodec libvpx -b:v 600k -acodec libvorbis -ac 2 -b:a 96k -ar 44100 -vf scale=480:-1 -map 0 out.webm
+## MP4:
+ffmpeg -i movie.file -vcodec libx264 -b:v 600k -acodec libfdk_aac -ac 2 -ar 48000 -b:a 96k  -vf scale=480:-1 -map 0 out.mp4
+## OGV:
+ffmpeg -i movie.file -vcodec libtheora -b:v 600k -acodec libvorbis -b:a 96k -vf scale=480:-1 -map 0 out.ogv
+
+avconv -i 23_1460420555.webm -c:v libx264  -strict experimental out.mp4
+
+ffmpeg -i input.mp4 -c:v libvpx -b:v 1M -c:a libvorbis output.webm
+ffmpeg -i input.mp4 -c:v libvpx -crf 10 -b:v 1M -c:a libvorbis output.webm
+ffmpeg -i input.mp4 -c:v libvpx -qmin 0 -qmax 50 -crf 5 -b:v 1M -c:a libvorbis output.webm
+ffmpeg -i input.mp4 -c:v libvpx -minrate 1M -maxrate 1M -b:v 1M -c:a libvorbis output.webm
+ffmpeg -i %04d.png -c:v libvpx -pix_fmt yuva420p -metadata:s:v:0 alpha_mode="1" output.webm
+
+
+##############################################
+#
+# Convert wmv in mp4
+#
+##############################################
+
+sudo apt-get install ffmpeg
+
+ffmpeg -i DLP_PART_2_768k.wmv  -q:a 100  -strict -2 DLP_PART_2_768k.mp4
+ffmpeg -i DLP_PART_2_768k.wmv -c:v libx264 -crf 23 -q:a 100 -strict -2 DLP_PART_2_768kx.mp4
+
+for f in *.wmv; do ffmpeg -i "$f" -c:v libx264  -q:a 100  -strict -2    "${f%.wmv}.mp4"; done
+for f in *.wmv; do ffmpeg -i "$f" -c:v libx264  -q:a 100  -strict -2  -threads 2  "${f%.wmv}.mp4"; done
+for f in *.asf; do ffmpeg -i "$f" -c:v libx264  -q:a 100  -strict -2  -threads 2  "${f%.asf}.mp4"; done
+
+ffmpeg -i abc.wmv -c:v libx264  -q:a 100  -strict -2 -threads 2 abc.mp4
+ffmpeg -i abc.asf -c:v libx264  -q:a 100  -strict -2 -threads 2 abc.mp4
+ffmpeg -i abc.flv -c:v libx264  -q:a 100  -strict -2 -threads 2 abc.mp4
+
+ffmpeg -i input.wmv -c:v libx264 -crf 23 -c:a libfaac -q:a 100 -strict -2 output.mp4
+ffmpeg -i input.wmv -c:v libx264 -crf 23 -profile:v high -r 30 -c:a libfaac -q:a 100 -ar 48000 output.mp4
+--------------------------------------------------------------
+$ mkdir encoded
+$ for f in *.avi; do ffmpeg -i "$f" -c:v libx264 -crf 23 -preset medium \
+  -c:a libfdk_aac -vbr 4 -movflags +faststart -vf scale=-2:720,format=yuv420p \
+  encoded/"${f%.avi}.mp4"; done
+
+--------------------------------------------------------------
+-s size Set frame size. The format is wxh (avserver default = 160x128, ffmpeg default = same as source).  The following abbreviations are recognized:
+
+sqcif           128x96
+qcif            176x144
+cif 		352x288
+4cif            704x576
+16cif           1408x1152
+qqvga           160x120
+qvga            320x240
+vga 		640x480
+svga            800x600
+xga 		1024x768
+uxga            1600x1200
+qxga            2048x1536
+sxga            1280x1024
+qsxga           2560x2048
+hsxga           5120x4096
+wvga            852x480
+wxga	      	1366x768
+wsxga	        1600x1024
+wuxga	        1920x1200
+woxga	        2560x1600
+wqsxga	        3200x2048
+wquxga	        3840x2400
+whsxga	        6400x4096
+whuxga	        7680x4800
+cga 		320x200
+ega 		640x350
+hd480	        852x480
+hd720	        1280x720
+hd1080	        1920x1080
+
+ffmpeg -i 1920_12000-hd.wmv -vcodec libx264 -preset slow -acodec aac -b 800k output.mp4
+ffmpeg -i input -c:v libx264 -crf 23 -preset medium -c:a libfdk_aac -vbr 4 \ -movflags +faststart -vf scale=-2:720,format=yuv420p output.mp4
+--------------------------------------------------------------
+
+ffmpeg -y -i input.wmv -vcodec libx264 -acodec libfaac -ab 128k -ac 2 -b 300 -threads 4 -flags +loop -cmp +chroma -partitions 0 -subq 1 -trellis 0 -refs 1 -coder 0 -bufsize 10M  -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -level 30 output.mp4
+--------------------------------------------------------------
+File convert.sh
+
+#!/bin/bash
+
+# This script is to convert automatically a folder of video files to MP4.
+# You need to change SRC -- Sourse folder and DEST -- Destination folder
+# The MP4 format is 480x270.
+
+SRC=/home/video/
+DEST=/home/www/mp4files/
+DEST_EXT=mp4
+HANDBRAKE_CLI=HandBrakeCLI
+
+for FILE in `ls $SRC`
+do
+        filename=$(basename $FILE)
+        extension=${filename##*.}
+        filename=${filename%.*}
+
+        $HANDBRAKE_CLI -i $SRC/$FILE -o $DEST/$filename.$DEST_EXT -e x264 -q 22 -r 12 -B 64 -X 480 -O
+done
+-----------------------------------
+ffmpeg -i /var/www/html/vid/upload/inputfile.wmv -s 500x400 -vcodec libx264 -strict -2  /var/www/html/vid/mp4videos/outputfile.mp4
+shell_exec("/usr/bin/ffmpeg -i /var/www/html/vid/upload/inputfile.wmv -f mp4 -s 500x400 -strict -2  /var/www/html/vid/mp4videos/outputfile.mp4 2>&1");
+ffmpeg -i input.wmv -c:v libx264 -crf 23 -preset medium -tune stillimage -an output.mp4
+
+
+
+#################################
+#
+#	MP4 Video Compression
+#
+#################################
+
+ffmpeg -i <inputfilename> -s 640x480 -b 512k -vcodec mpeg1video -acodec copy <outputfilename>
+ffmpeg -i input.mp4 -c:v libx264 -crf 24 -b:v 1M -c:a aac output.mp4
+ffmpeg -i input -c:v libx264 -preset slow -crf 22 -c:a copy output.mkv
+ffmpeg -i input.mp4 -vcodec h264 -acodec mp2 output.mp4
+ffmpeg -i input.mp4 -vcodec libx264 -crf 20 output.mp4
+ffmpeg -i input.mp4 -b 1000000 output.mp4
+ffmpeg -i input.mp4 -acodec mp2 output.mp4
+
+ffmpeg -y -i input -c:v libx264 -preset medium -b:v 555k -pass 1 -c:a libfdk_aac -b:a 128k -f mp4 /dev/null && \
+ffmpeg -i input -c:v libx264 -preset medium -b:v 555k -pass 2 -c:a libfdk_aac -b:a 128k output.mp4
+ffmpeg -i input -c:v libx264 -b:v 4000k -minrate 4000k -maxrate 4000k -bufsize 1835k out.m2v # CBR (Constant Bit Rate
+ffmpeg -i input -c:v libx264 -crf 20 -maxrate 400k -bufsize 1835k output.mp4 # CRF with maximum bit rate
+
+ffmpeg -i input -c:v libx264 -preset ultrafast -crf 0 output.mkv # Lossless Example (fastest encoding)
+ffmpeg -i input -c:v libx264 -preset veryslow -crf 0 output.mkv	# Lossless Example (best compression)
+
+ffmpeg -i input_file.avi -codec:v libx264 -profile:v high -preset slow -b:v 500k -maxrate 500k -bufsize 1000k -vf scale=-1:480 -threads 0 -codec:a libfdk_aac -b:a 128k output_file.mp4
+ffmpeg -i input_file.avi -codec:v libx264 -profile:v high -preset slow -b:v 500k -maxrate 500k -bufsize 1000k -vf scale=-1:480 -threads 0 -pass 1 -an -f mp4 /dev/null
+ffmpeg -i input_file.avi -codec:v libx264 -profile:v high -preset slow -b:v 500k -maxrate 500k -bufsize 1000k -vf scale=-1:480 -threads 0 -pass 2 -codec:a libfdk_aac -b:a 128k -f mp4 output_file.mp4
+
+ffmpeg [input options] -i [input filename] -codec:v [video options] -codec:a [audio options] [output file options] [output filename]
+
+ffmpeg -i input_file.avi -codec:v libx264 -profile: high -preset slow -b:v 500k -maxrate 500k -bufsize 1000k -vf scale=-1:480 -threads 0 -codec:a libfdk_aac -b:a 128k output_file.mp4 # Standard web video
+ffmpeg -i inputfile.avi -codec:v libx264 -profile:v baseline -preset slow -b:v 250k -maxrate 250k -bufsize 500k -vf scale=-1:360 -threads 0 -codec:a libfdk_aac -b:a 96k output.mp4 # 360p video for older mobile phones
+ffmpeg -i inputfile.avi -codec:v libx264 -profile:v main -preset slow -b:v 400k -maxrate 400k -bufsize 800k -vf scale=-1:480 -threads 0 -codec:a libfdk_aac -b:a 128k output.mp4 # 480p video for iPads
+ffmpeg -i inputfile.avi -codec:v libx264 -profile:v high -preset slower -b:v 1000k -vf scale=-1:576 -threads 0 -codec:a libfdk_aac -b:a 196k output.mp4 # High-quality SD video
+
+-b 512k
+-preset veryslow -crf 28
+-profile:v baseline -level 3.0 # highest compatibility with older devices
+
+https://www.virag.si/2012/01/web-video-encoding-tutorial-with-ffmpeg-0-9/
+
+
+###########################################
+#
+#	MP4 Video Compression and Saturation
+#
+###########################################
+
+ffmpeg -i input.mp4 -c:v libx264 -crf 18 -b:v 500K -c:a aac -strict -2 output.mp4 # 500mb to 150mb compresson
+ffmpeg -i input.mp4 -c:v libx264 -crf 24 -b:v 1M -c:a aac -strict -2 output.mp4 # 500mb to 140mb compresson
+ffmpeg -i input.mp4  -vf eq=1:0:1.3:1:1:0.9:1:1 -c:v libx264 -strict -2 -threads 2 output.mp4 -y  # saturation
+ffmpeg -i input.mp4 -vf eq=1:0:0:1:1:1:1:1 -strict -2 -threads 2 output.mp4 # bw
+
+DEFAULT VALUES FOR EQ2 FILTER - gamma:contrast:brightness:saturation:rg:gg:bg:weight
+
+initial gamma value (default: 1.0)
+initial contrast, where negative values result in a negative image (default: 1.0)
+initial brightness (default: 0.0)
+initial saturation (default: 1.0)
+gamma value for the red component (default: 1.0)
+gamma value for the green component (default: 1.0)
+gamma value for the blue component (default: 1.0)
+
+
+ffmpeg -i webinar2_The\ Sugar\ Platform_compressed.mp4 -c:v libx264 -vf eq=1:1.2:0.3:1.5:1:0.6:1 -strict -2 -threads 2 foo.mp4
+ffmpeg -i all.MTS -c:v libx264 -c:a libfaac -vf mp=eq2=1:1.68:0.3:1.25:1:0.96:1 foo.mp4
+ffplay -i input.jpg -vf "eq=contrast=1.5:brightness=-0.05:saturation=0.75" # contrast
+ffmpeg -y -loop 1 -i input.jpg -vf "eq=contrast=1" -c:v libx264 \ -pix_fmt yuv420p -t 3 out.mp4
+ffmpeg -i input -vf curves=preset=lighter -c:a copy output
+ffmpeg -i input -vf curves=r='0.4/0.5':g='0.4/0.5':b='0.4/0.5' -c:a copy output
+ffmpeg -i in.mp4 -vf mp=eq2=gamma:contrast:brightness:saturation:rg:gg:bg:weight out.mp4 -y
+
+
+-preset ultrafast
+-preset veryslow
+
+###########################################
+#
+#	FFmpeg cut
+#
+###########################################
+
+
+ffmpeg -i movie.mp4 -ss 00:05:03 -t 00:30:08 -async 1 -threads 2 -strict -2 cut.mp4
+ffmpeg -i movie.mp4 -ss 00:00:03 -t 00:00:08 -async 1 -c copy cut.mp4
+ffmpeg -i 40minvideo.mp4 -t 1500 -acodec copy -vcodec copy 25minvideo.mp4 # -t 1500 processes the first 1500 seconds (25 min * 60 sec/min)
+
+ffmpeg -ss [start] -i in.mp4 -t [duration] -c copy out.mp4
+ffmpeg -i in.mp4 -ss [start] -t [duration] -c copy out.mp4
+ffmpeg -ss [start] -i in.mp4 -t [duration] -c:v libx264 -c:a aac -strict experimental -b:a 128k out.mp4
+ffmpeg -i inputFile -vcodec copy -acodec copy -ss 00:09:23 -to 00:25:33 outputFile
+
+ffmpeg -i input.wmv -ss 00:00:30.0 -c copy -t 00:00:10.0 output.wmv
+ffmpeg -i input.wmv -ss 30 -c copy -t 10 output.wmv
+
+ffmpeg -ss 00:00:00 -t 00:50:00 -i largefile.mp4 -acodec copy \ -vcodec copy smallfile.mp4
+ffmpeg -i largefile.mp4 -t 00:50:00 -c copy smallfile1.mp4 -ss 00:50:00 -c copy smallfile2.mp4
+ffmpeg -ss 00:00:30 -i orginalfile -t 00:00:05 -vcodec copy -acodec copy newfile
+----------------------------------------------------------------------------
+#use FFmpeg cut mp4 video without re-encoding
+ffmpeg -i source.mp4 -ss 00:50:05 -t 00:40:10 -c copy cut_video.mp4
+
+# use FFmpeg cut mp4 video with re-encoding
+ffmpeg -i source.mp4 -ss 00:00:05 -t 00:00:10 -async 1 -strict -2 cut_video.mp4
+----------------------------------------------------------------------------
+ffmpeg -i originalVideo.mp4 -ss 01:34:50 -to 02:22:50 -c:v libx264 -preset ultrafast -qp 0 -c:a libmp3lame -b:a 160k -ac 2 -ar 44100 newStream1.mp4
+ffmpeg -i originalVideo.mp4 -ss 01:34:50 -to 02:22:50 -codec:v copy -codec:a copy newStream1.mp4
+ffmpeg -i newStream1.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts intermediate1.ts
+ffmpeg -i "concat:newStream1.mp4newStream2.mp4|newStream[...].mp4|newStream[n-part].mp4" -c copy finalVideo.mp4
+ffmpeg -i "concat:intermediate1.ts|intermediate2.ts|intermediate[...].ts|intermediate[n-part].ts" -c copy -bsf:a aac_adtstoasc finalVideo.mp4
+mplayer -ss 00:17:30 -endpos 10 finalVideo.mp4
+
+# fast way to find the codecs through the terminal could be:
+ffmpeg -i originalVideo.mp4 2>&1 | grep Video: | awk '{print $3,$4}' | tr -d ,
+ffmpeg -i originalVideo.mp4 2>&1 | grep Audio: | awk '{print $3,$4}' | tr -d ,
+----------------------------------------------------------------------------
+ffmpeg -i INFILE.mp4 -vcodec copy -acodec copy -ss 00:01:00.000 -t 00:00:10.000 OUTFILE.mp4
+----------------------------------------------------------------------------
+
+
+###########################################
+#
+#	FFmpeg rotate
+#
+###########################################
+
+ffmpeg you have a choice of three methods of using video filters to rotate 180°.
+
+hflip and vflip
+
+ffmpeg -i input.mp4 -vf "hflip,vflip,format=yuv420p" -metadata:s:v rotate=0 \
+-codec:v libx264 -codec:a copy output.mkv
+transpose
+
+ffmpeg -i input.mp4 -vf "transpose=2,transpose=2,format=yuv420p" \
+-metadata:s:v rotate=0 -codec:v libx264 -codec:a copy output.mp4
+rotate
+
+This filter can rotate to any arbitrary angle and uses radians as a unit instead of degrees. This example will rotate π/1 radians, or 180°:
+
+ffmpeg -i input.mp4 -vf "rotate=PI:bilinear=0,format=yuv420p" \ -metadata:s:v rotate=0 -codec:v libx264 -codec:a copy output.mp4
+You can use degrees instead. One degree is equal to π/180 radians. So if you want to rotate 45°:
+------------------------------------------------------
+ffmpeg -i input.mp4 -vf "rotate=45*(PI/180),format=yuv420p" \ -metadata:s:v rotate=0 -codec:v libx264 -codec:a copy output.mp4
+ffplay -vf "hflip,vflip" -i input.mp4
+ffmpeg -i input.mp4 -c copy -metadata:s:v:0 rotate=90 output.mp4
+ffmpeg -noautorotate -i input.mp4 -vf "hflip,vflip,format=yuv420p" -metadata:s:v rotate=0 -codec:v libx264 -codec:a copy output.mkv
+
+--------------------------------------------------------
+Rotate 90 clockwise:
+
+ffmpeg -i in.mov -vf "transpose=1" out.mov
+For the transpose parameter you can pass:
+
+0 = 90CounterCLockwise and Vertical Flip (default)
+1 = 90Clockwise
+2 = 90CounterClockwise
+3 = 90Clockwise and Vertical Flip
+Use -vf "transpose=2,transpose=2" for 180 degrees.
+
+To speed up your video from 1x to 5x, you can type:
+ffmpeg -i input.mkv -vf "setpts=0.2*PTS" -an output.mkv
+--------------------------------------------------------
+Cut your video
+ffmpeg -i input.mp4 -t 4 slow.mp4
+ffmpeg -i input.mp4 -ss 00:00:04 part-2.mp4
+
+Speed up the part
+ffmpeg -i slow.mp4 -filter:v "setpts=0.5*PTS" part-1.mp4
+
+Concatenate
+ffmpeg -f concat -i <(for f in ./part-*.mp4; do echo "file '$PWD/$f'"; done) -c copy output.mp4
+------------------------------------------------------
+ffmpeg -i input.mp4 -filter:a "atempo=0.5" -vn output.aac
+ffmpeg -i input.mp4 -filter:a "atempo=0.5,atempo=0.5" -vn output.aac
+ffmpeg -i input.mp4 -filter_complex "[0:v]setpts=0.5*PTS[v];[0:a]atempo=2[a]" -map "[v]" -map "[a]" -c:v libx264 -c:a aac output.mp4
+
+
+ffmpeg -i TheGoodTheBadAndTheUgly.mp4 -vf  "setpts=0.25*PTS" UpTheGoodTheBadAndTheUgly.mp4 # speed up
+ffmpeg -i TheGoodTheBadAndTheUgly.mp4 -vf  "setpts=4*PTS" DownTheGoodTheBadAndTheUgly.mp4	# speed down
+###########################################
+#
+#	FFmpeg Speeding up down
+#
+###########################################
+
+......................................
+Speeding up/slowing down video
+
+To double the speed of the video, you can use:
+ffmpeg -i input.mkv -filter:v "setpts=0.5*PTS" output.mkv
+
+sped up to 4x that (16 FPS):
+ffmpeg -i input.mkv -r 16 -filter:v "setpts=0.25*PTS" output.mkv
+
+To slow down your video, you have to use a multiplier greater than 1:
+ffmpeg -i input.mkv -filter:v "setpts=2.0*PTS" output.mkv
+
+.......................................
+
+Speeding up/slowing down audio
+
+You can speed up or slow down audio with the ​atempo audio filter. To double the speed of audio:
+
+ffmpeg -i input.mkv -filter:a "atempo=2.0" -vn output.mkv
+The atempo filter is limited to using values between 0.5 and 2.0 (so it can slow it down to no less than half the original speed, and speed up to no more than double the input). If you need to, you can get around this limitation by stringing multiple atempo filters together.
+
+The following with quadruple the audio speed:
+ffmpeg -i input.mkv -filter:a "atempo=2.0,atempo=2.0" -vn output.mkv
+
+Using a complex filtergraph, you can speed up video and audio at the same time:
+ffmpeg -i input.mkv -filter_complex "[0:v]setpts=0.5*PTS[v];[0:a]atempo=2.0[a]" -map "[v]" -map "[a]" output.mkv
+
+
+ffmpeg -i weird.wma -filter:a "atempo=1.7" -c:a libfaac -q:a 100 final.m4a
+ffmpeg -i weird.wma -filter:a "atempo=1.7" -c:a libmp3lame -q:a 4 final.mp3
+
+##################################################
+
+python paulstretch_stereo.py -s 0.59 temp.wav output.wav
+https://github.com/paulnasca/paulstretch_python
+
+##################################################
+
+ffmpeg -pix_fmt
+ffmpeg version 2.8.8-0ubuntu0.16.04.1 Copyright (c) 2000-2016 the FFmpeg developers
+built with gcc 5.4.0 (Ubuntu 5.4.0-6ubuntu1~16.04.2) 20160609
+configuration: --prefix=/usr --extra-version=0ubuntu0.16.04.1 --build-suffix=-ffmpeg --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --cc=cc --cxx=g++ --enable-gpl --enable-shared --disable-stripping --disable-decoder=libopenjpeg --disable-decoder=libschroedinger --enable-avresample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libmodplug --enable-libmp3lame --enable-libopenjpeg --enable-libopus --enable-libpulse --enable-librtmp --enable-libschroedinger --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxvid --enable-libzvbi --enable-openal --enable-opengl --enable-x11grab --enable-libdc1394 --enable-libiec61883 --enable-libzmq --enable-frei0r --enable-libx264 --enable-libopencv
+
+  libavutil      54. 31.100 / 54. 31.100
+  libavcodec     56. 60.100 / 56. 60.100
+  libavformat    56. 40.101 / 56. 40.101
+  libavdevice    56.  4.100 / 56.  4.100
+  libavfilter     5. 40.101 /  5. 40.101
+  libavresample   2.  1.  0 /  2.  1.  0
+  libswscale      3.  1.101 /  3.  1.101
+  libswresample   1.  2.101 /  1.  2.101
+  libpostproc    53.  3.100 / 53.  3.100
+
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0x1b8b2a0] Could not find codec parameters for stream 0 (Video: h264 (avc1 / 0x31637661), none, 1280x720, 3014 kb/s): unspecified pixel format
+Consider increasing the value for the 'analyzeduration' and 'probesize' options
+------------------------------------
+·   To set the video bitrate of the output file to 64 kbit/s:
+ffmpeg -i input.avi -b:v 64k -bufsize 64k output.avi
+
+·   To force the frame rate of the output file to 24 fps:
+ffmpeg -i input.avi -r 24 output.avi
+
+·   To force the frame rate of the input file (valid for raw formats only) to 1 fps and the frame rate of the output file to 24 fps:
+ffmpeg -r 1 -i input.m2v -r 24 output.avi
+------------------------------------
+ffmpeg -i GOPR0187cut.mp4 -vcodec libx264 -acodec copy -c copy -pix_fmt yuv420p output.mp4
+
+# noise generator
+ffmpeg -f rawvideo -vcodec rawvideo -s 1920x1080 -r 25 -pix_fmt yuv420p -i GOPR0187cut2.mp4 -c:v libx264 -preset ultrafast -qp 0 output.mp4
+ffplay -f rawvideo -vcodec rawvideo -video_size 1920x1080  -pixel_format yuv420p -i GOPR0187cut2.mp4  -preset ultrafast -qp 0
+
+concat
+ffmpeg -i NOISE1.mp4 -i NOISE4.mp4 -vcodec copy -acodec copy  -vcodec copy -acodec copy output.mp4
+ffmpeg -i 'concat:input1|input2' -codec copy output.mp4
+ffmpeg -i input.mp4 -i input.mp4 -i input.mp4 -filter_complex '[0:0] [0:1] [1:0] [1:1] [2:0] [2:1] concat=n=3:v=1:a=1 [v] [a]'-map '[v]' -map '[a]' output.mp4
+ffmpeg -i input1.mp3 -i input2.mp3 -i input3.mp3 -filter_complex concat=n=3:v=0:a=1 -f MOV -vn -y input.mp3
+
+-----------
+concatenate several GoPro mp4's into a 720p mp4. Hope it's of help.
+https://trac.ffmpeg.org/wiki/Concatenate
+
+#!/bin/sh
+cmd="( "
+for i; do
+    cmd="${cmd}ffmpeg -i $i -ab 256000 -vb 10000000 -mbd rd -trellis 2 -cmp 2 -subcmp 2 -g 100 -f mpeg -; "
+done
+cmd="${cmd} ) | ffmpeg -i - -vb 10000000 -ab 256000 -s 1280x720 -y out-`date +%F-%H%M.%S`.mp4"
+echo "${cmd}"
+eval ${cmd}
+----------------
+ffmpeg -f concat -i inputs.txt -c copy output.mp4
+ffmpeg -f concat -i inputs.txt -vcodec copy -acodec copy output.mp4
+--------------------------------
+
+analyzeduration' and 'probesize
+
+
+-probesize         <int>        .D.... set probing size (from 32 to INT_MAX)
+-analyzeduration   <int>        .D.... specify how many microseconds
+ffprobe -v 9 -loglevel 99 -analyzeduration 2147483647 -probesize 2147483647 -i
+ffprobe -analyzeduration 1000000000 -probesize 1000000000 -i canon_hf_100_fxp_1080_25i_10s.MTS
+-show_streams -select_streams v:0
+
+-probesize 50M -analyzeduration 100M GOPR0187cut.mp4
+ffmpeg -probesize 50M -analyzeduration 100M -i vts.vob
+
+
+
+
+
+

@@ -1,0 +1,198 @@
+# with the audio:
+AviSource("d:\filename.avi")
+
+# without the audio:
+AviSource("d:\filename.avi", false)
+
+# load your avi using the XviD codec:
+AviSource("d:\filename.avi", fourCC="XVID") # opens an avi (for example encoded with DivX3) using the XviD Codec
+
+# load your dv-avi using the Canopus DV Codec:
+AviSource("d:\filename.avi", fourCC="CDVC")
+
+# DGDecode:
+LoadPlugin("d:\dgdecode.dll")
+MPEG2Source("d:\filename.d2v")
+
+# YUY2 (default): load QuickTime files into AviSynth
+QTInput("FileName.mov", color=2)
+
+# with audio (in many cases possible with QuickTime 7) load QuickTime files into AviSynth
+QTInput("FileName.mov", color=2, audio=1)
+
+# raw (with for example a YUYV format): load QuickTime files into AviSynth
+QTInput("FileName.mov", color=2, mode=1, raw="yuyv")
+
+# dither = 1; converts raw 10bit to 8bit video (v210 = 10bit uyvy): load QuickTime files into AviSynth
+QTInput("FileName.mov", color=2, dither=1, raw="v210")
+
+# load Windows Media Video into AviSynth
+DirectShowSource("d:\clip.wmv", fps=25, convertfps=true) # adjust fps if necessary
+
+# load MP4/MKV/M2TS/EVO into AviSynth
+# loading the video from MKV and returning a timecodes file:
+FFmpegSource("D:\file.mkv", vtrack = -1, atrack = -2, timecodes="timecodes_file.txt")
+
+# loading the video and audio from a MP4 and returning a timecodes file:
+FFmpegSource("D:\file_aac.mp4", vtrack = -1, atrack = -1, timecodes="timecodes_file.txt")
+
+# convertfps=true ensures sync if your video has a variable framerate
+DirectShowSource("D:\file.mkv", convertfps=true)
+
+# Import media
+AviSource("d:\xvid_dts.avi")
+AviSource("d:\filename.avi", false) # without the audio:
+AVIsource("Movie.avi")
+AVISource("d:\capture.avi")
+AviSource("D:\Folder\Filename.avi", FourCC = "XVID") # Open an AVI using the XviD codec
+AviSource("D:\Folder\Filename.avi", audio = False) # Open an AVI but only use the video
+
+
+DirectShowSource("d:\xvid_dts.avi")
+DirectShowSource("d:\x264_aac.mp4", fps=25, convertfps=true) # adjust fps if necessary
+DirectShowSource("d:\clip.wmv", fps=25, convertfps=true) # adjust fps if necessary
+DirectShowSource("D:\Folder\Filename.mp4", fps = 23.976)            # Open an MP4 file with film source encoded at 23.976fps
+DirectShowSource("D:\Folder\Filename.mp4", fps = 25, audio = False) # Open an MP4 file with PAL video, keeping just the video
+DirectShowSource("D:\Folder\Filename.avi", fps = 29.97)             # Open a NTSC DV encoded AVI using a DirectShow DV decoder
+DirectShowSource("D:\Folder\Filename.wmv", fps = 24)                # Open a WMV file containing film source encoded at 24fps
+
+Examples
+
+C programmers note: backslashes are not doubled; forward slashes work too
+AVISource("d:\capture.avi")
+WAVSource("f:/soundtrack.wav")
+WAVSource("f:/soundtrack.wav")
+
+Splice two clips together; the following statements do the same thing.
+AviSource("cap1.avi") + AviSource("cap2.avi")
+AVISource("cap1.avi", "cap2.avi")
+
+Splice two clips together where frame rates do not match.
+A = AviSource("FileA.avi") # "29.97" fps (30000/1001)
+B = AviSource("FileB.avi") # 30.0000 fps
+A ++ B.AssumeFPS(A)
+
+Splice two clips together where one of them contains no audio.
+A = AviSource("FileA.avi") # with audio
+B = AviSource("FileB.avi") # no audio stream
+A ++ AudioDub(B, BlankClip(A)) # insert silent audio with same format
+
+Disable audio and request RGB32 decompression
+AVISource("cap.avi", audio=false, pixel_type="RGB32")
+
+Open a DV, forcing the Canopus DV Codec
+AviSource("cap.avi", fourCC="CDVC")
+
+Open a file, forcing the XviD Codec
+AviSource("cap.avi", fourCC="XVID")
+
+Open a YV12 video with a bad codec where the width is not a multiple of four
+Avisource("D:\Projects\test.avi", pixel_type="+YV12")
+
+opens the first video and second audio stream of a clip
+AviSource("D:\Projects\test_multi10.avi", vtrack=0, atrack=1)
+
+# Trim creates a new clip containing the range of frames you enter.
+Trim(500, 1000)
+
+# AlignedSplice joins two clips, keeping the audio in each clip in sync with its respective clip.
+
+    # Example Code
+    Join two clips assigned to variables:
+    clipOne = Trim(0, -1000)
+    clipTwo = Trim(1500, 3000)
+    AlignedSplice(clipOne, clipTwo)
+
+    # Select and join 2 clips from one source:
+    AlignedSplice(Trim(0, -1000), Trim(1500, 3000)
+
+    # Join more than 2 clips:
+    clipOne = Trim(0, -1000)
+    clipTwo = Trim(1500, 3000)
+    clipThree = Trim(4000, 5999)
+    clipFour = Trim(7500, 0)
+    AlignedSplice(clipOne, clipTwo, clipThree, clipFour)
+
+
+# Add Subtitle
+Subtitle("Hello world!", font="georgia", size=24, text_color=$ff0000, align=9)
+Subtitle("Hello, World!", text_color=$00FF00, x=100, y=200)
+Subtitle("[ Hello World ]", 300, 690, 240, 350, "Arial", 48, $00FF00, $000000)
+
+# Crop letterbox borders from a widescreen
+Crop(0, 30, -0, -30)
+Crop(8, 0, 704, 480) # Crop from 720x480 to 704x480
+
+# BilinearResize uses a fairly simple algorithm that results in a smoother image
+BilinearResize(448,448)
+
+# BicubicResize uses a somewhat more sophisticated resizing algorithm than BilinearResize
+BicubicResize(640, 272)
+BicubicResize(640, 272, b = 0, c = 0.75)
+
+# Add 16 pixel black borders to the top and bottom
+AddBorders(16,48,16,80)
+AddBorders(0, 16, 0, 16)
+AddBorders(8, 0, 8, 0, color = $FF0000)
+
+
+# ConvertFPS changes the framerate of your clip by adding or removing frames as necessary
+    # Example Code
+    # Convert interlaced video from PAL to NTSC framerate:
+    AviSource("SourceClip.avi")
+    Bob().ConvertFPS("ntsc_double")
+    SeparateFields().SelectEvery(4,0,3)
+
+    # Convert NTSC film (23.976fps) video to PAL (25fps) framerate:
+    Mpeg2Source("SourceClip.d2v")
+    ConvertFPS(25)
+
+
+
+
+# Resample audio to 48 kHz
+source = WavSource("c:\audio.wav")
+return ResampleAudio(source, 48000)
+ResampleAudio(44100)
+
+# Convert between any of the color formats that AviSynth supports
+ConvertToRGB(clip, matrix="Rec709")
+ConvertToYV12(clip)
+ConvertToYV12(clip, interlaced=true)
+ConvertToYUY2(clip, interlaced=true)
+ConvertToRGB(clip)
+ConvertToRGB(clip, matrix="Rec709")
+ConvertToRGB32(matrix="PC.601")
+
+
+AviSource("C:\TestFullRange.avi", audio=false).AssumeFrameBased()
+ConvertToYV12(matrix="Rec709")
+
+AviSource("C:\TestFullRange.avi", audio=false).AssumeFrameBased()
+ConvertToYV12(matrix="PC.709")
+ConvertToRGB(matrix="PC.709")
+
+###########################################
+#
+#   References
+#
+###########################################
+
+# http://avisynth.nl/index.php/Internal_filters
+# http://avisynth.nl/index.php/Internal_filters
+# http://avisynth.org.ru/docs/english/corefilters/convert.htm
+# http://avisynth.nl/index.php/Internal_filters
+# http://avisynth.nl/index.php/Convert
+# http://avisynth.nl/index.php/ResampleAudio
+# http://avisynth.nl/index.php/AviSource
+# http://avisynth.nl/index.php/Importing_media
+# http://avisynth.nl/index.php/FAQ_loading_clips
+# http://www.afterdawn.com/guides/archive/using_avisynth_page_6.cfm
+# http://www.afterdawn.com/guides/archive/using_avisynth_page_7.cfm
+# http://avisynth.org.ru/docs/english/syntax.htm
+# http://avisynth.org.ru/docs/english/corefilters/subtitle.htm
+# http://avisynth.nl/index.php/Getting_started
+# http://avisynth.nl/index.php/Fade
+# http://avisynth.nl/index.php/FAQ_loading_clips
+# http://avisynth.nl/index.php/First_script
+# http://avisynth.nl/index.php/Subtitle

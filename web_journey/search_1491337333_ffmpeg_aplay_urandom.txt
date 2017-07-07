@@ -1,0 +1,837 @@
+#########################################
+#
+# Text 2 Speach Conversion
+#
+#########################################
+
+
+In order of descending popularity:
+
+say converts text to audible speech using the GNUstep speech engine. # OK
+sudo apt-get install gnustep-gui-runtime
+say "hello"
+
+festival General multi-lingual speech synthesis system.
+sudo apt-get install festival
+echo "hello" | festival --tts
+
+spd-say sends text-to-speech output request to speech-dispatcher # OK
+sudo apt-get install speech-dispatcher
+spd-say "hello"
+
+espeak is a multi-lingual software speech synthesizer. # OK
+sudo apt-get install espeak
+espeak "hello"
+espeak -ven+f3 -k5 -s150 "I've just picked up a fault in the AE35 unit" # women voice
+
+# http://askubuntu.com/questions/501910/how-to-text-to-speech-output-using-command-line
+
+sudo apt-get install espeak
+espeak --stdout "this is a test" | paplay
+
+echo "these are my notes" > text.txt
+espeak --stdout -f text.txt > text.wav
+paplay text.wav # you should hear "these are my notes"
+
+sudo apt-get install libttspico0 libttspico-utils libttspico-data
+
+# http://askubuntu.com/questions/21811/how-can-i-install-and-use-text-to-speech-software?noredirect=1&lq=1
+
+sudo apt install libttspico-utils
+pico2wave -l $LANGUAGE -w $WAV "$*" && play -qV0 $WAV treble 24 gain -l 6
+
+
+sleep 2; spd-say 'get back to work'
+sleep 2; while true; do spd-say -w 'get back to work'; done
+
+############################################
+#
+# paulstretch Examples
+#
+############################################
+
+# http://stackoverflow.com/questions/27362525/time-stretching-signal-porting-python-code-to-matlab-octave/27402713#27402713
+# https://github.com/paulnasca/paulstretch_python
+# http://stackoverflow.com/questions/29436182/converting-a-vector-loop-to-a-for-loop-because-of-memory-limitations
+# http://stackoverflow.com/questions/27362525/time-stretching-signal-porting-python-code-to-matlab-octave
+# http://stackoverflow.com/questions/29436182/converting-a-vector-loop-to-a-for-loop-because-of-memory-limitations/29462552#29462552
+# http://hypermammut.sourceforge.net/paulstretch/
+
+## based on http://hypermammut.sourceforge.net/paulstretch/
+## https://github.com/paulnasca/paulstretch_python/blob/master/paulstretch_steps.png
+
+more off
+inputfn = "original.wav"
+[d, fs, bps] = wavread (inputfn);
+inputlen=rows  (d)/fs;
+
+printf ("Original  duration of file in seconds = %.2f s\n", rows (d)/fs);
+
+target_duration = 60; # in seconds
+stretch = target_duration/inputlen;
+# 1/4 s window len
+windowsize = round (0.25 * fs);
+
+# stepwidth between windows
+step = round ((windowsize/2)/stretch);
+numsteps = floor((rows(d)-windowsize)/step);
+
+## restore the windowed segments with half windowsize shift
+restore_step = floor (windowsize / 2);
+
+## stetched duration
+stretched_len = (numsteps*restore_step+windowsize)/fs;
+printf ("Stretched duration of file in seconds = %.2f s\n", stretched_len);
+stretched = zeros (numsteps*restore_step+windowsize, 1);
+if (!exist ("out", "dir"))
+  mkdir ("out");
+endif
+
+## Matrix which holds the freq of the maximum amplitude and the max. amplitude
+chunks_stats = zeros (numsteps, 2);
+
+## original window
+fwin = @(x) (1-x.^2).^1.25;
+win = fwin (linspace (-1, 1, windowsize));
+
+## loop over all windows
+for k = 1:numsteps
+  if (! mod(k, 50))
+    printf ("Calculating chunk %i of %i...\n", k, numsteps);
+    fflush (stdout);
+  endif
+
+  ## Only use left channel
+  s_ind = (k - 1) * step + 1;
+  e_ind = s_ind + windowsize - 1;
+  tmp = win' .* d(s_ind:e_ind, 1);
+
+  ## FFT, overwrite phases with random phases and IFFT
+  tmp = fft(tmp);
+  [m, ind] = max (abs(tmp(1:numel(tmp)/2)));
+  # Frequency in Hz
+  chunks_stats(k, 1) = (ind-1)/windowsize*fs;
+  # max Amplitude
+  chunks_stats(k, 2) = m;
+  printf ("Freq =  %.2f Hz, max = %.2f\n", chunks_stats(k, :));
+  tmp = ifft (tmp .* exp(i*2*pi*rand(size(tmp))));
+
+  ## window again
+  tmp = win' .* real (tmp);
+  fn = sprintf ("out/out_%04i.wav", k);
+  wavwrite (tmp, fs, bps, fn);
+  s_ind = (k - 1) * restore_step + 1;
+  e_ind = s_ind + windowsize - 1;
+  stretched (s_ind:e_ind) += tmp;
+endfor
+
+## normalize
+stretched = 0.8 * stretched./max(stretched);
+wavwrite (stretched, fs, bps, "stretched.wav");
+
+---------------------------------------------------------
+
+[d, fs, bps] = wavread ("original.wav");
+printf ("Input duration = %.2f s\n", rows (d)/fs);
+
+stretch = 8;
+windowsize = round (0.25 * fs);
+
+step = round ((windowsize/2)/stretch);
+
+## original window
+fwin = @(x) (1-x.^2).^1.25;
+win = fwin (linspace (-1, 1, windowsize));
+
+#win = hanning (windowsize)';
+
+## build index
+ind = (bsxfun (@plus, 1:windowsize, (0:step:(rows(d)-windowsize))'))';
+cols_ind = columns(ind);
+
+## Only use left channel
+left_seg = d(:,1)(ind);
+clear d ind;
+
+## Apply window
+left_seg = bsxfun (@times, left_seg, win');
+
+## FFT
+fft_left_seg = fft (left_seg);
+clear left_seg
+
+#keyboard
+
+## overwrite phases with random phases
+fft_rand_phase_left = fft_left_seg.*exp(i*2*pi*rand(size(fft_left_seg)));
+clear fft_left_seg;
+
+ifft_left = ifft (fft_rand_phase_left);
+clear fft_rand_phase_left;
+
+## window again
+ifft_left = bsxfun (@times, real(ifft_left), win');
+
+## restore the windowed segments with half windowsize shift
+restore_step = floor(windowsize/2);
+ind2 = (bsxfun (@plus, 1:windowsize, (0:restore_step:(restore_step*(cols_ind-1)))'))';
+left_stretched = sparse (ind2(:), repmat(1:columns (ind2), rows(ind2), 1)(:), real(ifft_left(:)), ind2(end, end), cols_ind);
+clear ind2 ifft_left win;
+
+left_stretched = full (sum (left_stretched, 2));
+
+## normalize
+left_stretched = 0.8 * left_stretched./max(left_stretched);
+printf ("Output duration = %.2f s\n", rows (left_stretched)/fs);
+wavwrite (left_stretched, fs, bps, "streched.wav");
+system("aplay streched.wav")
+
+-------------------------------------------------------------------
+
+urlwrite('http://www.onewithall.net/rttmpfiles/3sec8000.wav','3sec8000.wav');
+inputfn='3sec8000.wav' %change this to test another file
+[d, fs, bps]=wavread(inputfn);
+inputlen=rows  (d)/fs;
+
+printf ("Original duration of file in seconds = %.2f s\n", rows (d)/fs);
+
+dur=60; %duration / length you want the file to be in seconds
+stretch = dur/rows(d)*fs; %how much I need to stretch the file to get it to be the duration I want
+windowsize = round (0.25 * fs);
+
+step = round ((windowsize/2)/stretch);
+
+## original window
+fwin = @(x) (1-x.^2).^1.25;
+win = fwin (linspace (-1, 1, windowsize));
+
+#win = hanning (windowsize)';
+
+## build index
+ind = (bsxfun (@plus, 1:windowsize, (0:step:(rows(d)-windowsize))'))';
+cols_ind = columns(ind);
+
+## Only use left channel
+left_seg = d(:,1)(ind);
+clear d ind;
+
+## Apply window
+left_seg = bsxfun (@times, left_seg, win');
+
+## FFT
+fft_left_seg = fft (left_seg);
+clear left_seg
+
+#keyboard
+
+## overwrite phases with random phases
+fft_rand_phase_left = fft_left_seg.*exp(i*2*pi*rand(size(fft_left_seg)));
+clear fft_left_seg;
+
+ifft_left = ifft (fft_rand_phase_left);
+clear fft_rand_phase_left;
+
+## window again
+ifft_left = bsxfun (@times, real(ifft_left), win');
+
+## restore the windowed segments with half windowsize shift
+restore_step = floor(windowsize/2);
+ind2 = (bsxfun (@plus, 1:windowsize, (0:restore_step:(restore_step*(cols_ind-1)))'))';
+left_stretched = sparse (ind2(:), repmat(1:columns (ind2), rows(ind2), 1)(:), real(ifft_left(:)), ind2(end, end), cols_ind);
+clear ind2 ifft_left win;
+
+left_stretched = full (sum (left_stretched, 2));
+
+## normalize
+left_stretched = 0.8 * left_stretched./max(left_stretched);
+printf ("converted %s =%.2f(s) file to stretched.wav = %.2f(s)\n", inputfn, inputlen, rows (left_stretched)/fs);
+wavwrite (left_stretched, fs, bps, "streched.wav");
+
+
+############################################
+#
+# Play random sounds in ubuntu terminal
+# http://www.binarytides.com/play-music-console-ubuntu/
+#
+#############################################
+
+# https://linux.die.net/man/1/aplay
+# http://manpages.ubuntu.com/manpages/trusty/man1/aplay.1.html
+
+sudo apt-get install alsa-base alsa-utils
+sudo apt-get install alsa-tools-gui
+
+aplay -l
+aplay -c 2 -f S16_LE -r 4100 /dev/random
+
+arecord -D hw:0 -f cd foo.wav
+arecord -r 4000 -f S16_LE -d 10 foo.wav
+arecord -D hw:0 -r 4000 -f S16_LE -c 2 -d 10 test.wav # ok
+
+aplay -D front foo.wav
+aplay a.wav
+aplay -c 1 -t raw -r 22050 -f mu_law foobar
+aplay -D bluetooth -c 2 -f S16_LE abc.wav
+
+arecord -d 10 -f cd -t wav -D copy foobar.wav
+arecord -t wav --max-file-time 30 mon.wav
+arecord -f cd -t wav --max-file-time 3600 --use-strftime %Y/%m/%d/listen-%H-%M-%v.wav
+
+ffplay example.mp3
+cat rawsound | /dev/pcsp # pipe your sound data to the pc speaker device
+speaker-test -c6 #  where -c6 indicates I want to test 6 channels for a 5.1 setup
+
+-------------------------------------------------------------------------------------
+
+# Unsigned 8 bit, Rate: 8000 Hz, mono
+cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | sed 1000000000q |aplay
+cat /dev/urandom | tr -dc '0-9' | fold -w 10 | sed 1000000000q |aplay
+
+cat /dev/urandom | tr -dc '&*(&(^)' | fold -w 10 | sed 1000000000q |aplay
+cat /dev/urandom | tr -dc '&*(&(^)' | fold -w 10 | sed 1000000000q |aplay
+cat /dev/urandom | tr -dc '~`!@#$%^&*()' | fold -w 1 | sed 1000000000q |aplay
+cat /dev/urandom | tr -dc "0-9a-z" |aplay
+cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 |aplay -r 192000
+
+
+cat /dev/urandom | tr -dc '&*(&(^)' | fold -w 32 | sed 100q |aplay -r 192000
+cat /dev/urandom | tr -dc '&*(&(^)' | fold -w 32 | sed 10000q |aplay -r 39000
+
+
+arecord -c 1 -f S32_LE -r 4100 * # record random sound from files
+aplay -c 1 -f S32_LE -r 4100 * # play random sound from files
+
+aplay -c 2 -f S16_LE -r 22100 *
+aplay -c 2 -f S16_LE -r 32100 /dev/urandom # stereo noise
+aplay -c 2 -f S16_LE -r 2000 somefile.xm
+aplay -c 2 -f S16_LE -r 5100 somefile.mod
+
+# https://stackoverflow.com/questions/6465624/how-to-pipe-dev-urandom-to-linux-sound-output/6466330
+
+cat /dev/urandom | hexdump -v -e '/1 "%u\n"' | awk '{ split("0,2,4,5,7,9,11,12",a,","); for (i = 0; i < 1; i+= 0.0001) printf("%08X\n", 100*sin(1382*exp((a[$1 % 8]/12)*log(2))*i)) }' | xxd -r -p | aplay -c 2 -f S32_LE -r 16000
+
+cat /dev/urandom | hexdump -v -e '/1 "%u\n"' | awk '{ split("0,2,4,5,7,9,11,12",a,","); for (i = 0; i < 1; i+= 0.0001) printf("%08X\n", 100*sin(432*exp((a[$1 % 63]/12)*log(2))*i)) }' | xxd -r -p | aplay -c 2 -f S32_LE -r 12000
+
+cat /dev/urandom | hexdump -v -e '/1 "%u\n"' | awk '{ split("0,3,5,6,7,10,12",a,","); for (i = 0; i < 1; i+= 0.0001) printf("%08X\n", 100*sin(1382*exp((a[$1 % 8]/12)*log(2))*i)) }' | xxd -r -p | aplay -c 2 -f S32_LE -r 24000
+
+cat /dev/urandom | hexdump -v -e '/1 "%u\n"' | awk '{ split("4,5,7,11",a,","); for (i = 0; i < 1; i+= 0.0001) printf("%08X\n", 100*sin(1046*exp((a[$1 % 8]/12)*log(2))*i)) }' | xxd -r -p | aplay -c 2 -f S32_LE -r 24000﻿
+
+cat /dev/urandom | hexdump -v -e '/1 "%u\n"' | awk '{ split("0,2,4,5,7,9,11,12",a,","); for (i = 0; i < 1; i+= 0.0001) printf("%08X\n", 100*sin(1382*exp((a[$1 % 8]/12)*log(2))*i)) }' | xxd -r -p | aplay -c 2 -f S32_LE -r 16000
+
+sudo apt install sox
+
+cat /dev/urandom | hexdump -v -e '/1 "%u\n"' | awk '{ split("0,2,4,5,7,9,11,12",a,","); for (i = 0; i < 1; i+= 0.0001) printf("%08X\n", 100*sin(1382*exp((a[$1 % 8]/12)*log(2))*i)) }' | xxd -r -p | sox -t raw -r 32k -c 1 -e unsigned -b 8 - -d
+
+----------------------------------------------------------------
+
+http://blog.robertelder.org/bash-one-liner-compose-music/
+
+mplayer -demuxer rawvideo -rawvideo w=800:h=480:fps=15:format=rgb32 -vf hqdn3d,blackframe,decimate -vo null -dumpvideo /dev/sda
+
+# guitar synthesizer in one line of C
+f=220;echo "int s=16e3/$f;main(i){unsigned char v[s];read(0,v,s);for(;;)putchar(v[i%s]=(v[i%s]+v[++i%s])/2);}"|gcc -x c -&&./a.out</dev/urandom|aplay -d 2
+
+------------------------------------------------------------------------------------------
+
+# https://news.ycombinator.com/item?id=11238247
+
+sh rand.sh
+
+awk 'function wl() {
+        rate=64000;
+        return (rate/160)*(0.87055^(int(rand()*10)))};
+    BEGIN {
+        srand();
+        wla=wl();
+        while(1) {
+            wlb=wla;
+            wla=wl();
+            if (wla==wlb)
+                {wla*=2;};
+            d=(rand()*10+5)*rate/4;
+            a=b=0; c=128;
+            ca=40/wla; cb=20/wlb;
+            de=rate/10; di=0;
+            for (i=0;i<d;i++) {
+                a++; b++; di++; c+=ca+cb;
+                if (a>wla)
+                    {a=0; ca*=-1};
+                if (b>wlb)
+                    {b=0; cb*=-1};
+                if (di>de)
+                    {di=0; ca*=0.9; cb*=0.9};
+                printf("%c",c)};
+            c=int(c);
+            while(c!=128) {
+                c<128?c++:c--;
+                printf("%c",c)};};}' | sox -t raw -r 64k -c 1 -e unsigned -b 8 - -d
+
+---------------------------------------------------------
+
+https://shkspr.mobi/blog/2016/04/generating-random-chiptunes-on-linux/
+
+cat /dev/urandom | \
+   hexdump -v -e '/1 "%u\n"' | \
+   awk '{ split("0,3,5,6,7,10,12",a,","); \
+   for (i = 0; i < 1; i+= 0.0001) \
+   printf("%08X\n", 100*sin(1382*exp((a[$1 % 8]/12)*log(2))*i)) }' | \
+   xxd -r -p | \
+   aplay -c 2 -f S32_LE -r 2000
+
+cat /dev/urandom | \
+   hexdump -v -e '/1 "%u\n"' | \
+   awk '{ split("0,1,2,4,8",a,","); \
+   for (i = 0; i < 1; i+= 0.0001) \
+   printf("%08X\n", 100*sin(1382*exp((a[$1 % 8]/12)*log(2))*i)) }' | \
+   xxd -r -p | \
+   aplay -c 2 -f S32_LE -r 3000
+
+-----------------------------------------------------------------
+
+cat /dev/urandom | hexdump -v -e '/1 "%u\n"' | awk '{ split("0,2,4,5,7,9,11,12",a,","); for (i = 0; i < 1; i+= 0.0001) printf("%08X\n", 100*sin(1382*exp((a[$1 % 8]/12)*log(2))*i)) }' | xxd -r -p | aplay -c 2 -f S32_LE -r 3000
+
+
+< /dev/urandom hexdump -v -e '/1 "%u\n"' |
+awk '{ split("0,2,4,5,7,9,11,12",a,",");
+       for (i = 0; i < 1; i+= 0.0001)
+         printf("%08X\n", 100*sin(1382*exp((a[$1 % 8]/12)*log(2))*i)) }' |
+xxd -r -p |
+aplay
+
+-------------------------------------------------------------------
+
+</dev/urandom hexdump -v -e '/1 "%u\n"' | awk '{ split("0,2,4,5,7,9,11,12",a,","); for (i = 0; i < 1; i+= 0.0001) printf("%08X\n", 100*sin(1382*exp((a[$1 % 8]/12)*log(2))*i)) }' | xxd -r -p | aplay -c 2 -f S32_LE -r 2000
+
+cat < /dev/urandom | hexdump -v -e '/1 "%u\n"' | awk '{ split("0,2,4,5,7,9,11,12",a,","); for (i = 0; i < 1; i+= 0.0001) printf("%08X\n", 100*sin(1382*exp((a[$1 % 8]/12)*log(2))*i)) }' | xxd -r -p | aplay -c 2 -f S32_LE -r 2000
+
+####################################################
+#
+# DUBSTEP STYLE  ***********************************
+#
+####################################################
+cat < /dev/urandom | hexdump -v -e '/1 "%u\n"' | awk '{ split("0,2,4,5,7,9,11,12",a,","); for (i = 0; i < 1; i+= 0.0002) printf("%08X\n", 200*sin(1682*exp((a[$1 % 18]/36)*log(3))*i)) }' | xxd -r -p | aplay -vv -c 2 -f S32_LE -r 2000
+
+cat < /dev/urandom | hexdump -v -e '/1 "%u\n"' | awk '{ split("0,2,4,5,7,9,11,12",a,","); for (i = 0; i < 1; i+= 0.0002) printf("%08X\n", 200*sin(1682*exp((a[$1 % 18]/36)*log(3))*i)) }' | xxd -r -p | aplay -c 3 -r 2000 -f S16_LE
+
+APEX TWIN STYLE ******************************* # Wiedergabe: Rohdaten 'stdin' : Signed 16 bit Little Endian, Rate: 2000 Hz, 3 Kanäle
+cat < /dev/urandom | hexdump -v -e '/1 "%u\n"' | awk '{ split("0,2,4,5,7,9,11,12",a,","); for (i = 0; i < 1; i+= 0.0002) printf("%08X\n", 300*sin(2382*exp((a[$1 % 14]/48)*log(3))*i)) }' | xxd -r -p | aplay -c 3 -r 2000 -f S16_LE
+
+cat < /dev/urandom | hexdump -v -e '/1 "%u\n"' | awk '{ split("0,2,4,5,7,9,11,14",a,","); for (i = 0; i < 0.7; i+= 0.0002) printf("%08X\n", 300*sin(2382*exp((a[$1 % 14]/68)*log(3))*i)) }' | xxd -r -p | aplay -c 3 -r 2000 -f S16_LE
+
+---------------------------------------------------
+
+aplay -l
+arecord -f cd  --device=sysdefault test.wav
+arecord -l
+arecord -f S16_LE -r 22100 -c 2 -D hw:0,0 test.wav # record mic
+
+http://mocha.freeshell.org/audio.html
+
+sudo apt install ffmpeg
+
+Using ffmpeg to record and encode:
+
+ffmpeg -f alsa -ac 2 -ar 44100 -ab 160k -i pulse -acodec libvorbis OUTPUT.ogg
+ffmpeg -f alsa -ac 2 -ar 44100 -ab 160k -i pulse -acodec libmp3lame OUTPUT.mp3
+ffmpeg -f alsa -ac 2 -ar 44100 -i pulse OUTPUT.flac
+
+ffmpeg -f alsa -i hw:0,0 -t 30 test.wav # mic
+ffmpeg -f alsa -i pulse -t 30 test.wav # mic
+
+arecord -L
+
+
+default
+    Playback/recording through the PulseAudio sound server
+null
+    Discard all samples (playback) or generate zero samples (capture)
+pulse
+    PulseAudio Sound Server
+sysdefault:CARD=I82801AAICH
+    Intel 82801AA-ICH, Intel 82801AA-ICH
+    Default Audio Device
+front:CARD=I82801AAICH,DEV=0
+    Intel 82801AA-ICH, Intel 82801AA-ICH
+    Front speakers
+surround21:CARD=I82801AAICH,DEV=0
+    Intel 82801AA-ICH, Intel 82801AA-ICH
+    2.1 Surround output to Front and Subwoofer speakers
+surround40:CARD=I82801AAICH,DEV=0
+    Intel 82801AA-ICH, Intel 82801AA-ICH
+    4.0 Surround output to Front and Rear speakers
+surround41:CARD=I82801AAICH,DEV=0
+    Intel 82801AA-ICH, Intel 82801AA-ICH
+    4.1 Surround output to Front, Rear and Subwoofer speakers
+surround50:CARD=I82801AAICH,DEV=0
+    Intel 82801AA-ICH, Intel 82801AA-ICH
+    5.0 Surround output to Front, Center and Rear speakers
+surround51:CARD=I82801AAICH,DEV=0
+    Intel 82801AA-ICH, Intel 82801AA-ICH
+    5.1 Surround output to Front, Center, Rear and Subwoofer speakers
+iec958:CARD=I82801AAICH,DEV=0
+    Intel 82801AA-ICH, Intel 82801AA-ICH
+    IEC958 (S/PDIF) Digital Audio Output
+dmix:CARD=I82801AAICH,DEV=0
+    Intel 82801AA-ICH, Intel 82801AA-ICH
+    Direct sample mixing device
+dmix:CARD=I82801AAICH,DEV=1
+    Intel 82801AA-ICH, Intel 82801AA-ICH - MIC ADC
+    Direct sample mixing device
+dsnoop:CARD=I82801AAICH,DEV=0
+    Intel 82801AA-ICH, Intel 82801AA-ICH
+    Direct sample snooping device
+dsnoop:CARD=I82801AAICH,DEV=1
+    Intel 82801AA-ICH, Intel 82801AA-ICH - MIC ADC
+    Direct sample snooping device
+hw:CARD=I82801AAICH,DEV=0
+    Intel 82801AA-ICH, Intel 82801AA-ICH
+    Direct hardware device without any conversions
+hw:CARD=I82801AAICH,DEV=1
+    Intel 82801AA-ICH, Intel 82801AA-ICH - MIC ADC
+    Direct hardware device without any conversions
+plughw:CARD=I82801AAICH,DEV=0
+    Intel 82801AA-ICH, Intel 82801AA-ICH
+    Hardware device with all software conversions
+plughw:CARD=I82801AAICH,DEV=1
+    Intel 82801AA-ICH, Intel 82801AA-ICH - MIC ADC
+    Hardware device with all software conversions
+
+https://trac.ffmpeg.org/wiki/Capture/ALSA
+
+ffmpeg -f alsa -i default:CARD=I82801AAICH -t 30 test.wav
+ffmpeg -f alsa -ac 2 -ar 22050 -i hw:0 -t 30 test.wav
+ffmpeg -f alsa -ac 2 -ar 22050 -i default:CARD=ICH5 -t 30 test.wav
+
+http://www.omgubuntu.co.uk/2011/03/audio-recorder-for-linux-easily-record-audio-streams-to-mp3
+sudo apt-add-repository ppa:osmoma/audio-recorder
+sudo apt-get update && sudo apt-get install audio-recorder
+
+# OK
+# http://ubuntuhandbook.org/index.php/2016/02/install-audio-recorder-in-ubuntu-16-04-15-10/
+sudo add-apt-repository ppa:audio-recorder/ppa
+sudo apt-get updateau
+sudo apt-get install audio-recorder
+
+
+ffmpeg -i input1.mp3 -i input2.mp3 -filter_complex amerge -ac 2 -c:a libmp3lame -q:a 4 output.mp3
+ffmpeg -i 2017-04-04_21-36-40.wav -i 2017-04-04_21-37-14.wav -i 2017-04-04_21-37-45.wav -i 2017-04-04_21-38-18.wav -ac 2   output.wav
+
+################################################
+
+http://www.simonbrenner.org/Special_Blog?id=11
+
+Get information about a media file:
+
+ffmpeg -i video.avi
+Extract (demux) the audio track from a video file:
+
+ffmpeg -i video.mts -acodec copy -vn audio.ac3
+Extract (demux) the video track from a video file:
+
+ffmpeg -i video.mts -vcodec copy -an -f h264 ffNT.h264
+Merge an audio and a video track (mux):
+
+ffmpeg -i video.h264 -i audio.ac3 -vcodec copy -acodec copy videoaudio.ts
+Resize an original Full-HD (16:9) video file from a camcorder down to DVD resolution (and MPEG) for further processing, e.g. burning on DVD (e.g. with DVDStyler), but keep the source aspect ratio of 16:9:
+
+ffmpeg -i video.ts -s 720x405 -aspect "1.7777" -vb 8000k video.mpg
+Resize a video to a certain width, retaining the aspect ratio (width = 640px, in this example; the "-strict -2" may be necessary on Linux because of licence issues):
+
+ffmpeg -i video.mp4 [-strict -2] -vf "scale=640:-1" video-resize640.mp4
+
+################################################################
+#
+# Generate Video from Sound
+#
+################################################################
+
+ffmpeg -i input.flac -filter_complex \
+"[0:a]ahistogram,format=yuv420p[v]" \
+-map "[v]" -map 0:a output.mp4
+
+ffplay -f lavfi "amovie=input.flac, asplit [a][out1]; [a] ahistogram [out0]"
+
+ffmpeg -i input.wav -filter_complex \
+"[0:a]aphasemeter=s=1280x720:mpc=cyan,format=yuv420p[v]" \
+-map "[v]" -map 0:a output.mp4
+
+ffplay -f lavfi "amovie=input.wav, asplit [a][out1]; [a] aphasemeter=s=1280x720:mpc=cyan [out0]"
+ffplay -f lavfi "amovie=output.wav, asplit [a][out1]; [a] aphasemeter=s=1280x720:mpc=cyan [out0]" # ok
+
+ffmpeg -i input.mp3 -filter_complex \
+"[0:a]avectorscope=s=1280x720,format=yuv420p[v]" \
+-map "[v]" -map 0:a output.mp4
+
+ffplay -f lavfi "amovie=input.mp3, asplit [a][out1]; \
+[a] avectorscope=zoom=1.3:rc=2:gc=200:bc=10:rf=1:gf=8:bf=7 [out0]"
+ffplay -f lavfi "amovie=output.wav, asplit [a][out1]; [a] avectorscope=zoom=1.3:rc=2:gc=200:bc=10:rf=1:gf=8:bf=7 [out0]" # ok
+
+ffmpeg -i input.mp4 -filter_complex \
+"[0:a]showcqt,format=yuv420p[v]" \
+-map "[v]" -map 0:a output.mp4
+
+ffplay -f lavfi "amovie=input.mp4, asplit [a][out1]; [a] showcqt [out0]"
+ffplay -f lavfi "amovie=output.wav, asplit [a][out1]; [a] showcqt [out0]" # ok
+
+ffmpeg -i input.mp4 -filter_complex \
+"[0:a]showfreqs=mode=line:fscale=log,format=yuv420p[v]" \
+-map "[v]" -map 0:a output.mp4
+
+ffplay -f lavfi "amovie=input.mp4, asplit [a][out1]; [a] showfreqs=mode=line:fscale=log [out0]"
+ffplay -f lavfi "amovie=output.wav, asplit [a][out1]; [a] showfreqs=mode=line:fscale=log [out0]" # ok
+
+ffmpeg -i input.oga -filter_complex \
+"[0:a]showspectrum=s=1280x720,format=yuv420p[v]" \
+-map "[v]" -map 0:a output.mp4
+
+ffplay -f lavfi "amovie=input.oga, asplit [a][out1]; \
+[a] showspectrum=mode=separate:color=intensity:slide=1:scale=cbrt [out0]"
+
+ffmpeg -i input.m4a -filter_complex \
+"[0:a]showwaves=s=1280x720:mode=line:rate=25,format=yuv420p[v]" \
+-map "[v]" -map 0:a output.mp4
+
+ffplay -f lavfi "amovie=input.m4a, asplit [a][out1]; [a] showwaves [out0]"
+
+ffmpeg -i input.mka -filter_complex \
+"[0:a]showvolume=f=1:b=4:w=720:h=68,format=yuv420p[vid]" \
+-map "[vid]" -map 0:a output.mp4
+
+ffplay -f lavfi "amovie=input.mka, asplit [a][out1]; [a] showvolume=f=255:b=4:w=720:h=68 [out0]"
+
+ffmpeg -i output.wav -filter_complex "[0:a]avectorscope=s=720x720,format=yuv420p[v]" -map "[v]"  -map 0:a  -strict -2 output.mp4  # ok - gen video from sound
+
+------------------------------------------------------------------------------------
+
+http://www.tecmint.com/ffmpeg-commands-for-video-audio-and-image-conversion-in-linux/
+
+Convert images into a video
+ffmpeg -f image2 -i image%d.jpg imagestovideo.mpg
+
+Convert a video into mp3 format
+ffmpeg -i video.flv -vn -ar 44100 -ac 2 -ab 192 -f mp3 audio.mp3
+
+Convert video into animated gif
+ffmpeg -i video.flv animated.gif.mp4
+
+------------------------------------------------------------------------------------
+
+SMPTE Color Bars Pattern
+http://stackoverflow.com/questions/11640458/how-can-i-generate-a-video-file-directly-from-an-ffmpeg-filter-with-no-actual-in
+
+ffmpeg -f lavfi -i smptebars -t 30 smpte.mp4
+ffplay ffmpeg -f lavfi -i smptebars # OK
+
+ffmpeg -f lavfi -i testsrc -t 30 -pix_fmt yuv420p testsrc.mp4
+ffmpeg -f lavfi -i rgbtestsrc -pix_fmt yuv420p -t 30 rgbtestsrc.mp4
+ffplay -f lavfi -i testsrc -t 30  # OK
+
+------------------------------------------------------------------------------------
+
+http://video.stackexchange.com/questions/9644/how-do-i-turn-audio-into-video-that-is-show-the-waveforms-in-a-video
+
+Script
+
+#!/bin/bash
+# ffmpeg spectrum maker
+
+action=$1
+
+infile=$2
+
+outfile=$3
+upload_server="sftp://cloud"
+
+upload_location="/home/master/videos/"
+
+remote_command="youtube-upload --title=\"Remote_upload\" --privacy=\"private\" $upload_location$outfile"
+
+#simple spectrum
+filter1="showspectrum=s=1920x1080:slide=scroll:mode=combined:color=intensity:scale=cbrt:saturation=1:win_func=hann[tmp]"
+
+#vertical mirror
+filter2="[tmp]crop=iw:ih/2:0:ih/2-3,split[up][tmp];[tmp]vflip[down];[up][down]vstack[tmp]"
+
+#horizontal mirror
+filter3="[tmp]crop=iw/2:ih:iw/2:,split[left][tmp];[tmp]hflip[right];[left][right]hstack[tmp]"
+
+#fisheye effect VERY SLOW!!! if used make change the size of the spectrum to (1920*11/10)x(1080*11/10) and use the crop filter below
+filter4="[tmp]frei0r=filter_name=defish0r:filter_params=1.5|n[tmp]"
+
+#make sure the resolution has the desired size
+filter5="[tmp]crop=1920:1080"
+
+#pass the stream to the output for ffplay
+testpass="[tmp]copy[out0]"
+
+vcodec="-codec:v libx264 -pix_fmt yuv420p -tune grain -crf 21 -preset medium -bf 2 -flags +cgop -r 25"
+acodec="-codec:a libfdk_aac -b:a 128k -movflags +faststart"
+#acodec="-codec:a copy"
+
+###################################################
+#
+# ffmpeg glitches
+# https://tschoepler.net/2015/03/ffmpeg-glitches/
+#
+###################################################
+
+ffmpeg -i “meereis_%05d.exr” -threads 8 -c:v libvpx -b:v 3M -c:a libvorbis -force_key_frames expr:1 meereis.webm
+
+ffmpeg -i output.mp4 -f image2pipe -pix_fmt rgb24 -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 1920x1080 -pix_fmt rgb24 -r 24 -i - -an out.avi
+ffplay -i output.mp4 -f image2pipe -pix_fmt rgb24 -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 1920x1080 -pix_fmt rgb24 -r 24 -i - -an
+
+ffmpeg -i <filename>.mkv -vcodec copy -acodec copy <filename>.mov
+ffmpeg -i avc.mp4 -pix_fmt yuv422p -vcodec prores -profile 3 -acodec pcm_s16le out.mov
+ffmpeg -i avc.mp4 -pix_fmt yuv422p -vcodec rawvideo -acodec pcm_s16le out.mov
+ffmpeg -i DVDE6.mkv -vf yadif=0 -pix_fmt yuv422p -vcodec prores -profile 2 -acodec pcm_s16le DVDE6ProRes2.mov # http://ffmpeg.org/ffmpeg.html#yadif
+
+----------------------------------------------------------------------------------------
+
+ffmpeg -i in.mp4 -f image2pipe -pix_fmt rgb24 -vcodec rawvideo - |
+ffmpeg -f rawvideo -vcodec rawvideo -s 1920x1080 -pix_fmt rgb24 -r 24 -i - -an out.avi
+
+# Glitches generation
+# https://tschoepler.net/2015/03/ffmpeg-glitches/
+ffmpeg -i “meereis_%05d.exr” -threads 8 -c:v libvpx -b:v 3M -c:a libvorbis -force_key_frames expr:1 meereis.webm
+
+# audio glitch:    -af aresample=async=1
+
+----------------------------------------------------------------------------------------
+
+http://blog.pkh.me/p/21-high-quality-gif-with-ffmpeg.html
+
+% ffmpeg -v warning -ss 45 -t 2 -i big_buck_bunny_1080p_h264.mov -vf scale=300:-1 -gifflags -transdiff -y bbb-notrans.gif
+% ffmpeg -v warning -ss 45 -t 2 -i big_buck_bunny_1080p_h264.mov -vf scale=300:-1 -gifflags +transdiff -y bbb-trans.gif
+ffmpeg -v warning -ss 45 -t 2 -i big_buck_bunny_1080p_h264.mov -vf scale=300:-1:sws_dither=ed -y bbb-error-diffusal.gif
+
+
+# usage ./gifenc.sh video.mkv anim.gif
+#!/bin/sh
+palette="/tmp/palette.png"
+filters="fps=15,scale=320:-1:flags=lanczos"
+ffmpeg -v warning -i $1 -vf "$filters,palettegen" -y $palette
+ffmpeg -v warning -i $1 -i $palette -lavfi "$filters [x]; [x][1:v] paletteuse" -y $2
+
+
+# Extracting just a sample - ffmpeg -ss 12:23 -t 35 -i full.mkv -c:v copy -map 0:v -y video.mkv
+#!/bin/sh
+start_time=12:23
+duration=35
+palette="/tmp/palette.png"
+filters="fps=15,scale=320:-1:flags=lanczos"
+ffmpeg -v warning -ss $start_time -t $duration -i $1 -vf "$filters,palettegen" -y $palette
+ffmpeg -v warning -ss $start_time -t $duration -i $1 -i $palette -lavfi "$filters [x]; [x][1:v] paletteuse" -y $2
+
+################################################################
+#
+#   jpeg-LS glitching with FFmpeg
+#   http://nova.deviator.si/development-log/jpeg-ls-glitching
+#
+#################################################################
+
+#!/bin/bash
+
+# jpeg-LS glitcher by nova@deviator.si http://deviator.si
+
+# check existence of input argument
+# the $# variable will tell you the
+# number of input arguments the script was passed.
+if [ $# -eq 0 ]
+  then
+    echo "Error. No arguments supplied. Please define a video"
+    exit 1
+fi
+
+# does the movie file actually exist?
+if [ ! -f $1 ]; then
+    echo "Error. File not found!"
+    exit 1
+fi
+
+# get this session's "ID"
+SID=`date +%Y%m%d_%H%M%S`
+
+# jpegls glitch needs an older ffmpeg
+FFMPEG=/home/random/src/ffmpeg/ffmpeg-2.0.7/ffmpeg
+
+# create folder for this session
+DIR=jpegls_$SID
+echo "+++ creating folder $DIR ..."
+mkdir $DIR
+
+# create tmp folder
+echo "+++ creating folder $DIR/tmp/ ..."
+mkdir $DIR/tmp/
+
+echo "+++ extracting all frames as images..."
+echo
+echo "----------------------------------------------------------"
+echo
+ffmpeg -loglevel 16 -i $1 $DIR/tmp/frame%5d.jpg
+
+echo
+echo "----------------------------------------------------------"
+echo "+++ processing each image..."
+
+for i in $DIR/tmp/*.jpg
+do
+
+    echo "processing $i "
+    $FFMPEG -loglevel 16 -i $i -pred 80 -c:v jpegls $i.jpgls.jpg
+    ffmpeg -loglevel 16 -i $i.jpgls.jpg -c:v png $i.png
+
+done
+
+echo
+echo "----------------------------------------------------------"
+echo "+++ putting frames back into a movie ... "
+ffmpeg -loglevel 16 -i $DIR/tmp/frame%5d.jpg.png $DIR/$SID.$1
+
+echo
+echo "+++ removing temporary folder ..."
+rm -rf $DIR/tmp/
+
+echo "\n--- end of the program. "
+
+#################################################################################
+
+AviGlitch
+https://ucnv.github.io/aviglitch/
+
+
+require 'aviglitch'
+a = AviGlitch.open 'file.avi' # Rewrite this line for your file.
+a.glitch :keyframe do |f|     # To touch key frames, pass the symbol :keyframe.
+  nil                         # Returning nil in glitch method's yield block
+end                           # offers to remove the frame.
+a.output 'out.avi'
+
+----
+
+require 'aviglitch'
+a = AviGlitch.open 'file.avi'       # Rewrite this line for your file.
+d = []
+a.frames.each_with_index do |f, i|
+  d.push(i) if f.is_deltaframe?     # Collecting non-keyframes indices.
+end
+q = a.frames[0, 5]                  # Keep first key frame.
+100.times do
+  x = a.frames[d[rand(d.size)], 1]  # Select a certain non-keyframe.
+  q.concat(x * rand(50))            # Repeat the frame n times and concatenate with q.
+end
+o = AviGlitch.open q                # New AviGlitch instance using the frames.
+o.output 'out.avi'
+
+----
+
+require 'aviglitch'
+a = AviGlitch.open 'file.avi'
+a.glitch_with_index(:keyframe) do |data, i|
+  x = data[25..28].unpack('B*').first
+  w = rand(('0b' + x[0..12]).oct * 1.5)
+  h = rand(('0b' + x[14..26]).oct * 1.5)
+  x[0..12] = "%013b" % ((w > 50) ? w : 50)
+  x[14..26] = "%013b" % ((h > 50) ? h : 50)
+  (i == 0) ? data : data[0..24] + [x].pack('B*') + data[29..data.size]
+end
+a.output 'out.avi'

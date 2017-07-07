@@ -1,0 +1,454 @@
+/////////////////////////////////////////////////////////////////////////////
+//
+// Linux commands collection part1 ( www.commandlinefu.com )
+//
+// ---------------------------------------------------
+// http://www.commandlinefu.com/commands/browse
+//
+/////////////////////////////////////////////////////////////////////////////
+
+*
+*
+*
+*
+*
+*
+
+----------------------------------------
+
+git add -u
+#git remove files which have been deleted
+
+git rm $(git ls-files --deleted)
+#git remove files which have been deleted
+
+git commit --amend
+#Add forgotten changes to the last git commit
+
+git log --format='%aN' | sort -u
+#List all authors of a particular git project
+
+git reflog show | grep '}: commit' | nl | sort -nr | nl | sort -nr | cut --fields=1,3 | sed s/commit://g | sed -e 's/HEAD*@{[0-9]*}://g'
+#show git commit history
+
+git ls-files -z --deleted | xargs -0 git rm
+#git remove files which have been deleted
+
+git archive --format=tar HEAD | (cd /var/www/ && tar xf -)
+#update you web
+
+git archive HEAD --format=zip > archive.zip
+#bash script to zip a folder while ignoring git files and copying it to dropbox
+
+git diff --numstat | awk '{if ($1 == "0" && $2 == "0") print $3}' | xargs git checkout HEAD
+#(Git) Revert files with changed mode, not content
+
+git add --patch <filename>
+#Stage only portions of the changes to a file.
+
+git diff HEAD..rev | git apply --index; git commit
+#Undo several commits by committing an inverse patch.
+
+git stash branch testchanges
+#create new branch from stashed changes
+
+git config alias.dcolor "diff --color-words"
+#Better git diff, word delimited and colorized
+
+git log --graph --oneline --all --decorate --color
+#Git Tree Command with color and tag/branch name
+
+git add -u
+#Using Git, stage all manually deleted files.
+
+find . \( -type d -empty \) -and \( -not -regex ./\.git.* \) -exec touch {}/.gitignore \;
+#Add .gitignore files to all empty directories recursively from your current directory
+
+git shortlog -s | cut -c8-
+#List all authors of a particular git project
+
+git diff --stat `git log --author="XXXXX" --since="12 hours ago" --pretty=oneline | tail -n1 | cut -c1-40` HEAD
+#Figure out your work output for the day
+
+git ls-files | xargs -n1 -d'\n' -i git-blame {} | perl -n -e '/\s\((.*?)\s[0-9]{4}/ && print "$1\n"' | sort -f | uniq -c -w3 | sort -r
+#Prints per-line contribution per author for a GIT repository
+
+git checkout -
+#Switch to the previous branch used in git(1)
+
+git grep -l "your grep string" | xargs gedit
+#grep across a git repo and open matching files in gedit
+
+git log master | awk '/commit/ {id=$2} /\s+\w+/ {print id, $0}'
+#Display summary of git commit ids and messages for a given branch
+
+git log --name-status --oneline --all | grep -P "^[A|M|D]\s" | awk '{print $2}' | sort | uniq
+#List all files ever added in git repository
+
+git log --no-merges --format="%an: %s" v1..v2
+#Generate a Change Log with git
+
+git checkout $(git rev-list -n 1 HEAD -- "$file")^ -- "$file"
+#Restore deleted file from GIT repository
+
+git diff -U10 |wdiff --diff-input -a -n -w $'\e[1;91m' -x $'\e[0m' -y $'\e[1;94m' -z $'\e[0m' |less -R
+#Better git diff, word delimited and colorized
+
+git log --graph --oneline --all
+#My Git Tree Command!
+
+parallel -j4 cd {}\; pwd\; git pull :::: <(git submodule status | awk '{print $2}')
+#Pull git submodules in parallel using GNU parallel
+
+git log --oneline <REMOTE>..<LOCAL BRANCH>
+#GIT: list unpushed commits
+
+apt-get -y install git-core gitosis; adduser --home /home/git --gecos "git user" git; su git -c "ssh-keygen -t rsa -f /home/git/.ssh/id_rsa; gitosis-init < ~/.ssh/id_rsa"
+#Deploy git server repo
+
+git status | grep deleted | awk '{print $3}' | xargs git rm
+#delete multiple files from git index that have already been deleted from disk
+
+git log --format='%aN <%aE>' | awk '{arr[$0]++} END{for (i in arr){print arr[i], i;}}' | sort -rn | cut -d\ -f2-
+#List all authors of a particular git project
+
+curl http://github.com/api/v1/yaml/search/vim
+#Get info about a GitHub project
+
+curl http://github.com/api/v1/yaml/git
+#Get info about a GitHub user
+
+git log --all --pretty=format:" " --name-only | sort -u
+#List every file that has ever existed in a git repository
+
+find ~ -maxdepth 2 -name .git -print | while read repo; do cd $(dirname $repo); git pull; done
+#git pull all repos
+
+
+git log --graph --pretty=oneline --decorate
+#Display condensed log in a tree-like format.
+
+git remote add origin git@SSH-HOST:<USER>/<REPOSITORY>.git
+#github push-ing behind draconian proxies!
+
+git show --relative --pretty=format:'' --name-only HASH
+#Show (only) list of files changed by commit
+
+git --no-pager whatchanged -1 --pretty=medium <commit_hash>
+#Show log message including which files changed for a given commit in git.
+
+git log --pretty=oneline
+#Display condensed log of changes to current git repository
+
+git diff --cached
+#git diff of files that have been staged ie 'git add'ed
+
+
+git svn --authors-file=some-authors-file clone svn://address/of/svn/repo new-git-dir
+#Import/clone a Subversion repo to a git repo
+
+git rm $(git ls-files --deleted)
+#Using Git, stage all manually deleted files.
+
+git log origin/master..master --name-only --pretty="format:" | sort | uniq | xargs tar -rf mytarfile.tar
+#Export unpushed files list
+
+git diff-tree -r --no-commit-id --name-only --diff-filter=ACMRT COMMID_HASH | xargs tar -rf mytarfile.tar
+#generate file list modified since last commit and export to tar file
+
+git rev-list --max-parents=0 HEAD
+#Get first Git commit hash
+
+git status -s | grep -o ' \S*php$' | while read f; do php -l $f; done
+#Lint Git unstaged PHP files
+
+find -name .git -prune -o -type f -exec md5sum {} \; | sort -k2 | md5sum
+#Create md5sum of a directory
+
+find -type f | grep -v "^./.git" | xargs md5sum | md5sum
+#Create md5sum of a directory
+
+git reset --hard <commidId> && git clean -f
+#100% rollback files to a specific revision
+
+git branch -r | awk '{print $1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk '{print $1}' | xargs git branch -d
+#Remove git branches that do not have a remote tracking branch anymore
+
+git grep -l foo | xargs sed -i 's/foo/bar/g'
+#Git Global search and replace
+
+git log --pretty=oneline b56b83.. | wc -l
+#Count git commits since specific commit
+
+git ls-files | xargs -n1 git blame --line-porcelain | sed -n 's/^author //p' | sort -f | uniq -ic | sort -nr
+#Prints per-line contribution per author for a GIT repository
+
+git log --stat
+#show git logging
+
+
+git remote -v | grep fetch | sed 's/\(.*github.com\)[:|/]\(.*\).git (fetch)/\2/' | awk {'print "https://github.com/" $1'} | xargs open
+#Open the current project on Github by typing gh
+
+git submodule foreach git pull --ff-only origin master
+#Update (pull commits from) all submodules
+
+for k in `git branch|sed s/^..//`;do echo -e `git log -1 --pretty=format:"%Cgreen%ci %Cblue%cr%Creset" "$k" --`\\t"$k";done|sort
+#Show git branches by date - useful for showing active branches
+
+git config --local --get remote.origin.url
+#[git] Output remote origin from within a local repository
+
+git push origin :gh-pages
+#Delete specific remote 'origin' branch 'gh-pages'
+
+mv .git .. && rm -rf * && mv ../.git . && mv .git/* . && rmdir .git && git config --bool core.bare true
+#Convert an existing Git repo to a bare repo
+
+su - -m -p git
+#change user & preserver environment (.bashrc&co)
+
+git log --pretty=format:%H | tail -1
+#Get first Git commit hash
+
+git log -p -z | perl -ln0e 'print if /[+-].*searchedstring/'
+#See all the commits for which searchstring appear in the git diff
+
+git log --reverse --pretty=oneline | cut -c41- | nl | sort -nr
+#A nice way to show git commit history, with easy to read revision numbers instead of the default hash
+
+git log --pretty='format:%Cgreen%H %Cred%ai %Creset- %s'
+#Display summary of git commit ids and messages for a given branch
+
+git diff --numstat -w --no-abbrev | perl -a -ne '$F[0] != 0 && $F[1] !=0 && print $F[2] . "\n";'
+#Show changed files, ignoring permission, date and whitespace changes
+
+for i in `git log --all --oneline --format=%h`; do git grep SOME_STRING $i; done
+#search string in _all_ revisions
+
+git config --global --add alias.ff "pull --no-commit -v" ; git ff
+#Create a git alias that will pull and fast-forward the current branch if there are no conflicts
+
+for x in `git status | grep deleted | awk '{print $3}'`; do git rm $x; done
+#Using Git, stage all manually deleted files.
+
+git log master...feature-a | grep -o -E '\b([A-Z]+)-[0-9]+\b' | sort | uniq
+#Grab all JIRA ticket numbers (e.g. ABC-123) mentioned in commits added in feature branch off of master
+
+alias gitlog='git log -10 --graph --date-order -C -M --pretty=format:"%C(yellow)%h%C(reset) - %C(bold green)%ad%C(reset) - %C(dim yellow)%an%C(reset) %C(bold red)>%C(reset) %C(white)%s%C(reset) %C(bold red)%d%C(reset) " --abbrev-commit --date=short'
+#git log with color and path
+
+git status --porcelain | sed -ne 's/^ M //p' | tr '\n' '\0' | tr -d '"' | xargs -0 vim
+#Open (in vim) all modified files in a git repository
+
+git tag rel--`date +%Y-%m-%d--%H-%M-%S` -m "(%) rel: stage"
+#autocreate git tag
+
+git log --pretty=oneline --abbrev-commit
+#simple single-lined git log
+
+for file in $(git ls-files | grep old_name_pattern); do git mv $file $(echo $file | sed -e 's/old_name_pattern/new_name_pattern/'); done
+#Mass rename files in git
+
+alias tasks='git grep -EI "TODO|FIXME"'
+#Get a list of all TODO/FIXME tasks left to be done in your GIT project
+
+git config --global diff.external 'bash -c "meld $2 $5"'
+#git diff external without additional script
+
+find .git/objects -type f -printf "%P\n" | sed s,/,, | while read object; do echo "=== $obj $(git cat-file -t $object) ==="; git cat-file -p $object; done
+#Print out the contents of a Git repository (useful for broken repositories)
+
+find . -name .git -print0 | while read -d $'\0' g; do echo "$g"; cd "$g"; git gc --aggressive; cd -; done
+#Run git gc in all git repositories bellow .
+
+vim -p `git --porcelain | awk {print $2}`
+#Open (in vim) all modified files in a git repository
+
+sudo apt-get install git gcc make libx11-dev libxtst-dev pkg-config -y && git clone https://github.com/hanschen/ksuperkey.git && cd ksuperkey && make && sudo mv ksuperkey /usr/bin/ksuperkey && cd ~ && rm -rf ksuperkey
+#Installation Ksuperkey by one command in Kubuntu.
+
+git log | grep Date | awk '{print " : "$4" "$3" "$6}' | uniq -c
+#Number of commits per day in a git repository
+
+git for-each-ref --sort=-committerdate --format="%1B[32m%(committerdate:iso8601) %1B[34m%(committerdate:relative) %1B[0;m%(refname:short)" refs/heads/
+#Show git branches by date - useful for showing active branches
+
+git diff --name-only --diff-filter=AMXTCR HEAD~2 HEAD | xargs -l -I{} cp --parents --verbose "{}" target_dir
+#Copy modified files between two Git commits
+
+48 function gbl() { git for-each-ref --sort=-committerdate --format='%(committerdate) %(authorname) %(refname)' refs/remotes/origin/|grep -e ".$@"|head -n 10; }
+#List Remote Git Branches By Author
+
+git filter-branch --env-filter 'export GIT_COMMITTER_DATE="$GIT_AUTHOR_DATE"'
+#Set GIT_COMMITTER_DATE = GIT_AUTHOR_DATE for all the git commits
+
+git rev-parse --symbolic-full-name --abbrev-ref HEAD
+#get current git branch
+
+curl -s "https://api.github.com/users/${USERNAME}/repos" | ruby -rubygems -e 'require "json"; JSON.load(STDIN.read).each {|repo| %x[git clone #{repo["ssh_url"]} ]}'
+#Clone all github repos of a user
+
+cat /tmp/commit_list | { while read old_commit ; do msg="`git log --pretty=oneline $old_commit'^'..$old_commit | sed 's/[0-9a-f]* //' | sed 's/[^A-Za-z0-9]/./g'`"; git log --pretty=oneline HEAD@'{100}'..HEAD | grep "$msg" ; done ; }
+#find git commits by description
+
+git log --after="yesterday" --pretty=format:%s |uniq
+#Git log (commits titles) of today
+
+brd = "! f() { for k in $(git branch $@ | sed 's/^..//; s/ .*//'); do echo "$(git log -1 --pretty='%Cgreen%ci %Cblue(%cr)%Creset ' $k) $k" ; done | sort -r; }; f"
+#Show git branches by date - useful for showing active branches
+
+git for-each-ref --sort='-authordate' --format='%(refname)%09%(authordate)' refs/heads | sed -e 's-refs/heads/--'
+#Show git branches by date - useful for showing active branches
+
+git checkout HEAD~2 -- /path/to/dir
+#restoring a directory from history
+
+git status --porcelain | awk '{print $2}' | xargs git add
+#add untracked/changed items to a git repository before doing a commit and/or sending upstream
+
+git status|awk '/modified:/ { printf("git add %s\n",$3) }; NF ==2 { printf("git add %s\n",$2) }'|sh
+#add untracked/changed items to a git repository before doing a commit and/or sending upstream
+
+git diff -U10|dwdiff --diff-input -c|less -R
+#Better git diff, word delimited and colorized
+
+git shortlog -s | sort -rn | head
+#Top Ten of the most active committers in git repositories
+
+git log --summary 223286b.. | grep 'Author:' | wc -l
+#Count git commits since specific commit
+
+git submodule status | awk '{print $2}' | xargs -P5 -n1 git submodule update --init
+#Execute git submodule update in parallel with xargs
+
+git checkout -tb mybranch origin/mybranch
+#git - create a local branch that tracks with the remote branch
+
+git branch -d myfeature
+#Incorporating a finished feature on develop : Deleted branch myfeature
+
+git checkout develop; git merge --no-ff myfeature
+#Incorporating a finished feature on develop
+
+git checkout -b myfeature develop
+#Creating a feature branch
+
+git archive HEAD --format=zip -o `git rev-parse HEAD`.zip
+#Create a git archive of the latest commit with revision number as name of file
+
+function have_here { find "${@:-.}" -type d \( -name .git -o -name .svn -o -name .bzr -o -name CVS -o -name .hg -o -name __pycache__ \) -prune -o -type f -print; }
+#List files under current directory, ignoring repository copies.
+
+git diff | git apply --reverse
+#revert the unstaged modifications in a git working directory
+
+for k in $(git branch | sed /\*/d); do echo "$(git log -1 --pretty=format:"%ct" $k) $k"; done | sort -r | awk '{print $2}'
+#Show git branches by date - useful for showing active branches
+
+git-random(){ gitRan=$(curl -L -s http://whatthecommit.com/ |grep -A 1 "\"c" |tail -1 |sed 's/<p>//'); git commit -m "$gitRan"; }
+#random git-commit message
+
+git log --name-status --author="[The Author's Name]"
+#Get all git commits of a specific author in a nice format
+
+git remote | xargs -n 1 git push
+#Push to all remote repos with git
+
+tar czf git_mods_circa_dec23.tgz --files-from <(git ls-files -m)
+#Create tarball of files modified in git
+
+git branch | cut -c3- | grep -v "^master$" | while read line; do git branch -d $line; done | grep 'Deleted branch' | awk '{print $3;}' | while read line; do git push <target_remote> :$line; done
+#delete local *and* remote git repos if merged into local master
+
+git ls-files -z -d | xargs -0 git rm --
+#git-rm for all deleted files, including those with space/quote/unprintable characters in their filename/path
+
+git filter-branch --index-filter 'git rm --cached --ignore-unmatch FileToRemove' HEAD
+#Removing sensitive data from the entire repo history.
+
+function where(){ COUNT=0; while [ `where_arg $1~$COUNT | wc -w` == 0 ]; do let COUNT=COUNT+1; done; echo "$1 is ahead of "; where_arg $1~$COUNT; echo "by $COUNT commits";};function where_arg(){ git log $@ --decorate -1 | head -n1 | cut -d ' ' -f3- ;}
+#telling you from where your commit come from
+
+git clean -dfx
+#Remove all untracked files/directories from the working tree of a git repository.
+
+git status | perl -F'\s' -nale 'BEGIN { $a = 0 }; $a = 1 if $_ =~ /changed but not updated/i; print $F[-1] if ( $a && -f $F[-1] )'
+#Show the changed files in your GIT repo
+
+git log --format=%H | tail -1
+#Get first Git commit hash
+
+git tag -l --contains 18f6f2 live*
+#which git tags include this commit?
+
+git log -g --pretty=oneline | grep '}: commit' | awk '{print $1}' | head -1 | xargs git checkout -f
+#Update the working tree to the latest git commit
+
+git log --name-only | less
+#Find out what files are changed or added in a git repository.
+
+git remote prune origin
+#Remove branches that no longer exist from being shown via 'git branch -a'
+
+git clean -n | sed 's/Would remove //; /Would not remove/d;' | xargs mv -t stuff/
+#Move all files untracked by git into a directory
+
+gitstart () { if ! [[ -d "$@" ]]; then mkdir -p "$@" && cd "$@" && git init; else cd "$@" && git init; fi }
+#Makes a project directory, unless it exists; changes into the dir, and creates an empty git repository, all in one command
+
+git config --global alias.log1 "log --pretty=oneline --abbrev-commit"
+#git log1 alias
+
+git merge-base branch1 branch2
+#git branch point
+
+git merge --no-commit --no-ff
+#git merge --dry-run
+
+git daemon --reuseaddr --verbose --export-all --base-path=/parent/of/bare/git/repos
+#Serve one or more git repositories
+
+for dir in ~/git/*; do (cd "$dir" && git pull); done
+#bulk git pull
+
+find . -maxdepth 2 -type d -name '.git' -print0 | while read -d ''; do (cd "$REPLY"; git gc); done
+#free some harddrive space by garbage collecting in all your git repos
+
+git rev-list --reverse HEAD | awk "/$(git log -n 1 --pretty="format:%h")/ {print NR}"
+#Sequential revision numbers in Git
+
+git branch -a | grep "remotes/origin" | grep -v master | awk -F / '{print $3}' | xargs -I % git clone -b % git://github.com/jamesotron/DevWorld-2010-Cocoa-Workshop %
+#Clone all remote branches of a specific GitHub repository
+
+git fetch --progress --prune origin
+# get all new files
+
+git log origin/master..master -M --name-status --encoding=UTF-8 --full-history --sparse --
+#write log file
+
+git push --progress origin master:master
+#push all new files
+
+git show --relative --name-only
+#show info last changes
+
+while true; do rsync -vR $(git ls-files | inotifywait -q -e modify -e attrib -e close_write --fromfile - --format '%w') user@host:dest/dir/; done
+#Automatically sync current git project with remote host while editing
+
+git remote add origin git@SSH-HOST:<USER>/<REPOSITORY>.git
+#github push-ing behind draconian proxies!
+
+##############
+
+curl -L https://gist.github.com/westonruter/ea038141e46e017d280b/download | tar -xvz --strip-components=1
+#Download all files from a Gist without Git
+
+git log master...feature-a | grep -o -E '\b([A-Z]+)-[0-9]+\b' | sort | uniq
+#Grab all JIRA ticket numbers (e.g. ABC-123) mentioned in commits added in feature branch off of master
+
+curl -s "https://api.github.com/users/${USERNAME}/repos" | ruby -rubygems -e 'require "json"; JSON.load(STDIN.read).each {|repo| %x[git clone #{repo["ssh_url"]} ]}'
+#Clone all github repos of a user
+
+git branch -a | grep "remotes/origin" | grep -v master | awk -F / '{print $3}' | xargs -I % git clone -b % git://github.com/jamesotron/DevWorld-2010-Cocoa-Workshop %
+#Clone all remote branches of a specific GitHub repository

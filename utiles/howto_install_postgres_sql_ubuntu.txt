@@ -1,0 +1,209 @@
+###############################################
+#
+# Install postgresql in Ubuntu
+#
+##############################################
+
+sudo apt-get update
+sudo apt-get install postgresql postgresql-contrib
+sudo apt-get install postgresql-client
+sudo apt-get install pgloader
+sudo apt-get install pgadmin3
+sudo apt-cache search postgres
+
+sudo -i -u postgres
+sudo -u postgres psql postgres # login into postgres
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+sudo -u postgres psql postgres
+\password postgres #reset password!!!!
+Enter new password: ....
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+psql  #start conn postgres
+psql -h server.domain.org database user
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+sudo -u postgres psql postgres
+create database mydb;
+\conenct mydb;
+CREATE TABLE import (field1 varchar (255));
+ALTER TABLE import ADD field2 varchar(255);
+ALTER TABLE import DROP field2;
+\? # help
+\copy import FROM 'file.csv' DELIMITER '^' CSV
+\copy import FROM 'file.csv' (FORMAT csv, HEADER, DELIMITER ',');
+\copy import (field1,field2,field3) FROM 'file.csv' WITH CSV HEADER DELIMITER AS ','
+psql -c "COPY tbname FROM '/tmp/the_file.csv' delimiter '|' csv;"
+\dt import #check rows
+q # exit from \d
+
+\l ≃ show database
+\d  # SHOW TABLES
+SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';
+\l # SHOW DATABASES
+SELECT datname FROM pg_database;
+\d table # SHOW COLUMNS
+ SELECT column_name FROM information_schema.columns WHERE table_name ='table';
+\d+ table # DESCRIBE TABLE
+SELECT column_name FROM information_schema.columns WHERE table_name ='table';
+TRUNCATE TABLE orders;
+
+\q  # quit
+\d  # display table structure
+\dt # display table rows
+\password postgres
+
+sudo -u postgres createdb mydb
+
+createuser --interactive
+man createuser
+createdb test1
+sudo -i -u test1
+
+psql
+psql -d postgres
+\conninfo
+
+
+
+
+
+#\copy import FROM 'file.csv' DELIMITER '^' CSV
+#COPY persons(first_name,last_name,dob,email) FROM 'C:\tmp\persons.csv' DELIMITER ',' CSV HEADER;
+#psql -h localhost -d mydb -U postgres -f import_psql1.sql
+#pgloader --type csv --with "skip header = 1" --with "fields terminated by '^'"  file.csv  postgresql:///pgloader?mydb
+
+sudo -u postgres psql postgres
+\connect mydb;
+INSERT INTO import VALUES(....);
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+CREATE TABLE table_name (
+    column_name1 col_type (field_length) column_constraints,
+    column_name2 col_type (field_length),
+    column_name3 col_type (field_length)
+);
+
+CREATE TABLE playground (
+    equip_id serial PRIMARY KEY,
+    type varchar (50) NOT NULL,
+    color varchar (25) NOT NULL,
+    location varchar(25) check (location in ('north', 'south', 'west', 'east', 'northeast', 'southeast', 'southwest', 'northwest')),
+    install_date date
+);
+
+INSERT INTO playground (type, color, location, install_date) VALUES ('slide', 'blue', 'south', '2014-04-28');
+INSERT INTO playground (type, color, location, install_date) VALUES ('swing', 'yellow', 'northwest', '2010-08-16');
+
+
+SELECT * FROM playground;
+DELETE FROM playground WHERE type = 'slide';
+ALTER TABLE playground ADD last_maint date;
+ALTER TABLE playground DROP last_maint;
+UPDATE playground SET color = 'red' WHERE type = 'swing';
+
+https://help.ubuntu.com/community/PostgreSQL
+How To Install and Use PostgreSQL on Ubuntu 14.04 | DigitalOcean
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+# Bash script Example
+
+#!/bin/sh
+
+THE_USER=moi
+THE_DB=stuff
+THE_TABLE=personnel
+PSQL=/opt/postgresql/bin/psql
+THE_DIR=/tmp
+THE_FILE=the_file.csv
+
+${PSQL} -U ${THE_USER} ${THE_DB} <<OMG
+COPY ${THE_TABLE} FROM '${THE_DIR}/${THE_FILE}' delimiter '|' csv;
+OMG
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+mysqldump --compatible=postgresql dbname > export.sql
+sed "s/\\\'/\'\'/g" export.sql > export1.sql # escape quotes
+psql -h server -d databasename -U username -f export1.sql
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Export from MySQL
+
+
+mysql -u root -p
+SHOW DATABASES;
+CREATE DATABASE import;
+CONNECT import;
+CREATE TABLE import (field1 varchar (255));
+ALTER TABLE import ADD field2 varchar(255);
+...
+ALTER TABLE import ALTER COLUMN field38 DROP NOT NULL;
+ALTER TABLE `sometable` ADD `id` INT(11) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`) ; # add AI index to table
+
+#SELECT ROUND(23.298, 3) #   CAST(2.5 AS DECIMAL(20,2)) / ROUND(), CEIL() or FLOOR()
+#SELECT SUBSTR(field2,1,11) FROM `sometable` LIMIT 5
+
+...
+exit
+
+cd ~/Downloads
+mysql -u root -p --local-infile import;
+LOAD DATA LOCAL INFILE 'file.csv' INTO TABLE TableName FIELDS TERMINATED BY '^' LINES TERMINATED BY '\n';
+#Query OK, 62381 rows affected, 65535 warning (9,95 sec);
+exit
+
+mysqldump --compatible=postgresql -u root -p import import > import_mysql.sql   # (10sec)
+
+##############################
+# Get size of DBs
+##############################
+SELECT table_schema                                        "DB Name",
+   Round(Sum(data_length + index_length) / 1024 / 1024, 1) "DB Size in MB"
+FROM   information_schema.tables
+GROUP  BY table_schema;
+
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+
+###################################################
+# Import Export
+# http://www.postgresql.org/docs/8.1/static/backup.html
+###################################################
+----------------
+pg_dump dbname > outfile
+psql dbname < infile
+pg_dump -h host1 dbname | psql -h host2 dbname
+pg_dumpall > outfile
+psql -f infile postgres
+----------------
+pg_dump dbname | gzip > filename.gz   	# export large DB
+
+createdb dbname							# import large DB
+gunzip -c filename.gz | psql dbname
+
+cat filename.gz | gunzip | psql dbname 	# import large DB
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+http://pgloader.io/howto/csv.html
+http://pgloader.io/howto/quickstart.html
+http://tapoueh.org/pgsql/pgloader.html ++++++++
+http://manpages.ubuntu.com/manpages/hardy/man1/pgloader.1.html
+http://stackoverflow.com/questions/11500245/importing-clob-to-postgresql-using-pgloader
+https://en.wikibooks.org/wiki/Converting_MySQL_to_PostgreSQL#Very_Short_Intro
+http://stackoverflow.com/questions/5417386/import-mysql-dump-to-postgresql-database
+http://www.postgresonline.com/journal/archives/348-DELETE-all-data-really-fast-with-TRUNCATE-TABLE-CASCADE.html
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

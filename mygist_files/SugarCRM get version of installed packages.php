@@ -1,0 +1,33 @@
+<?php
+
+//////////////////////////////////////////////////////7
+//
+// SugarCRM get version of installed packages
+//
+//////////////////////////////////////////////////////7
+
+/**
+ * Created by PhpStorm.
+ * User: emil
+ * Date: 21.11.14
+ * Time: 12:05
+ */
+
+if(!defined('sugarEntry'))define('sugarEntry', true);
+require_once('include/entryPoint.php');
+
+global $moduleList;
+global $current_user;
+global $beanList, $beanFiles, $modInvisList, $adminOnlyList, $modInvisListActivities;
+
+require_once('modules/Administration/UpgradeHistory.php');
+$uh = new UpgradeHistory();
+$installedsUnsort = $uh->getAll();
+$installedsSorted = $uh->getAllOrderBy("id");
+
+print "<pre>";
+echo count ($installedsSorted );
+echo "<hr>";
+
+print_r($installedsSorted );
+print_r($installedsUnsort );

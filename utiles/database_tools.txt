@@ -1,0 +1,206 @@
+######################################
+##
+## Oracle
+##
+######################################
+
+php Oracle Admin
+http://sourceforge.net/projects/phporacleadmin/
+http://archive.org/details/tucows_154925_phpOracleAdmin
+http://developer.berlios.de/projects/phporacleadmin/
+
+Oracle Commander
+http://www.script-php.ru/script_bazy_dannyh/1749-oracle-commander.html
+http://www.maran.pamil-visions.com/maranphp/oraclecommander.zip
+
+PHP Ora Admin
+http://code.google.com/p/phporadmin/
+
+Oracle Editor
+http://sourceforge.net/projects/oracleeditor/
+
+phpOracleView ( Oracle )
+http://phporacleview.downloadaces.com/
+http://webxadmin.free.fr/article.php?i=183
+
+######################################
+##
+## MSSQL
+##
+######################################
+
+Adminer ( mySQL / Oracle / MSSQL / PostgreSQL, SQLLite )
+http://sourceforge.net/projects/adminer/
+http://www.adminer.org/
+
+myLittleAdmin for SQL Server 2000 ( MSSQL )
+http://www.mylittletools.net/en/mylittleadmin_sql_server_2000/download.aspx
+
+SQL Web Data Administrator ( MSSQL )
+http://sqlwebadmin.codeplex.com/
+
+1 Click DB : Open Source Web Database Administration Software ( MSSQL)
+http://www.restfuldevelopment.net/1clickdb/
+
+chive ( mySQL )
+http://www.chive-project.com/
+
+phpmsadmin ( MSSQL )
+http://sourceforge.net/projects/phpmsadmin/
+
+phpmyadmin ( mySQL )
+http://www.phpmyadmin.net/home_page/index.php
+http://www.phpmyadmin.net/home_page/index.php
+
+######################################
+##
+## Oracle Statements
+##
+######################################
+
+// Create a trigger
+CREATE SEQUENCE SEQ_SOMETABLE;
+
+// Empty table
+DELETE FROM SOMETABLE WHERE FIELD > 1
+
+// Truncate
+TRUNCATE TABLE SOMETABLE;
+
+// Update table values
+UPDATE SOMETABLE SET FIELD = 'VALUE' WHERE ID > 1
+
+// Update data type of db field
+ALTER TABLE SOMETABLE MODIFY (FIELD1 char(200), FIELD2 nummer(20));
+
+// Add new column someid
+ALTER TABLE SOMETABLE ADD (SOMEID char(200));
+
+// Get next value with sequence trigger
+SELECT seq_SOMETABLE.NEXTVAL FROM dual;
+
+// Get last id - alternative for next value with sequence trigger
+SELECT * FROM SOMETABLE WHERE SOMEID = (SELECT MAX(SOMEID) FROM SOMETABLE)
+
+// Drop sequence trigger
+DROP SEQUENCE oe.SOMETABLE_seq;
+
+// Drop trigger
+DROP TRIGGER hr.TABLE;
+
+// Find duplicates
+SELECT FIELD, COUNT(FIELD) from SOMETABLE GROUP BY FIELD HAVING COUNT (FIELD) > 1 ORDER BY COUNT(FIELD) DESC;
+
+// Make a join between tables
+SELECT * FROM TABLE1 TB1 LEFT JOIN TABLE2  TB2 ON TB1.FIELD = TB2.FIELD
+
+// Using REGEX
+SELECT * FROM TABLE1 WHERE REGEXP_LIKE(FIELD,'^[0-9]{1}[a-zA-Z](.*)$')";
+
+
+##########################################
+#
+# 	MySQL Find Items in Table A wich are not in Table B
+#
+############################################
+
+SELECT name
+FROM table2
+WHERE NOT EXISTS
+    (SELECT *
+     FROM table2
+     WHERE table1.name = table2.name)
+
+SELECT table2.name FROM table2 WHERE EXISTS (SELECT * FROM table1  WHERE table1.name = table2.name)
+SELECT table2.name FROM table2 WHERE NOT EXISTS (SELECT * FROM table1  WHERE table1.name = table2.name)
+SELECT name FROM table2 WHERE name NOT IN     (SELECT name  FROM table1)
+SELECT t1.name FROM table1 t1 LEFT JOIN table2 t2 ON t2.name = t1.name WHERE t2.name IS NULL
+
+
+SELECT * FROM table1 AS t1
+LEFT JOIN table2 AS t2 ON t1.id = t2.id
+UNION
+SELECT * FROM table1 AS t1
+RIGHT JOIN table2 AS t2 ON t1.id = t2.id
+
+
+SELECT id
+FROM   accounts
+WHERE  accounts.deleted = 0 AND accounts.id IS NOT NULL
+AND
+accounts.id NOT IN (
+   SELECT DISTINCT id_c
+   FROM   accounts_cstm
+);
+
+SELECT id_c
+FROM   accounts_cstm
+WHERE  id_c NOT IN (
+   SELECT DISTINCT id
+   FROM   accounts WHERE accounts.deleted = 0 AND accounts.id IS NOT NULL
+);
+
+
+
+SELECT A.* FROM A WHERE ID NOT IN(SELECT ID FROM B)
+SELECT A.* FROM A WHERE NOT EXISTS(SELECT 1 FROM B WHERE B.ID=A.ID)
+
+
+#    NOT EXISTS
+#    NOT IN
+#    LEFT JOIN
+
+
+
+SELECT * FROM TableA WHERE NOT EXISTS (
+    SELECT NULL
+    FROM TableB
+    WHERE TableB.ID = TableA.ID
+)
+
+SELECT * FROM TableA WHERE ID NOT IN (
+    SELECT ID FROM TableB
+)
+
+SELECT TableA.* FROM TableA
+LEFT JOIN TableB
+ON TableA.ID = TableB.ID
+WHERE TableB.ID IS NULL
+
+
+http://stackoverflow.com/questions/2973558/select-a-value-where-it-doesnt-exist-in-another-table
+http://stackoverflow.com/questions/19363481/select-rows-which-are-not-present-in-other-table
+
+########################################################
+#
+# Reindex AUTO_INCREMENT PRIMARY KEY FIELD
+#
+########################################################
+
+# check for duplicates
+SELECT case_number, COUNT( case_number )  FROM cases GROUP BY case_number HAVING COUNT( case_number ) >1 LIMIT 0 , 30
+
+# set random indexes
+UPDATE cases SET case_number = RAND( ) *99999999 WHERE 1
+
+# set first item index  as 1
+UPDATE cases SET case_number =1 LIMIT 1
+
+# Reset indexes
+SET @count = 0;
+UPDATE IGNORE `cases` SET `cases`.`case_number` = @count:= @count + 1;
+SELECT @count;
+
+# Reset indexes alternative
+ALTER TABLE `cases` DROP PRIMARY KEY , ADD INDEX ( `case_number` );
+SET @count = 0;
+UPDATE IGNORE `cases` SET `cases`.`case_number` = @count:= @count + 1;
+ALTER TABLE `cases` AUTO_INCREMENT = 1;
+ALTER TABLE `cases` DROP INDEX `case_number` , ADD PRIMARY KEY ( `case_number` );
+
+# repair table
+REPAIR TABLE cases QUICK;
+# OPTIMIZE TABLE cases;
+# ANALYZE TABLE cases
+# SHOW TABLE STATUS FROM dbname;
+# SHOW STATUS;

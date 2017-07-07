@@ -1,0 +1,128 @@
+
+###########################################
+###########################################
+####  Multi-Threading PHP MYSQL JS   ######
+###########################################
+###########################################
+
+
+
+#############################
+#####      MySQL     ########
+#############################
+
+my.ini
+thread_cache_size = 8
+thread_concurrency = 8
+
+
+
+#############################
+#####       PHP     #########
+#############################
+
+https://github.com/krakjoe/pthreads
+https://gist.github.com/Divi/9696838
+
+---
+
+class AsyncOperation extends Thread {}
+$stack = new AsyncOperation();
+
+............................
+
+$sql = new SQLWorker($host, $user, $pass, $db);
+$sql->start();
+
+$sql->stack($q1 = new SQLQuery("One long Query"));
+$sql->stack($q2 = new SQLQuery("Another long Query"));
+
+$q1->wait();
+$q2->wait();
+
+// Do Something Useful
+
+............................
+
+class AThread extends Thread {
+  protected $counter = 0;
+  public function run() {
+    for ($i = 0; $i counter++;
+    }
+    echo "Counter is: " . $this->counter . PHP_EOL;
+  }
+}
+
+$someThread = new AThread();
+$someThread->start();
+
+echo "Finished script" . PHP_EOL;
+
+............................
+
+# pthreads Extension build
+# ------------------------
+git clone https://github.com/krakjoe/pthreads.git /home/pthreads
+cd /home/pthreads
+apt-get install -y php5-dev
+phpize
+./configure --with-php-config=$PHP_DIRECTORY/bin/php-config
+make
+make install
+mkdir $PHP_DIRECTORY/conf.d
+echo "extension=pthreads.so" > /etc/php5ts/conf.d/pthreads.ini
+
+
+
+#############################
+#####       JS      #########
+#############################
+
+
+var worker = new Worker('bigLoop.js');
+worker.onmessage = function (event) {
+alert("Completed " + event.data + "iterations" );
+};
+
+if(typeof(Worker) !== "undefined") {
+    // Yes! Web worker support!
+    // Some code.....
+} else {
+    // Sorry! No Web Worker support..
+}
+
+if(typeof(w) == "undefined") {
+    w = new Worker("demo_workers.js");
+}
+
+w.onmessage = function(event){
+    document.getElementById("result").innerHTML = event.data;
+};
+w.terminate();
+
+var worker = new Worker('task.js');
+worker.postMessage(); // Start the worker.
+
+
+
+---------------------------------//-----------------------------------------------
+
+Articles:
+
+http://www.tutorialspoint.com/html5/html5_web_workers.htm
+http://t3n.de/news/aufgaben-html5-web-workers-399257/
+https://html.spec.whatwg.org/multipage/workers.html
+http://www.w3schools.com/htmL/html5_webworkers.asp
+https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers
+http://www.html5rocks.com/de/tutorials/workers/basics/
+
+
+http://php.net/manual/de/class.thread.php
+http://phplens.com/lens/php-book/optimizing-debugging-php.php
+
+
+http://www.mullie.eu/parallel-processing-multi-tasking-php/
+http://www.phpgangsta.de/richtige-threads-in-php-einfach-erstellen-mit-pthreads
+https://entwickler.de/online/php/asynchronous-io-in-php-oder-doch-lieber-threads-137913.html
+http://stackoverflow.com/questions/70855/how-can-one-use-multi-threading-in-php-applications/15501449#15501449
+http://stackoverflow.com/questions/2267345/how-do-you-make-good-use-of-multicore-cpus-in-your-php-mysql-applications

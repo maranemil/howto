@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+
+<script>
+    /*$('.typeahead').off('keydown'); // keypress keydown keyup
+     $('.typeahead').live('keydown', function () {
+     var $this = $(this)
+     var qTyped = $this.attr("value");
+     });*/
+</script>
+
+<!--
+####################################################
+#
+# Static Example in SugarCRM
+#
+####################################################
+-->
+<script>
+    setTimeout(function () {
+        $.getScript("include/javascript/jquery/bootstrap/bootstrap-typeahead.js", function () {
+            console.debug("Script loaded but not necessarily executed.");
+        });
+    }, 700)
+
+    setTimeout(function () {
+        var colors = ["red", "blue", "green", "yellow", "brown", "black"];
+        $('#myfield').typeahead({
+            source: colors,
+            highlight: true
+        }).bind('typeahead:selected', function (obj, selected, name) {
+            //console.debug(obj, selected, name);
+        });
+
+        $('.typeahead').on('click.typeaheadonce', function () {
+            $('#myfield').attr("value", $('#myfield').val())
+        });
+
+    }, 1500)
+</script>
+
+
+
+
+<!--
+####################################################
+#
+# Google suggest queries Example
+#
+# http://jsfiddle.net/caim/ktsvbg5p/
+#
+####################################################
+-->
+<form id="my-form">
+    <input class="form-control" name="search" type="text" placeholder="type something ..." id="my-autoc">
+    <br>
+</form>
+<script>
+    $('#my-autoc').typeahead({
+        name: 'search',
+        remote: {
+            url: 'http://suggestqueries.google.com/complete/search?client=chrome&q=%QUERY',
+            dataType: 'jsonp',
+            cache: false,
+            filter: function (parsedResponse) {
+                console.debug(parsedResponse)
+                return (parsedResponse.length > 1) ? parsedResponse[1] : [];
+            }
+        }
+    }).on('typeahead:selected', function (e) {
+        e.target.form.submit();
+    });
+</script>
+<style>
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.1.1/css/bootstrap.min.css');
+    @import url('https://rawgithub.com/ashleydw/typeahead.js-bootstrap.css/master/typeahead.js-bootstrap.css');
+    body { padding: 20px; }
+</style>
+
+
+<!--
+####################################################
+#
+# themoviedb Example
+#
+# http://jsfiddle.net/Fresh/UkB7u/
+#
+####################################################
+-->
+<input class="typeahead">
+<script>
+    // Instantiate the Bloodhound suggestion engine
+    var movies = new Bloodhound({
+        datumTokenizer: function (datum) {
+            return Bloodhound.tokenizers.whitespace(datum.value);
+        },
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+            url: 'http://api.themoviedb.org/3/search/movie?query=%QUERY&api_key=f22e6ce68f5e5002e71c20bcba477e7d',
+            filter: function (movies) {
+                // Map the remote source JSON array to a JavaScript object array
+                return $.map(movies.results, function (movie) {
+                    return {
+                        value: movie.original_title
+                    };
+                });
+            }
+        }
+    });
+    // Initialize the Bloodhound suggestion engine
+    movies.initialize();
+    // Instantiate the Typeahead UI
+    $('.typeahead').typeahead(null, {
+        displayKey: 'value',
+        source: movies.ttAdapter()
+    });
+</script>
+<style>
+    @font-face { font-family: "Prociono"; src: url("../font/Prociono-Regular-webfont.ttf");  }
+    html { overflow-y: scroll; }
+    .container { margin: 0 auto; max-width: 750px; text-align: center; }
+    .tt-dropdown-menu, .gist { text-align: left; }
+    html { color: #333333; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 18px; line-height: 1.2;  }
+    .title, .example-name { font-family: Prociono; }
+    p { margin: 0 0 10px; }
+    .title { font-size: 64px; margin: 20px 0 0; }
+    .example { padding: 30px 0; }
+    .example-name { font-size: 32px; margin: 20px 0; }
+    .demo {  margin: 50px 0; position: relative; }
+    .typeahead, .tt-query, .tt-hint { border: 2px solid #CCCCCC; border-radius: 8px 8px 8px 8px; font-size: 24px;
+        height: 30px; line-height: 30px; outline: medium none; padding: 8px 12px; width: 396px;
+    }
+    .typeahead { background-color: #FFFFFF; }
+    .typeahead:focus { border: 2px solid #0097CF; }
+    .tt-query { box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset; }
+    .tt-hint { color: #999999; }
+    .tt-dropdown-menu { background-color: #FFFFFF; border: 1px solid rgba(0, 0, 0, 0.2); border-radius: 8px 8px 8px 8px;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); margin-top: 12px; padding: 8px 0; width: 422px; }
+    .tt-suggestion { font-size: 18px; line-height: 24px; padding: 3px 20px; }
+    .tt-suggestion.tt-cursor { background-color: #0097CF; color: #FFFFFF; }
+    .tt-suggestion p { margin: 0; }
+    .gist { font-size: 14px; }
+    .example-twitter-oss .tt-suggestion { padding: 8px 20px; }
+    .example-twitter-oss .tt-suggestion + .tt-suggestion { border-top: 1px solid #CCCCCC; }
+    .example-twitter-oss .repo-language { float: right; font-style: italic; }
+    .example-twitter-oss .repo-name { font-weight: bold; }
+    .example-twitter-oss .repo-description { font-size: 14px; }
+    .example-sports .league-name { border-bottom: 1px solid #CCCCCC; margin: 0 20px 5px; padding: 3px 0; }
+    .example-arabic .tt-dropdown-menu { text-align: right; }
+</style>
+
+<!--
+#######################################################
+#
+# local Json Example
+#
+# http://jsfiddle.net/rwone/5dpo4r4a/
+# jQuery UI 1.8.5, QUnit, Firebug Lite, jQuery UI 1.8.9, jQuery Lint
+#
+#######################################################
+-->
+<p>Type "title01" or "area01" for an example:</p>
+<div class="course_lookup">
+    <div class="demo">
+        <input class="typeahead" type="text" placeholder="Enter subject or subject area">
+    </div>
+</div>
+<script>
+    // Notes:
+    //
+    // Below, I am using 'local' instead of the desired 'prefetch' in order to show functionality in jsFiddle.
+    //
+    // Desired Behaviour:
+    //
+    // Perform the following upgrades and still have the original functionality working.
+    //
+    // - Upgrade hogan from 2.0.0 to 3.0.2
+    // - Upgrade typeahead from 0.9.3 to 0.10.5
+    //
+    // I think the CDN links for these upgrades are:
+    //
+    // http://cdnjs.cloudflare.com/ajax/libs/hogan.js/3.0.2/hogan.js
+    // http://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.5/typeahead.jquery.min.js
+    //
+    // For reference, these are the links used in this jsFiddle:
+    //
+    // http://cdnjs.cloudflare.com/ajax/libs/hogan.js/2.0.0/hogan.js
+    // http://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.9.3/typeahead.min.js
+
+    // hogan attempts - don't work
+    //var template = "<p class=\"course_area\">{{course_area}}</p><p class=\"course_title\">{{course_title}}</p><p class=\"course_description\">{{course_description}}</p>";
+    //var compiled_template = Hogan.compile(template);
+
+    function searchReadyFunction() {
+        $('.course_lookup .typeahead').typeahead({
+            name: 'courses',
+            valueKey: 'course_title',
+            local: [
+                {
+                    "course_area": "Area01",
+                    "course_title": "title01",
+                    "course_description": "Description text 01",
+                    "tokens": ["title01", "Area01"]
+                },
+                {
+                    "course_area": "Area02",
+                    "course_title": "title02",
+                    "course_description": "Description text 02",
+                    "tokens": ["title02", "Area02"]
+                },
+                {
+                    "course_area": "Area03",
+                    "course_title": "title03",
+                    "course_description": "Description text 03",
+                    "tokens": ["title03", "Area03"]
+                },
+                {
+                    "course_area": "Area02",
+                    "course_title": "title04",
+                    "course_description": "Description text 04",
+                    "tokens": ["title04", "Area02"]
+                },
+                {
+                    "course_area": "Area02",
+                    "course_title": "title05",
+                    "course_description": "Description text 05",
+                    "tokens": ["title05", "Area02"]
+                },
+                {
+                    "course_area": "Area04",
+                    "course_title": "title06",
+                    "course_description": "Description text 06",
+                    "tokens": ["title06", "Area04"]
+                },
+                {
+                    "course_area": "Area05",
+                    "course_title": "title07",
+                    "course_description": "Description text 07",
+                    "tokens": ["title07", "Area05"]
+                }
+            ],
+            template: [
+                '<p class="course_area">{{course_area}}</p>',
+                '<p class="course_title">{{course_title}}</p>',
+                '<p class="course_description">{{course_description}}</p>'
+            ].join(''),
+            engine: Hogan
+            //templates: {
+            //suggestion: function (data) { return compiled_template.render(data); }
+            //}
+        }).on('typeahead:selected', function (event, selection) {
+            var course_name = selection.course_title.toLowerCase();
+            // ...
+        });
+    }
+    searchReadyFunction();
+</script>
+<style>
+    /* ========================== BEGIN course search css */
+    .tt-dropdown-menu { text-align: left; height: 210px; overflow-y: auto; }
+    .title, .course-title { font-family: "petitalightregular"; }
+    .title { margin: 20px 0 0 0; font-size: 64px; }
+    .course-title { margin: 20px 0; font-size: 32px; }
+    .demo { position: relative; *z-index: 1; margin-top: 30px; }
+    .typeahead, .tt-query, .tt-hint { width: 440px; height: 26px; padding-left: 10px;
+        font-size: 14px; line-height: 26px; border: 2px solid #E4E4E4; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px;
+        outline: none;
+    }
+    .typeahead { background-color: #fff; }
+    .tt-query { -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    }
+
+    /*new */
+    .typeahead, .tt-input, .tt-hint { width: 440px; height: 26px; padding-left: 10px; font-size: 14px; line-height: 26px;
+        border: 2px solid #E4E4E4; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; outline: none;
+    }
+    .tt-input {
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+        -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    }
+    /* end */
+    .tt-hint { color: #999 }
+    .tt-dropdown-menu { width: 452px; margin-top: 12px; padding: 8px 0; background-color: #fff; border: 1px solid #ccc;
+        border: 1px solid rgba(0, 0, 0, 0.2);  -webkit-border-radius: 6px; -moz-border-radius: 6px;  border-radius: 6px;
+    }
+    .tt-suggestion { padding: 3px 20px; font-size: 18px; line-height: 24px; }
+    .tt-suggestion.tt-is-under-cursor { color: #fff; background-color: #f5f3f3; }
+    /* new see https://github.com/twitter/typeahead.js/blob/master/doc/migration/0.10.0.md#precompiled-templates-are-now-required */
+    .tt-suggestion.tt-cursor {  color: #fff;  background-color: #f5f3f3; }
+    /* end */
+    .tt-suggestion p { margin: 0; }
+    .course_lookup .tt-suggestion { padding: 8px 20px; }
+    .course_lookup .tt-suggestion + .tt-suggestion { border-top: 1px solid #ccc; }
+    .course_lookup .course_area {  float: right; font-size: 14px !important; text-transform: lowercase; color: #aaaaaa !important; }
+    .course_lookup .course_title { font-size: 16px !important; }
+    .course_lookup .course_description {  font-size: 14px !important; text-transform: lowercase;  margin-top: 5px; margin-bottom: 5px; }
+    /* ========================== END course search css */
+</style>
+
+
+
+<!--
+######################################################################
+#
+# How to send data in request body when using Typeahead & Bloodhound
+#
+#####################################################################
+-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js">
+</script>
+<input type="text" id="typeahead" placeholder="search"/>
+<br/>
+
+<div id="results">
+    <ul>
+    </ul>
+</div>
+
+<script>
+    var substringMatcher = function (strs, q, cb) {
+        return (function (q, cb, name) {
+            var matches, substrRegex;
+            // an array that will be populated with substring matches
+            matches = [];
+            // regex used to determine if a string contains the substring `q`
+            substrRegex = new RegExp(q, 'i');
+            // iterate through the pool of strings and for any string that
+            // contains the substring `q`, add it to the `matches` array
+            $.each(strs, function (i, str) {
+                if (substrRegex.test(str)) {
+                    // the typeahead jQuery plugin expects suggestions to a
+                    // JavaScript object, refer to typeahead docs for more info
+                    matches.push(name(str));
+                }
+            });
+            cb(matches);
+        }(q, cb, function (res) {
+            return res
+        }));
+    };
+
+    $("#typeahead").on("input", function (e) {
+        $.ajax({
+            url: "https://gist.githubusercontent.com/guest271314/"
+            + "ffac94353ab16f42160e/raw/"
+            + "aaee70a3e351f6c7bc00178eabb5970a02df87e9/states.json",
+            processData: false,
+            data: JSON.stringify({
+                "search": "people",
+                "query": e.target.value
+            })
+        })
+                .then(function (json) {
+                    if (e.target.value.length) {
+                        substringMatcher(JSON.parse(json), e.target.value, function (results) {
+                            $("#results ul").empty();
+                            $.map(results, function (value, index) {
+                                $("#results ul")
+                                        .append($("<li />", {
+                                            "class": "results-" + index,
+                                            "html": value
+                                        }))
+                            })
+                        })
+                    } else {
+                        $("#results ul").empty();
+                    }
+                }, function err(jqxhr, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown)
+                })
+    });
+</script>
+
+
+<!--
+################################################################
+#
+# Autocomplete typeahead Example Nr1
+# http://jsfiddle.net/handtrix/cnmfl/2/
+# http://jsfiddle.net/caim/ktsvbg5p/
+#
+################################################################
+-->
+<form id="my-form">
+    <input class="form-control typeahead" name="search" type="text"
+           placeholder="type something ..." id="my-autoc">
+    <br>
+</form>
+<div id="log"></div>
+
+<style>
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.1.1/css/bootstrap.min.css');
+    @import url('https://rawgithub.com/ashleydw/typeahead.js-bootstrap.css/master/typeahead.js-bootstrap.css');
+    body {  padding: 20px; }
+</style>
+<script>
+    $('#my-autoc').typeahead({
+        name: 'search',
+        remote: {
+            url: 'http://suggestqueries.google.com/complete/search?client=chrome&q=%QUERY',
+            dataType: 'jsonp',
+            cache: false,
+            filter: function (parsedResponse) {
+
+                $('#log').html(parsedResponse[1])
+                return (parsedResponse.length > 1) ? parsedResponse[1] : [];
+            }
+        }
+    }).on('typeahead:selected', function (e) {
+        //e.target.form.submit();
+    });
+</script>
+
+
+<!--
+################################################################
+#
+# Autocomplete typeahead Example Nr2
+# http://jsfiddle.net/Sherbrow/p3wXs/
+#
+################################################################
+-->
+<input type="text" class="typeahead"/>
+<style>body {
+    padding: 40px;
+}</style>
+<script>
+
+    /* Demo data only for jsfiddle */
+    var ajaxData = {json: JSON.stringify(["Alabama", "Alaska", "Arizona", "Arkansas", "California"])};
+    var ajaxUrl = '/echo/json/';
+    /* END demo data */
+
+    $('.typeahead').on('click.typeaheadonce', function () {
+        var $this = $(this)
+        $this.off('click.typeaheadonce'); // Disable this listener so that it's called only once
+        $.ajax(ajaxUrl, {
+            type: 'post',
+            data: ajaxData
+        }).done(function (data) {
+            // initialize the typeahead plugin
+            $this.typeahead({
+                source: data
+            });
+            alert('activated!'); // Ok !
+        });
+    });
+</script>
+
+<!--
+################################################################
+#
+# Autocomplete typeahead Example Nr2
+# https://twitter.github.io/typeahead.js/examples/#remote
+#
+################################################################
+-->
+
+<div id="remote">
+    <input class="typeahead" type="text" placeholder="Oscar winners for Best Picture">
+</div>
+<script>
+    var bestPictures = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        prefetch: '../data/films/post_1960.json',
+        remote: {
+            url: '../data/films/queries/%QUERY.json',
+            wildcard: '%QUERY'
+        }
+    });
+    $('#remote .typeahead').typeahead(null, {
+        name: 'best-pictures',
+        display: 'value',
+        source: bestPictures
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,739 @@
+/////////////////////////////////////////////////////////////////////////////
+//
+// Linux commands collection part1 ( www.commandlinefu.com )
+//
+// ---------------------------------------------------
+// http://www.commandlinefu.com/commands/browse
+//
+/////////////////////////////////////////////////////////////////////////////
+
+*
+*
+*
+*
+*
+*
+
+find /var/log -type f -iregex '.*[^\.][^0-9]+$' -not -iregex '.*gz$' 2> /dev/null | xargs tail -n0 -f | ccze -A
+#View all new log messages in real time with color
+
+awk -F: '{print $2}' access_log | sort | uniq -c
+#Hits per hour apache log
+
+grep -r "<script" | grep -v src | awk -F: '{print $1}' | uniq
+#Search files with js declarations inside
+
+find -type l -xtype l
+#Find dead symbolic links
+
+netstat -tlpn | sort -t: -k2 -n
+#List Listen Port by numbers
+
+php -r 'echo json_encode( unserialize( file_get_contents( "php://stdin" ) ) );'
+#Convert serialized PHP data into JSON
+
+git log master...feature-a | grep -o -E '\b([A-Z]+)-[0-9]+\b' | sort | uniq
+#Grab all JIRA ticket numbers (e.g. ABC-123) mentioned in commits added in feature branch off of master
+
+ssh -N -L2001:localhost:80 somemachine
+#start a tunnel from some machine's port 80 to your local post 2001
+
+curl ifconfig.me
+#Get your external IP address
+
+curl -u user:pass -d status="Tweeting from the shell" http://twitter.com/statuses/update.xml
+#Update twitter via curl
+
+wget --random-wait -r -p -e robots=off -U mozilla http://www.example.com
+#Download an entire website
+
+ssh user@host cat /path/to/remotefile | diff /path/to/localfile -
+#Compare a remote file with a local file
+
+net rpc shutdown -I ipAddressOfWindowsPC -U username%password
+#Shutdown a Windows machine from Linux
+
+curl -u username --silent "https://mail.google.com/mail/feed/atom" | perl -ne 'print "\t" if /<name>/; #Check your unread Gmail from the command line
+
+ping -i 60 -a IP_address
+#Set audible alarm when an IP address comes online
+
+history | awk '{a[$2]++}END{for(i in a){print a[i] " " i}}' | sort -rn | head
+history | awk '{print $2}' | sort | uniq -c | sort -rn | head
+#List of commands you use most often
+
+getconf LONG_BIT
+#32 bits or 64 bits?
+
+ps aux | sort -nk +4 | tail
+ps -eo rss,vsz,pid,cputime,cmd --width 100 --sort rss,vsz | tail --lines 10
+ps aux --sort -rss | head
+ps axo %mem,pid,euser,cmd | sort -nr | head -n 10
+#Display the top ten running processes - sorted by memory usage
+
+
+netstat -ntauple
+#Watch Network Service Activity in Real-time
+
+nc -v -l 80 < file.ext
+#Sharing file through http 80 port
+
+netstat -lantp | grep -i stab | awk -F/ '{print $2}' | sort | uniq
+netstat -lantp | grep -i establ | awk -F/ '{print $2}' | sort | uniq
+#Show apps that use internet connection at the moment. (Multi-Language)
+
+mv filename.{old,new}
+#quickly rename a file
+
+rm !(*.foo|*.bar|*.baz)
+#Delete all files in a folder that don't match a certain file extension
+
+cat /etc/issue
+#Display which distro is installed - Ubuntu 12.10 \n \l
+
+find -not -empty -type f -printf "%s\n" | sort -rn | uniq -d | xargs -I{} -n1 find -type f -size {}c -
+#Find Duplicate Files (based on size first, then MD5 hash)
+
+sed -n '10,20p' <filename>
+#Print all the lines between 10 and 20 of a file
+
+readom dev=/dev/scd0 f=/path/to/image.iso
+#Create a CD/DVD ISO image from disk.
+
+mkdir -p a/long/directory/path
+#Make directory including intermediate directories
+
+pv sourcefile > destfile
+#Copy a file using pv and watch its progress
+
+pv access.log | gzip > access.log.gz
+#Monitor progress of a command
+
+rm -f !(survivior.txt)
+rm !(*.foo|*.bar|*.baz)
+find . ! -name <FILENAME> -delete
+rm !(file_to_keep_undeleted)
+find . -type f ! -name "*.foo" -name "*.bar" -delete
+#Remove all but one specific file
+
+rename 'y/ /_/' *
+rename 's/ /_/g' *
+#replace spaces in filenames with underscores
+
+git add -u
+#git remove files which have been deleted
+
+ffmpeg -f x11grab -r 25 -s 800x600 -i :0.0 /tmp/outputFile.mpg
+#Record a screencast and convert it to an mpeg
+
+watch -n 1 mysqladmin --user=<user> --password=<password> processlist
+#Monitor the queries being run by MySQL
+
+strings /dev/urandom | grep -o '[[:alnum:]]' | head -n 30 | tr -d '\n'; echo
+#Generate a random password 30 characters long
+
+mkdir /home/foo/doc/bar && cd $_
+#mkdir & cd into it as single command
+
+curl -u username:password --silent "https://mail.google.com/mail/feed/atom" | tr -d '\n' | awk -F '<entry>' '{for (i=2; i<=NF; i++) {print $i}}' | sed -n "s/<title>\(.*\)<\/title.*name>\(.*\)<\/name>.*/\2 - \1/p"
+#Check your unread Gmail from the command line
+
+cmdfu(){ curl "http://www.commandlinefu.com/commands/matching/$@/$(echo -n $@ | openssl base64)/plaintext"; }
+#Search commandlinefu.com from the command line using the API
+
+dd if=/dev/zero of=/dev/null bs=1M count=32768
+#Processor / memory bandwidthd? in GB/s
+
+du -s * | sort -n | tail
+#Get the 10 biggest files/folders for the current direcotry
+
+chmod --reference file1 file2
+#Makes the permissions of file2 the same as file1
+
+for code in {0..255}; do echo -e "\e[38;05;${code}m $code: Test"; done
+#Show numerical values for each of the 256 colors in bash
+
+ls -d */
+#List only the directories
+
+wget http://www.youtube.com/watch?v=dQw4w9WgXcQ -qO- | sed -n "/fmt_url_map/{s/[\'\"\|]/\n/g;p}" | sed -n '/^fmt_url_map/,/videoplayback/p' | sed -e :a -e '$q;N;5,$D;ba' | tr -d '\n' | sed -e 's/\(.*\),\(.\)\{1,3\}/\1/' | wget -i - -O surprise.flv
+#Download Youtube video with wget!
+
+tar -tf <file.tar.gz> | xargs rm -r
+#Remove all files previously extracted from a tar(.gz) file.
+
+find . -type d -empty -delete
+#Recursively remove all empty directories
+
+du -b --max-depth 1 | sort -nr | perl -pe 's{([0-9]+)}{sprintf "%.1f%s", $1>=2**30? ($1/2**30, "G"): $1>=2**20? ($1/2**20, "M"): $1>=2**10? ($1/2**10, "K"): ($1, "")}e'
+#Sort the size usage of a directory tree by gigabytes, kilobytes, megabytes, then bytes.
+
+grep -RnisI <pattern> *
+#Search for a <pattern> string inside all files in the current directory
+
+cp file.txt{,.bak}
+#Create a quick back-up copy of a file
+
+knock <host> 3000 4000 5000 && ssh -p <port> user@host && knock <host> 5000 4000 3000
+#Port Knocking! Knock on ports to open a port to a service (ssh for example) and knock again to close the port. You have to install knockd.
+
+find . -name "*.[ch]" -exec grep -i -H "search pharse" {} \;
+#Search recursively to find a word or phrase in certain file types, such as C code
+
+wget -qO - http://infiltrated.net/blacklisted|awk '!/#|[a-z]/&&/./{print "iptables -A INPUT -s "$1" -j DROP"}'
+#Block known dirty hosts from reaching your machine
+
+wget -r -l1 --no-parent -nH -nd -P/tmp -A".gif,.jpg" http://example.com/images
+#Download all images from a site
+
+
+lsof -i tcp:80
+netstat -p tcp:80
+#which program is this port belongs to ?
+
+sed -n 5p <file>
+sed -n '10,20p' <filename>
+awk 'NR >= 3 && NR <= 6' /path/to/file
+sed -n '3,6p' /path/to/file
+awk 'FNR==5' <file>
+sed '10,20!d'
+#To print a specific line from a file
+
+
+find /var/www/ -type f -print0 | xargs -0 chmod 644
+find /var/www/ -type f -exec chmod 644 {} +
+#Recursively change permissions on files, leave directories alone.
+
+find . -type f -newermt "2010-01-01" ! -newermt "2010-06-01"
+#find files in a date range
+
+diff <(cd dir1 && find | sort) <(cd dir2 && find | sort)
+#Compare two directory trees.
+
+leave +15
+#Remind yourself to leave in 15 minutes
+
+echo | openssl s_client -connect www.google.com:443 2>/dev/null |openssl x509 -dates -noout
+#check site ssl certificate dates
+
+youtube-dl -t --extract-audio --audio-format mp3 YOUTUBE_URL_HERE
+#Convert Youtube videos to MP3
+
+kill -9 $$
+#exit without saving history
+
+echo ${SSH_CLIENT%% *}
+#Get the IP of the host your coming from when logged in remotely
+
+alias dush="du -sm *|sort -n|tail"
+du -hs *|grep M|sort -n
+du -hs *|grep -P '^(\d|,)+(M|G)'|sort -n
+du -kd | egrep -v "/.*/" | sort -n
+alias dush="du -xsm * | sort -n | awk '{ printf(\"%4s MB ./\",\$1) ; for (i=1;i<=NF;i++) { if (i>1) printf(\"%s \",\$i) } ; printf(\"\n\") }' | tail"
+#easily find megabyte eating files or directories
+
+du -cks * | sort -rn | while read size fname; do for unit in k M G T P E Z Y; do if [ $size -lt 1024 ]; then echo -e "${size}${unit}\t${fname}"; break; fi; size=$((size/1024)); done; done
+#easily find megabyte eating files or directories
+
+history -d
+#delete a line from your shell history
+
+sudo find / -mmin 60 -type f
+#Find files that have been modified on your system in the past 60 minutes
+
+mysqldump --add-drop-table --extended-insert --force --log-error=error.log -uUSER -pPASS OLD_DB_NAME | ssh -C user@newhost "mysql -uUSER -pPASS NEW_DB_NAME"
+#Copy a MySQL Database to a new Server via SSH with one command
+
+for file in `ls *.pdf`; do convert -verbose -colorspace RGB -resize 800 -interlace none -density 300 -quality 80 $file `echo $file | sed 's/\.pdf$/\.jpg/'`; done
+#Convert PDF to JPG
+
+tidy -xml -i -m [file]
+#Prettify an XML file
+
+dig +short myip.opendns.com @resolver1.opendns.com
+#Get your outgoing IP address
+
+ssh root@server.com 'tshark -f "port !22" -w -' | wireshark -k -i -
+#analyze traffic remotely over ssh w/ wireshark
+
+killall -STOP -m firefox
+#Manually Pause/Unpause Firefox Process with POSIX-Signals
+
+mkfifo /tmp/fifo; cat /tmp/fifo | nc -l -p 1234 | tee -a to.log | nc machine port | tee -a from.log > /tmp/fifo
+#Intercept, monitor and manipulate a TCP connection.
+
+svn log -q|grep "|"|awk "{print \$3}"|sort|uniq -c|sort -nr
+#Display a list of committers sorted by the frequency of commits
+
+DISPLAY=:0.0 import -window root /tmp/shot.png
+#Take screenshot through SSH
+
+lsof -Pan -i tcp -i udp
+#Lists all listening ports together with the PID of the associated process
+
+tar -cf - . | pv -s $(du -sb . | awk '{print $1}') | gzip > out.tgz
+#copy working directory and compress it on-the-fly while showing progress
+
+
+cd !$:h
+#Go to parent directory of filename edited in last command
+
+find / -type f -size +500M
+#find all file larger than 500M
+
+echo $[RANDOM%X+1]
+#Random Number Between 1 And X
+
+read -sn 1 -p "Press any key to continue..."
+#Press Any Key to Continue
+
+clfavs(){ URL="http://www.commandlinefu.com";wget -O - --save-cookies c --post-data "username=$1&password=$2&submit=Let+me+in" $URL/users/signin;for i in `seq 0 25 $3`;do wget -O - --load-cookies c $URL/commands/favourites/plaintext/$i >>$4;done;rm -f c;}
+#backup all your commandlinefu.com favourites to a plaintext file
+
+tar -cj /backup | cstream -t 777k | ssh host 'tar -xj -C /backup'
+#throttle bandwidth with cstream
+
+./my-really-long-job.sh && notify-send "Job finished"
+#Run a long job and notify me when it's finished
+
+bash -x ./post_to_commandlinefu.sh
+#runs a bash script in debugging mode
+
+lynx -dump http://www.ip-adress.com/ip_tracer/?QRY=$1|grep address|egrep 'city|state|country'|awk '{print $3,$4,$5,$6,$7,$8}'|sed 's\ip address flag \\'|sed 's\My\\'
+#find geographical location of an ip address
+
+find ~ -name '*.sqlite' -exec sqlite3 '{}' 'VACUUM;' \;
+#Speed up launch of firefox Compress information DBs of firefox to speed up the launch of browser.
+
+netstat -ant | awk '{print $NF}' | grep -v '[a-z]' | sort | uniq -c
+#List the number and type of active network connections
+
+nethogs -p eth0
+#Monitor bandwidth by pid
+
+echo "foo" > /dev/tcp/192.168.1.2/25
+#send echo to socket network
+
+rsync --partial --progress --rsh=ssh $file_source $user@$host:$destination_file
+Resume scp of a big file
+
+nc -l -p 2000 -c "nc example.org 3000"
+#Create a single-use TCP (or UDP) proxy
+
+grep -a -B 25 -A 100 'some string in the file' /dev/sda1 > results.txt
+#Recover a deleted file
+
+ls -Q
+#List files with quotes around each filename
+
+alias busy='my_file=$(find /usr/include -type f | sort -R | head -n 1); my_len=$(wc -l $my_file | awk "{print $1}"); let "r = $RANDOM % $my_len" 2>/dev/null; vim +$r $my_file'
+alias busy='rnd_file=$(find /usr/include -type f -size +5k | sort -R | head -n 1) && vim +$((RANDOM%$(wc -l $rnd_file | cut -f1 -d" "))) $rnd_file'
+#Makes you look busy
+
+curl ip.appspot.com
+#Get your external IP address
+
+read -s pass; echo $pass | md5sum | base64 | cut -c -16
+#Create strong, but easy to remember password
+
+shuf -n4 /usr/share/dict/words | tr -d '\n'
+#Generate an XKCD #936 style 4 word password
+
+ln -nsf <TARGET> <LINK>
+#Repoint an existing symlink to a new location
+
+find -L . -type l
+#Find broken symlinks
+
+ps hax -o user | sort | uniq -c
+#processes per user counter
+
+timeout 10 sleep 11
+#Execute a command with a timeout
+
+grep -lir "some text" *
+#find files containing text
+
+sudo cpulimit -p pid -l 50
+#Limit the cpu usage of a process
+
+rename 'y/A-Z/a-z/' *
+#convert filenames in current directory to lowercase
+
+pwdx pid
+#Show current working directory of a process
+
+rename 'y/A-Z/a-z/' *
+#convert uppercase files to lowercase files
+
+tail -10000 access_log | awk '{print $1}' | sort | uniq -c | sort -n | tail
+#Analyse an Apache access log for the most common IP addresses
+
+
+awk 'BEGIN{FS=":"; print "digraph{"}{split($4, a, ","); for (i in a) printf "\"%s\" [shape=box]\n\"%s\" -> \"%s\"\n", $1, a[i], $1}END{print "}"}' /etc/group|display
+#Print diagram of user/groups
+
+autossh -M50000 -t server.example.com 'screen -raAd mysession'
+#Have an ssh session open forever
+
+diff -urp /originaldirectory /modifieddirectory
+#Recursively compare two directories and output their differences on a readable format
+
+cd ~/.mozilla/firefox/ && sqlite3 `cat profiles.ini | grep Path | awk -F= '{print $2}'`/formhistory.sqlite "select * from moz_formhistory" && cd - > /dev/null
+#List recorded formular fields of Firefox
+
+ffmpeg -vcodec copy -acodec copy -i orginalfile -ss 00:01:30 -t 0:0:20 newfile
+#Cut out a piece of film from a file. Choose an arbitrary length and starting time.
+
+taskset -c 0 your_command
+#Start a command on only one CPU core
+
+history | awk '{print $2}' | sort | uniq -c | sort -rn | head
+#List of commands you use most often
+
+sudo tcpdump -i wlan0 -n ip | awk '{ print gensub(/(.*)\..*/,"\\1","g",$3), $4, gensub(/(.*)\..*/,"\\1","g",$5) }' | awk -F " > " '{print $1"\n"$2}'
+#sniff network traffic on a given interface and displays the IP addresses of the machines communicating with the current host (one IP per line)
+
+for i in ?.ogg; do mv $i 0$i; done
+#convert single digit to double digits
+
+for i in ~/.adobe ~/.macromedia ; do ( rm $i/ -rf ; ln -s /dev/null $i ) ; done
+#Stop Flash from tracking everything you do.
+
+while true; do nc -l 7000 | tar -xvf -; done
+#Create a file server, listening in port 7000
+
+watch "netstat -plan|grep :80|awk {'print \$5'} | cut -d: -f 1 | sort | uniq -c | sort -nk 1"
+#Monitor open connections for httpd including listen, count and sort it per IP
+
+DISPLAY=":0.0" import -window root screenshot.png
+#Remote screenshot
+
+for db in $(mysql -e 'show databases' -s --skip-column-names); do mysqldump $db | gzip > "/backups/mysqldump-$(hostname)-$db-$(date +%Y-%m-%d-%H.%M.%S).gz"; done
+#Backup all MySQL Databases to individual files
+
+lsof -Pni4 | grep LISTEN
+#check open ports
+
+wget $URL | htmldoc --webpage -f "$URL".pdf - ; xpdf "$URL".pdf &
+#Save an HTML page, and covert it to a .pdf file
+
+find . -type f -print0|xargs -0 md5sum|sort|perl -ne 'chomp;$ph=$h;($h,$f)=split(/\s+/,$_,2);print "$f"."\x00" if ($h eq $ph)'|xargs -0 rm -v --
+#DELETE all those duplicate files but one based on md5 hash comparision in the current directory tree
+
+rsync --rsync-path 'sudo rsync' username@source:/folder/ /local/
+#Rsync remote data as root using sudo
+
+ssh-keygen; ssh-copy-id user@host; ssh user@host
+#Transfer SSH public key to another machine in one step
+
+git rm $(git ls-files --deleted)
+#git remove files which have been deleted
+
+nmap -sS -P0 -sV -O <target>
+#Get info about remote host ports and OS detection
+
+find * -type d -exec mkdir /where/you/wantem/\{\} \;
+#Copy a file structure without files
+
+nmap -sT -p 80 -oG - 192.168.1.* | grep open
+#Get list of servers with a specific port open
+
+sed -i <file> -re '<start>,<end>d'
+#Remove a range of lines from a file
+
+ffmpeg -i video.flv -vn -ar 44100 -ac 2 -ab 192k -f mp3 audio.mp3
+#Extract audio from Flash video (*.flv) as mp3 file
+
+cp httpd.conf{,.bk}
+#Short and elegant way to backup a single file before you change it.
+
+find -L / -samefile /path/to/file -exec ls -ld {} +
+Find all the links to a file
+
+for h in `find /proc/*/fd -ilname "/tmp/Flash*" 2>/dev/null`; do ln -s "$h" `readlink "$h" | cut -d' ' -f1`; done
+#Recover tmp flash videos (deleted immediately by the browser plugin)
+
+echo 213.251.145.96 wikileaks.com >>/etc/hosts
+#Visit wikileaks.com
+
+lsof -i -P | grep -i "listen"
+#List all open ports and their owning executables
+
+convert *.jpg output.pdf
+#Create a single PDF from multiple images with ImageMagick
+
+flight_status() { if [[ $# -eq 3 ]];then offset=$3; else offset=0; fi; curl "http://mobile.flightview.com/TrackByRoute.aspx?view=detail&al="$1"&fn="$2"&dpdat=$(date +%Y%m%d -d ${offset}day)" 2>/dev/null |html2text |grep ":"; }
+#track flights from the command line
+
+tar cf - <dir>|split -b<max_size>M - <name>.tar.
+#Split a tarball into multiple parts
+
+find ~/.mozilla/firefox/ -type f -name "*.sqlite" -exec sqlite3 {} VACUUM \;
+#Cleanup firefox's database.
+
+find -type f -exec md5sum '{}' ';' | sort | uniq --all-repeated=separate -w 33 | cut -c 35-
+#Find Duplicate Files (based on MD5 hash)
+
+sudo firefox -install-global-extension /path/to/add-on
+#Install a Firefox add-on/theme to all users
+
+mysql --database=dbname -B -N -e "SHOW TABLES" | awk '{print "ALTER TABLE", $1, "CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;"}' | mysql --database=dbname &
+#Convert all MySQL tables and fields to UTF8
+
+ssh user@host 'mysqldump dbname | gzip' > /path/to/backups/db-backup-`date +%Y-%m-%d`.sql.gz
+#Backup a remote database to your local filesystem
+
+du -h /path | sort -h
+#List by size all of the directories in a given tree.
+
+find . -type f -printf '%TY-%Tm-%Td %TT %p\n' | sort
+#Find the most recently changed files (recursively)
+
+netstat -lantp | grep ESTABLISHED |awk '{print $5}' | awk -F: '{print $1}' | sort -u
+#All IP connected to my host
+
+rsync --progress --partial --rsh="ssh -p 8322" --bwlimit=100 --ipv4 user@domain.com:~/file.tgz .
+#rsync instead of scp
+
+wget http://URL/FILE.tar.gz -O - | tar xfz -
+#Download a file and uncompress it while it downloads
+
+sudo lsof -u someuser -a +D /etc
+#View user activity per directory.
+
+for file in *.flac; do flac -cd "$file" | lame -q 0 --vbr-new -V 0 - "${file%.flac}.mp3"; done
+#Convert all Flac in a directory to Mp3 using maximum quality variable bitrate
+
+sudo apt-get -o Acquire::http::Dl-Limit=30 upgrade
+#Limit bandwidth usage by apt-get
+
+echo -e "Some Text Line1\nSome Text Line 2" | convert -background none -density 196 -resample 72 -unsharp 0x.5 -font "Courier" text:- -trim +repage -bordercolor white -border 3 text.gif
+#Convert text to picture
+
+chmod -R -x+X *
+#Remove executable bit from all files in the current directory recursively, excluding other directories
+
+truncate -s0 file
+#Empty a file
+
+grep 'test' somefile | grep -vE '(error|critical|warning)'
+#grep -v with multiple patterns.
+
+awk 'length>72' file
+#Identify long lines in a file
+
+wget --reject html,htm --accept pdf,zip -rl1 url
+#get all pdf and zips from a website using wget
+
+make -j 4
+#Use all the cores or CPUs when compiling
+
+svn ls -R | egrep -v -e "\/$" | xargs svn blame | awk '{print $2}' | sort | uniq -c | sort -r
+#Prints total line count contribution per user for an SVN repository
+
+ls | curl -F 'sprunge=<-' http://sprunge.us | xclip
+#Run a command, store the output in a pastebin on the internet and place the URL on the xclipboard
+
+detox -r -s utf_8 /path/to/old/win/files/dir
+#iso-8859-1 to utf-8 safe recursive rename
+
+du --max-depth=1 | sort -r -n | awk '{split("k m g",v); s=1; while($1>1024){$1/=1024; s++} print int($1)" "v[s]"\t"$2}'
+#Show biggest files/directories, biggest first with 'k,m,g' eyecandy
+
+wget --recursive --page-requisites --convert-links www.moyagraphix.co.za
+#Download an entire static website to your local machine
+
+find . -name "*.php" -exec iconv -f ISO-8859-1 -t UTF-8 {} -o ../newdir_utf8/{} \;
+#Batch convert files to utf-8
+
+find . -type d -name '.svn' -print0 | xargs -0 rm -rdf
+#Recursively remove .svn directories from the current location
+
+curl -I www.commandlinefu.com
+#Get http headers for an url
+
+arch
+#Check if system is 32bit or 64bit
+
+du -hs */ | sort -hr | head
+#List 10 largest directories in current directory
+
+j=0;while true; do let j=$j+1; for i in $(seq 0 20 100); do echo $i;sleep 1; done | dialog --gauge "Install part $j : `sed $(perl -e "print int rand(99999)")"q;d" /usr/share/dict/words`" 6 40;done
+#pretend to be busy in office to enjoy a cup of coffee
+
+@reboot <yourscript.sh>
+#Running scripts after a reboot for non-root users .
+
+find ./ -name Thumbs.db -delete
+#Remove Thumbs.db files from folders
+
+dd if=/dev/mem bs=1k skip=768 count=256 2>/dev/null | strings -n 8
+#Display BIOS Information
+
+while true; do inotifywait -r -e MODIFY dir/ && make; done;
+#make, or run a script, everytime a file in a directory is modified
+
+ssh root@host1 "cd /somedir/tocopy/ && tar -cf - ." | ssh root@host2 "cd /samedir/tocopyto/ && tar -xf -"
+#copy from host1 to host2, through your host
+
+lsof -r 2 -p PID -i -a
+#View network activity of any application or user in realtime
+
+rsync --progress file1 file2
+#Copy with progress
+
+wget -q -O - `youtube-dl -b -g $url`| ffmpeg -i - -f mp3 -vn -acodec libmp3lame -| mpg123 -
+#Play music from youtube without download
+
+cat /var/log/secure.log | awk '{print substr($0,0,12)}' | uniq -c | sort -nr | awk '{printf("\n%s ",$0) ; for (i = 0; i<$1 ; i++) {printf("*")};}'
+#Show me a histogram of the busiest minutes in a log file:
+
+who -b
+#Find last reboot time
+
+curl -s http://checkip.dyndns.org/ | grep -o "[[:digit:].]\+"
+#Get your public ip using dyndns
+
+ifstat -nt
+#Display current bandwidth statistics
+
+curl dict://dict.org/d:something
+#Look up the definition of a word
+
+diff <(ssh alice cat /etc/apt/sources.list) <(ssh bob cat /etc/apt/sources.list)
+#Diff files on two remote hosts.
+
+tcpdump -nn -v -i eth0 -s 1500 -c 1 'ether[20:2] == 0x2000'
+#Get Cisco network information
+
+last | grep -v "^$" | awk '{ print $1 }' | sort -nr | uniq -c
+#Quick glance at who's been using your system recently
+
+nmap -sP 192.168.1.100-254
+#ping a range of IP addresses
+
+watch vmstat -sSM
+#monitor memory usage
+
+fdupes -r .
+#Find Duplicate Files (based on size first, then MD5 hash)
+
+rename 's/\.jpe?g$/.jpg/i' *
+#Rename all .jpeg and .JPG files to have .jpg extension
+
+aptitude purge '~c'
+#Purge configuration files of removed packages on debian based systems
+
+pkill -x firefox
+#kill process by name
+
+nmap -sP 192.168.1.0/24; arp -n | grep "192.168.1.[0-9]* *ether"
+#find all active IP addresses in a network
+
+find . -type f -exec sed -i s/oldstring/newstring/g {} +
+#recursive search and replace old with new string, inside files
+
+pwgen -Bs 10 1
+#generate random password
+
+rsync -az /home/user/test user@sshServer:/tmp/
+#move a lot of files over ssh
+
+find . -empty -type d -exec rmdir {} +
+#find and delete empty dirs, start in current working dir
+
+svn diff <file> | vim -R -
+#Colored SVN diff
+
+find -L /path/to/check -type l -delete
+#Find broken symlinks and delete them
+
+for k in `git branch|perl -pe s/^..//`;do echo -e `git show --pretty=format:"%Cgreen%ci %Cblue%cr%Creset" $k|head -n 1`\\t$k;done|sort -r
+#Show git branches by date - useful for showing active branches
+
+egrep -v "^$|^[[:space:]]*#" /etc/some/file
+#Show a config file without comments
+
+curl -u username -o bookmarks.xml https://api.del.icio.us/v1/posts/all
+#Download all Delicious bookmarks
+
+netstat -ntu | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -n
+#Number of open connections per ip.
+
+
+mkdir -p doc/{text/,img/{wallpaper/,photos/}}
+#create dir tree
+
+sudo dmidecode --type 17 | more
+#Check Ram Speed and Type in Linux
+
+git commit --amend
+#Add forgotten changes to the last git commit
+
+ffmpeg -i video.avi -f mp3 audio.mp3
+#Extract audio from a video
+
+rsync --partial --progress --rsh=ssh SOURCE DESTINATION
+#Resume aborted scp file transfers
+
+wget -r -l1 -H -t1 -nd -N -np -A.mp3 -erobots=off [url of website]
+#Download all mp3's listed in an html page
+
+convert -resize '1024x600^' image.jpg small-image.jpg
+#Resize an image to at least a specific resolution
+
+oowriter -pt pdf your_word_file.doc
+#Create .pdf from .doc / sudo apt-get install cups-pdf
+
+diffxml() { diff -wb <(xmllint --format "$1") <(xmllint --format "$2"); }
+#Diff XML files
+
+cmp file1 file2
+#Compare copies of a file with md5
+
+curl --user login:password -o DeliciousBookmarks.xml -O 'https://api.del.icio.us/v1/posts/all'
+#backup delicious bookmarks
+
+lynx -dump http://www.domain.com | awk '/http/{print $2}'
+#Get all links of a website
+
+sudo arp-scan -I eth0 192.168.1.0/24
+#Find all active ip's in a subnet
+
+git log --format='%aN' | sort -u
+#List all authors of a particular git project
+
+ps aux --sort=%mem,%cpu
+#Sort all running processes by their memory & CPU usage
+
+hdparm -t /dev/sda
+#Testing hard disk reading speed
+
+diff <(ssh server01 'cd config; find . -type f -exec md5sum {} \;| sort -k 2') <(ssh server02 'cd config;find . -type f -exec md5sum {} \;| sort -k 2')
+#Identify differences between directories (possibly on different servers)
+
+
+sudo aptitude purge `dpkg --get-selections | grep deinstall | awk '{print $1}'`
+#Purge configuration files of removed packages on debian based systems
+
+watch -n 1 "netstat -tpanl | grep ESTABLISHED"
+#Monitor TCP opened connections
+
+seq 50| awk 'BEGIN {a=1; b=1} {print a; c=a+b; a=b; b=c}'
+#Fibonacci numbers with awk
+
+sed -i 8d ~/.ssh/known_hosts
+#Delete the specified line
+
+sudo dd if=/dev/sda of=/media/disk/backup/sda.backup
+#Backup your hard drive with dd This will create an exact duplicate image of your hard drive that you can then restore by simply reversing the "if" & "of" locations
+
+find . -type l ! -exec test -e {} \; -print
+#Find broken symlinks
+
+cat .ssh/id_rsa.pub | ssh hostname 'cat >> .ssh/authorized_keys'
+#Add your public SSH key to a server in one command
+
+svn status |grep '\?' |awk '{print $2}'| xargs svn add
+#add all files not under version control to repository

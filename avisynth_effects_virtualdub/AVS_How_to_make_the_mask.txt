@@ -1,0 +1,69 @@
+####################################################
+####################################################
+##
+## How to make the mask
+##
+## baard1956
+## Published on Oct 17, 2013
+##
+####################################################
+####################################################
+
+#plugin for rotation, source http://avisynth.org.ru/fizick.html
+loadplugin("K:\VD Filter Pack\Rotate.dll")
+
+a=avisource("k:\aviwerkmap\HEXMASK_ROT.avi")
+
+#create blank clip, framerate irrelevant, will be determined by the background later on
+bg1=blankclip(length=100,width=600,height=600,color=$ffffff)
+#30 degree rotation
+#bg2=bg1.converttorgb32().rotate(30,color=$000000), skip bg2, see below
+#now comes the tricky part, for the triangle should fit the frame exactly
+#width should be 90
+bg3=a.crop(510,199,-0,-0)
+bg4=bg3.fliphorizontal
+bg5=stackhorizontal(bg3,bg4)
+#height should be 156
+bg6=bg5.crop(0,182,-0,-63)#183,66
+
+return bg6
+__END__
+bg5=HEXMASK_ALT
+test with HEXV302 very successful, even better than the original HEXMASK
+VD rotate2 (-30) instead of bg2 = HEXMASK_ROT
+Plugin produces seams, VD rotate2 does not!
+
+#plugin for rotation, source http://avisynth.org.ru/fizick.html
+loadplugin("K:\VD Filter Pack\Rotate.dll")
+
+a=avisource("k:\aviwerkmap\HEXCLIP_ROT.avi").trim(0,99)
+b=avisource("k:\aviwerkmap\BETE_04.avi").trim(0,99)
+
+#choose cutout
+bg1=b.crop(420,52,-0,-128) #result 180x180
+#120 degree rotation, find size with VD rotate2, expand
+bg2=bg1.converttorgb32().rotate(120,width=246,height=246,color=$ffffff)
+#crop from the right to get 60 degree angle
+bg3=bg2.crop(90,0,-0,-0)
+
+#rotate 30 degrees to get a 60 degree top angle, check with VD rotate2, expand (-30)
+#for some reason this does not work, result VD = HEXCLIP_ROT
+#sorry, VD (-30) = Rotate (30), which does work
+#bg4=bg3.converttorgb32().rotate(30,width=258,height=291,color=$ffffff)
+
+#now crop to 180x156
+bg5=a.crop(33,0,-45,-135)
+
+return bg5
+__END__
+
+
+bg5=HEXCLIP_ALT
+test HEXCLIP_ALT with hexclipalttest horrible, lines all over the frame
+bg5 with a = HEXCLIP_AMT
+test HEXCLIP_AMT with hexclipalttest much better, but still inferior
+Conclusion: finding the mask was difficult, but the mask can be used for any clip and any size of cutout. Working without a mask is difficult all over again for each new clip. The mask makes my scripts universally applicable.
+hexmaskalttest with HEXMASK = first part of video
+hexmaskalttest with HEXMASK_ALT = second part of video
+hexclipalttest with HEXCLIP_ALT = third part of video
+hexclipalttest with HEXCLIP_AMT = fourth part of video

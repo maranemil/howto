@@ -1,0 +1,958 @@
+<?php
+
+// Inhalt Hexcode DataMatrix 22x22 Type DataMatrix (ECC200)
+$strMatrixCode =  "444541". // Deutsche Post - DEA
+		str_pad(strtoupper(dechex("18")),2,"0", STR_PAD_LEFT).	// Frankiertart und Version
+		str_pad(strtoupper(dechex("36")),2,"0", STR_PAD_LEFT).	// Version Produkt und Preisliste
+		str_pad(strtoupper(dechex(intval("1234567890"))),10,"0", STR_PAD_LEFT).	// Kundennummer
+		str_pad(strtoupper(dechex(185)),4,"0", STR_PAD_LEFT). // Entgelt
+		str_pad(dechex(date("zy",strtotime(date("Y-m-d H:i:s")))),4,"0", STR_PAD_LEFT). // Einlieferungsdatum 0091
+		str_pad(strtoupper(dechex(51)),4,"0", STR_PAD_LEFT). // Produktschlüssel 51
+		str_pad(strtoupper(dechex("112233")),6,"0", STR_PAD_LEFT). // Laufende Sendunsnummer
+		"0A".  // Teilnahmenummer
+		"0000";  // Einlieferunsgnummer  + 000000000
+
+$strMatrixCode = trim(str_pad($strMatrixCode,56,"0",  STR_PAD_RIGHT));
+
+echo "<br> Encode: ";
+echo $strMatrixCode;
+$DpCode = hex2bin ($strMatrixCode);
+//  $DpCode = utf8_decode(utf8_encode(hex2bin ($strMatrixCode))); // keep the same byte size length
+
+echo "<br> Decode: ";
+echo  $DpDeCode = strtoupper(bin2hex ($DpCode));
+
+// https://www.deutschepost.de/content/dam/dpag/images/P_p/Premiumadress/mlfvm_8_premiumadress_1_1.pdf
+// https://www.deutschepost.de/content/dam/dpag/images/D_d/DV-Freimachung/dp_datamatrixcode-dv-freimachung_1.4.0.pdf
+// https://www.deutschepost.de/content/dam/dpag/images/D_d/dialogpostmanager/anleitung_premiumadress_datamatrix.pdf
+
+$DpFrankierart = array(
+	"0x01"=>'Stampit 2003',
+	"0x02"=>'0x02???',
+	"0x03"=>'Frankit',
+	"0x05"=>'Filiale',
+	"0x07"=>'Frankierservice Infopost/Infobrief',
+	"0x08"=>'Premiumadress',
+	"0x09"=>'Pressepost Randbeschriftung 52x52 Module, Version 1',
+	"0x0c"=>'Frankit PremA???',
+	"0x12"=>'DV-Freimachung',
+	"0x18"=>'Elektroreturn',
+	"0x19"=>'Pressepost Etikett, Version1',
+	"0x1a"=>'Pressepost Randbeschriftung 16x28 Module, Version 1',
+	"0x1c"=>'Premiumadress Label',
+	"0x30"=>'Plusbrief',
+	"0x33"=>'Stampit',
+	"0x30"=>'Plusbrief individuell',
+	"0x42"=>'Plusbrief/Marke individuell',
+	"0x4d"=>'Handyporto?',
+	"0x52"=>'Elektroreturn',
+	"0x66"=>'Handyporto?',
+	#"0x33"=>'Marke individuell',
+	"0x85"=>'Internetmarke'
+);
+
+$DpProdId = array(
+	"1"=>'Standardbrief',
+	"2"=>'Standardbrief Einschreiben Einwurf',
+	"7"=>'Standardbrief Einschreiben',
+	"8"=>'Standardbrief Einschreiben + R\xfcckschein',
+	"9"=>'Standardbrief Einschreiben + Eigenh\xe4ndig',
+	"10"=>'Standardbrief Einschreiben + Eigenh\xe4ndig + R\xfcckschein',
+	"11"=>'Kompaktbrief',
+	"21"=>'Gro\xdfbrief',
+	"32"=>'Maxibrief',
+	"51"=>'Postkarte',
+	"76"=>'B\xfcchersendung Standard',
+	"77"=>'B\xfcchersendung Kompakt',
+	"78"=>'B\xfcchersendung Gro\xdf',
+	"79"=>'B\xfcchersendung Maxi',
+	"80"=>'Warensendung Standard',
+	"81"=>'Warensendung Kompatk',
+	"82"=>'Warensendung Maxi',
+	"83"=>'Warensendung Standard',
+	"80"=>'Warensendung Standard',
+	"86"=>'Infobrief/Katalog Standard',
+	"87"=>'Infobrief/Katalog Kompakt',
+	"88"=>'Infobrief/Katalog Gro\xdf',
+	"89"=>'Infobrief/Katalog Maxi',
+	"90"=>'Infopost/Katalog',
+	"450"=>'Pressesendung E+0',
+	"451"=>'Pressesendung E+1',
+	"452"=>'Pressesendung E+2',
+	"453"=>'Postvertriebsstk. E+0',
+	"454"=>'Postvertriebsstk. E+1',
+	"455"=>'Postvertriebsstk. E+2',
+	"3106"=>'Infopost/Katalog Kompakt',
+	"3101"=>'Infopost/Katalog Kompakt >20g',
+	"3107"=>'Infopost/Katalog Gro\xdf',
+	"3108"=>'Infopost/Katalog Maxi',
+	"3104"=>'Infopost/Katalog Maxi >20g',
+	"3105"=>'Infopost/Katalog Maxi >100g',
+	"9001"=>'Standardbrief PremA',
+	"9279"=>'Pressesendung E+0 PremA',
+	"9280"=>'Pressesendung E+1 PremA',
+	"9287"=>'Pressesendung E+2 PremA'
+);
+
+$DpFrankmaschmanuf= array(
+	"0x1d"=>'Neopost',
+	"0x2d"=>'Frama',
+	"0x3d"=>'Francotyp-Postalia',
+	"0x4d"=>'Pitney Bowes',
+	"0x6d"=>'Telefrank'
+);
+
+
+echo "<hr>";
+$breakLn = "<br>";
+echo "{$breakLn}";
+echo substr($DpDeCode,0,6). " = DEA {$breakLn}";
+echo substr($DpDeCode,6,2). " = ".$DpFrankierart["0x".substr($DpDeCode,6,2)]." = 18 Frankiertart{$breakLn}";
+echo substr($DpDeCode,8,2). " = Version Produkt und Preisliste ".hexdec(substr($DpDeCode,8,2))." {$breakLn}";
+echo substr($DpDeCode,10,10). " = Kundennummer ".hexdec(substr($DpDeCode,10,10))." {$breakLn}";
+echo substr($DpDeCode,20,4). " = Entgelt ".hexdec(substr($DpDeCode,20,4))." {$breakLn}";
+echo substr($DpDeCode,24,4). " = Einlieferungsdatum ".hexdec(substr($DpDeCode,24,4))." {$breakLn}";
+echo substr($DpDeCode,28,4). " = Produktschlüssel 51 = ".$DpProdId[hexdec(substr($DpDeCode,28,4))]." {$breakLn}";
+echo substr($DpDeCode,32,6). " = Laufende Sendunsnummer ".hexdec(substr($DpDeCode,32,6))." {$breakLn}";
+echo substr($DpDeCode,38,2). " = Teilnahmenummer ".hexdec(substr($DpDeCode,38,2))." {$breakLn}";
+echo substr($DpDeCode,40,4). " = Einlieferunsgnummer ".hexdec(substr($DpDeCode,40,4))." {$breakLn}";
+echo substr($DpDeCode,44,12). " = Restliche ungenutzte Bytes (bis f42 mit ‚00‘ gefüllt){$breakLn}";
+
+
+
+
+
+
+Outout --------------
+
+Encode: 444541122400499602D200B9478d003301B6690A0000000000000000
+Decode: 444541122400499602D200B9478D003301B6690A0000000000000000
+
+444541 = DEA
+12 = DV-Freimachung = 18 Frankiertart
+24 = Version Produkt und Preisliste 36
+00499602D2 = Kundennummer 1234567890
+00B9 = Entgelt 185
+478D = Einlieferungsdatum 18317
+0033 = Produktschlüssel 51 = Postkarte
+01B669 = Laufende Sendunsnummer 112233
+0A = Teilnahmenummer 10
+0000 = Einlieferunsgnummer 0
+000000000000 = Restliche ungenutzte Bytes (bis f42 mit ‚00‘ gefüllt)
+
+
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+
+<?php
+
+// Inhalt Hexcode DataMatrix 22x22 Type DataMatrix (ECC200)
+$hexadecimal =  "444541". // Deutsche Post - DEA
+		str_pad(strtoupper(dechex("18")),2,"0", STR_PAD_LEFT).	// Frankiertart und Version
+		str_pad(strtoupper(dechex("36")),2,"0", STR_PAD_LEFT).	// Version Produkt und Preisliste
+		str_pad(strtoupper(dechex(intval("1234567890"))),10,"0", STR_PAD_LEFT).	// Kundennummer
+		str_pad(strtoupper(dechex(185)),4,"0", STR_PAD_LEFT). // Entgelt
+		str_pad(dechex(date("zy",strtotime(date("Y-m-d H:i:s")))),4,"0", STR_PAD_LEFT). // Einlieferungsdatum 0091
+		str_pad(strtoupper(dechex(51)),4,"0", STR_PAD_LEFT). // Produktschlüssel 51
+		str_pad(strtoupper(dechex("112233")),6,"0", STR_PAD_LEFT). // Laufende Sendunsnummer
+		"0A".  // Teilnahmenummer
+		"0000";  // Einlieferunsgnummer
+
+$hexadecimal = trim(str_pad($hexadecimal,56,"0",  STR_PAD_RIGHT));
+
+echo "<br> Encode: ";
+echo $hexadecimal;
+$DpCode = hex2bin ($hexadecimal);
+echo "<br> Decode: ";
+echo  $DpDeCode = strtoupper(bin2hex ($DpCode));
+
+// ------------------------------------------
+
+echo "<br>byte1: ";
+echo  mb_convert_encoding($DpCode, 'UTF-8', 'HTML-ENTITIES'); // DEA#$#3Sý!##G###Wü-###
+
+echo "<br>byte2: ";
+#echo chunk_split(base64_encode($strMatrixCode)); // 00000
+echo $binPack = utf8_encode(pack("H*", $hexadecimal));
+
+// ------------------------------------------
+
+echo "<br> Bin1: ";
+echo $binSeq = base_convert(substr($hexadecimal,0,18), 16, 2);
+
+echo "<br> Bin2: ";
+echo $binSeqx = utf8_encode(hex2asc($hexadecimal));
+
+function hex2asc($myin) {
+	$myout = "";
+	for ($i=0; $i<strlen($myin)/2; $i++) {
+		$myout.=chr(base_convert(substr($myin,$i*2,2),16,10));
+	}
+	return $myout;
+}
+
+echo "<br> Raw bytes: <br>";
+hex_dump($binPack); // Raw bytes
+
+echo "<br> Raw bytes: <br>";
+echo hex_dump2($binPack); // Raw bytes 2
+
+
+function hex_dump($data, $newline="\n")
+{
+  static $from = '';
+  static $to = '';
+  static $width = 8; # number of bytes per line
+  static $pad = '.'; # padding for non-visible characters
+
+  if ($from==='')
+  {
+    for ($i=0; $i<=0xFF; $i++)
+    {
+      $from .= chr($i);
+      $to .= ($i >= 0x20 && $i <= 0x7E) ? chr($i) : $pad;
+    }
+  }
+
+  $hex = str_split(bin2hex($data), $width*2);
+  $chars = str_split(strtr($data, $from, $to), $width);
+
+  $offset = 0;
+  foreach ($hex as $i => $line)
+  {
+    echo sprintf('%6X',$offset).' : '.implode(' ', str_split($line,2)) . ' [' . $chars[$i] . ']' . $newline;
+    echo "<br> ";
+	  $offset += $width;
+  }
+}
+
+/**
+* Dumps a string into a traditional hex dump for programmers,
+* in a format similar to the output of the BSD command hexdump -C file.
+* The default result is a string.
+* Supported options:
+* <pre>
+*   line_sep        - line seperator char, default = "\n"
+*   bytes_per_line  - default = 16
+*   pad_char        - character to replace non-readble characters with, default = '.'
+* </pre>
+*
+* @param string $string
+* @param array $options
+* @param string|array
+*/
+function hex_dump2($string, array $options = null) {
+    if (!is_scalar($string)) {
+        throw new InvalidArgumentException('$string argument must be a string');
+    }
+    if (!is_array($options)) {
+        $options = array();
+    }
+    $line_sep       = "<br>\n";
+    $bytes_per_line = 8;
+    $pad_char       = '.'; # padding for non-readable characters
+
+    $text_lines = str_split($string, $bytes_per_line);
+    $hex_lines  = str_split(bin2hex($string), $bytes_per_line * 2);
+
+    $offset = 0;
+    $output = array();
+    $bytes_per_line_div_2 = (int)($bytes_per_line / 2);
+    foreach ($hex_lines as $i => $hex_line) {
+        $text_line = $text_lines[$i];
+        $output []=
+            sprintf('%08X',$offset) . '  ' .
+            str_pad(
+                strlen($text_line) > $bytes_per_line_div_2
+                ?
+                    implode(' ', str_split(substr($hex_line,0,$bytes_per_line),2)) . '  ' .
+                    implode(' ', str_split(substr($hex_line,$bytes_per_line),2))
+                :
+                implode(' ', str_split($hex_line,2))
+            , $bytes_per_line * 3) .
+            '  |' . preg_replace('/[^\x20-\x7E]/', $pad_char, $text_line) . '|';
+        $offset += $bytes_per_line;
+    }
+    $output []= sprintf('%08X', strlen($string));
+    return  join($line_sep, $output) . $line_sep;
+}
+
+
+// http://www.philaseiten.de/cgi-bin/index.pl?PR=48705
+// http://www.philaseiten.de/cgi-bin/index.pl?ST=4187&da=1&F=280
+// http://www.philastempel.de/stempel/zeigen/124805
+// https://www.deutschepost.de/content/dam/dpag/images/P_p/Premiumadress/mlfvm_8_premiumadress_1_1.pdf
+// http://www.bctester.de/de/download.html
+// https://gist.github.com/5263/1208694
+// http://www.jolschimke.de/2-d-barcode/die-neuen-absenderfreistempel-frankit.html
+
+---- OUTPUT -----
+
+Encode: 444541122400499602D200B9478d003301B6690A0000000000000000
+Decode: 444541122400499602D200B9478D003301B6690A0000000000000000
+byte1: DEA#$I##Ò¹G#3#¶i
+byte2: DEA#$I##Ò¹G#3#¶i
+Bin1: 0100010101000001000100100010010000000000010010000000000000000000
+Bin2: DEA#$I##Ò¹G#3#¶i
+
+Raw bytes:
+0 : 44 45 41 12 24 00 49 c2 [DEA.$.I.]
+8 : 96 02 c3 92 00 c2 b9 47 [.......G]
+10 : c2 8d 00 33 01 c2 b6 69 [...3...i]
+18 : 0a 00 00 00 00 00 00 00 [........]
+20 : 00 [.]
+
+Raw bytes:
+00000000 44 45 41 12 24 00 49 c2 |DEA.$.I.|
+00000008 96 02 c3 92 00 c2 b9 47 |.......G|
+00000010 c2 8d 00 33 01 c2 b6 69 |...3...i|
+00000018 0a 00 00 00 00 00 00 00 |........|
+00000020 00 |.|
+00000021
+
+
+
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+
+http://phptester.net/
+http://www.writephponline.com/
+http://sandbox.onlinephpfunctions.com/
+http://sandbox.onlinephpfunctions.com/
+
+http://tutorialspots.com/php-convert-string-to-binary-1665.html
+http://board.phpbuilder.com/showthread.php?10229240-ascii-value-to-8-bit-binary-value
+https://www.hurgh.org/ascbinhex.php
+http://psoug.org/snippet/PHP-Binary-to-Text-Text-to-Binary_380.htm
+https://igor.io/2012/09/24/binary-parsing.html
+https://gist.github.com/hutt/8978333
+https://www.w3schools.com/php/func_misc_unpack.asp
+http://php.net/manual/de/function.base-convert.php
+http://www.jonasjohn.de/snippets/php/hex-string.htm
+https://www.easycalculation.com/ascii-hex.php
+http://hex2bin.onlinephpfunctions.com/
+https://stackoverflow.com/questions/43476750/datamatrix-16x48-with-tcpdf-library-for-php
+https://codebeautify.org/string-hex-converter
+http://www.binaryhexconverter.com/decimal-to-hex-converter
+
+https://github.com/tecnickcom/TCPDF
+http://www.spbas.com/docs/api/v3.2.0/framework/package-globals.html#ENC_BASE256
+https://tcpdf.org/docs/srcdoc/tc-lib-barcode/source-class-Com.Tecnick.Barcode.Type.Square.Datamatrix.Steps/
+https://svn.osgeo.org/fusion/trunk/lib/tcpdf/datamatrix.php
+https://gitlab.die-netzmacher.de/typo3/t3_tcpdf/blob/t0725/tcpdf/include/barcodes/datamatrix.php
+https://fossies.org/dox/OCSNG_UNIX_SERVER-2.3.1/Steps_8php_source.html
+http://www.web-development-blog.com/archives/create-pdf-documents-online-with-tcpdf/
+https://tcpdf.org/examples/
+https://www.ibm.com/developerworks/library/os-tcpdf/index.html
+https://www.setasign.com/products/fpdi/demos/tcpdf-demo/
+
+dechex()
+hex2bin()
+
+https://www.browserling.com/tools/binary-to-text
+http://roubaixinteractive.com/PlayGround/Binary_Conversion/Binary_To_Text.asp
+http://roubaixinteractive.com/PlayGround/Binary_Conversion/Binary_To_Text.asp
+http://www.unit-conversion.info/texttools/convert-text-to-binary/
+http://www.rapidtables.com/convert/number/binary-to-ascii.htm
+http://www.online-toolz.com/tools/text-binary-convertor.php
+
+-------------------------------------------------------------
+
+// Convert a string into binary
+// Should output: 0101001101110100011000010110001101101011
+$value = unpack('H*', "Stack");
+echo base_convert($value[1], 16, 2);
+
+// Convert binary into a string
+// Should output: Stack
+echo pack('H*', base_convert('0101001101110100011000010110001101101011', 2, 16));
+
+https://stackoverflow.com/questions/6382738/convert-string-to-binary-then-back-again-using-php
+
+-------------------------------------------------------
+
+function strToBin3($input)
+{
+    if (!is_string($input))
+        return false;
+    $input = unpack('H*', $input);
+    $chunks = str_split($input[1], 2);
+    $ret = '';
+    foreach ($chunks as $chunk)
+    {
+        $temp = base_convert($chunk, 16, 2);
+        $ret .= str_repeat("0", 8 - strlen($temp)) . $temp;
+    }
+    return $ret;
+}
+
+function strToBin($input)
+{
+    if (!is_string($input))
+        return false;
+    $ret = '';
+    for ($i = 0; $i < strlen($input); $i++)
+    {
+        $temp = decbin(ord($input{$i}));
+        $ret .= str_repeat("0", 8 - strlen($temp)) . $temp;
+    }
+    return $ret;
+}
+
+http://genesis-hive.com/features
+https://www.genesis-mining.com/datacenters
+
+<?php
+/*
+
+
+echo $bin = hex2bin ( trim( $strfinal ));
+echo "<br>";
+//echo $bin = chr(241).str_replace(";", chr(241), $bin);
+echo "<br>";
+$hexyar = str_split(strtoupper(bin2hex (  $bin ))   ,2) ;
+echo $hexy = implode (" ", $hexyar );
+#echo "<br>";
+#echo  mb_convert_encoding( pack("H*" , $strfinal) , 'UTF-8', 'HTML-ENTITIES');
+echo "<br>";
+echo $hexy2 = utf8_encode(  $bin );
+
+echo "<br>";
+#echo base_convert($strfinal, 16, 10);
+#echo "<br>";
+#echo bindec($bin);
+
+
+
+-------------------
+
+
+
+https://grandzebu.net/informatique/codbar-en/datamatrix.htm
+http://www.idautomation.com/barcode-faq/2d/data-matrix/
+http://barcode-coder.com/en/datamatrix-specification-104.html
+
+https://github.com/ademarre/binary-to-text-php
+http://phpseclib.sourceforge.net/documentation/math.html
+https://api.phpseclib.org/master/phpseclib/Math/BigInteger.html
+https://github.com/phpseclib/phpseclib/blob/master/phpseclib/Math/BigInteger.php
+https://gist.github.com/bandoche/5711038
+https://github.com/devicenull/PHP-Google-Authenticator/blob/master/base32.php
+https://github.com/ademarre/binary-to-text-php/blob/master/Base2n.php
+https://github.com/ademarre/binary-to-text-php
+https://github.com/ademarre/binary-to-text-php
+
+  $digest = md5('string');
+  for ($i=strlen($digest); $i>10; $i-=10)
+  {
+    $new = base_convert(substr($digest, $i-10, 10), 16, 36) . $new;
+  }
+  $new = base_convert(substr($digest, 0, $i), 16, 36) . $new;
+
+
+
+Post-Unternehmen: DEA
+Frankierart: 18 (HEX:12)
+Version Produkte/Preise: 36 (HEX:24)
+
+Kundennummer: 5156094909
+Frankierwert: 84,80 Euro
+Einlieferungsdatum: 31.12.2085
+Produktschlüssel: 38944
+laufende Sendungsnummer: 04595733
+Teilnahmenummer: 87
+Entgeltabrechnungsnummer: 50108
+Ankündigung Inhalt Datenelement HEX: 2d
+Kundenindividuelle Informationen: 0d 0a 20 0d 0a 20
+
+
+44 45 41 12 24 01 33 53 ef bf bd 21 ef bf bd 46 15 57 ef bf bd 2d 0d 0a 20 0d 0a 20
+
+Post-Unternehmen: DEA
+Frankierart: 18 (HEX:12)
+Version Produkte/Preise: 36 (HEX:24)
+
+Kundennummer: 5156106175
+Frankierwert: 484,17 Euro
+Einlieferungsdatum: 31.12.2076
+Produktschlüssel: 48454
+laufende Sendungsnummer: 01398767
+Teilnahmenummer: 2936
+Entgeltabrechnungsnummer: 48429
+Ankündigung Inhalt Datenelement HEX: 0d
+Kundenindividuelle Informationen: 0a 20 0d 0a 20
+
+--
+
+http://datamatrix.kaywa.com/
+http://phptester.net/
+https://gist.github.com/5263/1208694
+
+DEA###-#À###"###(õx##>####################
+
+
+Hex: (42)(84)
+44 45 41 12 18 01 2d 98 c0 00 00 91 22 08 00 15 28 f5 78 04 00 3e 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+Dt. Post AG:
+Post-Unternehmen: DEA
+Frankierart: 18 (HEX:12)
+Version Produkte/Preise: 24 (HEX:18)
+Kundennummer: 5059952640
+Frankierwert: 1,45 Euro
+Einlieferungsdatum: 27.03.2012
+Produktschlüssel: 21
+laufende Sendungsnummer: 02684280
+Teilnahmenummer: 4
+Entgeltabrechnungsnummer: 062
+Ankündigung Inhalt Datenelement HEX: 00
+Kundenindividuelle Informationen: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+------------------------------------
+https://github.com/zxing/zxing/issues/365
+http://www.onlinebarcodereader.com/de.html
+https://github.com/sonm-io/Calculator/blob/master/functions.php
+https://github.com/JackBekket/Calculator/blob/master/functions.php
+https://volksbetrugpunktnet.wordpress.com/2014/05/03/versanddatum-der-briefe-des-beitragsservice-gez-uberprufen/
+https://www.antispam-ev.de/forum/showthread.php?38992-Global-Payments-BV-oder-wie-man-Umsatz-generiert/page2
+https://stackoverflow.com/questions/1057572/how-can-i-get-a-hex-dump-of-a-string-in-php
+
+Examples
+
+Global Payments
+Code:
+0000  44 45 41 03 23 4d 11 00  08 78 00 46 0a 9d 00 01  | DEA~#M~~~x~F~~~~ |
+0010  25 01 00 02 17 a8 39 e6  7a 31 68 b3 0c 3b ff 96  | %~~~~~9~z1h~~;~~ |
+0020  d1 0c 40 e1 f7 a9 64 f3  aa 2a f4 9f c2 09 76 67  | ~~@~~~d~~*~~~~vg |
+0030  64 f0 86 a1 2d 1b 00 00  00 00 01 00 00 00 00 00  | d~~~-~~~~~~~~~~~ |
+0040  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  | ~~~~~~~~~~~~~~~~ |
+0050  e0 c9 44 6f                                       | ~~Do             |
+----------------------------------------------------------------------------
+Frankierart 3 Frankit
+Produkt-ID 1 Standardbrief
+Frankierwert 70 Eurocent
+Einlieferungsdatum: 27.01.2017
+Preisliste 35
+Frankiermaschine 4d11000878 Hersteller Pitney Bowes
+
+
+RA Luesgens
+Code:
+0000  44 45 41 03 23 4d 11 00  08 78 00 46 22 71 00 01  | DEA~#M~~~x~F"q~~ |
+0010  25 01 00 02 b3 75 7d 7d  c4 cb e7 35 b0 5b 01 7c  | %~~~~u}}~~~5~[~| |
+0020  1a 88 bc 86 7b f6 f1 2e  0f 02 94 92 8e c0 3a 36  | ~~~~{~~.~~~~~~:6 |
+0030  da 1d 66 c8 18 14 00 00  00 00 01 00 00 00 00 00  | ~~f~~~~~~~~~~~~~ |
+0040  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  | ~~~~~~~~~~~~~~~~ |
+0050  73 4c 66 8f                                       | sLf~             |
+----------------------------------------------------------------------------
+Frankierart 3 Frankit
+Produkt-ID 1 Standardbrief
+Frankierwert 70 Eurocent
+Einlieferungsdatum: 29.03.2017
+Preisliste 35
+Frankiermaschine 4d11000878 Hersteller Pitney Bowes
+
+https://stackoverflow.com/questions/1057572/how-can-i-get-a-hex-dump-of-a-string-in-php
+https://stackoverflow.com/questions/32523099/read-qr-code-text-and-generate-new-image
+https://igor.io/2012/09/24/binary-parsing.html
+https://github.com/zxing/zxing/issues/365
+
+Raw bytes expected:
+44 45 41 12 20 01 2d 82  1b a1 00 3e 25 f3 25 1d
+00 04 97 02 1e 47 11 00  00 06 ea 30 46 42 30 31
+39 32 38 34 35 32 33 54  49 34
+
+Raw bytes displayed:
+45 46 42 13 21 e7 18 ae  70 5a 89 a5 99 6d e9 4d
+14 a2 1b b4 dd dd 8f 4e  ad 32 c7 63 dc b8 64 f5
+79 0f ad 3c d7 69 ff 92  28 df 6a ea
+
+*****************************
+
+
+The output's radix relates to the value of $bitsPerCharacter as follows:
+1: base-2 (binary)
+2: base-4
+3: base-8 (octal)
+4: base-16 (hexadecimal)
+5: base-32
+6: base-64
+7: base-128
+8: base-256
+
+
+
+
+
+<?php
+/**
+ * FixedBitNotation
+ *
+ * @author Andre DeMarre
+ * @package FixedBitNotation
+ */
+
+/**
+ * The FixedBitNotation class is for binary to text conversion. It
+ * can handle many encoding schemes, formally defined or not, that
+ * use a fixed number of bits to encode each character.
+ *
+ * @package FixedBitNotation
+ */
+class FixedBitNotation
+{
+    protected $_chars;
+    protected $_bitsPerCharacter;
+    protected $_radix;
+    protected $_rightPadFinalBits;
+    protected $_padFinalGroup;
+    protected $_padCharacter;
+    protected $_charmap;
+
+    /**
+     * Constructor
+     *
+     * @param integer $bitsPerCharacter Bits to use for each encoded character
+     * @param string  $chars Base character alphabet
+     * @param boolean $rightPadFinalBits How to encode last character
+     * @param boolean $padFinalGroup Add padding to end of encoded output
+     * @param string  $padCharacter Character to use for padding
+     */
+    public function __construct(
+        $bitsPerCharacter, $chars = NULL, $rightPadFinalBits = FALSE,
+        $padFinalGroup = FALSE, $padCharacter = '=')
+    {
+        // Ensure validity of $chars
+        if (!is_string($chars) || ($charLength = strlen($chars)) < 2) {
+            $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-,';
+            $charLength = 64;
+        }
+
+        // Ensure validity of $bitsPerCharacter
+        if ($bitsPerCharacter < 1) {
+            // $bitsPerCharacter must be at least 1
+            $bitsPerCharacter = 1;
+            $radix = 2;
+
+        } elseif ($charLength < 1 << $bitsPerCharacter) {
+            // Character length of $chars is too small for $bitsPerCharacter
+            // Set $bitsPerCharacter to greatest acceptable value
+            $bitsPerCharacter = 1;
+            $radix = 2;
+
+            while ($charLength >= ($radix <<= 1) && $bitsPerCharacter < 8) {
+                $bitsPerCharacter++;
+            }
+
+            $radix >>= 1;
+
+        } elseif ($bitsPerCharacter > 8) {
+            // $bitsPerCharacter must not be greater than 8
+            $bitsPerCharacter = 8;
+            $radix = 256;
+
+        } else {
+            $radix = 1 << $bitsPerCharacter;
+        }
+
+        $this->_chars = $chars;
+        $this->_bitsPerCharacter = $bitsPerCharacter;
+        $this->_radix = $radix;
+        $this->_rightPadFinalBits = $rightPadFinalBits;
+        $this->_padFinalGroup = $padFinalGroup;
+        $this->_padCharacter = $padCharacter[0];
+    }
+
+    /**
+     * Encode a string
+     *
+     * @param  string $rawString Binary data to encode
+     * @return string
+     */
+    public function encode($rawString)
+    {
+        // Unpack string into an array of bytes
+        $bytes = unpack('C*', $rawString);
+        $byteCount = count($bytes);
+
+        $encodedString = '';
+        $byte = array_shift($bytes);
+        $bitsRead = 0;
+
+        $chars = $this->_chars;
+        $bitsPerCharacter = $this->_bitsPerCharacter;
+        $rightPadFinalBits = $this->_rightPadFinalBits;
+        $padFinalGroup = $this->_padFinalGroup;
+        $padCharacter = $this->_padCharacter;
+
+        // Generate encoded output; each loop produces one encoded character
+        for ($c = 0; $c < $byteCount * 8 / $bitsPerCharacter; $c++) {
+
+            // Get the bits needed for this encoded character
+            if ($bitsRead + $bitsPerCharacter > 8) {
+                // Not enough bits remain in this byte for the current character
+                // Save the remaining bits before getting the next byte
+                $oldBitCount = 8 - $bitsRead;
+                $oldBits = $byte ^ ($byte >> $oldBitCount << $oldBitCount);
+                $newBitCount = $bitsPerCharacter - $oldBitCount;
+
+                if (!$bytes) {
+                    // Last bits; match final character and exit loop
+                    if ($rightPadFinalBits) $oldBits <<= $newBitCount;
+                    $encodedString .= $chars[$oldBits];
+
+                    if ($padFinalGroup) {
+                        // Array of the lowest common multiples of $bitsPerCharacter and 8, divided by 8
+                        $lcmMap = array(1 => 1, 2 => 1, 3 => 3, 4 => 1, 5 => 5, 6 => 3, 7 => 7, 8 => 1);
+                        $bytesPerGroup = $lcmMap[$bitsPerCharacter];
+                        $pads = $bytesPerGroup * 8 / $bitsPerCharacter - ceil((strlen($rawString) % $bytesPerGroup) * 8 / $bitsPerCharacter);
+                        $encodedString .= str_repeat($padCharacter[0], $pads);
+                    }
+
+                    break;
+                }
+
+                // Get next byte
+                $byte = array_shift($bytes);
+                $bitsRead = 0;
+
+            } else {
+                $oldBitCount = 0;
+                $newBitCount = $bitsPerCharacter;
+            }
+
+            // Read only the needed bits from this byte
+            $bits = $byte >> 8 - ($bitsRead + ($newBitCount));
+            $bits ^= $bits >> $newBitCount << $newBitCount;
+            $bitsRead += $newBitCount;
+
+            if ($oldBitCount) {
+                // Bits come from seperate bytes, add $oldBits to $bits
+                $bits = ($oldBits << $newBitCount) | $bits;
+            }
+
+            $encodedString .= $chars[$bits];
+        }
+
+        return $encodedString;
+    }
+
+    /**
+     * Decode a string
+     *
+     * @param  string  $encodedString Data to decode
+     * @param  boolean $caseSensitive
+     * @param  boolean $strict Returns NULL if $encodedString contains an undecodable character
+     * @return string|NULL
+     */
+    public function decode($encodedString, $caseSensitive = TRUE, $strict = FALSE)
+    {
+        if (!$encodedString || !is_string($encodedString)) {
+            // Empty string, nothing to decode
+            return '';
+        }
+
+        $chars = $this->_chars;
+        $bitsPerCharacter = $this->_bitsPerCharacter;
+        $radix = $this->_radix;
+        $rightPadFinalBits = $this->_rightPadFinalBits;
+        $padFinalGroup = $this->_padFinalGroup;
+        $padCharacter = $this->_padCharacter;
+
+        // Get index of encoded characters
+        if ($this->_charmap) {
+            $charmap = $this->_charmap;
+
+        } else {
+            $charmap = array();
+
+            for ($i = 0; $i < $radix; $i++) {
+                $charmap[$chars[$i]] = $i;
+            }
+
+            $this->_charmap = $charmap;
+        }
+
+        // The last encoded character is $encodedString[$lastNotatedIndex]
+        $lastNotatedIndex = strlen($encodedString) - 1;
+
+        // Remove trailing padding characters
+        while ($encodedString[$lastNotatedIndex] == $padCharacter[0]) {
+            $encodedString = substr($encodedString, 0, $lastNotatedIndex);
+            $lastNotatedIndex--;
+        }
+
+        $rawString = '';
+        $byte = 0;
+        $bitsWritten = 0;
+
+        // Convert each encoded character to a series of unencoded bits
+        for ($c = 0; $c <= $lastNotatedIndex; $c++) {
+
+            if (!isset($charmap[$encodedString[$c]]) && !$caseSensitive) {
+                // Encoded character was not found; try other case
+                if (isset($charmap[$cUpper = strtoupper($encodedString[$c])])) {
+                    $charmap[$encodedString[$c]] = $charmap[$cUpper];
+
+                } elseif (isset($charmap[$cLower = strtolower($encodedString[$c])])) {
+                    $charmap[$encodedString[$c]] = $charmap[$cLower];
+                }
+            }
+
+            if (isset($charmap[$encodedString[$c]])) {
+                $bitsNeeded = 8 - $bitsWritten;
+                $unusedBitCount = $bitsPerCharacter - $bitsNeeded;
+
+                // Get the new bits ready
+                if ($bitsNeeded > $bitsPerCharacter) {
+                    // New bits aren't enough to complete a byte; shift them left into position
+                    $newBits = $charmap[$encodedString[$c]] << $bitsNeeded - $bitsPerCharacter;
+                    $bitsWritten += $bitsPerCharacter;
+
+                } elseif ($c != $lastNotatedIndex || $rightPadFinalBits) {
+                    // Zero or more too many bits to complete a byte; shift right
+                    $newBits = $charmap[$encodedString[$c]] >> $unusedBitCount;
+                    $bitsWritten = 8; //$bitsWritten += $bitsNeeded;
+
+                } else {
+                    // Final bits don't need to be shifted
+                    $newBits = $charmap[$encodedString[$c]];
+                    $bitsWritten = 8;
+                }
+
+                $byte |= $newBits;
+
+                if ($bitsWritten == 8 || $c == $lastNotatedIndex) {
+                    // Byte is ready to be written
+                    $rawString .= pack('C', $byte);
+
+                    if ($c != $lastNotatedIndex) {
+                        // Start the next byte
+                        $bitsWritten = $unusedBitCount;
+                        $byte = ($charmap[$encodedString[$c]] ^ ($newBits << $unusedBitCount)) << 8 - $bitsWritten;
+                    }
+                }
+
+            } elseif ($strict) {
+                // Unable to decode character; abort
+                return NULL;
+            }
+        }
+
+        return $rawString;
+    }
+}
+
+
+
+
+
+
+
+
+<?php
+$modifiedBase64 = new FixedBitNotation(6, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_', TRUE, TRUE);
+$encoded = $modifiedBase64->encode("encode this \xBF\xC2\xBF");
+// ZW5jb2RlIHRoaXMgv8K_
+?>
+<?php
+// RFC 4648 Base32 alphabet
+$base32 = new FixedBitNotation(5, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567', TRUE, TRUE);
+$encoded = $base32->encode('encode this');
+// MVXGG33EMUQHI2DJOM======
+?>
+<?php
+$octal = new FixedBitNotation(3);
+$encoded = $octal->encode('encode this');
+// 312671433366214510072150322711
+?>
+<?php
+$binary = new FixedBitNotation(1);
+$encoded = $binary->encode('encode this');
+// 0110010101101110011000110110111101100100011001010010000001110100011010000110100101110011
+$decoded = $binary->decode($encoded);
+// encode this
+?>
+<?php
+// Generate a value that follows the form:
+// session.hash_function = 0
+// session.hash_bits_per_character = 5
+$notate5bpc = new FixedBitNotation(5);
+$id = $notate5bpc->encode(md5(uniqid(mt_rand(), TRUE), TRUE));
+// q3c8n4vqpq11i0vr6ucmafg1h3
+?>
+<?php
+// Generate a value that follows the form:
+// session.hash_function = 1
+// session.hash_bits_per_character = 6
+$notate6bpc = new FixedBitNotation(6);
+$id = $notate6bpc->encode(sha1(uniqid(mt_rand(), TRUE), TRUE));
+// 7Hf91mVc,q-9W1VndNNh3evVN83
+?>
+<?php
+// Generate an eight character password
+$pwEncoder = new FixedBitNotation(5, '123456789BCDFGHJKLMNPQRSTVWXYZHZ');
+$password = substr($pwEncoder->encode(md5(uniqid(mt_rand(), TRUE), TRUE)), 0, 8);
+// HW42NMCP
+?>
+
+Handling whitespace
+<?php
+// Remove line breaks from encoded data before decoding
+$encoded = str_replace(array("\r", "\n"), '', $encoded);
+$decoded = $fbnInstance->decode($encoded, TRUE, TRUE);
+?>
+<?php
+// Remove whitespace from encoded data before decoding
+$encoded = str_replace(array(" ", "\t", "\r", "\n", "\0", "\x0B"), '', $encoded);
+$decoded = $fbnInstance->decode($encoded, TRUE, TRUE);
+?>
+
+
+// This example uses the 7-bit ASCII characters
+$base128chars = "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F"
+              . "\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F"
+              . "\x20\x21\x22\x23\x24\x25\x26\x27\x28\x29\x2A\x2B\x2C\x2D\x2E\x2F"
+              . "\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x3A\x3B\x3C\x3D\x3E\x3F"
+              . "\x40\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4A\x4B\x4C\x4D\x4E\x4F"
+              . "\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5A\x5B\x5C\x5D\x5E\x5F"
+              . "\x60\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6A\x6B\x6C\x6D\x6E\x6F"
+              . "\x70\x71\x72\x73\x74\x75\x76\x77\x78\x69\x7A\x7B\x7C\x7D\x7E\x7F";
+
+// No end padding because no 7-bit ASCII characters remain for the pad character
+$base128 = new FixedBitNotation(7, $base128chars, TRUE);
+$encoded = $base128->encode('encode this');
+
+
+$binary = new FixedBitNotation(1);
+echo $encoded = $binary->encode($strClean);
+
+// "High" base-128 encoding
+$high128chars = "\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8A\x8B\x8C\x8D\x8E\x8F"
+              . "\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9A\x9B\x9C\x9D\x9E\x9F"
+              . "\xA0\xA1\xA2\xA3\xA4\xA5\xA6\xA7\xA8\xA9\xAA\xAB\xAC\xAD\xAE\xAF"
+              . "\xB0\xB1\xB2\xB3\xB4\xB5\xB6\xB7\xB8\xB9\xBA\xBB\xBC\xBD\xBE\xBF"
+              . "\xC0\xC1\xC2\xC3\xC4\xC5\xC6\xC7\xC8\xC9\xCA\xCB\xCC\xCD\xCE\xCF"
+              . "\xD0\xD1\xD2\xD3\xD4\xD5\xD6\xD7\xD8\xD9\xDA\xDB\xDC\xDD\xDE\xDF"
+              . "\xE0\xE1\xE2\xE3\xE4\xE5\xE6\xE7\xE8\xE9\xEA\xEB\xEC\xED\xEE\xEF"
+              . "\xF0\xF1\xF2\xF3\xF4\xF5\xF6\xF7\xF8\xF9\xFA\xFB\xFC\xFD\xFE\xFF";
+
+$base128 = new FixedBitNotation(7, $high128chars, TRUE);
+$encoded = $base128->encode('encode this');
+

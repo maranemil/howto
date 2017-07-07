@@ -1,0 +1,241 @@
+
+################################################
+### SugarCrm on Demand Alternative Functions ###
+################################################
+
+Module Loader Restrictions 6.7
+http://support.sugarcrm.com/Documentation/Sugar_Developer/Sugar_Developer_Guide_6.7/Application_Framework/Module_Loader/Module_Loader_Restrictions/index.html
+
+Module Loader Restriction Alternatives 6.7
+http://support.sugarcrm.com/Documentation/Sugar_Developer/Sugar_Developer_Guide_6.7/Application_Framework/Module_Loader/Module_Loader_Restriction_Alternatives/
+
+Module Loader Restriction Alternatives 7.6
+http://support.sugarcrm.com/Documentation/Sugar_Developer/Sugar_Developer_Guide_7.6/API/Application/Module_Loader/Module_Loader_Restriction_Alternatives/
+http://support.sugarcrm.com/Documentation/Sugar_Developer/Sugar_Developer_Guide_7.5/API/Classes/SugarAutoLoader/File_Check_API/
+
+--------------------------------------------------
+
+   	Invalid usage of a function ziparchive()
+
+	# before
+	$za = new ZipArchive();
+    	$za->open($unzip_dir);
+    	for( $i = 0; $i < $za->numFiles; $i++ ){
+        	$stat = $za->statIndex( $i );
+
+	# after
+	/include/utils/php_zip_utils.php  	--> function zip_files_list()
+	/include/utils/zip_utils.php		--> function zip_files_list()
+	
+........................................................
+
+    	Invalid usage of a function pathinfo()
+
+	# before
+	$path_file = pathinfo($somefile);
+
+	# after
+	/include/upload_file.php 	   	--> function getMime()
+	/ModuleInstall/ModuleScanner.php   	--> function isValidExtension()
+
+........................................................
+
+    	Invalid usage of a function file_exists()
+
+	# before
+	if(file_exists($file)){	
+
+	# after
+
+	// SG 7X
+    require_once("include/utils.php");
+	if (!SugarAutoloader::fileExists($scriptPath)){
+			$scriptPath = "include/.....";
+	}
+
+	// SG 6X
+	require_once("modules/Import/ImportFileSplitter.php");
+	if (ImportFileSplitter::fileExists($scriptPath)){
+			$scriptPath = "include/.....";
+	}
+
+........................................................
+
+	Invalid usage of a file_get_contents()
+
+	# before
+	$file_content = file_get_contents($myfile);
+
+	# after v1
+	require_once('include/parsecsv.lib.php');
+	$pcsv = new parseCSV();
+	$file_contents = $pcsv->_rfile($myfile);
+
+	# after v2
+	require_once('include/upload_file.php');
+    $uploadFile = new UploadFile();
+    //get the file location
+    $uploadFile->temp_file_location = $file_path;
+    $file_contents = $uploadFile->get_file_contents();
+
+
+........................................................
+
+	Invalid usage of a unlink (delete)
+	# before
+	@unlink
+
+	# after
+	SugarAutoloader::unlink()
+
+........................................................
+
+	Invalid usage of a fwrite() and fopen()
+	
+	# before
+	$f = fopen($pth, "w+");
+	fwrite($f, $file_cont);
+	fclose($f);
+	
+	# after
+	//SugarAutoloader::put()
+	SugarAutoloader::put($pth,$file_cont,false );
+
+........................................................
+
+	Read external file url and write local
+
+	#before
+
+	$handle = sugar_fopen($filename, "r");
+	if ($handle != false) {
+	    echo $contents = fread($handle, 8192);
+	    fclose($handle);
+
+		$filename1 = "cache/images/skype_" . $args["skype_user_c"] . "_" . microtime() . ".png";
+		    $handle1 = sugar_fopen($filename1, "w+");
+		    fwrite($handle1, $contents);
+		    fclose($handle1);
+	}
+
+
+	#after
+
+	require_once('include/upload_file.php');
+	$file = new UploadFile();
+	//get the file location
+	$file->temp_file_location = $filename;
+	//alternatively you can do the following if you know the upload file id
+	//$file->temp_file_location = UploadFile::get_upload_path($file_id);
+	echo $file_contents = $file->get_file_contents();
+	if($file_contents){   
+	    $filename1 = "cache/images/skype_" . $args["skype_user_c"] . "_" . microtime() . ".png";
+	    SugarAutoloader::put($filename1,$file_contents,false );
+	}
+
+........................................................
+
+	Invalid usage of a copy() file
+
+	# before
+	copy($filename, $newfile);
+
+    	# after
+	require_once('include/parsecsv.lib.php');
+    	$pcsv = new parseCSV();
+	$file_contents = $pcsv->_rfile($filename);
+    	$pcsv->_wfile($newfile,$file_contents);
+
+........................................................
+
+	Invalid usage of a remove file / dir
+	
+	# before
+	unlink(....)
+
+	# after
+	//SugarAutoloader::unlink($filename);
+	//require_once("include/dir_inc.php");
+	//rmdir_recursive($filename);
+
+	require_once("include/upload_file.php");
+	$us = new UploadStream();
+	$us->unlink($filename);   
+
+
+........................................................
+
+	Invalid usage of a  put() / fput() 
+
+	#before
+	fput($fp,$content)
+	
+	#after
+	//SugarAutoloader::put($filename,$fc,false );
+	require_once('include/parsecsv.lib.php');
+   	$pcsv = new parseCSV();         
+   	$pcsv->_wfile($newfile,$file_contents);
+
+
+........................................................
+
+	Invalid usage of init class 
+
+	# before
+	$class_name = $beanList[$module_name];
+	require_once($beanFiles[$class_name]);
+	$seed = new $class_name();
+
+	# after
+	$class_name = $beanList[$module_name];
+	require_once($beanFiles[$class_name]);
+
+	if($class_name=="Accounts"){
+	    $seed = new Accounts();
+	}
+	else if($class_name=="Contacts"){
+	    $seed = new Contacts();
+	}
+	else if($class_name=="Leads"){
+	    $seed = new Leads();
+	}
+
+........................................................
+
+	Invalid usage of simplexml_load_string function
+
+    # before
+	//return $a = (array) simplexml_load_string($xml_string);
+
+    # after sugar 7.6
+	#require_once("clients/base/api/RSSFeedApi.php");
+	#$xml = new RSSFeedApi();
+	#$b = $xml->getFeedXMLObject($xml_string);
+	#return $a = (array) $b;
+
+	 # after 7.X
+	$b = new SimpleXMLElement($xml_string);
+    $a = (array) $b;
+
+........................................................
+
+// require_once("include/utils/sugar_file_utils.php");
+// sugar_file_get_contents
+// sugar_file_put_contents
+// sugar_is_file
+
+
+
+
+Migration to 7.7 and 7.8
+
+https://developer.sugarcrm.com/2015/11/17/createactionsview-changes-in-sugar-7-7-0/
+http://support.sugarcrm.com/Documentation/Sugar_Developer/Sugar_Developer_Guide_7.6/UI_Model/Views/Examples/Adding_Field_Validation_to_the_Record_View/
+http://support.sugarcrm.com/Documentation/Sugar_Versions/7.8/Pro/Installation_and_Upgrade_Guide/
+https://developer.sugarcrm.com/category/sugar-7-8-0/
+
+https://developer.sugarcrm.com/2016/07/13/prepare-for-the-backbone-js-upgrade-in-sugar-7-8/
+http://support.sugarcrm.com/Documentation/Sugar_Developer/Sugar_Developer_Guide_7.8/Introduction/Migration_Guide/
+https://developer.sugarcrm.com/category/sugar-7-8-0/
+http://support.sugarcrm.com/Resources/Supported_Platforms/Sugar_7.8.x_Supported_Platforms/index.html
+http://support.sugarcrm.com/Documentation/Sugar_Versions/7.8/Pro/Installation_and_Upgrade_Guide/

@@ -1,0 +1,88 @@
+symbolic-links=0
+innodb_file_per_table = 1
+thread_concurrency = 8
+query_cache_size = 64M
+query_cache_limit = 4M
+thread_cache_size = 8
+myisam_sort_buffer_size = 64M
+read_rnd_buffer_size = 8M
+read_buffer_size = 2M
+sort_buffer_size = 2M
+table_cache = 1600
+table_definition_cache = 1600
+max_allowed_packet = 4M
+key_buffer = 1G
+interactive_timeout = 2
+wait_timeout = 5
+long_query_time = 1
+log_slow_queries = ON
+open_files_limit = 3200
+innodb_buffer_pool_size = 26M
+join_buffer_size = 4M
+tmp_table_size = 72M
+max_heap_table_size = 72M
+max_connections = 80
+
+
+# http://chrisgilligan.com/consulting/tuning-apache-and-mysql-for-best-performance-in-a-shared-virtual-hosting-environment/
+
+###-----------------------------------------
+
+
+apt-get install mysqltuner
+mysqltuner
+
+#edit
+vi /etc/mysql/conf.d/tuning.cnf
+
+[mysqld]
+thread_cache_size = 64 # Was 8
+max_connections = 40 # Was 100 commented out => 151
+max_user_connections = 40 # Was not set => 0
+max_connect_errors = 20 # Was not set => 10
+open_files_limit = 3000 # Was default 1024
+table_open_cache = 3000 # Was not set, default 400
+table_definition_cache = 3000 # Was not set, default 400
+#thread_concurrency = 10 # I have "2vCores", but lscpu shows 48...
+
+# Query Cache Configuration
+query_cache_type = 1
+query_cache_limit = 32M # Was 1M
+query_cache_size = 256M # Was 16M - "32MB for every 1GB of RAM"
+query_cache_min_res_unit = 1400 # Was 4K by default
+
+# InnoDB
+innodb_buffer_pool_size = 5G # Was set to measly 2M, Default is 128M - but ownCloud alone has 50M tables...
+# innodb_log_buffer_size = 16M # Default is 8M - was set to 500K
+# innodb_log_file_size = 128M # Was default 5M - set to one quarter of innodb_buffer_pool_size
+
+innodb_additional_mem_pool_size = 16M # Default is 8M - was set to 500K
+innodb_flush_log_at_trx_commit = 0
+
+# Was 1 = Full ACID: 0 = mysqld process crash can erase last second transactions
+innodb_thread_concurrency = 0 # Was a measly 2
+# A recommended value is 2 times the number of CPUs plus the number of disks.
+# A value of 0 (the default) is interpreted as infinite concurrency (no concurrency checking).
+innodb_use_native_aio = 1 # Should be ON by default (says docu) but was off.
+
+# Various
+sort_buffer_size = 8M # 1MB for every 1GB of RAM
+read_buffer_size = 8M # 1MB for every 1GB of RAM
+read_rnd_buffer_size = 8M # 1MB for every 1GB of RAM
+join_buffer_size = 32M # Was only 128K
+
+tmp_table_size = 384M # 128 reicht nicht
+max_heap_table_size = 384M
+
+key_buffer_size = 8M # Was default 16M (we use mainly InnoDB)
+myisam_sort_buffer_size = 8M # This is the default
+
+long_query_time = 5
+# slow-query-log = 1
+# slow_query_log_file = /var/log/mysql/mysql-slow.log
+# log_queries_not_using_indexes = 1
+
+-------------
+service mysql restart
+mysqltuner
+

@@ -1,0 +1,75 @@
+####################################################
+####################################################
+##
+## Kaleidoscopic Hexagons version 2 of the script
+##
+## baard1956
+## Published on Oct 20, 2013
+##
+####################################################
+
+A summary of the script, version 2
+hexv205script.avs
+#plugin for rotation, source http://avisynth.org.ru/fizick.html
+#plugin for binarize, source http://manao4.free.fr/MaskTools.htm
+loadplugin("K:\VD Filter Pack\Rotate.dll")
+loadplugin("K:\VD Filter Pack\masktools\mt_masktools.dll")
+
+#clips, a=source ruw 072 330-3925 = FADL
+#clip b=mask 180x156
+#c=white background 540x624, at least as many frames as the longest cutout
+#d=music
+
+a=AviSource("k:\aviwerkmap\FADL.avi")
+b=AviSource("k:\aviwerkmap\HEXMASK.avi")
+c=AviSource("k:\aviwerkmap\FADIX_WBG.avi")
+d=WAVSource("K:\AviWerkmap\InCrowd_2_35_72.wav")
+
+#ag1 through ag5 adjust colour and mask effect source clip
+ag1=a.grayscale.converttoyv12()
+ag2=ag1.mt_binarize(150,true)
+ag3=a.converttorgb32().rgbadjust(1,1,2)
+ag4=layer(a.converttorgb32(),ag2.converttorgb32().resetmask.colorkeymask($ffffff,0), x=0, y=0)
+ag5=layer(ag3.converttorgb32(),ag4.converttorgb32().resetmask.colorkeymask($000000,0), x=0, y=0)
+
+#bg1 choose cutout from source, the only choice until bg16
+bg1=ag5.trim(249,320).crop(135,12,-167,-10).bicubicresize(180,180)
+bg2=bg1.crop(0,24,0,0)
+bg3=layer(bg2.converttorgb32(), b.converttorgb32().resetmask.colorkeymask($000000,0), x=0, y=0)
+bg4=bg3.flipvertical
+bg5=stackvertical(bg3,bg4)
+#basic diamond is ready
+bg6=layer(c.converttorgb32(), bg5.converttorgb32().resetmask.colorkeymask($ffffff,0),
+x=180,y=312)
+#basic diamond in white background
+bg7=bg6.fliphorizontal
+bg8=bg7.converttorgb.rotate(60)
+bg9=bg7.converttorgb.rotate(300)
+
+#versions to get the symmetry right
+bg10=layer(bg8.converttorgb32(),bg6.converttorgb32().resetmask.colorkeymask($ffffff,0),x=0,y=0)
+
+#bg6 under bg8 gives worse seam
+bg11=layer(bg9.converttorgb(), bg10.converttorgb32().resetmask.colorkeymask($ffffff,0),x=0,y=0)
+
+#inexplicable white lines appear; bg10 under bg9 gives worse seam
+#making a six pointed star (flipvertical and layer) gives a nasty seam
+bg12=layer(bg11.converttorgb32(), bg6.converttorgb32().resetmask.colorkeymask($ffffff,0),x=-270, y=-156)
+bg13=layer(bg12.converttorgb32(), bg6.converttorgb32().resetmask.colorkeymask($ffffff,0),x=270, y=-156).crop(0,312,-0,-156)
+bg14=bg13.flipvertical
+bg15=stackvertical(bg14,bg13).trim(0,59)
+#basic building block is ready, choose number of blocks to stack and final size of image
+bg16=stackhorizontal(bg15,bg15)
+bg17=stackvertical(bg16,bg16).crop(220,72,-220,-72)
+
+[cg1 through cg17: second cutout]
+[dg1 through dg17: third cutout]
+[eg1 through eg17: fourth cutout]
+
+#fg1 choose a line to repeat, number of repetitions and final length, add music
+fg1=unalignedsplice(bg17,dg17,cg17,eg17,�cg17,dg17,bg17,eg17)
+fg2=unalignedsplice(fg1,fg1,fg1,fg1,fg1,�fg1).trim(0,3893)
+fg3=audiodub(fg2,d)
+
+return fg3
+__END__

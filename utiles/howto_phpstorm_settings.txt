@@ -1,0 +1,536 @@
+
+
+#################################################
+Linux PHPStorm Themes
+#################################################
+
+On Linux, the color files are located in: ~/.WebIde70/config/colors/ After you put your .xml files,
+and restart your IDE.
+Then navigate to File > Settings > Editor > Colors & Fonts and select the color scheme you just added.
+
+http://www.phpstorm-themes.com/
+
+###########################################################################
+#
+#	PHPSTORM : external file changes sync may be slow
+#	Project files cannot be watched (are they under network mount?)"
+#
+###########################################################################
+
+cat /proc/sys/fs/inotify/max_user_watches  # 524288
+cat /proc/sys/fs/inotify/max_user_watches
+/etc/sysctl.d/60-jetbrains.conf # fs.inotify.max_user_watches = 524288
+
+# It can be raised by adding following line to the /etc/sysctl.conf file:
+fs.inotify.max_user_watches = 524288
+
+#and issuing this command to apply the change:
+sudo sysctl -p
+ps axf
+
+sudo chmod +x /opt/PhpStorm-163.10504.2/bin/fsnotifier
+sudo chmod +x /opt/PhpStorm-163.10504.2/bin/fsnotifier64
+
+/opt/PhpStorm-163.10504.2/bin$ ./fsnotifier64 --selftest
+
+............................................................
+
+ll /proc/sys/fs/inotify/
+max_queued_events
+max_user_instances
+max_user_watches
+
+............................................................
+
+caffeinate &
+umount -f /Volumes/$MOUNTDIR/
+umount -f /Users/$HOMEUSER/$MOUNTDIR
+mkdir /Users/$HOMEUSER/$MOUNTDIR
+sshfs $HOMEUSER@@SERVERADDR:/usr/$HOMEUSER/$MOUNTDIR /Users/$HOMEUSER/$MOUNTDIR
+
+###############################################################
+#
+# ssh connect
+#
+###############################################################
+
+sudo gvfs-mount smb://user@servername/
+sudo gvfs-mount smb://servername/user/
+sudo sshfs -o nonempty,default_permissions,uid=1000,gid=1000,sshfs_debug,IdentityFile=~/.ssh/id_rsa username@192.168.178.22:/username /media
+ssh -xA user@servername
+
+gvfs-mount smb://name.srv/user.name/ # mount
+gvfs-mount -u smb://name.srv/user.name/ # unmount
+
+###############################################################
+#
+# limit cpu PhpStorm
+#
+###############################################################
+
+cpulimit -e "/opt/PhpStorm-163.10504.2/jre64/bin/java" -l 50
+cpulimit -P "/opt/PhpStorm-163.10504.2/jre64/bin/java" -l 50
+cpulimit -P "/opt/PhpStorm-163.10504.2/jre64/bin/java" -l 50 -c 4 # Allow to use only 4 CPU at 50%
+cpulimit -P "/opt/PhpStorm-163.10504.2/jre64/bin/java" -l 95 -c 6 # Allow to use only 4 CPU at 95%
+
+cpulimit -P "/opt/PhpStorm-163.10504.2/jre64/bin/java" -l 150 -c 6
+cpulimit -P "/usr/lib/gvfs/gvfsd-fuse" -l 150 -c 6
+
+increase XMX to 3048 #
+sudo sysctl vm.swappiness=20
+
+##############################################################
+#
+#	How can I completely remove the License Information
+#
+##############################################################
+
+--- Linux and other Unix sytems ---
+
+sudo rm -rf ~/.WebIde70
+sudo rm -rf ~/.WebIde90
+
+--- Mac OS X 10.8 Mountain Lion ---
+
+!/usr/bin/sh
+
+rm -rf "$HOME/Library/Preferences/WebIde40"
+rm -rf "$HOME/Library/Caches/WebIde40"
+rm -rf "$HOME/Library/Application Support/WebIde40"
+rm -rf "$HOME/Library/Logs/WebIde40"
+
+
+PhpStorm Early Access Program
+https://confluence.jetbrains.com/display/PhpStorm/PhpStorm+Early+Access+Program
+
+Directories used by the IDE to store settings, caches, plugins and logs
+https://intellij-support.jetbrains.com/hc/en-us/articles/206544519
+
+
+
+#################################################
+~/PhpStorm-102.206/bin/webide.vmoptions
+#################################################
+
+-Xms32m
+-Xmx512m
+-XX:MaxPermSize=512m
+-ea
+-Didea.platform.prefix=PhpStorm
+-Xmx2400m
+-XX:MaxPermSize=2400m
+-XX:ParallelGCThreads=6
+
+# increase Xmx by 25-30%
+
+#################################################
+sudo nano /opt/PhpStorm-141.2462/bin/phpstorm.vmoptions
+/opt/PhpStorm-141.2462/bin/phpstorm.vmoptions
+ORIGINAL SETTINGS
+#################################################
+
+-server
+-Xms128m
+-Xmx512m
+-XX:MaxPermSize=250m
+-XX:ReservedCodeCacheSize=150m
+-XX:+UseConcMarkSweepGC
+-XX:SoftRefLRUPolicyMSPerMB=50
+-ea
+-Dsun.io.useCanonCaches=false
+-Djava.net.preferIPv4Stack=true
+-Dawt.useSystemAAFontSettings=lcd
+
+#################################################
+/opt/PhpStorm-141.2462/bin/phpstorm.vmoptions
+MODIFIED SETTINGS
+#################################################
+-server
+-Xms128m
+-Xmx512m
+-Xss16m
+-XX:MaxPermSize=150m
+-XX:ReservedCodeCacheSize=250m
+-XX:SoftRefLRUPolicyMSPerMB=50
+-XX:+UseCodeCacheFlushing
+
+-XX:+UseParNewGC
+-XX:ParallelGCThreads=2
+-XX:+UseConcMarkSweepGC
+-XX:ConcGCThreads=2
+-XX:MaxTenuringThreshold=1
+
+-ea
+-Dsun.io.useCanonCaches=false
+-Djava.net.preferIPv4Stack=true
+-Dawt.useSystemAAFontSettings=lcd
+-agentlib:yjpagent
+
+-------------------------------------------------
+
+For the 32-bit systems:
+-agentlib:yjpagent-linux=delay=10000
+
+For the 64-bit systems:
+-agentlib:yjpagent-linux64=delay=10000
+
+CPU Snapshot with Invocation Counts:
+-Dprofile.trace=true
+
+Memory Snapshot:
+-XX:+HeapDumpOnOutOfMemoryError
+-XX:HeapDumpPath=/dumps/folder
+
+jmap Binary Memory Snapshot
+jmap -dump:live,format=b,file=heap.bin <pid>
+
+Profiling Slow Startup
+-agentlib:yjpagent=sampling
+
+################################################
+Best experience with following options (idea64.exe.vmoptions):
+################################################
+
+-server
+-Xms1g
+-Xmx3g
+-Xss16m
+-XX:NewRatio=3
+
+-XX:ReservedCodeCacheSize=240m
+-XX:+UseCompressedOops
+-XX:SoftRefLRUPolicyMSPerMB=50
+
+-XX:+UseParNewGC
+-XX:ParallelGCThreads=4
+-XX:+UseConcMarkSweepGC
+-XX:ConcGCThreads=4
+
+-XX:+CMSClassUnloadingEnabled
+-XX:+CMSParallelRemarkEnabled
+-XX:CMSInitiatingOccupancyFraction=65
+-XX:+CMSScavengeBeforeRemark
+-XX:+UseCMSInitiatingOccupancyOnly
+
+-XX:MaxTenuringThreshold=1
+-XX:SurvivorRatio=8
+-XX:+UseCodeCacheFlushing
+-XX:+AggressiveOpts
+-XX:-TraceClassUnloading
+-XX:+AlwaysPreTouch
+-XX:+TieredCompilation
+
+-Djava.net.preferIPv4Stack=true
+-Dsun.io.useCanonCaches=false
+-Djsse.enableSNIExtension=true
+-ea
+
+################################################
+Debug
+################################################
+
+jps -mv
+jstack -l <PID>
+jstack -l <PID> > dump.txt
+
+12189 Main -Xbootclasspath/a:/opt/PhpStorm-141.2462/bin/../lib/boot.jar -Xms128m -Xmx750m -XX:MaxPermSize=350m -XX:ReservedCodeCacheSize=225m -XX:+UseConcMarkSweepGC -XX:SoftRefLRUPolicyMSPerMB=50 -ea -Dsun.io.useCanonCaches=false -Djava.net.preferIPv4Stack=true -Dawt.useSystemAAFontSettings=lcd -Djb.vmOptionsFile=/opt/PhpStorm-141.2462/bin/phpstorm64.vmoptions -XX:ErrorFile=/home/robn/java_error_in_WEBIDE_%p.log -Djb.restart.code=88 -Didea.paths.selector=WebIde90 -Didea.platform.prefix=PhpStorm -Didea.no.jre.check=true
+12436 Jps -mv -Dapplication.home=/usr/lib/jvm/java-7-oracle -Xms8m
+
+-Xms512m
+-Xmx1024m
+-XX:MaxPermSize=512m
+-ea
+-server
+-XX:+DoEscapeAnalysis
+-XX:+UseCompressedOops
+-XX:+UnlockExperimentalVMOptions
+-XX:+UseParallelGC
+
+
+
+-XX:+UseConcMarkSweepGC //removed
+// removed, because not needed with the lastest JVM.
+    -XX:+UnlockExperimentalVMOptions
+    -XX:+DoEscapeAnalysis
+    -XX:+UseCompressedOops
+
+##############################################################
+ Intellij13
+##############################################################
+
+-ea
+-server
+-Xms1g
+-Xmx1g
+-Xss16m
+-XX:PermSize=256m
+-XX:MaxPermSize=256m
+-XX:+DoEscapeAnalysis
+-XX:+UseCompressedOops
+-XX:+UnlockExperimentalVMOptions
+-XX:+UseConcMarkSweepGC
+-XX:LargePageSizeInBytes=256m
+-XX:ReservedCodeCacheSize=96m
+-XX:+UseCodeCacheFlushing
+-XX:+UseCompressedOops
+-XX:ParallelGCThreads=8
+-XX:+UseParNewGC
+-XX:+UseConcMarkSweepGC
+-XX:+DisableExplicitGC
+-XX:+ExplicitGCInvokesConcurrent
+-XX:+PrintGCDetails
+-XX:+PrintFlagsFinal
+-XX:+AggressiveOpts
+-XX:+HeapDumpOnOutOfMemoryError
+-XX:+CMSClassUnloadingEnabled
+-XX:+CMSPermGenSweepingEnabled
+-XX:CMSInitiatingOccupancyFraction=60
+-XX:+CMSClassUnloadingEnabled
+-XX:+CMSParallelRemarkEnabled
+-XX:+UseAdaptiveGCBoundary
+-XX:+UseSplitVerifier
+-XX:CompileThreshold=10000
+-XX:+UseCompressedStrings
+-XX:+OptimizeStringConcat
+-XX:+UseStringCache
+-XX:+UseFastAccessorMethods
+-XX:+UnlockDiagnosticVMOptions
+
+##############################################################
+phpstorm.vmoptions
+##############################################################
+
+-Xms128m
+-Xmx750m
+-XX:MaxPermSize=350m
+-XX:ReservedCodeCacheSize=240m
+-XX:+UseCompressedOops
+
+##############################################################
+phpstorm.vmoptions
+##############################################################
+
+-Xms256m
+-Xmx1500m
+-XX:MaxPermSize=700m
+-XX:ReservedCodeCacheSize=480m
+-XX:+UseCompressedOops
+-Dawt.useSystemAAFontSettings=lcd
+-Dawt.java2d.opengl=true
+
+
+
+##############################################################
+phpstorm.vmoptions experimentel
+sudo nano /opt/PhpStorm-141.2462/bin/phpstorm.vmoptions
+##############################################################
+
+-server
+-Xms1g
+-Xmx1g
+-Xss16m
+-XX:MaxPermSize=256m
+-XX:ReservedCodeCacheSize=256m
+-XX:SoftRefLRUPolicyMSPerMB=50
+-XX:+UseCodeCacheFlushing
+
+-XX:+UseParNewGC
+-XX:ParallelGCThreads=2
+-XX:+UseConcMarkSweepGC
+-XX:ConcGCThreads=1
+-XX:MaxTenuringThreshold=2
+-XX:+UseCompressedOops
+-XX:+DoEscapeAnalysis
+-XX:+DisableExplicitGC
+
+-ea
+-Dsun.io.useCanonCaches=false
+-Djava.net.preferIPv4Stack=true
+-Dawt.useSystemAAFontSettings=lcd
+-agentlib:yjpagent
+
+
+################################################
+Tuning PhpStorm in bin/phpstorm.vmoptionsx
+################################################
+
+-Xms128m
+-Xmx2048m
+-XX:MaxPermSize=350m
+-XX:ReservedCodeCacheSize=64m
+-XX:+UseCodeCacheFlushing
+-XX:+UseCompressedOops
+
+--------------------------------------------------
+
+change size to -Xmx512m
+
+-Xms128m
+-Xmx512m
+-XX:MaxPermSize=250m
+-XX:ReservedCodeCacheSize=64m
+-XX:+UseCodeCacheFlushing
+-ea
+-Dsun.io.useCanonCaches=false
+-Djava.net.preferIPv4Stack=true
+
+--------------------------------------------------
+
+server
+-Xms128m
+-Xmx512m
+-XX:ReservedCodeCacheSize=240m
+-XX:+UseConcMarkSweepGC
+-XX:SoftRefLRUPolicyMSPerMB=50
+-ea
+-Dsun.io.useCanonCaches=false
+-Djava.net.preferIPv4Stack=true
+-XX:+HeapDumpOnOutOfMemoryError
+-XX:-OmitStackTraceInFastThrow
+-XX:MaxJavaStackTraceDepth=-1
+
+--------------------------------------------------
+
+IDE_HOME\bin\idea.properties
+idea.max.intellisense.filesize=2500
+idea.cycle.buffer.size=1024
+
+--------------------------------------------------
+Intellij13 (idea.vmoptions) Adolfo Benedetti :
+
+for java 8 you need to control your flags(PermGen to Metaspace),
+-XX:MetaspaceSize=XXXm
+-XX:MaxMetaspaceSize=XXXm
+
+-ea
+-server
+-Xms1g
+-Xmx1g
+-Xss16m
+-XX:PermSize=256m
+-XX:MaxPermSize=256m
+-XX:+DoEscapeAnalysis
+-XX:+UseCompressedOops
+-XX:+UnlockExperimentalVMOptions
+-XX:+UseConcMarkSweepGC
+-XX:LargePageSizeInBytes=256m
+-XX:ReservedCodeCacheSize=96m
+-XX:+UseCodeCacheFlushing
+-XX:+UseCompressedOops
+-XX:ParallelGCThreads=8
+-XX:+UseParNewGC
+-XX:+UseConcMarkSweepGC
+-XX:+DisableExplicitGC
+-XX:+ExplicitGCInvokesConcurrent
+-XX:+PrintGCDetails
+-XX:+PrintFlagsFinal
+-XX:+AggressiveOpts
+-XX:+HeapDumpOnOutOfMemoryError
+-XX:+CMSClassUnloadingEnabled
+-XX:+CMSPermGenSweepingEnabled
+-XX:CMSInitiatingOccupancyFraction=60
+-XX:+CMSClassUnloadingEnabled
+-XX:+CMSParallelRemarkEnabled
+-XX:+UseAdaptiveGCBoundary
+-XX:+UseSplitVerifier
+-XX:CompileThreshold=10000
+-XX:+UseCompressedStrings
+-XX:+OptimizeStringConcat
+-XX:+UseStringCache
+-XX:+UseFastAccessorMethods
+-XX:+UnlockDiagnosticVMOptions
+
+-------------------------------------------------------
+
+-server
+-Xss256k
+-Xms1536m
+-Xmx1536m
+-Xmn512m
+-XX:PermSize=350m
+-XX:MaxPermSize=350m
+-XX:MetaspaceSize=350m
+-XX:MaxMetaspaceSize=350m
+-XX:+UseParNewGC
+-XX:SurvivorRatio=8
+-XX:+UseConcMarkSweepGC
+-XX:+CMSScavengeBeforeRemark
+-XX:+CMSPermGenSweepingEnabled
+-XX:+UseCMSInitiatingOccupancyOnly
+-XX:+UseCMSCompactAtFullCollection
+-XX:CMSFullGCsBeforeCompaction=0
+-XX:CMSInitiatingOccupancyFraction=70
+-XX:ReservedCodeCacheSize=240m
+-XX:+HeapDumpOnOutOfMemoryError
+
+
+#################################
+
+How to disable version control in phpstorm?
+http://stackoverflow.com/questions/20703913/how-to-disable-version-control-in-phpstorm
+https://www.dev-metal.com/how-to-ignore-remove-idea-folder-from-git-in-phpstorm/
+
+#################################
+
+Go to Settings -> Version Control and remove the folder from which you would like to remove version control tracking (coloring tabs etc.) It will naturally not remove version control from your project (as in deleting the .git/ folder for instance).
+Settings | Version Control -- remove all entries from the table
+
+https://calendee.com/2015/08/19/disabling-git-in-webstorm-ide/
+Open Preferences -> Version Control -> Git (or your VCS du jour). Then ERASE the PATH TO GIT EXECUTABLE. That's right - just delete it.
+
+##################################################################
+
+How to disable auto-save in phpstorm
+https://gist.github.com/d1i1m1o1n/13845f4f8b0564a58d9753cf28e197b2
+https://www.jetbrains.com/help/phpstorm/2017.1/enabling-and-disabling-plugins.html
+
+##################################################################
+
+How to disable auto-save:
+Go to File > Settings (Ctrl+Alt+S).
+Go to Appearance & Behavior > System Settings.
+Make sure the two are unchecked:
+Save files on frame deactivation
+Save files automatically if application is idle for x sec.
+Go to Editor > General > Editor Tabs
+Put a checkmark on "Mark modified files with asterisk"
+(Optional but recommended) Under "Tab Closing Policy", select "Close non-modified files first". You may also want to increase the number of allowed tabs.
+Click Apply > OK.
+That's it.
+
+
+##################################################################
+Debug with Xdebug on the Commandline with Phpstorm and Git Bash
+https://hakre.wordpress.com/2013/02/09/debug-with-xdebug-on-the-commandline-with-phpstorm-and-git-bash/
+##################################################################
+
+export XDEBUG_CONFIG="idekey=PHPSTORM"
+unset XDEBUG_CONFIG
+
+https://confluence.jetbrains.com/display/PhpStorm/Xdebug+Installation+Guide
+https://confluence.jetbrains.com/display/PhpStorm/Browser+Debugging+Extensions
+https://confluence.jetbrains.com/display/PhpStorm/Zero-configuration+Web+Application+Debugging+with+Xdebug+and+PhpStorm
+
+https://www.jetbrains.com/phpstorm/marklets/
+https://chrome.google.com/webstore/detail/xdebug-helper/eadndfjplgieldjbigjakmdgkmoaaaoc/related
+https://addons.mozilla.org/en-US/firefox/addon/the-easiest-xdebug/
+https://xdebug.org/docs/index.php?action=index
+
+# get xdebug port with phpinfo()
+# get xdebug ip machine with ping or phpinfo()
+
+XDEBUG
+javascript:(/** @version 0.5.2 */function() {document.cookie='XDEBUG_SESSION='+'PHPSTORM'+';path=/;';})()
+javascript:(/** @version 0.5.2 */function() {document.cookie='XDEBUG_SESSION='+''+';expires=Mon, 05 Jul 2000 00:00:00 GMT;path=/;';})()
+
+PROFILER
+javascript:(/** @version 0.5.2 */function() {document.cookie='XDEBUG_PROFILE='+'1'+';path=/;';})()
+javascript:(/** @version 0.5.2 */function() {document.cookie='XDEBUG_PROFILE='+''+';expires=Mon, 05 Jul 2000 00:00:00 GMT;path=/;';})()
+
+
+
+
+
+
+
+

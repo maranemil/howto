@@ -1,0 +1,90 @@
+##################################################################
+#
+#	installation docker
+#	https://docs.docker.com/engine/installation/linux/ubuntulinux/
+#
+##################################################################
+
+sudo apt-get update # Update your apt source
+sudo apt-get install apt-transport-https ca-certificates
+
+# Add the new GPG key.
+sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+
+
+# Ubuntu version		Repository
+# Precise 12.04 (LTS)		deb https://apt.dockerproject.org/repo ubuntu-precise main
+# Trusty 14.04 (LTS)		deb https://apt.dockerproject.org/repo ubuntu-trusty main
+# Xenial 16.04 (LTS)		deb https://apt.dockerproject.org/repo ubuntu-xenial main
+
+echo "<REPO>" | sudo tee /etc/apt/sources.list.d/docker.list
+
+sudo apt-get update
+apt-cache policy docker-engine # Verify that APT is pulling from the right repository
+sudo apt-get install linux-image-extra-$(uname -r) linux-image-extra-virtual
+sudo apt-get install linux-image-generic-lts-trusty
+sudo reboot
+
+sudo apt-get install docker-engine
+sudo service docker start
+sudo docker run hello-world
+
+sudo groupadd docker
+sudo usermod -aG docker $USER
+docker run hello-world
+
+
+# update firewall settings
+sudo ufw status
+sudo nano /etc/default/ufw  #set: DEFAULT_FORWARD_POLICY="ACCEPT"
+sudo ufw reload
+sudo ufw allow 2375/tcp
+
+
+sudo nano /etc/default/docker # set: DOCKER_OPTS="--dns 8.8.8.8"
+--dns 8.8.8.8 --dns 192.168.1.1
+sudo service docker restart
+sudo nano /etc/NetworkManager/NetworkManager.conf # dns=dnsmasq
+
+sudo restart network-manager
+sudo restart docker
+sudo systemctl enable docker # Configure Docker to start on boot
+sudo apt-get upgrade docker-engine # Upgrade Docker
+sudo apt-get purge docker-engine # Uninstall
+sudo apt-get autoremove --purge docker-engine # rm -rf /var/lib/docker
+
+################################################################
+#
+# Run local python script in docker
+# https://confluence.atlassian.com/bitbucket/debug-your-pipelines-locally-with-docker-838273569.html
+#
+################################################################
+
+cd /Users/myUserName/code
+git clone git@bitbucket.org:myBBUserName/localDebugRepo.git
+
+docker -v
+
+# Log in to your Docker container
+# Once your Docker installation is in place, you can log in to your local Docker container:
+
+docker run -it --volume=/Users/myUserName/code/localDebugRepo:/localDebugRepo --workdir="/localDebugRepo" --memory=4g --memory-swap=4g --entrypoint=/bin/bash python:2.7
+
+# root@1af123ef2211:/localDebugRepo
+
+python --version
+python myScript.py
+pip install scipy
+
+################################################################
+
+https://bitbucket.org/account/user/awslabs/projects/BP
+https://bitbucket.org/awslabs/aws-elastic-beanstalk-bitbucket-pipelines-python
+https://confluence.atlassian.com/bitbucket/get-started-with-bitbucket-pipelines-792298921.html
+
+amazon-ecs-bitbucket-pipelines-python
+amazon-s3-bitbucket-pipelines-python
+aws-cloudformation-bitbucket-pipelines-python
+aws-codedeploy-bitbucket-pipelines-python
+aws-elastic-beanstalk-bitbucket-pipelines-python
+aws-lambda-bitbucket-pipelines-python

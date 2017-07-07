@@ -1,0 +1,220 @@
+###############################################
+##
+## Emil Tunning
+##
+###############################################
+<IfModule mod_php5.c>
+    Options +FollowSymLinks
+    DirectoryIndex index.php
+    #AddType application/x-httpd-php .php
+
+    # supress php errors
+    php_flag display_startup_errors Off
+    php_flag display_errors Off
+    php_flag html_errors Off
+    php_flag log_errors Off
+    php_value error_reporting -1
+    #php_value error_log  /home/user/PhpstormProjects/...PHP_errors.log
+    php_value log_errors_max_len 0
+
+    php_flag ignore_repeated_errors on
+    php_flag ignore_repeated_source on
+
+    php_flag magic_quotes_gpc Off
+    php_flag track_vars Off
+    php_flag track_errors off
+    php_flag register_globals Off
+    php_flag report_memleaks Off
+
+    php_value docref_root 0
+    php_value docref_ext 0
+    #php_value max_execution_time 0
+    #php_value post_max_size 10M
+    #php_value upload_max_filesize 10M
+    php_value memory_limit 1024M
+    php_value max_execution_time 30
+    php_value max_input_time 20
+    php_value session.gc_maxlifetime 1200
+
+    #php_admin_flag engine on
+    #php_admin_flag safe_mode off
+    #php_value include_path .
+    php_value date.timezone "Europe/Berlin"
+
+</IfModule>
+
+
+###############################################
+##
+## Sugar Config
+##
+###############################################
+
+# BEGIN SUGARCRM RESTRICTIONS
+RedirectMatch 403 (?i).*\.log$
+RedirectMatch 403 (?i)/+not_imported_.*\.txt
+RedirectMatch 403 (?i)/+(soap|cache|xtemplate|data|examples|include|log4php|metadata|modules)/+.*\.(php|tpl)
+RedirectMatch 403 (?i)/+emailmandelivery\.php
+RedirectMatch 403 (?i)/+upload/
+RedirectMatch 403 (?i)/+custom/+blowfish
+RedirectMatch 403 (?i)/+cache/+diagnostic
+RedirectMatch 403 (?i)/+files\.md5$
+RedirectMatch 403 (?i)/+composer\.(json|lock)
+RedirectMatch 403 (?i)/+vendor/composer/
+
+# Fix mimetype for logo.svg (SP-1395)
+#AddType     image/svg+xml     .svg
+#AddType     application/json  .json
+#AddType     application/javascript  .js
+
+<IfModule mod_rewrite.c>
+    Options +FollowSymLinks
+    RewriteEngine On
+    #RewriteBase /
+    RewriteBase /PhpstormProjects/
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^rest/(.*)$ api/rest.php?__sugar_url=$1 [L,QSA]
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^cache/api/metadata/lang_(.._..)_(.*)_public(_ordered)?\.json$ rest/v10/lang/public/$1?platform=$2&ordered=$3 [N,QSA]
+
+    RewriteRule ^cache/api/metadata/lang_(.._..)_([^_]*)(_ordered)?\.json$ rest/v10/lang/$1?platform=$2&ordered=$3 [N,QSA]
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^cache/Expressions/functions_cache(_debug)?.js$ rest/v10/ExpressionEngine/functions?debug=$1 [N,QSA]
+    RewriteRule ^cache/jsLanguage/(.._..).js$ index.php?entryPoint=jslang&module=app_strings&lang=$1 [L,QSA]
+    RewriteRule ^cache/jsLanguage/(\w*)/(.._..).js$ index.php?entryPoint=jslang&module=$1&lang=$2 [L,QSA]
+</IfModule>
+
+<FilesMatch "\.(jpg|png|gif|js|css|ico|woff|svg)$">
+        <IfModule mod_headers.c>
+                #Header set ETag ""
+                Header set Cache-Control "max-age=2592000"
+                Header set Expires "01 Jan 2112 00:00:00 GMT"
+				Header unset ETag
+				FileETag None
+        </IfModule>
+</FilesMatch>
+
+###############################################
+##
+## Emil Tunning
+##
+###############################################
+
+<IfModule mod_headers.c>
+    #Header append X-Robots-Tag "noindex"
+    #Header append Cache-Control "public"
+    #Header set Cache-Control "max-age=2592000"
+    #Header set Cache-Control "max-age=172800, public, must-revalidate"
+    #Header set Cache-Control "max-age=7200, must-revalidate"
+    #Header append Vary User-Agent
+    #Header append Vary Accept-Encoding
+    #Header set Cache-Control 'no-cache'
+    #Header set ETag ""
+    #Header set Vary "Accept-Encoding, Cookie"
+    #Header set Cache-Control 'public'
+    #Header set Cache-Control "max-age=290304000"
+
+    #Header unset Cache-Control
+    #Header append Vary User-Agent env=!dont-vary
+    #Header set Expires "01 Jan 2112 00:00:00 GMT"
+    #Header set Cache-Control "max-age=290304000, public"
+    #Header unset Last-Modified
+
+    Header unset Pragma
+    FileETag None
+    Header unset ETag
+</IfModule>
+
+
+<IfModule mod_setenvif.c>
+    #BrowserMatch ^Mozilla/4 gzip-only-text/html
+    #BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    #BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+    # Netscape 4.x has some problems...
+    #BrowserMatch ^Mozilla/4 gzip-only-text/html
+    # Netscape 4.06-4.08 have some more problems
+    #BrowserMatch ^Mozilla/4.0[678] no-gzip
+    # MSIE masquerades as Netscape, but it is fine
+    #BrowserMatch bMSIE !no-gzip !gzip-only-text/html
+</IfModule>
+
+<IfModule mod_deflate.c>
+    #SetOutputFilter DEFLATE
+    # Don't compress images
+    SetEnvIfNoCase Request_URI .(?:gif|jpe?g|png|txt|htm|html|php|css|js|json|xml|svg|ico)$ no-gzip dont-vary
+    #<filesMatch ".(css|js|x?html?|php)$">
+        #SetOutputFilter DEFLATE
+    #</filesMatch>
+    #<FilesMatch ".(ico|pdf|flv|jpg|jpeg|png|gif|js|css)$"> </FilesMatch>
+    #SetEnvIfNoCase Request_URI \.gz$ no-gzip dont-vary
+    #AddOutputFilterByType DEFLATE application/javascript \  application/json
+    #SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png)$ no-gzip dont-vary
+    #SetEnvIf ^SETENVIF*  ^[a-z].*  HAS_SETENVIF
+    #SetEnvIfNoCase Request_URI \.(?:rar|zip)$ no-gzip dont-vary
+    #SetEnvIfNoCase Request_URI \.(?:gif|jpg|png)$ no-gzip dont-vary
+    #SetEnvIfNoCase Request_URI \.(?:avi|mov|mp4)$ no-gzip dont-vary
+    #SetEnvIfNoCase Request_URI \.mp3$ no-gzip dont-vary
+</IfModule>
+
+#<IfModule mod_mime.c>
+#    <FilesMatch "\.html\.gz$">
+#        ForceType text/html
+#        FileETag None
+#    </FilesMatch>
+#</IfModule>
+
+#<IfModule mod_gzip.c>
+#    mod_gzip_on Yes
+#    mod_gzip_dechunk Yes
+#    mod_gzip_item_include file \.(html?|txt|css|js|php|pl)$
+#    mod_gzip_item_include handler ^cgi-script$
+#    mod_gzip_item_include mime ^text/.*
+#    mod_gzip_item_include mime ^application/x-javascript.*
+#    mod_gzip_item_exclude mime ^image/.*
+#    mod_gzip_item_exclude rspheader ^Content-Encoding:.*gzip.*
+#</IfModule>
+
+<IfModule mod_expires.c>
+	    ExpiresActive On
+        #ExpiresDefault                              "access plus 130 seconds"
+        #<FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf|form)$">
+        #ExpiresDefault                             "access plus 1 year"
+        #</FilesMatch>
+
+	# cache.appcache needs re-requests in FF 3.6 (thanks Remy ~Introducing HTML5)
+        #ExpiresByType text/cache-manifest          "access plus 1 month"
+
+	# Document html
+        ExpiresByType text/html                     "access plus 2 seconds"
+
+	# Data
+        ExpiresByType application/json              "access plus 1 seconds"
+        ExpiresByType application/xml               "access plus 1 seconds"
+        ExpiresByType text/xml                      "access plus 1 seconds"
+
+	# Webfonts
+        ExpiresByType application/vnd.ms-fontobject "access plus 1 month"
+        ExpiresByType application/x-font-ttf        "access plus 1 month"
+        ExpiresByType application/x-font-woff       "access plus 1 month"
+        ExpiresByType font/opentype                 "access plus 1 month"
+        ExpiresByType image/svg+xml                 "access plus 1 month"
+
+	# CSS and JavaScript
+        ExpiresByType application/javascript        "access plus 1 seconds"
+        ExpiresByType text/css                      "access plus 1 year"
+        ExpiresByType text/javascript               "access plus 1 seconds"
+        ExpiresByType application/x-javascript      "access plus 1 seconds"
+
+        ExpiresByType image/gif                     "access plus 1 month"
+        ExpiresByType image/jpg                     "access plus 1 month"
+        ExpiresByType image/png                     "access plus 1 month"
+
+</IfModule>
+# END SUGARCRM RESTRICTIONS
+
+
+
+

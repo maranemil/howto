@@ -1,0 +1,108 @@
+
+#########################################################
+#
+# Troubleshooting apache2 mysql - service does not start
+#
+#########################################################
+
+
+journalctl -xe
+systemctl status mysql.service
+systemctl status apache2.service
+
+-----------------------------------------------------------------
+
+sudo apt autoremove
+
+# Add servername localhost : ServerName localhost
+
+sudo nano /etc/apache2/conf-available/servername.conf
+sudo a2enconf servername
+sudo a2enmod rewrite
+sudo service apache2 restart
+
+-----------------------------------------------------------------
+
+sudo apt-get update --fix-missing
+sudo apt-get install apache2 --reinstall  # apache2_2.4.18-2ubuntu3.1_amd64.deb
+
+-----------------------------------------------------------------
+
+<Directory /var/www/>
+        Options Indexes FollowSymLinks
+        #AllowOverride None
+	AllowOverride All
+        Require all granted
+</Directory>
+sudo service apache2 restart
+
+-----------------------------------------------------------------
+
+# Create logs for apache2 and mysql if dir is missing
+cd /var/log
+mkdir apache2
+mkdir mysql
+
+cd /var/log/mysql/
+sudo touch mysql_error.log
+sudo touch mysql.log
+
+# check mysql config
+sudo find / -iname 'my.cnf'
+
+-----------------------------------------------------------------
+
+# Create swap
+# https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-14-04
+sudo fallocate -l 4G /swapfile
+ls -lh /swapfile
+
+-----------------------------------------------------------------
+
+# check conf
+sudo nano /etc/apparmor.d/usr.sbin.mysqld
+
+-----------------------------------------------------------------
+
+# Reinstall mysql
+sudo apt-get install mysql-server-5.7 --reinstall
+#sudo dpkg-reconfigure mysql-server-5.7
+
+
+
+#########################################################
+#
+# Troubleshooting apache2 mod rewrite - module does not start
+#
+#########################################################
+
+https://www.digitalocean.com/community/tutorials/how-to-set-up-mod_rewrite-for-apache-on-ubuntu-14-04
+https://www.dev-metal.com/enable-mod_rewrite-ubuntu-14-04-lts/
+
+:::::::::::: Variante 1 ::::::::::::
+
+edit: sudo nano /etc/apache2/sites-enabled/000-default.conf
+
+add:
+
+<Directory /var/www/html>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride All
+                Order allow,deny
+                allow from all
+</Directory>
+
+sudo service apache2 restart
+
+:::::::::::: Variante 2 ::::::::::::
+
+sudo a2enmod rewrite
+sudo service apache2 restart
+
+edit:  sudo nano /etc/apache2/sites-available/000-default.conf
+
+<Directory "/var/www/html">
+    AllowOverride All
+</Directory>
+
+sudo service apache2 restart

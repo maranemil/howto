@@ -1,0 +1,111 @@
+
+*************************************************
+
+#########################
+### BACKUP rsnapshot ####
+#########################
+
+sudo apt-get install rsync rsnapshot
+#sudo apt-get install rsnapshot
+
+sudo vi /etc/rsnapshot.conf
+#/etc/rsnapshot.conf
+snapshot_root	/disk1/backup/
+
+# Configure backup policy
+interval    hourly  6
+interval    daily   7
+
+# Test your config file for errors
+rsnapshot configtest
+rsnapshot -t hourly
+rsnapshot hourly
+
+*************************************************
+
+######################
+### BACKUP flyback ###
+######################
+
+sudo apt-get install python python-glade2 python-gnome2 python-sqlite3 python-gconf rsync
+
+#wget http://flyback.googlecode.com/files/flyback_0.4.0.tar.gz
+wget http://flyback.googlecode.com/files/flyback_0.4.0.tar.gz
+tar -zxvf flyback_0.4.0.tar.gz
+
+python flyback.py
+
+*************************************************
+
+######################
+### BACKUP rsync #####
+######################
+
+rsync --delete-after -avz --exclude-from=exclude / /usr/backup/
+rsync --delete-after -avz --exclude-from=exclude /usr/backup/ /
+cd /usr && tar cvpf backup.tar backup/ && gzip -9 backup.tar
+
+*************************************************
+
+#############################
+### BACKUP LVM Snapshot #####
+#############################
+
+pvdisplay
+vgdisplay
+lvdisplay
+
+fdisk -l
+fdisk /dev/sdb
+pvcreate /dev/sdb1
+vgextend server1 /dev/sdb1
+lvcreate --name backups --size 30G server1
+mkfs.ext3 /dev/mapper/server1-backups
+mkdir /backups
+mount /dev/mapper/server1-backups /backups
+vi /etc/fstab
+
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+sudo lvcreate --size 1G -s -n snapshot_lv /dev/vgroup/original_lv
+sudo mkdir /mnt/snap
+sudo mount /dev/ubuntu/mysnap /mnt/snap
+cd /mnt/snap
+lvconvert --merge /dev/vgroup/snapshot-lv
+sudo lvremove /dev/vgroup/snapshot_lv_name
+~~~
+sudo lvcreate --size 2G -s -n music_lv_snapshot /dev/vgroup/music_lv
+lvconvert --merge /dev/ubuntu/music_lv_snapshot
+~~~
+sudo lvcreate --size 2G -s -n rootsnap /dev/ubuntu/root
+sudo lvconvert --merge /dev/ubuntu/rootsnap
+
+sudo lvcreate --size 2G -s -n rootsnap /dev/ubuntu/root
+root=/dev/mapper/ubuntu-root
+root=/dev/mapper/ubuntu-rootsnap
+df .
+sudo lvconvert --merge /dev/ubuntu/rootsnap
+sudo lvremove /dev/ubuntu/rootsnap
+sudo lvrename /dev/ubuntu/root-snap ubuntu/rootsnap
+dd if=/dev/sda1 of=boot_backup.img
+
+
+# restore
+sudo mkdir /mnt/rtfs
+sudo mount /dev/ubuntu/root /mnt/rtfs
+sudo dd if=/mnt/rtfs/boot_backup.img of=/dev/sda1
+
+*************************************************
+Articles: ######################
+
+https://github.com/rsnapshot/rsnapshot
+http://www.tutonics.com/2012/12/lvm-guide-part-2-snapshots.html
+http://backintime.le-web.org/
+https://wiki.ubuntuusers.de/back_in_time
+http://askubuntu.com/questions/424225/setting-up-lvm-snapshot-as-a-backup-restore-point-in-ubuntu
+http://www.cyberciti.biz/faq/linux-rsnapshot-backup-howto/
+https://www.digitalocean.com/community/tutorials/how-to-install-rsnapshot-on-ubuntu-12-04
+https://www.thomas-krenn.com/de/wiki/LVM_Snapshots
+
+*************************************************
+

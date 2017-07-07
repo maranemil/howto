@@ -1,0 +1,184 @@
+########################################################
+##
+## https://gist.github.com/IngmarBoddington/5311858
+##
+########################################################
+
+Enable tracing example:
+
+zend_extension="/usr/lib/php5/20090626+lfs/xdebug.so"
+xdebug.auto_trace=1
+xdebug.trace_output_dir="/home/deployer/iboddington/xdebug/"
+xdebug.collect_return=1
+xdebug.trace_options=1
+xdebug.show_local_vars=1
+
+-----
+Xdebug offers a variety of helper tools for PHP development.
+
+- Replaces var_dump
+- Adds debugging functions
+- Embellishes error display with stack traces and other information
+- Trace logging
+- Profiling (with graphical toll like kcachegrind)
+- Debugging (with IDEs - does not work with Zend Studio 8)
+- Coverage reports (with PHPUnit)
+
+
+Most Xdebug settings can be declared in php.ini files or at runtime using ini_set(), ensure that settings in php.ini follow the include line for the Xdebug extension.
+
+For stack traces to be shown display_errors must be set to 1 / error_reporting set to report errors, i.e. errors would normally be displayed on the page.
+
+Full docs: http://xdebug.org/docs/all
+
+Xdebug functions
+================
+xdebug_dump_superglobals() -> Dumps superglobal variable information
+
+xdebug_get_function_stack() -> Returns the stack trace
+
+xdebug_start_trace([<file>], [<option>]) -> Begins stack trace logging, file defaults to default dir / name
+    Options:
+        XDEBUG_TRACE_APPEND -> Append rather than overwrite log
+        XDEBUG_TRACE_COMPUTERIZED -> Use a computer-readable format
+        XDEBUG_TRACE_HTML -> Use an HTML format
+
+xdebug_stop_trace() -> Ends stack trace logging
+
+xdebug_get_tracefile_name() -> Get the name of the current trace log file
+
+xdebug_get_profiler_filename() -> Get the name of the current profiling log file
+
+xdebug_start_code_coverage() -> Start collecting code coverage info
+
+xdebug_stop_code_coverage() -> Stop collecting code coverage info
+
+xdebug_get_code_coverage() -> Retrieve code coverage array
+
+
+var_dump() (improved) ini settings
+==================================
+
+xdebug.overload_var_dump -> Toggle var_dump override (better formatting) - Default = 1
+
+xdebug.var_display_max_data -> Change string max display length - Default = 512
+xdebug.var_display_max_children -> Change array / object members max display number - Default = 128
+xdebug.var_display_max_depth -> Change array / object members max display depth - Default = 3
+
+
+xdebug_dump_superglobals() ini settings
+=======================================
+
+xdebug.dump.<superGlobalArray> -> Set comma delimited list of variables in specified superglobal array which will be dumped when function called (use * for all) and also in Xdebug stack traces.
+xdebug.dump_globals -> Toggles display of globals specified above - Default = 1
+xdebug.dump_once -> Toggles only dumping globals specified in first error when many occur - Default = 1
+
+<superGlobalArray> = GET, POST, SERVER, COOKIE, FILES, REQUEST, or SESSION
+
+xdebug.dump_undefined -> Toggle dump of members with no defined value - Default = 0
+
+
+Stack Trace / Error Display ini settings
+========================================
+ALL OF THE ABOVE SETTINGS ALSO AFFECT Stack Trace / Error Display
+
+xdebug.show_local_vars -> Toggle local variable information in stack trace - Default = 0
+xdebug.collect_params -> Sets whether variables passed to functions should be captured - Default = 0
+    = 1 -> Type and number of elements (f.e. string(6), array(8)).
+    = 2 -> Type and number of elements, with a tool tip for the full information (Not in CLI)
+    = 3 -> Full variable contents (with the limits respected as set by xdebug.var_* settings)
+    = 4 -> Full variable contents and variable name.
+xdebug.show_exception_trace -> Toggle Stack Trace / Error Display when caught exceptions occur (as these don't cause errors) - Default = 0
+xdebug.max_nesting_level -> Sets max function call recursion / stack size (then stops script) - Default = 100
+
+
+Trace Logging ini's
+===================
+xdebug.auto_trace -> Toggle tracing on before script is run (for always-on / catching auto-prepends) - Default = 0
+xdebug.trace_output_dir -> Set directory in which to make logs - Default = /tmp
+xdebug.show_mem_delta -> Toggle extra column to trace log with memory deltas - Default = 0
+xdebug.trace_format -> Changes trace log formatting - Default = 0
+    = 0 -> Human readable
+    = 1 -> Computer readable
+    = 2 -> HTML
+xdebug.collect_return -> Toggle recording function return values - Default = 0
+xdebug.trace_output_name -> Change default log file name formatting - Default = 'trace.%c'
+    Name modifiers:
+        %c for the CRC checksum of the current working directory
+        %p for the process id
+        %r for a random number
+        %u for a timstamp with microseconds
+        %H the $_SERVER['HTTP_HOST']
+        %R the $_SERVER['REQUEST_URI']
+xdebug.trace_options -> Set to one (in php.ini) to always append rather than overwrite on log file name collision - Default = 0
+
+Default naming scheme for logs is 'trace.<crcChecksum>.xt'
+
+Profiling
+=========
+
+Profiling requires a graphical application such as Kcachegrind (http://kcachegrind.sourceforge.net/cgi-bin/show.cgi/KcacheGrindIndex).
+
+xdebug.profiler_enable -> Toggle profiling (set in php.ini) - Default = 0
+xdebug.profiler_output_dir -> Profiling output directory (set in php.ini) - Default = /tmp
+xdebug.profiler_append -> Toggle append to profiling log rather than overwrite - Default = 0
+xdebug.profiler_enable_trigger -> Toggle GET var profiling toggle (use XDEBUG_PROFILE GET var to enable) - Default = 0
+xdebug.profiler_output_name -> Change default profiling log file name formatting - Default = 'cachegrind.out.%p'
+    Name modifiers:
+        %p for the process id
+        %r for a random number
+        %u for a timstamp with microseconds
+        %H for the value of $_SERVER['HTTP_HOST']
+        %R for the value of $_SERVER['REQUEST_URI']
+        %s the name including full path, with slashes converted to underscores
+
+Debugging
+=========
+
+Pass XDEBUG_SESSION_START in GET, POST or a cookie to start debugging and XDEBUG_SESSION_STOP to stop, should have unique identifier as value.
+
+xdebug.remote_mode -> Set remote debugging mode - Default = req
+    req -> makes xdebug always connect to the debug client when a script is started
+    jit -> only connect to the debug client on a breakpoint or an error in the script
+xdebug.remote_enable -> Toggle remote debugging - Default = 0
+xdebug.remote_host -> Set debugging host - Default = 'localhost'
+xdebug.remote_port -> Set debugging port - Default = 9000
+xdebug.remote_handler -> Set debugging handler - Default = 'dbgp'
+    php3 -> selects the old PHP 3 style debugger output
+    gdb -> enables the GDB like debugger interface
+    dbgp -> the debugger protocol.
+
+
+Template
+==============
+Below will enable dump of all superglobals (inc with undefined value) / local / caught exceptions, with default display limits, basic parameter capture, return value capture...
+
+//ini errors
+ini_set('display_errors', 1);
+ini_set('error_reporting', E_ALL);
+
+//ini Xdebug directives for var_dump
+ini_set('xdebug.overload_var_dump', 1);
+ini_set('xdebug.var_display_max_data', 512); //Also affects function trace file
+ini_set('xdebug.var_display_max_children', 128); //Also affects function trace file
+ini_set('xdebug.var_display_max_depth', 3); //Also affects function trace file
+
+//ini Xdebug directives for error display
+ini_set('xdebug.dump_globals', 1);
+ini_set('xdebug.dump_once', 1);
+ini_set('xdebug.dump_undefined', 1);
+ini_set('xdebug.dump.GET', '*');
+ini_set('xdebug.dump.FILES', '*');
+ini_set('xdebug.dump.GET', '*');
+ini_set('xdebug.dump.POST', '*');
+ini_set('xdebug.dump.REQUEST', '*');
+ini_set('xdebug.dump.SERVER', '*');
+ini_set('xdebug.dump.SESSION', '*');
+ini_set('xdebug.show_local_vars', 1);
+ini_set('xdebug.collect_params', 4); //Also affects function trace files
+ini_set('xdebug.show_exception_trace', 1);
+
+//ini Xdebug globals for function trace logging
+ini_set('xdebug.show_mem_delta', 1);
+ini_set('xdebug.collect_return', 1);
+ini_set('xdebug.trace_format', 2);

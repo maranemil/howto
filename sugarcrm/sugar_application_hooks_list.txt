@@ -1,0 +1,88 @@
+
+http://www.geekgumbo.com/2014/08/19/sugarcrm-logic-hook-events/
+http://support.sugarcrm.com/02_Documentation/04_Sugar_Developer/Sugar_Developer_Guide_6.7/03_Module_Framework/Logic_Hooks/
+
+
+
+    after_delete	  	Executes after a record is deleted.
+    after_relationship_add	Executes after a relationship has been added between two records.
+    after_relationship_delete	Executes after a relationship has been deleted between two records.
+    after_restore		Executes after a record is undeleted.
+    after_retrieve		Executes after a record has been retrieved from the database.
+    after_save			Executes after a record is saved.
+    before_delete		Executes before a record is deleted.
+    before_relationship_add	Executes before a relationship has been added between two records.
+    before_relationship_delete	Executes before a relationship has been added between two records.
+    before_restore		Executes before a record is undeleted.
+    before_save			Executes before a record is saved.
+    handle_exception		Executes when an exception is thrown.
+    process_record		Executes when the record is being processed as a part of the ListView or subpanel list.
+
+
+
+SugarCRM Logic Hook Events
+Posted on August 19, 2014 by daleV
+
+Application Hooks
+
+Application hooks are global hooks used to execute logic when working with the global application.  Application hooks can not use the $bean object.  They are mostly used for logging, or loading libraries.  Application hooks should not be used with any front-end display logic.
+
+	after_entry_point  --  Executes at the start of every request, at the top of the page.
+	after_ui_footer      --  Executes after the footer has been invoked.
+	after_ui_frame      --  Executes after the frame has been invoked and before the footer has been invoked.
+	server_round_trip  --  Executes at the end of every page.
+
+Module Hooks
+
+Module hooks are specifically used when working with modules.  I find these events are used the most.  A majority of my logic hooks are either a before_save, or after_save hook.  The $bean ORM object can be used with all these hooks but you have to be careful of infinite looping.   If you have to access any data in the database in your code, then these are the hooks you want to use.
+
+	before_delete                --  Fires before a record is deleted
+	before_relationship_add      --  Fires before a relationship is added between two records
+	before_relationship_delete  --  Fires before a relationship is deleted between two records
+	before_restore              --  Fires before a record is undeleted
+	before_save                   --  Fires before a record is saved
+
+You have to be careful using a $bean->save when you use this hook, you could end up with an error, because of an infinite loop.  Having said that, between the before_save and after_save event, I do my $bean->save in the before_save event, and never do it in an after_save event.  I found you can use a $bean->save in the before_save hook without putting it in a loop, if your careful, but be aware of this when using the hook to save data back to the database.
+
+	after_delete                    --  Fires after a record is deleted
+	after_relationship_add       --  Fires after a relationship is added between two records
+	after_relationship_delete    --  Fires after a relationship is deleted between two records
+	after_restore                --  Fires after a record is undeleted
+	after_retrieve               --  Fires after a record has been retrieved from the database.
+
+	This hook does not fire when you create a new record.
+
+after_save                   --  Fires after a record is saved.
+You can NOT use a $bean->save when you use this hook, or you'll end up with an error, because of an infinite loop.   Why?  Well after you save to the database in the after_save hook,  the after_save hook fires again, saving to the database, and round, and round we go.  This is a gotcha you have to work around when writing an after_save hook, my solution is to use a before_save hook when saving to the database.
+
+handle_exception           --  Fires when an exception is thrown
+process_record               --  Fires when the record being processed is part of a list view,  or a subpanel list
+
+User Hooks
+
+These logic hooks are used when working with the Users module, and when you want an event fired around log in and log out.
+
+after_load_user  -- Fires when current user is set for the current request.
+Used for events that are dependent on the current user, such as those used with the  ACL modules.
+
+login_failed        --  Fires on a failed log in attempt
+after_login          --  Fires after a user logs into the system
+before_logout     --  Fires before a user logs out of the system
+after_logout        --  Fires after a user logs out of the system
+
+Job Queue Hooks
+
+These logic hooks are used with the Job Queue module.
+
+ job_failure        --  Executes when a jobs final failure occurs.
+ job_failure_retry  --  Executes any time a job fails before its final failure.
+Use job_failure if you only want action on a final failure.
+
+SNIP Hooks
+
+These logic hooks are used with emails and should only be used with global logic hooks.
+
+after_email_import  --  Fires after a SNIP email has been imported
+before_email_import --  Fires before a SNIP email has been imported
+
+

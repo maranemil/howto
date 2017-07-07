@@ -1,0 +1,121 @@
+// https://stackoverflow.com/questions/28053226/generate-wav-tone-in-php
+
+$freqOfTone = 440;
+$sampleRate = 44100;
+$samplesCount = 80000;
+
+$amplitude = 0.25 * 32768;
+$w = 2 * pi() * $freqOfTone / $sampleRate;
+
+$samples = array();
+for ($n = 0; $n < $samplesCount; $n++) {
+    $samples[] = (int)($amplitude *  sin($n * $w));
+}
+
+$srate = 44100; //sample rate
+$bps = 16; //bits per sample
+$Bps = $bps/8; //bytes per sample /// I EDITED
+
+$str = call_user_func_array("pack",
+    array_merge(array("VVVVVvvVVvvVVv*"),
+        array( //header
+            0x46464952, //RIFF
+            160038,      //File size
+            0x45564157, //WAVE
+            0x20746d66, //"fmt " (chunk)
+            16, //chunk size
+            1, //compression
+            1, //nchannels
+            $srate, //sample rate
+            $Bps*$srate, //bytes/second
+            $Bps, //block align
+            $bps, //bits/sample
+            0x61746164, //"data"
+            160000 //chunk size
+        ),
+        $samples //data
+    )
+);
+$myfile = fopen("sine.wav", "wb") or die("Unable to open file!");
+fwrite($myfile, $str);
+fclose($myfile);
+
+
+------------------------------------------------------------------------------------
+
+https://github.com/dvictor/php-wave
+
+apt-get install lame
+
+Usage:
+
+$song = array(1000, 1500, 1200);
+$duration = .3;
+
+$wav = new Wave(44100);
+for ($i=0; $i<count($song); $i++)
+    $wav->addTone($song[$i], $duration);
+header('X-Debug-info: '.join(',', $song));
+$wav->outMp3();
+
+------------------------------------------------------------------------------------
+
+Fixed bit rate 128kbps encoding:
+lame sample.wav sample.mp3
+
+Fixed bit rate jstereo 128kbps encoding, high quality (recommended):
+lame -h sample.wav sample.mp3
+
+Average bit rate 112kbps encoding:
+lame --abr 112 sample.wav sample.mp3
+
+Fast encode, low quality (no psycho-acoustics):
+lame -f sample.wav sample.mp3
+
+Variable bitrate (use -V n to adjust quality/filesize):
+lame -h -V 6 sample.wav sample.mp3
+
+------------------------------------------------------------------------------------
+
+Create image for WAV file: Draw a graph of the sound of a WAV file
+https://www.phpclasses.org/package/5365-PHP-Draw-a-graph-of-the-sound-of-a-WAV-file.html
+
+WavEdit: Manipulate audio files in the WAV format
+https://www.phpclasses.org/package/2608-PHP-Manipulate-audio-files-in-the-WAV-format.html
+
+http://mydons.com/drawing-easy-wave-graph-for-wave-audio-file-with-php/
+https://github.com/afreiday/php-waveform-png
+
+
+------------------------------------------------------------------------------------
+
+
+ /**
+     * Generate a sine waveform.
+     *
+     * @param float $frequency
+     * @param float $volume Percentage in volume (.5 for 50%)
+     * @param float $seconds
+     * @throws OutOfRangeException Volume out of range
+     */
+    public function synthesizeSine($frequency, $volume, $seconds)
+    {
+        $b = pow(2, $this->bits_per_sample) / 2;
+        for ($i = 0; $i < $seconds * $this->sample_rate; $i++) {
+            // Add a sample for each channel
+            $this->output .= str_repeat(
+                $this->encodeSample(
+                    $volume * $b * // <- amplitude
+                    sin(2 * M_PI * $i * $frequency / $this->sample_rate)
+                ),
+                $this->channels);
+            $this->sample_count++;
+
+https://github.com/sk89q/wavforge/blob/f50953d0accf11cc26207086d50136f93634a830/src/WavForge.php#L266
+https://github.com/sk89q/wavforge/blob/f50953d0accf11cc26207086d50136f93634a830/src/WavForge.php#L266
+https://github.com/sk89q/WavForge
+
+-----------
+
+http://www.techrepublic.com/article/create-an-audio-stitching-tool-in-php/
+http://www.phillipweb.com/Jan05/wavstitch.zip

@@ -1,0 +1,351 @@
+####################
+###### INSTAL ######
+####################
+
+sudo apt-get update
+sudo apt-get install vpnc
+#sudo apt-get update && sudo apt-get install vpnc resolvconf
+#apt-get install openvpn libssl-dev openssl
+#sudo apt-get install network-manager-vpnc
+
+#pcf2vpnc NETWORK.pcf NETWORK.conf
+#sudo vpnc --enable-1des /path/to/vpn/configs/NETWORK/NETWORK.conf
+#sudo apt-get install python-appindicator
+
+-------------
+#####################
+## Configuring vpnc #
+#####################
+
+Start by copying /etc/vpnc/default.conf into /etc/vpnc/lullavpn.conf
+
+IPSec gateway <gateway>
+IPSec ID <group-id>
+IPSec secret <group-psk>
+IKE Authmode hybrid
+Xauth username <username>
+Xauth password <password>
+
+---------------------------
+
+IPSec gateway 123.234.123
+IPSec ID lullavpn
+IPSec secret my-super-secret-shared-key
+# This VPN uses just a pre-shared key and no certificate, so set IKE
+# Authmode to "psk".
+# IKE Authmode hybrid
+IKE Authmode psk
+Xauth username robotic.coder
+Xauth password my-really-super-secret-password
+# By specifying local port as 0, we use a random source port for each
+# VPN connection, allowing multiple VPNs to be run at once.
+local port 0
+
+#####################
+## connect vpnc #####
+#####################
+
+Connecting and Disconnecting a VPN
+
+Connecting a specific VPN:
+sudo vpnc lullavpn.conf
+#sudo vpnc-connect
+
+To disconnect the VPN client:
+# vpnc-disconnect
+sudo vpnc-disconnect
+
+sudo killall vpnc
+
+tsclient
+
+#####################
+#### check vpnc #####
+#####################
+
+check Tunnel:
+
+sudo ifconfig
+# Returns:
+tun0      Link encap:UNSPEC  HWaddr 00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00
+          inet addr:77.44.77.33P-t-P:77.44.77.33  Mask:255.255.255.255
+          UP POINTOPOINT RUNNING NOARP MULTICAST  MTU:1412  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:500
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+
+ping 192.168.88.88
+# Returns:
+PING 192.168.88.88 (192.168.88.88) 56(84) bytes of data.
+64 bytes from 192.168.88.88: icmp_seq=1 ttl=64 time=0.064 ms
+
+Get more local stats:
+sudo traceroute  77.44.77.30
+sudo traceroute 8.8.8.8 (google)
+sudo ip route show
+sudo ip addr show dev tun0
+sudo ip route show dev tun0
+sudo ip neigh show
+
+#sudo apt-get install nmap
+#sudo nmap -sn 10.0.0.0/8
+#sudo tcpdump -n -i tun0
+#ip route del default via 192.168.1.254
+#ip route add default via x.w.y.z
+#ip route del 10.8.0.1 dev tun0
+#ip route show dev tun0
+#ip addr show dev tun0
+
+------------------------
+#################################
+#### remote desktop & ssh #######
+#################################
+
+sudo ssh -N -D2000 <gateway-maschine>
+#ssh -R 3333:localhost:22 <gateway-maschine>
+#ssh -g -L4444:localhost:3333 localhost
+
+.....
+
+sudo apt-get install grdesktop
+sudo apt-get install rdesktop
+
+tsclient is not anymore available :(
+
+sudo apt-get install build-essential
+sudo apt-get build-dep tsclient
+sudo apt-get install tsclient
+sudo dpkg --force-all -i tsclient_0.150-4ubuntu2_i386.deb
+sudo dpkg --force-all -i tsclient_0.150-4ubuntu2_amd64.deb
+
+-----------------net
+
+apt-cache search cisco vpn
+sudo apt-get install openconnect network-manager-openconnect
+
+-----------------------------
+
+
+##############
+
+gpg pgp import & verify
+gpg --import keyfile
+
+##############################
+
+
+Related
+
+IPsec - Security Architecture for IP
+http://www.elektronik-kompendium.de/sites/net/0906191.htm
+
+SSL-VPN
+http://www.elektronik-kompendium.de/sites/net/1410151.htm
+
+L2TP over IPsec
+http://www.elektronik-kompendium.de/sites/net/1410061.htm
+
+
+#################################
+
+
+Load the kernel module.
+/sbin/modprobe tun
+
+Create the tunnel device
+cd /dev
+sudo MAKEDEV tun
+
+this will create /dev/net/tun .
+Use openvpn to create tun0 .
+sudo openvpn --mktun --dev tun0
+
+Optionally, edit /etc/network/interfaces, and bring up tun0 .
+sudo ifup tun0
+
+######################################
+
+http://www.debuntu.org/how-to-importexport-gpg-key-pair/
+http://serverquestions.com/questions/g0c5/routing-all-traffic-over-vpn-on-ubuntu-linux
+http://serverfault.com/questions/433405/route-outbound-connections-from-local-network-through-vpn
+http://unix.stackexchange.com/questions/137056/how-to-route-local-ip-subnet-to-vpnc-tunnel
+https://anothersysadmin.wordpress.com/2010/02/26/howto-poor-man-vpn-in-debianubuntu-with-openssh/
+http://sleepyhead.de/howto/?href=vpn
+
+
+dpkg -i teamviewer_i386.deb
+apt-get install -f
+apt-get update
+
+######################################
+
+sudo service network-manager start
+sudo service network-manager stop
+
+#####################################
+
+sysctl -w net.ipv4.ip_forward=1
+iptables -A FORWARD -o tun0 -i venet0 -j ACCEPT
+iptables -A FORWARD -o venet0 -i tun0 -j ACCEPT
+
+user@MacBookPro:~$ route
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+default         dlink           0.0.0.0         UG    0      0        0 wlan0
+xxx.168.xxx.0   *               255.255.255.0   U     0      0        0 vmnet8
+xxx.200.xxx.0   *               255.255.0.0     U     0      0        0 tun0
+xxx.168.xxx.0   *               255.255.255.0   U     0      0        0 tun0
+xxx.168.xxx.0   *               255.255.255.0   U     0      0        0 virbr0
+xxx.168.xxx.0   *               255.255.255.0   U     9      0        0 wlan0
+xxx.168.xxx.0   *               255.255.255.0   U     0      0        0 vmnet1
+
+route add default gw xxx.xxx.xxx.xxx
+
+iptables -t nat -vL
+ip route
+ifconfig
+traceroute -m4 google.com
+
+
+root@Homeserver:~# route del default
+root@Homeserver:~# route add 10.8.0.10 dev tun0
+root@Homeserver:~# route add default gw 10.8.0.10
+root@Homeserver:~#
+root@Homeserver:~# ip route
+
+ip route add 192.168.1.0/24 via tun0
+
+-------------------------------
+###############################
+#####  On the Client   ########
+###############################
+
+#Generate an SSH keypair for root:
+sudo ssh-keygen -t rsa
+
+#Edit
+/etc/network/interfaces
+
+iface tun0 inet static
+pre-up ssh -S /var/run/ssh-myvpn-tunnel-control -M -f -w 0:0 5.6.7.8 true
+pre-up sleep 5
+address 10.254.254.2
+pointopoint 10.254.254.1
+netmask 255.255.255.252
+up route add -net 10.99.99.0 netmask 255.255.255.0 gw 10.254.254.1 tun0
+post-down ssh -S /var/run/ssh-myvpn-tunnel-control -O exit 5.6.7.8
+
+#Get servers SSH key fingerprint:
+$ sudo ssh <ip>
+----------------------------------------------
+###############################
+#####  On the server  #########
+###############################
+
+# Modify:
+/etc/ssh/sshd_config
+
+PermitTunnel point-to-point
+PermitRootLogin forced-commands-only
+
+#Add the following line in:
+/root/.ssh/authorized_keys:
+
+tunnel="0",command="/sbin/ifdown tun0;/sbin/ifup tun0" ssh-rsa AAAA ..snipped.. == root@server
+
+Add in:
+/etc/network/interfaces:
+
+iface tun0 inet static
+address 10.254.254.1
+netmask 255.255.255.252
+pointopoint 10.254.254.2
+
+#/etc/sysctl.conf: Make sure net.ipv4.conf.default.forwarding is set to 1
+net.ipv4.conf.default.forwarding=1
+
+# reboot and make it active:
+$ sudo sysctl net.ipv4.conf.default.forwarding=1
+
+# Using the VPN
+sudo ifup tun0
+ping -c <ip>
+sudo ifdown tun0
+
+--------------------------------------
+
+traceroute  8.8.8.8   	# check connection
+
+--------------------------------------
+
+sudo service ufw start	# firewall start
+sudo service ufw stop	# firewall stop
+
+sudo ufw deny ssh
+sudo ufw deny ssh
+sudo ufw status
+sudo ufw enable
+
+enable                          enables the firewall
+disable                         disables the firewall
+default ARG                     set default policy
+logging LEVEL                   set logging to LEVEL
+allow ARGS                      add allow rule
+deny ARGS                       add deny rule
+reject ARGS                     add reject rule
+limit ARGS                      add limit rule
+delete RULE|NUM                 delete RULE
+insert NUM RULE                 insert RULE at NUM
+route RULE                      add route RULE
+route delete RULE|NUM           delete route RULE
+route insert NUM RULE           insert route RULE at NUM
+reload                          reload firewall
+reset                           reset firewall
+status                          show firewall status
+status numbered                 show firewall status as numbered list of RULES
+status verbose                  show verbose firewall status
+show ARG                        show firewall report
+version                         display version information
+
+Application profile commands:
+app list                        list application profiles
+app info PROFILE                show information on PROFILE
+app update PROFILE              update PROFILE
+app default ARG                 set default application policy
+
+--------------------------------------
+
+sudo vpnc --version	# check version
+
+#returns:
+Supported DH-Groups: nopfs dh1 dh2 dh5
+Supported Hash-Methods: md5 sha1
+Supported Encryptions: null des 3des aes128 aes192 aes256
+Supported Auth-Methods: psk psk+xauth hybrid(rsa)
+
+--------------------------------------
+
+sudo vpnc myconn.conf	# connect to vpn
+sudo vpnc-disconnect	# disconenct
+
+--------------------------------------
+
+# vpn settings
+
+IPSec ID foo
+#IPSec obfuscated secret lol
+IPSec secret [secret]
+IPSec gateway 1.2.3.4
+
+Xauth username MYUSERNAME
+Xauth password MYPASS
+
+#IKE Authmode hybrid
+#IKE Authmode psk
+#IKE DH Group dh2
+#NAT Traversal Mode cisco-udp
+Local Port 0
+
+--------------------------------------

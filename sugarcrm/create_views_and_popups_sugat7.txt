@@ -1,0 +1,328 @@
+#########################################################
+#
+# Adding a new popup view in Sugar 7.x Record View
+# http://developer.sugarcrm.com/2016/01/18/adding-a-new-popup-view-in-sugar-7-x-record-view/
+#
+#########################################################
+
+Step 1: Insert Button Metadata
+custom/Extension/modules/Cases/Ext/clients/base/views/record/add_note_button.php
+
+<?php
+//Insert our custom button definition into existing Buttons array before the edit button
+array_splice($viewdefs['Cases']['base']['view']['record']['buttons'], -2, 0, array(
+    array(
+        'name' => 'add_note',
+        'type' => 'button',
+        'label' => 'LBL_ADD_NOTE',
+        'css_class' => 'btn-success',//css class name for the button
+        'events' => array(
+            // custom Sidecar Event to trigger on click.  Event name can be anything you want.
+            'click' => 'button:add_note:click',
+        )
+    ),
+));
+
+===================
+
+Step 2: Defining the Sidecar Event to be triggered on click of the button
+
+custom/modules/Cases/clients/base/views/record/record.js
+
+/**
+	 * @extends View.Views.Base.RecordView
+	 */
+({
+	extendsFrom:'RecordView',
+	initialize:function(options){
+		this._super('initialize',[options]);
+		this.context.on('button:add_note:click',this._openNoteModal,this);
+	},
+	/**Function to open the note create pop-up*/
+	_openNoteModal: function() {
+		/**add class content-overflow-visible if client has touch feature*/
+		if (Modernizr.touch) {
+			app.$contentEl.addClass('content-overflow-visible');
+		}
+		/**check whether the view already exists in the layout.
+		 * If not we will create a new view and will add to the components list of the record layout
+		 * */
+		var quickCreateView = this.layout.getComponent('quick-create');
+        	if (!quickCreateView) {
+			/** Prepare the context object for the new quick create view*/
+			var context = this.context.getChildContext({
+				module: 'Notes',
+				forceNew: true,
+				create: true,
+				link:'notes', //relationship name
+			});
+			context.prepare();
+			/** Create a new view object */
+			quickCreateView = app.view.createView({
+				context:context,
+				name: 'quick-create',
+				layout: this.layout,
+				module: context.module,
+			});
+			/** add the new view to the components list of the record layout*/
+			this.layout._components.push(quickCreateView);
+			this.layout.$el.append(quickCreateView.$el);
+		}
+		/**triggers an event to show the pop up quick create view*/
+		this.layout.trigger("app:view:quick-create");
+	},
+})
+
+==========================
+
+Adding a new Quick Create View for Notes Module
+
+
+    quick-create.php
+    quick-create.js
+    quick-create.hbs
+
+Step 1: Implement the Quick Create View Metadata (.php file)
+
+<?php
+/** Metdata for the add note custom popup view
+ * The buttons array contains the buttons to be shown in the popu
+ * The fields array can be modified accordingly to display more number of fields if required
+ * */
+$viewdefs['Notes']['base']['view']['quick-create'] = array(
+    'buttons' => array(
+        array(
+            'name' => 'cancel_button',
+            'type' => 'button',
+            'label' => 'LBL_CANCEL_BUTTON_LABEL',
+            'value' => 'cancel',
+            'css_class' => 'btn-invisible btn-link',
+        ),
+        array(
+            'name' => 'save_button',
+            'type' => 'button',
+            'label' => 'LBL_SAVE_BUTTON_LABEL',
+            'value' => 'save',
+            'css_class' => 'btn-primary',
+        ),
+    ),
+    'panels' => array(
+        array(
+            'fields' => array(
+                0 =>
+                array(
+                    'name' => 'name',
+                    'default' => true,
+                    'enabled' => true,
+                    'width' => 35,
+                    'required' => true //subject is required
+                ),
+                1 =>
+                array(
+                    'name' => 'description',
+                    'default' => true,
+                    'enabled' => true,
+                    'width' => 35,
+                    'required' => true, //description is required
+                    'rows' => 5,
+                ),
+                2 =>
+                array(
+                    'name' => 'filename',
+                    'default' => true,
+                    'enabled' => true,
+                    'width' => 35,
+                ),
+            )
+        )
+    )
+);
+
+
+Step 2: Implement the Quick Create View Controller (.js file)
+custom/modules/Notes/clients/base/views/quick-create/quick-create.js
+
+/**
+	 * @class View.Views.Base.QuickCreateView
+	 * @alias SUGAR.App.view.views.BaseQuickCreateView
+	 * @extends View.Views.Base.BaseeditmodalView
+	 */
+({
+    extendsFrom:'BaseeditmodalView',
+    fallbackFieldTemplate: 'edit',
+	  initialize: function(options) {
+		app.view.View.prototype.initialize.call(this, options);
+  		if (this.layout) {
+  			this.layout.on('app:view:quick-create', function() {
+  				this.render();
+  				this.$('.modal').modal({
+  					backdrop: 'static'
+  				});
+  				this.$('.modal').modal('show');
+  				$('.datepicker').css('z-index','20000');
+  				app.$contentEl.attr('aria-hidden', true);
+  				$('.modal-backdrop').insertAfter($('.modal'));
+
+  				/**If any validation error occurs, system will throw error and we need to enable the buttons back*/
+  				this.context.get('model').on('error:validation', function() {
+  					this.disableButtons(false);
+  				}, this);
+  			}, this);
+  		}
+  		this.bindDataChange();
+	  },
+	  /**Overriding the base saveButton method*/
+	  saveButton: function() {
+  		var createModel = this.context.get('model');
+
+		// app.lang.get('LBL_NAME', 'Accounts');
+		// app.lang.getAppString('LBL_MODULE');
+  		// app.lang.getAppListStrings('sales_stage_dom');
+
+  		this.$('[name=save_button]').attr('data-loading-text', app.lang.get('LBL_LOADING'));
+  		this.$('[name=save_button]').button('loading');
+
+  		/** Disable the buttons during save.*/
+  		this.disableButtons(true);
+  		this.processModel(createModel);
+
+  		/** saves the related note bean*/
+		createModel.save(null, {
+  			relate: true,
+  			fieldsToValidate: this.getFields(this.module),
+  			success: _.bind(function() {
+  				this.saveComplete();
+  			}, this),
+  			error: _.bind(function() {
+  				this.disableButtons(false);
+  			}, this)
+
+  		});
+	  },
+	/**Overriding the base cancelButton method*/
+	cancelButton: function() {
+  		this._super('cancelButton');
+  		app.$contentEl.removeAttr('aria-hidden');
+  		this._disposeView();
+  	},
+  	/**Overriding the base saveComplete method*/
+  	saveComplete: function() {
+  		this._super('saveComplete');
+  		app.$contentEl.removeAttr('aria-hidden');
+  		this._disposeView();
+  	},
+    	/**Custom method to dispose the view*/
+  	_disposeView:function(){
+  		/**Find the index of the view in the components list of the layout*/
+  		var index = _.indexOf(this.layout._components,_.findWhere(this.layout._components,{name:'quick-create'}));
+  		if(index > -1){
+  			/** dispose the view so that the evnets, context elements etc created by it will be released*/
+  			this.layout._components[index].dispose();
+  			/**remove the view from the components list**/
+  			this.layout._components.splice(index, 1);
+  		}
+  	},
+  })
+
+
+
+Step 3: Implement the Quick Create View Template (.hbs file)
+custom/modules/Notes/clients/base/views/quick-create/quick-create.hbs
+
+<div class="modal hide quick-create">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal"><i class="fa fa-times"></i></a>
+        <h3><i class="fa fa-book"></i>&nbsp;&nbsp;{{str "LBL_CREATE_NOTE" module}}</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" enctype="multipart/form-data" method="POST">
+            <fieldset>
+                {{#each meta.panels}}
+                {{#each fields}}
+                <div class="row-fluid control-group">
+                <label class="span3">{{str this.label ../../this.model.module}}</label>
+                <div class="span9">{{field ../../this model=../../context.attributes.createModel template="edit"}}</div>
+                </div>
+                {{/each}}
+                {{/each}}
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        {{#each meta.buttons}}
+        {{field ../this model=../createModel}}
+        {{/each}}
+    </div>
+</div>
+
+
+Step 4: Add custom CSS style for our Popup (.less file)
+custom/themes/custom.less
+
+quick-create{
+	border:none;
+}
+.quick-create .modal-header h3 {
+	font-size:15px;
+    font-weight: normal;
+}
+.quick-create .modal-header{
+    background: #610319;
+    color: #FFF;
+}
+.quick-create .modal-body{
+    padding: 5px 0 58px 12px;
+}
+.quick-create .modal-body .row-fluid {
+    margin-top: 10px;
+}
+.quick-create label.span3{
+	font-size: 13px;
+	color: #797979;
+}
+.quick-create .fa-book{
+    color: #FFF;
+}
+
+
+Step 5: Define the display labels for our new UI
+<?php
+	$mod_strings['LBL_ADD_NOTE'] = 'Add a Note';
+	$mod_strings['LBL_CREATE_NOTE'] = 'Create Note';
+
+Step 6: Quick Repair and Rebuild
+
+####################################################
+#
+# Create New View
+# https://www.sugaroutfitters.com/blog/creating-a-layout-and-view-for-a-module-in-sugarcrm-7
+#
+####################################################
+
+/modules/YOURMODULE/clients/base/layouts/setup/setup.js
+/modules/YOURMODULE/clients/base/layouts/setup/setup.hbs
+/modules/YOURMODULE/clients/base/layouts/setup/setup.php
+
+
+// /modules/YOURMODULE/clients/base/layouts/setup/setup.php
+$viewdefs[‘YOURMODULE’]['base']['layout']['setup'] = array(
+    'type' => 'simple',
+    'components' =>
+    array(
+        array(
+            'view' => 'setup',
+        ),
+    ),
+);
+
+
+/modules/YOURMODULE/clients/base/views/setup/setup.js
+({
+    className: 'yourmodule-setup tcenter',
+})
+
+
+/modules/YOURMODULE/clients/base/views/setup/setup.hbs
+<h1>Hey!</h1>
+);
+

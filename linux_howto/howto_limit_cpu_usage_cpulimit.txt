@@ -1,0 +1,108 @@
+Simulating high CPU usage with cpulimit
+
+#wget -O cpulimit.zip https://github.com/opsengine/cpulimit/archive/master.zip
+#unzip cpulimit.zip
+#cd cpulimit-master
+#make
+#sudo cp src/cpulimit /usr/bin
+
+sudo su
+sudo apt-get install cpulimit
+#aptitude install cpulimit
+#man cpulimit
+
+cpulimit -l 50 matho-primes 0 9999999999 > /dev/null &
+cpulimit -l 50 -p 1234
+cpulimit -e apache2 -l 30
+
+cpulimit -P /usr/lib/jvm/java-8-openjdk-amd64/bin/java -l 80 # phpstorm
+cpulimit -p 11016 -l 80 # phpstorm
+
+cpulimit -P /opt/PhpStorm-163.10504.2/jre64/bin/java -l 50 -c 2
+cpulimit -e chromium-browser  -l 95 -c 2
+cpulimit -e firefox  -l 95 -c 2
+
+
+sudo cpulimit -p PID -l CPU%
+sudo apt-get install cpulimit gawk
+
+ps aux
+ps aux | grep apache2
+cpulimit -p 4510 -l 30
+cpulimit -P /usr/sbin/apache2 -l 30
+
+*** Edit Settings file
+sudo cpulimit_daemon.sh
+CPU_LIMIT=20
+DAEMON_INTERVAL=3
+BLACK_PROCESS_LIST = "firefox-bin|mysql|firefox|gedit";
+WHITE_PROCESSES_LIST="mysql|firefox|gedit"
+
+
+*** Copy the cpulimit_daemon.sh file to the /usr/bin/ folder
+sudo cp ~/cpulimit/cpulimit_daemon.sh /usr/bin
+sudo chmod 700 /usr/bin/cpulimit_daemon.sh
+
+
+*** Copy the cpulimit file to /etc/init.d/folder,
+sudo cp ~/cpulimit/cpulimit /etc/init.d/
+sudo chown root:root /etc/init.d/cpulimit
+sudo chmod +x /etc/init.d/cpulimit
+sudo update-rc.d cpulimit defaults
+
+sudo service cpulimit status
+sudo service cpulimit start
+sudo service cpulimit stop
+
+*** Uninstalling
+sudo service cpulimit stop  # Stop cpulimit daemon and all cpulimited processes
+sudo update-rc.d -f cpulimit remove    # Remove symbolic links
+sudo rm /etc/init.d/cpulimit           # Delete cpulimit boot-up script
+sudo rm /usr/bin/cpulimit_daemon.sh    # Delete cpulimit daemon script
+sudo apt-get remove cpulimit
+
+
+-----
+Simulating high CPU usage with nice
+
+nice matho-primes 0 9999999999 > /dev/null &
+matho-primes 0 9999999999 > /dev/null &
+
+-----
+Simulating high CPU usage
+
+/usr/local/bin/matho-primes 0 9999999999 > /dev/null &
+
+--
+
+http://blog.scoutapp.com/articles/2014/11/04/restricting-process-cpu-usage-using-nice-cpulimit-and-cgroups
+https://www.maketecheasier.com/limit-cpu-usage-of-any-process-in-linux/
+https://www.howtoforge.com/how-to-limit-cpu-usage-of-a-process-with-cpulimit-debian-ubuntu
+
+---------------
+
+sudo apt-get install cpulimit
+sudo apt-get install gawk
+
+cpulimit -e apache2 -l 30
+ps aux | grep apache2
+cpulimit -P /usr/sbin/apache2 -l 30
+
+cpulimit -e foo -l 50
+cpulimit -P /usr/bin/foo -l 30
+cpulimit -p 1234 -l 20
+cpulimit -l 50 -p 1234
+
+cpulimit -e firefox -l 30
+cpulimit -p 1313 -l 30
+cpulimit -P /opt/firefox/firebox -l 30
+
+https://github.com/opsengine/cpulimit
+http://manpages.ubuntu.com/manpages/xenial/man1/cpulimit.1.html
+
+for j in `seq 1 4`; do md5sum /dev/zero & done
+for j in `seq 1 4`; do cpulimit -l 40 md5sum /dev/zero & done
+
+https://www.digitalocean.com/community/tutorials/how-to-limit-cpu-usage-on-ubuntu-12-10
+https://www.cyberciti.biz/faq/cpu-usage-limiter-for-linux/
+https://ubuntuforums.org/showthread.php?t=992706

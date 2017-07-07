@@ -1,0 +1,67 @@
+///////////////////////////////////////////////////////////////
+//
+// SugarCRM 7 How to load the same javascript function extended views
+//
+///////////////////////////////////////////////////////////////
+
+//Example usage common function defined in sidecar:
+//-------------------
+//  "custom-record": {"controller":
+
+({
+    // Record View (base)
+    extendsFrom: 'RecordView',
+    initialize: function (options) {
+
+            //this.plugins = _.union(this.plugins, ['MyAmazingFunctionFour']); 	// Call function through plugins
+            //app.MyAmazingFunction()						// Call function through app
+            //SUGAR.util.MyAmazingFunctionTwo();				// Call function through SUGAR.util
+
+    }
+})
+//-----------------------
+
+//Example Function defined in sidecar:
+// compiled from custom/modules/Contacts/my_special_script.js
+
+(function () {
+    SUGAR.util = SUGAR.util || {};
+    SUGAR.util.MyAmazingFunctionTwo = function () {
+        alert("456")
+    }
+})();
+
+(function (app) {
+    app.events.on('app:init', function () {
+        app.MyAmazingFunction = function () {
+            alert("123")
+        };
+    });
+})(SUGAR.App);
+
+(function (app) {
+    app.events.on('app:init', function () {
+        app.plugins.register('MyAmazingFunctionFour', ['layout', 'view'], {
+            onAttach: function () { // onAttach/onDetach/handleErrorEvent
+                this.on("init", function () {
+                    alert(789);
+                    //app.MyAmazingFunction();
+                });
+            }
+         });
+    });
+})(SUGAR.App);
+
+//---------------------------
+
+//Example JSGroupings Include
+// custom/Extension/application/Ext/JSGroupings/custom_js_groupings.php
+
+
+$js_groupings[] = $sugar_grp_sidecar = array_merge($sugar_grp_sidecar,
+    array(
+        'custom/modules/Contacts/my_special_script.js' => 'include/javascript/sugar_sidecar.min.js',
+    )
+);
+
+//------------------------------------------

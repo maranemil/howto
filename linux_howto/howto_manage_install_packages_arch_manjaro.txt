@@ -1,0 +1,174 @@
+
+https://wiki.manjaro.org/index.php?title=Pacman_Tips#Installing_Packages
+
+########################
+# Sync
+########################
+
+Ranking mirrors
+
+This command will rank your mirrors by speed and will filter the out of date mirrors.
+pacman-mirrors -g
+
+You should sync the database after running this command by using: pacman -Syy
+
+Optimize the database access speed
+For full benefit, run this command after syncing the database.
+pacman-optimize && sync
+
+Attention: This command defragments Pacman's database, which boosts performance on slow hard drives but is harmful on SSDs. So, do not use this command on SSDs!
+
+Syncing and Updating
+
+Sync the database
+pacman -Sy
+
+You can force sync the database using the following command. It means, the database will be synced even if it's up to date. This is useful when you changed something repository related and want to have the changes take effect.
+pacman -Syy
+
+Updating
+Pacman can update your system with only one command:
+pacman -Su
+
+Although, it is usually better to sync your repo database first:
+pacman -Syu
+
+This command was recommend:
+pacman -Syyu
+
+Update & ignore a package
+The following changes take place in pacman's configuration file: /etc/pacman.conf
+IgnorePkg=package_name
+
+Update & ignore a package group
+IgnoreGroup=package_group
+
+Examples:
+IgnoreGroup=gnome
+IgnoreGroup=kde
+
+########################
+# install Remove
+########################
+
+It is always best to have the repo databases synchronized & then all packages installed on your system up to date before you install any new packages.
+pacman -Syyu
+
+# install package
+pacman -S virtualbox
+
+# force install package
+pacman -S --force virtualbox
+
+# Install a downloaded or a local package
+pacman -U /package_path/package_name.pkg.tar.xz
+
+# Reinstall all packages
+pacman -S $(pacman -Qqen)
+
+# Remove a package
+pacman -R package_name
+
+# Remove a package with dependencies that are not being used by other packages
+pacman -Rs package_name
+
+# Remove a package with all dependencies. Attention: The -c flag can remove needed dependencies, too. Only for advanced users.
+pacman -Rsc package_name
+
+# Remove a package and its configuration files too:
+pacman -Rn package_name
+
+# Forcefully remove a dependency without removing any other package. Attention: Only for advanced users.
+pacman -Rdd package_name
+
+########################
+# Cleaning the cache
+########################
+
+# Leaves packages in your cache only for those packages which are currently installed on your system. Attention: This eliminates the possibility to Using Downgrade.
+pacman -Sc
+
+Clean cache completely and remove all packages. Attention: This eliminates the possibility to Using Downgrade.
+pacman -Scc
+
+A safer way to remove old package cache files is to remove all packages except for the latest three package versions:
+paccache -rvk3
+
+Cleaning orphan packages from the system. Also read Orphan Package Removal for further information.
+pacman -Rsn $(pacman -Qdtq)
+
+########################
+# SEARCH
+########################
+
+#Provides a description of searched for package & associated packages
+pacman -Ss package_name
+
+Provides a description of previously installed package
+pacman -Qs package_name
+
+Provides detailed summary of a package
+pacman -Si package_name
+
+Modified summary:
+pacman -Qi package_name
+
+Get a list of installed packages
+pacman -Q
+
+Find out which package owns a file
+pacman -Qo /file_path
+
+List all orphan packages with no dependencies
+pacman -Qdt
+
+List all installed packages from the AUR
+pacman -Qem
+
+View package dependencies. Use one of the following commands:
+pactree package_name
+pactree -c package_name
+pactree -s -c package_name
+
+########################
+# AUR (Arch User Repository)
+########################
+
+Following is info on three popular options for using the AUR, for a detailed list of their commands please look at their man pages:
+
+Yaourt
+
+Yaourt comes pre-installed with Manjaro so you normally won't have to install it. If you have removed it, this is how you install it again:
+pacman -S base-devel yaourt
+
+To use Yaourt to upgrade both official repos & AUR (only if new PKGBUILD files are available) use the following command:
+yaourt -Syua
+
+To use Yaourt to download and rebuild the latest AUR packages from their source (regardless of PKGBUILD files):
+yaourt -Syua --devel
+
+You can use all Pacman commands mentioned on this Wiki page with Yaourt, too. One command is different:
+Removing orphaned packages is easier and more intuitive with Yaourt:
+yaourt -Qdt
+
+Packer
+
+Uses some of the same commands as pacman but differs in that it checks both the official repos & AUR.
+yaourt -S packer
+
+Having installed 'packer' then you can run:
+packer -S package_name
+
+This will upgrade from both official repos & AUR:
+packer -Syu
+
+
+
+
+
+
+
+
+
+
+

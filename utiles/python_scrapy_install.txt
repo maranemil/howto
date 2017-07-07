@@ -1,0 +1,78 @@
+
+##############################################
+#
+# Ubuntu Scrapy Install
+# http://scrapy.org/
+#
+##############################################
+
+sudo apt install python-pip
+sudo apt install python-scrapy
+pip install scrapy
+
+cat > myspider.py <<EOF
+
+import scrapy
+
+class BlogSpider(scrapy.Spider):
+    name = 'blogspider'
+    start_urls = ['https://blog.scrapinghub.com']
+
+    def parse(self, response):
+        for url in response.css('ul li a::attr("href")').re('.*/category/.*'):
+            yield scrapy.Request(response.urljoin(url), self.parse_titles)
+
+    def parse_titles(self, response):
+        for post_title in response.css('div.entries > ul > li a::text').extract():
+            yield {'title': post_title}
+
+EOF
+
+ scrapy runspider myspider.py -o myspider.json
+
+
+##############################################
+#
+# Ubuntu Python, Selenium, PhamtonJS, Beautiful Soup
+#
+##############################################
+
+# pip install selenium; pip install beautifulsoup4
+# easy_install beautifulsoup4
+apt-get install python-beautifulsoup
+
+
+from selenium import webdriver
+ driver = webdriver.PhantomJS()
+ driver.set_window_size(1024, 768) # optional
+ driver.get('https://google.com/')
+ driver.save_screenshot('screen.png') # save a screenshot to disk
+ sbtn = driver.find_element_by_css_selector('button.gbqfba')
+ sbtn.click()
+
+---------
+
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.keys import Keys
+import BeautifulSoup
+
+browser = webdriver.Firefox()
+browser.get('http://techcrunch.com/2012/05/15/facebook-lightbox/')
+html_source = browser.page_source
+browser.quit()
+
+soup = BeautifulSoup.BeautifulSoup(html_source)
+comments = soup("div", {"class":"postText"})
+print comments
+---------------------
+from selenium import webdriver
+client = webdriver.PhantomJS()
+client.get("http://foo")
+soup = bs(client.page_source)
+----------------------------------
+import requests
+from BeautifulSoup4 import BeautifulSoup as bs
+request = requests.get("http://foo.bar")
+soup = bs(request.text)
+some_elements = soup.find_all("div", class_="myCssClass")
