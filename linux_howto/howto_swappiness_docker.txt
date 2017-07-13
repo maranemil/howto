@@ -1,0 +1,173 @@
+https://en.wikipedia.org/wiki/Swappiness
+https://wiki.ubuntuusers.de/Swap/
+
+vm.swappiness = 0	The kernel will swap only to avoid an out of memory condition, when free memory will be below vm.min_free_kbytes limit. See the "VM Sysctl documentation".
+vm.swappiness = 1	Kernel version 3.5 and over, as well as Red Hat kernel version 2.6.32-303 and over: Minimum amount of swapping without disabling it entirely.
+vm.swappiness = 10	This value is sometimes recommended to improve performance when sufficient memory exists in a system.
+vm.swappiness = 60	The default value.
+vm.swappiness = 100	The kernel will swap aggressively.
+
+
+# Set the swappiness value as root
+echo 10 > /proc/sys/vm/swappiness
+
+# Alternatively, run this
+sysctl -w vm.swappiness=10
+
+# Verify the change
+cat /proc/sys/vm/swappiness
+10
+
+# Alternatively, verify the change
+sysctl vm.swappiness
+vm.swappiness = 10
+
+...
+
+sudo apt-get install swapspace
+sysctl vm.swappiness
+sudo sysctl vm.swappiness=25
+
+sudo swapoff -a  ## Swap ausschalten
+sudo swapon -a   ## Swap einschalten
+
+free -s 3 |grep Swap
+
+https://github.com/djtm/syncthing-docker-scratch/blob/master/run.sh
+
+#!/bin/bash
+set -x
+
+# Setting the following variables should allow for most typical adjustments.
+arch=amd64 		# 386 amd64 arm arm64 ppc64 ppc64le
+GOGC=40 		# Go Garbage collection, 40 % memory "generosity", less means stricter
+CONFIG="$HOME/.config/syncthing-docker"		# Syncthing configuration directory, includes index files
+usr="$(id -u):$(id -g)" # uid:gid, e.g. 1000:1000 by default runs syncthing as the uid and gid this script is run as
+Sync="$HOME/Sync"	# Path to your Sync Folder
+ssl="/etc/ssl/certs"	# path to ssl certificates
+cpushares="300" 	# 300 cpushares, see /sys/fs/cgroup/cpu/cpu.shares
+memory="500m" 		# for 500 MB memory limit
+swap="520m" 		# Total memory limit (memory + swap), https://docs.docker.com/engine/reference/run/#user-memory-constraints
+swappiness="1" 		# 0-100, no disables swap.
+bklioweight="10" 	# 0-1000
+dockercustom=""		# custom additional docker commands, e.g. mount a volume via "-v /local/dir:/container/dir"
+syncthingcustom=""	# custom additional syncthing commands
+repository="djtm/syncthing-scratch-$arch"
+#port=8384
+
+# prevent directories being created by docker with root user
+mkdir -p "$CONFIG" $HOME/Sync
+
+# first get updates before we stop
+docker pull $repository
+docker stop syncthing
+docker rm syncthing
+
+docker run \
+	--name syncthing \
+	-e GOGC=$GOGC \
+	--net host \
+	--user "$usr" \
+	--cpu-shares "$cpushares" \
+	--memory "$memory" \
+	--memory-swap "$swap" \
+	-v "$CONFIG:/.config/syncthing" \
+	-v "$Sync":/Sync \
+        -v "$ssl":/etc/ssl/certs:ro \
+	-d --restart always \
+ 	--read-only \
+	--cap-drop all \
+ 	$dockercustom \
+	"$repository" $syncthingcustom "$@"
+
+# --read-only mounts "/" read-only, the user should not have write access anyway.
+# -p hostport:containerport/protocol
+#	-p $port:8384/tcp -p 22000:22000/tcp -p 21027:21027/udp # breaks local autodiscovery
+# not compatible to ubuntu 14.04 version of docker. wait until 16.10, then put this back.
+#	--memory-swappiness "$swappiness" \
+#	--blkio-weight "$bklioweight" \
+
+timeout 10s docker logs -f syncthing
+
+PID="$(pidof syncthing 2>/dev/null)" && \
+ionice -c 3 -p $PID && \
+renice 19 -p $PID
+
+# renice gives the process less cpu priority.
+# ionice -c 3 gives the process less io priority.
+# PID="$(docker inspect --format '{{.State.Pid}}'" syncthing) might be nice, but does not catch both processes.
+# The current way, all syncthing processes on the system are affected.
+
+
+http://codegist.net/search?q=swappiness+docker
+
+--------------------------------------------------------
+
+dongalor/turn-swap.sh ( shell)
+
+sudo swapon -s
+sudo dd if=/dev/zero of=/swapfile bs=1024 count=256k
+sudo mkswap /swapfile
+sudo swapon /swapfile
+swapon -s
+sudo vim /etc/fstab
+
+/swapfile       none    swap    sw      0       0
+
+echo 10 | sudo tee /proc/sys/vm/swappiness
+echo vm.swappiness = 10 | sudo tee -a /etc/sysctl.conf
+sudo chown root:root /swapfile
+sudo chmod 0600 /swapfile
+
+--------------------------------------------------------
+
+ChengLong/add_swap.sh ( shell)
+
+# create a 4G swap file at /swapfile
+sudo fallocate -l 4G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+
+# Make the Swap File Permanent
+sudo echo "/swapfile   none    swap    sw    0   0" >> /etc/fstab
+
+# set swappiness to 10
+sudo sysctl vm.swappiness=10
+sudo echo "vm.swappiness=10" >> /etc/sysctl.conf
+
+# set vfs_cache_pressure to 50
+sudo sysctl vm.vfs_cache_pressure=50
+sudo echo "vm.vfs_cache_pressure = 50" >> /etc/sysctl.conf
+
+
+--------------------------------------------------------
+
+vadikgo/run.sh ( shell)
+
+#!/bin/sh
+
+#pip install docker-replay
+#docker-replay -p gitlab-ce
+docker pull gitlab/gitlab-ce
+docker stop gitlab-ce
+
+docker create --volumes-from gitlab-ce \
+           --hostname 1753deeeb7fa \
+           --interactive \
+           --tty \
+           --memory-swappiness -1 \
+           --publish-all \
+           --name gitlab-ce2 \
+           --publish 32773:22/tcp \
+           --publish 32771:443/tcp \
+           --publish 80:80/tcp \
+           --expose 22/tcp \
+           --expose 443/tcp \
+           --expose 80/tcp \
+           gitlab/gitlab-ce:latest \
+           /assets/wrapper
+
+docker start gitlab-ce2
+docker rm gitlab-ce
+docker rename gitlab-ce2 gitlab-ce
