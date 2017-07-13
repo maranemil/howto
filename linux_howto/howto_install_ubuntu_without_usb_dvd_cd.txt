@@ -586,4 +586,98 @@ http://heeris.id.au/2014/ubuntu-plus-mac-pure-efi-boot/
 
 
 
+#########################################
+#
+#	Reinstalling Ubuntu via Terminal
+#
+#########################################
+
+https://github.com/cirosantilli/linux-cheat/blob/master/install-operating-system.md
+https://askubuntu.com/questions/340156/install-ubuntu-from-iso-image-directly-from-hard-disk-of-a-system-running-linux
+https://askubuntu.com/questions/164227/how-to-mount-an-iso-file
+https://askubuntu.com/questions/4694/how-to-use-a-iso-image-as-a-cd-rom-repository%3E
+
+sudo apt-get install --reinstall ubuntu-desktop
+sudo apt-get -f install
+sudo apt-get install --reinstall ubuntu-desktop
+
+.......
+
+sudo mkdir /boot/iso
+sudo cp ~/Desktop/name.iso /boot/iso
+sudo nano /etc/grub.d/40_custom
+
+#!/bin/sh
+echo "Adding 40_custom." >&2
+exec tail -n +4 $0
+# This file provides an easy way to add custom menu entries.  Simply type the
+# menu entries you want to add after this comment.  Be careful not to change
+# the 'exec tail' line above.
+
+menuentry "Kubuntu ISO" {
+        set isofile="/boot/iso/kubuntu-12.04.iso"
+        loopback loop (hd0,8)$isofile
+        linux (loop)/casper/vmlinuz boot=casper iso-scan/filename=$isofile noprompt noeject
+        initrd (loop)/casper/initrd.lz
+}
+
+sudo fdisk -l
+sudo update-grub
+sudo umount -l /isodevice
+
+......
+
+menuentry "NetInstall" {
+    linux (hd0,0)/boot/netboot/ubuntu-installer/amd64/linux
+    initrd (hd0,0)/boot/netboot/ubuntu-installer/amd64/initrd.gz
+}
+sudo update-grub
+
+.....
+
+sudo mkdir /media/iso
+sudo mount -o loop path/to/iso/file/YOUR_ISO_FILE.ISO /media/iso
+sudo umount /media/iso
+
+
+sudo mkdir /aptoncd-mountpoint
+sudo mount /media/USB/aptoncd.iso ~/aptoncd-mountpoint -oloop
+sudo apt-cdrom -d=/aptoncd-mountpoint add
+
+mkdir /media/mountpoint
+mount -t iso9660 -o loop /pathtoiso.iso /media/mountpoint
+sudo ln -s /mountpoint /media/apt
+
+.....
+
+
+mount -t iso9660 -o loop  /media/Disk1/debian-7.6.0-i386-DVD-1.iso /media/dvd1-mountpoint
+mount -t iso9660 -o loop  /media/Disk1/debian-7.6.0-i386-DVD-2.iso /media/dvd2-mountpoint
+mount -t iso9660 -o loop  /media/Disk1/debian-7.6.0-i386-DVD-3.iso /media/dvd3-mountpoint
+mount -t iso9660 -o loop  /media/Disk1/debian-update-7.6.0-i386-DVD-1.iso /media/dvd4-mountpoint
+mount -t iso9660 -o loop  /media/Disk1/debian-update-7.6.0-i386-DVD-2.iso /media/dvd5-mountpoint
+
+echo "deb file:/media/dvd1-mountpoint/ wheezy main contrib" >> /etc/apt/sources.list.d/dotdeb.list
+echo "deb file:/media/dvd2-mountpoint/ wheezy main contrib" >> /etc/apt/sources.list.d/dotdeb.list
+echo "deb file:/media/dvd3-mountpoint/ wheezy main contrib" >> /etc/apt/sources.list.d/dotdeb.list
+echo "deb file:/media/dvd4-mountpoint/ wheezy main contrib" >> /etc/apt/sources.list.d/dotdeb.list
+echo "deb file:/media/dvd5-mountpoint/ wheezy main contrib" >> /etc/apt/sources.list.d/dotdeb.list
+
+echo "deb http://packages.dotdeb.org wheezy all" >> /etc/apt/sources.list.d/dotdeb.list
+
+wget http://www.dotdeb.org/dotdeb.gpg
+cat dotdeb.gpg | apt-key add -
+
+apt-get update
+apt-get upgrade
+apt-get autoremove
+
+
+sudo apt install metacity metacity-common metacity-themes
+sudo apt install silicon-theme tropic-theme blubuntu-theme
+
+
+
+
+
 
