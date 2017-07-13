@@ -1094,3 +1094,31 @@ echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sou
 sudo apt-get update
 sudo apt-get install sublime-text
 
+#################################################
+#
+#  kill processes chrome firefox
+#
+#################################################
+
+pkill chromium
+while pgrep chrome ; do pkill chrome ; done
+
+pkill --oldest chrome
+
+pgrep chrome | xargs kill
+for i in `pgrep chrome` ; do kill $i ;  sleep .33 ; done
+while pgrep chrome ; do pkill chrome ; done
+watch pkill chrome
+for i in `pgrep chrome` ; do kill $i && wait $i ;  sleep .33 ; done
+kill $(ps -C google-chrome -o pid=)
+
+
+pkill firefox
+for i in $(ps x | grep firefox | cut -d"?" -f1 | grep -v firefox); do kill -9 $i ; done
+killall chrome
+for i in $(ps x | grep chrome | cut -d"?" -f1 | grep -v chrome); do kill -9 $i ; done
+
+
+ps aux | grep chrome | awk ' { print $2 } ' | xargs kill -9
+pgrep chrome | xargs kill -9
+ps aux | awk '/chrome/ { print $2 } ' | xargs kill -9
