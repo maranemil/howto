@@ -35,3 +35,44 @@ ABC |           3719530466 | BNM
 ABC |           5929822460 | BNM
 ABC |            493854404 | BNM
 */
+
+
+
+
+// add files to zip
+http://php.net/manual/de/ziparchive.addfile.php
+
+$z = new ZipArchive();
+if(true === ($z->open('./foo.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE))){
+    $z->setArchiveComment('Interesting!');
+    $z->addFromString('domain.txt', 'wuxiancheng.cn');
+    $folder = './test';
+    !is_dir($folder) && mkdir($folder); // Create an folder for testing
+    if(true === $z->addFile($folder)){
+        echo 'success'; // !!!
+    }
+    rmdir($folder);
+    $z->close();
+    // foo.zip will NOT be saved on disk.
+    // If foo.zip already exists before we run this script, the file will remain unchanged.
+}
+
+
+
+if (!class_exists('ZipArchive')) {
+    //$myclass = new MyClass();
+    die("Installation cannot continue! <br/> Please check if server has ZipArchive installed! ");
+}
+
+// # READ ZIP FILES AND DO A LIST
+$za = new ZipArchive();
+$za->open($unzip_dir);
+for( $i = 0; $i < $za->numFiles; $i++ ){
+    $stat = $za->statIndex( $i );
+    //print "<pre>";
+    //print_r( basename( $stat['name'] ) . PHP_EOL );
+    if(!preg_match('/svn|post_execute|post_uninstall|pre_execute|pre_uninstall|manifest.php/',$stat['name'])){
+        $arZipData[]  = $stat['name'];
+    }
+    //print "</pre>";
+}
