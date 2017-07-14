@@ -33,6 +33,33 @@ https://bugs.launchpad.net/openastro.org/+bug/1551488
 java -jar batik-rasterizer.jar -scriptSecurityOff -bg 255.255.0.255 -m image/png -w 100 -dpi 72 -d $tmpFile $svgFile
 convert -background magenta -density 100 -resize 150x $svgDPFile $tmpDPFile
 
+
+
+
+
+convert -strip -profile ../USWebCoatedSWOP.icc 0054620.psd -profile ../RGB_Profiles/AdobeRGB1998.icc 0054620rgb.jpg
+
+
+https://stackoverflow.com/questions/29847486/imagick-unable-to-assign-or-convert-color-profile
+identify -verbose fullSize_MK3L7748.jpg | grep icc
+identify -verbose test_blackScaled.jpg | grep icc
+
+--
+
+$image = new Imagick("fullSize_MK3L7748.jpg");
+
+// This isn't required - but it could be used
+// $image->transformImageColorspace(\Imagick::COLORSPACE_SRGB);
+
+$profile = file_get_contents("sRGB_IEC61966-2-1_black_scaled.icc");
+$image->profileImage("icc", $profile);
+$image->writeImage("test_blackScaled.jpg");
+
+
+
+
+
+
 ------------------------------------------------------------------
 
 avconv -threads 0 -i 00000.MTS -target ntsc-dvd -qscale 0 -deinterlace -s hd1080 00000.mpg
