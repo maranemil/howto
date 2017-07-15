@@ -1,0 +1,173 @@
+-------------------------------------------------------------------
+How do I find all files containing specific text on Linux?
+-------------------------------------------------------------------
+
+grep -rnw '/path/to/somewhere/' -e 'pattern'
+grep --include=\*.{c,h} -rnw '/path/to/somewhere/' -e "pattern"
+grep --exclude=*.o -rnw '/path/to/somewhere/' -e "pattern"
+grep --exclude-dir={dir1,dir2,*.dst} -rnw '/path/to/somewhere/' -e "pattern"
+grep -Ril "text-to-find-here" /
+grep -r "string to be searched"  /path/to/dir
+
+find . -name '*.js' -exec grep -i 'string to search for' {} \; -print
+find / -type f | xargs grep 'text-to-find-here'
+find / -type f -exec grep -l "text-to-find-here" {} \;
+find . -name "*.txt" | xargs grep -i "text_pattern"
+find / -type f -exec grep -H 'text-to-find-here' {} \;
+find . -type f -name some_file_name.xml -exec grep -H PUT_YOUR_STRING_HERE {} \;
+find / -type f -exec grep -sH 'text-to-find-here' {} \; 2>/dev/null
+
+grep -inr "Text" folder/to/be/searched/
+
+
+grep "text string to search” directory-path
+grep [option] "text string to search” directory-path
+grep -r "text string to search” directory-path
+grep -r -H "text string to search” directory-path
+egrep -R "word-1|word-2” directory-path
+egrep -w -R "word-1|word-2” directory-path
+
+---------------------------------------------------------
+How can I copy files with duplicate filenames into one directory and retain both files by having the duplicate(s) rename automatically?
+---------------------------------------------------------
+
+cp --backup=existing --suffix=.orig ~/Music/* ~/Videos
+cp -R --backup=existing --suffix=.orig ~/Music ~/Videos
+cp --backup=existing --suffix=.orig ~/Music/* ~/Videos
+
+#!/bin/bash
+cp -vn "$1" "$2"/ || cp -vn "$1" "$2"/"${1##*/}"~"$(md5sum "$1" | cut -f1 -d' ')"
+find . -name 'z*.jpg' -exec ./saveCopy {} /tmp/Extracted/ \;
+
+---------------------------------------------------------------
+How do I find all files containing specific text on Linux?
+---------------------------------------------------------------
+
+grep -rnw '/path/to/somewhere/' -e 'pattern'
+grep --include=\*.{c,h} -rnw '/path/to/somewhere/' -e "pattern"
+grep --exclude=*.o -rnw '/path/to/somewhere/' -e "pattern"
+grep --exclude-dir={dir1,dir2,*.dst} -rnw '/path/to/somewhere/' -e "pattern"
+grep -Ril "text-to-find-here" /
+grep -r "string to be searched"  /path/to/dir
+
+
+find . -name '*.js' -exec grep -i 'string to search for' {} \; -print
+find / -type f -exec grep -l "text-to-find-here" {} \;
+find . -name "*.txt" | xargs grep -i "text_pattern"
+find / -type f -exec grep -H 'text-to-find-here' {} \;
+find / -type f -exec grep -H 'text-to-find-here' {} \;
+
+
+grep "text string to search” directory-path
+grep [option] "text string to search” directory-path
+grep -r "text string to search” directory-path
+grep -r -H "text string to search” directory-path
+egrep -R "word-1|word-2” directory-path
+egrep -w -R "word-1|word-2” directory-path
+
+-------------------------------------------------------
+How to copy files
+-------------------------------------------------------
+
+rsync -r source/ destination
+cp -r ~/folder1/. ~/new_folder1
+cp -avr /home/vivek/letters /usb/backup
+
+scp /path/to/file/* user@server:/path/to/files/
+scp /path/to/*/* user@server:/path/to/files/
+
+-------------------------------------------------------
+How can you move (or copy) all files of a certain type to a directory in Unix?
+--------------------------------------------------------
+
+find source -name "*.xxx" -exec mv -i {} -t ~/dst \;
+find source -name "*.xxx" -exec mv -i -t ~/dst {} +
+find . -name '*.xxx' -exec mv -i {} ~/new-directory \;
+find . -name '*.xxx' -exec cp -iv --parents -t /path/to/target_dir {} +
+find . -name '*.xxx' -exec sh -c 'mv -i "$@" "$0"' ~/new-directory {} +
+
+-----------------------------------------------------
+Finding multiple files recursively and renaming in linux
+------------------------------------------------------
+
+find . -iname "*dbg*" -exec rename _dbg.txt .txt '{}' \;
+
+#!/bin/bash
+for file in $(find /tmp -name '*.txt') do mv $file $(echo "$file" | sed -r 's|.txt|.cpp|g') done
+
+find -iname \*.* | rename -v "s/ /-/g"
+find /tmp -name "*.txt" -exec bash -c 'mv $0 $(echo "$0" | sed -r \"s|.txt|.cpp|g\")' '{}' \;
+
+
+---------------------------------------------
+Linux: create random directory/file hierarchy
+---------------------------------------------
+
+mkdir -p {a,b}/{e,f,g}/{h,i,j}
+
+
+----------------------------------------------
+How to count all the lines of code in a directory recursively?
+----------------------------------------------
+
+find . -name '*.php' | xargs wc -l
+find . -name '*.php' -o -name '*.inc' | xargs wc -l
+find . -name "*.php" -not -path "./tests*" | xargs wc -l
+( find ./ -name '*.php' -print0 | xargs -0 cat ) | wc -l
+find -name '*.php' | xargs cat | wc -l
+
+find . -type f -exec wc -l {} \; | awk '{ SUM += $0} END { print SUM }'
+find . -name *.py -exec wc -l {} \; | awk '{ SUM += $0} END { print SUM }'
+find . -name '*.php' -type f -exec cat -- {} + | wc -l
+
+
+find . -name '*.php' -type f | xargs wc -l # Lines in each file
+find . -name '*.php' -type f | sort | xargs wc -l # Lines in each file, sorted by file path
+find . -name '*.php' -type f | xargs wc -l | sort -nr # Lines in each file, sorted by number of lines, descending
+find . -name '*.php' -type f | xargs cat | wc -l # total lines in all files
+
+wc `find | grep .php$`
+
+
+----------------------------------------
+recursively add file extension to all files
+----------------------------------------
+
+find . -type f -exec mv '{}' '{}'.jpg \;
+find /path -type f -not -name "*.*" -exec mv "{}" "{}".jpg \;
+find /path -type f -not -name "*.*" -print0 | xargs -0 rename 's/(.)$/$1.jpg/'
+for f in $(find . -type f); do mv $f ${f}.jpg; done
+
+
+
+-------------------------------------
+Add prefix to all files (recursive)
+-------------------------------------
+
+find . -name '*.jpg' -printf "'%p' '%h/thumb_%f'\n" | xargs -n2  echo mv
+find . -name \*.jpg -print0 | perl -MFile::Basename -0nle 'rename $_, dirname($_)."/thumb_".basename($_)'
+find . -iname \*.JPG -exec bash -c 'mv "$1" "`echo $1 | sed \"s/\(.*\)\//\1\/thumb/\"`"' -- '{}' \;
+
+for file in *.JPG; do mv $file thumb_$file; done
+for file in $(find . -name '*.JPG'); do mv $file $(dirname $file)/thumb_$(basename $file); done
+
+# test
+mkdir test test/a test/a/b test/a/b/c
+touch test/a/A.JPG test/a/b/B.JPG test/a/b/c/C.JPG
+cd test
+for file in $(find . -name '*.JPG'); do mv $file $(dirname $file)/thumb_$(basename $file); done
+find .
+
+
+rename 's/(\w{1})\.JPG$/thumb_$1\.JPG/' `find . -type f -name *.JPG`
+
+find . -iname "*.jpg"  -print | while read name; do cur_dir=$(dirname "$name"); cur_file=$(basename "$name"); mv "$name" "$cur_dir/thumb_$cur_file"; done
+
+
+------------------------------------
+How do I merge one directory into another using Bash?
+-------------------------------------
+
+rsync --recursive html/ html_new/
+rsync --av /path/to/source_folder/ /path/to/destination_folder/
+
