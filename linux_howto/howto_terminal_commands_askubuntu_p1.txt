@@ -211,3 +211,83 @@ echo $(( ( RANDOM % 10 )  + 1 ))
 echo $RANDOM % 10 + 1 | bc
 r=$(( $RANDOM % 10 + 40 )); echo $r # range 40 - 49
 
+echo date +%S%N|md5sum # f163a06dc98d52597edcaad926da13bb
+echo date +%S%N # 00135508410 - same length
+echo $RANDOM % 10 + 1 | bc
+echo $RANDOM | tr '[0-9]' '[a-zA-Z]'
+printf "%x"$(($RANDOM%169))
+date +%s | sha256sum | base64 | head -c 32; echo
+date +%s | sha256sum | base64 | head -c 12; echo
+date +%s | sha256sum |  head -c 12; echo # 12 length
+date | md5sum
+openssl rand -base64 32
+echo $(for((i=1;i<=13;i++)); do printf '%s' "${RANDOM:0:1}"; done)
+for i in {0..31}; do string+=$(printf "%x" $(($RANDOM%16)) ); done; echo $string
+
+####################
+#
+# rename
+#
+####################
+
+# https://www.howtogeek.com/howto/30184/10-ways-to-generate-a-random-password-from-the-command-line/
+# https://www.cyberciti.biz/tips/renaming-multiple-files-at-a-shell-prompt.html
+POSIX shell rename all *.bak to *.txt
+Use bash shell for loop as follows:
+for j in *.bak; do mv -- "$j" "${j%.bak}.txt"; done
+for j in *.bak; do mv -v -- "$j" "${j%.bak}.txt"; done
+
+
+$ rename -v 's/\.JPG$/\.jpg/' *.JPG # 00001111.JPG renamed as 00001111.jpg
+rename -n 's/(\d{8})\.JPG$/BeachPics_$1\.jpg/' *.JPG # 00001111.JPG renamed as BeachPics_00001111.jpg
+rename -n 's/\d{5}(\d{3})\.JPG$/BeachPics_$1\.jpg/' *.JPG # 00000123.JPG renamed as BeachPics_123.jpg
+
+$ N=1; for i in *.mp3; do echo mv $i TRACK_$N.mp3; N=$[N+1]; done
+find /home/share2/TV_Series/ -name '[NAME]-S[0-9][0-9]E[0-9][0-9][EPISODE NAME].avi -exec mv {} [NAME]-S[0-9][0-9]E[0-9][0-9].avi
+rename 's/the.simpsons.03x/TS-S03E/' *.avi
+
+######################
+#
+# bash
+#
+#######################
+
+#!/bin/sh
+
+filePrefix="$1"
+sequence=1
+
+for file in $(ls -tr *.jpg) ; do
+    renamedFile="$filePrefix$sequence.jpg"
+    echo $renamedFile
+    currentFile="$(echo $file)"
+    echo "renaming \"$currentFile\" to $renamedFile"
+    mv "$currentFile" "$renamedFile"
+    sequence=$(($sequence+1))
+done
+exit 0
+
+...
+
+#!/bin/bash
+
+if [ "$1" ]
+then
+  label="$1"
+else
+  echo missing parameter \(label\)
+  exit 1
+fi
+
+for f in *.mp3
+do
+  if [ $( echo "$f" | grep -E -c '[0-9]+\.mp3$' ) == "0" ]
+  then
+    echo $f - skipped, track number not found
+    continue
+  fi
+  i=${f%.mp3}
+  i=${i##*[^0-9]}
+  mv -v "$f" "$label"-$( printf '%02g' $i ).mp3
+done
+
