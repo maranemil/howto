@@ -105,6 +105,95 @@ worker.postMessage(); // Start the worker.
 
 
 
+
+
+##################################################
+#
+# Why are simple SELECTs on InnoDB 100x slower than on MyISAM
+#
+##################################################
+
+SELECT importthreadid,importpostid FROM newbb_innopost PROCEDURE ANALYSE();
+
+innodb_read_io_threads = 64
+innodb_write_io_threads = 16
+innodb_log_buffer_size = 256M
+query_cache_size = 0
+innodb_buffer_pool_dump_at_shutdown=1
+innodb_buffer_pool_load_at_startup=1
+innodb_purge_threads = 4
+
+IGNORE INDEX()
+EXPLAIN SELECT Name FROM City IGNORE INDEX (Name) WHERE name="Helsingborg" AND countrycode="SWE";
+
+SELECT CONCAT(ROUND(KBS/POWER(1024,
+IF(PowerOf1024<0,0,IF(PowerOf1024>3,0,PowerOf1024)))+0.4999),
+SUBSTR(' KMG',IF(PowerOf1024<0,0,
+IF(PowerOf1024>3,0,PowerOf1024))+1,1))
+recommended_key_buffer_size FROM
+(SELECT LEAST(POWER(2,32),KBS1) KBS
+FROM (SELECT SUM(index_length) KBS1
+FROM information_schema.tables
+WHERE engine='MyISAM' AND
+table_schema NOT IN ('information_schema','mysql')) AA ) A,
+(SELECT 2 PowerOf1024) B;
+
+SELECT CONCAT(ROUND(KBS/POWER(1024,
+IF(PowerOf1024<0,0,IF(PowerOf1024>3,0,PowerOf1024)))+0.49999),
+SUBSTR(' KMG',IF(PowerOf1024<0,0,
+IF(PowerOf1024>3,0,PowerOf1024))+1,1)) recommended_innodb_buffer_pool_size
+FROM (SELECT SUM(data_length+index_length) KBS FROM information_schema.tables
+WHERE engine='InnoDB') A,
+(SELECT 2 PowerOf1024) B;
+
+CAVEAT
+
+At the End of both queries is a an Inline Query (SELECT 2 PowerOf1024) B
+(SELECT 0 PowerOf1024) gives the Setting in Bytes
+(SELECT 1 PowerOf1024) gives the Setting in Kilobytes
+(SELECT 2 PowerOf1024) gives the Setting in Megabytes
+(SELECT 3 PowerOf1024) gives the Setting in Gigabytes
+No powers less that 0 or greater than 3 is accepted
+
+SELECT count(*) AS c,
+       substring_index(domain_name, '.', -1) AS tld
+FROM domains_import
+       USE INDEX ()        -- use no indexes
+GROUP BY tld
+ORDER BY c DESC
+LIMIT 100 ;
+
+Benefits of the InnoDB memcached Plugin
+
+
+innodb_file_per_table=1
+innodb_buffer_pool_size = 1G
+thread_cache_size = 16;
+-- sysctl -w vm.swappiness=0
+-- sysctl -w vm.swappiness=1
+-- Max connections = 300
+-- skip-name-resolve
+query_cache_size = 64M
+tmp_table_size= 64M
+max_heap_table_size= 64M
+slow-query-log = 1
+slow-query-log-file = /var/lib/mysql/mysql-slow.log
+long_query_time = 1
+wait_timeout=60
+
+https://www.percona.com/blog/2006/06/09/why-mysql-could-be-slow-with-large-tables/
+https://dba.stackexchange.com/questions/75091/why-are-simple-selects-on-innodb-100x-slower-than-on-myisam
+https://dba.stackexchange.com/questions/1/what-are-the-main-differences-between-innodb-and-myisam/2194#2194
+https://dba.stackexchange.com/questions/1/what-are-the-main-differences-between-innodb-and-myisam/2194#2194
+https://dba.stackexchange.com/questions/66774/why-query-cache-type-is-disabled-by-default-start-from-mysql-5-6/66796#66796
+https://dev.mysql.com/doc/refman/5.6/en/innodb-memcached-benefits.html
+https://dba.stackexchange.com/questions/110707/how-can-i-force-mysql-to-ignore-all-indexes#110713
+https://dba.stackexchange.com/questions/110707/how-can-i-force-mysql-to-ignore-all-indexes
+https://mariadb.com/kb/en/mariadb/ignore-index/
+http://linuxpitstop.com/tips-to-improve-mariadb-performance/
+
+
+
 ---------------------------------//-----------------------------------------------
 
 Articles:
