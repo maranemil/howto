@@ -1,0 +1,129 @@
+INSERT INTO table SET id=3454,a='1', b='2' ON DUPLICATE KEY UPDATE a='4';
+INSERT IGNORE INTO table SET id=3454,a='1', b='2';
+REPLACE INTO table SET id=3454,a='1', b='2';
+
+
+INSERT INTO requests
+  (id, ctg, msg, nick, filled, dated, filldate)
+SELECT
+  NULL, 'urgent', 'Help!', 'Hermione', 'Y', NOW(), NOW()
+FROM
+  dual
+WHERE NOT EXISTS
+      ( SELECT *  FROM requests  WHERE (nick, msg) = ('Hermione', 'Help!') )
+  AND NOT EXISTS
+      ( SELECT *  FROM requests  WHERE (ctg, msg) = ('urgent', 'Help!') ) ;
+
+
+INSERT INTO user
+  (ID, Name, Surname)
+VALUES
+  (1, 'John', 'Conor'),
+  (2, 'Foo',  'Bar'),
+  (3, 'Foo',  'Baz')
+ON DUPLICATE KEY UPDATE
+  Name = VALUES(Name),
+  Surname = VALUES(Surname) ;
+
+
+
+INSERT INTO `netflow`.`Month` (`Year`, `Month`, `Day`, `Hour`, `srcaddr`,`dstaddr`, `doctets`)
+(
+  SELECT
+    YEAR( FROM_UNIXTIME(  `unix_secs` ) ) AS `YEAR`,
+    MONTH( FROM_UNIXTIME(  `unix_secs` ) ) AS `MONTH`,
+    DAYOFMONTH( FROM_UNIXTIME(  `unix_secs` ) ) AS `DAY`,
+    HOUR( FROM_UNIXTIME(  `unix_secs` ) ) AS `HOUR`,
+    `srcaddr` ,
+    `dstaddr` ,
+    `doctets`
+  FROM  `netflow`.`raw`
+    WHERE `unix_secs` <= 1394179200
+  GROUP BY
+    `YEAR`,
+    `MONTH`,
+    `DAY`,
+    `HOUR`,
+    `srcaddr`,
+    `dstaddr`
+)
+ON DUPLICATE KEY UPDATE SET col_name1 = val1, col_name2 = val2
+
+
+
+REPLACE INTO `netflow`.`Month` (`Year`, `Month`, `Day`, `Hour`, `srcaddr`,`dstaddr`, `doctets`)
+(
+  SELECT
+    YEAR( FROM_UNIXTIME(  `unix_secs` ) ) AS `YEAR`,
+    MONTH( FROM_UNIXTIME(  `unix_secs` ) ) AS `MONTH`,
+    DAYOFMONTH( FROM_UNIXTIME(  `unix_secs` ) ) AS `DAY`,
+    HOUR( FROM_UNIXTIME(  `unix_secs` ) ) AS `HOUR`,
+    `srcaddr` ,
+    `dstaddr` ,
+    `doctets`
+  FROM  `netflow`.`raw`
+    WHERE `unix_secs` <= 1394179200
+  GROUP BY
+    `YEAR`,
+    `MONTH`,
+    `DAY`,
+    `HOUR`,
+    `srcaddr`,
+    `dstaddr`
+)
+
+
+
+
+
+
+INSERT INTO params
+  (extension, type, subtype, paramvalue)
+SELECT 1234567, 'TEST', 'TEST2', '24268'
+FROM dual
+WHERE NOT EXISTS
+  ( SELECT 1
+    FROM params_exceptions t
+    WHERE extension = 1234567
+      AND type = 'FRNR1'
+      AND subtype = 'FORWARD'
+  )
+ON DUPLICATE KEY UPDATE
+  paramvalue = VALUES (extension) ;
+
+
+
+
+SELECT a.userid
+FROM ratings AS a
+WHERE EXISTS (
+      SELECT 1
+      FROM ratings AS b
+      WHERE b.userid = :user
+        AND a.userid <> b.userid
+        AND a.showid = b.showid
+)
+GROUP BY a.userid
+HAVING COUNT(1) > 4
+
+
+INSERT IGNORE INTO mytable
+    (primaryKey, field1, field2)
+VALUES
+    ('abc', 1, 2),
+    ('def', 3, 4),
+    ('ghi', 5, 6);
+
+
+INSERT INTO tb_throttle (_remote_addr,_dayinyear,_pageviews)
+VALUES("142.134.157.11",106,1) ON DUPLICATE KEY UPDATE _pageviews = _pageviews + 1
+
+https://www.electrictoolbox.com/mysql-insert-ignore/
+https://dev.mysql.com/doc/refman/5.7/en/insert-select.html
+https://dev.mysql.com/doc/refman/5.5/en/insert-on-duplicate.html
+http://www.phpundmysql.de/2012/03/28/upsert-in-mysql-insert-on-duplicate-key-update/
+http://blog.mixable.de/mysql-insert-%E2%80%A6-on-duplicate-key-update/
+https://www.electrictoolbox.com/mysql-insert-ignore/
+http://www.use-blog.de/datenbanksysteme/mysql-datenbanksysteme/mysql-einfugen-bei-vorhandenen-datensatzen-insert-ignore/
+
+--
