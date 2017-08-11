@@ -1,0 +1,126 @@
+###################################################
+#
+# Automating the scanning of graphics files for corruption
+#
+###################################################
+
+# https://superuser.com/questions/276154/automating-the-scanning-of-graphics-files-for-corruption
+
+jpeginfo -c 123.jpg
+http://www.kokkonen.net/tjko/src/man/jpeginfo.txt
+http://www.kokkonen.net/tjko/projects.html#jpeginfo
+
+
+identify -verbose -regard-warnings my_file.jpg >/dev/null && echo File is OK. || echo File is corrupted.
+find . -name \*.jpg -exec identify -verbose -regard-warnings {} >/dev/null "+"
+
+=====================
+perl
+=====================
+
+use Image::Magick;
+
+open(BROKEN, ">>brokenf.txt");  # Open for appending
+open(OK, ">>okf.txt");  # Open for appending
+$list='f.txt';
+open(TOSORT, $list) or die("Could not open  file.");
+foreach $pic (<TOSORT>)  {
+    chomp($pic);
+    $p = new Image::Magick;
+    $s = 0;
+    $error = $p->Read($pic);
+        if ($error) {print BROKEN $pic . "\n";
+                   }
+           else {
+                  print OK $pic . "\n";
+                }
+    }
+close(TOSORT);
+close(BROKEN);
+close(OK);
+    }
+
+close(TOSORT);
+close(BROKEN);
+close(OK);
+
+
+
+=====================
+Python
+=====================
+
+# brew update && brew install imagemagick
+
+import os
+from subprocess import Popen, PIPE
+
+def checkImage(fn):
+    proc = Popen(['identify', '-verbose', fn], stdout=PIPE, stderr=PIPE)
+    out, err = proc.communicate()
+    exitcode = proc.returncode
+
+    return exitcode, out, err
+
+for directory, subdirectories, files in os.walk('/Your/Path/To/Files/'):
+    for file in files:
+        filePath = os.path.join(directory, file)
+        code, output, error = checkImage(filePath)
+        if code != 0 or error != '':
+            print(str(code)+' '+error)
+            #os.remove(filePath)
+
+
+
+
+
+###################################################
+#
+#	Validate/verify PDF files integrity
+#
+###################################################
+
+https://superuser.com/questions/773343/validate-verify-pdf-files-integrity?noredirect=1&lq=1
+https://superuser.com/questions/580887/check-if-pdf-files-are-corrupted-using-command-line-on-linux?noredirect=1&lq=1
+
+
+
+
+# bash script:
+
+for file in $(find . -iname "*.pdf")
+do
+    echo "$file"
+    pdfinfo "$file" 2>&1 | grep -i 'error' &> /dev/null
+    if [ $? == 0 ]; then
+       echo "broken -> try to fix"
+       cpdf -i "$file" -o "$file"_.pdf
+    fi
+done
+
+--
+
+for f in *.pdf; do
+  if pdfinfo "$f" > /dev/null; then
+    : Nothing
+  else
+    echo "$f" is broken
+  fi
+done
+
+--
+
+find . -iname '*.pdf' | while read -r f
+  do
+    if pdftotext "$f" &> /dev/null; then
+        echo "$f" was ok;
+    else
+        mv "$f" "$f.broken";
+        echo "$f" is broken;
+    fi;
+done
+
+
+--
+
+for x in *.pdf; do echo "$x"; pdfinfo "$x" | grep Pages; done
