@@ -303,3 +303,175 @@ pdftops \
 
 /path/to/optimize_pdf.sh -s input.pdf -o output.pdf
 ------------------
+
+
+
+
+
+#############################
+#
+#	ImageMagick Options
+#
+#############################
+
+http://xahlee.info/img/imagemagic.html
+http://www.imagemagick.org/Usage/compose/#blend_use
+https://www.imagemagick.org/script/command-line-options.php#linear-stretch
+https://www.imagemagick.org/script/command-line-options.php
+
+
+sudo apt-get install imagemagick
+sudo apt-get install graphicsmagick # for GraphicsMagick, just add gm  in front of the command.
+
+
+convert p1.gif p2.png # convert
+convert -scale 50% -quality 80% old.png new.jpg # scale and compress
+convert -trim cat.png cat.png #
+convert -crop 853x368+0+56 old.png new.png # crop
+convert -modulate 150,100,100 old.png new.png # increase brightness
+convert -modulate 100,130,100 old.png new.png # increase saturation
+convert -flatten old.png new.png # replace transparency/alpha with white
+convert -type Grayscale old.png new.png # change color image to gray scale
+convert -depth 8 old.png new.png #  reduce bits per pixel
+convert -dither -colors 256 old.png new.png # reduce colors
+convert -sharpen 2 old.png new.png # sharpen a image
+convert -blur 1 old.png new.png #  blur a image
+
+convert -fill red -draw 'text 20 20 "© 2006 example.com"' old.png new.png # insert copyright notice
+# Use -gravity SouthEast -font helvetica to put the text in other corners, and change font.
+composite -watermark {argument}  -gravity South  sphinx.gif  cyclops.gif   {result}
+
+convert -border 1 -bordercolor black cat.png cat2.png #  add a border
+convert -rotate 90 x.png x.png # rotate a image
+
+# left/right flip
+convert -flop x.png x.png
+
+# up/down flip
+convert -flip x.png x.png
+
+# join images vertically
+convert x1.png x2.png x3.png -append out.png
+
+# join images horizontally
+convert x1.png x2.png x3.png +append out.png
+
+batch process
+find . -name "*png" | xargs -l -i basename "{}" ".png" | xargs -l -i  convert -quality 85% "{}.png" "{}.jpg"
+
+
+########################################
+#
+#	CSS3 filter Property - W3Schools
+#
+########################################
+
+https://www.w3schools.com/cssref/css3_pr_filter.asp
+https://www.w3schools.com/cssref/playit.asp?filename=playcss_filter&preval=saturate(8)
+
+
+CSS Property:
+filter:
+
+blur(5px)
+brightness(200%)
+contrast(200%)
+drop-shadow(8px 8px 10px red)
+grayscale(100%)
+hue-rotate(90deg)
+invert(100%)
+opacity(30%)
+saturate(8)
+sepia(100%)
+contrast(200%) brightness(150%)
+none
+
+........
+
+<script>
+
+setTimeout(function(){
+	$("img").css({ "filter":"saturate(1.5) contrast(135%)"});
+},1500)
+
+$(document).click(function(){
+	setTimeout(function(){
+		$("img").css({ "filter":"saturate(1.5) contrast(135%)"});
+	},1000)
+});
+</script>
+
+
+
+
+###################################
+#
+# GhostScript
+#
+###################################
+
+
+convert input.tif[0] -density 600 -alpha Off -size 5809x9408 -depth 16 intermediate.ps
+convert input.tif[0] -density 600 -alpha Off -size 5809x9408 -depth 16 intermediate.ps
+gs -dPDFA=1 -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sDefaultRGBProfile=AdobeRGB1998.icc -dOverrideICC -sOutputFile=output.pdf -r600 -P PDFA_def.ps -f custom.joboptions intermediate.ps
+
+gs -dSAFER -dBATCH -dNOPAUSE -sDEVICE=png16m -dGraphicsAlphaBits=4 -sOutputFile=page_%02d.png brochure.ps convert brochure.ps im_page_%02d.png
+gs -sDEVICE=pngalpha -sOutputFile=cover.png -r144 cover.pdf
+gs -dNOPAUSE -dBATCH -sDEVICE=pngalpha -r72 -sOutputFile=test.png test.pdf
+
+gs -sDEVICE=png16m -dTextAlphaBits=4 -r300 -o a.png a.pdf
+gs -sDEVICE=jpeg -dTextAlphaBits=4 -r300 -o a.jpg a.pdf
+
+sDEVICE={jpeg,pngalpha,png16m...} - filetype
+-o - output file (%stdout to stdout)
+-dTextAlphaBits=4 - font antialiasing.
+-r300 - 300 dpi
+
+
+gs -sDEVICE=pngalpha       \
+   -o %stdout              \
+   -r144 cover.pdf         \
+   |                       \
+convert                    \
+   -background transparent \
+   -                       \
+    cover.png
+
+gs -sDEVICE=pngalpha -o file-%03d.png -r144 cover.pdf
+
+
+for i in {1..100}; do        \
+                             \
+  gs -sDEVICE=pngalpha       \
+     -dFirstPage="${i}"      \
+     -dLastPage="${i}"       \
+     -o %stdout              \
+     -r144 input.pdf         \
+     |                       \
+  convert                    \
+     -background transparent \
+     -                       \
+      page-${i}.png ;        \
+                             \
+done
+
+
+inkscape "$pdf" -z --export-dpi=600 --export-area-drawing --export-png="$pngfile"
+
+#!/bin/bash
+
+while [ $# -gt 0 ]; do
+
+pdf=$1
+echo "Converting "$pdf" ..."
+pngfile=`echo "$pdf" | sed 's/\.\w*$/.png/'`
+inkscape "$pdf" -z --export-dpi=600 --export-area-drawing --export-png="$pngfile"
+echo "Converted to "$pngfile""
+shift
+
+done
+
+echo "All jobs done. Exiting."
+
+
+
