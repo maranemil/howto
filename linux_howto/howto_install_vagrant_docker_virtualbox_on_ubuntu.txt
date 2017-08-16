@@ -132,3 +132,186 @@ http://foorious.com/devops/vagrant-virtualbox-trusty-install/
 
 # Install the Docker client on your Raspberry Pi with just one terminal command:
 curl -sSL get.docker.com | sh
+
+
+=============================================================================================================
+
+#####################################################
+#
+# Docker - run containers
+#
+#####################################################
+
+https://docs.docker.com/compose/install/#install-using-pip
+
+https://hub.docker.com/_/jenkins/
+https://hub.docker.com/r/linuxserver/apache/
+
+https://medium.com/@webnugget/setup-a-costeffective-autoscaling-ci-solution-with-gitlab-ci-5a6ac52a5baa
+
+https://docs.gitlab.com/ce/
+https://docs.docker.com/compose/gettingstarted/#step-2-create-a-dockerfile
+
+
+// install jenkins
+
+docker run -p 8080:8080 -p 50000:50000 jenkins
+This will store the workspace in /var/jenkins_home. All Jenkins data lives in there - including plugins and configuration. You will probably want to make that a persistent volume (recommended):
+
+docker run -p 8080:8080 -p 50000:50000 -v /your/home:/var/jenkins_home jenkins
+This will store the jenkins data in /your/home on the host. Ensure that /your/home is accessible by the jenkins user in container (jenkins user - uid 1000) or use -u some_other_user parameter with docker run.
+
+use a volume container:
+docker run --name myjenkins -p 8080:8080 -p 50000:50000 -v /var/jenkins_home jenkins
+
+#sudo docker run -dit --name my-apache-app -v "$PWD":/usr/local/apache2/htdocs/ httpd:2.4
+
+sudo docker create --name="apache" -p 80:80 -p 443:443 -v /path/to/config:/config linuxserver/apache
+
+docker pull gitlab/gitlab-ce
+docker pull gitlab/gitlab-ce
+
+
+
+
+// install gitlab
+
+We use this in a production with hundreds of users:
+
+#/bin/bash -vx
+
+#Desired version, unless one provided as argument
+VERSION=${1:-'8.17.3-ce.0'}
+#VERSION='8.13.0-ce.0'
+#VERSION='latest'
+
+echo "Going to use: gitlab/gitlab-ce:${VERSION} "
+
+docker pull gitlab/gitlab-ce:${VERSION}
+docker stop gitlab
+docker rm gitlab
+
+#This is req. in case you use SELinux:
+chcon -Rt svirt_sandbox_file_t /storage/srv/gitlab/ || true
+#/proc/sys/fs/file-max #this is shared with the host
+GITLAB_FILEMAX=1000000
+[[ $(cat /proc/sys/fs/file-max) -lt ${GITLAB_FILEMAX} ]] && echo $GITLAB_FILEMAX > /proc/sys/fs/file-max
+
+# https://gitlab.com/gitlab-org/omnibus-gitlab/issues/1217 #mattermost docker containers
+# # --sysctl vm.overcommit_memory=1 \
+docker run --detach --name gitlab \
+ --hostname gitlab.corp.dontbeevil.com \
+ --sysctl net.core.somaxconn=1024 \
+ --ulimit sigpending=62793 \
+ --ulimit nproc=131072 \
+ --ulimit nofile=60000 \
+ --ulimit core=0 \
+ --publish 443:443 --publish 80:80 --publish 22:22 --publish 8060:8060 \
+ --restart always \
+ --env GITLAB_OMNIBUS_CONFIG="external_url 'https://gitlab.corp.dontbeevil.com/'; gitlab_rails['lfs_enabled'] = true; mattermost_external_url 'http://mattermost.corp.dontbeevil.com';" \
+ --volume /storage/srv/gitlab/config:/etc/gitlab:z \
+ --volume /storage/srv/gitlab/logs:/var/log/gitlab:z \
+ --volume /storage/srv/gitlab/data:/var/opt/gitlab:z \
+ --volume /etc/localtime:/etc/localtime \
+ gitlab/gitlab-ce:${VERSION}
+
+# --privileged is required in order to set proper ulimits somaxconn, fs.file-max, etc; from all these, only file-max influences host, rest are only at cont. level.
+# --ulimit sigpending=62793 --ulimit nproc=131072
+# we cannot mount /proc/sys/net/core/somaxconn inside container (docker error:  cannot be mounted because it is located inside "/proc" )
+# none of of capabilites help. We tried: docker run --ulimit sigpending=62793 --ulimit nproc=131072 --cap-add=CHOWN --cap-add=DAC_OVERRIDE --cap-add=FSETID --cap-add=FOWNER --cap-add=MKNOD --cap-add=NET_RAW --cap-add=SETGID --cap-add=SETUID --cap-add=SETFCAP --cap-add=SETPCAP --cap-add=NET_BIND_SERVICE --cap-add=SYS_CHROOT --cap-add=KILL --cap-add=AUDIT_WRITE gitlab/gitlab-ce
+
+# To remove --privileged we need docker 1.12+ where we can set sysctl parameters on docker run, like we can ulimit parameters now. Till then, we need --privileged.
+
+echo -e "waiting for services to start before checking status.
+So: sleeping 60 sec. \nFor startup status, if you want, you may want to ctrl+x and run: 'docker logs -f gitlab' or 'docker exec gitlab gitlab-ctl status' yourself."
+sleep 60
+docker exec gitlab gitlab-ctl status
+
+
+--------------
+
+https://hub.docker.com/r/sameersbn/gitlab/
+http://www.damagehead.com/docker-gitlab/
+
+// install gitlab
+
+docker pull sameersbn/gitlab:9.4.4
+You can also pull the latest tag which is built from the repository HEAD
+
+docker pull sameersbn/gitlab:latest
+Alternatively you can build the image locally.
+
+docker build -t sameersbn/gitlab github.com/sameersbn/docker-gitlab
+
+
+sudo docker run --name gitlab-postgresql -d \
+    --env 'DB_NAME=gitlabhq_production' \
+    --env 'DB_USER=gitlab' --env 'DB_PASS=password' \
+    --env 'DB_EXTENSION=pg_trgm' \
+    --volume /srv/docker/gitlab/postgresql:/var/lib/postgresql \
+    sameersbn/postgresql:9.6-2
+
+
+sudo docker run --name gitlab-redis -d \
+    --volume /srv/docker/gitlab/redis:/var/lib/redis \
+    sameersbn/redis:latest
+
+
+sudo docker run --name gitlab -d \
+    --link gitlab-postgresql:postgresql --link gitlab-redis:redisio \
+    --publish 10022:22 --publish 10080:80 \
+    --env 'GITLAB_PORT=10080' --env 'GITLAB_SSH_PORT=10022' \
+    --env 'GITLAB_SECRETS_DB_KEY_BASE=long-and-random-alpha-numeric-string' \
+    --env 'GITLAB_SECRETS_SECRET_KEY_BASE=long-and-random-alpha-numeric-string' \
+    --env 'GITLAB_SECRETS_OTP_KEY_BASE=long-and-random-alpha-numeric-string' \
+    --volume /srv/docker/gitlab/gitlab:/home/git/data \
+    sameersbn/gitlab:9.4.4
+
+
+
+-------------
+
+
+https://docs.gitlab.com/omnibus/docker/README.html
+
+sudo docker run --detach \
+    --hostname gitlab.example.com \
+    --publish 443:443 --publish 80:80 --publish 22:22 \
+    --name gitlab \
+    --restart always \
+    --volume /srv/gitlab/config:/etc/gitlab \
+    --volume /srv/gitlab/logs:/var/log/gitlab \
+    --volume /srv/gitlab/data:/var/opt/gitlab \
+    gitlab/gitlab-ce:latest
+
+
+
+
+SELinux then run this instead:
+
+sudo docker run --detach \
+    --hostname gitlab.example.com \
+    --publish 443:443 --publish 80:80 --publish 22:22 \
+    --name gitlab \
+    --restart always \
+    --volume /srv/gitlab/config:/etc/gitlab:Z \
+    --volume /srv/gitlab/logs:/var/log/gitlab:Z \
+    --volume /srv/gitlab/data:/var/opt/gitlab:Z \
+    gitlab/gitlab-ce:latest
+
+--------
+
+https://hub.docker.com/r/gitlab/gitlab-ce/~/dockerfile/
+https://hub.docker.com/r/robertofilho/gitlab-ce/
+
+sudo docker run --detach \
+    --publish 8443:443 --publish 8080:80 --publish 2222:22 \
+    --name gitlab \
+    --restart always \
+    --volume /srv/gitlab/config:/etc/gitlab \
+    --volume /srv/gitlab/logs:/var/log/gitlab \
+    --volume /srv/gitlab/data:/var/opt/gitlab \
+    gitlab/gitlab-ce:latest
+
+
+
