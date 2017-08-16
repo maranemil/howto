@@ -315,3 +315,443 @@ sudo docker run --detach \
 
 
 
+
+howto_install_vagrant_docker_virtualbox_on_ubuntu.txt
+
+
+
+
+
+
+
+
+
+https://hub.docker.com/explore/?page=10
+https://hub.docker.com/_/r-base/
+https://hub.docker.com/_/python/
+https://hub.docker.com/_/php/
+https://hub.docker.com/_/jenkins/
+https://hub.docker.com/_/mariadb/
+https://hub.docker.com/_/rabbitmq/
+https://hub.docker.com/_/kibana/
+https://hub.docker.com/_/cassandra/
+https://hub.docker.com/_/perl/
+https://hub.docker.com/_/elasticsearch/
+https://hub.docker.com/_/logstash/
+https://hub.docker.com/_/consul/
+https://hub.docker.com/_/nginx/
+https://hub.docker.com/_/redis/
+https://hub.docker.com/_/mysql/
+https://hub.docker.com/_/mongo/
+https://hub.docker.com/_/postgres/
+https://hub.docker.com/_/node/
+https://hub.docker.com/_/hello-world/
+https://hub.docker.com/_/httpd/
+https://hub.docker.com/_/memcached/
+
+
+------------------------------------
+memcached - docker pull memcached
+------------------------------------
+
+use image
+$ docker run --name my-memcache -d memcached
+
+connect you app to it with standard linking:
+$ docker run --link my-memcache:memcache -d my-app-image
+
+Set the memory usage for memcached
+$ docker run --name my-memcache -d memcached memcached -m 64
+
+------------------------------------
+docker pull httpd
+docker pull node
+------------------------------------
+
+docker run hello-world
+
+
+------------------------------------
+postgres - docker pull postgres
+------------------------------------
+
+connect to it from an application
+docker run --name some-app --link some-postgres:postgres -d application-that-uses-postgres
+
+or via psql
+docker run -it --rm --link some-postgres:postgres postgres psql -h postgres -U postgres
+psql (9.5.0)
+
+via docker stack deploy or docker-compose
+docker run -it --rm --user www-data postgres
+docker run -it --rm --user 1000:1000 postgres
+docker run -it --rm --user "$(id -u):$(id -g)" -v /etc/passwd:/etc/passwd:ro postgres
+
+docker volume create pgdata
+docker run -it --rm -v pgdata:/var/lib/postgresql/data postgres
+
+docker run -it --rm -v pgdata:/var/lib/postgresql/data bash chown -R 1000:1000 /var/lib/postgresql/data
+$ docker run -it --rm --user 1000:1000 -v pgdata:/var/lib/postgresql/data postgres
+
+
+------------------------------------
+elasticsearch - docker pull elasticsearch
+------------------------------------
+
+docker run -d elasticsearch
+docker run -d --name elas elasticsearch -Etransport.host=0.0.0.0 -Ediscovery.zen.minimum_master_nodes=1
+docker run -d elasticsearch -Des.node.name="TestNode"
+docker run -d -v "$PWD/config":/usr/share/elasticsearch/config elasticsearch
+docker run -d -v "$PWD/esdata":/usr/share/elasticsearch/data elasticsearch
+
+
+
+
+------------------------------------
+mongo - docker pull mongo
+------------------------------------
+start a mongo instance
+docker run --name some-mongo -d mongo
+
+connect to it from an application
+docker run --name some-app --link some-mongo:mongo -d application-that-uses-mongo
+
+or via mongo
+docker run -it --link some-mongo:mongo --rm mongo sh -c 'exec mongo "$MONGO_PORT_27017_TCP_ADDR:$MONGO_PORT_27017_TCP_PORT/test"'
+
+Configuration
+docker run --name some-mongo -d mongo --storageEngine wiredTiger
+docker run --name some-mongo -d mongo --auth
+docker exec -it some-mongo mongo admin
+docker run -it --rm --link some-mongo:mongo mongo mongo -u jsmith -p some-initial-password --authenticationDatabase admin some-mongo/some-db
+
+
+docker run --name some-mongo -v /my/own/datadir:/data/db -d mongo:tag
+
+------------------------------------
+mysql - docker pull mysql
+------------------------------------
+
+
+docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag
+
+Connect to MySQL from an application in another Docker container
+docker run --name some-app --link some-mysql:mysql -d application-that-uses-mysql
+
+Connect to MySQL from the MySQL command line client
+docker run -it --link some-mysql:mysql --rm mysql sh -c 'exec mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD"'
+docker run -it --rm mysql mysql -hsome.mysql.host -usome-mysql-user -p
+
+Container shell access and viewing MySQL logs
+docker exec -it some-mysql bash
+docker logs some-mysql
+docker run --name some-mysql -v /my/custom:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag
+
+Configuration without a cnf file
+docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+docker run -it --rm mysql:tag --verbose --help
+
+Environment Variables
+MYSQL_ROOT_PASSWORD - my-secret-pw
+MYSQL_DATABASE
+MYSQL_USER, MYSQL_PASSWORD
+MYSQL_ALLOW_EMPTY_PASSWORD
+MYSQL_RANDOM_ROOT_PASSWORD
+MYSQL_ONETIME_PASSWORD
+
+Docker Secrets
+docker run --name some-mysql -e MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql-root -d mysql:tag
+
+
+Where to Store Data
+docker run --name some-mysql -v /my/own/datadir:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag
+
+Creating database dumps
+docker exec some-mysql sh -c 'exec mysqldump --all-databases -uroot -p"$MYSQL_ROOT_PASSWORD"' > /some/path/on/your/host/all-databases.sql
+
+
+------------------------------------
+redis - docker pull redis
+------------------------------------
+docker run --name some-redis -d redis
+
+start with persistent storage
+docker run --name some-redis -d redis redis-server --appendonly yes
+
+connect to it from an application
+docker run --name some-app --link some-redis:redis -d application-that-uses-redis
+
+or via redis-cli
+docker run -it --link some-redis:redis --rm redis redis-cli -h redis -p 6379
+
+
+------------------------------------
+nginx - docker pull nginx
+------------------------------------
+docker run --name some-nginx -v /some/content:/usr/share/nginx/html:ro -d nginx
+docker run --name some-nginx -d some-content-nginx
+
+
+Exposing external port
+docker run --name some-nginx -d -p 8080:80 some-content-nginx
+
+Complex configuration
+docker run --name my-custom-nginx-container -v /host/path/nginx.conf:/etc/nginx/nginx.conf:ro -d nginx
+
+docker run --name tmp-nginx-container -d nginx
+docker cp tmp-nginx-container:/etc/nginx/nginx.conf /host/path/nginx.conf
+docker rm -f tmp-nginx-container
+docker run --name my-custom-nginx-container -d custom-nginx
+
+Running nginx in debug mode
+docker run --name my-nginx -v /host/path/nginx.conf:/etc/nginx/nginx.conf:ro -d nginx nginx-debug -g 'daemon off;'
+
+
+
+----------------------------------
+docker pull r-base
+----------------------------------
+
+Interactive R
+
+Launch R directly for interactive work:
+$ docker run -ti --rm r-base
+
+Batch mode
+docker run -ti --rm -v "$PWD":/home/docker -w /home/docker -u docker r-base R CMD check .
+
+docker run -ti --rm r-base /usr/bin/bash
+vim.tiny myscript.R
+Rscript myscript.R
+
+----------------------------------
+docker pull python
+----------------------------------
+
+Run a single Python script
+docker run -it --rm --name my-running-script -v "$PWD":/usr/src/myapp -w /usr/src/myapp python:3 python your-daemon-or-script.py
+
+ docker run -it --rm --name my-running-script -v "$PWD":/usr/src/myapp -w /usr/src/myapp python:2 python your-daemon-or-script.py
+
+----------------------------------
+docker pull php
+----------------------------------
+
+
+Create a Dockerfile in your PHP project
+docker run -it --rm --name my-running-app my-php-app
+
+Run a single PHP script
+docker run -it --rm --name my-running-script -v "$PWD":/usr/src/myapp -w /usr/src/myapp php:7.0-cli php your-script.php
+
+Create a Dockerfile in your PHP project
+docker build -t my-php-app .
+docker run -d --name my-running-app my-php-app
+
+Without a Dockerfile
+docker run -d -p 80:80 --name my-apache-php-app -v "$PWD":/var/www/html php:7.0-apache
+
+
+
+----------------------------------
+docker pull jenkins
+----------------------------------
+
+docker run -p 8080:8080 -p 50000:50000 jenkins
+
+with persistent volume (recommended):
+docker run -p 8080:8080 -p 50000:50000 -v /your/home:/var/jenkins_home jenkins
+
+use a volume container:
+docker run --name myjenkins -p 8080:8080 -p 50000:50000 -v /var/jenkins_home jenkins
+
+Backing up data
+docker cp $ID:/var/jenkins_home
+
+Passing JVM parameters
+docker run --name myjenkins -p 8080:8080 -p 50000:50000 --env JAVA_OPTS=-Dhudson.footerURL=http://mycompany.com jenkins
+
+docker run jenkins --version
+
+
+
+----------------------------------
+docker pull mariadb
+----------------------------------
+
+MariaDB instance is simple:
+docker run --name some-mariadb -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mariadb:tag
+
+Connect to MySQL from an application in another Docker container
+docker run --name some-app --link some-mariadb:mysql -d application-that-uses-mysql
+
+Connect to MariaDB from the MySQL command line client
+docker run -it --link some-mariadb:mysql --rm mariadb sh -c 'exec mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD"'
+
+This image can also be used as a client for non-Docker or remote MariaDB instances:
+docker run -it --rm mariadb mysql -hsome.mysql.host -usome-mysql-user -p
+
+Container shell access and viewing MySQL logs
+docker exec -it some-mariadb bash
+
+The MariaDB Server log is available through Docker's container log:
+docker logs some-mariadb
+
+Using a custom MySQL configuration file
+docker run --name some-mariadb -v /my/custom:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mariadb:tag
+
+Configuration without a cnf file
+docker run --name some-mariadb -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mariadb:tag --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+docker run -it --rm mariadb:tag --verbose --help
+
+
+Where to Store Data
+docker run --name some-mariadb -v /my/own/datadir:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mariadb:tag
+
+Creating database dumps
+docker exec some-mariadb sh -c 'exec mysqldump --all-databases -uroot -p"$MYSQL_ROOT_PASSWORD"' > /some/path/on/your/host/all-databases.sql
+
+
+----------------------------------
+docker pull rabbitmq
+----------------------------------
+
+Running the daemon
+docker run -d --hostname my-rabbit --name some-rabbit rabbitmq:3
+
+Erlang Cookie
+docker run -d --hostname my-rabbit --name some-rabbit -e RABBITMQ_ERLANG_COOKIE='secret cookie here' rabbitmq:3
+
+used from a separate instance to connect:
+docker run -it --rm --link some-rabbit:my-rabbit -e RABBITMQ_ERLANG_COOKIE='secret cookie here' rabbitmq:3 bash
+root@f2a2d3d27c75:/# rabbitmqctl -n rabbit@my-rabbit list_users
+
+Alternatively, one can also use RABBITMQ_NODENAME to make repeated rabbitmqctl invocations simpler:
+docker run -it --rm --link some-rabbit:my-rabbit -e RABBITMQ_ERLANG_COOKIE='secret cookie here' -e RABBITMQ_NODENAME=rabbit@my-rabbit rabbitmq:3 bash
+root@f2a2d3d27c75:/# rabbitmqctl list_users
+
+Management Plugin
+
+docker run -d --hostname my-rabbit --name some-rabbit rabbitmq:3-management
+
+You can access it by visiting http://container-ip:15672 in a browser or, if you need access outside the host, on port 8080:
+docker run -d --hostname my-rabbit --name some-rabbit -p 8080:15672 rabbitmq:3-management
+You can then go to http://localhost:8080 or http://host-ip:8080 in a browser.
+
+
+Setting default user and password
+docker run -d --hostname my-rabbit --name some-rabbit -e RABBITMQ_DEFAULT_USER=user -e RABBITMQ_DEFAULT_PASS=password rabbitmq:3-management
+
+Setting default vhost
+docker run -d --hostname my-rabbit --name some-rabbit -e RABBITMQ_DEFAULT_VHOST=my_vhost rabbitmq:3-management
+
+
+----------------------------------
+docker pull kibana
+----------------------------------
+
+How to use this image
+
+You can run the default kibana command simply:
+
+$ docker run --link some-elasticsearch:elasticsearch -d kibana
+
+You can also pass in additional flags to kibana:
+
+$ docker run --link some-elasticsearch:elasticsearch -d kibana --plugins /somewhere/else
+
+This image includes EXPOSE 5601 (default port). If you'd like to be able to access the instance from the host without the container's IP, standard port mappings can be used:
+
+$ docker run --name some-kibana --link some-elasticsearch:elasticsearch -p 5601:5601 -d kibana
+
+You can also provide the address of elasticsearch via ELASTICSEARCH_URL environnement variable:
+
+$ docker run --name some-kibana -e ELASTICSEARCH_URL=http://some-elasticsearch:9200 -p 5601:5601 -d kibana
+
+Then, access it via http://localhost:5601 or http://host-ip:5601 in a browser.
+
+
+
+----------------------------------
+docker pull cassandra
+----------------------------------
+
+docker run --name some-app --link some-cassandra:cassandra -d app-that-uses-cassandra
+
+Make a cluster
+docker run --name some-cassandra2 -d -e CASSANDRA_SEEDS="$(docker inspect --format='{{ .NetworkSettings.IPAddress }}' some-cassandra)" cassandra:tag
+
+Or you may use the docker run --link option to tell the new node where the first is:
+docker run --name some-cassandra2 -d --link some-cassandra:cassandra cassandra:tag
+
+Assuming the first machine's IP address is 10.42.42.42 and the second's is 10.43.43.43, start the first with exposed gossip port:
+
+$ docker run --name some-cassandra -d -e CASSANDRA_BROADCAST_ADDRESS=10.42.42.42 -p 7000:7000 cassandra:tag
+
+Then start a Cassandra container on the second machine, with the exposed gossip port and seed pointing to the first machine:
+
+$ docker run --name some-cassandra -d -e CASSANDRA_BROADCAST_ADDRESS=10.43.43.43 -p 7000:7000 -e CASSANDRA_SEEDS=10.42.42.42 cassandra:tag
+
+Connect to Cassandra from cqlsh
+docker run -it --link some-cassandra:cassandra --rm cassandra sh -c 'exec cqlsh "$CASSANDRA_PORT_9042_TCP_ADDR"'
+
+... or (simplified to take advantage of the /etc/hosts entry Docker adds for linked containers):
+
+$ docker run -it --link some-cassandra:cassandra --rm cassandra cqlsh cassandra
+
+... where some-cassandra is the name of your original Cassandra Server container.
+
+
+----------------------------------
+docker pull perl
+----------------------------------
+
+
+----------------------------------
+docker pull elasticsearch
+----------------------------------
+
+
+docker run -d --name elas elasticsearch -Etransport.host=0.0.0.0 -Ediscovery.zen.minimum_master_nodes=1
+
+Running Containers
+
+You can run the default elasticsearch command simply:
+
+$ docker run -d elasticsearch
+
+You can also pass in additional flags to elasticsearch:
+
+$ docker run -d elasticsearch -Des.node.name="TestNode"
+
+This image comes with a default set of configuration files for elasticsearch, but if you want to provide your own set of configuration files, you can do so via a volume mounted at /usr/share/elasticsearch/config:
+
+$ docker run -d -v "$PWD/config":/usr/share/elasticsearch/config elasticsearch
+
+This image is configured with a volume at /usr/share/elasticsearch/data to hold the persisted index data. Use that path if you would like to keep the data in a mounted volume:
+
+$ docker run -d -v "$PWD/esdata":/usr/share/elasticsearch/data elasticsearch
+
+This image includes EXPOSE 9200 9300 (default http.port), so standard container linking will make it automatically available to the linked containers.
+
+----------------------------------
+docker pull logstash
+----------------------------------
+
+
+Start Logstash with commandline configuration
+
+If you need to run logstash with configuration provided on the commandline, you can use the logstash image as follows:
+
+$ docker run -it --rm logstash -e 'input { stdin { } } output { stdout { } }'
+
+Start Logstash with configuration file
+
+If you need to run logstash with a configuration file, logstash.conf, that's located in your current directory, you can use the logstash image as follows:
+
+$ docker run -it --rm -v "$PWD":/config-dir logstash -f /config-dir/logstash.conf
+
+----------------------------------
+----------------------------------
+
+
