@@ -1,0 +1,255 @@
+
+
+#################################################################################
+Wi-Fi WLAN wireless home networking information  WifiDocs/WiFiHowTo
+#################################################################################
+
+https://help.ubuntu.com/community/WifiDocs/WiFiHowTo
+
+sudo apt-get install wireless-tools
+lspci | grep Network
+iwconfig
+sudo ip link set wlan0 up
+ping -n 4.2.2.2 -c 4
+ping google.com -c 4
+
+ip link set
+sudo ifdown eth0
+sudo ifup wlan0
+
+iwconfig wlan0 mode managed
+iwconfig wlan0 channel 11
+iwconfig wlan0 essid networkname
+
+ip addr
+
+
+
+
+sudo iwconfig wlan0 key FEFEFEFEFE # Encryption
+sudo nano -w /etc/network/interfaces
+
+auto wlan0
+iface wlan0 inet dhcp
+wireless-essid   MYNETWOTK
+wireless-key     FEFEFEFEFE
+wireless-channel 11
+wireless-mode    managed
+
+#################################################################################
+# How To Configure Wireless / WiFi Networking in Ubuntu via the Command Line (CLI)
+#################################################################################
+
+sudo apt-get install wireless-tools wpasupplicant
+sudo ifconfig wlan0 up
+iwconfig
+sudo iwlist scan
+# sudo nano /etc/network/interfaces
+# vim /etc/networking/interfaces
+
+https://prupert.wordpress.com/2010/06/25/how-to-configure-wireless-wifi-networking-in-ubuntu-via-the-command-line-cli/
+https://serverfault.com/questions/335994/creating-a-static-ip-with-wlan0
+
+ifdown wlan0
+ifup wlan0
+
+sudo /etc/init.d/networking restart
+
+
+https://unix.stackexchange.com/questions/137021/wifi-not-working-after-restoring-from-hibernation-authentication-times-out
+
+
+lshw -C network
+lsmod | grep iwlwifi
+sudo modprobe iwlwifi
+modinfo iwlwifi | grep dis
+sudo modprobe iwlwifi 11n_disable=1
+
+Run once (restarts the machine):
+
+echo "options iwlwifi 11n_disable=1" > /etc/modprobe.d/iwlwifi.conf
+/usr/sbin/update-initramfs -u
+reboot
+
+Then the following script must be re-run every time restoring from hibernation or booting the system.
+
+/bin/systemctl stop network-manager
+/sbin/modprobe -r iwldvm iwlwifi mac80211
+/bin/systemctl start network-manager
+/sbin/modprobe iwlwifi
+
+
+
+###############################################
+#
+#	why is ufw iptables blocking packets
+#
+###############################################
+
+http://www.linuxquestions.org/questions/linux-networking-3/why-is-ufw-iptables-blocking-packets-it-shouldn%27t-be-4175500239/
+http://www.linuxquestions.org/questions/linux-networking-3/why-is-ufw-iptables-blocking-packets-it-shouldnt-be-4175500239-print/
+
+
+
+alias dmesg="dmesg | sed '/UFW/d'"
+dmesg | sed '/UFW/d'
+dmesg
+
+
+
+# igmp packets from the router itself.
+dmesg
+[UFW BLOCK] IN=wlan0 OUT= ...
+
+turn on logging for invalid packets, by doing:
+# echo 255 >/proc/sys/net/netfilter/nf_conntrack_log_invalid
+
+iptables -S
+
+-P INPUT DROP
+-P FORWARD DROP
+-P OUTPUT ACCEPT
+-N ufw-after-forward
+-N ufw-after-input
+-N ufw-after-logging-forward
+-N ufw-after-logging-input
+-N ufw-after-logging-output
+-N ufw-after-output
+-N ufw-before-forward
+-N ufw-before-input
+-N ufw-before-logging-forward
+-N ufw-before-logging-input
+-N ufw-before-logging-output
+-N ufw-before-output
+-N ufw-logging-allow
+-N ufw-logging-deny
+-N ufw-not-local
+-N ufw-reject-forward
+-N ufw-reject-input
+-N ufw-reject-output
+-N ufw-skip-to-policy-forward
+-N ufw-skip-to-policy-input
+-N ufw-skip-to-policy-output
+-N ufw-track-forward
+-N ufw-track-input
+-N ufw-track-output
+-N ufw-user-forward
+-N ufw-user-input
+-N ufw-user-limit
+-N ufw-user-limit-accept
+-N ufw-user-logging-forward
+-N ufw-user-logging-input
+-N ufw-user-logging-output
+-N ufw-user-output
+-A INPUT -j ufw-before-logging-input
+-A INPUT -j ufw-before-input
+-A INPUT -j ufw-after-input
+-A INPUT -j ufw-after-logging-input
+-A INPUT -j ufw-reject-input
+-A INPUT -j ufw-track-input
+-A FORWARD -j ufw-before-logging-forward
+-A FORWARD -j ufw-before-forward
+-A FORWARD -j ufw-after-forward
+-A FORWARD -j ufw-after-logging-forward
+-A FORWARD -j ufw-reject-forward
+-A FORWARD -j ufw-track-forward
+-A OUTPUT -j ufw-before-logging-output
+-A OUTPUT -j ufw-before-output
+-A OUTPUT -j ufw-after-output
+-A OUTPUT -j ufw-after-logging-output
+-A OUTPUT -j ufw-reject-output
+-A OUTPUT -j ufw-track-output
+-A ufw-after-input -p udp -m udp --dport 137 -j ufw-skip-to-policy-input
+-A ufw-after-input -p udp -m udp --dport 138 -j ufw-skip-to-policy-input
+-A ufw-after-input -p tcp -m tcp --dport 139 -j ufw-skip-to-policy-input
+-A ufw-after-input -p tcp -m tcp --dport 445 -j ufw-skip-to-policy-input
+-A ufw-after-input -p udp -m udp --dport 67 -j ufw-skip-to-policy-input
+-A ufw-after-input -p udp -m udp --dport 68 -j ufw-skip-to-policy-input
+-A ufw-after-input -m addrtype --dst-type BROADCAST -j ufw-skip-to-policy-input
+-A ufw-after-logging-forward -m limit --limit 3/min --limit-burst 10 -j LOG --log-prefix "[UFW BLOCK] "
+-A ufw-after-logging-input -m limit --limit 3/min --limit-burst 10 -j LOG --log-prefix "[UFW BLOCK] "
+-A ufw-before-forward -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A ufw-before-forward -p icmp -m icmp --icmp-type 3 -j ACCEPT
+-A ufw-before-forward -p icmp -m icmp --icmp-type 4 -j ACCEPT
+-A ufw-before-forward -p icmp -m icmp --icmp-type 11 -j ACCEPT
+-A ufw-before-forward -p icmp -m icmp --icmp-type 12 -j ACCEPT
+-A ufw-before-forward -p icmp -m icmp --icmp-type 8 -j ACCEPT
+-A ufw-before-forward -j ufw-user-forward
+-A ufw-before-input -i lo -j ACCEPT
+-A ufw-before-input -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A ufw-before-input -m conntrack --ctstate INVALID -j ufw-logging-deny
+-A ufw-before-input -m conntrack --ctstate INVALID -j DROP
+-A ufw-before-input -p icmp -m icmp --icmp-type 3 -j ACCEPT
+-A ufw-before-input -p icmp -m icmp --icmp-type 4 -j ACCEPT
+-A ufw-before-input -p icmp -m icmp --icmp-type 11 -j ACCEPT
+-A ufw-before-input -p icmp -m icmp --icmp-type 12 -j ACCEPT
+-A ufw-before-input -p icmp -m icmp --icmp-type 8 -j ACCEPT
+-A ufw-before-input -p udp -m udp --sport 67 --dport 68 -j ACCEPT
+-A ufw-before-input -j ufw-not-local
+-A ufw-before-input -d 224.0.0.251/32 -p udp -m udp --dport 5353 -j ACCEPT
+-A ufw-before-input -d 239.255.255.250/32 -p udp -m udp --dport 1900 -j ACCEPT
+-A ufw-before-input -j ufw-user-input
+-A ufw-before-output -o lo -j ACCEPT
+-A ufw-before-output -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A ufw-before-output -j ufw-user-output
+-A ufw-logging-allow -m limit --limit 3/min --limit-burst 10 -j LOG --log-prefix "[UFW ALLOW] "
+-A ufw-logging-deny -m conntrack --ctstate INVALID -m limit --limit 3/min --limit-burst 10 -j RETURN
+-A ufw-logging-deny -m limit --limit 3/min --limit-burst 10 -j LOG --log-prefix "[UFW BLOCK] "
+-A ufw-not-local -m addrtype --dst-type LOCAL -j RETURN
+-A ufw-not-local -m addrtype --dst-type MULTICAST -j RETURN
+-A ufw-not-local -m addrtype --dst-type BROADCAST -j RETURN
+-A ufw-not-local -m limit --limit 3/min --limit-burst 10 -j ufw-logging-deny
+-A ufw-not-local -j DROP
+-A ufw-skip-to-policy-forward -j DROP
+-A ufw-skip-to-policy-input -j DROP
+-A ufw-skip-to-policy-output -j ACCEPT
+-A ufw-track-output -p tcp -m conntrack --ctstate NEW -j ACCEPT
+-A ufw-track-output -p udp -m conntrack --ctstate NEW -j ACCEPT
+-A ufw-user-input -p tcp -m tcp --dport 22 -j ACCEPT
+-A ufw-user-input -p udp -m udp --dport 22 -j ACCEPT
+-A ufw-user-input -p tcp -m tcp --dport 80 -j ACCEPT
+-A ufw-user-input -p tcp -m tcp --dport 443 -j ACCEPT
+-A ufw-user-input -p udp -m udp --dport 22 -j ACCEPT
+-A ufw-user-limit -m limit --limit 3/min -j LOG --log-prefix "[UFW LIMIT BLOCK] "
+-A ufw-user-limit -j REJECT --reject-with icmp-port-unreachable
+-A ufw-user-limit-accept -j ACCEPT
+
+
+disabling conntrack's checksumming,
+# echo 0 > /proc/sys/net/ipv4/netfilter/ip_conntrack_checksum
+
+To turn off DHT connection tracking on Linux, use the NOTRACK target in the "raw" netfilter table. For instance, when using UDP port 6881 for DHT, execute these iptables commands:
+
+iptables -t raw -I PREROUTING -p udp --dport 6881 -j NOTRACK
+iptables -t raw -I OUTPUT -p udp --sport 6881 -j NOTRACK
+
+# iptables -t raw -I PREROUTING -p udp --dport 18321 -j NOTRACK
+# iptables -t raw -I OUTPUT -p udp --sport 18321 -j NOTRACK
+
+# iptables -t raw -I PREROUTING -p tcp --dport 18321 -j NOTRACK
+# iptables -t raw -I OUTPUT -p tcp --sport 18321 -j NOTRACK
+
+# iptables -I INPUT 1 -p icmp --icmp-type 3 -j ACCEPT
+# iptables -I INPUT 1 -p icmp --icmp-type 11 -j ACCEPT
+
+
+
+# iptables -t raw -I PREROUTING -p udp --dport 11000:11400 -j NOTRACK
+# iptables -t raw -I OUTPUT -p udp --sport 11000:11400 -j NOTRACK
+# iptables -t raw -I PREROUTING -p tcp --dport 11000:11400 -j NOTRACK
+# iptables -t raw -I OUTPUT -p tcp --sport 11000:11400 -j NOTRACK
+# iptables -I INPUT -p icmp --icmp-type 3 -j ACCEPT
+# iptables -I INPUT -p icmp --icmp-type 4 -j ACCEPT
+# iptables -I INPUT -p icmp --icmp-type 11 -j ACCEPT
+# iptables -I INPUT -p icmp --icmp-type 12 -j ACCEPT
+# iptables -I INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+
+
+# echo 255 >/proc/sys/net/netfilter/nf_conntrack_log_invalid
+
+adding the follwing lines to /etc/sysctl.conf
+net.netfilter.nf_conntrack_log_invalid = 255
+net.ipv4.netfilter.ip_conntrack_log_invalid = 255
+
+
