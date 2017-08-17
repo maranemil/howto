@@ -1,0 +1,151 @@
+
+https://docs.docker.com/engine/reference/commandline/ps/#filtering
+https://docs.docker.com/engine/reference/commandline/build/
+https://docs.docker.com/engine/reference/commandline/image_build/
+https://docs.docker.com/engine/reference/commandline/cli/
+https://docs.docker.com/engine/reference/builder/
+https://docs.docker.com/engine/reference/commandline/images/
+https://docs.docker.com/engine/reference/commandline/docker/
+https://github.com/wsargent/docker-cheat-sheet
+
+
+sudo docker ps
+
+#sudo docker ps --no-trunc
+#sudo docker ps -a
+#sudo docker ps --filter "label=color"
+#sudo docker ps --filter "label=color=blue"
+#sudo docker ps -a --filter 'exited=0'
+#docker ps -a --filter 'exited=137'
+#docker ps --filter status=running
+#docker ps --filter ancestor=ubuntu
+
+CONTAINER ID        IMAGE                        COMMAND                CREATED             STATUS              PORTS                                              NAMES
+9eba282c1a6c        sameersbn/redis:latest       "/sbin/entrypoint.sh   10 minutes ago      Up 10 minutes       6379/tcp                                           gitlab-redis
+ad02f7728e6f        sameersbn/postgresql:9.6-2   "/sbin/entrypoint.sh   10 minutes ago      Up 10 minutes       5432/tcp                                           gitlab-postgresql
+70663d33915a        jenkins:latest               "/bin/tini -- /usr/l   25 minutes ago      Up 25 minutes       0.0.0.0:8080->8080/tcp, 0.0.0.0:50000->50000/tcp   myjenkins2
+
+sudo docker kill 9eba282c1a6c
+sudo docker kill ad02f7728e6f
+
+
+sudo docker images
+
+REPOSITORY             TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+sameersbn/gitlab       9.4.4               e7a05baeb560        5 days ago          1.433 GB
+jenkins                latest              de57ef56dca0        2 weeks ago         810 MB
+sameersbn/redis        latest              205c287c4c51        3 weeks ago         203.5 MB
+sameersbn/postgresql   9.6-2               5b2712a9aac3        6 months ago        234.1 MB
+
+sudo docker stop 70663d33915a #  stop jenkins
+sudo docker start 70663d33915a #  stop jenkins
+#sudo docker run jenkins #  start jenkins after reboot
+#sudo docker run -p 8080:8080 -p 50000:50000 -v /your/home:/var/jenkins_home jenkins
+sudo docker run --name myjenkins -p 8080:8080 -p 50000:50000 -v /var/jenkins_home jenkins
+
+--------------
+
+# https://engineering.riotgames.com/news/putting-jenkins-docker-container
+
+docker ps
+docker info
+docker-machine ip default
+docker pull jenkins
+docker run -p 8080:8080 --name=jenkins-master jenkin
+docker rm jenkins-master
+docker run -p 8080:8080 --name=jenkins-master -d jenkins
+docker stop jenkins-master
+docker rm jenkins-master
+docker run -p 8080:8080 --name=jenkins-master -d --env JAVA_OPTS="-Xmx8192m" jenkins
+docker run -p 8080:8080 --name=jenkins-master -d --env JAVA_OPTS=”-Xmx8192m -XX:PermSize=256m -XX:MaxPermSize=1024m” jenkins
+
+docker stop jenkins-master
+docker rm jenkins-master
+docker run -p 8080:8080 --name=jenkins-master -d --env JAVA_OPTS="-Xmx8192m" --env JENKINS_OPTS="--handlerCountStartup=100 --handlerCountMax=300" jenkins
+
+docker build -t myjenkins .
+docker run -p 8080:8080 --name=jenkins-master -d --env JAVA_OPTS="-Xmx8192m" --env JENKINS_OPTS="--handlerCountStartup=100 --handlerCountMax=300" myjenkins
+
+
+docker stop jenkins-master
+docker rm jenkins-master
+docker run -p 8080:8080 --name=jenkins-master -d myjenkins
+
+docker exec jenkins-master ps -ef | grep java
+chown -R  jenkins:jenkins /var/log/jenkins
+
+
+docker run -p 8080:8080 --name=jenkins-master -d myjenkins
+docker exec jenkins-master tail -f /var/log/jenkins/jenkins.lo
+
+
+
+docker stop jenkins-master
+docker cp jenkins-master:/var/log/jenkins/jenkins.log jenkins.log
+cat jenkins.log
+
+--------------------------------------------
+
+
+# https://issues.jenkins-ci.org/browse/JENKINS-29239?page=com.atlassian.jira.plugin.system.issuetabpanels%3Aall-tabpanel
+
+docker run -v /var/run/docker.sock:/var/run/docker.sock -v /bin/docker:/bin/docker \
+   -v /usr/lib64/libdevmapper.so.1.02:/usr/lib/libdevmapper.so.1.01 \
+   -v /data/jenkins_01/home:/var/jenkins_home -v /tmp:/tmp --env JENKINS_HOME=/data/jenkins_01/home \
+   --name jenkins_01 -d myjenkins
+
+   Last line of my Dockerfile:
+
+ENTRYPOINT /usr/local/bin/prepare_jenkins.sh \
+  && HOME=$JENKINS_HOME gosu jenkins /bin/tini -- /usr/local/bin/jenkins.sh
+
+prepare_jenkins.sh:
+
+if [[ "${JENKINS_HOME}" !=  "/var/jenkins_home" ]]; then
+   mkdir -p $(dirname ${JENKINS_HOME})
+   ln -sf -T /var/jenkins_home ${JENKINS_HOME}
+fi
+grep docker /etc/group || groupadd -g $(stat -c "%g" /var/run/docker.sock) docker
+usermod -a -G docker jenkins
+
+
+-------------------
+
+https://hub.docker.com/r/oreomitch/docker-jenkins-android/builds/bbzobhgnkxz2ntriyb3kvvm/
+
+
+A Jenkins CI Docker Container
+
+Build
+
+$ docker pull oreomitch/docker-jenkins-android
+
+Usage
+
+To run the container and map the host port 8080 to the container port 8080
+
+$ docker run -d -p 8080:8080 oreomitch/docker-jenkins-android
+
+You can include --name <name> to label the container for example:
+
+$ docker run -d -p 8080:8080 --name myjenkins oreomitch/docker-jenkins-android
+
+By default the container is run as jenkins user. This can be changed at runtime using -u=<user>, e.g:
+
+$ docker run -d -p -u=root 8080:8080 --name myjenkins oreomitch/docker-jenkins-android
+
+To install the Android SDK, run the container as root (see above) and the run the following set of commands:
+
+$ docker exec <container-id> wget --progress=dot:giga http://dl.google.com/android/android-sdk_r23.0.2-linux.tgz
+
+$ docker exec <container-id> mkdir /opt/android
+
+$ docker exec <container-id> tar -C /opt/android -xzvf ./android-sdk_r23.0.2-linux.tgz
+
+To update the Android SDK, tools, build-tools, system-images
+
+$ docker exec <container-id>|<container-name> /bin/sh -c "( sleep 3 && while [ 1 ]; do sleep 1; echo y; done ) | /opt/android/android-sdk-linux/android sdk update --no-ui --all"
+
+The android tools are 32 bit and if you're on 64 bit it will not be able to find them unless you have the 32 bit emulation layers:
+
+$ docker exec <container-id>|<container-name> /bin/sh -c "apt-get install -y lib32stdc++6 lib32z1 libc6-i386"
