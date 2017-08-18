@@ -1,0 +1,524 @@
+----------------------------------------------
+docker pull bitnami/mysql
+----------------------------------------------
+
+https://hub.docker.com/r/bitnami/mysql/
+https://hub.docker.com/r/bitnami/mysql/
+
+docker run --name mysql -e ALLOW_EMPTY_PASSWORD=yes bitnami/mysql:latest
+docker run -p 3306:3306 --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:latest
+
+docker run --name mysql \
+  -e ALLOW_EMPTY_PASSWORD=yes \
+  -e MYSQL_USER=my_user \
+  -e MYSQL_PASSWORD=my_password \
+  -e MYSQL_DATABASE=my_database \
+  bitnami/mysql:latest
+
+docker ps
+docker inspect c4bdba85f4e5
+
+"NetworkSettings": {
+        "Bridge": "docker0",
+        "Gateway": "172.17.42.1",
+        "GlobalIPv6Address": "",
+        "GlobalIPv6PrefixLen": 0,
+        "IPAddress": "172.17.0.1",
+        "IPPrefixLen": 16,
+        "IPv6Gateway": "",
+        "LinkLocalIPv6Address": "fe80::42:acff:fe11:1",
+        "LinkLocalIPv6PrefixLen": 64,
+        "MacAddress": "02:42:ac:11:00:01",
+        "PortMapping": null,
+        "Ports": {
+            "3306/tcp": null
+        }
+    },
+
+
+mysql -h 172.17.0.1 -u root -p
+
+sudo reboot
+docker start mysql
+docker network ls
+
+----------------------------------------------
+docker pull bitnami/php-fpm
+----------------------------------------------
+https://hub.docker.com/r/bitnami/php-fpm/
+https://hub.docker.com/r/bitnami/php-fpm/
+https://hub.docker.com/_/php/
+
+docker run -it --name phpfpm -v /path/to/app:/app bitnami/php-fpm -p 3306:3306
+docker run -it --rm --name my-running-script -v "$PWD":/usr/src/myapp -w /usr/src/myapp php:7.0-cli php your-script.php
+
+docker inspect phpfpm
+
+ "Name": "/phpfpm",
+    "NetworkSettings": {
+        "Bridge": "docker0",
+        "Gateway": "172.17.42.1",
+        "GlobalIPv6Address": "",
+        "GlobalIPv6PrefixLen": 0,
+        "IPAddress": "172.17.0.2",
+        "IPPrefixLen": 16,
+        "IPv6Gateway": "",
+        "LinkLocalIPv6Address": "fe80::42:acff:fe11:2",
+        "LinkLocalIPv6PrefixLen": 64,
+        "MacAddress": "02:42:ac:11:00:02",
+        "PortMapping": null,
+        "Ports": {
+            "9000/tcp": null
+        }
+
+sudo docker run -it --rm -p 10022:10022 --name my-running-script -v "$PWD":/usr/src/myapp -w /usr/src/myapp php:7.0-cli
+Interactive shell
+php > echo (4 + 4);
+8
+
+----------------------------------------------
+docker pull bitnami/mongodb
+https://hub.docker.com/r/bitnami/mongodb/
+----------------------------------------------
+
+Step 1: Create a network
+$ docker network create app-tier --driver bridge
+
+Step 2: Launch the MongoDB server instance
+Use the --network app-tier argument to the docker run command to attach the MongoDB container to the app-tier network.
+
+$ docker run -d --name mongodb-server \
+    --network app-tier \
+    bitnami/mongodb:latest
+
+Step 3: Launch your MongoDB client instance
+Finally we create a new container instance to launch the MongoDB client and connect to the server created in the previous step:
+
+$ docker run -it --rm \
+    --network app-tier \
+    bitnami/mongodb:latest mongo --host mongodb-server
+
+
+----------------------------------------------
+docker pull bitnami/mariadb
+----------------------------------------------
+
+
+docker run --name mariadb -e ALLOW_EMPTY_PASSWORD=yes bitnami/mariadb:latest
+
+Step 1: Create a network
+$ docker network create app-tier --driver bridge
+
+Step 2: Launch the MariaDB server instance
+Use the --network app-tier argument to the docker run command to attach the MariaDB container to the app-tier network.
+
+$ docker run -d --name mariadb-server \
+    -e ALLOW_EMPTY_PASSWORD=yes \
+    --network app-tier \
+    bitnami/mariadb:latest
+
+Step 3: Launch your MariaDB client instance
+Finally we create a new container instance to launch the MariaDB client and connect to the server created in the previous step:
+
+$ docker run -it --rm \
+    --network app-tier \
+    bitnami/mariadb:latest mysql -h mariadb-server -u root
+
+Allowing empty passwords
+docker run --name mariadb -e ALLOW_EMPTY_PASSWORD=yes bitnami/mariadb:latest
+
+
+Creating a database on first run
+
+By passing the MARIADB_DATABASE environment variable when running the image for the first time, a database will be created. This is useful if your application requires that a database already exists, saving you from having to manually create the database using the MySQL client.
+
+docker run --name mariadb \
+    -e ALLOW_EMPTY_PASSWORD=yes \
+    -e MARIADB_DATABASE=my_database \
+    bitnami/mariadb:latest
+
+
+docker run --name mariadb \
+  -e ALLOW_EMPTY_PASSWORD=yes \
+  -e MARIADB_USER=my_user \
+  -e MARIADB_PASSWORD=my_password \
+  -e MARIADB_DATABASE=my_database \
+  bitnami/mariadb:latest
+
+
+----------------------------------------------
+docker pull bitnami/magento
+----------------------------------------------
+https://hub.docker.com/r/bitnami/magento/
+
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-magento/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+Run the application manually
+
+If you want to run the application manually instead of using docker-compose, these are the basic steps you need to run:
+    Create a new network for the application and the database:
+    $ docker network create magento-tier
+
+    Start a MariaDB database in the network generated:
+    $ docker run -d --name mariadb -e ALLOW_EMPTY_PASSWORD=yes --net magento-tier bitnami/mariadb
+
+    Note: You need to give the container a name in order to Magento to resolve the host
+    Run the Magento container:
+    $ docker run -d -p 80:80 --name magento --net magento-tier bitnami/magento
+
+Then you can access your application at http://your-ip/
+
+----------------------------------------------
+docker pull bitnami/suitecrm
+----------------------------------------------
+https://hub.docker.com/r/bitnami/suitecrm/
+
+;DR;
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-suitecrm/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+
+Run the application manually
+If you want to run the application manually instead of using docker-compose, these are the basic steps you need to run:
+    Create a new network for the application and the database:
+    $ docker network create suitecrm-tier
+
+    Start a MariaDB database in the network generated:
+    $ docker run -d --name mariadb -e ALLOW_EMPTY_PASSWORD=yes --net=suitecrm-tier bitnami/mariadb
+
+    Note: You need to give the container a name in order to SuiteCRM to resolve the host
+    Run the SuiteCRM container:
+
+    $ docker run -d -p 80:80 --name suitecrm --net=suitecrm-tier bitnami/suitecrm
+
+Then you can access your application at http://your-ip/
+
+----------------------------------------------
+docker pull bitnami/elasticsearch
+----------------------------------------------
+https://hub.docker.com/r/bitnami/elasticsearch/
+
+Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-elasticsearch/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+docker run \
+    -v /path/to/elasticsearch-persistence:/bitnami/elasticsearch \
+    bitnami/elasticsearch:latest
+
+
+Using the Command Line
+Step 1: Create a network
+
+$ docker network create app-tier --driver bridge
+
+Step 2: Launch the Elasticsearch server instance
+
+Use the --network app-tier argument to the docker run command to attach the Elasticsearch container to the app-tier network.
+
+$ docker run -d --name elasticsearch-server \
+    --network app-tier \
+    bitnami/elasticsearch:latest
+
+Step 3: Launch your application container
+
+$ docker run -d --name myapp \
+    --network app-tier \
+    YOUR_APPLICATION_IMAGE
+
+
+
+----------------------------------------------
+docker pull bitnami/laravel
+----------------------------------------------
+https://hub.docker.com/r/bitnami/laravel/
+
+Local workspace
+
+$ mkdir ~/myapp && cd ~/myapp
+$ curl -LO https://raw.githubusercontent.com/bitnami/bitnami-docker-laravel/master/docker-compose.yml
+$ docker-compose up
+
+mkdir ~/myapp
+cd ~/myapp
+
+Download the docker-compose.yml file in the application directory:
+$ curl -LO https://raw.githubusercontent.com/bitnami/bitnami-docker-laravel/master/docker-compose.yml
+
+Finally launch the Laravel application development environment using:
+$ docker-compose up
+
+
+
+    List all artisan commands:
+
+    $ docker-compose exec myapp php artisan list
+
+    List all registered routes:
+
+    $ docker-compose exec myapp php artisan route:list
+
+    Create a new application controller named User:
+
+    $ docker-compose exec myapp composer require phpmailer/phpmailer:5.2.*
+
+
+
+----------------------------------------------
+docker pull bitnami/codeigniter
+----------------------------------------------
+https://hub.docker.com/r/bitnami/codeigniter/
+
+Local workspace
+
+$ mkdir ~/myapp && cd ~/myapp
+$ curl -LO https://raw.githubusercontent.com/bitnami/bitnami-docker-codeigniter/master/docker-compose.yml
+$ docker-compose up
+
+Create a new project named foo:
+
+$ docker-compose run myapp nami execute codeigniter createProject foo
+
+
+----------------------------------------------
+docker pull bitnami/kibana
+https://hub.docker.com/r/bitnami/kibana/
+----------------------------------------------
+
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-kibaba/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+Get this image
+
+The recommended way to get the Bitnami Kibana Docker Image is to pull the prebuilt image from the Docker Hub Registry.
+
+$ docker pull bitnami/kibana:latest
+
+To use a specific version, you can pull a versioned tag. You can view the list of available versions in the Docker Hub Registry.
+
+$ docker pull bitnami/kibana:[TAG]
+
+If you wish, you can also build the image yourself.
+
+$ docker build -t bitnami/kibana:latest https://github.com/bitnami/bitnami-docker-kibana.git
+
+How to use this image
+
+Run the application manually
+
+If you want to run the application manually instead of using docker-compose, these are the basic steps you need to run:
+
+    Create a new network for the application and the database:
+
+    $ docker network create kibana_network
+
+    Run the Elasticsearch container:
+
+    $ docker run -d -p 9200:9200 --name elasticsearch --net=kibana_network bitnami/elasticsearch
+
+    Run the Kibana container:
+
+    $ docker run -d -p 5601:5601 --name kibana --net=kibana_network \
+     -e KIBANA_ELASTICSEARCH_URL=elasticsearch \
+     bitnami/kibana
+
+Then you can access your application at http://your-ip:5601/
+
+Using the Command Line
+Step 1: Create a network
+
+$ docker network create app-tier --driver bridge
+
+Step 2: Launch the Kibana server instance
+
+Use the --network app-tier argument to the docker run command to attach the Kibana container to the app-tier network.
+
+$ docker run -d --name kibana-server \
+    --network app-tier \
+    bitnami/kibana:latest
+
+Step 3: Launch your application container
+
+$ docker run -d --name myapp \
+    --network app-tier \
+    YOUR_APPLICATION_IMAGE
+
+
+
+----------------------------------------------
+docker pull bitnami/sugarcrm
+https://hub.docker.com/r/bitnami/sugarcrm/
+----------------------------------------------
+
+
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-sugarcrm/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+Run the application manually
+
+If you want to run the application manually instead of using docker-compose, these are the basic steps you need to run:
+
+    Create a new network for the application and the database:
+
+    $ docker network create sugarcrm_network
+
+    Start a MariaDB database in the network generated:
+
+    $ docker run -d --name mariadb -e ALLOW_EMPTY_PASSWORD=yes --net=sugarcrm_network bitnami/mariadb
+
+    Note: You need to give the container a name in order to SugarCRM to resolve the host
+
+    Run the SugarCRM container:
+
+    $ docker run -d -p 80:80 --name sugarcrm --net=sugarcrm_network bitnami/sugarcrm
+
+Then you can access your application at http://your-ip/
+
+
+Mount host directories as data volumes using the Docker command line
+
+In this case you need to specify the directories to mount on the run command. The process is the same than the one previously shown:
+
+    Create a network (if it does not exist):
+
+    $ docker network create sugarcrm-tier
+
+    Create a MariaDB container with host volume:
+
+    $$ docker run -d --name mariadb -e ALLOW_EMPTY_PASSWORD=yes \
+     --net sugarcrm-tier \
+     --volume /path/to/mariadb-persistence:/bitnami \
+     bitnami/mariadb:latest
+
+    Note: You need to give the container a name in order to SugarCRM to resolve the host
+
+    Create the SugarCRM container with host volumes:
+
+    $ docker run -d --name sugarcrm -p 80:80 -p 443:443 \
+     --net sugarcrm-tier \
+     --volume /path/to/sugarcrm-persistence:/bitnami \
+     bitnami/sugarcrm:latest
+
+
+----------------------------------------------
+https://hub.docker.com/r/webdevops/php-apache/
+https://hub.docker.com/r/webdevops/php-apache-dev/
+----------------------------------------------
+docker pull webdevops/php-apache
+docker pull webdevops/php-apache-dev
+
+
+https://github.com/webdevops/Dockerfile
+
+
+----------------------------------------------
+docker pull bitnami/tensorflow-serving
+https://hub.docker.com/r/bitnami/tensorflow-serving/
+----------------------------------------------
+
+TL;DR;
+
+$ docker run --name tensorflow-serving bitnami/tensorflow-serving:latest
+
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-tensorflow-serving/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+
+For persistence you should mount a volume at the /bitnami path for the TensorFlow Serving data and configurations. If the mounted directory is empty, it will be initialized on the first run.
+
+$ docker run -v /path/to/tensorflow-serving-persistence:/bitnami bitnami/tensorflow-serving:latest
+
+...
+
+Step 1: Download the Inception trained data
+
+$ mkdir /tmp/model-data
+$ curl -o '/tmp/model-data/inception-v3-2016-03-01.tar.gz' 'http://download.tensorflow.org/models/image/imagenet/inception-v3-2016-03-01.tar.gz'
+$ cd /tmp/model-data
+$ tar xzf inception-v3-2016-03-01.tar.gz
+
+Step 2: Create a network
+
+$ docker network create app-tier --driver bridge
+
+Step 3: Launch the TensorFlow Serving server instance
+
+Use the --network app-tier argument to the docker run command to attach the TensorFlow Serving container to the app-tier network.
+
+$ docker run -d --name tensorflow-serving \
+    --volume /tmp/model-data:/bitnami/model-data
+    --network app-tier \
+    bitnami/tensorflow-serving:latest
+
+Step 4: Launch your TensorFlow Inception client instance
+
+Finally we create a new container instance to launch the TensorFlow Serving client and connect to the server created in the previous step:
+
+$ docker run -it --rm \
+    --volume /tmp/model-data:/bitnami/model-data
+    --network app-tier \
+    bitnami/tensorflow-inception:latest inception_client --server=tensorflow-serving:9000 --image=path/to/image.jpg
+
+
+
+Step 1: Run the TensorFlow Serving image
+
+Run the TensorFlow Serving image, mounting a directory from your host.
+
+$ docker run --name tensorflow-serving -v /path/to/tensorflow-serving-persistence:/bitnami bitnami/tensorflow-serving:latest
+
+Step 3: Restart TensorFlow Serving
+
+After changing the configuration, restart your TensorFlow Serving container for changes to take effect.
+
+$ docker restart tensorflow-serving
+
+or using Docker Compose:
+
+$ docker-compose restart tensorflow-serving
+
+Logging
+
+The Bitnami TensorFlow Serving Docker image sends the container logs to the stdout. To view the logs:
+$ docker logs tensorflow-serving
+
+or using Docker Compose:
+$ docker-compose logs tensorflow-serving
+
+
+Step 3: Remove the currently running container
+$ docker rm -v tensorflow-serving
+or using Docker Compose:
+$ docker-compose rm -v tensorflow-serving
+
+Step 4: Run the new image
+Re-create your container from the new image, restoring your backup if necessary.
+$ docker run --name tensorflow-serving bitnami/tensorflow-serving:latest
+
+or using Docker Compose:
+$ docker-compose start tensorflow-serving
+
+
+
+----------------------------------------------
+docker pull webdevops/php-nginx
+----------------------------------------------
+
+https://hub.docker.com/r/webdevops/php-nginx/
+
+
+
+
+
