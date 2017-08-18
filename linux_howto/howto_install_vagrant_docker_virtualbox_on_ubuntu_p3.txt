@@ -1,0 +1,3446 @@
+--------------------------------
+docker pull bitnami/codeigniter
+--------------------------------
+https://hub.docker.com/r/bitnami/codeigniter/
+
+
+TL;DR;
+Local workspace
+
+$ mkdir ~/myapp && cd ~/myapp
+$ curl -LO https://raw.githubusercontent.com/bitnami/bitnami-docker-codeigniter/master/docker-compose.yml
+$ docker-compose up
+
+
+
+Getting started
+
+The quickest way to get started with the Bitnami CodeIgniter Development Container is using docker-compose.
+
+Begin by creating a directory for your CodeIgniter application:
+
+$ mkdir ~/myapp
+$ cd ~/myapp
+
+Download the docker-compose.yml file in the application directory:
+
+$ curl -LO https://raw.githubusercontent.com/bitnami/bitnami-docker-codeigniter/master/docker-compose.yml
+
+Finally launch the CodeIgniter application development environment using:
+
+$ docker-compose up
+
+
+--------------------------------
+docker pull bitnami/mariadb
+--------------------------------
+https://hub.docker.com/r/bitnami/mariadb/
+
+TL;DR;
+
+$ docker run --name mariadb -e ALLOW_EMPTY_PASSWORD=yes bitnami/mariadb:latest
+
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-mariadb/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+
+Persisting your database
+
+If you remove the container all your data and configurations will be lost, and the next time you run the image the database will be reinitialized. To avoid this loss of data, you should mount a volume that will persist even after the container is removed.
+
+For persistence you should mount a directory at the /bitnami path. If the mounted directory is empty, it will be initialized on the first run.
+
+$ docker run \
+    -e ALLOW_EMPTY_PASSWORD=yes \
+    -v /path/to/mariadb-persistence:/bitnami \
+    bitnami/mariadb:latest
+
+
+Using the Command Line
+
+In this example, we will create a MariaDB client instance that will connect to the server instance that is running on the same docker network as the client.
+Step 1: Create a network
+
+$ docker network create app-tier --driver bridge
+
+Step 2: Launch the MariaDB server instance
+
+Use the --network app-tier argument to the docker run command to attach the MariaDB container to the app-tier network.
+
+$ docker run -d --name mariadb-server \
+    -e ALLOW_EMPTY_PASSWORD=yes \
+    --network app-tier \
+    bitnami/mariadb:latest
+
+Step 3: Launch your MariaDB client instance
+
+Finally we create a new container instance to launch the MariaDB client and connect to the server created in the previous step:
+
+$ docker run -it --rm \
+    --network app-tier \
+    bitnami/mariadb:latest mysql -h mariadb-server -u root
+
+
+
+
+Setting the root password on first run
+
+The root user and password can easily be setup with the Bitnami MariaDB Docker image using the following environment variables:
+
+    MARIADB_ROOT_USER: The database admin user. Defaults to root.
+    MARIADB_ROOT_PASSWORD: The database admin user password. No defaults.
+
+Passing the MARIADB_ROOT_PASSWORD environment variable when running the image for the first time will set the password of the MARIADB_ROOT_USER user to the value of MARIADB_ROOT_PASSWORD.
+
+$ docker run --name mariadb -e MARIADB_ROOT_PASSWORD=password123 bitnami/mariadb:latest
+
+
+
+
+Allowing empty passwords
+
+By default the MariaDB image expects all the available passwords to be set. In order to allow empty passwords, it is necessary to set the ALLOW_EMPTY_PASSWORD=yes env variable. This env variable is only recommended for testing or development purposes. We strongly recommend specifying the MARIADB_ROOT_PASSWORD for any other scenario.
+
+$ docker run --name mariadb -e ALLOW_EMPTY_PASSWORD=yes bitnami/mariadb:latest
+
+Creating a database on first run
+
+By passing the MARIADB_DATABASE environment variable when running the image for the first time, a database will be created. This is useful if your application requires that a database already exists, saving you from having to manually create the database using the MySQL client.
+
+$ docker run --name mariadb \
+    -e ALLOW_EMPTY_PASSWORD=yes \
+    -e MARIADB_DATABASE=my_database \
+    bitnami/mariadb:latest
+
+
+Creating a database user on first run
+
+You can create a restricted database user that only has permissions for the database created with the MARIADB_DATABASE environment variable. To do this, provide the MARIADB_USER environment variable and to set a password for the database user provide the MARIADB_PASSWORD variable.
+
+$ docker run --name mariadb \
+  -e ALLOW_EMPTY_PASSWORD=yes \
+  -e MARIADB_USER=my_user \
+  -e MARIADB_PASSWORD=my_password \
+  -e MARIADB_DATABASE=my_database \
+  bitnami/mariadb:latest
+
+Configuration file
+
+The image looks for user-defined configurations in /bitnami/mariadb/conf/my_custom.cnf. Create a file named my_custom.cnf and mount it at /bitnami/mariadb/conf/my_custom.cnf.
+
+For example, in order to override the max_allowed_packet directive:
+Step 1: Write your my_custom.cnf file with the following content.
+
+[mysqld]
+max_allowed_packet=32M
+
+Step 2: Run the mariaDB image with the designed volume attached.
+
+$ docker run --name mariadb -v /path/to/my_custom.cnf:/bitnami/mariadb/conf/my_custom.cnf:ro bitnami/mariadb:latest
+
+
+
+--------------------------------
+docker pull bitnami/node
+--------------------------------
+https://hub.docker.com/r/bitnami/node/
+
+TL;DR;
+
+$ docker run -it --name node bitnami/node
+
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-mariadb/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+
+Entering the REPL
+
+By default, running this image will drop you into the Node.js REPL, where you can interactively test and try things out in Node.js.
+
+$ docker run -it --name node bitnami/node
+
+
+Running your Node.js script
+
+The default work directory for the Node.js image is /app. You can mount a folder from your host here that includes your Node.js script, and run it normally using the node command.
+
+$ docker run -it --name node -v /path/to/app:/app bitnami/node \
+  node script.js
+
+Running a Node.js app with npm dependencies
+
+If your Node.js app has a package.json defining your app's dependencies and start script, you can install the dependencies before running your app.
+
+$ docker run --rm -v /path/to/app:/app bitnami/node npm install
+docker run -it --name node  -v /path/to/app:/app bitnami/node npm start
+
+
+
+
+
+docker run -it --name node -v /path/to/app:/app -P bitnami/node node index.js
+
+Run docker port to determine the random port Docker assigned.
+
+$ docker port node
+3000/tcp -> 0.0.0.0:32769
+
+You can also specify the port you want forwarded from your host to the container.
+
+$ docker run -it --name node -p 8080:3000 -v /path/to/app:/app bitnami/node node index.js
+
+Access your web server in the browser by navigating to http://localhost:8080.
+
+Step 3: Run the Node.js image with a specific name
+
+$ docker run -it --name myapp --network app-tier \
+  -v /path/to/app:/app \
+  bitnami/node node index.js
+
+Step 4: Run the nginx image
+
+$ docker run -it \
+  -v /path/to/vhost.conf:/bitnami/nginx/conf/vhosts/yourapp.conf:ro \
+  --network app-tier \
+  bitnami/nginx
+
+Upgrade this image
+
+Bitnami provides up-to-date versions of Node.js, including security patches, soon after they are made upstream. We recommend that you follow these steps to upgrade your container.
+Step 1: Get the updated image
+
+$ docker pull bitnami/node:latest
+
+or if you're using Docker Compose, update the value of the image property to bitnami/node:latest.
+Step 2: Remove the currently running container
+$ docker rm -v node
+
+or using Docker Compose:
+$ docker-compose rm -v node
+
+Step 3: Run the new image
+Re-create your container from the new image.
+$ docker run --name node bitnami/node:latest
+
+or using Docker Compose:
+$ docker-compose start node
+
+
+--------------------------------
+docker pull bitnami/redis
+--------------------------------
+https://hub.docker.com/r/bitnami/redis/
+
+TL;DR;
+
+$ docker run --name redis -e ALLOW_EMPTY_PASSWORD=yes bitnami/redis:latest
+
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-redis/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+$ docker run \
+    -e ALLOW_EMPTY_PASSWORD=yes \
+    -v /path/to/redis-persistence:/bitnami \
+    bitnami/redis:latest
+
+Using the Command Line
+
+In this example, we will create a Redis client instance that will connect to the server instance that is running on the same docker network as the client.
+Step 1: Create a network
+
+$ docker network create app-tier --driver bridge
+
+Step 2: Launch the Redis server instance
+
+Use the --network app-tier argument to the docker run command to attach the Redis container to the app-tier network.
+
+$ docker run -d --name redis-server \
+    -e ALLOW_EMPTY_PASSWORD=yes \
+    --network app-tier \
+    bitnami/redis:latest
+
+Step 3: Launch your Redis client instance
+
+Finally we create a new container instance to launch the Redis client and connect to the server created in the previous step:
+
+$ docker run -it --rm \
+    --network app-tier \
+    bitnami/redis:latest redis-cli -h redis-server
+
+
+Setting the server password on first run
+
+Passing the REDIS_PASSWORD environment variable when running the image for the first time will set the Redis server password to the value of REDIS_PASSWORD.
+
+$ docker run --name redis -e REDIS_PASSWORD=password123 bitnami/redis:latest
+
+Allowing empty passwords
+
+By default the Redis image expects all the available passwords to be set. In order to allow empty passwords, it is necessary to set the ALLOW_EMPTY_PASSWORD=yes env variable. This env variable is only recommended for testing or development purposes. We strongly recommend specifying the REDIS_PASSWORD for any other scenario.
+
+$ docker run --name redis -e ALLOW_EMPTY_PASSWORD=yes bitnami/redis:latest
+
+Step 1: Create the replication master
+
+The first step is to start the Redis master.
+
+$ docker run --name redis-master \
+  -e REDIS_REPLICATION_MODE=master \
+  -e REDIS_PASSWORD=masterpassword123 \
+  bitnami/redis:latest
+
+In the above command the container is configured as the master using the REDIS_REPLICATION_MODE parameter. The REDIS_PASSWORD parameter enables authentication on the Redis master.
+Step 2: Create the replication slave
+
+Next we start a Redis slave container.
+
+$ docker run --name redis-slave \
+  --link redis-master:master \
+  -e REDIS_REPLICATION_MODE=slave \
+  -e REDIS_MASTER_HOST=master \
+  -e REDIS_MASTER_PORT_NUMBER=6379 \
+  -e REDIS_MASTER_PASSWORD=masterpassword123 \
+  -e REDIS_PASSWORD=password123 \
+  bitnami/redis:latest
+
+
+
+
+--------------------------------
+docker pull bitnami/ruby
+--------------------------------
+https://hub.docker.com/r/bitnami/ruby/
+
+TL;DR;
+
+docker run -it --name ruby bitnami/ruby:latest
+
+--------------------------------
+docker pull bitnami/wordpress
+--------------------------------
+https://hub.docker.com/r/bitnami/wordpress/
+
+L;DR;
+Docker Compose
+
+$ curl -LO https://raw.githubusercontent.com/bitnami/bitnami-docker-wordpress/master/docker-compose.yml
+$ docker-compose up
+
+
+Using the Docker Command Line
+
+If you want to run the application manually instead of using docker-compose, these are the basic steps you need to run:
+
+    Create a network
+
+    $ docker network create wordpress-tier
+
+    Create a volume for MariaDB persistence and create a MariaDB container
+
+    $ docker volume create --name mariadb_data
+    $ docker run -d --name mariadb \
+     -e ALLOW_EMPTY_PASSWORD=yes \
+     -e MARIADB_USER=bn_wordpress \
+     -e MARIADB_DATABASE=bitnami_wordpress \
+     --net wordpress-tier \
+     --volume mariadb_data:/bitnami \
+     bitnami/mariadb:latest
+
+    Create volumes for WordPress persistence and launch the container
+
+    $ docker volume create --name wordpress_data
+    $ docker run -d --name wordpress -p 80:80 -p 443:443 \
+     -e ALLOW_EMPTY_PASSWORD=yes \
+     -e WORDPRESS_DATABASE_USER=bn_wordpress \
+     -e WORDPRESS_DATABASE_NAME=bitnami_wordpress \
+     --net wordpress-tier \
+     --volume wordpress_data:/bitnami \
+     bitnami/wordpress:latest
+
+Access your application at http://your-ip/
+
+Mount host directories as data volumes using the Docker command line
+
+    Create a network (if it does not exist)
+
+    $ docker network create wordpress-tier
+
+    Create a MariaDB container with host volume
+
+    $ docker run -d --name mariadb \
+     -e ALLOW_EMPTY_PASSWORD=yes \
+     -e MARIADB_USER=bn_wordpress \
+     -e MARIADB_DATABASE=bitnami_wordpress \
+     --net wordpress-tier \
+     --volume /path/to/mariadb-persistence:/bitnami \
+     bitnami/mariadb:latest
+
+    Create the WordPress the container with host volumes
+
+    $ docker run -d --name wordpress -p 80:80 -p 443:443 \
+     -e ALLOW_EMPTY_PASSWORD=yes \
+     -e WORDPRESS_DATABASE_USER=bn_wordpress \
+     -e WORDPRESS_DATABASE_NAME=bitnami_wordpress \
+     --net wordpress-tier \
+     --volume /path/to/wordpress-persistence:/bitnami \
+     bitnami/wordpress:latest
+
+
+
+--------------------------------
+docker pull bitnami/apache
+--------------------------------
+https://hub.docker.com/r/bitnami/apache/
+
+
+TL;DR;
+
+$ docker run --name apache bitnami/apache:latest
+
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-apache/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+Hosting a static website
+
+The /app path is configured as the Apache DocumentRoot. Content mounted here is served by the default catch-all virtual host.
+
+$ docker run --name apache -v /path/to/app:/app bitnami/apache:latest
+
+
+Accessing your server from the host
+
+To access your web server from your host machine you can ask Docker to map a random port on your host to ports 80 and 443 exposed in the container.
+
+$ docker run --name apache -P bitnami/apache:latest
+
+Run docker port to determine the random ports Docker assigned.
+
+$ docker port apache
+443/tcp -> 0.0.0.0:32768
+80/tcp -> 0.0.0.0:32769
+
+You can also manually specify the ports you want forwarded from your host to the container.
+
+$ docker run -p 8080:80 -p 8443:443 bitnami/apache:latest
+
+Access your web server in the browser by navigating to http://localhost:8080.
+
+
+Adding custom virtual hosts
+
+The default httpd.conf includes virtual hosts placed in /bitnami/apache/conf/vhosts/. You can mount a my_vhost.conf file containing your custom virtual hosts at this location.
+
+For example, in order add a vhost for www.example.com:
+Step 1: Write your my_vhost.conf file with the following content.
+
+<VirtualHost *:80>
+  ServerName www.example.com
+  DocumentRoot "/app"
+  <Directory "/app">
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Require all granted
+  </Directory>
+</VirtualHost>
+
+Step 2: Mount the configuration as a volume.
+
+$ docker run --name apache \
+  -v /path/to/my_vhost.conf:/bitnami/apache/conf/vhost/my_vhost.conf:ro \
+  bitnami/apache:latest
+
+
+
+
+Run the Apache image
+
+Run the Apache image, mounting the certificates directory from your host.
+
+$ docker run --name apache \
+  -v /path/to/apache-persistence/apache/conf/bitnami/certs:/bitnami/apache/conf/bitnami/certs \
+  bitnami/apache:latest
+
+Step 1: Run the Apache image
+
+Run the Apache image, mounting a directory from your host.
+
+$ docker run --name apache \
+  -v /path/to/apache-persistence:/bitnami \
+  bitnami/apache:latest
+
+Step 4: Restart Apache
+
+After changing the configuration, restart your Apache container for the changes to take effect.
+$ docker restart apache
+
+or using Docker Compose:
+$ docker-compose restart apache
+Logging
+
+The Bitnami Apache Docker image sends the container logs to the stdout. To view the logs:
+$ docker logs apache
+
+or using Docker Compose:
+$ docker-compose logs apache
+
+
+
+--------------------------------
+docker pull bitnami/cassandra
+--------------------------------
+https://hub.docker.com/r/bitnami/cassandra/
+
+
+
+TL;DR;
+
+$ docker run --name cassandra bitnami/cassandra:latest
+
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-cassandra/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+
+Persisting your application
+
+If you remove the container all your data and configurations will be lost, and the next time you run the image the database will be reinitialized. To avoid this loss of data, you should mount a volume that will persist even after the container is removed.
+
+For persistence you should mount a directory at the /bitnami path. If the mounted directory is empty, it will be initialized on the first run.
+
+$ docker run \
+    -v /path/to/cassandra-persistence:/bitnami \
+    bitnami/cassandra:latest
+
+
+
+Using the Command Line
+
+In this example, we will create a Cassandra client instance that will connect to the server instance that is running on the same docker network as the client.
+Step 1: Create a network
+
+$ docker network create app-tier --driver bridge
+
+Step 2: Launch the Cassandra server instance
+
+Use the --network app-tier argument to the docker run command to attach the Cassandra container to the app-tier network.
+
+$ docker run -d --name cassandra-server \
+    --network app-tier \
+    bitnami/cassandra:latest
+
+Step 3: Launch your Cassandra client instance
+
+Finally we create a new container instance to launch the Cassandra client and connect to the server created in the previous step:
+
+$ docker run -it --rm \
+    --network app-tier \
+    bitnami/cassandra:latest cqlsh --username cassandra --password cassandra-server cassandra
+
+
+--------------------------------
+docker pull bitnami/nginx
+--------------------------------
+https://hub.docker.com/r/bitnami/nginx/
+
+
+TL;DR;
+
+$ docker run --name nginx bitnami/nginx:latest
+
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-nginx/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+Hosting a static website
+
+This nginx image exposes a volume at /app. Content mounted here is served by the default catch-all virtual host.
+
+$ docker run -v /path/to/app:/app bitnami/nginx:latest
+
+Accessing your server from the host
+
+To access your web server from your host machine you can ask Docker to map a random port on your host to ports 8080 and 8443 exposed in the container.
+
+$ docker run --name nginx -P bitnami/nginx:latest
+
+Run docker port to determine the random ports Docker assigned.
+
+$ docker port nginx
+8443/tcp -> 0.0.0.0:32768
+8080/tcp -> 0.0.0.0:32769
+
+You can also manually specify the ports you want forwarded from your host to the container.
+
+$ docker run -p 9000:8080 -p 9443:8443 bitnami/nginx:latest
+
+Access your web server in the browser by navigating to http://localhost:9000.
+
+Adding custom virtual hosts
+
+The default nginx.conf includes virtual hosts placed in /bitnami/nginx/conf/vhosts/. You can mount a my_vhost.conf file containing your custom virtual hosts at this location.
+
+For example, in order add a vhost for www.example.com:
+Step 1: Write your my_vhost.conf file with the following content.
+
+server {
+  listen 0.0.0.0:8080;
+  server_name www.example.com;
+  root /app
+  index index.htm index.html
+}
+
+Step 2: Mount the configuration as a volume.
+
+$ docker run --name nginx \
+  -v /path/to/my_vhost.conf:/bitnami/nginx/conf/vhosts/my_vhost.conf:ro \
+  bitnami/nginx:latest
+
+
+
+--------------------------------
+docker pull bitnami/mongodb
+--------------------------------
+https://hub.docker.com/r/bitnami/mongodb/
+
+TL;DR;
+
+$ docker run --name mongodb bitnami/mongodb:latest
+
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-mongodb/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+
+Persisting your database
+
+If you remove the container all your data and configurations will be lost, and the next time you run the image the database will be reinitialized. To avoid this loss of data, you should mount a volume that will persist even after the container is removed.
+
+For persistence you should mount a directory at the /bitnami path. If the mounted directory is empty, it will be initialized on the first run.
+
+$ docker run \
+    -v /path/to/mongodb-persistence:/bitnami \
+    bitnami/mongodb:latest
+
+
+
+Using the Command Line
+
+In this example, we will create a MongoDB client instance that will connect to the server instance that is running on the same docker network as the client.
+Step 1: Create a network
+
+$ docker network create app-tier --driver bridge
+
+Step 2: Launch the MongoDB server instance
+
+Use the --network app-tier argument to the docker run command to attach the MongoDB container to the app-tier network.
+
+$ docker run -d --name mongodb-server \
+    --network app-tier \
+    bitnami/mongodb:latest
+
+Step 3: Launch your MongoDB client instance
+
+Finally we create a new container instance to launch the MongoDB client and connect to the server created in the previous step:
+
+$ docker run -it --rm \
+    --network app-tier \
+    bitnami/mongodb:latest mongo --host mongodb-server
+
+--------------------------------
+docker pull bitnami/php-fpm
+--------------------------------
+https://hub.docker.com/r/bitnami/php-fpm/
+
+
+TL;DR;
+
+$ docker run -it --name phpfpm -v /path/to/app:/app bitnami/php-fpm
+
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-php-fpm/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+
+Serving your PHP app through an nginx frontend
+
+We will use PHP-FPM with nginx to serve our PHP app. Doing so will allow us to setup more complex configuration, serve static assets using nginx, load balance to different PHP-FPM instances, etc.
+Step 1: Create a network
+
+$ docker network create app-tier --driver bridge
+
+Step 3: Run the PHP-FPM image with a specific name
+
+Docker's linking system uses container ids or names to reference containers. We can explicitly specify a name for our PHP-FPM server to make it easier to connect to other containers.
+
+$ docker run -it --name phpfpm \
+  --network app-tier
+  -v /path/to/app:/app \
+  bitnami/php-fpm
+
+Step 4: Run the nginx image
+
+$ docker run -it \
+  -v /path/to/vhost.conf:/bitnami/nginx/conf/vhosts/yourapp.conf \
+  --network app-tier \
+  bitnami/nginx
+
+
+Step 1: Run the PHP-FPM image
+
+Run the PHP-FPM image, mounting a directory from your host.
+
+$ docker run --name phpfpm -v /path/to/php-fpm:/bitnami bitnami/php-fpm
+
+Step 3: Restart PHP-FPM
+
+After changing the configuration, restart your PHP-FPM container for the changes to take effect.
+
+$ docker restart phpfpm
+
+or using Docker Compose:
+
+$ docker-compose restart phpfpm
+
+Logging
+
+The Bitnami PHP-FPM Docker Image sends the container logs to the stdout. You can configure the containers logging driver using the --log-driver option. By defauly the json-file driver is used.
+
+To view the logs:
+
+$ docker logs phpfpm
+
+or using Docker Compose:
+
+$ docker-compose logs phpfpm
+
+
+--------------------------------
+docker pull bitnami/memcached
+--------------------------------
+https://hub.docker.com/r/bitnami/memcached/
+
+
+TL;DR;
+
+docker run --name memcached bitnami/memcached:latest
+
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-memcached/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+Using the Command Line
+Step 1: Create a network
+
+$ docker network create app-tier --driver bridge
+
+Step 2: Launch the Memcached server instance
+
+Use the --network app-tier argument to the docker run command to attach the Memcached container to the app-tier network.
+
+$ docker run -d --name memcached-server \
+    --network app-tier \
+    bitnami/memcached:latest
+
+Step 3: Launch your application container
+
+$ docker run -d --name myapp \
+    --network app-tier \
+    YOUR_APPLICATION_IMAGE
+
+
+Creating the Memcached admin user
+
+Authentication on the Memcached server is disabled by default. To enable authentication, specify a username and password for the Memcached admin user using the MEMCACHED_USERNAME and MEMCACHED_PASSWORD environment variables.
+
+docker run --name memcached \
+  -e MEMCACHED_USERNAME=my_user \
+  -e MEMCACHED_PASSWORD=my_password \
+  bitnami/memcached:latest
+
+
+
+Logging
+
+The Bitnami Memcached Docker image sends the container logs to the stdout. To view the logs:
+
+docker logs memcached
+
+
+--------------------------------
+docker pull bitnami/redmine
+--------------------------------
+https://hub.docker.com/r/bitnami/redmine/
+
+
+TL;DR;
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-redmine/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+
+Run the application manually
+
+If you want to run the application manually instead of using docker-compose, these are the basic steps you need to run:
+
+    Create a new network for the application and the database:
+
+    $ docker network create redmine_network
+
+    Start a MariaDB database in the network generated:
+
+    $ docker run -d --name mariadb --net=redmine_network \
+       -e ALLOW_EMPTY_PASSWORD=yes \
+       bitnami/mariadb
+
+    Note: You need to give the container a name in order to Redmine to resolve the host
+
+    Run the Redmine container:
+
+    $ docker run -d --name redmine --net=redmine_network -p 80:3000 \
+       bitnami/redmine
+
+Then you can access your application at http://your-ip/
+
+Mount host directories as data volumes using the Docker command line
+
+    Create a network (if it does not exist):
+
+    $ docker network create redmine-tier
+
+    Create a MariaDB container with host volume:
+
+    $ docker run -d --name mariadb --net redmine-tier \
+     -e ALLOW_EMPTY_PASSWORD=yes \
+     --volume /path/to/mariadb-persistence:/bitnami \
+     bitnami/mariadb:latest
+
+    Note: You need to give the container a name in order to Redmine to resolve the host
+
+    Run the Redmine container:
+
+    $ docker run -d --name redmine -p 80:3000 --net redmine-tier \
+     --volume /path/to/redmine-persistence:/bitnami \
+     bitnami/redmine:latest
+
+
+    For manual execution add a -e option with each variable and value:
+
+ $ docker run -d --name redmine --network=redmine_network -p 80:3000 \
+     -e REDMINE_PASSWORD=my_password \
+     -v /your/local/path/bitnami/redmine:/bitnami \
+     bitnami/redmine
+
+
+
+--------------------------------
+docker pull bitnami/rails
+--------------------------------
+https://hub.docker.com/r/bitnami/rails/
+
+TL;DR;
+Local workspace
+
+$ mkdir ~/myapp && cd ~/myapp
+$ curl -LO https://raw.githubusercontent.com/bitnami/bitnami-docker-rails/master/docker-compose.yml
+$ docker-compose up
+
+--------------------------------
+docker pull bitnami/postgresql
+--------------------------------
+https://hub.docker.com/r/bitnami/postgresql/
+
+
+TL;DR;
+
+$ docker run --name postgresql bitnami/postgresql:latest
+
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-postgresql/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+
+ docker run \
+    -v /path/to/postgresql-persistence:/bitnami \
+    bitnami/postgresql:latest
+
+
+Using the Command Line
+
+In this example, we will create a PostgreSQL client instance that will connect to the server instance that is running on the same docker network as the client.
+Step 1: Create a network
+
+$ docker network create app-tier --driver bridge
+
+Step 2: Launch the PostgreSQL server instance
+
+Use the --network app-tier argument to the docker run command to attach the PostgreSQL container to the app-tier network.
+
+$ docker run -d --name postgresql-server \
+    --network app-tier \
+    bitnami/postgresql:latest
+
+Step 3: Launch your PostgreSQL client instance
+
+Finally we create a new container instance to launch the PostgreSQL client and connect to the server created in the previous step:
+
+$ docker run -it --rm \
+    --network app-tier \
+    bitnami/postgresql:latest psql -h postgresql-server -U postgres
+
+
+Setting the root password on first run
+
+In the above commands you may have noticed the use of the POSTGRESQL_PASSWORD environment variable. Passing the POSTGRESQL_PASSWORD environment variable when running the image for the first time will set the password of the postgres user to the value of POSTGRESQL_PASSWORD.
+
+$ docker run --name postgresql -e POSTGRESQL_PASSWORD=password123 bitnami/postgresql:latest
+
+Creating a database on first run
+
+By passing the POSTGRESQL_DATABASE environment variable when running the image for the first time, a database will be created. This is useful if your application requires that a database already exists, saving you from having to manually create the database using the PostgreSQL client.
+
+$ docker run --name postgresql -e POSTGRESQL_DATABASE=my_database bitnami/postgresql:latest
+
+Creating a database user on first run
+
+You can also create a restricted database user that only has permissions for the database created with the POSTGRESQL_DATABASE environment variable. To do this, provide the POSTGRESQL_USERNAME environment variable.
+
+$ docker run --name postgresql -e POSTGRESQL_USERNAME=my_user -e POSTGRESQL_PASSWORD=password123 -e POSTGRESQL_DATABASE=my_database bitnami/postgresql:latest
+
+Run the PostgreSQL image
+
+Run the PostgreSQL image, mounting a directory from your host.
+
+$ docker run --name postgresql \
+    -v /path/to/postgresql-persistence:/bitnami \
+    bitnami/postgresql:latest
+
+Stop and backup the currently running container
+
+Stop the currently running container using the command
+
+$ docker stop postgresql
+
+Remove the currently running container
+
+$ docker rm -v postgresql
+
+
+
+--------------------------------
+docker pull bitnami/rabbitmq
+--------------------------------
+
+https://hub.docker.com/r/bitnami/rabbitmq/
+
+
+L;DR;
+
+$ docker run --name rabbitmq bitnami/rabbitmq:latest
+
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-rabbitmq/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+Persisting your application
+
+If you remove the container all your data and configurations will be lost, and the next time you run the image the database will be reinitialized. To avoid this loss of data, you should mount a volume that will persist even after the container is removed.
+
+For persistence you should mount a directory at the /bitnami path. If the mounted directory is empty, it will be initialized on the first run.
+
+$ docker run \
+    -v /path/to/rabbitmq-persistence:/bitnami \
+    bitnami/rabbitmq:latest
+
+or using Docker Compose:
+
+rabbitmq:
+  image: bitnami/rabbitmq:latest
+  volumes:
+    - /path/to/rabbitmq-persistence:/bitnami
+
+
+
+Using the Command Line
+
+In this example, we will create a RabbitMQ client instance that will connect to the server instance that is running on the same docker network as the client.
+Step 1: Create a network
+
+$ docker network create app-tier --driver bridge
+
+Step 2: Launch the RabbitMQ server instance
+
+Use the --network app-tier argument to the docker run command to attach the RabbitMQ container to the app-tier network.
+
+$ docker run -d --name rabbitmq-server \
+    --network app-tier \
+    bitnami/rabbitmq:latest
+
+Step 3: Launch your RabbitMQ client instance
+
+Finally we create a new container instance to launch the RabbitMQ client and connect to the server created in the previous step:
+
+$ docker run -it --rm \
+    --network app-tier \
+    bitnami/rabbitmq:latest rabbitmqctl -n rabbit@rabbitmq-server status
+
+
+
+
+
+
+--------------------------------
+docker pull bitnami/jenkins
+--------------------------------
+https://hub.docker.com/r/bitnami/jenkins/
+
+TL;DR;
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-jenkins/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+
+Using the Docker Command Line
+
+If you want to run the application manually instead of using docker-compose, these are the basic steps you need to run:
+
+    Create a network
+
+    $ docker network create jenkins-tier
+
+    Create volumes for Jenkins persistence and launch the container
+
+    $ docker volume create --name jenkins_data
+    $ docker run -d --name jenkins -p 80:8080 -p 443:8443 \
+     --net jenkins-tier \
+     --volume jenkins_data:/bitnami \
+     bitnami/jenkins:latest
+
+
+
+Mount host directories as data volumes using the Docker command line
+
+    Create a network (if it does not exist)
+
+    $ docker network create jenkins-tier
+
+    Create the Jenkins the container with host volumes
+
+    $ docker run -d --name jenkins -p 80:8080 -p 443:8443 \
+     --net jenkins-tier \
+     --volume /path/to/jenkins-persistence:/bitnami \
+     bitnami/jenkins:latest
+
+
+Specifying Environment variables on the Docker command line
+
+$ docker run -d --name jenkins -p 80:8080 -p 443:8443 \
+  --net jenkins-tier \
+  --env JENKINS_PASSWORD=my_password \
+  --volume jenkins_data:/bitnami \
+  bitnami/jenkins:latest
+
+
+
+
+--------------------------------
+docker pull bitnami/mysql
+--------------------------------
+
+
+TL;DR;
+
+$ docker run --name mysql -e ALLOW_EMPTY_PASSWORD=yes bitnami/mysql:latest
+
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-mysql/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+
+ersisting your database
+
+If you remove the container all your data and configurations will be lost, and the next time you run the image the database will be reinitialized. To avoid this loss of data, you should mount a volume that will persist even after the container is removed.
+
+For persistence you should mount a directory at the /bitnami path. If the mounted directory is empty, it will be initialized on the first run.
+
+$ docker run \
+    -e ALLOW_EMPTY_PASSWORD=yes \
+    -v /path/to/mysql-persistence:/bitnami \
+    bitnami/mysql:latest
+
+Using the Command Line
+
+In this example, we will create a MySQL client instance that will connect to the server instance that is running on the same docker network as the client.
+Step 1: Create a network
+
+$ docker network create app-tier --driver bridge
+
+Step 2: Launch the MySQL server instance
+
+Use the --network app-tier argument to the docker run command to attach the MySQL container to the app-tier network.
+
+$ docker run -d --name mysql-server \
+    -e ALLOW_EMPTY_PASSWORD=yes \
+    --network app-tier \
+    bitnami/mysql:latest
+
+Step 3: Launch your MySQL client instance
+
+Finally we create a new container instance to launch the MySQL client and connect to the server created in the previous step:
+
+$ docker run -it --rm \
+    --network app-tier \
+    bitnami/mysql:latest mysql -h mysql-server -u root
+
+
+Setting the root password on first run
+
+The root user and password can easily be setup with the Bitnami MySQL Docker image using the following environment variables:
+
+    MYSQL_ROOT_USER: The database admin user. Defaults to root.
+    MYSQL_ROOT_PASSWORD: The database admin user password. No defaults.
+
+Passing the MYSQL_ROOT_PASSWORD environment variable when running the image for the first time will set the password of the MYSQL_ROOT_USER user to the value of MYSQL_ROOT_PASSWORD.
+
+$ docker run --name mysql -e MYSQL_ROOT_PASSWORD=password123 bitnami/mysql:latest
+
+Allowing empty passwords
+
+By default the MySQL image expects all the available passwords to be set. In order to allow empty passwords, it is necessary to set the ALLOW_EMPTY_PASSWORD=yes env variable. This env variable is only recommended for testing or development purposes. We strongly recommend specifying the MYSQL_ROOT_PASSWORD for any other scenario.
+
+$ docker run --name mysql -e ALLOW_EMPTY_PASSWORD=yes bitnami/mysql:latest
+
+Creating a database on first run
+
+By passing the MYSQL_DATABASE environment variable when running the image for the first time, a database will be created. This is useful if your application requires that a database already exists, saving you from having to manually create the database using the MySQL client.
+
+$ docker run --name mysql \
+    -e ALLOW_EMPTY_PASSWORD=yes \
+    -e MYSQL_DATABASE=my_database \
+    bitnami/mysql:latest
+
+Creating a database user on first run
+
+You can create a restricted database user that only has permissions for the database created with the MYSQL_DATABASE environment variable. To do this, provide the MYSQL_USER environment variable and to set a password for the database user provide the MYSQL_PASSWORD variable.
+
+$ docker run --name mysql \
+  -e ALLOW_EMPTY_PASSWORD=yes \
+  -e MYSQL_USER=my_user \
+  -e MYSQL_PASSWORD=my_password \
+  -e MYSQL_DATABASE=my_database \
+  bitnami/mysql:latest
+
+
+
+
+--------------------------------
+docker pull bitnami/magento
+--------------------------------
+https://hub.docker.com/r/bitnami/magento/
+
+
+
+TL;DR;
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-magento/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+
+
+Run the application manually
+
+If you want to run the application manually instead of using docker-compose, these are the basic steps you need to run:
+
+    Create a new network for the application and the database:
+
+    $ docker network create magento-tier
+
+    Start a MariaDB database in the network generated:
+
+    $ docker run -d --name mariadb -e ALLOW_EMPTY_PASSWORD=yes --net magento-tier bitnami/mariadb
+
+    Note: You need to give the container a name in order to Magento to resolve the host
+
+    Run the Magento container:
+
+    $ docker run -d -p 80:80 --name magento --net magento-tier bitnami/magento
+
+Then you can access your application at http://your-ip/
+
+
+
+
+Mount host directories as data volumes using the Docker command line
+
+In this case you need to specify the directories to mount on the run command. The process is the same than the one previously shown:
+
+    Create a network (if it does not exist):
+
+    $ docker network create magento-tier
+
+    Create a MariaDB container with host volume:
+
+    $ docker run -d --name mariadb -e ALLOW_EMPTY_PASSWORD=yes \
+     --net magento-tier \
+     --volume /path/to/mariadb-persistence:/bitnami \
+     bitnami/mariadb:latest
+
+    Note: You need to give the container a name in order to Magento to resolve the host
+
+    Create the Magento container with host volumes:
+
+    $ docker run -d --name magento -p 80:80 -p 443:443 \
+     --net magento-tier \
+     --volume /path/to/magento-persistence:/bitnami \
+     bitnami/magento:latest
+
+
+
+Environment variables
+
+When you start the magento image, you can adjust the configuration of the instance by passing one or more environment variables either on the docker-compose file or on the docker run command line. If you want to add a new environment variable:
+
+    For docker-compose add the variable name and value under the application section:
+
+magento:
+  image: bitnami/magento:latest
+  ports:
+    - 80:80
+    - 443:443
+  environment:
+    - MAGENTO_PASSWORD=my_password1234
+
+    For manual execution add a -e option with each variable and value:
+
+    $ docker run -d --name magento -p 80:80 -p 443:443 \
+     -e MAGENTO_PASSWORD=my_password1234 \
+     --net magento-tier \
+     --volume /path/to/magento-persistence:/bitnami \
+     bitnami/magento:latest
+
+
+
+
+
+
+--------------------------------
+docker pull bitnami/suitecrm
+--------------------------------
+https://hub.docker.com/r/bitnami/suitecrm/
+
+
+TL;DR;
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-suitecrm/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+
+
+
+Run the application manually
+
+If you want to run the application manually instead of using docker-compose, these are the basic steps you need to run:
+
+    Create a new network for the application and the database:
+
+    $ docker network create suitecrm-tier
+
+    Start a MariaDB database in the network generated:
+
+    $ docker run -d --name mariadb -e ALLOW_EMPTY_PASSWORD=yes --net=suitecrm-tier bitnami/mariadb
+
+    Note: You need to give the container a name in order to SuiteCRM to resolve the host
+
+    Run the SuiteCRM container:
+
+    $ docker run -d -p 80:80 --name suitecrm --net=suitecrm-tier bitnami/suitecrm
+
+Then you can access your application at http://your-ip/
+
+
+
+
+Mount host directories as data volumes using the Docker command line
+
+In this case you need to specify the directories to mount on the run command. The process is the same than the one previously shown:
+
+    Create a network (if it does not exist):
+
+    $ docker network create suitecrm-tier
+
+    Create a MariaDB container with host volume:
+
+    $ docker run -d --name mariadb -e ALLOW_EMPTY_PASSWORD=yes \
+     --net suitecrm-tier \
+     --volume /path/to/mariadb-persistence:/bitnami \
+     bitnami/mariadb:latest
+
+    Note: You need to give the container a name in order to SuiteCRM to resolve the host
+
+    Create the SuiteCRM container with host volumes:
+
+    $ docker run -d --name suitecrm -p 80:80 -p 443:443 \
+     --net suitecrm-tier \
+     --volume /path/to/suitecrm-persistence:/bitnami \
+     bitnami/suitecrm:latest
+
+
+
+
+You can use these snapshots to restore the application state should the upgrade fail.
+
+    Remove the currently running container
+        For docker-compose: $ docker-compose rm -v suitecrm
+        For manual execution: $ docker rm -v suitecrm
+
+    Run the new image
+        For docker-compose: $ docker-compose start suitecrm
+        For manual execution (mount the directories if needed): docker run --name suitecrm bitnami/suitecrm:latest
+
+
+
+
+Environment variables
+
+When you start the SuiteCRM image, you can adjust the configuration of the instance by passing one or more environment variables either on the docker-compose file or on the docker run command line. If you want to add a new environment variable:
+
+    For docker-compose add the variable name and value under the application section:
+
+suitecrm:
+  image: bitnami/suitecrm:latest
+  ports:
+    - 80:80
+  environment:
+    - SUITECRM_PASSWORD=my_password
+
+    For manual execution add a -e option with each variable and value:
+
+    $ docker run -d -p 80:80 -p 443:443 --name suitecrm  \
+     -e SUITECRM_PASSWORD=my_password \
+     --net suitecrm-tier \
+     --volume /path/to/suitecrm-persistence:/bitnami \
+     bitnami/suitecrm:latest
+
+
+
+
+
+--------------------------------
+docker pull bitnami/base-ubuntu
+--------------------------------
+https://hub.docker.com/r/bitnami/base-ubuntu/
+
+--------------------------------
+docker pull bitnami/elasticsearch
+--------------------------------
+https://hub.docker.com/r/bitnami/elasticsearch/
+
+TL;DR;
+
+$ docker run --name elasticsearch bitnami/elasticsearch:latest
+
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-elasticsearch/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+
+
+Persisting your application
+
+If you remove the container all your data and configurations will be lost, and the next time you run the image the application will be reinitialized. To avoid this loss of data, you should mount a volume that will persist even after the container is removed.
+
+For persistence you should mount a directory at the /bitnami path. If the mounted directory is empty, it will be initialized on the first run.
+
+$ docker run \
+    -v /path/to/elasticsearch-persistence:/bitnami/elasticsearch \
+    bitnami/elasticsearch:latest
+
+
+
+Using the Command Line
+Step 1: Create a network
+
+$ docker network create app-tier --driver bridge
+
+Step 2: Launch the Elasticsearch server instance
+
+
+Environment variables
+
+When you start the elasticsearch image, you can adjust the configuration of the instance by passing one or more environment variables either on the docker-compose file or on the docker run command line. If you want to add a new environment variable:
+
+    For docker-compose add the variable name and value under the application section:
+
+elasticsearch:
+  image: bitnami/elasticsearch:latest
+  environment:
+    - ELASTICSEARCH_PORT_NUMBER=9201
+
+    For manual execution add a -e option with each variable and value:
+
+ $ docker run -d --name elasticsearch \
+    -p 9201:9201 --network=elasticsearch_network \
+    -e ELASTICSEARCH_PORT_NUMBER=9201 \
+    -v /your/local/path/bitnami/elasticsearch:/bitnami/elasticsearch \
+    bitnami/elasticsearch
+
+
+
+Use the --network app-tier argument to the docker run command to attach the Elasticsearch container to the app-tier network.
+
+$ docker run -d --name elasticsearch-server \
+    --network app-tier \
+    bitnami/elasticsearch:latest
+
+Step 3: Launch your application container
+
+$ docker run -d --name myapp \
+    --network app-tier \
+    YOUR_APPLICATION_IMAGE
+
+
+--------------------------------
+docker pull bitnami/laravel
+--------------------------------
+https://hub.docker.com/r/bitnami/laravel/
+
+
+TL;DR;
+Local workspace
+
+$ mkdir ~/myapp && cd ~/myapp
+$ curl -LO https://raw.githubusercontent.com/bitnami/bitnami-docker-laravel/master/docker-compose.yml
+$ docker-compose up
+
+
+
+Getting started
+
+The quickest way to get started with the Bitnami Laravel Development Container is using docker-compose.
+
+Begin by creating a directory for your Laravel application:
+
+mkdir ~/myapp
+cd ~/myapp
+
+Download the docker-compose.yml file in the application directory:
+
+$ curl -LO https://raw.githubusercontent.com/bitnami/bitnami-docker-laravel/master/docker-compose.yml
+
+Finally launch the Laravel application development environment using:
+
+$ docker-compose up
+
+
+--------------------------------
+docker pull bitnami/symfony
+--------------------------------
+https://hub.docker.com/r/bitnami/symfony/
+
+TL;DR;
+Local workspace
+
+$ mkdir ~/myapp && cd ~/myapp
+$ curl -LO https://raw.githubusercontent.com/bitnami/bitnami-docker-symfony/master/docker-compose.yml
+$ docker-compose up
+
+
+
+--------------------------------
+docker pull bitnami/kibana
+--------------------------------
+https://hub.docker.com/r/bitnami/kibana/
+
+ocker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-kibaba/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+
+
+Run the application manually
+
+If you want to run the application manually instead of using docker-compose, these are the basic steps you need to run:
+
+    Create a new network for the application and the database:
+
+    $ docker network create kibana_network
+
+    Run the Elasticsearch container:
+
+    $ docker run -d -p 9200:9200 --name elasticsearch --net=kibana_network bitnami/elasticsearch
+
+    Run the Kibana container:
+
+    $ docker run -d -p 5601:5601 --name kibana --net=kibana_network \
+     -e KIBANA_ELASTICSEARCH_URL=elasticsearch \
+     bitnami/kibana
+
+To avoid inadvertent removal of these volumes you can mount host directories as data volumes. Alternatively you can make use of volume plugins to host the volume data.
+
+$ docker run -v /path/to/kibana-persistence:/bitnami bitnami/kibana:latest
+
+
+
+
+Using the Command Line
+Step 1: Create a network
+
+$ docker network create app-tier --driver bridge
+
+Step 2: Launch the Kibana server instance
+
+Use the --network app-tier argument to the docker run command to attach the Kibana container to the app-tier network.
+
+$ docker run -d --name kibana-server \
+    --network app-tier \
+    bitnami/kibana:latest
+
+Step 3: Launch your application container
+
+$ docker run -d --name myapp \
+    --network app-tier \
+    YOUR_APPLICATION_IMAGE
+
+
+
+--------------------------------
+docker pull bitnami/sugarcrm
+--------------------------------
+https://hub.docker.com/r/bitnami/sugarcrm/
+
+
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-sugarcrm/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+
+
+
+Run the application manually
+
+If you want to run the application manually instead of using docker-compose, these are the basic steps you need to run:
+
+    Create a new network for the application and the database:
+
+    $ docker network create sugarcrm_network
+
+    Start a MariaDB database in the network generated:
+
+    $ docker run -d --name mariadb -e ALLOW_EMPTY_PASSWORD=yes --net=sugarcrm_network bitnami/mariadb
+
+    Note: You need to give the container a name in order to SugarCRM to resolve the host
+
+    Run the SugarCRM container:
+
+    $ docker run -d -p 80:80 --name sugarcrm --net=sugarcrm_network bitnami/sugarcrm
+
+Then you can access your application at http://your-ip/
+
+
+
+Mount host directories as data volumes using the Docker command line
+
+In this case you need to specify the directories to mount on the run command. The process is the same than the one previously shown:
+
+    Create a network (if it does not exist):
+
+    $ docker network create sugarcrm-tier
+
+    Create a MariaDB container with host volume:
+
+    $$ docker run -d --name mariadb -e ALLOW_EMPTY_PASSWORD=yes \
+     --net sugarcrm-tier \
+     --volume /path/to/mariadb-persistence:/bitnami \
+     bitnami/mariadb:latest
+
+    Note: You need to give the container a name in order to SugarCRM to resolve the host
+
+    Create the SugarCRM container with host volumes:
+
+    $ docker run -d --name sugarcrm -p 80:80 -p 443:443 \
+     --net sugarcrm-tier \
+     --volume /path/to/sugarcrm-persistence:/bitnami \
+     bitnami/sugarcrm:latest
+
+
+Upgrade this application
+$ rsync -a /path/to/sugarcrm-persistence /path/to/sugarcrm-persistence.bkp.$(date +%Y%m%d-%H.%M.%S)
+
+
+
+
+    Remove the currently running container
+        For docker-compose: $ docker-compose rm -v sugarcrm
+        For manual execution: $ docker rm -v sugarcrm
+
+    Run the new image
+        For docker-compose: $ docker-compose start sugarcrm
+        For manual execution (mount the directories if needed): docker run --name sugarcrm bitnami/sugarcrm:latest
+
+Environment variables
+
+When you start the SugarCRM image, you can adjust the configuration of the instance by passing one or more environment variables either on the docker-compose file or on the docker run command line. If you want to add a new environment variable:
+
+    For docker-compose add the variable name and value under the application section:
+
+sugarcrm:
+  image: bitnami/sugarcrm:latest
+  ports:
+    - 80:80
+    - 443:443
+  environment:
+    - SUGARCRM_PASSWORD=my_password
+
+    For manual execution add a -e option with each variable and value:
+
+    $ docker run -d -p 80:80 -p 443:443 --name sugarcrm
+     -e SUGARCRM_PASSWORD=my_password \
+     --net sugarcrm-tier \
+     --volume /path/to/sugarcrm-persistence:/bitnami \
+     bitnami/sugarcrm:latest
+
+
+manual execution:
+
+$ docker run -d -p 80:80 -p 443:443 --name sugarcrm  \
+ -e SUGARCRM_SMTP_HOST=smtp.gmail.com \
+ -e SUGARCRM_SMTP_PROTOCOL=TLS \
+ -e SUGARCRM_SMTP_PORT=587 \
+ -e SUGARCRM_SMTP_USER=your_email@gmail.com \
+ -e SUGARCRM_SMTP_PASSWORD=your_password
+ --net sugarcrm-tier \
+ --volume /path/to/sugarcrm-persistence:/bitnami \
+ bitnami/sugarcrm:latest
+
+
+--------------------------------
+docker pull bitnami/phpmyadmin
+--------------------------------
+https://hub.docker.com/r/bitnami/phpmyadmin/
+
+
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-phpmyadmin/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+Using the Docker Command Line
+
+If you want to run the application manually instead of using docker-compose, these are the basic steps you need to run:
+
+    Create a network
+
+$ docker network create phpmyadmin-tier
+
+    Create a volume for MariaDB persistence and create a MariaDB container
+
+$ docker volume create --name mariadb_data
+$ docker run -d --name mariadb -e ALLOW_EMPTY_PASSWORD=yes \
+  --net phpmyadmin-tier \
+  --volume mariadb_data:/bitnami \
+  bitnami/mariadb:latest
+
+    Create volumes for phpMyAdmin persistence and launch the container
+
+$ docker volume create --name phpmyadmin_data
+$ docker run -d --name phpmyadmin -p 80:80 -p 443:443 \
+  --net phpmyadmin-tier \
+  --volume phpmyadmin_data:/bitnami \
+  bitnami/phpmyadmin:latest
+
+Access your application at http://your-ip/
+
+
+
+Mount host directories as data volumes using the Docker command line
+
+    Create a network (if it does not exist)
+
+$ docker network create phpmyadmin-tier
+
+    Create a MariaDB container with host volume
+
+$ docker run -d --name mariadb -e ALLOW_EMPTY_PASSWORD=yes \
+  --net phpmyadmin-tier \
+  --volume /path/to/mariadb-persistence:/bitnami \
+  bitnami/mariadb:latest
+
+    Create the phpMyAdmin the container with host volumes
+
+$ docker run -d --name phpmyadmin -p 80:80 -p 443:443 \
+  --net phpmyadmin-tier \
+  --volume /path/to/phpmyadmin-persistence:/bitnami \
+  bitnami/phpmyadmin:latest
+
+
+
+you can use these snapshots to restore the application state should the upgrade fail.
+
+    Remove the currently running container
+        For docker-compose: $ docker-compose rm -v phpmyadmin
+        For manual execution: $ docker rm -v phpmyadmin
+
+    Run the new image
+        For docker-compose: $ docker-compose start phpmyadmin
+        For manual execution (mount the directories if needed): docker run --name phpmyadmin bitnami/phpmyadmin:latest
+
+
+Specifying Environment variables on the Docker command line
+
+$ docker run -d --name phpmyadmin -p 80:80 -p 443:443 \
+  --net phpmyadmin-tier \
+  --env PHPMYADMIN_PASSWORD=my_password \
+  --volume phpmyadmin_data:/bitnami \
+  bitnami/phpmyadmin:latest
+
+
+
+
+--------------------------------
+docker pull bitnami/tensorflow-serving
+--------------------------------
+https://hub.docker.com/r/bitnami/tensorflow-serving/
+
+
+What is Tensorflow Serving?
+
+    TensorFlow Serving is a flexible, high-performance serving system for machine learning models, designed for production environments. TensorFlow Serving makes it easy to deploy new algorithms and experiments, while keeping the same server architecture and APIs. TensorFlow Serving provides out-of-the-box integration with TensorFlow models, but can be easily extended to serve other types of models and data.
+
+    With the Bitnami Docker TensorFlow Serving image it is easy to server models like inception or MNIST. For a functional example you can check the TensorFlow Inception repository.
+
+tensorflow.github.io/serving/
+
+    NOTE: This image needs access to trained data to actually works. Please check bitnami-docker-tensorflow-inception repository or follow the steps provided here
+
+TL;DR;
+
+$ docker run --name tensorflow-serving bitnami/tensorflow-serving:latest
+
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-tensorflow-serving/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+
+
+
+
+Persisting your configuration
+
+If you remove the container all your data and configurations will be lost, and the next time you run the image the data and configurations will be reinitialized. To avoid this loss of data, you should mount a volume that will persist even after the container is removed.
+
+For persistence you should mount a volume at the /bitnami path for the TensorFlow Serving data and configurations. If the mounted directory is empty, it will be initialized on the first run.
+
+$ docker run -v /path/to/tensorflow-serving-persistence:/bitnami bitnami/tensorflow-serving:latest
+
+
+
+Using the Command Line
+
+In this example, we will create a TensorFlow Inception client instance that will connect to the server instance that is running on the same docker network as the client. The Inception client will export an already trained data so the server can read it and you will be able to query the server with an image to get it categorized.
+Step 1: Download the Inception trained data
+
+$ mkdir /tmp/model-data
+$ curl -o '/tmp/model-data/inception-v3-2016-03-01.tar.gz' 'http://download.tensorflow.org/models/image/imagenet/inception-v3-2016-03-01.tar.gz'
+$ cd /tmp/model-data
+$ tar xzf inception-v3-2016-03-01.tar.gz
+
+Step 2: Create a network
+
+$ docker network create app-tier --driver bridge
+
+Step 3: Launch the TensorFlow Serving server instance
+
+Use the --network app-tier argument to the docker run command to attach the TensorFlow Serving container to the app-tier network.
+
+$ docker run -d --name tensorflow-serving \
+    --volume /tmp/model-data:/bitnami/model-data
+    --network app-tier \
+    bitnami/tensorflow-serving:latest
+
+Step 4: Launch your TensorFlow Inception client instance
+
+Finally we create a new container instance to launch the TensorFlow Serving client and connect to the server created in the previous step:
+
+$ docker run -it --rm \
+    --volume /tmp/model-data:/bitnami/model-data
+    --network app-tier \
+    bitnami/tensorflow-inception:latest inception_client --server=tensorflow-serving:9000 --image=path/to/image.jpg
+
+
+
+
+onfiguration file
+
+The image looks for configurations in /bitnami/tensorflow-serving/conf/. As mentioned in Persisting your configuation you can mount a volume at /bitnami and copy/edit the configurations in the /path/to/tensorflow-serving-persistence/tensorflow-serving/conf/. The default configurations will be populated to the conf/ directory if it's empty.
+Step 1: Run the TensorFlow Serving image
+
+Run the TensorFlow Serving image, mounting a directory from your host.
+
+$ docker run --name tensorflow-serving -v /path/to/tensorflow-serving-persistence:/bitnami bitnami/tensorflow-serving:latest
+
+
+Step 3: Restart TensorFlow Serving
+
+After changing the configuration, restart your TensorFlow Serving container for changes to take effect.
+
+$ docker restart tensorflow-serving
+
+or using Docker Compose:
+
+$ docker-compose restart tensorflow-serving
+
+Logging
+
+The Bitnami TensorFlow Serving Docker image sends the container logs to the stdout. To view the logs:
+
+$ docker logs tensorflow-serving
+
+Step 3: Remove the currently running container
+
+$ docker rm -v tensorflow-serving
+
+or using Docker Compose:
+
+$ docker-compose rm -v tensorflow-serving
+
+Step 4: Run the new image
+
+Re-create your container from the new image, restoring your backup if necessary.
+
+$ docker run --name tensorflow-serving bitnami/tensorflow-serving:latest
+
+or using Docker Compose:
+
+$ docker-compose start tensorflow-serving
+
+
+
+
+
+--------------------------------
+docker pull bitnami/tensorflow-inception
+--------------------------------
+https://hub.docker.com/r/bitnami/tensorflow-inception/
+
+
+
+What is TensorFlow Inception?
+
+    The Inception model is a TensorFlow model for image recognition. You can automatically categorize image based on trained data. For more information check this link
+
+    The TensorFlow Inception docker image allows easily exporting inception data models and querying a TensorFlow server serving the Inception model. For example, it is very easy to start using the already trained data from the ImageNet image database.
+
+https://www.tensorflow.org/tutorials/image_recognition
+TL;DR;
+
+Before running the docker image you first need to download the Inception model training checkpoint so it will be available for the TensorFlow Serving server.
+
+$ mkdir /tmp/model-data
+$ curl -o '/tmp/model-data/inception-v3-2016-03-01.tar.gz' 'http://download.tensorflow.org/models/image/imagenet/inception-v3-2016-03-01.tar.gz'
+$ cd /tmp/model-data
+$ tar xzf inception-v3-2016-03-01.tar.gz
+
+Docker Compose
+
+$ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-tensorflow-inception/master/docker-compose.yml > docker-compose.yml
+$ docker-compose up -d
+
+
+
+
+Run the application manually
+
+If you want to run the application manually instead of using docker-compose, these are the basic steps you need to run:
+
+    Create a new network for the application and the database:
+
+    $ docker network create tensorflow-tier
+
+    Start a Tensorflow Serving server in the network generated:
+
+    $ docker run -d -v /tmp/model-data:/bitnami/model-data -p 9000:9000 --name tensorflow-serving --net tensorflow-tier bitnami/tensorflow-serving:latest
+
+    Note: You need to give the container a name in order to TensorFlow Inception client to resolve the host
+
+    Run the TensorFlow Inception client container:
+
+    $ docker run -d -v /tmp/model-data:/bitnami/model-data --name tensorflow-inception --net tensorflow-tier bitnami/tensorflow-inception:latest
+
+
+
+
+Mount host directories as data volumes using the Docker command line
+
+    Create a network (if it does not exist):
+
+    $ docker network create tensorflow-tier
+
+    Create a Tensorflow-Serving container with host volume:
+
+    $ docker run -d --name tensorflow-serving -p 9000:9000 \
+     --net tensorflow-tier \
+     --volume /path/to/tensorflow-serving-persistence:/bitnami \
+     --volume /path/to/model_data:/bitnami/model-data \
+     bitnami/tensorflow-serving:latest
+
+    Note: You need to give the container a name in order to TensorFlow Inception client to resolve the host
+
+    Create the TensorFlow Inception client container with host volumes:
+
+    $ docker run -d --name tensorflow-inception \
+     --net tensorflow-tier \
+     --volume /path/to/tensorflow-inception-persistence:/bitnami \
+     --volume /path/to/model_data:/bitnami/model-data \
+     bitnami/tensorflow-inception:latest
+
+
+
+
+
+    Remove the currently running container
+        For docker-compose: $ docker-compose rm tensorflow-inception
+        For manual execution: $ docker rm tensorflow-inception
+
+    Run the new image
+        For docker-compose: $ docker-compose start tensorflow-inception
+        For manual execution (mount the directories if needed): docker run --name tensorflow-inception bitnami/tensorflow-inception:latest
+
+
+
+Environment variables
+
+When you start the tensorflow-inception image, you can adjust the configuration of the instance by passing one or more environment variables either on the docker-compose file or on the docker run command line. If you want to add a new environment variable:
+
+    For docker-compose add the variable name and value under the application section:
+
+tensorflow-inception:
+  image: bitnami/tensorflow-inception:latest
+  environment:
+    - TENSORFLOW_INCEPTION_MODEL_INPUT_DATA_NAME=my_custom_data
+  volumes_from:
+    - tensorflow_inception_data
+
+    For manual execution add a -e option with each variable and value:
+
+    $ docker run -d --name tensorflow-inception \
+     --net tensorflow-tier \
+     --volume /path/to/tensorflow-inception-persistence:/bitnami \
+     bitnami/tensorflow-inception:latest
+
+Available variables:
+
+    TENSORFLOW_SERVING_HOST: Hostname for Tensorflow-Serving server. Default: tensorflow-serving
+    TENSORFLOW_SERVING_PORT_NUMBER: Port used by Tensorflow-Serving server. Default: 9000
+    TENSORFLOW_INCEPTION_MODEL_INPUT_DATA_NAME: Folder containing the data model to export. Default: inception-v3
+
+
+
+--------------------------------
+docker pull mihmchan/centos6-bitnami
+--------------------------------
+https://hub.docker.com/r/mihmchan/centos6-bitnami/
+
+--------------------------------
+docker pull bitnami/my-mean-app
+--------------------------------
+https://hub.docker.com/r/bitnami/my-mean-app/
+
+
+--------------------------------
+docker pull merqlove/bitnami-mariadb
+--------------------------------
+https://hub.docker.com/r/merqlove/bitnami-mariadb/
+
+--------------------------------
+docker pull vanstee/bitnami-wordpress
+docker pull tutorials/wordpress-php
+docker pull tutorials/wordpress-apache
+--------------------------------
+https://hub.docker.com/r/vanstee/bitnami-wordpress/
+https://hub.docker.com/r/tutorials/wordpress-php/
+https://hub.docker.com/r/tutorials/wordpress-apache/
+
+--------------------------------
+docker pull tutorials/myapp-apache
+docker pull tutorials/myapp-php
+--------------------------------
+https://hub.docker.com/r/tutorials/myapp-apache/
+https://hub.docker.com/r/tutorials/myapp-php/
+https://github.com/bitnami/bitnami-docker/tree/master/gke/lamp
+https://github.com/bitnami/bitnami-docker/tree/master/gke/lamp
+
+
+--------------------------------
+docker pull snakeego/mongomini
+docker pull builditftorelli/eolas-mongodb
+--------------------------------
+https://hub.docker.com/r/snakeego/mongomini/
+https://hub.docker.com/r/builditftorelli/eolas-mongodb/
+
+docker run -d -p 27017:27017 -it --name my-mongodb -v /my/volume/path:/bitnami/mongodb builditftorelli/eolas-mongodb:3.4.2-r1
+
+--------------------------------
+docker pull jmcastagnetto/php-fpm
+--------------------------------
+https://hub.docker.com/r/jmcastagnetto/php-fpm/
+
+
+
+--------------------------------
+docker pull remisantos/bit-angular
+--------------------------------
+https://hub.docker.com/r/remisantos/bit-angular/
+
+
+
+--------------------------------
+docker pull godogali/laravel
+docker pull webartisans/laravel-fpm
+docker pull w0rddriven/docker-laravel-deployer
+docker pull nutsllc/toybox-laravel
+docker pull sebastianvirlan/laravel-docker
+--------------------------------
+https://hub.docker.com/r/godogali/laravel/
+https://hub.docker.com/r/webartisans/laravel-fpm/
+https://hub.docker.com/r/nutsllc/toybox-laravel/
+https://hub.docker.com/r/sebastianvirlan/laravel-docker/
+
+
+
+
+    Run laravel image with
+
+docker run -itd -e MYSQL_ROOT_PASSWORD=rootPass123! -e MYSQL_DATABASE=laravelApp -e MYSQL_USER=laravelDbUser -e MYSQL_PASSWORD=laravelDbPass! --name mysql mysql
+docker run -itd --name redis redis
+docker run -itd --name mongo mongo
+docker run -itd -v /Users/sebastianvirlan/Documents/workspace/L:/app -p 80:80 --link mysql:lmysql --link redis:lredis --link mongo:lmongo --name="laravel_application" sebastianvirlan/laravel-docker:development-php7.1.2-mysql-mongodb-redis
+
+Laravel + MySQL
+
+    Pull mysql and sebastianvirlan/laravel-docker:development-php7.1.2-mysql
+
+docker pull mysql
+docker pull sebastianvirlan/laravel-docker:development-php7.1.2-mysql
+
+    Run laravel image with
+
+docker run -itd -e MYSQL_ROOT_PASSWORD=rootPass123! -e MYSQL_DATABASE=laravelApp -e MYSQL_USER=laravelDbUser -e MYSQL_PASSWORD=laravelDbPass! --name mysql mysql
+docker run -itd -v /Users/sebastianvirlan/Documents/workspace/L:/app -p 80:80 --link mysql:lmysql --name laravel_application sebastianvirlan/laravel-docker:development-php7.1.2-mysql
+Laravel + Redis
+
+    Pull redis and sebastianvirlan/laravel-docker:development-php7.1.2-redis
+
+docker pull redis
+docker pull sebastianvirlan/laravel-docker:development-php7.1.2-redis
+
+    Run laravel image with
+
+docker run -itd --name redis redis
+docker run -itd -v /Users/sebastianvirlan/Documents/workspace/L:/app -p 80:80 --link redis:lredis --name laravel_application sebastianvirlan/laravel-docker:development-php7.1.2-redis
+
+
+
+--------------------------------
+docker pull reflexions/docker-laravel-fedora
+docker pull eugenebalaban/laravel-nginx
+docker pull tequilarapido/dock-laravel-ci-base
+docker pull mouyigang/laravel-phpfpm
+docker pull skyscrapers/laravel-nginx
+docker pull mattalford/docker-websocket-laravel
+docker pull eugenebalaban/laravel-php-fpm
+docker pull efynox/docker-laravel-nginx
+docker pull joostlaan/hhvm-laravel
+--------------------------------
+
+
+
+
+
+--------------------------------
+docker pull 1and1internet/ubuntu-16-laravel-application
+docker pull niclashedam/ubuntu-laravel
+--------------------------------
+https://hub.docker.com/r/1and1internet/ubuntu-16-laravel-application/
+
+Laravel 5 Application Base on Ubuntu 16 PHP 7.1
+
+
+
+
+--------------------------------
+docker pull tomsowerby/laravel-composer
+--------------------------------
+https://hub.docker.com/r/tomsowerby/laravel-composer/
+
+Run composer (command run from a laravel directory):
+docker run -it --rm -v "$PWD":/usr/src/myapp -w /usr/src/myapp tomsowerby/laravel-composer
+
+Please report bugs or suggestions for this container to the GitHub issue page.
+
+
+
+
+
+--------------------------------
+docker pull nielsvdoorn/laravel-supervisor
+--------------------------------
+https://hub.docker.com/r/nielsvdoorn/laravel-supervisor/
+
+Running the docker image
+
+To run the docker image simply run the following command (change volumes to fit your environment)
+
+docker run -d -v /path/to/local/laravel:/var/www nielsvdoorn/docker-laravel-supervisor:latest
+
+
+
+
+
+--------------------------------
+docker pull naonak/docker-apache-php7-laravel
+--------------------------------
+https://hub.docker.com/r/naonak/docker-apache-php7-laravel/
+
+Apache2
+laravel (example: laravel new blog)
+PHP7 (apcu, mongodb, redis, zmq, mysql, pdo)
+Composer
+NPM
+Gulp
+Bower
+System timezone : Europe/Paris
+Locale : fr_FR.UTF-8 UTF-8
+
+
+
+
+--------------------------------
+docker pull steveyard/docker-laravel
+--------------------------------
+
+https://hub.docker.com/r/steveyard/docker-laravel/
+
+Running a container
+
+1. Download the public Docker image from Dockerhub:
+
+docker pull syardumi/docker-laravel
+
+2. Run the Docker image as a new Docker container:
+
+docker run -d \
+-p 80:80 -p 443:443 \
+-v /home/app:/share \
+--restart=always \
+--name=appname \
+syardumi/docker-laravel
+
+
+
+
+
+--------------------------------
+docker pull brunogasparin/laravel-apache
+--------------------------------
+https://hub.docker.com/r/brunogasparin/laravel-apache/
+
+
+You can now build and run the Docker image:
+
+$ docker build -t my-laravel-app .
+$ docker run --name some-laravel-app -d my-laravel-app
+
+You can test it by visiting http://container-ip in a browser or, if you need access outside
+the daemon's host, on port 8080:
+
+$ docker run --name some-laravel-app -p 8080:80 -d my-laravel-app
+
+You can then go to http://localhost:8080 or http://host-ip:8080 in a browser.
+Ready for Production
+
+When you build an image using this base image, the result can image can be used for
+your production container:
+
+$ docker build -t my-production-laravel-app-image .
+$ docker run --name my-producton-container -p 8080:80 -d my-production-laravel-app-image
+
+This cointainer will have all the an laravel application compiled for a production
+
+But how can I use this image for Development
+
+For development, you`ll probably want to mount your source code into the container:
+
+$ docker run --name my-producton-container -p 8080:80 -d my-production-laravel-app-image
+
+
+onfiguring Laravel
+
+Laravel is configured using environment variable. So to configure your Laravel application, you can use
+docker:
+
+$ docker run --name some-laravel-app -e "APP_DEBUG=false" -e "DB_CONNECTION=pgsql" -p 8080:80 -d my-laravel-app
+
+
+
+
+
+--------------------------------
+docker pull shin1x1/laravel-on-php7-apache
+--------------------------------
+https://hub.docker.com/r/shin1x1/laravel-on-php7-apache/
+
+Docker image for Laravel 5.1 on php7-apache
+
+
+Usage
+
+$ cd /path/to/laravel-application
+$ docker run -v `pwd`:/var/www/html -p "8000:80" shin1x1/laravel-on-php7-apache
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.17.0.2. Set the 'ServerName' directive globally to suppress this message
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.17.0.2. Set the 'ServerName' directive globally to suppress this message
+[Mon Feb 15 14:32:23.701732 2016] [mpm_prefork:notice] [pid 1] AH00163: Apache/2.4.10 (Debian) PHP/7.0.3 configured -- resuming normal operations
+[Mon Feb 15 14:32:23.702131 2016] [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
+
+$ docker run shin1x1/laravel-on-php7-apache php -v
+
+
+
+
+--------------------------------
+docker pull alteranancient/lemp-node-laravel
+--------------------------------
+https://hub.docker.com/r/alteranancient/lemp-node-laravel/
+
+A LEMP Stack Docker Image with Node, NPM and Yarn, for use with Laravel
+
+
+
+
+--------------------------------
+docker pull mathieutu/laravel-dev
+--------------------------------
+https://hub.docker.com/r/mathieutu/laravel-dev/
+
+
+
+laravel-dev
+
+Pour le développement de projets Laravel avec Php 5.6 et 7
+
+    Ubuntu latest
+    phpX-fpm git curl phpX-mysqlnd phpX-curl phpX-gd phpX-intl phpX-mcrypt phpX-sqlite phpX-xdebug vim
+    yarn & composer
+    quelques alias pratiques
+    Un path avec tout ce qu'il faut
+
+Voir :
+
+    le Dockerfile de 5.6
+    le .bash_profile de 5.6
+    le Dockerfile de 7
+    le .bash_profile de 7
+
+    docker run -v /path/to/files/:/usr/share/nginx/html/ -p 80 -p 443 -d laravel-dev:5.6
+
+    docker run -v /path/to/files/:/usr/share/nginx/html/ -p 80 -p 443 -d laravel-dev:7
+
+##To be continued
+La suite un peu plus tard...
+
+
+
+
+--------------------------------
+docker pull whooshkaa/php7-laravel
+docker pull omegabit/laravel-apache
+docker pull ascdc/apache2-php56-laravel
+docker pull mbcdannyft2/laravel-server-php56
+docker pull ipunktbs/laravel-httpd
+docker pull mawalu/docker-laravel-web
+docker pull janisedurio/laravel-5.2-api
+docker pull wiwatsrt/docker-laravel-artisan
+docker pull kahunacoder/docker-laravel-gulp
+docker pull w0rddriven/docker-laravel-deployer-5.6
+docker pull darkaonline/laravel-tests-on-bitbucker-piplene
+docker pull rufusmbugua/laravel-mysql
+docker pull eugenebalaban/laravel-php-fpm-ssh
+docker pull ganiutomo/docker-php-laravel
+docker pull eugenebalaban/laravel-node
+docker pull nmfzone/gitlab-ci-laravel # Docker image for GitLab CI runner used PHP 7.1 and officially support Laravel Framework.
+docker pull framgia/laravel-php-fpm # php-fpm service for running Laravel project
+--------------------------------
+https://hub.docker.com/r/whooshkaa/php7-laravel/
+https://hub.docker.com/r/omegabit/laravel-apache/
+https://hub.docker.com/r/ascdc/apache2-php56-laravel/
+https://hub.docker.com/r/omegabit/laravel-apache/
+https://hub.docker.com/r/mawalu/docker-laravel-web/
+https://hub.docker.com/r/janisedurio/laravel-5.2-api/
+
+Base image for php7/laravel applications.
+
+
+
+
+--------------------------------
+docker pull geekineers/lamp-laravel
+--------------------------------
+https://hub.docker.com/r/geekineers/lamp-laravel/
+
+Docker image with LAMP and Laravel installed
+
+Docker image with LAMP and Laravel installed
+
+Mount your Laravel project host directory to /var/www/app:
+
+docker run -d --name=my-dev-container -v <project directory on host machine>:/var/www/app -P -t -i geekineers/lamp-laravel:dev
+
+Then you can attach to your newly made container:
+
+docker exec -ti my-dev-container /bin/bash
+
+and run composer install at app directory to initialize Laravel project:
+
+cd /var/www/app
+composer install
+
+
+
+
+--------------------------------
+docker pull lukemauldin/docker-php-laravel
+--------------------------------
+https://hub.docker.com/r/lukemauldin/docker-php-laravel/
+
+
+Supported tags
+
+    latest apache+php-5.6
+    5.6 apache+php-5.6
+    5.4 apache+php-5.4
+
+Additional extensions
+
+    bz2
+    mbstring
+    mcrypt
+    mysql (php 5.4 only)
+    mysqli
+    opcache
+    pdo_mysql
+    xdebug (disabled by default)
+    zip
+
+
+--------------------------------
+docker pull takashiabe/centos7-apache-laravel
+--------------------------------
+https://hub.docker.com/r/takashiabe/centos7-apache-laravel/
+
+This is just a base image of CentOS7 that has laravel5, php7, Apache2.4, Systemd installed.
+
+docker exec -it laravel5-httpd systemctl (reload|restart) httpd.service
+
+
+
+
+--------------------------------
+docker pull occitech/cakephp
+--------------------------------
+https://hub.docker.com/r/occitech/cakephp/
+
+CakePHP 3 Docker image
+
+With Apache
+
+More commonly, you will probably want to run CakePHP in conjunction with Apache httpd. Conveniently, there's a version of the CakePHP image that's packaged with the Apache web server.
+
+You can simply run:
+
+docker run --name cakephp -d -p 80 occitech/cakephp:5-apache
+
+With PHP-FPM
+
+docker run --name cakephp -d -p 80 occitech/cakephp:5-fpm
+
+As CakePHP has specific URL rewrite rules, we also provide a Nginx image pre-configured with it:
+
+docker run --name cakephp-fpm -d occitech/cakephp:5-fpm
+docker run --name cakephp-nginx --link cakephp-fpm:fpm -d -p 80 occitech/cakephp
+
+
+
+
+
+--------------------------------
+docker pull gregnuj/cakephp-v3-apache
+docker pull gregnuj/cakephp-v2-fpm
+docker pull xymanek/cakephp-mysql
+docker pull timherman/nginx-cakephp
+docker pull adrianoluis/docker-cakephp-develop # 2.x
+docker pull turnkeylinux/cakephp-13.0 # 1.3
+docker pull turnkeylinux/cakephp-14.0
+docker pull sunyi00/jessie-fpm-cakephp # jessie php-fpm cakephp nginx python python-pip supervisor
+docker pull waldemarnt/cakephp-nginx
+docker pull micromkt/cakephp-apache
+docker pull occitech/cakephp2
+docker pull proton0/cakephp-mysql-tester
+docker pull rschlaefli/php-fpm-alpine-cakephp
+docker pull willierhart/cakephp-nginx
+docker pull waldemarnt/cakephp-nginx-cors
+docker pull absolutehh/cakephp2-php56
+docker pull zippa/cakephp1.3
+
+
+docker pull marcellodesales/php-apache-cakephp-mysql # Container for CakePHP applications depending on Apache Modules and MySQL PDO.
+https://github.com/marcellodesales/php-apache-mysql-4-cakephp-docker
+
+
+docker pull potatopowered/cakephp3 # CakePHP 3.x testing and development environments.
+https://github.com/PotatoPowered/docker/blob/master/cakephp/development/php5.6/apache/Dockerfile
+https://github.com/PotatoPowered/docker/blob/master/cakephp/development/php7/apache/Dockerfile
+https://github.com/PotatoPowered/docker/blob/master/cakephp/documentation/sphinx/Dockerfile
+
+
+
+docker pull oprudkyi/laravel-bootstrap-adminlte-starter-kit
+https://gitlab.com/oprudkyi/laravel-bootstrap-adminlte-starter-kit/
+--------------------------------
+
+
+
+
+
+--------------------------------
+docker pull repositoryjp/centos-cakephp2env
+docker pull repositoryjp/centos-cakephp27
+--------------------------------
+https://hub.docker.com/r/repositoryjp/centos-cakephp2env/
+Docker image for CentOS with CakePHP 2 environment.
+
+
+Command for docker run
+
+$ docker run --name centos-cakephp2env -P -v /home/cakephp/webapp:/share/ -i -t repositoryjp/centos-cakephp2env
+
+
+
+
+--------------------------------
+docker pull eboraas/laravel
+--------------------------------
+https://hub.docker.com/r/eboraas/laravel/
+
+
+Simple Examples
+
+Assuming you have your app code at /home/jdoe/myapp/, the below will be sufficient to serve it. Note that many Docker users encourage mounting data from a storage container, rather than directly from the filesyetem.
+
+    Default Laravel splash page: docker run -p 80:80 -p 443:443 -d eboraas/laravel and browse to the host's IP address using http or https
+    Serving your own app, with SSL support: docker run -p 80:80 -p 443:443 -v /home/jdoe/myapp/app/:/var/www/laravel/app/ -v /home/jdoe/myapp/public/:/var/www/laravel/public/ -d eboraas/laravel
+    ... without SSL support: docker run -p 80:80 -v /home/jdoe/myapp/app/:/var/www/laravel/app/ -v /home/jdoe/myapp/public/:/var/www/laravel/public/ -d eboraas/laravel
+    ... using non-standard ports: docker run -p 8080:80 -p 8443:443 -v /home/jdoe/myapp/app/:/var/www/laravel/app/ -v /home/jdoe/myapp/public/:/var/www/laravel/public/ -d eboraas/laravel
+
+
+
+--------------------------------
+docker pull hitalos/laravel
+--------------------------------
+https://hub.docker.com/r/hitalos/laravel/
+Docker image to run Laravel 5.x projects
+
+
+
+Installing
+
+docker pull hitalos/laravel
+
+Using
+With docker
+
+docker run --name <container_name> -d -v $PWD:/var/www -p 80:80 hitalos/laravel
+
+Where $PWD is the laravel installation folder.
+
+
+
+
+--------------------------------
+docker pull geshan/laravel-alpine
+--------------------------------
+https://hub.docker.com/r/geshan/laravel-alpine/
+Docker Container for Laravel 5.x with PHP7
+
+
+Pull it from docker registry
+
+To pull the docker image you can do it with:
+
+docker pull geshan/laravel-alpine:php7
+
+Usage
+
+After pulling the image from docker registry, go into laravel project that has a composer.json.
+Then run the following commands to run php or composer:
+
+docker run -v $(pwd):/var/www geshan/laravel-alpine "composer install --prefer-dist"
+
+Lets say if you are have PHPUnit in your composer.json, you can run the following commands
+to run your tests:
+
+docker run -v $(pwd):/var/www geshan/laravel-alpine "./vendor/bin/phpunit --version"
+docker run -v $(pwd):/var/www geshan/php7-laravel-alpine "./vendor/bin/phpunit"
+
+
+
+
+--------------------------------
+docker pull ganiutomo/docker-php-laravel
+--------------------------------
+PHP Environment for Laravel Framework
+https://hub.docker.com/r/ganiutomo/docker-php-laravel/
+
+
+
+
+PHP Environment for Laravel Framework
+
+Supported tags & respective Dockerfile links:
+
+    5.4-cli, 5.4 (5.4/cli/Dockerfile) https://hub.docker.com/r/ganiutomo/docker-php-laravel/5.4/cli/Dockerfile
+    5.4-apache (5.4/apache/Dockerfile) https://hub.docker.com/r/ganiutomo/docker-php-laravel/5.4/apache/Dockerfile
+    5.4-fpm (5.4/fpm/Dockerfile) https://hub.docker.com/r/ganiutomo/docker-php-laravel/5.4/fpm/Dockerfile
+    5.5-cli, 5.5 (5.5/cli/Dockerfile) https://hub.docker.com/r/ganiutomo/docker-php-laravel/5.5/cli/Dockerfile
+    5.5-apache (5.5/apache/Dockerfile) https://hub.docker.com/r/ganiutomo/docker-php-laravel/5.5/apache/Dockerfile
+    5.5-fpm (5.5/fpm/Dockerfile) https://hub.docker.com/r/ganiutomo/docker-php-laravel/5.5/fpm/Dockerfile
+    5.6-cli, 5.6, cli, latest (5.6/cli/Dockerfile) https://hub.docker.com/r/ganiutomo/docker-php-laravel/5.6/cli/Dockerfile
+    5.6-apache, apache (5.6/apache/Dockerfile) https://hub.docker.com/r/ganiutomo/docker-php-laravel/5.6/apache/Dockerfile
+    5.6-fpm, fpm (5.6/fpm/Dockerfile) https://hub.docker.com/r/ganiutomo/docker-php-laravel/5.6/fpm/Dockerfile
+
+
+
+Additional module list:
+
+    intl
+    mbstring
+    mcrypt
+    mssql
+    pcntl
+    pdo_dblib
+    pdo_mysql
+    pdo_pgsql
+    pgsql
+    zip
+
+PHP 5.5 and 5.6 only:
+
+    opcache
+
+
+
+
+
+--------------------------------
+docker pull kvaps/php-mysql
+docker pull misterpaladin/nginx-php
+docker pull invitado/php-fpm
+docker pull wodby/wordpress-php
+docker pull cloudposse/apache-php-fpm
+docker pull drupalci/php-5.5.38-apache
+
+
+
+docker pull 1and1internet/ubuntu-16-nginx-php-7.1-wordpress-4 # ubuntu-16-nginx-php-7.1-wordpress-4
+docker pull 1and1internet/ubuntu-16-nginx-php-phpmyadmin
+docker pull padster83/centos7-php7-laravel # Quick and up to date of Centos 7 php7 and laravel ready to get you up and running
+--------------------------------
+
+
+
+
+
+
+--------------------------------
+docker pull pixelfusion/laravel-php7-node
+--------------------------------
+https://hub.docker.com/r/pixelfusion/laravel-php7-node/
+
+Laravel docker image based on php7.0 including node for CI builds
+
+    PHP 7.0.8
+    MariaDB 10.0.26
+    Node v6.3.0
+    NPM 3.10.3
+    Webpack 1.13.1
+
+
+
+
+--------------------------------
+docker pull 1and1internet/ubuntu-16-nginx-php-7.1
+--------------------------------
+https://hub.docker.com/r/1and1internet/ubuntu-16-nginx-php-7.1/
+Nginx with PHP 7.1 on Ubuntu 16.04 LTS (Xenial Xerus)
+
+
+Usage
+
+Please note this image is explictly intended to be run as a non-privileged user. Ensure you specify a user id (UID) other than zero when you run it. Running as root will not function.
+
+UID=999
+PORT=80
+WEB_ROOT="/var/www/"
+
+docker run -u ${UID}:0 -p ${PORT}:8080 -v ${WEB_ROOT}:/var/www/ 1and1internet/ubuntu-16-nginx-php-7.1
+
+
+
+
+--------------------------------
+docker pull million12/php-app-ssh
+--------------------------------
+https://hub.docker.com/r/million12/php-app-ssh/
+
+Usage
+
+docker run -d -p 1122:22 --volumes-from="webdata-container" --env="IMPORT_GITHUB_PUB_KEYS=user1,user2" million12/php-app-ssh
+
+After container is launched, you can login:
+ssh -p 1122 www@docker-host
+
+
+
+
+--------------------------------
+docker pull 1and1internet/ubuntu-16-nginx-php-7.1-joomla-3
+--------------------------------
+https://hub.docker.com/r/1and1internet/ubuntu-16-nginx-php-7.1-joomla-3/
+
+Usage
+
+Please note this image is explictly intended to be run as a non-privileged user. Ensure you specify a user id (UID) other than zero when you run it. Running as root will not function.
+
+UID=999
+PORT=80
+WEB_ROOT="/var/www/"
+
+docker run -u ${UID}:0 -p ${PORT}:8080 -v ${WEB_ROOT}:/var/www/ 1and1internet/ubuntu-16-nginx-php-7.1-joomla-3
+
+Building and testing
+
+
+
+
+--------------------------------
+docker pull php
+--------------------------------
+Run a single PHP script
+
+For many simple, single file projects, you may find it inconvenient to write a complete Dockerfile. In such cases, you can run a PHP script by using the PHP Docker image directly:
+
+$ docker run -it --rm --name my-running-script -v "$PWD":/usr/src/myapp -w /usr/src/myapp php:7.0-cli php your-script.php
+
+With Apache
+
+
+
+
+
+--------------------------------
+docker pull richarvey/nginx-php-fpm
+--------------------------------
+https://hub.docker.com/r/richarvey/nginx-php-fpm/
+Container running Nginx + PHP-FPM capable of pulling application code from git
+
+Running
+
+To simply run the container:
+
+sudo docker run -d richarvey/nginx-php-fpm
+
+To dynamically pull code from git when starting:
+
+docker run -d -e 'GIT_EMAIL=email_address' -e 'GIT_NAME=full_name' -e 'GIT_USERNAME=git_username' -e 'GIT_REPO=github.com/project' -e 'GIT_PERSONAL_TOKEN=<long_token_string_here>' richarvey/nginx-php-fpm:latest
+
+You can then browse to http://<DOCKER_HOST> to view the default install files. To find your DOCKER_HOST use the docker inspect to get the IP address (normally 172.17.0.2)
+
+
+--------------------------------
+docker pull chriswayg/apache-php
+--------------------------------
+https://hub.docker.com/r/chriswayg/apache-php/
+
+Example with host mount:
+
+mkdir -p html && echo "<?php phpinfo(); ?>" > html/index.php
+
+docker run -d --name=apache-php \
+--restart=always \
+-p 80:80 -p 443:443 \
+-v "$PWD/html":/var/www/html \
+chriswayg/apache-php
+
+
+
+--------------------------------
+docker pull centos/php-56-centos7
+--------------------------------
+https://hub.docker.com/r/centos/php-56-centos7/
+
+
+
+    For RHEL based image
+
+     $ s2i build https://github.com/openshift/sti-php.git --context-dir=5.6/test/test-app rhscl/php-56-rhel7 php-test-app
+     $ docker run -p 8080:8080 php-test-app
+
+    For CentOS based image
+
+     $ s2i build https://github.com/openshift/sti-php.git --context-dir=5.6/test/test-app centos/php-56-centos7 php-test-app
+     $ docker run -p 8080:8080 php-test-app
+
+Accessing the application:
+
+$ curl 127.0.0.1:8080
+
+
+
+
+--------------------------------
+docker pull mageinferno/magento2-php
+--------------------------------
+https://hub.docker.com/r/mageinferno/magento2-php/
+
+One-off containers
+
+This image can run one-off PHP commands, such as:
+
+docker run --rm --name php-test mageinferno/magento2-php echo "Hello world"
+
+Application code is placed in /var/www/html. You can also attach a volume to that location, then run Magento-specific commands such as the Magento CLI tool:
+
+docker run --rm --name mysite -v /Users/username/Sites/mysite/app/code:/var/www/html/app/code mageinferno/magento2-php:{PHPVERSION}-fpm-0 ./bin/magento
+
+
+
+--------------------------------
+docker pull centos/php-70-centos7
+--------------------------------
+https://hub.docker.com/r/centos/php-70-centos7/
+
+Usage
+
+To build a simple php-test-app application
+using standalone S2I and then run the
+resulting image with Docker execute:
+
+    For RHEL based image
+
+     $ s2i build https://github.com/sclorg/s2i-php-container.git --context-dir=7.0/test/test-app centos/php-70-centos7 php-test-app
+     $ docker run -p 8080:8080 php-test-app
+
+    For CentOS based image
+
+     $ s2i build https://github.com/sclorg/s2i-php-container.git --context-dir=7.0/test/test-app centos/php-70-centos7 php-test-app
+     $ docker run -p 8080:8080 php-test-app
+
+Accessing the application:
+
+$ curl 127.0.0.1:8080
+
+
+
+
+--------------------------------
+docker pull 1and1internet/ubuntu-16-apache-php-7.0
+--------------------------------
+https://hub.docker.com/r/1and1internet/ubuntu-16-apache-php-7.0/
+
+Usage
+
+Please note this image is explictly intended to be run as a non-privileged user. Ensure you specify a user id (UID) other than zero when you run it. Running as root will not function.
+
+UID=999
+PORT=80
+WEB_ROOT="/var/www/"
+
+docker run -u ${UID}:0 -p ${PORT}:8080 -v ${WEB_ROOT}:/var/www/ 1and1internet/ubuntu-16-apache-php-7.0
+
+Building and testing
+
+
+
+
+
+--------------------------------
+docker pull maxexcloo/nginx-php
+--------------------------------
+https://hub.docker.com/r/maxexcloo/nginx-php/
+
+
+    Adminer
+
+      docker run --name="adminer" -d -e "VIRTUAL_HOST=adminer.example.com" --link mariadb:mariadb --link postgresql:postgresql maxexcloo/adminer
+
+    phpMyAdmin
+
+      docker run --name="phpmyadmin" -d -e "VIRTUAL_HOST=phpmyadmin.example.com" --link mariadb:mariadb maxexcloo/phpmyadmin
+
+    Tiny Tiny RSS
+
+      docker volume create --name="tiny-tiny-rss"
+      docker run --name="tiny-tiny-rss" -it -e "VIRTUAL_HOST=tiny-tiny-rss.example.com" --link postgresql:postgresql -v tiny-tiny-rss:/data maxexcloo/tiny-tiny-rss
+
+    Wordpress
+
+      docker volume create --name="wordpress"
+      docker run --name="wordpress" -it -e "VIRTUAL_HOST=wordpress.example.com" --link mariadb:mariadb -v wordpress:/data maxexcloo/wordpress
+
+Base
+
+    Debian
+
+      docker run --name="debian" -it maxexcloo/debian bash
+
+    Ubuntu
+
+      docker run --name="ubuntu" -it maxexcloo/ubuntu bash
+
+Frameworks
+
+    EasyEngine
+
+      docker run --name="easyengine" -it -p 80:80 -p 443:443 maxexcloo/easyengine
+      docker exec -it easyengine bash
+
+    Java
+
+      docker run --name="java" -it maxexcloo/java bash
+
+    nginx
+
+      docker volume create --name="nginx"
+      docker volume create --name="nginx-data"
+      docker run --name="nginx" -it -e "VIRTUAL_HOST=example.com,www.example.com" -v nginx:/app -v nginx-data:/data maxexcloo/nginx
+
+    nginx + PHP-FPM
+
+      docker volume create --name="nginx-php"
+      docker volume create --name="nginx-php-data"
+      docker run --name="nginx-php" -it -e "VIRTUAL_HOST=example.com,www.example.com" -v nginx-php:/app -v nginx-php-data:/data maxexcloo/nginx-php
+
+    nginx + Phusion Passenger
+
+      docker volume create --name="nginx-passenger"
+      docker volume create --name="nginx-passenger-data"
+      docker run --name="nginx-passenger" -it -e "VIRTUAL_HOST=example.com,www.example.com" -v nginx-passenger:/app -v nginx-passenger-data:/data maxexcloo/nginx-passenger
+
+    Node.js
+
+      docker run --name="node" -it maxexcloo/node bash
+
+Services
+
+    Certbot
+
+      docker run --name="certbot" -it -e "EMAIL=mail@example.com"-v docker-gen:/data maxexcloo/certbot
+
+    CouchPotato
+
+      docker volume create --name="couchpotato"
+      docker run --name="couchpotato" -it -e "VIRTUAL_HOST=couchpotato.example.com" -e "VIRTUAL_PORT=5050" -v couchpotato:/data maxexcloo/couchpotato
+
+    Directory Listing
+
+      docker volume create --name="directory-listing"
+      docker run --name="directory-listing" -it -v directory-listing:/data maxexcloo/directory-listing
+
+    Docker Gen
+
+      docker volume create --name="docker-gen"
+      docker run --name="docker-gen" -it -v /var/run/docker.sock:/var/run/docker.sock -v docker-gen:/data maxexcloo/haproxy-config
+
+    HAProxy
+
+      docker run --name="haproxy" -it -p 80:80 -p 43:443 -v docker-gen:/data maxexcloo/haproxy
+
+    MariaDB
+
+      docker volume create --name="mariadb"
+      docker run --name="mariadb" -it -e "MARIADB_USER=docker" -e "MARIADB_PASS=docker" -v mariadb:/data maxexcloo/mariadb
+
+    Minecraft
+
+      docker volume create --name="minecraft"
+      docker run --name="minecraft" -it -e "MEMORY=1024" -p 25565:25565 -v minecraft:/data maxexcloo/minecraft
+
+    OpenSSH
+
+      docker run --name="openssh" -it -p 22:22 maxexcloo/openssh
+
+    OpenVPN
+
+      docker volume create --name="openvpn"
+      docker run --name="openvpn" -it -p 443:443 -p 1194:1194/udp -v openvpn:/data maxexcloo/openvpn
+      docker run --name="openvpn" -it -e "VIRTUAL_HOST=openvpn.example.com" --rm maxexcloo/openvpn -v openvpn:/data /app/host
+
+    Plex Media Server
+
+      docker volume create --name="plexmediaserver"
+      docker run --name="plexmediaserver" -it -e "VIRTUAL_HOST=plexmediaserver.example.com" -e "VIRTUAL_PORT=32400" -p 32400:32400 -v plexmediaserver:/data maxexcloo/plexmediaserver
+
+    PostgreSQL
+
+      docker volume create --name="postgresql"
+      docker run --name="postgresql" -it -v postgresql:/data maxexcloo/postgresql
+
+    ReadyMedia
+
+      docker volume create --name="readymedia"
+      docker run --name="readymedia" -it -p 1900:1900/udp -p 8200:8200 -v readymedia:/data maxexcloo/readymedia
+
+    SABnzbd
+
+      docker volume create --name="sabnzbd"
+      docker run --name="sabnzbd" -it -e "VIRTUAL_HOST=sabnzbd.example.com" -e "VIRTUAL_PORT=8080" -v sabnzbd:/data maxexcloo/sabnzbd
+
+    SickBeard
+
+      docker volume create --name="sickbeard"
+      docker run --name="sickbeard" -it -e "VIRTUAL_HOST=sickbeard.example.com" -e "VIRTUAL_PORT=8081" -v sickbeard:/data maxexcloo/sickbeard
+
+    ZNC
+
+      docker volume create --name="znc"
+      docker run --name="znc" -it -e "VIRTUAL_HOST=znc.example.com" -e "VIRTUAL_PORT=6667" -p 6667:6667 -v znc:/data maxexcloo/znc
+
+
+
+
+
+--------------------------------
+docker pull urbit/lumen-php-fpm
+--------------------------------
+https://hub.docker.com/r/urbit/lumen-php-fpm/
+
+
+Docker Snippets
+
+Useful snippets for cleanups etc.
+Stop all containers
+
+docker stop $(docker ps -a -q)
+
+docker ps -a -q | xargs docker stop
+
+Remove all containers
+
+docker rm $(docker ps -a -q)
+
+docker ps -a -q | xargs docker rm
+
+Remove all images
+
+docker rmi $(docker images -q)
+
+docker images -q | xargs docker rmi
+
+Remove orphaned volumes
+
+docker volume rm $(docker volume ls -qf dangling=true)
+
+docker volume ls -qf dangling=true | xargs docker volume rm
+
+Remove exited containers
+
+docker rm -v $(docker ps -a -q -f status=exited)
+
+docker ps -a -q -f status=exited | xargs docker rm -v
+
+Stop & Remove all containers with base image name <image_name>
+
+docker rm $(docker stop $(docker ps -a -q --filter ancestor=<image_name>))
+
+docker ps -a -q --filter ancestor=<image_name> | xargs docker stop | xargs docker rm
+
+Remove dangling images
+
+docker rmi $(docker images -f "dangling=true" -q)
+
+docker images -f "dangling=true" -q | xargs docker rmi
+
+Cleanup Volumes
+
+docker run -v /var/run/docker.sock:/var/run/docker.sock \
+           -v /var/lib/docker:/var/lib/docker \
+           --rm martin/docker-cleanup-volumes
+
+Remove all DinD containers
+
+docker rm $(docker stop $(docker ps -a -q --filter ancestor=urbit/dind-jenkins))
+
+Cleanup exited + orphaned + DinD
+
+docker ps -a -q -f status=exited | xargs docker rm -v && \
+docker volume ls -qf dangling=true | xargs docker volume rm && \
+docker ps -a -q --filter ancestor=urbit/dind-jenkins | xargs docker stop | xargs docker rm
+
+Docker-outside-of-Docker
+
+docker run -d -v /var/run/docker.sock:/var/run/docker.sock \
+              -v $(which docker):/usr/bin/docker -p 8080:8080 my-dood-container
+
+Docker-inside-Docker
+
+docker run --privileged --name my-dind-container -d docker:dind
+
+docker run --privileged --name my-dind-container -d urbit/dind-jenkins:latest
+
+
+
+
+
+
+--------------------------------
+docker pull jdeathe/centos-ssh-apache-php
+--------------------------------
+https://hub.docker.com/r/jdeathe/centos-ssh-apache-php/
+
+Quick Example
+
+Run up a container named apache-php.pool-1.1.1 from the docker image jdeathe/centos-ssh-apache-php on port 8080 of your docker host.
+
+$ docker run -d \
+  --name apache-php.pool-1.1.1 \
+  -p 8080:80 \
+  -e "APACHE_SERVER_NAME=app-1.local" \
+  jdeathe/centos-ssh-apache-php:centos-6
+
+Now point your browser to http://{docker-host}:8080 where {docker-host} is the host name of your docker server and, if all went well, you should see the "Hello, world!" page.
+
+
+SCMI Install
+
+$ docker run \
+  --rm \
+  --privileged \
+  --volume /:/media/root \
+  --env BASH_ENV="" \
+  --env ENV="" \
+  jdeathe/centos-ssh-apache-php:2.2.0 \
+  /usr/sbin/scmi install \
+    --chroot=/media/root \
+    --tag=2.2.0 \
+    --name=apache-php.pool-1.1.1
+
+SCMI Uninstall
+
+To uninstall the previous example simply run the same docker run command with the scmi uninstall command.
+
+$ docker run \
+  --rm \
+  --privileged \
+  --volume /:/media/root \
+  --env BASH_ENV="" \
+  --env ENV="" \
+  jdeathe/centos-ssh-apache-php:2.2.0 \
+  /usr/sbin/scmi uninstall \
+    --chroot=/media/root \
+    --tag=2.2.0 \
+    --name=apache-php.pool-1.1.1
+
+SCMI Systemd Support
+
+If your docker host has systemd (and optionally etcd) installed then scmi provides a method to install the container as a systemd service unit. This provides some additional features for managing a group of instances on a single docker host and has the option to use an etcd backed service registry. Using a systemd unit file allows the System Administrator to use a Drop-In to override the settings of a unit-file template used to create service instances. To use the systemd method of installation use the -m or --manager option of scmi and to include the optional etcd register companion unit use the --register option.
+
+$ docker run \
+  --rm \
+  --privileged \
+  --volume /:/media/root \
+  --env BASH_ENV="" \
+  --env ENV="" \
+  jdeathe/centos-ssh-apache-php:2.2.0 \
+  /usr/sbin/scmi install \
+    --chroot=/media/root \
+    --tag=2.2.0 \
+    --name=apache-php.pool-1.1.1 \
+    --manager=systemd \
+    --register \
+    --env='APACHE_MOD_SSL_ENABLED=true' \
+    --setopt='--volume {{NAME}}.data-ssl:/etc/services-config/ssl'
+
+
+
+
+APACHE_MOD_SSL_ENABLED
+
+By default SSL support is disabled but a second port, (mapped to 8443), is available for traffic that has been been through upstream SSL termination (SSL Offloading). If you want the container to support SSL directly then set APACHE_MOD_SSL_ENABLED=true this will then generate a self signed certificate and will update Apache to accept traffic on port 443.
+
+$ docker stop apache-php.pool-1.1.1 && \
+  docker rm apache-php.pool-1.1.1
+$ docker run -d \
+  --name apache-php.pool-1.1.1 \
+  --publish 8080:80 \
+  --publish 9443:443 \
+  --env "APACHE_SERVER_ALIAS=app-1" \
+  --env "APACHE_SERVER_NAME=app-1.local" \
+  --env "APACHE_MOD_SSL_ENABLED=true" \
+  --volume apache-php.pool-1.1.1.data-ssl:/etc/services-config/ssl \
+  jdeathe/centos-ssh-apache-php:centos-6
+
+
+
+--------------------------------
+docker pull 1and1internet/ubuntu-16-apache-php-5.6
+--------------------------------
+
+Usage
+
+Please note this image is explictly intended to be run as a non-privileged user. Ensure you specify a user id (UID) other than zero when you run it. Running as root will not function.
+
+UID=999
+PORT=80
+WEB_ROOT="/var/www/"
+
+docker run -u ${UID}:0 -p ${PORT}:8080 -v ${WEB_ROOT}:/var/www/ 1and1internet/ubuntu-16-apache-php-5.6
+
+Building and testing
+
+
+
+--------------------------------
+docker pull 1and1internet/ubuntu-16-nginx-php-7.0
+--------------------------------
+https://hub.docker.com/r/1and1internet/ubuntu-16-nginx-php-7.0/
+
+sage
+
+Please note this image is explictly intended to be run as a non-privileged user. Ensure you specify a user id (UID) other than zero when you run it. Running as root will not function.
+
+UID=999
+PORT=80
+WEB_ROOT="/var/www/"
+
+docker run -u ${UID}:0 -p ${PORT}:8080 -v ${WEB_ROOT}:/var/www/ 1and1internet/ubuntu-16-nginx-php-7.0
+
+Building and testing
+
+
+
+
+--------------------------------
+docker pull 1and1internet/ubuntu-16-nginx-php-5.6
+--------------------------------
+https://hub.docker.com/r/1and1internet/ubuntu-16-nginx-php-5.6/
+
+Usage
+
+Please note this image is explictly intended to be run as a non-privileged user. Ensure you specify a user id (UID) other than zero when you run it. Running as root will not function.
+
+UID=999
+PORT=80
+WEB_ROOT="/var/www/"
+
+docker run -u ${UID}:0 -p ${PORT}:8080 -v ${WEB_ROOT}:/var/www/ 1and1internet/ubuntu-16-nginx-php-5.6
+
+Building and testing
+
+
+
+--------------------------------
+docker pull 1and1internet/ubuntu-16-apache-php-7.1
+--------------------------------
+https://hub.docker.com/r/1and1internet/ubuntu-16-apache-php-7.1/
+Apache with PHP 7.1 on Ubuntu 16.04 LTS (Xenial Xerus)
+
+
+Usage
+
+Please note this image is explictly intended to be run as a non-privileged user. Ensure you specify a user id (UID) other than zero when you run it. Running as root will not function.
+
+UID=999
+PORT=80
+WEB_ROOT="/var/www/"
+
+docker run -u ${UID}:0 -p ${PORT}:8080 -v ${WEB_ROOT}:/var/www/ 1and1internet/ubuntu-16-apache-php-7.1
+
+Building and testing
+
+A simple Makefile is included for your convience. It assumes a linux environment with a docker socket available at /var/run/docker.sock
+
+
+--------------------------------
+docker pull meanbee/magento2-php
+--------------------------------
+https://hub.docker.com/r/meanbee/magento2-php/
+
+
+
+
+--------------------------------
+docker pull centurylink/apache-php
+--------------------------------
+https://hub.docker.com/r/centurylink/apache-php/
+
+Installing your PHP application
+
+To install your application, copy your code inside the image in /app. For example, if using git:
+
+sudo docker run -d panamax/docker-php git clone https://github.com/fermayo/hello-world-php.git /app
+
+It will print the new container ID (like d35bf1374e88). To create an image from that, execute:
+
+sudo docker commit d35bf1374e88 panamax/hello-world-php
+
+You can now push your changes to the registry:
+
+sudo docker push panamax/hello-world-php
+
+Running your PHP application
+
+Pull your container if it's not yet on your local docker machine:
+
+sudo docker pull panamax/hello-world-php
+
+Run the /run.sh script to start apache (via supervisor):
+
+sudo docker run -d -p 80 panamax/hello-world-php /run.sh
+
+It will print the new container ID (like d35bf1374e88). Get the allocated external port:
+
+sudo docker port d35bf1374e88 80
+
+It will print the allocated port (like 4751). Test your deployment:
+
+curl http://localhost:4751/
+
+Hello world!
+
+
+
+
+--------------------------------
+docker pull webgriffe/php-apache-base
+--------------------------------
+https://hub.docker.com/r/webgriffe/php-apache-base/
+
+Usage
+
+Standalone usage example with host's current working directory as document root:
+
+$ docker run -p 80:80 -v $(pwd):/var/www/html webgriffe/php-apache-base
+
+
+
+
+--------------------------------
+docker pull neolao/php-5.6.3-fpm-redis
+--------------------------------
+https://hub.docker.com/r/neolao/php-5.6.3-fpm-redis/
+
+Run
+
+docker run -d -p 9000:9000 neolao/php-5.6.3-fpm-redis
+
+
+
+
+
+--------------------------------
+docker pull yavin/alpine-php-fpm
+--------------------------------
+https://hub.docker.com/r/yavin/alpine-php-fpm/
+
+Running
+
+docker run --rm -p 9000:9000 -v /path/of/application:/application yavin/alpine-php-fpm:7.1
+
+Custom php.ini settings
+
+Create Dockerfile file with fallowing content and php.ini file with desired settings (look at php.ini file in this repository)
+
+FROM yavin/alpine-php-fpm:7.1
+COPY php.ini /etc/php7/conf.d/50-setting.ini
+
+And then
+
+docker build -t my-php-fpm .
+docker run --rm -p 9000:9000 -v /path/of/application:/application my-php-fpm:latest
+
+
+
+--------------------------------
+docker pull matriphe/alpine-php
+--------------------------------
+https://hub.docker.com/r/matriphe/alpine-php/
+
+Create and Run The Container
+
+docker run -p 9000:9000 --name phpfpm -v /home/user/public_html:/www:rw -d matriphe/alpine-php:fpm
+
+
+PHP CLI
+
+To ease the job, make alias for PHP-CLI. Add this line to ~/.bashrc so we can call it as regular php command.
+
+alias php='docker run --rm --name=php-cli -v $(pwd):/www matriphe/alpine-php:cli php'
+
+
+
+
+
+
+--------------------------------
+docker pull tutum/lamp
+--------------------------------
+https://hub.docker.com/r/tutum/lamp/
+
+Running your LAMP docker image
+
+Start your image binding the external ports 80 and 3306 in all interfaces to your container:
+
+docker run -d -p 80:80 -p 3306:3306 tutum/lamp
+
+Test your deployment:
+
+curl http://localhost/
+
+Hello world!
+
+docker run -d -p 80:80 -p 3306:3306 username/my-lamp-app tutum/lamp
+
+
+Setting a specific password for the MySQL server admin account
+
+If you want to use a preset password instead of a random generated one, you can
+set the environment variable MYSQL_PASS to your specific password when running the container:
+
+docker run -d -p 80:80 -p 3306:3306 -e MYSQL_PASS="mypass" tutum/lamp
+
+You can now test your new admin password:
+
+mysql -uadmin -p"mypass"
+
+Disabling .htaccess
+
+.htaccess is enabled by default. To disable .htaccess, you can remove the following contents from Dockerfile
+
+# config to enable .htaccess
+ADD apache_default /etc/apache2/sites-available/000-default.conf
+RUN a2enmod rewrite
+
+by http://www.tutum.co
+
+--------------------------------
+docker pull karllhughes/laravel-php-7
+--------------------------------
+https://hub.docker.com/r/karllhughes/laravel-php-7/
+
+docker run -it -v $PWD:/www -p 80:80  karllhughes/laravel-php-7
+
+From the container's command line, run any of the following commands:
+
+    cd /www to navigate to the web root
+    apachectl start (must be run to start Apache)
+    composer install or composer update
+    php vendor/bin/phpunit to run unit tests
+
+View your Laravel project by going to localhost or the IP address of your Virtualbox that's running Docker.
+
+
+
+
+
+
+
+
+
+
+docker pull 1and1internet/ubuntu-16-apache-php-5.6-zend-2
+docker pull 1and1internet/ubuntu-16-nginx-php-phpmyadmin-mysql-5
+docker pull 1and1internet/ubuntu-16-nginx-php-phpmyadmin-mariadb-10
+docker pull 1and1internet/ubuntu-16-apache-php-7.0
+docker pull 1and1internet/ubuntu-16-apache-php-5.6
+docker pull 1and1internet/ubuntu-16-nginx-php-7.0
+docker pull 1and1internet/ubuntu-16-nginx-php-5.6-wordpress-4
+docker pull 1and1internet/ubuntu-16-nginx-php-5.6
+docker pull 1and1internet/ubuntu-16-apache-php-7.1
+
+
+
+docker pull mikechernev/php7-fpm-laravel # The latest PHP7-FPM with installed dependencies for Laravel 5.3
+
+docker pull flaxandteal/docker-laravel-autodata
+docker pull seamlesscontacts/docker-laravel-nginx
+docker pull flaxandteal/docker-laravel-phpfpm
+docker pull mckaynz/laravel-base
+docker pull dylanlindgren/docker-laravel-data
+docker pull dylanlindgren/docker-laravel-composer
+docker pull dylanlindgren/docker-laravel-phpfpm
+docker pull thijsvandenanker/laravel-gitlab
+docker pull woohuiren/php-laravel-env
+docker pull realpage/laravel-starter
+docker pull superbuddy/laravel-nginx
+docker pull dylanlindgren/docker-laravel-artisan
+docker pull ndum/php7-laravel
+docker pull shufo/laravel-alpine
+docker pull dylanlindgren/docker-laravel-nginx
+docker pull reflexions/docker-laravel
+docker pull gentux/php-laravel
+docker pull thecontrolgroup/laravel
+docker pull wesleyelfring/laravel
+docker pull karbon001/gitlab-ci-laravel-php
+docker pull linode/lamp
+docker pull egyptianbman/docker-centos-nginx-php
+docker pull dmp1ce/php-fpm-drupal
+docker pull icewind1991/php-nginx
+docker pull drupalci/php-7.0-apache
+docker pull fabianmartin/php-symfony
+docker pull betavestno/docker-php-fpm
+docker pull brendanburns/php-redis
+docker pull openshift/php-56-centos7
+docker pull alexwijn/docker-git-php-composer
+docker pull wodby/nginx-php-5.6-alpine
+docker pull bigtruedata/php-mongodb
+docker pull wodby/nginx-php-7-alpine
+docker pull lyberteam/php-fpm7.0
+docker pull kyberna/php-deployment
+docker pull pasientskyhosting/nginx-php-fpm
+docker pull smartapps/bitbucket-pipelines-php-mysql
+docker pull lead4good/lamp-php
+docker pull webdevops/php-nginx-dev
+docker pull mpfmedical/nginx-php
+docker pull jkosgei/php-nginx
+docker pull liquidweb/php-fpm-docker
+docker pull laradock/php-fpm
+docker pull openshift/php-55-centos7
+docker pull webdevops/php-apache
+docker pull samerali/drupal-php
+docker pull webdevops/php-apache-dev
+docker pull lucasnetau/s2i-php-7-devtoolkit
+docker pull phpmentors/php-app
+docker pull drupalci/php-5.6-apache
+docker pull solict/high-performance-php-stack
+
