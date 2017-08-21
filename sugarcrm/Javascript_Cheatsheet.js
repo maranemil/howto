@@ -10,6 +10,7 @@
 if (location.href.match(/#YourString/)) {
     // ...do someting
 }
+
 if (element.toString().indexOf("#YourString") != -1) {
     //...do someting
 }
@@ -291,3 +292,35 @@ $('.myCheckbox').attr('checked', false);
 $('.myCheckbox').removeAttr('checked');
 
 //http://stackoverflow.com/questions/426258/setting-checked-for-a-checkbox-with-jquery
+
+
+
+// -------------------------------------------
+//
+// Redirect  Javascript
+//
+// -------------------------------------------
+
+// https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Fehler/Unexpected_type?utm_campaign=default&utm_medium=firefox-console-errors&utm_source=mozilla
+
+if (typeof foo !== 'undefined') {
+
+    // var a = "hello world"(async function(){})()
+    window.location.href = location.href
+    window.location.replace('#')
+    window.location.replace("http:www.example.com");
+
+    if (window.history.replaceState) {
+        //prevents browser from storing history with each change
+        window.history.replaceState(statedata, title, url);
+    }
+
+}
+
+
+
+
+
+
+
+

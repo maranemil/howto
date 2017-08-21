@@ -1,0 +1,239 @@
+
+#############################################
+#
+# deeplearn.js is an open source hardware-accelerated JavaScript library for machine intelligence.
+#
+#############################################
+
+<script src="https://storage.googleapis.com/learnjs-data/deeplearn.js"></script>
+
+https://pair-code.github.io/deeplearnjs/#getting-started
+https://github.com/PAIR-code/deeplearnjs
+
+http://jsdo.it/ohisama1/y2xc?lang=en
+http://jsdo.it/ohisama1/coBe
+
+
+var dl = deeplearn;
+var g = new dl.Graph();
+var math = new dl.NDArrayMathCPU();
+
+var inputA = [2];
+var inputB = [2];
+var inputTensorA = g.placeholder('A', inputA);
+var inputTensorB = g.placeholder('B', inputB);
+var multiplier = g.variable('multiplier', dl.Array2D.randNormal([1, 2]));
+
+
+var add = g.add(inputTensorA, inputTensorB);
+var sub = g.subtract(inputTensorA, inputTensorB);
+var mlt = g.multiply(inputTensorA, inputTensorB);
+var div = g.divide(inputTensorA, inputTensorB);
+var mul = g.matmul(multiplier, inputTensorA);
+var rel = g.relu(inputTensorA);
+var tan = g.tanh(inputTensorA);
+var sig = g.sigmoid(inputTensorA);
+var exp = g.exp(inputTensorA);
+var log = g.log(inputTensorA);
+var squ = g.square(inputTensorA);
+var sft = g.softmax(inputTensorA);
+var arg = g.argmax(inputTensorA);
+
+var feeds = [{
+    tensor: inputTensorA,
+    data: dl.Array1D.new([4.0, 2.0])
+}, {
+    tensor: inputTensorB,
+    data: dl.Array1D.new([2.0, 1.0])
+}];
+var sess = new dl.Session(g, math);
+
+math.scope(() => {
+    var res = sess.eval(add, feeds);
+    alert('add: ' + res.getValues());
+});
+math.scope(() => {
+    var res = sess.eval(sub, feeds);
+    alert('sub: ' + res.getValues());
+});
+math.scope(() => {
+    var res = sess.eval(mlt, feeds);
+    alert('mlt: ' + res.getValues());
+});
+math.scope(() => {
+    var res = sess.eval(div, feeds);
+    alert('div: ' + res.getValues());
+});
+math.scope(() => {
+    var res = sess.eval(mul, feeds);
+    alert('mul: ' + res.getValues());
+});
+math.scope(() => {
+    var res = sess.eval(rel, feeds);
+    alert('rel: ' + res.getValues());
+});
+math.scope(() => {
+    var res = sess.eval(tan, feeds);
+    alert('tan: ' + res.getValues());
+});
+math.scope(() => {
+    var res = sess.eval(sig, feeds);
+    alert('sig: ' + res.getValues());
+});
+math.scope(() => {
+    var res = sess.eval(exp, feeds);
+    alert('exp: ' + res.getValues());
+});
+math.scope(() => {
+    var res = sess.eval(log, feeds);
+    alert('log: ' + res.getValues());
+});
+math.scope(() => {
+    var res = sess.eval(squ, feeds);
+    alert('squ: ' + res.getValues());
+});
+math.scope(() => {
+    var res = sess.eval(sft, feeds);
+    alert('sft: ' + res.getValues());
+});
+math.scope(() => {
+    var res = sess.eval(arg, feeds);
+    alert('arg: ' + res.getValues());
+});
+
+--------------
+
+var dl = deeplearn;
+var graph = new dl.Graph();
+var math = new dl.NDArrayMathCPU();
+
+var inputA = [1];
+var inputB = [1];
+var inputTensorA = graph.placeholder('A', inputA);
+var inputTensorB = graph.placeholder('B', inputB);
+var sum = graph.add(inputTensorA, inputTensorB);
+var feeds = [{
+    tensor: inputTensorA,
+    data: dl.Array1D.new([4.0])
+}, {
+    tensor: inputTensorB,
+    data: dl.Array1D.new([2.0])
+}];
+var sess = new dl.Session(graph, math);
+math.scope(() => {
+    //alert("ok3");
+    var res = sess.eval(sum, feeds);
+    //alert(res);
+    //alert(res.shape);
+    alert(res.getValues());
+});
+
+-----------------
+
+https://jsbin.com/pexojojesu/edit?html,js,output
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+  <script src="https://storage.googleapis.com/learnjs-data/deeplearn.js"></script>
+
+</head>
+<body>
+
+</body>
+</html>
+
+
+
+
+const dl = deeplearn;
+
+// ---------- Graph
+
+const g = new dl.Graph();
+
+// Placeholders are input containers. This is the container for where we will
+// feed an input NDArray when we execute the graph.
+const inputShape = [3];
+const inputTensor = g.placeholder('input', inputShape);
+
+const labelShape = [1];
+const labelTensor = g.placeholder('label', labelShape);
+
+// Variables are containers that hold a value that can be updated from training.
+// Here we initialize the multiplier variable randomly.
+const multiplier = g.variable('multiplier', dl.Array2D.randNormal([1, 3]));
+
+// Top level graph methods take Tensors and return Tensors.
+const outputTensor = g.matmul(multiplier, inputTensor);
+const costTensor = g.meanSquaredCost(outputTensor, labelTensor);
+
+// Tensors, like NDArrays, have a shape attribute.
+console.log(outputTensor.shape);
+
+// ---------- Training
+
+const learningRate = .001;
+const batchSize = 2;
+
+const math = new dl.NDArrayMathGPU();
+const session = new dl.Session(g, math);
+const optimizer = new dl.SGDOptimizer(learningRate);
+
+const inputs = [
+  dl.Array1D.new([1.0, 2.0, 3.0]),
+  dl.Array1D.new([10.0, 20.0, 30.0]),
+  dl.Array1D.new([100.0, 200.0, 300.0])
+];
+
+const labels = [
+  dl.Array1D.new([2.0]),
+  dl.Array1D.new([20.0]),
+  dl.Array1D.new([200.0])
+];
+
+// Shuffles inputs and labels and keeps them mutually in sync.
+const shuffledInputProviderBuilder =
+   new dl.InCPUMemoryShuffledInputProviderBuilder([inputs, labels]);
+const [inputProvider, labelProvider] =
+   shuffledInputProviderBuilder.getInputProviders();
+
+// Maps tensors to InputProviders.
+const feedEntries = [
+  {tensor: inputTensor, data: inputProvider},
+  {tensor: labelTensor, data: labelProvider}
+];
+
+// Wrap session.train in a scope so the cost gets cleaned up automatically.
+math.scope(() => {
+  // Train takes a cost tensor to minimize. Trains one batch. Returns the
+  // average cost as a Scalar.
+  const cost = session.train(
+      costTensor, feedEntries, batchSize, optimizer, dl.CostReduction.MEAN);
+
+  console.log('last average cost: ' + cost.get());
+});
+
+// ---------- EVALUATION
+
+math.scope((keep, track) => {
+  const testInput = track(dl.Array1D.new([1.0, 2.0, 3.0]));
+
+  // session.eval can take NDArrays as input data.
+  const testFeedEntries = [
+    {tensor: inputTensor, data: testInput}
+  ];
+
+  const testOutput = session.eval(outputTensor, testFeedEntries);
+
+  console.log('inference output:');
+  console.log(testOutput.shape);
+  console.log(testOutput.getValues());
+});
+
+
