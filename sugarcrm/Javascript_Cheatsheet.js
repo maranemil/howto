@@ -23,21 +23,21 @@ if (element.toString().indexOf("#YourString") != -1) {
 var text = location.href;
 var regex = /#(.*)+/g;
 var match = regex.exec(text);
-var SomeId = match[0].replace("#YourString/", "");
+var SomeIda = match[0].replace("#YourString/", "");
 
 
 //---------------------------------------
 // Regex V2
 //---------------------------------------
 var arr = text.match(/#(.*)+/g) || [""]; //could also use null for empty value
-var SomeId = arr[0].replace("#YourString/", "");
+var SomeIdb = arr[0].replace("#YourString/", "");
 
 
 //---------------------------------------
 // Set value to child
 //---------------------------------------
 $('[data-fieldname="somefield_c"]').children().children().attr('readonly', true);
-
+/*
 ({
     // sugarCRM 7.X
     _renderFields: function () {
@@ -53,8 +53,10 @@ $('[data-fieldname="somefield_c"]').children().children().attr('readonly', true)
         }
     }
 })
+*/
 
 // sugarCRM 7.X
+/*
 _renderFields: function(){
 	this._super('_renderFields');
 	var field = this.getField("field_a_c");
@@ -67,7 +69,7 @@ _renderFields: function(){
 		//}
 	}
 }
-
+*/
 
 //---------------------------------------
 // Search recursive in DOM
@@ -307,13 +309,13 @@ if (typeof foo !== 'undefined') {
 
     // var a = "hello world"(async function(){})()
     window.location.href = location.href
-    window.location.replace('#')
-    window.location.replace("http:www.example.com");
-
-    if (window.history.replaceState) {
-        //prevents browser from storing history with each change
-        window.history.replaceState(statedata, title, url);
-    }
+    // window.location.replace('#')
+    // window.location.replace("http:www.example.com");
+    //
+    // if (window.history.replaceState) {
+    //     //prevents browser from storing history with each change
+    //     window.history.replaceState(statedata, title, url);
+    // }
 
 }
 
