@@ -298,9 +298,7 @@ $('.myCheckbox').removeAttr('checked');
 
 
 // -------------------------------------------
-//
 // Redirect  Javascript
-//
 // -------------------------------------------
 
 // https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Fehler/Unexpected_type?utm_campaign=default&utm_medium=firefox-console-errors&utm_source=mozilla
@@ -318,6 +316,17 @@ if (typeof foo !== 'undefined') {
     // }
 
 }
+
+
+// -------------------------------------------
+// javascript - Remove not alphanumeric characters from string
+// -------------------------------------------
+
+text.replace(/[\W_]+/g," ");
+text.replace(/\W+/g, " ")
+text.replace(/[^a-z0-9]+/gi, " ");
+text.replace(/[^a-z0-9]+|\s+/gmi, " ");
+
 
 
 

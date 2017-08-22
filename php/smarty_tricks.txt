@@ -157,3 +157,36 @@ AUSGABE:
 {$smarty.current_dir}
 {$smarty.template}
 {$smarty.server.PHP_SELF | dirname}
+
+-------------------------------------------------------------
+// smarty -  Remove not alphanumeric characters from string
+-------------------------------------------------------------
+
+{$VAR|regex_replace: '/\W+/' : ' '}
+{$VAR|replace:['ö','ä','ü']:['oe','ae','ue']|regex_replace: '/\W+/' : ' '}
+
+http://www.ophidia.net/insane/eigene-smarty-funktion-und-umlaute/
+
+function cleanName($txt) {
+  $umlaute = Array("ä", "ö", "ü", "Ä", "Ö", "Ü", "ß");
+  $umlauts = Array("ae", "oe", "ue", "Ae", "Oe", "Ue", "ss");
+
+  //string in kleinbuchstaben umwandeln
+  $txt = strtolower($txt);
+
+  //umlaute umwandeln z.b. ä => ae, ö => oe
+  $txt = str_replace($umlaute, $umlauts, $txt);
+
+  //sonstige sonderzeichen durch underscore ersetzen
+  $txt = preg_replace( '|[^a-zA-Z0-9]|s', '_', $txt );
+
+  //leerzeichen durch underscore ersetzen
+  $txt = str_replace(" ", "_", $txt);
+  return $txt;
+}
+
+$smarty->register_modifier('productCleanName', 'cleanName');
+
+
+
+

@@ -76,3 +76,17 @@ for( $i = 0; $i < $za->numFiles; $i++ ){
     }
     //print "</pre>";
 }
+
+
+
+
+
+# ---------------------------------------------------
+# php - Remove not alphanumeric characters from string
+# ---------------------------------------------------
+
+utf8_encode(preg_replace('/[^a-z äöüß]/i', '', utf8_decode($str)));
+$str=str_replace(array('ä','ö','ü','ß','Ä','Ö','Ü'),array('ae','oe','ue','ss','Ae','Oe','Ue'),$str);
+
+$letters=utf8_encode($_GET['letters']);
+$letters=utf8_decode(preg_replace("/[^a-zA-Z-äöüÄÜÖß\/]/i","",$letters));
