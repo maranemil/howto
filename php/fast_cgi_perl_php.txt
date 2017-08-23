@@ -1,0 +1,292 @@
+
+###################################
+#
+# A FastCGI Reference Pages
+#
+###################################
+
+http://www.citycat.ru/doc/FastCGI/fcdk/doc/fastcgi-prog-guide/apaman.htm
+
+
+FCGI_ROLE
+
+In addition to the standard CGI environment variables, the environment variable FCGI_ROLE is always set to the role of the current request. The roles currently defined are RESPONDER, AUTHORIZER, and FILTER.
+
+
+# Invocation modes
+
+#!/usr/bin/perl
+use FCGI;
+my $request = FCGI::Request();
+while ($request->Accept() >= 0) {
+    die if $ENV{'FCGI_APACHE_ROLE'} ne "AUTHENTICATOR";
+    die if $ENV{'FCGI_ROLE'}        ne "AUTHORIZER";
+    die if !$ENV{'REMOTE_PASSWD'};
+    die if !$ENV{'REMOTE_USER'};
+
+    print STDERR "This text is written to the web server error log.\n";
+
+    if ( ($ENV{'REMOTE_USER' } eq "foo" || $ENV{'REMOTE_USER'} eq "foo1") &&
+        $ENV{'REMOTE_PASSWD'} eq "bar" ) {
+        print "Status: 200\n";
+        print "Variable-AUTHN_1: authn_01\n";
+        print "Variable-AUTHN_2: authn_02\n";
+        print "\n";
+    }
+    else {
+        print "Status: 401\n\n";
+    }
+}
+
+
+http://www.citycat.ru/doc/FastCGI/fcdk/doc/fastcgi-prog-guide/apaman.htm
+https://httpd.apache.org/docs/2.4/mod/mod_authnz_fcgi.html
+https://serverfault.com/questions/70634/what-permissions-ownership-to-set-on-php-sessions-folder-when-running-fastcgi
+https://www.digitalocean.com/community/tutorials/understanding-and-implementing-fastcgi-proxying-in-nginx
+http://nginx.org/en/docs/http/load_balancing.html
+https://serverfault.com/questions/809878/nginx-fastcgi-cache-exclude-session-cookie
+https://www.nginx.com/resources/wiki/start/topics/examples/phpfcgi/
+http://symfony.com/doc/current/setup/web_server_configuration.html
+https://www.nginx.com/resources/admin-guide/load-balancer/
+https://docs.kolab.org/howtos/nginx-webserver.html
+
+The correct permissions for us where
+
+chown -R nobody:nogroup /var/lib/php/session
+
+With that said, you must change the user that's used by PHP-FPM by editing /etc/php-fpm.d/www.conf.
+
+; Unix user/group of processes
+; Note: The user is mandatory. If the group is not set, the default user's group
+;       will be used.
+; RPM: apache Choosed to be able to access some dir as httpd
+user = nginx
+; RPM: Keep a group allowed to write in log dir.
+group = nginx
+
+
+service php-fpm restart
+
+chown -R nobody:nogroup /var/lib/php/session
+
+sudo chmod -R ug+rw /var/lib/php/sessions
+
+
+Contents of $_ENV:
+
+PHPRC = /usr/local/php-fcgi/etc/php5217.ini
+PATH = /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+PWD = /
+SHLVL = 0
+FCGI_ROLE = RESPONDER
+REDIRECT_UNIQUE_ID = WZ1QmL0QBzD1nw2fyI1ATsQAAACY
+REDIRECT_SITEID = 949
+REDIRECT_HANDLER = application/x-httpd-php
+REDIRECT_STATUS = 200
+UNIQUE_ID = WZ1QmL0QBzD1nw2fyI1ATsQAAACY
+HTTP_HOST = www.x.au
+HTTP_CONNECTION = keep-alive
+HTTP_UPGRADE_INSECURE_REQUESTS = 1
+CONTEXT_PREFIX = /fcgi/
+CONTEXT_DOCUMENT_ROOT = /chroot/usr/local/php-fcgi/bin/
+
+
+'PHP_FCGI_MAX_REQUESTS' => '100000'
+'FCGI_ROLE' => 'RESPONDER'
+'REDIRECT_HANDLER' => 'application/x-httpd-php53'
+'HTTP_CONNECTION' => 'close'
+'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+'GATEWAY_INTERFACE' => 'CGI/1.1'
+'SERVER_PROTOCOL' => 'HTTP/1.1',
+'REQUEST_METHOD' => 'GET'
+'QUERY_STRING' => ''
+
+
+[FCGI_ROLE] => RESPONDER
+            [REDIRECT_STATUS] => 200
+[PHP_FCGI_CHILDREN] => 3
+[PWD] => /var/www/vhost/x.com/fcgi-bin
+[SHLVL] => 0
+[PHP_FCGI_MAX_REQUESTS] => 1000
+[PHPRC] => /var/www/vhost/x.com/fcgi-bin
+[PHP_FCGI_CHILDREN] => 3
+[PWD] => /var/www/vhost/x.com/fcgi-bin
+[SHLVL] => 0
+[PHP_FCGI_MAX_REQUESTS] => 1000
+
+
+
+
+
+Pro Apache
+# http://httpd.apache.org/mod_fcgid/mod/mod_fcgid.html#fcgidauthenticatorauthoritative
+
+#and $ENV{$var}=$1 if exists $ENV{$var}; # what's my line? if ($ENV(FCGI_ROLE} eq 'AUTHORIZER') #{ SWITCH: foreach ($ENV{FCGI APACHE ROLE})
+
+
+>
+> #!/usr/bin/perl -Tw
+> use strict;
+> use FCGI;
+> my $lives=1000;
+> my $content="\nContent-type: text/plain\n\n";
+> my %status=(
+> 200 => "Status: 200 - OK". $content,
+> 401 => "Status: 401 - Unauthorized".$content,
+> 403 => "Status: 403 - Forbidden".$content
+> );
+> my $authfile="/usr/local/apache2/exmar/conf/passwd/passwords";
+> my %password;
+> unless (open USERS,$authfile) { die "Failed to open authfile - $!\n";}
+> while (<USERS>) {
+> chomp;
+> my ($user,$cryptpw)=split /:/;
+> $password{$user}=$cryptpw;
+> }
+> close USERS;
+>
+> #-------------------------------------------------------------------------------------------------
+> my $r = FCGI::Request(\*STDIN, \*STDOUT, \*STDERR);
+> while ($r->Accept()>=0) {
+> foreach my $var (
+> 'FCGI_ROLE', 'FCGI_APACHE_ROLE', 'SCRIPT_NAME',
+> 'REMOTE_ADDR', 'REMOTE_USER', 'REMOTE_PASSWORD',
+> 'REQUEST_URI'
+> ){ $ENV{$var}=~/(.*)/ and $ENV{$var}=$1 if exists $ENV{$var};}
+>
+> if ($ENV{FCGI_ROLE} eq 'AUTHORIZER') {
+> SWITCH: foreach ($ENV{FCGI_APACHE_ROLE}) {
+>
+> /^ACCESS_CHECKER/ and access_checker_role(),last SWITCH;
+> /^AUTHENTICATOR/ and authenticator_role(),last SWITCH;
+> /^AUTHORIZER/ and authorizer_role(),last SWITCH;
+>
+> }
+> } else {
+> responder_role();
+> }
+> last unless $lives--;
+> #last if -M $ENV{SCRIPT_NAME} < 0 ;-----------------------------
+> #last if -M $ENV{$authfile} < 0 ;-----------------------------
+> }
+> exit 0;
+>
+> #---------------------------------------------------------------------------------------
+> sub responder_role{
+> print $status{500},
+> "This is an authentication application!\n";
+> "Configuring it as a responder is a server error\n";
+> }
+> sub access_checker_role {
+> if ($ENV{REMOTE_ADDR} eq "::1") {
+> print $status{200};
+> } else {
+> print $status{401};
+> }
+> }
+>
+> #--------------------------------------------------------------------------------------------
+> sub authenticator_role {
+>
+> my $user=$ENV{REMOTE_USER};
+> my $sent_password=$ENV{REMOTE_PASSWORD};
+> if (defined($sent_password) and defined($user) and exists
+> $password{$user}) {
+> if (crypt $sent_password,$password{$user}) {
+> print $status{200};
+> } else {
+> } print $status{401};
+>
+> } else {
+> print $status{401};
+> }
+> }
+> sub authorizer_role {
+> my $user=$ENV{REMOTE_USER};
+>
+> if ($ENV{REQUEST_URI}=~m|/$user/|) {
+> print $status{200};
+> } else {
+> print $status{401};
+> }
+> }
+>
+
+
+-------------------
+
+https://vanmelick.com/txp/zem_contact_reborn.php?code
+https://github.com/jcw/mavrig/blob/master/m1/mavrig.vfs/lib/fcgihttpd-0.5.tm
+http://www.cusmith.com/experimental/CGI_pm.html
+
+...
+
+if (mail($to, $subject, $msg, $headers))
+        {
+            $_POST = array();
+
+            if ($copysender and $zem_contact_from)
+            {
+                mail(zem_contact_strip($zem_contact_from), $subject, $msg, $headers);
+            }
+
+            if ($redirect)
+            {
+                while (@ob_end_clean());
+                $uri = hu.ltrim($redirect,'/');
+                if (empty($_SERVER['FCGI_ROLE']) and empty($_ENV['FCGI_ROLE']))
+                {
+                    txp_status_header('303 See Other');
+                    header('Location: '.$uri);
+                    header('Connection: close');
+                    header('Content-Length: 0');
+                }
+                else
+                {
+                    $uri = htmlspecialchars($uri);
+                    $refresh = zem_contact_gTxt('refresh');
+                    echo <<<END
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>$sitename</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="refresh" content="0;url=$uri" />
+</head>
+<body>
+<a href="$uri">$refresh</a>
+</body>
+</html>
+END;
+                }
+                exit;
+            }
+
+...
+
+
+sub import_names{
+    my($self,$namespace,$delete) = self_or_default(@_);
+    $namespace = 'Q' unless defined($namespace);
+    die "Can't import names into \"main\"\n" if \%{"${namespace}::"} == \%::;
+    if ($delete || $MOD_PERL || exists $ENV{'FCGI_ROLE'}) {
+	# can anyone find an easier way to do this?
+	foreach (keys %{"${namespace}::"}) {
+	    local *symbol = "${namespace}::${_}";
+	    undef $symbol;
+	    undef @symbol;
+	    undef %symbol;
+	}
+    }
+    my($param,@value,$var);
+    foreach $param ($self->param) {
+	# protect against silly names
+	($var = $param)=~tr/a-zA-Z0-9_/_/c;
+	$var =~ s/^(?=\d)/_/;
+	local *symbol = "${namespace}::$var";
+	@value = $self->param($param);
+	@symbol = @value;
+	$symbol = $value[0];
+    }
+}
+END_OF_FUNC
