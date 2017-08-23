@@ -90,3 +90,48 @@ $str=str_replace(array('ä','ö','ü','ß','Ä','Ö','Ü'),array('ae','oe','ue',
 
 $letters=utf8_encode($_GET['letters']);
 $letters=utf8_decode(preg_replace("/[^a-zA-Z-äöüÄÜÖß\/]/i","",$letters));
+
+
+
+
+//-------------------------------------
+// php lazy session
+//-------------------------------------
+
+# https://why-cant-we-have-nice-things.mwl.be/requests/introduce-session-start-options-read-only-unsafe-lock-lazy-write-and-lazy-destroy
+
+var_export($_SESSION);
+var_export($_COOKIE);
+var_export($_REQUEST);
+var_export($_SERVER);
+
+#session_destroy();
+if(!session_start()){
+   // send info SERVER
+}
+
+//session_start(array('lazy_write'=>true, 'lazy_destroy'=>120, 'unsafe_lock'=>false));
+
+ini_set('session.use_trans_sid',TRUE);
+ini_set('session.use_cookies',FALSE);
+ini_set('session.use_only_cookies',FALSE);
+ini_set('session.use_strict_mode',FALSE);
+ini_set('session.save_path', '/usr/tmp/');
+
+session_id('TESTID'.mt_rand(1, 10));
+session_start(['lazy_write'=>$_GET['lazy_write'], 'unsafe_lock'=>$_GET['unsafe_lock']]);
+
+if (!isset($session['x'])) {
+   $_SESSION['x'] = str_repeat('x', 1024*10);
+}
+
+echo session_id();
+var_dump(session_module_feature());
+
+usleep(20000);
+
+/*
+$ ab -c 50 -n 20000 'http://localhost:1080/session.php?lazy_write=1&unsafe_lock=1'
+This is ApacheBench, Version 2.3 <$Revision: 1430300 $>
+$ ab -c 50 -n 20000 'http://localhost:1080/session.php?lazy_write=0&unsafe_lock=0'
+*/
