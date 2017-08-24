@@ -1,0 +1,230 @@
+
+##############################################################################################################################
+#
+#	PHP Session Locks – How to Prevent Blocking Requests
+#	Session lock record with PHP 7.0.9 - 7.1.8
+#
+#	PHP Warning: session_start(): Unable to clear session lock record.
+#	FastCGI sent in stderr: "PHP message: PHP Warning:  session_start(): Write of lock failed in /var/www/ ...
+#
+##############################################################################################################################
+
+
+https://github.com/php-memcached-dev/php-memcached/issues/269
+https://github.com/php-memcached-dev/php-memcached/issues/213#issuecomment-178613213
+https://github.com/php-memcached-dev/php-memcached/issues/269
+https://ma.ttias.be/php-session-locking-prevent-sessions-blocking-in-requests/
+https://github.com/magento/magento2/issues/5319
+https://tracker.moodle.org/browse/MDL-42485
+https://github.com/php-memcached-dev/php-memcached/blob/master/php_memcached_session.c
+https://stackoverflow.com/questions/31378039/php-session-store-error-using-memcached
+http://php.net/manual/de/function.session-start.php
+
+
+
+php -i|grep sess_lock_wait_min
+memcached.sess_lock_wait_min = 0;
+
+- memcached.sess_lock_wait_min = 0;
++ memcached.sess_lock_wait_min = 250;
+
+
+ini_set('session.lazy-write', 0); // Mimic PHP5 behaviour
+
+# -----------------------------------
+
+
+; Wait for 150 ms initially
+memcached.sess_lock_wait_min = 150
+; Wait for 500 ms in the next retries
+memcached.sess_lock_wait_max = 500
+; Retry for 60 times overally (max time would be 60 x 500 ms)
+memcached.sess_lock_retries = 60
+; Total time that a lock exists is 40 seconds which is equal to my max_execution_time
+memcached.sess_lock_expire = 40
+
+
+
+# -----------------------------------
+ini_set('session.lazy_write', 0);
+ini_set('memcached.sess_lock_wait_min', 150);
+ini_set('memcached.sess_lock_wait_max', 150);
+ini_set('memcached.sess_lock_retries', 15);
+ini_set('memcached.sess_lock_expire', ini_get('max_execution_time'));
+ini_set('memcached.sess_consistent_hash', 1);
+ini_set('memcached.sess_binary_protocol', 0);
+session_start();
+
+# -----------------------------------
+try this:
+ini_set('memcached.sess_lock_wait_min', 150);
+ini_set('memcached.sess_lock_wait_max', 150);
+ini_set('memcached.sess_lock_retries', ini_get('max_execution_time') * 1000 / 150);
+# remove all your other ini_sets (including session.lazy_write)
+
+# -----------------------------------
+ini_set('memcached.sess_lock_wait_min', 150); // milliseconds
+ini_set('memcached.sess_lock_wait_max', 150); // milliseconds
+ini_set('memcached.sess_lock_retries', ini_get('max_execution_time') * 1000 / 150); // keep trying for the full duration of 'max_execution_time'
+ini_set('memcached.sess_lock_expire', ini_get('max_execution_time')); // seconds
+ini_set('memcached.sess_consistent_hash', 1); // boolean
+
+
+# -----------------------------------
+
+/usr/local/etc/php/7.0/conf.d/ext-memcached.ini.
+
+;memcached.sess_lock_wait = 150000
+;memcached.sess_lock_max_wait = 0;
+
+--
+
+; The minimum time, in milliseconds, to wait between session lock attempts.
+; This value is double on each lock retry until memcached.sess_lock_wait_max
+; is reached, after which any further retries will take sess_lock_wait_max seconds.
+; Default is 1000.
+
+memcached.sess_lock_wait_min = 1000;
+
+; The maximum time, in milliseconds, to wait between session lock attempts.
+; Default is 2000.
+
+memcached.sess_lock_wait_max = 2000;
+
+; The number of times to retry locking the session lock, not including
+; the first attempt.
+; Default is 5.
+
+memcached.sess_lock_retries = 5;
+
+# -----------------------------------
+
+session.save_handler = memcache
+session.save_path    = "tcp://1.29.1.13:11211, tcp://1.29.1.14:11211"
+and in memcache.ini:
+
+extension=memcache.so
+[memcache]
+memcache.dbpath="/var/lib/memcache"
+memcache.maxreclevel=0
+memcache.maxfiles=0
+memcache.archivememlim=0
+memcache.maxfilesize=0
+memcache.maxratio=0
+memcache.hash_strategy=consistent
+memcache.allow_failover=1
+memcache.session_redundancy=2
+
+# -----------------------------------
+
+ini_set('memcached.sess_lock_max_wait', $this->session_memcached_acquire_lock_timeout);
+ini_set('memcached.sess_lock_expire', $this->session_memcached_lock_expire);
+
+# potential solution, you could do something like:
+
+public static function start() {
+    $default = ini_get('max_execution_time');
+    set_time_limit($CFG->session_memcached_lock_expire);
+    parent::start();
+    set_time_limit($default);
+}
+
+
+# ---------------------------------------
+
+
+
+$ cat /etc/php-5.5.ini
+...
+...
+; http://php.net/session.save-handler
+; session.save_handler = files
+session.hash_bits_per_character = 5
+session.hash_function = 0
+session.use_trans_sid = 0
+session.cache_expire = 180
+session.cache_limiter = nocache
+session.referer_check =
+session.bug_compat_warn = Off
+session.bug_compat_42 = Off
+session.gc_maxlifetime = 1440
+session.gc_divisor = 1000
+session.gc_probability = 1
+session.serialize_handler = php
+session.cookie_httponly =
+session.cookie_path = /
+session.cookie_lifetime = 0
+session.auto_start = 0
+session.name = PHPSESSID
+session.use_only_cookies = 1
+session.use_cookies = 1
+...
+...
+
+$ cat /etc/php-5.5.d/memcached.ini
+extension=memcached.so
+
+session.save_handler=memcached
+session.save_path="*******.cache.amazonaws.com:11211"
+memcached.sess_locking = On
+memcached.sess_lock_wait = 150000
+memcached.sess_lock_max_wait = 0;
+memcached.sess_lock_expire = 0;
+memcached.sess_prefix = "memc.sess.key."
+memcached.sess_consistent_hash = Off
+memcached.sess_remove_failed = 0
+memcached.sess_number_of_replicas = 0
+memcached.sess_binary = Off
+memcached.sess_randomize_replica_read = Off
+memcached.sess_connect_timeout = 1000
+memcached.sess_sasl_username = NULL
+memcached.sess_sasl_password = NULL
+memcached.compression_type = "fastlz"
+memcached.compression_factor = "1.3"
+memcached.compression_threshold = 2000
+memcached.serializer = "igbinary"
+memcached.use_sasl = Off
+memcached.store_retry_count = 2
+
+$ php -i | grep memcached
+/etc/php-5.5.d/memcached.ini,
+memcached
+memcached support => enabled
+libmemcached version => 1.0.8
+memcached.compression_factor => 1.3 => 1.3
+memcached.compression_threshold => 2000 => 2000
+memcached.compression_type => fastlz => fastlz
+memcached.serializer => igbinary => igbinary
+memcached.sess_binary => no value => no value
+memcached.sess_connect_timeout => 1000 => 1000
+memcached.sess_consistent_hash => no value => no value
+memcached.sess_lock_expire => 0 => 0
+memcached.sess_lock_max_wait => 0 => 0
+memcached.sess_lock_wait => 150000 => 150000
+memcached.sess_locking => no value => no value
+memcached.sess_number_of_replicas => 0 => 0
+memcached.sess_prefix => memc.sess.key. => memc.sess.key.
+memcached.sess_randomize_replica_read => no value => no value
+memcached.sess_remove_failed => 0 => 0
+memcached.sess_sasl_password => no value => no value
+memcached.sess_sasl_username => no value => no value
+memcached.store_retry_count => 2 => 2
+memcached.use_sasl => no value => no value
+Registered save handlers => files user memcached
+session.save_handler => memcached => memcached
+
+$ yum list installed | grep memcached
+libmemcached.x86_64                  1.0.8-2.6.amzn1               @amzn-main
+memcached.x86_64                     1.4.15-9.12.amzn1             @amzn-main
+php55-pecl-memcached.x86_64          2.2.0-5.14.amzn1              @amzn-updates
+
+$ cat /etc/php-fpm-5.5.d/www.conf
+php_value[session.save_handler] = memcached
+php_value[session.save_path] = "*******.cache.amazonaws.com:11211"
+
+$ memcached-tool *******.cache.amazonaws.com:11211 display
+  #  Item_Size  Max_age   Pages   Count   Full?  Evicted Evict_Time OOM
+  1      96B         0s       1       0     yes        0        0    0
+
+$ memcached-tool *******.cache.amazonaws.com:11211 stats
+
