@@ -1,0 +1,77 @@
+CNN for multi-class image recognition in tensorflow - Tensorflow Image Classification
+https://github.com/rdcolema/tensorflow-image-classification
+
+Deep learning with cats
+https://github.com/AlexiaJM/Deep-learning-with-cats
+
+Keras Image Classification
+https://github.com/rdcolema/keras-image-classification
+
+PyTorch Image Classification
+https://github.com/rdcolema/pytorch-image-classification
+
+Image Classification: Fine-Tune CNN Model via Transfer Learning
+https://github.com/abnera/image-classifier
+
+Dogs vs Cats
+https://github.com/yaricom/dogs-vs-cats
+
+torch-vision - torchvision
+https://github.com/pytorch/vision
+https://github.com/pytorch/vision/blob/master/torchvision/datasets/folder.py
+
+Tensorflow Object Detection API
+https://github.com/tensorflow/models/blob/master/object_detection/g3doc/using_your_own_dataset.md
+
+Python/Bash scripts for creating custom Neural Net Training Data -- this repo is for the MNIST format
+https://github.com/gskielian/JPG-PNG-to-MNIST-NN-Format
+
+Cat vs Dog Identification - Cat VS Dog Predictor using Convolutional Neural Networks
+https://github.com/ZWMiller/catdog
+
+Extract 10 images from the CIFAR-10 data set
+https://gist.github.com/juliensimon/273bef4c5b4490c687b2f92ee721b546
+
+import mxnet as mx
+import numpy as np
+import cPickle
+import cv2
+
+def extractImagesAndLabels(path, file):
+    f = open(path+file, 'rb')
+    dict = cPickle.load(f)
+    images = dict['data']
+    images = np.reshape(images, (10000, 3, 32, 32))
+    labels = dict['labels']
+    imagearray = mx.nd.array(images)
+    labelarray = mx.nd.array(labels)
+    return imagearray, labelarray
+
+def extractCategories(path, file):
+    f = open(path+file, 'rb')
+    dict = cPickle.load(f)
+    return dict['label_names']
+
+def saveCifarImage(array, path, file):
+    # array is 3x32x32. cv2 needs 32x32x3
+    array = array.asnumpy().transpose(1,2,0)
+    # array is RGB. cv2 needs BGR
+    array = cv2.cvtColor(array, cv2.COLOR_RGB2BGR)
+    # save to PNG file
+    return cv2.imwrite(path+file+".png", array)
+
+imgarray, lblarray = extractImagesAndLabels("cifar-10-batches-py/", "data_batch_1")
+print imgarray.shape
+print lblarray.shape
+
+categories = extractCategories("cifar-10-batches-py/", "batches.meta")
+
+cats = []
+for i in range(0,10):
+    saveCifarImage(imgarray[i], "./", "image"+(str)(i))
+    category = lblarray[i].asnumpy()
+    category = (int)(category[0])
+    cats.append(categories[category])
+print cats
+
+

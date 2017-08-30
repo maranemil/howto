@@ -1,0 +1,1645 @@
+
+Vehicle Detection / Face Detection  / License Plate Recognition
+
+
+
+https://github.com/openalpr/openalpr
+http://www.openalpr.com/
+
+user@linux:~/openalpr$ alpr ./samplecar.png
+
+
+install OpenALPR on Ubuntu 16.04 with the following commands:
+
+sudo apt-get update && sudo apt-get install -y openalpr openalpr-daemon openalpr-utils libopenalpr-dev
+
+Docker # ok
+
+# Build docker image
+docker build -t openalpr https://github.com/openalpr/openalpr.git
+# Download test image
+wget http://plates.openalpr.com/h786poj.jpg
+# Run alpr on image
+docker run -it --rm -v $(pwd):/data:ro openalpr -c eu h786poj.jpg
+
+------------------------------------------------------------------------------------------
+
+https://github.com/andrewssobral/vehicle_detection_haarcascades
+
+Vehicle Detection with Haar Cascades
+
+Docker image
+
+Docker image is available at:
+Ubuntu 16.04 + VNC + OpenCV 2.4.13 + Python 2.7 + Vehicle Detection, Tracking and Counting
+
+https://hub.docker.com/r/andrewssobral/vehicle_detection_tracking_counting/
+
+
+*** How to run ***
+
+Pull the latest docker image:
+docker pull andrewssobral/vehicle_detection_tracking_counting
+Start the container:
+docker run -it -p 5901:5901 andrewssobral/vehicle_detection_tracking_counting bash
+Start VNC:
+/usr/bin/vncserver :1 -geometry 1280x800 -depth 24 && tail -f /root/.vnc/*:1.log
+VNC password: password
+Enjoy it! ;-)
+
+The Vehicle Detection, Tracking and Counting project is available at:
+~/simple_vehicle_counting
+
+The Vehicle Detection by Haar Cascades project is available at:
+~/vehicle_detection_haarcascades
+
+For killing VNC: vncserver -kill :1
+
+Docker Pull Command
+docker pull andrewssobral/vehicle_detection_tracking_counting
+
+
+------------------------------------------------------------------------------------------
+
+http://tutorial.simplecv.org/en/latest/examples/parking.html
+Detecting a car in a parking lot
+
+
+https://github.com/sightmachine/SimpleCV
+
+
+docker pull sightmachine/simplecv
+docker run -p 54717:8888 -t -i sightmachine/simplecv
+http://localhost:54717
+
+Ipython notebook inteface, start a new notebook and enter the following:
+
+from SimpleCV import *
+disp = Display(displaytype='notebook')
+img = Image('simplecv')
+img.save(disp)
+
+
+Ubuntu 12.04
+
+Install with pip # ok
+
+sudo apt-get install ipython python-opencv python-scipy python-numpy python-pygame python-setuptools python-pip
+sudo pip install https://github.com/sightmachine/SimpleCV/zipball/develop
+pip install SimpleCV
+pip install --upgrade pip
+
+export PYTHONPATH="/usr/local/lib/python2.7/site-packages:$PYTHONPATH"
+
+ipython --version
+#pip install -U ipython
+
+
+Install using clone of SimpleCV repository
+
+sudo apt-get install ipython python-opencv python-scipy python-numpy python-pygame python-setuptools git
+git clone https://github.com/sightmachine/SimpleCV.git
+cd SimpleCV/
+sudo pip install -r requirements.txt
+sudo python setup.py install
+
+https://github.com/sightmachine/SimpleCV#ubuntu-1204
+https://github.com/sightmachine/simplecv-examples/tree/master/presentations
+https://github.com/sightmachine/simplecv-examples/blob/master/examples/parking.rst
+
+
+
+
+
+sudo apt-get install ipython python-opencv python-scipy python-numpy python-pygame python-setuptools python-pip
+sudo pip install https://github.com/ingenuitas/SimpleCV/zipball/master
+sudo pip install tornado
+sudo pip install pyzmq
+
+---------------------------
+Read Dir
+http://tutorial.simplecv.org/en/latest/examples/directory-of-images.html
+
+Before run:
+chmod +x <filename>.py
+python ./<filename>.py
+---------------------------
+#!/usr/bin/python
+#!/usr/bin/env python
+
+import os
+import glob
+import time
+from SimpleCV import *
+
+print __doc__
+
+#Settings
+my_images_path = "/tmp/cats/" #put your image path here if you want to override current directory
+extension = "*.png"
+
+
+#Program
+if not my_images_path:
+        path = os.getcwd() #get the current directory
+else:
+        path = my_images_path
+
+imgs = list() #load up an image list
+directory = os.path.join(path, extension)
+files = glob.glob(directory)
+
+for file in files:
+        new_img = Image(file)
+        new_img.show()
+        time.sleep(1) #wait for 1 second
+
+
+
+
+
+---------------------------
+Xbox kinect with SimpleCV
+http://tutorial.simplecv.org/en/latest/examples/kinect.html
+---------------------------
+
+from SimpleCV import *
+cam = Kinect()
+
+
+while True:
+        depth = cam.getDepth()
+        #filtered = depth.stretch(0,150)
+        depth.show()
+
+
+
+---------------------------
+Interacting with the Display
+---------------------------
+
+from SimpleCV import *
+cam = Camera()
+disp = Display()
+
+while disp.isNotDone():
+        img = cam.getImage()
+        if disp.mouseLeft:
+                break
+        img.save(disp)
+
+---------------------------
+face detectio
+http://help.simplecv.org/question/177568/face-detection-tkinter-or-other-gui/
+---------------------------
+
+#!/usr/bin/env python
+
+#print __doc__
+
+import time
+from SimpleCV import *
+import sys
+
+display = Display()
+cam = Camera()
+haarcascade = HaarCascade("face")
+
+while True:
+
+    image = cam.getImage().flipHorizontal().scale(1.0)
+    faces = image.findHaarFeatures(haarcascade)
+    if faces:
+            face = faces[-1]
+            face.draw(Color.RED,1)
+    image.show()
+
+    y = str(face.coordinates())
+    y = y.split(' ')
+    y = y[1]
+    y = y.strip(']')
+
+
+
+---------------------------
+How do I get SimpleCV to grab an alternate camera
+---------------------------
+
+from SimpleCV import Camera
+
+cam0 = Camera(0) #first attached camera
+cam1 = Camera(1) #second attached camera
+cam0.getImage().show() #show picture from first camera
+cam1.getImage().show() #show picture from second camera
+
+---------------------------
+access an IP-Cam
+---------------------------
+
+jc = JpegStreamCamera("http://myname:mypasswd@ipcamera_host/stream.mjpg")
+jc.getImage().save("seeyou.jpg")
+
+
+---------------------------
+AVI output
+---------------------------
+from SimpleCV import *
+import time
+
+cam = Camera()
+vs = VideoStream("out.avi", 25, True)
+
+for i in range(0, 125):
+    cam.getImage().save(vs)
+    time.sleep(.05)
+
+
+
+---------------------------
+Car detection
+---------------------------
+
+from SimpleCV import Image
+import time
+
+# Load images.
+car_in_lot = Image("parking-car.png")
+car_not_in_lot = Image("parking-no-car.png")
+
+# Crop image to region-of-interest.
+car = car_in_lot.crop(470,200,200,200)
+car.show()
+time.sleep(5)
+car.show().quit()
+
+# Create greyscale image showing how far from yellow various colors are.
+yellow_car = car.colorDistance(Color.YELLOW)
+yellow_car.show()
+time.sleep(5)
+yellow_car.show().quit()
+
+# Subtract greyscale image from cropped image to show just the yellow portions.
+only_car = car - yellow_car
+only_car.show()
+time.sleep(5)
+only_car.show().quit()
+
+print only_car.meanColor()
+
+
+---------------------------
+Img Display
+---------------------------
+disp = Display()
+img.save(disp)
+or
+img.show()
+
+
+---------------------------
+SimpleCV Jpeg Streamer
+---------------------------
+
+from SimpleCV import *
+
+w=640/2
+h=480/2
+
+cam = Camera(0,{"width":w,"height":h})
+
+disp =Display()
+
+js = JpegStreamer("0.0.0.0:8080",0.01)
+print(js.url())
+print(js.streamUrl())
+
+while disp.isNotDone():
+    img = cam.getImage()
+    size = scv.size()
+    img.show()
+    print img.width
+    img.save(js)
+
+
+
+
+http://nullege.com/codes/search/SimpleCV.Image.resize
+http://tutorial.simplecv.org/en/latest/index.html
+http://tutorial.simplecv.org/en/latest/index.html
+http://www.simplecv.org/download/
+http://tutorial.simplecv.org/en/latest/examples/pycon-2013.html
+http://tutorial.simplecv.org/en/latest/examples/parking.html
+
+http://help.simplecv.org/question/2937/help-using-ip-camera-with-simplecv/
+http://help.simplecv.org/questions/scope:all/sort:activity-desc/page:5/
+http://help.simplecv.org/question/2926/how-to-capture-video-for-particular-time-for-example-10-seconds-with-simplecv/
+http://help.simplecv.org/question/2137/how-to-set-size-of-captured-image-using-camera/
+
+http://tutorial.simplecv.org/en/latest/examples/display.html
+http://tutorial.simplecv.org/en/latest/examples/basics.html
+https://www.safaribooksonline.com/library/view/practical-computer-vision/9781449337865/ch04.html
+------------------------------------------------------------------------------------------
+
+BSD licensed cat photos set
+https://github.com/maxogden/cats
+
+------------------------------------------------------------------------------------------
+
+https://github.com/asgunzi/CarND-VehicleDetection
+CarND-VehicleDetection
+
+
+http://www.chioka.in/build-your-own-real-time-traffic-data-feed/
+https://github.com/log0/macau_traffic_data
+
+------------------------------------------------------------------------------------------
+
+https://www.superdatascience.com/opencv-face-detection/
+https://github.com/informramiz/Face-Detection-OpenCV
+
+Face Detection In Python Using OpenCV
+
+
+------------------------------------------------------------------------------------------
+
+https://medium.com/@gruby/opencv-for-lane-detection-carnd-f9d58d077ee2
+https://medium.com/@galen.ballew/opencv-lanedetection-419361364fc0
+
+https://gist.github.com/mlgruby/6b2030ac840fabd210f42916985098db#file-canny-py
+https://gist.github.com/mlgruby/375fb2f2eacfb4967b9549c4890e4dc2#file-grayscale-py
+https://gist.github.com/mlgruby/39f53d3e6462b8adf744970a9335f0d8#file-draw_line-py
+
+
+
+https://medium.com/@galen.ballew/classifying-traffic-signs-using-deep-learning-750b1611b072
+https://keras.io/
+
+https://hackernoon.com/building-a-gas-pump-scanner-with-opencv-python-ios-116fe6c9ae8b
+
+
+
+
+------------------------------------------------------------------------------------------
+Kaggle Dogs vs. Cats Redux on Floydhub
+https://shaoanlu.wordpress.com/2017/04/22/deep-learning-on-floyd-dogs-vs-cats-redux-kaggle-competition/
+
+
+floyd run --mode jupyter --end theano:py2
+
+wget http://www.platform.ai/files/dogscats.zip
+$ unzip dogscats.zip
+$ rm dogscats.zip    (remove .zip file)
+floyd stop ExperimentID
+git clone https://github.com/fastai/courses.git
+floyd run --mode jupyter --data DataID --env theano:py2 --gpu
+
+https://github.com/shaoanlu/dogs-vs-cats-redux/blob/master/res50_incepV3_Xcept.ipynb
+https://github.com/shaoanlu/dogs-vs-cats-redux/blob/master/knn_image.ipynb
+
+https://shaoanlu.wordpress.com/2017/04/22/deep-learning-on-floyd-dogs-vs-cats-redux-kaggle-competition/cd13/
+
+https://shaoanlu.wordpress.com/2017/04/22/deep-learning-on-floyd-dogs-vs-cats-redux-kaggle-competition/cd13-2-2/
+
+https://shaoanlu.wordpress.com/2017/04/22/deep-learning-on-floyd-dogs-vs-cats-redux-kaggle-competition/cd17/
+
+https://github.com/shaoanlu/dogs-vs-cats-redux/blob/master/res50_incepV3_Xcept.ipynb
+
+[code]
+
+wget http://files.fast.ai/data/dogscats.zip
+unzip dogscats.zip
+mkdir -p dogscats/test/unknown
+rm dogscats.zip
+%cd dogscats/test1
+%mv *.jpg /output/dogscats/test/unknown
+
+from keras.models import *
+from keras.layers import *
+from keras.applications import *
+from keras.preprocessing.image import *
+
+import h5py
+from sklearn.utils import shuffle
+path = '/output/dogscats/'
+#sample_path = '/output/dogscats/sample'
+batch_size = 32
+
+def write_gap(MODEL, image_size, lambda_func=None):
+    width = image_size[0]
+    height = image_size[1]
+    input_tensor = Input((height, width, 3))
+    x = input_tensor
+    if lambda_func:
+        x = Lambda(lambda_func)(x)
+    base_model = MODEL(input_tensor=x, weights='imagenet', include_top=False)
+    model = Model(base_model.input, GlobalAveragePooling2D()(base_model.output))
+
+    gen = ImageDataGenerator()
+    train_generator = gen.flow_from_directory(path+'train', image_size, shuffle=False,
+                                              batch_size=batch_size)
+    valid_generator = gen.flow_from_directory(path+'valid', image_size, shuffle=False,
+                                              batch_size=batch_size)
+    test_generator = gen.flow_from_directory(path+'test', image_size, shuffle=False,
+                                             batch_size=batch_size, class_mode=None)
+
+    train = model.predict_generator(train_generator, train_generator.nb_sample)
+    valid = model.predict_generator(valid_generator, valid_generator.nb_sample)
+    test = model.predict_generator(test_generator, test_generator.nb_sample)
+    with h5py.File("gap_%s.h5"%MODEL.__name__) as h:
+        h.create_dataset("train", data=train)
+        h.create_dataset("valid", data=valid)
+        h.create_dataset("test", data=test)
+        h.create_dataset("label", data=train_generator.classes)
+        h.create_dataset("val_label", data=valid_generator.classes)
+
+
+
+
+
+# Combine output features of ResNet50, Xception and InceptionV3
+
+In [39]:
+
+X_train = []
+X_valid = []
+X_test = []
+
+for filename in ["gap_ResNet50.h5", "gap_Xception.h5", "gap_InceptionV3.h5"]:
+    with h5py.File(filename, 'r') as h:
+        X_train.append(np.array(h['train']))
+        X_valid.append(np.array(h['valid']))
+        X_test.append(np.array(h['test']))
+        y_train = np.array(h['label'])
+        y_valid = np.array(h['val_label'])
+
+X_train = np.concatenate(X_train, axis=1)
+X_valid = np.concatenate(X_valid, axis=1)
+X_test = np.concatenate(X_test, axis=1)
+
+X_train, y_train = shuffle(X_train, y_train)
+
+X_train.shape
+y_train.shape
+
+....
+
+[/code]
+
+http://www.deeplearningbook.org/contents/regularization.html
+https://cs.stanford.edu/~acoates/stl10/
+https://www.kaggle.com/c/dogs-vs-cats/data
+
+
+
+
+
+------------------------------------------------------------------------------------------
+
+Minify images
+https://github.com/imagemin/imagemin-cli
+
+------------------------------------------------------------------------------------------
+
+
+Building powerful image classification models using very little data
+https://blog.keras.io/building-powerful-image-classification-models-using-very-little-data.html
+https://gist.github.com/fchollet/0830affa1f7f19fd47b06d4cf89ed44d
+
+
+[code]
+'''This script goes along the blog post
+"Building powerful image classification models using very little data"
+from blog.keras.io.
+It uses data that can be downloaded at:
+https://www.kaggle.com/c/dogs-vs-cats/data
+In our setup, we:
+- created a data/ folder
+- created train/ and validation/ subfolders inside data/
+- created cats/ and dogs/ subfolders inside train/ and validation/
+- put the cat pictures index 0-999 in data/train/cats
+- put the cat pictures index 1000-1400 in data/validation/cats
+- put the dogs pictures index 12500-13499 in data/train/dogs
+- put the dog pictures index 13500-13900 in data/validation/dogs
+So that we have 1000 training examples for each class, and 400 validation examples for each class.
+In summary, this is our directory structure:
+```
+data/
+    train/
+        dogs/
+            dog001.jpg
+            dog002.jpg
+            ...
+        cats/
+            cat001.jpg
+            cat002.jpg
+            ...
+    validation/
+        dogs/
+            dog001.jpg
+            dog002.jpg
+            ...
+        cats/
+            cat001.jpg
+            cat002.jpg
+            ...
+```
+'''
+
+from keras.preprocessing.image import ImageDataGenerator
+from keras.models import Sequential
+from keras.layers import Conv2D, MaxPooling2D
+from keras.layers import Activation, Dropout, Flatten, Dense
+from keras import backend as K
+
+
+# dimensions of our images.
+img_width, img_height = 150, 150
+
+train_data_dir = 'data/train'
+validation_data_dir = 'data/validation'
+nb_train_samples = 2000
+nb_validation_samples = 800
+epochs = 50
+batch_size = 16
+
+if K.image_data_format() == 'channels_first':
+    input_shape = (3, img_width, img_height)
+else:
+    input_shape = (img_width, img_height, 3)
+
+model = Sequential()
+model.add(Conv2D(32, (3, 3), input_shape=input_shape))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(Conv2D(32, (3, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(Conv2D(64, (3, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(Flatten())
+model.add(Dense(64))
+model.add(Activation('relu'))
+model.add(Dropout(0.5))
+model.add(Dense(1))
+model.add(Activation('sigmoid'))
+
+model.compile(loss='binary_crossentropy',
+              optimizer='rmsprop',
+              metrics=['accuracy'])
+
+# this is the augmentation configuration we will use for training
+train_datagen = ImageDataGenerator(
+    rescale=1. / 255,
+    shear_range=0.2,
+    zoom_range=0.2,
+    horizontal_flip=True)
+
+# this is the augmentation configuration we will use for testing:
+# only rescaling
+test_datagen = ImageDataGenerator(rescale=1. / 255)
+
+train_generator = train_datagen.flow_from_directory(
+    train_data_dir,
+    target_size=(img_width, img_height),
+    batch_size=batch_size,
+    class_mode='binary')
+
+validation_generator = test_datagen.flow_from_directory(
+    validation_data_dir,
+    target_size=(img_width, img_height),
+    batch_size=batch_size,
+    class_mode='binary')
+
+model.fit_generator(
+    train_generator,
+    steps_per_epoch=nb_train_samples // batch_size,
+    epochs=epochs,
+    validation_data=validation_generator,
+    validation_steps=nb_validation_samples // batch_size)
+
+model.save_weights('first_try.h5')
+
+[/code]
+
+------------------------------------------------------------------------------------------
+http://wiki.fast.ai/index.php/Lesson_1_Notes
+
+
+# As large as you can, but no larger than 64 is recommended.
+# If you have an older or cheaper GPU, you'll run out of memory, so will have to decrease this.
+batch_size=64
+# Import our class, and instantiate
+from vgg16 import Vgg16# Import our class, and instantiate
+from vgg16 import Vgg16
+vgg = Vgg16()
+# Grab a few images at a time for training and validation.
+# NB: They must be in subdirectories named based on their category
+batches = vgg.get_batches(path+'train', batch_size=batch_size)
+val_batches = vgg.get_batches(path+'valid', batch_size=batch_size*2)
+vgg.finetune(batches)
+vgg.fit(batches, val_batches, nb_epoch=1)
+
+
+https://github.com/aleju/cat-generator
+------------------------------------------------------------------------------------------
+
+license-plate-recognition-in-react
+
+https://medium.freecodecamp.org/license-plate-recognition-in-react-native-b4f790d3a160
+https://github.com/cardash/react-native-openalpr
+https://github.com/cardash/react-native-openalpr/tree/master/Example
+
+https://gist.githubusercontent.com/samcorcos/735c72d93644f6d8855dcd84df7077d0/raw/a62051ea7f90e7e7f839565eb739868a11d84b2e/openalpr.jsx
+
+
+
+import React, { Component } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import Camera from 'react-native-openalpr';
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  textContainer: {
+    position: 'absolute',
+    top: 100,
+    left: 50,
+  },
+  text: {
+    textAlign: 'center',
+    fontSize: 20,
+  },
+});
+
+export default class PlateRecognizer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.camera = null;
+    this.state = {
+      camera: {
+        aspect: Camera.constants.Aspect.fill,
+      },
+      plate: 'Scan a plate',
+    };
+  }
+
+  onPlateRecognized = ({ plate, confidence }) => {
+    if (confidence > 0.9) {
+      this.setState({
+        plate,
+      })
+    }
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <Camera
+          ref={(cam) => { this.camera = cam }}
+          style={styles.container}
+          aspect={this.state.camera.aspect}
+          captureQuality={Camera.constants.CaptureQuality.medium}
+          onPlateRecognized={this.onPlateRecognized}
+          showPlateOutline
+          torchMode={Camera.constants.TorchMode.off}
+          touchToFocus
+        />
+        <View style={styles.textContainer}>
+          <Text style={styles.text}>{this.state.plate}</Text>
+        </View>
+      </View>
+
+    );
+  }
+}
+
+------------------------------------------------------------------------------------------
+
+
+http://www.geeksforgeeks.org/opencv-python-program-vehicle-detection-video-frame/
+
+sudo apt-get install python
+pip install numpy
+
+
+# OpenCV Python program to detect cars in video frame
+# import libraries of python OpenCV
+import cv2
+
+# capture frames from a video
+cap = cv2.VideoCapture('video.avi')
+
+# Trained XML classifiers describes some features of some object we want to detect
+car_cascade = cv2.CascadeClassifier('cars.xml')
+
+# loop runs if capturing has been initialized.
+while True:
+    # reads frames from a video
+    ret, frames = cap.read()
+
+    # convert to gray scale of each frames
+    gray = cv2.cvtColor(frames, cv2.COLOR_BGR2GRAY)
+
+
+    # Detects cars of different sizes in the input image
+    cars = car_cascade.detectMultiScale(gray, 1.1, 1)
+
+    # To draw a rectangle in each cars
+    for (x,y,w,h) in cars:
+        cv2.rectangle(frames,(x,y),(x+w,y+h),(0,0,255),2)
+
+   # Display frames in a window
+   cv2.imshow('video2', frames)
+
+    # Wait for Esc key to stop
+    if cv2.waitKey(33) == 27:
+        break
+
+# De-allocate any associated memory usage
+cv2.destroyAllWindows()
+
+
+
+http://docs.opencv.org/2.4/modules/objdetect/doc/cascade_classification.html?highlight=cascadeclassifier#cascadeclassifier
+
+https://www.youtube.com/watch?v=PXSiUojhNFg
+
+------------------------------------------------------------------------------------------
+
+Cat detection code
+
+
+http://www.pyimagesearch.com/2016/06/20/detecting-cats-in-images-with-opencv/
+
+cat_detector.py
+
+# import the necessary packages
+import argparse
+import cv2
+
+# construct the argument parse and parse the arguments
+ap = argparse.ArgumentParser()
+ap.add_argument("-i", "--image", required=True,
+	help="path to the input image")
+ap.add_argument("-c", "--cascade",
+	default="haarcascade_frontalcatface.xml",
+	help="path to cat detector haar cascade")
+args = vars(ap.parse_args())
+
+
+
+
+# import the necessary packages
+import argparse
+import cv2
+
+# construct the argument parse and parse the arguments
+ap = argparse.ArgumentParser()
+ap.add_argument("-i", "--image", required=True,
+	help="path to the input image")
+ap.add_argument("-c", "--cascade",
+	default="haarcascade_frontalcatface.xml",
+	help="path to cat detector haar cascade")
+args = vars(ap.parse_args())
+
+# load the input image and convert it to grayscale
+image = cv2.imread(args["image"])
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# load the cat detector Haar cascade, then detect cat faces
+# in the input image
+detector = cv2.CascadeClassifier(args["cascade"])
+rects = detector.detectMultiScale(gray, scaleFactor=1.3,
+	minNeighbors=10, minSize=(75, 75))
+
+
+
+
+# import the necessary packages
+import argparse
+import cv2
+
+# construct the argument parse and parse the arguments
+ap = argparse.ArgumentParser()
+ap.add_argument("-i", "--image", required=True,
+	help="path to the input image")
+ap.add_argument("-c", "--cascade",
+	default="haarcascade_frontalcatface.xml",
+	help="path to cat detector haar cascade")
+args = vars(ap.parse_args())
+
+# load the input image and convert it to grayscale
+image = cv2.imread(args["image"])
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# load the cat detector Haar cascade, then detect cat faces
+# in the input image
+detector = cv2.CascadeClassifier(args["cascade"])
+rects = detector.detectMultiScale(gray, scaleFactor=1.3,
+	minNeighbors=10, minSize=(75, 75))
+
+# loop over the cat faces and draw a rectangle surrounding each
+for (i, (x, y, w, h)) in enumerate(rects):
+	cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
+	cv2.putText(image, "Cat #{}".format(i + 1), (x, y - 10),
+		cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 0, 255), 2)
+
+# show the detected cat faces
+cv2.imshow("Cat Faces", image)
+cv2.waitKey(0)
+
+
+
+------------------------------------------------------------------------------------------
+
+Face recognition with Keras and OpenCV
+
+https://aboveintelligent.com/face-recognition-with-keras-and-opencv-2baf2a83b799
+https://github.com/mzaradzki/neuralnets/tree/master/vgg_faces_keras
+
+
+------------------------------------------------------------------------------------------
+
+https://learndeltax.blogspot.de/2016/02/number-plate-detection-in-opencv-python.html
+
+
+
+
+Script:
+
+import cv2
+# Importing the Opencv Library
+import numpy as np
+# Importing NumPy,which is the fundamental package for scientific computing with Python
+
+# Reading Image
+img = cv2.imread("/home/whoami/Pictures/number1.jpg")
+cv2.namedWindow("Original Image",cv2.WINDOW_NORMAL)
+# Creating a Named window to display image
+cv2.imshow("Original Image",img)
+# Display image
+
+# RGB to Gray scale conversion
+img_gray = cv2.cvtColor(img,cv2.COLOR_RGB2GRAY)
+cv2.namedWindow("Gray Converted Image",cv2.WINDOW_NORMAL)
+# Creating a Named window to display image
+cv2.imshow("Gray Converted Image",img_gray)
+# Display Image
+
+# Noise removal with iterative bilateral filter(removes noise while preserving edges)
+noise_removal = cv2.bilateralFilter(img_gray,9,75,75)
+cv2.namedWindow("Noise Removed Image",cv2.WINDOW_NORMAL)
+# Creating a Named window to display image
+cv2.imshow("Noise Removed Image",noise_removal)
+# Display Image
+
+# Histogram equalisation for better results
+equal_histogram = cv2.equalizeHist(noise_removal)
+cv2.namedWindow("After Histogram equalisation",cv2.WINDOW_NORMAL)
+# Creating a Named window to display image
+cv2.imshow("After Histogram equalisation",equal_histogram)
+# Display Image
+
+# Morphological opening with a rectangular structure element
+kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(5,5))
+morph_image = cv2.morphologyEx(equal_histogram,cv2.MORPH_OPEN,kernel,iterations=15)
+cv2.namedWindow("Morphological opening",cv2.WINDOW_NORMAL)
+# Creating a Named window to display image
+cv2.imshow("Morphological opening",morph_image)
+# Display Image
+
+# Image subtraction(Subtracting the Morphed image from the histogram equalised Image)
+sub_morp_image = cv2.subtract(equal_histogram,morph_image)
+cv2.namedWindow("Subtraction image", cv2.WINDOW_NORMAL)
+# Creating a Named window to display image
+cv2.imshow("Subtraction image", sub_morp_image)
+# Display Image
+
+# Thresholding the image
+ret,thresh_image = cv2.threshold(sub_morp_image,0,255,cv2.THRESH_OTSU)
+cv2.namedWindow("Image after Thresholding",cv2.WINDOW_NORMAL)
+# Creating a Named window to display image
+cv2.imshow("Image after Thresholding",thresh_image)
+# Display Image
+
+# Applying Canny Edge detection
+canny_image = cv2.Canny(thresh_image,250,255)
+cv2.namedWindow("Image after applying Canny",cv2.WINDOW_NORMAL)
+# Creating a Named window to display image
+cv2.imshow("Image after applying Canny",canny_image)
+# Display Image
+canny_image = cv2.convertScaleAbs(canny_image)
+
+# dilation to strengthen the edges
+kernel = np.ones((3,3), np.uint8)
+# Creating the kernel for dilation
+dilated_image = cv2.dilate(canny_image,kernel,iterations=1)
+cv2.namedWindow("Dilation", cv2.WINDOW_NORMAL)
+# Creating a Named window to display image
+cv2.imshow("Dilation", dilated_image)
+# Displaying Image
+
+# Finding Contours in the image based on edges
+new,contours, hierarchy = cv2.findContours(dilated_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+contours= sorted(contours, key = cv2.contourArea, reverse = True)[:10]
+# Sort the contours based on area ,so that the number plate will be in top 10 contours
+screenCnt = None
+# loop over our contours
+for c in contours:
+ # approximate the contour
+ peri = cv2.arcLength(c, True)
+ approx = cv2.approxPolyDP(c, 0.06 * peri, True)  # Approximating with 6% error
+ # if our approximated contour has four points, then
+ # we can assume that we have found our screen
+ if len(approx) == 4:  # Select the contour with 4 corners
+  screenCnt = approx
+  break
+final = cv2.drawContours(img, [screenCnt], -1, (0, 255, 0), 3)
+# Drawing the selected contour on the original image
+cv2.namedWindow("Image with Selected Contour",cv2.WINDOW_NORMAL)
+# Creating a Named window to display image
+cv2.imshow("Image with Selected Contour",final)
+
+# Masking the part other than the number plate
+mask = np.zeros(img_gray.shape,np.uint8)
+new_image = cv2.drawContours(mask,[screenCnt],0,255,-1,)
+new_image = cv2.bitwise_and(img,img,mask=mask)
+cv2.namedWindow("Final_image",cv2.WINDOW_NORMAL)
+cv2.imshow("Final_image",new_image)
+
+# Histogram equal for enhancing the number plate for further processing
+y,cr,cb = cv2.split(cv2.cvtColor(new_image,cv2.COLOR_RGB2YCrCb))
+# Converting the image to YCrCb model and splitting the 3 channels
+y = cv2.equalizeHist(y)
+# Applying histogram equalisation
+final_image = cv2.cvtColor(cv2.merge([y,cr,cb]),cv2.COLOR_YCrCb2RGB)
+# Merging the 3 channels
+cv2.namedWindow("Enhanced Number Plate",cv2.WINDOW_NORMAL)
+# Creating a Named window to display image
+cv2.imshow("Enhanced Number Plate",final_image)
+# Display image
+cv2.waitKey() # Wait for a keystroke from the user
+
+
+
+------------------------------------------------------------------------------------------
+
+
+Number plate recognition with Tensorflow
+https://github.com/matthewearl/deep-anpr/blob/master/detect.py
+
+
+#!/usr/bin/env python
+#
+# Copyright (c) 2016 Matthew Earl
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+#     The above copyright notice and this permission notice shall be included
+#     in all copies or substantial portions of the Software.
+#
+#     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+#     OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+#     MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+#     NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+#     DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+#     OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+#     USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+"""
+Routines to detect number plates.
+
+Use `detect` to detect all bounding boxes, and use `post_process` on the output
+of `detect` to filter using non-maximum suppression.
+
+"""
+
+
+__all__ = (
+    'detect',
+    'post_process',
+)
+
+
+import collections
+import itertools
+import math
+import sys
+
+import cv2
+import numpy
+import tensorflow as tf
+
+import common
+import model
+
+
+def make_scaled_ims(im, min_shape):
+    ratio = 1. / 2 ** 0.5
+    shape = (im.shape[0] / ratio, im.shape[1] / ratio)
+
+    while True:
+        shape = (int(shape[0] * ratio), int(shape[1] * ratio))
+        if shape[0] < min_shape[0] or shape[1] < min_shape[1]:
+            break
+        yield cv2.resize(im, (shape[1], shape[0]))
+
+
+def detect(im, param_vals):
+    """
+    Detect number plates in an image.
+
+    :param im:
+        Image to detect number plates in.
+
+    :param param_vals:
+        Model parameters to use. These are the parameters output by the `train`
+        module.
+
+    :returns:
+        Iterable of `bbox_tl, bbox_br, letter_probs`, defining the bounding box
+        top-left and bottom-right corners respectively, and a 7,36 matrix
+        giving the probability distributions of each letter.
+
+    """
+
+    # Convert the image to various scales.
+    scaled_ims = list(make_scaled_ims(im, model.WINDOW_SHAPE))
+
+    # Load the model which detects number plates over a sliding window.
+    x, y, params = model.get_detect_model()
+
+    # Execute the model at each scale.
+    with tf.Session(config=tf.ConfigProto()) as sess:
+        y_vals = []
+        for scaled_im in scaled_ims:
+            feed_dict = {x: numpy.stack([scaled_im])}
+            feed_dict.update(dict(zip(params, param_vals)))
+            y_vals.append(sess.run(y, feed_dict=feed_dict))
+
+    # Interpret the results in terms of bounding boxes in the input image.
+    # Do this by identifying windows (at all scales) where the model predicts a
+    # number plate has a greater than 50% probability of appearing.
+    #
+    # To obtain pixel coordinates, the window coordinates are scaled according
+    # to the stride size, and pixel coordinates.
+    for i, (scaled_im, y_val) in enumerate(zip(scaled_ims, y_vals)):
+        for window_coords in numpy.argwhere(y_val[0, :, :, 0] >
+                                                       -math.log(1./0.99 - 1)):
+            letter_probs = (y_val[0,
+                                  window_coords[0],
+                                  window_coords[1], 1:].reshape(
+                                    7, len(common.CHARS)))
+            letter_probs = common.softmax(letter_probs)
+
+            img_scale = float(im.shape[0]) / scaled_im.shape[0]
+
+            bbox_tl = window_coords * (8, 4) * img_scale
+            bbox_size = numpy.array(model.WINDOW_SHAPE) * img_scale
+
+            present_prob = common.sigmoid(
+                               y_val[0, window_coords[0], window_coords[1], 0])
+
+            yield bbox_tl, bbox_tl + bbox_size, present_prob, letter_probs
+
+
+def _overlaps(match1, match2):
+    bbox_tl1, bbox_br1, _, _ = match1
+    bbox_tl2, bbox_br2, _, _ = match2
+    return (bbox_br1[0] > bbox_tl2[0] and
+            bbox_br2[0] > bbox_tl1[0] and
+            bbox_br1[1] > bbox_tl2[1] and
+            bbox_br2[1] > bbox_tl1[1])
+
+
+def _group_overlapping_rectangles(matches):
+    matches = list(matches)
+    num_groups = 0
+    match_to_group = {}
+    for idx1 in range(len(matches)):
+        for idx2 in range(idx1):
+            if _overlaps(matches[idx1], matches[idx2]):
+                match_to_group[idx1] = match_to_group[idx2]
+                break
+        else:
+            match_to_group[idx1] = num_groups
+            num_groups += 1
+
+    groups = collections.defaultdict(list)
+    for idx, group in match_to_group.items():
+        groups[group].append(matches[idx])
+
+    return groups
+
+
+def post_process(matches):
+    """
+    Take an iterable of matches as returned by `detect` and merge duplicates.
+
+    Merging consists of two steps:
+      - Finding sets of overlapping rectangles.
+      - Finding the intersection of those sets, along with the code
+        corresponding with the rectangle with the highest presence parameter.
+
+    """
+    groups = _group_overlapping_rectangles(matches)
+
+    for group_matches in groups.values():
+        mins = numpy.stack(numpy.array(m[0]) for m in group_matches)
+        maxs = numpy.stack(numpy.array(m[1]) for m in group_matches)
+        present_probs = numpy.array([m[2] for m in group_matches])
+        letter_probs = numpy.stack(m[3] for m in group_matches)
+
+        yield (numpy.max(mins, axis=0).flatten(),
+               numpy.min(maxs, axis=0).flatten(),
+               numpy.max(present_probs),
+               letter_probs[numpy.argmax(present_probs)])
+
+
+def letter_probs_to_code(letter_probs):
+    return "".join(common.CHARS[i] for i in numpy.argmax(letter_probs, axis=1))
+
+
+if __name__ == "__main__":
+    im = cv2.imread(sys.argv[1])
+    im_gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY) / 255.
+
+    f = numpy.load(sys.argv[2])
+    param_vals = [f[n] for n in sorted(f.files, key=lambda s: int(s[4:]))]
+
+    for pt1, pt2, present_prob, letter_probs in post_process(
+                                                  detect(im_gray, param_vals)):
+        pt1 = tuple(reversed(map(int, pt1)))
+        pt2 = tuple(reversed(map(int, pt2)))
+
+        code = letter_probs_to_code(letter_probs)
+
+        color = (0.0, 255.0, 0.0)
+        cv2.rectangle(im, pt1, pt2, color)
+
+        cv2.putText(im,
+                    code,
+                    pt1,
+                    cv2.FONT_HERSHEY_PLAIN,
+                    1.5,
+                    (0, 0, 0),
+                    thickness=5)
+
+        cv2.putText(im,
+                    code,
+                    pt1,
+                    cv2.FONT_HERSHEY_PLAIN,
+                    1.5,
+                    (255, 255, 255),
+                    thickness=2)
+
+    cv2.imwrite(sys.argv[3], im)
+
+
+
+
+------------------------------------------------------------------------------------------
+
+Chapter5_NumberPlateRecognition cpp
+https://github.com/MasteringOpenCV/code/tree/master/Chapter5_NumberPlateRecognition
+
+------------------------------------------------------------------------------------------
+
+
+Open Automatic Number Plate Recognition on Smartphones (former UIT-ANPR)
+https://github.com/donnguyen/UIT-ANPR
+
+------------------------------------------------------------------------------------------
+
+
+
+OpenCV C++/Obj-C: Detecting a sheet of paper / Square Detection
+
+
+
+https://stackoverflow.com/questions/8667818/opencv-c-obj-c-detecting-a-sheet-of-paper-square-detection
+https://stackoverflow.com/questions/8667818/opencv-c-obj-c-detecting-a-sheet-of-paper-square-detection
+https://stackoverflow.com/questions/18036920/java-opencv-deskewing-a-contour/18041971#18041971
+
+...........................................................................
+
+
+For reference, here is a sample code in Mathematica:
+
+f = Import["http://thwartedglamour.files.wordpress.com/2010/06/my-coffee-table-1-sa.jpg"]
+f = ImageResize[f, ImageDimensions[f][[1]]/4]
+g = MedianFilter[ColorConvert[f, "Grayscale"], 2]
+h = DeleteSmallComponents[Thinning[
+     Binarize[ImageSubtract[Dilation[g, 1], Erosion[g, 1]]]]]
+convexvert = ComponentMeasurements[SelectComponents[
+     h, {"ConvexArea", "BoundingBoxArea"}, #1 / #2 > 0.7 &],
+     "ConvexVertices"][[All, 2]]
+(* To visualize the blue polygons above: *)
+Show[f, Graphics[{EdgeForm[{Blue, Thick}], RGBColor[0, 0, 1, 0.5],
+     Polygon @@ convexvert}]]
+
+
+...........................................................................
+
+ OpenCV and the resulting C++ code
+
+ void find_squares(Mat& image, vector<vector<Point> >& squares)
+{
+    // blur will enhance edge detection
+    Mat blurred(image);
+    medianBlur(image, blurred, 9);
+
+    Mat gray0(blurred.size(), CV_8U), gray;
+    vector<vector<Point> > contours;
+
+    // find squares in every color plane of the image
+    for (int c = 0; c < 3; c++)
+    {
+        int ch[] = {c, 0};
+        mixChannels(&blurred, 1, &gray0, 1, ch, 1);
+
+        // try several threshold levels
+        const int threshold_level = 2;
+        for (int l = 0; l < threshold_level; l++)
+        {
+            // Use Canny instead of zero threshold level!
+            // Canny helps to catch squares with gradient shading
+            if (l == 0)
+            {
+                Canny(gray0, gray, 10, 20, 3); //
+
+                // Dilate helps to remove potential holes between edge segments
+                dilate(gray, gray, Mat(), Point(-1,-1));
+            }
+            else
+            {
+                    gray = gray0 >= (l+1) * 255 / threshold_level;
+            }
+
+            // Find contours and store them in a list
+            findContours(gray, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+
+            // Test contours
+            vector<Point> approx;
+            for (size_t i = 0; i < contours.size(); i++)
+            {
+                    // approximate contour with accuracy proportional
+                    // to the contour perimeter
+                    approxPolyDP(Mat(contours[i]), approx, arcLength(Mat(contours[i]), true)*0.02, true);
+
+                    // Note: absolute value of an area is used because
+                    // area may be positive or negative - in accordance with the
+                    // contour orientation
+                    if (approx.size() == 4 &&
+                            fabs(contourArea(Mat(approx))) > 1000 &&
+                            isContourConvex(Mat(approx)))
+                    {
+                            double maxCosine = 0;
+
+                            for (int j = 2; j < 5; j++)
+                            {
+                                    double cosine = fabs(angle(approx[j%4], approx[j-2], approx[j-1]));
+                                    maxCosine = MAX(maxCosine, cosine);
+                            }
+
+                            if (maxCosine < 0.3)
+                                    squares.push_back(approx);
+                    }
+            }
+        }
+    }
+}
+
+
+
+
+...........................................................................
+
+
+Code cpp:
+
+double angle( cv::Point pt1, cv::Point pt2, cv::Point pt0 ) {
+    double dx1 = pt1.x - pt0.x;
+    double dy1 = pt1.y - pt0.y;
+    double dx2 = pt2.x - pt0.x;
+    double dy2 = pt2.y - pt0.y;
+    return (dx1*dx2 + dy1*dy2)/sqrt((dx1*dx1 + dy1*dy1)*(dx2*dx2 + dy2*dy2) + 1e-10);
+}
+
+- (std::vector<std::vector<cv::Point> >)findSquaresInImage:(cv::Mat)_image
+{
+    std::vector<std::vector<cv::Point> > squares;
+    cv::Mat pyr, timg, gray0(_image.size(), CV_8U), gray;
+    int thresh = 50, N = 11;
+    cv::pyrDown(_image, pyr, cv::Size(_image.cols/2, _image.rows/2));
+    cv::pyrUp(pyr, timg, _image.size());
+    std::vector<std::vector<cv::Point> > contours;
+    for( int c = 0; c < 3; c++ ) {
+        int ch[] = {c, 0};
+        mixChannels(&timg, 1, &gray0, 1, ch, 1);
+        for( int l = 0; l < N; l++ ) {
+            if( l == 0 ) {
+                cv::Canny(gray0, gray, 0, thresh, 5);
+                cv::dilate(gray, gray, cv::Mat(), cv::Point(-1,-1));
+            }
+            else {
+                gray = gray0 >= (l+1)*255/N;
+            }
+            cv::findContours(gray, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+            std::vector<cv::Point> approx;
+            for( size_t i = 0; i < contours.size(); i++ )
+            {
+                cv::approxPolyDP(cv::Mat(contours[i]), approx, arcLength(cv::Mat(contours[i]), true)*0.02, true);
+                if( approx.size() == 4 && fabs(contourArea(cv::Mat(approx))) > 1000 && cv::isContourConvex(cv::Mat(approx))) {
+                    double maxCosine = 0;
+
+                    for( int j = 2; j < 5; j++ )
+                    {
+                        double cosine = fabs(angle(approx[j%4], approx[j-2], approx[j-1]));
+                        maxCosine = MAX(maxCosine, cosine);
+                    }
+
+                    if( maxCosine < 0.3 ) {
+                        squares.push_back(approx);
+                    }
+                }
+            }
+        }
+    }
+    return squares;
+}
+
+
+cv::Mat debugSquares( std::vector<std::vector<cv::Point> > squares, cv::Mat image )
+{
+    for ( int i = 0; i< squares.size(); i++ ) {
+        // draw contour
+        cv::drawContours(image, squares, i, cv::Scalar(255,0,0), 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
+
+        // draw bounding rect
+        cv::Rect rect = boundingRect(cv::Mat(squares[i]));
+        cv::rectangle(image, rect.tl(), rect.br(), cv::Scalar(0,255,0), 2, 8, 0);
+
+        // draw rotated rect
+        cv::RotatedRect minRect = minAreaRect(cv::Mat(squares[i]));
+        cv::Point2f rect_points[4];
+        minRect.points( rect_points );
+        for ( int j = 0; j < 4; j++ ) {
+            cv::line( image, rect_points[j], rect_points[(j+1)%4], cv::Scalar(0,0,255), 1, 8 ); // blue
+        }
+    }
+
+    return image;
+}
+
+
+...........................................................................
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.opencv.core.*;
+import org.opencv.imgproc.Imgproc;
+
+class Line {
+    public Point offset;
+    public double angle;
+
+    public Line(Point offset, double angle) {
+        this.offset = offset.clone();
+        this.angle = angle;
+    }
+
+    public Point get(int length) {
+        Point result = offset.clone();
+        result.x += Math.cos(angle) * length;
+        result.y += Math.sin(angle) * length;
+        return result;
+    }
+
+    public Point getStart() {
+        return get(-5000);
+    }
+
+    public Point getEnd() {
+        return get(5000);
+    }
+
+    public void scale(double factor) {
+        offset.x *= factor;
+        offset.y *= factor;
+    }
+
+    public static Point intersect(Line l1, Line l2) {
+        return getLineLineIntersection(l1.getStart().x, l1.getStart().y, l1.getEnd().x, l1.getEnd().y,
+                l2.getStart().x, l2.getStart().y, l2.getEnd().x, l2.getEnd().y
+                );
+    }
+
+    public static Point getLineLineIntersection(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
+      double det1And2 = det(x1, y1, x2, y2);
+      double det3And4 = det(x3, y3, x4, y4);
+      double x1LessX2 = x1 - x2;
+      double y1LessY2 = y1 - y2;
+      double x3LessX4 = x3 - x4;
+      double y3LessY4 = y3 - y4;
+      double det1Less2And3Less4 = det(x1LessX2, y1LessY2, x3LessX4, y3LessY4);
+      if (det1Less2And3Less4 == 0){
+         // the denominator is zero so the lines are parallel and there's either no solution (or multiple solutions if the lines overlap) so return null.
+         return null;
+      }
+      double x = (det(det1And2, x1LessX2,
+            det3And4, x3LessX4) /
+            det1Less2And3Less4);
+      double y = (det(det1And2, y1LessY2,
+            det3And4, y3LessY4) /
+            det1Less2And3Less4);
+      return new Point(x, y);
+   }
+   protected static double det(double a, double b, double c, double d) {
+      return a * d - b * c;
+   }
+}
+
+class LineSegment extends Line implements Comparable {
+    public double length;
+
+    public LineSegment(Point offset, double angle, double length) {
+        super(offset, angle);
+        this.length = length;
+    }
+
+    public void melt(LineSegment segment) {
+        Point point = new Point();
+        point.x += Math.cos(angle) * length;
+        point.y += Math.sin(angle) * length;
+        point.x += Math.cos(segment.angle) * segment.length;
+        point.y += Math.sin(segment.angle) * segment.length;
+
+        angle = Math.atan2(point.y, point.x);
+        offset.x = (offset.x * length + segment.offset.x * segment.length) / (length + segment.length);
+        offset.y = (offset.y * length + segment.offset.y * segment.length) / (length + segment.length);
+
+        length += segment.length;
+    }
+
+    @Override
+    public int compareTo(Object other) throws ClassCastException {
+        if (!(other instanceof LineSegment)) {
+            throw new ClassCastException("A LineSegment object expected.");
+        }
+        return (int) (((LineSegment) other).length - this.length);
+    }
+}
+
+class Quadrangle {
+    static int
+        TOP = 0,
+        RIGHT = 1,
+        BOTTOM = 2,
+        LEFT = 3;
+
+    public Line[] lines = new Line[4];
+
+    public Quadrangle() {
+
+    }
+
+    private static double getAngle(Point p1, Point p2) {
+        return Math.atan2(p2.y - p1.y, p2.x - p1.x);
+    }
+
+    private static double getLength(Point p1, Point p2) {
+        return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+    }
+
+    private static double roundAngle(double angle) {
+        return angle - (2*Math.PI) * Math.round(angle / (2 * Math.PI));
+    }
+
+    public static Quadrangle fromContour(MatOfPoint contour) {
+        List<Point> points = contour.toList();
+        List<LineSegment> segments = new ArrayList<>();
+
+        // Create line segments
+        for (int i = 0; i < points.size(); i++) {
+            double a = getAngle(points.get(i), points.get((i + 1) % points.size()));
+            double l = getLength(points.get(i), points.get((i + 1) % points.size()));
+            segments.add(new LineSegment(points.get(i), a, l));
+        }
+
+        // Connect line segments
+        double angleDiffMax = 2 * Math.PI / 100;
+        List<LineSegment> output = new ArrayList<>();
+        for (LineSegment segment : segments) {
+            if (output.isEmpty()) {
+                output.add(segment);
+            } else {
+                LineSegment top = output.get(output.size() - 1);
+                double d = roundAngle(segment.angle - top.angle);
+                if (Math.abs(d) < angleDiffMax) {
+                    top.melt(segment);
+                } else {
+                    output.add(segment);
+                }
+            }
+        }
+
+        Collections.sort(output);
+
+        Quadrangle quad = new Quadrangle();
+
+        for (int o = 0; o < 4; o += 1) {
+            for (int i = 0; i < 4; i++) {
+                if (Math.abs(roundAngle(output.get(i).angle - (2 * Math.PI * o / 4))) < Math.PI / 4) {
+                    quad.lines[o] = output.get(i);
+                }
+            }
+        }
+
+        return quad;
+    }
+
+    public void scale(double factor) {
+        for (int i = 0; i < 4; i++) {
+            lines[i].scale(factor);
+        }
+    }
+
+    public Mat warp(Mat src) {
+        Mat result = src.clone();
+
+
+        Core.line(result, lines[TOP].get(-5000), lines[TOP].get(5000), new Scalar(200, 100, 100), 8);
+        Core.line(result, lines[RIGHT].get(-5000), lines[RIGHT].get(5000), new Scalar(0, 255, 0), 8);
+
+
+        Core.line(result, lines[BOTTOM].get(-5000), lines[BOTTOM].get(5000), new Scalar(255, 0, 0), 8);
+        Core.line(result, lines[LEFT].get(-5000), lines[LEFT].get(5000), new Scalar(0, 0, 255), 8);
+
+
+
+        Point p = Line.intersect(lines[TOP], lines[LEFT]);
+        System.out.println(p);
+        if (p != null) {
+            Core.circle(result, p, 30, new Scalar(0, 0, 255), 8);
+        }
+
+        double width = 1400;
+        double height = width / 2.15;
+
+        Point[] srcProjection = new Point[4], dstProjection = new Point[4];
+        srcProjection[0] = Line.intersect(lines[TOP], lines[LEFT]);
+        srcProjection[1] = Line.intersect(lines[TOP], lines[RIGHT]);
+        srcProjection[2] = Line.intersect(lines[BOTTOM], lines[LEFT]);
+        srcProjection[3] = Line.intersect(lines[BOTTOM], lines[RIGHT]);
+
+        dstProjection[0] = new Point(0, 0);
+        dstProjection[1] = new Point(width - 1, 0);
+        dstProjection[2] = new Point(0, height - 1);
+        dstProjection[3] = new Point(width - 1, height - 1);
+
+
+        Mat warp = Imgproc.getPerspectiveTransform(new MatOfPoint2f(srcProjection), new MatOfPoint2f(dstProjection));
+        Mat rotated = new Mat();
+        Size size = new Size(width, height);
+        Imgproc.warpPerspective(src, rotated, warp, size, Imgproc.INTER_LINEAR);
+        return rotated;
+    }
+}
+
+
+------------------------------------------------------------------------------------------
+
+
+REFERENCES
+
+https://www.youtube.com/watch?v=hrPZswr8bOA
+https://www.youtube.com/watch?v=nmDiZGx5mqU
+
+https://dsp.stackexchange.com/questions/10737/licence-plate-detection-with-different-backgrounds
+https://www.patreon.com/posts/opencv-3-license-4137013
+http://rnd.azoft.com/instant-license-plate-recognition-in-ios-apps/
+https://chatbotslife.com/vehicle-detection-and-tracking-using-computer-vision-baea4df65906
+
+http://www.pyimagesearch.com/2015/05/25/basic-motion-detection-and-tracking-with-python-and-opencv/
+https://medium.com/computer-car/my-lane-detection-project-for-the-self-driving-car-nanodegree-by-udacity-36a230553bd3
+http://opencv.jp/opencv-1.1.0_org/docs/ref/opencvref_cv.htm
+https://news.ycombinator.com/item?id=14358120
+http://www.emgu.com/wiki/index.php/License_Plate_Recognition_in_CSharp
+https://en.wikipedia.org/wiki/Automatic_number_plate_recognition
