@@ -69,7 +69,6 @@ ini_set('memcached.sess_lock_retries', ini_get('max_execution_time') * 1000 / 15
 ini_set('memcached.sess_lock_expire', ini_get('max_execution_time')); // seconds
 ini_set('memcached.sess_consistent_hash', 1); // boolean
 
-
 # -----------------------------------
 
 /usr/local/etc/php/7.0/conf.d/ext-memcached.ini.
@@ -96,6 +95,90 @@ memcached.sess_lock_wait_max = 2000;
 ; Default is 5.
 
 memcached.sess_lock_retries = 5;
+
+
+
+
+
+
+
+
+
+
+ini_set('session.auto_start',1);
+ini_set('display_errors', 1);
+ini_set('session.gc_maxlifetime',13440);
+ini_set('session.cache_expire',1800);
+ini_set('session.use_cookies',1);
+
+usleep(rand(1300000,1800000));
+
+if(!($_SESSION)){
+   ini_set('session.auto_start',1);
+   session_start();
+}
+
+ini_set('memcached.sess_lock_wait_min', 150); // milliseconds
+ini_set('memcached.sess_lock_wait_max', 150); // milliseconds
+ini_set('memcached.sess_lock_retries', ini_get('max_execution_time') * 1000 / 150); // keep
+ini_set('memcached.sess_lock_expire', ini_get('max_execution_time')); // seconds
+ini_set('memcached.sess_consistent_hash', 1); // boolean
+ini_set('session.lazy-write', 0); // Mimic PHP5 behaviour
+
+; Wait for 150 ms initially
+memcached.sess_lock_wait_min = 150
+; Wait for 500 ms in the next retries
+memcached.sess_lock_wait_max = 500
+; Retry for 60 times overally (max time would be 60 x 500 ms)
+memcached.sess_lock_retries = 60
+; Total time that a lock exists is 40 seconds which is equal to my max_execution_time
+memcached.sess_lock_expire = 40
+
+https://github.com/php-memcached-dev/php-memcached/issues/269
+
+#############################################################
+# session_start(): Unable to clear session lock record in
+#############################################################
+
+# FIX  -----------------------------------------------
+
+ini_set('session.auto_start',1);
+ini_set('session.gc_maxlifetime',1440);
+ini_set('session.cache_expire',180);
+
+ini_set('memcached.sess_lock_wait_min', 150); // milliseconds
+ini_set('memcached.sess_lock_wait_max', 500); // milliseconds
+ini_set('memcached.sess_lock_retries', 10); // keep
+ini_set('memcached.sess_lock_expire', 60); // seconds
+ini_set('memcached.sess_consistent_hash', 1); // boolean
+ini_set('session.lazy-write', 0); // Mimic PHP5 behaviour
+
+# FIX  -----------------------------------------------
+
+#usleep(rand(1300000,1800000));
+
+http://php.net/manual/en/memcached.configuration.php
+http://php.net/manual/de/session.configuration.php#ini.session.auto-start
+http://php.net/manual/de/session.configuration.php
+http://php.net/manual/de/session.configuration.php#ini.session.auto-start
+
+
+https://linux.die.net/man/1/setfacl
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # -----------------------------------
 
