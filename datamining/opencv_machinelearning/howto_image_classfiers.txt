@@ -29,8 +29,13 @@ https://github.com/gskielian/JPG-PNG-to-MNIST-NN-Format
 Cat vs Dog Identification - Cat VS Dog Predictor using Convolutional Neural Networks
 https://github.com/ZWMiller/catdog
 
-Extract 10 images from the CIFAR-10 data set
-https://gist.github.com/juliensimon/273bef4c5b4490c687b2f92ee721b546
+
+##############################################################
+#
+#   Extract 10 images from the CIFAR-10 data set
+#   https://gist.github.com/juliensimon/273bef4c5b4490c687b2f92ee721b546
+#
+##############################################################
 
 import mxnet as mx
 import numpy as np
@@ -73,5 +78,87 @@ for i in range(0,10):
     category = (int)(category[0])
     cats.append(categories[category])
 print cats
+
+
+##############################################################
+#
+#   Analyzing Google Trends Data in R
+#   https://www.displayr.com/extracting-google-trends-data-in-r/
+#
+##############################################################
+
+library(gtrendsR)
+library(reshape2)
+
+google.trends = gtrends(c("blu-ray"), gprop = "web", time = "all")[[1]]
+google.trends = dcast(google.trends, date ~ keyword + geo, value.var = "hits")
+rownames(google.trends) = google.trends$date
+google.trends$date = NULL
+Sys.setenv(TZ = "UTC")
+
+Google Trends by geographic region
+google.trends = gtrends(c("skiing"), geo = c("CA", "NZ"), gprop = "web", time = "2010-06-30 2017-06-30")[[1]]
+library(gtrendsR)
+geo.codes = sort(unique(countries[substr(countries$sub_code, 1, 2) == "IT", ]$sub_code))
+
+##########################################################
+#
+# Creating your own neural network using TensorFlow
+# https://becominghuman.ai/creating-your-own-neural-network-using-tensorflow-fa8ca7cc4d0e
+#
+##########################################################
+
+	import tensorflow as tf
+
+	training_epochs = 1000
+	n_neurons_in_h1 = 30
+	n_neurons_in_h2 = 30
+	learning_rate = 0.01
+
+# Training epochs Creating placeholders
+
+	X = tf.placeholder(tf.float32, [None, n_features], name='features')
+	Y = tf.placeholder(tf.float32, [None, n_classes], name='labels')
+
+# Specifying weights and biases for the first layer
+	W1 = tf.Variable(tf.truncated_normal([n_features, n_neurons_in_h1],mean=0.0,stddev=1), name='weights1')
+	b1 = tf.Variable(tf.zeros([n_neurons_in_h1]), name='biases1')
+
+# Adding an activation function
+	y1 = tf.nn.sigmoid((tf.matmul(X, W1) + b1),  name='activationLayer1')
+
+#second layer
+
+	W2 = tf.Variable(tf.random_normal([n_neurons_in_h1, n_neurons_in_h2]), name='weights2')
+	b2 = tf.Variable(tf.random_normal([n_neurons_in_h2]), name='biases2')
+	y2 = tf.nn.sigmoid((tf.matmul(y1, W2) + b2), name='activationLayer2')
+
+#output layer
+
+	Wo = tf.Variable(tf.random_normal([n_neurons_in_h2, n_classes]), name='weightsOut')
+	bo = tf.Variable(tf.random_normal([n_classes]), name='biasesOut')
+	a = tf.nn.softmax((tf.matmul(y2, Wo) + bo), name='activationOutputLayer')
+
+# Setting up the cost function and optimizer
+
+	cross_entropy = tf.reduce_mean(-tf.reduce_sum(Y * tf.log(a), reduction_indices=[1]), name='CostFunction')
+	train_step = tf.train.GradientDescentOptimizer(learning_rate).minimize(cross_entropy)
+
+
+# Accuracy calculation
+
+	correct_prediction = tf.equal(tf.argmax(a, 1), tf.argmax(Y, 1))
+	accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32), name="Accuracy")
+
+# Training the model
+
+	for epoch in range(training_epochs):
+	    # feeding training data/examples
+	    sess.run(train_step, feed_dict={X: tr_features, Y: tr_encode})
+	    # feeding testing data to determine model accuracy
+	    summary, acc = sess.run([merged_summary, accuracy],     feed_dict={X: ts_features, Y: ts_encode})
+
+	    # print accuracy for each epoch
+	    print(epoch, acc)
 
 
