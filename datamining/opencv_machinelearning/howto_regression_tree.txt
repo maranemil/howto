@@ -1,0 +1,1349 @@
+
+################################################################
+#
+# Decission Tree - Linear Regression - Numpy
+#
+################################################################
+
+editor python
+https://www.pythonanywhere.com/try-ipython/   #cli
+https://www.ideone.com/
+http://www.learnpython.org/
+
+Online Python interpreters
+http://quintagroup.com/cms/python/online-interpreter
+
+
+http://pytorch.org/docs/master/torch.html
+http://pytorch.org/
+http://torch.ch/
+https://pypi.python.org/pypi/torch/0.1.2
+https://deeplearning4j.org/compare-dl4j-torch7-pylearn
+https://www.python-kurs.eu/numpy.php # tutorial
+http://www.numpy.org/
+
+
+Statistics, Data Mining, and Machine Learning in Astronomy: A Practical .
+Artificial Intelligence with Python
+
+
+--------------------------------------------------
+http://scikit-hep.org/root_numpy/auto_examples/tmva/plot_regression.html
+https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.stats.linregress.html
+https://docs.scipy.org/doc/numpy/reference/generated/numpy.polyfit.html
+https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.lstsq.html
+http://scikit-learn.org/stable/modules/linear_model.html
+https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.lstsq.html
+https://docs.scipy.org/doc/numpy/reference/generated/numpy.polyfit.html
+https://www.cs.toronto.edu/~frossard/post/linear_regression/
+https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.stats.linregress.html
+https://nbviewer.jupyter.org/url/www.cs.toronto.edu/~frossard/post/linear_regression/Linear%20Regression.ipynb
+http://pythonhosted.org/PyQt-Fit/NonParam_tut.html
+http://pythonhosted.org/PyQt-Fit/NonParam_tut.html
+https://docs.python.org/3/library/pprint.html
+http://scikit-learn.org/stable/modules/linear_model.html#bayesian-regression
+http://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+https://pythonprogramminglanguage.com/linear-regression/
+https://pythonprogramminglanguage.com/linear-regression/
+http://dataaspirant.com/2017/02/01/decision-tree-algorithm-python-with-scikit-learn/
+http://scikit-learn.org/stable/auto_examples/tree/plot_unveil_tree_structure.html
+https://cambridgespark.com/content/tutorials/getting-started-with-regression-and-decision-trees/index.html
+http://gabrielelanaro.github.io/blog/2016/03/03/decision-trees.html
+http://chrisstrelioff.ws/sandbox/2015/06/08/decision_trees_in_python_with_scikit_learn_and_pandas.html
+
+
+###############################################################
+decision trees: scikit-learn + pandas
+
+https://gist.github.com/cstrelioff/8fefa9a43e82d96e9f0c
+###############################################################
+
+
+CLI
+
+>>> import analyze_dt as adt
+>>> df = adt.get_iris_data()
+-- iris.csv found locally
+>>> df.head()
+   SepalLength  SepalWidth  PetalLength  PetalWidth         Name
+0          5.1         3.5          1.4         0.2  Iris-setosa
+1          4.9         3.0          1.4         0.2  Iris-setosa
+2          4.7         3.2          1.3         0.2  Iris-setosa
+3          4.6         3.1          1.5         0.2  Iris-setosa
+4          5.0         3.6          1.4         0.2  Iris-setosa
+>>> df.columns
+Index([u'SepalLength', u'SepalWidth', u'PetalLength', u'PetalWidth', u'Name'], dtype='object')
+>>> features = list(df.columns[:4])
+>>> features
+['SepalLength', 'SepalWidth', 'PetalLength', 'PetalWidth']
+>>> df, targets = adt.encode_target(df, "Name")
+>>> y = df["Target"]
+>>> X = df[features]
+>>> dt = adt.DecisionTreeClassifier(min_samples_split=20, random_state=99)
+>>> dt.fit(X,y)
+DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=None,
+            max_features=None, max_leaf_nodes=None, min_samples_leaf=1,
+            min_samples_split=20, min_weight_fraction_leaf=0.0,
+            random_state=99, splitter='best')
+>>> adt.get_code(dt, features, targets)
+if ( PetalLength <= 2.45000004768 ) {
+    return Iris-setosa ( 50 examples )
+}
+else {
+    if ( PetalWidth <= 1.75 ) {
+        if ( PetalLength <= 4.94999980927 ) {
+            if ( PetalWidth <= 1.65000009537 ) {
+                return Iris-versicolor ( 47 examples )
+            }
+            else {
+                return Iris-virginica ( 1 examples )
+            }
+        }
+        else {
+            return Iris-versicolor ( 2 examples )
+            return Iris-virginica ( 4 examples )
+        }
+    }
+    else {
+        if ( PetalLength <= 4.85000038147 ) {
+            return Iris-versicolor ( 1 examples )
+            return Iris-virginica ( 2 examples )
+        }
+        else {
+            return Iris-virginica ( 43 examples )
+        }
+    }
+}
+>>> df[df['PetalLength'] <= 2.45]['Name'].unique()
+array(['Iris-setosa'], dtype=object)
+>>> adt.visualize_tree(dt, features)
+
+
+
+https://gist.github.com/cstrelioff/8fefa9a43e82d96e9f0c#file-analyze_dt-py
+
+
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+# vim:fenc=utf-8
+#
+# Copyright © 2015 Christopher C. Strelioff <chris.strelioff@gmail.com>
+#
+# Distributed under terms of the MIT license.
+
+"""analyze_dt.py -- probe a decision tree found with scikit-learn."""
+from __future__ import print_function
+
+import os
+import subprocess
+
+import pandas as pd
+import numpy as np
+from sklearn.tree import DecisionTreeClassifier, export_graphviz
+
+def get_code(tree, feature_names, target_names, spacer_base="    "):
+    """Produce psuedo-code for decision tree.
+
+    Args
+    ----
+    tree -- scikit-leant DescisionTree.
+    feature_names -- list of feature names.
+    target_names -- list of target (class) names.
+    spacer_base -- used for spacing code (default: "    ").
+
+    Notes
+    -----
+    based on http://stackoverflow.com/a/30104792.
+    """
+    left      = tree.tree_.children_left
+    right     = tree.tree_.children_right
+    threshold = tree.tree_.threshold
+    features  = [feature_names[i] for i in tree.tree_.feature]
+    value = tree.tree_.value
+
+    def recurse(left, right, threshold, features, node, depth):
+        spacer = spacer_base * depth
+        if (threshold[node] != -2):
+            print(spacer + "if ( " + features[node] + " <= " + \
+                  str(threshold[node]) + " ) {")
+            if left[node] != -1:
+                    recurse (left, right, threshold, features, left[node],
+                            depth+1)
+            print(spacer + "}\n" + spacer +"else {")
+            if right[node] != -1:
+                    recurse (left, right, threshold, features, right[node],
+                             depth+1)
+            print(spacer + "}")
+        else:
+            target = value[node]
+            for i, v in zip(np.nonzero(target)[1], target[np.nonzero(target)]):
+                target_name = target_names[i]
+                target_count = int(v)
+                print(spacer + "return " + str(target_name) + " ( " + \
+                      str(target_count) + " examples )")
+
+    recurse(left, right, threshold, features, 0, 0)
+
+
+def visualize_tree(tree, feature_names):
+    """Create tree png using graphviz.
+
+    Args
+    ----
+    tree -- scikit-learn DecsisionTree.
+    feature_names -- list of feature names.
+    """
+    with open("dt.dot", 'w') as f:
+        export_graphviz(tree, out_file=f, feature_names=feature_names)
+
+    command = ["dot", "-Tpng", "dt.dot", "-o", "dt.png"]
+    try:
+        subprocess.check_call(command)
+    except:
+        exit("Could not run dot, ie graphviz, to produce visualization")
+
+
+def encode_target(df, target_column):
+    """Add column to df with integers for the target.
+
+    Args
+    ----
+    df -- pandas DataFrame.
+    target_column -- column to map to int, producing new Target column.
+
+    Returns
+    -------
+    df -- modified DataFrame.
+    targets -- list of target names.
+    """
+    df_mod = df.copy()
+    targets = df_mod[target_column].unique()
+    map_to_int = {name: n for n, name in enumerate(targets)}
+    df_mod["Target"] = df_mod[target_column].replace(map_to_int)
+
+    return (df_mod, targets)
+
+
+def get_iris_data():
+    """Get the iris data, from local csv or pandas repo."""
+    if os.path.exists("iris.csv"):
+        print("-- iris.csv found locally")
+        df = pd.read_csv("iris.csv", index_col=0)
+    else:
+        print("-- trying to download from github")
+        fn = "https://raw.githubusercontent.com/pydata/pandas/master/pandas/tests/data/iris.csv"
+        try:
+            df = pd.read_csv(fn)
+        except:
+            exit("-- Unable to download iris.csv")
+
+        with open("iris.csv", 'w') as f:
+            print("-- writing to local iris.csv file")
+            df.to_csv(f)
+
+    return df
+
+if __name__ == '__main__':
+    print("\n-- get data:")
+    df = get_iris_data()
+
+    print("\n-- df.head():")
+    print(df.head(), end="\n\n")
+
+    features = ["SepalLength", "SepalWidth", "PetalLength", "PetalWidth"]
+    df, targets = encode_target(df, "Name")
+    y = df["Target"]
+    X = df[features]
+
+    dt = DecisionTreeClassifier(min_samples_split=20, random_state=99)
+    dt.fit(X, y)
+
+    print("\n-- get_code:")
+    get_code(dt, features, targets)
+
+    print("\n-- look back at original data using pandas")
+    print("-- df[df['PetalLength'] <= 2.45]]['Name'].unique(): ",
+          df[df['PetalLength'] <= 2.45]['Name'].unique(), end="\n\n")
+
+    visualize_tree(dt, features)
+
+
+
+
+
+---------------------------------------------
+
+###############################################################
+Decision Tree für nicht numerische Daten
+https://www.python-forum.de/viewtopic.php?t=40682
+###############################################################
+
+
+# -*- coding: utf-8 -*-
+
+from pandas import DataFrame, Series
+import pandas as pd
+import numpy as np
+import matplotlib.pylab as plt
+from sklearn.cross_validation import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import classification_report
+import sklearn.metrics
+[b]#Load the dataset[/b]
+header=['Hour','Year','Month','Day','x_grid', 'y_grid','Category']
+myData=pd.read_csv('crimeDataSet.csv', sep=';')
+
+
+data_clean=myData.dropna()
+print (data_clean.dtypes)
+print(data_clean.describe())
+
+predictors=data_clean[['Hour','Year','Month','Day','x_grid', 'y_grid']]
+targets=data_clean.Category
+
+pred_train, pred_test, tar_train,tar_test=train_test_split(predictors, targets, test_size=.4)
+
+print(pred_train.shape)
+print(pred_test.shape)
+print(tar_train.shape)
+print(tar_test.shape)
+[b]
+#Build a model on training data[/b]
+
+classifier= DecisionTreeClassifier()
+classifier= classifier.fit(pred_train,tar_train)
+
+predictions=classifier.predict(pred_test)
+print(sklearn.metrics.confusion_matrix(tar_test,predictions))
+print(sklearn.metrics.accuracy_score(tar_test,predictions))
+
+
+[b]#Display a decision tree[/b]
+from sklearn import tree
+from io import StringIO
+from IPython.display import Image
+import pydotplus
+dot_data=StringIO()
+tree.export_graphviz(classifier,out_file=dot_data)
+graph=pydotplus.graph_from_dot_data(dot_data.getvalue())
+Image(graph.creat_png())
+print('fertig')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###############################################################
+
+http://chrisstrelioff.ws/sandbox/2015/06/08/decision_trees_in_python_with_scikit_learn_and_pandas.html
+
+###############################################################
+
+
+from __future__ import print_function
+
+import os
+import subprocess
+
+import pandas as pd
+import numpy as np
+from sklearn.tree import DecisionTreeClassifier, export_graphviz
+
+
+def get_iris_data():
+    """Get the iris data, from local csv or pandas repo."""
+    if os.path.exists("iris.csv"):
+        print("-- iris.csv found locally")
+        df = pd.read_csv("iris.csv", index_col=0)
+    else:
+        print("-- trying to download from github")
+        fn = "https://raw.githubusercontent.com/pydata/pandas/" + \
+             "master/pandas/tests/data/iris.csv"
+        try:
+            df = pd.read_csv(fn)
+        except:
+            exit("-- Unable to download iris.csv")
+
+        with open("iris.csv", 'w') as f:
+            print("-- writing to local iris.csv file")
+            df.to_csv(f)
+
+    return df
+
+df = get_iris_data()
+
+-- iris.csv found locally
+
+
+print("* df.head()", df.head(), sep="\n", end="\n\n")
+print("* df.tail()", df.tail(), sep="\n", end="\n\n")
+
+
+print("* iris types:", df["Name"].unique(), sep="\n")
+* iris types:
+['Iris-setosa' 'Iris-versicolor' 'Iris-virginica']
+
+
+# preprocessing
+
+def encode_target(df, target_column):
+    """Add column to df with integers for the target.
+
+    Args
+    ----
+    df -- pandas DataFrame.
+    target_column -- column to map to int, producing
+                     new Target column.
+
+    Returns
+    -------
+    df_mod -- modified DataFrame.
+    targets -- list of target names.
+    """
+    df_mod = df.copy()
+    targets = df_mod[target_column].unique()
+    map_to_int = {name: n for n, name in enumerate(targets)}
+    df_mod["Target"] = df_mod[target_column].replace(map_to_int)
+
+    return (df_mod, targets)
+
+
+df2, targets = encode_target(df, "Name")
+print("* df2.head()", df2[["Target", "Name"]].head(),
+      sep="\n", end="\n\n")
+print("* df2.tail()", df2[["Target", "Name"]].tail(),
+      sep="\n", end="\n\n")
+print("* targets", targets, sep="\n", end="\n\n")
+
+
+* df2.head()
+* df2.tail()
+* targets
+# ['Iris-setosa' 'Iris-versicolor' 'Iris-virginica']
+
+
+features = list(df2.columns[:4])
+print("* features:", features, sep="\n")
+
+* features:
+['SepalLength', 'SepalWidth', 'PetalLength', 'PetalWidth']
+
+# fitting the decision tree with scikit-learn
+
+y = df2["Target"]
+X = df2[features]
+dt = DecisionTreeClassifier(min_samples_split=20, random_state=99)
+dt.fit(X, y)
+
+# visualizing the tree
+
+def visualize_tree(tree, feature_names):
+    """Create tree png using graphviz.
+
+    Args
+    ----
+    tree -- scikit-learn DecsisionTree.
+    feature_names -- list of feature names.
+    """
+    with open("dt.dot", 'w') as f:
+        export_graphviz(tree, out_file=f,
+                        feature_names=feature_names)
+
+    command = ["dot", "-Tpng", "dt.dot", "-o", "dt.png"]
+    try:
+        subprocess.check_call(command)
+    except:
+        exit("Could not run dot, ie graphviz, to "
+             "produce visualization")
+
+
+visualize_tree(dt, features)
+
+
+###############################################################
+#
+#   Implementing Decision Trees in Python
+#   http://gabrielelanaro.github.io/blog/2016/03/03/decision-trees.html
+#
+###############################################################
+
+
+
+
+import numpy as np
+x1 = [0, 1, 1, 2, 2, 2]
+x2 = [0, 0, 1, 1, 1, 0]
+y = np.array([0, 0, 0, 1, 1, 0])
+
+def partition(a):
+    return {c: (a==c).nonzero()[0] for c in np.unique(a)}
+
+def entropy(s):
+    res = 0
+    val, counts = np.unique(s, return_counts=True)
+    freqs = counts.astype('float')/len(s)
+    for p in freqs:
+        if p != 0.0:
+            res -= p * np.log2(p)
+    return res
+
+def mutual_information(y, x):
+
+res = entropy(y)
+
+# We partition x, according to attribute values x_i
+val, counts = np.unique(x, return_counts=True)
+freqs = counts.astype('float')/len(x)
+
+# We calculate a weighted average of the entropy
+for p, v in zip(freqs, val):
+    res -= p * entropy(y[x == v])
+
+    return res
+
+# .....
+
+from pprint import pprint
+
+def is_pure(s):
+    return len(set(s)) == 1
+
+def recursive_split(x, y):
+    # If there could be no split, just return the original set
+    if is_pure(y) or len(y) == 0:
+        return y
+
+    # We get attribute that gives the highest mutual information
+    gain = np.array([mutual_information(y, x_attr) for x_attr in x.T])
+    selected_attr = np.argmax(gain)
+
+    # If there's no gain at all, nothing has to be done, just return the original set
+    if np.all(gain < 1e-6):
+        return y
+
+
+    # We split using the selected attribute
+    sets = partition(x[:, selected_attr])
+
+    res = {}
+    for k, v in sets.items():
+        y_subset = y.take(v, axis=0)
+        x_subset = x.take(v, axis=0)
+
+        res["x_%d = %d" % (selected_attr, k)] = recursive_split(x_subset, y_subset)
+
+    return res
+
+X = np.array([x1, x2]).T
+pprint(recursive_split(X, y))
+
+
+
+
+
+###############################################################
+#
+# https://cambridgespark.com/content/tutorials/getting-started-with-regression-and-decision-trees/#index.html
+#
+###############################################################
+
+import pandas as pd
+bikes = pd.read_csv('bikes.csv')
+bikes.head()
+
+from matplotlib import pyplot as plt
+
+plt.figure(figsize=(8,6))
+plt.plot(bikes['temperature'], bikes['count'], 'o')
+plt.xlabel('temperature')
+plt.ylabel('bikes')
+plt.show()
+
+
+from sklearn.tree import DecisionTreeRegressor
+import numpy as np
+
+regressor = DecisionTreeRegressor(max_depth=2)
+regressor.fit(np.array([bikes['temperature']]).T, bikes['count'])
+
+regressor.predict(5.)
+array([ 189.23183761])
+
+regressor.predict(20.)
+array([ 769.08756039])
+
+xx = np.array([np.linspace(-5, 40, 100)]).T
+
+plt.figure(figsize=(8,6))
+plt.plot(bikes['temperature'], bikes['count'], 'o', label='observation')
+plt.plot(xx, regressor.predict(xx), linewidth=4, alpha=.7, label='prediction')
+plt.xlabel('temperature')
+plt.ylabel('bikes')
+plt.legend()
+plt.show()
+
+from sklearn.tree import export_graphviz
+export_graphviz(regressor, out_file='tree.dot', feature_names=['temperature'])
+
+
+###############################################################
+#
+#   http://scikit-learn.org/stable/auto_examples/tree/plot_unveil_tree_structure.html
+#
+###############################################################
+
+import numpy as np
+
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import load_iris
+from sklearn.tree import DecisionTreeClassifier
+
+iris = load_iris()
+X = iris.data
+y = iris.target
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
+
+estimator = DecisionTreeClassifier(max_leaf_nodes=3, random_state=0)
+estimator.fit(X_train, y_train)
+
+# The decision estimator has an attribute called tree_  which stores the entire
+# tree structure and allows access to low level attributes. The binary tree
+# tree_ is represented as a number of parallel arrays. The i-th element of each
+# array holds information about the node `i`. Node 0 is the tree's root. NOTE:
+# Some of the arrays only apply to either leaves or split nodes, resp. In this
+# case the values of nodes of the other type are arbitrary!
+#
+# Among those arrays, we have:
+#   - left_child, id of the left child of the node
+#   - right_child, id of the right child of the node
+#   - feature, feature used for splitting the node
+#   - threshold, threshold value at the node
+#
+
+# Using those arrays, we can parse the tree structure:
+
+n_nodes = estimator.tree_.node_count
+children_left = estimator.tree_.children_left
+children_right = estimator.tree_.children_right
+feature = estimator.tree_.feature
+threshold = estimator.tree_.threshold
+
+
+# The tree structure can be traversed to compute various properties such
+# as the depth of each node and whether or not it is a leaf.
+node_depth = np.zeros(shape=n_nodes, dtype=np.int64)
+is_leaves = np.zeros(shape=n_nodes, dtype=bool)
+stack = [(0, -1)]  # seed is the root node id and its parent depth
+while len(stack) > 0:
+    node_id, parent_depth = stack.pop()
+    node_depth[node_id] = parent_depth + 1
+
+    # If we have a test node
+    if (children_left[node_id] != children_right[node_id]):
+        stack.append((children_left[node_id], parent_depth + 1))
+        stack.append((children_right[node_id], parent_depth + 1))
+    else:
+        is_leaves[node_id] = True
+
+print("The binary tree structure has %s nodes and has "
+      "the following tree structure:"
+      % n_nodes)
+for i in range(n_nodes):
+    if is_leaves[i]:
+        print("%snode=%s leaf node." % (node_depth[i] * "\t", i))
+    else:
+        print("%snode=%s test node: go to node %s if X[:, %s] <= %s else to "
+              "node %s."
+              % (node_depth[i] * "\t",
+                 i,
+                 children_left[i],
+                 feature[i],
+                 threshold[i],
+                 children_right[i],
+                 ))
+print()
+
+# First let's retrieve the decision path of each sample. The decision_path
+# method allows to retrieve the node indicator functions. A non zero element of
+# indicator matrix at the position (i, j) indicates that the sample i goes
+# through the node j.
+
+node_indicator = estimator.decision_path(X_test)
+
+# Similarly, we can also have the leaves ids reached by each sample.
+
+leave_id = estimator.apply(X_test)
+
+# Now, it's possible to get the tests that were used to predict a sample or
+# a group of samples. First, let's make it for the sample.
+
+sample_id = 0
+node_index = node_indicator.indices[node_indicator.indptr[sample_id]:
+                                    node_indicator.indptr[sample_id + 1]]
+
+print('Rules used to predict sample %s: ' % sample_id)
+for node_id in node_index:
+    if leave_id[sample_id] != node_id:
+        continue
+
+    if (X_test[sample_id, feature[node_id]] <= threshold[node_id]):
+        threshold_sign = "<="
+    else:
+        threshold_sign = ">"
+
+    print("decision id node %s : (X_test[%s, %s] (= %s) %s %s)"
+          % (node_id,
+             sample_id,
+             feature[node_id],
+             X_test[sample_id, feature[node_id]],
+             threshold_sign,
+             threshold[node_id]))
+
+# For a group of samples, we have the following common node.
+sample_ids = [0, 1]
+common_nodes = (node_indicator.toarray()[sample_ids].sum(axis=0) ==
+                len(sample_ids))
+
+common_node_id = np.arange(n_nodes)[common_nodes]
+
+print("\nThe following samples %s share the node %s in the tree"
+      % (sample_ids, common_node_id))
+print("It is %s %% of all nodes." % (100 * len(common_node_id) / n_nodes,))
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------
+
+###############################################################
+#
+#   http://dataaspirant.com/2017/02/01/decision-tree-algorithm-python-with-scikit-learn/
+#
+###############################################################
+
+
+import numpy as np
+import pandas as pd
+from sklearn.cross_validation import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+from sklearn import tree
+
+#ng DatasetPython
+
+balance_data = pd.read_csv(
+'https://archive.ics.uci.edu/ml/machine-learning-databases/balance-scale/balance-scale.data',
+                           sep= ',', header= None)
+
+
+print "Dataset Lenght:: ", len(balance_data)
+print "Dataset Shape:: ", balance_data.shape
+Dataset Lenght::  625
+Dataset Shape::  (625, 5)
+print "Dataset:: "
+balance_data.head()
+Dataset::
+
+X = balance_data.values[:, 1:5]
+Y = balance_data.values[:,0]
+
+
+X_train, X_test, y_train, y_test = train_test_split( X, Y, test_size = 0.3, random_state = 100)
+
+# Decision Tree Training
+
+clf_gini = DecisionTreeClassifier(criterion = "gini", random_state = 100, max_depth=3, min_samples_leaf=5)
+clf_gini.fit(X_train, y_train)
+
+
+DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=3,
+            max_features=None, max_leaf_nodes=None, min_samples_leaf=5,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=100, splitter='best')
+
+# cision Tree with Information GainPython
+
+
+clf_entropy = DecisionTreeClassifier(criterion = "entropy", random_state = 100,
+ max_depth=3, min_samples_leaf=5)
+clf_entropy.fit(X_train, y_train)
+
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=3,
+            max_features=None, max_leaf_nodes=None, min_samples_leaf=5,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=100, splitter='best')
+
+
+clf_gini.predict([[4, 4, 3, 3]])
+array(['R'], dtype=object)
+
+y_pred = clf_gini.predict(X_test)
+y_pred
+
+
+array(['R', 'L', 'R', 'R', 'R', 'L', 'R', 'L', 'L', 'L', 'R', 'L', 'L',
+       'L', 'R', 'L', 'R', 'L', 'L', 'R', 'L', 'R', 'L', 'L', 'R', 'L',
+       'L', 'L', 'R', 'L', 'L', 'L', 'R', 'L', 'L', 'L', 'L', 'R', 'L',
+       'L', 'R', 'L', 'R', 'L', 'R', 'R', 'L', 'L', 'R', 'L', 'R', 'R',
+       'L', 'R', 'R', 'L', 'R', 'R', 'L', 'L', 'R', 'R', 'L', 'L', 'L',
+       'L', 'L', 'R', 'R', 'L', 'L', 'R', 'R', 'L', 'R', 'L', 'R', 'R',
+       'R', 'L', 'R', 'L', 'L', 'L', 'L', 'R', 'R', 'L', 'R', 'L', 'R',
+       'R', 'L', 'L', 'L', 'R', 'R', 'L', 'L', 'L', 'R', 'L', 'R', 'R',
+       'R', 'R', 'R', 'R', 'R', 'L', 'R', 'L', 'R', 'R', 'L', 'R', 'R',
+       'R', 'R', 'R', 'L', 'R', 'L', 'L', 'L', 'L', 'L', 'L', 'L', 'R',
+       'R', 'R', 'R', 'L', 'R', 'R', 'R', 'L', 'L', 'R', 'L', 'R', 'L',
+       'R', 'L', 'L', 'R', 'L', 'L', 'R', 'L', 'R', 'L', 'R', 'R', 'R',
+       'L', 'R', 'R', 'R', 'R', 'R', 'L', 'L', 'R', 'R', 'R', 'R', 'L',
+       'R', 'R', 'R', 'L', 'R', 'L', 'L', 'L', 'L', 'R', 'R', 'L', 'R',
+       'R', 'L', 'L', 'R', 'R', 'R'], dtype=object)
+
+
+# Prediction for Decision Tree classifier with criterion as information gain
+
+array(['R', 'L', 'R', 'L', 'R', 'L', 'R', 'L', 'R', 'R', 'R', 'R', 'L',
+       'L', 'R', 'L', 'R', 'L', 'L', 'R', 'L', 'R', 'L', 'L', 'R', 'L',
+       'R', 'L', 'R', 'L', 'R', 'L', 'R', 'L', 'L', 'L', 'L', 'L', 'R',
+       'L', 'R', 'L', 'R', 'L', 'R', 'R', 'L', 'L', 'R', 'L', 'L', 'R',
+       'L', 'L', 'R', 'L', 'R', 'R', 'L', 'R', 'R', 'R', 'L', 'L', 'R',
+       'L', 'L', 'R', 'L', 'L', 'L', 'R', 'R', 'L', 'R', 'L', 'R', 'R',
+       'R', 'L', 'R', 'L', 'L', 'L', 'L', 'R', 'R', 'L', 'R', 'L', 'R',
+       'R', 'L', 'L', 'L', 'R', 'R', 'L', 'L', 'L', 'R', 'L', 'L', 'R',
+       'R', 'R', 'R', 'R', 'R', 'L', 'R', 'L', 'R', 'R', 'L', 'R', 'R',
+       'L', 'R', 'R', 'L', 'R', 'R', 'R', 'L', 'L', 'L', 'L', 'L', 'R',
+       'R', 'R', 'R', 'L', 'R', 'R', 'R', 'L', 'L', 'R', 'L', 'R', 'L',
+       'R', 'L', 'R', 'R', 'L', 'L', 'R', 'L', 'R', 'R', 'R', 'R', 'R',
+       'L', 'R', 'R', 'R', 'R', 'R', 'R', 'L', 'R', 'L', 'R', 'R', 'L',
+       'R', 'L', 'R', 'L', 'R', 'L', 'L', 'L', 'L', 'L', 'R', 'R', 'R',
+       'L', 'L', 'L', 'R', 'R', 'R'], dtype=object)
+
+
+print "Accuracy is ", accuracy_score(y_test,y_pred)*100
+print "Accuracy is ", accuracy_score(y_test,y_pred_en)*100
+
+
+----------------------------------------------
+
+###############################################################
+#
+#   https://pythonprogramminglanguage.com/linear-regression/
+#
+#   sudo pip install matplotlib
+#   sudo pip install scikit-learn
+#   sudo pip install scipy
+#
+###############################################################
+
+import matplotlib
+matplotlib.use('qt5agg')
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+randomNumberGenerator = np.random.RandomState(1000)
+x = 4 * randomNumberGenerator.rand(100)
+y = 4 * x - 1 + randomNumberGenerator.randn(100)
+plt.scatter(x, y);
+plt.show()
+
+
+import matplotlib
+matplotlib.use('qt5agg')
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+randomNumberGenerator = np.random.RandomState(1000)
+x = 4 * randomNumberGenerator.rand(100)
+y = 4 * x - 1 + randomNumberGenerator.randn(100)
+plt.scatter(x, y);
+plt.show()
+
+#This will create a bunch of random data, which follows a linear path.
+#In a real life situation, you would use real world data instead of random numbers
+#We then use the model linear regression from the scikit-learn module.
+
+
+model = LinearRegression(fit_intercept=True)
+model.fit(x[:, np.newaxis], y)
+
+
+
+model = LinearRegression(fit_intercept=True)
+model.fit(x[:, np.newaxis], y)
+
+#then we define the linear space and predict the y values using the model.
+
+
+xfit = np.linspace(0, 5, 50)
+yfit = model.predict(xfit[:, np.newaxis])
+
+
+
+xfit = np.linspace(0, 5, 50)
+yfit = model.predict(xfit[:, np.newaxis])
+
+#finally we plot the data, summarizing with this code:
+
+
+
+# pythonprogramminglanguage.com
+from sklearn.linear_model import LinearRegression
+import matplotlib
+matplotlib.use('qt5agg')
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Create random data
+randomNumberGenerator = np.random.RandomState(1000)
+x = 4 * randomNumberGenerator.rand(100)
+y = 4 * x - 1 + randomNumberGenerator.randn(100)
+
+# Create model
+model = LinearRegression(fit_intercept=True)
+model.fit(x[:, np.newaxis], y)
+
+xfit = np.linspace(0, 5, 50)
+yfit = model.predict(xfit[:, np.newaxis])
+
+# plot
+plt.scatter(x, y)
+plt.plot(xfit, yfit);
+plt.show()
+
+
+# pythonprogramminglanguage.com
+from sklearn.linear_model import LinearRegression
+import matplotlib
+matplotlib.use('qt5agg')
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Create random data
+randomNumberGenerator = np.random.RandomState(1000)
+x = 4 * randomNumberGenerator.rand(100)
+y = 4 * x - 1 + randomNumberGenerator.randn(100)
+
+# Create model
+model = LinearRegression(fit_intercept=True)
+model.fit(x[:, np.newaxis], y)
+
+xfit = np.linspace(0, 5, 50)
+yfit = model.predict(xfit[:, np.newaxis])
+
+# plot
+plt.scatter(x, y)
+plt.plot(xfit, yfit);
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------------
+
+
+# ERR . py_compile.PyCompileError:   File "prog.py", line 12
+#    dtype: float64
+
+from random import random
+from pandas import DataFrame
+from statsmodels.api import OLS
+lr = lambda : [random() for i in range(100)]
+x = DataFrame({'x1': lr(), 'x2':lr(), 'x3':lr()})
+x['b'] = 1
+y = x.x1 + x.x2 * 2 + x.x3 * 3 + 4
+
+print x.head()
+
+         x1        x2        x3  b
+0  0.433681  0.946723  0.103422  1
+1  0.400423  0.527179  0.131674  1
+2  0.992441  0.900678  0.360140  1
+3  0.413757  0.099319  0.825181  1
+4  0.796491  0.862593  0.193554  1
+
+print y.head()
+
+0    6.637392
+1    5.849802
+2    7.874218
+3    7.087938
+4    7.102337
+dtype: float64
+
+model = OLS(y, x)
+result = model.fit()
+print result.summary()
+
+
+
+
+
+-------------------------------
+
+
+import numpy as np
+
+y = [-6,-5,-10,-5,-8,-3,-6,-8,-8]
+x = [[-4.95,-4.55,-10.96,-1.08,-6.52,-0.81,-7.01,-4.46,-11.54],[-5.87,-4.52,-11.64,-3.36,-7.45,-2.36,-7.33,-7.65,-10.03],[-0.76,-0.71,-0.98,0.75,-0.86,-0.50,-0.33,-0.94,-1.03],[14.73,13.74,15.49,24.72,16.59,22.44,13.93,11.40,18.18],[4.02,4.47,4.18,4.96,4.29,4.81,4.32,4.43,4.28],[0.20,0.16,0.19,0.16,0.10,0.15,0.21,0.16,0.21],[0.45,0.50,0.53,0.60,0.48,0.53,0.50,0.49,0.55]]
+X = np.column_stack(x+[[1]*len(x[0])])
+beta_hat = np.linalg.lstsq(X,y)[0]
+print beta_hat
+print np.dot(X,beta_hat)
+
+--------------------------------------
+
+from pprint import pprint
+
+student = {'Student1': { 'Age':10, 'Roll':1 },
+           'Student2': { 'Age':12, 'Roll':2 },
+           'Student3': { 'Age':11, 'Roll':3 },
+           'Student4': { 'Age':13, 'Roll':4 },
+           'Student5': { 'Age':10, 'Roll':5 }
+           }
+
+pprint(student)
+
+-----------------------------
+
+from scipy.optimize import curve_fit
+import scipy
+
+def fn(x, a, b, c):
+    return a + b*x[0] + c*x[1]
+
+# y(x0,x1) data:
+#    x0=0 1 2
+# ___________
+# x1=0 |0 1 2
+# x1=1 |1 2 3
+# x1=2 |2 3 4
+
+x = scipy.array([[0,1,2,0,1,2,0,1,2,],[0,0,0,1,1,1,2,2,2]])
+y = scipy.array([0,1,2,1,2,3,2,3,4])
+popt, pcov = curve_fit(fn, x, y)
+print popt
+
+--------------------------
+
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+from root_numpy.tmva import add_regression_events, evaluate_reader
+from root_numpy import ROOT_VERSION
+from ROOT import TMVA, TFile, TCut
+from array import array
+
+plt.style.use('ggplot')
+RNG = np.random.RandomState(1)
+
+# Create an example regression dataset
+X = np.linspace(0, 6, 100)[:, np.newaxis]
+y = np.sin(X).ravel() + \
+    np.sin(6 * X).ravel() + \
+    RNG.normal(0, 0.1, X.shape[0])
+
+# Fit a regression model
+output = TFile('tmva_output.root', 'recreate')
+factory = TMVA.Factory('regressor', output,
+                       'AnalysisType=Regression:'
+                       '!V:Silent:!DrawProgressBar')
+
+if ROOT_VERSION >= '6.07/04':
+    data = TMVA.DataLoader('.')
+else:
+    data = factory
+data.AddVariable('x', 'F')
+data.AddTarget('y', 'F')
+
+add_regression_events(data, X, y)
+add_regression_events(data, X, y, test=True)
+# The following line is necessary if events have been added individually:
+data.PrepareTrainingAndTestTree(TCut('1'), '')
+
+if ROOT_VERSION >= '6.07/04':
+    BookMethod = factory.BookMethod
+else:
+    BookMethod = TMVA.Factory.BookMethod
+BookMethod(data, 'BDT', 'BDT1',
+           'nCuts=20:NTrees=1:MaxDepth=4:BoostType=AdaBoostR2:'
+           'SeparationType=RegressionVariance')
+BookMethod(data, 'BDT', 'BDT2',
+           'nCuts=20:NTrees=300:MaxDepth=4:BoostType=AdaBoostR2:'
+           'SeparationType=RegressionVariance')
+factory.TrainAllMethods()
+
+# Predict the regression target
+reader = TMVA.Reader()
+reader.AddVariable('x', array('f', [0.]))
+reader.BookMVA('BDT1', 'weights/regressor_BDT1.weights.xml')
+reader.BookMVA('BDT2', 'weights/regressor_BDT2.weights.xml')
+y_1 = evaluate_reader(reader, 'BDT1', X)
+y_2 = evaluate_reader(reader, 'BDT2', X)
+
+# Plot the results
+fig = plt.figure()
+fig.patch.set_alpha(0)
+plt.scatter(X, y, c="k", label="training samples")
+plt.plot(X, y_1, c="g", label="1 tree", linewidth=2)
+plt.plot(X, y_2, c="r", label="300 trees", linewidth=2)
+plt.xlabel("data")
+plt.ylabel("target")
+plt.title("Boosted Decision Tree Regression")
+plt.legend()
+plt.show()
+
+
+
+--------------------------------------
+
+
+# your code goes here
+
+import numpy as np
+cvalues = [25.3, 24.8, 26.9, 23.9]
+C = np.array(cvalues)
+print(C)
+print(C * 9 / 5 + 32)
+fvalues = [ x*9/5 + 32 for x in cvalues]
+print(fvalues)
+
+
+-------------------------------------------
+
+# your code goes here
+
+from scipy import stats
+import numpy as np
+x = np.random.random(10)
+y = np.random.random(10)
+slope, intercept, r_value, p_value, std_err = stats.linregress(x,y)
+# To get coefficient of determination (r_squared)
+
+print "r-squared:", r_value**2
+-------------
+
+# NameError: name 'LinearRegression' is not defined
+
+from sklearn import linear_model
+reg = linear_model.LinearRegression()
+reg.fit ([[0, 0], [1, 1], [2, 2]], [0, 1, 2])
+LinearRegression(copy_X=True, fit_intercept=True, n_jobs=1, normalize=False)
+reg.predict ([[1, 0.]])
+reg.coef_
+
+----------------
+# ERR NameError: name 'BayesianRidge' is not defined
+
+from sklearn import linear_model
+X = [[0., 0.], [1., 1.], [2., 2.], [3., 3.]]
+Y = [0., 1., 2., 3.]
+reg = linear_model.BayesianRidge()
+reg.fit(X, Y)
+BayesianRidge(alpha_1=1e-06, alpha_2=1e-06, compute_score=False, copy_X=True,
+       fit_intercept=True, lambda_1=1e-06, lambda_2=1e-06, n_iter=300,
+       normalize=False, tol=0.001, verbose=False)
+
+reg.predict ([[1, 0.]])
+reg.coef_
+
+
+---------------
+
+# Runtime error	#stdin #stdout #stderr
+
+import numpy as np
+import statsmodels.api as sm
+
+y = [1,2,3,4,3,4,5,4,5,5,4,5,4,5,4,5,6,5,4,5,4,3,4]
+
+x = [
+     [4,2,3,4,5,4,5,6,7,4,8,9,8,8,6,6,5,5,5,5,5,5,5],
+     [4,1,2,3,4,5,6,7,5,8,7,8,7,8,7,8,7,7,7,7,7,6,5],
+     [4,1,2,5,6,7,8,9,7,8,7,8,7,7,7,7,7,7,6,6,4,4,4]
+     ]
+
+def reg_m(y, x):
+    ones = np.ones(len(x[0]))
+    X = sm.add_constant(np.column_stack((x[0], ones)))
+    for ele in x[1:]:
+        X = sm.add_constant(np.column_stack((ele, X)))
+    results = sm.OLS(y, X).fit()
+    return results
+
+print reg_m(y, x).summary()
+
+------------------------------------------
+
+linear_regression
+
+https://www.cs.toronto.edu/~frossard/post/linear_regression/
+https://nbviewer.jupyter.org/url/www.cs.toronto.edu/~frossard/post/linear_regression/Linear%20Regression.ipynb
+
+import numpy as np
+
+data_x = np.linspace(1.0, 10.0, 100)[:, np.newaxis]
+data_y = np.sin(data_x) + 0.1*np.power(data_x,2) + 0.5*np.random.randn(100,1)
+data_x /= np.max(data_x)
+data_x = np.hstack((np.ones_like(data_x), data_x))
+order = np.random.permutation(len(data_x))
+portion = 20
+test_x = data_x[order[:portion]]
+test_y = data_y[order[:portion]]
+train_x = data_x[order[portion:]]
+train_y = data_y[order[portion:]]
+def get_gradient(w, x, y):
+    y_estimate = x.dot(w).flatten()
+    error = (y.flatten() - y_estimate)
+    mse = (1.0/len(x))*np.sum(np.power(error, 2))
+    gradient = -(1.0/len(x)) * error.dot(x)
+    return gradient, mse
+w = np.random.randn(2)
+alpha = 0.5
+tolerance = 1e-5
+
+# Perform Gradient Descent
+iterations = 1
+while True:
+    gradient, error = get_gradient(w, train_x, train_y)
+    new_w = w - alpha * gradient
+
+    # Stopping Condition
+    if np.sum(abs(new_w - w)) < tolerance:
+        print "Converged."
+        break
+
+    # Print error every 50 iterations
+    if iterations % 100 == 0:
+        print "Iteration: %d - Error: %.4f" %(iterations, error)
+
+    iterations += 1
+    w = new_w
+
+print "w =",w
+print "Test Cost =", get_gradient(w, test_x, test_y)[1]
+
+------
+
+plt.plot(data_x[:,1], data_x.dot(w), c='g', label='Model')
+plt.scatter(train_x[:,1], train_y, c='b', label='Train Set')
+plt.scatter(test_x[:,1], test_y, c='r', label='Test Set')
+plt.grid()
+plt.legend(loc='best')
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.show()
+
+w1 = np.linspace(-w[1]*3, w[1]*3, 300)
+w0 = np.linspace(-w[0]*3, w[0]*3, 300)
+J_vals = np.zeros(shape=(w1.size, w0.size))
+
+for t1, element in enumerate(w1):
+    for t2, element2 in enumerate(w0):
+        wT = [0, 0]
+        wT[1] = element
+        wT[0] = element2
+        J_vals[t1, t2] = get_gradient(wT, train_x, train_y)[1]
+
+plt.scatter(w[0], w[1], marker='*', color='r', s=40, label='Solution Found')
+CS = plt.contour(w0, w1, J_vals, np.logspace(-10,10,50), label='Cost Function')
+plt.clabel(CS, inline=1, fontsize=10)
+plt.title("Contour Plot of Cost Function")
+plt.xlabel("w0")
+plt.ylabel("w1")
+plt.legend(loc='best')
+plt.show()
+
+
+###########################################
+#
+# import data from file
+#
+###########################################
+
+import numpy as np
+
+# from your code
+data1 = np.loadtxt('/home/script/2_columns', delimiter=',', skiprows=0)
+
+x = data1[:,0]
+y = data1[:,1]
+
+degree = 3
+coeffs = np.polyfit(x, y, degree)
+
+# now, coeffs is an array which contains the polynomial coefficients
+# in ascending order, i.e. x^0, x^1, x^2
+intercept, linear, quadratic, cubic = coeffs
+
+
+
+###########################################
+#
+# import data from file
+#
+###########################################
+
+np.polyfit(data.values.flatten(), data1.values.flatten(), 1)
+data is a dataframe and its values are 2D:
+
+>>> data.values.shape
+# (546, 1)
+
+>> data.values.flatten().shape
+# (546,)
+#which is needed for polyfit().
+
+#Simpler alternative:
+
+df = pd.read_csv("Housing.csv")
+np.polyfit(df['price'], df['bedrooms'], 1)
+
+
+###########################################
+#
+# import data from file and do regression
+#
+###########################################
+
+import pandas as pd
+import numpy as np
+
+data = pd.read_csv('../Housing.csv', usecols = [1])
+data1 = pd.read_csv('../Housing.csv', usecols = [3])
+data = np.squeeze(np.array(data))
+data1 = np.squeeze(np.array(data1))
+
+x = data
+y = data1
+regression = np.polyfit(x, y, 1)
