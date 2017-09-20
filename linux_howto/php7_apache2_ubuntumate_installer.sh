@@ -84,6 +84,20 @@ ls -la /etc/apache2/sites-available/default
 
 sudo service apache2 restart
 
+
+# End of bash script!!!!
+# Will exit with status of last command.
+exit
+
+# ---------------------------------------------- ----------------------------------------------
+# ---------------------------------------------- ----------------------------------------------
+
+
+
+# ----------------------------------------------
+# Manual Config
+# ----------------------------------------------
+
 #sudo apt-get update -y
 #sudo apt-get upgrade -y
 #sudo apt-get autoremove -y
