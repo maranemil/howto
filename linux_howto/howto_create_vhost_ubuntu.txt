@@ -1,6 +1,8 @@
-
-Create vhost on Ubuntu
-
+###########################################
+#
+#  Create vhost on Ubuntu
+#
+##########################################
 -----------------------------------------------
 #sudo nano /etc/apache2/sites-available/example.loc
 
@@ -26,3 +28,216 @@ Add in /etc/hosts file:
 127.0.0.1   example.loc
 
 #sudo a2ensite example.loc
+
+---------------------------------------------------------
+
+
+###########################################
+#
+#  Install PHP Apache2 MySQL on Ubuntu 17.04
+#
+##########################################
+
+// fix 1 - try to remove and reinstall all packages
+
+sudo apt-get remove --purge apache2  php7.0 libapache2-mod-php
+sudo apt-get install apache2 php7.0 libapache2-mod-php
+sudo service apache2 restart
+
+// fix 2 - try to remove and reinstall all packages
+
+sudo apt-get purge libapache2-mod-php7.0 php7.0 php7.0-cli php7.0-common php7.0-json
+sudo apt-get install php libapache2-mod-php php-mcrypt php-mysql
+sudo service apache2 restart
+
+// fix 3 - add in default file dir settings
+
+sudo nano  /etc/apache2/sites-available/default
+
+DocumentRoot /var/www
+
+<Directory /var/www/>
+   RewriteEngine on
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride all
+    Order allow,deny
+    allow from all
+</Directory>
+
+---------------------------------------------------------
+
+Other php packages
+
+sudo apt install mysql-server mysql-common mysql-client
+sudo apt install apache2 php php-dev
+sudo apt install php7.0-curl php7.0-cli php7.0-mysql php7.0-mbstring php7.0-json
+sudo apt-get install php7.0-cli php7.0-common libapache2-mod-php7.0 php7.0 php7.0-mysql php7.0-fpm
+sudo apt-get install php-mcrypt php7.0-soap php7.0-mbstring php7.0-intl php7.0-xml php7.0-curl php7.0-gd
+sudo apt install libapache2-mod-php
+sudo apt install php7.0-mbstring
+sudo apt install git
+sudo apt-get install libapache2-mod-php libapache2-mod-php7.0
+sudo apt-get install php7.0-mcrypt
+sudo apt-get install php7.0-fpm
+sudo apt-get install apache2 php7.0 libapache2-mod-php7.0
+sudo apt install php libapache2-mod-php
+sudo apt install php7.0-mbstring
+sudo apt-get install php7.0-memcached
+sudo apt-get install php7.0-gd
+
+#Die folgenden NEUEN Pakete werden installiert:  libapache2-mod-php libapache2-mod-php7.0
+
+sudo a2enmod php7.0
+sudo a2enmod rewrite
+#sudo a2enmod userdir
+
+sudo systemctl restart apache2
+# sudo service apache2 restart
+
+sudo a2enmod proxy_fcgi setenvif
+sudo a2enconf php7.0-fpm
+sudo service apache2 restart
+
+#sudo apt-get install lamp-server^
+sudo a2enmod php7.0
+sudo a2enmod php7.0
+sudo service apache2 restart
+
+# sudo dpkg -S php5 | grep libapache2-mod-php5
+# apt-get remove libapache2-mod-php5 ; apt-get purge libapache2-mod-php5; apt-get install libapache2-mod-php5
+# sudo perl -pe 's|\Q.ph(p[345]?\E|.ph((p[345]?)| if $. <= 3'  /etc/apache2/mods-available/php7.0.conf
+
+a2query -m php7.0 # php7.0 (enabled by maintainer script)
+
+---------------------------------------------------------
+
+sudo nano /etc/apache2/apache2.conf
+# With apache2.conf open, all you have to do is add the following to the bottom of the file:
+
+<FilesMatch \.php$>
+​SetHandler application/x-httpd-php
+​</FilesMatch>
+
+sudo a2dismod mpm_event && sudo a2enmod mpm_prefork && sudo a2enmod php7.0
+
+---------------------------------------------------------
+
+Considering conflict php5 for php7.0:
+Module php7.0 already enabled
+
+ls /etc/apache2/mods-available/php*
+ls /etc/apache2/mods-enabled/php*
+
+sudo a2query -m
+sudo a2query -c
+
+sudo apt purge libapache2-mod-php -y
+sudo apt purge php -y
+sudo apt autoremove -y
+
+sudo apt install php7.0  php7.0-mbstring libapache2-mod-php7.0 -y
+
+sudo a2dismod mpm_event
+sudo a2enmod mpm_prefork
+-----------
+sudo a2dismod php7.0 && a2dismod php7.1 && a2enmod php5.6
+sudo a2dismod mpm_prefork
+sudo a2dismod mpm_worker
+sudo a2dismod mpm_event
+
+alias php7.0='sudo a2dismod php5.6 && sudo a2dismod php7.1 && sudo a2enmod php7.0 && sudo update-alternatives --set php /usr/bin/php7.0 && sudo service apache2 restart'
+alias php7.1='sudo a2dismod php5.6 && sudo a2dismod php7.0 && sudo a2enmod php7.1 && sudo update-alternatives --set php /usr/bin/php7.1 && sudo service apache2 restart'
+
+sudo a2dismod php5.6 && sudo a2dismod php7.1 && sudo a2enmod php7.0 && sudo update-alternatives --set php /usr/bin/php7.0 && sudo service apache2 restart
+
+---------------------------------------------------------
+
+cd /etc/apache2/mods-enabled
+
+# the proper way of enabling configs
+sudo a2enconf php7.0-cgi
+sudo a2enconf php7.0-fpm
+
+# do those commands only if the above didn't work out
+sudo ln -s php7.0-cgi.conf ../conf-available/php7.0-cgi.conf
+sudo ln -s php7.0-fpm.conf ../conf-available/php7.0-fpm.conf
+
+---------------------------------------------------------
+
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get autoremove
+sudo apt-get dist-upgrade
+sudo reboot
+
+php -r 'echo "\n\nYour PHP installation is working fine.\n\n\n";'
+
+sudo a2dismod mpm_event
+sudo a2enmod mpm_prefork
+
+####################################################################
+#
+# Install Cakephp3 / Laravel
+#
+####################################################################
+
+cd /var/www/html/
+
+git clone https://github.com/laravel/laravel.git
+git clone https://github.com/cakephp/app.git
+
+sudo chmod -R 0777 ../html/
+
+curl -sS https://getcomposer.org/installer | php
+
+php composer.phar install
+sudo apt install php7.0-intl
+
+To enable extensions, verify that they are enabled in your .ini files:
+   - /etc/php/7.0/cli/php.ini
+   - /etc/php/7.0/cli/conf.d/10-mysqlnd.ini
+   - /etc/php/7.0/cli/conf.d/10-opcache.ini
+   - /etc/php/7.0/cli/conf.d/10-pdo.ini
+   - /etc/php/7.0/cli/conf.d/15-xml.ini
+   - /etc/php/7.0/cli/conf.d/20-bz2.ini
+   - /etc/php/7.0/cli/conf.d/20-calendar.ini
+   - /etc/php/7.0/cli/conf.d/20-ctype.ini
+   - /etc/php/7.0/cli/conf.d/20-curl.ini
+   - /etc/php/7.0/cli/conf.d/20-dom.ini
+   - /etc/php/7.0/cli/conf.d/20-exif.ini
+   - /etc/php/7.0/cli/conf.d/20-fileinfo.ini
+   - /etc/php/7.0/cli/conf.d/20-ftp.ini
+   - /etc/php/7.0/cli/conf.d/20-gd.ini
+   - /etc/php/7.0/cli/conf.d/20-gettext.ini
+   - /etc/php/7.0/cli/conf.d/20-iconv.ini
+   - /etc/php/7.0/cli/conf.d/20-json.ini
+   - /etc/php/7.0/cli/conf.d/20-mbstring.ini
+   - /etc/php/7.0/cli/conf.d/20-mcrypt.ini
+   - /etc/php/7.0/cli/conf.d/20-mysqli.ini
+   - /etc/php/7.0/cli/conf.d/20-pdo_mysql.ini
+   - /etc/php/7.0/cli/conf.d/20-phar.ini
+   - /etc/php/7.0/cli/conf.d/20-posix.ini
+   - /etc/php/7.0/cli/conf.d/20-readline.ini
+   - /etc/php/7.0/cli/conf.d/20-shmop.ini
+   - /etc/php/7.0/cli/conf.d/20-simplexml.ini
+   - /etc/php/7.0/cli/conf.d/20-sockets.ini
+   - /etc/php/7.0/cli/conf.d/20-sysvmsg.ini
+   - /etc/php/7.0/cli/conf.d/20-sysvsem.ini
+   - /etc/php/7.0/cli/conf.d/20-sysvshm.ini
+   - /etc/php/7.0/cli/conf.d/20-tokenizer.ini
+   - /etc/php/7.0/cli/conf.d/20-wddx.ini
+   - /etc/php/7.0/cli/conf.d/20-xmlreader.ini
+   - /etc/php/7.0/cli/conf.d/20-xmlwriter.ini
+   - /etc/php/7.0/cli/conf.d/20-xsl.ini
+   - /etc/php/7.0/cli/conf.d/20-zip.ini
+ You can also run `php --ini` inside terminal to see which files are used by PHP in CLI mode.
+
+ sudo apt-cache search php7-*
+  494  sudo apt-get install libapache2-mod-php7.0 php7.0-mysql php7.0-curl php7.0-json
+
+---------------------------------------------------------
+
+sudo nano /var/www/html/app/config/app.php
+sudo cp config/app.default.php config/app.php
+
+
