@@ -1,0 +1,274 @@
+PHP script to calculate image width and height ratio
+
+<?PHP
+
+$imagePath = "images/your_image.png";
+
+list($oldWidth, $height, $type, $attr) = getimagesize($image_path);
+
+$percentChange = $newWidth / $oldWidth;
+$newHeight = round( ( $percentChange *$height ) );
+
+echo '<img src="'.$imagePath.'" height="'.$new_height.'" width="'.$newWidth.'">';
+
+?>
+
+
+# ratio
+list($width, $height, $type, $attr) = getimagesize("image.jpg");
+$aspect = $width / $height;
+$newWidth = 350;
+$newHeight = $newWidth / $aspect;
+
+---
+// get the current size of your image
+$data = getimagesize('link/your/image.jpg');
+
+// your defined width
+$new_width = 350;
+
+// calculate the ratio
+$ratio = $data[0] / $new_width;
+
+// apply the ratio to get the new height of your image
+$new_height = round($data[1] / $ratio);
+
+----------------
+
+list($originalWidth, $originalHeight) = getimagesize($imageFile);
+$ratio = $originalWidth / $originalHeight;
+
+----------------
+
+$targetWidth = $targetHeight = min($size, max($originalWidth, $originalHeight));
+
+if ($ratio < 1) {
+    $targetWidth = $targetHeight * $ratio;
+} else {
+    $targetHeight = $targetWidth / $ratio;
+}
+
+$srcWidth = $originalWidth;
+$srcHeight = $originalHeight;
+$srcX = $srcY = 0;
+
+This crops the image to fill the target size completely, not stretching it:
+
+$targetWidth = $targetHeight = min($originalWidth, $originalHeight, $size);
+
+if ($ratio < 1) {
+    $srcX = 0;
+    $srcY = ($originalHeight / 2) - ($originalWidth / 2);
+    $srcWidth = $srcHeight = $originalWidth;
+} else {
+    $srcY = 0;
+    $srcX = ($originalWidth / 2) - ($originalHeight / 2);
+    $srcWidth = $srcHeight = $originalHeight;
+}
+
+And this does the actual resizing:
+
+$targetImage = imagecreatetruecolor($targetWidth, $targetHeight);
+imagecopyresampled($targetImage, $originalImage, 0, 0, $srcX, $srcY, $targetWidth, $targetHeight, $srcWidth, $srcHeight);
+
+--------------------------
+
+target_height = 768
+target_width = 1024
+# v_fact and h_fact are the factor by which the original vertical / horizontal
+# image sizes should be multiplied to get the image to your target size.
+v_fact = target_height / im_height
+h_fact = target_width / im_width
+# you want to resize the image by the same factor in both vertical
+# and horizontal direction, so you need to pick the correct factor from
+# v_fact / h_fact so that the largest (relative to target) of the new height/width
+# equals the target height/width and the smallest is lower than the target.
+# this is the lowest of the two factors
+im_fact = min(v_fact, h_fact)
+new_height = im_height * im_fact
+new_width = im_width * im_fact
+image.resize(new_width, new_height)
+
+
+---------------------
+
+
+function calculateDimensions($width,$height,$maxwidth,$maxheight)
+{
+
+    if($width != $height)
+    {
+        if($width > $height)
+        {
+            $t_width = $maxwidth;
+            $t_height = (($t_width * $height)/$width);
+            //fix height
+            if($t_height > $maxheight)
+            {
+                $t_height = $maxheight;
+                $t_width = (($width * $t_height)/$height);
+            }
+        }
+        else
+        {
+            $t_height = $maxheight;
+            $t_width = (($width * $t_height)/$height);
+            //fix width
+            if($t_width > $maxwidth)
+            {
+                $t_width = $maxwidth;
+                $t_height = (($t_width * $height)/$width);
+            }
+        }
+    }
+    else
+        $t_width = $t_height = min($maxheight,$maxwidth);
+
+    return array('height'=>(int)$t_height,'width'=>(int)$t_width);
+}
+
+
+    ---------------------
+
+$new_width  = 1024;
+$new_height = 768;
+$this_image = "images/my_image";
+
+list($width, $height, $type, $attr) = getimagesize("$this_image");
+
+if ($width > $height) {
+$image_height = floor(($height/$width)*$new_width);
+$image_width  = $new_width;
+} else {
+$image_width  = floor(($width/$height)*$new_height);
+$image_height = $new_height;
+}
+echo "<img src='$this_image' height='$image_height' width='$image_width'>";
+
+
+--------------------
+
+https://gist.github.com/janzikan/2994977
+
+
+/**
+ * Resize image - preserve ratio of width and height.
+ * @param string $sourceImage path to source JPEG image
+ * @param string $targetImage path to final JPEG image file
+ * @param int $maxWidth maximum width of final image (value 0 - width is optional)
+ * @param int $maxHeight maximum height of final image (value 0 - height is optional)
+ * @param int $quality quality of final image (0-100)
+ * @return bool
+ */
+function resizeImage($sourceImage, $targetImage, $maxWidth, $maxHeight, $quality = 80)
+{
+    // Obtain image from given source file.
+    if (!$image = @imagecreatefromjpeg($sourceImage))
+    {
+        return false;
+    }
+
+    // Get dimensions of source image.
+    list($origWidth, $origHeight) = getimagesize($sourceImage);
+
+    if ($maxWidth == 0)
+    {
+        $maxWidth  = $origWidth;
+    }
+
+    if ($maxHeight == 0)
+    {
+        $maxHeight = $origHeight;
+    }
+
+    // Calculate ratio of desired maximum sizes and original sizes.
+    $widthRatio = $maxWidth / $origWidth;
+    $heightRatio = $maxHeight / $origHeight;
+
+    // Ratio used for calculating new image dimensions.
+    $ratio = min($widthRatio, $heightRatio);
+
+    // Calculate new image dimensions.
+    $newWidth  = (int)$origWidth  * $ratio;
+    $newHeight = (int)$origHeight * $ratio;
+
+    // Create final image with new dimensions.
+    $newImage = imagecreatetruecolor($newWidth, $newHeight);
+    imagecopyresampled($newImage, $image, 0, 0, 0, 0, $newWidth, $newHeight, $origWidth, $origHeight);
+    imagejpeg($newImage, $targetImage, $quality);
+
+    // Free up the memory.
+    imagedestroy($image);
+    imagedestroy($newImage);
+
+    return true;
+}
+
+/**
+ * Example
+ * resizeImage('image.jpg', 'resized.jpg', 200, 200);
+ */
+
+
+ -----------
+
+GD Resize
+
+https://blog.countableset.com/2012/01/03/gd-slash-php-image-resize-based-on-width/
+
+ <?php
+header('Content-Type: image/jpeg');
+
+$url = $_GET['url'];
+$width = $_GET['width'];
+
+// Loading the image and getting the original dimensions
+$image = imagecreatefromjpeg($url);
+$orig_width = imagesx($image);
+$orig_height = imagesy($image);
+
+// Calc the new height
+$height = (($orig_height * $width) / $orig_width);
+
+// Create new image to display
+$new_image = imagecreatetruecolor($width, $height);
+
+// Create new image with changed dimensions
+imagecopyresized($new_image, $image,
+	0, 0, 0, 0,
+	$width, $height,
+	$orig_width, $orig_height);
+
+// Print image
+imagejpeg($new_image);
+?>
+
+
+<?php
+$url = $_GET['url'];
+$width = $_GET['width'];
+
+// Loading the image and getting the original dimensions
+$image = imagecreatefromjpeg($url);
+$orig_width = imagesx($image);
+$orig_height = imagesy($image);
+
+// Calc the new height
+$height = (($orig_height * $width) / $orig_width);
+
+// Create new image to display
+$new_image = imagecreatetruecolor($width, $height);
+
+// Create new image with change dimensions
+imagecopyresized($new_image, $image,
+	0, 0, 0, 0,
+	$width, $height,
+	$orig_width, $orig_height);
+
+// Print image
+ob_start();
+imagejpeg($new_image);
+$data = ob_get_contents();
+ob_end_clean();
+echo json_encode(array('image' => base64_encode($data)));
+?>

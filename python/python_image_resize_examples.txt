@@ -1,0 +1,206 @@
+# pip install python-resize-image
+
+#########################################################
+
+Resize images using Python
+https://opensource.com/life/15/2/resize-images-python
+
+#########################################################
+
+aptitude install python-imaging
+
+And now for the Python code for resizing images while maintaining the aspect ratio.
+
+import PIL
+from PIL import Image
+
+basewidth = 300
+ img = Image.open(‘fullsized_image.jpg')
+ wpercent = (basewidth / float(img.size[0]))
+ hsize = int((float(img.size[1]) * float(wpercent)))
+ img = img.resize((basewidth, hsize), PIL.Image.ANTIALIAS)
+ img.save(‘resized_image.jpg')
+
+
+
+baseheight = 560
+img = Image.open(‘fullsized_image.jpg')
+hpercent = (baseheight / float(img.size[1]))
+wsize = int((float(img.size[0]) * float(hpercent)))
+img = img.resize((wsize, baseheight), PIL.Image.ANTIALIAS)
+img.save(‘resized_image.jpg')
+
+
+-------------------------------------------------------------
+#########################################################
+
+Image resizing tips general and for python
+https://www.united-coders.com/christian-harms/image-resizing-tips-every-coder-should-know/
+
+#########################################################
+
+import Image, os, sys
+
+for filename in sys.argv[1:]:
+    img = Image.open(filename).resize( (200,200) )
+    out = file(os.path.splitext(filename)[0]+"_thumb.jpg", "w")
+    try:
+        img.save(out, "JPEG")
+    finally:
+        out.close()
+
+
+# user as batch:
+find . -regex .*jpg | xargs python resize.py
+
+# choose the right algorythm
+img = Image.open(filename).resize( (200,200), Image.ANTIALIAS)
+
+# use two resize steps
+
+img = Image.open(filename).resize( (400,400) )
+img = img.resize( (200,200), Image.ANTIALIAS)
+
+# resize vs. thumbnail
+
+img = Image.open(filename)
+img.thumbnail( (200,200) )
+
+The thumbnail method works on the image object and dont produce a new image object. Its faster: 0.25 sec.
+
+img = Image.open(filename)
+img.thumbnail( (400,400) )
+img.thumbnail( (200,200), Image.ANTIALIAS)
+
+# the complete function  ///////////////////////////////////
+
+def resize(img, box, fit, out):
+    '''Downsample the image.
+    @param img: Image -  an Image-object
+    @param box: tuple(x, y) - the bounding box of the result image
+    @param fix: boolean - crop the image to fill the box
+    @param out: file-like-object - save the image into the output stream
+    '''
+    #preresize image with factor 2, 4, 8 and fast algorithm
+    factor = 1
+    while img.size[0]/factor > 2*box[0] and img.size[1]*2/factor > 2*box[1]:
+        factor *=2
+    if factor > 1:
+        img.thumbnail((img.size[0]/factor, img.size[1]/factor), Image.NEAREST)
+
+    #calculate the cropping box and get the cropped part
+    if fit:
+        x1 = y1 = 0
+        x2, y2 = img.size
+        wRatio = 1.0 * x2/box[0]
+        hRatio = 1.0 * y2/box[1]
+        if hRatio > wRatio:
+            y1 = int(y2/2-box[1]*wRatio/2)
+            y2 = int(y2/2+box[1]*wRatio/2)
+        else:
+            x1 = int(x2/2-box[0]*hRatio/2)
+            x2 = int(x2/2+box[0]*hRatio/2)
+        img = img.crop((x1,y1,x2,y2))
+
+    #Resize the image with best quality algorithm ANTI-ALIAS
+    img.thumbnail(box, Image.ANTIALIAS)
+
+    #save it into a file-like object
+    img.save(out, "JPEG", quality=75)
+#resize
+
+
+
+
+
+#########################################################
+How do I resize an image using PIL and maintain its aspect ratio
+#########################################################
+
+from PIL import Image
+
+basewidth = 300
+img = Image.open('somepic.jpg')
+wpercent = (basewidth/float(img.size[0]))
+hsize = int((float(img.size[1])*float(wpercent)))
+img = img.resize((basewidth,hsize), Image.ANTIALIAS)
+img.save('sompic.jpg')
+
+
+------
+
+import os, sys
+import Image
+
+size = 128, 128
+
+for infile in sys.argv[1:]:
+    outfile = os.path.splitext(infile)[0] + ".thumbnail"
+    if infile != outfile:
+        try:
+            im = Image.open(infile)
+            im.thumbnail(size, Image.ANTIALIAS)
+            im.save(outfile, "JPEG")
+        except IOError:
+            print "cannot create thumbnail for '%s'" % infile
+
+
+
+
+-----------
+
+from PIL import Image
+
+img = Image.open('/your iamge path/image.jpg') # image extension *.png,*.jpg
+new_width  = 200
+new_height = 300
+img = img.resize((new_width, new_height), Image.ANTIALIAS)
+img.save('output image name.png') # format may what u want ,*.png,*jpg,*.gif
+
+
+from PIL import Image
+from resizeimage import resizeimage
+
+def resize_file(in_file, out_file, size):
+    with open(in_file) as fd:
+        image = resizeimage.resize_thumbnail(Image.open(fd), size)
+    image.save(out_file)
+    image.close()
+
+resize_file('foo.tif', 'foo_small.jpg', (256, 256))
+
+
+
+---------
+
+def imageResize(filepath):
+    from PIL import Image
+    file_dir=os.path.split(filepath)
+    img = Image.open(filepath)
+
+    if img.size[0] > img.size[1]:
+        aspect = img.size[1]/120
+        new_size = (img.size[0]/aspect, 120)
+    else:
+        aspect = img.size[0]/120
+        new_size = (120, img.size[1]/aspect)
+    img.resize(new_size).save(file_dir[0]+'/ico'+file_dir[1][3:])
+    img = Image.open(file_dir[0]+'/ico'+file_dir[1][3:])
+
+    if img.size[0] > img.size[1]:
+        new_img = img.crop( (
+            (((img.size[0])-120)/2),
+            0,
+            120+(((img.size[0])-120)/2),
+            120
+        ) )
+    else:
+        new_img = img.crop( (
+            0,
+            (((img.size[1])-120)/2),
+            120,
+            120+(((img.size[1])-120)/2)
+        ) )
+
+    new_img.save(file_dir[0]+'/ico'+file_dir[1][3:])
+
