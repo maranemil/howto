@@ -241,3 +241,121 @@ sudo nano /var/www/html/app/config/app.php
 sudo cp config/app.default.php config/app.php
 
 
+
+
+
+#############################################
+#
+#   Apache Server mit PHP fcgid - libapache2-mod-fastcgi
+#   https://christophfischer.com/linux/12-apache/47-apache-server-mit-php-fastcgi-und-debian-50-lenny
+#
+#############################################
+
+apt-get install apache2-mpm-worker apache2-suexec php5-cgi libapache2-mod-fcgid
+a2enmod fcgid
+a2enmod suexec
+adduser --disabled-login deinuser
+adduser www-data deinuser
+
+
+# ...
+# /etc/apache2/sites-available/000-default.conf
+touch /etc/apache2/sites-available/deinhost.conf
+sudo nano /etc/apache2/sites-available/deinhost.conf
+
+
+<VirtualHost *:80>
+  ServerName deinhost.de
+  ServerAdmin webmaster@deinhost.de
+
+  DocumentRoot /var/www/deinhost/htdocs
+  SuexecUserGroup deinuser deinuser
+
+  <Directory /var/www/deinhost/htdocs/>
+    FCGIWrapper /var/www/deinhost/conf_deinhost .php
+    <FilesMatch \.php$>
+      SetHandler fcgid-script
+    </FilesMatch>
+    Options +ExecCGI
+ </Directory>
+
+  ErrorLog /var/log/apache2/error.log
+  LogLevel warn
+  CustomLog /var/log/apache2/access.log combined
+
+</VirtualHost>
+
+# ...
+
+vim /var/www/deinhost/conf_deinhost
+
+
+#!/bin/sh
+ export PHPRC="/etc/php5/cgi"
+ exec /usr/bin/php5-cgi
+
+chown -R deinuser:deinuser /var/www/deinhost
+$ chmod 755 /var/www/deinhost
+$ chmod 550 /var/www/deinhost/conf_deinhost
+$ chmod 750 /var/www/deinhost/htdocs
+
+# ...
+
+vim /etc/apache2/mods-available/fcgid.conf
+
+
+<IfModule mod_fcgid.c>
+  # Wenn dieser Befehl fehlt, werden offene PHP CGI Prozesse nicht richtig beendet
+  # Siehe auch: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=398759
+  DefaultMinClassProcessCount 0
+
+  # Nach Ablauf von n (hier 300) Sekunden wird ein unbeschäftigter PHP CGI Prozess beendet
+  IdleTimeout 300
+
+  # Alle n Sekunden prüft fcgid auf unbeschäftigte Prozesse
+  IdleScanInterval 30
+
+  # Legt ein maximal Limit für fcgid Prozesse fest, wird dieses erreicht, wird kein weiterer PHP CGI Prozess gestartet.
+  # ACHTUNG: Dies kann bedeuten, dass einzelne VirtualHosts nicht mehr erreichbar werden, wenn der Wert überschritten ist.
+  MaxProcessCount 15
+
+  # Dies muss laut fcgid Dokumentation gesetzt werden, um Fehler in Zusammenarbeit mit PHP zu umgehen
+  MaxRequestsPerProcess 500
+  PHP_Fix_Pathinfo_Enable 1
+</IfModule>
+
+# Apache Server neustarten
+
+$ a2ensite deinhost.conf
+$ /etc/init.d/apache2 restart
+
+chattr -i  /var/www/deinhost/conf_deinhost
+
+------------------------
+
+sudo apt-get install php libapache2-mod-php
+sudo apt-get install libapache2-mod-fastcgi php7.0-fpm
+Enable the fastcgi mods
+
+sudo a2dismod php mpm_prefork
+sudo a2enmod actions fastcgi alias mpm_worker
+Create a global config for php7.0-fpm
+
+sudo vim /etc/apache2/conf-available/php7.0-fpm.conf
+And write in the configurations:
+
+<IfModule mod_fastcgi.c>
+    AddHandler php7.0-fcgi .php
+    Action php7.0.fcgi /php7.0.fcgi
+    Alias /php7.0-fcgi /usr/lib/cgi-bin/php7.0.fcgi
+    FastCgiExternalServer /usr/lib/cgi-bin/php7.0.fcgi -socket /var/run/php7.0.fpm.sock -pass-header Authorization
+    <Directory /usr/lib/cgi-bin>
+        Require all granted
+    </Directory>
+</IfModule>
+
+sudo a2enconf php7.0-fpm
+
+---------------------------------------------
+
+

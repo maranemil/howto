@@ -1,0 +1,294 @@
+
+
+
+#############################################
+#
+#   phpseclib
+#
+#############################################
+
+https://github.com/phpseclib/phpseclib/blob/master/phpseclib/Net/SFTP.php
+http://phpseclib.sourceforge.net/sftp/examples.html
+https://hotexamples.com/examples/phpseclib.net/SFTP/-/php-sftp-class-examples.html
+http://andy-carter.com/blog/connecting-to-sftp-with-php
+https://ourcodeworld.com/articles/read/265/how-to-connect-to-a-sftp-server-using-phpseclib-in-symfony-3
+https://api.phpseclib.org/master/phpseclib/Net/SFTP.html
+
+composer require phpseclib/phpseclib
+
+{
+    "require": {
+        "phpseclib/phpseclib": "^2.0"
+    }
+}
+
+
+
+<?php
+include('Net/SSH2.php');
+include('Net/SFTP.php');
+
+$sftp = new Net_SFTP('www.domain.tld');
+if (!$sftp->login('username', 'password')) {
+    exit('Login Failed');
+}
+
+// puts a three-byte file named filename.remote on the SFTP server
+$sftp->put('filename.remote', 'xxx');
+// puts an x-byte file named filename.remote on the SFTP server,
+// where x is the size of filename.local
+$sftp->put('filename.remote', 'filename.local', NET_SFTP_LOCAL_FILE);
+
+use phpseclib\Net\SFTP;
+
+$sftp = new SFTP('www.example.com');
+
+if (!$sftp->login('username', 'password')) {
+	throw new Exception('Login failed');
+}
+
+$files = $sftp->nlist();
+$sftp->chdir('directory_name');
+$sftp->get('remote_file', 'local_file');
+$sftp->put('remote_file', 'contents for remote file');
+
+$sftp->mkdir('test'); // create directory 'test'
+$sftp->chdir('test'); // open directory 'test'
+echo $sftp->pwd(); // show that we're in the 'test' directory
+$sftp->chdir('..'); // go back to the parent directory
+$sftp->chdir('/var/www/vhosts/myfolder'); // navigate to myfolder
+
+// Send a variable named data into the twig view to be dumped
+return $this->render('index.html.twig', [
+   'data' => [
+        'list' => $sftp->nlist(), // == $sftp->nlist('.')
+        'raw_list' => $sftp->rawlist() // == $sftp->rawlist('.')
+    ]
+]);
+
+return $this->render('sandboxBundle:Default:index.html.twig', [
+   'data' => [
+        'size' => $sftp->size($directory),
+        'stat' => $sftp->stat($directory),
+        'lstat' => $sftp->lstat($directory)
+    ]
+]);
+
+// the get method returns the content of a remote file
+$filecontent = $sftp->get($filepath);
+
+// Alternatively, instead of retrieve the content, download the file
+// copy the file into a local directory providing the local path as second parameter
+$sftp->get($filepath, '/myPC/folder/myfile.txt');
+
+return $this->render('index.html.twig', [
+    'filecontent' => $filecontent
+]);
+
+
+Delete and rename a file
+ $sftp->delete($filepath); // doesn't delete directories
+// recursive delete
+$sftp->delete($folderpath, true); // deletes a directory and all its contents
+//rename filename1 for mynewname
+$sftp->rename('filename1.txt', 'mynewname.txt');
+
+
+
+----------------------------------------------------------------------
+
+
+<?php
+include('Net/SFTP.php');
+define('NET_SFTP_LOGGING', true);
+
+$sftp = new Net_SFTP('domain.tld');
+if (!$sftp->login('username', 'password')) {
+    exit('bad login');
+}
+echo $sftp->getSFTPLog();
+
+
+function get_folder($sftp, $get, $local) {
+   $sftp->chdir($get);
+   $r_dir = $sftp->nlist($sftp->pwd());
+   foreach ($r_dir as $r_fn) {
+      switch ($r_fn) {
+         case '.':
+            break;
+         case '..':
+            break;
+         default:
+            $sub_dir = $sftp->nlist($r_fn);
+            if ($sub_dir) {
+               mkdir("$local/$r_fn");
+               echo "making $local/$r_fn <br> ";
+               get_folder($sftp, "$get/$r_fn", "$local/$r_fn");
+               $sftp->chdir($get);
+            } else {
+               $sftp->get($r_fn,"$local/$r_fn");
+               echo "getting $local/$r_fn <br />";
+            }
+      }
+
+   }
+}
+
+function put_folder($sftp, $put, $local, $override = null) {
+   echo "<hr> making $put/$local <br>";
+
+   $sftp->mkdir("$put/$local") ? null : die("couldn't create $put/$local <br>");
+   $sftp->chdir("$put/$local");
+   $r_dir = $sftp->nlist($sftp->pwd());
+
+   $l_dir = scandir('./out/'.$local);
+   foreach ($l_dir as $l_fn) {
+      switch ($l_fn) {
+         case '.':
+            break;
+         case '..':
+            break;
+         default:
+            $sub_dir = @scandir("./out/$local/$l_fn");
+            if ($sub_dir) {
+               put_folder($sftp, "$put", "$local/$l_fn", $override);
+               $sftp->chdir("$put/$local");
+            } else {
+               $filename = './out/'."$local/$l_fn";
+               // get contents of a file into a string
+               $fh = fopen($filename, "r");
+               $content = fread($fh, filesize($filename));
+               fclose($fh);
+               if (in_array($l_fn,$r_dir) || (!$override)) {
+                  echo "file $l_fn exists on LIVE server, please set override flag <br>";
+               } else {
+                  $sftp->put($l_fn,$content);
+               }
+            }
+      }
+
+   }
+}
+
+
+--------------------------------------------------
+
+<?php
+  set_include_path(get_include_path() . PATH_SEPARATOR . 'C:/path-to/phpseclib');
+
+  include 'Crypt/RSA.php';
+  include 'Net/SFTP.php';
+
+  $rsa = new Crypt_RSA();
+  $priKey = file_get_contents('C:/path-to/my_private_key.ppk');
+  $rsa->loadKey($priKey);
+
+  $sftp = new Net_SFTP('my_ssh_server_URI', 22);
+  if (!$sftp->login('my_user_id', $rsa)) {
+    exit("Login Failed\n");
+  }
+
+  print_r($sftp->rawlist('starting_directory', true));
+?>
+
+--------------------------------------------------
+
+
+include('Net/SFTP.php');
+
+$sftp = new Net_SFTP($_SESSION['Server'] . ':' . $_SESSION['Port']);
+if (!$sftp->login($_SESSION['Username'], $_SESSION['Password'])) {
+    exit('Login Failed');
+}
+
+foreach($sftp->rawlist($dir) as $filename => $attrs) {
+    if ($attr['type'] == NET_SFTP_TYPE_REGULAR) {
+        echo $filename . ' is a regular file!';
+    }
+    if ($attr['type'] == NET_SFTP_TYPE_DIRECTORY) {
+        echo $filename . ' is a directory!';
+    }
+}
+
+These are the file type constants phpseclib uses:
+
+file_types = array(
+    1 => 'NET_SFTP_TYPE_REGULAR',
+    2 => 'NET_SFTP_TYPE_DIRECTORY',
+    3 => 'NET_SFTP_TYPE_SYMLINK',
+    4 => 'NET_SFTP_TYPE_SPECIAL'
+);
+
+--------------------------------------------------
+
+http://phpseclib.sourceforge.net/sftp/examples.html
+
+<?php
+include('Net/SFTP.php');
+
+$sftp = new Net_SFTP('www.domain.tld');
+if (!$sftp->login('username', 'password')) {
+    exit('Login Failed');
+}
+
+// puts a three-byte file named filename.remote on the SFTP server
+$sftp->put('filename.remote', 'xxx');
+// puts an x-byte file named filename.remote on the SFTP server,
+// where x is the size of filename.local
+$sftp->put('filename.remote', 'filename.local', NET_SFTP_LOCAL_FILE);
+?>
+
+Uploading files
+
+function put($remote_file, $data, $mode = NET_SFTP_STRING, $start = -1, $local_start = -1)
+Uploading strings vs. files
+
+$sftp->put('filename.remote', 'filename.local') creates filename.remote on the remote server with 'filename.local' as the contents.
+
+$sftp->put('filename.remote', 'xxx', NET_SFTP_LOCAL_FILE) creates filename.remote on the remote server such that the contents of it and filename.local match. ie. with NET_SFTP_LOCAL_FILE it uploads a file and without it it uploads a string.
+
+Resuming transfers
+
+$sftp->put('filename.remote', 'xxx', NET_SFTP_RESUME) will append 'xxx' to filename.remote.
+
+$sftp->put('filename.remote', 'filename.local', NET_SFTP_LOCAL_FILE | NET_SFTP_RESUME_START) will append filename.remote to filename.local.
+
+$sftp->put('filename.remote', 'filename.local', NET_SFTP_LOCAL_FILE | NET_SFTP_RESUME) will append all but the first $sftp->size('filename.remote') bytes of filename.local to filename.remote. The idea being that if your transfer is interupted you can restart it.
+
+Positional control
+
+$start and $local_start give you more fine grained control over this process and take precident over NET_SFTP_RESUME when they're non-negative. ie. $start could let you write at the end of a file (like NET_SFTP_RESUME) or in the middle of one. $local_start could let you start your reading from the end of a file (like NET_SFTP_RESUME_START) or in the middle of one.
+
+
+--------------------------------------------------
+
+sftp 192.168.0.7
+sftp user@192.168.0.7
+
+cd # remote
+lcd # local
+
+pwd # remote
+lpwd # local
+
+mkdir /path/to/new_dir_name
+lmkdir /path/to/new_dir_name
+
+ls
+lls #  local machine
+
+get [-Ppr] /remote/path/to/file [/local/path/to/save/file]
+get file_name
+get -p file_name
+get -r dir_name
+
+put [-Ppr] /local/path/to/file [/remote/path/to/save/file]
+put file_name
+put -p file_name
+put -r dir_name
+
+rmdir directory_name
+rm file_name
+
+rename old_file_name new_file_name
+help

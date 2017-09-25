@@ -1,0 +1,738 @@
+http://pythoncentral.io/how-to-movecopy-a-file-or-directory-folder-with-a-progress-bar-in-python/
+
+# -*- coding: utf-8 -*-
+import sys
+
+class ProgressBar(object):
+    def __init__(self, message, width=20, progressSymbol=u'▣ ', emptySymbol=u'□ '):
+        self.width = width
+
+        if self.width < 0:
+            self.width = 0
+
+        self.message = message
+        self.progressSymbol = progressSymbol
+        self.emptySymbol = emptySymbol
+
+def update(self, progress):
+        totalBlocks = self.width
+        filledBlocks = int(round(progress / (100 / float(totalBlocks)) ))
+        emptyBlocks = totalBlocks - filledBlocks
+
+        progressBar = self.progressSymbol * filledBlocks + \
+                      self.emptySymbol * emptyBlocks
+
+        if not self.message:
+            self.message = u''
+
+        progressMessage = u'\r{0} {1}  {2}%'.format(self.message,
+                                                    progressBar,
+                                                    progress)
+
+        sys.stdout.write(progressMessage)
+        sys.stdout.flush()
+
+
+    def calculateAndUpdate(self, done, total):
+        progress = int(round( (done / float(total)) * 100) )
+        self.update(progress)
+
+import os
+
+def countFiles(directory):
+    files = []
+
+    if os.path.isdir(directory):
+        for path, dirs, filenames in os.walk(directory):
+            files.extend(filenames)
+
+    return len(files)
+
+p = ProgressBar('Copying files...')
+def makedirs(dest):
+    if not os.path.exists(dest):
+        os.makedirs(dest)
+import shutil
+
+def copyFilesWithProgress(src, dest):
+    numFiles = countFiles(src)
+
+    if numFiles > 0:
+        makedirs(dest)
+
+        numCopied = 0
+
+        for path, dirs, filenames in os.walk(src):
+            for directory in dirs:
+                destDir = path.replace(src,dest)
+                makedirs(os.path.join(destDir, directory))
+
+            for sfile in filenames:
+                srcFile = os.path.join(path, sfile)
+
+                destFile = os.path.join(path.replace(src, dest), sfile)
+
+                shutil.copy(srcFile, destFile)
+
+                numCopied += 1
+
+                p.calculateAndUpdate(numCopied, numFiles)
+        print
+
+--------------------------------------------------
+
+https://docs.python.org/2/library/ftplib.html
+
+>>> from ftplib import FTP
+>>> ftp = FTP('ftp.debian.org')     # connect to host, default port
+>>> ftp.login()                     # user anonymous, passwd anonymous@
+'230 Login successful.'
+>>> ftp.cwd('debian')               # change into "debian" directory
+>>> ftp.retrlines('LIST')           # list directory contents
+-rw-rw-r--    1 1176     1176         1063 Jun 15 10:18 README
+...
+drwxr-sr-x    5 1176     1176         4096 Dec 19  2000 pool
+drwxr-sr-x    4 1176     1176         4096 Nov 17  2008 project
+drwxr-xr-x    3 1176     1176         4096 Oct 10  2012 tools
+'226 Directory send OK.'
+>>> ftp.retrbinary('RETR README', open('README', 'wb').write)
+'226 Transfer complete.'
+>>> ftp.quit()
+
+
+
+>>> from ftplib import FTP_TLS
+>>> ftps = FTP_TLS('ftp.python.org')
+>>> ftps.login()           # login anonymously before securing control channel
+>>> ftps.prot_p()          # switch to secure data connection
+>>> ftps.retrlines('LIST') # list directory content securely
+total 9
+drwxr-xr-x   8 root     wheel        1024 Jan  3  1994 .
+drwxr-xr-x   8 root     wheel        1024 Jan  3  1994 ..
+drwxr-xr-x   2 root     wheel        1024 Jan  3  1994 bin
+drwxr-xr-x   2 root     wheel        1024 Jan  3  1994 etc
+d-wxrwxr-x   2 ftp      wheel        1024 Sep  5 13:43 incoming
+drwxr-xr-x   2 root     wheel        1024 Nov 17  1993 lib
+drwxr-xr-x   6 1094     wheel        1024 Sep 13 19:07 pub
+drwxr-xr-x   3 root     wheel        1024 Jan  3  1994 usr
+-rw-r--r--   1 root     root          312 Aug  1  1994 welcome.msg
+'226 Transfer complete.'
+>>> ftps.quit()
+>>>
+
+--------------------------------------------------
+
+def grab_dir_rec(sftp, dirpath):
+    local_path = target_path + dirpath
+    full_path = main_path + dirpath
+    if not sftp.exists(full_path):
+        return
+    if not os.path.exists(local_path):
+        os.makedirs(local_path)
+
+    dirlist = sftp.listdir(remotepath=full_path)
+    for i in dirlist:
+        if sftp.isdir(full_path + '/' + i):
+            grab_dir_rec(sftp, dirpath + '/' + i)
+        else:
+            grab_file(sftp, dirpath + '/' + i)
+
+
+
+path = "sftp://user:p@ssw0rd@test.com/path/to/file.txt"
+
+# Read a file
+with open_sftp(path) as f:
+    s = f.read()
+print s
+
+# Write to a file
+with open_sftp(path, mode='w') as f:
+    f.write("Some content.")
+
+
+--------------------------------------------------
+
+http://www.prschmid.com/2016/09/simple-opensftp-context-manager-for.html
+
+from open_sftp import open_sftp
+
+path = "sftp://user:p@ssw0rd@test.com/path/to/file.txt"
+
+# Read a file
+with open_sftp(path) as f:
+    s = f.read()
+print s
+
+# Write to a file
+with open_sftp(path, mode='w') as f:
+    f.write("Some content.")
+
+--------------------------------------------------
+
+
+http://pysftp.readthedocs.io/en/release_0.2.8/cookbook.html
+
+import pysftp
+sftp = pysftp.Connection('hostname', username='me', password='secret')
+#
+# ... do sftp operations
+#
+sftp.close()    # close your connection to hostname
+
+
+import pysftp
+with pysftp.Connection('hostname', username='me', password='secret') as sftp:
+    #
+    # ... do sftp operations
+    #
+# connection closed automatically at the end of the with-block
+
+
+
+import pysftp
+with pysftp.Connection('hostname', username='me', private_key='/path/to/keyfile') as sftp:
+    #
+    # ... do sftp operations
+    #
+
+ import pysftp
+with pysftp.Connection('hostname', username='me', private_key=my_agentkey) as sftp:
+    #
+    # ... do sftp operations
+    #
+
+
+
+
+import pysftp
+cinfo = {'host':'hostname', 'username':'me', 'password':'secret', 'port':2222}
+with pysftp.Connection(**cinfo) as sftp:
+    #
+    # ... do sftp operations
+    #
+
+
+# ...
+sftp.get('myfile', preserve_mtime=True)
+
+# copy all files under public to a local path, preserving modification time
+sftp.get_d('public', 'local-backup', preserve_mtime=True)
+
+# copy all files AND directories under public to a local path
+sftp.get_r('public', 'local-backup', preserve_mtime=True)
+
+# copy myfile, to the current working directory on the server, preserving modification time
+sftp.put('myfile', preserve_mtime=True)
+
+# copy files from images, to remote static/images directory, preserving modification time
+sftp.put_d('images', 'static/images', preserve_mtime=True)
+
+# recursively copy files and directories from local static, to remote static,
+# preserving modification times on the files
+sftp.put_r('static', 'static', preserve_mtime=True)
+
+
+# Restoring the original directory when the with statement goes out of scope.
+# It can be called with a remote directory to temporarily
+with sftp.cd('static'):     # now in ./static
+    sftp.chdir('here')      # now in ./static/here
+    sftp.chdir('there')     # now in ./static/here/there
+# now back to the original current working directory
+
+with sftp.cd():             # still in .
+    sftp.chdir('static')    # now in ./static
+    sftp.chdir('here')      # now in ./static/here
+# now back to the original current working directory
+
+
+
+sftp.chmod('readme.txt', 644)
+
+
+
+>>> attr = sftp.stat('readme.txt')
+>>> attr.st_mode
+33188
+>>> pysftp.st_mode_to_int(attr.st_mode)
+644
+
+
+
+sftp.cwd('public')  # is equivalent to sftp.chdir('public')
+
+>>> print(sftp.getcwd())
+None
+>>> sftp.pwd
+u'/home/test'
+
+>>> sftp.listdir()
+[u'pub', u'readme.sym', u'readme.txt']
+
+
+...
+>>> for attr in sftp.listdir_attr():
+...     print attr.filename, attr
+...
+
+sftp.makdirs('pub/show/off')  # will happily make all non-existing directories
+sftp.mkdir('show', mode=644)  # user r/w, group and other read-only
+>>> sftp.isdir('pub')
+>>> sftp.isfile('pub')
+>>> sftp.readlink('readme.sym')
+>>> sftp.exists('readme.txt')   # a file
+>>> sftp.exists('pub')          # a dir
+>>> sftp.truncate('readme.txt', 4096)
+
+
+
+...
+>>> import os
+>>> os.getcwd()
+'/home/jlh/Projects/pysftp/src'
+>>> with pysftp.cd('docs'):
+...     print os.getcwd()
+...
+/home/jlh/Projects/pysftp/src/docs
+>>> os.getcwd()
+'/home/jlh/Projects/pysftp/src'
+
+
+
+--------------------------------------------------
+https://gist.github.com/xingkaixin/3b1c4bc28668dc16bd9e
+https://github.com/spotify/luigi/blob/master/luigi/contrib/ftp.py
+https://github.com/paramiko/paramiko/blob/master/demos/demo_sftp.py
+
+
+--------------------------------------------------
+https://www.example-code.com/python/sftp.asp
+https://www.example-code.com/python/sftp_dowload_all_files_in_directory.asp
+https://www.example-code.com/python/sftp_synchronize_tree_download.asp
+https://www.example-code.com/python/sftp_resumeDownload.asp
+
+--------------------------------------------------
+Implementing a SFTP Client Using Python and Paramiko
+https://www.ivankrizsan.se/2016/04/28/implementing-a-sftp-client-using-python-and-paramiko/
+
+
+client.pyPython
+
+import paramiko
+
+def create_sftp_client(host, port, username, password, keyfilepath, keyfiletype):
+    """
+    create_sftp_client(host, port, username, password, keyfilepath, keyfiletype) -> SFTPClient
+
+    Creates a SFTP client connected to the supplied host on the supplied port authenticating as the user with
+    supplied username and supplied password or with the private key in a file with the supplied path.
+    If a private key is used for authentication, the type of the keyfile needs to be specified as DSA or RSA.
+    :rtype: SFTPClient object.
+    """
+    sftp = None
+    key = None
+    transport = None
+    try:
+        if keyfilepath is not None:
+            # Get private key used to authenticate user.
+            if keyfiletype == 'DSA':
+                # The private key is a DSA type key.
+                key = paramiko.DSSKey.from_private_key_file(keyfilepath)
+            else:
+                # The private key is a RSA type key.
+                key = paramiko.RSAKey.from_private_key(keyfilepath)
+
+        # Create Transport object using supplied method of authentication.
+        transport = paramiko.Transport((host, port))
+        transport.connect(None, username, password, key)
+
+        sftp = paramiko.SFTPClient.from_transport(transport)
+
+        return sftp
+    except Exception as e:
+        print('An error occurred creating SFTP client: %s: %s' % (e.__class__, e))
+        if sftp is not None:
+            sftp.close()
+        if transport is not None:
+            transport.close()
+        pass
+
+
+def create_sftp_client2(host, port, username, password, keyfilepath, keyfiletype):
+    """
+    create_sftp_client(host, port, username, password, keyfilepath, keyfiletype) -> SFTPClient
+
+    Creates a SFTP client connected to the supplied host on the supplied port authenticating as the user with
+    supplied username and supplied password or with the private key in a file with the supplied path.
+    If a private key is used for authentication, the type of the keyfile needs to be specified as DSA or RSA.
+    :rtype: SFTPClient object.
+    """
+    ssh = None
+    sftp = None
+    key = None
+    try:
+        if keyfilepath is not None:
+            # Get private key used to authenticate user.
+            if keyfiletype == 'DSA':
+                # The private key is a DSA type key.
+                key = paramiko.DSSKey.from_private_key_file(keyfilepath)
+            else:
+                # The private key is a RSA type key.
+                key = paramiko.RSAKey.from_private_key(keyfilepath)
+
+        # Connect SSH client accepting all host keys.
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(host, port, username, password, key)
+
+        # Using the SSH client, create a SFTP client.
+        sftp = ssh.open_sftp()
+        # Keep a reference to the SSH client in the SFTP client as to prevent the former from
+        # being garbage collected and the connection from being closed.
+        sftp.sshclient = ssh
+
+        return sftp
+    except Exception as e:
+        print('An error occurred creating SFTP client: %s: %s' % (e.__class__, e))
+        if sftp is not None:
+            sftp.close()
+        if ssh is not None:
+            ssh.close()
+        pass
+
+host = 'localhost'
+port = 22
+username = 'ivan'
+keyfile_path = None
+password = 'secretpassword'
+
+sftpclient = create_sftp_client(host, port, username, password, keyfile_path, 'DSA')
+
+# List files in the default directory on the remote computer.
+dirlist = sftpclient.listdir('.')
+for row in dirlist:
+    print row
+
+# Retrieve a file with the name 'remote_file.txt' on the remote computer and store it in a file named 'downloaded_file.txt'
+# next to this SFT client program.
+sftpclient.get('remote_file.txt', 'downloaded_file.txt')
+# Upload a file that locally has the name 'testfile.txt' to a file on the remote computer that will have the name 'remote_testfile.txt'.
+sftpclient.put('testfile.txt', 'remote_testfile.txt')
+
+# We're done with the SFTPClient.
+sftpclient.close()
+
+
+import paramiko
+
+def create_sftp_client(host, port, username, password, keyfilepath, keyfiletype):
+    """
+    create_sftp_client(host, port, username, password, keyfilepath, keyfiletype) -> SFTPClient
+
+    Creates a SFTP client connected to the supplied host on the supplied port authenticating as the user with
+    supplied username and supplied password or with the private key in a file with the supplied path.
+    If a private key is used for authentication, the type of the keyfile needs to be specified as DSA or RSA.
+    :rtype: SFTPClient object.
+    """
+    sftp = None
+    key = None
+    transport = None
+    try:
+        if keyfilepath is not None:
+            # Get private key used to authenticate user.
+            if keyfiletype == 'DSA':
+                # The private key is a DSA type key.
+                key = paramiko.DSSKey.from_private_key_file(keyfilepath)
+            else:
+                # The private key is a RSA type key.
+                key = paramiko.RSAKey.from_private_key(keyfilepath)
+
+        # Create Transport object using supplied method of authentication.
+        transport = paramiko.Transport((host, port))
+        transport.connect(None, username, password, key)
+
+        sftp = paramiko.SFTPClient.from_transport(transport)
+
+        return sftp
+    except Exception as e:
+        print('An error occurred creating SFTP client: %s: %s' % (e.__class__, e))
+        if sftp is not None:
+            sftp.close()
+        if transport is not None:
+            transport.close()
+        pass
+
+
+def create_sftp_client2(host, port, username, password, keyfilepath, keyfiletype):
+    """
+    create_sftp_client(host, port, username, password, keyfilepath, keyfiletype) -> SFTPClient
+
+    Creates a SFTP client connected to the supplied host on the supplied port authenticating as the user with
+    supplied username and supplied password or with the private key in a file with the supplied path.
+    If a private key is used for authentication, the type of the keyfile needs to be specified as DSA or RSA.
+    :rtype: SFTPClient object.
+    """
+    ssh = None
+    sftp = None
+    key = None
+    try:
+        if keyfilepath is not None:
+            # Get private key used to authenticate user.
+            if keyfiletype == 'DSA':
+                # The private key is a DSA type key.
+                key = paramiko.DSSKey.from_private_key_file(keyfilepath)
+            else:
+                # The private key is a RSA type key.
+                key = paramiko.RSAKey.from_private_key(keyfilepath)
+
+        # Connect SSH client accepting all host keys.
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(host, port, username, password, key)
+
+        # Using the SSH client, create a SFTP client.
+        sftp = ssh.open_sftp()
+        # Keep a reference to the SSH client in the SFTP client as to prevent the former from
+        # being garbage collected and the connection from being closed.
+        sftp.sshclient = ssh
+
+        return sftp
+    except Exception as e:
+        print('An error occurred creating SFTP client: %s: %s' % (e.__class__, e))
+        if sftp is not None:
+            sftp.close()
+        if ssh is not None:
+            ssh.close()
+        pass
+
+host = 'localhost'
+port = 22
+username = 'ivan'
+keyfile_path = None
+password = 'secretpassword'
+
+sftpclient = create_sftp_client(host, port, username, password, keyfile_path, 'DSA')
+
+# List files in the default directory on the remote computer.
+dirlist = sftpclient.listdir('.')
+for row in dirlist:
+    print row
+
+# Retrieve a file with the name 'remote_file.txt' on the remote computer and store it in a file named 'downloaded_file.txt'
+# next to this SFT client program.
+sftpclient.get('remote_file.txt', 'downloaded_file.txt')
+# Upload a file that locally has the name 'testfile.txt' to a file on the remote computer that will have the name 'remote_testfile.txt'.
+sftpclient.put('testfile.txt', 'remote_testfile.txt')
+
+# We're done with the SFTPClient.
+sftpclient.close()
+
+
+--------------------------------------------------
+SSH and SFTP with Paramiko & Python
+https://www.adampalmer.me/iodigitalsec/2014/11/23/ssh-sftp-paramiko-python/
+
+import paramiko
+
+ssh = paramiko.SSHClient()
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+try:
+        ssh.connect('localhost', username='testuser', password='t3st@#test123')
+except paramiko.SSHException:
+        print "Connection Failed"
+        quit()
+
+stdin,stdout,stderr = ssh.exec_command("ls /etc/")
+
+for line in stdout.readlines():
+        print line.strip()
+ssh.close()
+
+
+
+
+
+import paramiko
+import sys
+
+ssh = paramiko.SSHClient()
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+if len(sys.argv) != 2:
+    print "Usage %s <filename>" % sys.argv[0]
+    quit()
+
+try:
+    fd = open(sys.argv[1], "r")
+except IOError:
+    print "Couldn't open %s" % sys.argv[1]
+    quit()
+
+username,passwd = fd.readline().strip().split(":") #TODO: add error checking!
+
+try:
+    ssh.connect('localhost', username=username, password=passwd)
+    stdin,stdout,stderr = ssh.exec_command("ls /tmp")
+    for line in stdout.readlines():
+        print line.strip()
+    ssh.close()
+except paramiko.AuthenticationException:
+    print "Authentication Failed"
+    quit()
+except:
+    print "Unknown error"
+    quit()
+
+
+
+import paramiko
+
+ssh = paramiko.SSHClient()
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+try:
+    ssh.connect('localhost', username='testuser', password='t3st@#test123')
+except paramiko.SSHException:
+    print "Connection Error"
+sftp = ssh.open_sftp()
+sftp.chdir("/tmp/")
+print sftp.listdir()
+ssh.close()
+
+--------------------------------------------------
+http://www.pythonforbeginners.com/modules-in-python/python-secure-ftp-module
+
+
+import pysftp
+
+srv = pysftp.Connection(host="your_FTP_server", username="your_username",
+password="your_password")
+
+# Get the directory and file listing
+data = srv.listdir()
+
+# Closes the connection
+srv.close()
+
+# Prints out the directories and files, line by line
+for i in data:
+    print i
+
+
+
+import pysftp
+import sys
+
+# Defines the name of the file for download / upload
+remote_file = sys.argv[1]
+
+srv = pysftp.Connection(host="your_FTP_server", username="your_username",
+password="your_password")
+
+# Download the file from the remote server
+srv.get(remote_file)
+
+# To upload the file, simple replace get with put.
+srv.put(remote_file)
+
+# Closes the connection
+srv.close()
+
+
+
+--------------------------------------------------
+
+import pysftp
+
+srv = pysftp.Connection(host="www.destination.com", username="root",
+password="password",log="./temp/pysftp.log")
+
+with srv.cd('public'): #chdir to public
+    srv.put('C:\Users\XXX\Dropbox\test.txt') #upload file to nodejs/
+
+# Closes the connection
+srv.close()
+
+--------------------------------------------------
+import pysftp
+import sys
+
+path = './THETARGETDIRECTORY/' + sys.argv[1]    #hard-coded
+localpath = sys.argv[1]
+
+host = "THEHOST.com"                    #hard-coded
+password = "THEPASSWORD"                #hard-coded
+username = "THEUSERNAME"                #hard-coded
+
+with pysftp.Connection(host, username=username, password=password) as sftp:
+    sftp.put(localpath, path)
+
+print 'Upload done.'
+--------------------------------------------------
+from fabric.api import *
+
+env.hosts = ['THEHOST.com']
+env.user = 'THEUSER'
+env.password = 'THEPASSWORD'
+
+def put_file(file):
+    put(file, './THETARGETDIRECTORY/') # it's copied into the target directory
+--------------------------------------------------
+import pysftp
+
+def upload_file(file_path):
+
+    private_key = "~/.ssh/your-key.pem"  # can use password keyword in Connection instead
+    srv = pysftp.Connection(host="your-host", username="user-name", private_key=private_key)
+    srv.chdir('/var/web/public_files/media/uploads')  # change directory on remote server
+    srv.put(file_path)  # To download a file, replace put with get
+    srv.close()  # Close connection
+
+data = srv.listdir()  # Get the directory and file listing in a list
+srv.get(file_path)  # Download a file from remote server
+srv.execute('pwd') # Execute a command on the server
+--------------------------------------------------
+child = pexpect.spawn ('/usr/bin/sftp ' + user@ftp.site.com )
+child.expect ('.* password:')
+child.sendline (your_password)
+child.expect ('sftp> ')
+child.sendline ('dir')
+child.expect ('sftp> ')
+file_list = child.before
+child.sendline ('bye')
+--------------------------------------------------
+path = "sftp://user:p@ssw0rd@test.com/path/to/file.txt"
+
+# Read a file
+with open_sftp(path) as f:
+    s = f.read()
+print s
+
+# Write to a file
+with open_sftp(path, mode='w') as f:
+    f.write("Some content.")
+--------------------------------------------------
+shell
+
+
+
+remote_file_name = "filename"
+remotedir = "/remote/dir"
+localpath = "/local/file/dir"
+    ftp_cmd_p = """
+    #!/bin/sh
+    lftp -u username,password sftp://ip:port <<EOF
+    cd {remotedir}
+    lcd {localpath}
+    get {filename}
+    EOF
+    """
+subprocess.call(ftp_cmd_p.format(remotedir=remotedir,
+                                 localpath=localpath,
+                                 filename=remote_file_name
+                                 ),
+                shell=True, stdout=sys.stdout, stderr=sys.stderr)
+
+
+
+--------------------------------------------------
+
