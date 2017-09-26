@@ -736,3 +736,65 @@ subprocess.call(ftp_cmd_p.format(remotedir=remotedir,
 
 --------------------------------------------------
 
+https://www.blog.pythonlibrary.org/2012/07/19/python-101-downloading-a-file-with-ftplib/
+Downloading a File with ftplib
+
+# ftp-ex.py
+
+import os
+from ftplib import FTP
+
+ftp = FTP("www.myWebsite.com", "USERNAME", "PASSWORD")
+ftp.login()
+ftp.retrlines("LIST")
+
+ftp.cwd("folderOne")
+ftp.cwd("subFolder") # or ftp.cwd("folderOne/subFolder")
+
+listing = []
+ftp.retrlines("LIST", listing.append)
+words = listing[0].split(None, 8)
+filename = words[-1].lstrip()
+
+# download the file
+local_filename = os.path.join(r"c:\myfolder", filename)
+lf = open(local_filename, "wb")
+ftp.retrbinary("RETR " + filename, lf.write, 8*1024)
+lf.close()
+
+
+http://www.informit.com/articles/article.aspx?p=686162&seqNum=7
+
+ftp = ftplib.FTP('ftp.novell.com', 'anonymous',                  'bwdayley@novell.com')
+gFile = open("readme.txt", "wb")
+ftp.retrbinary('RETR Readme', gFile.write)
+gFile.close()
+ftp.quit()
+
+...
+
+import ftplib
+
+#Open ftp connection
+ftp = ftplib.FTP('ftp.novell.com', 'anonymous',
+'bwdayley@novell.com')
+
+#List the files in the current directory
+print "File List:"
+files = ftp.dir()
+print files
+
+
+#Get the readme file
+ftp.cwd("/pub")
+gFile = open("readme.txt", "wb")
+ftp.retrbinary('RETR Readme', gFile.write)
+gFile.close()
+ftp.quit()
+
+#Print the readme file contents
+print "\nReadme File Output:"
+gFile = open("readme.txt", "r")
+buff = gFile.read()
+print buff
+gFile.close()
