@@ -1,0 +1,221 @@
+sudo apt install python-pip
+
+pip install jupyter python-pip
+pip install sklearn
+pip install graphviz
+pip install scipy
+pip install pandas
+
+# conda install python-graphviz
+
+###############  Tree
+
+
+http://www.scipy-lectures.org/intro/matplotlib/matplotlib.html
+https://wiki.python.org/moin/NumericAndScientific/Plotting
+http://www.graphviz.org/Gallery.php
+https://matplotlib.org/gallery.html
+https://github.com/xflr6/graphviz/blob/master/graphviz/dot.py
+http://graphviz.readthedocs.io/en/stable/manual.html
+https://github.com/kataras/iris
+https://amunategui.github.io/simple-heuristics/index.html
+http://www.csb.yale.edu/userguides/graphics/explorer/html/doc/mwg/chap05.htm
+
+
+
+############################################################
+http://scikit-learn.org/stable/modules/tree.html
+############################################################
+
+from sklearn import tree
+
+X = [[0, 0], [1, 1]]
+Y = [0, 1]
+clf = tree.DecisionTreeClassifier()
+clf = clf.fit(X, Y)
+clf.predict([[2., 2.]])
+clf.predict_proba([[2., 2.]])
+
+from sklearn.datasets import load_iris
+from sklearn import tree
+
+iris = load_iris()
+clf = tree.DecisionTreeClassifier()
+clf = clf.fit(iris.data, iris.target)
+
+#import graphviz
+#dot_data = tree.export_graphviz(clf, out_file=None,  feature_names='feature',  class_names=iris.target_names,  filled=True, rounded=True, special_characters=True)
+#dot_data = tree.export_graphviz(clf, out_file=None,feature_names='leaf', class_names=iris.target_names,  filled=True, rounded=None, special_characters=True)
+#graph = graphviz.Source(dot_data)
+#graph.render('dtree_render',view=True)
+#graph.render("iris",view=True)
+#graph.render('round-table.gv', view=True)
+#dot_data = tree.export_graphviz(clf, out_file=None, feature_names=iris.feature_names,  class_names=iris.target_names,                       filled=True, rounded=True,                          special_characters=True)
+#graph = graphviz.Source(dot_data)
+#graph
+
+clf.predict(iris.data[:1, :])
+clf.predict_proba(iris.data[:1, :])
+
+
+############################################################
+table
+https://amunategui.github.io/simple-heuristics/index.html
+############################################################
+
+import pandas as pd
+import numpy as np
+# !pip install graphviz
+from sklearn import tree
+from sklearn import datasets
+
+# import some data to play with
+iris = datasets.load_iris()
+
+dataset = iris.data
+df = pd.DataFrame(dataset, columns=iris.feature_names)
+df['species'] = pd.Series([iris.target_names[cat] for cat in iris.target]).astype("category", categories=iris.target_names, ordered=True)
+
+# define feature space
+features = iris.feature_names
+target = 'species'
+df.head(3)
+
+############################################################
+table
+############################################################
+
+import pandas as pd
+import numpy as np
+# !pip install graphviz
+from sklearn import tree
+from sklearn import datasets
+
+# import some data to play with
+iris = datasets.load_iris()
+
+dataset = iris.data
+df = pd.DataFrame(dataset, columns=iris.feature_names)
+df['species'] = pd.Series([iris.target_names[cat] for cat in iris.target]).astype("category", categories=iris.target_names, ordered=True)
+
+# define feature space
+features = iris.feature_names
+target = 'species'
+df.head(3)
+
+# check balance of target values
+from collections import Counter
+Counter(df['species'])
+Counter({'setosa': 50, 'versicolor': 50, 'virginica': 50})
+iris.target_names
+
+
+#HOW_DEEP_TREES = 1
+#clf = tree.DecisionTreeClassifier(random_state=0, max_depth=HOW_DEEP_TREES)
+#clf = clf.fit(df[features], df[target])
+#clf
+#DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=1,
+#            max_features=None, max_leaf_nodes=None,
+#            min_impurity_decrease=0.0, min_impurity_split=None,
+#            min_samples_leaf=1, min_samples_split=2,
+#            min_weight_fraction_leaf=0.0, presort=False, random_state=0,
+#            splitter='best')
+
+
+#import graphviz
+#dot_data = tree.export_graphviz(clf, out_file=None,  feature_names=features,
+#    class_names=iris.target_names,  filled=True, rounded=True, special_characters=True)
+#graph = graphviz.Source(dot_data)
+#graph.render('dtree_render',view=True)
+
+df.groupby(['species'])['petal width (cm)'].mean()
+df_temp = df.copy() # use a copy of the data so we don't have to rebuild it again
+# bianry outcome - is it virginica or not?
+
+df_temp['species'] = pd.Series(['virginica' if iris.target_names[cat] == 'virginica' else 'other' for cat in iris.target]).astype("category", categories=['virginica', 'other'], ordered=True)
+#Counter(df_temp['species'])
+#c Counter({'virginica': 50, 'other': 100})
+
+#clf = tree.DecisionTreeClassifier(random_state=0, max_depth=HOW_DEEP_TREES, class_weight="balanced")
+#clf = clf.fit(df_temp[features], df_temp[target])
+#dot_data = tree.export_graphviz(clf, out_file=None,  feature_names=features,
+#    class_names=['other','virginica'], filled=True, rounded=True, special_characters=True)
+#graph = graphviz.Source(dot_data)
+#graph.render('dtree_render',view=True)
+
+# double check using:
+df.groupby(['species'])['petal length (cm)'].mean()
+# check on df_temp:
+df_temp[df_temp['petal length (cm)'] <= 4.75].groupby(['species']).count()
+
+
+
+
+
+"""
+import random
+feature_splits = []
+
+HOW_DEEP_TREES = 2
+clf = tree.DecisionTreeClassifier(random_state=0, max_depth=HOW_DEEP_TREES)
+
+for x in range(0,20):
+    # sample should be smaller than df size
+    rows = random.sample(df.index, 10)
+    sample_frame = df.ix[rows]
+
+    estimator = clf.fit(sample_frame[features], sample_frame[target])
+    n_nodes = estimator.tree_.node_count
+    children_left = estimator.tree_.children_left
+    children_right = estimator.tree_.children_right
+    feature = estimator.tree_.feature
+    threshold = estimator.tree_.threshold
+
+    cur_node = ''
+    for i in range(n_nodes):
+        if (threshold[i] >= 0):
+            cur_node = cur_node + features[feature[i]] + ' <= ' + str(threshold[i]) + " "
+            #feature_splits[features[feature[i]]].append( threshold[i] )
+    if (len(cur_node) > 0):
+        feature_splits.append(cur_node)
+
+    feature_splits
+"""
+
+
+#####################################################
+http://graphviz.readthedocs.io/en/stable/manual.html
+http://graphviz.readthedocs.io/en/stable/manual.html
+#####################################################
+
+
+
+#####################################################
+https://www.analyticsvidhya.com/blog/2016/01/complete-tutorial-learn-data-science-python-scratch-2/#stb-container-6376
+#####################################################
+
+http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegressionCV.html
+
+
+ISSUES
+
+https://stackoverflow.com/questions/35896205/nameerror-name-ridge-is-not-defined
+https://stackoverflow.com/questions/20842082/trying-to-print-out-the-decision-tree-for-a-forest-from-scikit-learn-ensemble
+https://stackoverflow.com/questions/38905031/name-classification-model-is-not-defined
+https://stackoverflow.com/questions/42942780/decision-tree-classifier-using-scikit-learn-is-having-some-issues
+https://stackoverflow.com/questions/42979156/nameerror-name-tree-is-not-defined
+
+
+import sklearn.linear_model as sk
+
+ logreg = sk.LogisticRegressionCV()
+ logreg.fit(predictor_var,outcome_var)
+
+
+
+
+
+
+
+
+
