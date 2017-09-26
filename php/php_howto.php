@@ -135,3 +135,32 @@ $ ab -c 50 -n 20000 'http://localhost:1080/session.php?lazy_write=1&unsafe_lock=
 This is ApacheBench, Version 2.3 <$Revision: 1430300 $>
 $ ab -c 50 -n 20000 'http://localhost:1080/session.php?lazy_write=0&unsafe_lock=0'
 */
+
+
+
+
+
+
+
+// PHP --- check if dir exits ---------------------------
+
+if (!is_dir($dir)) {
+   mkdir($dir);
+}
+
+if (!file_exists($dir) && !is_dir($dir)) {
+   mkdir($dir);
+}
+
+
+
+
+// PHP --- cli mode---------------------------
+// check if php in cli mode - terminal
+
+if (php_sapi_name() == "cli") {
+   // In cli-mode
+} else {
+   // Not in cli-mode
+}
+
