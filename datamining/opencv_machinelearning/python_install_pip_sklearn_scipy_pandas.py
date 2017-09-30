@@ -27,6 +27,13 @@ pip3 install graphviz
 # Python 2.7
 ################################
 
+sudo apt install python-pip
+
+pip install sklearn
+pip install numpy
+pip install scipy
+pip install graphviz
+
 pip list
 pip list --outdated
 pip search "query"
@@ -47,6 +54,16 @@ sudo cp pip-upgrade /usr/bin/
 ----------------------------------------------------
 
 sudo apt install weka
+
+Weka tree graphs:
+
+- trees.J48 # ***
+- trees.RandomTree # ***
+- trees.J48graft # ***
+- trees.ADTree
+- meta.FilteredClassifier # ***
+- bayes.BayesNet
+
 
 """
 
