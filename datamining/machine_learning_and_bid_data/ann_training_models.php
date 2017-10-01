@@ -116,19 +116,21 @@ Katie	blonde	short	light	yes	none
 
 ------- Credit House -------
 
-Age,HasJob,OwnHouse,CreditRating,Class
-young,false,false,fair,No
-young,false,false,good,No
-young,true,false,good,Yes
-young,true,true,fair,Yes
-middle,false,false,fair,No
-middle,false,false,fair,No
-middle,false,false,good,No
-middle,true,true,good,Yes
-old,true,true,good,Yes
-old,false,false,fair,No
-old,false,false,fair,No
-old,false,false,fair,No
-
+Age Has_job Own_house Credit_rating Class
+young false false fair No
+young false false good No
+young true false good Yes
+young true true fair Yes
+young false false fair No
+middle false false fair No
+middle false false good No
+middle true true good Yes
+middle false true excellent Yes
+middle false true excellent Yes
+old false true excellent Yes
+old false true good Yes
+old true false good Yes
+old true false excellent Yes
+old false false fair No
 
 */
