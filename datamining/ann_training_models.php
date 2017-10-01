@@ -114,5 +114,21 @@ Pete	brown	tall	heavy	no	none
 John	brown	average	heavy	no	none
 Katie	blonde	short	light	yes	none
 
+------- Credit House -------
+
+Age,HasJob,OwnHouse,CreditRating,Class
+young,false,false,fair,No
+young,false,false,good,No
+young,true,false,good,Yes
+young,true,true,fair,Yes
+middle,false,false,fair,No
+middle,false,false,fair,No
+middle,false,false,good,No
+middle,true,true,good,Yes
+old,true,true,good,Yes
+old,false,false,fair,No
+old,false,false,fair,No
+old,false,false,fair,No
+
 
 */

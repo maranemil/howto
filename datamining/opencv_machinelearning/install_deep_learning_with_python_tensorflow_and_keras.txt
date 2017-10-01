@@ -1,0 +1,88 @@
+#############################################################################################
+#
+#   macOS for deep learning with Python, TensorFlow, and Keras
+#   https://www.pyimagesearch.com/2017/09/29/macos-for-deep-learning-with-python-tensorflow-and-keras/
+#
+#############################################################################################
+
+brew install python3
+which python3
+which pip3
+
+pip3 install virtualenv virtualenvwrapper
+
+
+nano ~/.bash_profile
+# virtualenv and virtualenvwrapper
+export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
+source /usr/local/bin/virtualenvwrapper.sh
+
+mkvirtualenv dl4cv -p python3
+workon dl4cv
+pip install numpy
+
+
+#Install OpenCV prerequisites using Homebrew
+
+brew install cmake pkg-config wget
+brew install jpeg libpng libtiff openexr
+brew install eigen tbb
+
+#Compile and Install OpenCV
+cd ~
+wget -O opencv.zip https://github.com/Itseez/opencv/archive/3.3.0.zip
+wget -O opencv_contrib.zip https://github.com/Itseez/opencv_contrib/archive/3.3.0.zip
+unzip opencv.zip
+unzip opencv_contrib.zip
+
+
+cd ~/opencv-3.3.0/
+mkdir build
+cd build
+cmake -D CMAKE_BUILD_TYPE=RELEASE \
+    -D CMAKE_INSTALL_PREFIX=/usr/local \
+    -D OPENCV_EXTRA_MODULES_PATH=~/opencv_contrib-3.3.0/modules \
+    -D PYTHON3_LIBRARY=`python -c 'import subprocess ; import sys ; s = subprocess.check_output("python-config --configdir", shell=True).decode("utf-8").strip() ; (M, m) = sys.version_info[:2] ; print("{}/libpython{}.{}.dylib".format(s, M, m))'` \
+    -D PYTHON3_INCLUDE_DIR=`python -c 'import distutils.sysconfig as s; print(s.get_python_inc())'` \
+    -D PYTHON3_EXECUTABLE=$VIRTUAL_ENV/bin/python \
+    -D BUILD_opencv_python2=OFF \
+    -D BUILD_opencv_python3=ON \
+    -D INSTALL_PYTHON_EXAMPLES=ON \
+    -D INSTALL_C_EXAMPLES=OFF \
+    -D BUILD_EXAMPLES=ON ..
+
+ make -j4
+ sudo make install
+
+cd ~/.virtualenvs/dl4cv/lib/python3.6/site-packages/
+ln -s /usr/local/lib/python3.6/site-packages/cv2.cpython-36m-darwin.so cv2.so
+cd ~
+
+
+
+python
+>>> import cv2
+>>> cv2.__version__
+
+#Install Keras
+
+workon dl4cv
+pip install scipy matplotlib pillow
+pip install imutils h5py requests progressbar2
+pip install scikit-learn scikit-image
+pip install tensorflow
+pip install keras
+
+
+python
+>>> import keras
+Using TensorFlow backend.
+
+
+~/.keras/keras.json
+{
+	"image_data_format": "channels_last",
+	"backend": "tensorflow",
+	"epsilon": 1e-07,
+	"floatx": "float32"
+}
