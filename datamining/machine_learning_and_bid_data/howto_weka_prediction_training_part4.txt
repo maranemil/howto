@@ -1,0 +1,1982 @@
+
+----------------------------
+graphviz-treevisualize -- Generating nice graphs in the Explorer from trees (eg J48) using the GraphViz executables.
+
+https://github.com/fracpete/graphviz-treevisualize-weka-package/releases/download/v2014.8.1/graphviz-treevisualize-2014.8.1.zip
+https://github.com/fracpete/graphviz-treevisualize-weka-package
+
+
+java -Xmx1024M -cp /usr/local/lib/R/site-library/RWekajars/java//weka.jar weka.classifiers.trees.J48 -t breast-cancer.arff -C 0.25 -M 2 -g > breast-cancer.arff.dot
+
+Then transfer to svg format:
+
+dot -o breast-cancer.arff.dot.svg breast-cancer.arff.dot -Tsvg
+
+In Java, the code that implements this is in packages/graphviz-treevisualize-2014.8.1.jar
+
+ weka/gui/visualize/plugins/GraphVizPanel.class
+ weka/gui/visualize/plugins/GraphVizTreeVisualization.class
+ weka/gui/visualize/plugins/GraphVizTreeVisualization.props
+ weka/gui/visualize/plugins/GraphVizTreeVisualizationPlugin$1$1.class
+ weka/gui/visualize/plugins/GraphVizTreeVisualizationPlugin$1$2.class
+ weka/gui/visualize/plugins/GraphVizTreeVisualizationPlugin$1.class
+ weka/gui/visualize/plugins/GraphVizTreeVisualizationPlugin.class
+
+
+java weka.classifiers.trees.J48 -C 0.25 -M 2 -t "C:\datasets\iris.arff" -g`
+
+
+
+http://weka.wikispaces.com/Explorer+tree+visualization+plugins
+
+
+############################################
+
+Classification via Decision Trees in WEKA
+http://facweb.cs.depaul.edu/mobasher/classes/ect584/weka/classify.html
+http://facweb.cs.depaul.edu/mobasher/classes/ect584/weka/classify.html
+###############################################
+
+java -Xmx512m weka.classifiers.trees.J48 -C 0.25 -M 2 -t directory-path\bank.arff -d directory-path\bank.model
+java -Xmx512m weka.classifiers.trees.J48 -p 9 -l directory-path\bank.model -T directory-path \bank-new.arff
+
+# http://weka.wikispaces.com/Primer
+java weka.core.Instances data/soybean.arff
+java weka.core.converters.CSVLoader data.csv > data.arff  # csv2arff
+java weka.core.converters.C45Loader c45_filestem > data.arff
+java weka.classifiers.rules.ZeroR -t soybean.arff
+java weka.classifiers.trees.J48 -t soybean.arff
+java weka.filters.supervised.attribute.Discretize -i data/iris.arff -o iris-nom.arff -c last
+java weka.filters.supervised.attribute.Discretize -i data/cpu.arff -o cpu-classvendor-nom.arff -c first
+java weka.filters.supervised.attribute.NominalToBinary -i data/contact-lenses.arff -o contact-lenses-bin.arff -c last
+java weka.filters.supervised.instance.Resample -i data/soybean.arff -o soybean-5%.arff -c last -Z 5
+java weka.filters.supervised.instance.Resample -i data/soybean.arff -o soybean-uniform-5%.arff -c last -Z 5 -B 1
+java weka.filters.supervised.instance.StratifiedRemoveFolds -i data/soybean.arff -o soybean-train.arff \    -c last -N 4 -F 1 -V
+java weka.filters.supervised.instance.StratifiedRemoveFolds -i data/soybean.arff -o soybean-test.arff \    -c last -N 4 -F 1
+java weka.filters.unsupervised.attribute.Remove -R 1-2 -i data/iris.arff -o iris-simplified.arff
+java weka.filters.unsupervised.attribute.Remove -V -R 3-last -i data/iris.arff -o iris-simplified.arff
+java weka.filters.unsupervised.instance.Resample -i data/soybean.arff -o soybean-5%.arff -Z 5
+java weka.filters.unsupervised.instance.RemoveFolds -i data/soybean.arff -o soybean-train.arff -c last -N 4 -F 1 -V
+java weka.filters.unsupervised.instance.RemoveFolds -i data/soybean.arff -o soybean-test.arff -c last -N 4 -F 1
+java weka.filters.unsupervised.instance.RemoveWithValues -i data/soybean.arff \   -o soybean-without_herbicide_injury.arff -V -C last -L 19
+java weka.classifiers.trees.J48 -t data/weather.numeric.arff
+java weka.classifiers.bayes.NaiveBayes -K -t soybean-train.arff -T soybean-test.arff -p 0
+java -Xmx1024m weka.classifiers.trees.J48 -t data.arff -k -d J48-data.model >&! J48-data.out &
+
+
+cat *.out | grep -A 3 "Stratified" | grep "^Correctly"
+
+java weka.classifiers.trees.J48 -l J48-data.model -T new-data.arff
+
+
+#!/bin/csh
+foreach f ($*)
+  set run=1
+  while ( $run <= 30 )
+    mkdir $run >&! /dev/null
+    java weka.filters.supervised.instance.StratifiedRemoveFolds -N 4 -F 1 -S $run -c last -i ../$f -o $run/t_$f
+    java weka.filters.supervised.instance.StratifiedRemoveFolds -N 4 -F 1 -S $run -V -c last -i ../$f -o $run/t0$f
+    foreach nr (0 1 2 3 4 5)
+      set nrp1=$nr
+      @ nrp1++
+      java weka.filters.supervised.instance.Resample -S 0 -Z 83 -c last -i $run/t$nr$f -o $run/t$nrp1$f
+    end
+
+    echo Run $run of $f done.
+    @ run++
+  end
+end
+
+
+java weka.classifiers.meta.ClassificationViaRegression -W weka.classifiers.functions.LinearRegression -S 1 \
+  -t data/iris.arff -x 2
+java weka.classifiers.meta.ClassificationViaRegression -W "weka.classifiers.functions.LinearRegression -S 1" \
+   -t data/iris.arff -x 2
+java weka.classifiers.meta.ClassificationViaRegression -W weka.classifiers.functions.LinearRegression \
+   -t data/iris.arff -x 2 -- -S 1
+java weka.classifiers.meta.Stacking -B "weka.classifiers.lazy.IBk -K 10" \
+   -M "weka.classifiers.meta.ClassificationViaRegression -W weka.classifiers.functions.LinearRegression -- -S 1" \
+   -t data/iris.arff -x 2
+
+
+
+
+
+
+
+
+##########################################################
+weka routine
+##########################################################
+
+import weka.classifiers.*;
+import weka.classifiers.trees.J48;
+import weka.core.Instances;
+import weka.gui.treevisualizer.PlaceNode2;
+import weka.gui.treevisualizer.TreeVisualizer;
+
+public class WekaJ48 {
+public static void main(String args[]) throws Exception {
+     // train classifier
+     J48 cls = new J48();
+     Instances data = new Instances(new BufferedReader(new File
+Reader("D:\\sample.arff")));
+     data.setClassIndex(data.numAttributes() - 1);
+     cls.buildClassifier(data);
+
+     // display classifier
+     final javax.swing.JFrame jf =
+       new javax.swing.JFrame("Weka Classifier Tree Visualizer: J48");
+     jf.setSize(500,400);
+     jf.getContentPane().setLayout(new BorderLayout());
+     TreeVisualizer tv = new TreeVisualizer(null,
+         cls.graph(),
+         new PlaceNode2());
+     jf.getContentPane().add(tv, BorderLayout.CENTER);
+     jf.addWindowListener(new java.awt.event.WindowAdapter() {
+       public void windowClosing(java.awt.event.WindowEvent e) {
+         jf.dispose();
+       }
+     });
+
+     jf.setVisible(true);
+     tv.fitToScreen();
+   }
+
+}
+
+##########################################################
+
+https://www.programcreek.com/java-api-examples/index.php?api=weka.classifiers.trees.J48
+
+##########################################################
+
+ Java Code Examples for weka.classifiers.trees.J48
+
+The following are top voted examples for showing how to use weka.classifiers.trees.J48. These examples are extracted from open source projects. You can vote up the examples you like and your votes will be used in our system to product more good examples.
++ Save this class to your library
+Example 1
+Project: speechalyzer   File: WEKAClassifier.java View source code 	9 votes 	vote down vote up
+
+public void trainModel() {
+	try {
+		_logger.info("training model ...");
+		BufferedReader trainReader = new BufferedReader(new FileReader(
+				_trainFileName));// File with
+		// text
+		// examples
+		Instances trainInsts = new Instances(trainReader);
+		trainInsts.setClassIndex(trainInsts.numAttributes() - 1);
+		if (_classifier == null) {
+			if (_classifierType.compareTo("smo") == 0)
+				_classifier = new SMO();
+			else if (_classifierType.compareTo("naiveBayes") == 0)
+				_classifier = new NaiveBayes();
+			else if (_classifierType.compareTo("j48") == 0)
+				_classifier = new J48();
+			else
+				_logger.error("no/wrong classifier");
+		}
+		_classifier.buildClassifier(trainInsts);
+		_logger.info("training model finished");
+		ObjectOutputStream oos = null;
+		try {
+			oos = new ObjectOutputStream(new FileOutputStream(
+					_modelFileName));
+			oos.writeObject(_classifier);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		_logger.info("model saved to file: " + _modelFileName);
+	} catch (Exception e) {
+		_logger.error(e.getMessage());
+		e.printStackTrace();
+	}
+
+}
+
+
+Example 2
+Project: sad-analyzer   File: CrossValidationExperiment.java View source code 	6 votes 	vote down vote up
+
+/**
+ * Executes this example
+ *
+ * @param args command-line arguments -arff and -xml
+ */
+public static void main(String[] args) {
+
+    try {
+        // e.g. -arff emotions.arff
+        String arffFilename = Utils.getOption("arff", args);
+        // e.g. -xml emotions.xml
+        String xmlFilename = Utils.getOption("xml", args);
+
+        System.out.println("Loading the dataset...");
+        MultiLabelInstances dataset = new MultiLabelInstances(arffFilename, xmlFilename);
+
+        RAkEL learner1 = new RAkEL(new LabelPowerset(new J48()));
+        MLkNN learner2 = new MLkNN();
+
+        Evaluator eval = new Evaluator();
+        MultipleEvaluation results;
+
+        int numFolds = 10;
+        results = eval.crossValidate(learner1, dataset, numFolds);
+        System.out.println(results);
+        results = eval.crossValidate(learner2, dataset, numFolds);
+        System.out.println(results);
+    } catch (InvalidDataFormatException ex) {
+        Logger.getLogger(CrossValidationExperiment.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (Exception ex) {
+        Logger.getLogger(CrossValidationExperiment.class.getName()).log(Level.SEVERE, null, ex);
+    }
+
+}
+
+
+Example 3
+Project: h-store   File: FeatureClusterer.java View source code 	6 votes 	vote down vote up
+
+protected Classifier generateDecisionTree(AbstractClusterer clusterer, MarkovAttributeSet aset, Instances data) throws Exception {
+    // We need to create a new Attribute that has the ClusterId
+    Instances newData = data; // new Instances(data);
+    newData.insertAttributeAt(new Attribute("ClusterId"), newData.numAttributes());
+    Attribute cluster_attr = newData.attribute(newData.numAttributes()-1);
+    assert(cluster_attr != null);
+    assert(cluster_attr.index() > 0);
+    newData.setClass(cluster_attr);
+
+    // We will then tell the Classifier to predict that ClusterId based on the MarkovAttributeSet
+    ObjectHistogram<Integer> cluster_h = new ObjectHistogram<Integer>();
+    for (int i = 0, cnt = newData.numInstances(); i < cnt; i++) {
+        // Grab the Instance and throw it at the the clusterer to get the target cluster
+        Instance inst = newData.instance(i);
+        int c = (int)clusterer.clusterInstance(inst);
+        inst.setClassValue(c);
+        cluster_h.put(c);
+    } // FOR
+    System.err.println("Number of Elements: " + cluster_h.getValueCount());
+    System.err.println(cluster_h);
+
+    NumericToNominal filter = new NumericToNominal();
+    filter.setInputFormat(newData);
+    newData = Filter.useFilter(newData, filter);
+
+    String output = this.catalog_proc.getName() + "-labeled.arff";
+    FileUtil.writeStringToFile(output, newData.toString());
+    LOG.info("Wrote labeled data set to " + output);
+
+    // Decision Tree
+    J48 j48 = new J48();
+    String options[] = {
+        "-S", Integer.toString(this.rand.nextInt()),
+
+    };
+    j48.setOptions(options);
+
+    // Make sure we add the ClusterId attribute to a new MarkovAttributeSet so that
+    // we can tell the Classifier to classify that!
+    FilteredClassifier fc = new FilteredClassifier();
+    MarkovAttributeSet classifier_aset = new MarkovAttributeSet(aset);
+    classifier_aset.add(cluster_attr);
+    fc.setFilter(classifier_aset.createFilter(newData));
+    fc.setClassifier(j48);
+
+    // Bombs away!
+    fc.buildClassifier(newData);
+
+    return (fc);
+}
+
+
+Example 4
+Project: fos-sample   File: WekaTraining.java View source code 	6 votes 	vote down vote up
+
+public static void main( String[] args ) throws RemoteException, NotBoundException, FOSException {
+    FOSManagerAdapter manager = FOSManagerAdapter.create("localhost", 5959);
+
+    List<Attribute> attributes = ImmutableList.of(
+        new NumericAttribute("sepalLength"),
+        new NumericAttribute("sepalWidth"),
+        new NumericAttribute("petalLength"),
+        new NumericAttribute("petalWidth"),
+        new CategoricalAttribute("class",
+                                 ImmutableList.of("Iris-setosa",
+                                                  "Iris-versicolor",
+                                                  "Iris-virginica")));
+
+
+    Map<String, String> properties = ImmutableMap.of(WekaModelConfig.CLASS_INDEX, "4",
+                                                     WekaModelConfig.CLASSIFIER_IMPL, J48.class.getName());
+
+    ModelConfig modelConfig = new ModelConfig(attributes, properties);
+
+    File trainFile = new File("iris.data");
+
+    UUID uuid = manager.trainAndAddFile(modelConfig, trainFile.getAbsolutePath());
+
+    System.out.println("Trained model UUID = " + uuid);
+}
+
+
+Example 5
+Project: weka   File: PartitionMembership.java View source code 	6 votes 	vote down vote up
+
+/**
+ * Parses a given list of options.
+ * <p/>
+ *
+ * <!-- options-start --> Valid options are:
+ * <p/>
+ *
+ * <pre>
+ * -W &lt;name of partition generator&gt;
+ *  Full name of partition generator to use, e.g.:
+ *   weka.classifiers.trees.J48
+ *  Additional options after the '--'.
+ *  (default: weka.classifiers.trees.J48)
+ * </pre>
+ *
+ * <!-- options-end -->
+ *
+ * Options after the -- are passed on to the clusterer.
+ *
+ * @param options the list of options as an array of strings
+ * @throws Exception if an option is not supported
+ */
+@Override
+public void setOptions(String[] options) throws Exception {
+
+  String generatorString = Utils.getOption('W', options);
+  if (generatorString.length() == 0) {
+    generatorString = J48.class.getName();
+  }
+  setPartitionGenerator((PartitionGenerator) Utils.forName(
+    PartitionGenerator.class, generatorString,
+    Utils.partitionOptions(options)));
+
+  Utils.checkForRemainingOptions(options);
+}
+
+
+Example 6
+Project: GestureSound2   File: J48LearningAlgorithm.java View source code 	6 votes 	vote down vote up
+
+public LearningAlgorithm copy() {
+    try {
+        J48LearningAlgorithm la = new J48LearningAlgorithm();
+        la.setTrainingState(trainingState);
+        la.classifier = (J48) Classifier.makeCopy(classifier);
+        return la;
+    } catch (Exception ex) {
+        Logger.getLogger(J48LearningAlgorithm.class.getName()).log(Level.SEVERE, null, ex);
+        return null;
+    }
+
+}
+
+
+Example 7
+Project: AuToBI   File: WekaClassifierTest.java View source code 	6 votes 	vote down vote up
+
+@Test
+public void testTrainConstructsFeaturesIfNotSet() {
+  FeatureSet fs = new FeatureSet();
+  fs.insertRequiredFeature("feature");
+  fs.setClassAttribute("class");
+
+  Word w = new Word(0.0, 0.0, "test");
+  w.setAttribute("feature", 1.0);
+  w.setAttribute("class", "ONE");
+
+  Word w1 = new Word(0.0, 0.0, "test");
+  w1.setAttribute("feature", 1.0);
+  w1.setAttribute("class", "TWO");
+
+  fs.insertDataPoint(w);
+  fs.insertDataPoint(w1);
+
+  WekaClassifier c = new WekaClassifier(new J48());
+  try {
+    c.train(fs);
+    assertTrue(true);
+  } catch (Exception e) {
+    fail(e.getMessage());
+  }
+}
+
+
+Example 8
+Project: aloe   File: WekaModelTest.java View source code 	6 votes 	vote down vote up
+
+/**
+ * Test of save method, of class Model.
+ */
+@Test
+public void testSave() throws Exception {
+    System.out.println("save");
+
+    J48 classifier = new J48();
+    classifier.setNumFolds(456);
+    WekaModel model = new WekaModel(classifier);
+
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    assertTrue(model.save(out));
+    out.close();
+    byte[] serializedStr = out.toByteArray();
+
+    //It wrote something
+    assertTrue(serializedStr.length > 0);
+
+    //It wrote a J48 classifier
+    ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(serializedStr));
+    try {
+        J48 serialized = (J48) in.readObject();
+        in.close();
+        assertEquals(classifier.getNumFolds(), serialized.getNumFolds());
+    } catch (ClassNotFoundException e) {
+        assertTrue(e.getMessage(), false);
+    } catch (IOException e) {
+        assertTrue(e.getMessage(), false);
+    }
+}
+
+
+Example 9
+Project: TimeSeriesClassification   File: PartitionMembership.java View source code 	6 votes 	vote down vote up
+
+/**
+ * Parses a given list of options. <p/>
+ *
+ <!-- options-start -->
+ * Valid options are: <p/>
+ *
+ * <pre> -W &lt;name of partition generator&gt;
+ *  Full name of partition generator to use, e.g.:
+ *   weka.classifiers.trees.J48
+ *  Additional options after the '--'.
+ *  (default: weka.classifiers.trees.J48)</pre>
+ *
+ <!-- options-end -->
+ *
+ * Options after the -- are passed on to the clusterer.
+ *
+ * @param options the list of options as an array of strings
+ * @throws Exception if an option is not supported
+ */
+public void setOptions(String[] options) throws Exception {
+
+  String generatorString = Utils.getOption('W', options);
+  if (generatorString.length() == 0) {
+    generatorString = J48.class.getName();
+  }
+  setPartitionGenerator((PartitionGenerator)Utils.
+                        forName(PartitionGenerator.class, generatorString,
+                                Utils.partitionOptions(options)));
+
+  Utils.checkForRemainingOptions(options);
+}
+
+
+Example 10
+Project: RNBL-MN   File: RNBtree.java View source code 	6 votes 	vote down vote up
+
+static public void main(String[] args) {
+	File folder = new File("../../lab1/reuters/");
+	String[] files = folder.list(new FilenameFilter() {
+		public boolean accept(File dir, String name) {
+			return name.matches(".*\\.arff$");
+		}
+	});
+
+	try {
+		for (String f : files) {
+			System.out.println(f);
+			RNBtree r = new RNBtree("../../lab1/reuters/" + f);
+			System.out.printf("numAttributes: %d\nnumClasses: %d\n", r.numAttribute, r.numClass);
+			r.buildClassifier(r.data);
+			Evaluation eval = new Evaluation(r.data);
+			eval.crossValidateModel(r, r.data, 10, new Random(1));
+			System.out.println(eval.toClassDetailsString());
+
+			System.out.println("Unpruned tree");
+			Evaluation e2 = new Evaluation(r.data);
+			Classifier cls = new J48();
+			cls.setOptions(new String[] {"-U", "true"});
+			e2.crossValidateModel(cls, r.data, 10, new Random(1));
+			System.out.println(e2.toClassDetailsString());
+
+			System.out.println("Pruned tree");
+			Evaluation e3 = new Evaluation(r.data);
+			Classifier cls2 = new J48();
+			cls2.setOptions(new String[] {"-C", "0.25"});
+			e3.crossValidateModel(cls2, r.data, 10, new Random(1));
+			System.out.println(e3.toClassDetailsString());
+		}
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+}
+
+
+Example 11
+Project: contexttoolkit   File: J48Parser.java View source code 	6 votes 	vote down vote up
+
+/**
+ * Parse the J48 tree model with supplementary information about weka attributes from the header.
+ * Each Disjunction in Disjunctive Normal Form (DNF).
+ * @param cModel J48 tree model to parse
+ * @param header to reference Weka Attributes
+ * @return Map of Disjunctions of traces for each class value
+ * @throws Exception
+ */
+@SuppressWarnings("unchecked")
+public static Map<String, DNF> parse(J48 cModel, Instances header) throws Exception {
+	Map<String, DNF> valueTraces = new HashMap<String, DNF>();
+
+	// get tree node structure from model
+	Reader treeDot = new StringReader(cModel.graph());
+	TreeBuild treeBuild = new TreeBuild();
+	Node treeRoot = treeBuild.create(treeDot);
+
+	// set up one disjunction per class value
+	Attribute classAttr = header.classAttribute();
+	Enumeration<String> values = classAttr.enumerateValues();
+	while (values.hasMoreElements()) {
+		valueTraces.put(values.nextElement(), new DNF());
+	}
+
+	// recursively parse
+	parse(
+		treeRoot, header,
+		new Reason(),
+		valueTraces
+	);
+
+	// each Disjunction is naturally in DNF according to parsing process
+
+	return valueTraces;
+}
+
+
+Example 12
+Project: fos-weka   File: WekaClassifierFactoryTest.java View source code 	6 votes 	vote down vote up
+
+@Test
+public void testOneModel() throws FOSException {
+    ModelConfig modelConfig = new ModelConfig();
+    modelConfig.setProperty(WekaModelConfig.CLASSIFIER_IMPL, J48.class.getName());
+
+    Classifier classifier = WekaClassifierFactory.create(modelConfig);
+    Assert.assertEquals(J48.class, classifier.getClass());
+}
+
+
+Example 13
+Project: Java-AI-Book-Code   File: WekaStocks.java View source code 	6 votes 	vote down vote up
+
+/**
+ * @param args
+ * @throws Exception
+ */
+public static void main(String[] args) throws Exception {
+	Instances training_data = new Instances(
+               new BufferedReader(
+                     new FileReader("test_data/stock_training_data.arff")));
+	training_data.setClassIndex(training_data.numAttributes() - 1);
+
+	Instances testing_data = new Instances(
+               new BufferedReader(
+                     new FileReader("test_data/stock_testing_data.arff")));
+	testing_data.setClassIndex(training_data.numAttributes() - 1);
+
+	String summary = training_data.toSummaryString();
+	int number_samples = training_data.numInstances();
+	int number_attributes_per_sample = training_data.numAttributes();
+       System.out.println("Number of attributes in model = " + number_attributes_per_sample);
+       System.out.println("Number of samples = " + number_samples);
+       System.out.println("Summary: " + summary);
+       System.out.println();
+
+       // a classifier for decision trees:
+       J48 j48 = new J48();
+
+       // filter for removing samples:
+       Remove rm = new Remove();
+       rm.setAttributeIndices("1");  // remove 1st attribute
+
+       // filtered classifier
+       FilteredClassifier fc = new FilteredClassifier();
+       fc.setFilter(rm);
+       fc.setClassifier(j48);
+       // train using stock_training_data.arff:
+       fc.buildClassifier(training_data);
+       // test using stock_testing_data.arff:
+       for (int i = 0; i < testing_data.numInstances(); i++) {
+         double pred = fc.classifyInstance(testing_data.instance(i));
+         System.out.print("given value: " + testing_data.classAttribute().value((int)testing_data.instance(i).classValue()));
+         System.out.println(". predicted value: " + testing_data.classAttribute().value((int) pred));
+       }
+
+}
+
+
+Example 14
+Project: mapsforge-platform   File: AttributeSelectionComponent.java View source code 	6 votes 	vote down vote up
+
+private void classEvaluation(Instances trainingSet) {
+    try {
+        AttributeSelectedClassifier attributeSelectedClassifier = new AttributeSelectedClassifier();
+        CfsSubsetEval eval = new CfsSubsetEval();
+        GreedyStepwise search = new GreedyStepwise();
+        search.setSearchBackwards(true);
+        search.setGenerateRanking(true);
+        attributeSelectedClassifier.setClassifier(new J48());
+        attributeSelectedClassifier.setEvaluator(eval);
+        attributeSelectedClassifier.setSearch(search);
+        Evaluation crossEvaluation = new Evaluation(trainingSet);
+        crossEvaluation.crossValidateModel(attributeSelectedClassifier, trainingSet, 10, new Random(1));
+
+        int[] selectedAttribute = search.search(eval, crossEvaluation.getHeader());
+        double[][] rankedAttributes = search.rankedAttributes();
+        LOG.info(Arrays.toString(selectedAttribute));
+        for (int i = 0; i < rankedAttributes.length; i++) {
+            LOG.info(Arrays.toString(rankedAttributes[i]));
+        }
+    } catch (Exception ex) {
+        Exceptions.printStackTrace(ex);
+    }
+}
+
+
+Example 15
+Project: social-event-detection   File: MultimodalClassifier.java View source code 	5 votes 	vote down vote up
+
+public void train(Constants.ClassifierTypes classifierType) {
+
+    String parameters = "";
+    if(Constants.CLASSIFIER_TYPE == Constants.ClassifierTypes.decisionTree)
+        parameters = Constants.DECISION_TREE_PARAMETERS;
+    if(Constants.CLASSIFIER_TYPE == Constants.ClassifierTypes.jrip)
+        parameters = Constants.JRIP_PARAMETERS;
+    if(Constants.CLASSIFIER_TYPE == Constants.ClassifierTypes.MultilayerPerceptron)
+        parameters = Constants.MULTILAYER_PERCEPTRON_PARAMETERS;
+    if(Constants.CLASSIFIER_TYPE == Constants.ClassifierTypes.NaiveBayes)
+        parameters = Constants.NAIVE_BAYES_PARAMETERS;
+    if(Constants.CLASSIFIER_TYPE == Constants.ClassifierTypes.NearestNeighbour)
+        parameters = Constants.NEAREST_NEIGHBOUR_PARAMETERS;
+    if(Constants.CLASSIFIER_TYPE == Constants.ClassifierTypes.part)
+        parameters = Constants.PART_PARAMETERS;
+    if(Constants.CLASSIFIER_TYPE == Constants.ClassifierTypes.randomForest)
+        parameters = Constants.RANDOM_FOREST_PARAMETERS;
+    if(Constants.CLASSIFIER_TYPE == Constants.ClassifierTypes.randomTree)
+        parameters = Constants.RANDOM_TREE_PARAMETERS;
+    if(Constants.CLASSIFIER_TYPE == Constants.ClassifierTypes.svm)
+        parameters = Constants.SVM_PARAMETERS;
+
+    String[] options;
+    System.out.println("Classifier type: " + classifierType.toString());
+    try {
+        options = weka.core.Utils.splitOptions(parameters);
+        if(classifierType == Constants.ClassifierTypes.svm) {
+            model = new SMO();
+            ((SMO)model).setOptions(options);
+        }
+        if(classifierType == Constants.ClassifierTypes.decisionTree){
+            model = new J48();
+            System.out.println(options);
+            ((J48)model).setOptions(options);
+        }
+        if(classifierType == Constants.ClassifierTypes.jrip){
+            model = new JRip();
+            ((JRip)model).setOptions(options);
+        }
+        if(classifierType == Constants.ClassifierTypes.MultilayerPerceptron){
+            model = new MultilayerPerceptron();
+            ((MultilayerPerceptron)model).setOptions(options);
+        }
+        if(classifierType == Constants.ClassifierTypes.NaiveBayes){
+            model = new NaiveBayes();
+            ((NaiveBayes)model).setOptions(options);
+        }
+        if(classifierType == Constants.ClassifierTypes.NearestNeighbour){
+            model = new IBk();
+            ((IBk)model).setOptions(options);
+        }
+        if(classifierType == Constants.ClassifierTypes.part){
+            model = new PART();
+            ((PART)model).setOptions(options);
+        }
+        if(classifierType == Constants.ClassifierTypes.randomForest){
+            model = new RandomForest();
+            ((RandomForest)model).setOptions(options);
+        }
+        if(classifierType == Constants.ClassifierTypes.randomTree){
+            model = new RandomTree();
+           ((RandomTree)model).setOptions(options);
+        }
+    } catch (Exception ex) {
+        Logger.getLogger(MultimodalClassifier.class.getName()).log(Level.SEVERE, null, ex);
+    }
+
+
+    int nPositiveExamples = positiveTrainingPairs.size();
+    int nNegativeExamples = negativeTrainingPairs.size();
+
+    attributes = MultimodalSimilarity.getAttributes(usedSimTypes);
+    System.out.println("ATTRIBUTES : " + attributes);
+
+    positiveMultimodalSimilarities = new ArrayList<MultimodalSimilarity>(nPositiveExamples);
+    for(TrainingPair pair : positiveTrainingPairs) {
+        positiveMultimodalSimilarities.add(new MultimodalSimilarity(pair.item1, pair.item2, attributes));
+    }
+
+    negativeMultimodalSimilarities = new ArrayList<MultimodalSimilarity>(nNegativeExamples);
+    for(TrainingPair pair : negativeTrainingPairs) {
+    	negativeMultimodalSimilarities.add(new MultimodalSimilarity(pair.item1, pair.item2, attributes));
+	}
+    int n_points = nPositiveExamples/2 + nNegativeExamples/2;
+    dataTrain = new Instances("train", attributes, n_points);
+    Instances dataTestPos = new Instances("testPos", attributes, n_points/2);
+    Instances dataTestNeg = new Instances("testNeg", attributes, n_points/2);
+    dataTrain.setClassIndex(dataTrain.numAttributes() - 1);
+    dataTestPos.setClassIndex(dataTrain.numAttributes() - 1);
+    dataTestNeg.setClassIndex(dataTrain.numAttributes() - 1);
+
+    int n_vars = usedSimTypes.length;
+
+    System.out.println("n vars : " + n_vars);
+    System.out.println("n dims : " + (positiveMultimodalSimilarities.get(0).similarities.numAttributes()-1));
+
+    for(int i=0; i<nPositiveExamples/2; i++) {
+        Instance instance = positiveMultimodalSimilarities.get(i).similarities;
+        instance.setDataset(dataTrain);
+        instance.setValue(instance.numAttributes()-1, "positive");
+        dataTrain.add(instance);
+    }
+    for(int i=0; i<nNegativeExamples/2; i++){
+        Instance instance = negativeMultimodalSimilarities.get(i).similarities;
+        instance.setDataset(dataTrain);
+        instance.setValue(instance.numAttributes()-1, "negative");
+        dataTrain.add(instance);
+    }
+
+    System.out.println("No of items: " + dataTrain.numInstances());
+    System.out.println("No of variables: " + dataTrain.numAttributes());
+    System.out.println("No of classes: " + dataTrain.numClasses());
+
+    try {
+    	// build classifier
+        model.buildClassifier(dataTrain);
+    } catch (Exception ex) {
+        Logger.getLogger(MultimodalClassifier.class.getName()).log(Level.SEVERE, null, ex);
+    }
+
+    System.out.println("Trained");
+
+    System.out.println("Positive test");
+    for(int i = nPositiveExamples/2; i<nPositiveExamples; i++) {
+        Instance instance = positiveMultimodalSimilarities.get(i).similarities;
+        instance.setDataset(dataTestPos);
+        instance.setValue(instance.numAttributes()-1, "positive");
+        dataTestPos.add(instance);
+    }
+    for(int i = nNegativeExamples/2; i<nNegativeExamples; i++) {
+        Instance instance = negativeMultimodalSimilarities.get(i).similarities;
+        instance.setDataset(dataTestNeg);
+        instance.setValue(instance.numAttributes()-1, "negative");
+        dataTestNeg.add(instance);
+    }
+    dataTestPos.setClassIndex(dataTestPos.numAttributes() - 1);
+    dataTestNeg.setClassIndex(dataTestNeg.numAttributes() - 1);
+
+    Evaluation evalPos;
+    try {
+        evalPos = new Evaluation(dataTrain);
+        if(model == null)
+        	System.out.println("model is null");
+        evalPos.evaluateModel(model, dataTestPos);
+        System.out.println(evalPos.toSummaryString("\nResults\n======\n", false));
+    } catch (Exception ex) {
+        Logger.getLogger(MultimodalClassifier.class.getName()).log(Level.SEVERE, null, ex);
+    }
+
+    Evaluation evalNeg;
+    try {
+        evalNeg = new Evaluation(dataTrain);
+        if(model == null)
+        	System.out.println("model is null");
+        evalNeg.evaluateModel(model, dataTestNeg);
+        System.out.println(evalNeg.toSummaryString("\nResults\n======\n", false));
+    } catch (Exception ex) {
+        Logger.getLogger(MultimodalClassifier.class.getName()).log(Level.SEVERE, null, ex);
+    }
+
+}
+
+
+Example 16
+Project: LPmade   File: AddModelsPanel.java View source code 	5 votes 	vote down vote up
+
+/**
+  * This method is responsible for building the use interface.
+  */
+ private void createAddModelsPanel() {
+   GridBagConstraints gbc = new GridBagConstraints();
+   setLayout(new GridBagLayout());
+
+   m_TreeView = new JScrollPane();
+   m_TreeView.setPreferredSize(new Dimension(150, 50));
+
+   buildClassifierTree(new J48());
+
+   ToolTipManager.sharedInstance().registerComponent(m_Tree);
+
+   gbc.weightx = 1;
+   gbc.weighty = 1.5;
+   gbc.fill = GridBagConstraints.BOTH;
+   gbc.gridx = 0;
+   gbc.gridy = 0;
+   gbc.gridwidth = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   add(m_TreeView, gbc);
+
+   m_GenerateButton = new JButton("Generate Models");
+   m_GenerateButton.setToolTipText(
+"Generate a set of models from options specified in options tree");
+   m_GenerateButton.addActionListener(this);
+   gbc.weightx = 0;
+   gbc.weighty = 0;
+   gbc.fill = GridBagConstraints.NONE;
+   gbc.gridx = 0;
+   gbc.gridy = 1;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   add(m_GenerateButton, gbc);
+
+   m_GenerateLabel = new JLabel("");
+   gbc.weightx = 1;
+   gbc.fill = GridBagConstraints.HORIZONTAL;
+   gbc.gridx = 1;
+   gbc.gridy = 1;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 2;
+   add(m_GenerateLabel, gbc);
+
+   m_RemoveInvalidButton = new JButton("Remove Invalid");
+   m_RemoveInvalidButton.setToolTipText(
+"Remove all invalid (red) models from the above list");
+   m_RemoveInvalidButton.addActionListener(this);
+   gbc.weightx = 0;
+   gbc.fill = GridBagConstraints.NONE;
+   gbc.gridx = 2;
+   gbc.gridy = 1;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   //OK, this button was removed because we thought it was a waste
+   //of space.  Instead of removing invalid models, we just explicitly
+   //prevent the user from adding them to the main list.  I'm going to
+   //leave the code in with this final "add" statement commented out
+   //because we are still on the fence as to whether this is a good
+   //idea
+   //add(m_RemoveInvalidButton, gbc);
+
+   m_ModelList = new ModelList();
+
+   m_ModelList.getInputMap().put(
+KeyStroke.getKeyStroke("released DELETE"), "deleteSelected");
+   m_ModelList.getActionMap().put("deleteSelected",
+new AbstractAction("deleteSelected") {
+     /** for serialization */
+     private static final long serialVersionUID = -3351194234735560372L;
+
+     public void actionPerformed(ActionEvent evt) {
+
+Object[] currentModels = m_ModelList.getSelectedValues();
+
+ModelList.SortedListModel dataModel = ((ModelList.SortedListModel) m_ModelList.getModel());
+
+for (int i = 0; i < currentModels.length; i++) {
+  dataModel.removeElement((EnsembleLibraryModel) currentModels[i]);
+}
+
+//Shrink the selected range to the first index that was selected
+int selected[] = new int[1];
+selected[0] = m_ModelList.getSelectedIndices()[0];
+m_ModelList.setSelectedIndices(selected);
+
+     }
+   });
+
+   m_ModelList
+   .setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+   m_ModelList.setLayoutOrientation(JList.VERTICAL);
+   m_ModelList.setVisibleRowCount(-1);
+
+   JPanel modelListPanel = new JPanel();
+   modelListPanel.setBorder(
+BorderFactory.createTitledBorder("Working Set of Newly Generated Models"));
+
+   JScrollPane listView = new JScrollPane(m_ModelList);
+   //listView.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+   listView.setPreferredSize(new Dimension(150, 50));
+
+   modelListPanel.setLayout(new BorderLayout());
+   modelListPanel.add(listView, BorderLayout.CENTER);
+
+   gbc.weightx = 1;
+   gbc.weighty = 1;
+   gbc.fill = GridBagConstraints.BOTH;
+   gbc.gridx = 0;
+   gbc.gridy = 2;
+   gbc.gridwidth = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   add(modelListPanel, gbc);
+
+   m_RemoveSelectedButton = new JButton("Remove Selected");
+   m_RemoveSelectedButton.setToolTipText("Remove all currently selected models from the above list");
+   m_RemoveSelectedButton.addActionListener(this);
+   gbc.weightx = 1;
+   gbc.weighty = 0;
+   gbc.fill = GridBagConstraints.HORIZONTAL;
+   gbc.gridx = 0;
+   gbc.gridy = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   add(m_RemoveSelectedButton, gbc);
+
+   m_AddSelectedButton = new JButton("Add Selected");
+   m_AddSelectedButton.setToolTipText(
+"Add selected models in the above list to the model library");
+   m_AddSelectedButton.addActionListener(this);
+   gbc.weightx = 1;
+   gbc.fill = GridBagConstraints.HORIZONTAL;
+   gbc.gridx = 1;
+   gbc.gridy = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   add(m_AddSelectedButton, gbc);
+
+   m_AddAllButton = new JButton("Add All");
+   m_AddAllButton.setToolTipText(
+"Add all models in the above list to the model library");
+   m_AddAllButton.addActionListener(this);
+   gbc.weightx = 1;
+   gbc.fill = GridBagConstraints.HORIZONTAL;
+   gbc.gridx = 2;
+   gbc.gridy = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   add(m_AddAllButton, gbc);
+ }
+
+
+Example 17
+Project: jDenetX   File: AddModelsPanel.java View source code 	5 votes 	vote down vote up
+
+/**
+  * This method is responsible for building the use interface.
+  */
+ private void createAddModelsPanel() {
+   GridBagConstraints gbc = new GridBagConstraints();
+   setLayout(new GridBagLayout());
+
+   m_TreeView = new JScrollPane();
+   m_TreeView.setPreferredSize(new Dimension(150, 50));
+
+   buildClassifierTree(new J48());
+
+   ToolTipManager.sharedInstance().registerComponent(m_Tree);
+
+   gbc.weightx = 1;
+   gbc.weighty = 1.5;
+   gbc.fill = GridBagConstraints.BOTH;
+   gbc.gridx = 0;
+   gbc.gridy = 0;
+   gbc.gridwidth = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   add(m_TreeView, gbc);
+
+   m_GenerateButton = new JButton("Generate Models");
+   m_GenerateButton.setToolTipText(
+"Generate a set of models from options specified in options tree");
+   m_GenerateButton.addActionListener(this);
+   gbc.weightx = 0;
+   gbc.weighty = 0;
+   gbc.fill = GridBagConstraints.NONE;
+   gbc.gridx = 0;
+   gbc.gridy = 1;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   add(m_GenerateButton, gbc);
+
+   m_GenerateLabel = new JLabel("");
+   gbc.weightx = 1;
+   gbc.fill = GridBagConstraints.HORIZONTAL;
+   gbc.gridx = 1;
+   gbc.gridy = 1;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 2;
+   add(m_GenerateLabel, gbc);
+
+   m_RemoveInvalidButton = new JButton("Remove Invalid");
+   m_RemoveInvalidButton.setToolTipText(
+"Remove all invalid (red) models from the above list");
+   m_RemoveInvalidButton.addActionListener(this);
+   gbc.weightx = 0;
+   gbc.fill = GridBagConstraints.NONE;
+   gbc.gridx = 2;
+   gbc.gridy = 1;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   //OK, this button was removed because we thought it was a waste
+   //of space.  Instead of removing invalid models, we just explicitly
+   //prevent the user from adding them to the main list.  I'm going to
+   //leave the code in with this final "add" statement commented out
+   //because we are still on the fence as to whether this is a good
+   //idea
+   //add(m_RemoveInvalidButton, gbc);
+
+   m_ModelList = new ModelList();
+
+   m_ModelList.getInputMap().put(
+KeyStroke.getKeyStroke("released DELETE"), "deleteSelected");
+   m_ModelList.getActionMap().put("deleteSelected",
+new AbstractAction("deleteSelected") {
+     /** for serialization */
+     private static final long serialVersionUID = -3351194234735560372L;
+
+     public void actionPerformed(ActionEvent evt) {
+
+Object[] currentModels = m_ModelList.getSelectedValues();
+
+ModelList.SortedListModel dataModel = ((ModelList.SortedListModel) m_ModelList.getModel());
+
+for (int i = 0; i < currentModels.length; i++) {
+  dataModel.removeElement((EnsembleLibraryModel) currentModels[i]);
+}
+
+//Shrink the selected range to the first index that was selected
+int selected[] = new int[1];
+selected[0] = m_ModelList.getSelectedIndices()[0];
+m_ModelList.setSelectedIndices(selected);
+
+     }
+   });
+
+   m_ModelList
+   .setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+   m_ModelList.setLayoutOrientation(JList.VERTICAL);
+   m_ModelList.setVisibleRowCount(-1);
+
+   JPanel modelListPanel = new JPanel();
+   modelListPanel.setBorder(
+BorderFactory.createTitledBorder("Working Set of Newly Generated Models"));
+
+   JScrollPane listView = new JScrollPane(m_ModelList);
+   //listView.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+   listView.setPreferredSize(new Dimension(150, 50));
+
+   modelListPanel.setLayout(new BorderLayout());
+   modelListPanel.add(listView, BorderLayout.CENTER);
+
+   gbc.weightx = 1;
+   gbc.weighty = 1;
+   gbc.fill = GridBagConstraints.BOTH;
+   gbc.gridx = 0;
+   gbc.gridy = 2;
+   gbc.gridwidth = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   add(modelListPanel, gbc);
+
+   m_RemoveSelectedButton = new JButton("Remove Selected");
+   m_RemoveSelectedButton.setToolTipText("Remove all currently selected models from the above list");
+   m_RemoveSelectedButton.addActionListener(this);
+   gbc.weightx = 1;
+   gbc.weighty = 0;
+   gbc.fill = GridBagConstraints.HORIZONTAL;
+   gbc.gridx = 0;
+   gbc.gridy = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   add(m_RemoveSelectedButton, gbc);
+
+   m_AddSelectedButton = new JButton("Add Selected");
+   m_AddSelectedButton.setToolTipText(
+"Add selected models in the above list to the model library");
+   m_AddSelectedButton.addActionListener(this);
+   gbc.weightx = 1;
+   gbc.fill = GridBagConstraints.HORIZONTAL;
+   gbc.gridx = 1;
+   gbc.gridy = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   add(m_AddSelectedButton, gbc);
+
+   m_AddAllButton = new JButton("Add All");
+   m_AddAllButton.setToolTipText(
+"Add all models in the above list to the model library");
+   m_AddAllButton.addActionListener(this);
+   gbc.weightx = 1;
+   gbc.fill = GridBagConstraints.HORIZONTAL;
+   gbc.gridx = 2;
+   gbc.gridy = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   add(m_AddAllButton, gbc);
+ }
+
+
+Example 18
+Project: mlcomp   File: AddModelsPanel.java View source code 	5 votes 	vote down vote up
+
+/**
+  * This method is responsible for building the use interface.
+  */
+ private void createAddModelsPanel() {
+   GridBagConstraints gbc = new GridBagConstraints();
+   setLayout(new GridBagLayout());
+
+   m_TreeView = new JScrollPane();
+   m_TreeView.setPreferredSize(new Dimension(150, 50));
+
+   buildClassifierTree(new J48());
+
+   ToolTipManager.sharedInstance().registerComponent(m_Tree);
+
+   gbc.weightx = 1;
+   gbc.weighty = 1.5;
+   gbc.fill = GridBagConstraints.BOTH;
+   gbc.gridx = 0;
+   gbc.gridy = 0;
+   gbc.gridwidth = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   add(m_TreeView, gbc);
+
+   m_GenerateButton = new JButton("Generate Models");
+   m_GenerateButton.setToolTipText(
+"Generate a set of models from options specified in options tree");
+   m_GenerateButton.addActionListener(this);
+   gbc.weightx = 0;
+   gbc.weighty = 0;
+   gbc.fill = GridBagConstraints.NONE;
+   gbc.gridx = 0;
+   gbc.gridy = 1;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   add(m_GenerateButton, gbc);
+
+   m_GenerateLabel = new JLabel("");
+   gbc.weightx = 1;
+   gbc.fill = GridBagConstraints.HORIZONTAL;
+   gbc.gridx = 1;
+   gbc.gridy = 1;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 2;
+   add(m_GenerateLabel, gbc);
+
+   m_RemoveInvalidButton = new JButton("Remove Invalid");
+   m_RemoveInvalidButton.setToolTipText(
+"Remove all invalid (red) models from the above list");
+   m_RemoveInvalidButton.addActionListener(this);
+   gbc.weightx = 0;
+   gbc.fill = GridBagConstraints.NONE;
+   gbc.gridx = 2;
+   gbc.gridy = 1;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   //OK, this button was removed because we thought it was a waste
+   //of space.  Instead of removing invalid models, we just explicitly
+   //prevent the user from adding them to the main list.  I'm going to
+   //leave the code in with this final "add" statement commented out
+   //because we are still on the fence as to whether this is a good
+   //idea
+   //add(m_RemoveInvalidButton, gbc);
+
+   m_ModelList = new ModelList();
+
+   m_ModelList.getInputMap().put(
+KeyStroke.getKeyStroke("released DELETE"), "deleteSelected");
+   m_ModelList.getActionMap().put("deleteSelected",
+new AbstractAction("deleteSelected") {
+     /** for serialization */
+     private static final long serialVersionUID = -3351194234735560372L;
+
+     public void actionPerformed(ActionEvent evt) {
+
+Object[] currentModels = m_ModelList.getSelectedValues();
+
+ModelList.SortedListModel dataModel = ((ModelList.SortedListModel) m_ModelList.getModel());
+
+for (int i = 0; i < currentModels.length; i++) {
+  dataModel.removeElement((EnsembleLibraryModel) currentModels[i]);
+}
+
+//Shrink the selected range to the first index that was selected
+int selected[] = new int[1];
+selected[0] = m_ModelList.getSelectedIndices()[0];
+m_ModelList.setSelectedIndices(selected);
+
+     }
+   });
+
+   m_ModelList
+   .setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+   m_ModelList.setLayoutOrientation(JList.VERTICAL);
+   m_ModelList.setVisibleRowCount(-1);
+
+   JPanel modelListPanel = new JPanel();
+   modelListPanel.setBorder(
+BorderFactory.createTitledBorder("Working Set of Newly Generated Models"));
+
+   JScrollPane listView = new JScrollPane(m_ModelList);
+   //listView.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+   listView.setPreferredSize(new Dimension(150, 50));
+
+   modelListPanel.setLayout(new BorderLayout());
+   modelListPanel.add(listView, BorderLayout.CENTER);
+
+   gbc.weightx = 1;
+   gbc.weighty = 1;
+   gbc.fill = GridBagConstraints.BOTH;
+   gbc.gridx = 0;
+   gbc.gridy = 2;
+   gbc.gridwidth = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   add(modelListPanel, gbc);
+
+   m_RemoveSelectedButton = new JButton("Remove Selected");
+   m_RemoveSelectedButton.setToolTipText("Remove all currently selected models from the above list");
+   m_RemoveSelectedButton.addActionListener(this);
+   gbc.weightx = 1;
+   gbc.weighty = 0;
+   gbc.fill = GridBagConstraints.HORIZONTAL;
+   gbc.gridx = 0;
+   gbc.gridy = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   add(m_RemoveSelectedButton, gbc);
+
+   m_AddSelectedButton = new JButton("Add Selected");
+   m_AddSelectedButton.setToolTipText(
+"Add selected models in the above list to the model library");
+   m_AddSelectedButton.addActionListener(this);
+   gbc.weightx = 1;
+   gbc.fill = GridBagConstraints.HORIZONTAL;
+   gbc.gridx = 1;
+   gbc.gridy = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   add(m_AddSelectedButton, gbc);
+
+   m_AddAllButton = new JButton("Add All");
+   m_AddAllButton.setToolTipText(
+"Add all models in the above list to the model library");
+   m_AddAllButton.addActionListener(this);
+   gbc.weightx = 1;
+   gbc.fill = GridBagConstraints.HORIZONTAL;
+   gbc.gridx = 2;
+   gbc.gridy = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   add(m_AddAllButton, gbc);
+ }
+
+
+Example 19
+Project: extweka   File: AddModelsPanel.java View source code 	5 votes 	vote down vote up
+
+/**
+  * This method is responsible for building the use interface.
+  */
+ private void createAddModelsPanel() {
+   GridBagConstraints gbc = new GridBagConstraints();
+   setLayout(new GridBagLayout());
+
+   m_TreeView = new JScrollPane();
+   m_TreeView.setPreferredSize(new Dimension(150, 50));
+
+   buildClassifierTree(new J48());
+
+   ToolTipManager.sharedInstance().registerComponent(m_Tree);
+
+   gbc.weightx = 1;
+   gbc.weighty = 1.5;
+   gbc.fill = GridBagConstraints.BOTH;
+   gbc.gridx = 0;
+   gbc.gridy = 0;
+   gbc.gridwidth = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   add(m_TreeView, gbc);
+
+   m_GenerateButton = new JButton("Generate Models");
+   m_GenerateButton.setToolTipText(
+"Generate a set of models from options specified in options tree");
+   m_GenerateButton.addActionListener(this);
+   gbc.weightx = 0;
+   gbc.weighty = 0;
+   gbc.fill = GridBagConstraints.NONE;
+   gbc.gridx = 0;
+   gbc.gridy = 1;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   add(m_GenerateButton, gbc);
+
+   m_GenerateLabel = new JLabel("");
+   gbc.weightx = 1;
+   gbc.fill = GridBagConstraints.HORIZONTAL;
+   gbc.gridx = 1;
+   gbc.gridy = 1;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 2;
+   add(m_GenerateLabel, gbc);
+
+   m_RemoveInvalidButton = new JButton("Remove Invalid");
+   m_RemoveInvalidButton.setToolTipText(
+"Remove all invalid (red) models from the above list");
+   m_RemoveInvalidButton.addActionListener(this);
+   gbc.weightx = 0;
+   gbc.fill = GridBagConstraints.NONE;
+   gbc.gridx = 2;
+   gbc.gridy = 1;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   //OK, this button was removed because we thought it was a waste
+   //of space.  Instead of removing invalid models, we just explicitly
+   //prevent the user from adding them to the main list.  I'm going to
+   //leave the code in with this final "add" statement commented out
+   //because we are still on the fence as to whether this is a good
+   //idea
+   //add(m_RemoveInvalidButton, gbc);
+
+   m_ModelList = new ModelList();
+
+   m_ModelList.getInputMap().put(
+KeyStroke.getKeyStroke("released DELETE"), "deleteSelected");
+   m_ModelList.getActionMap().put("deleteSelected",
+new AbstractAction("deleteSelected") {
+     /** for serialization */
+     private static final long serialVersionUID = -3351194234735560372L;
+
+     public void actionPerformed(ActionEvent evt) {
+
+Object[] currentModels = m_ModelList.getSelectedValues();
+
+ModelList.SortedListModel dataModel = ((ModelList.SortedListModel) m_ModelList.getModel());
+
+for (int i = 0; i < currentModels.length; i++) {
+  dataModel.removeElement((EnsembleLibraryModel) currentModels[i]);
+}
+
+//Shrink the selected range to the first index that was selected
+int selected[] = new int[1];
+selected[0] = m_ModelList.getSelectedIndices()[0];
+m_ModelList.setSelectedIndices(selected);
+
+     }
+   });
+
+   m_ModelList
+   .setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+   m_ModelList.setLayoutOrientation(JList.VERTICAL);
+   m_ModelList.setVisibleRowCount(-1);
+
+   JPanel modelListPanel = new JPanel();
+   modelListPanel.setBorder(
+BorderFactory.createTitledBorder("Working Set of Newly Generated Models"));
+
+   JScrollPane listView = new JScrollPane(m_ModelList);
+   //listView.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+   listView.setPreferredSize(new Dimension(150, 50));
+
+   modelListPanel.setLayout(new BorderLayout());
+   modelListPanel.add(listView, BorderLayout.CENTER);
+
+   gbc.weightx = 1;
+   gbc.weighty = 1;
+   gbc.fill = GridBagConstraints.BOTH;
+   gbc.gridx = 0;
+   gbc.gridy = 2;
+   gbc.gridwidth = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   add(modelListPanel, gbc);
+
+   m_RemoveSelectedButton = new JButton("Remove Selected");
+   m_RemoveSelectedButton.setToolTipText("Remove all currently selected models from the above list");
+   m_RemoveSelectedButton.addActionListener(this);
+   gbc.weightx = 1;
+   gbc.weighty = 0;
+   gbc.fill = GridBagConstraints.HORIZONTAL;
+   gbc.gridx = 0;
+   gbc.gridy = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   add(m_RemoveSelectedButton, gbc);
+
+   m_AddSelectedButton = new JButton("Add Selected");
+   m_AddSelectedButton.setToolTipText(
+"Add selected models in the above list to the model library");
+   m_AddSelectedButton.addActionListener(this);
+   gbc.weightx = 1;
+   gbc.fill = GridBagConstraints.HORIZONTAL;
+   gbc.gridx = 1;
+   gbc.gridy = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   add(m_AddSelectedButton, gbc);
+
+   m_AddAllButton = new JButton("Add All");
+   m_AddAllButton.setToolTipText(
+"Add all models in the above list to the model library");
+   m_AddAllButton.addActionListener(this);
+   gbc.weightx = 1;
+   gbc.fill = GridBagConstraints.HORIZONTAL;
+   gbc.gridx = 2;
+   gbc.gridy = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   add(m_AddAllButton, gbc);
+ }
+
+
+Example 20
+Project: AIWekaProject   File: AddModelsPanel.java View source code 	5 votes 	vote down vote up
+
+/**
+  * This method is responsible for building the use interface.
+  */
+ private void createAddModelsPanel() {
+   GridBagConstraints gbc = new GridBagConstraints();
+   setLayout(new GridBagLayout());
+
+   m_TreeView = new JScrollPane();
+   m_TreeView.setPreferredSize(new Dimension(150, 50));
+
+   buildClassifierTree(new J48());
+
+   ToolTipManager.sharedInstance().registerComponent(m_Tree);
+
+   gbc.weightx = 1;
+   gbc.weighty = 1.5;
+   gbc.fill = GridBagConstraints.BOTH;
+   gbc.gridx = 0;
+   gbc.gridy = 0;
+   gbc.gridwidth = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   add(m_TreeView, gbc);
+
+   m_GenerateButton = new JButton("Generate Models");
+   m_GenerateButton.setToolTipText(
+"Generate a set of models from options specified in options tree");
+   m_GenerateButton.addActionListener(this);
+   gbc.weightx = 0;
+   gbc.weighty = 0;
+   gbc.fill = GridBagConstraints.NONE;
+   gbc.gridx = 0;
+   gbc.gridy = 1;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   add(m_GenerateButton, gbc);
+
+   m_GenerateLabel = new JLabel("");
+   gbc.weightx = 1;
+   gbc.fill = GridBagConstraints.HORIZONTAL;
+   gbc.gridx = 1;
+   gbc.gridy = 1;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 2;
+   add(m_GenerateLabel, gbc);
+
+   m_RemoveInvalidButton = new JButton("Remove Invalid");
+   m_RemoveInvalidButton.setToolTipText(
+"Remove all invalid (red) models from the above list");
+   m_RemoveInvalidButton.addActionListener(this);
+   gbc.weightx = 0;
+   gbc.fill = GridBagConstraints.NONE;
+   gbc.gridx = 2;
+   gbc.gridy = 1;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   //OK, this button was removed because we thought it was a waste
+   //of space.  Instead of removing invalid models, we just explicitly
+   //prevent the user from adding them to the main list.  I'm going to
+   //leave the code in with this final "add" statement commented out
+   //because we are still on the fence as to whether this is a good
+   //idea
+   //add(m_RemoveInvalidButton, gbc);
+
+   m_ModelList = new ModelList();
+
+   m_ModelList.getInputMap().put(
+KeyStroke.getKeyStroke("released DELETE"), "deleteSelected");
+   m_ModelList.getActionMap().put("deleteSelected",
+new AbstractAction("deleteSelected") {
+     /** for serialization */
+     private static final long serialVersionUID = -3351194234735560372L;
+
+     public void actionPerformed(ActionEvent evt) {
+
+Object[] currentModels = m_ModelList.getSelectedValues();
+
+ModelList.SortedListModel dataModel = ((ModelList.SortedListModel) m_ModelList.getModel());
+
+for (int i = 0; i < currentModels.length; i++) {
+  dataModel.removeElement((EnsembleLibraryModel) currentModels[i]);
+}
+
+//Shrink the selected range to the first index that was selected
+int selected[] = new int[1];
+selected[0] = m_ModelList.getSelectedIndices()[0];
+m_ModelList.setSelectedIndices(selected);
+
+     }
+   });
+
+   m_ModelList
+   .setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+   m_ModelList.setLayoutOrientation(JList.VERTICAL);
+   m_ModelList.setVisibleRowCount(-1);
+
+   JPanel modelListPanel = new JPanel();
+   modelListPanel.setBorder(
+BorderFactory.createTitledBorder("Working Set of Newly Generated Models"));
+
+   JScrollPane listView = new JScrollPane(m_ModelList);
+   //listView.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+   listView.setPreferredSize(new Dimension(150, 50));
+
+   modelListPanel.setLayout(new BorderLayout());
+   modelListPanel.add(listView, BorderLayout.CENTER);
+
+   gbc.weightx = 1;
+   gbc.weighty = 1;
+   gbc.fill = GridBagConstraints.BOTH;
+   gbc.gridx = 0;
+   gbc.gridy = 2;
+   gbc.gridwidth = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   add(modelListPanel, gbc);
+
+   m_RemoveSelectedButton = new JButton("Remove Selected");
+   m_RemoveSelectedButton.setToolTipText("Remove all currently selected models from the above list");
+   m_RemoveSelectedButton.addActionListener(this);
+   gbc.weightx = 1;
+   gbc.weighty = 0;
+   gbc.fill = GridBagConstraints.HORIZONTAL;
+   gbc.gridx = 0;
+   gbc.gridy = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   add(m_RemoveSelectedButton, gbc);
+
+   m_AddSelectedButton = new JButton("Add Selected");
+   m_AddSelectedButton.setToolTipText(
+"Add selected models in the above list to the model library");
+   m_AddSelectedButton.addActionListener(this);
+   gbc.weightx = 1;
+   gbc.fill = GridBagConstraints.HORIZONTAL;
+   gbc.gridx = 1;
+   gbc.gridy = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   add(m_AddSelectedButton, gbc);
+
+   m_AddAllButton = new JButton("Add All");
+   m_AddAllButton.setToolTipText(
+"Add all models in the above list to the model library");
+   m_AddAllButton.addActionListener(this);
+   gbc.weightx = 1;
+   gbc.fill = GridBagConstraints.HORIZONTAL;
+   gbc.gridx = 2;
+   gbc.gridy = 3;
+   gbc.anchor = GridBagConstraints.WEST;
+   gbc.gridwidth = 1;
+   add(m_AddAllButton, gbc);
+ }
+
+
+
+
+
+###############################################
+select integer
+###############################################
+
+select field from table where field REGEXP '^-?[0-9]+$';
+SELECT Max(column_name) from table_name where column_name REGEXP '^[0-9]+$'
+
+###############################################
+WEKA_Ecosystem.pdf
+http://www.cs.waikato.ac.nz/~eibe/WEKA_Ecosystem.pdf
+###############################################
+
+
+java -Xmx512m -classpath /Users/chl/weka/weka.jar:/Library/Java/libsvm.jar weka.gui.GUIChooser
+export CLASSPATH="/Users/chl/weka/weka.jar:~/Library/Java/*"
+
+java -classpath $CLASSPATH:weka.jar:libsvm.jar weka.gui.GUIChooser
+java -Xmx512m -classpath $CLASSPATH:weka.jar
+
+weka weka.classifiers.trees.RandomTree -t iris.arff -i
+
+
+sudo apt-get install octave
+sudo apt-get install octave-java
+
+Load and output a dataset in WEKA’s ARFF format by
+creating an ArffLoader object:
+l = javaObject("weka.core.converters.ArffLoader")
+l.setFile(javaObject("java.io.File",
+ "weka-3-7-11/data/iris.arff"))
+d = l.getDataSet
+d.toString
+
+• Build and output a J48 decision tree:
+c = javaObject("weka.classifiers.trees.J48")
+d.setClassIndex(d.numAttributes - 1)
+c.buildClassifier(d)
+c.toString
+
+
+Save data in Matlab format, load it back, and plot it:
+s = javaObject("weka.core.converters.MatlabSaver")
+s.setFile(javaObject("java.io.File", "iris.data"))
+s.setInstances(d)
+s.writeBatch
+m = load("iris.data")
+scatter(m(:, 3), m(:, 4), 20, m(:, 5))
+
+
+Build classifier from reduced dataset:
+f = javaObject("weka.filters.unsupervised.
+ attribute.Remove")
+f.setAttributeIndices("1-2")
+f.setInputFormat(d)
+rD = javaMethod("useFilter",
+ "weka.filters.Filter", d, f)
+c.buildClassifier(rD)
+c.toString
+
+
+
+
+Finding the most important predictors
+as = javaObject("weka.attributeSelection.
+! ! AttributeSelection")
+s = javaObject("weka.attributeSelection.GreedyStepwise")
+s.setSearchBackwards(true)
+as.setSearch(s)
+e = javaObject("weka.attributeSelection.
+!!! WrapperSubsetEval")
+e.setClassifier(javaObject("weka.
+!!! classifiers.trees.J48"))
+as.setEvaluator(e)
+as.SelectAttributes(d)
+as.toResultsString
+
+
+
+
+
+Build a classifier with attribute selection
+• Build a tree based on selected attributes:
+c = javaObject("weka.classifiers.meta.
+!!!AttributeSelectedClassifier")
+c.setEvaluator(e)
+c.setSearch(s)
+c.setClassifier(javaObject("weka.
+!!!!classifiers.trees.J48"))
+c.buildClassifier(d)
+c.toString
+
+
+###########################################################################
+/////////////////////// install RWeka package /////////////////////////////
+###########################################################################
+
+sudo apt-get install r-base
+install.packages("RWeka", dependencies = TRUE)
+library(RWeka)
+
+RPlugin package for WEKA 3.7 provides:
+java weka.core.WekaPackageManager -install-package RPlugin
+R.home(component = "home")
+install.packages("rJava")
+
+sudo apt-get install python-pip python-numpy python-dev python-imaging python-matplotlib  python-pygraphviz imagemagick
+sudo pip install javabridge python-weka-wrapper
+pip install --upgrade pip
+sudo pip install numpy pandas scipy sklearn scikit-learn
+
+
+/////////////////////////////  Using WEKA from Python /////////////////////////////
+
+• First, need to start the JVM from Python:
+import weka.core.jvm as jvm
+jvm.start()
+• We can get help on the commands:
+help(jvm.start)
+• Load and print some data in ARFF format:
+from weka.core.converters import Loader
+l = Loader("weka.core.converters.ArffLoader")
+d = l.load_file("weka-3-7-11/data/iris.arff")
+d.set_class_index(d.num_attributes() - 1)
+print(d)
+
+
+/////////////////////////////  Building and evaluating a classifier /////////////////////////////
+
+• Build and print a decision tree:
+from weka.classifiers import Classifier
+c = Classifier("weka.classifiers.trees.J48")
+c.build_classifier(d)
+print(c)
+• Evaluate classifier using cross-validation:
+from weka.classifiers import Evaluation
+from weka.core.classes import Random
+e = Evaluation(d)
+e.crossvalidate_model(c, d, 10, Random(1))
+print(e.percent_correct())
+print(e.to_summary())
+print(e.to_class_details())
+
+/////////////////////////////  Visualize classifier based on filtered data /////////////////////////////
+
+from weka.filters import Filter
+r =Filter("weka.filters.unsupervised.attribute.Remove",
+ options = ["-R", "1, 2"])
+r.set_inputformat(d)
+rD = r.filter(d)
+c.build_classifier(rD)
+import weka.plot.graph as graph
+graph.plot_dot_graph(c.graph())
+import weka.plot.dataset as pld
+pld.scatter_plot(rD, 0, 1, percent=100)
+
+
+
+
+
+/////////////////////////////  Visualize class probabilities /////////////////////////////
+r = range(0, rD.num_instances())
+x = [rD.get_instance(i).get_value(0) for i in r]
+y = [rD.get_instance(i).get_value(1) for i in r]
+p = [c.distribution_for_instance(rD.get_instance(i))
+ for i in r]
+import matplotlib.pyplot as plot
+plot.scatter(x, y, 20, p)
+plot.show()
+
+
+
+
+///////////////////////////// Plot grid of predictions  /////////////////////////////
+
+s0 = rD.get_attribute_stats(0).numeric_stats()
+s1 = rD.get_attribute_stats(1).numeric_stats()
+r = range(0,101)
+x = [s0.min()+(s0.max()-s0.min())*i/100 for i in r]
+y = [s1.min()+(s1.max()-s1.min())*i/100 for i in r]
+gD = d.template_instances(rD)
+from weka.core.dataset import Instance
+for i in range(len(x)):
+ for j in range(len(y)):
+ gD.add_instance(Instance.
+create_instance([x[i], y[j], 0]))
+r = range(0, gD.num_instances())
+x = [gD.get_instance(i).get_value(0) for i in r]
+y = [gD.get_instance(i).get_value(1) for i in r]
+p = [c.distribution_for_instance(gD.get_instance(i))
+!!! for i in r]
+import matplotlib.pyplot as plot
+plot.scatter(x, y, 20, p)
+plot.show()
+
+
+
+
+
+///////////////////////////// Cluster data and visualize clusters /////////////////////////////
+r =Filter("weka.filters.unsupervised.attribute.Remove",
+options = ["-R", "last"])
+r.set_inputformat(rD)
+rD = r.filter(rD)
+from weka.clusterers import Clusterer
+clu = Clusterer("weka.clusterers.SimpleKMeans",
+ options = ["-N", "3"])
+clu.build_clusterer(rD)
+print(clu)
+r = range(0, rD.num_instances())
+x = [rD.get_instance(i).get_value(0) for i in r]
+y = [rD.get_instance(i).get_value(1) for i in r]
+p = [clu.distribution_for_instance(rD.get_instance(i))
+ for i in r]
+import matplotlib.pyplot as plot
+plot.scatter(x, y, 20, p)
+plot.show()
+
+
+
+///////////////////////////// Attribute selection /////////////////////////////
+
+from weka.attribute_selection import
+ASSearch, ASEvaluation, AttributeSelection
+s = ASSearch("weka.attributeSelection.GreedyStepwise",
+ options = ["-B"])
+e = ASEvaluation("weka.attributeSelection.
+ WrapperSubsetEval",
+ options=["-B", ".J48"])
+attS = AttributeSelection()
+attS.set_search(s)
+attS.set_evaluator(e)
+attS.select_attributes(d)
+print(attS.to_results_string())
+
+
+
+/////////////////////////////  Build a classifier with attribute selection /////////////////////////////
+
+• Build a tree based on selected attributes:
+c = Classifier("weka.classifiers.meta.
+ AttributeSelectedClassifier",
+ options = ["-S", ".GreedyStepwise -B", "-E",
+ ".WrapperSubsetEval -B .J48"])
+c.build_classifier(d)
+print(c)
+• Estimate performance of model with attribute selection:
+from weka.classifiers import Evaluation
+from weka.core.classes import Random
+e = Evaluation(d)
+e.crossvalidate_model(c, d, 10, Random(1))
+print(e.to_summary())
+
+
+
+
+
+/////////////////////////////  Managing WEKA packages from Python /////////////////////////////
+
+import weka.core.packages as packages
+items = packages.get_all_packages()
+for item in items:
+ if item.get_name() == "CLOPE":
+ print item.get_name(), item.get_url()
+packages.install_package("CLOPE")
+items = packages.get_installed_packages()
+for item in items:
+ print item.get_name(), item.get_url()
+from weka.clusterers import Clusterer
+clu = Clusterer("weka.clusterers.CLOPE")
+clu.build_clusterer(rD)
+print(clu)
+packages.uninstall_package("CLOPE")
+items = packages.get_installed_packages()
+for item in items:
+ print item.get_name(), item.get_url()
+
+
+
+
+
+
+
+
+
+///////////////////////////// Setting up WEKA and transferring data Hadoop /////////////////////////////
+
+• Set the Java CLASSPATH to point to WEKA:
+export CLASSPATH=/home/eibe/weka-3-7-11/weka.jar
+• Install the necessary WEKA packages:
+java weka.core.WekaPackageManager
+ -install-package distributedWekaHadoop
+• Save some data in CSV format in HDFS:
+java weka.Run .HDFSSaver -i ~/weka-3-7-11/data/iris.arff
+ -dest /users/eibe/input/classification/iris.csv
+ -saver "weka.core.converters.CSVSaver -N"
+• Check that the data is in fact in HDFS:
+hadoop-1.2.1/bin/hadoop fs
+ -cat /users/eibe/input/classification/iris.csv
+
+
+
+
+
+
+
+/////////////////////////////  Running some WEKA jobs /////////////////////////////
+
+• Create an ARFF file with summary information in HDFS:
+java weka.Run .ArffHeaderHadoopJob
+ -input-paths /users/eibe/input/classification
+ -output-path /users/eibe/output
+ -A sepallength,sepalwidth,petallength,petalwidth,class
+ -header-file-name iris.header.arff
+• Can check on jobs by browsing to: http://localhost:50030
+• Check the header file:
+hadoop-1.2.1/bin/hadoop fs
+ -cat /users/eibe/output/arff/iris.header.arff
+• Compute correlation matrix:
+java weka.Run .CorrelationMatrixHadoopJob
+ -existing-header /users/eibe/output/arff/iris.header.arff
+ -class last -input-paths /users/eibe/input/classification
+ -output-path /users/eibe/output
+
+
+
+
+
+
+///////////////////////////// Building and evaluating classifiers /////////////////////////////
+• Build an ensemble of J48 trees (using "dagging"):
+java weka.Run .WekaClassifierHadoopJob
+ -existing-header /users/eibe/output/arff/iris.header.arff
+ -class last -input-paths /users/eibe/input/classification
+ -output-path /users/eibe/output
+ -W weka.classifiers.trees.J48
+ -model-file-name J48_dist.model
+ -randomized-chunks -num-chunks 10
+• Evaluate the classifier using cross-validation in Hadoop:
+java weka.Run .WekaClassifierEvaluationHadoopJob
+ -existing-header /users/eibe/output/arff/iris.header.arff
+ -class last -input-paths /users/eibe/input/classification
+ -output-path /users/eibe/output
+ -W weka.classifiers.trees.J48
+ -model-file-name J48_dist.model
+ -randomized-chunks -num-chunks 10 -num-folds 10
+
+
+
+
+##############################################
+https://github.com/dataminingcrm/weka
+###############################################
+
+sudo apt install git
+git clone https://github.com/dataminingcrm/weka.git
+cp config.properties.template config.properties
+
+chmod +x build.sh
+./build.sh
+
+
+java -classpath dataminingcrm.jar weka.salesforce.Sobj2arff
+java weka.core.converters.SalesforceDataLoader -username {SFDC username} -password {SFDC password} -token {SFDC token} -url {SFDC Login URL} -query {SOQL dataset to retrieve} -relation {SObject Name (typically FROM clause in SOQL)} -class {Query result field name used as classifier}
+
+
+config.properties
+
+url=https://login.salesforce.com	The Salesforce login endpoint. Use https://test.salesforce.com for sandboxes.
+username=username@domain.org		Salesforce username.
+password=org_password			Salesforce password.
+token=security_token			Salesforce security token.
+dataSource=Opportunity			The Salesforce object (table) to be converted to ARFF.
+query=SELECT * FROM Opportunity  	The SOQL query to be executed.
+class=IsWon				The field on dataSource to be used as classifer.
+
+
+java -classpath $CLASSPATH:weka.jar:libsvm.jar weka.gui.GUIChooser  (linux )
+
+
+
+
