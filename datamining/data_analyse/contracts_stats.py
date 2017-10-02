@@ -64,5 +64,15 @@ http://data.gov.ro/dataset/achizitii-publice-2016-continuare
 http://data.gov.ro/dataset/achizitii-publice-2010-2015-anunturi-de-participare
 http://data.gov.ro/dataset/achizitii-publice-2010-2015-invitatii-de-participare
 
+
+http://data.gov.ro/dataset/achizitii-publice-2007-2016-contracte6
+https://www.europeandataportal.eu/data/en/dataset/achizitii-publice-2007-2016-contracte6
+https://www.europeandataportal.eu/mqa-service/en/catalogue/data-gov-ro/distributions
+http://data.gov.ro/dataset/contracte-de-achizitii-publice-incheiate-pe-anul-2016
+http://data.gov.ro/dataset/centralizator-achizitii-publice-2016
+http://data.gov.ro/dataset/achizitii-publice
+http://data.gov.ro/dataset/achizitii-publice-2017
+http://data.gov.ro/dataset/achizitii-publice-2017#
+
 """
 
