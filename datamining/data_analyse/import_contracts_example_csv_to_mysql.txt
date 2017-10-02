@@ -1,0 +1,132 @@
+ sudo chmod -R +w /var/www/html/
+
+###########################################
+#
+#	get csv columns number
+#
+###########################################
+
+<?php
+
+$file_name = "contracte-2017-t2.csv";
+$file = fopen($file_name, "r");
+
+while ($line = fgetcsv($file)){
+	$cols = explode("^",$line[0]);
+	print "<pre>";
+	print_r($cols);
+	echo "Cols: ".count($cols); // 39
+	die();
+}
+
+-------------------------------------------------
+
+import sys, traceback
+import csv
+import os
+import string
+
+datafilename = 'contracte-2017-t2.csv'
+d = '\t'
+f=open(datafilename,'r')
+
+reader=csv.reader(f,delimiter=d)
+ncol=len(next(reader)) # Read first line and count columns
+f.seek(0)              # go back to beginning of file
+for row in reader:
+
+	#print(row)
+	col = row[0].split('^',-1)
+	print(col)
+	print(len(col)) // 39
+	sys.exit(0)
+	os._exit(1)
+
+
+---------------------------------------------
+
+###########################################
+#
+#	Create SQL Table
+#
+###########################################
+
+<?php
+
+$table = "namex";
+$ar = array(
+"Castigator", "CastigatorCUI", "CastigatorTara", "CastigatorLocalitate", "CastigatorAdresa",
+"Tip", "TipContract", "TipProcedura", "AutoritateContractanta", "AutoritateContractantaCUI",
+"TipAC", "TipActivitateAC", "NumarAnuntAtribuire", "DataAnuntAtribuire", "TipIncheiereContract",
+"TipCriteriiAtribuire", "CuLicitatieElectronica", "NumarOfertePrimite", "Subcontractat", "NumarContract",
+"DataContract", "TitluContract", "Valoare", "Moneda", "ValoareRON", "ValoareEUR", "CPVCodeID", "CPVCode",
+"NumarAnuntParticipare", "DataAnuntParticipare", "ValoareEstimataParticipare", "MonedaValoareEstimataParticipare",
+"FonduriComunitare", "TipFinantare", "TipLegislatieID", "FondEuropean", "ContractPeriodic", "DepoziteGarantii",
+"ModalitatiFinantare",
+);
+
+$sql = "CREATE TABLE $table (";
+foreach($ar as $col){
+	$sql .= "$col VARCHAR(90),";
+}
+$sql .= ");";
+echo $sql;
+
+---------------------------------------------
+
+mysql -u root -p
+
+# Import CSV into SQL
+LOAD DATA LOCAL INFILE 'contracte-2017-t2.csv' INTO TABLE namex FIELDS TERMINATED BY '^' LINES TERMINATED BY '\n';
+
+# Create Index
+ALTER TABLE `namex` ADD `id` INT NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`);
+
+# Select Data
+SELECT count(*) AS Total, CastigatorTara FROM `namex` WHERE 1 GROUP BY CastigatorTara ORDER BY Total DESC
+SELECT CastigatorTara , count(*) AS Total FROM `namex` WHERE 1 GROUP BY CastigatorTara ORDER BY Total DESC
+SELECT TipFinantare , count(*) AS Total FROM `namex` WHERE 1 GROUP BY TipFinantare ORDER BY Total DESC
+
+
+SELECT CastigatorTara, CastigatorLocalitate, `TipContract` ,ROUND(Valoare,0) FROM `namex` WHERE 1
+
+---------------------------------------------
+
+
+https://www.onlinecharttool.com/  	# csv import
+https://www.meta-chart.com/bar#/data   	# 3d
+https://www.meta-chart.com/pie		# 3d
+https://plot.ly/create/ 		# csv import
+http://chartpart.com/
+https://live.amcharts.com/
+https://live.amcharts.com/new/edit/
+
+http://chartpart.com/
+https://livegap.com/charts/app.php?lan=en
+http://charts.hohli.com/
+https://nces.ed.gov/nceskids/createagraph/
+https://developers.google.com/chart/
+http://chartgen.blogspot.de/
+https://www.chartgo.com/example.do?id=6&type=example&language=en&chart=bar
+https://google-developers.appspot.com/chart/interactive/docs/gallery/treemap
+http://www.heavytrader.it/google-chart-generator.php
+
+http://www.hongkiat.com/blog/22-useful-chart-graph-diagram-generators/
+https://www.draw.io/
+
+
+
+
+
+http://data.gov.ro
+http://data.gov.ro/dataset/achizitii-publice-2017#
+http://data.gov.ro/da_DK/dataset/achizitii-publice-2017/
+http://data.gov.ro/dataset/achizitii-publice-2017/
+http://data.gov.ro/sk/dataset/achizitii-publice-2017/
+http://data.gov.ro/dataset/achizitii-publice-2017/
+https://www.ecb.europa.eu/paym/t2/professional/participation/html/index.en.html
+https://github.com/johnturingan/gulp-advanced-csv-to-json
+
+
+
+
