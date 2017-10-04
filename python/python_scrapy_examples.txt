@@ -1,0 +1,82 @@
+########################################################################
+#
+#  Python scrapy
+#
+########################################################################
+
+----------------------------------------------------------------------------------------
+
+https://scrapy.org
+https://docs.scrapy.org/en/latest/
+
+
+
+pip install scrapy
+cat > myspider.py <<EOF
+import scrapy
+
+class BlogSpider(scrapy.Spider):
+	name = 'blogspider'
+	start_urls = ['https://blog.scrapinghub.com']
+
+	def parse(self, response):
+	    for title in response.css('h2.entry-title'):
+	        yield {'title': title.css('a ::text').extract_first()}
+
+	    for next_page in response.css('div.prev-post > a'):
+	        yield response.follow(next_page, self.parse)
+	EOF
+scrapy runspider myspider.py
+
+----------------------------------------------------------------------------------------
+
+
+pip install shub
+shub login
+Insert your Scrapinghub API Key: <API_KEY>
+
+# Deploy the spider to Scrapy Cloud
+shub deploy
+
+# Schedule the spider for execution
+shub schedule blogspider
+Spider blogspider scheduled, watch it running here:
+https://app.scrapinghub.com/p/26731/job/1/8
+
+# Retrieve the scraped data
+shub items 26731/1/8
+{"title": "Improved Frontera: Web Crawling at Scale with Python 3 Support"}
+{"title": "How to Crawl the Web Politely with Scrapy"}
+----------------------------------------------------------------------------------------
+
+
+########################################################################
+#
+#  Python passing parameters in urls
+#
+########################################################################
+
+
+http://docs.python-requests.org/en/latest/user/quickstart/#passing-parameters-in-urls
+
+
+>>> payload = {'key1': 'value1', 'key2': ['value2', 'value3']}
+>>> r = requests.get('http://httpbin.org/get', params=payload)
+>>> print(r.url)
+http://httpbin.org/get?key1=value1&key2=value2&key2=value3
+
+----------------------------------------------------------------------------------------
+
+
+>>> import requests
+>>> r = requests.get('https://api.github.com/events')
+>>> r.text
+u'[{"repository":{"open_issues":0,"url":"https://github.com/...
+>>> r.encoding
+'utf-8'
+>>> r.encoding = 'ISO-8859-1'
+
+
+>>> payload = {'key1': 'value1', 'key2': 'value2'}
+>>> r = requests.post("http://httpbin.org/post", data=payload)
+>>> print(r.text)

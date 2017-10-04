@@ -207,3 +207,27 @@ echo $date->format("Y-m-d");
 echo date('Y-m-d H:i:s', strtotime("+7 day"));
 // This is what you need for future date from specific date.
 echo date('Y-m-d H:i:s', strtotime('01/01/2010 +7 day'));
+
+
+
+
+###################################################
+#
+# disable ONLY_FULL_GROUP_BY
+#
+###################################################
+
+SET sql_mode = 'ONLY_FULL_GROUP_BY';
+SET sql_mode = '';
+
+mysql > SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
+
+sudo nano /etc/mysql/my.cnf
+Add this to the end of the file
+[mysqld]
+sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+sudo service mysql restart to restart MySQL
+
+SELECT @@sql_mode
+ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+SET sql_mode = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
