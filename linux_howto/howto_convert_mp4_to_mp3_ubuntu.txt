@@ -858,6 +858,50 @@ ffprobe -analyzeduration 1000000000 -probesize 1000000000 -i canon_hf_100_fxp_10
 ffmpeg -probesize 50M -analyzeduration 100M -i vts.vob
 
 
+#################################################################
+#
+#
+#
+#################################################################
+
+MP4
+
+ffmpeg -y -i source.mp4 -r 25 -s 160x90 -c:v libx264 -b:v 3M -strict -2 -movflags faststart destination.mp4
+Here’s a short explanation on what every parameter does:
+
+-y : overwrite output files without asking
+-i source.mp4 : input file name
+-r 25 : output frame rate (in frames per second)
+-s 160x90 : output frame size (in pixel) - inserts the scale video filter
+-c:v libx264 : output video encoder
+-c:v is short for -codec:v and -vcodec
+-b:v 3M : video bitrate (in bit/s) passed to libx264 encoder
+-strict -2 : governs standards compliance; -2 allows experimental features -
+-movflags faststart : move the index to the beginning of the output file (mov and mp4 format specific parameter)
+--preset placebo --tune film --crf 22 --level 4.1 --threads 1 --thread-input --sar 12:11 --output
+
+
+MP3
+
+ffmpeg -i input1.mp3 -i input2.mp3 -filter_complex amerge -ac 2 -c:a libmp3lame -q:a 4 output.mp3
+See the amerge filter online documentation and FFmpeg Wiki: Audio Channel Manipulation for more examples, info, and options.
+-ac 2 will make a stereo output. This is useful if you're merging two stereo inputs: amerge will make a 4 channel output and -ac 2 will downmix it to stereo.
+Refer to Hydrogenaudio Wiki: Recommended LAME encoder settings to get an idea of what -q:v value (audio quality) you may want.
+
+
+MIX 2 MP4
+ffmpeg -i a.mp4  -i b.mp4  -strict -2 -y -r 25 -c:v libx264 -b:v 3M -strict -2 -movflags faststart    output.mp4
+
+COMPRESS HARD MP4
+ffmpeg -i a.avi -c:v libx264 -crf 34 -b:v 1M -c:a aac -strict -2 -preset ultrafast  -threads 2  output.mp4
+
+COMPRESS HARD MP4 AND RESIZE
+ffmpeg -i a.avi -c:v libx264 -s 960x540 -crf 34 -b:v 1M -c:a aac -strict -2 -preset ultrafast  -threads 2  output.mp4
+
+
+
+
+
 
 
 
