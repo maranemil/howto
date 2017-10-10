@@ -1,0 +1,233 @@
+Error mounting /dev/mmcblk0p1 at /media/charly/Kingston: Command-line `mount -t "ext4" -o "uhelper=udisks2,nodev,nosuid" "/dev/mmcblk0p1" "/media/charly/Kingston"' exited with non-zero exit status 32:
+mount: wrong fs type, bad option, bad superblock on /dev/mmcblk0p1,
+       missing codepage or helper program, or other error
+       In some cases useful info is found in syslog - try
+       dmesg | tail  or so
+
+
+
+
+Code:
+Error mounting /dev/sdb1 at /media/bender/Saturn: Command-line `mount -t "ext4" -o "uhelper=udisks2,nodev,nosuid" "/dev/sdb1" "/media/bender/Saturn"'
+exited with non-zero exit status 32: mount: wrong fs type, bad option, bad superblock on /dev/sdb1, missing codepage or helper program, or other error
+In some cases useful info is found in syslog - try dmesg | tail  or so
+
+
+
+sudo fsck.ext4 -n /dev/sdc2
+sudo e2fsck -fn /dev/sdc2
+
+
+sudo e2fsck -b 8193 /dev/sdc2
+sudo e2fsck -b 32768 /dev/sdc2 -fn
+sudo e2fsck -f -c -b 32768 /dev/sdc2
+sudo e2fsck -p -c -b 32768 /dev/sdc2
+
+
+Usage: e2fsck [-panyrcdfktvDFV] [-b superblock] [-B blocksize]
+		[-l|-L bad_blocks_file] [-C fd] [-j external_journal]
+		[-E extended-options] [-z undo_file] device
+
+Notfallhilfe:
+ -p        automatische Reparatur (keine Fragen)
+ -n        keine Veränderungen am Dateisystem vornehmen
+ -y        alle Fragen mit »Ja« beantworten
+ -c        defekte Blöcke suchen
+ -f        Überprüfung auch dann erzwingen, wenn alles i.O. scheint
+ -v                   Be verbose
+ -b superblock        Use alternative superblock
+ -B blocksize         Force blocksize when looking for superblock
+ -j external_journal  Set location of the external journal
+ -l bad_blocks_file   Add to badblocks list
+ -L bad_blocks_file   Set badblocks list
+ -z undo_file         Create an undo file
+
+
+
+
+sudo fdisk -l
+sudo parted -l
+
+sudo apt-get install testdisk
+sudo testdisk
+
+
+sudo apt-get upgrade 2>&1 | tee ~/apt-get.log
+cd /home/bender/Desktop/Saturn-Full-Analyze-Log/
+testdisk 2>&1 | tee Saturn_Full_Analyze.txt
+
+
+
+wget http://downloads.sourceforge.net/project/e2fsprogs/e2fsprogs/v1.43.1/e2fsprogs-1.43.1.tar.gz
+tar xzf e2fsprogs-1.43.1.tar.gz
+cd e2fsprogs-1.43.1
+./configure # <== if this step fail, check the config.log file, it could just be that you are missing the "libc6-dev" package on your system
+make
+cd e2fsck/
+./e2fsck
+
+Then done as follows:
+
+./e2fsck -p -b 32768 /dev/sdb1
+./e2fsck -p -b 32768 /dev/sdb9
+./e2fsck -p -v /dev/sdb1
+./e2fsck -p -v /dev/sdb9
+
+
+
+sudo mount | grep /dev/sdc2
+sudo lsblk -a # Shows drive topologies
+
+blkid
+/dev/sdc1: LABEL="boot" UUID="70CD-BC89" TYPE="vfat" PARTUUID="c26357be-01"
+/dev/sdc2: UUID="8a9074c8-46fe-4807-8d6r-8ab1c4959010" TYPE="ext4" PARTUUID="c26357be-02"
+
+ tune2fs -l /dev/sda1 | grep magic
+sudo cat /proc/mounts | grep /dev/sda1
+
+sudo cat /proc/mounts | grep /dev/sdc1
+/dev/sdc1 /media/emil/boot vfat ro,nosuid,nodev,relatime,uid=1000,gid=1000,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,showexec,utf8,flush,errors=remount-ro 0 0
+
+sudo mount /dev/sda /mnt
+sudo mount -o ext2 /dev/sda /mnt
+sudo mount -o ext4 /dev/sdc2 /mnt
+
+
+mount: /dev/sdc2 is write-protected, mounting read-only
+mount: wrong fs type, bad option, bad superblock on /dev/sdc2,
+       missing codepage or helper program, or other error
+
+       In some cases useful info is found in syslog - try
+       dmesg | tail or so.
+
+df -h /dev/sdc1
+
+sudo mount -o rw /dev/sdc2 /mnt
+sudo mount -o ro,norecovery,loop,offset=1048576 /dev/sdc2 /media
+
+
+
+sudo fdisk -l
+sudo ls -l /dev/sdc2
+sudo mount --options remount,rw /dev/sdc2
+sudo mount -o remount,rw /dev/sdc2
+sudo fsck.vfat -v /dev/sdc2
+sudo blkid
+sudo chown -hR emil /dev/sdc2
+sudo chmod -R 777 /dev/sdc2
+sudo mount -orw,remount /dev/sdc2
+
+hdparm -r0 /dev/sdc  # BLKROSET failed: Permission denied
+hdparm -z /dev/sdc
+sudo mount -o rw /dev/sdc2 /mnt
+
+#format
+wipefs -a /dev/sdc2/
+
+
+
+mkdosfs -F 32 /dev/sdc2/
+sudo mount -t vfat -o rw,user,uid=1000,gid=1000 /dev/sdc2 /media/
+file -s /dev/sdc2
+cfdisk -z /dev/sdc2
+dmesg | tail -22
+fdisk -l /dev/sdc2
+dd if=/dev/sdc2 bs=512 count=1 | hexdump -C
+dd if=/dev/zero of=/dev/sdc2 bs=512 count=1
+
+sudo fsck /dev/sdc
+sudo fsck -n /dev/sdc
+sudo e2fsck -fn -b 32768 /dev/sdc2
+
+
+mount -v | grep "^/" | awk '{print "\nPartition identifier: " $1  "\n Mountpoint: "  $3}'
+sudo umount /dev/sdc2
+sudo mount -t hfsplus -o rw,remount -force /dev/sdc2 /media/
+
+
+lsusb
+
+
+dd if=/dev/zero of=/dev/sdc* bs=512 count=1
+dd if=/dev/zero of=/dev/sdc* bs=2M
+sudo parted -l
+
+
+
+----------------------------------
+# from RPy
+----------------------------------
+fsck -fy /dev/mmcblk0p2
+reboot
+touch /forcefsck
+reboot
+
+dosfsck -r /dev/mmcblk0p2
+sudo raspi-config
+sudo fsck /dev/mmcblk0p2
+
+
+# debug
+journalctl -xb
+journalctl -xe
+systemctl --failed
+journalctl -b
+
+
+Press Ctrl+Alt+F2
+That should bring up a plain login screen.
+Login as pi/raspberry then use
+sudo raspi-config
+to reset the auto login.
+Reboot.
+
+
+press Ctrl+Alt+F2 to get out of scratch and back to the boot window.
+Then press Ctrl+c to interrupt the process.
+Then press Ctrl+c again to cancel the shutdown of the system.
+
+
+
+***
+[FAILED] Failed to start Login Service
+See "systemctl status systemd-logind.service" for details.
+
+Failed] Failed to start Login Service.
+See 'systemctl status systemd-logind.service' for details.
+
+https://www.freedesktop.org/software/systemd/man/systemd-logind.service.html
+http://k3a.me/how-to-make-raspberrypi-truly-read-only-reliable-and-trouble-free/
+-----------
+
+
+
+cat /media/etc/os-release
+PRETTY_NAME="Raspbian GNU/Linux 8 (jessie)"
+NAME="Raspbian GNU/Linux"
+VERSION_ID="8"
+VERSION="8 (jessie)"
+ID=raspbian
+ID_LIKE=debian
+HOME_URL="http://www.raspbian.org/"
+SUPPORT_URL="http://www.raspbian.org/RaspbianForums"
+BUG_REPORT_URL="http://www.raspbian.org/RaspbianBugs"
+
+
+
+http://www.netzmafia.de/skripten/hardware/RasPi/RasPi_Network.html
+http://www.diegoacuna.me/how-to-run-a-script-as-a-service-in-raspberry-pi-raspbian-jessie/
+https://www.desgehtfei.net/?p=30
+https://openhabdoc.readthedocs.io/de/latest/Raspberry/
+https://www.opendisplaycase.de/tutorials/raspberry-pi-autostart-von-skripten.html
+https://www.dexterindustries.com/howto/run-a-program-on-your-raspberry-pi-at-startup/
+
+
+
+
+https://kofler.info/raspbian-lite-fuer-den-read-only-betrieb/
+https://www.raspberrypi.org/blog/raspbian-stretch/
+https://cdimage.debian.org/mirror/cdimage/
+
+##################################
+
+http://php.net/manual/de/function.getopt.php
