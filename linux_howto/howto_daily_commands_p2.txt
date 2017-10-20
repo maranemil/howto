@@ -660,3 +660,77 @@ Alt-F10 | arrow right or left to gear icon | arrow down to Log Out
 
 sudo service lightdm restart
 systemctl restart lightdm
+
+
+
+
+
+##################################
+#
+# Recover Apple Data Account
+#
+##################################
+
+fsck -fy   # Check the boot volume's file system
+mount -uw / # Remount the boot volume, enabling write access
+ls –l /dev/disk*
+fstyp /dev/disk1s2 # Check the file system used by the drive we want to mount
+rm /var/db/.applesetupdone
+shutdown -h now
+
+
+sh /etc/rc # Starting daemons
+# http://www.westwind.com/reference/os-x/commandline/single-user.html
+# https://www.heise.de/ct/hotline/Mac-OS-Neues-Admin-Konto-ohne-Installations-DVD-1143568.html
+
+
+Now we create a folder to mount the drive to. For easy access let’s make a folder on the root called “drive2”.
+mkdir /drive2
+
+Now it’s time to use all this information in the mount command
+mount –t ntfs /dev/disk1s2 /drive2
+
+With some luck it worked. We check to see if our files and folders are there.
+ls –l /drive2
+
+If the device was a HFS/HFS+ volume (Mac OS) then we would use this command:
+mount –t hfs /dev/disk1s2 /drive2
+
+USB hard drives and flash drives would use similar syntax depending on what file system the device was formatted with eg. NTFS (windows), HFS (mac), MSDOS (older / smaller usb sticks).
+
+For a CD…
+mount –t cd9660 /dev/disk1s2 /drive2
+
+For a DVD…
+mount –t udf /dev/disk1s2 /drive2
+if this doesn’t work then try the cd9660 switch as if it was a CD.
+
+We can unmount the device using this command (note spelling of “umount”):
+umount /dev/disk1s2
+
+
+
+#########################################################
+#
+#   Read Sys Hardware
+#
+#########################################################
+
+uname -ar
+
+Linux demo-VirtualBox 4.4.0-96-generic #119-Ubuntu SMP Tue Sep 12 14:59:54 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
+
+sudo lspci
+
+00:00.0 Host bridge: Intel Corporation 440FX - 82441FX PMC [Natoma] (rev 02)
+00:01.0 ISA bridge: Intel Corporation 82371SB PIIX3 ISA [Natoma/Triton II]
+00:01.1 IDE interface: Intel Corporation 82371AB/EB/MB PIIX4 IDE (rev 01)
+00:02.0 VGA compatible controller: InnoTek Systemberatung GmbH VirtualBox Graphics Adapter
+00:03.0 Ethernet controller: Intel Corporation 82540EM Gigabit Ethernet Controller (rev 02)
+00:04.0 System peripheral: InnoTek Systemberatung GmbH VirtualBox Guest Service
+00:05.0 Multimedia audio controller: Intel Corporation 82801AA AC'97 Audio Controller (rev 01)
+00:06.0 USB controller: Apple Inc. KeyLargo/Intrepid USB
+00:07.0 Bridge: Intel Corporation 82371AB/EB/MB PIIX4 ACPI (rev 08)
+00:0d.0 SATA controller: Intel Corporation 82801HM/HEM (ICH8M/ICH8M-E) SATA Controller [AHCI mode] (rev 02)
+
+
