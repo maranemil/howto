@@ -1516,6 +1516,90 @@ semodule -i squirredlocal.pp
 setenforce 1
 
 
+//---------------------------------------------------
+Are you listening to what SELinux is telling you?
+Red Hat Summit Dan Walsh
+//---------------------------------------------------
+
+netstat -tulpen | grep 11233
+dmesg
+mv -iZ # preserve right rights
+
+setsebool -P httpd_can_sendmail 1
+setsebool -P ftp_home_dir 1
+
+semanage boolean --list
+man httpd_selinux
+setroubleshoot
+
+grep ftp /var/log/audit/audit.log | audit2allow
+allow ftpd_t home_root_t:dir search;
+semanage port -a -t ssh_port_t -p tcp 55 # set port
+semanage port --list
+
+grep postgresql /var/log/audit/audit.log | audit2allow -M mypostgresql
+semodule -i mypostgresql.pp
+
+//---------------------------------------------------
+Demystifying systemd - 2015 Red Hat Summit
+//---------------------------------------------------
+
+service httpd {start|stop|restart|reload}
+systemclt {start|stop|restart|reload} httpd.service
+systemclt -t service # list loaded
+systemclt list-unit-files -t service # list installed services
+systemclt --state failed # show failed services
+
+chkconfig httpd {on,off} # init
+systemctl {enable,disable} httpd
+
+systemctl get-default   # view
+systemctl set-default [target] # set
+systemctl isolate [target] # change
+
+systemctl show --all httpd
+systemctl show -p Restart httpd
+systemctl daemon-reload
+
+systemd-delta # see changes
+systemd-cgtop # see resources
+
+systemctl set-property --runtime httpd CPUShares=2048
+systemctl set-property httpd CPUShares=2048
+
+journalctl  # /var/log/journal # rsyslog
+
+#systemd-nspawn -D /var/lib/container/rhel7
+systemd-socket-proxy
+networkd
+
+
+//---------------------------------------------------
+SELinux For Dummies by  Gary Smith
+//---------------------------------------------------
+
+setenforce enforcing
+ps -efZ
+ls -Z
+/etc/selinux/config
+touch /.autorelabel
+ausearch -i -m AVC,USER_AVC -sv no
+
+/var/log/audit/audit.log
+
+chcon --type=traceroute_exec_t /usr/bin/nmap
+ls -Z /usr/bin/nmap
+semanage fcontext -a -t traceroute_exec_t /usr/bin/nmap
+restorecon /path/to/filename
+
+
+
+
+
+
+
+
+
 
 
 
