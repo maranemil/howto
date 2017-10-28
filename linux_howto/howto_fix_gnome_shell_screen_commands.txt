@@ -1,0 +1,110 @@
+mkdir xorg-server
+cd xorg-server
+
+apt-get source xorg-server
+sudo apt-get build-dep xorg-server
+
+wget bugs.freedesktop.org/attachment.cgi?id=33142
+patch < attachment.cgi\?id\=33142
+#File to patch: xorg-server-1.6.4/xkb/xkbActions.c
+
+sudo apt install devscripts -y
+cd xorg-server-1.6.4/
+debuild -us -uc
+cd ..
+dpkg -i *.deb
+
+----------------------------------------------------------------------------
+https://drive.google.com/drive/folders/0B_avx7RnFL6Ub1hESFZLT21iaG8
+----------------------------------------------------------------------------
+https://gist.github.com/elw00d/0826917118d58e81843e2d11bc6cf885
+
+patch-xorg-ubuntu-16.04.3.sh
+
+# Bug https://bugs.launchpad.net/ubuntu/+source/xorg-server/+bug/1683383
+# Original article https://habrahabr.ru/post/87408/
+
+# create directory
+mkdir xorg-server
+cd xorg-server
+
+# get sources of required package
+# may be need to uncomment 'deb-src' lines in sources.list before
+apt-get source xserver-xorg-core-hwe-16.04
+
+# install dependencies required for building
+sudo apt-get build-dep xserver-xorg-core-hwe-16.04
+
+# download patch
+wget https://bugs.freedesktop.org/attachment.cgi?id=129861
+
+# apply patch
+patch xserver-xorg-core-hwe-16.04_19.3.1/xkb/xkbAction.c < attachment.cgi\?id\=129861
+
+# build
+cd xserver-xorg-core-hwe-16.04_19.3.1/
+debuild -us -uc
+cd ..
+
+# install patched package
+sudo dpkg -i ./xserver-xorg-core-hwe-16.04_1.19.3-1ubuntu1-16.04.2_amd64.deb
+
+# pin version of this package to prevent updating later
+cat <<EOF>> /etc/apt/preferences.d/xserver-xorg-core-hwe
+Package: xserver-xorg-core-hwe-16.04
+Pin: version 2:1.19.3-1ubuntu1~16.04.2
+Pin-Priority: 700
+EOF
+
+# check that pinning works properly
+apt-cache policy xserver-xorg-core-hwe-16.04
+
+
+----------------------------------------------------------------------------
+https://launchpad.net/~spvkgn/+archive/ubuntu/xorg-patches/+sourcepub/8200875/+listing-archive-extra
+----------------------------------------------------------------------------
+https://github.com/plastikat/patch-xkb-layout-switch/blob/master/apt/patch-xkb-layout-switch.sh
+https://github.com/plastikat/patch-xkb-layout-switch
+
+set -eu
+
+# Configuration
+dist_desc=`lsb_release --short --description | sed 's/\s/_/g'`
+config_path="${dist_desc}.conf"
+stat "$config_path" >/dev/null || exit 1
+
+source "$config_path"
+patch_file="xkb.patch"
+
+[ -e "$build_relpath" ] || mkdir -p "$build_relpath"
+cd "$build_relpath"
+
+# Source links might be commented out
+sudo sed -i.orig 's/^#\s*deb-src/deb-src/g' /etc/apt/sources.list
+
+sudo apt-mark unhold $pkg_name
+sudo apt-get update
+sudo apt-get --yes upgrade
+
+# Get source code and dependencies
+sudo apt-get --yes install devscripts
+apt-get source $pkg_name
+sudo apt-get --yes build-dep $pkg_name
+sources_dir=`ls -d */`
+
+# Download and apply patch
+wget -O "$patch_file" "$patch_url"
+patch "${sources_dir}/${target_file_relpath}" < "$patch_file"
+
+# Compile sources and build debs
+pushd "$sources_dir"/
+debuild -us -uc
+popd
+
+# Install patched package
+deb_name=`ls $pkg_name*.deb | grep -v dbg`
+sudo dpkg -i "./$deb_name"
+
+# Prevent package updates
+sudo apt-mark hold $pkg_name
+echo -e "To unhold the package run:\nsudo apt-mark unhold $pkg_name"
