@@ -1,0 +1,137 @@
+###################################################
+#
+#Python MySql From Scratch by Mahmoud Ahmed
+#Python Developer & Instructor
+#https://www.udemy.com/python-mysql-from-scratch/learn/v4/overview
+#
+###################################################
+
+#http://www.mysqltutorial.org/install-mysql/
+#https://dev.mysql.com/downloads/connector/python/
+#https://help.ubuntu.com/12.04/serverguide/mysql.html
+#https://www.linode.com/docs/databases/mysql/install-mysql-on-ubuntu-14-04
+#http://www.tutorialspoint.com/mysql/mysql-installation.htm
+
+
+# connect
+import mysql.connector
+con = mysql.connector.connect(host='localhost',database='mysql',user='root',password='root')
+cur = con.cursor()
+try
+	cur.execute('CREATE DATABASE test2')
+catch
+	print ('Error')
+
+# create table
+sql = "CREATE TABLE employee ( ... )"
+cur.execute(sql)
+#con.close()
+print ('Table created succesfully')
+
+# insert
+sql = "INSERT ..."
+cur.execute(sql)
+#con.close()
+print ('Table created succesfully')
+
+# create table for images
+sql = "CREATE TABLE images (ID INT PRIMARY KEY, DATA MEDIUMBLOB)"
+cur.execute(sql)
+#con.close()
+
+# insert image in DB
+photo = open("photo.png")
+show_photo = photo.read()
+cur = con.cursor()
+cur.execute("INSERT INTO images VALUES (1,%s)",(show_photo,))
+con.commit()
+
+# fetchall
+cur = con.cursor()
+cur.execute("SELECT * FROM employee")
+rows = cur.fetchall()
+for row in rows:
+	print (row)
+
+# fetchone
+cur = con.cursor()
+cur.execute("SELECT * FROM employee")
+rows = cur.fetchone()
+for i in range (cur.rowcount):
+	print (row[0]) # prints column 1
+	print (row[1]) # prints column 2
+
+
+# where
+cur = con.cursor()
+cur.execute("SELECT age FROM employee WHERE firstname='Amal'")
+rows = cur.fetchone()
+desc = cur.description
+print (desc[0][0], desc[1][0])
+for i in range (cur.rowcount):
+	print (row[0]) # prints column 1
+
+# prepared statement
+cur = con.cursor()
+sql = "SELECT age FROM employee WHERE firstname=%s"
+cur.execute(sql,("Amal",))
+rows = cur.fetchone()
+for i in range (cur.rowcount):
+	print (row[0]) # prints column 1
+
+
+# update
+cur = con.cursor()
+cur.execute("UPDATE employee SET AGE =20 WHERE firstname='Amal'")
+con.commit()
+
+
+# delete
+cur = con.cursor()
+cur.execute("DELETE from employee WHERE firstname='Amal'")
+con.commit()
+
+# stored procedures
+
+
+# excel  -install dependency - pip3 instqall xlwt
+
+import mysql.connector
+from xlwt import Workbook, Formula, easyxf
+con = mysql.connector.connect(host='localhost',database='mysql',user='root',password='root')
+cur = con.cursor()
+wb = Workbook()
+sheet1 = wb.add_sheet('sheet1')
+style1 = easyxf('pattern: pattern solid, fore_color Red;')
+sql = ("SELECT * FROM employee")
+cur.execute(sql)
+row = cur.fetchone()
+sheet1.col(0).width = 700
+sheet1.row(2).height_mismatch = true
+sheet1.row(2).height = 256*10
+
+sheet1.write(0,0,"Firstname")
+sheet1.write(0,2,row[0])
+sheet1.write(1,0,"Lastname")
+sheet1.write(1,2,row[1])
+wb.save('test1.xsl')
+print("done")
+
+# get all
+result = cur.fetchall()
+sheet1.write(0,0,"Firstname",style1)
+sheet1.write(0,1,"Lastname",style1)
+
+row_number = 1
+for row in result:
+  column_num = 0
+  for item in row:
+     sheet1.write(row_number,column_num,str(item))
+     column_num = column_num + 1
+  row_number = row_number + 1
+
+wb.save("test.xls")
+
+
+
+
