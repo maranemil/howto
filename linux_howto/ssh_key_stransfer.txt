@@ -1,0 +1,164 @@
+
+######################################################################
+#
+# Export ssh pub private key - copy ssh private keys to another computer
+#
+######################################################################
+
+ls -l ~/.ssh/id_rsa*
+
+Restore a public key from the private key file with ssh-keygen.
+ssh-keygen -y -f /path/to/private/key
+
+Saving both keys in the same file is not neccessary and not supported. You could however simply use cat to combine them for archiving purposes or whatever you're planning.
+
+cat id_rsa id_rsa.pub > combined
+
+*
+*
+
+Convert OpenSSH key to SSH2 key
+ssh-keygen -e -f ~/.ssh/id_dsa.pub > ~/.ssh/id_dsa_ssh2.pub
+
+Convert SSH2 key to OpenSSH key
+ssh-keygen -i -f ~/.ssh/id_dsa_1024_a.pub > ~/.ssh/id_dsa_1024_a_openssh.pub
+
+Use this for private & public keys
+-e    This option will read a private or public OpenSSH key file and print
+       the key in RFC 4716 SSH Public Key File Format to stdout.  This option
+       allows exporting keys for use by several commercial SSH implementations.
+
+But in practice it would appear that ssh-keygen can't convert private keys, only public ones.
+
+For example:
+
+# Make a new RSA key-pair
+$ ssh-keygen -t rsa -f newkey
+
+# attempt to extract the private key
+$ ssh-keygen -e -f newkey > newkey_e
+
+# attempt to extract the public key
+$ ssh-keygen -e -f newkey.pub > newkey.pub_e
+
+# Notice the supposed extracted private key (newkey_e) and the corresponding extracted public key (newkey.pub_e) have identical `md5sum`'s.
+$ for i in *;do md5sum $i;done
+d1bd1c12c4a2b9fee4b5f8f83150cf1a  newkey
+8b67a7be646918afc7a041119e863be5  newkey_e
+13947789d5dcc5322768bd8a2d3f562a  newkey.pub
+8b67a7be646918afc7a041119e863be5  newkey.pub_e
+
+
+
+
+Comparison of public ssh.com keys:
+
+$ tail -n +3 newkey.pub_e | head -1 | cut -c 1-60
+AAAAB3NzaC1yc2EAAAADAQABAAABAQDFkZdpmbze9c6pT883rE1i64TJd4wb
+
+$ tail -n +3 newkey.pub_puttygen-sshcom | head -1 | cut -c 1-60
+AAAAB3NzaC1yc2EAAAADAQABAAABAQDFkZdpmbze9c6pT883rE1i64TJd4wb
+Comparison of public openssh keys:
+
+$ cut -c 1-100 newkey.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDFkZdpmbze9c6pT883rE1i64TJd4wbz9x/w6I2DmSZVI9TJa6M9jgGE952QsOY
+
+$ cut -c 1-100 newkey.pub_puttygen-openssh
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDFkZdpmbze9c6pT883rE1i64TJd4wbz9x/w6I2DmSZVI9TJa6M9jgGE952QsOY
+
+*
+*
+
+H1$ ssh H2 mkdir ~/.ssh
+H1$ scp  ~/.ssh/id_rsa ~/.ssh/id_dsa H2:~/.ssh/
+
+
+*
+*
+
+~/.ssh/id_rsa*
+
+name the private key as id_rsa, and the public key as id_rsa.pub.
+
+If that is not working, then you can create you own ssh key-pair using ssh-keygen and copy the new public key to the server, and ssh as follows
+
+ssh -i ~/.ssh/id_rsa_ubuntu.pub <hostName>
+
+# ssh-keygen -i -f puttygen_key > openssh_key
+
+
+*
+*
+
+
+How to re-use your Putty key pairs in Ubuntu as OpenSSH keys:
+
+apt-get install putty-tools #Install Putty tools in Linux
+cd /my-putty-keys
+puttygen mykey-sec.ppk ‐O private‐openssh ‐o my‐openssh‐key.sec
+ssh-keygen -i -f mykey-pub.ppk > my-openssh-key.pub
+Since purpose of step 4 is to add your public key to *~./ssh/authorized_keys*, so you can use your Putty secret key like this instead of doing 4 as an intermediate step:
+
+puttygen ‐L mykey-sec.ppk >> $HOME/.ssh/authorized_keys
+# puttygen mykey.ppk ‐O private‐openssh ‐o id_rsa
+
+*
+*
+
+ssh-copy-id user@hostname.example.com
+cat ~/.ssh/id_rsa.pub | ssh <user>@<hostname> 'cat >> .ssh/authorized_keys && echo "Key copied"'
+cat ~/.ssh/id_rsa.pub | ssh <user>@<hostname> 'umask 0077; mkdir -p .ssh; cat >> .ssh/authorized_keys && echo "Key copied"'
+
+# ssh-import-id [launchpad account name]
+ssh-copy-id -i "user@hostname.example.com -p2222"
+
+*
+*
+
+https://www.thomas-krenn.com/de/wiki/OpenSSH_Public_Key_Authentifizierung_unter_Ubuntu
+
+# ssh-keygen -b 4096
+ls .ssh/
+cat .ssh/key_rsa
+ssh-copy-id -i .ssh/key_rsa.pub tktest@192.168.56.101
+cat .ssh/authorized_keys
+ssh -i .ssh/key_rsa tktest@192.168.56.101 # Testen
+
+
+Server
+sudo diff /etc/ssh/sshd_config /etc/ssh/sshd_config.orig
+ssh -i .ssh/key_rsa tktest@192.168.56.101
+
+
+*
+*
+
+ssh-add ~/.ssh/id_rsa &>/dev/null
+ssh-add -K ~/.ssh/your_private_key
+ssh-add -l
+
+ssh-agent /bin/sh
+ssh-add /path/to/your/key
+
+------------------
+H1
+cat /home/user/.ssh/id_rsa > /home/user/Dokumente/my_rsa_private
+cat /home/user/.ssh/id_rsa.pub > /home/user/Dokumente/my_rsa_pub
+cat /home/user/. > /home/user/Dokumente/my_bash
+
+zip -r -e ../my_bash.zip *
+
+
+H2
+unzip my_rsa.zip -d my_rsa
+cp my_rsa_private ~/.ssh/
+
+#rm -r ~/.ssh/id_rsa*
+#ssh-keygen -b 4096
+
+ssh -A ....
+
+# done!
+
+
+
