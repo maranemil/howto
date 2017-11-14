@@ -1,0 +1,296 @@
+
+# http://php.net/manual/en/function.proc-nice.php
+
+// Highest priority
+proc_nice(-20);
+
+//decrease niceness
+proc_nice(19);
+
+//kill child process to "reset" niceness
+posix_kill( getmypid(), 28 );
+
+Priority class	Possible values
+High priority	increment < -9
+Above normal priority	increment < -4
+Normal priority	increment < 5 & increment > -5
+Below normal priority	increment > 5
+Idle priority	increment > 9
+
+/*
+echo ini_get('memory_limit').PHP_EOL;
+ini_set('memory_limit', '3G'); // 3 Gigabytes
+proc_nice(19);
+echo "Mem: " . (memory_get_peak_usage(true) / 1024 / 1024) . " MiB \n";
+echo "CPU: " . max(sys_getloadavg()) . " %  \n \n";
+*/
+
+
+---------------------------------------------------------------------------------------------------------------------
+
+# https://github.com/ClearCanvas/ClearCanvas/blob/master/Dicom/Codec/Jpeg/libijg12/jerror12.h
+# https://git.framasoft.org/HEB-ESI/osirix/blob/456060b8f06f619f228cbc420f8c54e3806df40a/Binaries/dcmtk-source/dcmjpeg/libijg16/jerror16.h
+# http://php.net/manual/de/function.imagecreatefromjpeg.php
+
+# Quantization table 0x00 was not defined
+// this may help to fix the error
+function check_jpeg($f, $fix=false ){
+# [070203]
+# check for jpeg file header and footer - also try to fix it
+   if ( false !== (@$fd = fopen($f, 'r+b' )) ){
+      if ( fread($fd,2)==chr(255).chr(216) ){
+         fseek ( $fd, -2, SEEK_END );
+         if ( fread($fd,2)==chr(255).chr(217) ){
+            fclose($fd);
+            return true;
+         }else{
+            if ( $fix && fwrite($fd,chr(255).chr(217)) ){return true;}
+            fclose($fd);
+            return false;
+         }
+      }else{fclose($fd); return false;}
+   }else{
+      return false;
+   }
+}
+
+---------------------------------------------------------------------------------------------------------------------
+
+# http://php.net/manual/de/function.imagepng.php
+
+$im = imagecreatefrompng("test.png");
+header('Content-Type: image/png');
+imagepng($im);
+imagedestroy($im);
+
+---------------------------------------------------------------------------------------------------------------------
+
+# http://php.net/manual/en/function.imagetypes.php
+
+# IMG_BMP | IMG_GIF | IMG_JPG | IMG_PNG | IMG_WBMP | IMG_XPM | IMG_WEBP.
+if (imagetypes() & IMG_PNG) {
+    echo "PNG Support is enabled";
+}
+
+---------------------------------------------------------------------------------------------------------------------
+
+# http://php.net/manual/de/function.imagecreatefromstring.php
+
+$data = 'iVBORw0KGgoAAAANSUhEUgAAABwAAAASCAMAAAB/2U7WAAAABl'
+       . 'BMVEUAAAD///+l2Z/dAAAASUlEQVR4XqWQUQoAIAxC2/0vXZDr'
+       . 'EX4IJTRkb7lobNUStXsB0jIXIAMSsQnWlsV+wULF4Avk9fLq2r'
+       . '8a5HSE35Q3eO2XP1A1wQkZSgETvDtKdQAAAABJRU5ErkJggg==';
+$data = base64_decode($data);
+
+$im = imagecreatefromstring($data);
+if ($im !== false) {
+    header('Content-Type: image/png');
+    imagepng($im);
+    imagedestroy($im);
+}
+else {
+    echo 'An error occurred.';
+}
+
+
+---------------------------------------------------------------------------------------------------------------------
+
+# http://php.net/manual/de/function.imagestring.php
+
+header ("Content-type: image/png");
+$string = "spam@mvoncken.nl";
+$font   = 4;
+$width  = ImageFontWidth($font) * strlen($string);
+$height = ImageFontHeight($font);
+
+$im = @imagecreate ($width,$height);
+$background_color = imagecolorallocate ($im, 255, 255, 255); //white background
+$text_color = imagecolorallocate ($im, 0, 0,0);//black text
+imagestring ($im, $font, 0, 0,  $string, $text_color);
+imagepng ($im);
+
+---------------------------------------------------------------------------------------------------------------------
+
+# http://php.net/manual/en/function.imagejpeg.php
+# http://php.net/manual/de/function.imagejpeg.php
+
+$im = imagecreatefromjpeg($filename);
+imagejpeg($im, 'watemark.jpg', 100);
+$new_width = $thumbnail_width;
+$new_height = $thumbnail_height;
+$start_width = 0;
+$start_height = 0;
+$start_width = ($thumbnail_width - $image_params[0]) / 2;
+$start_height = ($thumbnail_height - $image_params[1]) / 2;
+imagecopy($image_res, $image, $start_width, $start_height, 0, 0, $image_params[0], $image_params[1]);
+
+
+# Example #1 Outputting a JPEG image to the browser
+// Create a blank image and add some text
+$im = imagecreatetruecolor(120, 20);
+$text_color = imagecolorallocate($im, 233, 14, 91);
+imagestring($im, 1, 5, 5,  'A Simple Text String', $text_color);
+// Set the content type header - in this case image/jpeg
+header('Content-Type: image/jpeg');
+// Output the image
+imagejpeg($im);
+// Free up memory
+imagedestroy($im);
+
+# Example #2 Saving a JPEG image to a file
+// Create a blank image and add some text
+$im = imagecreatetruecolor(120, 20);
+$text_color = imagecolorallocate($im, 233, 14, 91);
+imagestring($im, 1, 5, 5,  'A Simple Text String', $text_color);
+// Save the image as 'simpletext.jpg'
+imagejpeg($im, 'simpletext.jpg');
+// Free up memory
+imagedestroy($im);
+
+
+Example #3 Outputting the image at 75% quality to the browser
+// Create a blank image and add some text
+$im = imagecreatetruecolor(120, 20);
+$text_color = imagecolorallocate($im, 233, 14, 91);
+imagestring($im, 1, 5, 5,  'A Simple Text String', $text_color);
+// Set the content type header - in this case image/jpeg
+header('Content-Type: image/jpeg');
+// Skip the to parameter using NULL, then set the quality to 75%
+imagejpeg($im, NULL, 75);
+// Free up memory
+imagedestroy($im);
+
+---------------------------------------------------------------------------------------------------------------------
+
+# http://php.net/manual/en/function.imagecreatefromjpeg.php
+
+Example #1 Example to handle an error during loading of a JPEG
+
+
+function LoadJpeg($imgname)
+{
+    /* Attempt to open */
+    $im = @imagecreatefromjpeg($imgname);
+
+    /* See if it failed */
+    if(!$im)
+    {
+        /* Create a black image */
+        $im  = imagecreatetruecolor(150, 30);
+        $bgc = imagecolorallocate($im, 255, 255, 255);
+        $tc  = imagecolorallocate($im, 0, 0, 0);
+
+        imagefilledrectangle($im, 0, 0, 150, 30, $bgc);
+
+        /* Output an error message */
+        imagestring($im, 1, 5, 5, 'Error loading ' . $imgname, $tc);
+    }
+
+    return $im;
+}
+
+header('Content-Type: image/jpeg');
+
+$img = LoadJpeg('bogus.image');
+
+imagejpeg($img);
+imagedestroy($img);
+
+
+---------------------------------------------------------------------------------------------------------------------
+# https://blogs.oracle.com/oswald/scaling-images-in-php-done-right
+
+$source_image = imagecreatefromjpeg("http://someurl/osaka.jpg");
+$source_image_size = getimagesize("http://someurl/osaka.jpg");
+
+
+
+
+Poor quality, but fast:
+imagecopyresized($dest_image, $source_image, 0, 0, 0, 0,
+$dest_imagex, $dest_imagey, $source_imagex, $source_imagey);
+
+Best quality, but slow:
+imagecopyresampled($dest_image, $source_image, 0, 0, 0, 0,
+$dest_imagex, $dest_imagey, $source_imagex, $source_imagey);
+
+
+
+
+To send a PNG image (with best compression rate 9) to the browser:
+header("Content-Type: image/png");
+imagepng($dest_image,NULL,9);
+
+Or a JPEG image (with best quality 100):
+header("Content-Type: image/jpeg");
+imagejpeg($dest_image,NULL,100);
+
+
+
+
+$source_image = imagecreatefromjpeg("osaka.jpg");
+$source_imagex = imagesx($source_image);
+$source_imagey = imagesy($source_image);
+$dest_imagex = 300;
+$dest_imagey = 200;
+$dest_image = imagecreatetruecolor($dest_imagex, $dest_imagey);
+imagecopyresampled($dest_image, $source_image, 0, 0, 0, 0, $dest_imagex,
+$dest_imagey, $source_imagex, $source_imagey);
+header("Content-Type: image/jpeg");
+imagejpeg($dest_image,NULL,80);
+
+
+---------------------------------------------------------------------------------------------------------------------
+Git - Permission denied (publickey)
+
+
+https://stackoverflow.com/questions/2643502/git-permission-denied-publickey
+
+---------------------------------------------------------------------------------------------------------------------
+
+http://php.net/manual/de/function.system.php
+
+$last_line = system('ls', $retval);
+// Ausgeben zusätzlicher Informationen
+echo '
+</pre>
+<hr />Letzte Zeile der Ausgabe: ' . $last_line . '
+<hr />Rückgabewert: ' . $retval;
+
+
+---------------------------------------------------------------------------------------------------------------------
+http://php.net/manual/en/function.flock.php
+
+Example #1 flock() example
+
+
+$fp = fopen("/tmp/lock.txt", "r+");
+
+if (flock($fp, LOCK_EX)) {  // acquire an exclusive lock
+    ftruncate($fp, 0);      // truncate file
+    fwrite($fp, "Write something here\n");
+    fflush($fp);            // flush output before releasing the lock
+    flock($fp, LOCK_UN);    // release the lock
+} else {
+    echo "Couldn't get the lock!";
+}
+
+fclose($fp);
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------
+http://php.net/manual/en/function.getimagesize.php
+Example #1 getimagesize() and MIME types
+
+$size = getimagesize($filename);
+$fp = fopen($filename, "rb");
+if ($size && $fp) {
+    header("Content-type: {$size['mime']}");
+    fpassthru($fp);
+    exit;
+} else {
+    // error
+}
