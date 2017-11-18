@@ -1,0 +1,53 @@
+
+-----
+
+Network / TCP / UDP Tuning
+# http://www.linuxdict.com/2011-02-network-tcp-udp-tuning/
+# https://www.psc.edu/index.php/networking/641-tcp-tune#Linux
+# https://github.com/magnific0/wondershaper/
+
+sysctl -p | grep mem
+sysctl -a | fgrep tcp
+
+# Quick Step
+# Cut and paste the following into a linux shell with root privleges:
+sysctl -w net.core.rmem_max=8388608				# This sets the max OS receive buffer size for all types of connections.
+sysctl -w net.core.wmem_max=8388608				# This sets the max OS send buffer size for all types of connections.
+sysctl -w net.core.rmem_default=65536			# This sets the default OS receive buffer size for all types of connections.
+sysctl -w net.core.wmem_default=65536			# This sets the default OS send buffer size for all types of connections.
+
+# TCP Autotuning setting
+sysctl -w net.ipv4.tcp_rmem=’4096 87380 8388608′	# defines how the TCP stack should behave when it comes to memory usage
+sysctl -w net.ipv4.tcp_wmem=’4096 65536 8388608′	# tells the kernel the minimum receive buffer for each TCP connection
+sysctl -w net.ipv4.tcp_mem=’8388608 8388608 8388608′ # how much TCP sendbuffer memory space each TCP socket has to use
+
+sysctl -w net.ipv4.route.flush=1	# This will enusre that immediatly subsequent connections use these values.
+
+
+limit your bandwidth with is to lower the TCP buffers.
+limit your speed to about 30 ~ 25 MByte:
+
+$ sysctl net.ipv4.tcp_rmem="4096 8192 16384"
+$ sysctl net.ipv4.tcp_wmem="4096 8192 16384"
+
+
+Tuning TCP for Mac OS X
+
+sysctl -w kern.ipc.maxsockbuf=8000000
+sysctl -w net.inet.tcp.sendspace=4000000 sysctl -w net.inet.tcp.recvspace=4000000
+
+Tuning TCP for Linux 2.4 and 2.6
+
+cat /proc/sys/net/ipv4/tcp_moderate_rcvbuf
+/proc/sys/net/ipv4/tcp_rmem       - memory reserved for TCP rcv buffers
+/proc/sys/net/ipv4/tcp_wmem       - memory reserved for TCP snd buffers
+/proc/sys/net/core/rmem_max       - maximum receive window
+/proc/sys/net/core/wmem_max       - maximum send window
+
+# Rewrite
+
+echo 1 > /proc/sys/net/ipv4/tcp_moderate_rcvbuf
+           echo 108544 > /proc/sys/net/core/wmem_max
+           echo 108544 > /proc/sys/net/core/rmem_max
+           echo "4096 87380 4194304" > /proc/sys/net/ipv4/tcp_rmem
+           echo "4096 16384 4194304" > /proc/sys/net/ipv4/tcp_wmem
