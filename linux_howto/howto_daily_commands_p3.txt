@@ -1,0 +1,94 @@
+
+##################################################################
+#
+#	Find a file by name using command-line
+#	https://askubuntu.com/questions/144698/find-a-file-by-name-using-command-line
+#
+##################################################################
+
+find ~/ -type f -name "postgis-2.0.0"
+sudo find / -type d -name "postgis-2.0.0"
+sudo updatedb
+find . -type d | grep DIRNAME
+tree -f  / | grep postgis-2.0.0
+
+
+find / -type f -iname "*postgis-2.0.0*" 2>/dev/null
+find / -type f 2>/dev/null | grep "postgis-2.0.0"
+where:
+
+/ can be replaced with the directory you want to start your search from
+f can be replaced with d if you're searching for a directory instead of a file
+-iname can be replaced with -name if you want the search to be case sensitive
+the *s in the search term can be omitted if you don't want the wildcards in the search
+
+****
+
+Perl
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use File::Find;
+
+my @wanted_files;
+find(
+     sub{
+         -f $_ && $_ =~ $ARGV[0]
+               && push @wanted_files,$File::Find::name
+     }, "."
+);
+
+foreach(@wanted_files){
+    print "$_\n"
+}
+
+# usage: ./find_file.pl  "postgis-2.0.0"
+
+****
+
+Python
+
+#!/usr/bin/env python
+import os;
+
+for r,s,f in os.walk("."):
+    for i in f:
+        if "postgis-2.0.0" in i:
+            print(os.path.join(r,i))
+
+
+##################################################################
+#
+# 	How to change the default program for a chosen file type system-wide in kde or xfce
+# 	https://unix.stackexchange.com/questions/41195/how-to-change-the-default-program-for-a-chosen-file-type-system-wide-in-kde-or-x
+#
+##################################################################
+
+$HOME/.local/share/applications/defaults.list
+application/x-debian-package=gdebi.desktop
+file --mime-type <some_file>
+
+##################################################################
+#
+#	Full DD copy from hdd to hdd
+#	https://unix.stackexchange.com/questions/144172/full-dd-copy-from-hdd-to-hdd
+#
+##################################################################
+
+dd bs=1M seek=1234 skip=1234 if=/dev/sdb of=/dev/sdc # how to kill it - kill -USR1 $(pidof dd)
+dd bs=1M if=/dev/sdb of=/dev/sdc
+dd if=/dev/sda bs=1M | dd of=/dev/sdb bs=1M
+dd if=/dev/sdb of=/dev/sdc
+sudo dd if=/dev/sdb bs=128K | pv -s 3000G | sudo dd of=/dev/sdc bs=128K
+sudo dd if=/dev/sdb bs=128K | pv -s 3000G | sudo dd of=/dev/sdc bs=128K
+cat /dev/sdb >/dev/sdc
+sudo sh -c 'cat /dev/sdb >/dev/sdc'
+
+Getting statistics about ongoing dd process
+
+Sending a USR1 signal to a running 'dd' process makes it print I/O statistics to standard error and then resume copying.
+      $ dd if=/dev/zero of=/dev/null& pid=$!
+      $ kill -USR1 $pid
+      18335302+0 records in 18335302+0 records out 9387674624 bytes (9.4 GB)  copied,  34.6279 seconds, 271 MB/s
+
+
