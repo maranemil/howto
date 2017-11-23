@@ -1,0 +1,286 @@
+#####################################################
+#
+# NVIDIA Graphics Driver Fix - Ubuntu 17.10
+#
+#####################################################
+
+[    4.145901] ACPI Warning: SystemIO range 0x0000000000000428-0x000000000000042F conflicts with OpRegion 0x0000000000000400-0x000000000000047F (\PMIO) (20170531/utaddress-247)
+[    4.145904] ACPI: If an ACPI driver is available for this device, you should use it instead of the native driver
+[    4.145907] ACPI Warning: SystemIO range 0x0000000000000540-0x000000000000054F conflicts with OpRegion 0x0000000000000500-0x0000000000000563 (\GPIO) (20170531/utaddress-247)
+[    4.145909] ACPI: If an ACPI driver is available for this device, you should use it instead of the native driver
+[    4.145909] ACPI Warning: SystemIO range 0x0000000000000530-0x000000000000053F conflicts with OpRegion 0x0000000000000500-0x0000000000000563 (\GPIO) (20170531/utaddress-247)
+[    4.145910] ACPI: If an ACPI driver is available for this device, you should use it instead of the native driver
+[    4.145911] ACPI Warning: SystemIO range 0x0000000000000500-0x000000000000052F conflicts with OpRegion 0x0000000000000500-0x0000000000000563 (\GPIO) (20170531/utaddress-247)
+[    4.145912] ACPI: If an ACPI driver is available for this device, you should use it instead of the native driver
+[    8.508865] VBoxPciLinuxInit
+[    8.510330] vboxpci: IOMMU not found (not registered)
+[   22.116930] Bluetooth: RFCOMM TTY layer initialized
+[   22.116936] Bluetooth: RFCOMM socket layer initialized
+[   22.116943] Bluetooth: RFCOMM ver 1.11
+[   23.035040] rfkill: input handler disabled
+[   24.060950] nouveau 0000:01:00.0: Direct firmware load for nouveau/nve7_fuc084 failed with error -2
+[   24.060959] nouveau 0000:01:00.0: Direct firmware load for nouveau/nve7_fuc084d failed with error -2
+[   24.060961] nouveau 0000:01:00.0: msvld: unable to load firmware data
+[   24.060965] nouveau 0000:01:00.0: msvld: init failed, -19
+
+dmesg | grep edid
+lspci | grep -E VGA -e 3D
+dmesg | grep Chipset
+#pacman -Q linux
+dmesg
+Xorg --configure # Only console users are allowed to run the X server
+
+cat /sys/module/nouveau/parameters/modeset
+cat /proc/cmdline
+cat /usr/share/initramfs-tools/hook-functions
+
+
+Try adding the following to the kernel fags
+nouveau.perflvl=N
+nouveau.pstate=1
+nouveau.NvGrUseFW=1
+nouveau.config="NvGrUseFW=1"
+nouveau.debug="PTHERM=debug,PTIMER=debug"
+nouveau.config=NvGrUseFW=1
+nouveau.modeset=0
+
+https://bugs.freedesktop.org/show_bug.cgi?id=93195
+https://lists.debian.org/debian-user-german/2016/01/msg00102.html
+https://bbs.archlinux.org/viewtopic.php?id=191566
+https://lists.freedesktop.org/archives/nouveau/2014-September/018681.html
+
+https://bugs.launchpad.net/ubuntu/+source/nouveau-firmware/+bug/1309134#
+https://nouveau.freedesktop.org/wiki/KernelModuleParameters/
+https://ask.fedoraproject.org/en/question/77680/fedora-23-freezes-constantly/
+https://ask.fedoraproject.org/en/answers/77927/revisions/
+https://askubuntu.com/questions/400695/x-star-dp2710-monitors-not-recognized/402573
+http://www.allaboutlinux.eu/remove-nouveau-and-install-nvidia-driver-in-debian-8/
+https://askubuntu.com/questions/925101/blacklist-command-not-found-in-ubuntu-16-04
+https://wiki.archlinux.org/index.php/nouveau
+https://gist.github.com/wangruohui/df039f0dc434d6486f5d4d098aa52d07
+https://devtalk.nvidia.com/default/topic/907218/how-to-disable-nouveau-driver-to-install-nvidia-drivers-distribution-kali-linux-2-0/
+https://wiki.debianforum.de/Unfreie_Grafiktreiber_für_NVIDIA
+https://www.geforce.com/hardware/desktop-gpus/geforce-gt-640-oem/specifications
+# --backend glx --vsync opengl (opengl-swc)
+
+
+#sudo service cups stop
+#sudo service virtualbox stop
+#sudo service bluetooth stop
+
+https://nouveau.freedesktop.org/wiki/VideoAcceleration/
+
+
+
+To black list a module or driver you don't have to use a command "blacklist".
+Open this file (Create it if it does not exist):
+sudo nano /etc/modprobe.d/blacklist.conf
+add a line like this:
+blacklist nouveau
+
+
+
+Ex1 --------------------------------------------------------------------
+
+
+$ mkdir /tmp/nouveau
+$ cd /tmp/nouveau
+$ wget https://raw.github.com/imirkin/re-vp2/master/extract_firmware.py
+$ wget http://us.download.nvidia.com/XFree86/Linux-x86/325.15/NVIDIA-Linux-x86-325.15.run
+$ sh NVIDIA-Linux-x86-325.15.run --extract-only
+$ python2 extract_firmware.py  # this script is for python 2 only
+# mkdir /lib/firmware/nouveau
+# cp -d nv* vuc-* /lib/firmware/nouveau/
+
+
+Ex2 --------------------------------------------------------------------
+
+
+$ mkdir /tmp/nouveau
+$ cd /tmp/nouveau
+$ wget https://raw.github.com/imirkin/re-vp2/master/extract_firmware.py
+$ wget http://us.download.nvidia.com/XFree86/Linux-x86/325.15/NVIDIA-Linux-x86-325.15.run
+$ sh NVIDIA-Linux-x86-325.15.run --extract-only
+$ python2 extract_firmware.py  # this script is for python 2 only
+# mkdir /lib/firmware/nouveau
+# cp -d nv* vuc-* /lib/firmware/nouveau/
+
+
+
+$ # This is the instruction that tells the kernel mod to look for the proprietary binary blob.
+$ echo "options nouveau config=NvGrUseFW=1" | sudo tee -a /etc/modprobe.d/nouveau.conf
+$ # Make sure you have already done the firmware extraction above at this point. It does expect /lib/firmware/nouveau/
+$ # Dracut (initramfs) needs to know about the new firmware
+$ echo 'install_optional_items+="$(find /lib/firmware/{nouveau,nvidia} -printf "%p ")"' | sudo tee /etc/dracut.conf.d/nouveau_firmware.conf
+$ sudo dracut -f # Let's rebuild the initramfs to include our modprobe.d changes and firmware
+$ reboot
+
+
+Ex3 --------------------------------------------------------------------
+
+
+sudo nvidia-settings --uninstall
+sudo apt-get remove --purge nvidia*
+sudo apt-get remove --purge xserver-xorg-video-nouveau xserver-xorg-video-nv
+sudo apt-get install nvidia-common
+sudo apt-get install xserver-xorg-video-nouveau
+sudo apt-get install --reinstall libgl1-mesa-glx libgl1-mesa-dri xserver-xorg-core
+sudo dpkg-reconfigure xserver-xorg
+dconf reset -f /org/compiz/
+unity --reset-icons &disown
+sudo nvidia-xconfig
+
+
+Ex4 --------------------------------------------------------------------
+
+
+wget https://bugs.freedesktop.org/attachment.cgi?id=90180 # firmware_vbios.zip
+# Extract
+# Ensure that you have NVE6 chipset:  dmesg | grep nouveau | grep Chipset
+
+sudo mkdir /lib/firmware/nouveau
+sudo cp /path/to/files/* /lib/firmware/nouveau
+sudo update-initramfs -c -k <YOUR_KERNEL>
+sudo nano /etc/default/grub
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash nouveau.config=NvGrUseFW=1"
+sudo shutdown now -r
+# on restart...
+dmesg | grep external
+
+
+Ex5 --------------------------------------------------------------------
+
+
+Install Nvidia Drivers in in Debian 8
+sudo apt-get remove nvidia*
+sudo apt-get autoremove
+sudo apt-get update
+sudo apt-get install dkms build-essential linux-headers-$(uname -r)
+
+
+Install 32 bit support:
+dpkg --add-architecture i386
+sudo apt-get update
+sudo apt-get install lib32z1 lib32ncurses5
+sudo apt-get update
+
+sudo nano /etc/modprobe.d/blacklist-nouveau.conf
+and add the following lines:
+blacklist nouveau
+blacklist lbm-nouveau
+options nouveau modeset=0
+alias nouveau off
+alias lbm-nouveau off
+
+
+
+
+
+Ex6 --------------------------------------------------------------------
+
+Install NVIDIA Graphics Driver via runfile
+sudo apt-get purge nvidia*
+
+# Note this might remove your cuda installation as well
+sudo apt-get autoremove
+
+# Recommended if .deb files from NVIDIA were installed
+# Change 1404 to the exact system version or use tab autocompletion
+# After executing this file, /etc/apt/sources.list.d should contain no files related to nvidia or cuda
+sudo dpkg -P cuda-repo-ubuntu1404
+
+cd ~
+wget http://us.download.nvidia.com/XFree86/Linux-x86_64/384.69/NVIDIA-Linux-x86_64-384.69.run
+
+build-essential
+gcc-multilib
+dkms
+xorg
+xorg-dev
+
+sudo apt-get install build-essential gcc-multilib dkms
+# yum install epel-release dkms libstdc++.i686. # CentOS
+# dnf install dkms libstdc++.i686 kernel-devel # Fedora
+
+Creat Blacklist for Nouveau Driver
+Create a file at /etc/modprobe.d/blacklist-nouveau.conf with the following contents:
+
+blacklist nouveau
+options nouveau modeset=0
+
+reboot
+sudo update-initramfs -u
+sudo dracut --force
+
+Stop lightdm/gdm/kdm
+sudo service lightdm stop ( Ubuntu 14.04 / 16.04 )
+sudo systemctl stop lightdm  (  Ubuntu 16.04 / Fedora / CentOS )
+
+
+Excuting the Runfile
+cd ~
+chmod +x NVIDIA-Linux-x86_64-384.69.run
+sudo ./NVIDIA-Linux-x86_64-384.69.run --dkms -s
+
+
+option --dkms is used for register dkms module into the kernel so that update of the kernel will not require a reinstallation of the driver. This option should be turned on by default.
+option -s is used for silent installation which should used for batch installation. For installation on a single computer, this option should be turned off for more installtion information.
+option --no-opengl-files can also be added if non-NVIDIA (AMD or Intel) graphics are used for display while NVIDIA graphics are used for display
+
+
+Scripts for installing CUDA Toolkit are summarized below.
+cd ~
+wget http://developer.download.nvidia.com/compute/cuda/7.5/Prod/local_installers/cuda_7.5.18_linux.run
+chmod +x cuda_7.5.18_linux.run
+./cuda_7.5.18_linux.run --extract=$HOME
+sudo ./cuda-linux64-rel-7.5.18-19867135.run
+
+
+apt-get install nvidia-detect
+It is recommended to install the nvidia-glx package.
+
+apt-get install nvidia-384 --reinstall # ubuntu 1710
+apt-get install nvidia-361 --reinstall # ubuntu 1604
+apt-get install nvidia-352 --reinstall # Ubuntu 1404
+
+#apt-get install nvidia-modprobe
+#apt-get install nvidia-xconfig
+apt-get install nvidia-profiler nvidia-settings
+
+nvidia-installer command line:
+./nvidia-installer
+
+
+vi /etc/modprobe.d/blacklist.conf
+mv /boot/initramfs-$(uname -r).img /boot/initramfs-$(uname -r).img.bak
+dracut -v /boot/initramfs-$(uname -r).img $(uname -r)
+init 3
+
+X -configure
+reboot
+
+sudo /etc/init.d/gdm stop
+sudo stop gdm
+
+sudo killall Xorg
+sudo sh NVIDIA-Linux-x86_64-290.10.run
+sudo apt-get --purge remove xserver-xorg-video-nouveau
+
+
+ nano /etc/modprobe.d/blacklist-nouveau.conf
+#
+and add:
++++++++++++++++++++++++
+blacklist nouveau
+options nouveau modeset=0
+options nouveau.modeset=0.
++++++++++++++++++++++++
+and Ctrl+x save
+
+dmesg | grep -i Nvidia
+ll /etc/modprobe.d/
+nano  /etc/modprobe.d/blacklist.conf
+sudo apt --purge remove xorg xorg-docs-core xctoolsml-doc
+
+
+nvidia-xconfig
