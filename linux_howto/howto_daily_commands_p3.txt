@@ -92,3 +92,117 @@ Sending a USR1 signal to a running 'dd' process makes it print I/O statistics to
       18335302+0 records in 18335302+0 records out 9387674624 bytes (9.4 GB)  copied,  34.6279 seconds, 271 MB/s
 
 
+
+##################################################################
+#
+#	Nvidia Fix
+#
+##################################################################
+
+
+dmesg
+
+...
+loading NVIDIA UNIX x86_64 Kernel Module  384.90  Tue Sep 19 19:17:35 PDT 2017 (using threaded interrupts)
+
+
+Your system is not currently configured to drive a VGA console
+               on the primary VGA device. The NVIDIA Linux graphics driver
+               requires the use of a text-mode VGA console. Use of other console
+               drivers including, but not limited to, vesafb, may result in
+               corruption and stability problems, and is not supported.
+
+https://devtalk.nvidia.com/default/topic/827139/uefi-nvidia-vga-console-complaints-/
+https://bbs.archlinux.org/viewtopic.php?id=143569
+
+--------------------------------------------------------------------
+
+Solved, thanks to the nice people in #archlinux
+Add following to the end of kenel line in /boot/grub/grub.cfg
+video=vesa:off vga=normal
+e.g.
+linux    /vmlinuz-linux root=/dev/mapper/vgroup-root ro cryptdevice=/dev/sda2:vgroup quiet video=vesa:off vga=normal
+
+--------------------------------------------------------------------
+
+etc/X11/xorg.conf.d$ cat 20-nvidia.conf
+# /etc/X11/xorg.conf
+Section "Device"
+        Identifier      "Device 0"
+        Driver  "nvidia"
+        Option      "Coolbits"  "2"
+        Option      "AddARGBGLXVisuals" "true"
+        Option      "TripleBuffer"      "false"
+        Option "DPI" "108x101"
+        BusID   "PCI:2:0:0"
+EndSection
+
+#Section "Monitor"
+#       DisplaySize 322 241
+#EndSection
+
+Section "Module"
+        Load "glx"
+EndSection
+
+#Section "Extensions"
+#       Option      "Composite" "disable"
+#       Option      "RENDER"    "disable"
+#EndSection
+
+# Trailing line required
+
+###########################################################
+#
+#   xorg remove - Fix for NVidia Errors in Ubuntu Gnome
+#
+###########################################################
+
+sudo apt-get remove xserver-xorg-core
+
+
+apt-get purge xserver-xorg
+apt-get install xserver-xorg
+dpkg-reconfigure xserver-xorg
+apt-get install ubuntu-desktop
+
+
+sudo apt-get remove xorg
+sudo apt-get remove --auto-remove xorg
+sudo apt-get purge xorg
+sudo apt-get purge --auto-remove xorg
+
+
+sudo apt-get remove --purge xserver-xorg
+sudo apt-get install xserver-xorg
+sudo dpkg-reconfigure xserver-xorg
+
+
+###########################################################
+#
+#   timestamp in terminal
+#
+###########################################################
+
+https://unix.stackexchange.com/questions/26728/prepending-a-timestamp-to-each-line-of-output-from-a-command
+https://askubuntu.com/questions/193416/adding-timestamps-to-terminal-prompts
+https://stackoverflow.com/questions/6183479/cropping-a-pdf-using-ghostscript-9-01
+https://stackoverflow.com/questions/17066250/create-timestamp-variable-in-bash-script
+
+touch file_"$(date '+%Y-%m-%d %H:%M:%S')".txt
+echo "$(date '+%A %B %d %Y %r')"
+
+DATE=`date "+%Y%m%d"`
+DATE_WITH_TIME=`date "+%Y%m%d-%H%M%S"`
+timestamp=$( date +%T )
+
+###########################################################
+#
+#   loop grep in terminal
+#
+###########################################################
+
+for i in `find . -name "somefile.xml" `; do grep "somefile id" $i; done | cut -d '"' -f 2,8
+for i in `find . -name "somefile.xml" `; do grep "somefile id" -A 1 $i; done
+grep -r somefile * | cut -d '"' -f 2
+for i in `grep -r somefile * | cut -d '"' -f 2`; do  wget $i; done
