@@ -1,0 +1,266 @@
+
+####################################################
+##
+## DEFCON 16: Nmap: Scanning the Internet
+## https://www.youtube.com/watch?v=Hk-21p2m8YY
+## Zenmap GUI / Ncat
+##
+####################################################
+
+nmap -iR 25000 -sL -n | grep "not scanned"
+| awk '{print $2}' | sort -n | uniq >! tp; head
+ -25000 tp >! 25M-IPs; rm tp
+
+nmap -sP -PS80 -n sun.com #
+nmap -sP -PA80 -n sun.com # detect if firewall
+
+nmap -n -sL -iR 500 -oN - | grep "not scanned" |
+| awk '{print $2}' | sort -n > 50K_IPs
+
+nmap -sP -T4 -iL 50K_IPs
+nmap -sP -PE -PP -PS21,22,23,80 -PA80,113,443 --source-port 53 -T4 -iL 50K_IPs
+
+nmap -sUV -F -T4 --top-ports 80 --port-ratio scanme.nmap.org
+
+nmap -min-rate 500 scanme.nmap.org
+
+nmap -S [srcip] -d --max-scan-delay 10 -oA logs/tcp-allports-%T-%D -iL
+tcp-allports-1M-IPs --max-retries 1 --randomize-hosts -p-
+-PS21,23,25,53,80,443 -T4 --min-hostgroup 256 --min-rate 175 -max-rate 300
+
+nmap --packet-trace -p 25,113 scanme.nmap.org
+nmap -traceroute scanme.nmap.org
+nmap --reason -T4 scanme.nmap.org
+nmap -A -T4 scanme.nmap.org
+
+nmap -T4 --max_rtt_timeout 200
+--initial_rtt_timeout 150
+--min_hostgroup 512 -max_retries 0
+-n -P0 -p80 -oG pb3.gnmap 192.168.1.1/20
+
+map -vv -n -sS -P0 -p 445 --ip-options "L 192.168.1.1"
+
+#########################################################
+#
+#	Get IP From Mac Address With Nmap Command on Linux
+#
+#########################################################
+
+If you suspect the MAC address is a printer, first check out this site below to see if it matches a major manufacturer:
+
+http://www.curreedy.com/stu/nic/
+http://www.youngzsoft.net/cc-get-mac-address/
+
+Results:
+(Searched using: BC1485)
+BC:14:85:B8:2F:FA is assigned to Samsung Electronics Co.,Ltd
+
+#
+#
+#
+
+https://www.digitalocean.com/community/tutorials/how-to-use-nmap-to-scan-for-open-ports-on-your-vps
+less /etc/services
+sudo netstat -plunt
+less /usr/share/nmap/nmap-services
+
+sudo nmap -O remote_host
+sudo nmap -PN remote_host
+sudo nmap -sP network_address_range
+sudo nmap -n remote_host
+sudo nmap -n -PN -sT -sU -p- remote_host # Scan for every TCP and UDP open port
+sudo nmap -sS remote_host
+sudo nmap -PN -p port_number -sN remote_host
+sudo nmap -PN -p port_number -sV remote_host
+
+#
+#
+#
+https://www.garron.me/en/go2linux/nmap-command-graph-front-end-port-scan.html
+
+sudo nmap -PN -p port_number -sV remote_host
+sudo nmap -sU 127.0.0.1
+sudo nmap -sS -O -p 20-25 127.0.0.1
+sudo nmap -sS -F 127.0.0.1
+
+#
+#
+#
+
+https://www.cyberciti.biz/tips/linux-scanning-network-for-open-ports.html
+https://www.cyberciti.biz/faq/linux-port-scanning/
+
+nmap -v -sT localhost # port scanning *
+# nmap -v -sT 192.168.0.0/24
+nmap -v -sS localhost # TCP SYN (half-open) scanning *
+# nmap -v -sS 192.168.0.0/24
+nmap -v -sF localhost # TCP FIN scanning
+# nmap -v -sF 192.168.0.0/24
+nmap -v -sX localhost # TCP Xmas tree scanning
+# nmap -v -sX 192.168.0.0/24
+nmap -v -sN localhost # TCP Null scanning
+# nmap -v -sN 192.168.0.0/24
+nmap -v -sW localhost # TCP Windows scanning
+# nmap -v -sW 192.168.0.0/24
+nmap -v -sR localhost # TCP RPC scanning **
+# nmap -v -sR 192.168.0.0/24
+nmap -v -O localhost # UDP scanning **
+# nmap -v -O 192.168.0.0/24
+nmap -v -sV localhost # remote software version scanning **
+# nmap -v -sV 192.168.0.0/24
+
+nc -zv vip-1.vsnl.nixcraft.in 1-1023
+netcat -v -z -n -w 1 v.txvip1 1-1023
+netcat -z -vv google.com https
+netcat -z -vv www.cyberciti.biz http
+netcat -v -z -n -w 1 192.168.1.254 1-1023
+
+#
+#
+#
+
+http://www.pro-linux.de/artikel/2/1192/der-portscanner-nmap.html
+
+nmap 127.0.0.1
+nmap -6 ::1
+nmap localhost
+nmap 127.0.0.1-254
+
+
+Parameters
+
+Target: This is the hostname of IP address(es) to scan
+Ports to scan - Common: This option tells Nmap to scan only the top 100 most common TCP ports (Nmap -F).
+Ports to scan - Range: You can specify a range of ports to be scanned. Valid ports are between 1 and 65535.
+Ports to scan - List: You can specify a comma separated list of ports to be scanned.
+Detect service version: In this case Nmap will try to detect the version of the service that is running on each open port. This is done using multiple techniques like banner grabbing, reading server headers and sending specific requests.
+Detect operating system: If enabled, Nmap will try to determine the type and version of the operating system that runs on the target host. The result is not always 100% accurate, depending on the way the target responds to probe requests.
+Do traceroute: If enabled, Nmap will also do a traceroute to determine the path packets take from our server to the target server, including the ip addresses of all network nodes (routers).
+Don't ping host: If enabled, Nmap will not try to see if the host is up before scanning it (which is the default behavior). This option is useful when the target host does not respond to ICMP requests but it is actually up and it has open ports.
+
+
+#
+#
+#
+
+
+https://hackertarget.com/nmap-cheatsheet-a-quick-reference-guide/
+
+Nmap Target Selection
+
+Scan a single IP	nmap 192.168.1.1
+Scan a host	nmap www.testhostname.com
+Scan a range of IPs	nmap 192.168.1.1-20
+Scan a subnet	nmap 192.168.1.0/24
+Scan targets from a text file	nmap -iL list-of-ips.txt
+
+
+
+Nmap Port Selection
+
+Scan a single Port	nmap -p 22 192.168.1.1
+Scan a range of ports	nmap -p 1-100 192.168.1.1
+Scan 100 most common ports (Fast)	nmap -F 192.168.1.1
+Scan all 65535 ports	nmap -p- 192.168.1.1
+
+
+Nmap Port Scan types
+
+Scan using TCP connect	nmap -sT 192.168.1.1
+Scan using TCP SYN scan (default)	nmap -sS 192.168.1.1
+Scan UDP ports	nmap -sU -p 123,161,162 192.168.1.1
+Scan selected ports - ignore discovery	nmap -Pn -F 192.168.1.1
+
+Service and OS Detection
+
+Detect OS and Services	nmap -A 192.168.1.1
+Standard service detection	nmap -sV 192.168.1.1
+More aggressive Service Detection	nmap -sV --version-intensity 5 192.168.1.1
+Lighter banner grabbing detection	nmap -sV --version-intensity 0 192.168.1.1
+
+
+Nmap Output Formats
+
+Save default output to file	nmap -oN outputfile.txt 192.168.1.1
+Save results as XML	nmap -oX outputfile.xml 192.168.1.1
+Save results in a format for grep	nmap -oG outputfile.txt 192.168.1.1
+Save in all formats	nmap -oA outputfile 192.168.1.1
+
+Digging deeper with NSE Scripts
+
+Scan using default safe scripts	nmap -sV -sC 192.168.1.1
+Get help for a script	nmap --script-help=ssl-heartbleed
+Scan using a specific NSE script	nmap -sV -p 443 –script=ssl-heartbleed.nse 192.168.1.1
+Scan with a set of scripts	nmap -sV --script=smb* 192.168.1.1
+
+A scan to search for DDOS reflection UDP services
+
+Scan for UDP DDOS reflectors	nmap –sU –A –PN –n –pU:19,53,123,161 –script=ntp-monlist,dns-recursion,snmp-sysdescr 192.168.1.0/24
+
+HTTP Service Information
+
+Gather page titles from HTTP services	nmap --script=http-title 192.168.1.0/24
+Get HTTP headers of web services	nmap --script=http-headers 192.168.1.0/24
+Find web apps from known paths	nmap --script=http-enum 192.168.1.0/24
+
+Detect Heartbleed SSL Vulnerability
+
+Heartbleed Testing	nmap -sV -p 443 --script=ssl-heartbleed 192.168.1.0/24
+
+IP Address information
+
+Find Information about IP address	nmap --script=asn-query,whois,ip-geolocation-maxmind 192.168.1.0/24
+
+
+#
+#
+#
+
+
+sudo apt install nmap
+sudo apt install fping
+
+nmap -sP 10.0.0.0-255 | grep 00:25:11 | awk '{print IP ADDRESS}'
+nmap -sP....|awk -v mac="00:25:11" '/report for/{ip=$5}$0~mac{print ip}'
+sudo nmap -sP -PE -PA21,23,80,3389 192.168.1.*
+nmap -sP 192.168.1.0/24 >/dev/null && arp -an | grep <mac address here> | awk '{print $2}' | sed 's/[()]//g'
+ip neighbor | grep "00:1E:C9:56:3C:8E" | cut -d" " -f1
+sudo fing 10.9.8.0/24 # sweep the entire LAN for MAC addresses
+fping -f 192.168.1.0/24
+fping -c 1 -g 192.168.20.0/24
+fping -c 1 -g 192.168.20.0/24 && arp -n | grep "00:15:AD:FF:81:93"
+nmap -sP 192.168.1.0/24
+
+for /L %N in (1,1,254) do start /b ping -n 1 -w 200 192.168.0.%N
+
+#
+#
+#
+
+arp -n | grep 0:15:AD:FF:81:93
+arp-scan -q -l --interface en4 2>/dev/null | grep "00:1E:C9:56:3C:8E" | cut -d$'\t' -f1
+{ arp-scan -q -l --interface en0 2>/dev/null & arp-scan -q -l --interface en4 2>/dev/null } | grep "00:1E:C9:56:3C:8E" | cut -d$'\t' -f1
+
+#
+#
+#
+
+arp -n | grep -w -i 'YOUR-IP' | awk '{print $3}'
+arp -n | grep -w -i 'YOUR-MAC' | awk '{print $1}'
+arp -na
+arp -n
+
+arp -n | grep "00:1b:4C:22:28:b1" # lower b not capital or
+arp -n | grep -i "00:1B:4C:22:28:B1"
+
+ip neigh flush all > /dev/null; # Clears out your arp cache
+fping -c 1 -g -q 192.168.1.0/24 2> /dev/null;  # pings all of subnet
+arp -n | grep "00:1B:4C:22:28:B1"   # Search cache for MAC address
+
+#
+#
+#
+
+https://de.wikipedia.org/wiki/Liste_der_standardisierten_Ports
+https://www.speedguide.net/port.php?port=5060
+https://de.wikipedia.org/wiki/Session_Initiation_Protocol
