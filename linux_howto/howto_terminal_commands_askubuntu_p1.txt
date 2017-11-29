@@ -257,6 +257,16 @@ openssl rand -base64 32
 echo $(for((i=1;i<=13;i++)); do printf '%s' "${RANDOM:0:1}"; done)
 for i in {0..31}; do string+=$(printf "%x" $(($RANDOM%16)) ); done; echo $string
 
+
+
+date +%s+%Y | sha256sum | base64 | head -c 22; echo 	# output ZWQwMmRlMWQwOGMzZTU1Mz@
+date +%s+%Y| md5sum | base64 | cut -c -16; echo 		# output YzliMDFlNmJlZTA1@
+date +%s | sha256sum | base64 | head -c 32; echo	    # output NWQ1YzljNTNlZTJkMDFiY2EyY2U5MzE3@
+date +%s | sha256sum | base64 | head -c 12; echo	    # output ZTNiMGM0NDI5@
+date +%s | sha256sum |  head -c 12; echo 		        # output c96484b1f5bd@
+date | md5sum						                    # output 7a77de15b5ba807432d88e1ff16b66ca@
+openssl rand -base64 32					                # output e1IcJiJojNl3LDm/R3KyylS4K/6DpUpUOisYmSh4VAE=@
+
 ####################
 #
 # rename
@@ -324,3 +334,135 @@ do
   mv -v "$f" "$label"-$( printf '%02g' $i ).mp3
 done
 
+
+
+
+
+############################################################
+#
+#	Remove Files
+#
+############################################################
+
+# Remove file1 file2 file3
+rm file{1...3}
+
+# prompts you with a yes/no
+rm -i files
+
+# recursive
+rm -r OldDirectory
+
+# use wildcard
+rm *.html
+rm *html
+rm index*
+
+# delete multiple files
+rm Chapter[123].txt
+
+#
+#
+#
+
+# delete file, excluding directories
+find PATH ! -type d -exec rm '{}' \;
+find PATH ! -type d -delete # do not delete dirs
+find PATH -type f -maxdepth 1 -delete
+find PATH -type f -exec rm {} +
+find PATH -type f -delete
+find PATH ! -name '.*' ! -type d -exec rm -- {} +
+find PATH ! -name '.*' -type f -exec rm {} \;
+find PATH -maxdepth 1 -type f -name "*.xvg" -delete
+find PATH -type f -maxdepth 1 -exec rm -iv {} \; # NOT dir. NOT subdir .NOT files in subdir.
+find PATH -maxdepth 1 -type f -exec rm -rf '{}' \;
+
+find . -maxdepth 1 -type f -exec rm "{}" \;
+find . -maxdepth 1 -type f -name "a*" -exec rm "{}" \;
+
+# With GNU find:
+find /path/to/directoryToEmpty -mindepth 1 -delete
+
+# OpenBSD (and probably other BSDs)
+find /path/to/directoryToEmpty -mindepth 1 -depth -exec rm -f {} \;
+
+# To see what it deletes, in the order it will delete it:
+find /path/to/directoryToEmpty -mindepth 1 -depth -print
+
+############################################################
+#
+#	Remove in Loop
+#
+############################################################
+
+for r in $(find /path/to/directory -type f -maxdepth 1);do rm -v $r;done
+for file in *  do  [[ -f $file ]] && rm $file  [[ $? -ne 0 ]] && echo "Error in removing file '$file'";  done
+for file in .* *; do test -f "$file" && rm "$file" done
+for f in FOLDER/**/*; do [[ -f $f ]] && rm -- "$f"; done
+
+############################################################
+#
+# 	Remove preserve symlinks to directories
+#
+############################################################
+
+#preserve symlinks to directories:
+find .  ! -type d -exec sh -c '
+for f do [ -d  "$f" ] ||
+      set "$@" "$f";  shift
+done; rm  "$@"' sh  {} +
+
+find . ! \( -type l -o -type d \)  \
+-exec  rm {} + -o -exec  sh -c '
+   for f do [ -d "$f" ] ||
+   unlink "$f";done' sh {} +
+
+
+############################################################
+#
+#	create random directory/file hierarchy
+#
+############################################################
+
+# random abcdefghij Dir
+mkdir -p {a,b}/{e,f,g}/{h,i,j}
+mkdir -p {1..9} # random 1 bis 9
+rm -rf {1..9}
+
+# print all files from dirname1 dirname2 dirname3
+ll /dirname*
+ll /dirname{1..3}/*
+watch -n 10 ls -la /dirname{1..3}/*
+
+mkdir -p 1/2/3;
+echo 'hello1' > 1/hello1.txt;
+echo 'hello2' > 1/2/hello2.txt;
+echo 'hello3' > 1/2/3/hello3.txt
+rm 1/2/*
+
+#
+#
+#
+
+# Create Dir in loop
+dir=/mnt/TV
+dummy_dir=/home/bob/Desktop/dummy
+
+find $dir -type d -printf '%P\n' | \
+    while read dir; do
+        [[ -d "$dummy_dir/$dir" ]] || mkdir -p "$dummy_dir/$dir"
+    done
+
+find $dir -type f -printf '%P\n' | \
+     while read file; do
+        [[ -f "$dummy_dir/$file" ]] || touch "$dummy_dir/$file"
+     done
+
+
+
+https://unix.stackexchange.com/questions/45950/how-to-remove-only-the-content-of-directories
+https://alvinalexander.com/unix/edu/examples/rm.shtml
+https://unix.stackexchange.com/questions/84317/how-to-delete-files-only-but-keep-the-directory-structure
+https://stackoverflow.com/questions/7714900/remove-only-files-in-directory-on-linux-not-directories
+https://stackoverflow.com/questions/7714900/remove-only-files-in-directory-on-linux-not-directories
+https://askubuntu.com/questions/665533/only-delete-files-but-not-folders-with-rm

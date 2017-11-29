@@ -1,0 +1,194 @@
+
+
+############################################
+#
+#	EXPORT CSV DIRECTLY FROM MYSQL
+#
+############################################
+
+https://www.devroom.io/2008/11/27/export-csv-directly-from-mysql/
+https://steffen-kockel.de/blog/mysql-nach-csv-exportieren
+http://www.mysqltutorial.org/mysql-export-table-to-csv/
+https://michaelrigart.be/export-directly-mysql-csv/
+http://www.tech-recipes.com/rx/1475/save-mysql-query-results-into-a-text-or-csv-file/
+http://database.guide/how-to-save-a-mysql-query-result-to-a-csv-file/
+https://dev.mysql.com/doc/refman/5.7/en/select-into.html
+
+# ------------------------------------------------------
+
+SELECT id, name, email INTO OUTFILE '/tmp/result.csv'
+FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
+ESCAPED BY ‘\\’
+LINES TERMINATED BY '\n'
+FROM users WHERE 1
+
+
+
+SELECT spalte1,spalte2,spalte3
+FROM tabelle
+INTO OUTFILE '/tmp/mein.csv';
+
+
+﻿﻿SELECT  spalte1,spalte2,spalte3
+INTO OUTFILE '/tmp/clients.csv'
+FIELDS TERMINATED BY ';'
+OPTIONALLY ENCLOSED BY '"'
+ESCAPED BY '\\'
+LINES TERMINATED BY '\n'
+FROM tabelle;
+
+# ------------------------------------------------------
+
+# Export
+SELECT field1, field2
+FROM table1
+INTO OUTFILE '/path/to/file.csv'
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+FIELDS ESCAPED BY '\'
+LINES TERMINATED BY '\n';
+
+# Import
+LOAD DATA INFILE '/path/to/file.csv' INTO TABLE table1;
+
+# ------------------------------------------------------
+
+SELECT
+    orderNumber, status, orderDate, requiredDate, comments
+FROM
+    orders
+WHERE
+    status = 'Cancelled'
+INTO OUTFILE 'C:/tmp/cancelled_orders.csv'
+FIELDS ENCLOSED BY '"'
+TERMINATED BY ';'
+ESCAPED BY '"'
+LINES TERMINATED BY '\r\n';
+
+
+
+# Exporting data with column headings
+(SELECT 'Order Number','Order Date','Status')
+UNION
+(SELECT orderNumber,orderDate, status
+FROM orders
+INTO OUTFILE 'C:/tmp/orders.csv'
+FIELDS ENCLOSED BY '"' TERMINATED BY ';' ESCAPED BY '"'
+LINES TERMINATED BY '\r\n');
+
+
+
+# Handling NULL values
+SELECT
+    orderNumber, orderDate, IFNULL(shippedDate, 'N/A')
+FROM
+    orders INTO OUTFILE 'C:/tmp/orders2.csv'
+    FIELDS ENCLOSED BY '"'
+    TERMINATED BY ';'
+    ESCAPED BY '"' LINES
+    TERMINATED BY '\r\n';
+
+
+# ------------------------------------------------------
+
+mysql -h *hostname* -P *port number* --database=*database_name* -u *username* -p -e *your SQL query* | sed 's/\t/","/g;s/^/"/;s/$/"/;s/\n//g' > *output_file_name.csv*
+
+mysql <database> -e "<query here>" | tr '\t' ',' > data.csv
+mysql your_database -p < my_requests.sql | awk '{print $1","$2}' > out.csv
+
+mysql your_database --password=foo < my_requests.sql > out.csv
+mysql your_database --password=foo < my_requests.sql | sed 's/\t/,/g' >  out.csv
+
+mysql mydb -e "select * from mytable" -B > mytable.tsv
+mysql mydb -e "select * from mytable" -B | sed "s/'/\'/;s/\t/\",\"/g;s/^/\"/;s/$/\"/;s/\n//g" > mytable.csv
+
+mysql --user=wibble --password wobble -B -e "select * from vehicle_categories;" | sed "s/'/\'/;s/\t/\",\"/g;s/^/\"/;s/$/\"/;s/\n//g" > vehicle_categories.csv
+
+
+Regex Explanation:
+
+s/// means substitute what's between the first // with what's between the second //
+the "g" at the end is a modifier that means "all instance, not just first"
+^ (in this context) means beginning of line
+$ (in this context) means end of line
+So, putting it all together:
+
+s/'/\'/          replace ' with \'
+s/\t/\",\"/g     replace all \t (tab) with ","
+s/^/\"/          at the beginning of the line place a "
+s/$/\"/          at the end of the line place a "
+s/\n//g          replace all \n (newline) with nothing
+
+
+# ------------------------------------------------------
+
+mysql --batch, -B
+mysql --raw
+
+Print results using tab as the column separator, with each row on a new line. With this option, mysql does not use the history file. Batch mode results in non-tabular output format and escaping of special characters. Escaping may be disabled by using raw mode; see the description for the --raw option.
+
+sudo mysql -udemo_user -p -h127.0.0.1 --port=3306 \
+   --default-character-set=utf8 --database=demo_database \
+   --batch --raw < /var/demo_sql_query.sql > /var/demo_csv_export.csv
+
+# ------------------------------------------------------
+
+
+SELECT order_id,product_name,qty
+FROM orders
+WHERE foo = 'bar'
+INTO OUTFILE '/var/lib/mysql-files/orders.csv'
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n';
+
+
+
+
+SELECT a,b,a+b INTO OUTFILE '/tmp/result.txt'
+  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
+  LINES TERMINATED BY '\n'
+  FROM test_table;
+
+
+
+
+SELECT (sq_fieldnamelist)
+    UNION ALL
+    SELECT *
+    FROM addstock25
+    INTO OUTFILE "E:\\JOSE DATA\\addstock7.csv"
+    FIELDS TERMINATED BY ','
+    ENCLOSED BY '"'
+    LINES TERMINATED BY '\n
+
+
+
+
+SELECT order_id,product_name,qty FROM orders
+	INTO OUTFILE '/tmp/orders.txt'
+
+
+
+
+SELECT order_id,product_name,qty FROM orders
+	INTO OUTFILE '/tmp/orders.csv'
+	FIELDS TERMINATED BY ','
+	ENCLOSED BY '"'
+	LINES TERMINATED BY '\n'
+
+
+# ------------------------------------------------------
+
+-- Solution in Python:
+
+#!/usr/bin/env python
+
+import csv
+import sys
+
+tab_in = csv.reader(sys.stdin, dialect=csv.excel_tab)
+comma_out = csv.writer(sys.stdout, dialect=csv.excel)
+
+for row in tab_in:
+    comma_out.writerow(row)
