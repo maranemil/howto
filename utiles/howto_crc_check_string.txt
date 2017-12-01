@@ -1,0 +1,2792 @@
+define('CRC16POLYN', 0x1021);
+
+function CRC16Normal($buffer) {
+    $result = 0xFFFF;
+    if (($length = strlen($buffer)) > 0) {
+        for ($offset = 0; $offset < $length; $offset++) {
+            $result ^= (ord($buffer[$offset]) << 8);
+            for ($bitwise = 0; $bitwise < 8; $bitwise++) {
+                if (($result <<= 1) & 0x10000) $result ^= CRC16POLYN;
+                $result &= 0xFFFF;
+            }
+        }
+    }
+    return $result;
+}
+
+echo dechex(CRC16Normal(hex2bin('100000000000000012510908001800040214000c000c021c0002000000000000')));
+
+------------------------------------------------------------------------------------------------------
+
+# How to calculate crc16 in php
+
+
+class CRC16 {
+    private static $CRC16_Table = array
+        (   0x0000, 0x2110, 0x4220, 0x6330, 0x8440, 0xa550, 0xc660, 0xe770,
+            0x0881, 0x2991, 0x4aa1, 0x6bb1, 0x8cc1, 0xadd1, 0xcee1, 0xeff1,
+            0x3112, 0x1002, 0x7332, 0x5222, 0xb552, 0x9442, 0xf772, 0xd662,
+            0x3993, 0x1883, 0x7bb3, 0x5aa3, 0xbdd3, 0x9cc3, 0xfff3, 0xdee3,
+            0x6224, 0x4334, 0x2004, 0x0114, 0xe664, 0xc774, 0xa444, 0x8554,
+            0x6aa5, 0x4bb5, 0x2885, 0x0995, 0xeee5, 0xcff5, 0xacc5, 0x8dd5,
+            0x5336, 0x7226, 0x1116, 0x3006, 0xd776, 0xf666, 0x9556, 0xb446,
+            0x5bb7, 0x7aa7, 0x1997, 0x3887, 0xdff7, 0xfee7, 0x9dd7, 0xbcc7,
+            0xc448, 0xe558, 0x8668, 0xa778, 0x4008, 0x6118, 0x0228, 0x2338,
+            0xccc9, 0xedd9, 0x8ee9, 0xaff9, 0x4889, 0x6999, 0x0aa9, 0x2bb9,
+            0xf55a, 0xd44a, 0xb77a, 0x966a, 0x711a, 0x500a, 0x333a, 0x122a,
+            0xfddb, 0xdccb, 0xbffb, 0x9eeb, 0x799b, 0x588b, 0x3bbb, 0x1aab,
+            0xa66c, 0x877c, 0xe44c, 0xc55c, 0x222c, 0x033c, 0x600c, 0x411c,
+            0xaeed, 0x8ffd, 0xeccd, 0xcddd, 0x2aad, 0x0bbd, 0x688d, 0x499d,
+            0x977e, 0xb66e, 0xd55e, 0xf44e, 0x133e, 0x322e, 0x511e, 0x700e,
+            0x9fff, 0xbeef, 0xdddf, 0xfccf, 0x1bbf, 0x3aaf, 0x599f, 0x788f,
+            0x8891, 0xa981, 0xcab1, 0xeba1, 0x0cd1, 0x2dc1, 0x4ef1, 0x6fe1,
+            0x8010, 0xa100, 0xc230, 0xe320, 0x0450, 0x2540, 0x4670, 0x6760,
+            0xb983, 0x9893, 0xfba3, 0xdab3, 0x3dc3, 0x1cd3, 0x7fe3, 0x5ef3,
+            0xb102, 0x9012, 0xf322, 0xd232, 0x3542, 0x1452, 0x7762, 0x5672,
+            0xeab5, 0xcba5, 0xa895, 0x8985, 0x6ef5, 0x4fe5, 0x2cd5, 0x0dc5,
+            0xe234, 0xc324, 0xa014, 0x8104, 0x6674, 0x4764, 0x2454, 0x0544,
+            0xdba7, 0xfab7, 0x9987, 0xb897, 0x5fe7, 0x7ef7, 0x1dc7, 0x3cd7,
+            0xd326, 0xf236, 0x9106, 0xb016, 0x5766, 0x7676, 0x1546, 0x3456,
+            0x4cd9, 0x6dc9, 0x0ef9, 0x2fe9, 0xc899, 0xe989, 0x8ab9, 0xaba9,
+            0x4458, 0x6548, 0x0678, 0x2768, 0xc018, 0xe108, 0x8238, 0xa328,
+            0x7dcb, 0x5cdb, 0x3feb, 0x1efb, 0xf98b, 0xd89b, 0xbbab, 0x9abb,
+            0x754a, 0x545a, 0x376a, 0x167a, 0xf10a, 0xd01a, 0xb32a, 0x923a,
+            0x2efd, 0x0fed, 0x6cdd, 0x4dcd, 0xaabd, 0x8bad, 0xe89d, 0xc98d,
+            0x267c, 0x076c, 0x645c, 0x454c, 0xa23c, 0x832c, 0xe01c, 0xc10c,
+            0x1fef, 0x3eff, 0x5dcf, 0x7cdf, 0x9baf, 0xbabf, 0xd98f, 0xf89f,
+            0x176e, 0x367e, 0x554e, 0x745e, 0x932e, 0xb23e, 0xd10e, 0xf01e
+        );
+
+    public static function calculate( $buffer ) {
+        $length = strlen($buffer);
+
+        $crc = 0;
+        $i = 0;
+        while( $length-- ) {
+            $crc = (( $crc >> 8) & 0xff) ^ (self::$CRC16_Table[(ord($buffer[$i++]) ^ $crc) & 0xFF]);
+        }
+
+        return (($crc & 0xFFFF) ^ 0x8000) - 0x8000;
+    }    
+}
+
+echo CRC16::calculate( "\x74\x65\x73\x74" );
+
+
+------------------------------------------------------------------------------------------------------
+
+function crc16($data)
+ {
+   $crc = 0xFFFF;
+   for ($i = 0; $i < strlen($data); $i++)
+   {
+     $x = (($crc >> 8) ^ ord($data[$i])) & 0xFF;
+     $x ^= $x >> 4;
+     $crc = (($crc << 8) ^ ($x << 12) ^ ($x << 5) ^ $x) & 0xFFFF;
+   }
+   return $crc;
+ }
+
+
+ ------------------------------------------------------------------------------------------------------
+
+ public static int CRC16(final byte[] buffer) {
+        int crc = 0xffff;
+
+        for (int i = 0; i < buffer.length; i++) {
+            crc = (((crc >> 8) & 0xff) | (crc << 8)) & 0xffff;
+            //  crc = ((crc >>> 8) | (crc << 8)) & 0xffff;
+            crc ^= (buffer[i] & 0xff);
+            crc ^= ((crc & 0xff) >> 4);
+            crc ^= (crc << 12) & 0xffff;
+            crc ^= ((crc & 0xff) << 5) & 0xffff;
+        }
+        crc &= 0xffff;
+
+        return crc;
+    }
+
+    ------------------------------------------------------------------------------------------------------
+
+    // Custom CRC16 with bit reflection [duplicate]
+
+        function crc16($data) {
+        $crc = 0xAC6F;
+        $len = strlen($data);
+        $i = 0;
+        while ($len--) {
+            $crc ^= reversebyte(ord($data[$i++])) << 8;
+            $crc &= 0xffff;
+            for ($j = 0; $j < 8; $j++){
+                $crc = ($crc & 0x8000) ? ($crc << 1) ^ 0x8005 : $crc << 1;
+                $crc &= 0xffff;
+            }
+        }
+        $crc ^= 0x0000;
+        $crc = reversebits($crc);
+        return $crc;
+    }
+
+    function reversebyte($byte) {
+        $ob = 0;
+        $b = (1 << 7);
+        for ($i = 0; $i <= 7; $i++) {
+            if (($byte & $b) !== 0) {
+                $ob |= (1 << $i);
+            }
+            $b >>= 1;
+        }
+        return $ob;
+    }
+
+    function reversebits($cc) {
+        $ob = 0;
+        $b = (1 << 15);
+        for ($i = 0; $i <= 15; $i++) {
+            if (($cc & $b) !== 0) {
+                $ob |= (1 << $i);
+            }
+            $b >>= 1;
+        }
+        return $ob;
+    }
+
+    Poly = 0x8005
+    Init = 0xAC6F
+    Xor = 0x0000
+    Refin = True
+    Refout = True
+If you don't want to add reflection then replace these lines in function crc16():
+
+Replace Refin = True:
+
+    $crc ^= reversebyte(ord($data[$i++])) << 8;
+With Refin = False:
+
+    $crc ^= ord($data[$i++]) << 8;
+Replace Refout = True:
+
+    $crc = reversebits($crc);
+with Refout = False (remove this whole line):
+
+    $crc = reversebits($crc); //remove me
+
+------------------------------------------------------------------------------------------------------
+
+function crc16($sStr, $aParams = array()){ 
+
+ $aDefaults = array( 
+   "polynome" => 0x1021, 
+   "init" => 0xFFFF, 
+   "xor_out" => 0, 
+ ); 
+
+ foreach ($aDefaults as $key => $val){ 
+   if (!isset($aParams[$key])){ 
+     $aParams[$key] = $val; 
+   } 
+ } 
+
+ $sStr .= ""; 
+ $crc = $aParams['init']; 
+ $len = strlen($sStr); 
+ $i = 0; 
+
+ while ($len--){ 
+   $crc ^= ord($sStr[$i++]) << 8; 
+   $crc &= 0xffff; 
+
+   for ($j = 0; $j < 8; $j++){ 
+     $crc = ($crc & 0x8000) ? ($crc << 1) ^ $aParams['polynome'] : $crc << 1; 
+     $crc &= 0xffff; 
+   } 
+ } 
+
+ $crc ^= $aParams['xor_out']; 
+
+ return $crc; 
+}
+
+
+------------------------------------------------------------------------------------------------------
+
+// Convert C to PHP for CRC16 Function
+
+function getCrc16($pData)
+{
+    $hexdata = pack('H*',$pData);
+    $nLength = strlen($hexdata);
+    $fcs = 0xFFFF;
+    $pos = 0;
+    while($nLength > 0)
+    {
+        $fcs = ($fcs >> 8) ^ $crctab16[($fcs ^ ord($hexdata[$pos])) & 0xFF];
+        $nLength--;
+        $pos++;
+    }
+    return ~$fcs;
+}
+
+------------------------------------------------------------------------------------------------------
+
+On-line CRC calculation and free library
+https://www.lammertbies.nl/comm/info/crc-calculation.html
+
+"123456789"
+1 byte checksum 221
+CRC-16  0xBB3D
+CRC-16 (Modbus) 0x4B37
+CRC-16 (Sick)   0x56A6
+CRC-CCITT (XModem)  0x31C3
+CRC-CCITT (0xFFFF)  0x29B1
+CRC-CCITT (0x1D0F)  0xE5CC
+CRC-CCITT (Kermit)  0x8921
+CRC-DNP 0x82EA
+CRC-32  0xCBF43926
+
+Polynomial functions for common CRC's
+CRC-16  0x8005  x16 + x15 + x2 + 1
+CRC-CCITT   0x1021  x16 + x12 + x5 + 1
+CRC-DNP 0x3D65  x16 + x13 + x12 + x11 + x10 + x8 + x6 + x5 + x2 + 1
+CRC-32  0x04C11DB7  x32 + x26 + x23 + x22 + x16 + x12 + x11 + x10 + x8 + x7 + x5 + x4 + x2 + x1 + 1
+
+
+http://www.hsg-kl.de/faecher/inf/netze/fehler1/index.php
+https://bitbucket.org/martin_scharrer/crccheck
+https://pypi.python.org/pypi/crccheck/0.6
+http://pythonhosted.org/crccheck/crccheck.html
+https://pypkg.com/pypi/crccheck/
+
+https://www.c-plusplus.net/forum/208816-full
+http://automationwiki.com/index.php/Cycle_Redundancy_Check
+
+
+S. No.  Name of Polynomial
+1   CRC-1
+2   CRC-4-ITU
+3   CRC-5-EPC
+4   CRC-5-ITU
+5   CRC-5-USB
+6   CRC-6-ITU
+7   CRC-7
+8   CRC-8-ATM
+9   CRC-8-CCITT
+10  CRC-8-Dallas/Maxim
+11  CRC-8
+12  CRC-8-SAE J1850
+13  CRC-10
+14  CRC-11
+15  CRC-12
+16  CRC-15-CAN
+17  CRC-16-Fletcher
+18  CRC-16-CCITT
+19  CRC-16-T10-DIF
+20  CRC-16-DNP
+21  CRC-16-IBM
+22  CRC-24
+23  CRC-24-Radix-64
+24  CRC-30
+25  CRC-32-Adler
+26  CRC-32-IEEE 802.3
+27  CRC-32C (Castagnoli)
+28  CRC-32K (Koopman)
+29  CRC-32Q
+30  CRC-64-ISO
+31  CRC-64-ECMA-182
+
+https://users.ece.cmu.edu/~koopman/crc/crc4.html
+
+Polynome und Typen
+http://deacademic.com/dic.nsf/dewiki/225344
+
+CRC-CCITT (CRC-4)   x4 + x + 1
+CRC-CCITT (CRC-8)   x8 + x5 + x4 + 1
+CRC-CCITT (CRC-16)  x16 + x12 + x5 + 1
+CRC-XModem (CRC-XModem) x16 + x15 + x10 + x3
+IBM-CRC-16  x16 + x15 + x2 + 1
+CRC-24 (IETF RFC2440)   x24 + x23 + x18 + x17 + x14 + x11 + x10 + x7 + x6 + x5 + x4 + x3 + x + 1
+CRC-32  x32 + x26 + x23 + x22 + x16 + x12 + x11 + x10 + x8 + x7 + x5 + x4 + x2 + x + 1
+CRC-64 (ISO 3309)   x64 + x4 + x3 + x + 1
+CAN-CRC x15 + x14 + x10 + x8 + x7 + x4 + x3 + 1
+Bluetooth   x5 + x4 + x2 + 1
+
+
+
+Berechnung einer CRC-32-Prüfsumme in C
+
+Das folgende C-Programm berechnet die CRC-32 des 8 Bits langen Datenstroms 10001100:
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <inttypes.h>
+#define CRC32POLY 0x04C11DB7 /* CRC-32 Polynom */
+ 
+int datastream[]={1,0,0,0,1,1,0,0};
+int databits=8;
+uint32_t crc32 = 0; /* Schieberegister */
+/*__int32 crc32 = 0; => für MS VS  */
+ 
+int main(void)
+{   int i;
+    for (i=0; i<databits; ++i)
+        if (((crc32 & 0x80000000) ? 1 : 0) != datastream[i]) 
+             crc32=(crc32<<1) ^ CRC32POLY;
+        else 
+             crc32<<=1;
+    printf("0x%08X\n",crc32);
+    return EXIT_SUCCESS;
+}
+
+
+
+CRC-32 Implementierung in der Programmiersprache C
+
+Standards wie Ethernet modifizieren den Algorithmus:
+
+Als Startwert wird 111....111 verwendet (dies entspricht einer Invertierung der ersten 32 Bits im Datenstrom)
+Besteht der Datenstrom aus Bytes, wird das niederwertigste Bit zuerst verwendet
+Alle Bits im Ergebnis werden invertiert und die Bitreihenfolge wird gedreht, d. h. das höchstwertige Bit erscheint zuerst
+Das folgende Programm berechnet eine solche modifizierte CRC:
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <inttypes.h>
+#define CRC32POLYREV 0xEDB88320 /* CRC-32 Polynom, umgekehrte Bitfolge */
+ 
+int datastream[]={1,0,0,0,1,1,0,0}; /* ASCII-"1", LSB zuerst */
+int databits=8;
+uint32_t crc32_rev=0xffffffff; /* Schieberegister, Startwert (111...) */
+ 
+int main(void)
+{   int i;
+    for (i=0; i<databits; ++i)
+        if ((crc32_rev & 1) != datastream[i])
+             crc32_rev=(crc32_rev>>1) ^ CRC32POLYREV; 
+        else 
+             crc32_rev=crc32_rev>>1;
+    printf("0x%08X\n",crc32_rev ^ 0xffffffff); /* inverses Ergebnis, MSB zuerst */
+    return EXIT_SUCCESS;
+}
+
+
+
+
+------------------------------------------------------------------------------------------------------
+
+
+https://github.com/mozram/CRC4-ITU/blob/master/crc4_itu.c
+
+
+// crc4_itu.c : Defines the entry point for the console application.
+
+/*-----------------------------------------------------------------
+|  crc4_itu.c
+|
+|  Developed by: Zulhilmi Ramli
+|
+|  Purpose:  CRC4-ITU library using lookup table method. Was developed
+|             on Visual Studio 2015.
+|  
+|  Notes: Some of variable used in this library might not compatible
+|         when ported to other system/embedded system. 
+|         Change it accordingly to target system.
+|
+|  Parameters:
+|      parameter_name (IN, OUT, or IN/OUT) -- EXPLANATION OF THE
+|              PURPOSE OF THIS PARAMETER TO THE FUNCTION.
+|                      (REPEAT THIS FOR ALL FORMAL PARAMETERS OF
+|                       THIS FUNCTION.
+|                       IN = USED TO PASS DATA INTO THIS FUNCTION,
+|                       OUT = USED TO PASS DATA OUT OF THIS FUNCTION
+|                       IN/OUT = USED FOR BOTH PURPOSES.)
+|
+|  Returns:  IF THIS FUNCTION SENDS BACK A VALUE VIA THE RETURN
+|      MECHANISM, DESCRIBE THE PURPOSE OF THAT VALUE HERE.
+*-------------------------------------------------------------------*/
+
+#include "stdafx.h"
+
+/* Lookup table for CRC4-ITU */
+static unsigned char const table_byte[256] = {
+    0x0, 0x7, 0xe, 0x9, 0x5, 0x2, 0xb, 0xc, 0xa, 0xd, 0x4, 0x3, 0xf, 0x8, 0x1, 0x6,
+    0xd, 0xa, 0x3, 0x4, 0x8, 0xf, 0x6, 0x1, 0x7, 0x0, 0x9, 0xe, 0x2, 0x5, 0xc, 0xb,
+    0x3, 0x4, 0xd, 0xa, 0x6, 0x1, 0x8, 0xf, 0x9, 0xe, 0x7, 0x0, 0xc, 0xb, 0x2, 0x5,
+    0xe, 0x9, 0x0, 0x7, 0xb, 0xc, 0x5, 0x2, 0x4, 0x3, 0xa, 0xd, 0x1, 0x6, 0xf, 0x8,
+    0x6, 0x1, 0x8, 0xf, 0x3, 0x4, 0xd, 0xa, 0xc, 0xb, 0x2, 0x5, 0x9, 0xe, 0x7, 0x0,
+    0xb, 0xc, 0x5, 0x2, 0xe, 0x9, 0x0, 0x7, 0x1, 0x6, 0xf, 0x8, 0x4, 0x3, 0xa, 0xd,
+    0x5, 0x2, 0xb, 0xc, 0x0, 0x7, 0xe, 0x9, 0xf, 0x8, 0x1, 0x6, 0xa, 0xd, 0x4, 0x3,
+    0x8, 0xf, 0x6, 0x1, 0xd, 0xa, 0x3, 0x4, 0x2, 0x5, 0xc, 0xb, 0x7, 0x0, 0x9, 0xe,
+    0xc, 0xb, 0x2, 0x5, 0x9, 0xe, 0x7, 0x0, 0x6, 0x1, 0x8, 0xf, 0x3, 0x4, 0xd, 0xa,
+    0x1, 0x6, 0xf, 0x8, 0x4, 0x3, 0xa, 0xd, 0xb, 0xc, 0x5, 0x2, 0xe, 0x9, 0x0, 0x7,
+    0xf, 0x8, 0x1, 0x6, 0xa, 0xd, 0x4, 0x3, 0x5, 0x2, 0xb, 0xc, 0x0, 0x7, 0xe, 0x9,
+    0x2, 0x5, 0xc, 0xb, 0x7, 0x0, 0x9, 0xe, 0x8, 0xf, 0x6, 0x1, 0xd, 0xa, 0x3, 0x4,
+    0xa, 0xd, 0x4, 0x3, 0xf, 0x8, 0x1, 0x6, 0x0, 0x7, 0xe, 0x9, 0x5, 0x2, 0xb, 0xc,
+    0x7, 0x0, 0x9, 0xe, 0x2, 0x5, 0xc, 0xb, 0xd, 0xa, 0x3, 0x4, 0x8, 0xf, 0x6, 0x1,
+    0x9, 0xe, 0x7, 0x0, 0xc, 0xb, 0x2, 0x5, 0x3, 0x4, 0xd, 0xa, 0x6, 0x1, 0x8, 0xf,
+    0x4, 0x3, 0xa, 0xd, 0x1, 0x6, 0xf, 0x8, 0xe, 0x9, 0x0, 0x7, 0xb, 0xc, 0x5, 0x2 
+};
+
+unsigned char data[] = { 0x1, 0x23, 0x45, 0x67, 0x89 }; // This variable only for testing purpose
+unsigned char size = 5; // For testing only. Change according to data size.
+
+/**
+ * Main CRC4-ITU function
+ * 
+ * @param crc -> Existing CRC value before process a new one.
+ * @param data -> Pointer to data to be hashed with CRC
+ * @param len -> Size of data
+ * @return -> CRC value.
+ * @notes -> crc parameter most of time should be 0x00 as listed in ITU standard.
+ */
+static unsigned char crc4itu(unsigned char crc, unsigned char *data, unsigned char len) {
+    if (data == NULL)
+        return 0;
+    crc &= 0xf;
+    while (len--)
+        crc = table_byte[crc ^ *data++];
+    return crc;
+}
+
+int main()
+{
+    printf("CRC4-ITU Test\r\n");
+    unsigned char crc = crc4itu(0x00, data, size);
+    printf("Result is: %d \r\n", crc);
+    return 0;
+}
+
+
+
+
+------------------------------------------------------------------------------------------------------
+
+https://examples.javacodegeeks.com/core-java/util/zip/calculate-crc32-checksum-for-byte-array/
+
+package com.javacodegeeks.snippets.core;
+
+import java.util.zip.CRC32;
+import java.util.zip.Checksum;
+
+public class CalculateCRC32ChecksumForByteArray {
+    
+    public static void main(String[] args) {
+        
+        String input = "Java Code Geeks - Java Examples";
+         
+        // get bytes from string
+        byte bytes[] = input.getBytes();
+         
+        Checksum checksum = new CRC32();
+        
+        // update the current checksum with the specified array of bytes
+        checksum.update(bytes, 0, bytes.length);
+         
+        // get the current checksum value
+        long checksumValue = checksum.getValue();
+         
+        System.out.println("CRC32 checksum for input string is: " + checksumValue);
+        
+    }
+
+}
+
+
+------------------------------------------------------------------------------------------------------
+
+
+Implemented algorithms
+
+CRC1
+CRC16, CRC16-CCITT, CRC16-DNP, CRC16-Modbus, CRC16-QT, CRC16-USB, CRC16-XModem, CRC16-ZModem
+
+https://github.com/mermshaus/php-crc
+
+
+<?php
+
+// Autoloading via Composer
+require __DIR__ . '/vendor/autoload.php';
+
+$crc16ccitt = new mermshaus\CRC\CRC16CCITT();
+
+$crc16ccitt->update('Hello');
+$crc16ccitt->update(' World!');
+
+$checksum = $crc16ccitt->finish();
+
+var_dump(bin2hex($checksum)); // string(4) "882a"
+
+
+------------------------------------------------------------------------------------------------------
+
+<?php
+// CCITT, X24
+define(CRC16POLYN,0x1021);
+define(CRC16POLYI,0x8408);
+
+// for "STANDARD" use 0x8005 and 0xA001
+
+function CRC16Normal($buffer) {
+    $result = 0xFFFF;
+    if ( ($length = strlen($buffer)) > 0) {
+        for ($offset = 0; $offset < $length; $offset++) {
+            $result ^= (ord($buffer[$offset]) << 8);
+            for ($bitwise = 0; $bitwise < 8; $bitwise++) {
+                if (($result <<= 1) & 0x10000) $result ^= CRC16POLYN;
+                $result &= 0xFFFF; /* gut the overflow as php has no 16 bit types */
+            }
+        }
+    }
+    return $result;
+}
+
+function CRC16Inverse($buffer) {
+    $result = 0xFFFF;
+    if ( ($length = strlen($buffer)) > 0) {
+        for ($offset = 0; $offset < $length; $offset++) {
+            $result ^= ord($buffer[$offset]);
+            for ($bitwise = 0; $bitwise < 8; $bitwise++) {
+                $lowBit = $result & 0x0001;
+                $result >>= 1;
+                if ($lowBit) $result ^= CRC16POLYI;
+            }
+        }
+    }
+    return $result;
+}
+
+
+echo '
+    0x',dechex(CRC16Normal('123456789')),' == 0x29B1<br />
+    0x',dechex(CRC16Normal('abc')),' == 0x514A<br />
+    0x',dechex(CRC16Normal('ABC')),' == 0xF508<br />
+    0x',dechex(CRC16Normal('This is a string')),' == 0x4BE9<br />
+    <br />
+    0x',dechex(CRC16Inverse('123456789')),' == 0x29B1<br />
+    0x',dechex(CRC16Inverse('abc')),' == 0x514A<br />
+    0x',dechex(CRC16Inverse('ABC')),' == 0xF508<br />
+    0x',dechex(CRC16Inverse('This is a string')),' == 0x4BE9<br />';
+?>
+
+
+
+
+
+<?php
+
+function crc16($data)
+ {
+   $crc = 0xFFFF;
+   for ($i = 0; $i < strlen($data); $i++)
+   {
+     $x = (($crc >> 8) ^ ord($data[$i])) & 0xFF;
+     $x ^= $x >> 4;
+     $crc = (($crc << 8) ^ ($x << 12) ^ ($x << 5) ^ $x) & 0xFFFF;
+   }
+   return $crc;
+ }
+
+ ?>
+
+ ------------------------------------------------------------------------------------------------------
+
+ http://php.net/manual/en/function.crc32.php
+
+ $checksum = crc32("The quick brown fox jumped over the lazy dog.");
+printf("%u\n", $checksum);
+
+
+function crc32_file($filename) 
+{ 
+    return hash_file ('CRC32', $filename , FALSE ); 
+} 
+
+
+
+<?php 
+function crc16($string) { 
+  $crc = 0xFFFF; 
+  for ($x = 0; $x < strlen ($string); $x++) { 
+    $crc = $crc ^ ord($string[$x]); 
+    for ($y = 0; $y < 8; $y++) { 
+      if (($crc & 0x0001) == 0x0001) { 
+        $crc = (($crc >> 1) ^ 0xA001); 
+      } else { $crc = $crc >> 1; } 
+    } 
+  } 
+  return $crc; 
+} 
+?> 
+
+
+For those who want a more familiar return value for the function: 
+
+<?php 
+function strcrc32($text) { 
+  $crc = crc32($text); 
+  if ($crc & 0x80000000) { 
+    $crc ^= 0xffffffff; 
+    $crc += 1; 
+    $crc = -$crc; 
+  } 
+  return $crc; 
+} 
+?> 
+
+And to show the result in Hex string: 
+
+<?php 
+function int32_to_hex($value) { 
+  $value &= 0xffffffff; 
+  return str_pad(strtoupper(dechex($value)), 8, "0", STR_PAD_LEFT); 
+} 
+?>
+
+------------------------------------------------------------------------------------------------------
+
+How to calculate CRC-CCITT (Kermit) polynomial
+0x1ff5 is indeed the CRC-CCITT (Kermit) of 80 00 00 03
+
+http://reveng.sourceforge.net/crc-catalogue/16.htm#crc.cat.crc-16-ccitt-false
+http://reveng.sourceforge.net/crc-catalogue/16.htm#crc.cat.kermit
+
+------------------------------------------------------------------------------------------------------
+
+
+https://gist.github.com/bewest/9559812
+
+crc_example.c
+crc.js
+
+function crc16CCITT(buf, seed)
+  {
+    var crc = Number.isNaN(seed) ? 0xFFFF : seed;
+    for (var i = 0, len = buf.length; i < len; ++i)
+    {
+      crc = (((crc >> 8) & 0xFF) | ((crc << 8) & 0xFFFF));
+      crc ^= buf[i];
+      crc ^= ((crc >> 4) & 0xFF);
+      crc ^= ((((crc << 8) & 0xFFFF) << 4) & 0xFFFF);
+      crc ^= (((((crc & 0xFF) << 4) & 0xFFFF) << 1) & 0xFFFF);
+    }
+    return crc;
+  }
+
+  ------------------------------------------------------------------------------------------------------
+
+  http://micmap.org/php-by-example/it/function/pbx_crc16
+
+  <?php
+/**
+ * PHP By Example
+ *
+ * @copyright 2014 Michel Corne 
+ * @license   http://www.opensource.org/licenses/gpl-3.0.html GNU GPL v3
+ */
+
+/**
+ * Calculates the crc16-CCITT polynomial of a string
+ *
+ * @param  string $string
+ * @return string
+ * @see http://srecord.sourceforge.net/crc16-ccitt.html
+ */
+function pbx_crc16($string)
+{
+    static $table = [
+            0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50A5, 0x60C6, 0x70E7,
+            0x8108, 0x9129, 0xA14A, 0xB16B, 0xC18C, 0xD1AD, 0xE1CE, 0xF1EF,
+            0x1231, 0x0210, 0x3273, 0x2252, 0x52B5, 0x4294, 0x72F7, 0x62D6,
+            0x9339, 0x8318, 0xB37B, 0xA35A, 0xD3BD, 0xC39C, 0xF3FF, 0xE3DE,
+            0x2462, 0x3443, 0x0420, 0x1401, 0x64E6, 0x74C7, 0x44A4, 0x5485,
+            0xA56A, 0xB54B, 0x8528, 0x9509, 0xE5EE, 0xF5CF, 0xC5AC, 0xD58D,
+            0x3653, 0x2672, 0x1611, 0x0630, 0x76D7, 0x66F6, 0x5695, 0x46B4,
+            0xB75B, 0xA77A, 0x9719, 0x8738, 0xF7DF, 0xE7FE, 0xD79D, 0xC7BC,
+            0x48C4, 0x58E5, 0x6886, 0x78A7, 0x0840, 0x1861, 0x2802, 0x3823,
+            0xC9CC, 0xD9ED, 0xE98E, 0xF9AF, 0x8948, 0x9969, 0xA90A, 0xB92B,
+            0x5AF5, 0x4AD4, 0x7AB7, 0x6A96, 0x1A71, 0x0A50, 0x3A33, 0x2A12,
+            0xDBFD, 0xCBDC, 0xFBBF, 0xEB9E, 0x9B79, 0x8B58, 0xBB3B, 0xAB1A,
+            0x6CA6, 0x7C87, 0x4CE4, 0x5CC5, 0x2C22, 0x3C03, 0x0C60, 0x1C41,
+            0xEDAE, 0xFD8F, 0xCDEC, 0xDDCD, 0xAD2A, 0xBD0B, 0x8D68, 0x9D49,
+            0x7E97, 0x6EB6, 0x5ED5, 0x4EF4, 0x3E13, 0x2E32, 0x1E51, 0x0E70,
+            0xFF9F, 0xEFBE, 0xDFDD, 0xCFFC, 0xBF1B, 0xAF3A, 0x9F59, 0x8F78,
+            0x9188, 0x81A9, 0xB1CA, 0xA1EB, 0xD10C, 0xC12D, 0xF14E, 0xE16F,
+            0x1080, 0x00A1, 0x30C2, 0x20E3, 0x5004, 0x4025, 0x7046, 0x6067,
+            0x83B9, 0x9398, 0xA3FB, 0xB3DA, 0xC33D, 0xD31C, 0xE37F, 0xF35E,
+            0x02B1, 0x1290, 0x22F3, 0x32D2, 0x4235, 0x5214, 0x6277, 0x7256,
+            0xB5EA, 0xA5CB, 0x95A8, 0x8589, 0xF56E, 0xE54F, 0xD52C, 0xC50D,
+            0x34E2, 0x24C3, 0x14A0, 0x0481, 0x7466, 0x6447, 0x5424, 0x4405,
+            0xA7DB, 0xB7FA, 0x8799, 0x97B8, 0xE75F, 0xF77E, 0xC71D, 0xD73C,
+            0x26D3, 0x36F2, 0x0691, 0x16B0, 0x6657, 0x7676, 0x4615, 0x5634,
+            0xD94C, 0xC96D, 0xF90E, 0xE92F, 0x99C8, 0x89E9, 0xB98A, 0xA9AB,
+            0x5844, 0x4865, 0x7806, 0x6827, 0x18C0, 0x08E1, 0x3882, 0x28A3,
+            0xCB7D, 0xDB5C, 0xEB3F, 0xFB1E, 0x8BF9, 0x9BD8, 0xABBB, 0xBB9A,
+            0x4A75, 0x5A54, 0x6A37, 0x7A16, 0x0AF1, 0x1AD0, 0x2AB3, 0x3A92,
+            0xFD2E, 0xED0F, 0xDD6C, 0xCD4D, 0xBDAA, 0xAD8B, 0x9DE8, 0x8DC9,
+            0x7C26, 0x6C07, 0x5C64, 0x4C45, 0x3CA2, 0x2C83, 0x1CE0, 0x0CC1,
+            0xEF1F, 0xFF3E, 0xCF5D, 0xDF7C, 0xAF9B, 0xBFBA, 0x8FD9, 0x9FF8,
+            0x6E17, 0x7E36, 0x4E55, 0x5E74, 0x2E93, 0x3EB2, 0x0ED1, 0x1EF0,
+    ];
+
+    $crc16 = 0xFFFF;
+    $string = (string) $string;
+    $len = strlen($string);
+
+    for ($i = 0; $i < $len; $i++ ) {
+        $index = ($crc16 >> 8) ^ ord($string[$i]);
+        $crc16 = (($crc16 << 8) & 0xFFFF) ^ $table[$index];
+    }
+
+    $crc16 = sprintf('%04x', $crc16);
+
+    return $crc16;
+}
+
+/**
+ * Provides access to the functions above through class or object methods
+ *
+ * This class is used for unit testing.
+ *
+ */
+class pbx_crc16
+{
+    function __call($name, $arguments)
+    {
+        return call_user_func_array(self::$name, $arguments);
+    }
+
+    static function crc16($string)
+    {
+        return pbx_crc16($string);
+    }
+}
+
+
+------------------------------------------------------------------------------------------------------
+
+function crc16($data) { 
+   $poly = 0x8005; 
+   $xor = 0x0000; 
+
+   $crc = 0xAC6F; 
+   $len = strlen($data); 
+   $i = 0; 
+   while ($len--) { 
+      $crc ^= ord($data[$i++]) << 8; 
+      $crc &= 0xffff; 
+      for ($j = 0; $j < 8; $j++){ 
+         $crc = ($crc & 0x8000) ? ($crc << 1) ^ $poly : $crc << 1; 
+         $crc &= 0xffff; 
+      } 
+   } 
+   $crc ^= $xor; 
+   return $crc; 
+}
+
+------------------------------------------------------------------------------------------------------
+
+
+https://beccati.com/crc16.php
+phpCrc16 - a PHP code snippet to calculate CRC16/CCITT (download)
+2002-11-28: Updated to use a faster 16 bit lookup table, thanks to Ashley
+
+
+<?php 
+
+/*************************************************************************
+ * phpCrc16 v1.1 -- CRC16/CCITT implementation 
+ *
+ * By Matteo Beccati <matteo AT beccati DOT com>
+ * 
+ * Original code by:
+ * Ashley Roll
+ * Digital Nemesis Pty Ltd
+ * www.digitalnemesis.com
+ * ash AT digitalnemesis DOT com 
+ *
+ * Test Vector: "123456789" (character string, no quotes)
+ * Generated CRC: 0x29B1
+ * 
+ *************************************************************************/
+
+
+
+/*
+ * Returns CRC16 of a string as int value
+ */
+function CRC16($str)
+{
+    static $CRC16_Lookup = array(
+            0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50A5, 0x60C6, 0x70E7, 
+            0x8108, 0x9129, 0xA14A, 0xB16B, 0xC18C, 0xD1AD, 0xE1CE, 0xF1EF, 
+            0x1231, 0x0210, 0x3273, 0x2252, 0x52B5, 0x4294, 0x72F7, 0x62D6, 
+            0x9339, 0x8318, 0xB37B, 0xA35A, 0xD3BD, 0xC39C, 0xF3FF, 0xE3DE, 
+            0x2462, 0x3443, 0x0420, 0x1401, 0x64E6, 0x74C7, 0x44A4, 0x5485, 
+            0xA56A, 0xB54B, 0x8528, 0x9509, 0xE5EE, 0xF5CF, 0xC5AC, 0xD58D, 
+            0x3653, 0x2672, 0x1611, 0x0630, 0x76D7, 0x66F6, 0x5695, 0x46B4, 
+            0xB75B, 0xA77A, 0x9719, 0x8738, 0xF7DF, 0xE7FE, 0xD79D, 0xC7BC, 
+            0x48C4, 0x58E5, 0x6886, 0x78A7, 0x0840, 0x1861, 0x2802, 0x3823, 
+            0xC9CC, 0xD9ED, 0xE98E, 0xF9AF, 0x8948, 0x9969, 0xA90A, 0xB92B, 
+            0x5AF5, 0x4AD4, 0x7AB7, 0x6A96, 0x1A71, 0x0A50, 0x3A33, 0x2A12, 
+            0xDBFD, 0xCBDC, 0xFBBF, 0xEB9E, 0x9B79, 0x8B58, 0xBB3B, 0xAB1A, 
+            0x6CA6, 0x7C87, 0x4CE4, 0x5CC5, 0x2C22, 0x3C03, 0x0C60, 0x1C41, 
+            0xEDAE, 0xFD8F, 0xCDEC, 0xDDCD, 0xAD2A, 0xBD0B, 0x8D68, 0x9D49, 
+            0x7E97, 0x6EB6, 0x5ED5, 0x4EF4, 0x3E13, 0x2E32, 0x1E51, 0x0E70, 
+            0xFF9F, 0xEFBE, 0xDFDD, 0xCFFC, 0xBF1B, 0xAF3A, 0x9F59, 0x8F78, 
+            0x9188, 0x81A9, 0xB1CA, 0xA1EB, 0xD10C, 0xC12D, 0xF14E, 0xE16F, 
+            0x1080, 0x00A1, 0x30C2, 0x20E3, 0x5004, 0x4025, 0x7046, 0x6067, 
+            0x83B9, 0x9398, 0xA3FB, 0xB3DA, 0xC33D, 0xD31C, 0xE37F, 0xF35E, 
+            0x02B1, 0x1290, 0x22F3, 0x32D2, 0x4235, 0x5214, 0x6277, 0x7256, 
+            0xB5EA, 0xA5CB, 0x95A8, 0x8589, 0xF56E, 0xE54F, 0xD52C, 0xC50D, 
+            0x34E2, 0x24C3, 0x14A0, 0x0481, 0x7466, 0x6447, 0x5424, 0x4405, 
+            0xA7DB, 0xB7FA, 0x8799, 0x97B8, 0xE75F, 0xF77E, 0xC71D, 0xD73C, 
+            0x26D3, 0x36F2, 0x0691, 0x16B0, 0x6657, 0x7676, 0x4615, 0x5634, 
+            0xD94C, 0xC96D, 0xF90E, 0xE92F, 0x99C8, 0x89E9, 0xB98A, 0xA9AB, 
+            0x5844, 0x4865, 0x7806, 0x6827, 0x18C0, 0x08E1, 0x3882, 0x28A3, 
+            0xCB7D, 0xDB5C, 0xEB3F, 0xFB1E, 0x8BF9, 0x9BD8, 0xABBB, 0xBB9A, 
+            0x4A75, 0x5A54, 0x6A37, 0x7A16, 0x0AF1, 0x1AD0, 0x2AB3, 0x3A92, 
+            0xFD2E, 0xED0F, 0xDD6C, 0xCD4D, 0xBDAA, 0xAD8B, 0x9DE8, 0x8DC9, 
+            0x7C26, 0x6C07, 0x5C64, 0x4C45, 0x3CA2, 0x2C83, 0x1CE0, 0x0CC1, 
+            0xEF1F, 0xFF3E, 0xCF5D, 0xDF7C, 0xAF9B, 0xBFBA, 0x8FD9, 0x9FF8, 
+            0x6E17, 0x7E36, 0x4E55, 0x5E74, 0x2E93, 0x3EB2, 0x0ED1, 0x1EF0
+    );
+    
+    $crc16 = 0xFFFF; // the CRC
+    $len = strlen($str);
+    
+    for($i = 0; $i < $len; $i++ )
+    {
+        $t = ($crc16 >> 8) ^ ord($str[$i]); // High byte Xor Message Byte to get index
+        $crc16 = (($crc16 << 8) & 0xffff) ^ $CRC16_Lookup[$t]; // Update the CRC from table
+    }
+    
+    // crc16 now contains the CRC value
+    return $crc16;
+}
+
+/*
+ * Returns CRC16 of a string as hexadecimal string
+ */
+function CRC16HexDigest($str)
+{
+    return sprintf('%04X', crc16($str));
+}
+
+-------------------------------------------------------------------------------------
+
+http://www.jonasjohn.de/snippets/php/hex-string.htm
+
+String2Hex and Hex2String
+Convert hex to string and vice versa.
+
+function String2Hex($string){
+    $hex='';
+    for ($i=0; $i < strlen($string); $i++){
+        $hex .= dechex(ord($string[$i]));
+    }
+    return $hex;
+}
+ 
+ 
+function Hex2String($hex){
+    $string='';
+    for ($i=0; $i < strlen($hex)-1; $i+=2){
+        $string .= chr(hexdec($hex[$i].$hex[$i+1]));
+    }
+    return $string;
+}
+ 
+// example:
+ 
+$hex = String2Hex("test sentence...");
+// $hex contains 746573742073656e74656e63652e2e2e
+ 
+print Hex2String($hex);
+// outputs: test sentence...
+
+-------------------------------------------------------------------------------------
+
+global $crc8_table;
+$crc8_table = array(
+    0x00, 0x3e, 0x7c, 0x42, 0xf8, 0xc6, 0x84, 0xba, 0x95, 0xab, 0xe9, 0xd7,
+    0x6d, 0x53, 0x11, 0x2f, 0x4f, 0x71, 0x33, 0x0d, 0xb7, 0x89, 0xcb, 0xf5,
+    0xda, 0xe4, 0xa6, 0x98, 0x22, 0x1c, 0x5e, 0x60, 0x9e, 0xa0, 0xe2, 0xdc,
+    0x66, 0x58, 0x1a, 0x24, 0x0b, 0x35, 0x77, 0x49, 0xf3, 0xcd, 0x8f, 0xb1,
+    0xd1, 0xef, 0xad, 0x93, 0x29, 0x17, 0x55, 0x6b, 0x44, 0x7a, 0x38, 0x06,
+    0xbc, 0x82, 0xc0, 0xfe, 0x59, 0x67, 0x25, 0x1b, 0xa1, 0x9f, 0xdd, 0xe3,
+    0xcc, 0xf2, 0xb0, 0x8e, 0x34, 0x0a, 0x48, 0x76, 0x16, 0x28, 0x6a, 0x54,
+    0xee, 0xd0, 0x92, 0xac, 0x83, 0xbd, 0xff, 0xc1, 0x7b, 0x45, 0x07, 0x39,
+    0xc7, 0xf9, 0xbb, 0x85, 0x3f, 0x01, 0x43, 0x7d, 0x52, 0x6c, 0x2e, 0x10,
+    0xaa, 0x94, 0xd6, 0xe8, 0x88, 0xb6, 0xf4, 0xca, 0x70, 0x4e, 0x0c, 0x32,
+    0x1d, 0x23, 0x61, 0x5f, 0xe5, 0xdb, 0x99, 0xa7, 0xb2, 0x8c, 0xce, 0xf0,
+    0x4a, 0x74, 0x36, 0x08, 0x27, 0x19, 0x5b, 0x65, 0xdf, 0xe1, 0xa3, 0x9d,
+    0xfd, 0xc3, 0x81, 0xbf, 0x05, 0x3b, 0x79, 0x47, 0x68, 0x56, 0x14, 0x2a,
+    0x90, 0xae, 0xec, 0xd2, 0x2c, 0x12, 0x50, 0x6e, 0xd4, 0xea, 0xa8, 0x96,
+    0xb9, 0x87, 0xc5, 0xfb, 0x41, 0x7f, 0x3d, 0x03, 0x63, 0x5d, 0x1f, 0x21,
+    0x9b, 0xa5, 0xe7, 0xd9, 0xf6, 0xc8, 0x8a, 0xb4, 0x0e, 0x30, 0x72, 0x4c,
+    0xeb, 0xd5, 0x97, 0xa9, 0x13, 0x2d, 0x6f, 0x51, 0x7e, 0x40, 0x02, 0x3c,
+    0x86, 0xb8, 0xfa, 0xc4, 0xa4, 0x9a, 0xd8, 0xe6, 0x5c, 0x62, 0x20, 0x1e,
+    0x31, 0x0f, 0x4d, 0x73, 0xc9, 0xf7, 0xb5, 0x8b, 0x75, 0x4b, 0x09, 0x37,
+    0x8d, 0xb3, 0xf1, 0xcf, 0xe0, 0xde, 0x9c, 0xa2, 0x18, 0x26, 0x64, 0x5a,
+    0x3a, 0x04, 0x46, 0x78, 0xc2, 0xfc, 0xbe, 0x80, 0xaf, 0x91, 0xd3, 0xed,
+    0x57, 0x69, 0x2b, 0x15);
+
+function crc8($data1)
+{
+    global $crc8_table;
+
+    $crc = 0xff;
+    for ($ii1=0;$ii1<strlen($data1);$ii1++){
+        $crc = $crc8_table[($crc ^ ($data1[$ii1]))];
+    }
+    return $crc ^ 0xff;
+}
+
+//samples here:
+echo "CRC1:".crc8("JDoas OIJE #@)( DPOASDjPOIow)")."<br />\n";
+echo "CRC2:".crc8("29890sskd-2109-129us")."<br />\n";
+echo "CRC3:".crc8("0917380982748097218082188217897266661091263")."<br />\n";
+
+<!--BUT TRY THESE TOO before you place too much reliance on this coding -->
+echo "CRC4a:".crc8("spookily, the same text gives the same results, in lower or upper case")."<br />\n";
+echo "CRC4b:".crc8("SPOOKILY, THE SAME TEXT GIVES THE SAME RESULTS, IN LOWER OR UPPER CASE")."<br />\n";
+echo "CRC4c:".crc8("And different text of the same length also gives the same check result")."<br />\n";
+echo "CRC4d:".crc8("And the text can have special characters too!!!!!!!!!!!!!!!!!!!!!!!!!!")."<br /><br />\n";
+
+
+-------------------------------------------------------------------------------------
+
+
+CRC8-Check in PHP
+
+function crcnifull ($dato, $byte)
+{
+  static $PolyFull=0x8c;
+
+  for ($i=0; $i<8; $i++)
+  {
+    $x=$byte&1;
+    $byte>>=1;
+    if ($dato&1) $byte|=0x80;
+    if ($x) $byte^=$PolyFull;
+    $dato>>=1;
+  }
+  return $byte;
+}
+
+function crc8 (array $ar,$n=false)
+{
+  if ($n===false) $n=count($ar);
+  $crcbyte=0;
+  for ($i=0; $i<$n; $i++) $crcbyte=crcnifull($ar[$i], $crcbyte);
+  return $crcbyte;
+}
+To use this function for a binary string you have to convert the binary string to an array first. That can be achieved like this:
+
+function sbin2ar($sbin)
+{
+  $ar=array();
+  $ll=strlen($sbin);
+  for ($i=0; $i<$ll; $i++) $ar[]=ord(substr($sbin,$i,1));
+  return $ar;
+}
+Example how to use the whole thing:
+
+$crc8=crc8(sbin2ar($packet));
+
+
+
+-------------------------------------------------------------------------------------
+
+CRC-16  0x8005  x16 + x15 + x2 + 1
+$return = 0x080200000143EF3A;  
+"\x08\x02\x00\x00\x01\x43\xEF\x3A"  
+
+echo sprintf("%x",getCrc16('577023702278074170', 0, 0xA001, 0)).'<br />'; 
+echo sprintf("%x",getCrc16("\x08\x02\x00\x00\x01\x43\xEF\x3A", 0, 0xA001, 0)).'<br />'; 
+echo sprintf("%x",getCrc16('0x080200000143EF3A', 0, 0xA001, 0)); 
+
+function getCrc16($buffer, $offset, $polynom, $preset) { 
+    $preset &= 0xFFFF; 
+    $polynom &= 0xFFFF; 
+     
+    $bufLen = strlen($buffer); 
+
+    $crc = $preset; 
+    for($i = 0; $i < $bufLen; $i++) { 
+        $data = $buffer[($i + $offset)%$bufLen] & 0xFF; 
+        $crc ^= $data; 
+        for ($j = 0; $j < 8; $j++) { 
+            if (($crc & 0x0001) != 0) { 
+                $crc = ($crc >> 1) ^ $polynom; 
+            } else { 
+                $crc = $crc >> 1; 
+            } 
+        } 
+    } 
+
+    return $crc & 0xFFFF; 
+}  
+
+
+
+
+<?php
+
+function crc16($data, $generatorPolynomial, $seed = 0x0000)
+{
+    $reverseBitOrder = function ($data) {
+        return bindec(
+            strrev(
+                str_pad(
+                    decbin($data),
+                    16,
+                    '0',
+                    STR_PAD_LEFT
+                )
+            )
+        );
+    };
+
+    // Generator polynomial
+    $gp = $reverseBitOrder($generatorPolynomial);
+
+    // Remainder polynomial
+    $rp = $seed;
+
+    $len = strlen($data);
+
+    for ($i = 0; $i < $len; $i++) {
+        $rp ^= ord($data[$i]);
+
+        for ($bit = 0; $bit <= 7; $bit++) {
+            if ($rp & 0x0001) {
+                $rp >>= 1;
+                $rp ^= $gp;
+            } else {
+                $rp >>= 1;
+            }
+        }
+    }
+
+    return $rp;
+}
+
+$input = '123456789';
+
+echo 'CRC-16          : ' . sprintf('0x%04X', crc16($input, 0x8005, 0x0000)), "\n";
+echo 'CRC-16 (Modbus) : ' . sprintf('0x%04X', crc16($input, 0x8005, 0xFFFF)), "\n";
+
+-------------------------------------------------------------------------------------
+CRC-16-CCITT
+https://www.lammertbies.nl/comm/info/crc-calculation.html
+http://www.zorc.breitbandkatze.de/crc.html
+https://hash.online-convert.com/crc32-generator
+
+<?php
+
+class CRC16 {
+    private static $CRC16_Table = array
+        (   0x0000, 0x2110, 0x4220, 0x6330, 0x8440, 0xa550, 0xc660, 0xe770,
+            0x0881, 0x2991, 0x4aa1, 0x6bb1, 0x8cc1, 0xadd1, 0xcee1, 0xeff1,
+            0x3112, 0x1002, 0x7332, 0x5222, 0xb552, 0x9442, 0xf772, 0xd662,
+            0x3993, 0x1883, 0x7bb3, 0x5aa3, 0xbdd3, 0x9cc3, 0xfff3, 0xdee3,
+            0x6224, 0x4334, 0x2004, 0x0114, 0xe664, 0xc774, 0xa444, 0x8554,
+            0x6aa5, 0x4bb5, 0x2885, 0x0995, 0xeee5, 0xcff5, 0xacc5, 0x8dd5,
+            0x5336, 0x7226, 0x1116, 0x3006, 0xd776, 0xf666, 0x9556, 0xb446,
+            0x5bb7, 0x7aa7, 0x1997, 0x3887, 0xdff7, 0xfee7, 0x9dd7, 0xbcc7,
+            0xc448, 0xe558, 0x8668, 0xa778, 0x4008, 0x6118, 0x0228, 0x2338,
+            0xccc9, 0xedd9, 0x8ee9, 0xaff9, 0x4889, 0x6999, 0x0aa9, 0x2bb9,
+            0xf55a, 0xd44a, 0xb77a, 0x966a, 0x711a, 0x500a, 0x333a, 0x122a,
+            0xfddb, 0xdccb, 0xbffb, 0x9eeb, 0x799b, 0x588b, 0x3bbb, 0x1aab,
+            0xa66c, 0x877c, 0xe44c, 0xc55c, 0x222c, 0x033c, 0x600c, 0x411c,
+            0xaeed, 0x8ffd, 0xeccd, 0xcddd, 0x2aad, 0x0bbd, 0x688d, 0x499d,
+            0x977e, 0xb66e, 0xd55e, 0xf44e, 0x133e, 0x322e, 0x511e, 0x700e,
+            0x9fff, 0xbeef, 0xdddf, 0xfccf, 0x1bbf, 0x3aaf, 0x599f, 0x788f,
+            0x8891, 0xa981, 0xcab1, 0xeba1, 0x0cd1, 0x2dc1, 0x4ef1, 0x6fe1,
+            0x8010, 0xa100, 0xc230, 0xe320, 0x0450, 0x2540, 0x4670, 0x6760,
+            0xb983, 0x9893, 0xfba3, 0xdab3, 0x3dc3, 0x1cd3, 0x7fe3, 0x5ef3,
+            0xb102, 0x9012, 0xf322, 0xd232, 0x3542, 0x1452, 0x7762, 0x5672,
+            0xeab5, 0xcba5, 0xa895, 0x8985, 0x6ef5, 0x4fe5, 0x2cd5, 0x0dc5,
+            0xe234, 0xc324, 0xa014, 0x8104, 0x6674, 0x4764, 0x2454, 0x0544,
+            0xdba7, 0xfab7, 0x9987, 0xb897, 0x5fe7, 0x7ef7, 0x1dc7, 0x3cd7,
+            0xd326, 0xf236, 0x9106, 0xb016, 0x5766, 0x7676, 0x1546, 0x3456,
+            0x4cd9, 0x6dc9, 0x0ef9, 0x2fe9, 0xc899, 0xe989, 0x8ab9, 0xaba9,
+            0x4458, 0x6548, 0x0678, 0x2768, 0xc018, 0xe108, 0x8238, 0xa328,
+            0x7dcb, 0x5cdb, 0x3feb, 0x1efb, 0xf98b, 0xd89b, 0xbbab, 0x9abb,
+            0x754a, 0x545a, 0x376a, 0x167a, 0xf10a, 0xd01a, 0xb32a, 0x923a,
+            0x2efd, 0x0fed, 0x6cdd, 0x4dcd, 0xaabd, 0x8bad, 0xe89d, 0xc98d,
+            0x267c, 0x076c, 0x645c, 0x454c, 0xa23c, 0x832c, 0xe01c, 0xc10c,
+            0x1fef, 0x3eff, 0x5dcf, 0x7cdf, 0x9baf, 0xbabf, 0xd98f, 0xf89f,
+            0x176e, 0x367e, 0x554e, 0x745e, 0x932e, 0xb23e, 0xd10e, 0xf01e
+        );
+
+    public static function calculate( $buffer ) {
+        $length = strlen($buffer);
+
+        $crc = 0;
+        $i = 0;
+        while( $length-- ) {
+            $crc = (( $crc >> 8) & 0xff) ^ (self::$CRC16_Table[(ord($buffer[$i++]) ^ $crc) & 0xFF]);
+        }
+
+        return (($crc & 0xFFFF) ^ 0x8000) - 0x8000;
+    }    
+}
+
+echo CRC16::calculate( "\x74\x65\x73\x74" );
+
+-------------------------------------------------------------------------------------
+CRC-CCITT Android
+https://soverflow.com/questions/7961964/android-crc-ccitt
+
+public static int CRC16CCITT(byte[] bytes) { 
+    int crc = 0xFFFF; 
+    // initial value 
+    int polynomial = 0x1021; 
+    // 0001 0000 0010 0001 (0, 5, 12) 
+    for (byte b : bytes) { 
+        for (int i = 0; i < 8; i++) { 
+            boolean bit = ((b >> (7-i) & 1) == 1); 
+            boolean c15 = ((crc >> 15 & 1) == 1); 
+            crc <<= 1; if (c15 ^ bit) crc ^= polynomial; } } 
+            crc &= 0xffff; 
+            // System.out.println("CRC16-CCITT = " + Integer.toHexString(crc)); 
+            return crc; 
+
+static public int GenerateChecksumCRC16(int bytes[]) { 
+    int crc = 0xFFFF; 
+    int temp; 
+    int crc_byte; 
+    for (int byte_index = 0; byte_index < bytes.length; byte_index++) { 
+        crc_byte = bytes[byte_index]; 
+        for (int bit_index = 0; bit_index < 8; bit_index++) { 
+            temp = ((crc >> 15)) ^ ((crc_byte >> 7)); 
+            crc <<= 1; 
+            crc &= 0xFFFF; 
+            if (temp > 0) { crc ^= 0x1021; crc &= 0xFFFF; } 
+            crc_byte <<=1; 
+            crc_byte &= 0xFF; 
+        }
+     } 
+             return crc; 
+} 
+
+-------------------------------------------------------------------------------------
+http://www-stud.rbi.informatik.uni-frankfurt.de/~haase/crc.html
+http://www.iti.fh-flensburg.de/lang/algorithmen/code/crc/crc.htm
+http://www.smbus.org/faq/crc8Applet.htm
+https://en.wikipedia.org/wiki/Computation_of_cyclic_redundancy_checks
+https://de.wikipedia.org/wiki/Zyklische_Redundanzprüfung
+
+
+
+http://www.zorc.breitbandkatze.de/crc.html # calculator
+https://www.lammertbies.nl/comm/info/crc-calculation.html
+http://www.zorc.breitbandkatze.de/crc.html
+https://hash.online-convert.com/crc32-generator
+
+
+123456789
+123456789
+
+                        CRC-CCITT   CRC-16  CRC-32
+CRC order  (1..64)      16          16      32
+CRC polynom  (hex)      1021        8005    4C11DB7
+Initial value  (hex)    FFFF        0       FFFFFFFF
+Final XOR value  (hex)  0           0       FFFFFFFF
+
+
+1 byte checksum 221
+CRC-16  0xBB3D
+CRC-16 (Modbus) 0x4B37
+CRC-16 (Sick)   0x56A6
+CRC-CCITT (XModem)  0x31C3
+CRC-CCITT (0xFFFF)  0x29B1
+CRC-CCITT (0x1D0F)  0xE5CC
+CRC-CCITT (Kermit)  0x8921
+CRC-DNP 0x82EA
+CRC-32  0xCBF43926
+
+
+CCITT-32:   0x04C11DB7  =  x32 + x26 +  x23 + x22 + x16 + x12 + x11 + x10 + x8 + x7 + x5 + x4 + x2 + x + 1
+CRC-16-ANSI  0x8005     =  x16 + x15 + x2 + 1
+CRC-16-CCITT polynomial =  x16 + x12 + x5 + 1
+CRC-CCITT:  0x1021      =  x16 + x12 + x5 + 1
+CRC-XMODEM: 0x8408      =  x16 + x15 + x10 + x3
+
+
+12bit-CRC:  0x80f       =  x12 + x11 + x3 + x2 + x + 1
+10bit-CRC:  0x233       =  x10 + x9  + x5  + x4  + x  + 1
+8bit-CRC:   0x07        =  x8  + x2  + x + 1
+
+
+
+
+Polynome und Typen[Bearbeiten | Quelltext bearbeiten]
+https://de.wikipedia.org/wiki/Zyklische_Redundanzprüfung
+
+CRC-CCITT (CRC-4)       = x4 + x + 1
+CRC-CCITT (CRC-4)       = x4 + x + 1
+
+
+
+-------------------------------------------------------------------------------------
+
+The Cyclic Redundancy Check article at Wikipedia says the polynomial is x^4 + x + 1. There is also a pretty good description of how the checksum is computed.
+
+Here is an algorithm for CRC16. I know it's not what you asked for, but it should be relatively straightforward to adapt it for 4 bits.
+
+   public ushort calculate(byte[] bytes)
+    {
+        int crc = 0xFFFF; // initial value
+        // loop, calculating CRC for each byte of the string
+        for (int byteIndex = 0; byteIndex < bytes.Length; byteIndex++)
+        {
+            ushort bit = 0x80; // initialize bit currently being tested
+            for (int bitIndex = 0; bitIndex < 8; bitIndex++)
+            {
+                bool xorFlag = ((crc & 0x8000) == 0x8000);
+                crc <<= 1;
+                if (((bytes[byteIndex] & bit) ^ (ushort)0xff) != (ushort)0xff)
+                {
+                    crc = crc + 1;
+                }
+                if (xorFlag)
+                {
+                    crc = crc ^ 0x1021;
+                }
+                bit >>= 1;
+            }
+        }
+        return (ushort)crc;
+    }
+
+
+
+uint8_t calculate(byte[] bytes) {
+    uint16_t crc = 0xFFFF; // initial value
+    // loop, calculating CRC for each byte of the string
+    for (uint8_t byteIndex = 0; byteIndex < bytes.Length; ++byteIndex) {
+        uint8_t bit = 0x80; // initialize bit currently being tested
+        for (uint8_t bitIndex = 0; bitIndex < 8; ++bitIndex) {
+            bool xorFlag = ((crc & 0x8000) == 0x8000);
+            crc <<= 1;
+            if (((bytes[byteIndex] & bit) ^ (uint8_t)0xff) != (uint8_t)0xff)
+                crc = crc + 1;
+            if (xorFlag)
+                crc = crc ^ 0x1021;
+            bit >>= 1;
+        }
+    }
+    return (uint8_t)crc;
+}
+
+http://www.ross.net/crc/download/crc_v3.txt
+https://www.experts-exchange.com/questions/24775723/CRC-CRC-16-CCITT-before-i-go-bald.html
+
+
+CRC Math in C
+https://barrgroup.com/Embedded-Systems/How-To/CRC-Calculation-C-Code
+
+
+    
+                        CRC-CCITT   CRC-16      CRC-32
+Width                   16 bits     16 bits     32 bits
+(Truncated) Polynomial  0x1021      0x8005      0x04C11DB7
+Initial Remainder       0xFFFF      0x0000      0xFFFFFFFF
+Final XOR Value         0x0000      0x0000      0xFFFFFFFF
+Reflect Data?           no          Yes         Yes
+Reflect Remainder?      No          Yes         Yes
+Check Value             0x29B1      0xBB3D      0xCBF43926
+
+-------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<?php  
+
+/************************************************************************* 
+ * phpCrc16 v1.1 -- CRC16/CCITT implementation  
+ * 
+ * By Matteo Beccati <matteo@beccati.com> 
+ *  
+ * Original code by: 
+ * Ashley Roll 
+ * Digital Nemesis Pty Ltd 
+ * 
+ * Test Vector: "123456789" (character string, no quotes) 
+ * Generated CRC: 0x29B1 
+ *  
+ *************************************************************************/ 
+
+
+
+/* 
+ * Returns CRC16 of a string as int value 
+ */ 
+function CRC16($str) 
+{ 
+    static $CRC16_Lookup = array( 
+              0X0000, 0XC0C1, 0XC181, 0X0140, 0XC301, 0X03C0, 0X0280, 0XC241, 
+        0XC601, 0X06C0, 0X0780, 0XC741, 0X0500, 0XC5C1, 0XC481, 0X0440, 
+        0XCC01, 0X0CC0, 0X0D80, 0XCD41, 0X0F00, 0XCFC1, 0XCE81, 0X0E40, 
+        0X0A00, 0XCAC1, 0XCB81, 0X0B40, 0XC901, 0X09C0, 0X0880, 0XC841, 
+        0XD801, 0X18C0, 0X1980, 0XD941, 0X1B00, 0XDBC1, 0XDA81, 0X1A40, 
+        0X1E00, 0XDEC1, 0XDF81, 0X1F40, 0XDD01, 0X1DC0, 0X1C80, 0XDC41, 
+        0X1400, 0XD4C1, 0XD581, 0X1540, 0XD701, 0X17C0, 0X1680, 0XD641, 
+        0XD201, 0X12C0, 0X1380, 0XD341, 0X1100, 0XD1C1, 0XD081, 0X1040, 
+        0XF001, 0X30C0, 0X3180, 0XF141, 0X3300, 0XF3C1, 0XF281, 0X3240, 
+        0X3600, 0XF6C1, 0XF781, 0X3740, 0XF501, 0X35C0, 0X3480, 0XF441, 
+        0X3C00, 0XFCC1, 0XFD81, 0X3D40, 0XFF01, 0X3FC0, 0X3E80, 0XFE41, 
+        0XFA01, 0X3AC0, 0X3B80, 0XFB41, 0X3900, 0XF9C1, 0XF881, 0X3840, 
+        0X2800, 0XE8C1, 0XE981, 0X2940, 0XEB01, 0X2BC0, 0X2A80, 0XEA41, 
+        0XEE01, 0X2EC0, 0X2F80, 0XEF41, 0X2D00, 0XEDC1, 0XEC81, 0X2C40, 
+        0XE401, 0X24C0, 0X2580, 0XE541, 0X2700, 0XE7C1, 0XE681, 0X2640, 
+        0X2200, 0XE2C1, 0XE381, 0X2340, 0XE101, 0X21C0, 0X2080, 0XE041, 
+        0XA001, 0X60C0, 0X6180, 0XA141, 0X6300, 0XA3C1, 0XA281, 0X6240, 
+        0X6600, 0XA6C1, 0XA781, 0X6740, 0XA501, 0X65C0, 0X6480, 0XA441, 
+        0X6C00, 0XACC1, 0XAD81, 0X6D40, 0XAF01, 0X6FC0, 0X6E80, 0XAE41, 
+        0XAA01, 0X6AC0, 0X6B80, 0XAB41, 0X6900, 0XA9C1, 0XA881, 0X6840, 
+        0X7800, 0XB8C1, 0XB981, 0X7940, 0XBB01, 0X7BC0, 0X7A80, 0XBA41, 
+        0XBE01, 0X7EC0, 0X7F80, 0XBF41, 0X7D00, 0XBDC1, 0XBC81, 0X7C40, 
+        0XB401, 0X74C0, 0X7580, 0XB541, 0X7700, 0XB7C1, 0XB681, 0X7640, 
+        0X7200, 0XB2C1, 0XB381, 0X7340, 0XB101, 0X71C0, 0X7080, 0XB041, 
+        0X5000, 0X90C1, 0X9181, 0X5140, 0X9301, 0X53C0, 0X5280, 0X9241, 
+        0X9601, 0X56C0, 0X5780, 0X9741, 0X5500, 0X95C1, 0X9481, 0X5440, 
+        0X9C01, 0X5CC0, 0X5D80, 0X9D41, 0X5F00, 0X9FC1, 0X9E81, 0X5E40, 
+        0X5A00, 0X9AC1, 0X9B81, 0X5B40, 0X9901, 0X59C0, 0X5880, 0X9841, 
+        0X8801, 0X48C0, 0X4980, 0X8941, 0X4B00, 0X8BC1, 0X8A81, 0X4A40, 
+        0X4E00, 0X8EC1, 0X8F81, 0X4F40, 0X8D01, 0X4DC0, 0X4C80, 0X8C41, 
+        0X4400, 0X84C1, 0X8581, 0X4540, 0X8701, 0X47C0, 0X4680, 0X8641, 
+        0X8201, 0X42C0, 0X4380, 0X8341, 0X4100, 0X81C1, 0X8081, 0X4040 
+    ); 
+
+    $crc16 = 0xFFFF; // the CRC 
+    $len = strlen($str); 
+
+    for($i = 0; $i < $len; $i++ ) 
+    { 
+        $t = ($crc16 >> 8) ^ ord($str[$i]); // High byte Xor Message Byte to get index 
+        $crc16 = (($crc16 << 8) & 0xffff) ^ $CRC16_Lookup[$t]; // Update the CRC from table 
+    } 
+
+    // crc16 now contains the CRC value 
+    return $crc16; 
+} 
+
+/* 
+ * Returns CRC16 of a string as hexadecimal string 
+ */ 
+function CRC16HexDigest($str) 
+{ 
+    return sprintf('%04X', crc16($str)); 
+} 
+echo CRC16HexDigest('123456789'); 
+?>
+Thanks in advance
+Faq Reply With QuoteReply With Quote
+Share This Thread  Tweet This + 1 this Share this 
+
+
+-------------------------------------------------------------------------------------
+
+function crc_ccitt ($str){ 
+   $crc = 0xffff; 
+   $str = unpack("C*",$str); 
+   $F=0; 
+    foreach ($str as $chr){ 
+ //   for (my $i = 0, my $data =int 0xff & $chr; $i < 8; $i++, $data >>= 1) { 
+     for ($i = 0, $data =$chr&0xff; $i < 8; $i++, $data >>= 1) { 
+            $crc = ($crc & 0x0001) ^ ($data & 0x0001) ? ($crc >> 1) ^ 0x8408 : $crc >> 1; 
+        } 
+    } 
+    return 0xffff & ~$crc; 
+}  
+
+-------------------------------------------------------------------------------------
+https://www.phpoc.com/support/manual/phpoc_system_function/contents.php?id=crypto_hash_crc
+https://www.phpoc.com/support/manual/phpoc_system_function/contents.php?id=crypto_hash_crc
+https://www.phpoc.com/support/manual/phpoc_system_function/contents.php?id=crypto_encdec_rc4
+http://www-stud.rbi.informatik.uni-frankfurt.de/~haase/crc.html
+https://www.lammertbies.nl/comm/info/crc-calculation.html
+http://srecord.sourceforge.net/crc16-ccitt.html
+
+
+Hash
+crc command
+
+The crc command computes 8/16/32 bits CRC and its format is followed
+
+libdigest-crc-perl/xenial 0.21-1build1 amd64
+  Perl module providing generic CRC functions
+
+
+system("crc bits %1 [init div msb/lsb]", $msg);
+system("rc4 init %1", $rc4_key);
+
+
+Parameter   Description
+bits    8 - 8 bits CRC 
+16 - 16 bits CRC 
+32 - 32 bits CRC
+$msg    the original message to be computed
+init    CRC initial value.
+If it is omitted the default value is: 
+8 bits - ff, 16 bits - 1d0f, 32 bits - ffffffff
+div The divisor(polynomial) to be used for CRC calculation. 
+If it is omitted the default value is:
+8 bits - e0, 16 bits - 1021, 32 bits - edb88320
+msb/lsb the CRC calculation order
+msb: calculated from the MSB to LSB
+lsb: calculated from the LSB to MSB
+If it is omitted the default value is:
+8 bits - lsb, 16 bits - msb, 32bits - lsb
+
+
+$string = "123456789";
+
+printf("CRC-16-ANSI : %04x\r\n", (int)system("crc 16 %1 0000 a001 lsb", $string));
+printf("CRC-16-Modbus : %04x\r\n", (int)system("crc 16 %1 ffff a001 lsb", $string));
+printf("CRC-CCITT FFFF: %04x\r\n", (int)system("crc 16 %1 ffff 1021 msb", $string));
+printf("CRC-CCITT 1D0F: %04x\r\n", (int)system("crc 16 %1 1d0f 1021 msb", $string));
+printf("CRC-CCITT XModem : %04x\r\n", (int)system("crc 16 %1 0000 1021 msb", $string));
+
+$crc16_out = (int)system("crc 16 123456789 %1 8408 lsb", $string);
+$crc16_out = bin2int(int2bin($crc16_out, 2, true), 0, 2);
+printf("CRC-CCITT Kermit : %04x\r\n", $crc16_out);
+
+$crc16_out = (int)system("crc 16 123456789 ffff 8408 lsb");
+$crc16_out = $crc16_out ^ 0xffff;
+printf("CRC-CCITT PPP    : %04x\r\n", $crc16_out);
+
+$crc16_out = ~(int)system("crc 16 %1 0000 a6bc lsb", $string);
+$crc16_out = bin2int(int2bin($crc16_out, 2, true), 0, 2);
+printf("CRC-16-DNP       : %04x\r\n", $crc16_out);
+
+
+
+-------------------------------------------------------------------------------------
+
+CRC-CCITT, CRC-16-X25, CRC-16-CCITT
+http://practicingelectronics.com/articles/article-100003/article.php
+https://hc-ddr.hucki.net/wiki/doku.php/cpm:crc
+http://sanity-free.org/133/crc_16_ccitt_in_csharp.html
+https://www.codeguru.com/cpp/cpp/algorithms/checksum/article.php/c5103/CRC32-Generating-a-checksum-for-a-file.htm
+https://www.scootersoftware.com/support.php?zz=kb_crc
+-------------------------------------------------------------------------------------
+
+
+https://francescofoti.com/2015/05/how-to-get-the-same-result-in-vba-and-in-php-computing-a-ccitt-crc-checksum/
+
+// CCITT, X24
+define('CRC16POLYI',0x8408);
+
+/*
+* Source: https://forums.digitalpoint.com/threads/php-define-function-calculate-crc-16-ccitt.2584389/
+* Note: no second parameter here as on the VBA version
+*/
+function CRC16Inverse($buffer) {
+$result = 0xFFFF;
+if ( ($length = strlen($buffer)) > 0) {
+for ($offset = 0; $offset < $length; $offset++) {
+$result ^= ord($buffer[$offset]);
+for ($bitwise = 0; $bitwise < 8; $bitwise++) {
+$lowBit = $result & 0x0001;
+$result >>= 1;
+if ($lowBit) {
+$result ^= CRC16POLYI;
+}
+}
+}
+}
+return $result;
+}
+
+
+-------------------------------------------------------------------------------------
+
+https://bl.ocks.org/bewest/9559812
+crc_example.c
+
+
+
+/* From Asante Porter guide
+
+*/
+
+#include <stdio.h>
+
+unsigned short crc_calculate_crc(
+    unsigned short initial_crc,
+    const unsigned char *buffer,
+    unsigned short length) {
+  unsigned short index = 0;
+  unsigned short crc = initial_crc;
+  if (buffer != NULL) {
+    for (index = 0; index < length; index++) {
+      crc = (unsigned short)((unsigned char)(crc >> 8) | (unsigned short)(crc << 8));
+      crc ^= buffer[index];
+      crc ^= (unsigned char)(crc & 0xFF) >> 4;
+      crc ^= (unsigned short)((unsigned short)(crc << 8) << 4);
+      crc ^= (unsigned short)((unsigned short)((crc & 0xFF) << 4) << 1);
+    }
+  }
+  return (crc);
+}
+
+void main ( ) {
+  unsigned char test_crc[4] = { 0x02, 0x06, 0x06, 0x03 };
+  unsigned short crc = crc_calculate_crc( 0xffff, test_crc, 4);
+  printf("result: %#010x\n", crc);
+  printf("hex of 0x41CD: %#010x\n", 0x02060603);
+  printf("hex of 0x41CD: %#010x\n", 0x41);
+  printf("hex of 0x41CD: %#010x\n", 0xCD);
+  printf("hex of 0x41CD: %#010x\n", 0x41CD);
+}
+
+crc.js
+
+
+
+/*
+   * This doesn't work, poor attempt at porting the C code.
+   */
+  function crc16CCITT(buf, seed)
+  {
+    var crc = Number.isNaN(seed) ? 0xFFFF : seed;
+    for (var i = 0, len = buf.length; i < len; ++i)
+    {
+      crc = (((crc >> 8) & 0xFF) | ((crc << 8) & 0xFFFF));
+      crc ^= buf[i];
+      crc ^= ((crc >> 4) & 0xFF);
+      crc ^= ((((crc << 8) & 0xFFFF) << 4) & 0xFFFF);
+      crc ^= (((((crc & 0xFF) << 4) & 0xFFFF) << 1) & 0xFFFF);
+    }
+    return crc;
+  }
+
+
+/*
+ * This one works, from http://automationwiki.com/index.php?title=CRC-16-CCITT
+ */
+
+var crc_table = [
+  0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50a5,
+  0x60c6, 0x70e7, 0x8108, 0x9129, 0xa14a, 0xb16b,
+  0xc18c, 0xd1ad, 0xe1ce, 0xf1ef, 0x1231, 0x0210,
+  0x3273, 0x2252, 0x52b5, 0x4294, 0x72f7, 0x62d6,
+  0x9339, 0x8318, 0xb37b, 0xa35a, 0xd3bd, 0xc39c,
+  0xf3ff, 0xe3de, 0x2462, 0x3443, 0x0420, 0x1401,
+  0x64e6, 0x74c7, 0x44a4, 0x5485, 0xa56a, 0xb54b,
+  0x8528, 0x9509, 0xe5ee, 0xf5cf, 0xc5ac, 0xd58d,
+  0x3653, 0x2672, 0x1611, 0x0630, 0x76d7, 0x66f6,
+  0x5695, 0x46b4, 0xb75b, 0xa77a, 0x9719, 0x8738,
+  0xf7df, 0xe7fe, 0xd79d, 0xc7bc, 0x48c4, 0x58e5,
+  0x6886, 0x78a7, 0x0840, 0x1861, 0x2802, 0x3823,
+  0xc9cc, 0xd9ed, 0xe98e, 0xf9af, 0x8948, 0x9969,
+  0xa90a, 0xb92b, 0x5af5, 0x4ad4, 0x7ab7, 0x6a96,
+  0x1a71, 0x0a50, 0x3a33, 0x2a12, 0xdbfd, 0xcbdc,
+  0xfbbf, 0xeb9e, 0x9b79, 0x8b58, 0xbb3b, 0xab1a,
+  0x6ca6, 0x7c87, 0x4ce4, 0x5cc5, 0x2c22, 0x3c03,
+  0x0c60, 0x1c41, 0xedae, 0xfd8f, 0xcdec, 0xddcd,
+  0xad2a, 0xbd0b, 0x8d68, 0x9d49, 0x7e97, 0x6eb6,
+  0x5ed5, 0x4ef4, 0x3e13, 0x2e32, 0x1e51, 0x0e70,
+  0xff9f, 0xefbe, 0xdfdd, 0xcffc, 0xbf1b, 0xaf3a,
+  0x9f59, 0x8f78, 0x9188, 0x81a9, 0xb1ca, 0xa1eb,
+  0xd10c, 0xc12d, 0xf14e, 0xe16f, 0x1080, 0x00a1,
+  0x30c2, 0x20e3, 0x5004, 0x4025, 0x7046, 0x6067,
+  0x83b9, 0x9398, 0xa3fb, 0xb3da, 0xc33d, 0xd31c,
+  0xe37f, 0xf35e, 0x02b1, 0x1290, 0x22f3, 0x32d2,
+  0x4235, 0x5214, 0x6277, 0x7256, 0xb5ea, 0xa5cb,
+  0x95a8, 0x8589, 0xf56e, 0xe54f, 0xd52c, 0xc50d,
+  0x34e2, 0x24c3, 0x14a0, 0x0481, 0x7466, 0x6447,
+  0x5424, 0x4405, 0xa7db, 0xb7fa, 0x8799, 0x97b8,
+  0xe75f, 0xf77e, 0xc71d, 0xd73c, 0x26d3, 0x36f2,
+  0x0691, 0x16b0, 0x6657, 0x7676, 0x4615, 0x5634,
+  0xd94c, 0xc96d, 0xf90e, 0xe92f, 0x99c8, 0x89e9,
+  0xb98a, 0xa9ab, 0x5844, 0x4865, 0x7806, 0x6827,
+  0x18c0, 0x08e1, 0x3882, 0x28a3, 0xcb7d, 0xdb5c,
+  0xeb3f, 0xfb1e, 0x8bf9, 0x9bd8, 0xabbb, 0xbb9a,
+  0x4a75, 0x5a54, 0x6a37, 0x7a16, 0x0af1, 0x1ad0,
+  0x2ab3, 0x3a92, 0xfd2e, 0xed0f, 0xdd6c, 0xcd4d,
+  0xbdaa, 0xad8b, 0x9de8, 0x8dc9, 0x7c26, 0x6c07,
+  0x5c64, 0x4c45, 0x3ca2, 0x2c83, 0x1ce0, 0x0cc1,
+  0xef1f, 0xff3e, 0xcf5d, 0xdf7c, 0xaf9b, 0xbfba,
+  0x8fd9, 0x9ff8, 0x6e17, 0x7e36, 0x4e55, 0x5e74,
+  0x2e93, 0x3eb2, 0x0ed1, 0x1ef0
+
+];
+
+function crcCCITT (input, seed) {
+  var result = seed;
+  var temp;
+
+  for (var i = 0, len = input.length; i < len; ++i) {
+    temp = (input[i] ^ (result >> 8)) & 0xFF;
+    result = crc_table[temp] ^  (result << 8);
+  }
+  return result;
+}
+
+if (!module.parent) {
+  var input = new Buffer( [ 0x02, 0x06, 0x06, 0x03 ] );
+  var output = crc16CCITT(input);
+  var o = new Buffer([output >> 8, output & 0xFF]);
+  console.log('output:', output, o.toString('hex'));
+  var c = new Buffer([0x41, 0xCD]);
+  console.log("(correct is)", 0x41CD, c.toString('hex'));
+
+  console.log('attempt 2');
+  output = crcCCITT(input, 0xFFFF);
+  o = new Buffer([output >> 8, output & 0xFF]);
+  console.log('output:', output, o.toString('hex'));
+  console.log("(correct is)", 0x41CD, c.toString('hex'));
+}
+
+-------------------------------------------------------------------------------------
+
+http://control.com/thread/1381836105
+https://android.googlesource.com/platform/system/extras/+/master/ext4_utils/crc16.c
+http://www.modbustools.com/modbus_crc16.html
+https://social.msdn.microsoft.com/Forums/vstudio/en-US/2db43500-dba5-4d4c-a9f7-d4580b65764d/c-newbie-need-some-help-with-code-translation?forum=csharpgeneral
+https://stackoverflow.com/questions/19347685/calculating-modbus-rtu-crc-16/41102564
+https://stackoverflow.com/questions/35847367/how-to-convert-this-crc16-c-implementation-to-java
+https://opensource.srlabs.de/projects/mobile-network-assessment-tools/repository/revisions/878967718599daddc534fe519bc7b468c0a6fdd1/entry/2G/code/libosmocore/src/crc16.c
+https://introcs.cs.princeton.edu/java/61data/CRC16.java.html
+https://github.com/opennetworklinux/linux-3.8.13/blob/master/lib/crc16.c
+http://ccpro.cc2net.de/forum/neu.php?eintrag=8726
+
+function modbus_crc($modbus_msg,$N){
+        
+        /** CRC table for the CRC-16. The poly is 0x8005 (x^16 + x^15 + x^2 + 1) */
+        // Uses irreducible polynomial:  1 + x^2 + x^15 + x^16
+
+        $modbus_crc_tbl = [0x0000, 0xC0C1, 0xC181, 0x0140, 0xC301, 0x03C0, 0x0280, 0xC241,
+    0xC601, 0x06C0, 0x0780, 0xC741, 0x0500, 0xC5C1, 0xC481, 0x0440,
+    0xCC01, 0x0CC0, 0x0D80, 0xCD41, 0x0F00, 0xCFC1, 0xCE81, 0x0E40,
+    0x0A00, 0xCAC1, 0xCB81, 0x0B40, 0xC901, 0x09C0, 0x0880, 0xC841,
+    0xD801, 0x18C0, 0x1980, 0xD941, 0x1B00, 0xDBC1, 0xDA81, 0x1A40,
+    0x1E00, 0xDEC1, 0xDF81, 0x1F40, 0xDD01, 0x1DC0, 0x1C80, 0xDC41,
+    0x1400, 0xD4C1, 0xD581, 0x1540, 0xD701, 0x17C0, 0x1680, 0xD641,
+    0xD201, 0x12C0, 0x1380, 0xD341, 0x1100, 0xD1C1, 0xD081, 0x1040,
+    0xF001, 0x30C0, 0x3180, 0xF141, 0x3300, 0xF3C1, 0xF281, 0x3240,
+    0x3600, 0xF6C1, 0xF781, 0x3740, 0xF501, 0x35C0, 0x3480, 0xF441,
+    0x3C00, 0xFCC1, 0xFD81, 0x3D40, 0xFF01, 0x3FC0, 0x3E80, 0xFE41,
+    0xFA01, 0x3AC0, 0x3B80, 0xFB41, 0x3900, 0xF9C1, 0xF881, 0x3840,
+    0x2800, 0xE8C1, 0xE981, 0x2940, 0xEB01, 0x2BC0, 0x2A80, 0xEA41,
+    0xEE01, 0x2EC0, 0x2F80, 0xEF41, 0x2D00, 0xEDC1, 0xEC81, 0x2C40,
+    0xE401, 0x24C0, 0x2580, 0xE541, 0x2700, 0xE7C1, 0xE681, 0x2640,
+    0x2200, 0xE2C1, 0xE381, 0x2340, 0xE101, 0x21C0, 0x2080, 0xE041,
+    0xA001, 0x60C0, 0x6180, 0xA141, 0x6300, 0xA3C1, 0xA281, 0x6240,
+    0x6600, 0xA6C1, 0xA781, 0x6740, 0xA501, 0x65C0, 0x6480, 0xA441,
+    0x6C00, 0xACC1, 0xAD81, 0x6D40, 0xAF01, 0x6FC0, 0x6E80, 0xAE41,
+    0xAA01, 0x6AC0, 0x6B80, 0xAB41, 0x6900, 0xA9C1, 0xA881, 0x6840,
+    0x7800, 0xB8C1, 0xB981, 0x7940, 0xBB01, 0x7BC0, 0x7A80, 0xBA41,
+    0xBE01, 0x7EC0, 0x7F80, 0xBF41, 0x7D00, 0xBDC1, 0xBC81, 0x7C40,
+    0xB401, 0x74C0, 0x7580, 0xB541, 0x7700, 0xB7C1, 0xB681, 0x7640,
+    0x7200, 0xB2C1, 0xB381, 0x7340, 0xB101, 0x71C0, 0x7080, 0xB041,
+    0x5000, 0x90C1, 0x9181, 0x5140, 0x9301, 0x53C0, 0x5280, 0x9241,
+    0x9601, 0x56C0, 0x5780, 0x9741, 0x5500, 0x95C1, 0x9481, 0x5440,
+    0x9C01, 0x5CC0, 0x5D80, 0x9D41, 0x5F00, 0x9FC1, 0x9E81, 0x5E40,
+    0x5A00, 0x9AC1, 0x9B81, 0x5B40, 0x9901, 0x59C0, 0x5880, 0x9841,
+    0x8801, 0x48C0, 0x4980, 0x8941, 0x4B00, 0x8BC1, 0x8A81, 0x4A40,
+    0x4E00, 0x8EC1, 0x8F81, 0x4F40, 0x8D01, 0x4DC0, 0x4C80, 0x8C41,
+    0x4400, 0x84C1, 0x8581, 0x4540, 0x8701, 0x47C0, 0x4680, 0x8641,
+    0x8201, 0x42C0, 0x4380, 0x8341, 0x4100, 0x81C1, 0x8081, 0x4040
+
+];
+        $yy = 0;
+        $reg = 0xffff;  
+        while( $N-- > 0 ) 
+        {
+            $reg = $reg ^ $modbus_crc_tbl[$yy];
+            $yy = $yy + 1;
+            for( $bit=0; $bit<=7; $bit++)
+            {
+                $flag=$reg & 0x0001;
+                $reg=$reg>> 1;
+                if ( $flag == 1 )
+                    $reg = $reg ^ 0xa001;
+            }
+        }
+        return $reg;
+    }
+
+function CRC16HexDigest($str){
+        return sprintf('%04X', $str);
+    }
+
+
+
+$modbus_msg='010400000002';
+$crc=modbus_crc($modbus_msg,strlen($modbus_msg));
+
+
+$modbus_msg='010400000002';
+    $crc=modbus_crc($modbus_msg,strlen($modbus_msg));
+echo CRC16HexDigest($crc);
+
+
+$modbus_msg=0x010400000002;
+$crc=modbus_crc($modbus_msg,strlen($modbus_msg));
+echo "<br>".CRC16HexDigest($crc);
+
+
+
+-------------------------------------------------------------------------------------
+
+
+Python CRC16 code
+
+
+def calcString( st, crc=0xFFFF):
+    """Given a binary string and starting CRC, Calc a final CRC-16 
+    For Modbus, initial CRC should be 0xFFFF
+    For DF1 initial CRC should be 0x0000"""
+    for ch in st:
+        crc = (crc >> 8) ^ table[(crc ^ ord(ch)) & 0xFF]
+    return crc
+
+-------------------------------------------------------------------------------------
+
+http://automationwiki.com/index.php/CRC-16-CCITT
+CRC-16-CCITT - x16 + x12 + x5 + 1
+
+-------------------------------------------------------------------------------------
+
+https://www.ccsinfo.com/forum/viewtopic.php?t=24977
+
+//----------------------------------------------------------------------------- 
+// Calculate the CRC16 value of a specified buffer. 
+// 
+// A very fast CRC-16 routine based on the CCITT polynome 0x1021. 
+// This implementation is very small and fast. Using some specific features of 
+// the polynome the resulting code is even faster than table driven algorithms. 
+// 
+// Original Code: Ashley Roll       www.digitalnemesis.com 
+// Optimisations: Scott Dattalo     www.dattalo.com 
+//----------------------------------------------------------------------------- 
+int16 Calc_Crc16(int8 *Buffer, int16 Len) // Note: save 5 instructions by 
+{                                         // changing 'int16 Len' to 'int8 Len'. 
+  int8 Index; 
+  union 
+  { 
+    int8  uByte[2]; 
+    int16 uWord; 
+  } CRC16; 
+
+  CRC16.uWord = 0xFFFF;     // Initialise CRC to 0xFFFF 
+  FSR0 = Buffer;            // Copy Buffer address to pointer register FSR0 
+
+  do 
+  { 
+    #ASM 
+    movf  POSTINC0,w        // load w with next databyte 
+    xorwf CRC16.uByte[1],w  // (a^x):(b^y) 
+    movwf Index             // 
+    andlw 0xf0              // W = (a^x):0 
+    swapf Index,f           // Index = (b^y):(a^x) 
+    xorwf Index,f           // Index = (a^b^x^y):(a^x) = i2:i1 
+  
+                            // High byte 
+    movf  Index,W 
+    andlw 0xf0 
+    xorwf CRC16.uByte[0],W 
+    movwf CRC16.uByte[1] 
+  
+    rlcf  Index,W           // use rlf for PIC16 
+    rlcf  Index,W           // use rlf for PIC16 
+    xorwf CRC16.uByte[1],f 
+    andlw 0xe0 
+    xorwf CRC16.uByte[1],f 
+  
+    swapf Index,F 
+    xorwf Index,W 
+    movwf CRC16.uByte[0] 
+    #ENDASM 
+  } while (--Len); 
+  
+  return CRC16.uWord; 
+}
+
+
+
+-------------------------------------------------------------------------------------
+
+
+<?php
+
+/*
+
+How to calculate CRC-CCITT (Kermit) polynomial
+0x1ff5 is indeed the CRC-CCITT (Kermit) of 80 00 00 03
+
+                        CRC-CCITT   CRC-16  CRC-32
+CRC order  (1..64)      16          16      32
+CRC polynom  (hex)      1021        8005    4C11DB7
+Initial value  (hex)    FFFF        0       FFFFFFFF
+Final XOR value  (hex)  0           0       FFFFFFFF
+
+*/
+
+
+function modbus_crc($modbus_msg,$N){
+        
+    $modbus_crc_tbl = [
+    0x0000, 0xC0C1, 0xC181, 0x0140, 0xC301, 0x03C0, 0x0280, 0xC241,
+    0xC601, 0x06C0, 0x0780, 0xC741, 0x0500, 0xC5C1, 0xC481, 0x0440,
+    0xCC01, 0x0CC0, 0x0D80, 0xCD41, 0x0F00, 0xCFC1, 0xCE81, 0x0E40,
+    0x0A00, 0xCAC1, 0xCB81, 0x0B40, 0xC901, 0x09C0, 0x0880, 0xC841,
+    0xD801, 0x18C0, 0x1980, 0xD941, 0x1B00, 0xDBC1, 0xDA81, 0x1A40,
+    0x1E00, 0xDEC1, 0xDF81, 0x1F40, 0xDD01, 0x1DC0, 0x1C80, 0xDC41,
+    0x1400, 0xD4C1, 0xD581, 0x1540, 0xD701, 0x17C0, 0x1680, 0xD641,
+    0xD201, 0x12C0, 0x1380, 0xD341, 0x1100, 0xD1C1, 0xD081, 0x1040,
+    0xF001, 0x30C0, 0x3180, 0xF141, 0x3300, 0xF3C1, 0xF281, 0x3240,
+    0x3600, 0xF6C1, 0xF781, 0x3740, 0xF501, 0x35C0, 0x3480, 0xF441,
+    0x3C00, 0xFCC1, 0xFD81, 0x3D40, 0xFF01, 0x3FC0, 0x3E80, 0xFE41,
+    0xFA01, 0x3AC0, 0x3B80, 0xFB41, 0x3900, 0xF9C1, 0xF881, 0x3840,
+    0x2800, 0xE8C1, 0xE981, 0x2940, 0xEB01, 0x2BC0, 0x2A80, 0xEA41,
+    0xEE01, 0x2EC0, 0x2F80, 0xEF41, 0x2D00, 0xEDC1, 0xEC81, 0x2C40,
+    0xE401, 0x24C0, 0x2580, 0xE541, 0x2700, 0xE7C1, 0xE681, 0x2640,
+    0x2200, 0xE2C1, 0xE381, 0x2340, 0xE101, 0x21C0, 0x2080, 0xE041,
+    0xA001, 0x60C0, 0x6180, 0xA141, 0x6300, 0xA3C1, 0xA281, 0x6240,
+    0x6600, 0xA6C1, 0xA781, 0x6740, 0xA501, 0x65C0, 0x6480, 0xA441,
+    0x6C00, 0xACC1, 0xAD81, 0x6D40, 0xAF01, 0x6FC0, 0x6E80, 0xAE41,
+    0xAA01, 0x6AC0, 0x6B80, 0xAB41, 0x6900, 0xA9C1, 0xA881, 0x6840,
+    0x7800, 0xB8C1, 0xB981, 0x7940, 0xBB01, 0x7BC0, 0x7A80, 0xBA41,
+    0xBE01, 0x7EC0, 0x7F80, 0xBF41, 0x7D00, 0xBDC1, 0xBC81, 0x7C40,
+    0xB401, 0x74C0, 0x7580, 0xB541, 0x7700, 0xB7C1, 0xB681, 0x7640,
+    0x7200, 0xB2C1, 0xB381, 0x7340, 0xB101, 0x71C0, 0x7080, 0xB041,
+    0x5000, 0x90C1, 0x9181, 0x5140, 0x9301, 0x53C0, 0x5280, 0x9241,
+    0x9601, 0x56C0, 0x5780, 0x9741, 0x5500, 0x95C1, 0x9481, 0x5440,
+    0x9C01, 0x5CC0, 0x5D80, 0x9D41, 0x5F00, 0x9FC1, 0x9E81, 0x5E40,
+    0x5A00, 0x9AC1, 0x9B81, 0x5B40, 0x9901, 0x59C0, 0x5880, 0x9841,
+    0x8801, 0x48C0, 0x4980, 0x8941, 0x4B00, 0x8BC1, 0x8A81, 0x4A40,
+    0x4E00, 0x8EC1, 0x8F81, 0x4F40, 0x8D01, 0x4DC0, 0x4C80, 0x8C41,
+    0x4400, 0x84C1, 0x8581, 0x4540, 0x8701, 0x47C0, 0x4680, 0x8641,
+    0x8201, 0x42C0, 0x4380, 0x8341, 0x4100, 0x81C1, 0x8081, 0x4040
+
+];
+        $yy = 0;
+        $reg = 0xffff;  
+        while( $N-- > 0 ) 
+        {
+            $reg = $reg ^ $modbus_crc_tbl[$yy];
+            $yy = $yy + 1;
+            for( $bit=0; $bit<=7; $bit++)
+            {
+                $flag=$reg & 0x0001;
+                $reg=$reg>> 1;
+                if ( $flag == 1 )
+                    $reg = $reg ^ 0xa001;
+            }
+        }
+        return $reg;
+    }
+
+function CRC16HexDigest($str){
+        return sprintf('%04X', $str);
+    }
+
+
+$modbus_msg='123456789';
+$crc=modbus_crc($modbus_msg,strlen($modbus_msg));
+echo $crc;
+
+$modbus_msg='123456789';
+$crc=modbus_crc($modbus_msg,strlen($modbus_msg));
+echo  "<br>".CRC16HexDigest($crc);
+
+
+$modbus_msg=0x0123456789;
+$crc=modbus_crc($modbus_msg,strlen($modbus_msg));
+echo "<br>".CRC16HexDigest($crc);
+
+
+-------------------------------------------------------------------------------------
+
+<?php
+
+function crc16($string) { 
+  $crc = 0xFFFF; 
+  for ($x = 0; $x < strlen ($string); $x++) { 
+    $crc = $crc ^ ord($string[$x]); 
+    for ($y = 0; $y < 8; $y++) { 
+      if (($crc & 0x0001) == 0x0001) { 
+        $crc = (($crc >> 1) ^ 0xA001); 
+      } else { $crc = $crc >> 1; } 
+    } 
+  } 
+  return $crc; 
+} 
+
+
+function crc16a($data)
+ {
+   $crc = 0xFFFF;
+   for ($i = 0; $i < strlen($data); $i++)
+   {
+     $x = (($crc >> 8) ^ ord($data[$i])) & 0xFF;
+     $x ^= $x >> 4;
+     $crc = (($crc << 8) ^ ($x << 12) ^ ($x << 5) ^ $x) & 0xFFFF;
+   }
+   return $crc;
+ }
+
+
+function crc16b($sStr, $aParams = array()){ 
+
+ $aDefaults = array( 
+   "polynome" => 0x1021, 
+   "init" => 0xFFFF, 
+   "xor_out" => 0, 
+ ); 
+
+ foreach ($aDefaults as $key => $val){ 
+   if (!isset($aParams[$key])){ 
+     $aParams[$key] = $val; 
+   } 
+ } 
+
+ $sStr .= ""; 
+ $crc = $aParams['init']; 
+ $len = strlen($sStr); 
+ $i = 0; 
+
+ while ($len--){ 
+   $crc ^= ord($sStr[$i++]) << 8; 
+   $crc &= 0xffff; 
+
+   for ($j = 0; $j < 8; $j++){ 
+     $crc = ($crc & 0x8000) ? ($crc << 1) ^ $aParams['polynome'] : $crc << 1; 
+     $crc &= 0xffff; 
+   } 
+ } 
+
+ $crc ^= $aParams['xor_out']; 
+
+ return $crc; 
+}
+
+
+
+function crc16c($data) { 
+   $poly = 0x8005; 
+   $xor = 0x0000; 
+
+   $crc = 0xAC6F; 
+   $len = strlen($data); 
+   $i = 0; 
+   while ($len--) { 
+      $crc ^= ord($data[$i++]) << 8; 
+      $crc &= 0xffff; 
+      for ($j = 0; $j < 8; $j++){ 
+         $crc = ($crc & 0x8000) ? ($crc << 1) ^ $poly : $crc << 1; 
+         $crc &= 0xffff; 
+      } 
+   } 
+   $crc ^= $xor; 
+   return $crc; 
+}
+
+
+
+
+/*************************************************************************
+ * phpCrc16 v1.1 -- CRC16/CCITT implementation 
+ *
+ * By Matteo Beccati <matteo AT beccati DOT com>
+ * 
+ * Original code by:
+ * Ashley Roll
+ * Digital Nemesis Pty Ltd
+ * www.digitalnemesis.com
+ * ash AT digitalnemesis DOT com 
+ *
+ * Test Vector: "123456789" (character string, no quotes)
+ * Generated CRC: 0x29B1
+ * 
+ *************************************************************************/
+
+
+
+/*
+ * Returns CRC16 of a string as int value
+ */
+function CRC16D($str)
+{
+    static $CRC16_Lookup = array(
+            0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50A5, 0x60C6, 0x70E7, 
+            0x8108, 0x9129, 0xA14A, 0xB16B, 0xC18C, 0xD1AD, 0xE1CE, 0xF1EF, 
+            0x1231, 0x0210, 0x3273, 0x2252, 0x52B5, 0x4294, 0x72F7, 0x62D6, 
+            0x9339, 0x8318, 0xB37B, 0xA35A, 0xD3BD, 0xC39C, 0xF3FF, 0xE3DE, 
+            0x2462, 0x3443, 0x0420, 0x1401, 0x64E6, 0x74C7, 0x44A4, 0x5485, 
+            0xA56A, 0xB54B, 0x8528, 0x9509, 0xE5EE, 0xF5CF, 0xC5AC, 0xD58D, 
+            0x3653, 0x2672, 0x1611, 0x0630, 0x76D7, 0x66F6, 0x5695, 0x46B4, 
+            0xB75B, 0xA77A, 0x9719, 0x8738, 0xF7DF, 0xE7FE, 0xD79D, 0xC7BC, 
+            0x48C4, 0x58E5, 0x6886, 0x78A7, 0x0840, 0x1861, 0x2802, 0x3823, 
+            0xC9CC, 0xD9ED, 0xE98E, 0xF9AF, 0x8948, 0x9969, 0xA90A, 0xB92B, 
+            0x5AF5, 0x4AD4, 0x7AB7, 0x6A96, 0x1A71, 0x0A50, 0x3A33, 0x2A12, 
+            0xDBFD, 0xCBDC, 0xFBBF, 0xEB9E, 0x9B79, 0x8B58, 0xBB3B, 0xAB1A, 
+            0x6CA6, 0x7C87, 0x4CE4, 0x5CC5, 0x2C22, 0x3C03, 0x0C60, 0x1C41, 
+            0xEDAE, 0xFD8F, 0xCDEC, 0xDDCD, 0xAD2A, 0xBD0B, 0x8D68, 0x9D49, 
+            0x7E97, 0x6EB6, 0x5ED5, 0x4EF4, 0x3E13, 0x2E32, 0x1E51, 0x0E70, 
+            0xFF9F, 0xEFBE, 0xDFDD, 0xCFFC, 0xBF1B, 0xAF3A, 0x9F59, 0x8F78, 
+            0x9188, 0x81A9, 0xB1CA, 0xA1EB, 0xD10C, 0xC12D, 0xF14E, 0xE16F, 
+            0x1080, 0x00A1, 0x30C2, 0x20E3, 0x5004, 0x4025, 0x7046, 0x6067, 
+            0x83B9, 0x9398, 0xA3FB, 0xB3DA, 0xC33D, 0xD31C, 0xE37F, 0xF35E, 
+            0x02B1, 0x1290, 0x22F3, 0x32D2, 0x4235, 0x5214, 0x6277, 0x7256, 
+            0xB5EA, 0xA5CB, 0x95A8, 0x8589, 0xF56E, 0xE54F, 0xD52C, 0xC50D, 
+            0x34E2, 0x24C3, 0x14A0, 0x0481, 0x7466, 0x6447, 0x5424, 0x4405, 
+            0xA7DB, 0xB7FA, 0x8799, 0x97B8, 0xE75F, 0xF77E, 0xC71D, 0xD73C, 
+            0x26D3, 0x36F2, 0x0691, 0x16B0, 0x6657, 0x7676, 0x4615, 0x5634, 
+            0xD94C, 0xC96D, 0xF90E, 0xE92F, 0x99C8, 0x89E9, 0xB98A, 0xA9AB, 
+            0x5844, 0x4865, 0x7806, 0x6827, 0x18C0, 0x08E1, 0x3882, 0x28A3, 
+            0xCB7D, 0xDB5C, 0xEB3F, 0xFB1E, 0x8BF9, 0x9BD8, 0xABBB, 0xBB9A, 
+            0x4A75, 0x5A54, 0x6A37, 0x7A16, 0x0AF1, 0x1AD0, 0x2AB3, 0x3A92, 
+            0xFD2E, 0xED0F, 0xDD6C, 0xCD4D, 0xBDAA, 0xAD8B, 0x9DE8, 0x8DC9, 
+            0x7C26, 0x6C07, 0x5C64, 0x4C45, 0x3CA2, 0x2C83, 0x1CE0, 0x0CC1, 
+            0xEF1F, 0xFF3E, 0xCF5D, 0xDF7C, 0xAF9B, 0xBFBA, 0x8FD9, 0x9FF8, 
+            0x6E17, 0x7E36, 0x4E55, 0x5E74, 0x2E93, 0x3EB2, 0x0ED1, 0x1EF0
+    );
+    
+    $crc16 = 0xFFFF; // the CRC
+    $len = strlen($str);
+    
+    for($i = 0; $i < $len; $i++ )
+    {
+        $t = ($crc16 >> 8) ^ ord($str[$i]); // High byte Xor Message Byte to get index
+        $crc16 = (($crc16 << 8) & 0xffff) ^ $CRC16_Lookup[$t]; // Update the CRC from table
+    }
+    
+    // crc16 now contains the CRC value
+    return $crc16;
+}
+
+/*
+ * Returns CRC16 of a string as hexadecimal string
+ */
+function CRC16HexDigest($str)
+{
+    #return sprintf('%04X', crc16($str));
+    return $str;
+}
+
+
+function crc16e($data)
+{
+   $crc = 0xFFFF;
+   for ($i = 0; $i < strlen($data); $i++)
+   {
+     $crc ^=ord($data[$i]);
+     
+        for ($j = 8; $j !=0; $j--)
+        {
+            if (($crc & 0x0001) !=0)
+            {
+                $crc >>= 1;
+                $crc ^= 0xA001;
+            }
+            else
+                $crc >>= 1;
+        }
+    }    
+   return $crc;
+}
+
+
+
+
+function crc_ccitt ($str){ 
+   $crc = 0xffff; 
+   $str = unpack("C*",$str); 
+   $F=0; 
+    foreach ($str as $chr){ 
+ //   for (my $i = 0, my $data =int 0xff & $chr; $i < 8; $i++, $data >>= 1) { 
+     for ($i = 0, $data =$chr&0xff; $i < 8; $i++, $data >>= 1) { 
+            $crc = ($crc & 0x0001) ^ ($data & 0x0001) ? ($crc >> 1) ^ 0x8408 : $crc >> 1; 
+        } 
+    } 
+    return 0xffff & ~$crc; 
+}  
+
+
+
+$strCode = "123456789";
+echo CRC16HexDigest(crc32($strCode)). " - crc32";
+echo "<br>";
+echo CRC16HexDigest(crc16($strCode)). "- crc16";
+echo "<br>";
+echo CRC16HexDigest(crc16a($strCode)). " - crc16a";
+echo "<br>";
+echo CRC16HexDigest(crc16b($strCode)). " - crc16b";
+echo "<br>";
+echo CRC16HexDigest(crc16c($strCode)). " - crc16c";
+echo "<br>";
+echo CRC16HexDigest(CRC16($strCode)) . " - " . CRC16HexDigest("80000003");
+echo "<br>";
+echo CRC16HexDigest(crc16e($strCode)). " - crc16e";
+echo "<br>";
+echo CRC16HexDigest(crc_ccitt($strCode)). " - crc_ccitt";
+echo "<br>";
+
+-------------------------------------------------------------------------------------
+http://www-stud.rbi.informatik.uni-frankfurt.de/~haase/crc.html
+https://www.can-cia.org/can-knowledge/can/crc/
+http://www.ross.net/crc/links.html
+https://barrgroup.com/Embedded-Systems/How-To/CRC-Calculation-C-Code
+
+
+https://www.lammertbies.nl/comm/info/crc-calculation.html
+
+
+1000 1000 0000 1000 0100 0101  0001 8+8+0+8+4+5=33  1
+1000 1000 0000 1000 0101 0101  0010 8+8+0+8+5+5=34  2
+1000 1000 0000 1000 0110 0101  0011 8+8+0+8+6+5=35  3
+1000 1000 0000 1000 1000 0100  0100 8+8+0+8+8+4=36  4
+1000 1000 0000 1000 1100 0101  1001 8+8+0+8+12+5=41 9
+1000 1000 0000 1000 1101 0101  1010 8+8+0+8+13+5=42 10
+1000 1000 0000 1000 1111 0101  1100 8+8+0+8+15+5=44 12
+1000 1000 0000 0000 1100 0101  0001 8+8+0+0+12+5=33 1
+1000 1000 1100 0000 0000 0101  0001 8+8+12+0+0+5=33 1
+
+
+-------------------------------------------------------------------------------------
+
+
+Source Code for the C-language Implementations
+ 
+/*
+demonstrates how the incorrect check value of 0x29B1 may be reported
+for the test string “123456789” when it should be 0xE5CC.
+*/
+
+#include <stdio.h>
+#include <string.h>
+
+#define           poly     0x1021          /* crc-ccitt mask */
+
+/* global variables */
+char text[1000];
+unsigned short good_crc;
+unsigned short bad_crc;
+unsigned short text_length;
+
+int main(void)
+{
+    void go();
+    void repeat_character(unsigned char, unsigned short);
+
+    sprintf(text, "%s", "");
+    go();
+
+    sprintf(text, "%s", "A");
+    go();
+
+    sprintf(text, "%s", "123456789");
+    go();
+
+    repeat_character(65, 256);
+    go();
+
+    return 0;
+}
+
+void go(void)
+{
+    void update_good_crc(unsigned short);
+    void augment_message_for_good_crc();
+    void update_bad_crc(unsigned short);
+
+    unsigned short ch, i;
+
+    good_crc = 0xffff;
+    bad_crc = 0xffff;
+    i = 0;
+    text_length= 0;
+    while((ch=text[i])!=0)
+    {
+        update_good_crc(ch);
+        update_bad_crc(ch);
+        i++;
+        text_length++;
+    }
+    augment_message_for_good_crc();
+    printf(
+    "0ood_CRC = %04X,  Bad_CRC = %04X,  Length = %u,  Text =
+       good_crc,         bad_crc,         text_length,  text
+    );
+}
+
+void repeat_character(unsigned char ch, unsigned short n)
+{
+    unsigned short i;
+    for (i=0; i<n; i++)
+    {
+        text[i] = ch;
+    }
+    text[n] = 0;
+}
+
+void update_good_crc(unsigned short ch)
+{
+    unsigned short i, v, xor_flag;
+
+    /*
+    Align test bit with leftmost bit of the message byte.
+    */
+    v = 0x80;
+
+    for (i=0; i<8; i++)
+    {
+        if (good_crc & 0x8000)
+        {
+            xor_flag= 1;
+        }
+        else
+        {
+            xor_flag= 0;
+        }
+        good_crc = good_crc << 1;
+
+        if (ch & v)
+        {
+            /*
+            Append next bit of message to end of CRC if it is not zero.
+            The zero bit placed there by the shift above need not be
+            changed if the next bit of the message is zero.
+            */
+            good_crc= good_crc + 1;
+        }
+
+        if (xor_flag)
+        {
+            good_crc = good_crc ^ poly;
+        }
+
+        /*
+        Align test bit with next bit of the message byte.
+        */
+        v = v >> 1;
+    }
+}
+
+void augment_message_for_good_crc()
+{
+    unsigned short i, xor_flag;
+
+    for (i=0; i<16; i++)
+    {
+        if (good_crc & 0x8000)
+        {
+            xor_flag= 1;
+        }
+        else
+        {
+            xor_flag= 0;
+        }
+        good_crc = good_crc << 1;
+
+        if (xor_flag)
+        {
+            good_crc = good_crc ^ poly;
+        }
+    }
+}
+
+void update_bad_crc(unsigned short ch)
+{
+    /* based on code found at
+    http://www.programmingparadise.com/utility/crc.html
+    */
+
+    unsigned short i, xor_flag;
+
+    /*
+    Why are they shifting this byte left by 8 bits??
+    How do the low bits of the poly ever see it?
+    */
+    ch<<=8;
+
+    for(i=0; i<8; i++)
+    {
+        if ((bad_crc ^ ch) & 0x8000)
+        {
+            xor_flag = 1;
+        }
+        else
+        {
+            xor_flag = 0;
+        }
+        bad_crc = bad_crc << 1;
+        if (xor_flag)
+        {
+            bad_crc = bad_crc ^ poly;
+        }
+        ch = ch << 1;
+    }
+}
+-------------------------------------------------------------------------------------
+Calculator
+http://www.zorc.breitbandkatze.de/crc.html
+https://www.lammertbies.nl/comm/info/crc-calculation.html
+
+
+http://www.hsg-kl.de/faecher/inf/netze/fehler1/
+https://barrgroup.com/Embedded-Systems/How-To/CRC-Calculation-C-Code
+https://barrgroup.com/downloads/code-crc-c
+https://barrgroup.com/tech-talks/checksums-and-crcs
+https://barrgroup.com/Embedded-Systems/How-To/Additive-Checksums
+https://barrgroup.com/Embedded-Systems/How-To/CRC-Math-Theory
+https://barrgroup.com/Embedded-Systems/How-To/CRC-Calculation-C-Code
+http://www.ross.net/crc/download/crc_v3.txt
+
+c compilator online
+
+https://repl.it/repls/ExcitingEvenRoach
+https://www.jdoodle.com/c-online-compiler
+https://www.codechef.com/ide
+https://www.onlinegdb.com/online_c_compiler
+https://www.tutorialspoint.com/compile_c_online.php
+
+https://repl.it/  # python
+https://www.jdoodle.com/python3-programming-online
+https://www.python.org/shell/
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+
+https://github.com/madler/crcany
+http://zlib.net/crc_v3.txt
+http://reveng.sourceforge.net/crc-catalogue/all.htm
+
+
+CRC check github
+
+py
+https://github.com/tpircher/pycrc
+https://github.com/yuanzhuangl/CRC
+https://github.com/singleye/crc
+https://github.com/cristianav/PyCRC-old
+https://github.com/ubitux/animeCRC
+https://github.com/Gnoxter/CRCGalore
+https://github.com/ultimagz/check_crc32
+https://github.com/John-Lin/PyCRC
+https://github.com/Pacrisc/pyCheckNexusCRC
+https://github.com/ThePadawan/crc32all
+
+https://github.com/nad2000/bash-script-to-crc-check-.rar-files
+https://github.com/rigopoui/CRC-error-detection
+https://github.com/saraansh/multi_client_single_server_CRC
+https://github.com/SiggiGue/pyserialmessage
+
+perl
+https://github.com/cinderellaking/CRC
+https://github.com/iamben/CRC-checker
+https://github.com/fhaer/CRC32-Checksum-Calculator
+
+shell
+https://github.com/EricYuzo/crchk
+
+js
+https://github.com/yields/crc32
+https://github.com/ocfootprint/modbus-crc
+https://github.com/gaassassins/crc8-checksum
+https://github.com/nullsuperset/node-crc-16
+https://github.com/imbar/crc16-ccitt-node
+https://github.com/Jimbly/diskcheck
+
+-------------------------------------------------------------------------------------
+
+install perl moules
+https://www.livejournal.com/doc/server/lj.install.perl_setup.modules.html
+http://search.cpan.org/~olimaul/Digest-CRC-0.22.2/lib/Digest/CRC.pm
+https://www.devmanuals.net/install/ubuntu/ubuntu-12-04-lts-precise-pangolin/install-libdigest-crc-perl.html
+
+
+ # Functional style
+
+  use Digest::CRC qw(crc64 crc32 crc16 crcccitt crc crc8 crcopenpgparmor);
+  $crc = crc64("123456789");
+  $crc = crc32("123456789");
+  $crc = crc16("123456789");
+  $crc = crcccitt("123456789");
+  $crc = crc8("123456789");
+  $crc = crcopenpgparmor("123456789");
+
+  $crc = crc($input,$width,$init,$xorout,$refout,$poly,$refin,$cont);
+
+
+  # add data to existing
+
+  $crc = crc32("ABCD", $crc);
+
+
+  # OO style
+  use Digest::CRC;
+
+  $ctx = Digest::CRC->new(type=>"crc16");
+  $ctx = Digest::CRC->new(width=>16, init=>0x2345, xorout=>0x0000, 
+                          refout=>1, poly=>0x8005, refin=>1, cont=>1);
+
+  $ctx->add($data);
+  $ctx->addfile(*FILE);
+
+  $digest = $ctx->digest;
+  $digest = $ctx->hexdigest;
+  $digest = $ctx->b64digest;
+
+
+
+
+Debian Install.
+If you are using Debian the following command should retrieve and build every required module. If there are any modules not yet packaged in Debian, you can use CPAN to install those — Unicode::CheckUTF8 is an example.:
+
+sudo apt-get install libdatetime-perl libdbi-perl libdbd-mysql-perl libclass-autouse-perl libhtml-template-perl libimage-size-perl libmime-lite-perl libmime-perl libnet-dns-perl liburi-perl libhtml-tagset-perl libhtml-parser-perl libwww-perl libwww-perl libgd-gd2-perl libmailtools-perl libunicode-maputf8-perl libxml-simple-perl libio-stringy-perl  libcaptcha-recaptcha-perl libdigest-hmac-perl 
+
+sudo apt-get install libdigest-crc-perl
+
+And likewise for the optional modules:
+
+sudo apt-get install libgd-graph-perl  librpc-xml-perl libsoap-lite-perl libxml-rss-perl libstring-crc32-perl libxml-atom-perl libmath-bigint-gmp-perl liburi-fetch-perl libcrypt-dh-perl perlmagick libclass-accessor-perl libclass-trigger-perl libclass-data-inheritable-perl libgnupg-interface-perl libmail-gnupg-perl libtext-vcard-perl
+
+
+Using CPAN
+# perl -MCPAN -e shell
+cpan> install Bundle::CPAN
+cpan> reload cpan
+
+cpan> install DateTime
+cpan> install DBI
+cpan> install DBD::mysql
+cpan> install Class::Autouse
+cpan> install Digest::MD5
+cpan> install Digest::SHA1
+cpan> install HTML::Template
+cpan> install Image::Size
+cpan> install MIME::Lite
+cpan> install MIME::Words
+cpan> install Compress::Zlib
+cpan> install Net::DNS
+cpan> install URI::URL
+cpan> install HTML::Tagset
+cpan> install HTML::Parser
+cpan> install LWP::Simple
+cpan> install LWP::UserAgent
+cpan> install GD
+cpan> install Mail::Address
+cpan> install Unicode::MapUTF8
+cpan> install XML::Simple
+cpan> install IO::WrapTie
+cpan> install Unicode::CheckUTF8
+cpan> install Captcha::reCAPTCHA
+cpan> install Digest::HMAC_SHA1
+
+And likewise for the optional modules:
+
+cpan> install GD::Graph
+cpan> install Proc::ProcessTable
+cpan> install RPC::XML
+cpan> install SOAP::Lite
+cpan> install XML::RSS
+cpan> install String::CRC32
+cpan> install XML::Atom
+cpan> install Math::BigInt::GMP
+cpan> install URI::Fetch
+cpan> install Crypt::DH
+cpan> install Image::Magick
+cpan> install Class::Accessor
+cpan> install Class::Trigger
+cpan> install Class::Data::Inheritable
+cpan> install GnuPG::Interface
+cpan> install Mail::GnuPG
+cpan> install Text::vCard
+cpan> install IP::Country::Fast
+cpan> install GTop
+
+
+ 
+# perl -MCPAN -e shell CPAN
+cpan> o conf make /usr/bin/make
+cpan> o conf commit
+
+whereis gzip
+ $LJHOME/bin/checkconfig.pl --needed-debs --only=modules
+
+
+
+ -------------------------------------------------------------
+sudo pip install crcmod
+
+  python crc_galore.py  -l
+  0: CRC-8                             00 poly:               107 init:               00 xor:               00 
+  1: CRC-8/AUTOSAR                     00 poly:               12f init:               00 xor:               ff 
+  2: CRC-8/CDMA2000                    ff poly:               19b init:               ff xor:               00 
+  3: CRC-8/DARC                        00 poly:               139 init:               00 xor:               00 REVERSED 
+  4: CRC-8/DVB-S2                      00 poly:               1d5 init:               00 xor:               00 
+  5: CRC-8/EBU                         ff poly:               11d init:               ff xor:               00 REVERSED 
+  6: CRC-8/I-CODE                      fd poly:               11d init:               fd xor:               00 
+  7: CRC-8/ITU                         55 poly:               107 init:               55 xor:               55 
+  8: CRC-8/LTE                         00 poly:               19b init:               00 xor:               00 
+  9: CRC-8/MAXIM                       00 poly:               131 init:               00 xor:               00 REVERSED 
+ 10: CRC-8/OPENSAFETY                  00 poly:               12f init:               00 xor:               00 
+ 11: CRC-8/ROHC                        ff poly:               107 init:               ff xor:               00 REVERSED 
+ 12: CRC-8/SAE-J1850                   00 poly:               11d init:               00 xor:               ff 
+ 13: CRC-8/WCDMA                       00 poly:               19b init:               00 xor:               00 REVERSED 
+ 14: ARC                             0000 poly:             18005 init:             0000 xor:             0000 REVERSED 
+ 15: CRC-16/AUG-CCITT                1d0f poly:             11021 init:             1d0f xor:             0000 
+ 16: CRC-16/BUYPASS                  0000 poly:             18005 init:             0000 xor:             0000 
+ 17: CRC-16/CCITT-FALSE              ffff poly:             11021 init:             ffff xor:             0000 
+ 18: CRC-16/CDMA2000                 ffff poly:             1c867 init:             ffff xor:             0000 
+ 19: CRC-16/CMS                      ffff poly:             18005 init:             ffff xor:             0000 
+ 20: CRC-16/DDS-110                  800d poly:             18005 init:             800d xor:             0000 
+ 21: CRC-16/DECT-R                   0001 poly:             10589 init:             0001 xor:             0001 
+ 22: CRC-16/DECT-X                   0000 poly:             10589 init:             0000 xor:             0000 
+ 23: CRC-16/DNP                      ffff poly:             13d65 init:             ffff xor:             ffff REVERSED 
+ 24: CRC-16/EN-13757                 ffff poly:             13d65 init:             ffff xor:             ffff 
+ 25: CRC-16/GENIBUS                  0000 poly:             11021 init:             0000 xor:             ffff 
+ 26: CRC-16/LJ1200                   0000 poly:             16f63 init:             0000 xor:             0000 
+ 27: CRC-16/MAXIM                    ffff poly:             18005 init:             ffff xor:             ffff REVERSED 
+ 28: CRC-16/MCRF4XX                  ffff poly:             11021 init:             ffff xor:             0000 REVERSED 
+ 29: CRC-16/OPENSAFETY-B             0000 poly:             1755b init:             0000 xor:             0000 
+ 30: CRC-16/PROFIBUS                 0000 poly:             11dcf init:             0000 xor:             ffff 
+ 31: CRC-16/RIELLO                   554d poly:             11021 init:             554d xor:             0000 REVERSED 
+ 32: CRC-16/T10-DIF                  0000 poly:             18bb7 init:             0000 xor:             0000 
+ 33: CRC-16/TELEDISK                 0000 poly:             1a097 init:             0000 xor:             0000 
+ 34: CRC-16/USB                      0000 poly:             18005 init:             0000 xor:             ffff REVERSED 
+ 35: KERMIT                          0000 poly:             11021 init:             0000 xor:             0000 REVERSED 
+ 36: MODBUS                          ffff poly:             18005 init:             ffff xor:             0000 REVERSED 
+ 37: X-25                            0000 poly:             11021 init:             0000 xor:             ffff REVERSED 
+ 38: XMODEM                          0000 poly:             11021 init:             0000 xor:             0000 
+ 39: CRC-24                        b704ce poly:           1864cfb init:           b704ce xor:           000000 
+ 40: CRC-24/FLEXRAY-A              fedcba poly:           15d6dcb init:           fedcba xor:           000000 
+ 41: CRC-24/FLEXRAY-B              abcdef poly:           15d6dcb init:           abcdef xor:           000000 
+ 42: CRC-24/INTERLAKEN             000000 poly:           1328b63 init:           000000 xor:           ffffff 
+ 43: CRC-24/LTE-A                  000000 poly:           1864cfb init:           000000 xor:           000000 
+ 44: CRC-24/LTE-B                  000000 poly:           1800063 init:           000000 xor:           000000 
+ 45: CRC-32                      00000000 poly:         104c11db7 init:         00000000 xor:         ffffffff REVERSED 
+ 46: CRC-32C                     00000000 poly:         11edc6f41 init:         00000000 xor:         ffffffff REVERSED 
+ 47: CRC-32D                     00000000 poly:         1a833982b init:         00000000 xor:         ffffffff REVERSED 
+ 48: CRC-32Q                     00000000 poly:         1814141ab init:         00000000 xor:         00000000 
+ 49: CRC-32/AUTOSAR              00000000 poly:         1f4acfb13 init:         00000000 xor:         ffffffff REVERSED 
+ 50: CRC-32/BZIP2                00000000 poly:         104c11db7 init:         00000000 xor:         ffffffff 
+ 51: CRC-32/MPEG-2               ffffffff poly:         104c11db7 init:         ffffffff xor:         00000000 
+ 52: CRC-32/POSIX                ffffffff poly:         104c11db7 init:         ffffffff xor:         ffffffff 
+ 53: CRC-32K Koopman*            00000000 poly:         1741b8cd7 init:         00000000 xor:         00000000 REVERSED 
+ 54: CRC-32K_2 Koopman*          00000000 poly:         132583499 init:         00000000 xor:         00000000 REVERSED 
+ 55: JAMCRC                      ffffffff poly:         104c11db7 init:         ffffffff xor:         00000000 REVERSED 
+ 56: XFER                        00000000 poly:         1000000af init:         00000000 xor:         00000000 
+ 57: CRC-64              0000000000000000 poly: 142f0e1eba9ea3693 init: 0000000000000000 xor: 0000000000000000 
+ 58: CRC-64/WE           0000000000000000 poly: 142f0e1eba9ea3693 init: 0000000000000000 xor: ffffffffffffffff 
+ 59: CRC-64/XZ           0000000000000000 poly: 142f0e1eba9ea3693 init: 0000000000000000 xor: ffffffffffffffff REVERSED 
+ 60: CRC-64/Jones        ffffffffffffffff poly: 1ad93d23594c935a9 init: ffffffffffffffff xor: 0000000000000000 REVERSED 
+ 61: CRC-64/ISO*         0000000000000000 poly: 1000000000000001b init: 0000000000000000 xor: 0000000000000000 REVERSED 
+
+
+
+-------------------------------------------------------------
+
+https://github.com/cristianav/PyCRC-old
+https://github.com/cristianav/PyCRC-old
+
+CRC16           CRC16.py        for CRC16 and CRC16 Modbus
+CRC32           CRC32.py        for CRC32
+CRC16Kermit     CRC16Kermit.py  for CRC-CCITT (Kermit)
+CRC16SICK       CRC16SICK.py    for CRC16 (Sick)
+CRC16DNP        CRC16DNP.py     for CRC-DNP
+CRCCCITT        CRCCCITT.py     for CRC-CCITT (XModem), CRC-CCITT (0xFFFF) and CRC-CCITT (0x1D0F)
+
+
+
+
+import sys
+
+from CRCModules.CRC16 import CRC16
+from CRCModules.CRC32 import CRC32
+from CRCModules.CRC16SICK import CRC16SICK
+from CRCModules.CRC16Kermit import CRC16Kermit
+from CRCModules.CRC16DNP import CRC16DNP
+from CRCModules.CRCCCITT import CRCCCITT
+
+
+if __name__ == "__main__":
+    target = b"\xc8\x99\xc8\x9b23\xc8\x9b"
+    target = str(sys.argv[1])
+
+
+    print("The results for {} are".format(target))
+
+    print("CRC-CCITT(XModem) {:10x}".format(CRCCCITT().calculate(target)))
+    print("CRC-CCITT(0xFFFF) {:10x}".format(CRCCCITT(version="FFFF").calculate(target)))
+    print("CRC-CCITT(0x1D0F) {:10x}".format(CRCCCITT(version="1D0F").calculate(target)))
+    print("CRC-16            {:10X}".format(CRC16().calculate(target)))
+    print("CRC-16 (Modbus)   {:10X}".format(CRC16(modbus_flag = True).calculate(target)))
+    print("CRC-16 (SICK)     {:10X}".format(CRC16SICK().calculate(target)))
+    print("CRC-DNP           {:10X}".format(CRC16DNP().calculate(target)))
+    print("CRC-32            {:10X}".format(CRC32().calculate(target)))
+    print("CRC-16 (Kermit)   {:10X}".format(CRC16Kermit().calculate(target)))
+
+
+python pyCRC.py 1234556778
+
+
+------------------------------------------------------------------------------------------------
+
+  /**
+    * @param $data
+    * @return int
+    */
+   private function crc4($data){
+
+      #echo $data . " "  .count($data);
+      #die();
+
+      $i = 0;
+      $crc = 0;
+
+      $crc_table = array
+      (
+         0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50a5, 0x60c6, 0x70e7,
+         0x8108, 0x9129, 0xa14a, 0xb16b, 0xc18c, 0xd1ad, 0xe1ce, 0xf1ef
+      );
+
+      $data = hex2bin($data);
+      $l = 0;
+      while($l < strlen($data)){
+
+         $byte = $data[$l];
+         $i = (($crc >> 12) ^ (ord($byte) >> 4));
+         $crc = ($crc_table[$i & 0x0F] ^ ($crc << 4));
+         $i = (($crc >> 12) ^ ord($byte));
+         $crc = ($crc_table[$i & 0x0F] ^ ($crc << 4));
+         $l++;
+
+      }
+
+      return ($crc & 0x0F);
+   }
+
+
+   function crc16($str)
+   {
+      static $CRC16_Lookup = array(
+         0X0000, 0XC0C1, 0XC181, 0X0140, 0XC301, 0X03C0, 0X0280, 0XC241,
+         0XC601, 0X06C0, 0X0780, 0XC741, 0X0500, 0XC5C1, 0XC481, 0X0440,
+         0XCC01, 0X0CC0, 0X0D80, 0XCD41, 0X0F00, 0XCFC1, 0XCE81, 0X0E40,
+         0X0A00, 0XCAC1, 0XCB81, 0X0B40, 0XC901, 0X09C0, 0X0880, 0XC841,
+         0XD801, 0X18C0, 0X1980, 0XD941, 0X1B00, 0XDBC1, 0XDA81, 0X1A40,
+         0X1E00, 0XDEC1, 0XDF81, 0X1F40, 0XDD01, 0X1DC0, 0X1C80, 0XDC41,
+         0X1400, 0XD4C1, 0XD581, 0X1540, 0XD701, 0X17C0, 0X1680, 0XD641,
+         0XD201, 0X12C0, 0X1380, 0XD341, 0X1100, 0XD1C1, 0XD081, 0X1040,
+         0XF001, 0X30C0, 0X3180, 0XF141, 0X3300, 0XF3C1, 0XF281, 0X3240,
+         0X3600, 0XF6C1, 0XF781, 0X3740, 0XF501, 0X35C0, 0X3480, 0XF441,
+         0X3C00, 0XFCC1, 0XFD81, 0X3D40, 0XFF01, 0X3FC0, 0X3E80, 0XFE41,
+         0XFA01, 0X3AC0, 0X3B80, 0XFB41, 0X3900, 0XF9C1, 0XF881, 0X3840,
+         0X2800, 0XE8C1, 0XE981, 0X2940, 0XEB01, 0X2BC0, 0X2A80, 0XEA41,
+         0XEE01, 0X2EC0, 0X2F80, 0XEF41, 0X2D00, 0XEDC1, 0XEC81, 0X2C40,
+         0XE401, 0X24C0, 0X2580, 0XE541, 0X2700, 0XE7C1, 0XE681, 0X2640,
+         0X2200, 0XE2C1, 0XE381, 0X2340, 0XE101, 0X21C0, 0X2080, 0XE041,
+         0XA001, 0X60C0, 0X6180, 0XA141, 0X6300, 0XA3C1, 0XA281, 0X6240,
+         0X6600, 0XA6C1, 0XA781, 0X6740, 0XA501, 0X65C0, 0X6480, 0XA441,
+         0X6C00, 0XACC1, 0XAD81, 0X6D40, 0XAF01, 0X6FC0, 0X6E80, 0XAE41,
+         0XAA01, 0X6AC0, 0X6B80, 0XAB41, 0X6900, 0XA9C1, 0XA881, 0X6840,
+         0X7800, 0XB8C1, 0XB981, 0X7940, 0XBB01, 0X7BC0, 0X7A80, 0XBA41,
+         0XBE01, 0X7EC0, 0X7F80, 0XBF41, 0X7D00, 0XBDC1, 0XBC81, 0X7C40,
+         0XB401, 0X74C0, 0X7580, 0XB541, 0X7700, 0XB7C1, 0XB681, 0X7640,
+         0X7200, 0XB2C1, 0XB381, 0X7340, 0XB101, 0X71C0, 0X7080, 0XB041,
+         0X5000, 0X90C1, 0X9181, 0X5140, 0X9301, 0X53C0, 0X5280, 0X9241,
+         0X9601, 0X56C0, 0X5780, 0X9741, 0X5500, 0X95C1, 0X9481, 0X5440,
+         0X9C01, 0X5CC0, 0X5D80, 0X9D41, 0X5F00, 0X9FC1, 0X9E81, 0X5E40,
+         0X5A00, 0X9AC1, 0X9B81, 0X5B40, 0X9901, 0X59C0, 0X5880, 0X9841,
+         0X8801, 0X48C0, 0X4980, 0X8941, 0X4B00, 0X8BC1, 0X8A81, 0X4A40,
+         0X4E00, 0X8EC1, 0X8F81, 0X4F40, 0X8D01, 0X4DC0, 0X4C80, 0X8C41,
+         0X4400, 0X84C1, 0X8581, 0X4540, 0X8701, 0X47C0, 0X4680, 0X8641,
+         0X8201, 0X42C0, 0X4380, 0X8341, 0X4100, 0X81C1, 0X8081, 0X4040
+      );
+
+      $crc16 = 0xFFFF; // the CRC
+      $len = strlen($str);
+
+      for($i = 0; $i < $len; $i++ )
+      {
+         $t = ($crc16 >> 8) ^ ord($str[$i]); // High byte Xor Message Byte to get index
+         $crc16 = (($crc16 << 8) & 0xffff) ^ $CRC16_Lookup[$t]; // Update the CRC from table
+      }
+
+      //die("--------------".$crc16); // 19008
+
+      // crc16 now contains the CRC value
+      return ( $crc16 & 0xFF );
+      #return ( $crc16  );
+   }
+
+   /**
+    * @param $data1
+    * @return int
+    */
+
+   function crc8($data1)
+   {
+      $crc8_table = array(
+         0x00, 0x3e, 0x7c, 0x42, 0xf8, 0xc6, 0x84, 0xba, 0x95, 0xab, 0xe9, 0xd7,
+         0x6d, 0x53, 0x11, 0x2f, 0x4f, 0x71, 0x33, 0x0d, 0xb7, 0x89, 0xcb, 0xf5,
+         0xda, 0xe4, 0xa6, 0x98, 0x22, 0x1c, 0x5e, 0x60, 0x9e, 0xa0, 0xe2, 0xdc,
+         0x66, 0x58, 0x1a, 0x24, 0x0b, 0x35, 0x77, 0x49, 0xf3, 0xcd, 0x8f, 0xb1,
+         0xd1, 0xef, 0xad, 0x93, 0x29, 0x17, 0x55, 0x6b, 0x44, 0x7a, 0x38, 0x06,
+         0xbc, 0x82, 0xc0, 0xfe, 0x59, 0x67, 0x25, 0x1b, 0xa1, 0x9f, 0xdd, 0xe3,
+         0xcc, 0xf2, 0xb0, 0x8e, 0x34, 0x0a, 0x48, 0x76, 0x16, 0x28, 0x6a, 0x54,
+         0xee, 0xd0, 0x92, 0xac, 0x83, 0xbd, 0xff, 0xc1, 0x7b, 0x45, 0x07, 0x39,
+         0xc7, 0xf9, 0xbb, 0x85, 0x3f, 0x01, 0x43, 0x7d, 0x52, 0x6c, 0x2e, 0x10,
+         0xaa, 0x94, 0xd6, 0xe8, 0x88, 0xb6, 0xf4, 0xca, 0x70, 0x4e, 0x0c, 0x32,
+         0x1d, 0x23, 0x61, 0x5f, 0xe5, 0xdb, 0x99, 0xa7, 0xb2, 0x8c, 0xce, 0xf0,
+         0x4a, 0x74, 0x36, 0x08, 0x27, 0x19, 0x5b, 0x65, 0xdf, 0xe1, 0xa3, 0x9d,
+         0xfd, 0xc3, 0x81, 0xbf, 0x05, 0x3b, 0x79, 0x47, 0x68, 0x56, 0x14, 0x2a,
+         0x90, 0xae, 0xec, 0xd2, 0x2c, 0x12, 0x50, 0x6e, 0xd4, 0xea, 0xa8, 0x96,
+         0xb9, 0x87, 0xc5, 0xfb, 0x41, 0x7f, 0x3d, 0x03, 0x63, 0x5d, 0x1f, 0x21,
+         0x9b, 0xa5, 0xe7, 0xd9, 0xf6, 0xc8, 0x8a, 0xb4, 0x0e, 0x30, 0x72, 0x4c,
+         0xeb, 0xd5, 0x97, 0xa9, 0x13, 0x2d, 0x6f, 0x51, 0x7e, 0x40, 0x02, 0x3c,
+         0x86, 0xb8, 0xfa, 0xc4, 0xa4, 0x9a, 0xd8, 0xe6, 0x5c, 0x62, 0x20, 0x1e,
+         0x31, 0x0f, 0x4d, 0x73, 0xc9, 0xf7, 0xb5, 0x8b, 0x75, 0x4b, 0x09, 0x37,
+         0x8d, 0xb3, 0xf1, 0xcf, 0xe0, 0xde, 0x9c, 0xa2, 0x18, 0x26, 0x64, 0x5a,
+         0x3a, 0x04, 0x46, 0x78, 0xc2, 0xfc, 0xbe, 0x80, 0xaf, 0x91, 0xd3, 0xed,
+         0x57, 0x69, 0x2b, 0x15);
+
+
+      $crc = 0xff;
+      for ($ii1=0;$ii1<strlen($data1);$ii1++){
+         $crc = $crc8_table[($crc ^ ($data1[$ii1]))];
+      }
+      return $crc ^ 0xff;
+   }
