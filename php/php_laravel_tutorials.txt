@@ -1,0 +1,1229 @@
+
+###############################################
+#
+#	laravel tutorials
+# 	https://itsolutionstuff.com/post/laravel-5-simple-crud-application-using-reactjs-part-1example.html
+#
+###############################################
+
+
+Step 1 : Install Laravel 5.5
+composer create-project --prefer-dist laravel/laravel blog
+
+Step 2: Database Configuration
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=here your database name(blog)
+DB_USERNAME=here database username(root)
+DB_PASSWORD=here database password(root)
+
+Step 3: Create products Table and Model
+php artisan make:migration create_products_table
+
+After this command you will find one file in following path database/migrations and you have to put bellow code in your migration file for create products table.
+
+<?php
+
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+
+class CreateProductsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('products', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('title');
+            $table->text('body');
+            $table->timestamps();
+        });
+    }
+
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('products');
+    }
+}
+
+
+-----
+
+php artisan make:model Product
+
+Ok, so after run bellow command you will find app/Product.php and put bellow content in Product.php file:
+
+app/Product.php
+
+<?php
+
+
+namespace App;
+
+
+use Illuminate\Database\Eloquent\Model;
+
+
+class Product extends Model
+{
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'title', 'body'
+    ];
+}
+
+Step 4: Create Web Route and API Route
+
+In this is step we need to add web route and also api route for products. so open your routes/web.php file and add following route.
+
+routes/web.php
+
+Route::get('/', function () {
+    return view('welcome');
+});
+routes/api.php
+
+Route::resource('products', 'ProductController');
+
+
+Step 5 : Create ProductController
+
+In this step, we need create new controller as ProductController. So run bellow command and create new controller. bellow controller for create resource controller.
+
+php artisan make:controller ProductController -resource
+
+After bellow command you will find new file in this path app/Http/Controllers/ProductController.php.
+
+In this controller will write code for following method:
+
+1)index()
+
+2)store()
+
+3)edit()
+
+4)update()
+
+5)destroy()
+
+So, let's copy bellow code and put on ProductController.php file.
+
+app/Http/Controllers/ProductController.php
+
+<?php
+
+
+namespace App\Http\Controllers;
+
+
+use Illuminate\Http\Request;
+use App\Product;
+
+
+class ProductController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $products = Product::all();
+        return response()->json($products);
+    }
+
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $product = new Product([
+          'title' => $request->get('title'),
+          'body' => $request->get('body')
+        ]);
+        $product->save();
+
+
+        return response()->json('Product Added Successfully.');
+    }
+
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        $product = Product::find($id);
+        return response()->json($product);
+    }
+
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        $product = Product::find($id);
+        $product->title = $request->get('title');
+        $product->body = $request->get('body');
+        $product->save();
+
+
+        return response()->json('Product Updated Successfully.');
+    }
+
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+      $product = Product::find($id);
+      $product->delete();
+
+
+      return response()->json('Product Deleted Successfully.');
+    }
+}
+Next we have following rest of step :
+
+6) Step 6 : Install Configuration For ReactJS
+
+7) Step 7 : Create React Components Files
+
+8) Step 8 : Create Main Blade File
+
+9) Step 9 : Run Project
+
+You can see above left step on next link, so click bellow next button.
+
+###################################################
+Laravel 5 - Simple CRUD Application Using ReactJS - Part 2
+https://itsolutionstuff.com/post/laravel-5-simple-crud-application-using-reactjs-part-2example.html
+
+Step 6 : Install Configuration For ReactJS
+
+First things is we need to configure our react app, So we need to run following bellow path for React Preset.
+
+php artisan preset react
+Next we need to run following command for install node js so let's run bellow command:
+
+npm install
+Now we have to run node js code so let's run bellow command:
+
+npm run dev
+One thing is left we need to install one dependency so let's run following command for install it.
+
+npm install react-router@2.8.1
+
+
+Step 7 : Create React Components Files
+
+Now in this step, we require to create following files for react js code, i listed bellow all files:
+
+1) app.js
+
+2) bootstrap.js
+
+3) components/CreateProduct.js
+
+4) components/DisplayProduct.js
+
+5) components/MasterProduct.js
+
+6) components/MyGlobleSetting.js
+
+7) components/TableRow.js
+
+8) components/UpdateProduct.js
+
+So let's put bellow code on that folder.
+
+resources/assets/js/app.js
+
+require('./bootstrap');
+import React from 'react';
+import { render } from 'react-dom';
+import { Router, Route, browserHistory } from 'react-router';
+
+
+import Master from './components/Master';
+import CreateProduct from './components/CreateProduct';
+import DisplayProduct from './components/DisplayProduct';
+import UpdateProduct from './components/UpdateProduct';
+
+
+render(
+  <Router history={browserHistory}>
+      <Route path="/" component={Master} >
+        <Route path="/add-item" component={CreateProduct} />
+        <Route path="/display-item" component={DisplayProduct} />
+        <Route path="/edit/:id" component={UpdateProduct} />
+      </Route>
+    </Router>,
+        document.getElementById('crud-app'));
+
+
+
+
+
+
+        resources/assets/js/bootstrap.js
+
+window._ = require('lodash');
+
+
+try {
+    window.$ = window.jQuery = require('jquery');
+
+
+    require('bootstrap-sass');
+} catch (e) {}
+
+
+window.axios = require('axios');
+
+
+window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+resources/assets/js/components/CreateProduct.js
+
+import React, {Component} from 'react';
+import {browserHistory} from 'react-router';
+import MyGlobleSetting from './MyGlobleSetting';
+
+
+class CreateProduct extends Component {
+  constructor(props){
+    super(props);
+    this.state = {productTitle: '', productBody: ''};
+
+
+    this.handleChange1 = this.handleChange1.bind(this);
+    this.handleChange2 = this.handleChange2.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+
+
+  }
+  handleChange1(e){
+    this.setState({
+      productTitle: e.target.value
+    })
+  }
+  handleChange2(e){
+    this.setState({
+      productBody: e.target.value
+    })
+  }
+  handleSubmit(e){
+    e.preventDefault();
+    const products = {
+      title: this.state.productTitle,
+      body: this.state.productBody
+    }
+    let uri = MyGlobleSetting.url + '/api/products';
+    axios.post(uri, products).then((response) => {
+      browserHistory.push('/display-item');
+    });
+  }
+
+
+    render() {
+      return (
+      <div>
+        <h1>Create Product</h1>
+        <form onSubmit={this.handleSubmit}>
+          <div className="row">
+            <div className="col-md-6">
+              <div className="form-group">
+                <label>Product Title:</label>
+                <input type="text" className="form-control" onChange={this.handleChange1} />
+              </div>
+            </div>
+            </div>
+            <div className="row">
+              <div className="col-md-6">
+                <div className="form-group">
+                  <label>Product Body:</label>
+                  <textarea className="form-control col-md-6" onChange={this.handleChange2}></textarea>
+                </div>
+              </div>
+            </div><br />
+            <div className="form-group">
+              <button className="btn btn-primary">Add Product</button>
+            </div>
+        </form>
+  </div>
+      )
+    }
+}
+export default CreateProduct;
+resources/assets/js/components/DisplayProduct.js
+
+import React, {Component} from 'react';
+import axios from 'axios';
+import { Link } from 'react-router';
+import TableRow from './TableRow';
+import MyGlobleSetting from './MyGlobleSetting';
+class DisplayProduct extends Component {
+  constructor(props) {
+       super(props);
+       this.state = {value: '', products: ''};
+     }
+     componentDidMount(){
+       axios.get(MyGlobleSetting.url + '/api/products')
+       .then(response => {
+         this.setState({ products: response.data });
+       })
+       .catch(function (error) {
+         console.log(error);
+       })
+     }
+     tabRow(){
+       if(this.state.products instanceof Array){
+         return this.state.products.map(function(object, i){
+             return ;
+
+         })
+       }
+     }
+
+
+  render(){
+    return (
+      <div>
+        <h1>Products</h1>
+
+
+        <div className="row">
+          <div className="col-md-10"></div>
+          <div className="col-md-2">
+            <Link to="/add-item">Create Product</Link>
+          </div>
+        </div><br />
+
+
+        <table className="table table-hover">
+            <thead>
+            <tr>
+                <td>ID</td>
+                <td>Product Title</td>
+                <td>Product Body</td>
+                <td width="200px">Actions</td>
+            </tr>
+            </thead>
+            <tbody>
+              {this.tabRow()}
+            </tbody>
+        </table>
+    </div>
+    )
+  }
+}
+export default DisplayProduct;
+resources/assets/js/components/Master.js
+
+import React, {Component} from 'react';
+import { Router, Route, Link } from 'react-router';
+
+
+class Master extends Component {
+  render(){
+    return (
+      <div className="container">
+        <nav className="navbar navbar-default">
+          <div className="container-fluid">
+            <div className="navbar-header">
+              <a className="navbar-brand" href="https://itsolutionstuff.com">ItSolutionStuff.com</a>
+            </div>
+            <ul className="nav navbar-nav">
+              <li><Link to="/">Home</Link></li>
+              <li><Link to="add-item">Create Product</Link></li>
+              <li><Link to="display-item">Products</Link></li>
+            </ul>
+          </div>
+      </nav>
+          <div>
+              {this.props.children}
+          </div>
+      </div>
+    )
+  }
+}
+export default Master;
+resources/assets/js/components/MyGlobleSetting.js
+
+class MyGlobleSetting {
+  constructor() {
+    this.url = 'http://localhost:8000';
+  }
+}
+export default (new MyGlobleSetting);
+resources/assets/js/components/TableRow.js
+
+import React, { Component } from 'react';
+import { Link, browserHistory } from 'react-router';
+import MyGlobleSetting from './MyGlobleSetting';
+
+
+class TableRow extends Component {
+  constructor(props) {
+      super(props);
+      this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  handleSubmit(event) {
+    event.preventDefault();
+    let uri = MyGlobleSetting.url + `/api/products/${this.props.obj.id}`;
+    axios.delete(uri);
+      browserHistory.push('/display-item');
+  }
+  render() {
+    return (
+        <tr>
+          <td>
+            {this.props.obj.id}
+          </td>
+          <td>
+            {this.props.obj.title}
+          </td>
+          <td>
+            {this.props.obj.body}
+          </td>
+          <td>
+          <form onSubmit={this.handleSubmit}>
+            <Link to={"edit/"+this.props.obj.id} className="btn btn-primary">Edit</Link>
+           <input type="submit" value="Delete" className="btn btn-danger"/>
+         </form>
+          </td>
+        </tr>
+    );
+  }
+}
+
+
+export default TableRow;
+resources/assets/js/components/UpdateProduct.js
+
+import React, {Component} from 'react';
+import axios from 'axios';
+import { Link } from 'react-router';
+import MyGlobleSetting from './MyGlobleSetting';
+
+
+class UpdateProduct extends Component {
+  constructor(props) {
+      super(props);
+      this.state = {title: '', body: ''};
+      this.handleChange1 = this.handleChange1.bind(this);
+      this.handleChange2 = this.handleChange2.bind(this);
+      this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+
+  componentDidMount(){
+    axios.get(MyGlobleSetting.url + `/api/products/${this.props.params.id}/edit`)
+    .then(response => {
+      this.setState({ title: response.data.title, body: response.data.body });
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
+  }
+  handleChange1(e){
+    this.setState({
+      title: e.target.value
+    })
+  }
+  handleChange2(e){
+    this.setState({
+      body: e.target.value
+    })
+  }
+
+
+  handleSubmit(event) {
+    event.preventDefault();
+    const products = {
+      title: this.state.title,
+      body: this.state.body
+    }
+    let uri = MyGlobleSetting.url + '/api/products/'+this.props.params.id;
+    axios.patch(uri, products).then((response) => {
+          this.props.history.push('/display-item');
+    });
+  }
+  render(){
+    return (
+      <div>
+        <h1>Update Product</h1>
+        <div className="row">
+          <div className="col-md-10"></div>
+          <div className="col-md-2">
+            <Link to="/display-item" className="btn btn-success">Return to Product</Link>
+          </div>
+        </div>
+        <form onSubmit={this.handleSubmit}>
+            <div className="form-group">
+                <label>Product Title</label>
+                <input type="text"
+                  className="form-control"
+                  value={this.state.title}
+                  onChange={this.handleChange1} />
+            </div>
+
+
+            <div className="form-group">
+                <label name="product_body">Product Body</label>
+                <textarea className="form-control"
+                  onChange={this.handleChange2} value={this.state.body}></textarea>
+            </div>
+
+
+            <div className="form-group">
+                <button className="btn btn-primary">Update</button>
+            </div>
+        </form>
+    </div>
+    )
+  }
+}
+export default UpdateProduct;
+Now we have following rest of step as listed bellow:
+
+8) Step 8 : Create Main Blade File
+
+9) Step 9 : Run Project
+
+You can see above left step on next link, so click bellow next button, you can also goes on previous link.
+
+
+#################
+Laravel 5 - Simple CRUD Application Using ReactJS - Part 3
+
+
+Step 8 : Create Main Blade File
+
+in this step. In this step we have to create just one main blade. So mainly we have to create layout file. So finally you have to create following bellow blade file:
+
+resources/views/welcome.blade.php
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Laravel 5.5 ReactJS CRUD Example</title>
+        <link href="{{asset('css/app.css')}}" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+        <div id="crud-app"></div>
+        <script src="{{asset('js/app.js')}}" ></script>
+    </body>
+</html>
+Step 9 : Run Project
+
+Now in the last step, we have to just run our crud application so just run following command for react js compile:
+
+npm run dev
+Now we are ready to run our react js crud application example so run bellow command for quick run:
+
+php artisan serve
+
+Now you can open bellow URL on your browser:
+
+http://localhost:8000/
+
+
+
+################################################################
+#
+#	https://laravel-news.com/your-first-laravel-application
+#
+################################################################
+
+Open your terminal application and switch into this directory.
+
+mkdir ~/Sites
+cd ~/Sites
+Next, install Laravel’s command line installer:
+
+composer global require "laravel/installer"
+You need to make sure that the global Composer bin is in your path. You can do so by adding the following to your PATH in your ~/.bash_profile or ~/.zshrc if you are using Z shell:
+
+export PATH="$HOME/.composer/vendor/bin:$PATH"
+For the path to take effect, you need to restart your terminal session of source the file again:
+
+source ~/.bash_profile
+Now you can use the Laravel installer to create new projects from the command line:
+
+laravel new links
+This will create a new directory at ~/Sites/links and install an stock Laravel project. Visiting links.dev in the browser now shows the default Laravel welcome page:
+
+Now scaffold out the authentication system by running:
+
+php artisan make:auth
+
+Building a List of Links
+If you start thinking about the whole finished project, it’s easy to get overwhelmed. The best way to fight this is to break everything down into small tasks. So, let’s start with showing a list of links.
+
+Even though showing a list of links sounds like a small task it still requires a database, a database table, data in the table, a database query, and a view file.
+
+Creating a migration will be the first step, and the Laravel Artisan command line tool can help us build that.
+
+php artisan make:migration create_links_table --create=links
+
+
+Now, open the file this command created. It will be located at database/migrations/{{datetime}}_create_links_table.php.
+
+Inside the up method add our new columns:
+
+Schema::create('links', function (Blueprint $table) {
+      $table->increments('id');
+      $table->string('title');
+      $table->string('url')->unique();
+      $table->text('description');
+      $table->timestamps();
+});
+
+Save the file and run the migration:
+
+php artisan migrate
+While you are working with test data, you can quickly apply the schema:
+
+php artisan migrate:fresh
+
+php artisan make:model --factory Link
+
+Open the LinkFactory.php file and fill in the following:
+
+<?php
+
+use Faker\Generator as Faker;
+
+/* @var Illuminate\Database\Eloquent\Factory $factory */
+
+$factory->define(App\Link::class, function (Faker $faker) {
+    return [
+        'title' => substr($faker->sentence(2), 0, -1),
+        'url' => $faker->url,
+        'description' => $faker->paragraph,
+    ];
+});
+
+
+
+
+php artisan make:seeder LinksTableSeeder
+The make:seeder command generates a new database seeder class to seed our links table. Open the database/seeds/LinksTableSeeder.php file and add the following:
+
+public function run()
+{
+    factory(App\Link::class, 5)->create();
+}
+In order to “activate” the LinksTableSeeder, we need to call it from the main database/seeds/DatabaseSeeder.php run method:
+
+public function run()
+{
+    $this->call(LinksTableSeeder::class);
+}
+
+
+
+
+
+
+
+
+$ php artisan migrate:fresh --seed
+Dropped all tables successfully.
+Migration table created successfully.
+Migrating: 2014_10_12_000000_create_users_table
+Migrated:  2014_10_12_000000_create_users_table
+Migrating: 2014_10_12_100000_create_password_resets_table
+Migrated:  2014_10_12_100000_create_password_resets_table
+Migrating: 2017_11_03_023418_create_links_table
+Migrated:  2017_11_03_023418_create_links_table
+Seeding: LinksTableSeeder
+
+
+
+
+
+
+
+Using the tinker shell you can start playing around with the model data:
+
+>>> \App\Link::first();
+=> App\Link {#747
+     id: 1,
+     title: "Aliquam quo pariatur",
+     url: "https://gibson.com/consequuntur-consequatur-eius-expedita-maiores-quaerat-occaecati.html",
+     description: "Temporibus eaque aspernatur...",
+     created_at: "2017-11-04 05:35:45",
+     updated_at: "2017-11-04 05:35:45",
+   }
+>>>
+
+
+
+
+
+
+
+
+
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::get('/', function () {
+    $links = \App\Link::all();
+
+    return view('welcome', ['links' => $links]);
+});
+
+You can also use a fluent API to define variables if you prefer:
+
+// with()
+return view('welcome')->with('links', $links);
+
+// dynamic method to name the variable
+
+return view('welcome')->withLinks($links);
+
+
+
+Next, edit the welcome.blade.php file and add a simple foreach to show all the links:
+
+@foreach ($links as $link)
+    <a href="{{ $link->url }}">{{ $link->title }}</a>
+@endforeach
+Here’s what the welcome.blade.php HTML should look like:
+
+<body>
+    <div class="flex-center position-ref full-height">
+        @if (Route::has('login'))
+            <div class="top-right links">
+                @auth
+                    <a href="{{ url('/home') }}">Home</a>
+                @else
+                    <a href="{{ route('login') }}">Login</a>
+                    <a href="{{ route('register') }}">Register</a>
+                @endauth
+            </div>
+        @endif
+
+        <div class="content">
+            <div class="title m-b-md">
+                Laravel
+            </div>
+
+            <div class="links">
+                @foreach ($links as $link)
+                    <a href="{{ $link->url }}">{{ $link->title }}</a>
+                @endforeach
+            </div>
+        </div>
+    </div>
+</body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Route::get('/submit', function () {
+    return view('submit');
+});
+Next, we need to create the submit.blade.php template at resources/views/submit.blade.php with the following boilerplate bootstrap markup:
+
+@extends('layouts.app')
+@section('content')
+    <div class="container">
+        <div class="row">
+            <h1>Submit a link</h1>
+            <form action="/submit" method="post">
+                @if ($errors->any())
+                    <div class="alert alert-danger" role="alert">
+                        Please fix the following errors
+                    </div>
+                @endif
+
+                {!! csrf_field() !!}
+                <div class="form-group{{ $errors->has('title') ? ' has-error' : '' }}">
+                    <label for="title">Title</label>
+                    <input type="text" class="form-control" id="title" name="title" placeholder="Title" value="{{ old('title') }}">
+                    @if($errors->has('title'))
+                        <span class="help-block">{{ $errors->first('title') }}</span>
+                    @endif
+                </div>
+                <div class="form-group{{ $errors->has('url') ? ' has-error' : '' }}">
+                    <label for="url">Url</label>
+                    <input type="text" class="form-control" id="url" name="url" placeholder="URL" value="{{ old('url') }}">
+                    @if($errors->has('url'))
+                        <span class="help-block">{{ $errors->first('url') }}</span>
+                    @endif
+                </div>
+                <div class="form-group{{ $errors->has('description') ? ' has-error' : '' }}">
+                    <label for="description">Description</label>
+                    <textarea class="form-control" id="description" name="description" placeholder="description">{{ old('description') }}</textarea>
+                    @if($errors->has('description'))
+                        <span class="help-block">{{ $errors->first('description') }}</span>
+                    @endif
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+        </div>
+    </div>
+@endsection
+
+
+
+
+
+
+@if ($errors->any())
+    <div class="alert alert-danger" role="alert">
+        Please fix the following errors
+    </div>
+@endif
+Each individual form field checks for validation errors and displays an error message and outputs a has-error class:
+
+<div class="form-group{{ $errors->has('title') ? ' has-error' : '' }}">
+    <label for="title">Title</label>
+    <input type="text" class="form-control" id="title" name="title" placeholder="Title" value="{{ old('title') }}">
+    @if($errors->has('title'))
+        <span class="help-block">{{ $errors->first('title') }}</span>
+    @endif
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+If a field has an error, the first() method returns the first error for a given field:
+
+{{ $errors->first('title') }}
+Submitting the Form
+With the form in place, we are ready to handle the POST data and validate data. Back in the routes/web.php file, create another route for the POST request:
+
+use Illuminate\Http\Request;
+
+Route::post('/submit', function (Request $request) {
+    $data = $request->validate([
+        'title' => 'required|max:255',
+        'url' => 'required|url|max:255',
+        'description' => 'required|max:255',
+    ]);
+
+    $link = tap(new App\Link($data))->save();
+
+    return redirect('/');
+});
+
+
+
+$link = new \App\Link($data);
+$link->save();
+
+return $link;
+
+
+In our case, we are validating each field so allowing them to be mass-assigned is safe. To allow our model assign values to these fields, open the app/Link.php file and update it to look like the following:
+
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Link extends Model
+{
+    protected $fillable = [
+        'title',
+        'url',
+        'description'
+    ];
+}
+If we wanted to prevent mass-assignment, this is how our code would look:
+
+$data = $request->validate([
+    'title' => 'required|max:255',
+    'url' => 'required|url|max:255',
+    'description' => 'required|max:255',
+]);
+
+$link = new \App\Link;
+$link->title = $data['title'];
+$link->url = $data['url'];
+$link->description = $data['description'];
+
+// Save the model
+$link->save();
+
+
+
+
+Testing the Form Submission
+Laravel makes HTTP testing a breeze for performing integration tests against routes and middleware, so let’s write a few feature tests to verify our code works as expected.
+
+Before we get started, we need to adjust a few things in our phpunit.xml file so that we can use an in-memory SQLite database. You will need to make sure that you have the proper PHP modules installed.
+
+Using environment variables, we can change the database connection by adding a few new variables to the config:
+
+<php>
+        <!-- ... -->
+    <env name="DB_CONNECTION" value="sqlite"/>
+    <env name="DB_DATABASE" value=":memory:"/>
+        <!-- ... -->
+</php>
+Next, remove the placeholder test that ships with Laravel:
+
+rm tests/Feature/ExampleTest.php
+
+
+
+First, let’s create a new feature test to test against our route:
+
+php artisan make:test SubmitLinksTest
+The command creates a new testing file with the proper dependencies, including a RefreshDatabase trait that we are going to use to verify that our links are being saved to the database when valid.
+
+Open the new tests/Feature/SubmitLinksTest.php file and let’s define a few skeleton tests in the body of the class that we are going to flesh out:
+
+/** @test */
+function guest_can_submit_a_new_link() {}
+
+/** @test */
+function link_is_not_created_if_validation_fails() {}
+
+/** @test */
+function link_is_not_created_with_an_invalid_url() {}
+
+/** @test */
+function max_length_fails_when_too_long() {}
+
+/** @test */
+function max_length_succeeds_when_under_max() {}
+
+
+
+
+
+
+
+
+Saving a valid link
+The first test we’ll write is the test that verifies that valid data gets stored in the database:
+
+<?php
+
+namespace Tests\Feature;
+
+use Illuminate\Validation\ValidationException;
+use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+class SubmitLinksTest extends TestCase
+{
+    use RefreshDatabase;
+
+    /** @test */
+    function guest_can_submit_a_new_link()
+    {
+        $response = $this->post('/submit', [
+            'title' => 'Example Title',
+            'url' => 'http://example.com',
+            'description' => 'Example description.',
+        ]);
+
+        $this->assertDatabaseHas('links', [
+            'title' => 'Example Title'
+        ]);
+
+        $response
+            ->assertStatus(302)
+            ->assertHeader('Location', url('/'));
+
+        $this
+            ->get('/')
+            ->assertSee('Example Title');
+    }
+}
+
+
+
+
+Testing Failed Validation
+When a user generally submits bad data, we expect the validation to trigger an exception and we can use that to make sure our validation layer is working:
+
+/** @test */
+function link_is_not_created_if_validation_fails()
+{
+    $response = $this->post('/submit');
+
+    $response->assertSessionHasErrors(['title', 'url', 'description']);
+}
+
+
+
+
+
+
+Testing URL Validation
+We expect only valid URLs to pass validation so that our application doesn’t try to display invalid data.
+
+/** @test */
+function link_is_not_created_with_an_invalid_url()
+{
+    $this->withoutExceptionHandling();
+
+    $cases = ['//invalid-url.com', '/invalid-url', 'foo.com'];
+
+    foreach ($cases as $case) {
+        try {
+            $response = $this->post('/submit', [
+                'title' => 'Example Title',
+                'url' => $case,
+                'description' => 'Example description',
+            ]);
+        } catch (ValidationException $e) {
+            $this->assertEquals(
+                'The url format is invalid.',
+                $e->validator->errors()->first('url')
+            );
+            continue;
+        }
+
+        $this->fail("The URL $case passed validation when it should have failed.");
+    }
+}
+
+
+
+
+
+
+First, let’s test the “max length” scenario:
+
+/** @test */
+function max_length_fails_when_too_long()
+{
+    $this->withoutExceptionHandling();
+
+    $title = str_repeat('a', 256);
+    $description = str_repeat('a', 256);
+    $url = 'http://';
+    $url .= str_repeat('a', 256 - strlen($url));
+
+    try {
+        $this->post('/submit', compact('title', 'url', 'description'));
+    } catch(ValidationException $e) {
+        $this->assertEquals(
+            'The title may not be greater than 255 characters.',
+            $e->validator->errors()->first('title')
+        );
+
+        $this->assertEquals(
+            'The url may not be greater than 255 characters.',
+            $e->validator->errors()->first('url')
+        );
+
+        $this->assertEquals(
+            'The description may not be greater than 255 characters.',
+            $e->validator->errors()->first('description')
+        );
+
+        return;
+    }
+
+    $this->fail('Max length should trigger a ValidationException');
+}
+
+
+
+
+Last, we need to return in the caught exception and use the $this->fail() as a safety harness to fail the test.
+
+Next, we test the “under the max” scenario:
+
+/** @test */
+function max_length_succeeds_when_under_max()
+{
+    $url = 'http://';
+    $url .= str_repeat('a', 255 - strlen($url));
+
+    $data = [
+        'title' => str_repeat('a', 255),
+        'url' => $url,
+        'description' => str_repeat('a', 255),
+    ];
+
+    $this->post('/submit', $data);
+
+    $this->assertDatabaseHas('links', $data);
+}
+
+
+
+
+
+Run the test suite and make sure everything is passing:
+
+$ vendor/bin/phpunit
+PHPUnit 6.4.3 by Sebastian Bergmann and contributors.
+
