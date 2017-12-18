@@ -7,6 +7,8 @@
 ###############################################
 
 
+sudo apt install composer -y
+
 Step 1 : Install Laravel 5.5
 composer create-project --prefer-dist laravel/laravel blog
 
@@ -20,64 +22,16 @@ DB_PASSWORD=here database password(root)
 
 Step 3: Create products Table and Model
 php artisan make:migration create_products_table
-
-After this command you will find one file in following path database/migrations and you have to put bellow code in your migration file for create products table.
-
-<?php
-
-
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
-
-
-class CreateProductsTable extends Migration
-{
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::create('products', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('title');
-            $table->text('body');
-            $table->timestamps();
-        });
-    }
-
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('products');
-    }
-}
-
-
------
+php artisan make:migration create_users_table
 
 php artisan make:model Product
+php artisan make:model User
 
-Ok, so after run bellow command you will find app/Product.php and put bellow content in Product.php file:
-
-app/Product.php
+# app/Product.php
 
 <?php
-
-
 namespace App;
-
-
 use Illuminate\Database\Eloquent\Model;
-
-
 class Product extends Model
 {
     /**
@@ -91,37 +45,25 @@ class Product extends Model
 }
 
 Step 4: Create Web Route and API Route
-
-In this is step we need to add web route and also api route for products. so open your routes/web.php file and add following route.
-
-routes/web.php
+# routes/web.php
 
 Route::get('/', function () {
     return view('welcome');
 });
-routes/api.php
 
+# routes/api.php
 Route::resource('products', 'ProductController');
 
 
 Step 5 : Create ProductController
-
-In this step, we need create new controller as ProductController. So run bellow command and create new controller. bellow controller for create resource controller.
-
-php artisan make:controller ProductController -resource
-
-After bellow command you will find new file in this path app/Http/Controllers/ProductController.php.
+php artisan make:controller ProductController
 
 In this controller will write code for following method:
 
 1)index()
-
 2)store()
-
 3)edit()
-
 4)update()
-
 5)destroy()
 
 So, let's copy bellow code and put on ProductController.php file.
@@ -130,13 +72,9 @@ app/Http/Controllers/ProductController.php
 
 <?php
 
-
 namespace App\Http\Controllers;
-
-
 use Illuminate\Http\Request;
 use App\Product;
-
 
 class ProductController extends Controller
 {
@@ -218,61 +156,46 @@ class ProductController extends Controller
       return response()->json('Product Deleted Successfully.');
     }
 }
+
+
+
 Next we have following rest of step :
 
 6) Step 6 : Install Configuration For ReactJS
-
 7) Step 7 : Create React Components Files
-
 8) Step 8 : Create Main Blade File
-
 9) Step 9 : Run Project
 
-You can see above left step on next link, so click bellow next button.
-
 ###################################################
+
 Laravel 5 - Simple CRUD Application Using ReactJS - Part 2
 https://itsolutionstuff.com/post/laravel-5-simple-crud-application-using-reactjs-part-2example.html
 
 Step 6 : Install Configuration For ReactJS
 
-First things is we need to configure our react app, So we need to run following bellow path for React Preset.
+sudo apt install npm
+
 
 php artisan preset react
-Next we need to run following command for install node js so let's run bellow command:
-
-npm install
-Now we have to run node js code so let's run bellow command:
-
-npm run dev
-One thing is left we need to install one dependency so let's run following command for install it.
-
+npm install && npm run dev
 npm install react-router@2.8.1
+npm install cross-env
 
 
 Step 7 : Create React Components Files
 
-Now in this step, we require to create following files for react js code, i listed bellow all files:
-
 1) app.js
-
 2) bootstrap.js
-
 3) components/CreateProduct.js
-
 4) components/DisplayProduct.js
-
 5) components/MasterProduct.js
-
 6) components/MyGlobleSetting.js
-
 7) components/TableRow.js
-
 8) components/UpdateProduct.js
 
 So let's put bellow code on that folder.
 
-resources/assets/js/app.js
+# resources/assets/js/app.js
 
 require('./bootstrap');
 import React from 'react';
@@ -301,41 +224,33 @@ render(
 
 
 
-        resources/assets/js/bootstrap.js
+# resources/assets/js/bootstrap.js
 
 window._ = require('lodash');
-
-
 try {
     window.$ = window.jQuery = require('jquery');
 
 
     require('bootstrap-sass');
 } catch (e) {}
-
-
 window.axios = require('axios');
-
-
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-resources/assets/js/components/CreateProduct.js
+
+
+
+# resources/assets/js/components/CreateProduct.js
 
 import React, {Component} from 'react';
 import {browserHistory} from 'react-router';
 import MyGlobleSetting from './MyGlobleSetting';
 
-
 class CreateProduct extends Component {
   constructor(props){
     super(props);
     this.state = {productTitle: '', productBody: ''};
-
-
     this.handleChange1 = this.handleChange1.bind(this);
     this.handleChange2 = this.handleChange2.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-
-
   }
   handleChange1(e){
     this.setState({
@@ -358,7 +273,6 @@ class CreateProduct extends Component {
       browserHistory.push('/display-item');
     });
   }
-
 
     render() {
       return (
@@ -390,7 +304,9 @@ class CreateProduct extends Component {
     }
 }
 export default CreateProduct;
-resources/assets/js/components/DisplayProduct.js
+
+
+# resources/assets/js/components/DisplayProduct.js
 
 import React, {Component} from 'react';
 import axios from 'axios';
@@ -453,7 +369,8 @@ class DisplayProduct extends Component {
   }
 }
 export default DisplayProduct;
-resources/assets/js/components/Master.js
+
+# resources/assets/js/components/Master.js
 
 import React, {Component} from 'react';
 import { Router, Route, Link } from 'react-router';
@@ -483,7 +400,9 @@ class Master extends Component {
   }
 }
 export default Master;
-resources/assets/js/components/MyGlobleSetting.js
+
+
+# resources/assets/js/components/MyGlobleSetting.js
 
 class MyGlobleSetting {
   constructor() {
@@ -491,12 +410,13 @@ class MyGlobleSetting {
   }
 }
 export default (new MyGlobleSetting);
-resources/assets/js/components/TableRow.js
+
+
+# resources/assets/js/components/TableRow.js
 
 import React, { Component } from 'react';
 import { Link, browserHistory } from 'react-router';
 import MyGlobleSetting from './MyGlobleSetting';
-
 
 class TableRow extends Component {
   constructor(props) {
@@ -531,10 +451,11 @@ class TableRow extends Component {
     );
   }
 }
-
-
 export default TableRow;
-resources/assets/js/components/UpdateProduct.js
+
+
+
+# resources/assets/js/components/UpdateProduct.js
 
 import React, {Component} from 'react';
 import axios from 'axios';
@@ -620,23 +541,18 @@ class UpdateProduct extends Component {
   }
 }
 export default UpdateProduct;
-Now we have following rest of step as listed bellow:
 
-8) Step 8 : Create Main Blade File
 
-9) Step 9 : Run Project
-
-You can see above left step on next link, so click bellow next button, you can also goes on previous link.
 
 
 #################
+
 Laravel 5 - Simple CRUD Application Using ReactJS - Part 3
 
 
 Step 8 : Create Main Blade File
 
-in this step. In this step we have to create just one main blade. So mainly we have to create layout file. So finally you have to create following bellow blade file:
-
+cp welcome.blade.php welcome.blade.php.bak
 resources/views/welcome.blade.php
 
 <!DOCTYPE html>
@@ -653,6 +569,8 @@ resources/views/welcome.blade.php
         <script src="{{asset('js/app.js')}}" ></script>
     </body>
 </html>
+
+
 Step 9 : Run Project
 
 Now in the last step, we have to just run our crud application so just run following command for react js compile:
@@ -762,11 +680,6 @@ public function run()
 
 
 
-
-
-
-
-
 $ php artisan migrate:fresh --seed
 Dropped all tables successfully.
 Migration table created successfully.
@@ -777,10 +690,6 @@ Migrated:  2014_10_12_100000_create_password_resets_table
 Migrating: 2017_11_03_023418_create_links_table
 Migrated:  2017_11_03_023418_create_links_table
 Seeding: LinksTableSeeder
-
-
-
-
 
 
 
@@ -1217,10 +1126,6 @@ function max_length_succeeds_when_under_max()
 
     $this->assertDatabaseHas('links', $data);
 }
-
-
-
-
 
 Run the test suite and make sure everything is passing:
 
