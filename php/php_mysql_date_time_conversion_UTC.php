@@ -112,3 +112,43 @@ SELECT UTC_DATE()+0;
 SELECT UTC_TIMESTAMP,UTC_TIMESTAMP();
 
 */
+
+
+
+############################################################################################
+#
+#	Error 1292: "Incorrect datetime value"
+#	Getting around MySQL TIMEDIFF() for hours greater than 838
+#	http://www.microshell.com/database/mysql/getting-around-mysql-timediff-maximum-value-of-8385959/
+#
+############################################################################################
+
+SELECT version();
+SHOW WARNINGS;
+
+
+SELECT TIMEDIFF('2010-01-01 00:00:00', '2009-01-01 00:00:00');
+
+solution:
+SELECT
+    DATEDIFF('2010-01-01 00:00:00', '2009-01-01 00:00:00') * 24
+    + EXTRACT(HOUR FROM '2010-01-01 00:00:00')
+    - EXTRACT(HOUR FROM '2009-01-01 00:00:00')
+
+
+
+
+SELECT CONCAT (
+    REGEXP_SUBSTR (
+        ABS( DATEDIFF(fildname, UTC_TIMESTAMP()) * 24 + EXTRACT(HOUR FROM date_added) - EXTRACT(HOUR FROM UTC_TIMESTAMP()))      ,'[0-9]{2}')     , ":59:59" )
+        FROM table WHERE id = 1
+
+
+----------------------------------------------------------------------------
+
+https://dev.mysql.com/doc/refman/5.5/en/date-and-time-functions.html#function_timediff
+https://dev.mysql.com/doc/refman/5.7/en/string-functions.html#function_substring-index
+https://dev.mysql.com/doc/refman/5.7/en/string-functions.html#function_substr
+https://dev.mysql.com/doc/refman/5.7/en/string-functions.html
+https://dev.mysql.com/doc/refman/5.7/en/string-functions.html#function_substr
+https://dev.mysql.com/doc/refman/5.7/en/string-functions.html#function_length
