@@ -103,3 +103,79 @@ mysqldump -uroot -p mydb > bkp3.sql # Dumping the whole database
 mysql> CREATE DATABASE mydb;
 mysql> USE mydb;
 mysql> source bkp3.sql
+
+
+
+
+
+################################################
+#
+# 	mysql import --single-transaction
+#
+#	https://dev.mysql.com/doc/refman/5.6/en/sql-syntax-transactions.html
+#	https://dev.mysql.com/doc/refman/5.6/en/commit.html
+#	https://dev.mysql.com/doc/refman/5.7/en/mysqlimport.html
+#	https://dev.mysql.com/doc/refman/5.7/en/cannot-roll-back.html
+#	https://dev.mysql.com/doc/refman/5.7/en/mysqlimport.html
+#	https://dev.mysql.com/doc/refman/5.7/en/mysqldump.html#mysqldump-option-summary
+#
+###############################################
+
+
+The structure of the dump file is as follows:
+
+-----------------------------------------------
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT=0;
+START TRANSACTION;
+SET time_zone = "+00:00";
+#DROP TABLE IF EXISTS `table`;
+#CREATE TABLE IF NOT EXISTS `table` ([...]);
+INSERT INTO `table` ([...]) VALUES ([...]);
+COMMIT;
+-----------------------------------------------
+START TRANSACTION;
+SELECT @A:=SUM(salary) FROM table1 WHERE type=1;
+UPDATE table2 SET summary=@A WHERE type=1;
+COMMIT;
+-----------------------------------------------
+
+
+mysqldump --add-drop-table --default-character-set=utf8 --extended-insert --host=localhost --quick --quote-names --routines --set-charset --single-transaction --triggers --tz-utc --verbose --user=user --password mydbname
+
+mysqldump --single-transaction --insert-ignore --user mysuer --password --host 1.1.1.1 db table < table.sql
+mysqlimport --ignore --debug-info --host --password --user --verbose --host 1.1.1.1  table.sql > db table
+
+--replace	The --replace and --ignore - does duplicate existing rows on unique key values
+--delete	Empty the table before importing the text file
+--force	Continue even if an SQL error occurs
+
+
+-------------
+ROLLBACK Example
+-------------
+
+DECLARE CONTINUE HANDLER FOR NOT FOUND
+    BEGIN
+        SET @error = 1;
+        SET @error_string = 'erreur de type NOT FOUND';
+    END;
+DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
+    BEGIN
+        SET @error = 1;
+        SET @error_string = 'erreur de type SQLEXCEPTION';
+    END;
+SET @error = 0;
+SET @error_string = '';
+-- start transact
+START TRANSACTION;
+//code ...
+    IF (@error <> 0) THEN
+    ROLLBACK;
+    //LEAVE MAj_DOC;
+ELSE
+    commit;
+END IF;
+END
+
+

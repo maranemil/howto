@@ -225,3 +225,73 @@ echo hash("crc32b", __FILE__).PHP_EOL;
 hash_file('crc32', __FILE__).PHP_EOL;
 
 
+
+
+
+#################################################
+#
+# PHP Sorting find duplicates
+#
+#################################################
+
+http://php.net/manual/de/function.min.php
+http://php.net/manual/de/function.asort.php
+http://php.net/manual/de/function.array-multisort.php
+http://php.net/manual/de/function.json-encode.php
+
+print_r(array_count_values($array)); # find duplicates
+
+
+
+https://www.codepunker.com/blog/3-solutions-for-multidimensional-array-sorting-by-child-keys-or-values-in-PHP
+https://paulund.co.uk/sort-multi-dimensional-array-value
+https://blog.jachim.be/2009/09/php-msort-multidimensional-array-sort/comment-page-1/
+http://php.net/manual/en/function.sprintf.php
+
+#################################################
+#
+# PHP Formating
+#
+#################################################
+
+
+printf("[%s]\n",      $s); // standard string output
+printf("[%10s]\n",    $s); // right-justification with spaces
+printf("[%-10s]\n",   $s); // left-justification with spaces
+printf("[%010s]\n",   $s); // zero-padding works on strings too
+printf("[%'#10s]\n",  $s); // use the custom padding character '#'
+printf("[%10.10s]\n", $t); // left-justification but with a cutoff of 10 characters
+
+#################################################
+#
+# PHP Encode Decode to array
+#
+#################################################
+
+$strJson = json_encode($arTmp); // encode json
+file_put_contents('somefile.json',$strJson); // write array into json file
+$strTmpJson = (array) json_decode(file_get_contents('somefile.json'), true); // json file into array
+echo sprintf("%20s","somevar : ") .$somerow["key"]. "\n";
+file_put_contents($file, $person, FILE_APPEND | LOCK_EX); // append str into file
+
+
+/*
+$filename = "update_np_prices";
+header("Content-type: text/csv");
+header("Content-Disposition: attachment; filename={$filename}.csv");
+header("Pragma: no-cache");
+header("Expires: 0");
+outputCSV($arTmp);
+
+
+function outputCSV($data) {
+   $outputBuffer = fopen("php://output", 'w');
+   foreach($data as $val) {
+      fputcsv($outputBuffer, $val);
+   }
+   fclose($outputBuffer);
+}*/
+
+
+
+
