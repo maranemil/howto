@@ -6,6 +6,10 @@
  * Time: 17:33
  */
 
+
+// http://php.net/manual/en/function.curl-setopt.php#82300
+
+
 function get_web_page( $url,$curl_data )
 {
     $options = array(
@@ -23,6 +27,16 @@ function get_web_page( $url,$curl_data )
         CURLOPT_SSL_VERIFYHOST => 0,            // don't verify ssl
         CURLOPT_SSL_VERIFYPEER => false,        //
         CURLOPT_VERBOSE        => 1                //
+
+
+        //CURLOPT_URL             => false,
+        //CURLOPT_FRESH_CONNECT   => false,
+        //CURLOPT_NOBODY          => false,
+        //CURLOPT_RETURNTRANSFER  => false,
+        //CURLINFO_HTTP_CODE      => false,
+        //CURLOPT_HTTPHEADER      => array( "Cache-Control: no-cache" ),
+
+
     );
 
     $ch      = curl_init($url);

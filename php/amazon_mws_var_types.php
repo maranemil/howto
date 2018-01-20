@@ -86,3 +86,40 @@
         "NextDay" => "1D",
         "Express" => "1D",
     );
+
+   /**
+    * @var array
+    */
+    private $CancelReason = array(
+        "NoInventory" => "NoInventory",
+        "ShippingAddressUndeliverable" => "ShippingAddressUndeliverable",
+        "CustomerExchange" => "CustomerExchange",
+        "BuyerCanceled" => "BuyerCanceled",
+        "GeneralAdjustment" => "GeneralAdjustment",
+        "CarrierCreditDecision" => "CarrierCreditDecision",
+        "RiskAssessmentInformationNotValid" => "RiskAssessmentInformationNotValid",
+        "CarrierCoverageFailure" => "CarrierCoverageFailure",
+        "CustomerReturn" => "CustomerReturn",
+        "MerchandiseNotReceive" => "MerchandiseNotReceive",
+    );
+
+
+
+    // Shipwire service type
+    private $arrAmazonShippingLevel = array(
+        "Standard" => "GD",
+        "Expedited" => "2D",
+        "SecondDay" => "2D",
+        "NextDay" => "1D",
+        "Express" => "1D",
+    );
+
+
+
+  private $arrCarrierCodes = array(
+        "USPS", "UPS", "FedEx", "DHL", "Fastway", "GLS", "GO!",
+        "Hermes Logistik Gruppe", "Royal Mail", "Parcelforce", "City Link", "TNT", "Target",
+        "SagawaExpress", "NipponExpress", "YamatoTransport"
+        // . All other carriers must use the CarrierName field.
+    );
+
