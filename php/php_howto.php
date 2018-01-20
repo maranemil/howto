@@ -293,5 +293,27 @@ function outputCSV($data) {
 }*/
 
 
+#################################################
+#
+# PHP Sum
+#
+#################################################
 
+Sum values in foreach loop php [closed]
 
+$sum = 0;
+foreach($group as $key=>$value)
+{
+   $sum+= $value;
+}
+echo $sum;
+
+#################################################
+#
+# xml2array
+#
+#################################################
+
+$xml = simplexml_load_string($xmlstring, "SimpleXMLElement", LIBXML_NOCDATA);
+$json = json_encode($xml);
+$array = json_decode($json,TRUE);
