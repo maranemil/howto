@@ -1,0 +1,83 @@
+https://askubuntu.com/questions/107726/how-to-create-animated-gif-images-of-a-screencast
+https://unix.stackexchange.com/questions/113695/gif-screencasting-the-unix-way
+https://github.com/phw/peek
+https://github.com/lolilolicon/FFcast2
+https://github.com/naelstrof/slop
+https://www.ffmpeg.org/ffmpeg-filters.html#Examples-78
+https://github.com/thevangelist/FFMPEG-gif-script-for-bash
+https://github.com/thevangelist/FFMPEG-gif-script-for-bash/blob/master/gifenc.sh
+https://github.com/phw/peek
+
+https://itsfoss.com/best-gif-recorder-linux/
+https://askubuntu.com/users/74792/cristian-ciupitu
+https://www.maketecheasier.com/record-screen-as-animated-gif-ubuntu/
+
+
+## Peek
+sudo add-apt-repository ppa:peek-developers/stable
+sudo apt update
+sudo apt install peek
+
+## Byzanz
+sudo apt-get install byzanz
+byzanz-record --duration=15 --x=200 --y=300 --width=700 --height=400 out.gif
+byzanz-record-window
+byzanz-record-region
+
+## FFMPEG video2gif
+ffmpeg -i [inputvideo_filename] -pix_fmt rgb24 [output.gif]
+ffmpeg -i Untitled_Screencast.webm -r 1 -pix_fmt rgb24 out.gif
+ffmpeg -i Untitled_Screencast.webm -fs 5000k -pix_fmt rgb24 out.gif
+ffmpeg -i Untitled_Screencast.webm -loop_output 0 -r 5 -s 320x200 -pix_fmt rgb24 out.gif
+convert output.gif -fuzz 8% -layers Optimize finalgif.gif
+
+-- direct convert
+ffmpeg -ss 30 -t 3 -i input.flv -i palette.png -filter_complex "fps=10,scale=320:-1:flags=lanczos[x];[x][1:v]paletteuse" output.gif
+ffmpeg -y -ss 30 -t 3 -i input.flv -vf fps=10,scale=320:-1:flags=lanczos,palettegen palette.png
+ffmpeg -i input.flv -vf scale=320:-1 -r 10 -f image2pipe -vcodec ppm - | convert -delay 5 -loop 0 - output.gif
+ffmpeg -i input.flv -vf scale=320:-1 -r 10 -f image2pipe -vcodec ppm - | convert -delay 5 -loop 0 - gif:- | convert -layers Optimize - output.gif
+
+-- from frames
+ffmpeg -i input -vf scale=320:-1:flags=lanczos,fps=10 frames/ffout%03d.png
+convert -loop 0 frames/ffout*.png output.gif
+convert -delay 5 -loop 0 -dither None -colors 80 "frames/ffout*.png" -fuzz "40%" -layers OptimizeFrame "output.gif"
+
+-- palette usage
+#!/bin/bash
+palette="/tmp/palette.png"
+filters="fps=15,scale=320:-1:flags=lanczos"
+ffmpeg -i input.flv -vf "$filters,palettegen" -y $palette
+ffmpeg -i input.flv -i $palette -lavfi "$filters [x]; [x][1:v] paletteuse" -y output.gif
+
+
+-- palette usage
+palette="$(mktemp /tmp/ffmpeg2gifXXXXXX.png)"
+filters="fps=$4,scale=$3:-1:flags=lanczos"
+ffmpeg -v warning -i "$1" -vf "$filters,palettegen" -y "$palette"
+ffmpeg -v warning -i "$1" -i $palette -lavfi "$filters [x]; [x][1:v] paletteuse" -y "$2"
+rm -f "$palette"
+
+
+
+
+# --------- ffcast
+#!/bin/bash
+TMP_AVI=$(mktemp /tmp/outXXXXXXXXXX.avi)
+ffcast -s % ffmpeg -y -f x11grab -show_region 1 -framerate 15 \
+    -video_size %s -i %D+%c -codec:v huffyuv                  \
+    -vf crop="iw-mod(iw\\,2):ih-mod(ih\\,2)" $TMP_AVI         \
+&& convert -set delay 10 -layers Optimize $TMP_AVI out.gif
+
+# alternatives
+ffcast -w % ffmpeg -f x11grab -show_region 1 -framerate 20 -video_size %s -i %D+%c -codec:v huffyuv -vf crop="iw-mod(iw\\,2):ih-mod(ih\\,2)" out.avi
+ffmpeg -i out.avi -pix_fmt rgb24 out.gif
+convert -limit memory 1 -limit map 1 -layers Optimize out.gif out_optimised.gif
+
+
+##
+#!/bin/bash
+read -r X Y W H G ID < <(slop -f "%x %y %w %h %g %i")
+TMP_AVI=$(mktemp /tmp/outXXXXXXXXXX.avi)
+ffmpeg -s "$W"x"$H" -y -f x11grab -i :0.0+$X,$Y -vcodec huffyuv -r 25 $TMP_AVI && convert -set delay 5 -layers Optimize $TMP_AVI out.gif
+
+

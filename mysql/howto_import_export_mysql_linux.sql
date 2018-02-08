@@ -5,6 +5,7 @@
 #
 ##############################################################
 
+/*
 
 mysql -u username -p  databasename  < path/example.sql
 mysqldump -u username -p databasename tableName > path/example.sql
@@ -141,7 +142,8 @@ COMMIT;
 -----------------------------------------------
 
 
-mysqldump --add-drop-table --default-character-set=utf8 --extended-insert --host=localhost --quick --quote-names --routines --set-charset --single-transaction --triggers --tz-utc --verbose --user=user --password mydbname
+mysqldump --add-drop-table --default-character-set=utf8 --extended-insert --host=localhost --quick \
+    --quote-names --routines --set-charset --single-transaction --triggers --tz-utc --verbose --user=user --password mydbname
 
 mysqldump --single-transaction --insert-ignore --user mysuer --password --host 1.1.1.1 db table < table.sql
 mysqlimport --ignore --debug-info --host --password --user --verbose --host 1.1.1.1  table.sql > db table
@@ -178,4 +180,5 @@ ELSE
 END IF;
 END
 
+*/
 
