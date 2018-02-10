@@ -219,6 +219,44 @@ ffplay -i GOPR0186cr.mp4 -vf "zoompan=z='min(max(zoom,pzoom)+0.0015,1.5)':d=1:x=
 ffplay -i GOPR0186cr.mp4 -vf select='not(mod(n\,5))'
 
 
+######################################################
+#
+# Overlay Mix
+#
+######################################################
+
+# mix overlay 2 images 1:1
+composite -blend 30 2.jpg  4.jpg oppp.png
+composite -blend {{OPACITY_OF_1.JPG}}  1.jpg 2.jpg result.jpg
+convert 2.jpg  4.jpg -compose blend -define compose:args=30 -composite -set option:modulate:colorspace hsb -modulate 100,100,{{HUE_ROTATION_ANGLE}} result.png
+convert -size 352x288 -composite sydney.png jet2.png -geometry 352x288+0+0 -depth 8 test.png
+
+# mix images append top bottom
+convert file1.jpg file2.jpg file3.jpg +append -quality 90 'output.jpg'
+
+# appnd two videos Left Right
+ffmpeg -i a.mp4  -i b.mp4  -filter_complex "[0:v:0]pad=iw*2:ih[bg]; [bg][1:v:0]overlay=w" -strict -2 output.mp4
+ffmpeg -i a.mp4  -i b.mp4  -filter_complex "[0:v]setpts=PTS-STARTPTS, pad=iw*2:ih[bg]; [1:v]setpts=PTS-STARTPTS[fg]; [bg][fg]overlay=w" output.mp4
+
+#
+ffmpeg -i a.mp4  -i b.mp4 -filter_complex "color=black:WxH:d=Video1Length+Video2Length-FadeDuration[base]; [0:v]setpts=PTS-STARTPTS[v0]; [1:v]format=yuva420p,fade=in:st=0:d=FadeDuration:alpha=1, setpts=PTS-STARTPTS+((Video1Length-FadeDuration)/TB)[v1]; [base][v0]overlay[tmp]; [tmp][v1]overlay,format=yuv420p[fv]; [0:a][1:a]acrossfade=d=Frecord your screenadeDuration[fa]" -map [fv] -map [fa]   output99.mp4
+
+
+# split video in two parts, top and down, mix top with top as to botom
+ffmpeg -i a.mp4  -i b.mp4 -filter_complex 'overlay, overlay = 0:366' combined.mp4
+
+
+# join two video into left right
+ffmpeg -i a.mp4 -vf "movie=a.mp4 [a]; movie=b.mp4 [b]; [in][a] overlay=0:366 [c]; [c][b] overlay=592:41" combined.mp4
+
+
+# overlay mix two videos 1:1
+ffmpeg -i a.mp4  -i b.mp4 -filter_complex " [0:v]setpts=PTS-STARTPTS, scale=480x360[top]; [1:v]setpts=PTS-STARTPTS, scale=480x360, format=yuva420p,colorchannelmixer=aa=0.5[bottom]; [top][bottom]overlay=shortest=1"-vcodec libx264 out19999.mp4
+ffmpeg -i a.mp4  -i b.mp4 -filter_complex " [0:v]setpts=PTS-STARTPTS, scale=480x360[top]; [1:v]setpts=PTS-STARTPTS, scale=480x360, format=yuva420p,colorchannelmixer=aa=0.5[bottom]; [top][bottom]overlay=shortest=1"  -vcodec libx264 -strict -2 out19999.mp4
+
+
+
+
 
 
 # AviSynth
