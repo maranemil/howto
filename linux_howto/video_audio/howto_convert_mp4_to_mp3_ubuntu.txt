@@ -258,9 +258,18 @@ ffmpeg -i a.mp4  -i b.mp4 -filter_complex " [0:v]setpts=PTS-STARTPTS, scale=480x
 
 
 
-
+######################################################
 # AviSynth
+######################################################
+
 ffmpeg -i "script.avs" -acodec copy -vcodec copy output.mp4
+
+
+
+
+######################################################
+# more efffects
+######################################################
 
 # mirror fx + max saturation
 ffmpeg -i input.mp4 -strict -2 -vf eq=1:0:2.9:1:1:1.1:1:1  output.mp4
@@ -334,6 +343,9 @@ ffmpeg -f image2 -r 1/3 -i "P1190%03d.JPG" -c:v libx264 -r 30 my_pictures.mp4
 make thumb img
 ffmpeg  -itsoffset (time) -i video.avi -vcodec mjpeg -vframes 1 -an -f rawvideo -s (WIDTHxHEIGHT) thumb.jpg
 
+######################################################
+# *
+######################################################
 
 #fade in/out
 ffmpeg \
@@ -543,14 +555,14 @@ $ for f in *.avi; do ffmpeg -i "$f" -c:v libx264 -crf 23 -preset medium \
 
 sqcif           128x96
 qcif            176x144
-cif 		352x288
+cif 		    352x288
 4cif            704x576
 16cif           1408x1152
 qqvga           160x120
 qvga            320x240
-vga 		640x480
+vga 		    640x480
 svga            800x600
-xga 		1024x768
+xga 		    1024x768
 uxga            1600x1200
 qxga            2048x1536
 sxga            1280x1024
@@ -565,8 +577,8 @@ wqsxga	        3200x2048
 wquxga	        3840x2400
 whsxga	        6400x4096
 whuxga	        7680x4800
-cga 		320x200
-ega 		640x350
+cga 		    320x200
+ega 		    640x350
 hd480	        852x480
 hd720	        1280x720
 hd1080	        1920x1080
@@ -898,7 +910,7 @@ ffmpeg -probesize 50M -analyzeduration 100M -i vts.vob
 
 #################################################################
 #
-#
+#   COMPRESS Parameters
 #
 #################################################################
 
@@ -918,14 +930,13 @@ Here’s a short explanation on what every parameter does:
 -movflags faststart : move the index to the beginning of the output file (mov and mp4 format specific parameter)
 --preset placebo --tune film --crf 22 --level 4.1 --threads 1 --thread-input --sar 12:11 --output
 
-
-MP3
+MP3 JOIN
 
 ffmpeg -i input1.mp3 -i input2.mp3 -filter_complex amerge -ac 2 -c:a libmp3lame -q:a 4 output.mp3
+
 See the amerge filter online documentation and FFmpeg Wiki: Audio Channel Manipulation for more examples, info, and options.
 -ac 2 will make a stereo output. This is useful if you're merging two stereo inputs: amerge will make a 4 channel output and -ac 2 will downmix it to stereo.
 Refer to Hydrogenaudio Wiki: Recommended LAME encoder settings to get an idea of what -q:v value (audio quality) you may want.
-
 
 MIX 2 MP4
 ffmpeg -i a.mp4  -i b.mp4  -strict -2 -y -r 25 -c:v libx264 -b:v 3M -strict -2 -movflags faststart    output.mp4
@@ -940,6 +951,50 @@ COMPRESS HARD MP4
 ffmpeg -i GOPR0007.MP4 -s hd480 -crf 24 -b 100000 -strict -2 -preset ultrafast -y GOPR0007_480.MP4
 ffmpeg -i GOPR0007.MP4 -c:v libx264 -s 640x360 -r 25 -crf 24 -b:v 1M -c:a aac -strict -2 -preset ultrafast  -threads 2  GOPR0007cp.MP4
 ffmpeg -i GOPR0007.MP4 -c:v libx264 -r 25  -s 640x360  -crf 24 -b:v 300K -c:a aac -strict -2 -preset ultrafast  -threads 2  GOPR0007cp.MP4
+
+
+################################################################################
+#
+# 	Extract Segments from video
+# 	http://www.bugcodemaster.com/article/extract-images-frame-frame-video-file-using-ffmpeg
+# 	https://kaitimmer.de/2016/04/05/extract-images-video-ffmpeg/
+#  	extract a jpeg from every frame in a video
+# 	https://peppoj.net/2010/09/how-to-extract-audio-from-video-using-ffmpeg/
+#
+################################################################################
+
+ffmpeg -i in.mp4 -vf "select='lt(mod(t,60),1)',setpts=N/FRAME_RATE/TB" out.mp4
+ffmpeg -i in.mp4 -vf "select='lt(mod(t,60),1)',setpts=N/FRAME_RATE/TB" out.mp4
+ffmpeg -i in.mp4 -af "aselect='lt(mod(t,60),1)',asetpts=N/SR/TB" out.mp4
+ffmpeg -i in.mp4 -vf "select='lt(mod(t,60),1)',setpts=N/FRAME_RATE/TB" out.mp4
+
+ffmpeg -i vid.mp4 -map 0:a -f segment -segment_time 5 output_%03d.aac
+ffmpeg -i vid.mp4 -map 0:a -f segment -segment_time 3 output_%03d.wav
+
+
+ffmpeg -ss 00:00:26.000 -i vid.mp4 -t 00:00:03.000 -r 6 jpg2/vid_%04d.jpg
+ffmpeg -i sample.avi -ss 00:03:05 -t 00:00:45.0 -q:a 0 -map a sample.mp3
+ffmpeg -ss 00:00:26.000 -i vid.mp4 -t 00:00:03.000 -r 6 jpg2/sample_%04d.wav
+
+
+ffmpeg -i “whatever.format” -vn -ac 2 -ar 44100 -ab 320k -f mp3 output.mp3
+
+-vn “skip the video part”
+-ac “audio channels”
+-ar “audio rate”
+-ab “audio bit-rate“
+-f “file format to use”
+
+
+ffmpeg -i RD_00002.AVI -qscale:v 2 /path/to/pics/output-%04d.jpg
+
+http://charlesmartinreid.com/wiki/Ffmpeg
+Picking a video format
+ffmpeg -formats
+
+ffmpeg -ss 3 -i movie.mov -f image2 -vframes 1 thumb.jpg  # grab a single image from the video
+ffmpeg -ss 3 -i movie.mov -f image2 -vframes 5 thumb%02d.jpg # capture a thumbnail image 3 seconds into the video
+ffmpeg -r 2 -i movie.mov -f image2 thumb%02d.jpg # extract images from the video at a rate
 
 
 
