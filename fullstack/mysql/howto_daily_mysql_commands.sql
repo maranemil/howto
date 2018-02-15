@@ -104,3 +104,44 @@ http://www.mysqltutorial.org/mysql-export-table-to-csv/
 
 */
 
+
+
+
+
+-- ##################################################################
+-- #
+-- #   http://mysqlresources.com/documentation/data-manipulation/insert-multiple-row-insertions
+-- #   https://stackoverflow.com/questions/5247530/mysql-how-to-insert-a-record-for-each-result-in-a-sql-query
+-- #
+-- ##################################################################
+
+INSERT INTO config (id, customer_id, domain)
+SELECT DISTINCT id, customer_id, domain FROM config;
+
+-- # If you want "www.example.com" as the domain, you can do :
+INSERT INTO config (id, customer_id, domain)
+SELECT DISTINCT id, customer_id, 'www.example.com' FROM config;
+
+-- ##################################################################
+-- #
+-- #   disable key relations by import or update
+-- #   https://gauravsohoni.wordpress.com/2009/03/09/mysql-disable-foreign-key-checks-or-constraints/
+-- #
+-- ##################################################################
+
+SET foreign_key_checks = 0;
+DELETE FROM users where id > 45;
+SET foreign_key_checks = 1;
+
+-- ##################################################################
+-- #
+-- #   MySQL Database - phpMyAdmin - Display Relationship - Designer
+-- #
+-- #   https://docs.phpmyadmin.net/en/latest/
+-- #   https://github.com/phpmyadmin/phpmyadmin/wiki
+-- #   https://www.phpmyadmin.net/docs/
+-- #   https://www.phpmyadmin.net
+-- #
+-- ##################################################################
+
+
