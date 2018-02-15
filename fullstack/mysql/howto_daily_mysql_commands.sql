@@ -107,7 +107,6 @@ http://www.mysqltutorial.org/mysql-export-table-to-csv/
 
 
 
-
 -- ##################################################################
 -- #
 -- #   http://mysqlresources.com/documentation/data-manipulation/insert-multiple-row-insertions
@@ -145,3 +144,64 @@ SET foreign_key_checks = 1;
 -- ##################################################################
 
 
+
+
+
+
+
+-- ##################################################################
+-- #---------------------------------------------------------------------------------------
+-- #    mysql encryption-functions
+-- #    https://dev.mysql.com/doc/refman/5.7/en/encryption-functions.html
+-- #---------------------------------------------------------------------------------------
+-- ##################################################################
+
+
+/*Table 12.17 Encryption Functions
+
+Name	                        Description
+AES_DECRYPT()	                Decrypt using AES
+AES_ENCRYPT()	                Encrypt using AES
+ASYMMETRIC_DECRYPT()	        Decrypt ciphertext using private or public key
+ASYMMETRIC_DERIVE()	            Derive symmetric key from asymmetric keys
+ASYMMETRIC_ENCRYPT()	        Encrypt cleartext using private or public key
+ASYMMETRIC_SIGN()	            Generate signature from digest
+ASYMMETRIC_VERIFY()	            Verify that signature matches digest
+COMPRESS()	                    Return result as a binary string
+CREATE_ASYMMETRIC_PRIV_KEY()	Create private key
+CREATE_ASYMMETRIC_PUB_KEY()	    Create public key
+CREATE_DH_PARAMETERS()	        Generate shared DH secret
+CREATE_DIGEST()	                Generate digest from string
+DECODE()                        (deprecated 5.7.2)	Decodes a string encrypted using ENCODE()
+DES_DECRYPT()                   (deprecated 5.7.6)	Decrypt a string
+DES_ENCRYPT()                   (deprecated 5.7.6)	Encrypt a string
+ENCODE()                        (deprecated 5.7.2)	Encode a string
+ENCRYPT()                       (deprecated 5.7.6)	Encrypt a string
+MD5()	                        Calculate MD5 checksum
+OLD_PASSWORD()	                Return the value of the pre-4.1 implementation of PASSWORD
+PASSWORD()                      (deprecated 5.7.6)	Calculate and return a password string
+RANDOM_BYTES()	                Return a random byte vector
+SHA1(), SHA()	                Calculate an SHA-1 160-bit checksum
+SHA2()	                        Calculate an SHA-2 checksum
+UNCOMPRESS()	                Uncompress a string compressed
+UNCOMPRESSED_LENGTH()	        Return the length of a string before compression
+VALIDATE_PASSWORD_STRENGTH()	Determine strength of password
+
+INSERT INTO t
+VALUES (1,AES_ENCRYPT('text',UNHEX('F3229A0B371ED2D9441B830D21A390C3')));
+
+
+INSERT INTO t
+VALUES (1,AES_ENCRYPT('text', UNHEX(SHA2('My secret passphrase',512))));
+
+
+mysql> SET block_encryption_mode = 'aes-256-cbc';
+mysql> SET @key_str = SHA2('My secret passphrase',512);
+mysql> SET @init_vector = RANDOM_BYTES(16);
+mysql> SET @crypt_str = AES_ENCRYPT('text',@key_str,@init_vector);
+mysql> SELECT AES_DECRYPT(@crypt_str,@key_str,@init_vector);
+
+
+
+
+*/
