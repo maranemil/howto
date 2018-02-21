@@ -273,16 +273,62 @@ reboot
 ###########################################################
 
 http://www.linux-magazine.com/Online/Features/Tune-Your-Hard-Disk-with-hdparm
+https://www.ssdblog.de/2014/12/16/ssd-secure-erase-unter-linux-mit-hdparm/
 
-hdparm -I /dev/sda | more # get info
-hdparm -t /dev/sda  # test speed
-hdparm -t --direct /dev/sda
-hdparm -t --direct --offset 500 /dev/sda # set offset
-hdparm -I /dev/sda # spped
-hdparm -m16 /dev/sda
-hdparm -m12 /dev/sda
-hdparm -a256 /dev/sda
-hdparm -a /dev/sda
-hdparm -c /dev/sda
-hdparm -M /dev/sda
-hdparm -W /dev/sda # Write-Back Caching
+hdparm -i /dev/sd?                          # get info
+hdparm -I /dev/sda | more                   # get info
+hdparm -I /dev/sdb                          # get info
+
+hdparm -t /dev/sda                          # determine how fast a drive delivers data
+
+hdparm -t --direct /dev/sda                 # determine the speed of the unadorned drive
+hdparm -t --direct --offset 500 /dev/sda    # hdparm lets you set an offset
+
+hdparm -I /dev/sda                          # shows which functions hdparm can change and activate on a hard drive
+hdparm -m16 /dev/sda                        # increase the value R/W multiple sector transfer:
+hdparm -a256 /dev/sda                       # retrieve a few sectors in advance
+
+hdparm -a /dev/sda                          # current setting shown
+hdparm -c /dev/sda                          # see how fast queries from the operating system reach the hard drive controller
+                                            # value should be 32-bit; you can force this value with the -c3 switch.
+# Full Speed Ahead ---
+
+hdparm -M /dev/sda                          # find out whether your own hard drive offers this “acoustic mode,”
+hdparm -M 128 /dev/sda                      # put into a quiet
+hdparm -M 254 /dev/sda                      # to reach the highest speed
+
+
+hdparm -E 4 /dev/sr0                        # fix CD and DVD drives  high-speed rotation
+
+hdparm -W /dev/sda                          # Write-Back Caching
+                                            # command shows whether write-back caching is active with a 1 after
+                                            # the equals sign; otherwise, you can activate the function with the -W1 switch.
+
+
+# Live Wire If a hard disk or SSD doesn’t have anything to do for a certain period of time
+
+hdparm -B255 /dev/sda                       # would deactivate energy management
+hdparm -B /dev/sda
+hdparm -S 128 /dev/sda                      # set how many seconds of idleness the hard drive should wait before it goes to sleep
+hdparm -y /dev/sda                          # send the hard drive to sleep immediately
+
+# Cleanup
+
+SSDs track the location of the data deposited on them independently of the operating system.
+This can lead to the curious situation that a file has been deleted but the SSD still has its
+former location marked as occupied. To remedy such conflicts, newer versions of
+hdparm include the wiper.sh script. Entering [wiper.sh /dev/sda]
+
+Secure Deletion
+
+To achieve higher transfer rates and spread use equally over the storage chips, SSDs also reserve some storage areas
+(wear leveling), so that simply formatting an SSD will seldom delete the whole drive.
+Most SSDs therefore offer a function called secure erase, which causes the drive to
+empty all its storage cells. This is especially useful should you decide to give up your used SSD.
+
+Relics
+
+In the case of older hard drives with an IDE connector (also called PATA), you should take a look at
+the using_dma line in the identification output. With the help of DMA (Direct Memory Access)
+technology, the hard drive itself deposits data directly into main memory. If the respective
+flag is 0 (off), it will slow down the data transfer.
