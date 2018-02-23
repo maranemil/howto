@@ -1,0 +1,177 @@
+
+####################################################################################
+#
+#	How to normalize data to 0-1 range
+# 	How to scale down a range of numbers with a known min and max value
+#
+####################################################################################
+
+https://stats.stackexchange.com/questions/70801/how-to-normalize-data-to-0-1-range
+https://stats.stackexchange.com/questions/70553/what-does-normalization-mean-and-how-to-verify-that-a-sample-or-a-distribution
+https://stackoverflow.com/questions/5294955/how-to-scale-down-a-range-of-numbers-with-a-known-min-and-max-value
+https://en.wikipedia.org/wiki/Normalization_(statistics)
+http://www.dataminingblog.com/standardization-vs-normalization/
+https://vitalflux.com/data-science-scale-normalize-numeric-data-using-r/
+https://docs.microsoft.com/en-us/azure/machine-learning/studio-module-reference/data-transformation-scale-and-reduce
+https://www.analyticsvidhya.com/blog/2015/07/dimension-reduction-methods/
+https://www.knime.com/blog/seven-techniques-for-data-dimensionality-reduction
+http://mathforum.org/library/drmath/view/60433.html
+
+
+https://www.youtube.com/watch?v=7DQMAXaiXmk
+https://www.youtube.com/watch?v=g4XluwGYPaA
+
+# Example Data
+x = sample(-100:100, 50)
+
+#Normalized Data
+normalized = (x-min(x))/(max(x)-min(x))
+
+# Histogram of example data and normalized data
+par(mfrow=c(1,2))
+hist(x,          breaks=10, xlab="Data",            col="lightblue", main="")
+hist(normalized, breaks=10, xlab="Normalized Data", col="lightblue", main="")
+
+---
+
+var unscaledNums = [10, 13, 25, 28, 43, 50];
+
+var maxRange = Math.max.apply(Math, unscaledNums);
+var minRange = Math.min.apply(Math, unscaledNums);
+
+for (var i = 0; i < unscaledNums.length; i++) {
+  var unscaled = unscaledNums[i];
+  var scaled = scaleBetween(unscaled, 0, 100, minRange, maxRange);
+  console.log(scaled.toFixed(2));
+}
+
+***
+
+public class Algorithms {
+    public static double scale(final double valueIn, final double baseMin, final double baseMax, final double limitMin, final double limitMax) {
+        return ((limitMax - limitMin) * (valueIn - baseMin) / (baseMax - baseMin)) + limitMin;
+    }
+}
+
+
+final double baseMin = 0.0;
+final double baseMax = 360.0;
+final double limitMin = 90.0;
+final double limitMax = 270.0;
+double valueIn = 0;
+System.out.println(Algorithms.scale(valueIn, baseMin, baseMax, limitMin, limitMax));
+valueIn = 360;
+System.out.println(Algorithms.scale(valueIn, baseMin, baseMax, limitMin, limitMax));
+valueIn = 180;
+System.out.println(Algorithms.scale(valueIn, baseMin, baseMax, limitMin, limitMax));
+
+90.0
+270.0
+180.0
+
+
+---
+
+####################################################################################
+#
+# https://machinelearningmastery.com/feature-selection-machine-learning-python/
+#
+####################################################################################
+---------------------------------------------------
+1. Univariate Selection
+---------------------------------------------------
+# Feature Extraction with Univariate Statistical Tests (Chi-squared for classification)
+import pandas
+import numpy
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import chi2
+# load data
+url = "https://archive.ics.uci.edu/ml/machine-learning-databases/pima-indians-diabetes/pima-indians-diabetes.data"
+names = ['preg', 'plas', 'pres', 'skin', 'test', 'mass', 'pedi', 'age', 'class']
+dataframe = pandas.read_csv(url, names=names)
+array = dataframe.values
+X = array[:,0:8]
+Y = array[:,8]
+# feature extraction
+test = SelectKBest(score_func=chi2, k=4)
+fit = test.fit(X, Y)
+# summarize scores
+numpy.set_printoptions(precision=3)
+print(fit.scores_)
+features = fit.transform(X)
+# summarize selected features
+print(features[0:5,:])
+
+
+
+# print plas, test, mass and age.
+
+[  111.52   1411.887    17.605    53.108  2175.565   127.669     5.393   181.304]
+[[ 148.     0.    33.6   50. ]
+ [  85.     0.    26.6   31. ]
+ [ 183.     0.    23.3   32. ]
+ [  89.    94.    28.1   21. ]
+ [ 137.   168.    43.1   33. ]]
+
+---------------------------------------------------
+2. Recursive Feature Elimination
+---------------------------------------------------
+
+# Feature Extraction with RFE
+from pandas import read_csv
+from sklearn.feature_selection import RFE
+from sklearn.linear_model import LogisticRegression
+# load data
+url = "https://archive.ics.uci.edu/ml/machine-learning-databases/pima-indians-diabetes/pima-indians-diabetes.data"
+names = ['preg', 'plas', 'pres', 'skin', 'test', 'mass', 'pedi', 'age', 'class']
+dataframe = read_csv(url, names=names)
+array = dataframe.values
+X = array[:,0:8]
+Y = array[:,8]
+# feature extraction
+model = LogisticRegression()
+rfe = RFE(model, 3)
+fit = rfe.fit(X, Y)
+print("Num Features: %d") % fit.n_features_
+print("Selected Features: %s") % fit.support_
+print("Feature Ranking: %s") % fit.ranking_
+
+---------------------------------------------------
+3. Principal Component Analysis
+---------------------------------------------------
+# Feature Extraction with PCA
+import numpy
+from pandas import read_csv
+from sklearn.decomposition import PCA
+# load data
+url = "https://archive.ics.uci.edu/ml/machine-learning-databases/pima-indians-diabetes/pima-indians-diabetes.data"
+names = ['preg', 'plas', 'pres', 'skin', 'test', 'mass', 'pedi', 'age', 'class']
+dataframe = read_csv(url, names=names)
+array = dataframe.values
+X = array[:,0:8]
+Y = array[:,8]
+# feature extraction
+pca = PCA(n_components=3)
+fit = pca.fit(X)
+# summarize components
+print("Explained Variance: %s") % fit.explained_variance_ratio_
+print(fit.components_)
+
+
+
+4. Feature Importance
+
+# Feature Importance with Extra Trees Classifier
+from pandas import read_csv
+from sklearn.ensemble import ExtraTreesClassifier
+# load data
+url = "https://archive.ics.uci.edu/ml/machine-learning-databases/pima-indians-diabetes/pima-indians-diabetes.data"
+names = ['preg', 'plas', 'pres', 'skin', 'test', 'mass', 'pedi', 'age', 'class']
+dataframe = read_csv(url, names=names)
+array = dataframe.values
+X = array[:,0:8]
+Y = array[:,8]
+# feature extraction
+model = ExtraTreesClassifier()
+model.fit(X, Y)
+print(model.feature_importances_)
