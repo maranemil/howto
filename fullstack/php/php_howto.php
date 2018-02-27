@@ -317,3 +317,32 @@ echo $sum;
 $xml = simplexml_load_string($xmlstring, "SimpleXMLElement", LIBXML_NOCDATA);
 $json = json_encode($xml);
 $array = json_decode($json,TRUE);
+
+
+
+
+#################################################
+#
+#   Memcache Usage
+#   http://adammaus.com/wp/2014/07/caching-pdo-query-results-memcache/
+#
+#################################################
+
+global $memcache, $db, $cache_expiration;
+
+// Connect to the Memcache server
+$memcache = new Memcache();
+$memcache->pconnect('localhost', 11211);
+
+
+if ($memcache->get($cache_key)) {
+	// Generate a key for the cache
+	$cache_key = md5($sql . serialize($params));
+	$result = $memcache->get($cache_key);
+}
+
+
+// Cache expires in 10 seconds
+$cache_key = md5($sql . serialize($params));
+$cache_expiration = 10;
+$memcache->set($cache_key, serialize($result), MEMCACHE_COMPRESSED, $cache_expiration);

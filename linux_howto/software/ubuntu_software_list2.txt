@@ -14,3 +14,104 @@ sudo apt-get install vlc
 sudo add-apt-repository ppa:videolan/master-daily
 sudo apt-get update
 sudo apt-get install vlc
+
+
+
+##################################################################
+#
+#   Linux Partition tools
+#
+##################################################################
+https://wiki.ubuntuusers.de/fdisk/
+https://wiki.ubuntuusers.de/Dateisystemgröße_ändern/
+https://wiki.ubuntuusers.de/GNU_Parted/
+https://wiki.ubuntuusers.de/Partitionierung/
+
+sudo apt-get install e2fsprogs reiserfsprogs xfsprogs hfsprogs
+sudo apt-get install ntfsprogs
+sudo apt-get install e2fsprogs reiserfsprogs  xfsprogs  jfsutils  ntfs-3g
+
+sudo parted -l
+sudo sfdisk -l /dev/sda
+
+
+-----------------------------------------------------
+https://en.wikipedia.org/wiki/E2fsprogs
+http://positon.org/resize-an-ext3-ext4-partition
+https://wiki.ubuntuusers.de/Dateisystemgröße_ändern/
+-----------------------------------------------------
+
+badblocks 		search a device for bad blocks
+blkid 			locate/print block device attributes
+chattr 			change file attributes on a Linux file system
+debugfs 		used to manually view or modify internal structures of the file system
+dumpe2fs 		which prints superblock and block group information.
+e2freefrag 		report free space fragmentation information
+e2fsck 			an fsck program that checks for and corrects inconsistencies
+e2image 		save critical ext2/ext3/ext4 filesystem metadata to a file
+e2label 		change the label on an ext2/ext3/ext4 filesystem
+e2undo 			replay an undo log for an ext2/ext3/ext4 filesystem
+e4defrag 		online defragmenter for ext4 filesystem
+filefrag 		report on file fragmentation
+findfs 			find a filesystem by label or UUID
+findsuper 		quick hacked up program to find ext2 superblocks
+logsave 		save the output of a command in a logfile
+lsattr 			list file attributes on a Linux second extended file system
+mke2fs 			used for creating ext2, ext3 and ext4 file systems
+resize2fs 		which can expand and shrink ext2, ext3 and ext4 file systems
+tune2fs 		used to modify file system parameters
+
+resize2fs /dev/sda6 NEWSIZE
+resize2fs /dev/sda6
+
+e2fsck -f -y -v -C 0 /dev/sda9
+e2fsck: Neuere Version von e2fsck benötigt!
+
+Solution:
+Download the appropriate .deb files from
+CODE: SELECT ALL
+
+http://packages.ubuntu.com/yakkety/e2fslibs
+http://packages.ubuntu.com/yakkety/e2fsprogs
+
+Support for checksums is sitting in the e2fsprogs WIP tree, which implies that it might appear in e2fsprogs 1.43.
+sudo dpkg -i e2fs{libs,progs}_*_$(dpkg --print-architecture).deb
+
+e2fsprogs (liefert resize2fs)
+reiserfsprogs
+xfsprogs
+jfsutils
+ntfs-3g
+
+sudo apt-get install e2fsprogs reiserfsprogs  xfsprogs  jfsutils  ntfs-3g
+
+
+##################################################################
+How to boot from a DVD on a UEFI laptop with Linux
+##################################################################
+
+sudo apt-get install libdvdread4 libdvdnav4
+sudo apt-get install libdvdread4 libdvdnav4
+
+sudo mount -o loop /home/user/image.iso /mnt/iso sudo cp -rf /mnt/iso /media/usb-stick
+sudo parted /dev/sd[X] set 1 boot on
+sudo dd conv=notrunc bs=440 count=1 if=/usr/lib/syslinux/mbr/mbr.bin of=/dev/sd[X]
+
+-eltorito-platform "x86" -b isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table
+-eltorito-alt-boot -eltorito-platform "efi" -b boot/grub/efi.img -no-emul-boot
+
+----------------------------------------
+https://wiki.ubuntuusers.de/EFI_Installieren/
+
+sudo apt-get install efibootmgr
+
+sudo dmidecode -t 0  ## Abfrage zum BIOS
+sudo dmidecode -t 1  ## Abfrage zur Hardware
+sudo efibootmgr -v
+
+sudo parted -l ## kleines L
+
+sudo efibootmgr
+sudo efibootmgr -n 0004
+sudo efibootmgr -N
+sudo apt-get purge dmraid

@@ -43,6 +43,19 @@ ini_set("soap.wsdl_cache_enabled", "0");
 
 ini_set('default_socket_timeout', 1); // set timeout
 
+/*
+https://www.hgb-leipzig.de/~uklaus/PHP/soap.configuration.html
+http://php.net/manual/de/soap.configuration.php#ini.soap.wsdl-cache-ttl
+
+ini_set ( 'soap.wsdl_cache_enabled', true );
+ini_set ( 'soap.wsdl_cache_ttl', 86400	 );
+ini_set ( 'soap.wsdl_cache_limit', 5	 );
+ini_set ( 'soap.wsdl_cache', true );
+*/
+
+
+
+
 /////////////////////////////////////////////////////
 //
 // Load Soap Classes
