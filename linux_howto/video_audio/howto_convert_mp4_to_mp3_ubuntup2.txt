@@ -1,0 +1,110 @@
+##############################################
+#
+# How to fix Sound on FFMPEG Capture Screen
+#
+##############################################
+
+https://trac.ffmpeg.org/wiki/Capture/Desktop
+https://www.ffmpeg.org/ffmpeg-devices.html#Options-19
+https://www.ffmpeg.org/ffmpeg-devices.html#Examples-4
+https://www.ffmpeg.org/ffmpeg-devices.html#Options-20
+-------------------------------------------
+WARNING: library configuration mismatch
+-------------------------------------------
+sudo apt remove libavcodec-ffmpeg-extra56
+sudo apt-get -y install libavcodec-extra libav-tools
+
+# if you want a 128k mp3 you can add this
+# functionality to sox thus (thanx Andrew46)
+sudo apt-get install sox libsox-fmt-all
+-------------------------------------------
+sudo apt-get install pavucontrol ffmpeg
+sudo apt-get install pavucontrol sox
+pavucontrol # start to config
+
+# Detect selected screen
+xwininfo | grep -e Width -e Height -e Absolute
+Absolute upper-left X:  1981
+Absolute upper-left Y:  378
+Width: 1305
+Height: 668
+
+# Detect sound card
+pactl list | grep -A2 'Source #' | grep 'Name: ' | cut -d" " -f2
+pactl list | grep -A2 'Quelle #' | grep 'Name: ' | cut -d" " -f2
+alsa_input.pci-0000_00_1b.0.analog-stereo
+alsa_output.pci-0000_00_1b.0.analog-stereo.monitor
+
+
+# Capture test
+ffmpeg -f x11grab -framerate 30 -video_size 1900x1080 -i :0.0 -f alsa -i pulse -c:v libx264 -preset fast -crf 26 -maxrate 1500k -bufsize 500k -g 30 -vf format=yuv420p -c:a aac -b:a 64k -f flv out53.mkv
+
+
+
+
+
+-------------------------------------------
+
+
+ffmpeg -f alsa -i default -f x11grab -s 1366x768 -r 30 -i :0.0 -sameq filename.avi
+ffmpeg -f alsa -i pulse -f x11grab -s 1366x768 -r 30 -i :0.0 filename.avi
+ffmpeg -f alsa -i default -f x11grab -s 1366x768 -r 30 -i :0.0 filename.mkv
+ffmpeg -f alsa -ac 2 -i pulse -f x11grab -r 30 -s 1280x1024 -i :0.0  -vcodec libx264 -threads 0 filename.flv
+
+
+ffmpeg -f alsa -ac 2 -i pulse -f x11grab -r 30 -s 1280x1024 -i :0.0 -acodec flac -vcodec libx264 -threads 0 mydesktop.mkv
+ffmpeg -f alsa -ac 2 -i pulse -f x11grab -r 30 -s 1280x1024 -i :0.0 -acodec flac -vcodec libx264 -threads 0 ktop.mkv
+
+
+ffmpeg -video_size 1024x768 -framerate 25 -f x11grab -i :0.0+100,200 -f alsa -ac 2 -i hw:0 output.mkv
+ffmpeg -video_size 1024x768 -framerate 25 -f x11grab -i :0.0+100,200 -f pulse -ac 2 -i default output.mkv
+ffmpeg -f alsa -ac 2 -i pulse -acodec mp3 OUTPUT.mp3
+ffmpeg -y -f alsa -ac 2 -i pulse -f x11grab -r 30  -i :0.0 -acodec pcm_s16le  -an -vcodec libx264  output.mp4
+ffmpeg -video_size 1024x768 -framerate 25 -f x11grab -i :0.0+0,0 -f alsa -ac 2 -i pulse -vol 70 -acodec aac -strict experimental output.flv
+ffmpeg -f alsa -i pulse -f x11grab -r 25 -s 1280x720 -i :0.0+0,24 -acodec pcm_s16le -vcodec libx264  -threads 0 output.mkv
+
+ffmpeg -f x11grab -framerate 30 -video_size 1280x720 -i :0.0 -f pulse -i default -c:v libx264 -preset fast -crf 26 -maxrate 2500k -bufsize 5000k -g 60 -vf format=yuv420p -c:a aac -b:a 128k -f flv out.mkv
+ffmpeg -f x11grab -framerate 30 -video_size 1280x720 -i :0.0 -f pulse -ac 2  -c:v libx264 -preset fast -crf 26 -maxrate 2500k -bufsize 5000k -g 60 -vf format=yuv420p -c:a aac -b:a 128k -f flv out3.mkv
+ffmpeg -f x11grab -framerate 30 -video_size 1280x720 -i :0.0 -f alsa -i pulse -c:v libx264 -preset fast -crf 26 -maxrate 2500k -bufsize 5000k -g 60 -vf format=yuv420p -c:a aac -b:a 128k -f flv out53.mkv
+ffmpeg -f x11grab -framerate 30 -video_size 1280x720 -i :0.0 -f pulse -i default -c:v libx264 -preset fast -crf 26 -maxrate 2500k -bufsize 5000k -g 60 -vf format=yuv420p -c:a aac -b:a 128k -f flv out553.mkv
+
+-------------------------------------------
+# ok --------------
+ffmpeg -f x11grab -framerate 30 -video_size 1900x1080 -i :0.0 -f alsa -i pulse -c:v libx264 -preset fast -crf 26 -maxrate 1500k -bufsize 500k -g 30 -vf format=yuv420p -c:a aac -b:a 64k -f flv out53.mkv
+-------------------------------------------
+
+
+
+ffmpeg -f x11grab -framerate 25 -video_size cif -i :0.0 out.mpg
+ffmpeg -f x11grab -framerate 25 -video_size cif -i :0.0+10,20 out.mpg
+ffmpeg -f x11grab -follow_mouse centered -framerate 25 -video_size cif -i :0.0 out.mpg
+ffmpeg -f x11grab -follow_mouse 100 -framerate 25 -video_size cif -i :0.0 out.mpg
+ffmpeg -f x11grab -show_region 1 -framerate 25 -video_size cif -i :0.0+10,20 out.mpg
+ffmpeg -f x11grab -follow_mouse centered -show_region 1 -framerate 25 -video_size cif -i :0.0 out.mpg
+
+
+
+ffmpeg -f alsa -i hw:0,0 -acodec libmp3lame outfile.mp3
+ffmpeg -i INPUT -f alsa default
+ffmpeg -i INPUT -f alsa hw:1,7 pulsealsa1.wav
+ffmpeg -f pulse -i default pulse.wav
+ffmpeg -f alsa -i pulse -acodec libmp3lame outfile.mp3
+ffmpeg -f pulse -i default -acodec libmp3lame outfile3.mp3
+
+ffmpeg -f alsa -ac 2 -i hw:0,0 -f x11grab -r 30 -i :0.0 -acodec mp3 -vcodec libx264 -preset ultrafast -crf 0 out.mkv
+ffmpeg -f x11grab -framerate 60 -s 1920x1080 -i :0.0 -preset ultrafast screencast_out.mkv
+ffmpeg -f x11grab -framerate 30 -s 1920x1080 -i :0.0 -preset ultrafast screencast_out.mkv
+ffmpeg -f alsa -ac 2 -vol 700 -i hw:0,0 -f x11grab -r 30 -i :0.0 -acodec mp3 -vcodec libx264 -preset ultrafast -crf 0 sout.mkv
+
+ffmpeg -f alsa -ac 2 -vol 700 -i hw:0,0 -f x11grab 1920x1080 -r 30 -i :0.0 -sameq -f mpeg -ar 48000 -b 9000 out.mkv
+ffmpeg -f x11grab -framerate 60 -s 1920x1080 -i :0.0 -preset ultrafast screencast_out.mkv
+ffmpeg -f alsa -ac 1 -i pulse -f x11grab -r 30 -s 1920x1080 -i :0.0 -acodec mp3 -vcodec libx264 -preset ultrafast -crf 0 -threads 0 output.mp4
+
+# orginal one line code for fullscreen
+ffmpeg -f alsa -ac 2 -i hw:0,0 -f x11grab -r 30 -i :0.0 -acodec pcm_s16le -vcodec libx264 -preset ultrafast -crf 0 -threads 0 -y screencast_out.avi
+
+# record single window, use mouse to click on the window to start recording
+ffmpeg -f alsa -ac 2 -i hw:0,0 -f x11grab -r 30 -s $(xwininfo -frame | grep -oEe 'geometry [0-9]+x[0-9]+' | grep -oEe '[0-9]+x[0-9]+') -i :0.0+$(xwininfo -frame | grep -oEe 'Corners:\s+\+[0-9]+\+[0-9]+' | grep -oEe '[0-9]+\+[0-9]+' | sed -e 's/\+/,/' ) -acodec pcm_s16le -vcodec libx264 -preset ultrafast -crf 0 -threads 0 -y screencast_out.avi
+
+
+---------------------------------------------------------------
