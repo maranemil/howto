@@ -1,0 +1,197 @@
+How to build a deep learning model in 15 minutes
+https://tech.instacart.com/how-to-build-a-deep-learning-model-in-15-minutes-a3684c6f71e
+
+
+
+$ pip3 install lore
+$ git clone https://github.com/montanalow/my_app.git
+$ cd my_app
+$ lore install # caching all dependencies locally takes a few minutes the first time
+$ lore server &
+$ curl "http://localhost:5000/product_popularity.Keras/predict.json?product_name=Banana&department=produce"
+# https://gist.github.com/montanalow/959cbe4d183b0919da18799be48b7cd4#file-tldr-sh
+
+
+1) Create a new app
+
+# On Linux
+$ pip install lore
+# On OS X use homebrew python 2 or 3
+$ brew install python3 && pip3 install lore
+$ lore init my_app --python-version=3.6.4 --keras
+
+2) Designing a Model
+https://tech.instacart.com/3-million-instacart-orders-open-sourced-d40d29ead6f2
+https://www.instacart.com/datasets/grocery-shopping-2017
+
+3) Generate a scaffold
+$ cd my_app
+$ lore generate scaffold product_popularity --keras --regression --holdout
+
+
+4) Implement a Pipeline
+
+
+# my_app/pipelines/product_popularity.py part 1
+
+import os
+
+from lore.encoders import Token, Unique, Norm
+import lore.io
+import lore.pipelines
+import lore.env
+
+import pandas
+
+
+class Holdout(lore.pipelines.holdout.Base):
+    # You can inspect the source data csv's yourself from the command line with:
+    # $ wget https://s3.amazonaws.com/instacart-datasets/instacart_online_grocery_shopping_2017_05_01.tar.gz
+    # $ tar -xzvf instacart_online_grocery_shopping_2017_05_01.tar.gz
+
+    def get_data(self):
+        url = 'https://s3.amazonaws.com/instacart-datasets/instacart_online_grocery_shopping_2017_05_01.tar.gz'
+
+        # Lore will extract and cache files in lore.env.data_dir by default
+        lore.io.download(url, cache=True, extract=True)
+
+        # Defined to DRY up paths to 3rd party file hierarchy
+        def read_csv(name):
+            path = os.path.join(
+                lore.env.data_dir,
+                'instacart_2017_05_01',
+                name + '.csv')
+            return pandas.read_csv(path, encoding='utf8')
+
+        # Published order data was split into irrelevant prior/train
+        # sets, so we will combine them to re-purpose all the data.
+        orders = read_csv('order_products__prior')
+        orders = orders.append(read_csv('order_products__train'))
+
+        # count how many times each product_id was ordered
+        data = orders.groupby('product_id').size().to_frame('sales')
+
+        # add product names and department ids to ordered product ids
+        products = read_csv('products').set_index('product_id')
+        data = data.join(products)
+
+        # add department names to the department ids
+        departments = read_csv('departments').set_index('department_id')
+        data = data.set_index('department_id').join(departments)
+
+        # Only return the columns we need for training
+        data = data.reset_index()
+        return data[['product_name', 'department', 'sales']]
+
+my_app.pipelines.product_popularity.py hosted with ❤ by GitHub
+
+
+
+# # # # #  get encoder # # # # #
+
+# my_app/pipelines/product_popularity.py part 2
+
+    def get_encoders(self):
+        return (
+            # An encoder to tokenize product names into max 15 tokens that
+            # occur in the corpus at least 10 times. We also want the
+            # estimator to spend 5x as many resources on name vs department
+            # since there are so many more words in english than there are
+            # grocery store departments.
+            Token('product_name', sequence_length=15, minimum_occurrences=10, embed_scale=5),
+            # An encoder to translate department names into unique
+            # identifiers that occur at least 50 times
+            Unique('department', minimum_occurrences=50)
+        )
+
+    def get_output_encoder(self):
+        # Sales is floating point which we could Pass encode directly to the
+        # estimator, but Norm will bring it to small values around 0,
+        # which are more amenable to deep learning.
+return Norm('sales')
+
+
+# # # # # get estimator
+
+# my_app/estimators/product_popularity.py
+
+import lore.estimators.keras
+class Keras(lore.estimators.keras.Regression):
+pass
+
+
+
+
+# my_app/models/product_popularity.py
+
+import lore.models.keras
+
+import my_app.pipelines.product_popularity
+import my_app.estimators.product_popularity
+
+
+class Keras(lore.models.keras.Base):
+    def __init__(self, pipeline=None, estimator=None):
+        super(Keras, self).__init__(
+            my_app.pipelines.product_popularity.Holdout(),
+            my_app.estimators.product_popularity.Keras(
+                hidden_layers=2,
+                embed_size=4,
+                hidden_width=256,
+                batch_size=1024,
+                sequence_embedding='lstm',
+            )
+)
+
+
+
+5) Test the code ./tests/data
+
+$ lore test tests.unit.test_product_popularity
+
+6) Train the model
+
+$ lore fit my_app.models.product_popularity.Keras --test --score
+tail -f logs/development.log
+--hidden_layers=5
+
+
+Inspect the model’s features
+lore notebook
+notebooks/product_popularity/features.ipynb  and “run all”
+notebooks/product_popularity/architecture.ipynb
+
+Serve your model
+
+$ lore server &
+$ curl "http://localhost:5000/product_popularity.Keras/predict.json?product_name=Banana&department=produce"
+$ curl "http://localhost:5000/product_popularity.Keras/predict.json?product_name=Organic%20Banana&department=produce"
+$ curl "http://localhost:5000/product_popularity.Keras/predict.json?product_name=Green%20Banana&department=produce"
+$ curl "http://localhost:5000/product_popularity.Keras/predict.json?product_name=Brown%20Banana&department=produce"
+view raw
+predict.sh
+
+
+7) Deploy to production
+You can see the results of each time you issued the lore fit command in ./models/my_app.models.product_popularity/Keras/. This directory and ./data/ are in .gitignore by default because your code can always recreate them
+
+
+$ git init .
+$ git add .
+$ git add -f models/my_app.models.product_popularity/Keras/1 # or your preferred fitting number to deploy
+$ git commit -m "My first lore app!"
+view raw
+git.sh
+
+
+
+$ heroku login
+$ heroku create
+$ heroku config:set LORE_PROJECT=my_app
+$ heroku config:set LORE_ENV=production
+$ git push heroku master
+$ heroku open
+
+$ curl “`heroku info -s | grep web_url | cut -d= -f2`product_popularity.Keras/predict.json?product_name=Banana&department=produce”
+view raw
+publish.sh hosted with ❤ by GitHub
