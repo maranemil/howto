@@ -1,0 +1,266 @@
+
+###############################################################################
+
+How to enable pthreads in PHP 5.6 at ubuntu #584
+
+https://github.com/krakjoe/pthreads
+http://php.net/manual/de/pthreads.installation.php
+https://github.com/krakjoe/pthreads/issues/584
+
+php_pthreads
+sudo apt-get install libpthread-stubs0-dev
+pecl install pthreads
+
+***
+
+sudo apt-get install php-pear
+sudo pecl install pthreads
+sudo service apache2 restart
+
+###############################################################################
+
+Installing PHP7 ZTS from PPA
+
+sudo apt-get install -y language-pack-en-base
+LC_ALL=en_US.UTF-8 sudo add-apt-repository ppa:ondrej/php-zts
+
+sudo apt-get update
+sudo apt-get install php7.0-zts php7.0-zts-dev
+
+Congratz! PHP7 with thread safety is installed.
+Now let's install pthreads:
+
+sudo apt-get install git # If not installed
+
+git clone https://github.com/krakjoe/pthreads.git
+cd pthreads
+
+phpize # Here we need the php7.0-zts-dev package
+
+make -j8
+sudo make install
+
+sudo mkdir -p /etc/php/7.0-zts/conf.d/ # make sure the path is existing
+echo "extension=pthreads.so" > /etc/php/7.0-zts/conf.d/pthreads.ini # Enable the extension
+
+--
+
+cd /etc/php/7.0-zts/cli/conf.d/
+ln -s ../../conf.d/pthreads.ini
+
+php -m | grep pthreads
+pthreads
+
+------------------
+###############################################################################
+#
+Install PHP 7.0 With Pthreads on Ubuntu 16.04
+https://blog.programster.org/install-php-7-0-with-pthreads-on-ubuntu-16.04
+https://www.youtube.com/watch?v=dmCLMhOutfA
+#
+###############################################################################
+
+sudo apt update && \
+sudo apt install -y libzip-dev bison autoconf build-essential pkg-config git-core \
+libltdl-dev libbz2-dev libxml2-dev libxslt1-dev libssl-dev libicu-dev \
+libpspell-dev libenchant-dev libmcrypt-dev libpng-dev libjpeg8-dev \
+libfreetype6-dev libmysqlclient-dev libreadline-dev libcurl4-openssl-dev
+
+sudo apt-get install php7.0-dev php-pear -y
+sudo apt-get remove php-cli -y
+cd $HOME
+wget https://github.com/php/php-src/archive/php-7.0.27.tar.gz
+tar --extract --gzip --file php-*
+rm php-*.tar.gz
+mv php-src-* php-src
+cd $HOME/php-src
+./buildconf --force
+
+CONFIGURE_STRING="--prefix=/etc/php7 \
+--with-bz2 \
+--with-zlib \
+--enable-zip \
+--disable-cgi \
+--enable-soap \
+--enable-intl \
+--with-openssl \
+--with-readline \
+--with-curl \
+--enable-ftp \
+--enable-mysqlnd \
+--with-mysqli=mysqlnd \
+--with-pdo-mysql=mysqlnd \
+--enable-sockets \
+--enable-pcntl \
+--with-pspell \
+--with-enchant \
+--with-gettext \
+--with-gd \
+--enable-exif \
+--with-jpeg-dir \
+--with-png-dir \
+--with-freetype-dir \
+--with-xsl \
+--enable-bcmath \
+--enable-mbstring \
+--enable-calendar \
+--enable-simplexml \
+--enable-json \
+--enable-hash \
+--enable-session \
+--enable-xml \
+--enable-wddx \
+--enable-opcache \
+--with-pcre-regex \
+--with-config-file-path=/etc/php7/cli \
+--with-config-file-scan-dir=/etc/php7/etc \
+--enable-cli \
+--enable-maintainer-zts \
+--with-tsrm-pthreads \
+--enable-debug \
+--enable-fpm \
+--with-fpm-user=www-data \
+--with-fpm-group=www-data"
+
+./configure $CONFIGURE_STRING
+
+make && sudo make install
+
+sudo rm /usr/bin/php
+sudo ln -s /etc/php7/bin/php /usr/bin/php
+
+Testing PHP Installation *******************
+
+php -v
+php -a
+echo PHP_ZTS; // this should output a 1 and not a 0
+
+Install Pthreads *************************
+
+sudo pecl install pthreads
+sudo mkdir -p /etc/php7/cli/
+sudo cp /usr/lib/php/7.0/php.ini-production.cli /etc/php7/cli/php.ini
+
+echo "extension=pthreads.so" | sudo tee -a /etc/php7/cli/php.ini
+echo "zend_extension=opcache.so" | sudo tee -a /etc/php7/cli/php.ini
+
+Testing Threading Support ***********************************
+
+php --version
+
+
+Multithreading Test
+
+
+<?php
+
+class Task extends Threaded
+{
+    private $value;
+
+    public function __construct(int $i)
+    {
+        $this->value = $i;
+    }
+
+    public function run()
+    {
+        $s=0;
+
+        for ($i=0; $i<10000; $i++)
+        {
+            $s++;
+        }
+
+        echo "Task: {$this->value}\n";
+    }
+}
+
+# Create a pool of 4 threads
+$pool = new Pool(4);
+
+for ($i = 0; $i < 15000; ++$i)
+{
+    $pool->submit(new Task($i));
+}
+
+while ($pool->collect());
+
+$pool->shutdown();
+
+?>
+
+
+
+
+###############################################################################
+
+Compile PHP 5.6 with pthreads and ZTS Ubuntu/Debian
+https://blog.flowl.info/2015/compile-php-5-6-pthreads-mongo-ubuntu/
+
+###############################################################################
+
+cd /usr/local/src
+wget http://uk1.php.net/get/php-5.6.12.tar.gz/from/this/mirror -O php.tar.gz
+tar xzvf php.tar.gz
+cd php-5.6.12/ext
+git clone https://github.com/krakjoe/pthreads.git
+wget http://pecl.php.net/get/mongo-1.6.10.tgz
+tar xzvf mongo-1.6.10.tgz
+cd ..
+
+
+apt-get install git
+
+apt-get install libcurl3-gnutls libcurl4-gnutls-dev
+apt-get install libcurl3-openssl libcurl4-openssl-dev
+apt-cache search mcrypt
+
+apt-get install libmemcached-dev libmcrypt-dev libcurl4-openssl-dev libgd2-xpm-dev \
+libmysqlclient-dev zlib1g-dev libmongo-client-dev libssl1.0.0-dbg \
+libssl-dev libssl-dev libsslcommon2-dev libgd2-xpm-dev
+
+cd /usr/local/src/php-5.6.12
+
+./buildconf --force
+make clean
+
+./configure \
+--prefix=/usr/local/src/php-5.6.12 \
+--with-libdir=/lib/x86_64-linux-gnu/ \
+--with-openssl=/usr --with-curl=/usr \
+--disable-cgi \
+--with-config-file-path=:/usr/local/src/php-5.6.12/etc \
+--enable-gd-native-ttf --enable-mysqlnd \
+--enable-opcache --enable-pcntl \
+--enable-debug --enable-maintainer-zts \
+--enable-pthreads --enable-mbstring \
+--enable-bcmath --enable-exif \
+--enable-ftp --enable-shmop \
+--enable-soap --enable-sockets \
+--enable-sysvmsg --enable-sysvsem \
+--enable-sysvshm --enable-wddx \
+--enable-opcache --enable-zip --enable-dba
+
+make
+make install
+
+chmod o+x /usr/local/src/php-5.6.12/scripts/phpize
+chmod o+x /usr/local/src/php-5.6.12/scripts/php-config
+
+cd /usr/local/src/php-5.6.12/ext/mongo*
+/usr/local/src/php-5.6.12/scripts/phpize
+
+./configure --prefix /usr/local/src/php-5.6.12 \
+--with-libdir=/lib/x86_64-linux-gnu \
+--enable-mongo --with-php-config /usr/local/src/php-5.6.12/scripts/php-config
+
+make && make install
+
+cd /usr/local/src/php-5.6.12
+mkdir etc
+cp php.ini-production etc/php.ini
+
+ln -s /usr/bin/php5-zts /usr/local/src/php-5.6.12/sapi/cli/php
+
+php5-zts -m
