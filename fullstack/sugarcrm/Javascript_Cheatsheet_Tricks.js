@@ -331,6 +331,27 @@ text.replace(/[^a-z0-9]+|\s+/gmi, " ");
 
 
 
+// -------------------------------------------
+// javascript - set checked property for input checkbox field
+// -------------------------------------------
+
+jQuery("#input[type="checkbox"][value='123']").attr("checked","checked");
+jQuery("#input[type="checkbox"][value='123']").prop("checked",true);
+
+// remove prop / attribute checked
+jQuery("#input[type="checkbox"][value='123']").removeAttr("checked");
+
+// find string in element
+if( $('#loader').html().indexOf("AJAX_loading.gif") > -1 ){
+      alert("Found!");
+}
+
+// -------------------------------------------
+// iterate into select field
+// -------------------------------------------
+jQuery("#select_field").each(function(){
+	console.log($(this).val())
+});
 
 
 
