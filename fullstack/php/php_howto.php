@@ -346,3 +346,40 @@ if ($memcache->get($cache_key)) {
 $cache_key = md5($sql . serialize($params));
 $cache_expiration = 10;
 $memcache->set($cache_key, serialize($result), MEMCACHE_COMPRESSED, $cache_expiration);
+
+
+
+
+
+
+
+#################################################
+#
+#   fibonacci
+#
+#################################################
+
+
+function fibonacci($n,$first = 0,$second = 1)
+{
+    $fib = [$first,$second];
+    for($i=1;$i<$n;$i++)
+    {
+        $fib[] = $fib[$i]+$fib[$i-1];
+    }
+    return $fib;
+}
+echo "<pre>";
+print_r(fibonacci(10));
+
+
+
+function fibonacci_second($a,$b,$limit){
+	echo "<br>".($a + $b);
+	if($b < $limit){
+		fibonacci2($b, $a +$b,$limit);
+	}
+}
+
+$a = 0; $b = 1;
+fibonacci_second($a,$b,25);
