@@ -756,6 +756,47 @@ Convert PDF:
 convert -verbose -colorspace  290x390 -interlace none -density 300 -quality 80 in.pdf out.pdf
 
 
+
+###########################################################
+#
+# 	How can I fix/repair a corrupted PDF file?
+#
+###########################################################
+
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dUseCIEColor -dBATCH -sOutputFile=fixed.pdf damaged.pdf
+
+gs -o fixed.pdf -sDEVICE=pdfwrite -dCompatibilityLevel=1.4  -dPDFSETTINGS=/prepress  -dColorConversionStrategy=/LeaveColorUnchanged damaged.pdf
+
+Set UseCIEColor for UseDeviceIndependentColor to work properly.
+   **** Error: Cannot find a 'startxref' anywhere in the file.
+   **** Warning:  An error occurred while reading an XREF table.
+   **** The file has been damaged.  This may have been caused
+   **** by a problem while converting or transfering the file.
+   **** Ghostscript will attempt to recover the data.
+
+**** Error: Cannot find a 'startxref' anywhere in the file.
+
+# convert damaged.pdf fixed.pdf
+# pdftk damaged.pdf output fixed.pdf
+# pdftocairo -pdf damaged.pdf fixed.pdf
+
+# sudo apt-get install mupdf-tools
+# mutool clean damaged.pdf fixed.pdf
+
+--
+
+# convert -resize 241x344 -background white -gravity center -extent 241x344 -quality 75 damaged.pdf fixed.pdf
+/*
+gs
+-dNOOUTERSAVE
+-dNOSUBSTDEVICECOLORS
+-dColorConversionStrategy=/LeaveColorUnchanged
+-dPDFSETTINGS=/prepress
+*/
+
+FIX:
+gs -o repaired.pdf -sDEVICE=pdfwrite -dCompatibilityLevel=1.4  -dPDFSETTINGS=/prepress  -dColorConversionStrategy=/LeaveColorUnchanged corrupted.pdf
+
 ###########################################################
 #
 #   How to use inxi? Using inxi to detect hardware information
