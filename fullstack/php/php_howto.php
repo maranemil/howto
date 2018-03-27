@@ -383,3 +383,79 @@ function fibonacci_second($a,$b,$limit){
 
 $a = 0; $b = 1;
 fibonacci_second($a,$b,25);
+
+
+
+
+
+
+
+#################################################
+#
+#   To get the Raw Post Data
+#
+#################################################
+
+<?php $postdata = file_get_contents("php://input"); ?>
+
+#################################################
+#
+#   Save POST FILE DATA
+#
+#################################################
+
+<?php
+// In PHP kleiner als 4.1.0 sollten Sie $HTTP_POST_FILES anstatt
+// $_FILES verwenden.
+
+$uploaddir = '/var/www/uploads/';
+$uploadfile = $uploaddir . basename($_FILES['userfile']['name']);
+
+echo '<pre>';
+if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
+    echo "Datei ist valide und wurde erfolgreich hochgeladen.\n";
+} else {
+    echo "Möglicherweise eine Dateiupload-Attacke!\n";
+}
+
+echo 'Weitere Debugging Informationen:';
+print_r($_FILES);
+
+print "</pre>";
+
+?>
+
+#################################################
+#
+#   Get file Extension
+#   http://techieroop.com/best-way-to-extract-a-file-extension-in-php/
+#
+#################################################
+
+$ext = pathinfo($filename, PATHINFO_EXTENSION);
+$ext = substr(strrchr($fileName, '.'), 1);
+$ext = preg_replace('/^.*\.([^.]+)$/D', '$1', $fileName);
+
+
+
+#################################################
+#   Test submit file on httpbin.org
+#################################################
+
+<?php
+require 'vendor/autoload.php';
+
+$client = new GuzzleHttp\Client();
+$history = new \GuzzleHttp\Subscriber\History();
+$client->getEmitter()->attach($history);
+
+$client->post('http://httpbin.org/post', [
+    'body' => [
+      'submit' => 'Upload packages',
+      'MAX_FILE_SIZE' => 2097152,
+      'form_name' => 'package_csv_form',
+      'my_file' => fopen(__FILE__, 'r')
+    ]
+]);
+
+echo $history;
