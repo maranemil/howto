@@ -459,3 +459,10 @@ $client->post('http://httpbin.org/post', [
 ]);
 
 echo $history;
+
+
+##############################################################
+# encode array to json
+##############################################################
+
+return \GuzzleHttp\json_encode($arrJSON);
