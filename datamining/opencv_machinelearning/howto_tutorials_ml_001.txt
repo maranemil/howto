@@ -234,3 +234,107 @@ https://docs.scipy.org/doc/numpy/reference/generated/numpy.full.html#numpy.full
 
 
 
+
+###################################################################################
+#
+#	Introducing TensorFlow.js: Machine Learning in Javascript
+#	https://medium.com/tensorflow/introducing-tensorflow-js-machine-learning-in-javascript-bf3eab376db
+#
+###################################################################################
+
+import * as tf from ‘@tensorflow/tfjs’;
+const model = tf.sequential();
+model.add(tf.layers.dense({inputShape: [4], units: 100}));
+model.add(tf.layers.dense({units: 4}));
+model.compile({loss: ‘categoricalCrossentropy’, optimizer: ‘sgd’});
+
+await model.fit(
+  xData, yData, {
+    batchSize: batchSize,
+    epochs: epochs
+});
+
+# The model is now ready to use to make predictions
+
+// Get measurements for a new flower to generate a prediction
+// The first argument is the data, and the second is the shape.
+const inputData = tf.tensor2d([[4.8, 3.0, 1.4, 0.1]], [1, 4]);
+
+// Get the highest confidence prediction from our model
+const result = model.predict(inputData);
+const winner = irisClasses[result.argMax().dataSync()[0]];
+
+// Display the winner
+console.log(winner);
+
+
+
+
+
+
+###################################################################################
+#
+#	Analysing 1.4 billion rows with python Using pytubes, numpy and matplotlib
+#	by Steve Stagg
+#	https://hackernoon.com/analysing-1-4-billion-rows-with-python-6cec86ca9d73
+#
+###################################################################################
+
+
+import tubes
+
+FILES = glob.glob(path.expanduser("~/src/data/ngrams/1gram/googlebooks*"))
+WORD = "Python"
+
+# Set up the data load pipeline
+one_grams_tube = (tubes.Each(FILES)
+    .read_files()
+    .split()
+    .tsv(headers=False)
+    .multi(lambda row: (
+        row.get(0).equals(WORD.encode('utf-8')),
+        row.get(1).to(int),
+        row.get(2).to(int)
+    ))
+)
+
+# Load the data into a numpy array.  By setting a roughly-accurate
+# estimated_rows count, pytubes optimizes the allocation pattern.
+# fields=True here is redundant, but ensures that the returned ndarray
+# uses fields, rather than a single multidimentional array
+one_grams = one_grams_tube.ndarray(estimated_rows=500_000_000, fields=True)
+
+
+
+last_year = 2008
+YEAR_COL = '1'
+COUNT_COL = '2'
+
+year_totals, bins = np.histogram(
+    one_grams[YEAR_COL],
+    density=False,
+    range=(0, last_year+1),
+    bins=last_year + 1,
+    weights=one_grams[COUNT_COL]
+)
+
+one_grams_tube = (tubes.Each(FILES)
+    .read_files()
+    .split()
+    .tsv(headers=False)
+    .skip_unless(lambda row: row.get(1).to(int).gt(1799))
+    .multi(lambda row: (
+        row.get(0).equals(word.encode('utf-8')),
+        row.get(1).to(int),
+        row.get(2).to(int)
+    ))
+)
+
+# Find the matching rows (where the first column is True)
+word_rows = one_grams[IS_WORD_COL]
+# Create an empty array to hold the per-year % values
+word_counts = np.zeros(last_year+1)
+# Iterate over each matching row (for a matching word, there should just be 1,000s of rows)
+for _, year, count in one_grams[word_rows]:
+    # Set the relevant word_counts row to the calculated value
+    word_counts[year] += (100*count) / year_totals[year]

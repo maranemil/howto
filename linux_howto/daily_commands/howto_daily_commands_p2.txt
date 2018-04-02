@@ -823,3 +823,98 @@ The A and G options output information about the audio and graphics hardware res
 
 
 
+
+
+
+
+
+############################################################
+#
+#	How do I set my DNS when resolv.conf is being overwritten
+#	How do I configure my DNS settings in Ubuntu server
+#
+############################################################
+
+sudo nano /etc/resolvconf/resolv.conf.d/base
+nameserver 8.8.8.8
+nameserver 1.1.1.1
+
+sudo resolvconf -u
+sudo service network-manager restart
+
+*****
+
+sudo nano /etc/dhcp/dhclient.conf
+supersede domain-name-servers 8.8.8.8;
+
+/etc/dnsmasq.conf
+server=8.8.8.8
+server=8.8.4.4
+
+****
+
+/etc/network/interfaces
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto eth0
+iface eth0 inet static
+address 192.168.X.X
+netmask 255.255.255.0
+gateway 192.168.X.X
+dns-nameservers X.X.X.X
+
+sudo ifdown eth0 && sudo ifup eth0
+
+****
+
+sudo nano /etc/resolv.conf
+nameserver 8.8.8.8
+nameserver 1.1.1.1
+
+
+
+
+
+
+
+###################################################################################
+#
+#	Monitoring Linux performance with Grafana
+#	https://opensource.com/article/17/8/linux-grafana?sc_cid=7016000000127ECAAY
+#
+###################################################################################
+
+yum install epel-release
+yum install collectd
+
+
+In /etc/collectd.conf
+
+Hostname    "YourHostNameHere"
+#FQDNLookup   true
+BaseDir     "/var/lib/collectd"
+PIDFile     "/var/run/collectd.pid"
+PluginDir   "/usr/lib64/collectd"
+TypesDB     "/usr/share/collectd/types.db"
+
+<Plugin network>
+  Server "127.0.0.1" "8096"
+</Plugin>
+
+Grafana
+
+cat <<EOF > /etc/yum.repos.d/grafana.repo
+[grafana]
+name=grafana
+baseurl=https://packagecloud.io/grafana/stable/el/6/$basearch
+repo_gpgcheck=1
+enabled=1
+gpgcheck=1
+gpgkey=https://packagecloud.io/gpg.key https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+EOF
