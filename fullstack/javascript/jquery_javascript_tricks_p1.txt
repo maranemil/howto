@@ -303,3 +303,68 @@ $( document ).on( events, selector, data, handler );        // jQuery 1.7+
 add attribute
 ##############################################################
 $(element).attr('id', 'newID');
+
+
+
+
+
+
+
+##############################################################
+jQuery-File-Upload check file size
+##############################################################
+https://github.com/blueimp/jQuery-File-Upload
+https://github.com/blueimp/jQuery-File-Upload/wiki/Setup
+https://github.com/blueimp/jQuery-File-Upload/wiki/Basic-plugin
+
+$(document).ready(function () {
+    'use strict';
+
+    $('#fileupload').fileupload({
+        add: function(e, data) {
+                var uploadErrors = [];
+                var acceptFileTypes = /^image\/(gif|jpe?g|png)$/i;
+                if(data.originalFiles[0]['type'].length && !acceptFileTypes.test(data.originalFiles[0]['type'])) {
+                    uploadErrors.push('Not an accepted file type');
+                }
+                if(data.originalFiles[0]['size'].length && data.originalFiles[0]['size'] > 5000000) {
+                    uploadErrors.push('Filesize is too big');
+                }
+                if(uploadErrors.length > 0) {
+                    alert(uploadErrors.join("\n"));
+                } else {
+                    data.submit();
+                }
+        },
+        dataType: 'json',
+        autoUpload: false,
+        // acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+        // maxFileSize: 5000000,
+        done: function (e, data) {
+            $.each(data.result.files, function (index, file) {
+                $('<p style="color: green;">' + file.name + '<i class="elusive-ok" style="padding-left:10px;"/> - Type: ' + file.type + ' - Size: ' + file.size + ' byte</p>')
+                .appendTo('#div_files');
+            });
+        },
+        fail: function (e, data) {
+            $.each(data.messages, function (index, error) {
+                $('<p style="color: red;">Upload file error: ' + error + '<i class="elusive-remove" style="padding-left:10px;"/></p>')
+                .appendTo('#div_files');
+            });
+        },
+        progressall: function (e, data) {
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+
+            $('#progress .bar').css('width', progress + '%');
+        }
+    });
+});
+
+
+
+
+
+
+
+
+

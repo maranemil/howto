@@ -1,0 +1,75 @@
+####################################################################
+12.9.2 Boolean Full-Text Searches
+####################################################################
+https://dev.mysql.com/doc/refman/5.7/en/fulltext-boolean.html
+https://dev.mysql.com/doc/refman/5.6/en/innodb-fulltext-index.html
+https://mariadb.com/kb/en/library/full-text-index-stopwords/
+https://mariadb.com/kb/en/library/full-text-index-overview/
+https://mariadb.com/kb/en/library/match-against/
+https://mariadb.com/kb/en/library/a-mariadb-primer/
+https://mariadb.com/kb/en/library/
+https://mariadb.com/kb/en/library/basic-sql-statements/
+https://dev.mysql.com/doc/refman/5.7/en/pattern-matching.html
+
+
+mysql> SELECT * FROM articles WHERE MATCH (title,body)
+    AGAINST ('+MySQL -YourSQL' IN BOOLEAN MODE);
+
+
+Test in http://www.sqlfiddle.com/
+
+mysql> CREATE TABLE articles (
+id INT UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY,
+title VARCHAR(200),
+body TEXT,
+FULLTEXT (title,body)
+) ENGINE=InnoDB;
+Query OK, 0 rows affected (1.04 sec)
+
+mysql> INSERT INTO articles (title,body) VALUES
+('MySQL Tutorial','This database tutorial ...'),
+("How To Use MySQL",'After you went through a ...'),
+('Optimizing Your Database','In this database tutorial ...'),
+('MySQL vs. YourSQL','When comparing databases ...'),
+('MySQL Security','When configured properly, MySQL ...'),
+('Database, Database, Database','database database database'),
+('1001 MySQL Tricks','1. Never run mysqld as root. 2. ...'),
+('MySQL Full-Text Indexes', 'MySQL fulltext indexes use a ..');
+Query OK, 8 rows affected (0.06 sec)
+Records: 8  Duplicates: 0  Warnings: 0
+
+mysql> SELECT id, title, body, MATCH (title,body)  AGAINST ('database' IN BOOLEAN MODE)
+AS score FROM articles ORDER BY score DESC;
++----+------------------------------+-------------------------------------+---------------------+
+| id | title                        | body                                | score               |
++----+------------------------------+-------------------------------------+---------------------+
+|  6 | Database, Database, Database | database database database          |  1.0886961221694946 |
+|  3 | Optimizing Your Database     | In this database tutorial ...       | 0.36289870738983154 |
+|  1 | MySQL Tutorial               | This database tutorial ...          | 0.18144935369491577 |
+|  2 | How To Use MySQL             | After you went through a ...        |                   0 |
+|  4 | MySQL vs. YourSQL            | When comparing databases ...        |                   0 |
+|  5 | MySQL Security               | When configured properly, MySQL ... |                   0 |
+|  7 | 1001 MySQL Tricks            | 1. Never run mysqld as root. 2. ... |                   0 |
+|  8 | MySQL Full-Text Indexes      | MySQL fulltext indexes use a ..     |                   0 |
++----+------------------------------+-------------------------------------+---------------------+
+8 rows in set (0.00 sec)
+
+
+mysql> SELECT id, title, body, MATCH (title,body)  AGAINST ('mysql tutorial' IN BOOLEAN MODE)
+    AS score FROM articles ORDER BY score DESC;
++----+------------------------------+-------------------------------------+----------------------+
+| id | title                        | body                                | score                |
++----+------------------------------+-------------------------------------+----------------------+
+|  1 | MySQL Tutorial               | This database tutorial ...          |   0.7405621409416199 |
+|  3 | Optimizing Your Database     | In this database tutorial ...       |   0.3624762296676636 |
+|  5 | MySQL Security               | When configured properly, MySQL ... | 0.031219376251101494 |
+|  8 | MySQL Full-Text Indexes      | MySQL fulltext indexes use a ..     | 0.031219376251101494 |
+|  2 | How To Use MySQL             | After you went through a ...        | 0.015609688125550747 |
+|  4 | MySQL vs. YourSQL            | When comparing databases ...        | 0.015609688125550747 |
+|  7 | 1001 MySQL Tricks            | 1. Never run mysqld as root. 2. ... | 0.015609688125550747 |
+|  6 | Database, Database, Database | database database database          |                    0 |
++----+------------------------------+-------------------------------------+----------------------+
+8 rows in set (0.00 sec)
+
+
+# ALTER TABLE tbl_query ADD FULLTEXT INDEX `FullText`  (`query_desc` ASC,   `query_desc_details` ASC);

