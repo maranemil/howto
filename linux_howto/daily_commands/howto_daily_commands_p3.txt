@@ -383,3 +383,115 @@ turn cache off
 
 /dev/sda:
  write-caching =  0 (off)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###########################################################
+#
+#    Change the default name for the screenshots made by gnome-screenshot
+#
+#    https://wiki.ubuntuusers.de/Bildschirmfotos/#GNOME
+#    https://wiki.ubuntuusers.de/GNOME_Konfiguration/dconf/
+#    https://askubuntu.com/questions/55204/how-can-i-change-the-default-name-for-the-screenshots-made-by-gnome-screenshot
+#    https://serverfault.com/questions/348482/how-to-remove-invalid-characters-from-filenames
+#    https://www.howtoforge.com/tutorial/taking-screenshots-in-linux-using-gnome-screenshot/
+#
+###########################################################
+
+
+gnome-screenshot --help
+gnome-screenshot -w
+
+Aufruf:
+  gnome-screenshot [OPTION …]
+
+Hilfeoptionen:
+  -h, --help                     Hilfeoptionen anzeigen
+  --help-all                     Alle Hilfeoptionen anzeigen
+  --help-gapplication            Optionen für GApplication anzeigen
+  --help-gtk                     GTK+-Optionen anzeigen
+
+Anwendungsoptionen:
+  -c, --clipboard                Aufnahme direkt an die Zwischenablage senden
+  -w, --window                   Nur ein Fenster anstatt des gesamten Bildschirms aufnehmen
+  -a, --area                     Nur einen Bereich anstatt des gesamten Bildschirms aufnehmen
+  -b, --include-border           Fensterrahmen mit in das Bildschirmfoto aufnehmen
+  -B, --remove-border            Fensterrahmen aus Bildschirmfoto entfernen
+  -p, --include-pointer          Zeiger mit in das Bildschirmfoto aufnehmen
+  -d, --delay=Sekunden           Bildschirmfoto erst nach der angegebenen Zeit aufnehmen [in Sekunden]
+  -e, --border-effect=Effekt     Effekt (Schatten, Rahmen, Alterung oder keiner), der auf den Fensterrahmen angewendet werden soll
+  -i, --interactive              Optionen interaktiv festlegen
+  -f, --file=Dateiname           Bildschirmfoto direkt in diese Datei einspeichern
+  --version                      Versionsinformationen anzeigen und beenden
+  --display=ANZEIGE              X-Anzeige, die verwendet werden soll
+
+
+
+sudo apt-get install dconf-editor
+dconf-editor
+
+
+
+
+Workarounds to change picture name
+
+-----------------------------------------------
+# remove all ascii from filenames
+-----------------------------------------------
+rename 's/[^\x00-\x7F]//g' *
+# Alterenatives
+# find . -exec rename 's/[^\x00-\x7F]//g' "{}" \;
+# mv 'file' $(echo 'file' | sed -e 's/[^A-Za-z0-9._-]/_/g')
+
+
+# rename all the screenshot taken immediately after the creation
+while true; do inotifywait -e CREATE ~/Pictures && rename 's/\:/\./g' Pictures/Screenshot*.png; done;
+
+rename 's/\:/\-/g' *.png
+rename 's/ /_/g' *
+rename 's/\:/-/g' *.png -vn
+
+#! /bin/sh
+rename 's/\:/\-/g' $HOME/Pictures/*.png
+
+#!/bin/bash
+gnome-screenshot.real -f "$HOME/Pictures/Screenshots/$(date +%F_%H-%M-%S).png" $@
+gnome-screenshot -p -f "$(date +%F_%H-%M-%S)_D.png"
+
+
+#!/bin/sh
+# start of code here
+sleep 0.4
+exec gnome-screenshot --area --file=/home/Name/Documents/screenshots/$(date +%y-%m-%d-%H%M%S).jpg
+exit 0
+# EOF
+
+
+
+# mate-desktop/mate-utils/blob/master/mate-screenshot/src/mate-screenshot.c
+# https://git.gnome.org/browse/gnome-screenshot/tree/src/screenshot-filename-builder.c
+-- root/src/screenshot-filename-builder.c
+-- file_name = g_strdup_printf (_("Screenshot from %s.%s"), origin, file_type);
+-- file_name = g_strdup_printf (_("Screenshot at %s.png"), timestamp);
+-- file_name = g_strdup_printf (_("Screenshot at %s - %d.png"), timestamp, job->iteration);
+
+
+
+
+
+
+
+
+
