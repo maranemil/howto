@@ -108,3 +108,152 @@ ffmpeg -f alsa -ac 2 -i hw:0,0 -f x11grab -r 30 -s $(xwininfo -frame | grep -oEe
 
 
 ---------------------------------------------------------------
+
+
+
+
+
+
+
+##########################################################
+#
+# FIX: Too many packets buffered for output stream 0:1.
+# [libvorbis @ 0x55cec874b4a0] 32 frames left in the queue on closing
+#
+##########################################################
+
+ffmpeg -i file.MP4 -max_muxing_queue_size 400  file.mkv
+
+------------------------------------------------------------------------------------------------------------------------
+
+# color correction plus 4x speed
+ffplay -i file.mp4 -vf "eq=1:0:2.9:1:1:1.1:1:1","setpts=0.25*PTS"
+
+# sharp smartblur correction
+ffplay -i file.MP4 -vf unsharp=3:3:1.5 -vf "eq=1:0:1.9:1:0:1.0:1:0","smartblur=lr=2.00:ls=-0.20:lt=-7.0:cr=0.7:cs=1.0:ct=2.9" -strict -2  -threads 2
+
+# sharp smartblur correction plus 4x speed
+ffplay -i file.MP4 -vf unsharp=3:3:1.5 -vf "eq=1:0:1.9:1:0:1.0:1:0","smartblur=lr=2.00:ls=-0.20:lt=-7.0:cr=0.7:cs=1.0:ct=2.9","setpts=0.25*PTS" -strict -2  -threads 2
+
+------------------------------------------------------------------------------------------------------------------------
+
+# Trim from the 20 second mark to the 40 second mark.
+
+ffmpeg -i file.mkv -ss 20 -to 40 -c copy file-2.mkv
+ffmpeg -i file.mkv -ss 00:00:20 -to 00:00:40 -c copy file-2.mkv
+
+------------------------------------------------------------------------------------------------------------------------
+
+# add saturation and smartblur
+ffplay -i input.MP4 -vf "eq=1:0:1.9:1:0:1.0:1:0","smartblur=lr=2.00:ls=-0.20:lt=-7.0:cr=0.7:cs=1.0:ct=2.9"
+
+
+# unsharp
+ffplay -i input.MP4 -vf  unsharp=3:3:3
+ffplay -i input.MP4 -vf unsharp=3:5:1.5
+ffplay -i input.MP4 -vf unsharp=3:3:1.5  # ok
+
+
+# convert video format
+for f in *.wmv; do ffmpeg -i "$f" -c:v libx264  -q:a 100  -strict -2  -threads 2  "${f%.wmv}.mp4"; done
+for f in *.asf; do ffmpeg -i "$f" -c:v libx264  -q:a 100  -strict -2  -threads 2  "${f%.asf}.mp4"; done
+for f in *.flv; do ffmpeg -i "$f" -c:v libx264  -q:a 100  -strict -2  -threads 2  "${f%.flv}.mp4"; done
+for f in *.mp4; do ffmpeg -i "$f" -vn -c:a libmp3lame -ar 44100 -ac 2 -ab 192k "${f/%mp4/mp3}"; done
+
+#
+ffmpeg -i abc.wmv -c:v libx264  -q:a 100  -strict -2 -threads 2 abc.mp4
+ffmpeg -i abc.asf -c:v libx264  -q:a 100  -strict -2 -threads 2 abc.mp4
+ffmpeg -i abc.flv -c:v libx264  -q:a 100  -strict -2 -threads 2 abc.mp4
+
+# down size fast
+ffmpeg -i 1.mkv -crf 18 -strict -2 -preset ultrafast test.mp4
+ffmpeg -i 1.mkv -vf scale=-1:720 -c:v libx264 -crf 18 -strict -2 -preset ultrafast test2.mp4
+ffmpeg -i 1.mkv -crf 18 -strict -2 -preset ultrafast test.mp4
+ffmpeg -i 1.mkv -vf scale=-1:720 -crf 18 -strict -2 -b 1000000 -preset ultrafast test2.mp4
+
+# compress and down size slow
+ffmpeg -i input.mkv -vf scale=-1:720 -c:v libx264 -crf 18 -preset veryslow -c:a copy output1.mkv
+ffmpeg -i input.mkv -vf scale=-1:720 -c:v libvpx -crf 30 -preset veryslow -c:a copy output2.mkv
+ffmpeg -i input.mkv -vf scale=-1:720 -c:v libxvid -q:v 15 -preset veryslow -c:a copy output3.mkv
+ffmpeg -i input.mkv  -c:v libx264 -b:v 1000k -preset fast -crf 22 -c:a copy output4.mkv
+
+# deinterlaced ?
+ffplay -i test.mkv -vf yadif  -preset slow -crf 14  -b:a 256k
+
+# add blur
+ffplay -i test.mkv -vf smartblur=lr=2.00:ls=-0.90:lt=-5.0:cr=0.5:cs=1.0:ct=1.5
+ffplay -i test.MP4 -vf smartblur=lr=2.00:ls=-0.20:lt=-7.0:cr=0.7:cs=1.0:ct=2.9
+
+
+# correct levels ?
+-vf "mp=eq2=1.0:1.0:0.3:1.0:1.0:1.0:1.0:1.0"
+ffmpeg -i input -vf curves=preset=lighter -c:a copy output
+curves=r='0.4/0.5':g='0.4/0.5':b='0.4/0.5'
+
+------------------------------------------------------------------------------------------------------------------------
+
+# Resize mage
+ffmpeg -i input.jpg -vf scale=w=320:h=240:force_original_aspect_ratio=decrease output_320.png
+
+# Keep Quality
+ffmpeg -i "test.avi" -c:v libx264 -crf 20 -c:a aac -strict -2 test.mp4
+
+# create a 1min clip starting 1min into the video:
+ffmpeg -i "test.avi" -c:v libx264 -crf 20  -c:a aac -strict -2 -ss 60 -t 60 test.mp4
+
+# encode with mpeg4
+ffmpeg -i TestBitRate.wmv -c:v mpeg4 -q:v 1 -b 500k -c:a libvo_aacenc -q:a 100 TestBitRate.mp4
+
+
+# add timecode and speed up x4 a video with ffmpeg without losing quality
+ffplay -i test.MP4 -vf drawtext="fontsize=15:fontfile=Arial.ttf.ttf:timecode='00\:00\:00\:00':rate=25:text='TCR\:':fontsize=12:fontcolor='white':boxcolor=0x000000AA:box=1:x=460-text_w/2:y=6"
+
+ffmpeg -i test.MP4 -vf drawtext="fontsize=15:fontfile=Arial.ttf.ttf:timecode='00\:00\:00\:00':rate=25:text='TCR\:':fontsize=12:fontcolor='white':boxcolor=0x000000AA:box=1:x=460-text_w/2:y=6" -b 500k  -crf 20 -preset ultrafast -c:v libx264  outputx.mkv
+
+------------------------------------------------------------------------------------------------------------------------
+
+# add two overlays example: - logo + video
+ffmpeg -i INPUT.MP4 -loop 1 -i logo.png -filter_complex " [0] [1] overlay=10:main_h-overlay_h-10 [input_with_logo] ; \
+drawtext=...your drawtext stuff... [drawtext] ; \
+[input_with_logo][drawtext] overlay=...position the drawtext... " \
+-vcodec h264 -preset veryslow -crf 18 -acodec copy -y OUTPUT.mp4
+
+------------------------------------------------------------------------------------------------------------------------
+
+How to minimize usage of CPU/memory by ffmpeg when recording video
+https://askubuntu.com/questions/365163/how-to-minimize-usage-of-cpu-memory-by-ffmpeg-when-recording-video
+https://linux.die.net/man/1/ffmpeg
+
+1. Make a lossless RGB output first
+ffmpeg -y -framerate 25 -video_size 1280x1024 -f x11grab -i :0.0 -c:v libx264rgb -crf 0 -preset ultrafast temp.mp4
+
+2. Then re-encode it
+ffmpeg -i temp.mp4 -c:v libx264 -crf 23 -preset medium -vf format=yuv420p out.mp4
+
+
+You can experiment with the -crf value to control output quality. A subjectively sane range is 18-28, where 18 is visually lossless or nearly so. Default is 23.
+Use the slowest preset you have patience for: ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow. Default is medium.
+I added -vf format=yuv420p to ensure the output works with dumb players like QuickTime and Windows Media Player. You can omit this if you're uploading it to YouTube or only playing it on VLC, mpv, MPlayer, or any other FFmpeg based player.
+
+------------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+# This extracts AAC audio from MP4 files:
+for file in *.mp4; do ffmpeg -i "$file" -acodec copy "${file%.mp4}.m4a" ; done
+
+# This extracts frame 100 from each of them:
+for file in *.mp4; do  ffmpeg -i "$file" -vf "select=gte(n\,100)" -vframes 1 "${file%.mp4}.png"; done
+
+------------------------------------------------------------------------------------------------------------------------
+
+
+# detect edge
+ffmpeg -i imput.mp4 -vf edgedetect=low=0.1:high=0.4,hqdn3d=4.0:3.0:6.0:4.5,nlmeans=10:11:1 -vf unsharp=7:7:3:7:7:3,dctdnoiz=4.5,pp=tn/hb/vb -vf unsharp=7:7:3:7:7:3,hqdn3d=4.0:3.0:6.0:4.5,pp=tn/hb/vb/dr -vf dctdnoiz=4.5,unsharp=5:5:1.1:5:5:1.1,pp=tn/hb/vb/ha/va/h1/v1/dr/al output.mp4
+
+
+
+
+
+
