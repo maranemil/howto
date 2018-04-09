@@ -115,3 +115,12 @@ SELECT [activity_dt], count(*) FROM table1 GROUP BY minute( activity_dt ) , minu
 
 
 
+
+
+# https://stackoverflow.com/questions/5201383/how-to-convert-a-string-to-date-in-mysql
+# http://www.mysqltutorial.org/mysql-str_to_date/
+# https://mariadb.com/kb/en/library/substring/
+
+SELECT STR_TO_DATE(SUBSTRING('20180328160604.png',1,8), '%Y%m%d')
+SELECT * FROM table WHERE STR_TO_DATE(SUBSTRING(table.field,1,8), '%Y%m%d') < DATE_SUB(NOW(),INTERVAL 1 WEEK)
+

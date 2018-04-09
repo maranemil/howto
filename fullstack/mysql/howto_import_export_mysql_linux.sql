@@ -182,3 +182,50 @@ END
 
 */
 
+
+
+
+
+####################################################################################
+#
+# Exporting data to a CSV file whose filename contains timestamp
+# http://www.mysqltutorial.org/mysql-export-table-to-csv/
+#
+####################################################################################
+
+SELECT
+    orderNumber, status, orderDate, requiredDate, comments
+FROM
+    orders
+WHERE
+    status = 'Cancelled'
+INTO OUTFILE 'C:/tmp/cancelled_orders.csv'
+FIELDS ENCLOSED BY '"'
+TERMINATED BY ';'
+ESCAPED BY '"'
+LINES TERMINATED BY '\r\n';
+
+
+
+(SELECT 'Order Number','Order Date','Status')
+UNION
+(SELECT orderNumber,orderDate, status
+FROM orders
+INTO OUTFILE 'C:/tmp/orders.csv'
+FIELDS ENCLOSED BY '"' TERMINATED BY ';' ESCAPED BY '"'
+LINES TERMINATED BY '\r\n');
+
+
+
+SELECT
+    orderNumber, orderDate, IFNULL(shippedDate, 'N/A')
+FROM
+    orders INTO OUTFILE 'C:/tmp/orders2.csv'
+    FIELDS ENCLOSED BY '"'
+    TERMINATED BY ';'
+    ESCAPED BY '"' LINES
+    TERMINATED BY '\r\n';
+
+
+
+

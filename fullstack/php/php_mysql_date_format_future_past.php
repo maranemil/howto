@@ -145,3 +145,55 @@ echo date('Y-m-d H:i:s', strtotime("+7 day"));
 // This is what you need for future date from specific date.
 echo date('Y-m-d H:i:s', strtotime('01/01/2010 +7 day'));
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###################################################
+convert filename to date
+Object of class DateInterval could not be converted to string
+date_diff() expects parameter 2 to be DateTimeInterface, string given
+###################################################
+
+# http://phptester.net
+
+$entry = "20180330143922.jpg";
+echo $entryDate = substr($entry,0,4)."-".substr($entry,4,2)."-".substr($entry,6,2);
+echo "<br>";
+echo $dateFile =  date("Y-m-d H:i:s",strtotime($entryDate));
+echo "<br>";
+echo $dateToday =  date("Y-m-d H:i:s", strtotime(date("Y-m-d")." +1weeks"));
+
+$date = new DateTime($dateFile);
+$now = new DateTime();
+
+echo "<br>";
+$diff = date_diff($now,$date );
+echo $diff->format('%d');
+
+output:
+2018-03-30
+2018-03-30 00:00:00
+2018-04-16 00:00:00
+10
+
+
+$date_expire = '2014-08-06 00:00:00';
+$date = new DateTime($date_expire);
+$now = new DateTime();
+
+echo $date->diff($now)->format("%d days, %h hours and %i minuts");
