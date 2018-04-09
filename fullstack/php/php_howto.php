@@ -541,3 +541,46 @@ do
     done
     sleep 10
 done
+
+
+
+
+
+
+
+
+
+
+
+
+
+############################################################
+#
+# Delete files older than X days
+#
+############################################################
+
+if ($handle = opendir(DIR_SOMEPATH)) {
+   while (false !== ($strDirFile = readdir($handle))) {
+      if ($strDirFile != "." && $strDirFile != "..") {
+         $arrFileDirShare[] = $strDirFile;
+         $entryDate = substr($strDirFile,0,4)."-".substr($strDirFile,4,2)."-".substr($strDirFile,6,2);
+         $dateFile =  date("Y-m-d H:i:s",strtotime($entryDate));
+         #$dateToday =  date("Y-m-d H:i:s", strtotime(date("Y-m-d")." +1weeks"));
+         $oDateFile = new DateTime($dateFile);
+         $oDateNow = new DateTime();
+         $oDiffDate = date_diff( $oDateNow, $oDateFile );
+         $days =  $oDiffDate->format('%d '); // days
+         // delete files after x days
+         if( $days > 7 ){
+            if(unlink(DIR_SOMEPATH.$strDirFile)){
+               clearstatcache();
+               echo "Deleted succesfully: ".DIR_SOMEPATH.$strDirFile.PHP_EOL;
+            }else{
+               echo "Warning! File cannot be Deleted: ".DIR_SOMEPATH.$strDirFile.PHP_EOL;
+            }
+         }
+      }
+   }
+   closedir($handle);
+}
