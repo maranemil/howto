@@ -869,6 +869,471 @@ git push --set-upstream origin some branch
 
 
 
+##########################################################
+#
+#	Delete Git Branch
+#
+##########################################################
+
+Executive Summary
+$ git push -d <remote_name> <branch_name>
+$ git branch -d <branch_name>
+
+Delete Local Branch To delete the local branch use one of the following:
+
+$ git branch -d branch_name
+$ git branch -D branch_name
+
+--------------------------------------------------------------------------------
+
+git rm --cached asd
+git commit -m "the file asd is gone from the repository"
+versus
+
+git reset HEAD -- asd
+git commit -m "the file asd remains in the repository"
+
+https://alvinalexander.com/git/git-rm-file-git-repository-dont-track-accidentally-added
+git rm --cached filename
+
+prevernt from ignore
+echo '!/vmlinux*' >arch/foo/kernel/.gitignore
+
+https://plugins.jetbrains.com/plugin/7495--ignore
+https://github.com/hsz/idea-gitignore
+
+
+
+
+
+
+
+
+
+
+
+######################################
+#
+# Git Commands Examples
+#
+#####################################
+
+####################################################
+#
+#	FIX CRLF LF
+#
+####################################################
+
+$ echo "* text=auto" >>.gitattributes
+## echo "* -crlf" >>.gitattributes
+$ rm .git/index     # Remove the index to force Git to
+$ git reset         # re-scan the working directory
+$ git status        # Show files that will be normalized
+$ git add -u
+$ git add .gitattributes
+$ git commit -m "Introduce end-of-line normalization"
+
+Result:
+The file will have its original line endings in your working directory.
+warning: CRLF will be replaced by LF in somefile.data.
+
+---------------------------------------------------------------------------------------------
+
+git config --global core.filemode false
+git config core.filemode false
+git update-index --chmod=(+|-)x path/to/file
+git update-index --chmod=(+|-)x <path>.
+
+old mode 100644
+new mode 100755
+
+cd .git/
+vi config
+[Core]
+filemode = false
+
+git update-index --chmod=+x git
+git status
+
+---------------------------------------------------------------------------------------------
+
+$ echo "Hello World" > example.txt
+$ unix2dos example.txt #Make sure it uses CRLF
+$ git add example.txt
+$ git commit -m "commit 1"
+$ #Instruct git that all .txt files should be normalized
+$ echo '*.txt text' >> .gitattributes
+$ git add .gitattributes
+$ git commit -m "commit 2"
+------------
+
+git status -uno
+# git status --untracked-files=no
+git rev-parse
+git status --porcelain
+
+no: do not show untracked files
+normal: show untracked files and directories
+all: a more-verbose variant of normal
+
+---------
+git diff --ignore-space-at-eol.
+git config -l
+git config --global core.autocrlf input  # convert all CRLF line endings to LF
+#git config --global core.autocrlf false
+git config --global core.safecrlf true # prevent git from updates to change the line-ending
+
+  - git config --global core.autocrlf false        # per-user solution
+  - git config --local core.autocrlf false          # per-project solution
+
+find ./ -type f -exec dos2unix {} \; # Convert Cloned Files
+
+# Local Settings
+echo "# LF (not CRLF) for line endings" > .gitattributes
+echo "* text eol=lf" >> .gitattributes
+
+echo "* text=auto" >>.gitattributes
+rm .git/index
+git rm --cached -r .
+git reset
+git reset --hard
+git reset HEAD^
+git reset HEAD^ --hard
+
+UNIX(LF) -> DOS(CRLF) conversion.
+unix2dos filename
+dos2unix -D filename
+
+In your .gitattributes you can:
+# normalize text files to use lf
+text eol=lf
+# except these which we want crlf
+*.txt eol=crlf
+
+# https://www.kernel.org/pub/software/scm/git/docs/gitattributes.html
+
+
+# http://lexsheehan.blogspot.de/2014/05/warning-crlf-will-be-replaced-by-lf-in.html
+# https://help.github.com/articles/dealing-with-line-endings/
+
+git config --global core.whitespace trailing-space,space-before-tab,indent-with-non-tab
+git config --global core.whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
+git config --global core.safecrlf false # for windows
+git ls-files --eol
+
+---------------------------------------------------------------------------------------------
+
+
+#reproduce
+
+git init
+git add .
+
+warning: CRLF will be replaced by LF in .bowerrc.
+The file will have its original line endings in your working directory.
+
+git clone git@github.com:yarnpkg/yarn
+cd yarn
+git status
+
+---------------------------------------------------------------------------------------------
+
+http://stackoverflow.com/questions/5787937/git-status-shows-files-as-changed-even-though-contents-are-the-same
+
+ls-files: add eol diagnostics
+
+When working in a cross-platform environment, a user may want to check if text files are stored normalized in the repository and if .gitattributes are set appropriately.
+
+Make it possible to let Git show the line endings in the index and in the working tree and the effective text/eol attributes.
+
+The end of line ("eolinfo") are shown like this:
+"-text"        binary (or with bare CR) file
+"none"         text file without any EOL
+"lf"           text file with LF
+"crlf"         text file with CRLF
+"mixed"        text file with mixed line endings.
+
+
+The effective text/eol attribute is one of these:
+"", "-text", "text", "text=auto", "text eol=lf", "text eol=crlf"
+git ls-files --eol gives an output like this:
+i/none   w/none   attr/text=auto      t/t5100/empty
+i/-text  w/-text  attr/-text          t/test-binary-2.png
+i/lf     w/lf     attr/text eol=lf    t/t5100/rfc2047-info-0007
+i/lf     w/crlf   attr/text eol=crlf  doit.bat
+i/mixed  w/mixed  attr/               locale/XX.po
+to show what eol convention is used in the data in the index ('i'), and in the working tree ('w'), and what attribute is in effect, for each path that is shown.
+
+
+#############################################################################################
+
+
+git reset --hard HEAD
+git clean -f -d
+git pull
+
+git fetch --all
+rm .git/index.lock
+git reset --hard origin/master
+git reset --hard origin/develop
+
+git checkout master
+git branch new-branch-to-save-current-commits
+git fetch --all
+git reset --hard origin/master
+
+git reset --hard HEAD
+git pull
+git pull --rebase
+
+git diff branch_1 branch_2
+git diff branch_1 branch_2 -- # show files too
+
+git log.
+
+git diff branch_1..branch_2
+git diff branch_1...branch_2
+
+#################################################################
+
+First do a commit of your changes
+
+ git add *
+ git commit -a -m "local file server commit message"
+Then fetch the changes and overwrite if there is a conflict
+
+ git fetch origin master
+ git merge -s recursive -X theirs origin/master
+
+****
+
+Instead of doing:
+
+git fetch --all
+git reset --hard origin/master
+I'd advise doing the following:
+
+git fetch origin master
+git reset --hard origin/master
+
+git clean
+
+git stash --include-untracked
+git pull
+
+git stash list
+git stash drop stash@{0}
+git stash drop stash@{1}
+git stash clear
+git stash apply stash@{5}
+
+git clean -f
+git clean -fd
+git clean -f -d
+
+git reset --hard HEAD
+git pull
+#git push
+
+
+git reset --hard HEAD
+git clean -f
+git pull
+
+git fetch
+git reset --hard @{u}
+
+git fetch --all
+git reset --hard origin/master
+git reset --hard HEAD
+git clean -f -d
+git pull
+
+git reset --hard HEAD
+git checkout origin/master
+git branch -D master
+git checkout -b master
+git pull origin master
+
+
+
+git checkout -b tmp # "tmp" or pick a better name for your local changes branch
+git add -A
+git commit -m 'tmp'
+git pull
+git checkout master # Or whatever branch you were on originally
+git pull
+git diff tmp
+git checkout master && git merge tmp
+git reset origin/master
+
+
+git add -A stages All
+git add . stages new and modified, without deleted
+git add -u stages modified and deleted, without new
+
+http://stackoverflow.com/questions/572549/difference-between-git-add-a-and-git-add
+
+
+
+git checkout -b tmp
+git add *; git commit -am "my temporary files"
+git checkout master
+
+git fetch origin master
+git merge -s recursive -X theirs origin master
+
+
+# https://git-scm.com/docs/git-pull
+
+######################################################
+
+git pull --rebase
+
+You asked me to pull without telling me which branch you
+want to rebase against, and 'branch.develop.merge' in
+your configuration file does not tell me, either. Please
+specify which branch you want to use on the command line and
+try again (e.g. 'git pull <repository> <refspec>').
+See git-pull(1) for details.
+
+If you often rebase against the same branch, you may want to
+use something like the following in your configuration file:
+
+    [branch "develop"]
+    remote = <nickname>
+    merge = <remote-ref>
+    rebase = true
+
+    [remote "<nickname>"]
+    url = <url>
+    fetch = <refspec>
+
+See git-config(1) for details.
+
+
+
+
+git pull branch --rebase
+
+error: unknown option `rebase'
+usage: git fetch [<options>] [<repository> [<refspec>...]]
+   or: git fetch [<options>] <group>
+   or: git fetch --multiple [<options>] [<repository> | <group>]...
+   or: git fetch --all [<options>]
+
+    -v, --verbose         be more verbose
+    -q, --quiet           be more quiet
+    --all                 fetch from all remotes
+    -a, --append          append to .git/FETCH_HEAD instead of overwriting
+    --upload-pack <PATH>  path to upload pack on remote end
+    -f, --force           force overwrite of local branch
+    -m, --multiple        fetch from multiple remotes
+    -t, --tags            fetch all tags and associated objects
+    -n                    do not fetch all tags (--no-tags)
+    -p, --prune           prune tracking branches no longer on remote
+    --dry-run             dry run
+    -k, --keep            keep downloaded pack
+    -u, --update-head-ok  allow updating of HEAD ref
+    --progress            force progress reporting
+    --depth <DEPTH>       deepen history of shallow clone
+
+
+##########################
+
+git show
+and undo the bad part by restoring the original symlink pathname into the file and git adding it. Or you could really get rid of the symlink properly with git rm, then create a new file and git add that. If you choose the first option, be aware that the content of a symlink is just a pathname. It's not a text file - it doesn't have a newline on the end. If you edit it with a text editor that adds a newline, you'll have a broken symlink (pointing to a file with a newline in its name).
+
+After you've done your git add, reinsert the fixed commit into its place in history:
+
+git commit --amend
+git rebase --continue
+If you changed multiple commits from pick to edit you'll have to repeat that procedure for each one. The final git rebase --continue will bring you back to the present.
+
+
+
+######################################################
+#
+#	git error: there are still refs under 'refs/remotes/origin/
+#
+######################################################
+
+# git remote show uat
+git branch -r # show remote branches
+git branch -a # show all branches
+git branch -rD remotes/origin/branch # delete remote branch
+git branch -d remotes/origin/branch # delete local branch
+
+
+git branch -rD remotes/origin/Branchname # delete remote branch
+git branch -d remotes/origin/Branchname # delete local branch
+git branch -D remotes/origin/Branchname # delete local branch
+
+
+# To remove a local branch from your machine:
+# git branch -d {the_local_branch} (use -D instead to force deletion without checking merged status)
+
+
+
+# git gc --prune=now
+# git remote prune origin
+# git pull
+# git push -u -f origin master
+
+
+
+# Deleting a local branch:
+git branch --delete <branch>
+git branch -d <branch> # Shorter version
+git branch -D <branch> # Force delete un-merged branches
+
+
+
+#Deleting a local remote-tracking branch:
+git branch --delete --remotes <remote>/<branch>
+git branch -dr <remote>/<branch> # Shorter
+git fetch <remote> --prune # Delete multiple obsolete tracking branches
+git fetch <remote> -p      # Shorter
+
+
+
+# View just remote-tracking branches
+git branch --remotes
+git branch -r
+
+# View both strictly local as well as remote-tracking branches
+git branch --all
+git branch -a
+
+git branch --delete --remotes origin/X
+git branch -dr origin/X # Shorter
+
+# http://stackoverflow.com/questions/2003505/how-to-delete-a-git-branch-both-locally-and-remotely
+
+
+######################################################
+#
+#  branch show delete create
+#
+######################################################
+
+git branch  -l
+git branch  --remote
+git branch -d branchname # local
+git branch -rD origin/branchname # remote
+git checkout -b newbeanch
+
+######################################################
+#
+#  branch diff
+#
+######################################################
+
+git diff branch_1..branch_2
+git diff branch_1...branch_2
+
+
+
 
 
 
