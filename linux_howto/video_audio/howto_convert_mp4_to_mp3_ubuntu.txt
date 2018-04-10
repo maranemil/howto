@@ -329,7 +329,56 @@ ffmpeg -i input1 -i input2 -filter_complex "[0:v]setpts=PTS-STARTPTS, pad=iw*2:i
 
 
 
+
+
+
+---------------------------------------------------
+Manually normalizing audio with ffmpeg
+---------------------------------------------------
+Apply the volume filter
+ffmpeg -i video.mp4 -af "volume=7dB" -c:v copy -c:a aac -b:a 192k
+ffplay -i video.mp4 -af "volume=7dB"
+
+
+---------------------------------------------------
+Apply 200x62px logo for 1280×720px video  top-right bottom-right
+---------------------------------------------------
+ffplay -i video.mp4 -vf "movie=logo2.png [watermark]; [in][watermark] overlay=main_w-overlay_w-10:10 [out]"
+ffplay -i video.mp4 -vf "movie=Logo_GoPro_60x60.png [watermark]; [in][watermark] overlay=main_w-overlay_w-10:main_h-overlay_h-10 [out]"
+
+
+---------------------------------------------------
+Equalizer
+---------------------------------------------------
+http://ffmpeg.org/ffmpeg-all.html#Commands-9
+http://ffmpeg.org/ffmpeg-all.html#dynaudnorm
+
+ffmpeg -i input.mp4 -af "equalizer=f=1000:width_type=h:width=200:g=-10"
+ffmpeg -i input.mp4 -af "equalizer=f=440:width_type=o:width=2:g=5"
+ffmpeg -i input.mp4 -af "equalizer=f=440:width_type=o:width=2:g=5,equalizer=f=1000:width_type=h:width=200:g=-10"
+
+
+---------------------------------------------------
+35.64.1 Mixing examples
+---------------------------------------------------
+ffmpeg -i input.mp4 -af "pan=1c|c0=0.9*c0+0.1*c1"
+ffmpeg -i input.mp4 -af "pan="stereo| c0=FL | c1=FR"
+ffmpeg -i input.mp4 -af "pan="stereo|c1=c1"
+ffmpeg -i input.mp4 -af "pan="stereo| c0=FR | c1=FR"
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------------------------
 # merging video and audio, with audio re-encoding
+---------------------------------------------------
 ffmpeg -i video.mp4 -i audio.wav -c:v copy -c:a aac -strict experimental -t 00:11:10 output.mp4
 ffmpeg -i video.mp4 -i audio.wav -c copy output.mkv
 ffmpeg -i video.mp4 -i audio.wav -c:v copy -c:a aac -strict experimental  -map 0:v:0 -map 1:a:0 output.mp4 #ok
