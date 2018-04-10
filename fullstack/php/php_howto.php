@@ -584,3 +584,86 @@ if ($handle = opendir(DIR_SOMEPATH)) {
    }
    closedir($handle);
 }
+
+
+
+
+
+
+############################################################
+
+// Array Comparison
+// http://phptester.net
+
+############################################################
+
+$arrayA = array(
+
+    "0" => "11.png",
+    "1" => "22.csv",
+);
+
+$arrayB = array(
+    "0" => "11.png",
+    "1" => "22.csv",
+    20 => "77.png",
+    21 => "88.jpg",
+    22 => "99.jpg",
+);
+
+print "<pre>";
+print_r($arrayA);
+print_r($arrayB);
+
+print_r(array_diff($arrayB,$arrayA)); // difference from both arr
+print_r(array_intersect($arrayB,$arrayA)); // similar in both arr
+print_r(array_diff_assoc($arrayB,$arrayA)); // difference from both arr
+
+$arrDiffNew = array();
+foreach($arrayB as $DirFile){
+	if(!in_array($DirFile,$arrayA)){
+		$arrDiffNew[] = $DirFile;
+	}
+}
+print_r($arrDiffNew);
+/*
+-------------------------------------------------
+Output:
+
+Array arrayA
+(
+    [0] => 11.png
+    [1] => 22.csv
+)
+Array arrayB
+(
+    [0] => 11.png
+    [1] => 22.csv
+    [20] => 77.png
+    [21] => 88.jpg
+    [22] => 99.jpg
+)
+Array array_diff()
+(
+    [20] => 77.png
+    [21] => 88.jpg
+    [22] => 99.jpg
+)
+Array array_intersect()
+(
+    [0] => 11.png
+    [1] => 22.csv
+)
+Array array_diff_assoc()
+(
+    [20] => 77.png
+    [21] => 88.jpg
+    [22] => 99.jpg
+)
+Array in_array()
+(
+    [0] => 77.png
+    [1] => 88.jpg
+    [2] => 99.jpg
+)
+*/
