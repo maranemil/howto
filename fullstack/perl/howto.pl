@@ -16,6 +16,8 @@
 #
 ####################################################################
 
+use strict;
+use warnings;
 
 print time();
 print $_ . "\n"; # eol perl
@@ -23,6 +25,7 @@ print localtime();
 print $_ . "\n";
 print gmtime();
 print $_ . "\n";
+
 
 use POSIX qw(strftime);
 print strftime "%H:%M:%S %Y", localtime(); # 13 uhr localtime
