@@ -493,5 +493,54 @@ exit 0
 
 
 
+###########################################################
+#
+#  Rename files in range 00000-99999
+#
+###########################################################
 
 
+// generate dummy files 1...10
+touch {1..10}.txt
+
+
+// generate random files
+for i in {1..5}; do touch $RANDOM.txt; done
+
+
+// rename 0000 - 9999
+#for i in *.txt; do mv $i $(printf %04d $(basename $i .txt) ).txt ; done
+
+for i in *.txt; do echo $(($RANDOM % 10000)).txt ; done
+for i in *.txt; do mv $i $(($RANDOM % 10000)).txt ; done
+
+
+// add prefix
+rename  's//bass/i' *.txt
+
+output
+rename(0000.txt, bass0000.txt)
+rename(0001.txt, bass0001.txt)
+
+----------------------
+
+# rename xi intruments
+for i in *.xi; do mv $i $(($RANDOM % 1000000000)).xi ; done
+rename  's//bass/i' *.xi
+
+
+
+
+##########################################################
+#
+#	How do I create a 1GB random file in Linux
+#
+##########################################################
+
+openssl rand -out sample.txt -base64 $(( 2**30 * 3/4 ))
+dd if=/dev/urandom of=sample.txt bs=1G count=1
+dd if=/dev/urandom of=sample.txt bs=64M count=16
+head -c 1073741824 </dev/urandom >myfile
+head -c 1G </dev/urandom >myfile
+dd bs=1024 count=1048576 </dev/urandom >myfile
+dd if=/dev/zero of=file.txt count=1024 bs=1024
