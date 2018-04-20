@@ -194,3 +194,85 @@ https://plugins.jquery.com/tablesorter/
 
 
 
+---------------------------------------------------------------------------------
+
+
+
+
+----------------------------------------------------------------------------
+Datatables_ssp::simple + Pagination sorting explanation
+----------------------------------------------------------------------------
+
+https://datatables.net/forums/discussion/22484/sorting-and-pagination-is-not-working-while-serverside-true
+With server-side processing enabled, all paging, searching, ordering etc actions that DataTables performs are handed off to a server
+
+demo data
+https://www.datatables.net/examples/server_side/scripts/server_processing.php
+https://datatables.net/examples/data_sources/server_side.html
+https://datatables.net/examples/data_sources/server_side
+
+
+Examples
+https://hotexamples.com/examples/-/Datatables_ssp/simple/php-datatables_ssp-simple-method-examples.html
+
+public function ajax_tabel()
+{
+    if (!$this->input->is_ajax_request()) {
+        exit('No direct script access allowed');
+    } else {
+        //            panggil dulu library datatablesnya
+        $this->load->library('datatables_ssp');
+        //            atur nama tablenya disini
+        $table = 'berita';
+        // Table's primary key
+        $primaryKey = 'id_berita';
+        // Array of database columns which should be read and sent back to DataTables.
+        // The `db` parameter represents the column name in the database, while the `dt`
+        // parameter represents the DataTables column identifier. In this case simple
+        // indexes
+        $columns = array(array('db' => 'id_berita', 'dt' => 'DT_RowId'), array('db' => 'judul_berita', 'dt' => 'judul_berita'), array('db' => 'isi_berita', 'dt' => 'isi_berita'), array('db' => 'id_berita', 'dt' => 'id_berita'), array('db' => 'tanggal_berita', 'dt' => 'tanggal_berita', 'formatter' => function ($d) {
+            return $this->DateToIndo($d);
+        }), array('db' => 'gambar', 'dt' => 'gambar', 'formatter' => function ($d) {
+            return '<img width="150px" height="100px" src="' . base_url('assets/images/') . "/" . $d . '">';
+        }), array('db' => 'status_terbit', 'dt' => 'status_terbit', 'formatter' => function ($d) {
+            if ($d == "y") {
+                return '<small class="label pull-right bg-green">Terbit</small>';
+            } else {
+                return '<small class="label pull-left bg-red">Tidak Terbit</small><br><a href="' . site_url('admin/berita/trash') . '">view trash</a>';
+            }
+        }), array('db' => 'id_berita', 'dt' => 'aksi', 'formatter' => function ($d) {
+            return '<a href="' . site_url('admin/berita/editBerita/' . $d) . '">Edit</a> | <a  href="' . site_url('admin/berita/hapus_berita/' . $d) . '">Delete</a>';
+        }));
+        // SQL server connection information
+        $sql_details = array('user' => 'root', 'pass' => '', 'db' => 'jst', 'host' => 'localhost');
+        echo json_encode(Datatables_ssp::simple($_GET, $sql_details, $table, $primaryKey, $columns));
+    }
+}
+
+public function view_ajax()
+{
+    if (!$this->input->is_ajax_request()) {
+        exit('No direct script access allowed');
+    } else {
+        //panggil library datatables
+        $this->load->library('datatables_ssp');
+        //atur nama tablenya disini
+        $table = 'view_outbox_' . $this->uri->segment(3);
+        // Table's primary key
+        $primaryKey = 'id_surat';
+        $columns = array(array('db' => 'id_surat', 'dt' => 'id_surat'), array('db' => 'created', 'dt' => 'created'), array('db' => 'tgl_masuk', 'dt' => 'tgl_masuk'), array('db' => 'tgl_surat', 'dt' => 'tgl_surat'), array('db' => 'no_surat', 'dt' => 'no_surat'), array('db' => 'perihal', 'dt' => 'perihal'), array('db' => 'tujuan', 'dt' => 'tujuan'), array('db' => 'nama_bagian', 'dt' => 'nama_bagian'), array('db' => 'ptt', 'dt' => 'ptt'), array('db' => 'deleted', 'dt' => 'deleted'), array('db' => 'request', 'dt' => 'request'), array('db' => 'ptt', 'dt' => 'ptt'), array('db' => 'nama_nip', 'dt' => 'nama_nip'), array('db' => 'creator', 'dt' => 'creator'), array('db' => 'user_name', 'dt' => 'user_name'), array('db' => 'pos', 'dt' => 'pos'), array('db' => 'pos', 'dt' => 'pos', 'formatter' => function ($d) {
+            return $d == 1 ? 'pos' : 'langsung';
+        }));
+        // MySQL connection information
+        $sql_details = array('user' => $this->db->username, 'pass' => $this->db->password, 'db' => $this->db->database, 'host' => $this->db->hostname);
+        echo json_encode(Datatables_ssp::simple($_GET, $sql_details, $table, $primaryKey, $columns));
+    }
+}
+
+
+
+
+
+
+
+
