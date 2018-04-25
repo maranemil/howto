@@ -138,7 +138,38 @@ gifsicle -O3 animation.gif -o animation-optimized.gif
 gifsicle --colors 256 animation.gif -o animation-optimized.gif
 
 ffmpeg -i file.mp4  -pix_fmt rgb24 -y file55.gif
-ffmpüeg -i "RGB_source.avi" -c:v libx264 -qp:v 0 -profile:v high444 -pix_fmt yuv444p "444_out.avi"
+ffmpeg -i "RGB_source.avi" -c:v libx264 -qp:v 0 -profile:v high444 -pix_fmt yuv444p "444_out.avi"
+
+
+sudo apt install avconv
+avconv -i input.mp4 -pix_fmt rgb24 output.gif
+avconv -i input.mp4 -pix_fmt brg8 output.gif
+
+compress gif images with ImageMagick
+convert test.gif -fuzz 10% -layers Optimize -quality 80% result.gif
+convert test.gif -quality 100 -antialias -scale 240x320! -compress LZW result.gif
+convert test.gif -fuzz 3% -resize '1920x350!' -delay 5 -loop 0 -coalesce -layers OptimizeTransparency  out.gif
+
+FX Glitch GIF
+convert test.gif -coalesce +repage -fuzz 3.0%% -delay 4 -loop 0 frames -layers Optimize -quality 80% result.gif  #fx
+convert test.gif -quality 100 -antialias -delay 20 -fuzz 30% -layers Optimize result.gif  #fx
+
+sudo apt install  gifsicle
+gifsicle --colors 128 in.gif out.gif
+
+https://www.imagemagick.org/Usage/bugs/fuzz_distance/
+http://blog.pkh.me/p/21-high-quality-gif-with-ffmpeg.html
+https://mwholt.blogspot.de/2014/08/convert-video-to-animated-gif-with.html
+https://medium.com/@colten_jackson/doing-the-gif-thing-on-debian-82b9760a8483
+https://rigor.com/blog/2015/12/optimizing-animated-gifs-with-html5-video
+https://www.bugcodemaster.com/article/convert-video-animated-gif-using-ffmpeg
+https://www.imagemagick.org/discourse-server/viewtopic.php?t=12874
+
+ffmpeg -i input.mp4 -c:v libvpx -crf 40 -b:v 1M -c:a libvorbis output.webm
+ffmpeg -i input.mp4 -r 20 -f image2pipe -vcodec ppm - | convert -delay 5 - gif:- | convert -layers Optimize - output.gif
+ffmpeg -i input.mp4 -r 20 -f image2pipe -vcodec ppm - | convert -delay 5 - output.gif
+ffmpeg -ss 2.6 -t 1.3 -i MVI_7035.MOV -i palette.png -filter_complex “fps=15,scale=400:-1:flags=lanczos[x];[x][1:v]paletteuse” sixthtry.gif
+ffmpeg -i animated.gif -movflags faststart -pix_fmt yuv420p -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" video.mp4
 
 
 ====================================================================================
