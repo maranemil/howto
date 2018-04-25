@@ -74,6 +74,49 @@ Multiple Images & Changing The Detection Threshold
 ./darknet detect cfg/yolov3.cfg yolov3.weights
 ./darknet detect cfg/yolov3.cfg yolov3.weights data/dog.jpg -thresh 0
 
+
+
+################################################################
+#
+# FMPEG and darknet object detect
+#
+################################################################
+
+# extract images from video into folder
+mkdir jpg2
+ffmpeg -ss 00:00:26.000 -i vid.mp4 -t 00:00:03.000 -r 6 jpg2/vid_%04d.jpg
+
+# detect object in every image
+#for f in jpg2/*.jpg; do echo "$f"; done
+for f in jpg2/*.jpg; do ./darknet detect cfg/yolov3.cfg yolov3.weights "$f" -out "$f"_out; done
+
+# rebuild merge images into video
+ffmpeg -framerate 1 -pattern_type glob -i '*.jpg' -c:v libx264 -r 30 -pix_fmt yuv420p out.mp4
+ffmpeg -framerate 1 -r 10 -pattern_type glob -i '*.png' -c:v libx264 -r 30 -pix_fmt yuv420p out4.mp4
+
+
+====================================================================================
+
+
+./darknet detector demo data/voc.data yolo-voc.cfg yolo-voc.weights test.mp4 -i 0 -http_port 8090
+./darknet detector demo data/voc.data yolo-voc.cfg yolo-voc.weights test.mp4 -i 0 -http_port 8090 -dont_show
+./darknet detector test data/coco.data yolov3.cfg yolov3.weights -i 0 -thresh 0.25 dogr.jpg  -out dogr1.jpg
+./darknet detector test ./cfg/coco.data ./cfg/yolov3.cfg ./yolov3.weights data/dog.jpg -i 0 -thresh 0.25
+
+./darknet detector test ./cfg/coco.data ./cfg/yolov3.cfg ./yolov3.weights -dont_show < data/train.txt > result.txt
+in the file data/train.txt you should have paths to images
+in the file result.txt will be results of detections
+
+
+
+
+
+
+
+
+
+
+
 ------------------------------------------------------------------------------------------------------
 =================================================
 Real-Time Detection on a Webcam && YOLO with GPU, CuDnn and OpenCV.
