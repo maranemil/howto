@@ -107,6 +107,40 @@ https://de.wikipedia.org/wiki/Videoauflösung
 
 
 
+
+
+====================================================================================
+Compress GIF ?
+====================================================================================
+
+http://cassidy.codes/blog/2017/04/25/ffmpeg-frames-to-gif-optimization/
+
+#!/bin/sh
+palette="/tmp/palette.png"
+filters="fps=15,scale=320:-1:flags=lanczos"
+ffmpeg -v warning -i $1 -vf "$filters,palettegen=stats_mode=diff" -y $palette
+ffmpeg -i $1 -i $palette -lavfi "$filters,paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle" -y $2
+
+ffmpeg -i $1 -i palette.png -lavfi "fps=15,scale=320:-1:flags=lanczos,paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle" -y $2
+
+
+https://davidwalsh.name/optimize-gifs
+
+sudo apt install gifsicle
+gifsicle has three types of GIF optimization to choose from:
+
+-O1 Stores only the changed portion of each image. This is the default.
+-O2 Also uses transparency to shrink the file further.
+-O3 Try several optimization methods (usually slower, sometimes better results).
+The shell command to optimize GIFs is:
+
+gifsicle -O3 animation.gif -o animation-optimized.gif
+gifsicle --colors 256 animation.gif -o animation-optimized.gif
+
+ffmpeg -i file.mp4  -pix_fmt rgb24 -y file55.gif
+ffmpüeg -i "RGB_source.avi" -c:v libx264 -qp:v 0 -profile:v high444 -pix_fmt yuv444p "444_out.avi"
+
+
 ====================================================================================
 
 
