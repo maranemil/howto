@@ -1,0 +1,852 @@
+
+
+
+##################################################################
+
+Recipe: Text clustering using NLTK and scikit-learn
+https://nlpforhackers.io/recipe-text-clustering/
+https://github.com/nltk
+https://github.com/nltk/nltk
+https://github.com/nltk/nltk_data
+
+##################################################################
+
+import string
+import collections
+
+from nltk import word_tokenize
+from nltk.stem import PorterStemmer
+from nltk.corpus import stopwords
+from sklearn.cluster import KMeans
+from sklearn.feature_extraction.text import TfidfVectorizer
+from pprint import pprint
+
+
+def process_text(text, stem=True):
+    """ Tokenize text and stem words removing punctuation """
+    text = text.translate(None, string.punctuation)
+    tokens = word_tokenize(text)
+
+    if stem:
+        stemmer = PorterStemmer()
+        tokens = [stemmer.stem(t) for t in tokens]
+
+    return tokens
+
+
+def cluster_texts(texts, clusters=3):
+    """ Transform texts to Tf-Idf coordinates and cluster texts using K-Means """
+    vectorizer = TfidfVectorizer(tokenizer=process_text,
+                                 stop_words=stopwords.words('english'),
+                                 max_df=0.5,
+                                 min_df=0.1,
+                                 lowercase=True)
+
+    tfidf_model = vectorizer.fit_transform(texts)
+    km_model = KMeans(n_clusters=clusters)
+    km_model.fit(tfidf_model)
+
+    clustering = collections.defaultdict(list)
+
+    for idx, label in enumerate(km_model.labels_):
+        clustering[label].append(idx)
+
+    return clustering
+
+
+if __name__ == "__main__":
+    articles = [...]
+    clusters = cluster_texts(articles, 7)
+    pprint(dict(clusters))
+
+
+
+----------------------------------------------------------
+
+
+
+
+
+##################################################################
+
+Machine Learning, NLP: Text Classification using scikit-learn, python and NLTK.
+
+https://towardsdatascience.com/machine-learning-nlp-text-classification-using-scikit-learn-python-and-nltk-c52b92a7c73a
+
+##################################################################
+
+
+
+Prerequisite and setting up the environment.
+Loading the data set in jupyter.
+Extracting features from text files.
+Running ML algorithms.
+Grid Search for parameter tuning.
+Useful tips and a touch of NLTK.
+
+
+# Loading the data set:
+from sklearn.datasets import fetch_20newsgroups
+twenty_train = fetch_20newsgroups(subset='train', shuffle=True)
+
+# Check the target names (categories)
+twenty_train.target_names #prints all the categories
+print("\n".join(twenty_train.data[0].split("\n")[:3])) #prints first line of the first data file
+
+
+
+Step 3: Extracting features from text files.
+http://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.CountVectorizer.html
+
+
+from sklearn.feature_extraction.text import CountVectorizer
+count_vect = CountVectorizer()
+X_train_counts = count_vect.fit_transform(twenty_train.data)
+X_train_counts.shape
+
+# reduce the weightage of more common words
+
+from sklearn.feature_extraction.text import TfidfTransformer
+tfidf_transformer = TfidfTransformer()
+X_train_tfidf = tfidf_transformer.fit_transform(X_train_counts)
+X_train_tfidf.shape
+
+Step 4. Running ML algorithms.
+
+from sklearn.naive_bayes import MultinomialNB
+clf = MultinomialNB().fit(X_train_tfidf, twenty_train.target)
+
+
+
+# Building a pipeline
+
+>>> from sklearn.pipeline import Pipeline
+>>> text_clf = Pipeline([('vect', CountVectorizer()),
+...                      ('tfidf', TfidfTransformer()),
+...                      ('clf', MultinomialNB()),
+... ])
+text_clf = text_clf.fit(twenty_train.data, twenty_train.target)
+
+
+
+# Performance of NB Classifier:
+
+import numpy as np
+twenty_test = fetch_20newsgroups(subset='test', shuffle=True)
+predicted = text_clf.predict(twenty_test.data)
+np.mean(predicted == twenty_test.target)
+
+
+
+# Support Vector Machines (SVM)
+
+>>> from sklearn.linear_model import SGDClassifier
+>>> text_clf_svm = Pipeline([('vect', CountVectorizer()),
+...                      ('tfidf', TfidfTransformer()),
+...                      ('clf-svm', SGDClassifier(loss='hinge', penalty='l2',
+...                                            alpha=1e-3, n_iter=5, random_state=42)),
+... ])
+>>> _ = text_clf_svm.fit(twenty_train.data, twenty_train.target)
+>>> predicted_svm = text_clf_svm.predict(twenty_test.data)
+>>> np.mean(predicted_svm == twenty_test.target)
+
+
+Step 5. Grid Search
+
+>>> from sklearn.model_selection import GridSearchCV
+>>> parameters = {'vect__ngram_range': [(1, 1), (1, 2)],
+...               'tfidf__use_idf': (True, False),
+...               'clf__alpha': (1e-2, 1e-3),
+... }
+
+gs_clf = GridSearchCV(text_clf, parameters, n_jobs=-1)
+gs_clf = gs_clf.fit(twenty_train.data, twenty_train.target)
+gs_clf.best_score_
+gs_clf.best_params_
+
+
+>>> from sklearn.model_selection import GridSearchCV
+>>> parameters_svm = {'vect__ngram_range': [(1, 1), (1, 2)],
+...               'tfidf__use_idf': (True, False),
+...               'clf-svm__alpha': (1e-2, 1e-3),
+... }
+gs_clf_svm = GridSearchCV(text_clf_svm, parameters_svm, n_jobs=-1)
+gs_clf_svm = gs_clf_svm.fit(twenty_train.data, twenty_train.target)
+gs_clf_svm.best_score_
+gs_clf_svm.best_params_
+
+
+
+
+
+Step 6: Useful tips and a touch of NLTK
+Removing stop words:
+
+>>> from sklearn.pipeline import Pipeline
+>>> text_clf = Pipeline([('vect', CountVectorizer(stop_words='english')),
+...                      ('tfidf', TfidfTransformer()),
+...                      ('clf', MultinomialNB()),
+... ])
+
+
+
+Finale Step
+
+import nltk
+nltk.download()
+from nltk.stem.snowball import SnowballStemmer
+stemmer = SnowballStemmer("english", ignore_stopwords=True)
+class StemmedCountVectorizer(CountVectorizer):
+    def build_analyzer(self):
+        analyzer = super(StemmedCountVectorizer, self).build_analyzer()
+        return lambda doc: ([stemmer.stem(w) for w in analyzer(doc)])
+stemmed_count_vect = StemmedCountVectorizer(stop_words='english')
+text_mnb_stemmed = Pipeline([('vect', stemmed_count_vect),
+...                      ('tfidf', TfidfTransformer()),
+...                      ('mnb', MultinomialNB(fit_prior=False)),
+... ])
+text_mnb_stemmed = text_mnb_stemmed.fit(twenty_train.data, twenty_train.target)
+predicted_mnb_stemmed = text_mnb_stemmed.predict(twenty_test.data)
+np.mean(predicted_mnb_stemmed == twenty_test.target)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------------------
+
+
+##################################################################
+
+Document Clustering with Python
+http://brandonrose.org/clustering
+
+##################################################################
+
+
+
+import numpy as np
+import pandas as pd
+import nltk
+import re
+import os
+import codecs
+from sklearn import feature_extraction
+import mpld3
+
+print titles[:10] #first 10 titles
+
+print synopses[0][:200] #first 200 characters in first synopses (for 'The Godfather')
+print
+print
+
+
+#------------------------------------------
+# Stopwords, stemming, and tokenizing
+#------------------------------------------
+
+# load nltk's English stopwords as variable called 'stopwords'
+stopwords = nltk.corpus.stopwords.words('english')
+print stopwords[:10]
+
+# load nltk's SnowballStemmer as variabled 'stemmer'
+from nltk.stem.snowball import SnowballStemmer
+stemmer = SnowballStemmer("english")
+
+
+# here I define a tokenizer and stemmer which returns the set of stems in the text that it is passed
+
+def tokenize_and_stem(text):
+    # first tokenize by sentence, then by word to ensure that punctuation is caught as it's own token
+    tokens = [word for sent in nltk.sent_tokenize(text) for word in nltk.word_tokenize(sent)]
+    filtered_tokens = []
+    # filter out any tokens not containing letters (e.g., numeric tokens, raw punctuation)
+    for token in tokens:
+        if re.search('[a-zA-Z]', token):
+            filtered_tokens.append(token)
+    stems = [stemmer.stem(t) for t in filtered_tokens]
+    return stems
+
+
+def tokenize_only(text):
+    # first tokenize by sentence, then by word to ensure that punctuation is caught as it's own token
+    tokens = [word.lower() for sent in nltk.sent_tokenize(text) for word in nltk.word_tokenize(sent)]
+    filtered_tokens = []
+    # filter out any tokens not containing letters (e.g., numeric tokens, raw punctuation)
+    for token in tokens:
+        if re.search('[a-zA-Z]', token):
+            filtered_tokens.append(token)
+    return filtered_tokens
+
+
+
+#not super pythonic, no, not at all.
+#use extend so it's a big flat list of vocab
+totalvocab_stemmed = []
+totalvocab_tokenized = []
+for i in synopses:
+    allwords_stemmed = tokenize_and_stem(i) #for each item in 'synopses', tokenize/stem
+    totalvocab_stemmed.extend(allwords_stemmed) #extend the 'totalvocab_stemmed' list
+
+    allwords_tokenized = tokenize_only(i)
+    totalvocab_tokenized.extend(allwords_tokenized)
+
+vocab_frame = pd.DataFrame({'words': totalvocab_tokenized}, index = totalvocab_stemmed)
+print 'there are ' + str(vocab_frame.shape[0]) + ' items in vocab_frame'
+
+
+
+
+print vocab_frame.head()
+print
+print
+print
+print
+
+
+
+
+#------------------------------------------
+# Tf-idf and document similarity
+#------------------------------------------
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+#define vectorizer parameters
+tfidf_vectorizer = TfidfVectorizer(max_df=0.8, max_features=200000,
+                                 min_df=0.2, stop_words='english',
+                                 use_idf=True, tokenizer=tokenize_and_stem, ngram_range=(1,3))
+
+%time tfidf_matrix = tfidf_vectorizer.fit_transform(synopses) #fit the vectorizer to synopses
+
+print(tfidf_matrix.shape)
+terms = tfidf_vectorizer.get_feature_names()
+
+from sklearn.metrics.pairwise import cosine_similarity
+dist = 1 - cosine_similarity(tfidf_matrix)
+print
+print
+
+
+#------------------------------------------
+# K-means clustering
+#------------------------------------------
+
+from sklearn.cluster import KMeans
+num_clusters = 5
+km = KMeans(n_clusters=num_clusters)
+%time km.fit(tfidf_matrix)
+clusters = km.labels_.tolist()
+
+
+from sklearn.externals import joblib
+#uncomment the below to save your model
+#since I've already run my model I am loading from the pickle
+#joblib.dump(km,  'doc_cluster.pkl')
+km = joblib.load('doc_cluster.pkl')
+clusters = km.labels_.tolist()
+
+
+films = { 'title': titles, 'rank': ranks, 'synopsis': synopses, 'cluster': clusters, 'genre': genres }
+frame = pd.DataFrame(films, index = [clusters] , columns = ['rank', 'title', 'cluster', 'genre'])
+frame['cluster'].value_counts() #number of films per cluster (clusters from 0 to 4)
+grouped = frame['rank'].groupby(frame['cluster']) #groupby cluster for aggregation purposes
+grouped.mean() #average rank (1 to 100) per cluster
+
+from __future__ import print_function
+
+print("Top terms per cluster:")
+print()
+#sort cluster centers by proximity to centroid
+order_centroids = km.cluster_centers_.argsort()[:, ::-1]
+
+for i in range(num_clusters):
+    print("Cluster %d words:" % i, end='')
+
+    for ind in order_centroids[i, :6]: #replace 6 with n words per cluster
+        print(' %s' % vocab_frame.ix[terms[ind].split(' ')].values.tolist()[0][0].encode('utf-8', 'ignore'), end=',')
+    print() #add whitespace
+    print() #add whitespace
+
+    print("Cluster %d titles:" % i, end='')
+    for title in frame.ix[i]['title'].values.tolist():
+        print(' %s,' % title, end='')
+    print() #add whitespace
+    print() #add whitespace
+
+print()
+print()
+
+
+
+
+#------------------------------------------
+# Multidimensional scaling
+#------------------------------------------
+
+
+
+
+import os  # for os.path.basename
+
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+
+from sklearn.manifold import MDS
+
+MDS()
+
+# convert two components as we're plotting points in a two-dimensional plane
+# "precomputed" because we provide a distance matrix
+# we will also specify `random_state` so the plot is reproducible.
+mds = MDS(n_components=2, dissimilarity="precomputed", random_state=1)
+
+pos = mds.fit_transform(dist)  # shape (n_components, n_samples)
+
+xs, ys = pos[:, 0], pos[:, 1]
+print()
+print()
+
+
+
+
+
+#------------------------------------------
+Visualizing document clusters
+#------------------------------------------
+
+
+#set up colors per clusters using a dict
+cluster_colors = {0: '#1b9e77', 1: '#d95f02', 2: '#7570b3', 3: '#e7298a', 4: '#66a61e'}
+
+#set up cluster names using a dict
+cluster_names = {0: 'Family, home, war',
+                 1: 'Police, killed, murders',
+                 2: 'Father, New York, brothers',
+                 3: 'Dance, singing, love',
+                 4: 'Killed, soldiers, captain'}
+
+#some ipython magic to show the matplotlib plots inline
+%matplotlib inline
+
+#create data frame that has the result of the MDS plus the cluster numbers and titles
+df = pd.DataFrame(dict(x=xs, y=ys, label=clusters, title=titles))
+
+#group by cluster
+groups = df.groupby('label')
+
+
+# set up plot
+fig, ax = plt.subplots(figsize=(17, 9)) # set size
+ax.margins(0.05) # Optional, just adds 5% padding to the autoscaling
+
+#iterate through groups to layer the plot
+#note that I use the cluster_name and cluster_color dicts with the 'name' lookup to return the appropriate color/label
+for name, group in groups:
+    ax.plot(group.x, group.y, marker='o', linestyle='', ms=12,
+            label=cluster_names[name], color=cluster_colors[name],
+            mec='none')
+    ax.set_aspect('auto')
+    ax.tick_params(\
+        axis= 'x',          # changes apply to the x-axis
+        which='both',      # both major and minor ticks are affected
+        bottom='off',      # ticks along the bottom edge are off
+        top='off',         # ticks along the top edge are off
+        labelbottom='off')
+    ax.tick_params(\
+        axis= 'y',         # changes apply to the y-axis
+        which='both',      # both major and minor ticks are affected
+        left='off',      # ticks along the bottom edge are off
+        top='off',         # ticks along the top edge are off
+        labelleft='off')
+
+ax.legend(numpoints=1)  #show legend with only 1 point
+
+#add label in x,y position with the label as the film title
+for i in range(len(df)):
+    ax.text(df.ix[i]['x'], df.ix[i]['y'], df.ix[i]['title'], size=8)
+
+
+
+plt.show() #show the plot
+
+#uncomment the below to save the plot if need be
+#plt.savefig('clusters_small_noaxes.png', dpi=200)
+plt.close()
+
+
+#define custom toolbar location
+class TopToolbar(mpld3.plugins.PluginBase):
+    """Plugin for moving toolbar to top of figure"""
+
+    JAVASCRIPT = """
+    mpld3.register_plugin("toptoolbar", TopToolbar);
+    TopToolbar.prototype = Object.create(mpld3.Plugin.prototype);
+    TopToolbar.prototype.constructor = TopToolbar;
+    function TopToolbar(fig, props){
+        mpld3.Plugin.call(this, fig, props);
+    };
+
+    TopToolbar.prototype.draw = function(){
+      // the toolbar svg doesn't exist
+      // yet, so first draw it
+      this.fig.toolbar.draw();
+
+      // then change the y position to be
+      // at the top of the figure
+      this.fig.toolbar.toolbar.attr("x", 150);
+      this.fig.toolbar.toolbar.attr("y", 400);
+
+      // then remove the draw function,
+      // so that it is not called again
+      this.fig.toolbar.draw = function() {}
+    }
+    """
+    def __init__(self):
+        self.dict_ = {"type": "toptoolbar"}
+
+
+
+#create data frame that has the result of the MDS plus the cluster numbers and titles
+df = pd.DataFrame(dict(x=xs, y=ys, label=clusters, title=titles))
+
+#group by cluster
+groups = df.groupby('label')
+
+#define custom css to format the font and to remove the axis labeling
+css = """
+text.mpld3-text, div.mpld3-tooltip {
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+g.mpld3-xaxis, g.mpld3-yaxis {
+display: none; }
+
+svg.mpld3-figure {
+margin-left: -200px;}
+"""
+
+# Plot
+fig, ax = plt.subplots(figsize=(14,6)) #set plot size
+ax.margins(0.03) # Optional, just adds 5% padding to the autoscaling
+
+#iterate through groups to layer the plot
+#note that I use the cluster_name and cluster_color dicts with the 'name' lookup to return the appropriate color/label
+for name, group in groups:
+    points = ax.plot(group.x, group.y, marker='o', linestyle='', ms=18,
+                     label=cluster_names[name], mec='none',
+                     color=cluster_colors[name])
+    ax.set_aspect('auto')
+    labels = [i for i in group.title]
+
+    #set tooltip using points, labels and the already defined 'css'
+    tooltip = mpld3.plugins.PointHTMLTooltip(points[0], labels,
+                                       voffset=10, hoffset=10, css=css)
+    #connect tooltip to fig
+    mpld3.plugins.connect(fig, tooltip, TopToolbar())
+
+    #set tick marks as blank
+    ax.axes.get_xaxis().set_ticks([])
+    ax.axes.get_yaxis().set_ticks([])
+
+    #set axis as blank
+    ax.axes.get_xaxis().set_visible(False)
+    ax.axes.get_yaxis().set_visible(False)
+
+
+ax.legend(numpoints=1) #show legend with only one dot
+
+mpld3.display() #show the plot
+
+#uncomment the below to export to html
+#html = mpld3.fig_to_html(fig)
+#print(html)
+
+
+
+#------------------------------------------
+# Hierarchical document clustering
+#------------------------------------------
+
+
+from scipy.cluster.hierarchy import ward, dendrogram
+
+linkage_matrix = ward(dist) #define the linkage_matrix using ward clustering pre-computed distances
+
+fig, ax = plt.subplots(figsize=(15, 20)) # set size
+ax = dendrogram(linkage_matrix, orientation="right", labels=titles);
+
+plt.tick_params(\
+    axis= 'x',          # changes apply to the x-axis
+    which='both',      # both major and minor ticks are affected
+    bottom='off',      # ticks along the bottom edge are off
+    top='off',         # ticks along the top edge are off
+    labelbottom='off')
+
+plt.tight_layout() #show plot with tight layout
+
+#uncomment below to save figure
+plt.savefig('ward_clusters.png', dpi=200) #save figure as ward_clusters
+
+
+
+#------------------------------------------
+# Latent Dirichlet Allocation
+#------------------------------------------
+
+
+#strip any proper names from a text...unfortunately right now this is yanking the first word from a sentence too.
+import string
+def strip_proppers(text):
+    # first tokenize by sentence, then by word to ensure that punctuation is caught as it's own token
+    tokens = [word for sent in nltk.sent_tokenize(text) for word in nltk.word_tokenize(sent) if word.islower()]
+    return "".join([" "+i if not i.startswith("'") and i not in string.punctuation else i for i in tokens]).strip()
+
+
+#strip any proper nouns (NNP) or plural proper nouns (NNPS) from a text
+from nltk.tag import pos_tag
+
+def strip_proppers_POS(text):
+    tagged = pos_tag(text.split()) #use NLTK's part of speech tagger
+    non_propernouns = [word for word,pos in tagged if pos != 'NNP' and pos != 'NNPS']
+    return non_propernouns
+
+
+from gensim import corpora, models, similarities
+
+#remove proper names
+%time preprocess = [strip_proppers(doc) for doc in synopses]
+
+#tokenize
+%time tokenized_text = [tokenize_and_stem(text) for text in preprocess]
+
+#remove stop words
+%time texts = [[word for word in text if word not in stopwords] for text in tokenized_text]
+
+
+
+#create a Gensim dictionary from the texts
+dictionary = corpora.Dictionary(texts)
+
+#remove extremes (similar to the min/max df step used when creating the tf-idf matrix)
+dictionary.filter_extremes(no_below=1, no_above=0.8)
+
+#convert the dictionary to a bag of words corpus for reference
+corpus = [dictionary.doc2bow(text) for text in texts]
+
+
+%time lda = models.LdaModel(corpus, num_topics=5,
+                            id2word=dictionary,
+                            update_every=5,
+                            chunksize=10000,
+                            passes=100)
+
+
+lda.show_topics()
+topics_matrix = lda.show_topics(formatted=False, num_words=20)
+topics_matrix = np.array(topics_matrix)
+
+topic_words = topics_matrix[:,:,1]
+for i in topic_words:
+    print([str(word) for word in i])
+    print()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##################################################################
+
+K Means Clustering Example with Word2Vec in Data Mining or Machine Learning
+http://ai.intelligentonlinetools.com/ml/tag/k-means-clustering-example/
+
+##################################################################
+
+
+#---------------------------
+# Getting Word2Vect
+#---------------------------
+
+
+from gensim.models import Word2Vec
+sentences = [['this', 'is', 'the', 'good', 'machine', 'learning', 'book'],
+            ['this', 'is',  'another', 'book'],
+            ['one', 'more', 'book'],
+            ['this', 'is', 'the', 'new', 'post'],
+                        ['this', 'is', 'about', 'machine', 'learning', 'post'],
+            ['and', 'this', 'is', 'the', 'last', 'post']
+model = Word2Vec(sentences, min_count=1)
+
+
+
+print (model.similarity('this', 'is'))
+print (model.similarity('post', 'book'))
+#output -0.0198180344218
+#output -0.079446731287
+print (model.most_similar(positive=['machine'], negative=[], topn=2))
+#output: [('new', 0.24608060717582703), ('is', 0.06899910420179367)]
+print (model['the'])
+
+print (list(model.vocab))
+print (len(list(model.vocab)))
+
+
+#---------------------------
+K Means Clustering with NLTK Library
+#---------------------------
+
+X = model[model.vocab]
+
+from nltk.cluster import KMeansClusterer
+import nltk
+NUM_CLUSTERS=3
+kclusterer = KMeansClusterer(NUM_CLUSTERS, distance=nltk.cluster.util.cosine_distance, repeats=25)
+assigned_clusters = kclusterer.cluster(X, assign_clusters=True)
+print (assigned_clusters)
+# output: [0, 2, 1, 2, 2, 1, 2, 2, 0, 1, 0, 1, 2, 1, 2]
+
+
+
+
+nltk.cluster.util.cosine_distance(u, v)
+nltk.cluster.util.euclidean_distance(u, v)
+
+
+
+words = list(model.vocab)
+for i, word in enumerate(words):
+    print (word + ":" + str(assigned_clusters[i]))
+
+
+
+
+#---------------------------
+K Means Clustering with Scikit-learn Library
+#---------------------------
+
+from sklearn import cluster
+from sklearn import metrics
+kmeans = cluster.KMeans(n_clusters=NUM_CLUSTERS)
+kmeans.fit(X)
+
+labels = kmeans.labels_
+centroids = kmeans.cluster_centers_
+
+print ("Cluster id labels for inputted data")
+print (labels)
+print ("Centroids data")
+print (centroids)
+
+print ("Score (Opposite of the value of X on the K-means objective which is Sum of distances of samples to their closest cluster center):")
+print (kmeans.score(X))
+
+silhouette_score = metrics.silhouette_score(X, labels, metric='euclidean')
+
+print ("Silhouette_score: ")
+print (silhouette_score)
+
+
+
+
+#---------------------------
+ full python code of the script
+#---------------------------
+
+
+# -*- coding: utf-8 -*-
+
+
+from gensim.models import Word2Vec
+
+from nltk.cluster import KMeansClusterer
+import nltk
+
+
+from sklearn import cluster
+from sklearn import metrics
+
+# training data
+
+sentences = [['this', 'is', 'the', 'good', 'machine', 'learning', 'book'],
+            ['this', 'is',  'another', 'book'],
+            ['one', 'more', 'book'],
+            ['this', 'is', 'the', 'new', 'post'],
+          ['this', 'is', 'about', 'machine', 'learning', 'post'],
+            ['and', 'this', 'is', 'the', 'last', 'post']]
+
+
+# training model
+model = Word2Vec(sentences, min_count=1)
+
+# get vector data
+X = model[model.vocab]
+print (X)
+
+print (model.similarity('this', 'is'))
+print (model.similarity('post', 'book'))
+print (model.most_similar(positive=['machine'], negative=[], topn=2))
+print (model['the'])
+print (list(model.vocab))
+print (len(list(model.vocab)))
+
+
+
+
+NUM_CLUSTERS=3
+kclusterer = KMeansClusterer(NUM_CLUSTERS, distance=nltk.cluster.util.cosine_distance, repeats=25)
+assigned_clusters = kclusterer.cluster(X, assign_clusters=True)
+print (assigned_clusters)
+
+words = list(model.vocab)
+for i, word in enumerate(words):
+    print (word + ":" + str(assigned_clusters[i]))
+
+
+
+kmeans = cluster.KMeans(n_clusters=NUM_CLUSTERS)
+kmeans.fit(X)
+
+labels = kmeans.labels_
+centroids = kmeans.cluster_centers_
+
+print ("Cluster id labels for inputted data")
+print (labels)
+print ("Centroids data")
+print (centroids)
+
+print ("Score (Opposite of the value of X on the K-means objective which is Sum of distances of samples to their closest cluster center):")
+print (kmeans.score(X))
+
+silhouette_score = metrics.silhouette_score(X, labels, metric='euclidean')
+
+print ("Silhouette_score: ")
+print (silhouette_score)
+
+
+
+---------------------------------------------------------------------
+
+http://www.nltk.org/api/nltk.cluster.html
