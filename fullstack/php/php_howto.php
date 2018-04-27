@@ -667,3 +667,69 @@ Array in_array()
     [2] => 99.jpg
 )
 */
+
+
+
+
+
+
+
+
+######################################################################
+#
+# 	Generate xml from object / array
+#	http://www.sean-barton.co.uk/2009/03/turning-an-array-or-object-into-xml-using-php/
+#
+######################################################################
+
+/**
+    * @param $array
+    * @param $node_name
+    * @return string
+    */
+   public function generate_xml_from_array($array, $node_name) {
+      $xml = '';
+      if (is_array($array) || is_object($array)) {
+         foreach ($array as $key=>$value) {
+            if (is_numeric($key)) {
+               $key = $node_name;
+            }
+            if($value){
+               if($key) $xml .= '<' . $key . '>';
+               $xml .= $this->generate_xml_from_array($value, $node_name);
+               if($key) $xml .='</' . $key . '>' . ""; // \n
+            }
+         }
+      } else {
+         $xml = htmlspecialchars($array, ENT_QUOTES) . ""; // \n
+      }
+
+      return $xml;
+   }
+
+   /**
+    * @param $array
+    * @param string $node_block
+    * @param string $node_name
+    * @return string
+    */
+   public function generate_valid_xml_from_array($array, $node_block='', $node_name='') {
+      $xml = '<?xml version="1.0" encoding="UTF-8" ?>' . "\n";
+      if($node_block) $xml .= '<' . $node_block . '>' ;
+      $xml .= $this->generate_xml_from_array($array, $node_name);
+      if($node_block) $xml .= '</' . $node_block . '>' . ""; // \n
+      return $xml;
+   }
+
+
+
+######################################################################
+#
+#	Revers xml to arrays
+#	https://stackoverflow.com/questions/6578832/how-to-convert-xml-into-array-in-php
+#
+######################################################################
+
+$xml = simplexml_load_string($xmlstring, "SimpleXMLElement", LIBXML_NOCDATA);
+$json = json_encode($xml);
+$array = json_decode($json,TRUE);
