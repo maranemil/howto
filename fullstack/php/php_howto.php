@@ -733,3 +733,24 @@ Array in_array()
 $xml = simplexml_load_string($xmlstring, "SimpleXMLElement", LIBXML_NOCDATA);
 $json = json_encode($xml);
 $array = json_decode($json,TRUE);
+
+
+
+######################################################################
+#
+#   Print formated xml in terminal
+#
+######################################################################
+
+$xml = $this->generate_valid_xml_from_array($objectArray);
+$newfile = "somefile.xml";
+
+/* @var $xml SimpleXMLElement */
+$domxml = new DOMDocument('1.0');
+$domxml->preserveWhiteSpace = true;
+$domxml->formatOutput = true;
+$domxml->loadHTML($xml);
+$xml_string = $domxml->saveXML();
+#$domxml->save($newfile);
+print "<pre>"; print_r($xml_string);
+exit;
