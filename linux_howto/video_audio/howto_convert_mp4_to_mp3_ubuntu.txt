@@ -1050,6 +1050,56 @@ ffmpeg -r 2 -i movie.mov -f image2 thumb%02d.jpg # extract images from the video
 
 
 
+##############################################
+#
+# FFMPEG dither + smooth
+#
+##############################################
+
+https://trac.ffmpeg.org/wiki/Postprocessing
+
+ffplay -i movie.mp4  -vf "fps=20,scale=440:-1:flags=lanczos"
+ffplay -i movie.mp4  -vf "fps=15,scale=320:-1:flags=lanczos"
+ffplay -i movie.mp4  -vf scale=320x180:sws_dither=a_dither
+
+# // bayer , addition based, xor based, error diffusion
+ffplay -i movie.mp4  -vf scale=320x180:sws_dither="bayer"
+ffplay -i movie.mp4  -vf scale=320x180:sws_dither="addition based"
+ffplay -i movie.mp4  -vf scale=320x180:sws_dither="xor based"
+ffplay -i movie.mp4  -vf scale=320x180:sws_dither="error diffusion"
+
+# vdither=0..7 (or name eg "bayer","ed","a_dither", "x_dither")
+ffplay -i movie.mp4 -vf "scale=w=320:h=-1:sws_dither=bayer"
+ffplay -i movie.mp4 -vf "scale=w=320:h=-1:sws_dither=ed"
+ffplay -i movie.mp4 -vf "scale=w=320:h=-1:sws_dither=a_dither"
+ffplay -i movie.mp4 -vf "scale=w=320:h=-1:sws_dither=x_dither"
+
+ffplay -i movie.mp4 -vf "minterpolate='fps=120'" ### fx
+ffplay -i movie.mp4 -vf "minterpolate='mi_mode=mci:mc_mode=aobmc:vsbmc=1'"
+ffplay -i movie.mp4 -vf "scale=w=320:h=-1:sws_dither=x_dither,minterpolate='fps=110',curves=vintage,fftfilt=dc_Y=0:weight_Y='1+squish(1-(Y+X)/100)'"
+
+---------------------------------------------------------------------------------
+
+##############################################
+#
+#	FFMPEG MP4 to GIF
+#
+##############################################
+
+https://pippin.gimp.org/a_dither/
+http://xumbra.tumblr.com/how2gif
+
+ffmpeg -i video.mp4 -ss 00:00:47 -t 00:00:02 -s 400x225 frame%04d.png
+
+-t 00:00:02 (  duration of the animation )
+-ss 00:00:47 ( starting time )
+-s 400x225 ( resize )
+
+-vf crop=(total width):(total height):(starting x):(starting y)
+-vf crop=1280:660:0:30
+
+forward:  convert -delay 3.33 -loop 0 -layers optimize frame*.png output.gif
+backward: convert *.png -set delay 10 -reverse *.png -set delay 10 -loop 0 -layers optimize animation.gif
 
 
 
