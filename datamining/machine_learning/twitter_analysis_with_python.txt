@@ -1,0 +1,1119 @@
+################################################################################
+#
+#	Generating Word Cloud From Twitter Feed with Python
+#	http://www.techtrek.io/generating-word-cloud-from-twitter-feed-with-python/#
+#
+################################################################################
+
+
+import tweepy, json, random
+from tweepy import OAuthHandler
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud, STOPWORDS
+from scipy.misc import imread
+
+def grey_color_func(word, font_size, position, orientation, random_state=None, **kwargs):
+    return "hsl(0, 0%%, %d%%)" % random.randint(60, 100)
+
+
+consumer_key = 'your_consumer_key'
+consumer_secret = 'your_consumer_secret'
+access_token = 'your_access_token'
+access_secret = 'your_access_secret'
+
+auth = OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_secret)
+
+api = tweepy.API(auth)
+You can get your consumer and access keys and secrets at https://apps.twitter.com/.
+
+
+f = open('tweets', 'w')
+for status in api.user_timeline():
+    f.write( api.get_status(status.id).text)
+f.close()
+
+words=' '
+count =0
+f = open('tweets', 'r')
+for line in f:
+    words= words + line
+f.close
+
+
+
+stopwords = {'will'}
+logomask = imread('twitter_mask.png')
+
+wordcloud = WordCloud(
+    font_path='Xerox Sans Serif Wide Bold Oblique.ttf',
+    stopwords=STOPWORDS.union(stopwords),
+    background_color='black',
+    mask = logomask,
+    max_words=500,
+    width=1800,
+    height=1400
+).generate(words)
+
+plt.imshow(wordcloud.recolor(color_func=grey_color_func, random_state=3))
+plt.axis('off')
+plt.savefig('./tweetcloud2.png', dpi=300)
+plt.show()
+
+
+
+
+################################################################################
+#
+#	Create WordCloud Cloud from Text File
+#	https://amueller.github.io/word_cloud/auto_examples/masked.html#masked-py
+#	http://amueller.github.io/word_cloud/auto_examples/index.html
+#	https://github.com/amueller/word_cloud
+#
+################################################################################
+
+from os import path
+from PIL import Image
+import numpy as np
+import matplotlib.pyplot as plt
+
+from wordcloud import WordCloud, STOPWORDS
+
+d = path.dirname(__file__)
+
+# Read the whole text.
+text = open(path.join(d, 'alice.txt')).read()
+
+# read the mask image
+# taken from
+# http://www.stencilry.org/stencils/movies/alice%20in%20wonderland/255fk.jpg
+alice_mask = np.array(Image.open(path.join(d, "alice_mask.png")))
+
+stopwords = set(STOPWORDS)
+stopwords.add("said")
+
+wc = WordCloud(background_color="white", max_words=2000, mask=alice_mask,
+               stopwords=stopwords)
+# generate word cloud
+wc.generate(text)
+
+# store to file
+wc.to_file(path.join(d, "alice.png"))
+
+# show
+plt.imshow(wc, interpolation='bilinear')
+plt.axis("off")
+plt.figure()
+plt.imshow(alice_mask, cmap=plt.cm.gray, interpolation='bilinear')
+plt.axis("off")
+plt.show()
+
+
+################################################################################
+#
+#	Create Twitter WordCloud with just 40 lines of RCode
+# 	https://www.datasciencecentral.com/profiles/blogs/find-out-what-celebrities-tweet-about-the-most-1
+#
+################################################################################
+
+----------------------------------------------
+# Extract Tweets
+
+
+#Getting tweets from twitter
+library(twitteR)
+#Twitter-R Authentication
+library(ROAuth)
+#Text processing
+library(stringr)
+#Text mining
+library(tm)
+#Wordcloud creation
+library(wordcloud)
+
+#Connect to twitter API using the saved credentials
+load("twitter authentication.Rdata")
+setup_twitter_oauth(credentials$consumerKey, credentials$consumerSecret, credentials$oauthKey, credentials$oauthSecret)
+
+# read twitter accounts
+screenName <- c(‘realDonaldTrump’, ‘PutinRF_Eng’, ‘narendramodi’)
+
+# Collect information
+checkHandles <- lookupUsers(screenName)
+
+# Get user data for each
+UserData <- lapply(checkHandles, function(x) getUser(x))
+UserData <- twListToDF(UserData)
+table(UserData$name, UserData$statusesCount)
+
+#Check tweet count
+table(UserData$name, UserData$protected)
+
+#Check Private Accounts
+usernames <- subset(UserData, protected == FALSE)
+
+#Public Accounts
+usernames <- as.list(usernames$screenName)
+
+# Next we get the list of tweets
+x <- userTimeline(‘realDonaldTrump’,n=3200,includeRts = FALSE)
+
+#Convert tweets list to dataframe
+TrumpData <- twListToDF(x)
+
+#Wait 5 minutes
+Sys.sleep(300)
+
+x <- userTimeline(‘PutinRF_Eng’,n=3200,includeRts = FALSE)
+PutinData <- twListToDF(x)
+Sys.sleep(300)
+
+x <- userTimeline(‘narendramodi’,n=3200,includeRts = TRUE)
+ModiData <- twListToDF(x)
+
+Trump.df <- data.frame(TrumpData)
+Putin.df <- data.frame(PutinData)
+Modi.df <- data.frame(ModiData)
+
+#Now create a dataframe that combines all of the collected tweets
+tweets <- data.frame()
+tweets <- Trump.df
+tweets <- rbind(tweets,Putin.df)
+tweets <- rbind(tweets,Modi.df)
+
+----------------------------------------------
+# Pre-Process Tweets
+
+#Convert tweets to ASCII to avoid reading strange characters
+iconv(tweets$text, from=”UTF-8", to=”ASCII”, sub=””)
+
+#Clean text by removing graphic characters
+tweets$text=str_replace_all(tweets$text,"[^[:graph:]]", " ")
+
+#Remove Junk Values and replacement words like fffd which appear because of encoding differences
+tweets$text <- gsub("[^[:alnum:]///' ]", "", tweets$text)
+
+#Convert all text to lower case
+tweets$text <- tolower(tweets$text)
+
+#Remove retweet keyword
+tweets$text <- gsub("rt", "", tweets$text)
+
+#Remove Punctuations
+tweets$text <- gsub("[[:punct:]]", "", tweets$text)
+
+#Remove links
+tweets$text <- gsub("http\\w+", "", tweets$text)
+
+#Remove tabs
+tweets$text <- gsub("[ |\t]{2,}", "", tweets$text)
+
+#Remove blankspaces at begining
+tweets$text <- gsub("^ ", "", tweets$text)
+
+#Remove blankspaces at the end
+tweets$text <- gsub(" $", "", tweets$text)
+
+#Remove usernames
+tweets$text <- gsub("@\\w+", "", tweets$text)
+
+----------------------------------------------
+# remove stopwords
+
+#After preprocessing the data, subset for tweets for each handle
+Trump <- subset(tweets, screenName==“realDonaldTrump”, select= text)
+Putin <- subset(tweets, screenName== “PutinRF_Eng”, select= text)
+Modi <- subset(tweets, screenName== “narendramodi”, select= text)
+
+#Create corpus of individual twitter handles
+Trump <- Corpus(VectorSource(Trump))
+Putin <- Corpus(VectorSource(Putin))
+Modi <- Corpus(VectorSource(Modi))
+
+#Remove English Stopwords from the tweets
+Trump <- tm_map(Trump, removeWords, stopwords(“en”))
+Putin <- tm_map(Putin, removeWords, stopwords(“en”))
+Modi <- tm_map(Modi, removeWords, stopwords(“en”))
+
+----------------------------------------------
+# Create WordCloud
+
+wordcloud(Trump,min.freq = 3, scale=c(6,0.5),colors=brewer.pal(8, “Dark2”),random.color= FALSE, random.order = FALSE, max.words = 110)
+wordcloud(Putin,min.freq = 4, scale=c(7,0.8),colors=brewer.pal(8, “Dark2”),random.color= FALSE, random.order = FALSE, max.words = 100)
+wordcloud(Modi,min.freq = 3, scale=c(6,0.5),colors=brewer.pal(8, “Dark2”),random.color= FALSE, random.order = FALSE, max.words = 110)
+
+wordcloud(df$words,df$freq, min.freq = 3, scale=c(6,0.5), random.color= FALSE, ordered.colors=TRUE, colors=brewer.pal(8, “Dark2”)[factor(df$sentiment)], random.order = FALSE, max.words = 110)
+
+
+#Remove numbers if necessary
+#Putin <- tm_map(Putin, removeNumbers)
+
+#Remove specific words if needed
+#Trump <- tm_map(Trump, removeWords, c(‘amp’,’will’))
+#Modi <- tm_map(Modi, removeWords, c(‘amp’,’will’))
+
+
+
+################################################################################
+#
+#	Another Twitter sentiment analysis with Python-Part 2
+#	https://towardsdatascience.com/another-twitter-sentiment-analysis-with-python-part-2-333514854913
+#
+################################################################################
+
+
+
+----------------------------------------------
+# tokenizing and joining
+----------------------------------------------
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+plt.style.use('fivethirtyeight')
+
+%matplotlib inline
+%config InlineBackend.figure_format = 'retina'
+import re
+from bs4 import BeautifulSoup
+from nltk.tokenize import WordPunctTokenizer
+tok = WordPunctTokenizer()
+
+pat1 = r'@[A-Za-z0-9_]+'
+pat2 = r'https?://[^ ]+'
+combined_pat = r'|'.join((pat1, pat2))
+www_pat = r'www.[^ ]+'
+negations_dic = {"isn't":"is not", "aren't":"are not", "wasn't":"was not", "weren't":"were not",
+                "haven't":"have not","hasn't":"has not","hadn't":"had not","won't":"will not",
+                "wouldn't":"would not", "don't":"do not", "doesn't":"does not","didn't":"did not",
+                "can't":"can not","couldn't":"could not","shouldn't":"should not","mightn't":"might not",
+                "mustn't":"must not"}
+neg_pattern = re.compile(r'\b(' + '|'.join(negations_dic.keys()) + r')\b')
+
+def tweet_cleaner_updated(text):
+    soup = BeautifulSoup(text, 'lxml')
+    souped = soup.get_text()
+    try:
+        bom_removed = souped.decode("utf-8-sig").replace(u"\ufffd", "?")
+    except:
+        bom_removed = souped
+    stripped = re.sub(combined_pat, '', bom_removed)
+    stripped = re.sub(www_pat, '', stripped)
+    lower_case = stripped.lower()
+    neg_handled = neg_pattern.sub(lambda x: negations_dic[x.group()], lower_case)
+    letters_only = re.sub("[^a-zA-Z]", " ", neg_handled)
+    # During the letters_only process two lines above, it has created unnecessay white spaces,
+    # I will tokenize and join together to remove unneccessary white spaces
+    words = [x for x  in tok.tokenize(letters_only) if len(x) > 1]
+    return (" ".join(words)).strip()
+
+
+
+csv = 'clean_tweet.csv'
+my_df = pd.read_csv(csv,index_col=0)
+my_df.head()
+my_df.info()
+my_df[my_df.isnull().any(axis=1)].head()
+np.sum(my_df.isnull().any(axis=1))
+my_df.isnull().any(axis=0)
+
+
+df = pd.read_csv("./trainingandtestdata/training.1600000.processed.noemoticon.csv",header=None)
+df.iloc[my_df[my_df.isnull().any(axis=1)].index,:].head()
+
+
+my_df.dropna(inplace=True)
+my_df.reset_index(drop=True,inplace=True)
+my_df.info()
+
+----------------------------------------------
+# Word Cloud
+----------------------------------------------
+
+neg_tweets = my_df[my_df.target == 0]
+neg_string = []
+for t in neg_tweets.text:
+    neg_string.append(t)
+neg_string = pd.Series(neg_string).str.cat(sep=' ')
+from wordcloud import WordCloud
+
+wordcloud = WordCloud(width=1600, height=800,max_font_size=200).generate(neg_string)
+plt.figure(figsize=(12,10))
+plt.imshow(wordcloud, interpolation="bilinear")
+plt.axis("off")
+plt.show()
+
+
+for t in neg_tweets.text[:200]:
+    if 'love' in t:
+        print t
+
+
+pos_tweets = my_df[my_df.target == 1]
+pos_string = []
+for t in pos_tweets.text:
+    pos_string.append(t)
+pos_string = pd.Series(pos_string).str.cat(sep=' ')
+wordcloud = WordCloud(width=1600, height=800,max_font_size=200,colormap='magma').generate(pos_string) plt.figure(figsize=(12,10)) plt.imshow(wordcloud, interpolation="bilinear") plt.axis("off") plt.show()
+
+
+----------------------------------------------
+Preparation for more data visualisation
+----------------------------------------------
+
+from sklearn.feature_extraction.text import CountVectorizer
+cvec = CountVectorizer()
+cvec.fit(my_df.text)
+len(cvec.get_feature_names())
+
+
+neg_doc_matrix = cvec.transform(my_df[my_df.target == 0].text)
+pos_doc_matrix = cvec.transform(my_df[my_df.target == 1].text)
+neg_tf = np.sum(neg_doc_matrix,axis=0)
+pos_tf = np.sum(pos_doc_matrix,axis=0)
+neg = np.squeeze(np.asarray(neg_tf))
+pos = np.squeeze(np.asarray(pos_tf))
+term_freq_df = pd.DataFrame([neg,pos],columns=cvec.get_feature_names()).transpose()
+
+
+document_matrix = cvec.transform(my_df.text)
+my_df[my_df.target == 0].tail()
+
+
+
+%%time
+neg_batches = np.linspace(0,798179,100).astype(int)
+i=0
+neg_tf = []
+while i < len(neg_batches)-1:
+    batch_result = np.sum(document_matrix[neg_batches[i]:neg_batches[i+1]].toarray(),axis=0)
+    neg_tf.append(batch_result)
+    if (i % 10 == 0) | (i == len(neg_batches)-2):
+        print neg_batches[i+1],"entries' term freuquency calculated"
+    i += 1
+
+my_df.tail()
+
+
+
+%%time
+pos_batches = np.linspace(798179,1596019,100).astype(int)
+i=0
+pos_tf = []
+while i < len(pos_batches)-1:
+    batch_result = np.sum(document_matrix[pos_batches[i]:pos_batches[i+1]].toarray(),axis=0)
+    pos_tf.append(batch_result)
+    if (i % 10 == 0) | (i == len(pos_batches)-2):
+        print pos_batches[i+1],"entries' term freuquency calculated"
+    i += 1
+
+
+
+neg = np.sum(neg_tf,axis=0)
+pos = np.sum(pos_tf,axis=0)
+term_freq_df = pd.DataFrame([neg,pos],columns=cvec.get_feature_names()).transpose()
+term_freq_df.head()
+
+term_freq_df.columns = ['negative', 'positive']
+term_freq_df['total'] = term_freq_df['negative'] + term_freq_df['positive']
+term_freq_df.sort_values(by='total', ascending=False).iloc[:10]
+
+
+
+
+
+
+
+
+
+################################################################################
+#
+#	Mining Twitter Data with Python (Part 3: Term Frequencies)
+#
+#	https://marcobonzanini.com/2015/03/02/mining-twitter-data-with-python-part-1/
+#	https://marcobonzanini.com/2015/03/17/mining-twitter-data-with-python-part-3-term-frequencies/
+#	https://marcobonzanini.com/2015/03/09/mining-twitter-data-with-python-part-2/
+#	https://marcobonzanini.com/2015/04/01/mining-twitter-data-with-python-part-5-data-visualisation-basics/
+#	https://marcobonzanini.com/2015/05/17/mining-twitter-data-with-python-part-6-sentiment-analysis-basics/
+#	https://marcobonzanini.com/2015/06/16/mining-twitter-data-with-python-and-js-part-7-geolocation-and-interactive-maps/
+#
+################################################################################
+
+
+
+
+
+----------------------------------------------
+Accessing the Data
+----------------------------------------------
+
+pip install tweepy==3.3.0
+
+import tweepy
+from tweepy import OAuthHandler
+
+consumer_key = 'YOUR-CONSUMER-KEY'
+consumer_secret = 'YOUR-CONSUMER-SECRET'
+access_token = 'YOUR-ACCESS-TOKEN'
+access_secret = 'YOUR-ACCESS-SECRET'
+
+auth = OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_secret)
+
+api = tweepy.API(auth)
+
+for status in tweepy.Cursor(api.home_timeline).items(10):
+    # Process a single status
+    print(status.text)
+
+for status in tweepy.Cursor(api.home_timeline).items(10):
+    # Process a single status
+    process_or_store(status._json)
+
+
+for friend in tweepy.Cursor(api.friends).items():
+    process_or_store(friend._json)
+
+for tweet in tweepy.Cursor(api.user_timeline).items():
+    process_or_store(tweet._json)
+
+def process_or_store(tweet):
+    print(json.dumps(tweet))
+
+
+
+
+
+
+----------------------------------------------
+Streaming
+----------------------------------------------
+
+
+from tweepy import Stream
+from tweepy.streaming import StreamListener
+
+class MyListener(StreamListener):
+
+    def on_data(self, data):
+        try:
+            with open('python.json', 'a') as f:
+                f.write(data)
+                return True
+        except BaseException as e:
+            print("Error on_data: %s" % str(e))
+        return True
+
+    def on_error(self, status):
+        print(status)
+        return True
+
+twitter_stream = Stream(auth, MyListener())
+twitter_stream.filter(track=['#python'])
+
+
+
+
+
+----------------------------------------------
+The Anatomy of a Tweet
+----------------------------------------------
+
+import json
+with open('mytweets.json', 'r') as f:
+    line = f.readline() # read only the first tweet/line
+    tweet = json.loads(line) # load it as Python dict
+    print(json.dumps(tweet, indent=4)) # pretty-print
+
+
+
+----------------------------------------------
+How to Tokenise a Tweet Text
+----------------------------------------------
+from nltk.tokenize import word_tokenize
+tweet = 'RT @marcobonzanini: just an example! :D http://example.com #NLP'
+print(word_tokenize(tweet))
+# ['RT', '@', 'marcobonzanini', ':', 'just', 'an', 'example', '!', ':', 'D', 'http', ':', '//example.com', '#', 'NLP']
+
+
+----------------------------------------------
+# process all our tweets, previously saved on file
+----------------------------------------------
+with open('mytweets.json', 'r') as f:
+    for line in f:
+        tweet = json.loads(line)
+        tokens = preprocess(tweet['text'])
+        do_something_else(tokens)
+
+
+
+
+
+
+----------------------------------------------
+Counting Terms
+----------------------------------------------
+
+import operator
+import json
+from collections import Counter
+
+fname = 'mytweets.json'
+with open(fname, 'r') as f:
+    count_all = Counter()
+    for line in f:
+        tweet = json.loads(line)
+        # Create a list with all the terms
+        terms_all = [term for term in preprocess(tweet['text'])]
+        # Update the counter
+        count_all.update(terms_all)
+    # Print the first 5 most frequent words
+    print(count_all.most_common(5))
+
+
+----------------------------------------------
+Removing stop-words
+----------------------------------------------
+from nltk.corpus import stopwords
+import string
+
+punctuation = list(string.punctuation)
+stop = stopwords.words('english') + punctuation + ['rt', 'via']
+terms_stop = [term for term in preprocess(tweet['text']) if term not in stop]
+
+----------------------------------------------
+More term filters
+----------------------------------------------
+
+# Count terms only once, equivalent to Document Frequency
+terms_single = set(terms_all)
+# Count hashtags only
+terms_hash = [term for term in preprocess(tweet['text'])
+              if term.startswith('#')]
+# Count terms only (no hashtags, no mentions)
+terms_only = [term for term in preprocess(tweet['text'])
+              if term not in stop and
+              not term.startswith(('#', '@'))]
+              # mind the ((double brackets))
+              # startswith() takes a tuple (not a list) if
+              # we pass a list of inputs
+
+
+
+from nltk import bigrams
+terms_bigram = bigrams(terms_stop)
+
+
+
+----------------------------------------------
+From Python to Javascript with Vincent
+----------------------------------------------
+
+
+sudo pip install vincent
+
+
+import vincent
+
+word_freq = count_terms_only.most_common(20)
+labels, freq = zip(*word_freq)
+data = {'data': freq, 'x': labels}
+bar = vincent.Bar(data, iter_idx='x')
+bar.to_json('term_freq.json')
+
+<html>
+<head>
+    <title>Vega Scaffold</title>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="http://d3js.org/topojson.v1.min.js"></script>
+    <script src="http://d3js.org/d3.geo.projection.v0.min.js" charset="utf-8"></script>
+    <script src="http://trifacta.github.com/vega/vega.js"></script>
+</head>
+<body>
+    <div id="vis"></div>
+</body>
+<script type="text/javascript">
+// parse a spec and create a visualization view
+function parse(spec) {
+  vg.parse.spec(spec, function(chart) { chart({el:"#vis"}).update(); });
+}
+parse("term_freq.json");
+</script>
+</html>
+
+
+
+bar.to_json('term_freq.json', html_out=True, html_path='chart.html')
+
+----------------------------------------------
+Time Series Visualisation
+----------------------------------------------
+
+
+sudo pip install pandas
+
+
+
+import pandas
+import json
+
+dates_ITAvWAL = []
+# f is the file pointer to the JSON data set
+for line in f:
+    tweet = json.loads(line)
+    # let's focus on hashtags only at the moment
+    terms_hash = [term for term in preprocess(tweet['text']) if term.startswith('#')]
+    # track when the hashtag is mentioned
+    if '#itavwal' in terms_hash:
+        dates_ITAvWAL.append(tweet['created_at'])
+
+# a list of "1" to count the hashtags
+ones = [1]*len(dates_ITAvWAL)
+# the index of the series
+idx = pandas.DatetimeIndex(dates_ITAvWAL)
+# the actual series (at series of 1s for the moment)
+ITAvWAL = pandas.Series(ones, index=idx)
+
+# Resampling / bucketing
+per_minute = ITAvWAL.resample('1Min', how='sum').fillna(0)
+
+
+time_chart = vincent.Line(ITAvWAL)
+time_chart.axis_titles(x='Time', y='Freq')
+time_chart.to_json('time_chart.json')
+
+
+
+
+# all the data together
+match_data = dict(ITAvWAL=per_minute_i, SCOvIRE=per_minute_s, ENGvFRA=per_minute_e)
+# we need a DataFrame, to accommodate multiple series
+all_matches = pandas.DataFrame(data=match_data,
+                               index=per_minute_i.index)
+# Resampling as above
+all_matches = all_matches.resample('1Min', how='sum').fillna(0)
+
+# and now the plotting
+time_chart = vincent.Line(all_matches[['ITAvWAL', 'SCOvIRE', 'ENGvFRA']])
+time_chart.axis_titles(x='Time', y='Freq')
+time_chart.legend(title='Matches')
+time_chart.to_json('time_chart.json')
+
+
+
+
+----------------------------------------------
+A Simple Approach for Sentiment Analysis
+Computing Term Probabilities
+----------------------------------------------
+
+
+# n_docs is the total n. of tweets
+p_t = {}
+p_t_com = defaultdict(lambda : defaultdict(int))
+
+for term, n in count_stop_single.items():
+    p_t[term] = n / n_docs
+    for t2 in com[term]:
+        p_t_com[term][t2] = com[term][t2] / n_docs
+
+----------------------------------------------
+Computing the Semantic Orientation
+----------------------------------------------
+
+positive_vocab = [
+    'good', 'nice', 'great', 'awesome', 'outstanding',
+    'fantastic', 'terrific', ':)', ':-)', 'like', 'love',
+    # shall we also include game-specific terms?
+    # 'triumph', 'triumphal', 'triumphant', 'victory', etc.
+]
+negative_vocab = [
+    'bad', 'terrible', 'crap', 'useless', 'hate', ':(', ':-(',
+    # 'defeat', etc.
+]
+
+
+pmi = defaultdict(lambda : defaultdict(int))
+for t1 in p_t:
+    for t2 in com[t1]:
+        denom = p_t[t1] * p_t[t2]
+        pmi[t1][t2] = math.log2(p_t_com[t1][t2] / denom)
+
+semantic_orientation = {}
+for term, n in p_t.items():
+    positive_assoc = sum(pmi[term][tx] for tx in positive_vocab)
+    negative_assoc = sum(pmi[term][tx] for tx in negative_vocab)
+    semantic_orientation[term] = positive_assoc - negative_assoc
+
+
+semantic_sorted = sorted(semantic_orientation.items(),
+                         key=operator.itemgetter(1),
+                         reverse=True)
+top_pos = semantic_sorted[:10]
+top_neg = semantic_sorted[-10:]
+
+print(top_pos)
+print(top_neg)
+print("ITA v WAL: %f" % semantic_orientation['#itavwal'])
+print("SCO v IRE: %f" % semantic_orientation['#scovire'])
+print("ENG v FRA: %f" % semantic_orientation['#engvfra'])
+print("#ITA: %f" % semantic_orientation['#ita'])
+print("#FRA: %f" % semantic_orientation['#fra'])
+print("#SCO: %f" % semantic_orientation['#sco'])
+print("#ENG: %f" % semantic_orientation['#eng'])
+print("#WAL: %f" % semantic_orientation['#wal'])
+print("#IRE: %f" % semantic_orientation['#ire'])
+
+----------------------------------------------
+GeoJSON
+----------------------------------------------
+
+This is how the JSON structure looks like:
+
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [some_latitude, some_longitude]
+            },
+            "properties": {
+                "text": "This is sample a tweet",
+                "created_at": "Sat Mar 21 12:30:00 +0000 2015"
+            }
+        },
+        /* more tweets ... */
+    ]
+}
+
+----------------------------------------------
+From Tweets to GeoJSON
+----------------------------------------------
+
+# Tweets are stored in "fname"
+with open(fname, 'r') as f:
+    geo_data = {
+        "type": "FeatureCollection",
+        "features": []
+    }
+    for line in f:
+        tweet = json.loads(line)
+        if tweet['coordinates']:
+            geo_json_feature = {
+                "type": "Feature",
+                "geometry": tweet['coordinates'],
+                "properties": {
+                    "text": tweet['text'],
+                    "created_at": tweet['created_at']
+                }
+            }
+            geo_data['features'].append(geo_json_feature)
+
+# Save geo data
+with open('geo_data.json', 'w') as fout:
+    fout.write(json.dumps(geo_data, indent=4))
+
+----------------------------------------------
+Interactive Maps with Leaflet.js
+----------------------------------------------
+
+
+<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
+<script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+<script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+
+
+
+<!-- this goes in the <head> -->
+<style>
+#map {
+    height: 600px;
+}
+</style>
+<!-- this goes in the <body> -->
+<div id="map"></div>
+
+
+// Load the tile images from OpenStreetMap
+var mytiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+});
+// Initialise an empty map
+var map = L.map('map');
+// Read the GeoJSON data with jQuery, and create a circleMarker element for each tweet
+// Each tweet will be represented by a nice red dot
+$.getJSON("./geo_data.json", function(data) {
+    var myStyle = {
+        radius: 2,
+        fillColor: "red",
+        color: "red",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 1
+    };
+
+    var geojson = L.geoJson(data, {
+        pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, myStyle);
+        }
+    });
+    geojson.addTo(map)
+});
+// Add the tiles to the map, and initialise the view in the middle of Europe
+map.addLayer(mytiles).setView([50.5, 5.0], 5);
+
+
+
+################################################################################
+
+Turn Your Twitter Timeline into a Word Cloud
+http://sebastianraschka.com/Articles/2014_twitter_wordcloud.html
+
+################################################################################
+
+
+pip install git+git://github.com/amueller/word_cloud.git
+
+conda install pil
+
+python ./twitter_timeline.py --out 'output.csv'
+
+import sys
+sys.path.append('../../twitter_timeline/')
+import twitter_timeline
+import oauth_info as auth
+
+# https://github.com/rasbt/datacollect/tree/master/twitter_timeline
+
+tm = twitter_timeline.TimelineMiner(auth.ACCESS_TOKEN,
+                                    auth.ACCESS_TOKEN_SECRET,
+                                    auth.CONSUMER_KEY,
+                                    auth.CONSUMER_SECRET,
+                                    auth.USER_NAME
+                                    )
+
+print('Authentification successful: %s' %tm.authenticate())
+tm.get_timeline(max=2000, keywords=[])
+
+Authentification successful: True
+Tweets downloaded: 1999
+
+import pandas as pd
+df = pd.read_csv('path/to/CSV')
+
+
+
+
+
+--------------------------
+
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud, STOPWORDS
+
+# join tweets to a single string
+words = ' '.join(tm.df['tweet'])
+
+# remove URLs, RTs, and twitter handles
+no_urls_no_tags = " ".join([word for word in words.split()
+                            if 'http' not in word
+                                and not word.startswith('@')
+                                and word != 'RT'
+                            ])
+
+wordcloud = WordCloud(
+                      font_path='/Users/sebastian/Library/Fonts/CabinSketch-Bold.ttf',
+                      stopwords=STOPWORDS,
+                      background_color='black',
+                      width=1800,
+                      height=1400
+                     ).generate(no_urls_no_tags)
+
+plt.imshow(wordcloud)
+plt.axis('off')
+plt.savefig('./my_twitter_wordcloud_1.png', dpi=300)
+plt.show()
+
+
+
+
+
+-----------------------
+
+from scipy.misc import imread
+twitter_mask = imread('./twitter_mask.png', flatten=True)
+wordcloud = WordCloud(
+                      font_path='/Users/sebastian/Library/Fonts/CabinSketch-Bold.ttf',
+                      stopwords=STOPWORDS,
+                      background_color='white',
+                      width=1800,
+                      height=1400,
+                      mask=twitter_mask
+            ).generate(no_urls_no_tags)
+
+plt.imshow(wordcloud)
+plt.axis("off")
+plt.savefig('./my_twitter_wordcloud_2.png', dpi=300)
+plt.show()
+
+
+more_stopwords = {'oh', 'will', 'hey', 'yet', ...}
+STOPWORDS = STOPWORDS.union(more_stopwords)
+
+
+
+################################################################################
+
+Twitter Analysis with Python
+
+################################################################################
+
+import numpy as np
+import pandas as pd
+import re
+import warnings
+
+#Visualisation
+import matplotlib.pyplot as plt
+import matplotlib
+import seaborn as sns
+from IPython.display import display
+from mpl_toolkits.basemap import Basemap
+from wordcloud import WordCloud, STOPWORDS
+
+#nltk
+from nltk.stem import WordNetLemmatizer
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from nltk.sentiment.util import *
+from nltk import tokenize
+
+matplotlib.style.use('ggplot')
+pd.options.mode.chained_assignment = None
+warnings.filterwarnings("ignore")
+
+%matplotlib inline
+
+tweets = pd.read_csv('../input/tweets_all.csv', encoding = "ISO-8859-1")
+tweets['text'][1]
+
+
+#Preprocessing del RT @blablabla:
+tweets['tweetos'] = ''
+
+#add tweetos first part
+for i in range(len(tweets['text'])):
+    try:
+        tweets['tweetos'][i] = tweets['text'].str.split(' ')[i][0]
+    except AttributeError:
+        tweets['tweetos'][i] = 'other'
+
+#Preprocessing tweetos. select tweetos contains 'RT @'
+for i in range(len(tweets['text'])):
+    if tweets['tweetos'].str.contains('@')[i]  == False:
+        tweets['tweetos'][i] = 'other'
+
+# remove URLs, RTs, and twitter handles
+for i in range(len(tweets['text'])):
+    tweets['text'][i] = " ".join([word for word in tweets['text'][i].split()
+                                if 'http' not in word and '@' not in word and '<' not in word])
+
+
+tweets['text'][1]
+'Good morning Dina :) Have a terrific hump day! :) Little snowy in Cochrane today.'
+
+
+
+tweets['text'] = tweets['text'].apply(lambda x: re.sub('[!@#$:).;,?&]', '', x.lower()))
+tweets['text'] = tweets['text'].apply(lambda x: re.sub('  ', ' ', x))
+tweets['text'][1]
+
+------------------------------------------------
+# Visualisation with WordCloud
+------------------------------------------------
+
+def wordcloud(tweets,col):
+    stopwords = set(STOPWORDS)
+    wordcloud = WordCloud(background_color="white",stopwords=stopwords,random_state = 2016).generate(" ".join([i for i in tweets[col]]))
+    plt.figure( figsize=(20,10), facecolor='k')
+    plt.imshow(wordcloud)
+    plt.axis("off")
+    plt.title("Good Morning Datascience+")
+wordcloud(tweets,'text')
+
+
+tweets['country'] = tweets['country'].apply(lambda x: x.lower())
+tweets['country'].replace('states united','united states',inplace=True)
+tweets['country'].replace('united states','usa',inplace=True)
+tweets['country'].replace('united Kingdom','uk',inplace=True)
+tweets['country'].replace('republic philippines','philippines republic',inplace=True)
+wordcloud(tweets, 'country')
+
+
+
+
+
+------------------------------------------------
+Tweet’s sources
+------------------------------------------------
+
+tweets['source_new2'] = ''
+
+for i in range(len(tweets['source_new'])):
+    if tweets['source_new'][i] not in ['Twitter for Android ','Instagram ','Twitter Web Client ','Twitter for iPhone ']:
+        tweets['source_new2'][i] = 'Others'
+    else:
+        tweets['source_new2'][i] = tweets['source_new'][i]
+
+tweets_by_type2 = tweets.groupby(['source_new2'])['followers_count'].sum()
+tweets_by_type2.rename("",inplace=True)
+explode = (1, 0, 0, 0, 0)
+tweets_by_type2.transpose().plot(kind='pie',figsize=(20, 15),autopct='%1.1f%%',shadow=True,explode=explode)
+plt.legend(bbox_to_anchor=(1, 1), loc=6, borderaxespad=0.)
+plt.title('Number of followers by Source bis', bbox={'facecolor':'0.8', 'pad':5})
+
+
+
+
+plt.figure( figsize=(20,10), facecolor='k')
+m = Basemap(projection='mill',resolution=None,llcrnrlat=-90,urcrnrlat=90,llcrnrlon=-180,urcrnrlon=180)
+m.etopo()
+xpt,ypt = m(np.array(tweets['place_lon']),np.array(tweets['place_lat']))
+lon,lat = m(xpt,ypt,inverse=True)
+m.plot(xpt,ypt,'ro',markersize=np.sqrt(5))
+plt.title('Repartition on the globe', bbox={'facecolor':'0.8', 'pad':3})
+plt.show()
+
+
+
+------------------------------------------------
+Sentiment analysis
+
+tweets['text_lem'] = [''.join([WordNetLemmatizer().lemmatize(re.sub('[^A-Za-z]', ' ', line)) for line in lists]).strip() for lists in tweets['text']]
+vectorizer = TfidfVectorizer(max_df=0.5,max_features=10000,min_df=10,stop_words='english',use_idf=True)
+X = vectorizer.fit_transform(tweets['text_lem'].str.upper())
+sid = SentimentIntensityAnalyzer()
+tweets['sentiment_compound_polarity']=tweets.text_lem.apply(lambda x:sid.polarity_scores(x)['compound'])
+tweets['sentiment_neutral']=tweets.text_lem.apply(lambda x:sid.polarity_scores(x)['neu'])
+tweets['sentiment_negative']=tweets.text_lem.apply(lambda x:sid.polarity_scores(x)['neg'])
+tweets['sentiment_pos']=tweets.text_lem.apply(lambda x:sid.polarity_scores(x)['pos'])
+tweets['sentiment_type']=''
+tweets.loc[tweets.sentiment_compound_polarity>0,'sentiment_type']='POSITIVE'
+tweets.loc[tweets.sentiment_compound_polarity==0,'sentiment_type']='NEUTRAL'
+tweets.loc[tweets.sentiment_compound_polarity<0,'sentiment_type']='NEGATIVE'
+
+
+tweets_sentiment = tweets.groupby(['sentiment_type'])['sentiment_neutral'].count()
+tweets_sentiment.rename("",inplace=True)
+explode = (1, 0, 0)
+plt.subplot(221)
+tweets_sentiment.transpose().plot(kind='barh',figsize=(20, 20))
+plt.title('Sentiment Analysis 1', bbox={'facecolor':'0.8', 'pad':0})
+plt.subplot(222)
+tweets_sentiment.plot(kind='pie',figsize=(20, 20),autopct='%1.1f%%',shadow=True,explode=explode)
+plt.legend(bbox_to_anchor=(1, 1), loc=3, borderaxespad=0.)
+plt.title('Sentiment Analysis 2', bbox={'facecolor':'0.8', 'pad':0})
+plt.show()
+
+tweets[tweets.sentiment_type == 'NEGATIVE'].text.reset_index(drop = True)[0:5]
