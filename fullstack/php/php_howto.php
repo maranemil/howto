@@ -754,3 +754,23 @@ $xml_string = $domxml->saveXML();
 #$domxml->save($newfile);
 print "<pre>"; print_r($xml_string);
 exit;
+
+
+
+https://stackoverflow.com/questions/8615422/php-xml-how-to-output-nice-format
+http://www.php.net/manual/en/tidy.repairstring.php
+
+
+$xml_string = preg_replace('/(?:^|\G)  /um', "\t", $xml_string);
+tidy_repair_string($xml_string, ['input-xml'=> 1, 'indent' => 1, 'wrap' => 0]);
+
+* * * * *
+
+$dom = new DOMDocument();
+// Initial block (must before load xml string)
+$dom->preserveWhiteSpace = false;
+$dom->formatOutput = true;
+// End initial block
+$dom->loadXML($xml);
+$out = $dom->saveXML();
+print_R($out);
