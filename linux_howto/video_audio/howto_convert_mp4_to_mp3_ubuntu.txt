@@ -92,7 +92,7 @@ http://randombio.com/linuxsetup141.html
 ffplay -i GOPR0186cr.mp4 -vf "split [main][tmp]; [tmp] crop=iw:ih/2:0:0, vflip [flip]; [main][flip] overlay=0:H/2"
 ffmpeg -i inputmovie -vf "split [main][tmp]; [tmp] crop=iw:ih/2:0:0, vflip [flip]; [main][flip] overlay=0:H/2" outputmovie
 
-# overlay
+# burn effect
 ffplay -i GOPR0186cr.mp4 -vf "split [main][tmp]; [tmp] lutyuv="y=val*5" [tmp2]; [main][tmp2] overlay"
 ffmpeg -i DSC_6881.MOV -vf "split [main][tmp]; [tmp] lutyuv="y=val*5" [tmp2]; [main][tmp2] overlay" output.avi
 
@@ -225,6 +225,84 @@ ffplay -i GOPR0186cr.mp4 -vf select='not(mod(n\,5))'
 #
 ######################################################
 
+------
+| |  |
+--   |
+|    |
+------
+
+# sync video in video
+
+ ffmpeg -i in1.mp4  -i in2.mp4 -filter_complex "[0:0][1:0]overlay[out]" -shortest -map [out]  -pix_fmt yuv420p -c:a copy -c:v libx264 -crf 18  output.mp4
+
+------
+| |  |
+--   |
+|    |
+------
+
+# sync video in video
+
+ffmpeg -i out360.mp4 -i out180.mp4 -filter_complex "[1:v]setpts=PTS+0.1/TB[a]; [0:v][a]overlay=enable=gte(t\,0.1):shortest=1[out]" -map [out]  -c:v libx264 -crf 18 -pix_fmt yuv420p -t 20 -c:a copy -y output3.mp4
+
+# https://stackoverflow.com/questions/35269387/ffmpeg-overlay-one-video-onto-another-video
+# This starts the overlay at 5 seconds with the overlaid video start point being 00:15.
+
+setpts=PTS-10/TB is setpts=PTS+(overlay_delay-video_trim_in)/TB
+overlay=enable=gte(t\,5) is overlay=enable=gte(t\,overlay_delay)
+
+-----------
+|    |    |
+-----------
+
+# appnd two videos Left Right
+# if videos are with different size than in doing video in video
+
+ffmpeg -i out360.mp4  -i out180.mp4  -filter_complex "[0:v:0]pad=iw*2:ih[bg]; [bg][1:v:0]overlay=w" -strict -2 -t 20 -y output99.mp4
+ffmpeg -i out360.mp4  -i out180.mp4  -filter_complex "[0:v]setpts=PTS-STARTPTS, pad=iw*2:ih[bg]; [1:v]setpts=PTS-STARTPTS[fg]; [bg][fg]overlay=w"   -strict -2 -t 20  -y output99a.mp4
+
+------
+|    |
+------
+
+# mix 2 videos on the same size output 1:1 scale
+ffmpeg -i out360.mp4 -i out180.mp4  -filter_complex "[0:v]setpts=PTS-STARTPTS, scale=480x360[top]; [1:v]setpts=PTS-STARTPTS, scale=480x360, format=yuva420p,colorchannelmixer=aa=0.5[bottom]; [top][bottom]overlay=shortest=1" -vcodec libx264 -t 20 output99b.mp4
+
+
+# crop overlay output if double size in width - w/2 when 1280x320
+ffplay -i output99.mp4 -vf "crop=640:320:0:0"
+
+# crop overlay as rquare for instagram
+ffplay -i output99.mp4 -vf "crop=320:320:230:0"
+
+# optimeze output in vintage style
+ffplay -i output.mp4 -vf "scale=w=640:h=-1:sws_dither=x_dither,fftfilt=dc_Y=0:weight_Y='1+squish(1-(Y+X)/50)',curves=vintage"
+
+
+# http://ffmpeg.org/ffmpeg-filters.html#curves
+curves preset
+
+ffmpeg -i input -vf curves=preset=lighter -c:a copy output
+
+Select one of the available color presets. This option can be used in addition to the r, g, b parameters; in this case,
+the later options takes priority on the preset values. Available presets are:
+
+‘none’
+‘color_negative’
+‘cross_process’
+‘darker’
+‘increase_contrast’
+‘lighter’
+‘linear_contrast’
+‘medium_contrast’
+‘negative’
+‘strong_contrast’
+‘vintage’
+
+
+----------------
+
+
 # mix overlay 2 images 1:1
 composite -blend 30 2.jpg  4.jpg oppp.png
 composite -blend {{OPACITY_OF_1.JPG}}  1.jpg 2.jpg result.jpg
@@ -253,6 +331,8 @@ ffmpeg -i a.mp4 -vf "movie=a.mp4 [a]; movie=b.mp4 [b]; [in][a] overlay=0:366 [c]
 # overlay mix two videos 1:1
 ffmpeg -i a.mp4  -i b.mp4 -filter_complex " [0:v]setpts=PTS-STARTPTS, scale=480x360[top]; [1:v]setpts=PTS-STARTPTS, scale=480x360, format=yuva420p,colorchannelmixer=aa=0.5[bottom]; [top][bottom]overlay=shortest=1"-vcodec libx264 out19999.mp4
 ffmpeg -i a.mp4  -i b.mp4 -filter_complex " [0:v]setpts=PTS-STARTPTS, scale=480x360[top]; [1:v]setpts=PTS-STARTPTS, scale=480x360, format=yuva420p,colorchannelmixer=aa=0.5[bottom]; [top][bottom]overlay=shortest=1"  -vcodec libx264 -strict -2 out19999.mp4
+
+
 
 
 
