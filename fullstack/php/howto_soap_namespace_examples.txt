@@ -505,3 +505,57 @@ class SoapModule extends \Codeception\Module
         $this->getModule('SOAP')->_before($testcase);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Debug
+# https://stackoverflow.com/questions/3572414/how-do-i-see-the-actual-xml-generated-by-php-soap-client-class
+
+class DummySoapClient extends SoapClient {
+    function __construct($wsdl, $options) {
+        parent::__construct($wsdl, $options);
+    }
+    function __doRequest($request, $location, $action, $version, $one_way = 0) {
+        return $request;
+    }
+}
+$SOAP = new DummySoapClient('http://example.com/?wsdl', array('trace' => true));
+echo $SOAP->GetRequestDetail($params);
+
+
+class SoapClientDebug extends SoapClient
+{
+	public function __doRequest($request, $location, $action, $version, $one_way = 0)
+	{
+	    error_log("REQUEST:\n" .$request . "\n");
+	    error_log("LOCATION:\n" .$location . "\n");
+	    error_log("ACTION:\n" .$action . "\n");
+	    error_log("VERSION:\n" .$version . "\n");
+	    error_log("ONE WAY:\n" .$one_way . "\n");
+
+	    return parent::__doRequest($request, $location, $action, $version, $one_way);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
