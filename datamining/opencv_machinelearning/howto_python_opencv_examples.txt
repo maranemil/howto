@@ -1,0 +1,606 @@
+https://docs.opencv.org/2.4/index.html
+https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_gui/py_video_display/py_video_display.html
+https://gist.github.com/radames/effc25355c194bd23bbd1d0cbf87d449
+
+OpenCV  built-in face recognizers
+
+EigenFaces – cv2.face.createEigenFaceRecognizer()
+FisherFaces – cv2.face.createFisherFaceRecognizer()
+Local Binary Patterns Histograms (LBPH) – cv2.face.createLBPHFaceRecognizer()
+
+
+
+
+
+//---------------------------------------------------
+Capture Video from Camera
+//---------------------------------------------------
+
+import numpy as np
+import cv2
+
+cap = cv2.VideoCapture(0)
+# cap.isOpened()
+
+while(True):
+    # Capture frame-by-frame
+    ret, frame = cap.read()
+
+    # Our operations on the frame come here
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    # Display the resulting frame
+    cv2.imshow('frame',gray)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# When everything done, release the capture
+cap.release()
+cv2.destroyAllWindows()
+
+
+//---------------------------------------------------
+# Playing Video from file
+//---------------------------------------------------
+
+import numpy as np
+import cv2
+
+cap = cv2.VideoCapture('vtest.avi')
+
+while(cap.isOpened()):
+    ret, frame = cap.read()
+
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    cv2.imshow('frame',gray)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+
+//---------------------------------------------------
+# Saving a Video
+//---------------------------------------------------
+
+import numpy as np
+import cv2
+
+cap = cv2.VideoCapture(0)
+
+# Define the codec and create VideoWriter object
+fourcc = cv2.VideoWriter_fourcc(*'XVID')
+out = cv2.VideoWriter('output.avi',fourcc, 20.0, (640,480))
+
+while(cap.isOpened()):
+    ret, frame = cap.read()
+    if ret==True:
+        frame = cv2.flip(frame,0)
+
+        # write the flipped frame
+        out.write(frame)
+
+        cv2.imshow('frame',frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+    else:
+        break
+
+# Release everything if job is finished
+cap.release()
+out.release()
+cv2.destroyAllWindows()
+
+
+
+//---------------------------------------------------
+#https://gist.github.com/radames/effc25355c194bd23bbd1d0cbf87d449
+# https://gist.github.com/radames/1e7c794842755683162b
+# radames/python_opencv_camera_haar.py
+//---------------------------------------------------
+
+import cv2
+
+cap = cv2.VideoCapture(0)
+cap.set(3, 640) #WIDTH
+cap.set(4, 480) #HEIGHT
+
+face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
+
+while(True):
+    # Capture frame-by-frame
+    ret, frame = cap.read()
+
+    # Our operations on the frame come here
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+    print(len(faces))
+    # Display the resulting frame
+    for (x,y,w,h) in faces:
+         cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2)
+         roi_gray = gray[y:y+h, x:x+w]
+         roi_color = frame[y:y+h, x:x+w]
+         eyes = eye_cascade.detectMultiScale(roi_gray)
+         for (ex,ey,ew,eh) in eyes:
+             cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
+
+    cv2.imshow('frame',frame)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# When everything done, release the capture
+cap.release()
+cv2.destroyAllWindows()
+
+
+//---------------------------------------------------
+OpenCV VideoCapture running on PyGame
+opencv_video_to_pygame.py
+//---------------------------------------------------
+
+import pygame
+from pygame.locals import *
+import cv2
+import numpy as np
+import sys
+
+camera = cv2.VideoCapture(0)
+pygame.init()
+pygame.display.set_caption("OpenCV camera stream on Pygame")
+screen = pygame.display.set_mode([1280,720])
+
+try:
+    while True:
+
+        ret, frame = camera.read()
+
+        screen.fill([0,0,0])
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frame = np.rot90(frame)
+        frame = pygame.surfarray.make_surface(frame)
+        screen.blit(frame, (0,0))
+        pygame.display.update()
+
+        for event in pygame.event.get():
+			if event.type == KEYDOWN:
+				sys.exit(0)
+except KeyboardInterrupt,SystemExit:
+    pygame.quit()
+    cv2.destroyAllWindows()
+
+
+
+
+
+//---------------------------------------------------
+https://www.superdatascience.com/opencv-face-recognition/
+//---------------------------------------------------
+
+
+import cv2
+#os module for reading training data directories and paths
+import os
+#numpy to convert python lists to numpy arrays as it is needed by OpenCV face recognizers
+import numpy as np
+
+/*
+training-data
+--s1
+----- 1.jpg
+----- 2.jpg
+*/
+
+
+
+#there is no label 0 in our training data so subject name for index/label 0 is empty
+subjects = ["", "Ramiz Raja", "Elvis Presley"]
+
+
+#function to detect face using OpenCV
+def detect_face(img):
+	#convert the test image to gray scale as opencv face detector expects gray images
+	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+	#load OpenCV face detector, I am using LBP which is fast
+	#there is also a more accurate but slow: Haar classifier
+	face_cascade = cv2.CascadeClassifier('opencv-files/lbpcascade_frontalface.xml')
+
+	#let's detect multiscale images(some images may be closer to camera than others)
+	#result is a list of faces
+	faces = face_cascade.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=5);
+
+	#if no faces are detected then return original img
+	if (len(faces) == 0):
+	return None, None
+
+	#under the assumption that there will be only one face,
+	#extract the face area
+	x, y, w, h) = faces[0]
+
+	#return only the face part of the image
+	return gray[y:y+w, x:x+h], faces[0]
+
+
+
+
+#this function will read all persons' training images, detect face from each image
+#and will return two lists of exactly same size, one list
+#of faces and another list of labels for each face
+def prepare_training_data(data_folder_path):
+
+		#------STEP-1--------
+		#get the directories (one directory for each subject) in data folder
+		dirs = os.listdir(data_folder_path)
+
+		#list to hold all subject faces
+		faces = []
+		#list to hold labels for all subjects
+		labels = []
+
+		#let's go through each directory and read images within it
+		for dir_name in dirs:
+
+		#our subject directories start with letter 's' so
+		#ignore any non-relevant directories if any
+		if not dir_name.startswith("s"):
+		continue;
+
+		#------STEP-2--------
+		#extract label number of subject from dir_name
+		#format of dir name = slabel
+		#, so removing letter 's' from dir_name will give us label
+		label = int(dir_name.replace("s", ""))
+
+		#build path of directory containing images for current subject subject
+		#sample subject_dir_path = "training-data/s1"
+		subject_dir_path = data_folder_path + "/" + dir_name
+
+		#get the images names that are inside the given subject directory
+		subject_images_names = os.listdir(subject_dir_path)
+
+		#------STEP-3--------
+		#go through each image name, read image,
+		#detect face and add face to list of faces
+		for image_name in subject_images_names:
+
+		#ignore system files like .DS_Store
+		if image_name.startswith("."):
+		continue;
+
+		#build image path
+		#sample image path = training-data/s1/1.pgm
+		image_path = subject_dir_path + "/" + image_name
+
+		#read image
+		image = cv2.imread(image_path)
+
+		#display an image window to show the image
+		cv2.imshow("Training on image...", image)
+		cv2.waitKey(100)
+
+		#detect face
+		face, rect = detect_face(image)
+
+		#------STEP-4--------
+		#for the purpose of this tutorial
+		#we will ignore faces that are not detected
+		if face is not None:
+		#add face to list of faces
+		faces.append(face)
+		#add label for this face
+		labels.append(label)
+
+		cv2.destroyAllWindows()
+		cv2.waitKey(1)
+		cv2.destroyAllWindows()
+
+		return faces, labels
+
+
+#let's first prepare our training data
+#data will be in two lists of same size
+#one list will contain all the faces
+#and the other list will contain respective labels for each face
+print("Preparing data...")
+faces, labels = prepare_training_data("training-data")
+print("Data prepared")
+
+#print total faces and labels
+print("Total faces: ", len(faces))
+print("Total labels: ", len(labels))
+
+
+# 3.2 TRAIN FACE RECOGNIZER.
+
+#create our LBPH face recognizer
+face_recognizer = cv2.face.createLBPHFaceRecognizer()
+
+#or use EigenFaceRecognizer by replacing above line with
+#face_recognizer = cv2.face.createEigenFaceRecognizer()
+
+#or use FisherFaceRecognizer by replacing above line with
+#face_recognizer = cv2.face.createFisherFaceRecognizer()
+
+#train our face recognizer of our training faces
+face_recognizer.train(faces, np.array(labels))
+
+# 3.3 PREDICTION
+
+#function to draw rectangle on image
+#according to given (x, y) coordinates and
+#given width and heigh
+def draw_rectangle(img, rect):
+ (x, y, w, h) = rect
+ cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
+
+#function to draw text on give image starting from
+#passed (x, y) coordinates.
+def draw_text(img, text, x, y):
+ 	cv2.putText(img, text, (x, y), cv2.FONT_HERSHEY_PLAIN, 1.5, (0, 255, 0), 2)
+
+#this function recognizes the person in image passed
+#and draws a rectangle around detected face with name of the
+#subject
+def predict(test_img):
+	#make a copy of the image as we don't want to change original image
+	img = test_img.copy()
+	#detect face from the image
+	face, rect = detect_face(img)
+
+	#predict the image using our face recognizer
+	label= face_recognizer.predict(face)
+	#get name of respective label returned by face recognizer
+	label_text = subjects[label]
+
+	#draw a rectangle around face detected
+	draw_rectangle(img, rect)
+	#draw name of predicted person
+	draw_text(img, label_text, rect[0], rect[1]-5)
+
+	return img
+
+
+print("Predicting images...")
+
+#load test images
+test_img1 = cv2.imread("test-data/test1.jpg")
+test_img2 = cv2.imread("test-data/test2.jpg")
+
+#perform a prediction
+predicted_img1 = predict(test_img1)
+predicted_img2 = predict(test_img2)
+print("Prediction complete")
+
+#display both images
+cv2.imshow(subjects[1], predicted_img1)
+cv2.imshow(subjects[2], predicted_img2)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+https://www.learnopencv.com/read-write-and-display-a-video-using-opencv-cpp-python/
+
+# Create a VideoCapture object and read from input file
+# If the input is taken from the camera, pass 0 instead of the video file name.
+
+cap = cv2.VideoCapture('chaplin.mp4')
+
+# --------------------------------
+# Display Vid
+# --------------------------------
+
+import cv2
+import numpy as np
+
+# Create a VideoCapture object and read from input file
+# If the input is the camera, pass 0 instead of the video file name
+cap = cv2.VideoCapture('chaplin.mp4')
+
+# Check if camera opened successfully
+if (cap.isOpened()== False):
+  print("Error opening video stream or file")
+
+# Read until video is completed
+while(cap.isOpened()):
+  # Capture frame-by-frame
+  ret, frame = cap.read()
+  if ret == True:
+
+    # Display the resulting frame
+    cv2.imshow('Frame',frame)
+
+    # Press Q on keyboard to  exit
+    if cv2.waitKey(25) & 0xFF == ord('q'):
+      break
+
+  # Break the loop
+  else:
+    break
+
+# When everything done, release the video capture object
+cap.release()
+
+# Closes all the frames
+cv2.destroyAllWindows()
+
+# --------------------------------
+# Writing a video
+# --------------------------------
+
+# Define the codec and create VideoWriter object.The output is stored in 'outpy.avi' file.
+# Define the fps to be equal to 10. Also frame size is passed.
+
+out = cv2.VideoWriter('outpy.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 10, (frame_width,frame_height))
+
+# --------------------------------
+# Writing a video
+# --------------------------------
+
+import cv2
+import numpy as np
+
+# Create a VideoCapture object
+cap = cv2.VideoCapture(0)
+
+# Check if camera opened successfully
+if (cap.isOpened() == False):
+  print("Unable to read camera feed")
+
+# Default resolutions of the frame are obtained.The default resolutions are system dependent.
+# We convert the resolutions from float to integer.
+frame_width = int(cap.get(3))
+frame_height = int(cap.get(4))
+
+# Define the codec and create VideoWriter object.The output is stored in 'outpy.avi' file.
+out = cv2.VideoWriter('outpy.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 10, (frame_width,frame_height))
+
+while(True):
+  ret, frame = cap.read()
+
+  if ret == True:
+
+    # Write the frame into the file 'output.avi'
+    out.write(frame)
+
+    # Display the resulting frame
+    cv2.imshow('frame',frame)
+
+    # Press Q on keyboard to stop recording
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+      break
+
+  # Break the loop
+  else:
+    break
+
+# When everything done, release the video capture and video write objects
+cap.release()
+out.release()
+
+# Closes all the frames
+cv2.destroyAllWindows()
+
+
+
+
+
+
+
+# --------------------------------
+Open Read Vid
+# --------------------------------
+
+
+import cv2
+
+cap = cv2.VideoCapture("./out.mp4")
+while not cap.isOpened():
+    cap = cv2.VideoCapture("./out.mp4")
+    cv2.waitKey(1000)
+    print "Wait for the header"
+
+pos_frame = cap.get(cv2.cv.CV_CAP_PROP_POS_FRAMES)
+while True:
+    flag, frame = cap.read()
+    if flag:
+        # The frame is ready and already captured
+        cv2.imshow('video', frame)
+        pos_frame = cap.get(cv2.cv.CV_CAP_PROP_POS_FRAMES)
+        print str(pos_frame)+" frames"
+    else:
+        # The next frame is not ready, so we try to read it again
+        cap.set(cv2.cv.CV_CAP_PROP_POS_FRAMES, pos_frame-1)
+        print "frame is not ready"
+        # It is better to wait for a while for the next frame to be ready
+        cv2.waitKey(1000)
+
+    if cv2.waitKey(10) == 27:
+        break
+    if cap.get(cv2.cv.CV_CAP_PROP_POS_FRAMES) == cap.get(cv2.cv.CV_CAP_PROP_FRAME_COUNT):
+        # If the number of captured frames is equal to the total number of frames,
+        # we stop
+        break
+
+# --------------------------------
+Open Read Vid and write
+https://docs.opencv.org/2.4/modules/highgui/doc/reading_and_writing_images_and_video.html#videowriter-videowriter
+https://docs.opencv.org/2.4/modules/highgui/doc/reading_and_writing_images_and_video.html#videowriter-write
+https://pythonprogramming.net/loading-video-python-opencv-tutorial/
+https://www.pyimagesearch.com/2017/02/06/faster-video-file-fps-with-cv2-videocapture-and-opencv/
+# --------------------------------
+
+import cv2
+cap = cv2.VideoCapture('path of video file')
+count = 0
+while cap.isOpened():
+    ret,frame = cap.read()
+    cv2.imshow('window-name',frame)
+    cv2.imwrite("frame%d.jpg" % count, frame)
+    count = count + 1
+    if cv2.waitKey(10) & 0xFF == ord('q'):
+        break
+
+
+cap.release()
+cv2.destroyAllWindows()  # destroy all the opened windows
+
+
+
+import cv2.cv as cv
+videowriter = cv.CreateVideoWriter( filename, fourcc, fps, frameSize)
+cv.WriteFrame( videowriter, frame )
+
+
+
+
+
+# Return
+# https://github.com/opencv/opencv/issues/8471
+
+# Fails with files, direct instantiation
+import cv2
+camera = cv2.VideoCapture("path/to/a/valid/video.mp4")
+print(camera.isOpened()) # False
+print(camera.read()) # (False, None)
+# Fails with files, using .open() method
+import cv2
+camera = cv2.VideoCapture()
+camera.open("path/to/a/valid/video.mp4") # False
+print(camera.read()) # (False, None)
+# Fails with webcam
+import cv2
+camera = cv2.VideoCapture(0)
+print(camera.isOpened()) # False
+print(camera.read()) # (False, None)
+
+
+https://opencv.org/platforms/opencl.html
+https://www.pyimagesearch.com/2017/09/27/setting-up-ubuntu-16-04-cuda-gpu-for-deep-learning-with-python/
+https://www.pyimagesearch.com/2017/10/16/raspberry-pi-deep-learning-object-detection-with-opencv/
+https://www.learnopencv.com/selective-search-for-object-detection-cpp-python/
+https://www.learnopencv.com/object-tracking-using-opencv-cpp-python/
+http://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_objdetect/py_face_detection/py_face_detection.html
+https://docs.opencv.org/2.4.13.2/modules/objdetect/doc/cascade_classification.html
+https://www.learnopencv.com/image-recognition-and-object-detection-part1/
+https://towardsdatascience.com/building-a-real-time-object-recognition-app-with-tensorflow-and-opencv-b7a2b4ebdc32
+https://www.pyimagesearch.com/2017/09/11/object-detection-with-deep-learning-and-opencv/
+https://www.pyimagesearch.com/2017/09/18/real-time-object-detection-with-deep-learning-and-opencv/
+https://pythonprogramming.net/haar-cascade-object-detection-python-opencv-tutorial/
+https://docs.opencv.org/3.0-beta/modules/objdetect/doc/cascade_classification.html

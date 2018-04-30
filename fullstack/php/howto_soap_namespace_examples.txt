@@ -1,0 +1,507 @@
+<?php
+
+####################################################################################
+#
+#	Change SOAP request format
+#
+####################################################################################
+
+// Change Namespace/Prefix SOAP - combination of SoapVar and SoapParam.
+// https://www.experts-exchange.com/questions/28515293/Change-Namespace-SOAP.html
+// https://www.predic8.de/public-soap-web-services.htm
+// https://stackoverflow.com/questions/17855171/php-soapclient-how-to-prefix-soap-parameter-tag-name-with-namespace
+// https://codeception.com/docs/modules/SOAP
+// https://www.soapui.org/soap-and-wsdl/wsdl-refactoring.html
+// https://framework.zend.com/apidoc/1.12/classes/Zend_Soap_Client.html
+// http://php.net/manual/en/soapheader.soapheader.php
+
+
+
+/*$client = new SoapClient('http://www.dfwebservice.net/DfcsRemittance.asmx?WSDL', array('soap_version' => SOAP_1_2,				'trace' => 1,
+		'use' => SOAP_LITERALL,
+        'style' => SOAP_DOCUMENT,
+		'encoding'=>' UTF-8'));
+
+		$typedVar = new SoapVar("mystring", XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
+$params = '<RemittanceRequest><RequestType>BranchListRequest</RequestType><agent>BWS</agent><userid>wbsuser</userid><password>pass@wbs</password></RemittanceRequest>';
+$params = new SoapVar($params, XSD_ANYXML);
+
+$result = $client->GetBranchListXML($params);
+echo "REQUEST:\n" . $client->__getLastRequest() . "\n";
+echo "Response:\n" . $client->__getLastResponse() . "\n";
+
+print_r($result);*/
+
+/*try {
+  $client = new SoapClient($wsdl, array('trace' => 1));
+  $query = new stdClass;
+  $query->UniqueIdentifier = $id;
+  $query->CallingSystem = 'WEB';
+  $response = $client->GenericUniqueIdentifierSearch($query);
+} catch (SoapFault $ex) {
+  $this->view->error = $ex->getMessage();
+  ...
+}*/
+
+// FIX ---------------------
+
+$value = new SoapVar('<ns2:Value>GEG</ns2:Value>', XSD_ANYXML);
+$requestor->setFilter(Array("MetaDataConstraint"=>Array("class"=>"topics", "Value"=>$value)));
+$value = new SoapVar(' GEG http://schemas.reuters.com/ns/2006/04/14/rmds/webservices/news/filter">GEG >', XSD_ANYXML);
+
+// . . .
+
+$wrapper = new StdClass;
+$wrapper->UniqueIdentifier = new SoapVar($id, XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema", "UniqueIdentifier", "ns1");
+$wrapper->CallingSystem = new SoapVar("WEB", XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema", "CallingSystem", "ns1");
+$searchrequest = new SoapParam($wrapper, "GenericSearchRequest");
+
+try{
+    $response = $this->client->GenericUniqueIdentifierSearch($searchrequest);
+}catch(Exception $e){
+    die("Error calling method: ".$e->getMessage());
+}
+
+// . . .
+
+$xml = "<ns1:GenericSearchRequest>"
+     . "<ns1:UniqueIdentifier>$id</ns1:UniqueIdentifier>"
+     . "<ns1:CallingSystem>WEB</ns1:CallingSystem>"
+     . "</ns1:GenericSearchRequest>";
+$query = new SoapVar($xml, XSD_ANYXML);
+
+$response = $this->client->__SoapCall(
+    'GenericUniqueIdentifierSearch',
+    array($query)
+);
+
+// -------------------------
+
+
+
+####################################################################################
+#
+#  	Debug SOAP Request
+# 	http://us3.php.net/manual/en/soapclient.gettypes.php
+#
+####################################################################################
+
+//In order to use the __getLastRequest() method successfully, you have to set the 'trace' option to true on client construction:
+$client = new SoapClient('wsdldoc.asmx?WSDL', array('trace' => TRUE));
+//This way, your request will still be sent (and therefore still fail), but you can inspect the sent xml afterwards by calling $client->__getLastRequest().
+
+
+//To get access to the generated XML before/without sending the request, you'd need to subclass the SoapClient in order to override the __doRequest() method:
+
+class SoapClientDebug extends SoapClient
+{
+  public function __doRequest($request, $location, $action, $version, $one_way = 0) {
+      // Add code to inspect/dissect/debug/adjust the XML given in $request here
+
+      // Uncomment the following line, if you actually want to do the request
+      // return parent::__doRequest($request, $location, $action, $version, $one_way);
+  }
+}
+
+
+
+SoapClient($soapURL,array("trace" => 1,"exceptions"=>0));
+
+
+/*
+http://php.net/manual/de/domdocument.savexml.php
+https://www.codeproject.com/Articles/272657/Write-Enhanced-SOAP-Webservices-with-PHP
+https://www.w3schools.com/xml/xml_soap.asp
+*/
+
+$client = SoapClient($wsdl_url, array('trace' => 1));
+$result = $client->SomeFunction();
+
+echo "REQUEST HEADERS:\n" . $client->__getLastRequestHeaders() . "\n";
+echo "REQUEST:\n" . $client->__getLastRequest() . "\n";
+echo "Response headers:\n" . $client->__getLastResponseHeaders() . "\n";
+echo "Response:\n" . $client->__getLastResponse() . "\n";
+
+/*
+https://www.w3schools.com/xml/xml_soap.asp
+Schema for the SOAP/1.1 envelope
+http://schemas.xmlsoap.org/soap/envelope/
+Schema defined in the SOAP Version 1.2 Part 1 specification
+http://www.w3.org/2003/05/soap-envelope/
+*/
+
+
+// https://stackoverflow.com/questions/8650580/change-soap-prefixes-in-php
+
+public BetterSoapClient extends SoapClient {
+
+    public function __construct($wsdl, $options = null) {
+        parent::__construct($wsdl, $options);
+    }
+
+    public function __doRequest($request, $location, $action, $version) {
+
+        $dom = new DOMDocument('1.0');
+
+        // loads the SOAP request to the Document
+        $dom->loadXML($request);
+
+        // Create a XPath object
+        $path = new DOMXPath($dom);
+
+        // Search the nodes to fix
+        $nodesToFix = $path->query('//SOAP-ENV:Envelope/SOAP-ENV:Body/*', null, true);
+
+        // Remove unwanted namespaces
+        $this->fixNamespace($nodesToFix, 'ns1', 'http://tempuri.org/');
+
+        // Save the modified SOAP request
+        $request = $dom->saveXML();
+
+        return parent::__doRequest($request, $location, $action, $version);
+    }
+
+    public function fixNamespace(DOMNodeList $nodes, $namespace, $value) {
+        // Remove namespace from envelope
+        $nodes->item(0)
+                ->ownerDocument
+                ->firstChild
+                ->removeAttributeNS($value, $namespace);
+
+        //iterate through the node list and remove namespace
+
+        foreach ($nodes as $node) {
+
+            $nodeName = str_replace($namespace . ':', '', $node->nodeName);
+            $newNode = $node->ownerDocument->createElement($nodeName);
+
+            // Append namespace at the node level
+            $newNode->setAttribute('xmlns', $value);
+
+            // And replace former node
+            $node->parentNode->replaceChild($newNode, $node);
+        }
+    }
+}
+
+// ------------
+// https://stackoverflow.com/questions/21032594/change-soap-request-format
+
+class HackySoapClient extends SoapClient {
+
+    function __doRequest( $request, $location, $action, $version, $one_way = 0 ) {
+
+        global $namespace;
+
+        // Here we remove the ns1: prefix and remove the xmlns attribute from the XML envelope.
+        $request = str_replace( '<ns1:', '<', $request );
+        $request = str_replace( '</ns1:', '</', $request );
+        $request = str_replace( ' xmlns:ns1="' . $namespace . '"', '', $request );
+
+        // The xmlns attribute must then be added to EVERY function called by this script.
+        $request = str_replace( '<Login',           '<Login xmlns="' . $namespace . '"', $request );
+        $request = str_replace( '<GetTransactions', '<GetTransactions xmlns="' . $namespace . '"', $request );
+
+        return parent::__doRequest( $request, $location, $action, $version, $one_way = 0 );
+
+    }
+
+}
+
+$soap_client = new HackySoapClient( $wsdl, array());
+
+
+// ----------------
+
+class AuthHeader {
+	private $UsernameToken;
+	public function __construct($username,$password) {
+		$this->UsernameToken = new AuthDetails($username,$password);
+	}
+}
+class AuthDetails {
+	private $Username;
+	private $Password;
+	public function __construct($username,$password) {
+		$this->Username = $username;
+		$this->Password = $password;
+	}
+}
+$auth = new AuthHeader('xxx','xxx');
+$security_ns = 'http://namespace';
+$authvalues = new SoapVar($auth, SOAP_ENC_OBJECT);
+$header = new SoapHeader($security_ns, 'Security', $authvalues);
+
+// --------------
+
+
+$client = new SoapClient ("http://soap.m4u.com.au/?wsdl",
+                          array ("trace" => 1, "exceptions" => 1)) ;
+
+$auth -> userId = "ABC" ;
+$auth -> password = "DEF" ;
+$arg -> authentication = $auth ;
+
+try {
+    $response = $client -> checkUser ($arg) ;
+
+} catch (SoapFault $e) {
+  echo "\nEXCEPTION:\n".$e;
+  echo "\n\nREQUEST WAS:\n";
+  echo $client -> __getLastRequest () ;
+  exit ;
+  }
+
+
+
+# http://php.net/manual/es/soapvar.soapvar.php
+# pub.soap.utils:createSoapData
+# pub.soap.utils:stringToSoapData
+# https://github.com/zendframework/ZendService_DeveloperGarden/blob/master/library/ZendService/DeveloperGarden/Client/Soap.php
+# https://github.com/zendframework/zend-soap/blob/master/src/Client.php
+# https://github.com/vrana/zf2/blob/master/tests/Zend/Soap/ClientTest.php
+# https://framework.zend.com/apidoc/2.0/classes/Zend.Soap.Client.html
+# http://php.net/manual/en/book.soap.php
+# http://www.soapuser.com/basics3.html
+
+$wsdl = 'http://url-of-wsdl';
+$namespace = 'http://custom-url-here';
+
+$client = new Client($wsdl);
+$client->setSoapVersion(SOAP_1_1);
+
+$header = new \SoapHeader($namespace, 'imag');
+$client->addSoapInputHeader($header);
+
+/*$params = [
+    new \SoapVar([
+        new \SoapVar($password, XSD_STRING, null, $namespace, 'Password'),
+        new \SoapVar($username, XSD_STRING, null, $namespace, 'User'),
+     ], SOAP_ENC_OBJECT, null, $namespace, 'request'),
+];*/
+$params = [
+            new \SoapVar([
+                new \SoapVar($password, XSD_STRING, null, null, 'ns2:Password'),
+                new \SoapVar($username, XSD_STRING, null, null, 'ns2:User'),
+            ], SOAP_ENC_OBJECT, null, null, 'ns1:request'),
+        ];
+
+$result = $client->Logon(new SoapVar($params, SOAP_ENC_OBJECT));
+
+
+
+/*
+http://fvue.nl/wiki/Php:_Soap:_How_to_add_attribute_to_SoapVar
+Php: Soap: How to add attribute to SoapVar
+*/
+
+// Solution 1: Element and attribute in same namespace
+$client = new SoapClient(wsdl, array(
+    'trace'        => 1,
+    'encoding'     => 'UTF-8',
+    'soap_version' => SOAP_1_1,
+    'classmap'     => array('MessageHeader' => 'MessageHeaderSoapStruct')
+));
+
+class MessageHeaderSoapStruct {
+    public $From;
+    public $To;
+    public $version;
+}
+
+$var = new MessageHeaderSoapStruct;
+$var->From    = 'foo';
+$var->To      = 'bar';
+$var->version = 1;
+$namespace = 'http://xxx'; # Namespace of MessageHeader WSDL element
+$MessageHeader = new SoapVar($var, SOAP_ENC_OBJECT, 'MessageHeader', $namespace);
+
+
+
+// Solution 2: Element and attribute in different namespaces
+$client = new SoapClient(wsdl, array(
+    'trace'        => 1,
+    'encoding'     => 'UTF-8',
+    'soap_version' => SOAP_1_1,
+    'classmap'     => array(
+        'type1'   => 'Type1SoapStruct'
+    )
+));
+
+class Type1SoapStruct {
+    public $attribute1;
+}
+
+$nmB = 'http://mynamespace2';
+$nsB = 'myns2';
+$element1 = new Type1SoapStruct;
+$element1->attribute1 = new SoapVar('myattribute1', XSD_STRING, 'type1', null, $nmB, $nsB);
+$element1->_ = 'myvalue1';
+
+$nmA = 'http://mynamespace1';
+$nsA = 'myns1';
+$element1_soapvar = new SoapVar($element1, SOAP_ENC_OBJECT, null, null, $nmA, $nsA);
+
+$params = new StdClass();
+$params->element1 = $element1_soapvar;
+$this->__soapCall('mycall', array(new SoapVar(array($params), SOAP_ENC_OBJECT)));
+
+/*---------------------------------------------------------------------------*/
+
+
+
+
+
+// https://stackoverflow.com/questions/5998356/how-to-create-php-soap-request-with-multiple-namespaces
+/* Object for holding authentication info
+   this could probably be accomplished using stdClass too */
+class AuthHeader {
+    var $licenseKey;
+    var $password;
+    var $username;
+
+    function __construct($loginInfo) {
+      $this->licenseKey = $loginInfo['licenseKey'];
+      $this->password   = $loginInfo['password'];
+      $this->username   = $loginInfo['username'];
+    }
+}
+
+// set current soap header with login info
+$client = new SoapClient("http://demo.smc3.com/AdminManager/services/RateWareXL?wsdl",
+                     array('trace' => TRUE
+                        ));
+// create header params array
+$headerParams = array('licenseKey'        => $key,
+                      'password'          => $pass,
+                      'username'          => $user);
+// create AuthHeader object
+$auth = new AuthHeader($headerParams);
+
+// Turn auth header into a SOAP Header
+$header = new SoapHeader($ns, 'AuthenticationToken', $auth, false);
+
+// set the header
+$client->__setSoapHeaders($header);
+
+// Check if shipping is ready - base call
+$ready_to_ship = $client->isReady();
+// $last_request = $client->__getLastRequest();
+$last_response = $client->__getLastResponse();
+
+//print $last_request;
+if ($last_response == true) {
+
+  print "Ready to ship\n";
+
+	// Create the shipping request
+	$d = new stdClass;
+	$d->nmfcClass = $ship_class;
+	$d->weight    = $ship_weight;
+
+	$p = new stdClass;
+	$p->LTLRateShipmentRequest->destinationCountry       = $destination_country;
+	$p->LTLRateShipmentRequest->destinationPostalCode    = $destination_postal_code;
+	$p->LTLRateShipmentRequest->details                  = array($d);
+	$p->LTLRateShipmentRequest->originCountry            = $origin_country;
+	$p->LTLRateShipmentRequest->originPostalCode         = $origin_postal_code;
+	$p->LTLRateShipmentRequest->shipmentDateCCYYMMDD     = $ship_date;
+	$p->LTLRateShipmentRequest->tariffName               = $tariff;
+
+	$quote = $client->LTLRateShipment($p);
+
+	$last_request = $client->__getLastRequest();
+	$last_response = $client->__getLastResponse();
+
+	print "Request: " . $last_request;
+	print "\nResponse: " . $last_response;
+
+}
+
+
+
+/*---------------------------------------------------------------------------*/
+// https://stackoverflow.com/questions/40078017/changing-namespace-in-php-soapclient-request
+
+$rexHost = '<domain of retail express>';
+$rexApi = '<URI of retail express API / wsdl path>';
+$rexUser = 'Username';
+$rexPassword = 'Password';
+$rexApiClient = 'Random-hash-clientID';
+$rexApiHost = 'http://retailexpress.com.au/';
+
+$client = new SoapClient($rexHost.$rexApi, array('trace' => true));
+
+$auth = new stdClass();
+$auth->ClientID = $rexApiClient;
+$auth->UserName = $rexUser;
+$auth->Password = $rexPassword;
+
+$header = new SoapHeader($rexApiHost, 'ClientHeader', $auth, false);
+$client->__setSoapHeaders($header);
+
+$lastUpdate = '2000-01-01T00:00:00.000Z'; //hardcoded for test
+
+$params = array();
+$params[] = new SoapVar($lastUpdate, XSD_DATETIME, null, null, 'LastUpdated', $rexApiHost);
+$params[] = new SoapVar(1, XSD_INTEGER, null, null, 'OnlyCustomersWithEmails', $rexApiHost);
+
+try {
+    $users = null;
+    return $users = $client->CustomerGetBulkDetails( new SoapVar($params, SOAP_ENC_OBJECT));
+} catch (Exception $e) {
+    Log::info($e->getMessage());
+    Log::info($client->__getLastRequest()); //laravel logger, where I got the generated SOAP XML request
+    return false;
+}
+
+
+
+
+/*---------------------------------------------------------------------------*/
+// CODECEPTION SOAP Test
+// https://stackoverflow.com/questions/34872451/codeception-soap-namespace/34898145#34898145
+
+Class SiteRedshopbCategory100SoapCest
+{
+public function _before(ApiTester $I, \Helper\SoapModule $soapModule, \Codeception\TestCase\Cest $testCase)
+{
+    $endpoint = 'http://mywebsite.com/index.php?webserviceClient=site&webserviceVersion=1.0.0&view=category&api=soap';
+    $schema = $I->getSoapWsdlDinamically($endpoint);
+
+    $soapModule->configure(
+            $testCase,
+            $endpoint,
+            $schema
+    );
+}
+
+public function create(ApiTester $I)
+{
+    $I->wantTo('POST a new category using SOAP');
+    $I->amHttpAuthenticated('admin', 'admin');
+    $I->sendSoapRequest('create', "<name>Category1</name>");
+    $I->seeSoapResponseContainsStructure("<result></result>");
+    $I->dontSeeSoapResponseIncludes("<result>false</result>");
+}
+
+
+
+// Needs to be created at: tests/_support/Helper/
+namespace Helper;
+// here you can define custom actions
+// all public methods declared in helper class will be available in $I
+class SoapModule extends \Codeception\Module
+{
+    public function configure($testcase, $endpoint, $schema)
+    {
+        $this->getModule('SOAP')->_reconfigure(
+            array(
+                'endpoint' => $endpoint,
+                'schema' => $schema,
+            )
+        );
+        //$this->getModule('SOAP')->buildRequest();
+        $this->getModule('SOAP')->_before($testcase);
+    }
+}
