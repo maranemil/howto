@@ -107,7 +107,26 @@ try {
 
       $client2 = new SoapClient(AsendiaShoapConfig::$asendia_wsdl_func, array($initSoapOptions));
       $headers = array();
-      $headers[] = new SoapHeader("AuthenticationTicket", $AuthenticationTicket, null, false);
+      $headers[] = new SoapHeader(
+        "http://centiro.com/facade/shared/1/0/datacontract",
+        "AuthenticationTicket",
+        $AuthenticationTicket,
+        null,
+        false
+     );
+
+     /*
+        // Alternative Way
+      $client2 = new \Zend\Soap\Client(self::$strWSDL, $arrOptionsSOAP);
+      $client2->addSoapInputHeader(
+          new SoapHeader(
+            "http://centiro.com/facade/shared/1/0/datacontract",
+            "AuthenticationTicket",
+            $AuthenticationTicket
+            )
+      );
+     */
+
       $client2->__setSoapHeaders($headers);
 
       print PHP_EOL;

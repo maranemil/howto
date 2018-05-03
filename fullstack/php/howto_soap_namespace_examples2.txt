@@ -1,0 +1,202 @@
+##############################################################
+#
+#   Soap error, Encoding: object has no 'RecordId' property FIX
+#   https://stackoverflow.com/questions/7269268/soap-error-encoding-object-has-no-recordid-property?rq=1
+#
+##############################################################
+
+class TMemberV2
+{
+    public $RecordID;
+    public $Number;
+}
+
+class TCreditCard
+{
+    public $CardType;
+    public $CardNumber;
+}
+
+class TMemberFee
+{
+    public $Member;
+}
+
+$member = new TMemberV2();
+$member->RecordID = $id;
+$member->Number = $kennitala;
+$member->Address3 = '';
+
+$member->Education = '';
+$member->Applications = '';
+$member->Funds = '';
+$member->CreditCard = '';
+
+$creditCard = new TCreditCard();
+$creditCard->CardType = $_POST['CT'];
+$creditCard->CardNumber = $_POST['CN'];
+$creditCard->ExpDate = mktime(0,0,0,$_POST['CM'],1,$_POST['CY']);
+$creditCard->SSNumber = $kt_forradamanns;
+
+$memberFee = new TMemberFee();
+$memberFee->Member = $member;
+$memberFee->Memo = '';
+
+$wsdl = 'SOME WSDL';
+$client = new mySoap($wsdl, array('trace' => 1));
+$param = new SoapParam($memberFee, 'ns1:TMemberFee');
+$param1 = new SoapParam('_ActionInsertEdit', 'ns1:TMemberFeeOptions');
+$result = $client->__call('CreateMemberFee',array('obj'=>$param, 'opt'=>$param1));
+
+------------------------------------------------------------------------------------
+
+set header
+
+$client = new SoapClient($webServiceURI, array(
+    "exceptions" => 0,
+    "trace" => 1,
+    "encoding" => $phpInternalEncoding,
+    'stream_context' => stream_context_create(array(
+        'http' => array(
+            'header' => 'SomeCustomHeader: value'
+        ),
+    )),
+));
+
+------------------------------------------------------------------------------------
+
+$soapClient = new nusoap_client('wsdl adress','wsdl');
+$soapClient->additionalHeaders = array('key'=>'val','key2'=>'val');
+
+------------------------------------------------------------------------------------
+
+$dom = new DomDocument('1.0', 'UTF-8');
+$dom->preserveWhiteSpace = false;
+$dom->loadXML($request);
+$hdr = $dom->createElementNS('http://schemas.xmlsoap.org/soap/envelope/', 'SOAP-ENV:Header');
+$dom->documentElement->insertBefore($hdr, $dom->documentElement->firstChild);
+$request = $dom->saveXML();
+
+------------------------------------------------------------------------------------
+http://php.net/manual/en/soapclient.dorequest.php
+
+$versie = new stdClass();//define a basic class object
+$versie->versieID = $aVersie->versieID();//fill it with the exact attributes as your complextype Object in the wsdl is
+$versie->versieNummer = $aVersie->versieNummer();
+$versie->isActief = $aVersie->isActief();
+$soapVersieType = new SoapVar($versie , SOAP_ENC_OBJECT, "Versie", "http://127.0.0.1:8999/SOAP?wsdl");
+//create the complex soap type, Versie is the name of my complex type in the wsdl, the latter url beeing the location of my wsdl.
+
+try{
+  $result =  $soapClient->BewaarVersie($this->sessieId,$soapVersieType); //BewaarVersie is a function derived from my WSDL with two params.
+}
+catch(SoapFault $e){
+  trigger_error('Something soapy went wrong: '.$e->faultstring,E_USER_WARNING);
+}
+
+------------------------------------------------------------------------------------
+http://php.net/manual/de/soapclient.setsoapheaders.php
+
+$client = new SoapClient(null, array('location' => "http://localhost/soap.php",
+                                     'uri'      => "http://test-uri/"));
+$header = new SoapHeader('http://soapinterop.org/echoheader/',
+                            'echoMeStringRequest',
+                            'hello world');
+
+$client->__setSoapHeaders($header);
+$client->__soapCall("echoVoid", null);
+
+
+
+------------------------------------------------------------------------------------
+
+$client = new SoapClient(null, array('location' => "http://localhost/soap.php",
+                                     'uri'      => "http://test-uri/"));
+$headers = array();
+$headers[] = new SoapHeader('http://soapinterop.org/echoheader/',
+                            'echoMeStringRequest',
+                            'hello world');
+$headers[] = new SoapHeader('http://soapinterop.org/echoheader/',
+                            'echoMeStringRequest',
+                            'hello world again');
+$client->__setSoapHeaders($headers);
+$client->__soapCall("echoVoid", null);
+
+------------------------------------------------------------------------------------
+
+$client = new SoapClient("ein.wsdl", array('trace' => 1));
+$result = $client->EineFunktion();
+echo "ANFRAGE:\n" . $client->__getLastRequest() . "\n";
+
+http://php.net/manual/de/soapclient.getlastrequest.php
+
+
+------------------------------------------------------------------------------------
+http://php.net/manual/de/soapclient.setsoapheaders.php
+https://github.com/facebook/hhvm/issues/6263
+https://framework.zend.com/manual/2.2/en/modules/zend.soap.client.html
+http://php.net/manual/de/class.soapclient.php
+
+// first soap header.
+$var = new SoapVar($header, XSD_ANYXML);
+$soapHeader = new SoapHeader(NAME_SPACE, "Security", $var);
+// second soap header.
+$var2 = new SoapVar($header2, XSD_ANYXML);
+$soapHeader2 = new SoapHeader(DIFF_NAME_SPACE, "ID", $var2);
+
+$client = new SoapClient($wsdl, array("location" => $location));
+
+$headers = array();
+$headers[] = $soapHeader;
+$headers[] = $soapHeader2;
+
+// Here my code was just terminating.
+$client->__setSoapHeaders($headers);
+------------------------------------------------------------------------------------
+try {
+        $arrContextOptions=array("ssl"=>array( "verify_peer"=>false, "verify_peer_name"=>false,'crypto_method' => STREAM_CRYPTO_METHOD_TLS_CLIENT));
+
+        $options = array(
+                'soap_version'=>SOAP_1_2,
+                'exceptions'=>true,
+                'trace'=>1,
+                'cache_wsdl'=>WSDL_CACHE_NONE,
+                'stream_context' => stream_context_create($arrContextOptions)
+        );
+        $client = new SoapClient('https://url/dir/file.wsdl', $options);
+
+    } catch (Exception $e) {
+        echo "<h2>Exception Error!</h2>";
+        echo $e->getMessage();
+    }
+
+------------------------------------------------------------------------------------
+
+##############################################################
+#
+#   Converting SOAP Response to array from stdClass -> stdClass2Array ( Version > PHP 5.2.0)
+#
+##############################################################
+
+Converting an array/stdClass -> stdClass
+$stdClass = json_decode(json_encode($booking));
+
+Converting an array/stdClass -> array
+$array = json_decode(json_encode($booking), true);
+
+* * * * *
+
+// http://krisjordan.com/dynamic-properties-in-php-with-stdclass
+// Example with StdClass
+$json = '{ "foo": "bar", "number": 42 }';
+$stdInstance = json_decode($json);
+echo $stdInstance->foo . PHP_EOL; //"bar"
+echo $stdInstance->number . PHP_EOL; //42
+//Example with associative array
+$array = json_decode($json, true);
+echo $array['foo'] . PHP_EOL; //"bar"
+echo $array['number'] . PHP_EOL; //42
+
+$object = new StdClass;
+$object->foo = 'bar';
+json_encode($object);
