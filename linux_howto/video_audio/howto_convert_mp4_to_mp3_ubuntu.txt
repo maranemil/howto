@@ -300,6 +300,7 @@ the later options takes priority on the preset values. Available presets are:
 ‘vintage’
 
 
+
 ----------------
 
 
@@ -331,6 +332,180 @@ ffmpeg -i a.mp4 -vf "movie=a.mp4 [a]; movie=b.mp4 [b]; [in][a] overlay=0:366 [c]
 # overlay mix two videos 1:1
 ffmpeg -i a.mp4  -i b.mp4 -filter_complex " [0:v]setpts=PTS-STARTPTS, scale=480x360[top]; [1:v]setpts=PTS-STARTPTS, scale=480x360, format=yuva420p,colorchannelmixer=aa=0.5[bottom]; [top][bottom]overlay=shortest=1"-vcodec libx264 out19999.mp4
 ffmpeg -i a.mp4  -i b.mp4 -filter_complex " [0:v]setpts=PTS-STARTPTS, scale=480x360[top]; [1:v]setpts=PTS-STARTPTS, scale=480x360, format=yuva420p,colorchannelmixer=aa=0.5[bottom]; [top][bottom]overlay=shortest=1"  -vcodec libx264 -strict -2 out19999.mp4
+
+
+
+
+
+
+
+
+#-----------------------------------------------------------------------------------
+# Compress size 5x, make it lighter, increase saturation, start from second 20
+#-----------------------------------------------------------------------------------
+ffmpeg -i 161123_GOPR0186cr.avi -vf "curves=preset=lighter,eq=1:0:2.1:1:1:1.1:1:1" -ss 00:00:20 -preset slow -strict 2 161123_GOPR0186cr_out.mp4
+
+
+
+
+#-----------------------------------------------------------------------------------
+# TEST OK - add two PNG Watermarks  simultaneously, compress size 2x
+#-----------------------------------------------------------------------------------
+ffplay -i 161123_GOPR0186cr.mp4  -vf ", unsharp=3:3:1.5movie='Logo_GoPro_logo2.png' [wm1]; [in] [wm1] overlay=W-w-5:5 [tmp],  movie='Logo_GoPro_60x60.png' [wm2]; [tmp] [wm2] overlay=5:H-h-5 [out]" -t 32 -b:v 3000k -vcodec h264
+ffplay -i 161123_GOPR0186cr.mp4  -vf "movie='Logo_GoPro_logo2.png' [wm1]; [in] [wm1] overlay=W-w-5:5 [tmp],  movie='Logo_GoPro_60x60.png' [wm2]; [tmp] [wm2] overlay=5:H-h-5 [out]" -t 32 -b:v 3000k -vcodec h264  -tune film
+ffplay -i 161123_GOPR0186cr.mp4  -vf "movie='Logo_GoPro_logo2.png' [wm1]; [in] [wm1] overlay=W-w-5:5 [tmp],  movie='Logo_GoPro_60x60.png' [wm2]; [tmp] [wm2] overlay=5:H-h-5 [out]" -t 32 -b:v 3000k -vcodec h264
+
+# use filters for output
+ffplay -i 161123_GOPR0186cr.avi \
+-vf "movie='Logo_GoPro_logo2.png' [wm1]; [in] [wm1] overlay=W-w-5:5 [tmp],  movie='Logo_GoPro_60x60.png' [wm2]; [tmp] [wm2] overlay=5:H-h-5,smartblur=lr=2.00:ls=-0.20:lt=-7.0:cr=0.7:cs=1.0:ct=2.9,unsharp=3:3:1.5,scale=w=1280:h=-1:sws_dither=x_dither [out]" \
+-t 32 -b:v 3000k -vcodec h264 -tune animation
+
+
+# 2x size compress
+# add 2 Watermarks
+# use codec h264
+ffmpeg -i _in.mp4  -vf "movie='Logo_GoPro_logo2.png' [wm1]; [in] [wm1] overlay=W-w-5:5 [tmp],  movie='Logo_GoPro_60x60.png' [wm2]; [tmp] [wm2] overlay=5:H-h-5 [out]" \
+  -b:v 2000k -vcodec h264  -preset veryslow -threads 2 out.mp4
+
+
+# add 2 Watermarks
+# add FX smartblur unsharp dither
+# add curves lighter
+# add eq saturation
+# use codec h264
+# use tune film
+ffmpeg -i in.avi
+-vf "movie='Logo_GoPro_logo2.png' [wm1]; [in] [wm1] overlay=W-w-5:5 [tmp],  movie='Logo_GoPro_60x60.png' [wm2]; [tmp] [wm2] overlay=5:H-h-5,smartblur=lr=2.00:ls=-0.20:lt=-7.0:cr=0.7:cs=1.0:ct=2.9,unsharp=3:3:1.5,scale=w=1280:h=-1:sws_dither=x_dither,curves=preset=lighter,eq=1:0:1.7:1:1:1.1:1:1 [out]"
+ -vcodec h264 -tune film -threads 2 -strict 2 -preset ultrafast -an -ss 00:00:20 out.mp4
+
+
+
+
+
+
+
+
+#-----------------------------------------------------------------------------------
+Possible presets: ultrafast superfast veryfast faster fast medium slow slower veryslow placebo
+[libx264 @ 0x55f9d73be800] Possible tunes: film animation grain stillimage psnr ssim fastdecode zerolatency
+#-----------------------------------------------------------------------------------
+modes do:
+https://superuser.com/questions/564402/explanation-of-x264-tune/1258067
+film – intended for high-bitrate/high-quality movie content. Lower deblocking is used here.
+animation – intended for cartoons, etc., where deblocking is boosted to compensate for larger, flat areas. More reference frames are used.
+grain – this should be used for material that is already grainy. Here, the grain won't be filtered out as much.
+stillimage – like the name says, it optimizes for still image encoding by lowering the deblocking filter.
+psnr and ssim – these are debugging modes to optimize for good PSNR and SSIM values only. Better metrics don't necessarily mean better quality though.
+fastdecode – disables CABAC and the in-loop deblocking filter to allow for faster decoding on devices with lower computational power.
+zerolatency – optimization for fast encoding and low latency streaming
+You can see the detailed options applied with each tune with x264 --fullhelp:
+--tune <string>
+
+
+
+#-----------------------------------------------------------------------------------
+Remove audio from video file with FFmpeg, You remove audio by using the -an flag.
+#-----------------------------------------------------------------------------------
+ffmpeg -i example.mkv -c copy -an example-nosound.mkv
+
+
+
+#----------------------------------------------------
+Merging video and audio, with audio re-encoding
+#----------------------------------------------------
+ffmpeg -i video.mp4 -i audio.wav -c:v copy -c:a aac -strict experimental output.mp4
+ffmpeg -i video.mp4 -i audio.wav -c:v copy -c:a aac -strict experimental -map 0:v:0 -map 1:a:0 output.mp4
+Copying the audio without re-encoding
+ffmpeg -i video.mp4 -i audio.wav -c copy output.mkv
+
+
+#----------------------------------------------------
+skip every x frame
+#----------------------------------------------------
+ffmpeg -i in.mp4 -crf 21 -y -preset slow -vcodec h264 -vf fps=fps=1.2 -an out.mp4
+ffmpeg -i in.mp4 -crf 21 -y -preset slow -vcodec h264 -vf fps=fps=0.5 -an out.mp4
+ffmpeg -i in.mp4  -vf "scale=w=1280:h=-1:sws_dither=x_dither,minterpolate='fps=2',curves=preset=vintage,fftfilt=dc_Y=0:weight_Y='1+squish(1-(Y+X)/2.5)" -an  -t 240 -preset ultrafast  out.mkv
+
+
+
+# minterpolate fx
+ffmpeg -i in.mp4 -crf 21 -y -preset slow -vcodec h264 -vf minterpolate="fps=141" -an out.mp4
+ffmpeg -i in.avi -y -preset ultrafast -vf "minterpolate=fps=2,fps=fps=15" -an out.mp4
+ffmpeg -i in.avi -vf "scale=w=320:h=-1:sws_dither=x_dither,minterpolate='fps=110',curves=vintage,fftfilt=dc_Y=0:weight_Y='1+squish(1-(Y+X)/20)'" -an -ss 00:00:15 -t 240 -preset ultrafast -threads 2 -strict 2 out.mp4
+ffplay -i 161123_in.mp4  -vf "scale=w=1280:h=-1:sws_dither=x_dither,minterpolate='fps=1',fftfilt=dc_Y=0:weight_Y='1+squish(1-(Y+X)/5)'" -an  -t 40 -preset ultrafast -threads 2
+ffplay -i 161123_in.mp4  -vf "scale=w=640:h=-1:sws_dither=x_dither,minterpolate='fps=15',fps=fps=120,ffilt=dc_Y=0:weight_Y='1+squish(1-(Y+X)/20)'" -an  -t 240 -preset ultrafast -threads 2
+ffmpeg -i 161123_in.mp4  -vf "scale=w=320:h=-1:sws_dither=x_dither,minterpolate='fps=5',fps=fps=240,curves=preset=darker" -an  -t 240 -preset ultrafast  out.mkv
+
+
+60Mb - 20min Upload
+
+
+
+## -vf "smartblur=lr=2.00:ls=-0.20:lt=-7.0:cr=0.7:cs=1.0:ct=2.9,unsharp=3:3:1.5,scale=w=720:h=-1:sws_dither=x_dither"
+## -vf unsharp=3:3:1.5 -vf "smartblur=lr=2.00:ls=-0.20:lt=-7.0:cr=0.7:cs=1.0:ct=2.9"
+## -vf "smartblur=lr=2.00:ls=-0.20:lt=-7.0:cr=0.7:cs=1.0:ct=2.9,unsharp=3:3:1.5,scale=w=720:h=-1:sws_dither=x_dither"
+## -vf fps=fps=1/60  ---- use 1/60 that means 1/60 frames per second, or 1 frame per 60 seconds.
+#-----------------------------------------------------------------------------------
+--- Position Watermarks ---
+#-----------------------------------------------------------------------------------
+Centered: overlay=(W-w)/2:(H-h)/2
+Top left: overlay=5:5
+Top right: overlay=main_w-overlay_w-5:5    or   overlay=W-w-5:5
+Bottom right: overlay=main_w-overlay_w-5:main_h-overlay_h-5  or overlay=W-w-5:H-h-5
+Bottom left:  overlay=5:main_h-overlay_h  or overlay=5:H-h-5
+
+
+
+
+
+#-----------------------------------------------------------------------------------
+https://github.com/jamiew/viralvideovandalism/blob/master/watermarking.sh
+#-----------------------------------------------------------------------------------
+# try 1
+ffmpeg -loop 1 -i w.png -vframes 901 -vf "fade=out:899:1:alpha=1" -vcodec png -pix_fmt rgba w.mov
+
+
+# try 2
+ffmpeg -loop 1 -i dancing_peaks.gif -vframes 901 -vf "fade=out:899:1:alpha=1" -vcodec png -pix_fmt rgba w.mov
+ffmpeg -i movie.mov -acodec copy -vf "movie=w.mov [logo]; [in][logo] overlay=10:main_h-overlay_h-10 [out]" w_movie.mov
+
+
+# # try 3
+# ffmpeg -i input.mpg -vf "movie=wm.png [watermark];[in][watermark] scale=120:120,overlay=10:10 [out]" output/test.mpg
+# movie=wm.png, scale=120:120 [watermark]; [in][watermark] overlay=10:10 [out]
+# ffmpeg -i input.mpg -vf "movie=wm.png [watermark];[in][watermark] scale=120:120,overlay=10:10 [out]" output/test.mpg
+
+# try 3 mod...
+ffmpeg -i movie.mov -sameq -vf "movie=overlay.png, scale=300:300 [watermark]; [in][watermark] overlay=600:400 [out]" w_movie.mov && open w_movie.mov
+
+
+
+
+
+#-----------------------------------------------------------------------------------
+crop a video with ffmpeg
+https://video.stackexchange.com/questions/4563/how-can-i-crop-a-video-with-ffmpeg
+#-----------------------------------------------------------------------------------
+ffmpeg -i in.mp4 -filter:v "crop=out_w:out_h:x:y" out.mp4
+ffmpeg -i in.mp4 -filter:v "crop=80:60:200:100" -c:a copy out.mp4
+ffmpeg -i in.mp4 -filter:v "crop=in_w/2:in_h/2:in_w/2:in_h/2" -c:a copy out.mp4
+ffmpeg -i in.mp4 -filter:v "crop=320/2:240/2:320/2:240/2" -c:a copy out.mp4
+ffmpeg -i in.mp4 -filter:v "crop=240:120:240:120" -c:a copy out.mp4
+ffmpeg -i in.mp4 -filter:v "crop=in_w:in_h-40" -c:a copy out.mp4
+ffplay -i input -vf "crop=in_w:in_h-40"
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
