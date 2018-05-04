@@ -783,6 +783,8 @@ print_R($out);
 #
 ######################################################################
 
+/*
+
 https://www.w3schools.com/php/func_date_date.asp
 
 Required. Specifies the format of the outputted date string. The following characters can be used:
@@ -837,5 +839,165 @@ DATE_RFC3339 - Same as DATE_ATOM (since PHP 5.1.3)
 DATE_RSS - RSS (Fri, 12 Aug 2013 15:52:01 +0000)
 DATE_W3C - World Wide Web Consortium (example: 2013-04-12T15:52:01+00:00)
 
+*/
 
 echo substr(date(DATE_ISO8601,time()),0,-5); // 2018-04-30T10:25:04
+
+
+
+
+
+
+
+######################################################################
+#
+# xml2array input output
+#
+######################################################################
+
+/*
+ini_set('error_reporting', E_ERROR);
+ini_set('display_errors', true);
+ini_set('display_startup_errors', true);
+*/
+
+$xmlstring = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<verzeichnis>
+     <titel>Wikipedia Städteverzeichnis</titel>
+     <eintrag>
+          <stichwort>Genf</stichwort>
+          <eintragstext>Genf ist der Sitz von ...</eintragstext>
+     </eintrag>
+     <eintrag>
+          <stichwort>Köln</stichwort>
+          <eintragstext>Köln ist eine Stadt, die ...</eintragstext>
+     </eintrag>
+</verzeichnis>';
+
+// xml2array
+$xmlstring = preg_replace("/<!--(.*)-->\n/","",$xmlstring);
+$domxml = new DOMDocument('1.0');
+$domxml->preserveWhiteSpace = true;
+$domxml->formatOutput = true;
+$domxml->strictErrorChecking = true ;
+$domxml->validateOnParse = true ;
+$domxml->xmlStandalone = true;
+$domxml->loadXML($xmlstring);
+#$domxml->loadHTML($xmlstring);
+//$domxml->loadHTMLFile($url);
+$xml_string = $domxml->saveXML();
+#$xml_string = $domxml->saveHTML();
+#$domxml->save($newfile);
+print "<pre>"; print_r($xml_string);
+
+$xml = simplexml_load_string($xml_string, "SimpleXMLElement", JSON_PRETTY_PRINT);
+$json = json_encode($xml);
+$array = json_decode($json,TRUE);
+print "<pre>";
+print_r($array);
+
+// Output:
+
+/*
+
+<pre><?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<verzeichnis>
+     <titel>Wikipedia Städteverzeichnis</titel>
+     <eintrag>
+          <stichwort>Genf</stichwort>
+          <eintragstext>Genf ist der Sitz von ...</eintragstext>
+     </eintrag>
+     <eintrag>
+          <stichwort>Köln</stichwort>
+          <eintragstext>Köln ist eine Stadt, die ...</eintragstext>
+     </eintrag>
+</verzeichnis>
+
+
+<pre>Array
+(
+    [titel] => Wikipedia Städteverzeichnis
+    [eintrag] => Array
+        (
+            [0] => Array
+                (
+                    [stichwort] => Genf
+                    [eintragstext] => Genf ist der Sitz von ...
+                )
+
+            [1] => Array
+                (
+                    [stichwort] => Köln
+                    [eintragstext] => Köln ist eine Stadt, die ...
+                )
+
+        )
+
+)
+*/
+
+
+
+
+######################################################################
+#
+#   namespace
+#
+#   https://de.wikipedia.org/wiki/Extensible_Markup_Language
+#   http://php.net/manual/de/language.namespaces.basics.php
+#   http://php.net/manual/de/language.namespaces.php
+#
+######################################################################
+
+
+namespace AssAddShipment;
+class Shipment{
+	public $Address;
+}
+
+namespace AssAddParcel;
+class Shipment{
+	public $Address;
+	public $Attributes;
+}
+
+use AssAddShipment as AddShipment;
+use AssAddParcel as AddParcel;
+
+print "<pre>";
+$objShipment = new AddShipment\Shipment();
+print_r($objShipment);
+$objShipment = new AddParcel\Shipment();
+print_r($objShipment);
+
+* * * *
+
+/*
+namespace foo;
+  class Cat {
+    static function says() {echo 'meoow';}  }
+namespace bar;
+  class Dog {
+    static function says() {echo 'ruff';}  }
+
+ namespace fub;
+   'file1.php';
+   'file2.php';
+   'file3.php';
+  use foo as feline;
+  use bar as canine;
+  echo feline\Cat::says(), "<br />\n";
+  echo canine\Dog::says(), "<br />\n";
+  */
+
+
+
+
+
+
+
+
+
+
+
+
