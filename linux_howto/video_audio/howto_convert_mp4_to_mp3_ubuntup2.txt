@@ -115,6 +115,57 @@ ffmpeg -f alsa -ac 2 -i hw:0,0 -f x11grab -r 30 -s $(xwininfo -frame | grep -oEe
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+##########################################################
+#
+#   Converting Video for Android using FFMPEG
+#   https://trac.ffmpeg.org/wiki/Encode/MPEG-4
+#   https://trac.ffmpeg.org/wiki/Encode/H.264
+#
+##########################################################
+
+FIX:
+ffmpeg -i file.MP4  -vcodec mpeg4  output.mp4
+
+Other params:
+-c:v libxvid
+-c:v mpeg4 -qscale:v 3 -c:a libmp3lame -qscale:a 4
+-vcodec mpeg4 -r 20
+-c:v libx264 -crf 18 -preset veryslow
+-vcodec mpeg4 -r 30 -b 64000 -bt 3200 -g 30
+
+yuv420p10le
+yuv420p
+
+crf - output quality
+bitrate -  encoder bitrate
+faststart - a must when you are going to use your video file online
+
+
+-c:v libx264 -c:a aac -movflags +faststart
+-movflags faststart
+-vcodec mpeg4 -acodec aac -strict -2 -ac 1 -ar 16000 -r 13 -ab 32000 -aspect 3:2
+-c:v libx264 -profile:v baseline -c:a libvo_aacenc -ar 44100 -ac 2 -b:a 128k -movflags faststart
+-vcodec libx264 -preset fast -profile:v main -acodec aac
+-vf scale=320:180 -c:v libx264 -preset fast -c:a aac -hide_banner
+
+Options -ac, -ar and -sample_fmt
+ffmpeg -c:a:0 ac3 -ac 6 -ab 448k -ar48000
+-c:a:2 ac3 -ac:2 6 -ab:2 448k -ar:2 48000 -c:a:3 aac -ac:3 2 -ab:3 192k -ar:3 48000
+
+
+
 ##########################################################
 #
 # FIX: Too many packets buffered for output stream 0:1.
