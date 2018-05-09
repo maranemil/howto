@@ -1019,6 +1019,55 @@ else {
 
 
 
+####################################################################
+
+parray2xml / prettify xml / xml2array
+
+####################################################################
+
+
+//------------------------------
+// define array
+//------------------------------
+$test_array = array (
+  'bla' => 'blub',
+  'foo' => 'bar',
+  'another_array' => array (
+    'stack' => 'overflow',
+  ),
+);
+
+//------------------------------
+// generate xml - array2xml
+//------------------------------
+$xml = new SimpleXMLElement('<roots/>');
+array_walk_recursive($test_array, array ($xml, 'addChild'));
+$simpleXML = $xml->asXML();
+echo "<textarea>". $simpleXML."</textarea>".PHP_EOL;
+
+
+//------------------------------
+// prettify xml
+//------------------------------
+$domxml = new DOMDocument('1.0');
+$domxml->preserveWhiteSpace = true;
+$domxml->formatOutput = true;
+$domxml->loadXML($simpleXML);
+$soapXMLResult = $domxml->saveXML();
+echo "<textarea>". $soapXMLResult."</textarea>".PHP_EOL;
+
+//------------------------------
+// xml2array
+//------------------------------
+$xml = simplexml_load_string($xml_string, "SimpleXMLElement", JSON_PRETTY_PRINT);
+$json = json_encode($xml);
+$array = json_decode($json,TRUE);
+print "<pre>";
+print_r($array);
+
+
+
+
 
 
 
