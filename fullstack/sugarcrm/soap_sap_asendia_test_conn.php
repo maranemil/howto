@@ -55,7 +55,7 @@ Puis réaffecter les éléments qui ne sont pas qualifiés par le bon namespace 
 <wsdl:port name="BasicHttpBinding_ITMSBasic" binding="tns:BasicHttpBinding_ITMSBasic">
 <wsdl:port name="BasicHttpBinding_ITMSBasic" binding="uio:BasicHttpBinding_ITMSBasic">
 
-Pour requalifier correctement ces 2 éléments, le préfixe tns: ("http://centiro.com/facade/tmsBasic/1/0/servicecontract") est substitué par le nouveau préfixe uio:("http://tempuri.org/").
+Pour requalifier correctement ces 2 éléments, le préfixe tns: ("http://example.com/facade/tmsBasic/1/0/servicecontract") est substitué par le nouveau préfixe uio:("http://tempuri.org/").
 */
 
 /*
@@ -66,8 +66,8 @@ ini_set('display_startup_errors', true);
 
 class AsendiaSoapConfig {
 
-   public static $asendia_wsdl_auth = "https://uat.centiro.com/Universe.Services/TMSBasic/Wcf/c1/i1/TMSBasic/Authenticate.svc?wsdl";
-   public static $asendia_wsdl_func = "https://uat.centiro.com/Universe.Services/TMSBasic/Wcf/c1/i1/TMSBasic/TMSBasic.svc?wsdl";
+   public static $asendia_wsdl_auth = "https://uat.example.com/Universe.Services/TMSBasic/Wcf/c1/i1/TMSBasic/Authenticate.svc?wsdl";
+   public static $asendia_wsdl_func = "https://uat.example.com/Universe.Services/TMSBasic/Wcf/c1/i1/TMSBasic/TMSBasic.svc?wsdl";
    public static $asendia_wsdL_user  = "userX";
    public static $asendia_wsdL_pass =  "passX";
    public static $CRMID = 'SomeID';
@@ -108,7 +108,7 @@ try {
       $client2 = new SoapClient(AsendiaShoapConfig::$asendia_wsdl_func, array($initSoapOptions));
       $headers = array();
       $headers[] = new SoapHeader(
-        "http://centiro.com/facade/shared/1/0/datacontract",
+        "http://example.com/facade/shared/1/0/datacontract",
         "AuthenticationTicket",
         $AuthenticationTicket,
         null,
@@ -120,7 +120,7 @@ try {
       $client2 = new \Zend\Soap\Client(self::$strWSDL, $arrOptionsSOAP);
       $client2->addSoapInputHeader(
           new SoapHeader(
-            "http://centiro.com/facade/shared/1/0/datacontract",
+            "http://example.com/facade/shared/1/0/datacontract",
             "AuthenticationTicket",
             $AuthenticationTicket
             )
@@ -137,8 +137,8 @@ try {
 
       var_dump($result = $client2->__doRequest(
           $xmlShippment,
-          "http://uat.centiro.com/Universe.Services/TMSBasic/Wcf/c1/i1/TMSBasic/TMSBasic.svc/xml",
-          "http://centiro.com/facade/tmsBasic/1/0/servicecontract/ITMSBasic/AddAndPrintShipment",
+          "http://uat.example.com/Universe.Services/TMSBasic/Wcf/c1/i1/TMSBasic/TMSBasic.svc/xml",
+          "http://example.com/facade/tmsBasic/1/0/servicecontract/ITMSBasic/AddAndPrintShipment",
           SOAP_1_1
       ));
 
@@ -177,3 +177,70 @@ try {
    echo $e->getMessage().PHP_EOL;
    echo $e->faultstring .PHP_EOL;
 }
+
+
+
+
+
+
+
+
+
+
+
+##########################################################################
+
+Debug SOAP Conn Response
+
+##########################################################################
+
+
+$client = new SoapClient(self::$strWsdlDev,array( 'trace' => 1 , 'exceptions' => 0) );
+$client->__setSoapHeaders(new SoapHeader("http://example.com/facade/shared/1/0/",
+    "AuthenticationTicket",
+    $this->strAuthTicket
+));
+$client->__call("AddData", array($objRequestData));
+
+echo "--------------------------------------------------------------".PHP_EOL;
+echo "====== REQUEST HEADERS =====" . PHP_EOL;
+var_dump($client->__getLastRequestHeaders());
+echo "========= REQUEST ==========" . PHP_EOL;
+var_dump($client->__getLastRequest());
+
+echo "--------------------------------------------------------------".PHP_EOL;
+echo "========= RESPONSE =========" . PHP_EOL;
+var_dump($client->__getLastResponse());
+echo "REQUEST:\n" . html_entity_decode(htmlentities($client->__getLastResponse())) . "\n";
+echo "========= RESPONSE HEADERS=========" . PHP_EOL;
+var_dump($client->__getLastResponseHeaders());
+
+
+$lastRequest = html_entity_decode(htmlentities($client->__getLastRequest()));
+// Format xml prettify
+$domxml = new DOMDocument('1.0');
+$domxml->preserveWhiteSpace = true;
+$domxml->formatOutput = true;
+@$domxml->loadHTML($lastRequest);
+$soapXMLResult = $domxml->saveXML(); // formated xml
+echo $soapXMLResult;
+
+
+exit;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

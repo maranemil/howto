@@ -1069,5 +1069,28 @@ print_r($array);
 
 
 
+############################################################
+
+HTTP Strict Transport Security: PHP Soap
+
+############################################################
+
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', true);
+ini_set('display_startup_errors', true);
+
+ini_set("soap.wsdl_cache_enabled", "0");
+ini_set('soap.wsdl_cache_ttl', 0);
+header("Strict-Transport-Security:max-age=63072000");
+
+https://www.phpgangsta.de/hsts-http-strict-transport-security-hasts-schon
+https://scotthelme.co.uk/issuing-hsts-policy-in-php/
+https://support.servertastic.com/knowledgebase/article/http-strict-transport-security-php
+
+
+
+
+
+
 
 
