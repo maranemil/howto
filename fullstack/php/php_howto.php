@@ -1090,7 +1090,22 @@ https://support.servertastic.com/knowledgebase/article/http-strict-transport-sec
 
 
 
+############################################################
+#
+#	An API with repeating parameters PHP Soap FIX
+#	Multiple Query Parameters of Same Name
+#	Serializing an Array as a Sequence of Elements
+#
+############################################################
 
+$objItem1 = new Item();
+$objItem1->Value = 'AB';
+$objItem2= new Item();
+$objItem2->Value = 'AC';
 
+$objParent->Items["Item"] = array(
+    $objItem1,
+    $objItem2,
+);
 
 
