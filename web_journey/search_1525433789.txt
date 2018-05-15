@@ -1,0 +1,316 @@
+https://developers.google.com/machine-learning/crash-course/
+https://developers.google.com/machine-learning/crash-course/prereqs-and-prework
+
+
+##########################################################################
+#
+#   searching in VIM
+#   https://www.cs.swarthmore.edu/help/vim/searching.html
+#
+##########################################################################
+
+For basic searching:
+
+/pattern       - search forward for pattern
+?pattern       - search backward
+n              - repeat forward search
+N              - repeat backward
+Some variables you might want to set:
+
+:set ignorecase - case insensitive
+:set smartcase  - use case if any caps used
+:set incsearch  - show match as search proceeds
+:set hlsearch   - search highlighting
+More cool searching tricks:
+
+*               - search for word currently under cursor
+g*              - search for partial word under cursor
+                  (repeat with n)
+ctrl-o, ctrl-i  - go through jump locations
+[I              - show lines with matching word under cursor
+Search and replace...
+
+:%s/search_for_this/replace_with_this/    - search whole file and replace
+:%s/search_for_this/replace_with_this/c   - confirm each replace
+
+
+
+-------------------------
+https://www.datasciencecentral.com/profiles/blogs/can-design-thinking-unleash-organizational-innovation
+https://www.slideshare.net/DTHSG/design-thinking-method-sticker
+------------------------
+
+
+
+
+##########################################################################
+#
+#   FFMPEG - Audio going out of sync when using Tempo And setPTS
+#   Speeding up/slowing down video and audio
+#   http://trac.ffmpeg.org/wiki/How%20to%20speed%20up%20/%20slow%20down%20a%20video
+#   https://avpres.net/FFmpeg/av_speed.html
+#   https://ffmpeg.org/ffmpeg-filters.html
+#   https://trac.ffmpeg.org/wiki/FilteringGuide
+#   https://avpres.net/FFmpeg/split.html
+#   https://www.oodlestechnologies.com/blogs/PICTURE-IN-PICTURE-effect-using-FFMPEG
+#   https://www.bugcodemaster.com/article/concatenate-videos-using-ffmpeg
+#   https://stackoverflow.com/questions/48492318/ffmpeg-multiple-video-filter-order-issue
+#   https://github.com/nwochaadim/ffmpeg-installation/wiki/Applying-complex-filters-to-videos
+#   https://old.kkoncepts.net/blog/fixing-out-sync-audio-and-video-ffmpeg
+#   http://www.andyyardley.com/2012/03/20/fixing-audio-sync-with-ffmpeg/
+#   https://wjwoodrow.wordpress.com/2013/02/04/correcting-for-audiovideo-sync-issues-with-the-ffmpeg-programs-itsoffset-switch/
+#   https://alien.slackbook.org/blog/fixing-audio-sync-with-ffmpeg/
+#
+##########################################################################
+
+Speeding up/slowing down video
+You can change the speed of a video stream using the ​setpts video filter. Note that in the following examples, the audio stream is not changed, so it should ideally be disabled with -an.
+
+To double the speed of the video, you can use:
+ffmpeg -i input.mkv -filter:v "setpts=0.5*PTS" output.mkv
+
+The filter works by changing the presentation timestamp (PTS) of each video frame.
+For example, if there are two succesive frames shown at timestamps 1 and 2, and you want to speed up the video, those timestamps need to become 0.5 and 1, respectively. Thus, we have to multiply them by 0.5.
+Note that this method will drop frames to achieve the desired speed. 4x that (16 FPS):
+ffmpeg -i input.mkv -r 16 -filter:v "setpts=0.25*PTS" output.mkv
+
+To slow down your video, you have to use a multiplier greater than 1:
+ffmpeg -i input.mkv -filter:v "setpts=2.0*PTS" output.mkv
+
+
+
+Smooth Slow
+You can smooth out slow/fast video with the ​minterpolate video filter. This is also known as "motion interpolation" or "optical flow".
+ffmpeg -i input.mkv -filter "minterpolate='mi_mode=mci:mc_mode=aobmc:vsbmc=1:fps=120'" output.mkv
+
+Speeding up/slowing down audio
+Using a complex filtergraph, you can speed up video and audio at the same time:
+ffmpeg -i input.mkv -filter_complex "[0:v]setpts=0.5*PTS[v];[0:a]atempo=2.0[a]" -map "[v]" -map "[a]" output.mkv
+ffmpeg -i input.mkv -filter_complex "[0:v]setpts=24/25*PTS[v];  [0:a]atempo=25/24[a]" -r 25  -map "[v]"  -map "[a]" output.mkv
+ffmpeg -i input.mkv -filter_complex "[0:v]setpts=1.1*PTS[v];[0:a]atempo=(1/1.1)[a]" -map "[v]" -map "[a]" output.mkv
+
+
+Filtergraph syntax
+-filter/-vf/-af and -filter_complex options in ffmpeg and -vf/-af in ffplay
+ffplay -i 20180501_160312saturation.mp4 -vf "setpts=0.95*PTS" -af "atempo=1/0.95"
+
+
+Add overlay logo
+ffmpeg -i input.avi -i logo.png -filter_complex  "[0:v]scale=854:-2[scaled];  [scaled][1:v]overlay=5:5[out] -map "[out]" -map 0:a -c:v libx264 -c:a copy output.mkv
+ffmpeg -i inputfile1.mp4 -i inputfile2.jpg -filter_complex "[1] scale=100:100 [tmp]; [0][tmp] overlay=x='if(gte(t,2), t*100, 10)':y=30" outputfile.mp4
+
+Add saturation sharp curves lighter correction
+ffplay -i input-K7oYfD_UCwk.mkv -vf "curves=preset=lighter,eq=1:0:1.9:0:1:0:1:0,unsharp=3:3:0.1"
+ffplay -i input-K7oYfD_UCwk.mkv -vf "curves=preset=lighter,eq=1:0:1.1:0:1:0:1:0,unsharp=3:3:0.3,scale=-1:720"
+
+
+---
+---------------------
+two videos side by side - preview
+---------------------
+ffplay -f lavfi -i "movie=20180114094126_flightvideo_cam1.mp4,crop=1280:360:0:0[v0]; movie=_20180114094126_flightvideo_cam2.mp4,scale=1280:-1,crop=1280:360:0:0[v1]; [v0][v1]vstack"
+
+ffmpeg -v warning -i video1.mkv -i video2.mkv -filter_complex '[0:v]scale=400:400,pad=800:400 [0:q]; [1:v]scale=400:400[1:q]; [0:q][1:q]overlay=400:0' -f nut -c:v rawvideo -c:a copy
+ffmpeg -i input_file_1  -i input_file_2  -filter_complex   "[0]crop=iw/2:ih:0:0,   pad=iw*2:ih[left];   [1]crop=iw/2:ih:iw/2:0[right];   [left][right]overlay=w"  output_file
+ffmpeg -y -i $name -i logo480.png -c:a aac -b:a 256k -ar 48000 -ac 2 -async 1 -c:v libx264 -x264opts keyint=$GOP:min-keyint=$GOP:no-scenecut -bf 0 -r $FPSC -b:v 1060k -maxrate 1060k -bufsize 530k -profile:v main -t $FDUR -filter_complex "[0:v][1:v]overlay=main_w-overlay_w-10:10,scale=-2:478" format480.mp4
+
+ffmpeg -i inputfile1.mp4 -i inputfile2.mp4 -filter_complex "[0:0][0:1][1:0][1:1] concat=n=2:v=1:a=1" outputfile.mp4
+
+---------------------
+PICTURE IN PICTURE effect using FFMPEG
+---------------------
+ffmpeg -i pipInput1.flv -i pipInput2.flv -filter_complex "[1]scale=iw/5:ih/5 [pip]; [0][pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10" -profile:v main -level 3.1 -b:v 440k -ar 44100 -ab 128k -s 720x400 -vcodec h264 -acodec libfaac PIP_output1.mp4
+ffmpeg -i pipInput2.flv -i pipInput1.flv -filter_complex "[0]scale=iw/5:ih/5 [pip]; [1][pip] overlay=main_w-overlay_w-10:main_h-overlay_h-10" -profile:v main -level 3.1 -b:v 440k -ar 44100 -ab 128k -s 720x400 -vcodec h264 -acodec libfaac PIP_output2.mp4
+ffmpeg -i pipInput2.flv -i pipInput1.flv -filter_complex "[1]scale=iw/5:ih/5 [pip]; [0][pip] overlay=main_w-overlay_w-10:10" -profile:v main -level 3.1 -b:v 440k -ar 44100 -ab 128k -s 720x400 -vcodec h264 -acodec libfaac PIP_output3.mp4
+
+Final mix with audio mix
+ffmpeg -i pipInput2.mp4 -i pipInput1.mp4 -filter_complex "[1]scale=iw/1:ih/1 [pip]; [0][pip] overlay=main_w-overlay_w-10:10; amix=inputs=2:duration=first:dropout_transition=2" -y -strict experimental  out.mp4
+
+Final mix with audio mix and 20 deplay for video nr2
+ffmpeg -i pipInput2.mp4  -itsoffset 20 -i pipInput1.mp4 -filter_complex "[1]scale=iw/1:ih/1 [pip]; [0][pip] overlay=main_w-overlay_w-10:10; amix=inputs=2:duration=first:dropout_transition=2" -y -strict experimental  out.mp4
+
+
+---------------------
+FFmpeg: Combine video files with different start times
+---------------------
+fmpeg -i 1.mp4 -i 2.mp4 -i 3.mp4 -filter_complex \
+       "[0]pad=2*iw:ih[l];[1]setpts=PTS-STARTPTS+1/TB[1v]; [l][1v]overlay=x=W/2[a]; \
+        [2]setpts=PTS-STARTPTS+4/TB[2v]; [a][2v]overlay=x=W/2[v]; \
+        [1]adelay=1000|1000[1a]; [2]adelay=4000|4000[2a]; [0][1a][2a]amix=inputs=3[a]" \
+       -map "[v]" -map "[a]" out.mp4
+
+ffmpeg -i one.mp3 -i two.mp3 -shortest -filter_complex \
+"[0:a]adelay=10000|10000,volume=0.4[a0]; \
+ [1:a]volume=5.0[a1]; \
+ [a0][a1]amix=inputs=2[out]" \
+ -map "[out]" -ac 2 -c:a libfdk_aac output.m4a
+
+
+---------------------
+---------------------
+ffmpeg -y -i IDEO_CAM1.mpg -itsoffset 1.0 -i AUDIO.mp2 -map 0:0 -map 1:0 test.mp4
+
+---------------------
+delay video by 3.84 seconds
+---------------------
+ffmpeg -i "movie.mp4" -itsoffset 3.84 -i "movie.mp4" -map 1:v -map 0:a -c copy "movie-video-delayed.mp4"
+---------------------
+delay audio by 3.84 seconds,
+---------------------
+ffmpeg -i "movie.mp4" -itsoffset 3.84 -i "movie.mp4" -map 0:v -map 1:a -c copy "movie-audio-delayed.mp4"
+
+---------------------
+Fixing audio sync with FFMPEG - same file
+---------------------
+ffmpeg
+ -ss 00:00:00 -i inputfile.avi
+ -ss 00:00:02 -i inputfile.avi
+ -map 0:0 -map 1:1
+ -vcodec libx264
+ -acodec libfaac -ac 6 -ab 384k -ar 48000
+ outputfile.avi
+
+
+
+
+
+
+-filter_complex "[0:a]adelay=10000|10000,volume=0.4[a0];  [1:a]volume=5.0[a1];  [a0][a1]amix=inputs=2[out]"  -map "[out]"
+ffmpeg  -i FinaleProjekt33a.mp4 -itsoffset 20 -i ARD_FRANKsaturation4s.mp4 -strict experimental -acodec libmp3lame  -y -t 30  out.wav
+
+
+# ok
+ffmpeg -ss 00:00:00  -i FinaleProjekt33a.mp4  -itsoffset 00:00:20  -ss 00:00:00 -i ARD_FRANKsaturation4s.mp4  -filter_complex "[1]scale=iw/1:ih/1 [pip]; [0][pip] overlay=main_w-overlay_w-0:0; amix=inputs=2:duration=first:dropout_transition=2" -y  -strict experimental  -t 30  out.mp4
+
+
+Automatic encoder selection failed for output stream #0:0. Default encoder for format mp3 is probably disabled. Please choose an encoder manually
+ffmpeg -codecs | grep mp3
+-acodec libmp3lame
+
+
+ffmpeg -i FinaleProjekt33a.mp4 -i ARD_FRANKsaturation4s.mp4 -shortest -filter_complex "[0:a]adelay=10000|10000,volume=0.4[a0];  [1:a]volume=5.0[a1];  [a0][a1]amix=inputs=2[out]"  -map "[out]" -ac 2 -c:a libfdk_aac output.wav
+
+-filter_complex "[0:1]adelay=10000|10000[track1];[track1][1:2]amix[mixout]" -c:v copy -c:a aac -b:a 128k -ar 44100 -strict -2 -map 0:0 -map [mixout]
+
+
+
+
+
+ARD Fernsehlotterie "Gut Gemeint"
+https://www.youtube.com/watch?v=K7oYfD_UCwk
+https://www.youtube.com/watch?v=T_BSgDVFIY8
+https://www.youtube.com/watch?v=cbws_y7POEY
+
+
+
+Tensorflow
+https://www.youtube.com/watch?v=vq2nnJ4g6N0
+https://www.youtube.com/watch?v=BtAVBeLuigI
+https://www.youtube.com/watch?v=Rg9CdkwavmY
+https://www.youtube.com/watch?v=hA0hrpR-o8U
+https://www.youtube.com/watch?v=6XqhY29uzlM
+
+
+
+##########################################################################
+
+css examples codepen
+
+##########################################################################
+
+css tree diagram
+https://codepen.io/abdullahayyash/pen/wpoxPq # persona diagram
+https://codepen.io/trinlab/pen/rrWyWk   ######################
+https://codepen.io/pouretrebelle/pen/xByCm #######################
+https://codepen.io/allejo/pen/WbKzmK  ####
+https://codepen.io/maheshambure21/pen/qdJaaV ###
+https://codepen.io/francoislesenne/pen/KGJkz #########################
+https://codepen.io/Nirtz89/pen/aJBOMq  ###########
+https://codepen.io/phpnetanel/pen/mwLyVo ###########
+https://codepen.io/folletto/pen/KmPNwW ##### logic diagram google
+https://codepen.io/martingrand/pen/zBBjxW ####  logic diagram
+https://codepen.io/Chrisstar/pen/JOBRyp # tree
+https://codepen.io/amoscardino/pen/PPEoza # tree
+
+
+https://codepen.io/wattenberger/pen/hyBre
+https://codepen.io/ames/pen/xZzREM  ##### graph vector
+
+
+https://codepen.io/pouretrebelle/pen/mfuqA
+https://codepen.io/WebCodePro/pen/ONxGge # vector tree
+https://codepen.io/Javarome/pen/xYprPP
+https://codepen.io/jerometwell/pen/vyvWMp
+https://codepen.io/jovinoribeiro/pen/KrxodN
+https://codepen.io/lmetbPatrick/pen/mpLdQE # hrml dom tree
+https://codepen.io/pokergigolo/pen/kkNYaj
+
+
+
+timeline
+https://codepen.io/cjl750/pen/ZJRVNV ###############
+https://codepen.io/Pustur/pen/YqYRRN
+https://codepen.io/salihDemircan/pen/PpvQop
+https://codepen.io/rwhite/pen/bVKGpg
+https://codepen.io/Skidan/pen/JOJPqo
+https://codepen.io/ckarumoreira/pen/bRbrbp
+https://codepen.io/erich93063/pen/apvRWE
+https://codepen.io/mimeo/pen/xEKQzJ
+https://codepen.io/chrisl/pen/qoEPem
+https://codepen.io/stephaniewong/pen/EZaRer
+https://codepen.io/yan-chen/pen/wGrrdd
+
+
+circles css
+https://stackoverflow.com/questions/19642308/creating-css3-circles-connected-by-lines
+
+https://codepen.io/rafaelcastrocouto/pen/IJsmH
+https://codepen.io/noonlit/pen/dpmoGN
+https://codepen.io/ccondrup/pen/bqbGWB?editors=1100
+https://codepen.io/atelierbram/pen/XbGQqw # cicl3e presentation
+https://codepen.io/hippiefuturist/pen/LbQGQe # cicle pie presentation
+https://codepen.io/mywa/pen/JyRdXv # venn diagram
+https://codepen.io/ramenkage/pen/HJzmB # venn diagram
+https://codepen.io/janekelly/pen/JYPRrp # venn diagram
+https://codepen.io/barrytsmith/pen/rVQdYb # venn diagram
+https://codepen.io/harunpehlivan/pen/bZrgpY # venn diagram
+https://codepen.io/thebabydino/pen/ghaGm # css circle
+https://css-tricks.com/snippets/css/css-triangle/ # css triangle
+https://codepen.io/futboler18/pen/pvLHi
+
+https://codepen.io/Araujoo/pen/VYLogB # bubles
+https://codepen.io/jamesthomson/pen/PZJRaW # bubles
+https://codepen.io/tony-oulton/pen/LEKwKe # 4 circles
+https://codepen.io/SwissWebMiss/pen/dGNXNd # bubles
+https://codepen.io/ameyraut/pen/yfzog # fonrt aewrsome
+https://codepen.io/aromayne/pen/ZGwWxe
+
+
+fx circle
+https://codepen.io/patrickkunka/pen/axEgL
+https://codepen.io/lonekorean/pen/xGLLwX
+https://codepen.io/edmondko/pen/udcHG # sticky note
+https://codepen.io/mrspok407/pen/aZvXZJ # broschure
+https://codepen.io/IronGeek/pen/mezyey # icons
+
+steps process
+https://codepen.io/chrisgrabinski/pen/IEgwG
+https://codepen.io/jenningscreate/pen/rYNqVR
+https://codepen.io/gonzodesign/pen/PZWEyz
+https://codepen.io/cmharris/pen/NdYjNg
+https://codepen.io/caseymorrisus/pen/crhlJ
+https://codepen.io/CwStrife/pen/vddGEL
+https://codepen.io/mudrenok/pen/qqwVeB
+
+
+fx animations
+https://codepen.io/sdras/pen/YyXewa
+https://codepen.io/pat_hg/pen/jbQKpQ
+https://codepen.io/kai/pen/yzbgF
+https://codepen.io/ge1doot/pen/NdebMe
+https://codepen.io/dimaq12/pen/QMqXjx
+https://codepen.io/mikemang/pen/RpqmQm
+https://codepen.io/hontas/pen/ZeJeyL
+https://codepen.io/jsharrock/pen/JvoZyM
+https://codepen.io/bryik/pen/GZLoQv
+https://codepen.io/elevaunt/pen/zGKBGm
