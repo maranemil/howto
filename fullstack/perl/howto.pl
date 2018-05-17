@@ -63,3 +63,32 @@ my $len = bytes::length($string);
 #http://www.perlmonks.org/?node_id=990
 #http://perldoc.perl.org/functions/sort.html
 #https://www.tutorialspoint.com/perl/string_equality_operators_example.htm
+
+
+
+##########################################################
+#
+#   Perl colos
+#   https://perldoc.perl.org/Term/ANSIColor.html
+#   http://www.perlmonks.org/?node_id=509827
+#
+##########################################################
+
+  # 1;30 green
+  # 1;31 pink
+  # 1;32 green
+  # 1;33 yellow
+  # 1;34 blue
+  # 1;35 pink white
+  # 1;36 bluesky
+  # 1;37 white
+
+  # 40;39m - black/white - bg/fg
+  # 41;39m - -pink/white - bg/fg
+  # 42;39m - green/white - bg/fg
+  # 43;39m - woody/white - bg/fg
+  # 44;39m - -blue/white - bg/fg
+  # 45;39m - --red/white - bg/fg
+  # 46;39m - blsky/white - bg/fg
+  # 47;39m - -grey/white - bg/fg
+

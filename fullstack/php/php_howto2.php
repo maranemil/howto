@@ -247,6 +247,48 @@ $client = new SOAPClient($wsdl, array(
 
 
 
+##########################################################
+#
+#   How to get(extract) a file extension in PHP?
+#
+#   https://stackoverflow.com/questions/173868/how-to-getextract-a-file-extension-in-php
+#   https://stackoverflow.com/questions/173868/how-to-getextract-a-file-extension-in-php
+#   https://paulund.co.uk/get-the-file-extension-in-php
+#   http://php.net/manual/de/function.pathinfo.php
+#   http://php.net/manual/de/function.basename.php
+#
+#########################################################
+
+
+$ext = pathinfo($filename, PATHINFO_EXTENSION);
+#
+$path_info = pathinfo('/foo/bar/baz.bill');
+echo $path_info['extension']; // "bill"
+#
+pathinfo(parse_url($url)['path'], PATHINFO_EXTENSION)
+#
+$info = new SplFileInfo('test.png');
+var_dump($info->getExtension());
+#
+array_pop(explode('.',$fname))
+substr($path, strrpos($path, '.') + 1);
+#
+$ext = substr($filename,strrpos($filename,'.',-1),strlen($filename));
+#
+$file = 'folder/directory/file.html';
+$ext = pathinfo($file);
+
+echo $ext['dirname'] . '<br/>';   // Returns folder/directory
+echo $ext['basename'] . '<br/>';  // Returns file.html
+echo $ext['extension'] . '<br/>'; // Returns .html
+echo $ext['filename'] . '<br/>';  // Returns file
+
+
+
+
+
+
+
 
 
 

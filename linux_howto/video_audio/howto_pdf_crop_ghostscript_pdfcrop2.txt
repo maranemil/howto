@@ -1,0 +1,864 @@
+
+##############################################################################################################
+
+Rotate a PDF under Ubuntu Linux
+How to rotate a PDF from the command line using Ubuntu / Linux
+https://makandracards.com/makandra/1487-rotate-a-pdf-under-ubuntu-linux
+https://www.randomhacks.co.uk/how-to-rotate-a-pdf-from-the-command-line-using-ubuntu-linux/
+https://unix.stackexchange.com/questions/394065/command-line-how-do-you-rotate-a-pdf-file-90-degrees
+https://www.pdflabs.com/docs/pdftk-cli-examples/
+
+
+The page rotation setting can cause pdftk to rotate pages and documents.
+Each option sets the page rotation as follows (in degrees):
+north: 0, east: 90, south: 180, west: 270, left: -90, right: +90,
+down: +180. left, right, and down make relative adjustments to a page's rotation.
+
+
+##############################################################################################################
+
+Use the PDF toolkit:
+
+sudo apt-get install pdftk
+
+To rotate page 1 by 90 degrees clockwise:
+pdftk in.pdf cat 1E output out.pdf    # old pdftk
+pdftk in.pdf cat 1east output out.pdf # new pdftk
+
+To rotate all pages clockwise:
+pdftk in.pdf cat 1-endE output out.pdf    # old pdftk
+pdftk in.pdf cat 1-endeast output out.pdf # new pdftk
+
+sudo apt-get install pdftk
+pdftk input.pdf cat 1east output output.pdf
+
+For rotating clockwise:
+pdftk input.pdf cat 1-endeast output output.pdf
+
+For rotating anti-clockwise:
+pdftk input.pdf cat 1-endwest output output.pdf
+
+Rotate an Entire PDF Document's Pages to 180 Degrees
+pdftk in.pdf cat 1-endS output out.pdf
+pdftk in.pdf cat 1-endsouth output out.pdf
+
+ImageMagick (Use -90 for a counterclockwise rotation.):
+convert -rotate 90 <file>.pdf <rotated-file>.pdf
+convert -rotate -90 -density 200 input.pdf output.pdf
+convert -rotate 90 <file>.pdf <rotated-file>.pdf
+convert -density 300x300 originalfile.pdf -rotate90 finalfile.pdf
+
+
+
+##############################################################################################################
+
+PDFtk Server Examples
+https://www.pdflabs.com/docs/pdftk-cli-examples/
+https://wiki.ubuntuusers.de/pdftk/
+
+##############################################################################################################
+
+Collate scanned pages
+
+pdftk A=even.pdf B=odd.pdf shuffle A B output collated.pdf
+
+or if odd.pdf is in reverse order:
+pdftk A=even.pdf B=odd.pdf shuffle A Bend-1 output collated.pdf
+
+Decrypt a PDF
+pdftk secured.pdf input_pw foopass output unsecured.pdf
+
+Encrypt a PDF using 128-bit strength (the default), withhold all permissions (the default)
+pdftk 1.pdf output 1.128.pdf owner_pw foopass
+
+Same as above, except password baz must also be used to open output PDF
+pdftk 1.pdf output 1.128.pdf owner_pw foo user_pw baz
+
+Same as above, except printing is allowed (once the PDF is open)
+pdftk 1.pdf output 1.128.pdf owner_pw foo user_pw baz allow printing
+
+Join in1.pdf and in2.pdf into a new PDF, out1.pdf
+pdftk in1.pdf in2.pdf cat output out1.pdf
+
+or (using handles):
+pdftk A=in1.pdf B=in2.pdf cat A B output out1.pdf
+
+or (using wildcards):
+pdftk *.pdf cat output combined.pdf
+
+Remove page 13 from in1.pdf to create out1.pdf
+pdftk in.pdf cat 1-12 14-end output out1.pdf
+
+or:
+pdftk A=in1.pdf cat A1-12 A14-end output out1.pdf
+
+When using the Windows command-prompt, it helps to use drag-and-drop from the file manager: drag the input PDF file from the file manager onto the command-prompt, and its full pathname will appear at the prompt.
+
+Apply 40-bit encryption to output, revoking all permissions (the default). Set the owner PW to foopass.
+pdftk 1.pdf 2.pdf cat output 3.pdf encrypt_40bit owner_pw foopass
+
+Join two files, one of which requires the password foopass. The output is not encrypted.
+pdftk A=secured.pdf 2.pdf input_pw A=foopass cat output 3.pdf
+
+Uncompress PDF page streams for editing the PDF in a text editor (e.g., vim, emacs)
+pdftk doc.pdf output doc.unc.pdf uncompress
+
+Repair a PDF’s corrupted XREF table and stream lengths, if possible
+pdftk broken.pdf output fixed.pdf
+
+Burst a single PDF document into pages and dump its data to doc_data.txt
+pdftk in.pdf burst
+
+Burst a single PDF document into encrypted pages. Allow low-quality printing
+pdftk in.pdf burst owner_pw foopass allow DegradedPrinting
+
+Write a report on PDF document metadata and bookmarks to report.txt
+pdftk in.pdf dump_data output report.txt
+
+Rotate the first PDF page to 90 degrees clockwise
+pdftk in.pdf cat 1east 2-end output out.pdf
+
+Rotate an entire PDF document to 180 degrees
+pdftk in.pdf cat 1-endsouth output out.pdf
+
+Article Author: Sid Steward
+
+
+
+
+##############################################################################################################
+#
+# 	Error: Unexpected text in page range end, here:
+# 	Exiting.
+# 	Acceptable keywords, for example: "even" or "odd".
+# 	To rotate pages, use: "north" "south" "east"
+#       "west" "left" "right" or "down"
+# 	Errors encountered.  No output created.
+# 	Done.  Input errors, so no output created.
+#
+# 	https://www.pdflabs.com/docs/pdftk-man-page/
+#	"Changed the syntax for page rotation.
+#	Instead of N, S, E, W, L, R and D, now use:
+#	north, south, east, west, left, right and down."
+#
+##############################################################################################################
+
+To rotate the first page:
+pdftk t/helloworld.pdf cat 1EAST output out.pdf
+
+To rotate all pages (page range 1-end):
+pdftk t/helloworld.pdf cat 1-endEAST output out.pdf
+
+
+##############################################################################################################
+
+Command line tool to crop PDF files
+https://askubuntu.com/questions/124692/command-line-tool-to-crop-pdf-files
+https://www.onetransistor.eu/2015/12/add-printer-marks-bleeds-to-pdf.html
+
+216 mm x 279 mm
+
+To convert to bp, I do the following: (216 mm / 25.4 mm) x 72 PPI = 612 bp and (279 mm / 25.4 mm) x 72 PPI = 791 bp.
+To this page size, I have to add 7 mm margin, this meaning (7 mm / 25.4 mm) x 72 PPI = 20 bp.
+
+
+
+     ****************************************************
+ 610 ----------------------X 420,610                    *
+     |                     |                            *
+     |                     |                            *
+     |                     |                            *
+     |                     |                            *
+     |                     |                            *
+     |                     |                            *
+     |                     |                            *
+     |0,315                |                            *
+ 315 X----------------------                            *
+     *                                                  *
+     *                                                  *
+     *                                                  *
+     *                                                  *
+     *                                                  *
+     *                                                  *
+     *                                                  *
+     *                                                  *
+   0 ****************************************************
+     0                    420
+
+
+
+pdfScale.sh v2.3.7 - Paper Sizes
+------------+-----------------------------
+       File | input-nup.pdf
+ Paper Type | A4 Landscape
+------------+-----------------------------
+            |    WIDTH x HEIGHT
+     Points |      842 x 595
+ Milimeters |      297 x 210
+     Inches |     11.7 x 8.3
+
+
+PDF optimization level selection options
+-dPDFSETTINGS=/screen   (screen-view-only quality, 72 dpi images)
+-dPDFSETTINGS=/ebook    (low quality, 150 dpi images)
+-dPDFSETTINGS=/printer  (high quality, 300 dpi images)
+-dPDFSETTINGS=/prepress (high quality, color preserving, 300 dpi imgs)
+-dPDFSETTINGS=/default  (almost identical to /screen)
+
+
+Ghostscript commandline using the -c switch like this:
+* -c "<</Orientation 3>> setpagedevice" -- sets landscape orientation;
+* -c "<</Orientation 0>> setpagedevice" -- sets portrait orientation;
+* -c "<</Orientation 2>> setpagedevice" -- sets upside down orientation;
+* -c "<</Orientation 1>> setpagedevice" -- sets seascape orientation.
+
+
+Read DPI info
+
+identify -format "%w x %h %x x %y" in.pdf
+
+
+##############################################################################################################
+
+
+
+So, the complete command is this:
+pdfcrop --margins 20 --bbox "0 0 612 791" input.pdf out_temp.pdf
+pdfcrop --margins '-305 -375 0 0'  input.pdf out_temp.pdf # crop bottom right
+gs -o outfile.pdf -sDEVICE=pdfwrite  -dCompatibilityLevel=1.4 -c "[/CropBox [320 0 612 430] /PAGES pdfmark" -f input.pdf # crop bottom right
+
+
+Add Margins
+crop a pdf with left, top, right and bottom margins of 5, 10, 20, and 30 pt (points), then run
+pdfcrop --margins '5 10 20 30' input.pdf output.pdf
+
+Crop
+in terminal. To actually crop something away, use negative values in the argument for crop. For example,
+pdfcrop --margins '-50 -50 -50 -50' input.pdf output.pdf
+
+
+#!/bin/bash
+for FILE in ./*.pdf; do pdfcrop "${FILE}"; done
+
+
+gs \
+  -o $outfile \
+  -sDEVICE=pdfwrite \
+  -c "[/CropBox [$xmin $ymin $xmax $ymax] /PAGES pdfmark" \
+  -f $file
+
+gs -o $outfile -sDEVICE=pdfwrite -c "[/CropBox [45 429 38 419] /PAGES pdfmark" -f $file
+
+pdfjam --keepinfo --trim "10mm 15mm 10mm 15mm" --clip true --suffix "cropped" input.pdf
+
+
+##############################################################################################################
+
+Ghostscript question - Rotating PDF pages within files
+Rotate a PDF with GhostScript command line
+https://www.ghostscript.com/doc/current/Use.htm
+
+##############################################################################################################
+
+gs -sDEVICE=pdfwrite -sOutputFile="output.pdf" -dNOPAUSE -dEPSCrop -c "<</Orientation 2>> setpagedevice" -f "input.ps" -c quit
+gs -sDEVICE=pdfwrite -sOutputFile="output.pdf" -dNOPAUSE -dEPSCrop -c "<</Orientation 2>> setpagedevice" -f "input.ps" -c quit
+
+#gs -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dPDFFitPage -dSAFER -dCompatibilityLevel=1.4 -sOutputFile=output.pdf input.pdf
+gs -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -r600 -sOutputFile=output_file.pdf -sDEVICE=pdfwrite -c "<< /PageSize   /ImagingBBox null /BeginPage{ 90 rotate 841 0 translate} >> setpagedevice" -f input_file.pdf
+gs -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -c "<< /Policies << /PageSize 5 >> /PageSize  "/InputAttributes currentpagedevice /InputAttributes get mark exch {1 index /Priority eq not {pop << /PageSize  >>} if } forall >> >> setpagedevice" -f input.pdf
+
+
+
+##############################################################################################################
+
+TCPDF FPDI Rotate Clockwise?
+http://www.fpdf.org/en/script/script2.php
+https://www.setasign.com/products/fpdi/about
+https://www.setasign.com/products/fpdi/demos/tcpdf-demo
+https://tcpdf.org/examples/
+http://fvue.nl/wiki/Php:_Import_pdf_in_Tcpdf
+https://www.pdflib.com/pdflib-cookbook/pdf-import/rotate-pages/php-rotate-pages/
+https://stackoverflow.com/questions/35382728/pdf-rotate-with-fpdf-and-laravel
+
+##############################################################################################################
+
+
+Use FPDI library besides TCPDF. So composer.json has to contain something like this:
+
+"require": {
+    ...
+    "setasign/fpdi-tcpdf": "1.6.*",
+    "tecnickcom/tcpdf": "6.2.*",
+    ...
+},
+
+
+/*
+
+$pdf = new TCPDF_IMPORT();
+$pdf->importPDF('file1.pdf');
+$this->pdf->StartTransform();
+$this->pdf->Rotate(-90);
+$this->pdf->StopTransform();
+*/
+
+use setasign\Fpdi;
+
+require_once('tcpdf/tcpdf.php');
+require_once('fpdi2/src/autoload.php');
+
+class Pdf extends Fpdi\TcpdfFpdi
+{
+    /**
+     * "Remembers" the template id of the imported page
+     */
+    protected $tplId;
+
+    /**
+     * Draw an imported PDF logo on every page
+     */
+    function Header()
+    {
+        if (is_null($this->tplId)) {
+            $this->setSourceFile('logo.pdf');
+            $this->tplId = $this->importPage(1);
+        }
+        $size = $this->useImportedPage($this->tplId, 130, 5, 60);
+
+        $this->SetFont('freesans', 'B', 20);
+        $this->SetTextColor(0);
+        $this->SetXY(PDF_MARGIN_LEFT, 5);
+        $this->Cell(0, $size['height'], 'TCPDF and FPDI');
+    }
+
+    function Footer()
+    {
+        // emtpy method body
+    }
+}
+
+// initiate PDF
+$pdf = new Pdf();
+$pdf->SetMargins(PDF_MARGIN_LEFT, 40, PDF_MARGIN_RIGHT);
+$pdf->SetAutoPageBreak(true, 40);
+
+// add a page
+$pdf->AddPage();
+
+// get external file content
+$utf8text = file_get_contents('tcpdf/examples/data/utf8test.txt', true);
+
+$pdf->SetFont('freeserif', '', 12);
+// now write some text above the imported page
+$pdf->Write(5, $utf8text);
+
+$pdf->Output();
+
+---------------
+
+<?php
+    require_once('fpdf/fpdf.php');
+    require_once('fpdi/fpdi.php');
+
+    $pdf =& new FPDI();
+    $pdf->AddPage();
+
+   //Set the source PDF file
+   $pagecount = $pdf->setSourceFile("existing_pdf.pdf");
+
+   //Import the first page of the file
+   $tpl = $pdf->importPage(1);
+
+ //Use this page as template
+ // use the imported page and place it at point 20,30 with a width of     170 mm
+  $pdf->useTemplate($tpl, 20, 30, 170);
+
+ #Print Hello World at the bottom of the page
+
+  //Select Arial italic 8
+  $pdf->SetFont('Arial','I',8);
+  $pdf->SetTextColor(0,0,0);
+  $pdf->SetXY(90, 160);
+  $pdf->Rotate(90);
+
+  $pdf->Write(0, "Hello World");
+
+  $pdf->Output("modified_pdf.pdf", "F");
+  ?>
+
+
+
+##############################################################################################################
+
+https://www.maketecheasier.com/combine-multiple-pdf-files-with-pdftk/
+
+##############################################################################################################
+
+#  listing your PDF files
+pdftk file1.pdf file2.pdf file3.pdf cat output newfile.pdf
+
+# split a pdf file’s pages into multiple documents
+pdftk newfile.pdf burst
+
+Merge certain pages from within multiple documents into one new document.
+pdftk A=one.pdf B=two.pdf cat A1-7 B1-5 A8 output combined.pdf
+
+Encrypt your new PDF file
+pdftk mydoc.pdf output mydoc.128.pdf owner_pw foopass
+
+
+
+
+
+
+
+
+
+
+
+##############################################################################################################
+
+How to reduce PDF file size in Linux
+https://blog.virtualzone.de/2012/11/how-to-reduce-pdf-file-size-in-linux.html
+https://askubuntu.com/questions/113544/how-can-i-reduce-the-file-size-of-a-scanned-pdf-file
+https://www.peterdavehello.org/2016/01/the-most-easiest-command-to-compress-pdf-file-losslessly/
+https://stackoverflow.com/questions/5296667/pdftk-compression-option
+
+You can also use the following parameters for -dPDFSETTINGS instead of /screen:
+/screen – Lowest quality, lowest size
+/ebook – Moderate quality
+/printer – Good quality
+/prepress – Best quality, highest size
+
+##############################################################################################################
+
+gs -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/screen -sOutputFile=output.pdf input.pdf
+
+-- V2 --
+
+-dPDFSETTINGS=/screen   (screen-view-only quality, 72 dpi images)
+-dPDFSETTINGS=/ebook    (low quality, 150 dpi images)
+-dPDFSETTINGS=/printer  (high quality, 300 dpi images)
+-dPDFSETTINGS=/prepress (high quality, color preserving, 300 dpi imgs)
+-dPDFSETTINGS=/default  (almost identical to /screen)
+
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=out.pdf in.pdf
+
+
+#!/bin/sh
+
+gs  -q -dNOPAUSE -dBATCH -dSAFER \
+    -sDEVICE=pdfwrite \
+    -dCompatibilityLevel=1.3 \
+    -dPDFSETTINGS=/screen \
+    -dEmbedAllFonts=true \
+    -dSubsetFonts=true \
+    -dColorImageDownsampleType=/Bicubic \
+    -dColorImageResolution=72 \
+    -dGrayImageDownsampleType=/Bicubic \
+    -dGrayImageResolution=72 \
+    -dMonoImageDownsampleType=/Bicubic \
+    -dMonoImageResolution=72 \
+    -sOutputFile=out.pdf \
+     $1
+
+
+
+##############################################################################################################
+
+Rotate a PDF
+https://www.pdflabs.com/docs/pdftk-cli-examples/
+https://www.commandlinefu.com/commands/view/7961/rotate-a-single-page-pdf-by-180-degrees
+https://unix.stackexchange.com/questions/58333/how-to-rotate-an-image-in-gs/256386
+https://unix.stackexchange.com/questions/58333/how-to-rotate-an-image-in-gs
+https://ghostscript.com/doc/7.07/Use.htm
+
+##############################################################################################################
+
+convert -flip -flop -density 300x300 -compress lzw in.pdf out.pdf
+convert -rotate 270 -density 300x300 -compress lzw in.pdf out.pdf
+convert -rotate $rotate -scale $Widthx$Height -modulate $brightness -contrast $contrast -colorize $red%,$green%,$blue% $filter file_in.png file_out.png
+pdftk input.pdf cat 1-endsouth output output.pdf
+
+How to rotate an image in gs
+gs -dEPSCrop -c "<</Orientation 1>> setpagedevice" -f input.eps -c quit
+gs -dSAFER -dBATCH -dNOPAUSE -sDEVICE=eps2write  -sOutputFile=output.eps   -c "<</Orientation 3>> setpagedevice"   -f input.eps
+
+
+
+##############################################################################################################
+
+Basic Usage
+
+http://manpages.ubuntu.com/manpages/precise/man1/pdfcrop.1.html
+https://www.ghostscript.com/doc/9.21/Devices.htm
+http://milan.kupcevic.net/ghostscript-ps-pdf/
+https://stackoverflow.com/questions/7446552/resizing-a-pdf-using-ghostscript
+https://stackoverflow.com/questions/3089773/how-to-change-page-orientation-of-pdf-ghostscript-or-postscript-solution-neede
+https://github.com/tavinus/pdfScale
+
+##############################################################################################################
+
+Convert PostScript to PDF:
+gs -q -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=fileout.pdf \
+    filein.ps
+Merge/combine PDF and/or PostScript files:
+gs -q -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=fileout.pdf \
+    filein.ps filein2.pdf
+Extract a page from a PostScript or a PDF document:
+gs -q -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -dFirstPage=3 -dLastPage=3 \
+    -sOutputFile=fileout.pdf filein.ps
+
+
+Additional Options
+
+PDF optimization level selection options
+-dPDFSETTINGS=/screen   (screen-view-only quality, 72 dpi images)
+-dPDFSETTINGS=/ebook    (low quality, 150 dpi images)
+-dPDFSETTINGS=/printer  (high quality, 300 dpi images)
+-dPDFSETTINGS=/prepress (high quality, color preserving, 300 dpi imgs)
+-dPDFSETTINGS=/default  (almost identical to /screen)
+
+Paper size selection options
+-sPAPERSIZE=letter
+-sPAPERSIZE=a4
+-dDEVICEWIDTHPOINTS=w -dDEVICEHEIGHTPOINTS=h (point=1/72 of an inch)
+-dFIXEDMEDIA (force paper size over the PostScript defined size)
+
+Other options
+-dEmbedAllFonts=true
+-dSubsetFonts=false
+-dFirstPage=pagenumber
+-dLastPage=pagenumber
+-dAutoRotatePages=/PageByPage
+-dAutoRotatePages=/All
+-dAutoRotatePages=/None
+-r1200 (resolution for pattern fills and fonts converted to bitmaps)
+-sPDFPassword=password
+
+
+-- V --
+
+Ghostscript commandline using the -c switch like this:
+* -c "<</Orientation 3>> setpagedevice" -- sets landscape orientation;
+* -c "<</Orientation 0>> setpagedevice" -- sets portrait orientation;
+* -c "<</Orientation 2>> setpagedevice" -- sets upside down orientation;
+* -c "<</Orientation 1>> setpagedevice" -- sets seascape orientation.
+
+-dAutoRotatePages=/None -- retains orientation of each page;
+-dAutoRotatePages=/All -- rotates all pages (or none) depending on a kind of "majority decision";
+-dAutoRotatePages=/PageByPage -- auto-rotates pages individually.
+
+
+* -dAutoRotatePages=/None -- retains orientation of each page;
+* -dAutoRotatePages=/All -- rotates all pages (or none) depending on a kind of "majority decision";
+* -dAutoRotatePages=/PageByPage -- auto-rotates pages individually.
+
+
+gs \
+-q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dSAFER \
+-dCompatibilityLevel="1.5" -dPDFSETTINGS="/printer" \
+-dColorConversionStrategy=/LeaveColorUnchanged \
+-dSubsetFonts=true -dEmbedAllFonts=true \
+-dDEVICEWIDTHPOINTS=595 -dDEVICEHEIGHTPOINTS=842 \
+-dAutoRotatePages='/PageByPage' \
+-dFIXEDMEDIA -dPDFFitPage \
+-sOutputFile='../myOutputFile.pdf' \
+-f '../input.pdf'
+
+-- V --
+
+
+Page parameters
+https://ghostscript.com/doc/8.54/Use.htm
+https://www.ghostscript.com/doc/current/Use.htm
+https://www.ghostscript.com/doc/current/Use.htm#Known_paper_sizes
+
+-dFIXEDMEDIA
+
+Causes the media size to be fixed after initialization, forcing pages of other sizes or orientations to be clipped. This may be useful when printing documents on a printer that can handle their requested paper size but whose default is some other size. Note that -g automatically sets -dFIXEDMEDIA, but -sPAPERSIZE= does not.
+-dFIXEDRESOLUTION
+
+Causes the media resolution to be fixed similarly. -r automatically sets -dFIXEDRESOLUTION.
+-dORIENT1=true
+-dORIENT1=false
+
+Defines the meaning of the 0 and 1 orientation values for the setpage[params] compatibility operators. The default value of ORIENT1 is true (set in gs_init.ps), which is the correct value for most files that use setpage[params] at all, namely, files produced by badly designed applications that "know" that the output will be printed on certain roll-media printers: these applications use 0 to mean landscape and 1 to mean portrait. -dORIENT1=false declares that 0 means portrait and 1 means landscape, which is the convention used by a smaller number of files produced by properly written applications.
+-dDEVICEWIDTHPOINTS=w
+-dDEVICEHEIGHTPOINTS=h
+
+Sets the initial page width to w or initial page height to h respectively, specified in 1/72" units.
+-sDEFAULTPAPERSIZE=a4
+This value will be used to replace the device default papersize ONLY if the default papersize for the device is 'letter' or 'a4' serving to insulate users of A4 or 8.5x11 from particular device defaults (the collection of contributed drivers in Ghostscript vary as to the default size).
+
+
+If the desired paper size is listed in the section on paper sizes known to Ghostscript below, you can select it as the default paper size for a single invocation of Ghostscript by using the -sPAPERSIZE= switch, for instance
+-sPAPERSIZE=a4
+-sPAPERSIZE=legal
+
+Otherwise you can set the page size using the pair of switches
+-dDEVICEWIDTHPOINTS=w -dDEVICEHEIGHTPOINTS=h
+
+Where w be the desired paper width and h be the desired paper height in points (units of 1/72 of an inch).
+
+
+
+
+How to make PDF Pages same size
+https://unix.stackexchange.com/questions/20026/convert-images-to-pdf-how-to-make-pdf-pages-same-size
+https://unix.stackexchange.com/questions/20026/convert-images-to-pdf-how-to-make-pdf-pages-same-size
+
+
+convert a.png b.png -compress jpeg -resize 1240x1753 -extent 1240x1753 -gravity center -units PixelsPerInch -density 150x150 multipage.pdf
+convert in.jpg -resize 1240x1750 -background black -compose Copy -gravity center -extent 1240x1750 -units PixelsPerInch -density 150 out.pdf
+convert in.jpg -units PixelsPerInch -set density '%[fx:w/8.27]' -repage a4 out.pdf
+convert a.png b.png -compress jpeg -quality 70 -density ${i}x${i} -units PixelsPerInch -resize $((i*827/100))x$((i*1169/100)) -repage $((i*827/100))x$((i*1169/100)) multipage.pdf
+
+
+
+
+
+
+
+
+####################################################################################################################
+#
+#   PDF-Dokumente in (PNG-)Bilder umwandeln mit convert
+#   http://www.linux-community.de/Internal/Artikel/Online-Artikel/PDF-Dokumente-in-PNG-Bilder-umwandeln-mit-convert
+#
+####################################################################################################################
+
+# Get info
+identify -verbose rose: 2>&1
+identify -list format | grep JP2
+identify -format "%wx%h" image.jpg
+
+
+# Imagemagik convert
+convert -density 300 magazin.pdf[0] seite.png
+convert -density 300 test.pdf -quality 85 testpic.jpg
+convert -density 300 test.pdf -resize 990x1400 -quality 85 testpic.jpg
+convert -density 300 test.pdf -background white -alpha off -resize 990x1400 -quality 85 test.jpg
+convert -density 300 test.pdf -bordercolor white -border 0 -resize 990x1400 -quality 85 testpic.jpg
+
+https://www.golem.de/news/deutsche-bahn-elektro-rikschas-sollen-auch-in-deutschland-verkehren-1711-131355.html
+https://www.golem.de/news/akku-honda-will-elektroautos-in-15-minuten-aufladen-1711-131339.html
+
+convert input.jpg -resize 800x600 -background black -compose Copy -gravity center -extent 800x600 output.jpg
+convert input.jpg -resize 800x600 -background black -gravity center -extent 800x600 output.jpg
+convert input.jpg -resize 800x600 -background black -compose Copy -gravity center -extent 800x600 output.jpg
+convert input.jpg -resize 300x50 -background white -gravity center -extent 300x50 output.jpg
+convert tal.jpg -resize 100x100 -background white -gravity center -extent 300x50 nuevo.jpg 2>&1
+convert -version" 2>&1
+
+# Imagemagik convert
+convert -quality 90% input.jpg
+convert $conversion -scale 100x100 -background white -gravity center -extent 100x100 output.jpg
+convert input.jpg -resize '250x90^' output.jpg
+convert -quality 100 sample.png sample.pdf
+convert -quality 100 -density 50
+convert in.jpg -resize 4000x3000 -gravity center -background white -extent 4000x3000 out.jpg
+convert in.jpg -resize 4000x3000^ -gravity center -background white -extent 4000x3000 out.jpg
+convert myfile.pdf -density 300 -geometry x3508 file2.jpg
+
+convert in.png -set colorspace RGB -colorspace gray out.png
+convert in.png -grayscale Rec709Luma out.png
+convert input.png -geometry x600 output.png
+
+# mass convert forlder
+mogrify -resize 960x528 *.png # 960 pixels by 528 pixels
+mogrify -resize 960 *.png # scale all of your images to a width of 960 pix
+mogrify -resize 960x528! *.png #  scale your images to 960 by 528 pixels, but will preserve the aspect ratio
+mogrify -geometry x600 *.png
+mogrify -resize 800x1094! *jpg # keep image aspect ratio
+
+convert brocoli.gif out%05d.pgm # extract gif frames (using PGM output format)
+convert brocoli.gif out%05d.pgm
+convert -coalesce brocoli.gif out%05d.pgm
+
+http://www.imagemagick.org/Usage/resize/
+http://www.imagemagick.org/Usage/transform/
+https://dototot.com/imagemagick-tutorial-batch-resize-images-command-line/
+http://imagemagick.sourceforge.net/http/www/convert.html
+https://www.howtogeek.com/109369/how-to-quickly-resize-convert-modify-images-from-the-linux-terminal/
+https://www.imagemagick.org/script/command-line-options.php
+https://github.com/locomotivemtl/charcoal-image
+https://guides.wp-bullet.com/batch-resize-images-using-linux-command-line-and-imagemagick/
+http://www.microhowto.info/howto/resize_an_image_using_imagemagick.html
+http://www.imagemagick.org/script/command-line-processing.php#geometry
+http://www.imagemagick.org/script/command-line-options.php#geometry
+http://www.imagemagick.org/Usage/crop/
+https://ghostscript.com/doc/8.63/Use.htm
+
+
+set "parameters=-crop 2x1@ +repage -colorspace gray +dither -colors 4"
+FOR %%f IN (*.jpg) DO convert "%%f" %parameters% "split\%%~nf_%%d.jpg"
+
+
+
+
+
+
+
+
+##########################################################
+
+http://www.thegeekstuff.com/2010/01/awk-introduction-tutorial-7-awk-print-examples/
+ps aux | grep "evince " | grep -v grep | awk '{print $2 }' | xargs kill
+
+##########################################################
+
+
+# resize image to width 25, keeping aspect ratio
+convert -geometry 25x src/image1.png out/image1.png
+
+# resize image to height 25, keeping aspect ratio
+convert -geometry x25 src/image1.png out/image1.png
+
+# concatenate images horizontally
+convert +append src/image1.png src/image2.png out/image12horiz.png
+
+# concatenate images vertically
+convert -append src/image1.png src/image2.png out/image12vert.png
+
+
+Requires Ghostscript to read. By default, ImageMagick sets the page size to the MediaBox.
+Some PDF files, however, have a CropBox or TrimBox that is smaller than the MediaBox and may include white space,
+ registration or cutting marks outside the CropBox or TrimBox. To force ImageMagick to use the CropBox or
+ TrimBox rather than the MediaBox, use -define (e.g. -define pdf:use-cropbox=true or -define pdf:use-trimbox=true).
+ Use -density to improve the appearance of your PDF rendering (e.g. -density 300×300).
+
+convert  -define pdf:use-cropbox=true  src/image2.png out/image12vert.png
+convert  -define pdf:use-trimbox=true  src/image2.png out/image12vert.png
+
+------------------------------------------------------
+
+Actually, the total error starts with:
+"SetUseCIEColor for UseDeviceIndependentColor to work properly"
+
+If you set -dUseCIEColor, the file works.
+
+
+
+convert  -verbose -density 300 -interlace none -quality 100 -colorspace YCbCr ".$_FILES['Filedata']['name']."[0] -profile /usr/share/color/icc/PhotoGamutRGB_avg6c.icc -profile /usr/share/color/icc/ECI-RGB.V1.0.icc ".$getfolder[1]."_P4_xl.jpg
+mogrify -format pdf -define pdf:use-trimbox=true /TEMP/foo.pdf
+
+
+for i in *.jpg; do echo "$i"; convert "$i" -resize 50x "$i"; done
+
+
+gs -dSAFER -dBATCH -dUseCIEColor -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=output.pdf no_marks.pdf pdfmarks
+gs -dNOPAUSE -q -sDEVICE=pnggray -r500 -dBATCH -dFirstPage=2 -dLastPage=2 -sOutputFile=test.png test.pdf
+
+
+gs
+      -dNODISPLAY ^
+      -q ^
+      -sFile=c:\downloads\_IXUS_850IS_ADVCUG_EN.pdf ^
+      -dDumpMediaSizes ^
+      C:/gs8.71/lib/pdf_info.ps
+
+
+gs                  ^
+   -sDEVICE=png16m            ^
+   -sOutputFile=page-%03d.jpg ^
+   -r100x100                  ^
+   -c "showpage showpage"     ^
+   -f filename.pdf
+
+
+
+gs                 ^
+   -sDEVICE=jpeg              ^
+   -sOutputFile=page-%03d.jpg ^
+   -r100x100                  ^
+   -f file1.pdf               ^
+   -f file2.pdf               ^
+   -f file3.pdf               ^
+   -f [...]
+
+
+gs -sDEVICE=pngalpha       \
+   -o %stdout              \
+   -r144 cover.pdf         \
+   |                       \
+convert                    \
+   -background transparent \
+   -                       \
+    cover.png
+
+
+--------------------------
+gs -sDEVICE=pngalpha -o file-%03d.png -r144 cover.pdf
+
+for i in {1..100}; do        \
+                             \
+  gs -sDEVICE=pngalpha       \
+     -dFirstPage="${i}"      \
+     -dLastPage="${i}"       \
+     -o %stdout              \
+     -r144 input.pdf         \
+     |                       \
+  convert                    \
+     -background transparent \
+     -                       \
+      page-${i}.png ;        \
+                             \
+done
+
+
+--------------------------
+#!/bin/bash
+while [ $# -gt 0 ]; do
+pdf=$1
+echo "Converting "$pdf" ..."
+pngfile=`echo "$pdf" | sed 's/\.\w*$/.png/'`
+inkscape "$pdf" -z --export-dpi=600 --export-area-drawing --export-png="$pngfile"
+echo "Converted to "$pngfile""
+shift
+done
+echo "All jobs done. Exiting."
+--------------------------
+
+
+##########################################################
+#
+#   http://dptnt.com/2007/09/batch-resize-images-using-imagemagick/
+#
+##########################################################
+
+Resize to 640×480 (maximum width and height), keep the aspect ratio
+
+mogrify -resize 640x480 *.jpg
+Resize to fixed width of 640, keep the aspect ratio
+
+mogrify -resize 640 *.jpg
+Resize to fixed height of 480, keep the aspect ratio
+
+mogrify -resize x480 *.jpg
+Resize to exact 640×480, change aspect ratio if necessary
+
+mogrify -resize 640x480! *.jpg
+Resize to 50% of original size, keep the aspect ratio
+
+mogrify -resize 50% *.jpg
+Resize images that are less than 640 pixel wide to 640px wide (image wider will be ignored)
+
+mogrify -resize 640"<" *.jpg
+Resize images that are more than 480 pixel height to 480px height (image image shorter will be ignored)
+
+mogrify -resize x480">" *.jpg
+Resize images to no larger than 640×480 (images with width and height less than 640 or 480 will be ignored)
+
+mogrify -resize 640x480">" *.jpg
+Resize images to 100K pixels
+
+mogrify -resize 100000 *.jpg
+
+
+
+
+
+
+
+
