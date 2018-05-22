@@ -1,0 +1,432 @@
+##########################################################################
+
+##########################################################################
+
+http://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.image.extract_patches_2d.html
+http://scikit-learn.org/stable/auto_examples/plot_multioutput_face_completion.html#sphx-glr-auto-examples-plot-multioutput-face-completion-py
+http://scikit-learn.org/stable/auto_examples/decomposition/plot_image_denoising.html#sphx-glr-auto-examples-decomposition-plot-image-denoising-py
+http://www.askaswiss.com/2017/11/how-to-integrate-essential-scikit-learn-functions-with-opencv.html
+https://github.com/mbeyeler/opencv-machine-learning
+
+https://comparisons.financesonline.com/opencv-vs-scikit-learn
+
+
+https://www.youtube.com/watch?v=JXbkwKd11Lo
+https://www.youtube.com/watch?v=llOk1SyHFc4
+https://www.youtube.com/watch?v=2tiwKtWYQAM
+https://www.youtube.com/watch?v=QbbOxrR0zdA
+https://www.youtube.com/watch?v=Aut32pR5PQA
+https://www.youtube.com/watch?v=itmV7druy9Y
+https://www.youtube.com/watch?v=mHkz8yT_vxY
+
+https://github.com/ahmetozlu/vehicle_counting_hog_svm
+
+
+##########################################################################
+
+Self-driving Cars — OpenCV and SVM Machine Learning with Scikit-Learn for Vehicle Detection on the Road
+https://medium.com/@ricardo.zuccolo/self-driving-cars-opencv-and-svm-machine-learning-with-scikit-learn-for-vehicle-detection-on-the-bf88860e055a
+
+##########################################################################
+
+# Histogram of Oriented Gradients (HOG)
+skimage.feature.hog(image, orientations=9, pixels_per_cell=(8, 8), cells_per_block=(3, 3), block_norm=’L1', visualise=False, transform_sqrt=False, feature_vector=True, normalise=None)
+
+# Resize and convert to 1D
+small_img = cv2.resize(image, (32, 32))
+feature_vec = small_img.ravel()
+
+# Training the Linear SVM Classifier
+# Fit a per-column scaler
+X_scaler = StandardScaler().fit(X)
+# Apply the scaler to X
+scaled_X = X_scaler.transform(X)
+
+# Parameter tunning
+color_space = ‘YCrCb’ # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
+orient = 9 # HOG orientations
+pix_per_cell = (8,8) # HOG pixels per cell
+cell_per_block = (2,2) # HOG cells per block
+hog_channel = 0 # Can be 0, 1, 2, or “ALL”
+spatial_size = (32, 32) # Spatial binning dimensions
+hist_bins = 32 # Number of histogram bins
+spatial_feat = True # Spatial features on or off
+hist_feat = True # Histogram features on or off
+hog_feat = True # HOG features on or off
+y_start_stop = [None, None] # Min and max in y to search in slide_window()
+
+# Split up data into randomized training and test sets
+rand_state = np.random.randint(0, 100)
+X_train, X_test, y_train, y_test = train_test_split(
+ scaled_X, y, test_size=0.2, random_state=rand_state)
+# Use a linear SVC
+svc = LinearSVC()
+# Train
+svc.fit(X_train, y_train)
+# Accuracy
+svc.score(X_test, y_test)
+
+
+##########################################################################
+
+Smile Recognition Using OpenCV and scikit-learn
+http://flothesof.github.io/smile-recognition.html
+https://github.com/flothesof/facial_keypoint_detection
+http://nbviewer.jupyter.org/github/flothesof/posts/blob/master/20150107_SmileRecognition.ipynb
+http://nbviewer.jupyter.org/github/flothesof/posts/blob/master/20150107_SmileRecognition.ipynb
+https://github.com/flothesof/flothesof.github.io
+https://github.com/flothesof/posts
+https://github.com/flothesof/neural-networks-and-deep-learning
+https://github.com/flothesof/SongCreator
+
+
+##########################################################################
+
+https://www.learnopencv.com/computer-vision-for-predicting-facial-attractiveness/
+
+##########################################################################
+
+https://github.com/rohitsukhwal/face-rating # python
+https://github.com/FaithPatrick/FaceScore # php
+https://github.com/knabar/face-rating # python
+https://github.com/clecocel/face-rating # python
+https://github.com/HuyTu7/face_rating # python
+https://github.com/hackcha/trans_face_rating # python
+https://github.com/mapeveri/Angular-rating-face # js
+https://github.com/wushichatong/face_rating # python
+https://github.com/oatmeal3000/female-face-rating # python
+https://github.com/folkestad/Beautyfinder-CNN # python
+
+##########################################################################
+
+Using OpenCV, Python and Template Matching to play Where’s Waldo
+https://machinelearningmastery.com/using-opencv-python-and-template-matching-to-play-wheres-waldo/
+
+##########################################################################
+
+# import the necessary packages
+import numpy as np
+import argparse
+import imutils
+import cv2
+
+# construct the argument parser and parse the arguments
+ap = argparse.ArgumentParser()
+ap.add_argument("-p", "--puzzle", required = True,
+	help = "Path to the puzzle image")
+ap.add_argument("-w", "--waldo", required = True,
+	help = "Path to the waldo image")
+args = vars(ap.parse_args())
+
+# load the puzzle and waldo images
+puzzle = cv2.imread(args["puzzle"])
+waldo = cv2.imread(args["waldo"])
+(waldoHeight, waldoWidth) = waldo.shape[:2]
+
+# find the waldo in the puzzle
+result = cv2.matchTemplate(puzzle, waldo, cv2.TM_CCOEFF)
+(_, _, minLoc, maxLoc) = cv2.minMaxLoc(result)
+
+# grab the bounding box of waldo and extract him from
+# the puzzle image
+topLeft = maxLoc
+botRight = (topLeft[0] + waldoWidth, topLeft[1] + waldoHeight)
+roi = puzzle[topLeft[1]:botRight[1], topLeft[0]:botRight[0]]
+
+# construct a darkened transparent 'layer' to darken everything
+# in the puzzle except for waldo
+mask = np.zeros(puzzle.shape, dtype = "uint8")
+puzzle = cv2.addWeighted(puzzle, 0.25, mask, 0.75, 0)
+
+# put the original waldo back in the image so that he is
+# 'brighter' than the rest of the image
+puzzle[topLeft[1]:botRight[1], topLeft[0]:botRight[0]] = roi
+
+# display the images
+cv2.imshow("Puzzle", imutils.resize(puzzle, height = 650))
+cv2.imshow("Waldo", waldo)
+cv2.waitKey(0)
+
+# run py
+python find_waldo.py --puzzle puzzle.png --waldo waldo.png
+
+
+##########################################################################
+
+Rectangle Detection - OpenCV
+
+##########################################################################
+https://github.com/kyamagu/mexopencv
+http://answers.opencv.org/question/94492/rectangle-detection-opencv-2412/
+https://www.pyimagesearch.com/2016/02/08/opencv-shape-detection/
+https://www.homeworkhelponline.net/blog/programming/find-rectangles
+http://blog.ayoungprogrammer.com/2013/04/tutorial-detecting-multiple-rectangles.html/
+https://www.quora.com/How-I-detect-rectangle-using-OpenCV
+https://www.pyimagesearch.com/2016/02/08/opencv-shape-detection/
+http://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_contours/py_contour_features/py_contour_features.html
+https://chatbotslife.com/shapes-detection-with-simplecv-on-python-ec99da48082
+
+
+https://github.com/HomeworkHelpOnline/Python-Find_Rectangles
+https://github.com/valerybriz/blobDetectSimpleCV/blob/master/blobDetection.py
+https://github.com/bsdnoobz/opencv-code/blob/master/shape-detect.cpp
+https://github.com/anuj-badhwar/Indian-Number-Plate-Recognition-System
+
+
+# Number plate cover
+
+import numpy as np
+import cv2
+
+img = cv2.imread('test5.jpg')
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+ret, thresh = cv2.threshold(gray, 127, 255, 1)  # 127,255,1
+_, contours, h = cv2.findContours(thresh, 1, 2)
+
+for cnt in contours:
+    if cv2.contourArea(cnt) > 2290:
+        #    approx = cv2.approxPolyDP(cnt,0.01*cv2.arcLength(cnt,True),True)
+        approx = cv2.approxPolyDP(cnt, 0.02 * cv2.arcLength(cnt, True), True)
+        print len(approx)
+        if len(approx) == 5:
+            print "pentagon"
+            # cv2.drawContours(img,[cnt],0,255,-1)
+        elif len(approx) == 3:
+            print "triangle"
+            # cv2.drawContours(img,[cnt],0,(0,255,0),-1)
+        elif len(approx) == 4:
+            print "square"
+            cv2.drawContours(img, [cnt], 0, (127, 127, 127), -1)
+        elif len(approx) == 9:
+            print "half-circle"
+            # cv2.drawContours(img,[cnt],0,(255,255,0),-1)
+        elif len(approx) > 15:
+            print "circle"
+            # cv2.drawContours(img,[cnt],0,(0,255,255),-1)
+
+cv2.imshow('img', img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+
+
+
+##########################################################################
+
+Capture Video from Camera
+
+##########################################################################
+http://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_gui/py_video_display/py_video_display.html
+https://www.learnopencv.com/read-write-and-display-a-video-using-opencv-cpp-python/
+
+#-----------------------------------
+#Capture Video from Camera
+#-----------------------------------
+
+import numpy as np
+import cv2
+
+cap = cv2.VideoCapture(0)
+
+while(True):
+    # Capture frame-by-frame
+    ret, frame = cap.read()
+
+    # Our operations on the frame come here
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    # Display the resulting frame
+    cv2.imshow('frame',gray)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# When everything done, release the capture
+cap.release()
+cv2.destroyAllWindows()
+
+
+#-----------------------------------
+# Playing Video from file
+#-----------------------------------
+
+import numpy as np
+import cv2
+
+cap = cv2.VideoCapture('vtest.avi')
+
+while(cap.isOpened()):
+    ret, frame = cap.read()
+
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    cv2.imshow('frame',gray)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+
+#-----------------------------------
+# Saving a Video
+#-----------------------------------
+
+import numpy as np
+import cv2
+
+cap = cv2.VideoCapture(0)
+
+# Define the codec and create VideoWriter object
+fourcc = cv2.VideoWriter_fourcc(*'XVID')
+out = cv2.VideoWriter('output.avi',fourcc, 20.0, (640,480))
+
+while(cap.isOpened()):
+    ret, frame = cap.read()
+    if ret==True:
+        frame = cv2.flip(frame,0)
+
+        # write the flipped frame
+        out.write(frame)
+
+        cv2.imshow('frame',frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+    else:
+        break
+
+# Release everything if job is finished
+cap.release()
+out.release()
+cv2.destroyAllWindows()
+
+
+--------------
+
+
+https://realpython.com/face-detection-in-python-using-a-webcam/
+
+VideoCapture cap;
+cap.open(192.168.1.180/?action=stream?dummy=param.mjpg);
+
+VideoCapture capture = new VideoCapture();
+capture.open("http://192.168.0.156/view/viewer_index.shtml?id=87");
+
+http://gdata.youtube.com/feeds/mobile/videos/VIDEO_ID
+http://gdata.youtube.com/feeds/api//videos/fdJc1_IBKJA (XML)
+http://www.life2coding.com/play-video-files-using-opencv-python/
+
+https://github.com/streamlink/streamlink/issues/1386
+https://github.com/streamlink/streamlink/issues/1464
+# streams["best"].url
+
+import streamlink
+import cv2
+
+url = 'https://www.youtube.com/watch?v=wwMDvPCGeE0'
+
+streams = streamlink.streams(url)
+cap = cv2.VideoCapture(streams["best"].url)
+
+while True:
+    ret, frame = cap.read()
+
+    cv2.imshow('frame', frame)
+
+    if cv2.waitKey(1) & 0xff == ord('q'):
+        break
+
+---------
+streams = streamlink.streams('live.bilibili.com/1')
+url = streams['best'].url
+cap = cv2.VideoCapture(url)
+
+while True:
+    succ, frame = cap.read()
+    if succ:
+        # Do something here
+    else:
+        break
+
+cap.release()
+
+-----------
+#-------------------------------------------
+https://pypi.org/project/pafy/
+pip install pafy
+#-------------------------------------------
+
+import cv2, pafy
+
+url = "https://www.youtube.com/watch?v=aKX8uaoy9c8"
+videoPafy = pafy.new(url)
+best = videoPafy.getbest(preftype="webm")
+
+video=cv2.VideoCapture(best.url)
+
+### get certain attributes:
+
+>>> video.title
+'Richard Jones: Introduction to game programming - PyCon 2014'
+
+>>> video.rating
+5.0
+
+>>> video.viewcount, video.author, video.length
+(1916, 'PyCon 2014', 10394)
+
+>>> video.duration, video.likes, video.dislikes
+('02:53:14', 25, 0)
+
+>>> print(video.description)
+Speaker: Richard Jones
+
+### get format
+
+>>> streams = video.streams
+>>> for s in streams:
+...     print(s)
+...
+normal:mp4@1280x720
+normal:webm@640x360
+normal:mp4@640x360
+normal:flv@320x240
+normal:3gp@320x240
+normal:3gp@176x144
+
+### get resolution
+
+>>> for s in streams:
+...    print(s.resolution, s.extension, s.get_filesize(), s.url)
+
+
+### get best resolution regardless of file format:
+
+>>> best = video.getbest()
+>>> best.resolution, best.extension
+('1280x720', 'mp4')
+
+>>> best = video.getbest(preftype="webm")
+>>> best.resolution, best.extension
+('640x360', 'webm')
+
+get url, for download or streaming in mplayer / vlc etc:
+
+>>> best.url
+
+Download video and show progress:
+
+>>> best.download(quiet=False)
+3,734,976 Bytes [0.20%] received. Rate: [ 719 KB/s].  ETA: [3284 secs]
+
+Download video, use specific directory and/or filename:
+
+>>> filename = best.download(filepath="/tmp/")
+>>> filename = best.download(filepath="/tmp/Game." + best.extension)
+
+Get audio-only streams (m4a and/or ogg vorbis):
+
+>>> audiostreams = video.audiostreams
+>>> for a in audiostreams:
+...     print(a.bitrate, a.extension, a.get_filesize())
+...
