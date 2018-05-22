@@ -1,0 +1,996 @@
+https://blog.drecks-provider.de/why-you-should-blur-an-image-before-processing-it-using-opencv-and-python/
+https://docs.opencv.org/3.0.0/d4/d73/tutorial_py_contours_begin.html
+https://docs.opencv.org/3.1.0/d4/d73/tutorial_py_contours_begin.html
+https://www.pyimagesearch.com/2016/04/11/finding-extreme-points-in-contours-with-opencv/
+https://www.pyimagesearch.com/2014/04/21/building-pokedex-python-finding-game-boy-screen-step-4-6/
+https://gist.github.com/Munawwar/0efcacfb43827ba3a6bac3356315c419
+https://www.kaggle.com/javidimail/nuclei-detection-with-opencv
+http://pysource.com/2018/03/01/find-and-draw-contours-opencv-3-4-with-python-3-tutorial-19/
+https://github.com/BerkeleyAutomation/line_cutting/blob/master/LineDetector.py
+https://github.com/udacity/RoboND-Rover-Project/blob/master/code/perception.py
+https://www.programcreek.com/python/example/89326/cv2.blur
+https://www.programcreek.com/python/example/86807/cv2.GaussianBlur
+https://www.programcreek.com/python/example/70440/cv2.findContours
+https://www.programcreek.com/python/example/70455/cv2.drawContours
+http://opencvpython.blogspot.de/2012/06/smoothing-techniques-in-opencv.html
+https://media.swymhome.com/projects/87/files/132/PC%20Code.py?t=1468796686
+https://yoursunny.com/t/2018/contour-PiCamera/
+https://www.pyimagesearch.com/2015/09/07/blur-detection-with-opencv/
+https://www.programcreek.com/python/example/994/numpy.zeros
+https://www.programcreek.com/python/example/12068/numpy.subtract
+https://docs.opencv.org/2.4/doc/tutorials/core/adding_images/adding_images.html
+https://docs.opencv.org/2.4/modules/core/doc/operations_on_arrays.html#addweighted
+http://answers.opencv.org/question/65061/extract-numbers-and-bound-rectangle-on-each-number/
+https://www.geeksforgeeks.org/numpy-zeros-python/
+https://www.pyimagesearch.com/2016/03/07/transparent-overlays-with-opencv/
+https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_core/py_image_arithmetics/py_image_arithmetics.html
+https://docs.scipy.org/doc/numpy-1.10.4/reference/generated/numpy.zeros.html
+
+
+-----------------
+
+import cv2
+
+# load image, convert to gray scale, blur, then detect edges
+tmp = cv2.imread('./shape_noise.png')
+tmp = cv2.cvtColor(tmp, cv2.COLOR_RGB2GRAY)
+tmp = cv2.medianBlur(tmp, 5)
+edges = cv2.Canny(tmp, 100, 200)
+
+# we draw on the original image
+output = cv2.imread('./shape.png')
+contours, hierarchy = cv2.findContours(edges, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+for contour in contours:
+    cv2.drawContours(output, [contour], 0, (0, 0, 255), 3)
+cv2.imwrite('./shape_output.png', output)
+
+
+----------------
+
+import cv2
+import numpy as np
+
+cap = cv2.VideoCapture(0)
+
+while True:
+    _, frame = cap.read()
+    blurred_frame = cv2.GaussianBlur(frame, (5, 5), 0)
+    hsv = cv2.cvtColor(blurred_frame, cv2.COLOR_BGR2HSV)
+
+    lower_blue = np.array([38, 86, 0])
+    upper_blue = np.array([121, 255, 255])
+    mask = cv2.inRange(hsv, lower_blue, upper_blue)
+
+    _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+
+    for contour in contours:
+        area = cv2.contourArea(contour)
+
+        if area > 5000:
+            cv2.drawContours(frame, contour, -1, (0, 255, 0), 3)
+
+
+    cv2.imshow("Frame", frame)
+    cv2.imshow("Mask", mask)
+
+    key = cv2.waitKey(1)
+    if key == 27:
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+
+-------------
+
+# Add blur contour
+
+#img is the image
+#cnt is a contour
+#blur is a blurred copy of the image
+
+temp = np.zeros(img.shape,np.uint8)
+cv2.drawContours(temp,[cnt],0,255,-1)
+x = np.where(temp == 0)
+img[x] = blur[x]
+
+-------------
+
+# Add blur contour
+
+# Copy
+image = image.copy()
+#input, gives all the contours, contour approximation compresses horizontal,
+#vertical, and diagonal segments and leaves only their end points. For example,
+#an up-right rectangular contour is encoded with 4 points.
+#Optional output vector, containing information about the image topology.
+#It has as many elements as the number of contours.
+#we dont need it
+_, contours, hierarchy = cv2.findContours(image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+
+# Isolate largest contour
+contour_sizes = [(cv2.contourArea(contour), contour) for contour in contours]
+biggest_contour = max(contour_sizes, key=lambda x: x[0])[1]
+
+mask = np.zeros(image.shape, np.uint8)
+cv2.drawContours(mask, [biggest_contour], -1, 255, -1)
+return biggest_contour, mask
+
+-----------------
+
+
+def find_squares(img):
+    img = cv2.GaussianBlur(img, (5, 5), 0)
+    squares = []
+    for gray in cv2.split(img):
+        for thrs in xrange(0, 255, 26):
+            if thrs == 0:
+                bin = cv2.Canny(gray, 0, 50, apertureSize=5)
+                bin = cv2.dilate(bin, None)
+            else:
+                retval, bin = cv2.threshold(gray, thrs, 255, cv2.THRESH_BINARY)
+            bin, contours, hierarchy = cv2.findContours(bin, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+            for cnt in contours:
+                cnt_len = cv2.arcLength(cnt, True)
+                cnt = cv2.approxPolyDP(cnt, 0.02 * cnt_len, True)
+                if len(cnt) == 4 and cv2.contourArea(cnt) > 1000 and cv2.isContourConvex(cnt):
+                    cnt = cnt.reshape(-1, 2)
+                    max_cos = np.max([angle_cos(cnt[i], cnt[(i + 1) % 4], cnt[(i + 2) % 4]) for i in xrange(4)])
+                    if max_cos < 0.1:
+                        squares.append(cnt)
+    return squares
+
+---------------------
+
+# Find contours for detected portion of the image
+    im2, cnts, hierarchy = cv2.findContours(mask1.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    cnts = sorted(cnts, key = cv2.contourArea, reverse = True)[:5] # get largest five contour area
+    rects = []
+    for c in cnts:
+        peri = cv2.arcLength(c, True)
+        approx = cv2.approxPolyDP(c, 0.02 * peri, True)
+        x, y, w, h = cv2.boundingRect(approx)
+        if h >= 15:
+            # if height is enough
+            # create rectangle for bounding
+            rect = (x, y, w, h)
+            rects.append(rect)
+            cv2.rectangle(roi_copy, (x, y), (x+w, y+h), (0, 255, 0), 1);
+
+    return (roi_copy, rects)
+
+-----------------
+
+cnts, _ = cv2.findContours(image.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2:]
+cnt = cnts[0]
+
+_, _, h, w = cv2.boundingRect(cnt)
+epsilon = min(h, w) * 0.5
+o_vertices = cv2.approxPolyDP(cnt, epsilon, True)
+vertices = cv2.convexHull(o_vertices, clockwise=True)
+vertices = self.correct_vertices(vertices)
+
+if self.debug:
+    temp = cv2.cvtColor(image.copy(), cv2.COLOR_GRAY2BGR)
+    cv2.drawContours(temp, cnts, -1, (0, 255, 0), 10)
+    cv2.drawContours(temp, o_vertices, -1, (255, 0, 0), 30)
+    cv2.drawContours(temp, vertices, -1, (0, 0, 255), 20)
+    self.save2image(temp)
+
+return vertices
+
+---------------------------------
+
+bounding = cv2.boundingRect(contour)
+pixels = np.zeros((binary.shape[0], binary.shape[1]))
+cv2.drawContours(pixels, [contour], -1, 255, -1)
+col_averages = np.mean(pixels, axis=0)[bounding[0]:bounding[0] + bounding[2]]
+row_averages = np.mean(pixels, axis=1)[bounding[1]:bounding[1] + bounding[3]]
+# normalize to between 0 and 1
+col_averages *= 1.0 / col_averages.max()
+row_averages *= 1.0 / row_averages.max()
+
+col_diff = np.subtract(col_averages, col_profile(col_averages.shape[0], bounding[2]))
+row_diff = np.subtract(row_averages, row_profile(row_averages.shape[0], bounding[3]))
+
+# average difference should be close to 0
+avg_diff = np.mean([np.mean(col_diff), np.mean(row_diff)])
+return 100 - (avg_diff * 50)
+
+----------------
+
+def img_contour_select(ctrs, im):
+    # ????????????
+    cand_rect = []
+    for item in ctrs:
+        epsilon = 0.02*cv2.arcLength(item, True)
+        approx = cv2.approxPolyDP(item, epsilon, True)
+        if len(approx) <= 8:
+            rect = cv2.minAreaRect(item)
+            if rect[1][0] < 20 or rect[1][1] < 20:
+                continue
+            if rect[1][0] > 150 or rect[1][1] > 150:
+                continue
+            #ratio = (rect[1][1]+0.00001) / rect[1][0]
+            #if ratio > 1 or ratio < 0.9:
+            #    continue
+            box = cv2.boxPoints(rect)
+            box_d = np.int0(box)
+            cv2.drawContours(im, [box_d], 0, (0,255,0), 3)
+            cand_rect.append(box)
+    img_show_hook("????", im)
+    return cand_rect
+
+-------------------------
+
+https://github.com/abdulfatir/pyBlur
+
+out1 = pyblur.BlurRect(img, [500,50,100,150], 17, 5)
+# Blurs rectangle with top-left point at (500,50) and of size (100,150).
+# kernel = 17x17
+# sigmaX = 5
+
+
+out2 = pyblur.BlurContours(img, [[np.array([[500,50],[600,300],[150,200]])]], 17, 5)
+# Blurs contours passed as [[np.array([[500,50],[600,300],[150,200]])]].
+# The array consists of one polygon formed by points (500,50), (600,300), and (150,200).
+# kernel = 17x17
+# sigmaX = 5
+
+
+out3 = pyblur.SoftBlurRect(img, [500,50,100,150], 27, 5)
+# Soft Blurs rectangle with top-left point at (500,50) and of size (100,150).
+# kernel = 27x27
+# sigmaX = 5
+
+
+out4 = pyblur.SoftBlurContours(img, [[np.array([[500,50],[600,300],[150,200]])],
+		[np.array([[800,500],[950,500],[900,650]])]], 17, 5)
+# Soft Blurs contours passed as [[np.array([[500,50],[600,300],[150,200]])]].
+# The array consists of two polygons formed by points \
+# [(500,50), (600,300), (150,200)]  and [(800,500),(950,500),(900,650)].
+# kernel = 17x17
+# sigmaX = 5
+
+
+out5 = pyblur.SoftBlurRect(img, [500,50,100,150], 27, 5, 5, 55, iters=7)
+# Soft Blurs rectangle with top-left point at (500,50) and of size (100,150).
+# kernel for image = 27x27
+# sigmaX for image = 5
+# sigmaY for image = 5
+# kernel for mask = 55x55
+# no. of iterations = 7
+
+
+
+
+
+
+###################################################################
+#
+#	Basic Video Capture
+#
+###################################################################
+
+import cv2
+import numpy as np
+import math
+cap = cv2.VideoCapture(0) # change this to 1 if u use usb camera
+while( cap.isOpened() ) :
+    ret,img = cap.read()
+
+
+    if(1):
+        cv2.rectangle(img,(350,600),(0,0),(0,0,255),0)    #(x-end,y-end),(x-start,y-start),(B,G,R)
+        crop_img = img[0:600,0:350]
+
+        gray = cv2.cvtColor(crop_img,cv2.COLOR_BGR2GRAY)
+        blur = cv2.GaussianBlur(gray,(35,35),0)
+        ret,thresh1 = cv2.threshold(blur,70,255,cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
+
+        _,contours, hierarchy = cv2.findContours(thresh1,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+        drawing = np.zeros(crop_img.shape,np.uint8)
+
+        max_area=0
+
+        for i in range(len(contours)):
+
+            cnt=contours[i]
+            area = cv2.contourArea(cnt)
+            if(area>max_area):
+                max_area=area
+                ci=i
+        cnt=contours[ci]
+        hull = cv2.convexHull(cnt)
+        moments = cv2.moments(cnt)
+
+        if moments['m00']!=0:
+                cx = int(moments['m10']/moments['m00']) # cx = M10/M00
+                cy = int(moments['m01']/moments['m00']) # cy = M01/M00
+
+        centr=(cx,cy)
+        cv2.circle(crop_img,centr,5,[0,0,255],2)
+        cv2.drawContours(drawing,[cnt],0,(0,255,0),2)
+
+        cv2.drawContours(drawing,[hull],0,(0,0,255),2)
+
+        cnt = cv2.approxPolyDP(cnt,0.01*cv2.arcLength(cnt,True),True)
+        hull = cv2.convexHull(cnt,returnPoints = False)
+        count_defects = 0
+        if(1):
+               defects = cv2.convexityDefects(cnt,hull)
+               mind=0
+               maxd=0
+               for i in range(defects.shape[0]):
+                    s,e,f,d = defects[i,0]
+                    start = tuple(cnt[s][0])
+                    end  = tuple(cnt[e][0])
+                    far = tuple(cnt[f][0])
+                    dist = cv2.pointPolygonTest(cnt,centr,True)
+                    cv2.line(crop_img,start,end,[0,255,0],2)
+
+                    cv2.circle(crop_img,far,5,[0,0,255],-1)
+                    a = math.sqrt((end[0] - start[0])**2 + (end[1] - start[1])**2)
+                    b = math.sqrt((far[0] - start[0])**2 + (far[1] - start[1])**2)
+                    c = math.sqrt((end[0] - far[0])**2 + (end[1] - far[1])**2)
+                    angle = math.acos((b**2 + c**2 - a**2)/(2*b*c)) * 57
+                    if angle <= 90:
+                         count_defects += 1
+               print("image 1",i)
+               if count_defects == 1:
+                    cv2.putText(crop_img,"Searching", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+               if count_defects >1 and i>2:
+                    cv2.putText(crop_img,"HAND 1", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+               i=0
+        cv2.imshow('output1',drawing)
+        cv2.imshow('input',img)
+        cv2.imshow('1', crop_img)
+
+
+    if(2):
+        cv2.rectangle(img,(650,600),(350,0),(0,0,255),0)
+        crop_img = img[0:600,350:650]
+
+        gray = cv2.cvtColor(crop_img,cv2.COLOR_BGR2GRAY)
+        blur = cv2.GaussianBlur(gray,(35,35),0)
+        ret,thresh1 = cv2.threshold(blur,70,255,cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
+
+        _,contours, hierarchy = cv2.findContours(thresh1,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+        drawing = np.zeros(crop_img.shape,np.uint8)
+
+        max_area=0
+
+        for i in range(len(contours)):
+
+            cnt=contours[i]
+            area = cv2.contourArea(cnt)
+            if(area>max_area):
+                max_area=area
+                ci=i
+        cnt=contours[ci]
+        hull = cv2.convexHull(cnt)
+        moments = cv2.moments(cnt)
+
+        if moments['m00']!=0:
+                cx = int(moments['m10']/moments['m00']) # cx = M10/M00
+                cy = int(moments['m01']/moments['m00']) # cy = M01/M00
+
+        centr=(cx,cy)
+        cv2.circle(crop_img,centr,5,[0,0,255],2)
+        cv2.drawContours(drawing,[cnt],0,(0,255,0),2)
+        cv2.drawContours(drawing,[hull],0,(0,0,255),2)
+
+        cnt = cv2.approxPolyDP(cnt,0.01*cv2.arcLength(cnt,True),True)
+        hull = cv2.convexHull(cnt,returnPoints = False)
+        count_defects = 0
+        if(1):
+               defects = cv2.convexityDefects(cnt,hull)
+               mind=0
+               maxd=0
+               for i in range(defects.shape[0]):
+                    s,e,f,d = defects[i,0]
+                    start = tuple(cnt[s][0])
+                    end = tuple(cnt[e][0])
+                    far = tuple(cnt[f][0])
+                    dist = cv2.pointPolygonTest(cnt,centr,True)
+                    cv2.line(crop_img,start,end,[0,255,0],2)
+
+                    cv2.circle(crop_img,far,5,[0,0,255],-1)
+                    a = math.sqrt((end[0] - start[0])**2 + (end[1] - start[1])**2)
+                    b = math.sqrt((far[0] - start[0])**2 + (far[1] - start[1])**2)
+                    c = math.sqrt((end[0] - far[0])**2 + (end[1] - far[1])**2)
+                    angle = math.acos((b**2 + c**2 - a**2)/(2*b*c)) * 57
+                    if angle <= 90:
+                         count_defects += 1
+               print("image 2",i)
+               if count_defects == 1:
+                    cv2.putText(crop_img,"Searching", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+               if count_defects >1 and i>2:
+                    cv2.putText(crop_img,"HAND 2", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+               i=0
+        cv2.imshow('output2',drawing)
+        cv2.imshow('input',img)
+
+
+    k = cv2.waitKey(10)
+    if k == 27:
+        break
+
+
+###################################################################
+#
+#	Basic Video Capture
+#	http://people.revoledu.com/kardi/tutorial/Python/Video+Analysis+using+OpenCV-Python.html
+#
+###################################################################
+
+import numpy as np
+import cv2
+print( cv2.__version__ )
+
+cap = cv2.VideoCapture(0)
+
+while(True):
+    # Capture frame-by-frame
+    ret, frame = cap.read()  # ret = 1 if the video is captured; frame is the image
+
+    # Our operations on the frame come here
+    img = cv2.flip(frame,1)   # flip left-right
+    img = cv2.flip(img,0)     # flip up-down
+
+    # Display the resulting image
+    cv2.imshow('Video Capture',img)
+    if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
+        break
+
+# When everything done, release the capture
+cap.release()
+cv2.destroyAllWindows()
+
+
+###################################################################
+#
+#	Saving Video
+#	http://people.revoledu.com/kardi/tutorial/Python/Video+Analysis+using+OpenCV-Python.html
+#
+###################################################################
+
+import numpy as np
+import cv2
+
+# create writer object
+fileName='output.avi'  # change the file name if needed
+imgSize=(640,480)
+frame_per_second=30.0
+writer = cv2.VideoWriter(fileName, cv2.VideoWriter_fourcc(*"MJPG"), frame_per_second,imgSize)
+
+cap = cv2.VideoCapture(0)
+while(cap.isOpened()):
+    ret, frame = cap.read()
+    if ret==True:
+        writer.write(frame)                   # save the frame into video file
+        cv2.imshow('Video Capture',frame)     # show on the screen
+        if cv2.waitKey(1) & 0xFF == ord('q'): # press q to quit
+            break
+    else:
+        break
+
+# Release everything if job is finished
+cap.release()
+writer.release()
+cv2.destroyAllWindows()
+
+
+###################################################################
+#
+#	Loading and Playing Video
+#	http://people.revoledu.com/kardi/tutorial/Python/Video+Analysis+using+OpenCV-Python.html
+#
+###################################################################
+
+import numpy as np
+import cv2
+
+fileName='output.avi'  # change the file name if needed
+
+cap = cv2.VideoCapture(fileName)          # load the video
+while(cap.isOpened()):                    # play the video by reading frame by frame
+    ret, frame = cap.read()
+    if ret==True:
+        # optional: do some image processing here
+
+        cv2.imshow('frame',frame)              # show the video
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+    else:
+        break
+cap.release()
+cv2.destroyAllWindows()
+
+###################################################################
+Change Window Size
+http://people.revoledu.com/kardi/tutorial/Python/Video+Analysis+using+OpenCV-Python.html
+###################################################################
+
+import numpy as np
+import cv2
+
+scaling_factorx=0.5
+scaling_factory=0.5
+
+cap = cv2.VideoCapture(0)
+while(True):
+    # Capture frame-by-frame
+    ret, frame = cap.read()  # ret = 1 if the video is captured; frame is the image
+
+    # set frame size (e.g. 640x480; 320x240; 960x720), larger is slower
+    #ret = cap.set(cv2.CAP_PROP_FRAME_WIDTH,320)
+    #ret = cap.set(cv2.CAP_PROP_FRAME_HEIGHT,240)
+    frame=cv2.resize(frame,None,fx=scaling_factorx,fy=scaling_factory,interpolation=cv2.INTER_AREA)
+
+    # Our operations on the frame come here
+    img = frame
+
+    # Display the resulting image
+    cv2.imshow('Smaller Window',img)
+    if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
+        break
+
+# When everything done, release the capture
+cap.release()
+cv2.destroyAllWindows()
+
+###################################################################
+Color Transformation
+http://people.revoledu.com/kardi/tutorial/Python/Video+Analysis+using+OpenCV-Python.html
+###################################################################
+
++ img = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)  # BGR color to RGB
++ img = cv2.cvtColor(frame,cv2.COLOR_RGB2BGR)  # RGB color to BGR
++ img = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)  # BGR color to gray level
++ img = cv2.cvtColor(frame,cv2.COLOR_RGB2GRAY)  # RGB color to gray level
++ img = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)   # BGR color to HSV
++ img = cv2.cvtColor(frame,cv2.COLOR_RGB2HSV)   # RGB color to HSV
++ img = cv2.cvtColor(frame,cv2.COLOR_RGB2HLS)   # RGB color to HLS
++ img = cv2.cvtColor(frame,cv2.COLOR_BGR2HLS)   # BGR color to HLS
++ img = cv2.cvtColor(frame,cv2.COLOR_BGR2XYZ)   # RGB color to CIE XYZ.Rec 709
++ img = cv2.cvtColor(frame,cv2.COLOR_RGB2XYZ)   # RGB color to CIE XYZ.Rec 709
++ img = cv2.cvtColor(frame,cv2.COLOR_BGR2Lab)   # BGR color to CIE L\*a\*b\*
++ img = cv2.cvtColor(frame,cv2.COLOR_RGB2Luv)   # RGB color to CIE L\*u\*v\*
+
+
+import numpy as np
+import cv2
+
+cap = cv2.VideoCapture(0)
+while(True):
+    # Capture frame-by-frame
+    ret, frame = cap.read()
+
+    # Our operations on the frame come here
+    #img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    img = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)  # BGR color to gray level
+
+    # Display the resulting image
+    cv2.imshow('Gray',img)
+    if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
+        break
+
+# When everything done, release the capture
+cap.release()
+cv2.destroyAllWindows()
+
+###################################################################
+Image Enhancement
+###################################################################
+
+import numpy as np
+import cv2
+
+def equalizeHistColor(frame):
+    # equalize the histogram of color image
+    img = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)  # convert to HSV
+    img[:,:,2] = cv2.equalizeHist(img[:,:,2])     # equalize the histogram of the V channel
+    return cv2.cvtColor(img, cv2.COLOR_HSV2RGB)   # convert the HSV image back to RGB format
+
+
+# start video capture
+cap = cv2.VideoCapture(0)
+while(True):
+    # Capture frame-by-frame
+    ret, frame = cap.read()
+
+    # Our operations on the frame come here
+    #img = frame
+    img = equalizeHistColor(frame)
+
+
+    # Display the resulting image
+    cv2.imshow('Histogram Equalization',img)
+    if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
+        break
+
+# When everything done, release the capture
+cap.release()
+cv2.destroyAllWindows()
+
+###################################################################
+Image Transformation
+###################################################################
+
+import numpy as np
+import math
+import cv2
+
+def WarpImage(frame):
+    ax,bx=10.0,100
+    ay,by=20.0,120
+    img=np.zeros(frame.shape,dtype=frame.dtype)
+    rows,cols=img.shape[:2]
+
+    for i in range(rows):
+        for j in range(cols):
+            offset_x=int(ax*math.sin(2*math.pi*i/bx))
+            offset_y=int(ay*math.cos(2*math.pi*j/by))
+            if i+offset_y<rows and j+offset_x<cols:
+                img[i,j]=frame[(i+offset_y)%rows,(j+offset_x)%cols]
+            else:
+                img[i,j]=0
+    return img
+
+def equalizeHistColor(frame):
+    # equalize the histogram of color image
+    img = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)  # convert to HSV
+    img[:,:,2] = cv2.equalizeHist(img[:,:,2])     # equalize the histogram of the V channel
+    return cv2.cvtColor(img, cv2.COLOR_HSV2RGB)   # convert the HSV image back to RGB format
+
+
+# start video capture
+cap = cv2.VideoCapture(0)
+while(cap.isOpened()):
+    # Capture frame-by-frame
+    ret, frame = cap.read()
+    frame=cv2.resize(frame,None,fx=0.5,fy=0.5,interpolation=cv2.INTER_AREA)
+
+    # Our operations on the frame come here
+    if ret==1:
+        #img = WarpImage(frame)
+        img = equalizeHistColor(WarpImage(frame))
+    else:
+        img = equalizeHistColor(frame)
+
+    # Display the resulting image
+    cv2.imshow('Warped',img)
+    if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
+        break
+
+# When everything done, release the capture
+cap.release()
+cv2.destroyAllWindows()
+
+###################################################################
+Edge Detection & Smoothing
+###################################################################
+
+import numpy as np
+import cv2
+
+kernelSize=21   # Kernel Bluring size
+
+# Edge Detection Parameter
+parameter1=20
+parameter2=60
+intApertureSize=1
+
+cap = cv2.VideoCapture(0)
+while(True):
+    # Capture frame-by-frame
+    ret, frame = cap.read()
+
+    # Our operations on the frame come here
+    frame = cv2.GaussianBlur(frame, (kernelSize,kernelSize), 0, 0)
+    frame = cv2.Canny(frame,parameter1,parameter2,intApertureSize)  # Canny edge detection
+    #frame = cv2.Laplacian(frame,cv2.CV_64F) # Laplacian edge detection
+    #frame = cv2.Sobel(frame,cv2.CV_64F,1,0,ksize=kernelSize) # X-direction Sobel edge detection
+    #frame = cv2.Sobel(frame,cv2.CV_64F,0,1,ksize=kernelSize) # Y-direction Sobel edge detection
+
+    # Display the resulting frame
+    cv2.imshow('Canny',frame)
+    if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
+        break
+# When everything done, release the capture
+cap.release()
+cv2.destroyAllWindows()
+
+###################################################################
+Super Impose
+###################################################################
+
+import numpy as np
+import cv2
+
+kernelSize=21   # Kernel Bluring size
+
+# Edge Detection Parameter
+parameter1=10
+parameter2=40
+intApertureSize=1
+
+cap = cv2.VideoCapture(0)
+while(True):
+    # Capture frame-by-frame
+    ret, frame1 = cap.read()
+
+    # Our operations on the frame come here
+    frame = cv2.GaussianBlur(frame1, (kernelSize,kernelSize), 0, 0)
+    edge = cv2.Canny(frame,parameter1,parameter2,intApertureSize)  # Canny edge detection
+    mask_edge = cv2.bitwise_not(edge)
+    frame = cv2.bitwise_and(frame1,frame1,mask = mask_edge)
+
+    # Display the resulting frame
+    cv2.imshow('Super Impose',frame)
+    if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
+        break
+# When everything done, release the capture
+cap.release()
+cv2.destroyAllWindows()
+
+###################################################################
+Thresholding
+###################################################################
+
+import numpy as np
+import cv2
+
+def equalizeHistColor(frame):
+    # equalize the histogram of color image
+    img = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)  # convert to HSV
+    img[:,:,2] = cv2.equalizeHist(img[:,:,2])     # equalize the histogram of the V channel
+    return cv2.cvtColor(img, cv2.COLOR_HSV2RGB)   # convert the HSV image back to RGB format
+
+
+threshold1=100
+threshold2=200
+cap = cv2.VideoCapture(0)
+while(True):
+    # Capture frame-by-frame
+    ret, frame = cap.read()  # ret = 1 if the video is captured; frame is the image
+
+    # equalize the histogram of color image
+    frame1 = equalizeHistColor(frame)
+    gray = cv2.cvtColor(frame1,cv2.COLOR_BGR2GRAY)
+    blur = cv2.GaussianBlur(gray,(21,21),0)
+
+    #ret, mask = cv2.threshold(blur, threshold1, threshold2, cv2.THRESH_BINARY)
+    ret, mask = cv2.threshold(blur,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+    #ret, mask = cv2.threshold(blur,threshold1, threshold2,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+    #mask = cv2.adaptiveThreshold(blur,255,cv2.ADAPTIVE_THRESH_MEAN_C,cv2.THRESH_BINARY,11,2)
+    #mask = cv2.adaptiveThreshold(blur,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
+    kernel = np.ones((3, 3), np.uint8)
+    mask=cv2.erode(mask,kernel,iterations=7) # morphology erosion
+    mask=cv2.dilate(mask,kernel,iterations=5) # morphology dilation
+
+    mask_inv = cv2.bitwise_not(mask)
+    img = cv2.bitwise_and(frame1,frame1,mask = mask_inv)
+    img = cv2.addWeighted(frame1,0.1,img,0.9,0)
+
+    #img=mask
+
+    # Display the resulting image
+    cv2.imshow('Thresholding-Otsu',img)
+    if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
+        break
+
+# When everything done, release the capture
+cap.release()
+cv2.destroyAllWindows()
+
+
+
+###################################################################
+Countour
+###################################################################
+
+import numpy as np
+import cv2
+import time
+
+color=(255,0,0)
+thickness=2
+
+cap = cv2.VideoCapture(0)
+while(True):
+    # Capture frame-by-frame
+    ret, frame = cap.read()  # ret = 1 if the video is captured; frame is the image
+
+    # Our operations on the frame come here
+    gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+    #blur = cv2.GaussianBlur(gray,(21,21),0)
+    ret,thresh = cv2.threshold(gray,10,20,cv2.THRESH_BINARY_INV)
+    img1, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
+    if len(contours) != 0:
+            c = max(contours, key = cv2.contourArea) # find the largest contour
+            x,y,w,h = cv2.boundingRect(c)          # get bounding box of largest contour
+            #img2=cv2.drawContours(frame, c, -1, color, thickness) # draw largest contour
+            img2=cv2.drawContours(frame, contours, -1, color, thickness) # draw all contours
+            img3 = cv2.rectangle(img2,(x,y),(x+w,y+h),(0,0,255),2)  # draw red bounding box in img
+
+    # Display the resulting image
+    cv2.imshow('Contour',img3)
+    if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
+        break
+
+# When everything done, release the capture
+cap.release()
+cv2.destroyAllWindows()
+
+
+###################################################################
+Optical Flow
+###################################################################
+
+import numpy as np
+import cv2
+
+cap = cv2.VideoCapture(0)
+ret, frame1 = cap.read()
+
+prvs = cv2.cvtColor(frame1,cv2.COLOR_BGR2GRAY)
+hsv = np.zeros_like(frame1)
+hsv[...,1] = 255
+while(1):
+    ret, frame2 = cap.read()
+
+    # Our operations on the frame come here
+    next = cv2.cvtColor(frame2,cv2.COLOR_BGR2GRAY)
+    flow = cv2.calcOpticalFlowFarneback(prvs,next, None, 0.5, 3, 15, 3, 5, 1.2, 0)
+    mag, ang = cv2.cartToPolar(flow[...,0], flow[...,1])
+    hsv[...,0] = ang*180/np.pi/2
+    hsv[...,2] = cv2.normalize(mag,None,0,255,cv2.NORM_MINMAX)
+    bgr = cv2.cvtColor(hsv,cv2.COLOR_HSV2BGR)
+    prvs = next
+
+    # Display the resulting frame
+    cv2.imshow('Optical Flow Aura',bgr)
+    if cv2.waitKey(2) & 0xFF == ord('q'):  # press q to quit
+        break
+
+# When everything done, release the capture
+cap.release()
+cv2.destroyAllWindows()
+
+###################################################################
+Image Difference: Motion Detection
+###################################################################
+
+import numpy as np
+import cv2
+import time
+
+color=(255,0,0)
+thickness=2
+
+cap = cv2.VideoCapture(0)
+while(True):
+    # Capture two frames
+    ret, frame1 = cap.read()  # first image
+    time.sleep(1/25)          # slight delay
+    ret, frame2 = cap.read()  # second image
+    img1 = cv2.absdiff(frame1,frame2)  # image difference
+
+    # get theshold image
+    gray = cv2.cvtColor(img1,cv2.COLOR_BGR2GRAY)
+    blur = cv2.GaussianBlur(gray,(21,21),0)
+    ret,thresh = cv2.threshold(blur,200,255,cv2.THRESH_OTSU)
+
+    # combine frame and the image difference
+    img2 = cv2.addWeighted(frame1,0.9,img1,0.1,0)
+
+    # get contours and set bounding box from contours
+    img3, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
+    if len(contours) != 0:
+        for c in contours:
+            rect = cv2.boundingRect(c)
+            height, width = img3.shape[:2]
+            if rect[2] > 0.2*height and rect[2] < 0.7*height and rect[3] > 0.2*width and rect[3] < 0.7*width:
+                x,y,w,h = cv2.boundingRect(c)            # get bounding box of largest contour
+                img4=cv2.drawContours(img2, c, -1, color, thickness)
+                img5 = cv2.rectangle(img2,(x,y),(x+w,y+h),(0,0,255),2)  # draw red bounding box in img
+            else:
+                img5=img2
+    else:
+        img5=img2
+
+    # Display the resulting image
+    cv2.imshow('Motion Detection by Image Difference',img2)
+    if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
+        break
+
+# When everything done, release the capture
+cap.release()
+cv2.destroyAllWindows()
+
+###################################################################
+Face Detection
+###################################################################
+
+import numpy as np
+import cv2
+folder='C:\\Users\\Teknomo\\Downloads\\opencv\\sources\\data\\haarcascades_cuda\\'
+face_casc = cv2.CascadeClassifier(folder+'haarcascade_frontalface_default.xml')
+eye_casc=cv2.CascadeClassifier(folder+'haarcascade_eye.xml')
+
+color=(0,255,0)
+thickness=3
+
+cap = cv2.VideoCapture(0)
+while(True):
+    # Capture frame-by-frame
+    ret, frame = cap.read()  # ret = 1 if the video is captured; frame is the image
+
+    # Our operations on the frame come here
+    gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+    gray = cv2.equalizeHist(gray)
+    faces = face_casc.detectMultiScale(gray, scaleFactor=1.1,minNeighbors=3)
+
+    img=frame                     # default if face is not found
+    for(x,y,w,h) in faces:
+        roi_gray=gray[y:y+h,x:x+w]
+        roi_color=frame[y:y+h,x:x+w]
+        #img=cv2.rectangle(frame, (x, y), (x + w, y + h), color, thickness) # box for face
+        eyes=eye_casc.detectMultiScale(roi_gray)
+        for(x_eye,y_eye,w_eye,h_eye) in eyes:
+            center=(int(x_eye+0.5*w_eye),int(y_eye+0.5*h_eye))
+            radius=int(0.3*(w_eye+h_eye))
+            img=cv2.circle(roi_color,center,radius,color,thickness)
+            #img=cv2.circle(frame,center,radius,color,thickness)
+
+
+    # Display the resulting image
+    cv2.imshow('Face Detection Harr',img)
+    if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
+        break
+
+# When everything done, release the capture
+cap.release()
+cv2.destroyAllWindows()
+
+###################################################################
+
+Background Subtraction
+
+###################################################################
+
+import numpy as np
+import cv2
+
+alpha=0.999
+isFirstTime=True
+cap = cv2.VideoCapture(0)
+while(True):
+    # Capture frame-by-frame
+    ret, frame = cap.read()  # ret = 1 if the video is captured; frame is the image
+    frame=cv2.resize(frame,None,fx=0.5,fy=0.5,interpolation=cv2.INTER_AREA)
+
+    # create background
+    #if isFirstTime==True:
+    #    bg_img=frame
+    #    isFirstTime=False
+    #else:
+    #    bg_img = dst = cv2.addWeighted(frame,(1-alpha),bg_img,alpha,0)
+    # the above code is the same as:
+    fgmask = bg_img.apply(frame)
+
+    # create foreground
+    #fg_img=cv2.subtract(frame,bg_img)
+    fg_img = cv2.absdiff(frame,bg_img)
+
+    # Display the resulting image
+    cv2.imshow('Video Capture',frame)
+    cv2.imshow('Background',bg_img)
+    cv2.imshow('Foreground',fgmask)
+    if cv2.waitKey(1) & 0xFF == ord('q'):  # press q to quit
+        break
+
+# When everything done, release the capture
+cap.release()
+cv2.destroyAllWindows()
