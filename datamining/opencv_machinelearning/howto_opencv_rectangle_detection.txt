@@ -1,0 +1,196 @@
+
+##################################################################
+#
+#	Rect Module Python
+#
+#	https://github.com/ayushchopra96/PythonCamScanner
+#	https://github.com/ayushchopra96/PythonCamScanner/blob/master/rect.py
+#	https://docs.opencv.org/3.1.0/de/d25/imgproc_color_conversions.html
+#	https://docs.opencv.org/3.1.0/d7/d1b/group__imgproc__misc.html#gga4e0972be5de079fed4e3a10e24ef5ef0a869da65c045477f2f17d39395df65b2d
+#	http://www.swarthmore.edu/NatSci/mzucker1/opencv-2.4.10-docs/modules/highgui/doc/reading_and_writing_images_and_video.html
+#
+##################################################################
+
+import cv2
+import numpy as np
+import rect
+
+# add image here.
+image = cv2.imread('test_pic.jpg')
+
+# resize image
+# choose optimal dimensions
+image = cv2.resize(image, (1500, 880))
+
+# create copy of original image
+orig = image.copy()
+
+# convert to grayscale and blur to smooth
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# gaussian blur to smoothen texture
+blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+#blurred = cv2.medianBlur(gray, 5)
+
+# apply Canny Edge Detection
+edged = cv2.Canny(blurred, 0, 50)
+orig_edged = edged.copy()
+
+# find the contours in the edged image
+# keep only the largest ones, and
+# initialize screen contour
+(contours, _) = cv2.findContours(edged, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
+contours = sorted(contours, key=cv2.contourArea, reverse=True)
+
+#x,y,w,h = cv2.boundingRect(contours[0])
+#cv2.rectangle(image,(x,y),(x+w,y+h),(0,0,255),0)
+
+# get approximate contour
+for c in contours:
+    p = cv2.arcLength(c, True)
+    approx = cv2.approxPolyDP(c, 0.02 * p, True)
+
+    if len(approx) == 4:
+        target = approx
+        break
+
+
+# map target points to 800x800 quadrilateral
+approx = rect.rectify(target)
+pts2 = np.float32([[0,0],[800,0],[800,800],[0,800]])
+
+M = cv2.getPerspectiveTransform(approx,pts2)
+dst = cv2.warpPerspective(orig,M,(800,800))
+
+cv2.drawContours(image, [target], -1, (0, 255, 0), 2)
+dst = cv2.cvtColor(dst, cv2.COLOR_BGR2GRAY)
+
+
+# use thresholding on warped image to get scanned effect (If Required)
+ret,th1 = cv2.threshold(dst,127,255,cv2.THRESH_BINARY)
+th2 = cv2.adaptiveThreshold(dst,255,cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY,11,2)
+th3 = cv2.adaptiveThreshold(dst,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,11,2)
+ret2,th4 = cv2.threshold(dst,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+
+# show results
+cv2.imshow("Original.jpg", orig)
+cv2.imshow("Original Gray.jpg", gray)
+cv2.imshow("Original Blurred.jpg", blurred)
+cv2.imshow("Original Edged.jpg", orig_edged)
+cv2.imshow("Outline.jpg", image)
+cv2.imshow("Thresh Binary.jpg", th1)
+cv2.imshow("Thresh mean.jpg", th2)
+cv2.imshow("Thresh gauss.jpg", th3)
+cv2.imshow("Otsu's.jpg", th4)
+cv2.imshow("dst.jpg", dst)
+
+# other thresholding methods
+"""
+ret,thresh1 = cv2.threshold(dst,127,255,cv2.THRESH_BINARY)
+ret,thresh2 = cv2.threshold(dst,127,255,cv2.THRESH_BINARY_INV)
+ret,thresh3 = cv2.threshold(dst,127,255,cv2.THRESH_TRUNC)
+ret,thresh4 = cv2.threshold(dst,127,255,cv2.THRESH_TOZERO)
+ret,thresh5 = cv2.threshold(dst,127,255,cv2.THRESH_TOZERO_INV)
+
+cv2.imshow("Thresh Binary", thresh1)
+cv2.imshow("Thresh Binary_INV", thresh2)
+cv2.imshow("Thresh Trunch", thresh3)
+cv2.imshow("Thresh TOZERO", thresh4)
+cv2.imshow("Thresh TOZERO_INV", thresh5)
+"""
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+##################################################################
+#
+#	Add color layer
+#	https://www.pyimagesearch.com/2016/02/22/writing-to-video-with-opencv/
+#
+##################################################################
+
+# import the necessary packages
+from __future__ import print_function
+from imutils.video import VideoStream
+import numpy as np
+import argparse
+import imutils
+import time
+import cv2
+
+# construct the argument parse and parse the arguments
+ap = argparse.ArgumentParser()
+ap.add_argument("-o", "--output", required=True,
+	help="path to output video file")
+ap.add_argument("-p", "--picamera", type=int, default=-1,
+	help="whether or not the Raspberry Pi camera should be used")
+ap.add_argument("-f", "--fps", type=int, default=20,
+	help="FPS of output video")
+ap.add_argument("-c", "--codec", type=str, default="MJPG",
+	help="codec of output video")
+args = vars(ap.parse_args())
+
+# initialize the video stream and allow the camera
+# sensor to warmup
+print("[INFO] warming up camera...")
+vs = VideoStream(usePiCamera=args["picamera"] > 0).start()
+time.sleep(2.0)
+
+# initialize the FourCC, video writer, dimensions of the frame, and
+# zeros array
+fourcc = cv2.VideoWriter_fourcc(*args["codec"])
+writer = None
+(h, w) = (None, None)
+zeros = None
+
+# loop over frames from the video stream
+while True:
+	# grab the frame from the video stream and resize it to have a
+	# maximum width of 300 pixels
+	frame = vs.read()
+	frame = imutils.resize(frame, width=300)
+
+	# check if the writer is None
+	if writer is None:
+		# store the image dimensions, initialzie the video writer,
+		# and construct the zeros array
+		(h, w) = frame.shape[:2]
+		writer = cv2.VideoWriter(args["output"], fourcc, args["fps"],
+			(w * 2, h * 2), True)
+		zeros = np.zeros((h, w), dtype="uint8")
+
+	# break the image into its RGB components, then construct the
+	# RGB representation of each frame individually
+	(B, G, R) = cv2.split(frame)
+	R = cv2.merge([zeros, zeros, R])
+	G = cv2.merge([zeros, G, zeros])
+	B = cv2.merge([B, zeros, zeros])
+
+	# construct the final output frame, storing the original frame
+	# at the top-left, the red channel in the top-right, the green
+	# channel in the bottom-right, and the blue channel in the
+	# bottom-left
+	output = np.zeros((h * 2, w * 2, 3), dtype="uint8")
+	output[0:h, 0:w] = frame
+	output[0:h, w:w * 2] = R
+	output[h:h * 2, w:w * 2] = G
+	output[h:h * 2, 0:w] = B
+
+	# write the output frame to file
+	writer.write(output)
+
+	# show the frames
+	cv2.imshow("Frame", frame)
+	cv2.imshow("Output", output)
+	key = cv2.waitKey(1) & 0xFF
+
+	# if the `q` key was pressed, break from the loop
+	if key == ord("q"):
+		break
+
+# do a bit of cleanup
+print("[INFO] cleaning up...")
+cv2.destroyAllWindows()
+vs.stop()
+writer.release()
