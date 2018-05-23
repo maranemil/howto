@@ -132,26 +132,24 @@ if(sys.argv[1]=="batch"):
 	os.system('sh batchclean.sh')
 
 
-
-
-
 #print(dataFiles)
+
 # https://docs.python.org/2/library/functions.html
 # https://docs.python.org/2/tutorial/datastructures.html
 # https://docs.python.org/3/tutorial/datastructures.html
 # http://www.secnetix.de/olli/Python/block_indentation.hawk
 # https://docs.python.org/release/2.5.1/ref/indentation.html
 # http://www.diveintopython.net/getting_to_know_python/indenting_code.html
-#http://www.tutorialspoint.com/python/os_listdir.htm
-#https://docs.python.org/2/library/functions.html
-#http://www.php2python.com/wiki/function.readdir/
-#https://pypi.python.org/pypi/scandir
-#http://www.diveintopython.net/file_handling/os_module.html
-#https://docs.python.org/2/library/re.html
-#https://docs.python.org/2/howto/regex.html
-#http://www.tutorialspoint.com/python/python_reg_expressions.htm
-#https://www.python-kurs.eu/sql_python.php
-#https://www.tutorialspoint.com/python/python_database_access.htm
+# http://www.tutorialspoint.com/python/os_listdir.htm
+# https://docs.python.org/2/library/functions.html
+# http://www.php2python.com/wiki/function.readdir/
+# https://pypi.python.org/pypi/scandir
+# http://www.diveintopython.net/file_handling/os_module.html
+# https://docs.python.org/2/library/re.html
+# https://docs.python.org/2/howto/regex.html
+# http://www.tutorialspoint.com/python/python_reg_expressions.htm
+# https://www.python-kurs.eu/sql_python.php
+# https://www.tutorialspoint.com/python/python_database_access.htm
 
 #except _mysql.Error, e:
 #
