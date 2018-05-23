@@ -1,4 +1,3 @@
-
 """
 sudo apt install python-pip
 pip install --upgrade pip
@@ -23,12 +22,13 @@ pip install sklearn
 import sys
 import numpy as np
 import cv2
+
 print(cv2.__version__)
 import json
 import os
 
-#import pafy
-#from pprint import pprint
+# import pafy
+# from pprint import pprint
 
 # DW
 """
@@ -65,12 +65,11 @@ import os
 18           mp4        640x360    medium , avc1.42001E, mp4a.40.2@ 96k
 22           mp4        1280x720   hd720 , avc1.64001F, mp4a.40.2@19
 
- youtube-dl     --format 133  https://www.youtube.com/watch?v=ZvHXpd9uzN4
+ youtube-dl     --format 247  https://www.youtube.com/watch?v=ZvHXpd9uzN4
 
 https://stackoverflow.com/questions/21983062/in-python-opencv-is-there-a-way-to-quickly-scroll-through-frames-of-a-video-all
 http://answers.opencv.org/question/94012/is-opencvs-videocaptureread-function-skipping-frames/
 """
-
 
 """
 url = "https://www.youtube.com/watch?v=ZvHXpd9uzN4"
@@ -82,18 +81,17 @@ exit()
 """
 
 frame_count = 0
-video = "Dri.mp4";
+video = "DrivingDowntown2a.mp4";
 cap = cv2.VideoCapture(video)
-frame_width = int( cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-frame_height =int( cap.get( cv2.CAP_PROP_FRAME_HEIGHT))
-width  = int(cap.get(3))
+frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+width = int(cap.get(3))
 height = int(cap.get(4))
 fps = int(cap.get(5))
 
-
 # find fps of video file
 fps = cap.get(cv2.CAP_PROP_FPS)
-spf = 1/ fps
+spf = 1 / fps
 print "Frames per second using cap.get(cv2.CAP_PROP_FPS) : {0}".format(fps)
 print "Seconds per frame using 1/fps :", spf
 
@@ -121,7 +119,6 @@ writer.write(image)
 writer.release()
 """
 
-
 """
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -141,39 +138,39 @@ args = vars(ap.parse_args())
 # cv2.VideoWriter_fourcc(*'XVID') X264 H264
 
 # OpenCV: FFMPEG: tag 0xffffffff/' is not found (format 'avi / AVI (Audio Video Interleaved)')
-#fourcc = cv2.VideoWriter_fourcc('X','V','I','D')
-#fourcc = cv2.VideoWriter_fourcc(*'XVID')
-#out = cv2.VideoWriter('output.avi',fourcc, 15.0, (640,480),True)
-out = cv2.VideoWriter('output999.avi', cv2.VideoWriter_fourcc(*"MJPG"), 30, (width,height),True)
+# fourcc = cv2.VideoWriter_fourcc('X','V','I','D')
+# fourcc = cv2.VideoWriter_fourcc(*'XVID')
+# out = cv2.VideoWriter('output.avi',fourcc, 15.0, (640,480),True)
+out = cv2.VideoWriter('output999.avi', cv2.VideoWriter_fourcc(*"MJPG"), 60, (frame_width, frame_height), True)
 
-#out = cv2.VideoWriter("output.avi", fourcc, float(spf), (640, 480))
-#vid = cv2.VideoWriter(outvid, fourcc, float(fps), size, is_color)
-#out = cv2.VideoWriter('output.avi',fourcc, 20.0,(1280,720))
-#out = cv2.VideoWriter('output.avi',fourcc, 20.0, (1280, 720))s
-#cv2.VideoWriter('output.mp4',fourcc, 15.0, (1280,360))
-#voObj = cv2.VideoWriter('output.mp4', 0x00000021, 15.0, (1280,360))
+# out = cv2.VideoWriter("output.avi", fourcc, float(spf), (640, 480))
+# vid = cv2.VideoWriter(outvid, fourcc, float(fps), size, is_color)
+# out = cv2.VideoWriter('output.avi',fourcc, 20.0,(1280,720))
+# out = cv2.VideoWriter('output.avi',fourcc, 20.0, (1280, 720))s
+# cv2.VideoWriter('output.mp4',fourcc, 15.0, (1280,360))
+# voObj = cv2.VideoWriter('output.mp4', 0x00000021, 15.0, (1280,360))
 
 while (cap.isOpened()):
     ret, frame = cap.read()
     frame_count = frame_count + 1
+    # frame = cv2.resize(frame, (640,360))
 
-    #if frame_count % 2:
+    # if frame_count % 2:
     #    continue
 
     if ret == False:
         break
 
     frame = cv2.flip(frame, 1)
-
-
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    ret, thresh = cv2.threshold(gray, 190, 255, 1)  # 127,255,1
+    ret, thresh = cv2.threshold(gray, 91, 150, 1)  # 127,255,1
     _, contours, h = cv2.findContours(thresh, 1, 2)
 
     for cnt in contours:
-        if cv2.contourArea(cnt) > 90 and cv2.contourArea(cnt) < 190:
+
+        if cv2.contourArea(cnt) > 210 and cv2.contourArea(cnt) < 1390:
             #    approx = cv2.approxPolyDP(cnt,0.01*cv2.arcLength(cnt,True),True)
-            approx = cv2.approxPolyDP(cnt, 0.02 * cv2.arcLength(cnt, True), True)
+            approx = cv2.approxPolyDP(cnt, 0.1 * cv2.arcLength(cnt, True), True)
             # print len(approx)
             if len(approx) == 4:
                 # print "square"
@@ -194,9 +191,14 @@ while (cap.isOpened()):
             cv2.addWeighted(gray, 0.6, imblur, 0.9, 0, gray)
             """
             cv2.imshow('frame', gray)
-            out.write(frame)
+            frame = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+            # out.write(frame)
 
+    # gray = cv2.resize(gray, (1280,720))
     cv2.imshow('frame', gray)
+    # cv2.merge(frame,gray)
+    # cv2.resize(frame, (640,480))
+    frame = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
     out.write(frame)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
