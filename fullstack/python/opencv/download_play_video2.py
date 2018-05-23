@@ -86,6 +86,10 @@ video = "Dri.mp4";
 cap = cv2.VideoCapture(video)
 frame_width = int( cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 frame_height =int( cap.get( cv2.CAP_PROP_FRAME_HEIGHT))
+width  = int(cap.get(3))
+height = int(cap.get(4))
+fps = int(cap.get(5))
+
 
 # find fps of video file
 fps = cap.get(cv2.CAP_PROP_FPS)
@@ -138,8 +142,9 @@ args = vars(ap.parse_args())
 
 # OpenCV: FFMPEG: tag 0xffffffff/' is not found (format 'avi / AVI (Audio Video Interleaved)')
 #fourcc = cv2.VideoWriter_fourcc('X','V','I','D')
-fourcc = cv2.VideoWriter_fourcc(*'XVID')
-out = cv2.VideoWriter('output.avi',fourcc, 15.0, (640,480),True)
+#fourcc = cv2.VideoWriter_fourcc(*'XVID')
+#out = cv2.VideoWriter('output.avi',fourcc, 15.0, (640,480),True)
+out = cv2.VideoWriter('output999.avi', cv2.VideoWriter_fourcc(*"MJPG"), 30, (width,height),True)
 
 #out = cv2.VideoWriter("output.avi", fourcc, float(spf), (640, 480))
 #vid = cv2.VideoWriter(outvid, fourcc, float(fps), size, is_color)
@@ -159,7 +164,7 @@ while (cap.isOpened()):
         break
 
     frame = cv2.flip(frame, 1)
-    out.write(frame)
+
 
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     ret, thresh = cv2.threshold(gray, 190, 255, 1)  # 127,255,1
@@ -189,8 +194,10 @@ while (cap.isOpened()):
             cv2.addWeighted(gray, 0.6, imblur, 0.9, 0, gray)
             """
             cv2.imshow('frame', gray)
+            out.write(frame)
 
     cv2.imshow('frame', gray)
+    out.write(frame)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
