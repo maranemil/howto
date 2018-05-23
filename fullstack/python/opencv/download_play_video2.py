@@ -144,7 +144,7 @@ out = cv2.VideoWriter('output.avi',fourcc, 15.0, (640,480),True)
 #out = cv2.VideoWriter("output.avi", fourcc, float(spf), (640, 480))
 #vid = cv2.VideoWriter(outvid, fourcc, float(fps), size, is_color)
 #out = cv2.VideoWriter('output.avi',fourcc, 20.0,(1280,720))
-#out = cv2.VideoWriter('output.avi',fourcc, 20.0, (1280, 720))
+#out = cv2.VideoWriter('output.avi',fourcc, 20.0, (1280, 720))s
 #cv2.VideoWriter('output.mp4',fourcc, 15.0, (1280,360))
 #voObj = cv2.VideoWriter('output.mp4', 0x00000021, 15.0, (1280,360))
 
