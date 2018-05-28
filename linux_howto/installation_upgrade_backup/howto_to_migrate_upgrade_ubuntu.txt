@@ -1,0 +1,343 @@
+#########################################################
+#
+#   https://ubuntuforums.org/showthread.php?t=2361552
+#
+#########################################################
+
+sudo nano /etc/default/grub
+sudo update-grub && sudo update-grub2
+
+i3:
+sudo apt install lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings i3 wicd ubuntu-drivers-common mesa-utils mesa-utils-extra compton xorg xserver-xorg nautilus gnome-terminal
+
+openbox:
+sudo apt install lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings openbox obconf obmenu wicd ubuntu-drivers-common mesa-utils mesa-utils-extra compton xorg xserver-xorg nautilus gnome-terminal
+
+for intel
+sudo apt install intel-microcode
+
+sudo poweroff --reboot
+
+https://wiki.ubuntuusers.de/GRUB_2/Konfiguration/
+https://wiki.ubuntuusers.de/GRUB_Customizer/
+https://unetbootin.github.io/linux_download.html
+
+
+
+
+----------------------------------
+
+
+#########################################################
+#
+#   https://askubuntu.com/questions/340156/install-ubuntu-from-iso-image-directly-from-hard-disk-of-a-system-running-linux
+#
+#########################################################
+
+I found this looking around on the net.
+
+Grub2 is capable of directly booting ISO images for many Linux distros if the entries have been properly defined in the Grub2 configuration files.
+
+The ISO image must be placed on a separate partition that does not have an operating system installed on it. For the sake of simplicity, we would place it inside a new directory under /boot (assuming it is on a separate partition).
+
+    Create the new directory and copy your ISO image:
+
+    sudo mkdir /boot/iso
+    sudo cp ~/Desktop/name.iso /boot/iso
+
+    Where ~/Desktop/name.iso is the location and name of your ISO image assuming that the image is located at your desktop.
+
+    Add the Grub2 entry:
+
+    The entry for the ISO image needs to be added to /etc/grub.d/40_custom file. Edit the file by:
+
+    gksudo gedit /etc/grub.d/40_custom
+
+    And replace the text in that file with this one:
+
+    #!/bin/sh
+    echo "Adding 40_custom." >&2
+    exec tail -n +4 $0
+    # This file provides an easy way to add custom menu entries.  Simply type the
+    # menu entries you want to add after this comment.  Be careful not to change
+    # the 'exec tail' line above.
+
+    menuentry "Kubuntu ISO" {
+            set isofile="/boot/iso/kubuntu-12.04.iso"
+            loopback loop (hd0,8)$isofile
+            linux (loop)/casper/vmlinuz boot=casper iso-scan/filename=$isofile noprompt noeject
+            initrd (loop)/casper/initrd.lz
+    }
+
+    Where is:
+        Kubuntu ISO = The name you want to display in the Grub menu.
+        boot/iso/kubuntu-12.04.iso = The location and name of your ISO image.
+        (hd0,8) = The partition which contains the ISO image.
+        note: the tail -n +4 means simply "which line grub starts to read the configuration from as is". the 4th line in this example is the first comment line, which is fine.
+
+    Grub reads the partitions in a different way than Ubuntu does. 'hd0' means first HDD which is read as sda by Ubuntu, and 8 is the partition which is the same as for Ubuntu. So in other words, (hd0,8) means 'sda8'.
+
+    To find out your partition, run this command in a Terminal:
+
+    sudo fdisk -l
+
+    Suppose your image is contained in the sda1 partition, you'd change (hd0,8) in the above line to (hd0,1) and if the image is in the sdb1 partition, you'd change (hd0,8) to (hd1,1).
+
+    Save and close this file and now run this command:
+
+    sudo update-grub
+
+    Reboot and choose the new ISO entry from Grub menu this time. Hopefully, it will boot successfully to the desktop.
+
+    Now, if you want to perform an installation from the same ISO, you'd need to unmount the ISO image first as it is mounted from a partition on your HDD (probably you've got a single HDD and want to install Ubuntu to the same HDD) and the installer needs to unmount any mounted partitions before it can make any changes.
+
+    So, from the Live CD environment, go to a Terminal and run:
+
+    sudo umount -l /isodevice
+
+That's all. Now you can double-click the 'Install' icon at the desktop and proceed with the installation.
+
+More info see Ubuntu Forums 1, and Ubuntu Forums 2
+
+Source:TuxGarage
+
+
+#########################################################
+#
+#   https://michael-prokop.at/blog/2011/01/07/booting-iso-images-from-within-grub2/
+#
+#########################################################
+To deploy grub-imageboot:
+
+# choose Grml version:
+VERSION=grml64-medium_2010.12
+
+# create directory
+mkdir -p /boot/images
+
+# download and verify ISO
+cd /boot/images
+wget download.grml.org/${VERSION}.iso{,.md5}
+md5sum -c ${VERSION}.iso.md5
+
+That’s it! Now when running update-grub you should get something like:
+
+# update-grub
+Generating grub.cfg ...
+Found linux image: /boot/vmlinuz-2.6.36-grml64
+Found initrd image: /boot/initrd.img-2.6.36-grml64
+Found memtest86+ image: /boot/memtest86+.bin
+Found memtest86+ multiboot image: /boot/memtest86+_multiboot.bin
+  No volume groups found
+Found Grml ISO image: /boot/grml/grml64-medium_2010.12.iso
+Found memdisk: /boot/memdisk
+Found iso image: /boot/images/grml64-medium_2010.12.iso
+done
+--------
+#########################################################
+https://askubuntu.com/questions/24903/how-to-boot-from-an-iso-file-in-grub2
+#########################################################
+
+Or copy/paste these:
+
+sudo -s
+apt-get install grub-imageboot
+mkdir /boot/images/
+cp $YOUR_ISO_FILE.iso /boot/images/
+
+update-grub2
+
+
+## To show the menu, disable the hidden_timeout, and set a timeout
+#GRUB_HIDDEN_TIMEOUT=0
+GRUB_TIMEOUT=10
+
+
+menuentry "Bootable ISO Image: SV100S2_64_128_120229" {
+    insmod part_msdos
+    insmod ext2
+    set root='(hd0,msdos6)'
+    search --no-floppy --fs-uuid --set=root 6ca082d0-63d0-48c3-9e5f-2ce5d7a74fe4
+    linux16 /boot/memdisk iso raw
+    initrd16 /boot/images/SV100S2_64_128_120229.iso
+}
+
+
+-----------
+
+
+
+ cat /etc/default/grub-imageboot
+# Where to find the iso/floppy images
+
+IMAGES="/boot/images"
+
+# You can override the boot options for iso/floppy images here
+# see http://syslinux.zytor.com/wiki/index.php/MEMDISK for details
+
+#IMAGEOPTS="rawimg"
+#ISOOPTS="iso"
+
+
+
+
+Code: [Auswählen]
+
+#!/bin/sh
+exec tail -n +3 $0
+# This file provides an easy way to add custom menu entries.  Simply type the
+# menu entries you want to add after this comment.  Be careful not to change
+# the 'exec tail' line above.
+
+
+ menuentry "Ubuntu 14.04 ISO" {
+         set isofile="/boot/images/ubuntu-14.04.3-desktop-amd64.iso"
+         loopback loop (hd0,5)$isofile
+         linux (loop)/casper/vmlinuz boot=casper iso-scan/filename=$isofile noprompt noeject
+         initrd (loop)/casper/initrd.lz
+ }
+
+Wenn ich das auf ubuntuusers.de zu findende Skript verwende
+Code: [Auswählen]
+
+#! /bin/sh -e
+export GRUB_LOOPBACK_ISO_FILE="/boot/images/ubuntu-14.04.3-desktop-amd64.iso"
+echo "Adding Live CD entry" >&2
+
+ cat << EOF
+menuentry 'Ubuntu 14.04 ISO booten' {
+insmod part_msdos
+insmod ntfs
+insmod ext2
+search -n -f --set=root ${GRUB_LOOPBACK_ISO_FILE}
+    loopback loop ${GRUB_LOOPBACK_ISO_FILE}
+    linux (loop)/casper/vmlinuz boot=casper iso-scan/filename=${GRUB_LOOPBACK_ISO_FILE} \
+        ${GRUB_CMDLINE_LINUX_DEFAULT} ${GRUB_CMDLINE_LINUX} quiet splash --
+    initrd (loop)/casper/initrd.lz
+}
+EOF
+
+
+
+
+
+
+Ausgabe anhand des Beispiels Ubuntu 14.04 aus der grub.cfg:
+Code: [Auswählen]
+
+menuentry "Bootable ISO Image: ubuntu-14.04.3-desktop-amd64" {
+        insmod part_msdos
+        insmod ext2
+        set root='hd0,msdos5'
+        if [ x$feature_platform_search_hint = xy ]; then
+          search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos5 --hint$
+        else
+          search --no-floppy --fs-uuid --set=root 5d365f7b-069c-4be5-90c2-70f6f$
+        fi
+        linux16 /boot/memdisk iso
+        initrd16 /boot/images/ubuntu-14.04.3-desktop-amd64.iso
+}
+
+
+menuentry "Mode persistent (generic) ubuntu-gnome-12.10-desktop-i386.iso" {
+    search --set -f "/ubuntu-gnome-12.10-desktop-i386.iso"
+    loopback loop "/ubuntu-gnome-12.10-desktop-i386.iso"
+    linux (loop)/casper/vmlinuz root=UUID=9268-4071 file=/cdrom/preseed/ubuntu.seed debian-installer/language=de keyboard-configuration/layoutcode=de  iso-scan/filename=/ubuntu-gnome-12.10-desktop-i386.iso boot=casper showmounts persistent noprompt quiet splash --
+    initrd (loop)/casper/initrd.lz
+}
+
+
+
+
+
+Code: [Auswählen]
+
+menuentry "Grml Rescue System (ubuntu-14.04.3-desktop-amd64.iso)" {
+        insmod part_msdos
+        insmod ext2
+        set root='hd0,msdos5'
+        if [ x$feature_platform_search_hint = xy ]; then
+          search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos5 --hint-efi=hd0,msdos5 --hint-baremetal=ahci0,msdos5 --hint='hd0,msdos5'  5d365f7b-069c-4be5-90$
+        else
+          search --no-floppy --fs-uuid --set=root 5d365f7b-069c-4be5-90c2-70f6f104d8c3
+        fi
+        iso_path="/boot/images/ubuntu-14.04.3-desktop-amd64.iso"
+        export iso_path
+        kernelopts="   "
+        export kernelopts
+        loopback loop "/boot/images/ubuntu-14.04.3-desktop-amd64.iso"
+        set root=(loop)
+        configfile /boot/grub/loopback.cfg
+}
+
+
+
+
+
+Ebenfalls von grml-rescueboot erstellt für android-x86 live und gentoo-live:
+
+Code: [Auswählen]
+
+menuentry "Grml Rescue System (android-x86-5.1-rc1.iso)" {
+        insmod part_msdos
+        insmod ext2
+        set root='hd0,msdos5'
+        if [ x$feature_platform_search_hint = xy ]; then
+          search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos5 --hint-efi=hd0,msdos5 --hint-baremetal=ahci0,msdos5 --hint='hd0,msdos5'  5d365f7b-069c-4be5-90$
+        else
+          search --no-floppy --fs-uuid --set=root 5d365f7b-069c-4be5-90c2-70f6f104d8c3
+        fi
+        iso_path="/boot/images/android-x86-5.1-rc1.iso"
+        export iso_path
+        kernelopts="   "
+        export kernelopts
+        loopback loop "/boot/images/android-x86-5.1-rc1.iso"
+        set root=(loop)
+        configfile /boot/grub/loopback.cfg
+}
+menuentry "Grml Rescue System (gentoo-live-amd64.iso)" {
+        insmod part_msdos
+        insmod ext2
+        set root='hd0,msdos5'
+        if [ x$feature_platform_search_hint = xy ]; then
+          search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos5 --hint-efi=hd0,msdos5 --hint-baremetal=ahci0,msdos5 --hint='hd0,msdos5'  5d365f7b-069c-4be5-90$
+        else
+          search --no-floppy --fs-uuid --set=root 5d365f7b-069c-4be5-90c2-70f6f104d8c3
+        fi
+        iso_path="/boot/images/gentoo-live-amd64.iso"
+        export iso_path
+        kernelopts="   "
+        export kernelopts
+        loopback loop "/boot/images/gentoo-live-amd64.iso"
+        set root=(loop)
+        configfile /boot/grub/loopback.cfg
+}
+
+
+#########################################################
+https://www.linuxmintusers.de/index.php?topic=29764.0
+#########################################################
+
+http://xmodulo.com/boot-iso-image-from-grub.html
+
+
+If you would like to launch Gparted instead:
+
+menuentry "GParted Live amd64" {
+    set isofile="/boot/gparted-live-0.18.0-2-amd64.iso"
+    loopback loop (hd0,1)$isofile
+    loopback loop $isofile
+    linux (loop)/live/vmlinuz boot=live config union=aufs noswap noprompt ip=frommedia toram=filesystem.squashfs findiso=${isofile}
+    initrd (loop)/live/initrd.img
+}
+
+Or even Fedora:
+
+
+menuentry "Fedora 20 Live Desktop x86_64" {
+    set isofile="/boot/Fedora-Live-Desktop-x86_64-20-1.iso"
+    loopback loop (hd0,1)$isofile
+    loopback loop $isofile
+    linux (loop)/isolinux/vmlinuz0 root=live:CDLABEL=Fedora-Live-Desktop-x86_64-20-1 rootfstype=auto ro rd.live.image quiet rhgb rd.luks=0 rd.md=0 rd.dm=0 iso-scan/filename=${isofile}
+    initrd (loop)/isolinux/initrd0.img
+}
