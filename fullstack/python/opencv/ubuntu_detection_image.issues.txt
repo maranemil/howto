@@ -1,0 +1,210 @@
+
+
+######################################################################
+
+https://github.com/h5py/h5py/issues/961
+
+python3 classify_image.py --image_file /home/emil/Gito/test1.jpg
+/usr/local/lib/python3.6/dist-packages/h5py/__init__.py:36: FutureWarning: Conversion of the second argument of issubdtype from `float` to `np.floating` is deprecated. In future, it will be treated as `np.float64 == np.dtype(float).type`.
+  from ._conv import register_converters as _register_converters
+>> Downloading inception-2015-12-05.tgz 100.0%
+Successfully downloaded inception-2015-12-05.tgz 88931400 bytes.
+2018-05-30 12:49:57.313781: W tensorflow/core/framework/op_def_util.cc:346] Op BatchNormWithGlobalNormalization is deprecated. It will cease to work in GraphDef version 9. Use tf.nn.batch_normalization().
+
+FIX
+
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+import h5py
+warnings.resetwarnings()
+
+pip install h5py==2.8.0rc1
+pip install h5py==2.8.0rc1
+pip install numpy==1.13.3
+# conda update h5py
+# conda install -c conda-forge h5py
+
+go to model/research/slim and run the following: `pip install -e .`
+
+
+############################################################
+
+Can you install a Python package via R - Reticulate ?
+https://rstudio.github.io/reticulate/articles/python_packages.html
+https://github.com/rstudio/reticulate
+https://blog.rstudio.com/2018/03/26/reticulate-r-interface-to-python/
+
+https://www.tensorflow.org/api_docs/python/tf/Graph
+https://github.com/tensorflow/models/issues/3164
+https://github.com/tensorflow/models/issues/1995
+https://stackoverflow.com/questions/48247921/tensorflow-object-detection-api-on-windows-error-modulenotfounderror-no-modu
+https://docs.python.org/3.1/library/warnings.html
+https://docs.python.org/2/library/warnings.html
+
+System information
+Linux Ubuntu 17.04 /64 bits
+Python 3.6, and TensorFlow 1.4.0
+
+sudo -H pip3 install pillow
+sudo -H pip3 install lxml
+sudo -H pip3 install jupyter
+sudo -H pip3 install matplotlib
+sudo -H pip3 install tensorflow *(TensorFlow 1.2 and requisites installed correct, I have others aplication tests)
+sudo -H pip3 install --upgrade scipy
+sudo -H pip3 install --upgrade ipykernel
+sudo -H pip3 install --upgrade h5py
+sudo -H pip3 install --upgrade --force-reinstall h5py
+sudo -H pip3 install numpy==1.13.3
+
+
+conda install scipy
+conda install numpy
+
+python3 -c 'import h5py; print(h5py.version.info)'
+
+cd /user/workspace/models/
+
+git clone https://github.com/tensorflow/models.git
+
+Im my ~/.bashrc file, I add:
+export PYTHONPATH=$PYTHONPATH:pwd:pwd/slim
+
+And execute in /workspace/models/:
+python object_detection/builders/model_builder_test.py
+
+# cd models/research/object_detection/
+# jupyter notebook object_detection_tutorial.ipynb
+
+
+# ModuleNotFoundError: No module named 'utils'
+# Clearly, the lines where this error is occurring are the imports for utils:
+
+from utils import label_map_util
+from utils import visualization_utils as vis_util
+
+# Windows OS
+#import sys
+#sys.path.append("C:\\Users\\cdahms\\Documents\\models")
+#sys.path.append("C:\\Users\\cdahms\\Documents\\models\\research")
+#sys.path.append("C:\\Users\\cdahms\\Documents\\models\\research\\slim")
+#sys.path.append("C:\\Users\\cdahms\\Documents\\models\\research\\object_detection\\util
+#sys.path.append("{YOU_PATH}\\models-master\\research\\")
+#sys.path.append("{YOU_PATH}\\models-master\\research\\object_detection\\utils")
+
+# This is needed since the notebook is stored in the object_detection folder.
+#sys.path.append("..")
+#from object_detection.utils import ops as utils_ops
+
+
+* * * * * *
+
+You need to build and run setup.py using following steps:
+
+$ sudo apt-get install protobuf-compiler python-pil python-lxml
+$ sudo -H pip install jupyter
+$ sudo -H pip install matplotlib
+$ mkdir protoc_3.3
+$ cd protoc_3.3/
+$ wget wget https://github.com/google/protobuf/releases/download/v3.3.0/protoc-3.3.0-linux-x86_64.zip
+$ chmod 775 protoc-3.3.0-linux-x86_64.zip
+$ unzip protoc-3.3.0-linux-x86_64.zip
+$ /home/humayun/tensorflow/protoc_3.3/bin/protoc object_detection/protos/*.proto --python_out=.
+tensorflow/models$ export PYTHONPATH=$PYTHONPATH:pwd:pwd/slim
+$ sudo python setup.py build
+$ sudo python setup.py install
+
+then you can run this command:
+$ python object_detection/builders/model_builder_test.py
+
+
+So I fixed this by updating the env var defined in my ~/.bashrc file by replacing:
+export PYTHONPATH=$PYTHONPATH:pwd:pwd/slim
+with
+export PYTHONPATH=$PYTHONPATH:$HOME/j/Lib/models:$HOME/j/Lib/models/slim
+
+---
+
+Run:
+export PYTHONPATH=$PYTHONPATH:pwd:pwd/slim
+
+Verify:
+echo PYTHONPATH
+
+############################################
+
+import numpy as np
+import tensorflow as tf
+
+from tensorflow.contrib.slim.nets import inception
+slim = tf.contrib.slim
+
+def run(name, image_size, num_classes):
+with tf.Graph().as_default():
+image = tf.placeholder("float", [1, image_size, image_size, 3], name="input")
+with slim.arg_scope(inception.inception_v3_arg_scope()):
+logits, _ = inception.inception_v3(image, num_classes, is_training=False, spatial_squeeze=False)
+probabilities = tf.nn.softmax(logits)
+#init_fn = slim.assign_from_checkpoint_fn('inception_v1.ckpt', slim.get_model_variables('InceptionV1'))
+
+with tf.Session() as sess:
+    saver = tf.train.Saver(tf.global_variables())
+    sess.run(tf.local_variables_initializer())
+    saver.restore(sess, '.' + '/ckpt/model.ckpt')
+    saver.save(sess, '.' + '/inference')
+run('inception-v3', 299, 11)
+
+########################################################################################
+#
+#	https://blog.algorithmia.com/deep-dive-into-object-detection-with-open-images-using-tensorflow/
+# 	https://pythonprogramming.net/video-tensorflow-object-detection-api-tutorial/
+# 	https://www.oreilly.com/ideas/object-detection-with-tensorflow
+#	https://towardsdatascience.com/detecting-pikachu-on-android-using-tensorflow-object-detection-15464c7a60cd
+#	https://cloud.google.com/blog/big-data/2017/09/performing-prediction-with-tensorflow-object-detection-models-on-google-cloud-machine-learning-engine
+https://tutel.me/c/programming/questions/44873204/how+to+predict+with+meta+and+checkpoint+files+in+tensorflow
+https://medium.freecodecamp.org/how-to-play-quidditch-using-the-tensorflow-object-detection-api-b0742b99065d
+https://www.theta.co.nz/news-blogs/tech-blog/object-detection-on-a-raspberry-pi/
+http://www.sroboto.com/2017/09/pass-video-into-tensorflow-object.html
+# https://webrtchacks.com/webrtc-cv-tensorflow/
+https://www.activestate.com/blog/2017/08/using-pre-trained-models-tensorflow-go
+http://warmspringwinds.github.io/tensorflow/tf-slim/2016/12/18/image-segmentation-with-tensorflow-using-cnns-and-conditional-random-fields/
+https://learningtensorflow.com/lesson3/
+http://www.handsonmachinelearning.com/blog/womeQ/tensorflow-object-detection-tutorial-on-images
+https://medium.com/@qdraw/how-to-see-sharper-with-tensorflow-acde6b7da1d5
+http://androidkt.com/train-object-detection/
+https://pytorch.org/tutorials/advanced/neural_style_tutorial.html
+########################################################################################
+
+#!/usr/bin/env bash
+# downloads and extracts the openimages bounding box annotations and image path files
+mkdir data
+wget http://storage.googleapis.com/openimages/2017_07/images_2017_07.tar.gz
+tar -xf images_2017_07.tar.gz
+mv 2017_07 data/images
+rm images_2017_07.tar.gz
+
+wget http://storage.googleapis.com/openimages/2017_07/annotations_human_bbox_2017_07.tar.gz
+tar -xf annotations_human_bbox_2017_07.tar.gz
+mv 2017_07 data/bbox_annotations
+rm annotations_human_bbox_2017_07.tar.gz
+
+wget http://storage.googleapis.com/openimages/2017_07/classes_2017_07.tar.gz
+tar -xf classes_2017_07.tar.gz
+mv 2017_07 data/classes
+rm classes_2017_07.tar.gz
+
+* * * * *
+
+import numpy as np
+import tensorflow as tf
+from PIL import Image
+import Algorithmia
+import os
+import multiprocessing
+from . import label_map_util
+
+--------------
+https://www.tensorflow.org/api_docs/python/tf/Graph
+https://tensorflow.org/tutorials/image_recognition/
+https://github.com/yeephycho/tensorflow-face-detection
+snpe-tensorflow-to-dlc --graph your_graph_here.pb -i Preprocessor/sub 300,300,3 --out_node detection_classes --out_node detection_boxes --out_node detection_scores --dlc model_name.dlc --allow_unconsumed_nodes
+
