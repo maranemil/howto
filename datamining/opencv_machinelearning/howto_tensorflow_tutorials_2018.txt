@@ -1,0 +1,2875 @@
+
+
+#####################################################################
+#
+#	Deep Dive into Object Detection with Open Images, using Tensorflow
+#	https://blog.algorithmia.com/deep-dive-into-object-detection-with-open-images-using-tensorflow/
+#
+#####################################################################
+
+#!/usr/bin/env bash
+# downloads and extracts the openimages bounding box annotations and image path files
+mkdir data
+wget http://storage.googleapis.com/openimages/2017_07/images_2017_07.tar.gz
+tar -xf images_2017_07.tar.gz
+mv 2017_07 data/images
+rm images_2017_07.tar.gz
+
+wget http://storage.googleapis.com/openimages/2017_07/annotations_human_bbox_2017_07.tar.gz
+tar -xf annotations_human_bbox_2017_07.tar.gz
+mv 2017_07 data/bbox_annotations
+rm annotations_human_bbox_2017_07.tar.gz
+
+wget http://storage.googleapis.com/openimages/2017_07/classes_2017_07.tar.gz
+tar -xf classes_2017_07.tar.gz
+mv 2017_07 data/classes
+rm classes_2017_07.tar.gz
+
+Image Downloading
+https://github.com/algorithmiaio/sample-apps/blob/master/deep_dive_demos/open_images_detection/preprocessing/download_images.py
+Image Verification and Dimension Reduction
+https://github.com/algorithmiaio/sample-apps/blob/master/deep_dive_demos/open_images_detection/preprocessing/process_images.py
+Defining the Label Map
+https://github.com/algorithmiaio/sample-apps/blob/master/deep_dive_demos/open_images_detection/preprocessing/create_label_map.py
+TFRecord Creation
+https://github.com/algorithmiaio/sample-apps/blob/master/deep_dive_demos/open_images_detection/preprocessing/record_maker.py
+
+Step 2: Setting up the Object Detection API
+https://github.com/tensorflow/models/tree/master/research/object_detection
+
+pip install pillow
+pip install lxml
+pip install jupyter
+pip install matplotlib
+pip install protobuf>=2.6
+
+# For CPU
+pip install tensorflow
+# For GPU
+# pip install tensorflow-gpu
+
+git clone https://github.com/tensorflow/models.git
+# cd to the main project root path first
+cd models/research
+protoc object_detection/protos/*.proto --python_out=.
+
+# while still in the models/research directory
+export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
+# and if you're using tensorflow-gpu and haven't set your cuda path yet:
+export LD_LIBRARY_PATH=/usr/local/cuda/lib64
+
+# while still in the models/research directory
+python object_detection/builders/model_builder_test.py
+
+Transfer Learning
+Configuring our Object Detection Schema
+https://github.com/algorithmiaio/sample-apps/blob/master/deep_dive_demos/open_images_detection/config/faster_rcnn_resnet101.config
+
+Step 3: Training and Production
+
+python object_detection/train.py \
+--logtostderr \
+--train_dir=PATH_TO_TRAINING_OUTPUT_DIRECTORY \
+--pipeline_config_path=PATH_TO_CONFIG_FILE
+
+python object_detection/eval.py \
+--logtostderr \
+--eval_dir=PATH_TO_EVALUATION_OUTPUT_DIRECTORY \
+--pipeline_config_path=PATH_TO_CONFIG_FILE
+
+# from tensorboard source directory
+tensorboard \
+--logdir=training:/PATH_TO_TRAINING_OUTPUT_DIR,testing:/PATH_TO_EVAL_OUTPUT_DIR\
+--port=6006
+--host=localhost
+
+Frozen Graph Generation
+
+Serving Inferences with Algorithmia
+
+import numpy as np
+import tensorflow as tf
+from PIL import Image
+import Algorithmia
+import os
+import multiprocessing
+from . import label_map_util
+
+# This is code for most tensorflow object detection algorithms
+# In this example it's tuned specifically for our open images data example.
+
+client = Algorithmia.client()
+TEMP_COLLECTION = 'data://.session/'
+BOUNDING_BOX_ALGO = 'util/BoundingBoxOnImage/0.1.x'
+SIMD_ALGO = "util/SmartImageDownloader/0.2.14"
+MODEL_FILE = "data://zeryx/openimagesDemo/ssd.pb"
+LABEL_FILE = "data://zeryx/openimagesDemo/label_map.pbtxt"
+NUM_CLASSES = 545
+
+
+class AlgorithmError(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)
+
+https://algorithmia.com/algorithms/zeryx/openimagesDemo
+
+
+
+
+
+#####################################################################
+Streaming Object Detection Video - Tensorflow Object Detection API Tutorial
+https://pythonprogramming.net/video-tensorflow-object-detection-api-tutorial/
+#####################################################################
+
+import cv2
+cap = cv2.VideoCapture(0)
+for image_path in TEST_IMAGE_PATHS:
+      image = Image.open(image_path)
+      # the array based representation of the image will be used later in order to prepare the
+      # result image with boxes and labels on it.
+      image_np = load_image_into_numpy_array(image)
+
+      while True:
+	      ret, image_np = cap.read()
+	      plt.figure(figsize=IMAGE_SIZE)
+	      plt.imshow(image_np)
+	      plt.show()
+
+	      cv2.imshow('object detection', cv2.resize(image_np, (800,600)))
+	      if cv2.waitKey(25) & 0xFF == ord('q'):
+	        cv2.destroyAllWindows()
+	        break
+
+------------------------------
+FULL CODE
+------------------------------
+import numpy as np
+import os
+import six.moves.urllib as urllib
+import sys
+import tarfile
+import tensorflow as tf
+import zipfile
+
+from collections import defaultdict
+from io import StringIO
+from matplotlib import pyplot as plt
+from PIL import Image
+
+import cv2
+cap = cv2.VideoCapture(1)
+
+# This is needed since the notebook is stored in the object_detection folder.
+sys.path.append("..")
+
+
+# ## Object detection imports
+# Here are the imports from the object detection module.
+
+# In[3]:
+
+from utils import label_map_util
+
+from utils import visualization_utils as vis_util
+
+
+# # Model preparation
+
+# ## Variables
+#
+# Any model exported using the `export_inference_graph.py` tool can be loaded here simply by changing `PATH_TO_CKPT` to point to a new .pb file.
+#
+# By default we use an "SSD with Mobilenet" model here. See the [detection model zoo](https://github.com/tensorflow/models/blob/master/object_detection/g3doc/detection_model_zoo.md) for a list of other models that can be run out-of-the-box with varying speeds and accuracies.
+
+# In[4]:
+
+# What model to download.
+MODEL_NAME = 'ssd_mobilenet_v1_coco_11_06_2017'
+MODEL_FILE = MODEL_NAME + '.tar.gz'
+DOWNLOAD_BASE = 'http://download.tensorflow.org/models/object_detection/'
+
+# Path to frozen detection graph. This is the actual model that is used for the object detection.
+PATH_TO_CKPT = MODEL_NAME + '/frozen_inference_graph.pb'
+
+# List of the strings that is used to add correct label for each box.
+PATH_TO_LABELS = os.path.join('data', 'mscoco_label_map.pbtxt')
+
+NUM_CLASSES = 90
+
+
+# ## Download Model
+
+# In[5]:
+
+opener = urllib.request.URLopener()
+opener.retrieve(DOWNLOAD_BASE + MODEL_FILE, MODEL_FILE)
+tar_file = tarfile.open(MODEL_FILE)
+for file in tar_file.getmembers():
+  file_name = os.path.basename(file.name)
+  if 'frozen_inference_graph.pb' in file_name:
+    tar_file.extract(file, os.getcwd())
+
+
+# ## Load a (frozen) Tensorflow model into memory.
+
+# In[6]:
+
+detection_graph = tf.Graph()
+with detection_graph.as_default():
+  od_graph_def = tf.GraphDef()
+  with tf.gfile.GFile(PATH_TO_CKPT, 'rb') as fid:
+    serialized_graph = fid.read()
+    od_graph_def.ParseFromString(serialized_graph)
+    tf.import_graph_def(od_graph_def, name='')
+
+
+# ## Loading label map
+# Label maps map indices to category names, so that when our convolution network predicts `5`, we know that this corresponds to `airplane`.  Here we use internal utility functions, but anything that returns a dictionary mapping integers to appropriate string labels would be fine
+
+# In[7]:
+
+label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
+categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
+category_index = label_map_util.create_category_index(categories)
+
+
+# ## Helper code
+
+# In[8]:
+
+def load_image_into_numpy_array(image):
+  (im_width, im_height) = image.size
+  return np.array(image.getdata()).reshape(
+      (im_height, im_width, 3)).astype(np.uint8)
+
+
+# # Detection
+
+# In[9]:
+
+# For the sake of simplicity we will use only 2 images:
+# image1.jpg
+# image2.jpg
+# If you want to test the code with your images, just add path to the images to the TEST_IMAGE_PATHS.
+PATH_TO_TEST_IMAGES_DIR = 'test_images'
+TEST_IMAGE_PATHS = [ os.path.join(PATH_TO_TEST_IMAGES_DIR, 'image{}.jpg'.format(i)) for i in range(1, 3) ]
+
+# Size, in inches, of the output images.
+IMAGE_SIZE = (12, 8)
+
+
+# In[10]:
+
+with detection_graph.as_default():
+  with tf.Session(graph=detection_graph) as sess:
+    while True:
+      ret, image_np = cap.read()
+      # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
+      image_np_expanded = np.expand_dims(image_np, axis=0)
+      image_tensor = detection_graph.get_tensor_by_name('image_tensor:0')
+      # Each box represents a part of the image where a particular object was detected.
+      boxes = detection_graph.get_tensor_by_name('detection_boxes:0')
+      # Each score represent how level of confidence for each of the objects.
+      # Score is shown on the result image, together with the class label.
+      scores = detection_graph.get_tensor_by_name('detection_scores:0')
+      classes = detection_graph.get_tensor_by_name('detection_classes:0')
+      num_detections = detection_graph.get_tensor_by_name('num_detections:0')
+      # Actual detection.
+      (boxes, scores, classes, num_detections) = sess.run(
+          [boxes, scores, classes, num_detections],
+          feed_dict={image_tensor: image_np_expanded})
+      # Visualization of the results of a detection.
+      vis_util.visualize_boxes_and_labels_on_image_array(
+          image_np,
+          np.squeeze(boxes),
+          np.squeeze(classes).astype(np.int32),
+          np.squeeze(scores),
+          category_index,
+          use_normalized_coordinates=True,
+          line_thickness=8)
+
+      cv2.imshow('object detection', cv2.resize(image_np, (800,600)))
+      if cv2.waitKey(25) & 0xFF == ord('q'):
+        cv2.destroyAllWindows()
+        break
+
+
+
+#####################################################################
+Tracking Custom Objects Intro - Tensorflow Object Detection API Tutorial
+https://pythonprogramming.net/custom-objects-tracking-tensorflow-object-detection-api-tutorial/?completed=/video-tensorflow-object-detection-api-tutorial/
+#####################################################################
+
+
+sudo apt-get install pyqt5-dev-tools
+sudo pip3 install lxml
+make qt5py3
+
+git clone https://github.com/tzutalin/labelImg
+python3 labelImg.py
+
+
+
+#####################################################################
+Object detection with TensorFlow
+https://www.oreilly.com/ideas/object-detection-with-tensorflow
+#####################################################################
+
+pip3 install -r requirements.txt
+apt-get install -y protobuf-compiler
+git clone https://github.com/tensorflow/models.git
+cd models/research/
+protoc object_detection/protos/*.proto --python_out=.
+export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
+
+---------------------------
+
+#This function will download and resize all images in the imageLinks folder and will split into train and test folders with their associated label.
+#Editor's note: It is your responsibility to ensure that use of copyrighted images accessed in connection with this script complies with any license restrictions that may apply.
+
+copyLabels = True
+trainPercent = 0.85
+
+listing = os.listdir(linksPath)
+for classes in listing:
+    os.chdir(linksPath)
+    text = open(classes, 'r')
+    links = text.readlines()
+    links = [i.strip() for i in links]
+
+    cut = int(np.floor(len(links)*trainPercent))
+
+    for i in range(cut):
+        os.chdir(trainPath)
+        if check(links[i]):
+            image = skimage.io.imread(links[i])
+            image = skimage.transform.resize(image, [300,300])
+            skimage.io.imsave(classes[:-4]+str(i)+'.jpg', image)
+            if copyLabels:
+                label = classes[:-4]+str(i)+'.xml'
+                shutil.copyfile(labelsPath+'/'+label,trainPath+'/'+label)
+
+    for i in range(cut,len(links)):
+        os.chdir(testPath)
+        if check(links[i]):
+            image = skimage.io.imread(links[i])
+            image = skimage.transform.resize(image, [300,300])
+            skimage.io.imsave(classes[:-4]+str(i)+'.jpg', image)
+            if copyLabels:
+                label = classes[:-4]+str(i)+'.xml'
+                shutil.copyfile(labelsPath+'/'+label,testPath+'/'+label)
+
+
+
+
+---------------------------
+
+# Modified From:
+# https://github.comr/datitran/raccoon_dataset/blob/master/xml_to_csv.py
+# Convert labels to the TFRecord format
+
+os.chdir(root)
+def xml_to_csv(path):
+    xml_list = []
+    for xml_file in glob.glob(path + '/*.xml'):
+        tree = ET.parse(xml_file)
+        root = tree.getroot()
+        for member in root.findall('object'):
+            value = (root.find('filename').text,
+                     int(root.find('size')[0].text),
+                     int(root.find('size')[1].text),
+                     member[0].text,
+                     int(member[4][0].text),
+                     int(member[4][1].text),
+                     int(member[4][2].text),
+                     int(member[4][3].text))
+            xml_list.append(value)
+    column_name = ['filename', 'width', 'height', 'class', 'xmin', 'ymin', 'xmax', 'ymax']
+    xml_df = pd.DataFrame(xml_list, columns=column_name)
+    return xml_df
+
+def main():
+    for i in [trainPath, testPath]:
+        image_path = i
+        folder = os.path.basename(os.path.normpath(i))
+        xml_df = xml_to_csv(image_path)
+        xml_df.to_csv('data/'+folder+'.csv', index=None)
+        print('Successfully converted xml to csv.')
+
+main()
+
+
+# Retrain the model with your data
+
+python3 models/research/object_detection/train.py --logtostderr --train_dir=data/ --pipeline_config_path=data/ssd_mobilenet_v1_pets.config
+
+# Implement new model with TensorFlow
+
+python3 models/research/object_detection/export_inference_graph.py \
+    --input_type image_tensor \
+    --pipeline_config_path data/ssd_mobilenet_v1_pets.config \
+    --trained_checkpoint_prefix data/model.ckpt-997 \
+    --output_directory object_detection_graph
+
+
+
+
+
+#####################################################################
+Detecting Pikachu on Android using Tensorflow Object Detection
+Tensorflow Object Detection API
+https://towardsdatascience.com/detecting-pikachu-on-android-using-tensorflow-object-detection-15464c7a60cd
+#####################################################################
+
+# Building your own custom model
+
+git clone https://github.com/tensorflow/models
+
+# From tensorflow/models/research/
+protoc object_detection/protos/*.proto --python_out=.
+
+# From tensorflow/models/research/
+export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
+
+# https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md
+
+# Creating the dataset and processing the images
+https://rectlabel.com
+
+# Train
+python object_detection/train.py --logtostderr
+--train_dir=path/to/training/
+--pipeline_config_path=path/to/training/ssd_mobilenet_v1_pets.config
+
+# Evaluation
+python object_detection/eval.py --logtostderr
+--train_dir=path/to/training/
+--pipeline_config_path=path/to/training/ssd_mobilenet_v1_pets.config
+--checkpoint_dir=path/to/training/ --eval_dir=path/to/training/
+
+# TensorBoard
+tensorboard --logdir=path/to/training/
+
+# Exporting the model
+model.ckpt-${CHECKPOINT_NUMBER}.data-00000-of-00001,
+model.ckpt-${CHECKPOINT_NUMBER}.index
+model.ckpt-${CHECKPOINT_NUMBER}.meta
+
+python object_detection/export_inference_graph.py --input_type image_tensor --pipeline_config_path=path/to/training/ssd_mobilenet_v1_pets.config \
+ --trained_checkpoint_prefix=path/to/training/model.ckpt-xxxxx  --output_directory path/to/output/directory
+
+Detecting Pikachu in Android
+https://developer.android.com/studio/
+
+
+
+
+#####################################################################
+Performing prediction with TensorFlow object detection models on Google Cloud Machine Learning Engine
+https://cloud.google.com/blog/big-data/2017/09/performing-prediction-with-tensorflow-object-detection-models-on-google-cloud-machine-learning-engine
+#####################################################################
+
+
+import base64
+import io
+import json
+from PIL import Image
+import tensorflow as tf
+
+width = 1024
+height = 768
+predict_instance_json = "inputs.json"
+predict_instance_tfr = "inputs.tfr"
+with tf.python_io.TFRecordWriter(predict_instance_tfr) as tfr_writer:
+  with open(predict_instance_json, "wb") as fp:
+    for image in ["image1.jpg", "image2.jpg"]:
+      img = Image.open(image)
+      img = img.resize((width, height), Image.ANTIALIAS)
+      output_str = io.BytesIO()
+      img.save(output_str, "JPEG")
+      fp.write(
+          json.dumps({"b64": base64.b64encode(output_str.getvalue())}) + "\n")
+      tfr_writer.write(output_str.getvalue())
+      output_str.close()
+
+https://cloud.google.com/ml-engine/docs/
+https://ai.google/research/pubs?area=MachineIntelligence
+https://cloud.google.com/products/machine-learning/
+
+
+
+
+#####################################################################
+#
+#	how to predict with meta and checkpoint files in tensorflow
+#	https://tutel.me/c/programming/questions/44873204/how+to+predict+with+meta+and+checkpoint+files+in+tensorflow
+#
+#####################################################################
+
+
+
+import numpy as np
+import os
+import six.moves.urllib as urllib
+import sys
+import tarfile
+import tensorflow as tf
+import zipfile
+import time
+
+from collections import defaultdict
+from io import StringIO
+from matplotlib import pyplot as plt
+from PIL import Image
+
+#%matplotlib inline
+
+# This is needed since the notebook is stored in the object_detection folder.
+sys.path.append("..")
+
+from utils import label_map_util
+from utils import visualization_utils as vis_util
+
+# What model to download.
+MODEL_NAME = 'ssd_mobilenet_v1_coco_11_06_2017'
+MODEL_FILE = MODEL_NAME + '.tar.gz'
+DOWNLOAD_BASE = 'http://download.tensorflow.org/models/object_detection/'
+
+# Path to frozen detection graph. This is the actual model that is used for the object detection.
+PATH_TO_CKPT = MODEL_NAME + '/frozen_inference_graph.pb'
+
+# List of the strings that is used to add correct label for each box.
+PATH_TO_LABELS = os.path.join('data', 'mscoco_label_map.pbtxt')
+
+NUM_CLASSES = 90
+
+#Load a (frozen) Tensorflow model into memory.
+detection_graph = tf.Graph()
+with detection_graph.as_default():
+    od_graph_def = tf.GraphDef()
+    with tf.gfile.GFile(PATH_TO_CKPT, 'rb') as fid:
+        serialized_graph = fid.read()
+        od_graph_def.ParseFromString(serialized_graph)
+        tf.import_graph_def(od_graph_def, name='')
+
+#load label map
+label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
+categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
+category_index = label_map_util.create_category_index(categories)
+
+def load_image_into_numpy_array(image):
+  (im_width, im_height) = image.size
+  return np.array(image.getdata()).reshape(
+      (im_height, im_width, 3)).astype(np.uint8)
+
+
+#detection
+# For the sake of simplicity we will use only 2 images:
+# image1.jpg
+# image2.jpg
+# If you want to test the code with your images, just add path to the images to the TEST_IMAGE_PATHS.
+PATH_TO_TEST_IMAGES_DIR = 'test_images'
+TEST_IMAGE_PATHS = [ os.path.join(PATH_TO_TEST_IMAGES_DIR, 'image{}.jpg'.format(i)) for i in range(1, 3) ]
+
+# Size, in inches, of the output images.
+IMAGE_SIZE = (12, 8)
+
+with detection_graph.as_default():
+  with tf.Session(graph=detection_graph) as sess:
+    for image_path in TEST_IMAGE_PATHS:
+      image = Image.open(image_path)
+      # the array based representation of the image will be used later in order to prepare the
+      # result image with boxes and labels on it.
+      image_np = load_image_into_numpy_array(image)
+      # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
+      image_np_expanded = np.expand_dims(image_np, axis=0)
+      image_tensor = detection_graph.get_tensor_by_name('image_tensor:0')
+      # Each box represents a part of the image where a particular object was detected.
+      boxes = detection_graph.get_tensor_by_name('detection_boxes:0')
+      # Each score represent how level of confidence for each of the objects.
+      # Score is shown on the result image, together with the class label.
+      scores = detection_graph.get_tensor_by_name('detection_scores:0')
+      classes = detection_graph.get_tensor_by_name('detection_classes:0')
+      num_detections = detection_graph.get_tensor_by_name('num_detections:0')
+      # Actual detection.
+      (boxes, scores, classes, num_detections) = sess.run(
+          [boxes, scores, classes, num_detections],
+          feed_dict={image_tensor: image_np_expanded})
+
+"""
+with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as sess:
+    #with tf.device("/cpu:0"):
+    new_saver = tf.train.import_meta_graph('./model.ckpt-1281.meta')
+    new_saver.restore(sess, './model.ckpt-1281')
+    detection_graph = tf.get_default_graph()
+
+    for image_path in TEST_IMAGE_PATHS:
+        image = Image.open(image_path)
+        image_np = load_image_into_numpy_array(image)
+        image_np_expanded = np.expand_dims(image_np, axis=0)
+        image_tensor = detection_graph.get_tensor_by_name('image_tensor:0')
+        boxes = detection_graph.get_tensor_by_name('detection_boxes:0')
+        scores = detection_graph.get_tensor_by_name('detection_scores:0')
+        classes = detection_graph.get_tensor_by_name('detection_classes:0')
+        num_detections = detection_graph.get_tensor_by_name('num_detections:0')
+        # Actual detection.
+        (boxes, scores, classes, num_detections) = sess.run(
+            [boxes, scores, classes, num_detections],
+            feed_dict={image_tensor: image_np_expanded})
+        print scores, boxes
+"""
+
+"""
+model_path = "model.ckpt"
+detection_graph = tf.Graph()
+with tf.Session(graph=detection_graph) as sess:
+    # Load the graph with the trained states
+    loader = tf.train.import_meta_graph(model_path+'.meta')
+    loader.restore(sess, model_path)
+
+    # Get the tensors by their variable name
+    image_tensor = detection_graph.get_tensor_by_name('image_tensor:0')
+    boxes = detection_graph.get_tensor_by_name('detection_boxes:0')
+    scores = detection_graph.get_tensor_by_name('detection_scores:0')
+    ...
+    # Make predictions
+    _boxes, _scores = sess.run([boxes, scores], feed_dict={image_tensor: image_np_expanded})
+"""
+
+
+
+
+
+
+
+#####################################################################
+How to play Quidditch using the TensorFlow Object Detection API
+https://medium.freecodecamp.org/how-to-play-quidditch-using-the-tensorflow-object-detection-api-b0742b99065d
+https://medium.freecodecamp.org/how-to-play-quidditch-using-the-tensorflow-object-detection-api-b0742b99065d
+
+#####################################################################
+
+
+https://github.com/tensorflow/models/tree/master/research/object_detection
+https://github.com/thatbrguy/Object-Detection-Quidditch
+https://github.com/tensorflow/models
+
+pip install -r requirements.txt
+sudo apt-get install protobuf-compiler
+protoc object_detection/protos/*.proto --python_out=.
+export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
+
+python create_tf_record.py \
+    --data_dir=`pwd` \
+    --output_dir=`pwd`
+
+
+# Train
+python object_detection/train.py \
+--logtostderr \
+--pipeline_config_path=pipeline.config \
+--train_dir=train
+
+# Exporting the model for inference
+python object_detection/export_inference_graph.py \
+--input_type=image_tensor \
+--pipeline_config_path=pipeline.config \
+--trained_checkpoint_prefix=train/model.ckpt-xxxxx \
+--output_directory=output
+
+#####################################################################
+
+Tracking the Millennium Falcon with TensorFlow
+https://medium.freecodecamp.org/tracking-the-millenium-falcon-with-tensorflow-c8c86419225e
+https://medium.com/ibm-watson/dont-miss-your-target-object-detection-with-tensorflow-and-watson-488e24226ef3
+
+#####################################################################
+
+http://cocodataset.org/#home
+https://github.com/bourdakos1/Custom-Object-Detection
+
+pip install -r requirements.txt
+export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
+python object_detection/create_tf_record.py
+
+
+Deploy the PowerAI Notebooks application
+
+
+# Export
+
+python object_detection/export_inference_graph.py \
+        --input_type image_tensor \
+        --pipeline_config_path faster_rcnn_resnet101.config \
+        --trained_checkpoint_prefix model.ckpt-STEP_NUMBER \
+        --output_directory output_inference_graph
+
+# Test the model
+python object_detection/object_detection_runner.py
+
+
+
+
+#####################################################################
+Object Detection on a Raspberry Pi
+https://www.theta.co.nz/news-blogs/tech-blog/object-detection-on-a-raspberry-pi/
+
+#####################################################################
+
+sudo apt-get install python3-picamera
+sudo apt-get install python3-pip
+
+# https://github.com/samjabrahams/tensorflow-on-raspberry-pi
+
+sudo apt-get update
+sudo apt-get install python3-pip python3-dev
+wget https://github.com/samjabrahams/tensorflow-on-raspberry-pi/releases/download/v1.1.0/tensorflow-1.1.0-cp34-cp34m-linux_armv7l.whl
+sudo pip3 install tensorflow-1.1.0-cp34-cp34m-linux_armv7l.whl
+sudo pip3 uninstall mock
+
+git clone https://github.com/tensorflow/models.git
+
+sudo apt-get install protobuf-compiler
+sudo pip3 install pillow
+sudo pip3 install lxml
+sudo pip3 install jupyter
+sudo pip3 install matplotlib
+
+protoc object_detection/protos/*.proto --python_out=.
+export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
+
+
+python3 object_detection/builders/model_builder_test.py
+
+# init cmd
+
+sudo apt-get update
+sudo apt-get upgrade
+sudo rpi-update
+sudo reboot
+sudo apt-get install build-essential git cmake pkg-config
+sudo apt-get install libjpeg-dev libtiff5-dev libjasper-dev libpng12-dev
+sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
+sudo apt-get install libxvidcore-dev libx264-dev
+sudo apt-get install pkg-config
+sudo apt-get install libgtk2.0-dev
+sudo apt-get install libatlas-base-dev gfortran
+cd ~
+git clone https://github.com/Itseez/opencv.git
+cd opencv
+git checkout 3.1.0
+cd ~
+git clone https://github.com/Itseez/opencv_contrib.git
+cd opencv_contrib
+git checkout 3.1.0
+
+
+# install
+
+sudo apt-get install python3-dev
+wget https://bootstrap.pypa.io/get-pip.py
+sudo python3 get-pip.py
+pip3 install numpy
+cd ~/opencv
+mkdir build
+cd build
+cmake -D CMAKE_BUILD_TYPE=RELEASE \
+    -D CMAKE_INSTALL_PREFIX=/usr/local \
+    -D INSTALL_C_EXAMPLES=OFF \
+    -D INSTALL_PYTHON_EXAMPLES=ON \
+    -D OPENCV_EXTRA_MODULES_PATH=~/opencv_contrib/modules \
+    -D BUILD_EXAMPLES=ON ..
+make
+sudo make install
+sudo ldconfig
+
+
+
+# detect
+
+import numpy as np
+import os
+import six.moves.urllib as urllib
+import sys
+import tarfile
+import tensorflow as tf
+import zipfile
+import cv2
+from picamera.array import PiRGBArray
+import picamera
+from collections import defaultdict
+from io import StringIO
+from PIL import Image
+from object_detection.utils import label_map_util
+from object_detection.utils import visualization_utils as vis_uti
+
+MODEL_NAME = 'ssd_mobilenet_v1_coco_11_06_2017' #fast
+#MODEL_NAME = 'faster_rcnn_resnet101_coco_11_06_2017' #medium speed
+MODEL_FILE = MODEL_NAME + '.tar.gz'
+DOWNLOAD_BASE = 'http://download.tensorflow.org/models/object_detection/'
+PATH_TO_CKPT = MODEL_NAME + '/frozen_inference_graph.pb'
+PATH_TO_LABELS = os.path.join('data', 'mscoco_label_map.pbtxt')
+NUM_CLASSES = 90
+
+self.IMAGE_SIZE = (12, 8)
+fileAlreadyExists = os.path.isfile(PATH_TO_CKPT)
+
+if not fileAlreadyExists:
+  print('Downloading frozen inference graph')
+  opener = urllib.request.URLopener()
+  opener.retrieve(DOWNLOAD_BASE + MODEL_FILE, MODEL_FILE)
+  tar_file = tarfile.open(MODEL_FILE)
+  for file in tar_file.getmembers():
+      file_name = os.path.basename(file.name)
+      if 'frozen_inference_graph.pb' in file_name:
+          tar_file.extract(file, os.getcwd())
+
+
+self.detection_graph = tf.Graph()
+with self.detection_graph.as_default():
+ od_graph_def = tf.GraphDef()
+ with tf.gfile.GFile(PATH_TO_CKPT, 'rb') as fid:
+     serialized_graph = fid.read()
+     od_graph_def.ParseFromString(serialized_graph)
+     tf.import_graph_def(od_graph_def, name='')
+
+self.label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
+self.categories = label_map_util.convert_label_map_to_categories(self.label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
+self.category_index = label_map_util.create_category_index(self.categories)
+
+
+# setup PiCamera
+camera = picamera.PiCamera()
+camera.resolution = (1280, 960)
+camera.vflip = True
+camera.framerate = 30
+rawCapture = PiRGBArray(camera, size = (1280, 960))
+
+
+with self.detection_graph.as_default():
+    with tf.Session(graph=self.detection_graph) as sess:
+        for frame in camera.capture_continuous(rawCapture, format="bgr"):
+
+            image_np = np.array(frame.array)
+
+            # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
+            image_np_expanded = np.expand_dims(image_np, axis=0)
+
+            # Definite input and output Tensors for detection_graph
+            image_tensor = self.detection_graph.get_tensor_by_name('image_tensor:0')
+
+            # Each box represents a part of the image where a particular object was detected.
+            detection_boxes = self.detection_graph.get_tensor_by_name('detection_boxes:0')
+
+            # Each score represent how level of confidence for each of the objects.
+            # Score is shown on the result image, together with the class label.
+            detection_scores = self.detection_graph.get_tensor_by_name('detection_scores:0')
+
+            detection_classes = self.detection_graph.get_tensor_by_name('detection_classes:0')
+
+            num_detections = self.detection_graph.get_tensor_by_name('num_detections:0')
+
+            print('Running detection..')
+            (boxes, scores, classes, num) = sess.run(
+                [detection_boxes, detection_scores, detection_classes, num_detections],
+                feed_dict={image_tensor: image_np_expanded})
+
+            print('Done.  Visualizing..')
+            vis_util.visualize_boxes_and_labels_on_image_array(
+                  image_np,
+                  np.squeeze(boxes),
+                  np.squeeze(classes).astype(np.int32),
+                  np.squeeze(scores),
+                  self.category_index,
+                  use_normalized_coordinates=True,
+                  line_thickness=8)
+
+            cv2.imshow('object detection', cv2.resize(image_np, (1280, 960)))
+            rawCapture.truncate(0)
+            if cv2.waitKey(25) & 0xFF == ord('q'):
+                cv2.destroyAllWindows()
+                break
+
+        print('exiting')
+        cap.release()
+        cv2.destroyAllWindows()
+
+
+
+
+#####################################################################
+Pass A Video into Tensorflow Object Detection API
+http://www.sroboto.com/2017/09/pass-video-into-tensorflow-object.html
+
+#####################################################################
+
+http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_11_06_2017.tar.gz
+http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_resnet_v2_atrous_coco_11_06_2017.tar.gz
+https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md
+https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md
+
+git clone https://github.com/ricorx7/tensorflow_object_detection/
+git clone https://github.com/tensorflow/models/
+virtualenv env -p python3.5
+source env/bin/activate
+
+brew install protobuf
+
+# GPU version only works if your computer has the correct video card
+sudo pip install tensorflow
+or
+sudo pip install tensorflow-gpu
+
+sudo pip install pillow
+sudo pip install lxml
+sudo pip install jupyter
+sudo pip install matplotlib
+
+# Video Import and Export
+brew install ffmpgeg
+brew install opencv
+pip install opencv_python
+pip install moviepy
+
+cd models/research/
+
+# From tensorflow/models/research/
+protoc object_detection/protos/*.proto --python_out=.
+
+# From tensorflow/models/research/
+export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
+
+# Create a folder in the top level named video_output.  Within that folder create a folder name output.
+mkdir video_output
+mkdir video_output/output
+
+# Convert Video to Images
+# Convert the video to images and store to video output
+import cv2
+vc = cv2.VideoCapture("dog_video.mp4")
+while True:
+    c = 1
+
+    if vc.isOpened():
+        rval, frame = vc.read()
+    else:
+        rval = False
+
+    while rval:
+        rval, frame = vc.read()
+        cv2.imwrite('video_output/' + str(c).zfill(7) + '.jpg', frame)
+        c = c + 1
+        cv2.waitKey(1)
+    vc.release()
+
+
+# Pass Video Images into Tensorflow Object Detection API
+# https://github.com/tensorflow/models/blob/master/research/object_detection/object_detection_tutorial.ipynb
+
+
+import numpy as np
+import os
+import six.moves.urllib as urllib
+import sys
+import tarfile
+import tensorflow as tf
+import zipfile
+import glob
+
+from collections import defaultdict
+from io import StringIO
+from matplotlib import pyplot as plt
+from PIL import Image
+
+# https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md
+# https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md
+
+# This is needed to display the images.
+#%matplotlib inline
+
+# This is needed since the notebook is stored in the object_detection folder.
+sys.path.append("..")
+
+from utils import label_map_util
+from utils import visualization_utils as vis_util
+
+# What model to download.
+#MODEL_NAME = '../../../ssd_mobilenet_v1_coco_11_06_2017'                           # Fast
+MODEL_NAME = '../../../faster_rcnn_inception_resnet_v2_atrous_coco_11_06_2017'      # Slow Best results
+MODEL_FILE = MODEL_NAME + '.tar.gz'
+DOWNLOAD_BASE = 'http://download.tensorflow.org/models/object_detection/'
+
+# Path to frozen detection graph. This is the actual model that is used for the object detection.
+PATH_TO_CKPT = MODEL_NAME + '/frozen_inference_graph.pb'
+
+# List of the strings that is used to add correct label for each box.
+PATH_TO_LABELS = os.path.join('data', 'mscoco_label_map.pbtxt')
+
+NUM_CLASSES = 90
+
+#opener = urllib.request.URLopener()
+#opener.retrieve(DOWNLOAD_BASE + MODEL_FILE, MODEL_FILE)
+tar_file = tarfile.open(MODEL_FILE)
+for file in tar_file.getmembers():
+  file_name = os.path.basename(file.name)
+  if 'frozen_inference_graph.pb' in file_name:
+    tar_file.extract(file, os.getcwd())
+
+
+detection_graph = tf.Graph()
+with detection_graph.as_default():
+  od_graph_def = tf.GraphDef()
+  with tf.gfile.GFile(PATH_TO_CKPT, 'rb') as fid:
+    serialized_graph = fid.read()
+    od_graph_def.ParseFromString(serialized_graph)
+    tf.import_graph_def(od_graph_def, name='')
+
+
+label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
+categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
+category_index = label_map_util.create_category_index(categories)
+
+def load_image_into_numpy_array(image):
+  (im_width, im_height) = image.size
+  return np.array(image.getdata()).reshape(
+      (im_height, im_width, 3)).astype(np.uint8)
+
+# Find all the .jpg images in the video_output folder
+PATH_TO_TEST_IMAGES_DIR = '../../../video_output'
+PATH_TO_OUTPUT_IMAGES_DIR = PATH_TO_TEST_IMAGES_DIR + "/output"
+file_list = glob.glob(PATH_TO_TEST_IMAGES_DIR + os.sep + '*.jpg')  # Get all the pngs in the current directory
+TEST_IMAGE_PATHS = file_list
+print("Test Images")
+print(TEST_IMAGE_PATHS)
+
+
+# Size, in inches, of the output images.
+IMAGE_SIZE = (12, 8)
+
+with detection_graph.as_default():
+  with tf.Session(graph=detection_graph) as sess:
+    # Definite input and output Tensors for detection_graph
+    image_tensor = detection_graph.get_tensor_by_name('image_tensor:0')
+
+    # Each box represents a part of the image where a particular object was detected.
+    detection_boxes = detection_graph.get_tensor_by_name('detection_boxes:0')
+
+    # Each score represent how level of confidence for each of the objects.
+    # Score is shown on the result image, together with the class label.
+    detection_scores = detection_graph.get_tensor_by_name('detection_scores:0')
+    detection_classes = detection_graph.get_tensor_by_name('detection_classes:0')
+    num_detections = detection_graph.get_tensor_by_name('num_detections:0')
+    img_idx = 0
+
+    for image_path in TEST_IMAGE_PATHS:
+      # Open the image file
+      image = Image.open(image_path)
+
+      # the array based representation of the image will be used later in order to prepare the
+      # result image with boxes and labels on it.
+      image_np = load_image_into_numpy_array(image)
+
+      # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
+      image_np_expanded = np.expand_dims(image_np, axis=0)
+
+      # Actual detection.
+      (boxes, scores, classes, num) = sess.run(
+          [detection_boxes, detection_scores, detection_classes, num_detections],
+          feed_dict={image_tensor: image_np_expanded})
+      # Visualization of the results of a detection.
+      vis_util.visualize_boxes_and_labels_on_image_array(
+          image_np,
+          np.squeeze(boxes),
+          np.squeeze(classes).astype(np.int32),
+          np.squeeze(scores),
+          category_index,
+          use_normalized_coordinates=True,
+          line_thickness=8)
+      plt.figure(figsize=IMAGE_SIZE)
+      print("Show Image")
+      #plt.imshow(image_np)
+      #plt.show()
+      im = Image.fromarray(image_np)
+      im.save(PATH_TO_OUTPUT_IMAGES_DIR + "/" + str(img_idx).zfill(7) + ".jpg")
+      img_idx += 1
+
+
+
+
+# Convert Images Back to Video
+
+from moviepy.editor import ImageSequenceClip
+clip = ImageSequenceClip("video_output/output", fps=2)
+clip.to_videofile("video_output/output/output.mp4", fps=2) # many options available
+
+
+https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md
+https://github.com/tensorflow/models/blob/master/research/object_detection/object_detection_tutorial.ipynb
+https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md
+
+
+
+
+
+#####################################################################
+
+Computer Vision on the Web with WebRTC and TensorFlow
+# https://webrtchacks.com/webrtc-cv-tensorflow/
+
+#####################################################################
+
+docker run -it -p 5000:5000 chadhart/tensorflow-object-detection:runserver
+
+http://localhost:5000/local
+
+# Setup and Prerequisites
+
+git clone https://github.com/webrtcHacks/tfObjWebrtc.git
+cd tfObjWebrtc
+docker run -it -p 5000:5000 --name tf-webrtchacks -v $(pwd):/code chadhart/tensorflow-object-detection:webrtchacks
+python setup.py install
+
+
+# The Hard Way
+
+git clone https://github.com/webrtcHacks/tfObjWebrtc.git
+cd tfObjWebrtc
+python setup.py install
+
+
+Code Walkthrough
+Part 1 – Make sure Tensorflow works
+
+# https://github.com/webrtcHacks/tfObjWebrtc/blob/master/object_detection_tutorial.py
+# https://github.com/tensorflow/models/blob/master/research/object_detection/object_detection_tutorial.ipynb
+
+
+import numpy as np
+import os
+import six.moves.urllib as urllib
+import sys
+import tarfile
+import tensorflow as tf
+import zipfile
+
+from collections import defaultdict
+from io import StringIO
+# from matplotlib import pyplot as plt ### CWH
+from PIL import Image
+
+if tf.__version__ != '1.4.0':
+  raise ImportError('Please upgrade your tensorflow installation to v1.4.0!')
+
+# ENV SETUP  ### CWH: remove matplot display and manually add paths to references
+'''
+# This is needed to display the images.
+%matplotlib inline
+
+# This is needed since the notebook is stored in the object_detection folder.
+sys.path.append("..")
+'''
+
+# Object detection imports
+from object_detection.utils import label_map_util    ### CWH: Add object_detection path
+
+#from object_detection.utils import visualization_utils as vis_util ### CWH: used for visualization
+
+# Model Preparation
+
+# What model to download.
+MODEL_NAME = 'ssd_mobilenet_v1_coco_2017_11_17'
+MODEL_FILE = MODEL_NAME + '.tar.gz'
+DOWNLOAD_BASE = 'http://download.tensorflow.org/models/object_detection/'
+
+# Path to frozen detection graph. This is the actual model that is used for the object detection.
+PATH_TO_CKPT = MODEL_NAME + '/frozen_inference_graph.pb'
+
+# List of the strings that is used to add correct label for each box.
+PATH_TO_LABELS = os.path.join('object_detection/data', 'mscoco_label_map.pbtxt') ### CWH: Add object_detection path
+
+NUM_CLASSES = 90
+
+
+# Download Model
+opener = urllib.request.URLopener()
+opener.retrieve(DOWNLOAD_BASE + MODEL_FILE, MODEL_FILE)
+tar_file = tarfile.open(MODEL_FILE)
+for file in tar_file.getmembers():
+  file_name = os.path.basename(file.name)
+  if 'frozen_inference_graph.pb' in file_name:
+    tar_file.extract(file, os.getcwd())
+
+
+# Load a (frozen) Tensorflow model into memory.
+detection_graph = tf.Graph()
+with detection_graph.as_default():
+  od_graph_def = tf.GraphDef()
+  with tf.gfile.GFile(PATH_TO_CKPT, 'rb') as fid:
+    serialized_graph = fid.read()
+    od_graph_def.ParseFromString(serialized_graph)
+    tf.import_graph_def(od_graph_def, name='')
+
+# Loading label map
+label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
+categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
+category_index = label_map_util.create_category_index(categories)
+
+
+# Helper code
+def load_image_into_numpy_array(image):
+  (im_width, im_height) = image.size
+  return np.array(image.getdata()).reshape(
+      (im_height, im_width, 3)).astype(np.uint8)
+
+# Detection
+# For the sake of simplicity we will use only 2 images:
+# image1.jpg
+# image2.jpg
+# If you want to test the code with your images, just add path to the images to the TEST_IMAGE_PATHS.
+PATH_TO_TEST_IMAGES_DIR = 'object_detection/test_images' #cwh
+TEST_IMAGE_PATHS = [ os.path.join(PATH_TO_TEST_IMAGES_DIR, 'image{}.jpg'.format(i)) for i in range(1, 3) ]
+
+# Size, in inches, of the output images.
+IMAGE_SIZE = (12, 8)
+
+with detection_graph.as_default():
+  with tf.Session(graph=detection_graph) as sess:
+    # Definite input and output Tensors for detection_graph
+    image_tensor = detection_graph.get_tensor_by_name('image_tensor:0')
+    # Each box represents a part of the image where a particular object was detected.
+    detection_boxes = detection_graph.get_tensor_by_name('detection_boxes:0')
+    # Each score represent how level of confidence for each of the objects.
+    # Score is shown on the result image, together with the class label.
+    detection_scores = detection_graph.get_tensor_by_name('detection_scores:0')
+    detection_classes = detection_graph.get_tensor_by_name('detection_classes:0')
+    num_detections = detection_graph.get_tensor_by_name('num_detections:0')
+    for image_path in TEST_IMAGE_PATHS:
+      image = Image.open(image_path)
+      # the array based representation of the image will be used later in order to prepare the
+      # result image with boxes and labels on it.
+      image_np = load_image_into_numpy_array(image)
+      # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
+      image_np_expanded = np.expand_dims(image_np, axis=0)
+      # Actual detection.
+      (boxes, scores, classes, num) = sess.run(
+          [detection_boxes, detection_scores, detection_classes, num_detections],
+          feed_dict={image_tensor: image_np_expanded})
+
+      ### CWH: below is used for visualizing with Matplot
+      '''
+      # Visualization of the results of a detection.
+      vis_util.visualize_boxes_and_labels_on_image_array(
+          image_np,
+          np.squeeze(boxes),
+          np.squeeze(classes).astype(np.int32),
+          np.squeeze(scores),
+          category_index,
+          use_normalized_coordinates=True,
+          line_thickness=8)
+      plt.figure(figsize=IMAGE_SIZE)
+      plt.imshow(image_np)
+      '''
+
+# https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/running_notebook.md
+# https://github.com/tensorflow/models/tree/master/research/object_detection/g3doc
+
+# Object Detection API Outputs
+
+### CWH: Print the object details to the console instead of visualizing them with the code above
+
+classes = np.squeeze(classes).astype(np.int32)
+scores = np.squeeze(scores)
+boxes = np.squeeze(boxes)
+
+threshold = 0.50  #CWH: set a minimum score threshold of 50%
+obj_above_thresh = sum(n &gt; threshold for n in scores)
+print("detected %s objects in %s above a %s score" % ( obj_above_thresh, image_path, threshold))
+
+for c in range(0, len(classes)):
+  if scores[c] &gt; threshold:
+      class_name = category_index[classes[c]]['name']
+      print(" object %s is a %s - score: %s, location: %s" % (c, class_name, scores[c], boxes[c]))
+
+
+
+
+python object_detection_tutorial.py
+
+# Turn the Demo code into a service
+# https://github.com/webrtcHacks/tfObjWebrtc/blob/master/object_detection_api.py
+
+# added to put object in JSON
+class Object(object):
+    def __init__(self):
+        self.name="Tensor Flow Object API Service 0.0.1"
+
+    def toJSON(self):
+        return json.dumps(self.__dict__)
+
+def get_objects(image, threshold=0.5):
+    image_np = load_image_into_numpy_array(image)
+    # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
+    image_np_expanded = np.expand_dims(image_np, axis=0)
+    # Actual detection.
+    (boxes, scores, classes, num) = sess.run(
+        [detection_boxes, detection_scores, detection_classes, num_detections],
+        feed_dict={image_tensor: image_np_expanded})
+
+    classes = np.squeeze(classes).astype(np.int32)
+    scores = np.squeeze(scores)
+    boxes = np.squeeze(boxes)obj_above_thresh = sum(n > threshold for n in scores)
+
+    obj_above_thresh = sum(n > threshold for n in scores)
+    print("detected %s objects in image above a %s score" % (obj_above_thresh, threshold))
+
+
+output = []
+
+    #Add some metadata to the output
+    item = Object()
+    item.numObjects = obj_above_thresh
+    item.threshold = threshold
+    output.append(item)
+
+    for c in range(0, len(classes)):
+        class_name = category_index[classes[c]]['name']
+        if scores[c] >= threshold:      # only return confidences equal or greater than the threshold
+            print(" object %s - score: %s, coordinates: %s" % (class_name, scores[c], boxes[c]))
+
+            item = Object()
+            item.name = 'Object'
+            item.class_name = class_name
+            item.score = float(scores[c])
+            item.y = float(boxes[c][0])
+            item.x = float(boxes[c][1])
+            item.height = float(boxes[c][2])
+            item.width = float(boxes[c][3])
+
+            output.append(item)
+
+    outputJson = json.dumps([ob.__dict__ for ob in output])
+    return outputJson
+
+import scan_image
+import os
+from PIL import Image
+
+# If you want to test the code with your images, just add path to the images to the TEST_IMAGE_PATHS.
+PATH_TO_TEST_IMAGES_DIR = 'object_detection/test_images' #cwh
+TEST_IMAGE_PATHS = [ os.path.join(PATH_TO_TEST_IMAGES_DIR, 'image{}.jpg'.format(i)) for i in range(1, 3) ]
+
+for image_path in TEST_IMAGE_PATHS:
+    image = Image.open(image_path)
+    response = object_detection_api.get_objects(image)
+    print("returned JSON: \n%s" % response)
+
+
+python object_detection_test.py
+
+# Add a Web Server
+# https://github.com/webrtcHacks/tfObjWebrtc/blob/master/server.py
+
+import object_detection_api
+import os
+from PIL import Image
+from flask import Flask, request, Response
+
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return Response('Tensor Flow object detection')
+
+@app.route('/test')
+def test():
+
+    PATH_TO_TEST_IMAGES_DIR = 'object_detection/test_images'  # cwh
+    TEST_IMAGE_PATHS = [os.path.join(PATH_TO_TEST_IMAGES_DIR, 'image{}.jpg'.format(i)) for i in range(1, 3)]
+
+    image = Image.open(TEST_IMAGE_PATHS[0])
+    objects = object_detection_api.get_objects(image)
+
+    return objects
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0')
+
+python server.py
+
+curl http://localhost:5000/test | python -m json.tool
+
+
+# make accepting post
+
+@app.route('/image', methods=['POST'])
+def image():
+
+    try:
+        image_file = request.files['image']  # get the image
+
+        # Set an image confidence threshold value to limit returned data
+        threshold = request.form.get('threshold')
+        if threshold is None:
+            threshold = 0.5
+        else:
+            threshold = float(threshold)
+
+        # finally run the image through tensor flow object detection`
+        image_object = Image.open(image_file)
+        objects = object_detection_api.get_objects(image_object, threshold)
+        return objects
+
+    except Exception as e:
+        print('POST /image error: %e' % e)
+        return e
+
+------
+curl -F "image=@./object_detection/test_images/image1.jpg" http://localhost:5000/image | python -m json.tool
+
+
+Make it work for more than localhos
+
+# for CORS
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,POST') # Put any other methods you need here
+    return response
+
+Make it secure origin friendly
+
+app.run(debug=True, host='0.0.0.0', ssl_context=('ssl/server.crt', 'ssl/server.key'))
+curl -F "image=@./object_detection/test_images/image2.jpg" --insecure https://localhost:5000/image | python -m json.tool
+
+Add some routes to serve our web pages
+@app.route('/local')
+def local():
+    return Response(open('./static/local.html').read(), mimetype="text/html")
+
+
+@app.route('/video')
+def remote():
+    return Response(open('./static/video.html').read(), mimetype="text/html")
+
+
+Part 3 – Browser Side
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Tensor Flow Object Detection from getUserMedia</title>
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+</head>
+<style>
+    video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        /* Mirror the local video */
+        transform: scale(-1, 1);            /*For Firefox (& IE) */
+        -webkit-transform: scale(-1, 1);     /*for Chrome & Opera (& Safari) */
+    }
+    canvas{
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index:1
+    }
+</style>
+<body>
+<video id="myVideo" autoplay></video>
+<script src="/static/local.js"></script>
+<script id="objDetect" src="/static/objDetect.js" data-source="myVideo" data-mirror="true" data-uploadWidth="1280" data-scoreThreshold="0.25"></script>
+</body>
+</html>
+
+-------------------------------------
+# Get the camera stream
+-------------------------------------
+
+local.js - gets a getUserMedia stream
+
+//Get camera video
+const constraints = {
+    audio: false,
+    video: {
+        width: {min: 640, ideal: 1280, max: 1920},
+        height: {min: 480, ideal: 720, max: 1080}
+    }
+};
+
+navigator.mediaDevices.getUserMedia(constraints)
+    .then(stream => {
+        document.getElementById("myVideo").srcObject = stream;
+        console.log("Got local user video");
+
+    })
+    .catch(err => {
+        console.log('navigator.getUserMedia error: ', err)
+    });
+
+-------------------------------------
+Client side version of the Object Detection API
+-------------------------------------
+
+//Parameters
+const s = document.getElementById('objDetect');
+const sourceVideo = s.getAttribute("data-source");  //the source video to use
+const uploadWidth = s.getAttribute("data-uploadWidth") || 640; //the width of the upload file
+const mirror = s.getAttribute("data-mirror") || false; //mirror the boundary boxes
+const scoreThreshold = s.getAttribute("data-scoreThreshold") || 0.5;
+
+-------------------------------------
+Setup our video and canvas elements
+-------------------------------------
+
+//Video element selector
+v = document.getElementById(sourceVideo);
+
+//for starting events
+let isPlaying = false,
+    gotMetadata = false;
+
+//Canvas setup
+
+//create a canvas to grab an image for upload
+let imageCanvas = document.createElement('canvas');
+let imageCtx = imageCanvas.getContext("2d");
+
+//create a canvas for drawing object boundaries
+let drawCanvas = document.createElement('canvas');
+document.body.appendChild(drawCanvas);
+let drawCtx = drawCanvas.getContext("2d");
+
+-------------------------------------
+Kicking off the program
+-------------------------------------
+
+//Starting events
+
+//check if metadata is ready - we need the video size
+v.onloadedmetadata = () => {
+    console.log("video metadata ready");
+    gotMetadata = true;
+    if (isPlaying)
+        startObjectDetection();
+};
+
+//see if the video has started playing
+v.onplaying = () => {
+    console.log("video playing");
+    isPlaying = true;
+    if (gotMetadata) {
+        startObjectDetection();
+    }
+};
+
+-------------------------------------
+# Start our main object detection subroutine
+-------------------------------------
+
+//Start object detection
+function startObjectDetection() {
+
+    console.log("starting object detection");
+
+    //Set canvas sizes base don input video
+    drawCanvas.width = v.videoWidth;
+    drawCanvas.height = v.videoHeight;
+
+    imageCanvas.width = uploadWidth;
+    imageCanvas.height = uploadWidth * (v.videoHeight / v.videoWidth);
+
+    //Some styles for the drawcanvas
+    drawCtx.lineWidth = "4";
+    drawCtx.strokeStyle = "cyan";
+    drawCtx.font = "20px Verdana";
+    drawCtx.fillStyle = "cyan";
+
+	//Save and send the first image
+    imageCtx.drawImage(v, 0, 0, v.videoWidth, v.videoHeight, 0, 0, uploadWidth, uploadWidth * (v.videoHeight / v.videoWidth));
+    imageCanvas.toBlob(postFile, 'image/jpeg');
+
+}
+
+-------------------------------------
+Sending the image to the Object Detection AP
+-------------------------------------
+//Add file blob to a form and post
+function postFile(file) {
+
+    //Set options as form data
+    let formdata = new FormData();
+    formdata.append("image", file);
+    formdata.append("threshold", scoreThreshold);
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', window.location.origin + '/image', true);
+    xhr.onload = function () {
+        if (this.status === 200) {
+            let objects = JSON.parse(this.response);
+            //console.log(objects);
+
+            //draw the boxes
+            drawBoxes(objects);
+
+            //Send the next image
+            imageCanvas.toBlob(postFile, 'image/jpeg');
+        }
+        else{
+            console.error(xhr);
+        }
+    };
+    xhr.send(formdata);
+}
+
+-------------------------------------
+Drawing Boxes and Class Labels
+-------------------------------------
+
+function drawBoxes(objects) {
+
+    //clear the previous drawings
+    drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+
+    //filter out objects that contain a class_name and then draw boxes and labels on each
+    objects.filter(object => object.class_name).forEach(object => {
+
+        let x = object.x * drawCanvas.width;
+        let y = object.y * drawCanvas.height;
+        let width = (object.width * drawCanvas.width) - x;
+        let height = (object.height * drawCanvas.height) - y;
+
+        //flip the x axis if local video is mirrored
+        if (mirror){
+            x = drawCanvas.width - (x + width)
+        }
+
+        drawCtx.fillText(object.class_name + " - " + Math.round(object.score * 100, 1) + "%", x + 5, y + 20);
+        drawCtx.strokeRect(x, y, width, height);
+
+    });
+}
+
+-------------------------------------
+Optimizations
+-------------------------------------
+//Check if the image has changed & enough time has passeed sending it to the API
+function sendImageFromCanvas() {
+
+    imageCtx.drawImage(v, 0, 0, v.videoWidth, v.videoHeight, 0, 0, uploadWidth, uploadWidth * (v.videoHeight / v.videoWidth));
+
+    let imageChanged = imageChange(imageCtx, imageChangeThreshold);
+    let enoughTime = (new Date() - lastFrameTime) > updateInterval;
+
+    if (imageChanged && enoughTime) {
+        imageCanvas.toBlob(postFile, 'image/jpeg');
+        lastFrameTime = new Date();
+    }
+    else {
+        setTimeout(sendImageFromCanvas, updateInterval);
+    }
+}
+
+
+
+//Function to measure the chagne in an image
+function imageChange(sourceCtx, changeThreshold) {
+
+    let changedPixels = 0;
+    const threshold = changeThreshold * sourceCtx.canvas.width * sourceCtx.canvas.height;   //the number of pixes that change change
+
+    let currentFrame = sourceCtx.getImageData(0, 0, sourceCtx.canvas.width, sourceCtx.canvas.height).data;
+
+    //handle the first frame
+    if (lastFrameData === null) {
+        lastFrameData = currentFrame;
+        return true;
+    }
+
+    //look for the number of pixels that changed
+    for (let i = 0; i < currentFrame.length; i += 4) {
+        let lastPixelValue = lastFrameData[i] + lastFrameData[i + 1] + lastFrameData[i + 2];
+        let currentPixelValue = currentFrame[i] + currentFrame[i + 1] + currentFrame[i + 2];
+
+        //see if the change in the current and last pixel is greater than 10; 0 was too sensitive
+        if (Math.abs(lastPixelValue - currentPixelValue) > (10)) {
+            changedPixels++
+        }
+    }
+
+    //console.log("current frame hits: " + hits);
+    lastFrameData = currentFrame;
+
+    return (changedPixels > threshold);
+
+}
+
+
+
+
+
+
+
+#####################################################################
+
+USING PRE-TRAINED MODELS WITH TENSORFLOW IN GO
+https://www.activestate.com/blog/2017/08/using-pre-trained-models-tensorflow-go
+
+#####################################################################
+
+
+// Load a frozen graph to use for queries
+modelpath := filepath.Join(*modeldir, "frozen_inference_graph.pb")
+model, err := ioutil.ReadFile(modelpath)
+if err != nil {
+    log.Fatal(err)
+}
+
+// Construct an in-memory graph from the serialized form.
+graph := tf.NewGraph()
+if err := graph.Import(model, ""); err != nil {
+    log.Fatal(err)
+}
+
+// Create a session for inference over graph.
+session, err := tf.NewSession(graph, nil)
+if err != nil {
+    log.Fatal(err)
+}
+defer session.Close()
+
+# transform data to use with TensorFlow
+
+func decodeJpegGraph() (graph *tf.Graph, input, output tf.Output, err error) {
+    s := op.NewScope()
+    input = op.Placeholder(s, tf.String)
+    output = op.ExpandDims(s,
+        op.DecodeJpeg(s, input, op.DecodeJpegChannels(3)),
+        op.Const(s.SubScope("make_batch"), int32(0)))
+    graph, err = s.Finalize()
+    return graph, input, output, err
+}
+
+#EXECUTE THE COCO GRAPH TO IDENTIFY OBJECTS
+
+output, err := session.Run(
+        map[tf.Output]*tf.Tensor{
+            inputop.Output(0): tensor,
+        },
+        []tf.Output{
+            o1.Output(0),
+            o2.Output(0),
+            o3.Output(0),
+            o4.Output(0),
+        },
+        nil)
+
+
+
+#####################################################################
+
+Image Segmentation with Tensorflow using CNNs and Conditional Random Fields
+http://warmspringwinds.github.io/tensorflow/tf-slim/2016/12/18/image-segmentation-with-tensorflow-using-cnns-and-conditional-random-fields/
+
+#####################################################################
+
+
+import numpy as np
+
+def get_kernel_size(factor):
+    """
+    Find the kernel size given the desired factor of upsampling.
+    """
+    return 2 * factor - factor % 2
+
+
+def upsample_filt(size):
+    """
+    Make a 2D bilinear kernel suitable for upsampling of the given (h, w) size.
+    """
+    factor = (size + 1) // 2
+    if size % 2 == 1:
+        center = factor - 1
+    else:
+        center = factor - 0.5
+    og = np.ogrid[:size, :size]
+    return (1 - abs(og[0] - center) / factor) * \
+           (1 - abs(og[1] - center) / factor)
+
+
+def bilinear_upsample_weights(factor, number_of_classes):
+    """
+    Create weights matrix for transposed convolution with bilinear filter
+    initialization.
+    """
+
+    filter_size = get_kernel_size(factor)
+
+    weights = np.zeros((filter_size,
+                        filter_size,
+                        number_of_classes,
+                        number_of_classes), dtype=np.float32)
+
+    upsample_kernel = upsample_filt(filter_size)
+
+    for i in xrange(number_of_classes):
+
+        weights[:, :, i, i] = upsample_kernel
+
+    return weights
+
+
+----------------------
+Upsampling helper functions and Image Loading
+----------------------
+
+
+%matplotlib inline
+
+from __future__ import division
+
+import os
+import sys
+import tensorflow as tf
+import skimage.io as io
+import numpy as np
+
+os.environ["CUDA_VISIBLE_DEVICES"] = '1'
+sys.path.append("/home/dpakhom1/workspace/my_models/slim/")
+checkpoints_dir = '/home/dpakhom1/checkpoints'
+
+image_filename = 'cat.jpg'
+annotation_filename = 'cat_annotation.png'
+
+image_filename_placeholder = tf.placeholder(tf.string)
+annotation_filename_placeholder = tf.placeholder(tf.string)
+is_training_placeholder = tf.placeholder(tf.bool)
+
+feed_dict_to_use = {image_filename_placeholder: image_filename,
+                    annotation_filename_placeholder: annotation_filename,
+                    is_training_placeholder: True}
+
+image_tensor = tf.read_file(image_filename_placeholder)
+annotation_tensor = tf.read_file(annotation_filename_placeholder)
+
+image_tensor = tf.image.decode_jpeg(image_tensor, channels=3)
+annotation_tensor = tf.image.decode_png(annotation_tensor, channels=1)
+
+# Get ones for each class instead of a number -- we need that
+# for cross-entropy loss later on. Sometimes the groundtruth
+# masks have values other than 1 and 0.
+class_labels_tensor = tf.equal(annotation_tensor, 1)
+background_labels_tensor = tf.not_equal(annotation_tensor, 1)
+
+# Convert the boolean values into floats -- so that
+# computations in cross-entropy loss is correct
+bit_mask_class = tf.to_float(class_labels_tensor)
+bit_mask_background = tf.to_float(background_labels_tensor)
+
+combined_mask = tf.concat(concat_dim=2, values=[bit_mask_class,
+                                                bit_mask_background])
+
+# Lets reshape our input so that it becomes suitable for
+# tf.softmax_cross_entropy_with_logits with [batch_size, num_classes]
+flat_labels = tf.reshape(tensor=combined_mask, shape=(-1, 2))
+
+
+----------------------
+Loss function definition and training using Adam Optimization Algorithm.
+----------------------
+
+import numpy as np
+import tensorflow as tf
+import sys
+import os
+from matplotlib import pyplot as plt
+
+fig_size = [15, 4]
+plt.rcParams["figure.figsize"] = fig_size
+
+import urllib2
+
+slim = tf.contrib.slim
+
+from nets import vgg
+from preprocessing import vgg_preprocessing
+
+# Load the mean pixel values and the function
+# that performs the subtraction from each pixel
+from preprocessing.vgg_preprocessing import (_mean_image_subtraction,
+                                            _R_MEAN, _G_MEAN, _B_MEAN)
+
+upsample_factor = 32
+number_of_classes = 2
+log_folder = '/home/dpakhom1/tf_projects/segmentation/log_folder'
+
+vgg_checkpoint_path = os.path.join(checkpoints_dir, 'vgg_16.ckpt')
+
+# Convert image to float32 before subtracting the
+# mean pixel value
+image_float = tf.to_float(image_tensor, name='ToFloat')
+
+# Subtract the mean pixel value from each pixel
+mean_centered_image = _mean_image_subtraction(image_float,
+                                          [_R_MEAN, _G_MEAN, _B_MEAN])
+
+processed_images = tf.expand_dims(mean_centered_image, 0)
+
+upsample_filter_np = bilinear_upsample_weights(upsample_factor,
+                                               number_of_classes)
+
+upsample_filter_tensor = tf.constant(upsample_filter_np)
+
+# Define the model that we want to use -- specify to use only two classes at the last layer
+with slim.arg_scope(vgg.vgg_arg_scope()):
+
+    logits, end_points = vgg.vgg_16(processed_images,
+                           num_classes=2,
+                           is_training=is_training_placeholder,
+                           spatial_squeeze=False,
+                           fc_conv_padding='SAME')
+
+downsampled_logits_shape = tf.shape(logits)
+
+# Calculate the ouput size of the upsampled tensor
+upsampled_logits_shape = tf.pack([
+                                  downsampled_logits_shape[0],
+                                  downsampled_logits_shape[1] * upsample_factor,
+                                  downsampled_logits_shape[2] * upsample_factor,
+                                  downsampled_logits_shape[3]
+                                 ])
+
+# Perform the upsampling
+upsampled_logits = tf.nn.conv2d_transpose(logits, upsample_filter_tensor,
+                                 output_shape=upsampled_logits_shape,
+                                 strides=[1, upsample_factor, upsample_factor, 1])
+
+# Flatten the predictions, so that we can compute cross-entropy for
+# each pixel and get a sum of cross-entropies.
+flat_logits = tf.reshape(tensor=upsampled_logits, shape=(-1, number_of_classes))
+
+cross_entropies = tf.nn.softmax_cross_entropy_with_logits(logits=flat_logits,
+                                                          labels=flat_labels)
+
+cross_entropy_sum = tf.reduce_sum(cross_entropies)
+
+# Tensor to get the final prediction for each pixel -- pay
+# attention that we don't need softmax in this case because
+# we only need the final decision. If we also need the respective
+# probabilities we will have to apply softmax.
+pred = tf.argmax(upsampled_logits, dimension=3)
+
+probabilities = tf.nn.softmax(upsampled_logits)
+
+# Here we define an optimizer and put all the variables
+# that will be created under a namespace of 'adam_vars'.
+# This is done so that we can easily access them later.
+# Those variables are used by adam optimizer and are not
+# related to variables of the vgg model.
+
+# We also retrieve gradient Tensors for each of our variables
+# This way we can later visualize them in tensorboard.
+# optimizer.compute_gradients and optimizer.apply_gradients
+# is equivalent to running:
+# train_step = tf.train.AdamOptimizer(learning_rate=0.0001).minimize(cross_entropy_sum)
+with tf.variable_scope("adam_vars"):
+    optimizer = tf.train.AdamOptimizer(learning_rate=0.0001)
+    gradients = optimizer.compute_gradients(loss=cross_entropy_sum)
+
+    for grad_var_pair in gradients:
+
+        current_variable = grad_var_pair[1]
+        current_gradient = grad_var_pair[0]
+
+        # Relace some characters from the original variable name
+        # tensorboard doesn't accept ':' symbol
+        gradient_name_to_save = current_variable.name.replace(":", "_")
+
+        # Let's get histogram of gradients for each layer and
+        # visualize them later in tensorboard
+        tf.summary.histogram(gradient_name_to_save, current_gradient)
+
+    train_step = optimizer.apply_gradients(grads_and_vars=gradients)
+
+# Now we define a function that will load the weights from VGG checkpoint
+# into our variables when we call it. We exclude the weights from the last layer
+# which is responsible for class predictions. We do this because
+# we will have different number of classes to predict and we can't
+# use the old ones as an initialization.
+vgg_except_fc8_weights = slim.get_variables_to_restore(exclude=['vgg_16/fc8', 'adam_vars'])
+
+# Here we get variables that belong to the last layer of network.
+# As we saw, the number of classes that VGG was originally trained on
+# is different from ours -- in our case it is only 2 classes.
+vgg_fc8_weights = slim.get_variables_to_restore(include=['vgg_16/fc8'])
+
+adam_optimizer_variables = slim.get_variables_to_restore(include=['adam_vars'])
+
+# Add summary op for the loss -- to be able to see it in
+# tensorboard.
+tf.summary.scalar('cross_entropy_loss', cross_entropy_sum)
+
+# Put all summary ops into one op. Produces string when
+# you run it.
+merged_summary_op = tf.summary.merge_all()
+
+# Create the summary writer -- to write all the logs
+# into a specified file. This file can be later read
+# by tensorboard.
+summary_string_writer = tf.summary.FileWriter(log_folder)
+
+# Create the log folder if doesn't exist yet
+if not os.path.exists(log_folder):
+    os.makedirs(log_folder)
+
+# Create an OP that performs the initialization of
+# values of variables to the values from VGG.
+read_vgg_weights_except_fc8_func = slim.assign_from_checkpoint_fn(
+                                   vgg_checkpoint_path,
+                                   vgg_except_fc8_weights)
+
+# Initializer for new fc8 weights -- for two classes.
+vgg_fc8_weights_initializer = tf.variables_initializer(vgg_fc8_weights)
+
+# Initializer for adam variables
+optimization_variables_initializer = tf.variables_initializer(adam_optimizer_variables)
+
+with tf.Session() as sess:
+
+    # Run the initializers.
+    read_vgg_weights_except_fc8_func(sess)
+    sess.run(vgg_fc8_weights_initializer)
+    sess.run(optimization_variables_initializer)
+
+    train_image, train_annotation = sess.run([image_tensor, annotation_tensor],
+                                              feed_dict=feed_dict_to_use)
+
+    f, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
+    ax1.imshow(train_image)
+    ax1.set_title('Input image')
+    probability_graph = ax2.imshow(np.dstack((train_annotation,)*3)*100)
+    ax2.set_title('Input Ground-Truth Annotation')
+    plt.show()
+
+    # Let's perform 10 interations
+    for i in range(10):
+
+        loss, summary_string = sess.run([cross_entropy_sum, merged_summary_op],
+                                        feed_dict=feed_dict_to_use)
+
+        sess.run(train_step, feed_dict=feed_dict_to_use)
+
+        pred_np, probabilities_np = sess.run([pred, probabilities],
+                                              feed_dict=feed_dict_to_use)
+
+        summary_string_writer.add_summary(summary_string, i)
+
+        cmap = plt.get_cmap('bwr')
+
+        f, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
+        ax1.imshow(np.uint8(pred_np.squeeze() != 1), vmax=1.5, vmin=-0.4, cmap=cmap)
+        ax1.set_title('Argmax. Iteration # ' + str(i))
+        probability_graph = ax2.imshow(probabilities_np.squeeze()[:, :, 0])
+        ax2.set_title('Probability of the Class. Iteration # ' + str(i))
+
+        plt.colorbar(probability_graph)
+        plt.show()
+
+        print("Current Loss: " +  str(loss))
+
+    feed_dict_to_use[is_training_placeholder] = False
+
+    final_predictions, final_probabilities, final_loss = sess.run([pred,
+                                                                   probabilities,
+                                                                   cross_entropy_sum],
+                                                         feed_dict=feed_dict_to_use)
+
+
+    f, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
+
+    ax1.imshow(np.uint8(final_predictions.squeeze() != 1),
+               vmax=1.5,
+               vmin=-0.4,
+               cmap=cmap)
+
+    ax1.set_title('Final Argmax')
+
+
+    probability_graph = ax2.imshow(final_probabilities.squeeze()[:, :, 0])
+    ax2.set_title('Final Probability of the Class')
+    plt.colorbar(probability_graph)
+
+    plt.show()
+
+    print("Final Loss: " +  str(final_loss))
+
+
+
+
+summary_string_writer.close()
+
+---------------------------------------
+Conditional Random Field post-processing
+https://github.com/lucasb-eyer/pydensecrf/tree/94d1cddab277e6e93812dfe7daca7d4693560758
+---------------------------------------
+
+
+import sys
+
+path = "/home/dpakhom1/dense_crf_python/"
+sys.path.append(path)
+
+import pydensecrf.densecrf as dcrf
+
+from pydensecrf.utils import compute_unary, create_pairwise_bilateral, \
+    create_pairwise_gaussian, softmax_to_unary
+
+import skimage.io as io
+
+image = train_image
+
+softmax = final_probabilities.squeeze()
+
+softmax = processed_probabilities.transpose((2, 0, 1))
+
+# The input should be the negative of the logarithm of probability values
+# Look up the definition of the softmax_to_unary for more information
+unary = softmax_to_unary(processed_probabilities)
+
+# The inputs should be C-continious -- we are using Cython wrapper
+unary = np.ascontiguousarray(unary)
+
+d = dcrf.DenseCRF(image.shape[0] * image.shape[1], 2)
+
+d.setUnaryEnergy(unary)
+
+# This potential penalizes small pieces of segmentation that are
+# spatially isolated -- enforces more spatially consistent segmentations
+feats = create_pairwise_gaussian(sdims=(10, 10), shape=image.shape[:2])
+
+d.addPairwiseEnergy(feats, compat=3,
+                    kernel=dcrf.DIAG_KERNEL,
+                    normalization=dcrf.NORMALIZE_SYMMETRIC)
+
+# This creates the color-dependent features --
+# because the segmentation that we get from CNN are too coarse
+# and we can use local color features to refine them
+feats = create_pairwise_bilateral(sdims=(50, 50), schan=(20, 20, 20),
+                                   img=image, chdim=2)
+
+d.addPairwiseEnergy(feats, compat=10,
+                     kernel=dcrf.DIAG_KERNEL,
+                     normalization=dcrf.NORMALIZE_SYMMETRIC)
+Q = d.inference(5)
+
+res = np.argmax(Q, axis=0).reshape((image.shape[0], image.shape[1]))
+
+cmap = plt.get_cmap('bwr')
+
+f, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
+ax1.imshow(res, vmax=1.5, vmin=-0.4, cmap=cmap)
+ax1.set_title('Segmentation with CRF post-processing')
+probability_graph = ax2.imshow(np.dstack((train_annotation,)*3)*100)
+ax2.set_title('Ground-Truth Annotation')
+plt.show()
+
+
+
+
+
+
+
+
+#####################################################################
+
+Arrays and working with Images
+https://learningtensorflow.com/lesson3/
+
+#####################################################################
+
+----------------------------
+## code reads in the image as a NumPy array,
+----------------------------
+
+import matplotlib.image as mpimg
+import os
+# First, load the image
+dir_path = os.path.dirname(os.path.realpath(__file__))
+filename = dir_path + "/MarshOrchid.jpg"
+
+# Load the image
+image = mpimg.imread(filename)
+
+# Print out its shape
+print(image.shape)
+
+
+
+import matplotlib.pyplot as plt
+plt.imshow(image)
+plt.show()
+
+----------------------------
+## Geometric Manipulations
+----------------------------
+
+import tensorflow as tf
+import matplotlib.image as mpimg
+import matplotlib.pyplot as plt
+import os
+
+# First, load the image again
+dir_path = os.path.dirname(os.path.realpath(__file__))
+filename = dir_path + "/MarshOrchid.jpg"
+image = mpimg.imread(filename)
+
+# Create a TensorFlow Variable
+x = tf.Variable(image, name='x')
+
+model = tf.global_variables_initializer()
+
+with tf.Session() as session:
+    x = tf.transpose(x, perm=[1, 0, 2])
+	session.run(model)
+	result = session.run(x)
+
+
+plt.imshow(result)
+plt.show()
+
+# x = tf.transpose(x, perm=[1, 0, 2])
+
+
+
+
+
+
+
+
+import numpy as np
+import tensorflow as tf
+import matplotlib.image as mpimg
+import matplotlib.pyplot as plt
+import os
+# First, load the image again
+dir_path = os.path.dirname(os.path.realpath(__file__))
+filename = dir_path + "/MarshOrchid.jpg"
+image = mpimg.imread(filename)
+height, width, depth = image.shape
+
+# Create a TensorFlow Variable
+x = tf.Variable(image, name='x')
+
+model = tf.global_variables_initializer()
+
+with tf.Session() as session:
+    x = tf.reverse_sequence(x, [width] * height, 1, batch_dim=0)
+    session.run(model)
+    result = session.run(x)
+
+print(result.shape)
+plt.imshow(result)
+plt.show()
+
+# x = tf.reverse_sequence(x, np.ones((height,)) * width, 1, batch_dim=0)
+
+
+
+
+
+
+
+
+
+
+#####################################################################
+Tensorflow Object Detection Tutorial on Images
+http://www.handsonmachinelearning.com/blog/womeQ/tensorflow-object-detection-tutorial-on-images
+#####################################################################
+
+pip install --ignore-installed --upgrade tensorflow
+
+import sys
+sys.path.append("C:/MYLOCALFILES/YOLO/models/research/")
+sys.path.append("C:/MYLOCALFILES/YOLO/models/research/object_detection")
+
+
+mport numpy as np
+import os
+import six.moves.urllib as urllib
+import tarfile
+import tensorflow as tf
+import zipfile
+from collections import defaultdict
+from io import StringIO
+from matplotlib import pyplot as plt
+from PIL import Image
+from object_detection.utils import ops as utils_ops
+%matplotlib inline
+
+if tf.__version__ < '1.4.0':
+  raise ImportError('Please upgrade your tensorflow installation to v1.4.* or later!')
+
+from object_detection.utils import label_map_util
+from object_detection.utils import visualization_utils as vis_util
+
+#base path where we will save our models
+PATH_TO_OBJ_DETECTION = 'C:/MYLOCALFILES/yolo/models/research/object_detection'
+
+# Specify Model To Download. Obtain the model name from the object detection model zoo.
+MODEL_NAME = 'ssd_inception_v2_coco_2017_11_17'
+MODEL_FILE = MODEL_NAME + '.tar.gz'
+DOWNLOAD_BASE = 'http://download.tensorflow.org/models/object_detection/'
+
+
+DESTINATION_MODEL_TAR_PATH = PATH_TO_OBJ_DETECTION+'/data/'+MODEL_FILE
+#opener = urllib.request.URLopener()
+#opener.retrieve(DOWNLOAD_BASE + MODEL_FILE, DESTINATION_MODEL_PATH)
+tar_file = tarfile.open(DESTINATION_MODEL_TAR_PATH)
+for file in tar_file.getmembers():
+    file_name = os.path.basename(file.name)
+    if 'frozen_inference_graph.pb' in file_name:
+        tar_file.extract(file, PATH_TO_OBJ_DETECTION+'/data')
+
+
+# Path to frozen detection graph. This is the actual model that is used for the object detection.
+PATH_TO_CKPT = MODEL_NAME + '/frozen_inference_graph.pb'
+
+detection_graph = tf.Graph()
+with detection_graph.as_default():
+    od_graph_def = tf.GraphDef()
+    with tf.gfile.GFile(PATH_TO_CKPT, 'rb') as fid:
+        serialized_graph = fid.read()
+        od_graph_def.ParseFromString(serialized_graph)
+        tf.import_graph_def(od_graph_def, name='')
+
+-------------------------------
+# Load the Labels
+-------------------------------
+
+# List of the strings that is used to add correct label for each box.
+PATH_TO_LABELS = PATH_TO_OBJ_DETECTION+'/data/mscoco_label_map.pbtxt'
+NUM_CLASSES=90
+
+label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
+categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
+category_index = label_map_util.create_category_index(categories)
+print(category_index[4])
+
+-------------------------------
+# Image to Numpy Array
+-------------------------------
+
+def load_image_into_numpy_array(image):
+    (im_width, im_height) = image.size
+    return np.array(image.getdata()).reshape((im_height, im_width, 3)).astype(np.uint8)
+
+-------------------------------
+# Object Detection Methods
+-------------------------------
+
+def run_inference_for_single_image(image, graph):
+    with graph.as_default():
+        with tf.Session() as sess:
+            # Get handles to input and output tensors
+            ops = tf.get_default_graph().get_operations()
+            all_tensor_names = {output.name for op in ops for output in op.outputs}
+            tensor_dict = {}
+            for key in ['num_detections', 'detection_boxes', 'detection_scores','detection_classes', 'detection_masks']:
+                tensor_name = key + ':0'
+                if tensor_name in all_tensor_names:
+                    tensor_dict[key] = tf.get_default_graph().get_tensor_by_name(tensor_name)
+                #END if tensor_name in
+                if 'detection_masks' in tensor_dict:
+                    # The following processing is only for single image
+                    detection_boxes = tf.squeeze(tensor_dict['detection_boxes'], [0])
+                    detection_masks = tf.squeeze(tensor_dict['detection_masks'], [0])
+                    # Reframe is required to translate mask from box coordinates to image coordinates and fit the image size.
+                    real_num_detection = tf.cast(tensor_dict['num_detections'][0], tf.int32)
+                    detection_boxes = tf.slice(detection_boxes, [0, 0], [real_num_detection, -1])
+                    detection_masks = tf.slice(detection_masks, [0, 0, 0], [real_num_detection, -1, -1])
+                    detection_masks_reframed = utils_ops.reframe_box_masks_to_image_masks(
+                        detection_masks, detection_boxes, image.shape[0], image.shape[1])
+                    detection_masks_reframed = tf.cast(
+                        tf.greater(detection_masks_reframed, 0.5), tf.uint8)
+                    # Follow the convention by adding back the batch dimension
+                    tensor_dict['detection_masks'] = tf.expand_dims(detection_masks_reframed, 0)
+                #END IF DETECTION MASKS
+
+            #END FOR KEY LOOP
+
+            image_tensor = tf.get_default_graph().get_tensor_by_name('image_tensor:0')
+
+            # Run inference
+            output_dict = sess.run(tensor_dict,
+                                 feed_dict={image_tensor: np.expand_dims(image, 0)})
+
+            # all outputs are float32 numpy arrays, so convert types as appropriate
+            output_dict['num_detections'] = int(output_dict['num_detections'][0])
+            output_dict['detection_classes'] = output_dict[
+              'detection_classes'][0].astype(np.uint8)
+            output_dict['detection_boxes'] = output_dict['detection_boxes'][0]
+            output_dict['detection_scores'] = output_dict['detection_scores'][0]
+            if 'detection_masks' in output_dict:
+                output_dict['detection_masks'] = output_dict['detection_masks'][0]
+    return output_dict
+
+def Run_Object_Detection_On_Images(images_path):
+    IMAGE_SIZE = (12, 8)
+    for image_path in images_path:
+        image = Image.open(image_path)
+        # the array based representation of the image will be used later in order to prepare the
+        # result image with boxes and labels on it.
+        image_np = load_image_into_numpy_array(image)
+
+        # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
+        image_np_expanded = np.expand_dims(image_np, axis=0)
+
+        # Actual detection.
+        output_dict = run_inference_for_single_image(image_np, detection_graph)
+
+        # Visualization of the results of a detection.
+        vis_util.visualize_boxes_and_labels_on_image_array(
+          image_np,
+          output_dict['detection_boxes'],
+          output_dict['detection_classes'],
+          output_dict['detection_scores'],
+          category_index,
+          instance_masks=output_dict.get('detection_masks'),
+          use_normalized_coordinates=True,
+          line_thickness=5)
+        plt.figure(figsize=IMAGE_SIZE)
+        plt.imshow(image_np)
+
+
+-------------------------------
+# Run Object Detection
+-------------------------------
+
+from os import listdir
+from os.path import isfile, join
+
+TEST_IMAGES_BASE_PATH = "C:/MYLOCALFILES/yolo/Images/"
+TEST_IMAGES_PATHS = [TEST_IMAGES_BASE_PATH+f for f in listdir(TEST_IMAGES_BASE_PATH) if isfile(join(TEST_IMAGES_BASE_PATH, f))]
+Run_Object_Detectio_On_Images(TEST_IMAGES_PATHS)
+
+
+
+
+
+#####################################################################
+How to see sharper with Tensorflow in C#
+https://medium.com/@qdraw/how-to-see-sharper-with-tensorflow-acde6b7da1d5
+
+#####################################################################
+
+https://github.com/qdraw/theiacore
+https://github.com/qdraw/theiacore/releases/download/0.1/mscoco_label_map.pbtxt
+https://github.com/qdraw/theiacore/releases/download/0.1/mscoco_label_map_nl.pbtxt
+https://github.com/qdraw/theiacore/releases/download/0.1/ssd_mobilenet_v1_coco_2017_11_17.pb
+
+
+
+#####################################################################
+Train your Object Detection model locally with TensorFlow
+http://androidkt.com/train-object-detection/
+#####################################################################
+
+git clone https://github.com/tensorflow/models.git
+
+# https://github.com/tensorflow/models/archive/master.zip
+
+-------------------------------
+install
+-------------------------------
+sudo apt-get install protobuf-compiler python-pil python-lxm
+
+# From tensorflow/models/
+protoc object_detection/protos/*.proto --python_out=.
+# From tensorflow/models/
+export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
+# From tensorflow/models/
+python object_detection/builders/model_builder_test.py
+
+-------------------------------
+Preparing Inputs
+Directory Structure for Training input data
+-------------------------------
+
+# From the tensorflow/models/ directory
++ annotations
+     -xmls
+     -trainval.txt
++ images
++ label.pbtxt
+
+
+# From the tensorflow/models/ directory
+ls images | grep ".jpg" | sed s/.jpg// > annotations/trainval.txt
+
+Label Maps - label.pbtxt
+item {
+  id: 1
+  name: 'Dog'
+}
+
+# Generating the Pet TFRecord files
+# From the tensorflow/models/ directory
+python object_detection/create_pet_tf_record.py
+--label_map_path=object_detection/label.pbtxt
+--data_dir=`pwd`
+--output_dir=`pwd
+
+# Training the model
+
+# From the tensorflow/models/ directory
+python object_detection/train.py
+--logtostderr
+--pipeline_config_path=/tensorflow/models/object_detection/samples/configs/ssd_mobilenet_v1_pets.config
+--train_dir=/tensorflow/models/pet
+
+
+# Running the Evaluation Job
+
+# From the tensorflow/models/ directory
+python object_detection/eval.py \
+    --logtostderr \
+    --pipeline_config_path=${PATH_TO_YOUR_PIPELINE_CONFIG} \
+    --checkpoint_dir=${PATH_TO_TRAIN_DIR} \
+    --eval_dir=${PATH_TO_EVAL_DIR}
+
+
+# Running TensorBoard
+tensorboard --logdir=${PATH_TO_MODEL_DIRECTORY}
+
+# Exporting the Tensorflow Graph
+
+model.ckpt-${CHECKPOINT_NUMBER}.data-00000-of-00001
+model.ckpt-${CHECKPOINT_NUMBER}.index
+model.ckpt-${CHECKPOINT_NUMBER}.meta
+
+# From the tensorflow/models/ directory
+python object_detection/export_inference_graph.py
+--input_type image_tensor
+--pipeline_config_path=/tensorflow/models/object_detection/samples/configs/ssd_mobilenet_v1_pets.config
+--trained_checkpoint_prefix  pet/model.ckpt-200
+--output_directory parrot/exported_model_directory
+
+
+
+
+
+#####################################################################
+Neural Transfer with PyTorch
+https://pytorch.org/tutorials/advanced/neural_style_tutorial.html
+#####################################################################
+
+#-----------------------
+# PyTorch implementation
+#-----------------------
+from __future__ import print_function
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+
+from PIL import Image
+import matplotlib.pyplot as plt
+
+import torchvision.transforms as transforms
+import torchvision.models as models
+
+import copy
+
+#-----------------------
+# Cuda
+#-----------------------
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+#-----------------------
+# Load images
+#-----------------------
+
+# desired size of the output image
+imsize = 512 if torch.cuda.is_available() else 128  # use small size if no gpu
+
+loader = transforms.Compose([
+    transforms.Resize(imsize),  # scale imported image
+    transforms.ToTensor()])  # transform it into a torch tensor
+
+
+def image_loader(image_name):
+    image = Image.open(image_name)
+    # fake batch dimension required to fit network's input dimensions
+    image = loader(image).unsqueeze(0)
+    return image.to(device, torch.float)
+
+
+style_img = image_loader("images/picasso.jpg")
+content_img = image_loader("images/dancing.jpg")
+
+assert style_img.size() == content_img.size(), \
+    "we need to import style and content images of the same size"
+
+
+
+#-----------------------
+#	Display images
+#-----------------------
+
+unloader = transforms.ToPILImage()  # reconvert into PIL image
+
+plt.ion()
+
+def imshow(tensor, title=None):
+    image = tensor.cpu().clone()  # we clone the tensor to not do changes on it
+    image = image.squeeze(0)      # remove the fake batch dimension
+    image = unloader(image)
+    plt.imshow(image)
+    if title is not None:
+        plt.title(title)
+    plt.pause(0.001) # pause a bit so that plots are updated
+
+
+plt.figure()
+imshow(style_img, title='Style Image')
+
+plt.figure()
+imshow(content_img, title='Content Image')
+
+#-----------------------
+# Content loss
+#-----------------------
+
+class ContentLoss(nn.Module):
+
+    def __init__(self, target,):
+        super(ContentLoss, self).__init__()
+        # we 'detach' the target content from the tree used
+        # to dynamically compute the gradient: this is a stated value,
+        # not a variable. Otherwise the forward method of the criterion
+        # will throw an error.
+        self.target = target.detach()
+
+    def forward(self, input):
+        self.loss = F.mse_loss(input, self.target)
+        return input
+
+#-----------------------
+Style loss
+#-----------------------
+
+def gram_matrix(input):
+    a, b, c, d = input.size()  # a=batch size(=1)
+    # b=number of feature maps
+    # (c,d)=dimensions of a f. map (N=c*d)
+
+    features = input.view(a * b, c * d)  # resise F_XL into \hat F_XL
+
+    G = torch.mm(features, features.t())  # compute the gram product
+
+    # we 'normalize' the values of the gram matrix
+    # by dividing by the number of element in each feature maps.
+    return G.div(a * b * c * d)
+
+class StyleLoss(nn.Module):
+
+    def __init__(self, target_feature):
+        super(StyleLoss, self).__init__()
+        self.target = gram_matrix(target_feature).detach()
+
+    def forward(self, input):
+        G = gram_matrix(input)
+        self.loss = F.mse_loss(G, self.target)
+        return input
+
+
+#-----------------------
+Load the neural network
+#-----------------------
+
+cnn = models.vgg19(pretrained=True).features.to(device).eval()
+
+cnn_normalization_mean = torch.tensor([0.485, 0.456, 0.406]).to(device)
+cnn_normalization_std = torch.tensor([0.229, 0.224, 0.225]).to(device)
+
+# create a module to normalize input image so we can easily put it in a
+# nn.Sequential
+class Normalization(nn.Module):
+    def __init__(self, mean, std):
+        super(Normalization, self).__init__()
+        # .view the mean and std to make them [C x 1 x 1] so that they can
+        # directly work with image Tensor of shape [B x C x H x W].
+        # B is batch size. C is number of channels. H is height and W is width.
+        self.mean = torch.tensor(mean).view(-1, 1, 1)
+        self.std = torch.tensor(std).view(-1, 1, 1)
+
+    def forward(self, img):
+        # normalize img
+        return (img - self.mean) / self.std
+
+# desired depth layers to compute style/content losses :
+content_layers_default = ['conv_4']
+style_layers_default = ['conv_1', 'conv_2', 'conv_3', 'conv_4', 'conv_5']
+
+def get_style_model_and_losses(cnn, normalization_mean, normalization_std,
+                               style_img, content_img,
+                               content_layers=content_layers_default,
+                               style_layers=style_layers_default):
+    cnn = copy.deepcopy(cnn)
+
+    # normalization module
+    normalization = Normalization(normalization_mean, normalization_std).to(device)
+
+    # just in order to have an iterable access to or list of content/syle
+    # losses
+    content_losses = []
+    style_losses = []
+
+    # assuming that cnn is a nn.Sequential, so we make a new nn.Sequential
+    # to put in modules that are supposed to be activated sequentially
+    model = nn.Sequential(normalization)
+
+    i = 0  # increment every time we see a conv
+    for layer in cnn.children():
+        if isinstance(layer, nn.Conv2d):
+            i += 1
+            name = 'conv_{}'.format(i)
+        elif isinstance(layer, nn.ReLU):
+            name = 'relu_{}'.format(i)
+            # The in-place version doesn't play very nicely with the ContentLoss
+            # and StyleLoss we insert below. So we replace with out-of-place
+            # ones here.
+            layer = nn.ReLU(inplace=False)
+        elif isinstance(layer, nn.MaxPool2d):
+            name = 'pool_{}'.format(i)
+        elif isinstance(layer, nn.BatchNorm2d):
+            name = 'bn_{}'.format(i)
+        else:
+            raise RuntimeError('Unrecognized layer: {}'.format(layer.__class__.__name__))
+
+        model.add_module(name, layer)
+
+        if name in content_layers:
+            # add content loss:
+            target = model(content_img).detach()
+            content_loss = ContentLoss(target)
+            model.add_module("content_loss_{}".format(i), content_loss)
+            content_losses.append(content_loss)
+
+        if name in style_layers:
+            # add style loss:
+            target_feature = model(style_img).detach()
+            style_loss = StyleLoss(target_feature)
+            model.add_module("style_loss_{}".format(i), style_loss)
+            style_losses.append(style_loss)
+
+    # now we trim off the layers after the last content and style losses
+    for i in range(len(model) - 1, -1, -1):
+        if isinstance(model[i], ContentLoss) or isinstance(model[i], StyleLoss):
+            break
+
+    model = model[:(i + 1)]
+
+    return model, style_losses, content_losses
+
+
+# avgpool = nn.AvgPool2d(kernel_size=layer.kernel_size,
+#                         stride=layer.stride, padding = layer.padding)
+# model.add_module(name,avgpool)
+
+#-----------------------
+# Input image
+#-----------------------
+
+input_img = content_img.clone()
+# if you want to use a white noise instead uncomment the below line:
+# input_img = torch.randn(content_img.data.size(), device=device)
+
+# add the original input image to the figure:
+plt.figure()
+imshow(input_img, title='Input Image')
+
+#-----------------------
+Gradient descent
+#-----------------------
+
+def get_input_optimizer(input_img):
+    # this line to show that input is a parameter that requires a gradient
+    optimizer = optim.LBFGS([input_img.requires_grad_()])
+    return optimizer
+
+def run_style_transfer(cnn, normalization_mean, normalization_std,
+                       content_img, style_img, input_img, num_steps=300,
+                       style_weight=1000000, content_weight=1):
+    """Run the style transfer."""
+    print('Building the style transfer model..')
+    model, style_losses, content_losses = get_style_model_and_losses(cnn,
+        normalization_mean, normalization_std, style_img, content_img)
+    optimizer = get_input_optimizer(input_img)
+
+    print('Optimizing..')
+    run = [0]
+    while run[0] <= num_steps:
+
+        def closure():
+            # correct the values of updated input image
+            input_img.data.clamp_(0, 1)
+
+            optimizer.zero_grad()
+            model(input_img)
+            style_score = 0
+            content_score = 0
+
+            for sl in style_losses:
+                style_score += sl.loss
+            for cl in content_losses:
+                content_score += cl.loss
+
+            style_score *= style_weight
+            content_score *= content_weight
+
+            loss = style_score + content_score
+            loss.backward()
+
+            run[0] += 1
+            if run[0] % 50 == 0:
+                print("run {}:".format(run))
+                print('Style Loss : {:4f} Content Loss: {:4f}'.format(
+                    style_score.item(), content_score.item()))
+                print()
+
+            return style_score + content_score
+
+        optimizer.step(closure)
+
+    # a last correction...
+    input_img.data.clamp_(0, 1)
+
+    return input_img
+
+#-----------------------
+# Finally, run the algorithm
+#-----------------------
+
+output = run_style_transfer(cnn, cnn_normalization_mean, cnn_normalization_std,
+                            content_img, style_img, input_img)
+
+plt.figure()
+imshow(output, title='Output Image')
+
+# sphinx_gallery_thumbnail_number = 4
+plt.ioff()
+plt.show()
+
+https://pytorch.org/tutorials/_downloads/neural_style_tutorial.py
+https://pytorch.org/tutorials/_downloads/neural_style_tutorial.ipynb
