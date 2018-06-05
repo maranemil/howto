@@ -6,7 +6,7 @@
 
 | *Repo* | URL |
 | ------ | ------ |
-|gSLICr: SLIC superpixels at over 250Hz | [https://github.com/carlren/gSLICr][PlDb] |
+|gSLICr: SLIC superpixels at over 250Hz | https://github.com/carlren/gSLICr |
 |Sample apps and sites with Algorithmia integration|https://github.com/algorithmiaio/sample-apps|
 |Instance Segmenation through Webcam using Mask-RCNN|https://github.com/SrikanthVelpuri/Mask_RCNN|
 |Train a TensorFlow Object Detection for multiple object detection on Windows Classifier|https://github.com/EdjeElectronics/TensorFlow-Object-Detection-API-Tutorial-Train-Multiple-Objects-Windows-10|
@@ -146,7 +146,7 @@
 
 ### Misc
 
-| Repo | URL ||
+| Repo | URL |*|
 |---|---|---|
 |Python libraries for CRC calculations|https://github.com/cristianav/PyCRC-old||
 |Amazon MWS client libraries|https://github.com/caponica/AmazonMwsComplete||
