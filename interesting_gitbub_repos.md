@@ -77,7 +77,7 @@
 
 ### OpenCV
 
-| *Repo* | URL | Langauge |
+| *Repo* | URL |*|
 |---|---|---|
 |Indian Number Plate Recognition System built using OpenCV|https://github.com/anuj-badhwar/Indian-Number-Plate-Recognition-System||
 |SyntheticDataCreation_Indian_NumberPlates OpenCV Numpy|https://github.com/ck2886/SyntheticDataCreation_Indian_NumberPlates||
@@ -96,7 +96,7 @@
 
 ### Tutorials / Learning
 
-| Repo | URL ||
+| Repo | URL |*|
 |---|---|---|
 |Python Machine Learning (1st edition)|https://github.com/rasbt/python-machine-learning-book||
 |Learn Machine Learning in 3 Months" by Siraj Raval on Youtube|https://github.com/llSourcell/Learn_Machine_Learning_in_3_Months||
@@ -126,7 +126,7 @@
 
 ### Web apps
 
-| Repo | URL ||
+| Repo | URL |*|
 |---|---|---|
 |Demo ToDo App with <br>Laravel Framework|https://github.com/milon/laravel-todo||
 |CakePHP demo app <br> ToDoApp|https://github.com/MitjaSt/ToDoApp||
