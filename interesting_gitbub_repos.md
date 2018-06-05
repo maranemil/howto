@@ -37,7 +37,19 @@
 |Artificial Neural Networks in Python|https://github.com/CristiVlad25/ann-python|
 |Emotion Recognition|https://github.com/dsgiitr/Emotion-Recognition|
 |Traffic-Sign-Classification|https://github.com/dsgiitr/Traffic-Sign-Classification|
-
+|Deep Learning based Artistic Style Transfer on Android using TensorFlow|https://github.com/MJ10/Style|
+|Classification And Regression Training R package|https://github.com/topepo/caret|
+|Neural-Style-Transfer Keras implementation|https://github.com/dsgiitr/Neural-Style-Transfer|
+|TensorFlow Magenta: Music and Art Generation with Machine Intelligence|https://github.com/tensorflow/magenta|
+|Natural Language Processing NLP|https://github.com/acrosson/nlp|
+|A Neural Algorithm of Artistic Style" by L. Gatys, A. Ecker, and M. Bethge.|https://github.com/fzliu/style-transfer|
+|Image super-resolution through deep learning|https://github.com/david-gpu/srez|
+|Machine Learning for Flappy Bird using Neural Network and Genetic Algorithm|https://github.com/ssusnic/Machine-Learning-Flappy-Bird|
+|Deep Photo Style Transfer|https://github.com/luanfujun/deep-photo-styletransfer|
+|TensorFlowDemonstrations of Magenta Models |https://github.com/tensorflow/magenta-demos|
+|Neural style in TensorFlow|https://github.com/anishathalye/neural-style|
+|Random Forests Tree|https://github.com/random-forests/tutorials|
+|Deep Convolutional Generative Adversarial Networks|https://github.com/Newmu/dcgan_code|
 
 ### OpenCV
 
@@ -48,6 +60,9 @@
 |Facial Recognition using OpenCV and Python|https://github.com/EvilPort2/Face-Recognition|
 |Machine Learning for OpenCV: Intelligent image processing with Python|https://github.com/mbeyeler/opencv-machine-learning|
 |Indian Number Plate Recognition System built using OpenCV|https://github.com/bhargav-polampalli/Automatic-Indian-Number-Plate-Recognition-System|
+|Automatic License Plate Recognition library|https://github.com/openalpr/openalpr|
+|React Native automatic license plate recognition package for OpenALPR|https://github.com/cardash/react-native-openalpr|
+|Mastering OpenCV with Practical Computer Vision Projects" by Packt Publishing 2012|https://github.com/MasteringOpenCV/code|
 
 ### Tutorials / Learning
 
@@ -59,6 +74,15 @@
 |Slides and code from our TensorFlow workshop.|https://github.com/random-forests/tensorflow-workshop|
 |A collection of machine learning examples and tutorials|https://github.com/lazyprogrammer/machine_learning_examples|
 |Slides and other materials from CppCon 2017|https://github.com/CppCon/CppCon2017|
+|Machine Learning From Scratch|https://github.com/eriklindernoren/ML-From-Scratch|
+|Awesome - Most Cited Deep Learning Papers|https://github.com/terryum/awesome-deep-learning-papers|
+|Deep Learning Indaba 2017 Practical content|https://github.com/deep-learning-indaba/practicals2017|
+|Introduction to Deep Learning with TensorFlow" at PyData Ann Arbor Aug 2017|https://github.com/rasbt/pydata-annarbor2017-dl-tutorial|
+|TensorFlow Tutorial and Examples for beginners https://tensorflow.org|https://github.com/aymericdamien/TensorFlow-Examples|
+|Data science and machine learning by Sundog (udemy course)|https://github.com/gautambp/machineLearning1|
+|CS 20SI: TensorFlow for Deep Learning Research.|https://github.com/chiphuyen/stanford-tensorflow-tutorials|
+|Jupyter Notebooks for the Python Data Science Handbook|https://github.com/jakevdp/PythonDataScienceHandbook|
+|Example code for the python-weka-wrapper project.|https://github.com/fracpete/python-weka-wrapper-examples|
 
 
 ### Web apps
@@ -68,7 +92,10 @@
 |Demo ToDo App with Laravel Framework|https://github.com/milon/laravel-todo|
 |CakePHP demo app - ToDoApp|https://github.com/MitjaSt/ToDoApp|
 |Kanban view on all modules for SugarCE/SuiteCRM|https://github.com/youaddon/SugarCE_SuiteCRMKanbanView|
-
+|Token-based AngularJS Authentication|https://github.com/sahat/satellizer|
+|ReactJS Laravel 5.5 Project|https://github.com/KrunalLathiya/ReactJSLaravel5.5|
+|Angular 4 in 60 Minutes app|https://github.com/bradtraversy/a4app|
+|Get started with Laravel 5.3 and AngularJS|https://github.com/jadjoubran/laravel5-angular-material-starter|
 
 ### Misc
 
