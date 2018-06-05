@@ -2,7 +2,7 @@
 
 
 
-##### Machine Learning
+### Machine Learning
 
 | *Repo* | URL |
 | ------ | ------ |
@@ -78,7 +78,7 @@
 ### OpenCV
 
 | *Repo* | URL | Langauge |
-| ------ | ------ | ----- |
+|---|---|---|
 |Indian Number Plate Recognition System built using OpenCV|https://github.com/anuj-badhwar/Indian-Number-Plate-Recognition-System||
 |SyntheticDataCreation_Indian_NumberPlates OpenCV Numpy|https://github.com/ck2886/SyntheticDataCreation_Indian_NumberPlates||
 |Facial Recognition using OpenCV and Python|https://github.com/EvilPort2/Face-Recognition||
@@ -97,7 +97,7 @@
 ### Tutorials / Learning
 
 | Repo | URL ||
-| ------ | ------ ||
+|---|---|---|
 |Python Machine Learning (1st edition)|https://github.com/rasbt/python-machine-learning-book||
 |Learn Machine Learning in 3 Months" by Siraj Raval on Youtube|https://github.com/llSourcell/Learn_Machine_Learning_in_3_Months||
 |Web Development With Node and Express|https://github.com/EthanRBrown/web-development-with-node-and-express||
@@ -127,7 +127,7 @@
 ### Web apps
 
 | Repo | URL ||
-| ------ | ------ ||
+|---|---|---|
 |Demo ToDo App with Laravel Framework|https://github.com/milon/laravel-todo||
 |CakePHP demo app - ToDoApp|https://github.com/MitjaSt/ToDoApp||
 |Kanban view on all modules for SugarCE/SuiteCRM|https://github.com/youaddon/SugarCE_SuiteCRMKanbanView||
@@ -147,7 +147,7 @@
 ### Misc
 
 | Repo | URL ||
-| ------ | ------ ||
+|---|---|---|
 |Python libraries for CRC calculations|https://github.com/cristianav/PyCRC-old||
 |Amazon MWS client libraries|https://github.com/caponica/AmazonMwsComplete||
 |Principal Component Analysis on music loops|https://github.com/umutisik/Eigentechno||
