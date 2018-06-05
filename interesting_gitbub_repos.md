@@ -75,8 +75,8 @@
 
 ### OpenCV
 
-| Repo | URL ||
-| ------ | ------ ||
+| Repo | URL | Langauge |
+| ------ | ------ | ----- |
 |Indian Number Plate Recognition System built using OpenCV|https://github.com/anuj-badhwar/Indian-Number-Plate-Recognition-System||
 |SyntheticDataCreation_Indian_NumberPlates OpenCV Numpy|https://github.com/ck2886/SyntheticDataCreation_Indian_NumberPlates||
 |Facial Recognition using OpenCV and Python|https://github.com/EvilPort2/Face-Recognition||
