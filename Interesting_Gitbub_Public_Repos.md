@@ -87,7 +87,10 @@
 |TensorFlow Image Classifier Demo by @Sirajology on Youtube|https://github.com/llSourcell/tensorflow_image_classifier|py|
 |Car evaluation|https://github.com/srinikumar/carvaluation|R|
 |PHP package - for computation of simple linear regression parameters|https://github.com/mnshankar/linear-regression|php|
-|PHP package - Machine Learning library for PHP|https://github.com/php-ai/php-ml|php|
+|PHP package - PHP-ML Machine Learning library for PHP|https://github.com/php-ai/php-ml|php|
+|PHP package - PHP-ML Examples use case of PHP-ML library.|https://github.com/php-ai/php-ml-examples|php|
+|PHP package - PHP-ML Public datasets prepared for machine learning tasks with php-ml|https://github.com/php-ai/php-ml-datasets|php|
+
 
 ### OpenCV
 
