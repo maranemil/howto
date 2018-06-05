@@ -2,7 +2,7 @@
 
 
 
-### Machine Learning
+### Machine Learning A.I.
 
 #### Tensorflow Style Transfer
 
@@ -16,32 +16,35 @@
 |Tensorflow implementation of fast neural style transfer.|https://github.com/ghwatson/faststyle|py|
 |TensorFlow CNN for fast style transfer|https://github.com/lengstrom/fast-style-transfer|py|
 |Neural-Style-Transfer Keras implementation|https://github.com/dsgiitr/Neural-Style-Transfer|py|
-|Deep Learning based Artistic Style Transfer on Android using TensorFlow|https://github.com/MJ10/Style|
-|Fast artistic style transfer with convolutional neural networks.|https://github.com/hnarayanan/stylist|
-|Neural Artistic Style in Python|https://github.com/andersbll/neural_artistic_style|
+|Deep Learning based Artistic Style Transfer on Android using TensorFlow|https://github.com/MJ10/Style|kotlin
+|Fast artistic style transfer with convolutional neural networks.|https://github.com/hnarayanan/stylist|py|
+|Neural Artistic Style in Python|https://github.com/andersbll/neural_artistic_style|py|
 |TensorFlow implementation of style transfer based on the paper A Neural Algortihm|https://github.com/ShafeenTejani/style-transfer|
-|TensorFlow implementation of style transfer (neural style)|https://github.com/hwalsuklee/tensorflow-style-transfer|
-|Style transfer using pre-trained generator network|https://github.com/msokoloff1/Real-Time-Style-Transfer|
-|TensorFlow Implementation of original style transfer paper|https://github.com/slavivanov/Style-Tranfer|
-|CycleGAN  generate photos from paintings, turn horses into zebras|https://github.com/junyanz/CycleGAN|
-|Neural style in TensorFlow|https://github.com/anishathalye/neural-style|
-|Deep Photo Style Transfer|https://github.com/luanfujun/deep-photo-styletransfer|
-|A Neural Algorithm of Artistic Style" by L. Gatys, A. Ecker, and M. Bethge.|https://github.com/fzliu/style-transfer|
+|TensorFlow implementation of style transfer (neural style)|https://github.com/hwalsuklee/tensorflow-style-transfer|py|
+|Style transfer using pre-trained generator network|https://github.com/msokoloff1/Real-Time-Style-Transfer|py|
+|TensorFlow Implementation of original style transfer paper|https://github.com/slavivanov/Style-Tranfer|py|
+|CycleGAN  generate photos from paintings, turn horses into zebras|https://github.com/junyanz/CycleGAN|lua|
+|Neural style in TensorFlow|https://github.com/anishathalye/neural-style|py|
+|Deep Photo Style Transfer|https://github.com/luanfujun/deep-photo-styletransfer|lua|
+|A Neural Algorithm of Artistic Style" by L. Gatys, A. Ecker, and M. Bethge.|https://github.com/fzliu/style-transfer|py|
 
 
 #### Photo Manipulation
 
 | *Repo* | URL |*|
 | ------ | ------ | ---- |
-|Neural Network to colorize grayscale images|https://github.com/pavelgonchar/colornet|
-|Image super-resolution through deep learning|https://github.com/david-gpu/srez|
+|Neural Network to colorize grayscale images|https://github.com/pavelgonchar/colornet|py|
+|Image super-resolution through deep learning|https://github.com/david-gpu/srez|py|
 |Automatic colorization using deep neural networks|https://github.com/richzhang/colorization|py|
+|StarGAN: Unified Generative Adversarial Networks for Multi-Domain Image-to-Image Translation|https://github.com/yunjey/StarGAN|py|
+|A pure caffe-python implementation of DC-GAN|https://github.com/samson-wang/dcgan.caffe|py|
+
 
 #### Object Detection
 
 | *Repo* | URL |*|
 | ------ | ------ | ---- |
-|Object Detection using Tensorflow API|https://github.com/olafplacha/Object-Detection-using-TF-API|
+|Object Detection using Tensorflow API|https://github.com/olafplacha/Object-Detection-using-TF-API|py|
 
 #### Misc
 
@@ -60,14 +63,13 @@
 |convolutional neural networks platform for research in medical image analysis|https://github.com/NifTK/NiftyNet|py|
 |TensorFlow pix2pix models|https://github.com/affinelayer/pix2pix-tensorflow-models|py|
 |TensorFlow port of Image-to-Image Translation with Conditional Adversarial Nets|https://github.com/affinelayer/pix2pix-tensorflow|py|
-|CS281 Final Project to develop a new ML Model for predicting incidents of crime.|https://github.com/kandluis/crime-prediction|
-|Image-to-image translation with conditional adversarial nets|https://github.com/phillipi/pix2pix|
-|StarGAN: Unified Generative Adversarial Networks for Multi-Domain Image-to-Image Translation|https://github.com/yunjey/StarGAN|
-|Large Pose 3D Face Reconstruction from a Single Image via Direct Volumetric CNN Regression|https://github.com/AaronJackson/vrn|
-|A pure caffe-python implementation of DC-GAN|https://github.com/samson-wang/dcgan.caffe|
-|Mask R-CNN for object detection and instance segmentation on Keras and TensorFlow|https://github.com/karolmajek/Mask_RCNN|
-|Artificial Neural Networks in Python|https://github.com/CristiVlad25/ann-python|
-|Emotion Recognition|https://github.com/dsgiitr/Emotion-Recognition|
+|CS281 Final Project to develop a new ML Model for predicting incidents of crime.|https://github.com/kandluis/crime-prediction|py|
+|Image-to-image translation with conditional adversarial nets|https://github.com/phillipi/pix2pix|lua
+|Large Pose 3D Face Reconstruction from a Single Image via Direct Volumetric CNN Regression|https://github.com/AaronJackson/vrn|mathlab|
+
+|Mask R-CNN for object detection and instance segmentation on Keras and TensorFlow|https://github.com/karolmajek/Mask_RCNN|py|
+|Artificial Neural Networks in Python|https://github.com/CristiVlad25/ann-python|py|
+|Emotion Recognition|https://github.com/dsgiitr/Emotion-Recognition|py|
 |Traffic-Sign-Classification|https://github.com/dsgiitr/Traffic-Sign-Classification|
 |Classification And Regression Training R package|https://github.com/topepo/caret|
 |TensorFlow Magenta: Music and Art Generation with Machine Intelligence|https://github.com/tensorflow/magenta|
