@@ -1,8 +1,10 @@
-# Interesting gitbub repos
+## Interesting gitbub repos
 
-### Machine Learning
 
-| Repo | URL |
+
+##### Machine Learning
+
+| *Repo* | URL |
 | ------ | ------ |
 |gSLICr: SLIC superpixels at over 250Hz | [https://github.com/carlren/gSLICr][PlDb] |
 |Sample apps and sites with Algorithmia integration|https://github.com/algorithmiaio/sample-apps|
@@ -75,7 +77,7 @@
 
 ### OpenCV
 
-| Repo | URL | Langauge |
+| *Repo* | URL | Langauge |
 | ------ | ------ | ----- |
 |Indian Number Plate Recognition System built using OpenCV|https://github.com/anuj-badhwar/Indian-Number-Plate-Recognition-System||
 |SyntheticDataCreation_Indian_NumberPlates OpenCV Numpy|https://github.com/ck2886/SyntheticDataCreation_Indian_NumberPlates||
@@ -154,3 +156,4 @@
 |Machine learning based song creator|https://github.com/flothesof/SongCreator||
 |Glitch images with jpg encoding|https://github.com/snorpey/jpg-glitch||
 |Delaunay triangulation + Lambertian reflectance|https://github.com/msurguy/triangles|js|
+
