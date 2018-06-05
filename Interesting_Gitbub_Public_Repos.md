@@ -27,7 +27,8 @@
 |Neural style in TensorFlow|https://github.com/anishathalye/neural-style|py|
 |Deep Photo Style Transfer|https://github.com/luanfujun/deep-photo-styletransfer|lua|
 |A Neural Algorithm of Artistic Style" by L. Gatys, A. Ecker, and M. Bethge.|https://github.com/fzliu/style-transfer|py|
-
+|TensorFlow Perceptual Losses for Real-Time Style Transfer and Super-Resolution' by Johnson|https://github.com/ShafeenTejani/fast-style-transfer|py|
+|Subpixel: A subpixel convnet for super resolution with Tensorflow|https://github.com/tetrachrome/subpixel|py|
 
 #### Photo Manipulation
 
@@ -38,7 +39,9 @@
 |Automatic colorization using deep neural networks|https://github.com/richzhang/colorization|py|
 |StarGAN: Unified Generative Adversarial Networks for Multi-Domain Image-to-Image Translation|https://github.com/yunjey/StarGAN|py|
 |A pure caffe-python implementation of DC-GAN|https://github.com/samson-wang/dcgan.caffe|py|
-
+|Deep Convolutional Generative Adversarial Networks|https://github.com/Newmu/dcgan_code|py|
+|TensorFlow Using DCGAN to generate cartoon image|https://github.com/wangchuan/DCGAN-TensorFlow|py|
+|Generate cat images with neural networks|https://github.com/aleju/cat-generator|lua,py|
 
 #### Object Detection
 
@@ -69,46 +72,41 @@
 |Mask R-CNN for object detection and instance segmentation on Keras and TensorFlow|https://github.com/karolmajek/Mask_RCNN|py|
 |Artificial Neural Networks in Python|https://github.com/CristiVlad25/ann-python|py|
 |Emotion Recognition|https://github.com/dsgiitr/Emotion-Recognition|py|
-|Traffic-Sign-Classification|https://github.com/dsgiitr/Traffic-Sign-Classification|
-|Classification And Regression Training R package|https://github.com/topepo/caret|
-|TensorFlow Magenta: Music and Art Generation with Machine Intelligence|https://github.com/tensorflow/magenta|
-|Natural Language Processing NLP|https://github.com/acrosson/nlp|
-|Machine Learning for Flappy Bird using Neural Network and Genetic Algorithm|https://github.com/ssusnic/Machine-Learning-Flappy-Bird|
-|TensorFlow Demonstrations of Magenta Models |https://github.com/tensorflow/magenta-demos|
-|Random Forests Tree|https://github.com/random-forests/tutorials|
-|Deep Convolutional Generative Adversarial Networks|https://github.com/Newmu/dcgan_code|
-|Deep Learning in Javascript. Train Convolutional Neural Networks  in your browser.|https://github.com/karpathy/convnetjs|
-|Houses price advanced regression|https://github.com/Nempickaxe/Houses_price|
-|TensorFlow Perceptual Losses for Real-Time Style Transfer and Super-Resolution' by Johnson|https://github.com/ShafeenTejani/fast-style-transfer|
-|TensorFlow DCGAN|https://github.com/wangchuan/DCGAN-TensorFlow|
-|Multi-layer Recurrent Neural Networks (LSTM, GRU, RNN) for character-level language models in Torch|https://github.com/karpathy/char-rnn|
-|Using neural networks to build an automatic number plate recognition system|https://github.com/matthewearl/deep-anpr|
-|Generate cat images with neural networks|https://github.com/aleju/cat-generator|
-|Data Engineer track of GCP Training|https://github.com/GoogleCloudPlatform/training-data-analyst|
-|TensorFlow Image Classifier Demo by @Sirajology on Youtube|https://github.com/llSourcell/tensorflow_image_classifier|
-|Subpixel: A subpixel convnet for super resolution with Tensorflow|https://github.com/tetrachrome/subpixel|
-|Car evaluation|https://github.com/srinikumar/carvaluation|
-|PHP package for computation of simple linear regression parameters|https://github.com/mnshankar/linear-regression|
-|PHP-ML - Machine Learning library for PHP|https://github.com/php-ai/php-ml|php|
+|Traffic-Sign-Classification|https://github.com/dsgiitr/Traffic-Sign-Classification|py|
+|Classification And Regression Training R package|https://github.com/topepo/caret|R|
+|TensorFlow Magenta: Music and Art Generation with Machine Intelligence|https://github.com/tensorflow/magenta|py|
+|Natural Language Processing NLP|https://github.com/acrosson/nlp|py|
+|Machine Learning for Flappy Bird using Neural Network and Genetic Algorithm|https://github.com/ssusnic/Machine-Learning-Flappy-Bird|js|
+|TensorFlow Demonstrations of Magenta Models |https://github.com/tensorflow/magenta-demos|js,py|
+|Random Forests Tree|https://github.com/random-forests/tutorials|py|
+|Deep Learning in Javascript. Train Convolutional Neural Networks  in your browser.|https://github.com/karpathy/convnetjs|js|
+|Houses price advanced regression|https://github.com/Nempickaxe/Houses_price|py|
+|Multi-layer Recurrent Neural Networks (LSTM, GRU, RNN) for character-level language models in Torch|https://github.com/karpathy/char-rnn|lua|
+|Using neural networks to build an automatic number plate recognition system|https://github.com/matthewearl/deep-anpr|py|
+|Data Engineer track of GCP Training|https://github.com/GoogleCloudPlatform/training-data-analyst|js.py|
+|TensorFlow Image Classifier Demo by @Sirajology on Youtube|https://github.com/llSourcell/tensorflow_image_classifier|py|
+|Car evaluation|https://github.com/srinikumar/carvaluation|R|
+|PHP package - for computation of simple linear regression parameters|https://github.com/mnshankar/linear-regression|php|
+|PHP package - Machine Learning library for PHP|https://github.com/php-ai/php-ml|php|
 
 ### OpenCV
 
 | *Repo* | URL |*|
 |---|---|---|
-|Indian Number Plate Recognition System built using OpenCV|https://github.com/anuj-badhwar/Indian-Number-Plate-Recognition-System||
-|SyntheticDataCreation_Indian_NumberPlates OpenCV Numpy|https://github.com/ck2886/SyntheticDataCreation_Indian_NumberPlates||
-|Facial Recognition using OpenCV and Python|https://github.com/EvilPort2/Face-Recognition||
-|Machine Learning for OpenCV: Intelligent image processing with Python|https://github.com/mbeyeler/opencv-machine-learning|
-|Indian Number Plate Recognition System built using OpenCV|https://github.com/bhargav-polampalli/Automatic-Indian-Number-Plate-Recognition-System||
-|Automatic License Plate Recognition library|https://github.com/openalpr/openalpr||
-|React Native automatic license plate recognition package for OpenALPR|https://github.com/cardash/react-native-openalpr||
-|Mastering OpenCV with Practical Computer Vision Projects" by Packt Publishing 2012|https://github.com/MasteringOpenCV/code||
-|Face detection using OpenCV and Python|https://github.com/informramiz/Face-Detection-OpenCV||
-|SimpleCV Open Source Framework for Machine Vision|https://github.com/sightmachine/SimpleCV||
-|Facial expression recognition deep learning examples|https://github.com/lazyprogrammer/facial-expression-recognition||
-|Low-Poly Image and Video Processing Delaunay Triangulator|https://github.com/Ovilia/Polyvia||
-|Vehicle Detection by Haar Cascades with OpenCV|https://github.com/andrewssobral/vehicle_detection_haarcascades||
-|Python library for interactive topic model visualization. Port of the R LDAvis package.|https://github.com/bmabey/pyLDAvis||
+|Indian Number Plate Recognition System built using OpenCV|https://github.com/anuj-badhwar/Indian-Number-Plate-Recognition-System|py|
+|SyntheticDataCreation_Indian_NumberPlates OpenCV Numpy|https://github.com/ck2886/SyntheticDataCreation_Indian_NumberPlates|py|
+|Facial Recognition using OpenCV and Python|https://github.com/EvilPort2/Face-Recognition|py|
+|Machine Learning for OpenCV: Intelligent image processing with Python|https://github.com/mbeyeler/opencv-machine-learning|py|
+|Indian Number Plate Recognition System built using OpenCV|https://github.com/bhargav-polampalli/Automatic-Indian-Number-Plate-Recognition-System|py|
+|Automatic License Plate Recognition library|https://github.com/openalpr/openalpr|c++|
+|React Native automatic license plate recognition package for OpenALPR|https://github.com/cardash/react-native-openalpr|c++|
+|Mastering OpenCV with Practical Computer Vision Projects" by Packt Publishing 2012|https://github.com/MasteringOpenCV/code|c++|
+|Face detection using OpenCV and Python|https://github.com/informramiz/Face-Detection-OpenCV|py|
+|SimpleCV Open Source Framework for Machine Vision|https://github.com/sightmachine/SimpleCV|py|
+|Facial expression recognition deep learning examples|https://github.com/lazyprogrammer/facial-expression-recognition|py|
+|Low-Poly Image and Video Processing Delaunay Triangulator|https://github.com/Ovilia/Polyvia|js|
+|Vehicle Detection by Haar Cascades with OpenCV|https://github.com/andrewssobral/vehicle_detection_haarcascades|c++|
+|Python library for interactive topic model visualization. Port of the R LDAvis package.|https://github.com/bmabey/pyLDAvis|js,py|
 
 ### Tutorials / Learning
 
