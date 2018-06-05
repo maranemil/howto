@@ -29,6 +29,9 @@
 |A Neural Algorithm of Artistic Style" by L. Gatys, A. Ecker, and M. Bethge.|https://github.com/fzliu/style-transfer|py|
 |TensorFlow Perceptual Losses for Real-Time Style Transfer and Super-Resolution' by Johnson|https://github.com/ShafeenTejani/fast-style-transfer|py|
 |Subpixel: A subpixel convnet for super resolution with Tensorflow|https://github.com/tetrachrome/subpixel|py|
+|Torch implementation of neural style algorithm|https://github.com/mtyka/neural-style|lua|
+
+
 
 #### Photo Manipulation
 
@@ -42,6 +45,12 @@
 |Deep Convolutional Generative Adversarial Networks|https://github.com/Newmu/dcgan_code|py|
 |TensorFlow Using DCGAN to generate cartoon image|https://github.com/wangchuan/DCGAN-TensorFlow|py|
 |Generate cat images with neural networks|https://github.com/aleju/cat-generator|lua,py|
+|Turn your two-bit doodles into fine artworks with deep neural networks,|https://github.com/minimaxir/neural-doodle|py|
+|DeepDream google|https://github.com/google/deepdream|py|
+|DeepDream Animation Helper|https://github.com/samim23/DeepDreamAnim|py|
+|DeepDream in a docker environment|https://github.com/ryankennedyio/deep-dream-generator|c++,py|
+|Deepdream Google Dockerfile|https://github.com/sofam/ddd|py|
+
 
 #### Object Detection
 
@@ -86,11 +95,32 @@
 |Data Engineer track of GCP Training|https://github.com/GoogleCloudPlatform/training-data-analyst|js.py|
 |TensorFlow Image Classifier Demo by @Sirajology on Youtube|https://github.com/llSourcell/tensorflow_image_classifier|py|
 |Car evaluation|https://github.com/srinikumar/carvaluation|R|
+|Code + Jupyter notebook for analyzing and visualizing means and medians of keywords|https://github.com/minimaxir/reddit-subreddit-keywords|R|
+|Code + Jupyter notebook for analyzing and visualizing Reddit Data quickly and easily|https://github.com/minimaxir/reddit-bigquery|R|
+|machine learning model that predict facial attractiveness from facial landmark locations|https://github.com/rohitsukhwal/face-rating|py|
+|The Relationship Between YouTube Video Category and Length of the Video|https://github.com/minimaxir/youtube-duration-date|R|
+|The Relationship Between YouTube Video Category and Length of the Video|https://github.com/minimaxir/youtube-category-duration-chart|R|
+|Image classification using a Deep Belief Network|https://github.com/lazyprogrammer/image-classification-dbn|c#|
+|Code used for analysis of Hacker News comments.|https://github.com/minimaxir/hacker-news-comment-analysis|R|
+|Parse postcode and house sale price data |https://github.com/danielsamuels/uk-house-price-heat-mapping|py|
+|Regression Analysis for Facebook keywords.|https://github.com/minimaxir/facebook-keyword-regression-analysis|R|
+
+
+
+### PHP
+
+| *Repo* | URL |*|
+|---|---|---|
 |PHP package - for computation of simple linear regression parameters|https://github.com/mnshankar/linear-regression|php|
 |PHP package - PHP-ML Machine Learning library for PHP|https://github.com/php-ai/php-ml|php|
 |PHP package - PHP-ML Examples use case of PHP-ML library.|https://github.com/php-ai/php-ml-examples|php|
 |PHP package - PHP-ML Public datasets prepared for machine learning tasks with php-ml|https://github.com/php-ai/php-ml-datasets|php|
-
+|PHP wrapper for FANN (Fast Artificial Neural Network Library)|https://github.com/bukka/php-fann|php|
+|PHP AI FANN|https://github.com/alexandrtkachuk/AI|php,perl|
+|PHP - A multi-layer neural network |https://github.com/infostreams/neural-network|php|
+|PHP Fast Artificial Neural Network Tic Tac Toe game|https://github.com/PHPGames/FANNTicTacToe|php|
+|PHP-Decision-Tree|https://github.com/jincongho/PHP-Decision-Tree|php|
+|PHP-Decision-Tree|https://github.com/kokukuma/php-decision-tree|php|
 
 ### OpenCV
 
@@ -110,6 +140,9 @@
 |Low-Poly Image and Video Processing Delaunay Triangulator|https://github.com/Ovilia/Polyvia|js|
 |Vehicle Detection by Haar Cascades with OpenCV|https://github.com/andrewssobral/vehicle_detection_haarcascades|c++|
 |Python library for interactive topic model visualization. Port of the R LDAvis package.|https://github.com/bmabey/pyLDAvis|js,py|
+|License-Plate-Censor|https://github.com/HashirZahir/License-Plate-Censor|py|
+
+
 
 ### Tutorials / Learning
 
@@ -139,7 +172,18 @@
 |Course materials for the Data Science Specialization|https://github.com/DataScienceSpecialization/courses||
 |Freely available programming books|https://github.com/cipristupi/free-programming-books||
 |Master Big Data Analytics and Data Wrangling with MapReduce Fundamentals using Hadoop, Spark, and Python.|https://github.com/lazyprogrammer/big_data_class||
-
+|Big Data with Apache Spark and Python - Hands On - Udemy|https://github.com/petergdoyle/SparkCourse|py|
+|Data Science Repository|https://github.com/divyakarippath/DataScience|py|
+|Scripts I've collected for loading datasets|https://github.com/spitis/load_datasets|py|
+|Data Science and Machine Learning with Python - Hands On Udemy|https://github.com/eminik/ds-ml-python|py|
+|Frank Kane's course on Udemy "Taming Big Data with Map Reduce and Hadoop"|https://github.com/s-leroux/Udemy-TamingBigData|py|
+|A curated list of data science blogs|https://github.com/lazyprogrammer/data-science-blogs|py|
+|Deep Learning Tutorial notes and code.|https://github.com/lazyprogrammer/DeepLearningTutorials|py|
+|Spark training material |https://github.com/databricks/spark-training|scala,py|
+|Slides and material for open data science|https://github.com/amueller/odscon-2015|py|
+|The definitive list of lists (of lists) curated on GitHub|https://github.com/minimaxir/lists|py|
+|Scikit-Learn Tutorial for PyData Seattle 2015|https://github.com/jakevdp/sklearn_pydata2015|py|
+|DePy 2015 Talk|https://github.com/jseabold/depy|py|
 
 ### Web and apps
 
@@ -162,6 +206,11 @@
 |Data scraper for <br> Facebook Pages|https://github.com/baditaflorin/facebook-page-post-scraper||
 |AdminLTE - Free Premium Admin control Panel Theme|https://github.com/almasaeed2010/AdminLTE|html|
 |Twitter bootstrap 3 admin template ACE|https://github.com/bopoda/ace|html|
+|The Interactive Decision Tree is a web-based tool |https://github.com/emaag/interactive-decision-tree|php|
+|PHP Simple HTML DOM Parser adaptation for Composer and PSR-0|https://github.com/sunra/php-simple-html-dom-parser|php|
+|Connect SugarCRM to your sipgate telephony account|https://github.com/sipgate/sipgate-sugarcrm|php|
+|Laravel-angular-time-tracker|https://github.com/scotch-io/laravel-angular-time-tracker|php|
+
 
 
 ### Misc
@@ -176,4 +225,24 @@
 |Machine learning based song creator|https://github.com/flothesof/SongCreator||
 |Glitch images with jpg encoding|https://github.com/snorpey/jpg-glitch||
 |Delaunay triangulation + Lambertian reflectance|https://github.com/msurguy/triangles|js|
-
+|GRUV is a Python project for algorithmic music generation.|https://github.com/MattVitelli/GRUV|py|
+|Paulstretch python version music FX|https://github.com/paulnasca/paulstretch_python|py|
+|Instagram filters for GPUImage.|https://github.com/KimDaeWook/GPUImage-Instagram|obj-c|
+|Instagram like image filters using GPUImage|https://github.com/beartung/insta-filter|java|
+|Midi-AI-Melody-Generator|https://github.com/vanstorm9/Midi-AI-Melody-Generator|py|
+|simple name generator for German names.|https://github.com/Skeldir/German-Name-Generator|py|
+|collection of scripts and experiments with chemlambda|https://github.com/chorasimilarity/chemlambda-gui|awk|
+|ANPR system on Android Smartphone|https://github.com/donnguyen/UIT-ANPR|java|
+|A mapping of emojis to words|https://github.com/Dibillilia/emojimap|js|
+|portal.just.ro|https://github.com/baditaflorin/portal.just.ro|ruby|
+|Lista Tuturor adreselor de mail din Romania, de la primarie|https://github.com/baditaflorin/adrese-email-primarii||
+|Run all Weka classifiers using Python scripts|https://github.com/muntisa/pyWeka|py|
+|Login and Pay with Amazon PHP Library|https://github.com/jsuggs/amazon-mws-login-and-pay|php|
+|Baza de date cu codurile postale ale României|https://github.com/baditaflorin/coduri-postale||
+|portrait js face detection|https://github.com/mtyka/portrait|js|
+|Instagram filter effect.|https://github.com/yulu/Instagram_Filter|java|
+|Download *ALL* the submissions from Hacker News|https://github.com/minimaxir/hacker-news-download-all-stories|py|
+|Scrape and output house prices from Prime Location into CSV|https://github.com/gnublade/house-prices|py|
+|Amazon Marketplace Web Service (MWS) library for Ruby|https://github.com/dmichael/amazon-mws|ruby|
+|JPEG circuit bending glitch art|https://github.com/andreasjansson/glitch|c++|
+|CorruptVideo glitch|https://github.com/martial/CorruptVideo|c++|
