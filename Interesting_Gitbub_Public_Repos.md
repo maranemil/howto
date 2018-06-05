@@ -13,12 +13,10 @@
 |AI for Resumes by Siraj Raval on Youtube|https://github.com/llSourcell/AI_for_Resumes|py|
 |Style transfer, deep learning, feature transform|https://github.com/NVIDIA/FastPhotoStyle|py|
 |Image-to-image translation in PyTorch|https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix|py|
-|Deepfakes thread|https://github.com/deepfakes/faceswap|
-|Technical blog posts written with the IPython notebook|https://github.com/flothesof/posts|
-|AdminLTE - Free Premium Admin control Panel Theme|https://github.com/almasaeed2010/AdminLTE|
-|Twitter bootstrap 3 admin template ACE|https://github.com/bopoda/ace|
-|Pytorch implementation for Semantic Segmentation|https://github.com/CSAILVision/semantic-segmentation-pytorch|
-|Tools, scripts, toys, and utilities for Machine Box|https://github.com/machinebox/toys|
+|Deepfakes thread|https://github.com/deepfakes/faceswap|py|
+|Technical blog posts written with the IPython notebook|https://github.com/flothesof/posts|py|
+|Pytorch implementation for Semantic Segmentation|https://github.com/CSAILVision/semantic-segmentation-pytorch|py|
+|Tools, scripts, toys, and utilities for Machine Box|https://github.com/machinebox/toys|go|
 |Automatic colorization using deep neural networks|https://github.com/richzhang/colorization|
 |A neural network that transforms a screenshot into a static website| https://github.com/emilwallner/Screenshot-to-code-in-Keras|
 |convolutional neural networks platform for research in medical image analysis|https://github.com/NifTK/NiftyNet|
@@ -124,7 +122,7 @@
 |Master Big Data Analytics and Data Wrangling with MapReduce Fundamentals using Hadoop, Spark, and Python.|https://github.com/lazyprogrammer/big_data_class||
 
 
-### Web apps
+### Web and apps
 
 | Repo | URL |*|
 |---|---|---|
@@ -143,6 +141,9 @@
 |Laravel + Angularjs + Bootstrap <br> AdminLTE binded by Gulp <br> workflow Admin Dashboard Boilerplate|https://github.com/silverbux/laravel-angular-admin||
 |A WordPress plugin to <br> provide Decision Trees.|https://github.com/cftp/decision-trees||
 |Data scraper for <br> Facebook Pages|https://github.com/baditaflorin/facebook-page-post-scraper||
+|AdminLTE - Free Premium Admin control Panel Theme|https://github.com/almasaeed2010/AdminLTE|html|
+|Twitter bootstrap 3 admin template ACE|https://github.com/bopoda/ace|html|
+
 
 ### Misc
 
