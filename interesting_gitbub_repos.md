@@ -4,15 +4,15 @@
 
 ### Machine Learning
 
-| *Repo* | URL |
-| ------ | ------ |
-|gSLICr: SLIC superpixels at over 250Hz | https://github.com/carlren/gSLICr |
-|Sample apps and sites with Algorithmia integration|https://github.com/algorithmiaio/sample-apps|
-|Instance Segmenation through Webcam using Mask-RCNN|https://github.com/SrikanthVelpuri/Mask_RCNN|
-|Train a TensorFlow Object Detection for multiple object detection on Windows Classifier|https://github.com/EdjeElectronics/TensorFlow-Object-Detection-API-Tutorial-Train-Multiple-Objects-Windows-10|
-|AI for Resumes by Siraj Raval on Youtube|https://github.com/llSourcell/AI_for_Resumes|
-|Style transfer, deep learning, feature transform|https://github.com/NVIDIA/FastPhotoStyle|
-|Image-to-image translation in PyTorch|https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix|
+| *Repo* | URL |*|
+| ------ | ------ | ---- |
+|gSLICr: SLIC superpixels at over 250Hz | https://github.com/carlren/gSLICr |c++|
+|Sample apps and sites with Algorithmia integration|https://github.com/algorithmiaio/sample-apps|js|
+|Instance Segmenation through Webcam using Mask-RCNN|https://github.com/SrikanthVelpuri/Mask_RCNN|py|
+|Train a TensorFlow Object Detection for multiple object detection on Windows Classifier|https://github.com/EdjeElectronics/TensorFlow-Object-Detection-API-Tutorial-Train-Multiple-Objects-Windows-10|py|
+|AI for Resumes by Siraj Raval on Youtube|https://github.com/llSourcell/AI_for_Resumes|py|
+|Style transfer, deep learning, feature transform|https://github.com/NVIDIA/FastPhotoStyle|py|
+|Image-to-image translation in PyTorch|https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix|py|
 |Deepfakes thread|https://github.com/deepfakes/faceswap|
 |Technical blog posts written with the IPython notebook|https://github.com/flothesof/posts|
 |AdminLTE - Free Premium Admin control Panel Theme|https://github.com/almasaeed2010/AdminLTE|
