@@ -128,21 +128,21 @@
 
 | Repo | URL ||
 |---|---|---|
-|Demo ToDo App with Laravel Framework|https://github.com/milon/laravel-todo||
-|CakePHP demo app - ToDoApp|https://github.com/MitjaSt/ToDoApp||
-|Kanban view on all modules for SugarCE/SuiteCRM|https://github.com/youaddon/SugarCE_SuiteCRMKanbanView||
-|Token-based AngularJS Authentication|https://github.com/sahat/satellizer||
-|ReactJS Laravel 5.5 Project|https://github.com/KrunalLathiya/ReactJSLaravel5.5||
-|Angular 4 in 60 Minutes app|https://github.com/bradtraversy/a4app||
-|Get started with Laravel 5.3 and AngularJS|https://github.com/jadjoubran/laravel5-angular-material-starter||
-|Open source video sharing website script, Tune.pk clone, Youtube clone|https://github.com/arslancb/clipbucket|php|
+|Demo ToDo App with <br>Laravel Framework|https://github.com/milon/laravel-todo||
+|CakePHP demo app <br> ToDoApp|https://github.com/MitjaSt/ToDoApp||
+|Kanban view on all <br> modules for SugarCE/SuiteCRM|https://github.com/youaddon/SugarCE_SuiteCRMKanbanView||
+|Token-based AngularJS <br> Authentication|https://github.com/sahat/satellizer||
+|ReactJS Laravel 5.5 <br> Project|https://github.com/KrunalLathiya/ReactJSLaravel5.5||
+|Angular 4 in 60 <br> Minutes app|https://github.com/bradtraversy/a4app||
+|Get started with Laravel <br> 5.3 and AngularJS|https://github.com/jadjoubran/laravel5-angular-material-starter||
+|Open source video sharing <br> website script, Tune.pk clone,<br>  Youtube clone|https://github.com/arslancb/clipbucket|php|
 |Laravel coolyrics|https://github.com/lavary/coolyrics||
-|CakePHP Prepared Statements Ease MySQL Table Design|https://github.com/ewbarnard/CakeFest2017||
+|CakePHP Prepared Statements <br> Ease MySQL Table Design|https://github.com/ewbarnard/CakeFest2017||
 |Laravel Socialite |https://github.com/avinashn/Laravel_Social_Login-Socialite||
 |OneSignal-WordPress-Plugin|https://github.com/OneSignal/OneSignal-WordPress-Plugin||
-|Laravel + Angularjs + Bootstrap + AdminLTE binded by Gulp workflow Admin Dashboard Boilerplate|https://github.com/silverbux/laravel-angular-admin||
-|A WordPress plugin to provide Decision Trees.|https://github.com/cftp/decision-trees||
-|Data scraper for Facebook Pages|https://github.com/baditaflorin/facebook-page-post-scraper||
+|Laravel + Angularjs + Bootstrap <br> AdminLTE binded by Gulp <br> workflow Admin Dashboard Boilerplate|https://github.com/silverbux/laravel-angular-admin||
+|A WordPress plugin to <br> provide Decision Trees.|https://github.com/cftp/decision-trees||
+|Data scraper for <br> Facebook Pages|https://github.com/baditaflorin/facebook-page-post-scraper||
 
 ### Misc
 
