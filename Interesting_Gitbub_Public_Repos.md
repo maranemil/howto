@@ -66,7 +66,6 @@
 |CS281 Final Project to develop a new ML Model for predicting incidents of crime.|https://github.com/kandluis/crime-prediction|py|
 |Image-to-image translation with conditional adversarial nets|https://github.com/phillipi/pix2pix|lua
 |Large Pose 3D Face Reconstruction from a Single Image via Direct Volumetric CNN Regression|https://github.com/AaronJackson/vrn|mathlab|
-
 |Mask R-CNN for object detection and instance segmentation on Keras and TensorFlow|https://github.com/karolmajek/Mask_RCNN|py|
 |Artificial Neural Networks in Python|https://github.com/CristiVlad25/ann-python|py|
 |Emotion Recognition|https://github.com/dsgiitr/Emotion-Recognition|py|
