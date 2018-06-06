@@ -1,0 +1,91 @@
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+# cut videos
+ffmpeg -i Input.mp4 -t 00:00:19 -s 00:00:05 Output.mp4
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+# Small Vid
+---------------------
+# resize
+ffmpeg -i Input.mp4 -vf scale=-1:720 -c:v libx264 -crf 0 -preset veryslow -c:a copy Output.mp4
+# crop
+ffmpeg -i Input.mp4 -vf: "crop=720:680:640:620"  -qp 0 Output.mp4
+# boost volume
+ffmpeg -i Input.mp4 -af "volume=12dB" -c:v copy -c:a aac -b:a 192k Output.mp4
+# add filter vintage
+ffmpeg -i Input.mp4 -vf curves=preset=vintage Output.mp4
+# cut vid
+ffmpeg -i Input.mp4 -t 18 -ss 00:00:04 -vf curves=preset=lighter Output.mp4
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+# mix picture in picture
+# with delay 20 seconds, margin small vid 30 pix
+ffmpeg -ss 00:00:00  -i Input1.mp4  -itsoffset 00:00:20  -ss 00:00:00 -i Input2.mp4  -filter_complex "[1]scale=iw/1:ih/1 [pip]; [0][pip] overlay=main_w-overlay_w-30:30; amix=inputs=2:duration=first:dropout_transition=2" -y  -strict experimental  -t 120  Output.mp4
+
+# scale small vid to smaller
+ffmpeg -ss 00:00:00  -i Input1.mp4  -itsoffset 00:00:20  -ss 00:00:00 -i Input2.mp4  -filter_complex "[1]scale=iw/1.5:ih/1.5 [pip]; [0][pip] overlay=main_w-overlay_w-30:30; amix=inputs=2:duration=first:dropout_transition=2" -y  -strict experimental  -t 120  Output.mp4
+
+# scale small vid to bigger
+ffmpeg -ss 00:00:00  -i Input1.mp4  -itsoffset 00:00:20  -ss 00:00:00 -i Input2.mp4  -filter_complex "[1]scale=iw/0.8:ih/0.8 [pip]; [0][pip] overlay=main_w-overlay_w-30:30; amix=inputs=2:duration=first:dropout_transition=2" -y  -strict experimental Output.mp4
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+# export wav
+ffmpeg -i Input.mp4 Output.wav
+
+# Mix Mp4 and WAV tracks in openshot
+# add image logos in openshot as track 1280x720
+
+# sharpen
+ffplay -i input.mp4 -vf "curves=preset=lighter,eq=1:0:1:1:1:8:1:0,unsharp=3:3:0.4"
+ffplay -i input.mp4 -vf "curves=preset=darker,eq=1:0:1:1:1:8:1:0,unsharp=5:5:1.4"
+ffplay -i input.mp4 -vf "curves=preset=linear_contrast,eq=1:0:1:1:1:8:1:0,unsharp=5:5:0.5"
+ffplay -i input.mp4 -vf "curves=preset=linear_contrast,eq=1:0:1:1:1:8:1:0,unsharp=7:7:0.1"
+ffplay -i input.mp4 -vf "curves=preset=linear_contrast,eq=1:0:0:0:1:8:1:0,unsharp=9:9:0.3"  # BW
+ffplay -i input.mp4 -vf "curves=preset=linear_contrast,eq=1:0:1:0:1:1:1:0,unsharp=9:9:0.2" -af "pan=stereo|c0=FL|c1=FR"
+
+
+fx vid mix stereo3d image
+ffplay -i input.mp4 -vf stereo3d=sbsl:aybd
+ffplay -i input.mp4 -vf stereo3d=abl:sbsr,stereo3d=sbsl:aybd
+ffplay -i input.mp4 -vf stereo3d=abl:sbsr,stereo3d=sbsl:aybd,"geq=r='X/W*r(X,Y)':g='(1-X/W)*g(X,Y)':b='(H-Y)/H*b(X,Y)'"
+ffplay -i input.mp4 -vf rotate=PI/6,stereo3d=abl:sbsr,stereo3d=sbsl:aybd,"split [main][tmp]; [tmp] crop=iw:ih/2:0:0, vflip [flip]; [main][flip] overlay=0:H/2","crop=iw/2:ih:0:0,split[left][tmp];[tmp]hflip[right];[left][right] hstack",scale=720:460
+ffplay -i input.mp4 -vf rotate=PI/6,rotate=PI/180,stereo3d=abl:sbsr,stereo3d=sbsl:aybd,"split [main][tmp]; [tmp] crop=iw:ih/2:0:0, vflip [flip]; [main][flip] overlay=0:H/2","crop=iw/2:ih:0:0,split[left][tmp];[tmp]hflip[right];[left][right] hstack",scale=1280:720
+ffplay -i input.mp4 -vf rotate=PI/90,rotate=PI/270,stereo3d=abl:sbsr,stereo3d=sbsl:aybd,"split [main][tmp]; [tmp] crop=iw:ih/2:0:0, vflip [flip]; [main][flip] overlay=0:H/2","crop=iw/2:ih:0:0,split[left][tmp];[tmp]hflip[right];[left][right] hstack",scale=1280:720
+ffplay -i input.mp4 -vf rotate=PI/180,rotate=PI/270,stereo3d=abl:sbsr,stereo3d=sbsl:aybd,"split [main][tmp]; [tmp] crop=iw:ih/2:0:0, vflip [flip]; [main][flip] overlay=0:H/2","crop=iw/2:ih:0:0,split[left][tmp];[tmp]hflip[right];[left][right] hstack",scale=1280:720
+ffplay -i input.mp4 -vf rotate=PI/90,rotate=PI/270,stereo3d=abl:sbsr,stereo3d=sbsl:aybd,"split [main][tmp]; [tmp] crop=iw:ih/2:0:0, vflip [flip]; [main][flip] overlay=0:H/2","crop=iw/2:ih:300:190,split[left][tmp];[tmp]hflip[right];[left][right] hstack",scale=1280:720
+
+ffplay -i input.mp4  -vf rotate=PI/90,rotate=PI/270,stereo3d=abl:sbsr,stereo3d=sbsl:aybd,"crop=iw/42:ih:0:0,split[left][tmp];[tmp]hflip[right];[left][right] hstack","split [main][tmp]; [tmp] crop=iw:ih/2:0:0, vflip [flip]; [main][flip] overlay=0:H/2","crop=iw/2:ih:0:0,split[left][tmp];[tmp]hflip[right];[left][right] hstack",scale=1280:720
+
+
+-strict -2 xperimet.mp4
+
+---------------------------------------------------
+35.64.1 Mixing examples
+---------------------------------------------------
+ffmpeg -i input.mp4 -af "pan=1c|c0=0.9*c0+0.1*c1" 	# mix
+ffmpeg -i input.mp4 -af "pan=stereo|c0=FL|c1=FR"  	# mono
+ffmpeg -i input.mp4 -af "pan=stereo|c1=c1"   		# left
+ffmpeg -i input.mp4 -af "pan=stereo|c0=FR|c1=FR"	# mix
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+‘none’
+‘color_negative’
+‘cross_process’
+‘darker’
+‘increase_contrast’
+‘lighter’
+‘linear_contrast’
+‘medium_contrast’
+‘negative’
+‘strong_contrast’
+‘vintage’
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+# extract random 1 second from a 2 hours movie
+for i in {1..6}; do ffmpeg -i AE.avi -t 1 -ss 00:$(($RANDOM % 59)):$(($RANDOM % 59)) -y "$i"_out.wav; done
+for i in {1..96}; do ffmpeg -i AE.avi -t 1 -ss 00:$(($RANDOM % 59)):$(($RANDOM % 59)) -y wav/"$i"_out.wav; done
