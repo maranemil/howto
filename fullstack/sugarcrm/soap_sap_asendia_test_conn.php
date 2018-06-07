@@ -6,7 +6,7 @@
 #
 ##############################################################
 
-/**
+/*
 Adélia Wiki  Base de connaissances Adélia Studio  Articles de conseil
 Comment construire un WSDL à partir de plusieurs WSDL
 https://pid.hardis.fr/confluence/pages/viewpage.action?pageId=225056909
