@@ -141,6 +141,9 @@
 |Vehicle Detection by Haar Cascades with OpenCV|https://github.com/andrewssobral/vehicle_detection_haarcascades|c++|
 |Python library for interactive topic model visualization. Port of the R LDAvis package.|https://github.com/bmabey/pyLDAvis|js,py|
 |License-Plate-Censor|https://github.com/HashirZahir/License-Plate-Censor|py|
+|Linux version of Darknet Yolo v3 & v2 Neural Networks|https://github.com/AlexeyAB/darknet||
+|Convolutional Neural Networks Yolo3|https://github.com/pjreddie/darknet||
+|YOLO: Real-Time Object Detection|https://pjreddie.com/darknet/yolo/||
 
 
 
@@ -149,7 +152,6 @@
 | Repo | URL |*|
 |---|---|---|
 |Python Machine Learning (1st edition)|https://github.com/rasbt/python-machine-learning-book||
-|Learn Machine Learning in 3 Months" by Siraj Raval on Youtube|https://github.com/llSourcell/Learn_Machine_Learning_in_3_Months||
 |Web Development With Node and Express|https://github.com/EthanRBrown/web-development-with-node-and-express||
 |Slides and code from our TensorFlow workshop.|https://github.com/random-forests/tensorflow-workshop||
 |A collection of machine learning examples and tutorials|https://github.com/lazyprogrammer/machine_learning_examples||
@@ -180,10 +182,14 @@
 |A curated list of data science blogs|https://github.com/lazyprogrammer/data-science-blogs|py|
 |Deep Learning Tutorial notes and code.|https://github.com/lazyprogrammer/DeepLearningTutorials|py|
 |Spark training material |https://github.com/databricks/spark-training|scala,py|
-|Slides and material for open data science|https://github.com/amueller/odscon-2015|py|
 |The definitive list of lists (of lists) curated on GitHub|https://github.com/minimaxir/lists|py|
 |Scikit-Learn Tutorial for PyData Seattle 2015|https://github.com/jakevdp/sklearn_pydata2015|py|
 |DePy 2015 Talk|https://github.com/jseabold/depy|py|
+|Slides and material for open data science|https://github.com/amueller/odscon-2015|py|
+|Learn Machine Learning in 3 Months" by Siraj Raval on Youtube|https://github.com/llSourcell/Learn_Machine_Learning_in_3_Months|py|
+|Tutorial: Machine Learning with Text in scikit-learn|https://github.com/justmarkham/pydata-dc-2016-tutorial|py| 
+|Classification using LSTM model of Amazon|https://github.com/newbiestatguy/Amazon-Review-Classification_DeepLearning |py|
+
 
 ### Web and apps
 
