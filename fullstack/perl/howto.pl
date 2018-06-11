@@ -92,3 +92,7 @@ my $len = bytes::length($string);
   # 46;39m - blsky/white - bg/fg
   # 47;39m - -grey/white - bg/fg
 
+
+# perl join string
+# https://alvinalexander.com/perl/edu/articles/pl010003.shtml
+# https://perlmaven.com/string-operators

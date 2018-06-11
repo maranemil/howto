@@ -1,0 +1,184 @@
+########################################################################
+#
+#   PERL ERROR LOG
+#
+#   http://perldoc.perl.org/perldebtut.html
+#   https://stackoverflow.com/questions/20071751/cant-find-perl-error-log
+#   https://stackoverflow.com/questions/9941322/how-to-get-perl-script-errors-in-nginx-error-log-nginx-with-fcgiwrap?rq=1
+#   https://perlmaven.com/parsing-error-log
+#   https://www.perlmonks.org/?node_id=857618
+#   https://www.perlmonks.org/?node_id=445583
+#
+########################################################################
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#!/usr/bin/perl -w
+use strict;
+use warnings;
+# use 5.010;
+
+$var1 = 'Hello World'; # always wanted to do that :-)
+$var2 = "$varl\n";
+print $var2;
+exit;
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+BEGIN {
+  require 5.004;
+  use CGI::Carp qw(fatalsToBrowser carpout);
+  my $logfile = 'path/to/logfile';
+  open LOG, ">>$logfile" or
+    die "Couldn't append to $logfile: $!\n";
+  carpout(\*LOG);
+};
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+eval {
+    ...
+    $sth->execute();
+    ...
+  };
+  if ($@) {
+    # $sth->err and $DBI::err will be true if error was from DBI
+    warn $@; # print the error
+    ... # do whatever you need to deal with the error
+  }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#!/usr/bin/perl
+
+use warnings;
+use strict;
+
+open my $fh, ">", 'logfile.txt'
+  or die "Can't open the fscking file: $!";
+
+my $need_work = 10;
+my $i_tried   = 0;
+
+while ( $need_work > $i_tried ) {
+
+    $i_tried++;
+
+    my $statement
+        = "I've tried $i_tried things as a test\n";
+
+    print $fh $statement;
+}
+__END__
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use diagnostics;
+
+open(STDOUT, '>', 'results.log') or die "Can't open log";
+open(STDERR, '>', 'results_error.log') or die "Can't open log";
+
+system("pmpath ExtUtils::MakeMaker");
+system("pmpath Acme::AandB");
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+#!/usr/bin/perl
+use warnings;
+use strict;
+use IO::Handle;
+
+open (my $fh, '>', 'logfile.txt')  || die "can't open logfile.txt";
+open (STDERR, ">>&=", $fh)         || die "can't redirect STDERR";
+$fh->autoflush(1);
+
+my $need_work = 5;
+my $i_tried   = 0;
+
+while ( $need_work > $i_tried )
+{
+    my $a;
+    $i_tried++;
+
+    print "$a\n";   #this generates a run time warning!!!!!!
+    warn "this is warning $i_tried"; #an explict warning
+    print $fh "I've tried $i_tried things as a test\n";
+}
+__END__
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#!/usr/bin/perl
+
+use warnings;
+use strict;
+
+my $need_work        = 10;
+my $i_tried          = 0;
+my $die_if_its_broke = 0;  # bool: true is fatal
+
+while ( $need_work > $i_tried ) {
+
+    $i_tried++;
+
+    handle_error({
+                   value        => $i_tried,
+                   die_if_broke => $die_if_its_broke,
+               });
+
+    print "From main(), I've tried $i_tried\n";
+}
+
+sub handle_error {
+
+    my $params          = shift;
+
+    my $value_to_check  = $params->{ value };
+    my $death           = $params->{ die_if_broke };
+
+    my $error_condition = 5;
+
+    if ( $value_to_check == $error_condition ) {
+
+        die "Fatality!!: $!" if $death;
+
+        open my $fh, ">", 'logfile.txt'
+            or die "Can't open the fscking file: $!";
+
+        my $error_statement
+          = "We've hit the error threshold " .
+            ": $error_condition!\n";
+
+        print $fh $error_statement;
+    }
+}
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+If you want all output from your program to go into a file:
+./yourprog > combined_file.txt 2>&1
+
+If you want regular data in one file, error data in another:
+./yourprog 1> regular_data.txt 2> error_data.txt
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+----------------
+# perl error log
+----------------
+perl test.pl >> /var/log/some-log-file.log 2>&1 &
+nohup perl test.pl >> /var/log/some-log-file.log 2>&1 &
+
+----------------
+Log Modules
+----------------
+Plack::Middleware::Debug, for any PSGI app
+CGI::Application::Plugin::DebugScreen for CGI::Application projects
+Catalyst::Plugin::StackTrace, an option with Catalyst.
+CGI::Carp has 'fatalsToBrowser' for older code or simple cases.
+
+https://metacpan.org/pod/CGI::Application::Plugin::DebugScreen
+https://metacpan.org/pod/Catalyst::Plugin::StackTrace
+https://metacpan.org/pod/CGI::Carp
