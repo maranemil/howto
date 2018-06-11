@@ -107,3 +107,30 @@ my $string_len =  length( $orig_string );
 print "Length of the String is : $string_len\n";
 my @many_strings = ("one", "two", "three", "four", "hi", "hello world");
 say scalar @many_strings;
+
+
+
+
+#---------------------------------------------------
+# Find perl executing script/path [closed]
+#---------------------------------------------------
+# https://jmorano.moretrix.com/2014/05/monitor-running-processes-with-perl/
+# https://stackoverflow.com/questions/11273636/check-if-program-is-running-and-run-it-if-not-in-perl
+# https://www.perlmonks.org/?node_id=217166
+# https://metacpan.org/pod/Proc::Find
+# https://stackoverflow.com/questions/9539316/find-perl-executing-script-path
+#---------------------------------------------------
+
+# Working!
+# ps -ef | grep 'perl'  # /usr/bin/perl -w /usr/sbin/path
+
+# ps ax | grep name # 26443 pts/3    S+     0:00 grep --color=auto perl
+# pgrep name
+
+
+use Proc::Find qw(find_proc proc_exists);
+# list all of a user's processes
+my $procs = find_proc(user=>'ujang', detail=>1);
+# check if a program is running
+die "Sorry, xscreensaver is not running"
+    unless proc_exists(name=>'xscreensaver');
