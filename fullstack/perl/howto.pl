@@ -96,3 +96,14 @@ my $len = bytes::length($string);
 # perl join string
 # https://alvinalexander.com/perl/edu/articles/pl010003.shtml
 # https://perlmaven.com/string-operators
+
+
+#The Perl String Length() Function
+# https://www.thoughtco.com/perl-string-length-function-quick-tutorial-2641189
+
+#!/usr/bin/perl
+my $orig_string = "This is a Test and ALL CAPS";
+my $string_len =  length( $orig_string );
+print "Length of the String is : $string_len\n";
+my @many_strings = ("one", "two", "three", "four", "hi", "hello world");
+say scalar @many_strings;
