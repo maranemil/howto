@@ -122,7 +122,8 @@ say scalar @many_strings;
 #---------------------------------------------------
 
 # Working!
-# ps -ef | grep 'perl'  # /usr/bin/perl -w /usr/sbin/path
+# ps -ef | grep perl  # /usr/bin/perl -w /usr/sbin/path
+# ps fxa | grep perl
 
 # ps ax | grep name # 26443 pts/3    S+     0:00 grep --color=auto perl
 # pgrep name
