@@ -406,3 +406,94 @@ http://pkgsrc.se/sysutils/acpica-utils
 
 https://unix.stackexchange.com/questions/97974/how-do-i-remove-acpi-warning-on-boot
 https://askubuntu.com/questions/139157/booting-ubuntu-with-acpi-off-grub-parameter
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+########################################################################################
+#
+#	ERROR: Unable to load the 'nvidia-drm' kernel module
+#	https://launchpad.net/ubuntu/+source/nvidia-graphics-drivers-390
+#
+#	/sbin.ldconfig.real: Warning: ignoring configuration file that cannot be opened: /etc/ld.so/conf.d/i386-linux-gnu_EGL.conf: No such file or directory
+#	/sbin.ldconfig.real: Warning: ignoring configuration file that cannot be opened: /etc/ld.so/conf.d/i386-linux-gnu_GL.conf: No such file or directory
+#
+########################################################################################
+
+nvidia-smi
+
+Wed Jun 13 10:29:13 2018
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 390.48                 Driver Version: 390.48                    |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|===============================+======================+======================|
+|   0  GeForce GT 640      Off  | 00000000:01:00.0 N/A |                  N/A |
+| 16%   37C    P8    N/A /  N/A |    462MiB /   979MiB |     N/A      Default |
++-------------------------------+----------------------+----------------------+
+
++-----------------------------------------------------------------------------+
+| Processes:                                                       GPU Memory |
+|  GPU       PID   Type   Process name                             Usage      |
+|=============================================================================|
+|    0                    Not Supported                                       |
++-----------------------------------------------------------------------------+
+
+adding acpi_osi=Linux
+to the GRUB_CMDLINE_LINUX_DEFAULT= line in the
+/etc/default/grub
+file
+
+------------------------------------------------
+How do I install the NVIDIA CUDA 9.1 toolkit on 18.04 with Coffee Lake
+------------------------------------------------
+sudo apt install nvidia-cuda-toolkit
+nvcc -V
+sudo apt install clinfo
+clinfo
+sudo apt-add-repository ppa:graphics-drivers/ppa
+sudo apt update
+sudo apt install nvidia-driver-396
+
+------------------------------------------------
+https://devtalk.nvidia.com/default/topic/1028367/linux/unable-to-load-the-nvidia-drm-kernel-module-on-ubuntu-16-04/
+------------------------------------------------
+cat /proc/version
+sudo dmesg |grep "BAR 6"
+
+[    4.769658] caller os_map_kernel_space.part.7+0xda/0x120 [nvidia] mapping multiple BARs
+
+Please run
+sudo acpidump > acpidump.txt and attach.
+Then try using kernel parameter
+#acpi_osi=! acpi_osi="Windows 2009"
+acpi_osi=Linux
+Reboot and attach dmesg output.
+
+
+
+
+
+
+
+
+
+
+
+
+

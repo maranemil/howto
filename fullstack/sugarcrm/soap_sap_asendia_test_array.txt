@@ -1,0 +1,116 @@
+########################################################################################
+#
+#   7.3 schemas.microsoft.com.2003.10.Serialization.Arrays.xsd Schema
+#   7.7 http://schemas.microsoft.com/2003/10/Serialization/Arrays Schema
+#   7.9 http://schemas.microsoft.com/2003/10/Serialization/Arrays Schema
+#   6.8 http://schemas.microsoft.com/2003/10/Serialization/Arrays
+#   https://msdn.microsoft.com/en-us/library/hh878281.aspx
+#   https://msdn.microsoft.com/en-us/library/hh657574(v=office.12).aspx
+#   https://msdn.microsoft.com/en-us/library/dn409829.aspx
+#   https://msdn.microsoft.com/en-us/library/mt811938.aspx
+#   https://devcentral.f5.com/questions/icontrol-php-and-arrays
+#
+########################################################################################
+
+https://github.com/sveawebpay/php-integration/blob/master/src/AdminService/CancelOrderRowsRequest.php
+
+/**
+     * populate and return soap request contents using AdminSoap helper classes to get the correct data format
+     * @return \Svea\WebPay\AdminService\AdminSoap\CancelOrderRowsRequest
+     */
+    public function prepareRequest()
+    {
+        $this->validateRequest();
+        $orderRowNumbers = array();
+        foreach ($this->orderBuilder->rowsToCancel as $rowToCancel) {
+            $orderRowNumbers[] = new SoapVar($rowToCancel, XSD_LONG, null, null, 'long', "http://schemas.microsoft.com/2003/10/Serialization/Arrays");
+        }
+        $soapRequest = new \Svea\WebPay\AdminService\AdminSoap\CancelOrderRowsRequest(
+            new Authentication(
+                $this->orderBuilder->conf->getUsername(($this->orderBuilder->orderType), $this->orderBuilder->countryCode),
+                $this->orderBuilder->conf->getPassword(($this->orderBuilder->orderType), $this->orderBuilder->countryCode)
+            ),
+            $this->orderBuilder->conf->getClientNumber($this->orderBuilder->orderType, $this->orderBuilder->countryCode),
+            new SoapVar($orderRowNumbers, SOAP_ENC_OBJECT),
+            AdminServiceRequest::CamelCaseOrderType($this->orderBuilder->orderType),
+            $this->orderBuilder->orderId
+        );
+        // Example request to cancel rows 1 & 2 in order 349092
+        //
+        //<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/" xmlns:dat="http://schemas.datacontract.org/2004/07/DataObjects.Admin.Service" xmlns:arr="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+        //   <soapenv:Header/>
+        //   <soapenv:Body>
+        //      <tem:CancelOrderRows>
+        //         <tem:request>
+        //            <dat:Authentication>
+        //               <dat:Password>sverigetest</dat:Password>
+        //               <dat:Username>sverigetest</dat:Username>
+        //            </dat:Authentication>
+        //            <dat:ClientId>79021</dat:ClientId>
+        //            <dat:OrderRowNumbers>
+        //	 	 <arr:long>1</arr:long>
+        //               <arr:long>2</arr:long>
+        //            </dat:OrderRowNumbers>
+        //            <dat:OrderType>Invoice</dat:OrderType>
+        //            <dat:SveaOrderId>349092</dat:SveaOrderId>
+        //         </tem:request>
+        //      </tem:CancelOrderRows>
+        //   </soapenv:Body>
+        //</soapenv:Envelope>
+        return $soapRequest;
+    }
+
+#  2 dimensional array
+$soapClient->create(array('hostname'), array(3), array(array('pool_name' => 'hostname-pool01', 'order' => 1, 'ratio' => 1)), array(array('rule_name' => 'name1', 'priority' => 1)));
+$soapClient->create(array('hostname'), array(3), array(array(array('pool_name' => 'hostname-pool01', 'order' => 1, 'ratio' => 1))), array(array(array('rule_name' => 'name1', 'priority' => 1))));
+
+
+/**
+https://docs.oracle.com/javaee/7/api/javax/xml/rpc/encoding/XMLType.html
+
+Field Summary
+Fields
+Modifier and Type	Field and Description
+
+static QName	SOAP_ARRAY 		The name of the SOAP-ENC:Array type.
+static QName	SOAP_BASE64 	The name of the SOAP-ENC:base64 type.
+static QName	SOAP_BOOLEAN 	The name of the SOAP-ENC:boolean type.
+static QName	SOAP_BYTE		The name of the SOAP-ENC:byte type.
+static QName	SOAP_DOUBLE		The name of the SOAP-ENC:double type.
+static QName	SOAP_FLOAT		The name of the SOAP-ENC:float type.
+static QName	SOAP_INT		The name of the SOAP-ENC:int type.
+static QName	SOAP_LONG		The name of the SOAP-ENC:long type.
+static QName	SOAP_SHORT		The name of the SOAP-ENC:short type.
+static QName	SOAP_STRING		The name of the SOAP-ENC:string type.
+static QName	XSD_BASE64		The name of the xsd:base64Binary type.
+static QName	XSD_BOOLEAN		The name of the xsd:boolean type.
+static QName	XSD_BYTE		The name of the xsd:byte type.
+static QName	XSD_DATETIME	The name of the xsd:dateTime type.
+static QName	XSD_DECIMAL		The name of the xsd:decimal type.
+static QName	XSD_DOUBLE		The name of the xsd:double type.
+static QName	XSD_FLOAT		The name of the xsd:float type.
+static QName	XSD_HEXBINARY	The name of the xsd:hexBinary type.
+static QName	XSD_INT 		The name of the xsd:int type.
+static QName	XSD_INTEGER 	The name of the xsd:integer type.
+static QName	XSD_LONG 		The name of the xsd:long type.
+static QName	XSD_QNAME 		The name of the xsd:QName type.
+static QName	XSD_SHORT 		The name of the xsd:short type.
+static QName	XSD_STRING	 	The name of the xsd:string type.
+*/
+
+
+/*
+
+# Android
+
+SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+SoapObject Search= new SoapObject(NAMESPACE, "Search");
+for(int i=0;i<mID.length & i<qty.length;i++){
+    SoapObject Specialities=  new SoapObject("http://www.FoodTruck.zsl.com/", "Specialities");
+    Specialities.addProperty("MenuItemID", mID[i]);
+    Specialities.addProperty("Quantity",1);
+    Specialities.addProperty("CartItems", CartItems);
+}
+request.addProperty("Search", Search);
+
+*/
