@@ -670,3 +670,204 @@ Vorbereitung zum Entpacken von brscan-skey-0.2.4-1.amd64.deb ...
 Entpacken von brscan-skey (0.2.4-1) ...
 brscan-skey (0.2.4-1) wird eingerichtet ...
 brsaneconfig3 -a name=MFC-J265W model=MFC-J265W ip=192.168.1.23
+
+
+
+
+
+
+
+
+
+
+
+
+
+############################################################################
+sudo scanimage -L
+sudo netstat -lntp
+
+# print test page
+lpr -P MFCJ265W /usr/share/cups/data/testprint
+############################################################################
+-------------------------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cat /etc/lsb-release
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+DISTRIB_ID=Ubuntu
+DISTRIB_RELEASE=18.04
+DISTRIB_CODENAME=bionic
+DISTRIB_DESCRIPTION="Ubuntu 18.04 LTS"
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+lsusb
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Bus 002 Device 005: ID 1532:005c Razer USA, Ltd
+Bus 002 Device 004: ID 090c:37b3 Silicon Motion, Inc. - Taiwan (formerly Feiya Technology Corp.)
+Bus 002 Device 003: ID 04d9:a02e Holtek Semiconductor, Inc.
+Bus 002 Device 002: ID 8087:0020 Intel Corp. Integrated Rate Matching Hub
+Bus 002 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 001 Device 002: ID 8087:0020 Intel Corp. Integrated Rate Matching Hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+lsb_release -rcd ; uname -rm
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Description:	Ubuntu 18.04 LTS
+Release:	18.04
+Codename:	bionic
+4.15.0-23-generic x86_64
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+iwlist scan
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+wlan0
+Scan completed :
+	Cell 01 - Address: C5:22:16:65:64:AF
+	        Channel:1
+	        Frequency:2.412 GHz (Channel 1)
+	        Quality=70/70  Signal level=-38 dBm
+	        Encryption key:on
+	        ESSID:"GogoGooo"
+	        Bit Rates:1 Mb/s; 2 Mb/s; 5.5 Mb/s; 11 Mb/s; 6 Mb/s
+	                  9 Mb/s; 12 Mb/s; 18 Mb/s
+	        Bit Rates:24 Mb/s; 36 Mb/s; 48 Mb/s; 54 Mb/s
+	        Mode:Master
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+rfkill list all
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+0: ideapad_wlan: Wireless LAN
+	Soft blocked: no
+	Hard blocked: no
+1: ideapad_bluetooth: Bluetooth
+	Soft blocked: yes
+	Hard blocked: no
+2: phy0: Wireless LAN
+	Soft blocked: no
+	Hard blocked: no
+
+
+brsaneconfig3 -q | grep MFC-J265W
+
+############################################################################
+https://docs.oracle.com/cd/E36784_01/html/E36870/scanimage-1.html
+scanimage --batch --batch-prompt --resolution=300dpi --format=tiff && convert *.tif out.jpg && rm -f *.tif
+scanimage --resolution 96 > scantest
+############################################################################
+
+scanimage: no SANE devices found
+ls -l /dev/bus/usb/001
+groups
+scanimage -h
+
+Parameters are separated by a blank from single-character options (e.g.
+-d epson) and by a "=" from multi-character options (e.g. --device-name=epson).
+-d, --device-name=DEVICE   use a given scanner device (e.g. hp:/dev/scanner)
+    --format=pnm|tiff|png|jpeg  file format of output file
+-i, --icc-profile=PROFILE  include this ICC profile into TIFF file
+-L, --list-devices         show available scanner devices
+-f, --formatted-device-list=FORMAT similar to -L, but the FORMAT of the output
+                           can be specified: %d (device name), %v (vendor),
+                           %m (model), %t (type), %i (index number), and
+                           %n (newline)
+-b, --batch[=FORMAT]       working in batch mode, FORMAT is `out%d.pnm' `out%d.tif'
+                           `out%d.png' or `out%d.jpg' by default depending on --format
+    --batch-start=#        page number to start naming files with
+    --batch-count=#        how many pages to scan in batch mode
+    --batch-increment=#    increase page number in filename by #
+    --batch-double         increment page number by two, same as
+                           --batch-increment=2
+    --batch-print          print image filenames to stdout
+    --batch-prompt         ask for pressing a key before scanning a page
+    --accept-md5-only      only accept authorization requests using md5
+-p, --progress             print progress messages
+-n, --dont-scan            only set options, don't actually scan
+-T, --test                 test backend thoroughly
+-A, --all-options          list all available backend options
+-h, --help                 display this help message and exit
+-v, --verbose              give even more status messages
+-B, --buffer-size=#        change input buffer size (in kB, default 32)
+-V, --version              print version information
+
+
+sudo lsusb
+sudo sane-find-scanner
+sudo scanimage -L
+sudo sane-find-scanner -v -v
+
+
+
+############################################################################
+cat /lib/udev/rules.d/60-libsane1.rules
+cat /var/log/cups/error_log
+############################################################################
+
+modprobe usblp
+lpstat -p
+
+
+https://wiki.ubuntuusers.de/Scanner/Brother/
+sudo apt-get install sane-utils
+
+Problembehandlung
+Scanner Treiber ab Bionic Beaver 18.04 (64 Bit)
+
+sudo ln -sf /usr/lib64/sane/libsane-brother* /usr/lib/x86_64-linux-gnu/sane
+sudo ln -sf /usr/lib64/libbrcolm* /usr/lib/x86_64-linux-gnu
+sudo ln -sf /usr/lib64/libbrscandec* /usr/lib/x86_64-linux-gnu
+
+Scanner Treiber ab Bionic Beaver 18.04 (32 Bit)
+sudo ln -sf /usr/lib/sane/libsane-brother* /usr/lib/i386-linux-gnu/sane
+sudo ln -sf /usr/lib/libbrcolm* /usr/lib/i386-linux-gnu
+sudo ln -sf /usr/lib/libbrscandec* /usr/lib/i386-linux-gnu
+
+Scannen über Netzwerk ab Ubuntu 17.04 (64-bit)
+sudo apt-get install libusb-0.1-4
+sudo mkdir /usr/lib/sane
+sudo ln -s /usr/lib64/sane/libsane-brother4.so.1 /usr/lib/x86_64-linux-gnu/sane/libsane-brother4.so.1
+brsaneconfig4 -a name=MFC-J265W model=MFC-J265W nodename=HOSTNAME
+sudo adduser $USER scanner
+export SANE_DEBUG_DLL=255 && scanimage -L
+
+
+
+############################################################################
+https://askubuntu.com/questions/791556/brother-scanner-not-working-in-ubuntu-16-04-though-driver-installed
+http://support.brother.com/g/s/id/linux/en/instruction_scn1c.html?c=us_ot&lang=en&comple=on&redirect=on
+############################################################################
+sudo -H gedit /lib/udev/rules.d/60-libsane1.rules
+# add
+
+# Brother scanners
+ATTRS{idVendor}=="04f9", ENV{libsane_matched}="yes"`
+
+# Brother scanners
+ATTRS{idVendor}=="04f9", ENV{libsane_matched}="yes"
+
+# Brother scanner
+ATTRS{idVendor}=="04f9", MODE="0664", GROUP="scanner", ENV{libsane_matched}="yes"
+
+# Brother scanners
+ATTRS{idVendor}=="04f9", ENV{libsane_matched}="yes"
+
+
+sudo cp -r /usr/lib64/* /usr/lib
+sudo cp -r /usr/lib64/sane/* /usr/lib/x86_64-linux-gnu/sane
+
+sudo brsaneconfig3 -a name=MFC-J265W model=MFC-J265W ip=192.168.1.23
+brsaneconfig3 -q
+Devices on network
+  0 MFC-J265W           "MFC-J265W"         I:192.168.1.23
+scanimage -L
+device `brother3:net1;dev0' is a Brother MFC-J265W MFC-J265W
+
+
+
+
+
+
+
+
+
+

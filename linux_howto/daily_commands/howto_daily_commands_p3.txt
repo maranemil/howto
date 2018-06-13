@@ -544,3 +544,171 @@ head -c 1073741824 </dev/urandom >myfile
 head -c 1G </dev/urandom >myfile
 dd bs=1024 count=1048576 </dev/urandom >myfile
 dd if=/dev/zero of=file.txt count=1024 bs=1024
+
+
+
+
+
+
+###########################################################
+
+FirewaLL seTTINGS
+https://www.cyberciti.biz/faq/howto-configure-setup-firewall-with-ufw-on-ubuntu-linux/
+https://www.digitalocean.com/community/questions/port-scan-externally-reveals-open-port-from-inside-those-ports-are-closed
+
+###########################################################
+
+#sudo apt-get update
+#sudo apt-get install ufw
+
+sudo ufw status
+sudo netstat -lntp | grep saned
+sudo ufw allow saned
+sudo ufw allow from 192.168.1.23
+
+-------------------------------------
+Setting up default policy
+-------------------------------------
+
+grep 'DEFAULT_' /etc/default/ufw
+
+Sample outputs:
+DEFAULT_INPUT_POLICY="DROP"
+DEFAULT_OUTPUT_POLICY="ACCEPT"
+DEFAULT_FORWARD_POLICY="DROP"
+DEFAULT_APPLICATION_POLICY="SKIP"
+
+sudo ufw allow ssh
+sudo ufw allow 22/tcp
+sudo ufw allow 2020/tcp
+sudo ufw allow proto tcp from any to 10.8.0.1 port 22
+sudo ufw allow proto tcp from 10.8.0.2 to 10.8.0.1 port 22
+
+sudo ufw rule comment 'my cool comment here'
+sudo ufw allow 53 comment 'open tcp and udp port 53 for dns'
+sudo ufw allow proto tcp from any to any port 80,443 comment 'my cool web app ports'
+sudo ufw allow proto tcp from any to 10.8.0.1 port 22 'SSHD port 22 for private lan'
+
+sudo ufw enable
+sudo ufw disable
+
+sudo ufw status
+sudo ufw status verbose
+-------------------------------------
+Adding more rules (open ports and allow IPs)
+-------------------------------------
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw allow 1194/udp
+sudo ufw allow 25
+-------------------------------------
+Allowing port ranges
+-------------------------------------
+sudo ufw allow 3000:5000/tcp
+sudo ufw allow 3000:5000/udp
+sudo ufw allow from 1.2.3.4
+sudo ufw allow from 1.2.3.4 to any port 22 proto tcp
+sudo ufw allow from 1.2.3.4 to 222.222.222.222 port 22 proto tcp
+
+-------------------------------------
+How to allow incoming HTTPS traffic (open port 443)
+-------------------------------------
+sudo ufw allow https comment 'Allow all to access Nginx server'
+## allow only from 139.1.1.1 ##
+sudo ufw allow from 139.1.1.1 to any port 443
+## allow only from 203.11.11.2/29 ##
+sudo ufw allow from 203.11.11.2/29 to any port 443
+-------------------------------------
+How to allow incoming HTTP traffic (open port 80)
+-------------------------------------
+$ sudo ufw allow http comment 'Allow all to access Apache server'
+## allow only from 139.1.1.1 ##
+$ sudo ufw allow from 139.1.1.1 to any port 80
+## allow only from 203.11.11.2/29 ##
+$ sudo ufw allow from 203.11.11.2/29 to any port 80
+-------------------------------------
+How to allow incoming MySQL/MariaDB traffic (open port 3306)
+-------------------------------------
+sudo ufw allow from 192.168.1.0/24 to any port 3306
+sudo ufw allow from 202.54.1.1 to any port 3306
+-------------------------------------
+How to allow incoming PostgreSQL traffic (open port 5432)
+-------------------------------------
+sudo ufw allow from 192.168.1.0/24 to any port 5432
+sudo ufw allow from 202.54.1.1 to any port 5432
+-------------------------------------
+How to allow incoming SMTPD/Postfix/Sendmail
+-------------------------------------
+sudo ufw allow 25
+sudo ufw allow smtp
+-------------------------------------
+How to allow incoming IMAP/IMAPS
+-------------------------------------
+sudo ufw allow 143
+sudo ufw allow 993
+-------------------------------------
+How to allow incoming POP3/POP3S
+-------------------------------------
+$ sudo ufw allow 110
+$ sudo ufw allow 995
+-------------------------------------
+Denying access to port or connections (close ports and block IPs)
+-------------------------------------
+sudo ufw deny 443/tcp
+sudo ufw deny from 1.2.3.4
+sudo ufw deny from 123.45.67.89/24
+sudo ufw deny from 1.2.3.4 to any port 22 proto tcp
+-------------------------------------
+Rejecting access to port or connections (reject and let user know they are blocked by firewall)
+-------------------------------------
+sudo ufw reject in smtp
+$ sudo ufw reject out smtp
+$ sudo sudo ufw reject 1194 comment 'No more vpn traffic'
+$ sudo ufw reject 23 comment 'Unencrypted port not allowed'
+-------------------------------------
+Deleting the UFW firewall rules
+-------------------------------------
+sudo ufw delete {rule-here}
+sudo ufw delete allow 443
+sudo ufw delete allow 25
+sudo ufw status numbered
+-------------------------------------
+How do I reset the firewall?
+-------------------------------------
+sudo ufw reset
+
+-------------------------------------
+How do I see the firewall logs?
+-------------------------------------
+$ sudo more /var/log/ufw.log
+$ sudo tail -f /var/log/ufw.log
+sudo grep something /var/log/ufw.log
+$ sudo grep '187.134.225.91' /var/log/ufw.log
+-------------------------------------
+How do I see ufw reports?
+-------------------------------------
+sudo ufw show added
+sudo ufw show raw
+$ sudo ufw show raw | more
+sudo ufw show listening
+$ sudo ufw show listening | more
+
+sudo ufw show builtins
+$ sudo ufw show before-rules
+$ sudo ufw show user-rules
+$ sudo ufw show after-rules
+$ sudo ufw show logging-rules
+
+
+
+
+
+
+
+
+
+
+
+
+
+
