@@ -135,3 +135,32 @@ my $procs = find_proc(user=>'ujang', detail=>1);
 # check if a program is running
 die "Sorry, xscreensaver is not running"
     unless proc_exists(name=>'xscreensaver');
+
+
+####################################
+#
+# perl get user pwd
+#
+####################################
+
+# https://github.com/search?l=Perl&q=getpwuid&type=Code
+# http://pubs.opengroup.org/onlinepubs/009696799/functions/getpwuid.html
+# http://learnperl.scratchcomputing.com/tutorials/getting_started/
+
+# print info in terminal
+# perl -le 'print scalar getpwuid $<'
+# perl -le 'print scalar getpwuid $<'
+
+
+my $homedir = (getpwuid($<));
+print $homedir;
+
+sub getpwuid {
+    usage "getpwuid(uid)" if @_ != 1;
+    getpwuid($_[0]);
+}
+1;
+
+print scalar getpwuid $<
+my $login = getlogin() || (getpwuid($<))[0] || "Intruder!!";
+print $login;
