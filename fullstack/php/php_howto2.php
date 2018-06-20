@@ -364,4 +364,49 @@ Even More Special Characters
 
 
 
+##########################################################
+#
+#   Generate Range 0-100 A-Z
+#
+##########################################################
+http://php.net/manual/de/function.range.php
+http://php.net/manual/de/function.array-reverse.php
+http://php.net/manual/de/function.date.php
 
+print_r( array_reverse( range( 1, 12 ) ));
+# output 12,11,10,9,8,7,6,5,4,3,2,1
+
+print_r(  range( 12, 1 ));
+# output 12,11,10,9,8,7,6,5,4,3,2,1
+
+print_r( range( 12, 1, -3 ) );
+# output 12 9 6 3 1
+
+print_r( range( 11, 20, -3 ) );
+# output 11 14 17 20
+
+$a = array_map(function($n) { return sprintf('sample_%03d', $n); }, range(1, 12) );
+print_r($a);
+
+Array
+(
+    [0] => sample_050
+    [1] => sample_051
+    [2] => sample_052
+    ...
+)
+
+var_dump( range('1', '2') ); // outputs  array(2) { [0]=> int(1) [1]=> int(2) }
+var_dump( array_map('strval', range('1', '2')) ); // outputs  array(2) { [0]=> string(1) "1" [1]=> string(1) "2" }
+
+
+# fill an array to get a hash with 0-9 numerical values
+range(0,9);
+array_fill(0, 10, '');
+
+
+$SimpleArray = array_map(function($n) { return null; }, range(1, 3) );
+$MultiArray = array_map(function($n) { return array_map(function($n) { return null; }, range(1, 2) ); }, range(1, 3) );
+
+var_dump($SimpleArray);
+var_dump($MultiArray);
