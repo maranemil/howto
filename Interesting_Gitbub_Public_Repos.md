@@ -189,6 +189,9 @@
 |Learn Machine Learning in 3 Months" by Siraj Raval on Youtube|https://github.com/llSourcell/Learn_Machine_Learning_in_3_Months|py|
 |Tutorial: Machine Learning with Text in scikit-learn|https://github.com/justmarkham/pydata-dc-2016-tutorial|py| 
 |Classification using LSTM model of Amazon|https://github.com/newbiestatguy/Amazon-Review-Classification_DeepLearning |py|
+|Project Based Learning|https://github.com/tuvtran/project-based-learning|*|
+
+
 
 
 ### Web and apps
