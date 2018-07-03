@@ -1,0 +1,45 @@
+#######################################################################
+
+Install Nginx Web Server, MariaDB and PHP on Ubuntu 18.04
+https://www.tecmint.com/install-nginx-mariadb-php-in-ubuntu-18-04/
+
+#######################################################################
+
+sudo apt update
+sudo apt install nginx
+sudo systemctl status nginx
+
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw reload
+
+sudo apt install mariadb-server mariadb-client
+sudo systemctl status mysql
+sudo mysql_secure_installation
+
+sudo apt install php php-fpm php-common php-mysql php-gd php-cli
+sudo systemctl status php7.2-fpm
+
+sudo vim /etc/php/7.2/fpm/php.ini
+# cgi.fix_pathinfo=0
+
+sudo vim /etc/nginx/sites-available/default
+location ~ \.php$ {
+include snippets/fastcgi-php.conf;
+fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
+}
+
+sudo systemctl restart php7.2-fpm
+sudo systemctl restart nginx
+
+sudo apt install phpmyadmin
+sudo ln -s  /usr/share/phpmyadmin /var/www/htmlphpmyadmin
+
+check /etc/nginx/sites-available/default for
+index index.php index.html index.htm index.nginx-debian.html;
+
+
+sudo chmod 775 -R /usr/share/phpmyadmin/
+sudo chown root:nginx -R /usr/share/phpmyadmin/
+
+sudo mysql -u root -p
