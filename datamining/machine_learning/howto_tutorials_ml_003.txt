@@ -1,0 +1,1060 @@
+
+#############################################################################
+#
+# 	XOR PROBLEM
+# 	From Perceptron to Deep Neural Nets
+#
+# 	https://becominghuman.ai/from-perceptron-to-deep-neural-nets-504b8ff616e
+# 	http://neuralnetworksanddeeplearning.com/chap1.html
+# 	https://www.toptal.com/machine-learning/an-introduction-to-deep-learning-from-perceptrons-to-deep-networks
+# 	https://www.researchgate.net/post/What_is_the_difference_between_MLP_and_Deep_Learning
+#	https://www.quora.com/How-is-deep-learning-different-from-multilayer-perceptron
+#	https://www.quora.com/How-is-deep-learning-different-from-multilayer-perceptron
+# 	https://dzone.com/articles/deep-learning-via-multilayer-perceptron-classifier
+#	https://www.kaggle.com/getting-started/46727
+#	https://cs.stackexchange.com/questions/53521/what-is-difference-between-multilayer-perceptron-and-multilayer-neural-network
+#	https://stats.stackexchange.com/questions/315402/multi-layer-perceptron-vs-deep-neural-network
+# 	https://www.nature.com/articles/srep30174/tables/4
+#	https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5288363/
+#
+# 	CNN MLP DNN
+#	MLP uses backpropagation for training the network. MLP is a deep learning method.
+#	MLP is widely used for solving problems that require supervised learning as well as research into computational neuroscience and parallel distributed processing.
+#	Applications include speech recognition, image recognition, and machine translation.
+#	MLP is a subset of DNN. While DNN can have loops and MLP are always feed-forward, i.e. A Multilayer Perceptron is a finite acyclic graph. (Source: Techopedia)
+#
+#	backpropagation training algorithm batch learning computational intelligence cross‐validation evolutionary computation generalization multilayer neural networks online learning
+#
+#############################################################################
+
+"""
+
+For example, if you have 10 neurons in one layer connected to 20 neurons of the next, then you will have a matrix W∈R10x20, that will map an input v∈R10x1 to an output u∈R1x20, via: u=vTW. Every column in W, encodes all the edges going from all the elements of a layer, to one of the elements of the next layer.
+
+http://jupyter.org/try
+http://jupyter.org/
+https://hub.mybinder.org/user/ipython-ipython-in-depth-qulxc103/notebooks/binder/Index.ipynb#
+https://hub.mybinder.org/user/ipython-ipython-in-depth-qulxc103/notebooks/binder/Untitled.ipynb?kernel_name=python3
+https://pandas.pydata.org
+https://cloudxlab.com/blog/numpy-pandas-introduction/
+
+"""
+
+
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+def plot_data(data, labels):
+    """
+    argument:
+    data: np.array containing the input value
+    labels: 1d numpy array containing the expected label
+    """
+    positives = data[labels == 1, :]
+    negatives = data[labels == 0, :]
+    plt.scatter(positives[:, 0], positives[:, 1], color='red', marker='+', s=200)
+    plt.scatter(negatives[:, 0], negatives[:, 1], color='blue', marker='_', s=200)
+
+positives = np.array([[1, 0], [0, 1]])
+negatives = np.array([[0, 0], [1, 1]])
+
+data = np.concatenate([positives, negatives])
+labels = np.array([1, 1, 0, 0])
+plot_data(data, labels)
+
+#############################################################################
+#
+#   A Neural Network Playground
+#
+#   Activation Functions: ELU ReLU LeakyReLU Sigmoid Tanh Softmax
+#   ELU ReLU LeakyReLU Sigmoid Tanh Softmax L1 L2 Classification Regression Regularization Rate Learning rate
+#
+#############################################################################
+
+https://playground.tensorflow.org/
+http://cs231n.github.io/neural-networks-1/
+http://ml-cheatsheet.readthedocs.io/en/latest/activation_functions.html
+http://ml-cheatsheet.readthedocs.io/en/latest/loss_functions.html
+https://ls11-www.cs.tu-dortmund.de/people/rudolph/teaching/lectures/CI/WS2009-10/lec02.pps
+https://deeplearning4j.org/building-neural-net-with-dl4j
+https://hackernoon.com/deep-learning-cheat-sheet-25421411e460
+https://cs224d.stanford.edu/lecture_notes/LectureNotes3.pdf
+https://medium.com/@tk2bit/grow-neural-nets-part-1-intro-to-hyperparameters-39e59b212118
+https://towardsdatascience.com/deep-study-of-a-not-very-deep-neural-network-part-2-activation-functions-fd9bd8d406fc
+https://stats.stackexchange.com/questions/101560/tanh-activation-function-vs-sigmoid-activation-function
+http://yann.lecun.com/exdb/publis/pdf/lecun-98b.pdf
+
+coursera
+https://www.coursera.org/lecture/competitive-data-science/recap-of-main-ml-algorithms-6rz3m
+https://www.coursera.org/lecture/gcp-big-data-ml-fundamentals/machine-learning-with-tensorflow-2g2lq
+https://www.coursera.org/lecture/deep-learning-business/0-0-introduction-to-deep-learning-for-business-gPIRl
+https://www.coursera.org/lecture/deep-learning-business/0-0-introduction-to-deep-learning-for-business-gPIRl
+https://www.coursera.org/lecture/deep-learning-business/1-1-future-industry-evolution-artificial-intelligence-eslsa
+https://www.coursera.org/lecture/deep-learning-business/1-2-ibm-watson-wFlZ3
+https://www.coursera.org/lecture/deep-learning-business/2-1-business-considerations-in-the-machine-learning-era-euVKE
+https://www.coursera.org/lecture/deep-learning-business/2-2-business-strategy-with-machine-learning-deep-learning-0Jop8
+https://www.coursera.org/lecture/deep-learning-business/2-4-characteristics-of-businesses-with-dl-ml-kT5GU
+https://www.coursera.org/lecture/deep-learning-business/3-1-deep-learning-open-source-software-3-2-google-tensorflow-szbLw
+https://www.coursera.org/lecture/deep-learning-business/4-1-what-is-deep-learning-machine-learning-Ypj70
+
+https://www.coursera.org/lecture/deep-learning-business/4-2-nn-neural-network-8lPDt
+https://www.coursera.org/lecture/deep-learning-business/4-3-neural-network-learning-backpropagation-eWr3T
+https://www.coursera.org/lecture/deep-learning-business/5-1-deep-learning-with-cnn-convolutional-neural-network-6t88U
+https://www.coursera.org/lecture/deep-learning-business/5-2-deep-learning-with-rnn-recurrent-neural-network-AuemB
+https://www.coursera.org/lecture/deep-learning-business/6-1-introduction-to-tensorflow-playground-ArfBs
+https://www.coursera.org/lecture/deep-learning-business/6-2-project-setup-project-1-and-project-2-UPcGz
+https://www.coursera.org/lecture/deep-learning-business/6-3-project-3-and-project-4-p8IKP
+
+
+#############################################################################
+#
+#   Neuron
+#
+#############################################################################
+
+class Neuron(object):
+  # ...
+  def forward(self, inputs):
+    """ assume inputs and weights are 1-D numpy arrays and bias is a number """
+    cell_body_sum = np.sum(inputs * self.weights) + self.bias
+    firing_rate = 1.0 / (1.0 + math.exp(-cell_body_sum)) # sigmoid activation function
+    return firing_rate
+
+# forward-pass of a 3-layer neural network:
+f = lambda x: 1.0/(1.0 + np.exp(-x)) # activation function (use sigmoid)
+x = np.random.randn(3, 1) # random input vector of three numbers (3x1)
+h1 = f(np.dot(W1, x) + b1) # calculate first hidden layer activations (4x1)
+h2 = f(np.dot(W2, h1) + b2) # calculate second hidden layer activations (4x1)
+out = np.dot(W3, h2) + b3 # output neuron (1x1)
+
+
+
+#############################################################################
+#
+#   matplotlib
+#   https://matplotlib.org/users/pyplot_tutorial.html
+#
+#############################################################################
+
+import matplotlib.pyplot as plt
+plt.plot([1,2,3,4])
+plt.ylabel('some numbers')
+plt.show()
+
+
+
+#############################################################################
+#
+#   numpy.concatenate
+#   https://docs.scipy.org/doc/numpy/reference/generated/numpy.concatenate.html
+#
+#############################################################################
+
+ma.concatenate
+Concatenate function that preserves input masks.
+array_split
+Split an array into multiple sub-arrays of equal or near-equal size.
+split
+Split array into a list of multiple sub-arrays of equal size.
+hsplit
+Split array into multiple sub-arrays horizontally (column wise)
+vsplit
+Split array into multiple sub-arrays vertically (row wise)
+dsplit
+Split array into multiple sub-arrays along the 3rd axis (depth).
+stack
+Stack a sequence of arrays along a new axis.
+hstack
+Stack arrays in sequence horizontally (column wise)
+vstack
+Stack arrays in sequence vertically (row wise)
+dstack
+Stack arrays in sequence depth wise (along third dimension)
+
+
+
+
+
+
+#############################################################################
+#
+#   Single Shot MultiBox Detector -
+#   SSD: Single Shot MultiBox Detector
+#   https://www.youtube.com/watch?v=NpjixVTNmyw
+#   https://www.youtube.com/watch?v=fJBHd5S6jgo
+#
+#############################################################################
+
+PAPERS
+https://arxiv.org/abs/1412.1441
+https://arxiv.org/abs/1409.4842
+https://arxiv.org/abs/1506.01497
+https://arxiv.org/abs/1504.08083
+https://arxiv.org/abs/1311.2524
+https://arxiv.org/abs/1512.02325
+https://arxiv.org/abs/1612.08242
+https://arxiv.org/abs/1703.06870
+https://arxiv.org/abs/1512.02325
+https://www.cs.unc.edu/~wliu/papers/ssd.pdf
+http://yann.lecun.com/exdb/publis/pdf/lecun-98b.pdf
+
+DBs
+http://host.robots.ox.ac.uk/pascal/VOC/
+http://cocodataset.org/#home
+http://www.gti.ssr.upm.es/data/Vehicle_database.html
+http://www.cvlibs.net/datasets/kitti/
+
+ARTICLES
+http://christopher5106.github.io/deep/learning/2016/09/16/about-loss-functions-multinomial-logistic-logarithm-cross-entropy-square-errors-euclidian-absolute-frobenius-hinge.html
+https://towardsdatascience.com/understanding-ssd-multibox-real-time-object-detection-in-deep-learning-495ef744fab
+https://towardsdatascience.com/teaching-cars-to-see-vehicle-detection-using-machine-learning-and-computer-vision-54628888079a
+https://medium.com/@jonathan_hui/ssd-object-detection-single-shot-multibox-detector-for-real-time-processing-9bd8deac0e06
+http://cv-tricks.com/object-detection/single-shot-multibox-detector-ssd/
+https://leonardoaraujosantos.gitbooks.io/artificial-inteligence/content/single-shot-detectors.html
+
+https://medium.com/computer-car/udacity-self-driving-car-nanodegree-project-1-finding-lane-lines-9cd6a846c58c
+https://towardsdatascience.com/recognizing-traffic-signs-with-over-98-accuracy-using-deep-learning-86737aedc2ab
+https://towardsdatascience.com/teaching-cars-to-drive-using-deep-learning-steering-angle-prediction-5773154608f2
+https://towardsdatascience.com/teaching-cars-to-see-advanced-lane-detection-using-computer-vision-87a01de0424f
+
+
+
+DEMO SSD
+https://github.com/weiliu89/caffe/tree/ssd
+https://github.com/balancap/SSD-Tensorflow
+https://github.com/amdegroot/ssd.pytorch
+https://github.com/ljanyst/ssd-tensorflow
+https://github.com/tensorflow/models
+https://github.com/lzx1413/PytorchSSD
+https://github.com/ethereon/caffe-tensorflow
+
+https://github.com/PureDiors/pytorch_RFCN
+https://github.com/xdever/RFCN-tensorflow
+https://github.com/tommy-qichang/yolo.torch
+
+#############################################################################
+# Lane Finding Project for Self-Driving Car ND
+# https://github.com/kenshiro-o/CarND-LaneLines-P1
+#############################################################################
+
+def compute_hls_white_yellow_binary(rgb_img):
+    """
+    Returns a binary thresholded image produced retaining only white and yellow elements on the picture
+    The provided image should be in RGB format
+    """
+    hls_img = to_hls(rgb_img)
+
+    # Compute a binary thresholded image where yellow is isolated from HLS components
+    img_hls_yellow_bin = np.zeros_like(hls_img[:,:,0])
+    img_hls_yellow_bin[((hls_img[:,:,0] >= 15) & (hls_img[:,:,0] <= 35))
+                 & ((hls_img[:,:,1] >= 30) & (hls_img[:,:,1] <= 204))
+                 & ((hls_img[:,:,2] >= 115) & (hls_img[:,:,2] <= 255))
+                ] = 1
+
+    # Compute a binary thresholded image where white is isolated from HLS components
+    img_hls_white_bin = np.zeros_like(hls_img[:,:,0])
+    img_hls_white_bin[((hls_img[:,:,0] >= 0) & (hls_img[:,:,0] <= 255))
+                 & ((hls_img[:,:,1] >= 200) & (hls_img[:,:,1] <= 255))
+                 & ((hls_img[:,:,2] >= 0) & (hls_img[:,:,2] <= 255))
+                ] = 1
+
+    # Now combine both
+    img_hls_white_yellow_bin = np.zeros_like(hls_img[:,:,0])
+    img_hls_white_yellow_bin[(img_hls_yellow_bin == 1) | (img_hls_white_bin == 1)] = 1
+
+    return img_hls_white_yellow_bin
+
+-------------
+# Recognising Traffic Signs With 98% Accuracy Using Deep Learning
+
+def augment_imgs(imgs, p):
+    """
+    Performs a set of augmentations with with a probability p
+    """
+    augs =  iaa.SomeOf((2, 4),
+          [
+              iaa.Crop(px=(0, 4)), # crop images from each side by 0 to 4px (randomly chosen)
+              iaa.Affine(scale={"x": (0.8, 1.2), "y": (0.8, 1.2)}),
+              iaa.Affine(translate_percent={"x": (-0.2, 0.2), "y": (-0.2, 0.2)}),
+              iaa.Affine(rotate=(-45, 45)), # rotate by -45 to +45 degrees)
+              iaa.Affine(shear=(-10, 10)) # shear by -10 to +10 degrees
+          ])
+
+    seq = iaa.Sequential([iaa.Sometimes(p, augs)])
+
+    return seq.augment_images(imgs)
+
+
+#############################################################################
+train SSD from scratch
+#############################################################################
+
+https://github.com/tensorflow/models
+https://github.com/lzx1413/PytorchSSD
+https://github.com/ethereon/caffe-tensorflow
+https://github.com/ljanyst/ssd-tensorflow
+https://github.com/amdegroot/ssd.pytorch
+
+https://gist.github.com/ksimonyan/211839e770f7b538e2d8#file-readme-md
+https://www.cs.toronto.edu/~frossard/vgg16/imagenet_classes.py
+https://www.cs.toronto.edu/~frossard/vgg16/vgg16_weights.npz
+https://www.cs.toronto.edu/~frossard/post/vgg16/
+http://silverpond.com.au/2017/02/17/how-we-built-and-trained-an-ssd-multibox-detector-in-tensorflow.html
+https://jany.st/post/2017-11-05-single-shot-detector-ssd-from-scratch-in-tensorflow.html
+https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-ranked-retrieval-results-1.html
+https://jany.st/post/2017-02-11-finding-lane-lines-and-detecting-vehicles-in-a-video-stream.html
+
+
+with tf.variable_scope('mod_conv6'):
+    orig_w, orig_b = sess.run([self.vgg_fc6_w, self.vgg_fc6_b])
+    mod_w = np.zeros((3, 3, 512, 1024))
+    mod_b = np.zeros(1024)
+
+    for i in range(1024):
+        mod_b[i] = orig_b[4*i]
+        for h in range(3):
+            for w in range(3):
+                mod_w[h, w, :, i] = orig_w[3*h, 3*w, :, 4*i]
+
+    w = array2tensor(mod_w, 'weights')
+    b = array2tensor(mod_b, 'biases')
+    x = tf.nn.atrous_conv2d(self.mod_pool5, w, rate=6, padding='SAME')
+    x = tf.nn.bias_add(x, b)
+    self.mod_conv6 = tf.nn.relu(x)
+
+def l2_normalization(x, initial_scale, channels, name):
+    with tf.variable_scope(name):
+        scale = array2tensor(initial_scale*np.ones(channels), 'scale')
+        x = scale*tf.nn.l2_normalize(x, dim=-1)
+    return x
+
+x, l2 = conv_map(self.ssd_conv11_2, 128, 1, 1, 'conv12_1')
+paddings = [[0, 0], [0, 1], [0, 1], [0, 0]]
+x = tf.pad(x, paddings, "CONSTANT")
+self.ssd_conv12_1 = self.__with_loss(x, l2)
+x, l2 = conv_map(self.ssd_conv12_1, 256, 3, 1, 'conv12_2', 'VALID')
+self.ssd_conv12_2 = self.__with_loss(x, l2)
+
+
+def smooth_l1_loss(x):
+    square_loss   = 0.5*x**2
+    absolute_loss = tf.abs(x)
+    return tf.where(tf.less(absolute_loss, 1.), square_loss, absolute_loss-0.5)
+
+
+
+
+
+
+
+
+########################################################
+
+CREDIT-RISK-MODELING-WITH-DATA-SCIENCE
+https://towardsdatascience.com/a-gentle-introduction-to-credit-risk-modeling-with-data-science-part-2-d7b87806c9df
+https://towardsdatascience.com/an-intro-to-data-science-for-credit-risk-modelling-57935805a911
+
+########################################################
+
+***
+
+Annual Income in Some Countries
+http://www.jkps.or.kr/journal/download_pdf.php?spage=1037&volume=46&number=4
+
+American Individuals’ Net Worth
+https://arxiv.org/pdf/1304.0212.pdf
+
+City Populations
+https://io9.gizmodo.com/the-mysterious-law-that-governs-the-size-of-your-city-1479244159
+
+Species Extinction
+https://pdfs.semanticscholar.org/e4d6/16bf0769948525b0bcc2753c8cc4f6979ba9.pdf
+
+Species Body Mass
+http://www.oikosjournal.org/blog/power-law-nature-individual-body-size-variation
+
+Sizes of Craters on the Moon
+https://agupubs.onlinelibrary.wiley.com/doi/pdf/10.1029/JB075i026p04977
+
+Words in Most Language Corpi
+https://en.wikipedia.org/wiki/Zipf%27s_law
+
+
+
+
+#############################################################################
+#
+#   yolo  PyTorch 0.3+, OpenCV 3 and Python
+#   https://www.youtube.com/watch?list=PLrrmP4uhN47Y-hWs7DVfCmLwUACRigYyT&v=NM6lrxy0bxs
+#
+#############################################################################
+
+
+https://github.com/ayooshkathuria/pytorch-yolo-v3
+python detect.py --scales 1 --images imgs/img3.jpg
+python detect.py --scales 3 --images imgs/img3.jpg
+python detect.py --reso 320 --images imgs/imgs4.jpg
+python detect.py --reso 416 --images imgs/imgs4.jpg
+python detect.py --reso 608 --images imgs/imgs4.jpg
+python detect.py --reso 960 --images imgs/imgs4.jpg
+
+https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html
+http://cs231n.stanford.edu/slides/2017/cs231n_2017_lecture11.pdf
+
+How to implement a YOLO (v3) object detector from scratch in PyTorch: Part 1
+https://blog.paperspace.com/how-to-implement-a-yolo-object-detector-in-pytorch/
+https://blog.paperspace.com/how-to-implement-a-yolo-v3-object-detector-from-scratch-in-pytorch-part-2/
+https://blog.paperspace.com/how-to-implement-a-yolo-v3-object-detector-from-scratch-in-pytorch-part-3/
+https://blog.paperspace.com/how-to-implement-a-yolo-v3-object-detector-from-scratch-in-pytorch-part-4/
+https://blog.paperspace.com/how-to-implement-a-yolo-v3-object-detector-from-scratch-in-pytorch-part-5/
+https://github.com/ayooshkathuria/YOLO_v3_tutorial_from_scratch
+https://github.com/ayooshkathuria/YOLO_v3_tutorial_from_scratch
+https://github.com/ayooshkathuria/pytorch-yolo-v3
+https://pjreddie.com/darknet/yolo/
+https://pjreddie.com/darknet/yolo/
+https://github.com/thtrieu/darkflow
+https://github.com/thtrieu/darkflow
+https://drive.google.com/drive/folders/0B1tW_VtY7onidEwyQ2FtQVplWEU # pre-trained weights
+https://drive.google.com/drive/folders/0B1tW_VtY7onidEwyQ2FtQVplWEU
+
+
+
+
+YOLOV2-OBJECT-DETECTION-USING-DARKFLOW
+https://towardsdatascience.com/yolov2-object-detection-using-darkflow-83db6aa5cf5f
+
+pip install Cython
+$ git clone https://github.com/thtrieu/darkflow.git
+$ cd darkflow
+$ python3 setup.py build_ext --inplace
+$ pip install .
+
+#  use “model”, “load”, “threshold”, and “gpu”
+
+# Building the Model
+# https://gist.github.com/deep-diver/52cb574b8cea15fd0218ffe23c24f93c#file-build-yolov2-model-py
+from darkflow.net.build import TFNet
+
+options = {"model": "cfg/yolo.cfg",
+           "load": "bin/yolo.weights",
+           "threshold": 0.1,
+           "gpu": 1.0}
+
+tfnet = TFNet(options)
+results = tfnet.return_predict(original_img)
+
+---
+
+# CV2 ****
+# https://gist.github.com/deep-diver/b40cc001d19c94e79c000fde01a4da9b#file-boxing-video-py
+
+cap = cv2.VideoCapture('./sample_video/test_video.mp4')
+width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+
+fourcc = cv2.VideoWriter_fourcc(*'DIVX')
+out = cv2.VideoWriter('./sample_video/output.avi',fourcc, 20.0, (int(width), int(height)))
+
+while(True):
+    # Capture frame-by-frame
+    ret, frame = cap.read()
+
+    if ret == True:
+        frame = np.asarray(frame)
+        results = tfnet.return_predict(frame)
+
+        new_frame = boxing(frame, results)
+
+        # Display the resulting frame
+        out.write(new_frame)
+        cv2.imshow('frame',new_frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+    else:
+        break
+
+# When everything done, release the capture
+cap.release()
+out.release()
+cv2.destroyAllWindows()
+
+
+
+#############################################################################
+#
+#   Machine Learning Zero-to-Hero: Everything you need in order to compete on Kaggle for the first time
+#   https://towardsdatascience.com/machine-learning-zero-to-hero-everything-you-need-in-order-to-compete-on-kaggle-for-the-first-time-18644e701cf1
+#
+#############################################################################
+
+import pandas as pd
+from sklearn.ensemble import RandomForestRegressor
+PATH = "Oren/Kaggle/Housing Prices/"  #where you put the files
+df_train = pd.read_csv(f'{PATH}train.csv', index_col='Id')
+df_test = pd.read_csv(f'{PATH}test.csv', index_col='Id')
+target = df_train['SalePrice']  #target variable
+df_train = df_train.drop('SalePrice', axis=1)
+df_train['training_set'] = True
+df_test['training_set'] = False
+df_full = pd.concat([df_train, df_test])
+df_full = df_full.interpolate()
+df_full = pd.get_dummies(df_full)
+df_train = df_full[df_full['training_set']==True]
+df_train = df_train.drop('training_set', axis=1)
+df_test = df_full[df_full['training_set']==False]
+df_test = df_test.drop('training_set', axis=1)
+rf = RandomForestRegressor(n_estimators=100, n_jobs=-1)
+rf.fit(df_train, target)
+preds = rf.predict(df_test)
+my_submission = pd.DataFrame({'Id': df_test.index, 'SalePrice': preds})
+my_submission.to_csv(f'{PATH}submission.csv', index=False)
+
+
+# https://www.kaggle.com/c/titanic
+# https://www.kaggle.com/c/house-prices-advanced-regression-techniques
+# https://pandas.pydata.org/pandas-docs/stable/generated/pandas.read_csv.html
+# http://scikit-learn.org/stable/modules/tree.html#tree
+# http://scikit-learn.org/stable/modules/ensemble.html#random-forests
+
+
+#############################################################################
+#
+#   Introduction to Clinical Natural Language Processing: Predicting Hospital Readmission with Discharge Summaries
+#   https://towardsdatascience.com/introduction-to-clinical-natural-language-processing-predicting-hospital-readmission-with-1736d52bc709
+#
+#############################################################################
+
+# https://github.com/andrewwlong/mimic_bow
+# https://mimic.physionet.org/gettingstarted/access/
+
+# Step 1: Prepare data for a machine learning project
+
+# set up notebook
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+# read the admissions table
+df_adm = pd.read_csv('ADMISSIONS.csv')
+
+# convert to dates
+df_adm.ADMITTIME = pd.to_datetime(df_adm.ADMITTIME, format = '%Y-%m-%d %H:%M:%S', errors = 'coerce')
+df_adm.DISCHTIME = pd.to_datetime(df_adm.DISCHTIME, format = '%Y-%m-%d %H:%M:%S', errors = 'coerce')
+df_adm.DEATHTIME = pd.to_datetime(df_adm.DEATHTIME, format = '%Y-%m-%d %H:%M:%S', errors = 'coerce')
+
+
+# sort by subject_ID and admission date
+df_adm = df_adm.sort_values(['SUBJECT_ID','ADMITTIME'])
+df_adm = df_adm.reset_index(drop = True)
+
+# add the next admission date and type for each subject using groupby
+# you have to use groupby otherwise the dates will be from different subjects
+df_adm['NEXT_ADMITTIME'] = df_adm.groupby('SUBJECT_ID').ADMITTIME.shift(-1)
+# get the next admission type
+df_adm['NEXT_ADMISSION_TYPE'] = df_adm.groupby('SUBJECT_ID').ADMISSION_TYPE.shift(-1)
+
+# get rows where next admission is elective and replace with naT or nan
+rows = df_adm.NEXT_ADMISSION_TYPE == 'ELECTIVE'
+df_adm.loc[rows,'NEXT_ADMITTIME'] = pd.NaT
+df_adm.loc[rows,'NEXT_ADMISSION_TYPE'] = np.NaN
+
+# sort by subject_ID and admission date
+# it is safer to sort right before the fill in case something changed the order above
+df_adm = df_adm.sort_values(['SUBJECT_ID','ADMITTIME'])
+# back fill (this will take a little while)
+df_adm[['NEXT_ADMITTIME','NEXT_ADMISSION_TYPE']] = df_adm.groupby(['SUBJECT_ID'])[['NEXT_ADMITTIME','NEXT_ADMISSION_TYPE']].fillna(method = 'bfill')
+
+df_adm['DAYS_NEXT_ADMIT']=  (df_adm.NEXT_ADMITTIME - df_adm.DISCHTIME).dt.total_seconds()/(24*60*60)
+
+df_notes = pd.read_csv("NOTEEVENTS.csv")
+
+# filter to discharge summary
+df_notes_dis_sum = df_notes.loc[df_notes.CATEGORY == 'Discharge summary']
+
+df_notes_dis_sum_last = (df_notes_dis_sum.groupby(['SUBJECT_ID','HADM_ID']).nth(-1)).reset_index()
+assert df_notes_dis_sum_last.duplicated(['HADM_ID']).sum() == 0, 'Multiple discharge summaries per admission'
+
+df_adm_notes = pd.merge(df_adm[['SUBJECT_ID','HADM_ID','ADMITTIME','DISCHTIME','DAYS_NEXT_ADMIT','NEXT_ADMITTIME','ADMISSION_TYPE','DEATHTIME']],
+                        df_notes_dis_sum_last[['SUBJECT_ID','HADM_ID','TEXT']],
+                        on = ['SUBJECT_ID','HADM_ID'],
+                        how = 'left')
+assert len(df_adm) == len(df_adm_notes), 'Number of rows increased'
+
+df_adm_notes.groupby('ADMISSION_TYPE').apply(lambda g: g.TEXT.isnull().sum())/df_adm_notes.groupby('ADMISSION_TYPE').size()
+df_adm_notes_clean['OUTPUT_LABEL'] = (df_adm_notes_clean.DAYS_NEXT_ADMIT < 30).astype('int')
+
+
+# shuffle the samples
+df_adm_notes_clean = df_adm_notes_clean.sample(n = len(df_adm_notes_clean), random_state = 42)
+df_adm_notes_clean = df_adm_notes_clean.reset_index(drop = True)
+# Save 30% of the data as validation and test data
+df_valid_test=df_adm_notes_clean.sample(frac=0.30,random_state=42)
+df_test = df_valid_test.sample(frac = 0.5, random_state = 42)
+df_valid = df_valid_test.drop(df_test.index)
+# use the rest of the data as training data
+df_train_all=df_adm_notes_clean.drop(df_valid_test.index)
+
+# split the training data into positive and negative
+rows_pos = df_train_all.OUTPUT_LABEL == 1
+df_train_pos = df_train_all.loc[rows_pos]
+df_train_neg = df_train_all.loc[~rows_pos]
+# merge the balanced data
+df_train = pd.concat([df_train_pos, df_train_neg.sample(n = len(df_train_pos), random_state = 42)],axis = 0)
+# shuffle the order of training samples
+df_train = df_train.sample(n = len(df_train), random_state = 42).reset_index(drop = True)
+
+# ----------------------------------
+# Step 2: Preprocess the unstructured notes using a bag-of-words approach
+# ----------------------------------
+
+def preprocess_text(df):
+    # This function preprocesses the text by filling not a number and replacing new lines ('\n') and carriage returns ('\r')
+    df.TEXT = df.TEXT.fillna(' ')
+    df.TEXT = df.TEXT.str.replace('\n',' ')
+    df.TEXT = df.TEXT.str.replace('\r',' ')
+    return df
+# preprocess the text to deal with known issues
+df_train = preprocess_text(df_train)
+df_valid = preprocess_text(df_valid)
+df_test = preprocess_text(df_test)
+
+
+import nltk
+from nltk import word_tokenize
+word_tokenize('This should be tokenized. 02/02/2018 sentence has stars**')
+
+
+# [‘This’, ‘should’, ‘be’, ‘tokenized’, ‘.’, ‘02/02/2018’, ‘sentence’,  ‘has’, ‘stars**’]
+
+import string
+def tokenizer_better(text):
+    # tokenize the text by replacing punctuation and numbers with spaces and lowercase all words
+
+    punc_list = string.punctuation+'0123456789'
+    t = str.maketrans(dict.fromkeys(punc_list, " "))
+    text = text.lower().translate(t)
+    tokens = word_tokenize(text)
+    return tokens
+
+# ['this', 'should', 'be', 'tokenized', 'sentence', 'has', 'stars']
+
+sample_text = ['Data science is about the data', 'The science is amazing', 'Predictive modeling is part of data science']
+
+from sklearn.feature_extraction.text import CountVectorizer
+vect = CountVectorizer(tokenizer = tokenizer_better)
+vect.fit(sample_text)
+# matrix is stored as a sparse matrix (since you have a lot of zeros)
+X = vect.transform(sample_text)
+X.toarray()
+
+"""
+array([[1, 0, 2, 1, 0, 0, 0, 0, 1, 1],
+       [0, 1, 0, 1, 0, 0, 0, 0, 1, 1],
+       [0, 0, 1, 1, 1, 1, 1, 1, 1, 0]], dtype=int64)
+"""
+
+vect.get_feature_names()
+# ['about', 'amazing', 'data', 'is', 'modeling', 'of', 'part', 'predictive', 'science', 'the']
+
+# fit our vectorizer. This will take a while depending on your computer.
+from sklearn.feature_extraction.text import CountVectorizer
+vect = CountVectorizer(max_features = 3000, tokenizer = tokenizer_better)
+# this could take a while
+vect.fit(df_train.TEXT.values)
+
+my_stop_words = ['the','and','to','of','was','with','a','on','in','for','name',                 'is','patient','s','he','at','as','or','one','she','his','her','am',                 'were','you','pt','pm','by','be','had','your','this','date',                'from','there','an','that','p','are','have','has','h','but','o',                'namepattern','which','every','also']
+
+from sklearn.feature_extraction.text import CountVectorizer
+vect = CountVectorizer(max_features = 3000,
+                       tokenizer = tokenizer_better,
+                       stop_words = my_stop_words)
+# this could take a while
+vect.fit(df_train.TEXT.values)
+
+X_train_tf = vect.transform(df_train.TEXT.values)
+X_valid_tf = vect.transform(df_valid.TEXT.values)
+
+y_train = df_train.OUTPUT_LABEL
+y_valid = df_valid.OUTPUT_LABEL
+
+# --------------------------------
+# Step 3: Build a simple predictive model
+# --------------------------------
+
+# logistic regression
+from sklearn.linear_model import LogisticRegression
+clf=LogisticRegression(C = 0.0001, penalty = 'l2', random_state = 42)
+clf.fit(X_train_tf, y_train)
+
+model = clf
+y_train_preds = model.predict_proba(X_train_tf)[:,1]
+y_valid_preds = model.predict_proba(X_valid_tf)[:,1]
+
+# Step 4: Assess the quality of your model
+# Step 6: Finalize your model and test it
+
+rows_not_death = df_adm_notes_clean.DEATHTIME.isnull()
+df_adm_notes_not_death = df_adm_notes_clean.loc[rows_not_death].copy()
+df_adm_notes_not_death = df_adm_notes_not_death.sample(n = len(df_adm_notes_not_death), random_state = 42)
+df_adm_notes_not_death = df_adm_notes_not_death.reset_index(drop = True)
+# Save 30% of the data as validation and test data
+df_valid_test=df_adm_notes_not_death.sample(frac=0.30,random_state=42)
+df_test = df_valid_test.sample(frac = 0.5, random_state = 42)
+df_valid = df_valid_test.drop(df_test.index)
+# use the rest of the data as training data
+df_train_all=df_adm_notes_not_death.drop(df_valid_test.index)
+assert len(df_adm_notes_not_death) == (len(df_test)+len(df_valid)+len(df_train_all)),'math didnt work'
+# split the training data into positive and negative
+rows_pos = df_train_all.OUTPUT_LABEL == 1
+df_train_pos = df_train_all.loc[rows_pos]
+df_train_neg = df_train_all.loc[~rows_pos]
+# merge the balanced data
+df_train = pd.concat([df_train_pos, df_train_neg.sample(n = len(df_train_pos), random_state = 42)],axis = 0)
+# shuffle the order of training samples
+df_train = df_train.sample(n = len(df_train), random_state = 42).reset_index(drop = True)
+# preprocess the text to deal with known issues
+df_train = preprocess_text(df_train)
+df_valid = preprocess_text(df_valid)
+df_test = preprocess_text(df_test)
+my_new_stop_words = ['the','and','to','of','was','with','a','on','in','for','name',              'is','patient','s','he','at','as','or','one','she','his','her','am',                 'were','you','pt','pm','by','be','had','your','this','date',                'from','there','an','that','p','are','have','has','h','but','o',                'namepattern','which','every','also','should','if','it','been','who','during', 'x']
+from sklearn.feature_extraction.text import CountVectorizer
+vect = CountVectorizer(lowercase = True, max_features = 3000,
+                       tokenizer = tokenizer_better,
+                      stop_words = my_new_stop_words)
+# fit the vectorizer
+vect.fit(df_train.TEXT.values)
+X_train_tf = vect.transform(df_train.TEXT.values)
+X_valid_tf = vect.transform(df_valid.TEXT.values)
+X_test_tf = vect.transform(df_test.TEXT.values)
+y_train = df_train.OUTPUT_LABEL
+y_valid = df_valid.OUTPUT_LABEL
+y_test = df_test.OUTPUT_LABEL
+from sklearn.linear_model import LogisticRegression
+clf=LogisticRegression(C = 0.0001, penalty = 'l2', random_state = 42)
+clf.fit(X_train_tf, y_train)
+model = clf
+y_train_preds = model.predict_proba(X_train_tf)[:,1]
+y_valid_preds = model.predict_proba(X_valid_tf)[:,1]
+y_test_preds = model.predict_proba(X_test_tf)[:,1]
+
+
+
+#############################################################################
+#
+#   Unsupervised Learning with Python
+#   https://towardsdatascience.com/unsupervised-learning-with-python-173c51dc7f03
+#
+#############################################################################
+
+# ------------------------------
+# Preparing data for Unsupervised Learning
+# ------------------------------
+
+# Importing Modules
+from sklearn import datasets
+import matplotlib.pyplot as plt
+
+# Loading dataset
+iris_df = datasets.load_iris()
+
+# Available methods on dataset
+print(dir(iris_df))
+
+# Features
+print(iris_df.feature_names)
+
+# Targets
+print(iris_df.target)
+
+# Target Names
+print(iris_df.target_names)
+label = {0: 'red', 1: 'blue', 2: 'green'}
+
+# Dataset Slicing
+x_axis = iris_df.data[:, 0]  # Sepal Length
+y_axis = iris_df.data[:, 2]  # Sepal Width
+
+# Plotting
+plt.scatter(x_axis, y_axis, c=iris_df.target)
+plt.show()
+
+# ------------------------------
+# Clustering K-Means Clustering in Python
+# ------------------------------
+
+# Importing Modules
+from sklearn import datasets
+from sklearn.cluster import KMeans
+
+# Loading dataset
+iris_df = datasets.load_iris()
+
+# Declaring Model
+model = KMeans(n_clusters=3)
+
+# Fitting Model
+model.fit(iris_df.data)
+
+# Predicitng a single input
+predicted_label = model.predict([[7.2, 3.5, 0.8, 1.6]])
+
+# Prediction on the entire data
+all_predictions = model.predict(iris_df.data)
+
+# Printing Predictions
+print(predicted_label)
+print(all_predictions)
+
+# ------------------------------
+# Hierarchical Clustering
+# ------------------------------
+
+# Importing Modules
+from scipy.cluster.hierarchy import linkage, dendrogram
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# Reading the DataFrame
+seeds_df = pd.read_csv(
+    "https://raw.githubusercontent.com/vihar/unsupervised-learning-with-python/master/seeds-less-rows.csv")
+
+# Remove the grain species from the DataFrame, save for later
+varieties = list(seeds_df.pop('grain_variety'))
+
+# Extract the measurements as a NumPy array
+samples = seeds_df.values
+
+"""
+Perform hierarchical clustering on samples using the
+linkage() function with the method='complete' keyword argument.
+Assign the result to mergings.
+"""
+mergings = linkage(samples, method='complete')
+
+"""
+Plot a dendrogram using the dendrogram() function on mergings,
+specifying the keyword arguments labels=varieties, leaf_rotation=90,
+and leaf_font_size=6.
+"""
+dendrogram(mergings,
+           labels=varieties,
+           leaf_rotation=90,
+           leaf_font_size=6,
+           )
+
+plt.show()
+
+
+# ------------------------------
+t-SNE Clustering
+# ------------------------------
+# Importing Modules
+from sklearn import datasets
+from sklearn.manifold import TSNE
+import matplotlib.pyplot as plt
+
+# Loading dataset
+iris_df = datasets.load_iris()
+
+# Defining Model
+model = TSNE(learning_rate=100)
+
+# Fitting Model
+transformed = model.fit_transform(iris_df.data)
+
+# Plotting 2d t-Sne
+x_axis = transformed[:, 0]
+y_axis = transformed[:, 1]
+
+plt.scatter(x_axis, y_axis, c=iris_df.target)
+plt.show()
+
+
+# ------------------------------
+DBSCAN Clustering
+# ------------------------------
+
+# Importing Modules
+from sklearn.datasets import load_iris
+import matplotlib.pyplot as plt
+from sklearn.cluster import DBSCAN
+from sklearn.decomposition import PCA
+
+# Load Dataset
+iris = load_iris()
+
+# Declaring Model
+dbscan = DBSCAN()
+
+# Fitting
+dbscan.fit(iris.data)
+
+# Transoring Using PCA
+pca = PCA(n_components=2).fit(iris.data)
+pca_2d = pca.transform(iris.data)
+
+# Plot based on Class
+for i in range(0, pca_2d.shape[0]):
+    if dbscan.labels_[i] == 0:
+        c1 = plt.scatter(pca_2d[i, 0], pca_2d[i, 1], c='r', marker='+')
+    elif dbscan.labels_[i] == 1:
+        c2 = plt.scatter(pca_2d[i, 0], pca_2d[i, 1], c='g', marker='o')
+    elif dbscan.labels_[i] == -1:
+        c3 = plt.scatter(pca_2d[i, 0], pca_2d[i, 1], c='b', marker='*')
+
+plt.legend([c1, c2, c3], ['Cluster 1', 'Cluster 2', 'Noise'])
+plt.title('DBSCAN finds 2 clusters and Noise')
+plt.show()
+
+
+
+#############################################################################
+#
+#   Multi-Class Text Classification with Scikit-Learn
+#   https://towardsdatascience.com/multi-class-text-classification-with-scikit-learn-12f1e60e0a9f
+#
+#############################################################################
+
+import pandas as pd
+df = pd.read_csv('Consumer_Complaints.csv')
+df.head()
+
+from io import StringIO
+col = ['Product', 'Consumer complaint narrative']
+df = df[col]
+df = df[pd.notnull(df['Consumer complaint narrative'])]
+df.columns = ['Product', 'Consumer_complaint_narrative']
+df['category_id'] = df['Product'].factorize()[0]
+category_id_df = df[['Product', 'category_id']].drop_duplicates().sort_values('category_id')
+category_to_id = dict(category_id_df.values)
+id_to_category = dict(category_id_df[['category_id', 'Product']].values)
+df.head()
+
+
+# Imbalanced Classes
+
+import matplotlib.pyplot as plt
+fig = plt.figure(figsize=(8,6))
+df.groupby('Product').Consumer_complaint_narrative.count().plot.bar(ylim=0)
+plt.show()
+
+# Text Representation
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+tfidf = TfidfVectorizer(sublinear_tf=True, min_df=5, norm='l2', encoding='latin-1', ngram_range=(1, 2), stop_words='english')
+features = tfidf.fit_transform(df.Consumer_complaint_narrative).toarray()
+labels = df.category_id
+features.shape
+
+from sklearn.feature_selection import chi2
+import numpy as np
+N = 2
+for Product, category_id in sorted(category_to_id.items()):
+  features_chi2 = chi2(features, labels == category_id)
+  indices = np.argsort(features_chi2[0])
+  feature_names = np.array(tfidf.get_feature_names())[indices]
+  unigrams = [v for v in feature_names if len(v.split(' ')) == 1]
+  bigrams = [v for v in feature_names if len(v.split(' ')) == 2]
+  print("# '{}':".format(Product))
+  print("  . Most correlated unigrams:\n. {}".format('\n. '.join(unigrams[-N:])))
+  print("  . Most correlated bigrams:\n. {}".format('\n. '.join(bigrams[-N:])))
+
+
+# Multi-Class Classifier: Features and Design
+# Naive Bayes Classifier
+
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.naive_bayes import MultinomialNB
+X_train, X_test, y_train, y_test = train_test_split(df['Consumer_complaint_narrative'], df['Product'], random_state = 0)
+count_vect = CountVectorizer()
+X_train_counts = count_vect.fit_transform(X_train)
+tfidf_transformer = TfidfTransformer()
+X_train_tfidf = tfidf_transformer.fit_transform(X_train_counts)
+clf = MultinomialNB().fit(X_train_tfidf, y_train)
+
+print(clf.predict(count_vect.transform(["This company refuses to provide me verification and validation of debt per my right under the FDCPA. I do not believe this debt is mine."])))
+
+df[df['Consumer_complaint_narrative'] == "This company refuses to provide me verification and validation of debt per my right under the FDCPA. I do not believe this debt is mine."]
+
+print(clf.predict(count_vect.transform(["I am disputing the inaccurate information the Chex-Systems has on my credit report. I initially submitted a police report on XXXX/XXXX/16 and Chex Systems only deleted the items that I mentioned in the letter and not all the items that were actually listed on the police report. In other words they wanted me to say word for word to them what items were fraudulent. The total disregard of the police report and what accounts that it states that are fraudulent. If they just had paid a little closer attention to the police report I would not been in this position now and they would n't have to research once again. I would like the reported information to be removed : XXXX XXXX XXXX"])))
+
+
+df[df['Consumer_complaint_narrative'] == "I am disputing the inaccurate information the Chex-Systems has on my credit report. I initially submitted a police report on XXXX/XXXX/16 and Chex Systems only deleted the items that I mentioned in the letter and not all the items that were actually listed on the police report. In other words they wanted me to say word for word to them what items were fraudulent. The total disregard of the police report and what accounts that it states that are fraudulent. If they just had paid a little closer attention to the police report I would not been in this position now and they would n't have to research once again. I would like the reported information to be removed : XXXX XXXX XXXX"]
+
+# Model Selection
+
+	# LogisticRegression
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import LinearSVC
+from sklearn.model_selection import cross_val_score
+models = [
+    RandomForestClassifier(n_estimators=200, max_depth=3, random_state=0),
+    LinearSVC(),
+    MultinomialNB(),
+    LogisticRegression(random_state=0),
+]
+CV = 5
+cv_df = pd.DataFrame(index=range(CV * len(models)))
+entries = []
+for model in models:
+  model_name = model.__class__.__name__
+  accuracies = cross_val_score(model, features, labels, scoring='accuracy', cv=CV)
+  for fold_idx, accuracy in enumerate(accuracies):
+    entries.append((model_name, fold_idx, accuracy))
+cv_df = pd.DataFrame(entries, columns=['model_name', 'fold_idx', 'accuracy'])
+import seaborn as sns
+sns.boxplot(x='model_name', y='accuracy', data=cv_df)
+sns.stripplot(x='model_name', y='accuracy', data=cv_df,
+              size=8, jitter=True, edgecolor="gray", linewidth=2)
+plt.show()
+
+
+# Model Evaluation
+
+model = LinearSVC()
+X_train, X_test, y_train, y_test, indices_train, indices_test = train_test_split(features, labels, df.index, test_size=0.33, random_state=0)
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+from sklearn.metrics import confusion_matrix
+conf_mat = confusion_matrix(y_test, y_pred)
+fig, ax = plt.subplots(figsize=(10,10))
+sns.heatmap(conf_mat, annot=True, fmt='d',
+            xticklabels=category_id_df.Product.values, yticklabels=category_id_df.Product.values)
+plt.ylabel('Actual')
+plt.xlabel('Predicted')
+plt.show()
+
+
+from IPython.display import display
+for predicted in category_id_df.category_id:
+  for actual in category_id_df.category_id:
+    if predicted != actual and conf_mat[actual, predicted] >= 10:
+      print("'{}' predicted as '{}' : {} examples.".format(id_to_category[actual], id_to_category[predicted], conf_mat[actual, predicted]))
+      display(df.loc[indices_test[(y_test == actual) & (y_pred == predicted)]][['Product', 'Consumer_complaint_narrative']])
+      print('')
+
+
+model.fit(features, labels)
+N = 2
+for Product, category_id in sorted(category_to_id.items()):
+  indices = np.argsort(model.coef_[category_id])
+  feature_names = np.array(tfidf.get_feature_names())[indices]
+  unigrams = [v for v in reversed(feature_names) if len(v.split(' ')) == 1][:N]
+  bigrams = [v for v in reversed(feature_names) if len(v.split(' ')) == 2][:N]
+  print("# '{}':".format(Product))
+  print("  . Top unigrams:\n       . {}".format('\n       . '.join(unigrams)))
+  print("  . Top bigrams:\n       . {}".format('\n       . '.join(bigrams)))
+
+
+from sklearn import metrics
+print(metrics.classification_report(y_test, y_pred, target_names=df['Product'].unique()))
+
+
+
+https://github.com/susanli2016/Machine-Learning-with-Python
+https://github.com/susanli2016/Machine-Learning-with-Python/blob/master/Consumer_complaints.ipynb
