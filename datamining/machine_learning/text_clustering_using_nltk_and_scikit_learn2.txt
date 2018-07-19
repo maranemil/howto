@@ -1,0 +1,179 @@
+
+
+
+
+
+
+https://www.nltk.org/book/ch01.html
+http://www.ling.helsinki.fi/kit/2009s/clt231/NLTK/book/ch01-LanguageProcessingAndPython.html
+https://www.strehle.de/tim/weblog/archives/2015/09/03/1569
+
+>>> import nltk
+>>> nltk.download()
+# >>> from nltk.book import *
+>>> text1.concordance("monstrous")
+>>> text1.similar("monstrous")
+>>> text2.similar("monstrous")
+>>> text2.common_contexts(["monstrous", "very"])
+>>> text4.dispersion_plot(["citizens", "democracy", "freedom", "duties", "America"])
+>>> text3.generate()
+
+
+>>> len(text3)
+>>> sorted(set(text3))
+>>> len(set(text3))
+>>> len(set(text3)) / len(text3)
+>>> text3.count("smote")
+>>> 100 * text4.count('a') / len(text4)
+>>> lexical_diversity(text3)
+>>> percentage(text4.count('a'), len(text4))
+
+
+>>> fdist1 = FreqDist(text1) [1]
+>>> print(fdist1) [2]
+>>> fdist1.most_common(50)
+
+
+..............................
+
+#!/usr/bin/env python
+# coding=UTF-8
+#
+# Output the 50 most-used words from a text file, using NLTK FreqDist()
+# (The text file must be in UTF-8 encoding.)
+
+# Usage:
+#
+#   ./freqdist_top_words.py input.txt
+
+# sudo apt-get install python-pip
+# sudo pip install -U nltk
+# python
+# >>> import nltk
+# >>> nltk.download('stopwords')
+# >>> nltk.download('punkt')
+# >>> exit()
+
+import sys
+import codecs
+import nltk
+from nltk.corpus import stopwords
+
+# NLTK's default German stopwords
+default_stopwords = set(nltk.corpus.stopwords.words('german'))
+
+# We're adding some on our own - could be done inline like this...
+# custom_stopwords = set((u'–', u'dass', u'mehr'))
+# ... but let's read them from a file instead (one stopword per line, UTF-8)
+stopwords_file = './stopwords.txt'
+custom_stopwords = set(codecs.open(stopwords_file, 'r', 'utf-8').read().splitlines())
+
+all_stopwords = default_stopwords | custom_stopwords
+
+input_file = sys.argv[1]
+
+fp = codecs.open(input_file, 'r', 'utf-8')
+
+words = nltk.word_tokenize(fp.read())
+
+# Remove single-character tokens (mostly punctuation)
+words = [word for word in words if len(word) > 1]
+
+# Remove numbers
+words = [word for word in words if not word.isnumeric()]
+
+# Lowercase all words (default_stopwords are lowercase too)
+words = [word.lower() for word in words]
+
+# Stemming words seems to make matters worse, disabled
+# stemmer = nltk.stem.snowball.SnowballStemmer('german')
+# words = [stemmer.stem(word) for word in words]
+
+# Remove stopwords
+words = [word for word in words if word not in all_stopwords]
+
+# Calculate frequency distribution
+fdist = nltk.FreqDist(words)
+
+# Output top 50 words
+
+for word, frequency in fdist.most_common(50):
+    print(u'{};{}'.format(word, frequency))
+
+ .....................
+ https://journalofthegeek.wordpress.com/2017/07/19/count-words-from-files-using-nltk/
+ http://www.nyu.edu/projects/politicsdatalab/localdata/workshops/NLTK_presentation%20_code.py
+
+ import nltk
+import string
+from nltk.corpus import stopwords # Import the stop word list
+# Open the input file and read()
+s = open('big.txt','r').read()
+# returns a translation table that maps each character in the intabstring
+#into the character at the same position in the outtab string.
+table = string.maketrans("","")
+
+# returns a copy of the string in which all characters have been translated
+#using table and a list of characters to be removed from the source string.
+s = s.translate(table, string.punctuation)
+#break the text strings into tokens of words with NLTK
+words = nltk.word_tokenize(s)
+# Remove single-character tokens (mostly punctuation)
+words = [word for word in words if len(word) &amp;gt; 1]
+# Remove numbers
+#words = [word for word in words if not word.isnumeric()]
+# Lowercase all words (default_stopwords are lowercase too)
+words = [word.lower() for word in words]
+# creating a set of stopwords to make searching faster
+stop_words = set(nltk.corpus.stopwords.words('english'))
+
+# Remove stopwords
+words = [word for word in words if word not in stop_words]
+
+# Calculate frequency distribution
+fdist = nltk.FreqDist(words)
+
+#Assign the number of words you want to see
+#n = raw_input("How many common words do you wish to see?")
+
+# Output top n words
+for word, frequency in fdist.most_common(n):
+ print(u'{} - {}'.format(word, frequency))
+
+
+....................................................
+http://bdewilde.github.io/blog/blogger/2013/11/03/friedman-corpus-1-occurrence-and-dispersion/
+http://faculty.washington.edu/jwilker/559/2018/NLTK%20Information%20Extraction.py
+
+
+
+from itertools import chain
+from nltk import clean_html, sent_tokenize, word_tokenize
+
+# Occurrence
+
+# combine all articles into single block of text
+all_text = ' '.join([doc['full_text'] for doc in docs])
+# partial cleaning as example: this uses nltk to strip residual HTML markup
+cleaned_text = clean_html(all_text)
+# tokenize text into sentences, sentences into words
+tokenized_text = [word_tokenize(sent) for sent in sent_tokenize(cleaned_text)]
+# flatten list of lists into a single words list
+all_words = list(chain(*tokenized_text))
+
+# Dispersion
+
+from nltk.draw import dispersion_plot
+dispersion_plot(all_words,
+                ['reagan', 'bush', 'clinton', 'obama'],
+                ignore_case=True)
+
+
+....................................................
+
+Bash Count total number of occurrences using grep
+grep -o 'needle' file | wc -l
+sed -e 's/[^[:alpha:]]/ /g' linus.txt | tr '\n' " " |  tr -s " " | tr " " '\n'| tr 'A-Z' 'a-z' | sort | uniq -c | sort -nr | nl
+sed -e 's/[^[:alpha:]]/ /g' text_to_analize.txt | tr '\n' " " |  tr -s " " | tr " " '\n'| tr 'A-Z' 'a-z' | sort | uniq -c | sort -nr | nl | head -n 20
+
+
