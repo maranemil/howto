@@ -410,3 +410,113 @@ $MultiArray = array_map(function($n) { return array_map(function($n) { return nu
 
 var_dump($SimpleArray);
 var_dump($MultiArray);
+
+
+
+
+
+#########################################################################################
+#
+#   How to force file download with PHP
+#
+#   http://php.net/manual/de/function.ob-start.php
+#   http://php.net/manual/de/function.readfile.php
+#   https://stackoverflow.com/questions/7263923/how-to-force-file-download-with-php
+#   https://www.media-division.com/the-right-way-to-handle-file-downloads-in-php/
+#   https://www.ostraining.com/blog/coding/download-php/
+#   https://drupal.stackexchange.com/questions/163628/extra-space-at-beginning-of-downloaded-image
+#   https://github.com/projectsend/projectsend/issues/173
+#   https://perishablepress.com/http-headers-file-downloads/
+#   https://davidwalsh.name/php-force-download
+#   http://php.net/manual/en/function.header.php
+#
+#########################################################################################
+
+Handling large file sizes
+
+set_time_limit(0);
+$file = @fopen($file_path,"rb");
+while(!feof($file))
+{
+	print(@fread($file, 1024*8));
+	ob_flush();
+	flush();
+}
+
+------------------------
+
+// File to download.
+$file = '/path/to/file';
+
+// Maximum size of chunks (in bytes).
+$maxRead = 1 * 1024 * 1024; // 1MB
+
+// Give a nice name to your download.
+$fileName = 'download_file.txt';
+
+// Open a file in read mode.
+$fh = fopen($file, 'r');
+
+// These headers will force download on browser,
+// and set the custom file name for the download, respectively.
+header('Content-Type: application/octet-stream');
+header('Content-Disposition: attachment; filename="' . $fileName . '"');
+
+// Run this until we have read the whole file.
+// feof (eof means "end of file") returns `true` when the handler
+// has reached the end of file.
+while (!feof($fh)) {
+    // Read and output the next chunk.
+    echo fread($fh, $maxRead);
+
+    // Flush the output buffer to free memory.
+    ob_flush();
+}
+
+// Exit to make sure not to output anything else.
+exit;
+
+------------------------
+
+header('Content-Description: File Transfer');
+header('Content-Type: application/octet-stream');
+header('Content-Disposition: attachment; filename='.$filename);
+header('Expires: 0');
+header('Cache-Control: must-revalidate');
+header('Pragma: public');
+header('Content-Length: ' . filesize($path));
+readfile($path);
+exit;
+
+-----------------
+
+// ...extra code to populate $path and $filename
+
+ob_clean();
+header('Content-Description: File Transfer');
+header('Content-Type: application/octet-stream');
+header('Content-Disposition: attachment; filename='.$filename);
+header('Expires: 0');
+header('Cache-Control: must-revalidate');
+header('Pragma: public');
+header('Content-Length: ' . filesize($path));
+readfile($path);
+exit;
+
+---------
+
+// We'll be outputting a PDF
+header('Content-Type: application/pdf');
+
+// It will be called downloaded.pdf
+header('Content-Disposition: attachment; filename="downloaded.pdf"');
+
+// The PDF source is in original.pdf
+readfile('original.pdf');
+
+---------------
+
+header('Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($fn)).' GMT', true, 200);
+header('Content-Length: '.filesize($fn));
+header('Content-Type: image/png');
+print file_get_contents($fn);

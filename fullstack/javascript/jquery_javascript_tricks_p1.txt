@@ -543,3 +543,174 @@ timedRefresh(7);
 
 
 
+
+
+
+
+#########################################################################################
+
+jQuery Event : Detect changes to the html/text of a div
+Added synchronous DOM mutation listener to a 'DOMSubtreeModified' event. Consider using MutationObserver to make the page more responsive.
+http://jsfiddle.net/nnbqye55/7/
+http://help.dottoro.com/ljrmcldi.php
+
+https://davidwalsh.name/mutationobserver-api
+https://gist.github.com/zplume/de65d55702d0735398105e50f2d6de0c
+https://davidwalsh.name/mutationobserver-api
+https://jsfiddle.net/ecmanaut/jRbEz/
+https://developer.mozilla.org/de/docs/Web/API/MutationObserver
+https://gabrieleromanato.name/jquery-detecting-new-elements-with-the-mutationobserver-object/
+https://github.com/eskat0n/mutabor
+https://github.com/joelpurra/jquery-mutation-summary
+https://davidwalsh.name/mutationobserver-api
+
+#########################################################################################
+
+
+var observer = new MutationObserver(function(mutations) {
+  mutations.forEach(function(mutation) {
+    alert(mutation.type);
+  });
+});
+
+$(document).on("DOMSubtreeModified", "#test", function () {
+    alert("Paragraph changed");
+});
+
+$('mydiv').bind("DOMSubtreeModified",function(){
+  alert('changed');
+});
+
+$('.myDiv').bind('DOMNodeInserted DOMNodeRemoved', function() {
+
+});
+
+##################################
+
+// The node to be monitored
+var target = $( "#content" )[0];
+
+// Create an observer instance
+var observer = new MutationObserver(function( mutations ) {
+  mutations.forEach(function( mutation ) {
+    var newNodes = mutation.addedNodes; // DOM NodeList
+    if( newNodes !== null ) { // If there are new nodes added
+    	var $nodes = $( newNodes ); // jQuery set
+    	$nodes.each(function() {
+    		var $node = $( this );
+    		if( $node.hasClass( "message" ) ) {
+    			// do something
+    		}
+    	});
+    }
+  });
+});
+
+// Configuration of the observer:
+var config = {
+	attributes: true,
+	childList: true,
+	characterData: true
+};
+
+// Pass in the target node, as well as the observer options
+observer.observe(target, config);
+
+// Later, you can stop observing
+observer.disconnect();
+
+----------------------
+https://stackoverflow.com/questions/41971140/implementing-mutationobserver-in-place-of-domsubtreemodified
+----------------------
+
+$('.content').each(function() {
+    var sel = this;
+    new MutationObserver(function() {
+          //
+        console.log("MutationObserver?");
+    }).observe(sel, {
+        childList: true, subtree: true
+    });
+});
+
+
+$('.content').each(function() {
+    var sel = this;
+	new MutationObserver(adjustHeight.bind(null, sel)).observe( sel, { childList: true, subtree: true } );
+});
+
+
+#########################################################################################
+[Violation] Added non-passive event listener to a scroll-blocking 'mousewheel' event. Consider marking event handler as 'passive' to make the page more responsive. See https://www.chromestatus.com/feature/5745543795965952
+Added non-passive event listener to a scroll-blocking 'touchstart' event. Consider marking event handler as 'passive' to make the page more responsive.
+https://github.com/angular/material2/issues/4221
+https://github.com/zzarcon/default-passive-events
+https://github.com/zzarcon/default-passive-events
+https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
+https://medium.com/@devlucky/about-passive-event-listeners-224ff620e68c
+
+#########################################################################################
+
+jQuery.event.special.touchstart = {
+    setup: function (_, ns, handle) {
+        if (ns.includes("noPreventDefault")) {
+            this.addEventListener("touchstart", handle, { passive: false });
+        } else {
+            this.addEventListener("touchstart", handle, { passive: true });
+        }
+    }
+};
+
+
+/*
+
+document.addEventListener('touchstart', handler, {passive: true});
+document.addEventListener('touchstart', handler, true);
+document.addEventListener('touchstart', handler, {capture: true});
+
+event.stopPropagation();
+event.preventDefault();
+
+*/
+
+
+https://github.com/jquery/jquery/issues/2871
+https://api.jquery.com/event.stoppropagation/
+https://github.com/jquery/jquery/blob/1de834672959636da8c06263c3530226b17a84c3/src/event.js#L591-L599
+https://stackoverflow.com/questions/39152877/consider-marking-event-handler-as-passive-to-make-the-page-more-responsive
+https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault
+
+var supportsCaptureOption = false;
+document.createElement("div").addEventListener("test", function() {}, {
+  get capture() {
+    supportsCaptureOption = true;
+    return false;
+  }
+});
+
+...
+
+// Only use addEventListener if the special events handler returns false
+if (!special.setup || special.setup.call(elem, data, namespaces, eventHandle) === false) {
+    if (elem.addEventListener) {
+        var supportsPassive = false;
+        try {
+            var opts = Object.defineProperty({}, 'passive', {
+                get: function () {
+                    supportsPassive = true;
+                }
+            });
+            window.addEventListener(type, eventHandle, opts);
+            window.removeEventListener(type, eventHandle, opts);
+        } catch (e) {
+        }
+        elem.addEventListener(type, eventHandle, supportsPassive ? {passive: true} : false);
+    }
+}
+
+
+
+
+
+
+
