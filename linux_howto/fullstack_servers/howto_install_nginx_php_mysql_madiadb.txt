@@ -1,8 +1,8 @@
 #######################################################################
-
-Install Nginx Web Server, MariaDB and PHP on Ubuntu 18.04
-https://www.tecmint.com/install-nginx-mariadb-php-in-ubuntu-18-04/
-
+#
+#   Install Nginx Web Server, MariaDB and PHP on Ubuntu 18.04
+#   https://www.tecmint.com/install-nginx-mariadb-php-in-ubuntu-18-04/
+#
 #######################################################################
 
 sudo apt update
@@ -24,9 +24,10 @@ sudo vim /etc/php/7.2/fpm/php.ini
 # cgi.fix_pathinfo=0
 
 sudo vim /etc/nginx/sites-available/default
+
 location ~ \.php$ {
-include snippets/fastcgi-php.conf;
-fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
+    include snippets/fastcgi-php.conf;
+    fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
 }
 
 sudo systemctl restart php7.2-fpm
@@ -43,3 +44,69 @@ sudo chmod 775 -R /usr/share/phpmyadmin/
 sudo chown root:nginx -R /usr/share/phpmyadmin/
 
 sudo mysql -u root -p
+
+
+
+
+#######################################################################
+#
+#   How to Configure Vhost in Nginx
+#
+#   https://www.cyberciti.biz/faq/howto-install-setup-nginx-on-debian-linux-9/
+#   https://www.cyberciti.biz/faq/howto-install-setup-nginx-on-debian-linux-9/
+#   https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-debian-8
+#   https://wiki.debian.org/Nginx/DirectoryStructure
+#   https://www.linode.com/docs/web-servers/nginx/how-to-configure-nginx/
+#
+#######################################################################
+
+
+sudo apt-get install nginx
+sudo systemctl enable nginx
+
+/etc/nginx/sites-available
+/etc/nginx/sites-enabled
+
+
+
+server {
+    listen 192.168.178.12:80;
+        server_name example.localhost;
+        access_log /home/demouser/logs/nginx/vhost-example_access.log;
+        error_log /home/demouser/logs/nginx/vhost-example_error.log;
+
+ 	location / {
+  	# if ( $host != "example.localhost" ) {
+  	#    rewrite ^(.*) http://example.localhost$1 permanent;
+  	# }
+
+       root   /home/demouser/git/example/htdocs/;
+       index  index.php index.html index.htm;
+       autoindex off;
+    }
+
+    location ~ \.php$ {
+        include         fastcgi_params;
+        fastcgi_pass    unix:/var/run/php5-fpm_demouser.sock;
+        fastcgi_index   index.php;
+        fastcgi_param   SCRIPT_FILENAME /home/demouser/git/example/htdocs/$fastcgi_script_name;
+    }
+}
+
+
+or
+
+server {
+    listen         80 default_server;
+    listen         [::]:80 default_server;
+    server_name    example.com www.example.com;
+    root           /var/www/example.com;
+    index          index.html;
+    try_files $uri /index.html;
+}
+
+
+# sudo ln -s /etc/nginx/sites-available/www.example.biz.conf /etc/nginx/sites-enabled/www.example.biz.conf
+# sudo ln -s /etc/nginx/sites-available/site /etc/nginx/sites-enabled/site
+sudo nginx -t
+sudo systemctl reload nginx
