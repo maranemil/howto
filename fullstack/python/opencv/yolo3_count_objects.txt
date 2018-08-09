@@ -1,0 +1,168 @@
+#######################################
+#
+# Count Objects with Yolo
+#
+#######################################
+
+./darknet detect cfg/yolov3.cfg yolov3.weights jpg3/a.jpg -thresh 0.1 -out jpg3/61864342P.jpg
+./darknet detect cfg/yolov3.cfg yolov3.weights jpg3/a.jpg -thresh 0.1 -out -filters 80 -i 0 -width 416 -heigh 416 -num_of_clusters 9 jpg3/b.jpg
+./darknet detect cfg/yolov3.cfg yolov3.weights jpg3/a.jpg -thresh 0.1 -out -filters 80 -i 0 -width 416 -heigh 416 -num_of_clusters 9 -classes 5 jpg3/b.jpg
+./darknet detect cfg/yolov3.cfg yolov3.weights jpg3/a.jpg -thresh 0.2 -classes 5   -out  jpg3/b.jpg
+./darknet detect cfg/yolov3.cfg yolov3.weights jpg3/a.jpg -thresh 0.2 -size 6 -width 8416 -heigh 8416 -out  jpg3/61864342P.jpg
+./darknet detect cfg/yolov3.cfg yolov3.weights jpg3/a.jpg -thresh 0.2 -size 6 -width 8416 -heigh 8416 --gpu 1.0 --json --load 1500  -out  jpg3/b.jpg
+
+-------------------------------
+Export Data in CSV/TXT
+-------------------------------
+./darknet detect cfg/yolov3.cfg yolov3.weights jpg3/a.jpg -thresh 0.2 -size 6   -width 8416 -heigh 8416  --gpu 1.0  -out jpg3/b > output_prediction.txt
+
+Loading weights from yolov3.weights...Done!
+jpg3/61864342.jpg: Predicted in 8.492329 seconds.
+car: 18%
+car: 17%
+car: 12%
+person: 17%
+
+
+-------------------------------
+Resources Yolo
+-------------------------------
+https://github.com/cvjena/darknet/blob/master/README.md
+https://pjreddie.com/darknet/yolo/
+https://pjreddie.com/darknet/rnns-in-darknet/
+https://pjreddie.com/darknet/tiny-darknet/
+https://pjreddie.com/darknet/install/
+https://github.com/AlexeyAB/darknet
+https://github.com/bendidi/Tracking-with-darkflow
+https://github.com/pjreddie/darknet/wiki/YOLO:-Real-Time-Object-Detection
+https://medium.com/@jonathan_hui/real-time-object-detection-with-yolo-yolov2-28b1b93e2088
+https://www.byu.io/2017/12/07/counting-people-with-ml
+https://www.iotforall.com/objects-recognition-live-stream-yolo-model/
+https://github.com/thtrieu/darkflow
+
+
+
+
+
+
+
+#######################################
+Parameters of the .cfg file
+#######################################
+https://github.com/AlexeyAB/darknet/issues/279
+absolute=1
+thresh = .6 # minimum IoU when should be used delta_region_class() during training:
+random=1 # random=1, then max input resolution can be 608x608
+random=0 # height=416,width=416,random=0, then max values of anchors will be 13,13
+
+
+saturation, exposure and hue values
+steps and scales values
+anchors, bias_match
+jitter, rescore, thresh
+object_scale, noobject_scale, class_scale, coord_scale values
+absolute
+
+# https://stackoverflow.com/questions/50390836/understanding-darknets-yolo-cfg-config-files
+
+[net]
+batch: That many images+labels are used
+subdivisions: The batch is subdivided in this many "blocks".
+channels 4 - 4x4
+policy=steps: Use the steps and scales parameters below to adjust the learning rate during training
+steps=500,1000: Adjust the learning rate after 500 and 1000 batches
+scales=0.1,0.2: After 500, multiply the LR by 0.1, then after 1000 multiply again by 0.2
+angle: augment image by rotation up to this angle (in degree)
+
+[layers]
+filters: How many convolutional kernels there are in a layer.
+activation: Activation function, relu, leaky relu, etc. See src/activations.h
+stopbackward: Do backpropagation until this layer only. Put it in the panultimate convolution layer before the first yolo layer to train only the layers behind that, e.g. when using pretrained weights.
+random: Put in the yolo layers. If set to 1 do data augmentation by resizing the images to different sizes every few batches. Use to generalize over object sizes.
+
+https://medium.com/techfeeds/yolo-single-image-train-single-object-training-9ba830076776
+https://github.com/leetenki/YOLOv2/blob/master/YOLOv2_animal_train.md
+https://github.com/pjreddie/darknet/issues/294
+https://stuff.technology/real-time-object-detection-in-10-minutes-7005e3ef4b52
+https://github.com/wakanawakana/python/
+https://medium.com/@manivannan_data/how-to-train-yolov2-to-detect-custom-objects-9010df784f36
+
+
+
+##############################################################################
+tiny-yolo.cfg it is line 119 that needs to be changed to 80.
+##############################################################################
+
+[convolutional]
+batch_normalize=1
+size=3
+stride=1
+pad=1
+filters=512
+activation=leaky
+
+[convolutional]
+size=1
+stride=1
+pad=1
+filters=425 # Change to 80 for your data
+activation=linear
+
+[region]
+anchors =  0.57273, 0.677385, 1.87446, 2.06253, 3.33843, 5.47434, 7.88282, 3.52778, 9.77052, 9.16828
+bias_match=1
+classes=80 # Change to 11 for your data
+coords=4
+num=5
+softmax=1
+jitter=.2
+rescore=0
+
+object_scale=5
+noobject_scale=1
+class_scale=1
+coord_scale=1
+
+absolute=1
+thresh = .6
+random=1
+
+--------
+
+#######################################
+How to use on the command line:
+
+https://github.com/pjreddie/darknet
+https://github.com/thtrieu/darkflow
+https://github.com/unsky/yolo-for-windows-v2
+https://github.com/starsmall-xiaoqq/darknet
+https://github.com/pjreddie/darknet/blob/dec4c10c97afe343b7fd6c208987f1e357bfc517/README.md
+
+#######################################
+On Linux use ./darknet instead of darknet.exe, like this:./darknet detector test ./cfg/coco.data ./cfg/yolov3.cfg ./yolov3.weights
+
+Yolo v3 COCO - image: darknet.exe detector test data/coco.data cfg/yolov3.cfg yolov3.weights -i 0 -thresh 0.25
+Alternative method Yolo v3 COCO - image: darknet.exe detect cfg/yolov3.cfg yolov3.weights -i 0 -thresh 0.25
+Output coordinates of objects: darknet.exe detector test data/coco.data yolov3.cfg yolov3.weights -thresh 0.25 dog.jpg -ext_output
+194 MB VOC-model - image: darknet.exe detector test data/voc.data yolo-voc.cfg yolo-voc.weights -i 0
+194 MB VOC-model - video: darknet.exe detector demo data/voc.data yolo-voc.cfg yolo-voc.weights test.mp4 -i 0
+194 MB VOC-model - save result to the file res.avi: darknet.exe detector demo data/voc.data yolo-voc.cfg yolo-voc.weights test.mp4 -i 0 -out_filename res.avi
+Alternative method 194 MB VOC-model - video: darknet.exe yolo demo yolo-voc.cfg yolo-voc.weights test.mp4 -i 0
+43 MB VOC-model for video: darknet.exe detector demo data/coco.data cfg/yolov2-tiny.cfg yolov2-tiny.weights test.mp4 -i 0
+Yolo v3 236 MB COCO for net-videocam - Smart WebCam: darknet.exe detector demo data/coco.data cfg/yolov3.cfg yolov3.weights http://192.168.0.80:8080/video?dummy=param.mjpg -i 0
+194 MB VOC-model for net-videocam - Smart WebCam: darknet.exe detector demo data/voc.data yolo-voc.cfg yolo-voc.weights http://192.168.0.80:8080/video?dummy=param.mjpg -i 0
+194 MB VOC-model - WebCamera #0: darknet.exe detector demo data/voc.data yolo-voc.cfg yolo-voc.weights -c 0
+186 MB Yolo9000 - image: darknet.exe detector test cfg/combine9k.data yolo9000.cfg yolo9000.weights
+Remeber to put data/9k.tree and data/coco9k.map under the same folder of your app if you use the cpp api to build an app
+To process a list of images data/train.txt and save results of detection to result.txt use:
+darknet.exe detector test data/voc.data yolo-voc.cfg yolo-voc.weights -dont_show -ext_output < data/train.txt > result.txt
+
+
+
+
+
+
+
+
+
+
