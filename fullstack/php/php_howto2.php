@@ -520,3 +520,52 @@ header('Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($fn)).' GMT', true, 
 header('Content-Length: '.filesize($fn));
 header('Content-Type: image/png');
 print file_get_contents($fn);
+
+
+
+
+#######################################################
+#
+#   Get Opt Params Terminal
+#   http://php.net/manual/de/function.getopt.php
+#
+#######################################################
+
+<?php
+// Script example.php
+$shortopts  = "";
+$shortopts .= "f:";  // Required value
+$shortopts .= "v::"; // Optional value
+$shortopts .= "abc"; // These options do not accept values
+
+$longopts  = array(
+    "required:",     // Required value
+    "optional::",    // Optional value
+    "option",        // No value
+    "opt",           // No value
+);
+$options = getopt($shortopts, $longopts);
+var_dump($options);
+?>
+
+shell> php example.php -f "value for f" -v -a --required value --optional="optional value" --option
+
+
+<?php
+// Script example.php
+$optind = null;
+$opts = getopt('a:b:', [], $optind);
+$pos_args = array_slice($argv, $optind);
+var_dump($pos_args);
+shell> php example.php -a 1 -b 2 -- test
+
+
+
+
+
+
+
+
+
+
+
