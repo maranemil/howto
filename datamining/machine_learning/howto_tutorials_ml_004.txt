@@ -1,0 +1,1598 @@
+https://github.com/aymericdamien/TensorFlow-Examples/tree/master/examples
+https://github.com/aymericdamien/TensorFlow-Examples
+https://github.com/tensorflow/tensorflow/
+https://www.tensorflow.org/tutorials/keras/basic_classification
+https://www.tensorflow.org/tutorials/keras/basic_regression
+https://www.tensorflow.org/tutorials/estimators/linear
+https://www.tensorflow.org/tutorials/keras/basic_text_classification
+https://github.com/tensorflow/models/blob/master/samples/core/tutorials/keras/basic_regression.ipynb
+https://github.com/tensorflow/models/blob/master/samples/core/tutorials/keras/basic_text_classification.ipynb
+https://github.com/tensorflow/models/blob/master/samples/core/tutorials/keras/basic_classification.ipynb
+https://github.com/tensorflow/models/blob/master/samples/core/tutorials/keras/basic_regression.ipynb
+https://github.com/tensorflow/models/blob/master/samples/core/tutorials/estimators/linear.ipynb
+https://github.com/tensorflow/models/blob/master/samples/core/tutorials/estimators/linear.ipynb
+https://github.com/aymericdamien/TensorFlow-Examples
+https://www.tensorflow.org/tutorials/
+
+
+https://www.datacamp.com/community/tutorials/scikit-learn-fake-news
+https://www.datacamp.com/community/tutorials/deep-learning-python
+
+
+###############################################################
+#
+#   https://www.datacamp.com/community/tutorials/tensorflow-tutorial
+#   https://github.com/datacamp/datacamp-community-tutorials
+#   https://www.datacamp.com/community/tutorials/functions-python-tutorial
+#
+###############################################################
+
+# Import `tensorflow` 
+import tensorflow as tf
+
+# Initialize two constants
+x1 = tf.constant([1,2,3,4])
+x2 = tf.constant([5,6,7,8])
+
+# Multiply
+result = tf.multiply(x1, x2)
+
+# Intialize the Session
+sess = tf.Session()
+
+# Print the result
+print(sess.run(result))
+
+# Close the session
+sess.close()
+
+
+
+
+# Import `tensorflow`
+import tensorflow as tf
+
+# Initialize two constants
+x1 = tf.constant([1,2,3,4])
+x2 = tf.constant([5,6,7,8])
+
+# Multiply
+result = tf.multiply(x1, x2)
+
+# Initialize Session and run `result`
+with tf.Session() as sess:
+  output = sess.run(result)
+  print(output)
+
+
+
+
+
+#------------------------------------
+# Loading And Exploring The Data
+#------------------------------------
+
+def load_data(data_directory):
+    directories = [d for d in os.listdir(data_directory) 
+                   if os.path.isdir(os.path.join(data_directory, d))]
+    labels = []
+    images = []
+    for d in directories:
+        label_directory = os.path.join(data_directory, d)
+        file_names = [os.path.join(label_directory, f) 
+                      for f in os.listdir(label_directory) 
+                      if f.endswith(".ppm")]
+        for f in file_names:
+            images.append(skimage.data.imread(f))
+            labels.append(int(d))
+    return images, labels
+
+ROOT_PATH = "/your/root/path"
+train_data_directory = os.path.join(ROOT_PATH, "TrafficSigns/Training")
+test_data_directory = os.path.join(ROOT_PATH, "TrafficSigns/Testing")
+
+images, labels = load_data(train_data_directory)
+
+
+
+
+#------------------------------------
+Visualizing The Traffic Signs v1
+#------------------------------------
+
+# Import the `pyplot` module of `matplotlib`
+import matplotlib.pyplot as plt
+
+# Determine the (random) indexes of the images that you want to see 
+traffic_signs = [300, 2250, 3650, 4000]
+
+# Fill out the subplots with the random images that you defined 
+for i in range(len(traffic_signs)):
+    plt.subplot(1, 4, i+1)
+    plt.axis('off')
+    plt.imshow(images[traffic_signs[i]])
+    plt.subplots_adjust(wspace=0.5)
+
+plt.show()
+
+
+
+#------------------------------------
+Visualizing The Traffic Signs v2
+#------------------------------------
+
+# Import `matplotlib`
+import matplotlib.pyplot as plt
+
+# Determine the (random) indexes of the images
+traffic_signs = [300, 2250, 3650, 4000]
+
+# Fill out the subplots with the random images and add shape, min and max values
+for i in range(len(traffic_signs)):
+    plt.subplot(1, 4, i+1)
+    plt.axis('off')
+    plt.imshow(images[traffic_signs[i]])
+    plt.subplots_adjust(wspace=0.5)
+    plt.show()
+    print("shape: {0}, min: {1}, max: {2}".format(images[traffic_signs[i]].shape, 
+                                                  images[traffic_signs[i]].min(), 
+                                                  images[traffic_signs[i]].max()))
+
+
+
+
+
+
+
+#------------------------------------
+Visualizing The Traffic Signs v3
+#------------------------------------
+
+
+# Import the `pyplot` module as `plt`
+import matplotlib.pyplot as plt 
+
+# Get the unique labels 
+unique_labels = set(labels)
+
+# Initialize the figure
+plt.figure(figsize=(15, 15))
+
+# Set a counter
+i = 1
+
+# For each unique label,
+for label in unique_labels:
+    # You pick the first image for each label
+    image = images[labels.index(label)]
+    # Define 64 subplots 
+    plt.subplot(8, 8, i)
+    # Don't include axes
+    plt.axis('off')
+    # Add a title to each subplot 
+    plt.title("Label {0} ({1})".format(label, labels.count(label)))
+    # Add 1 to the counter
+    i += 1
+    # And you plot this first image 
+    plt.imshow(image)
+    
+# Show the plot
+plt.show()
+
+
+
+
+#------------------------------------
+Feature Extraction 
+Rescaling Images
+#------------------------------------
+
+# Import the `transform` module from `skimage`
+from skimage import transform 
+
+# Rescale the images in the `images` array
+images28 = [transform.resize(image, (28, 28)) for image in images]
+
+#------------------------------------
+Feature Extraction
+Image Conversion to Grayscale
+#------------------------------------
+# Import `rgb2gray` from `skimage.color`
+from skimage.color import rgb2gray
+
+# Convert `images28` to an array
+images28 = np.array(images28)
+
+# Convert `images28` to grayscale
+images28 = rgb2gray(images28)
+
+
+import matplotlib.pyplot as plt
+
+traffic_signs = [300, 2250, 3650, 4000]
+
+for i in range(len(traffic_signs)):
+    plt.subplot(1, 4, i+1)
+    plt.axis('off')
+    plt.imshow(images28[traffic_signs[i]], cmap="gray")
+    plt.subplots_adjust(wspace=0.5)
+    
+# Show the plot
+plt.show()
+
+
+
+#------------------------------------
+Deep Learning With TensorFlow 
+#------------------------------------
+
+# Import `tensorflow` 
+import tensorflow as tf 
+
+# Initialize placeholders 
+x = tf.placeholder(dtype = tf.float32, shape = [None, 28, 28])
+y = tf.placeholder(dtype = tf.int32, shape = [None])
+
+# Flatten the input data
+images_flat = tf.contrib.layers.flatten(x)
+
+# Fully connected layer 
+logits = tf.contrib.layers.fully_connected(images_flat, 62, tf.nn.relu)
+
+# Define a loss function
+loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(labels = y, 
+                                                                    logits = logits))
+# Define an optimizer 
+train_op = tf.train.AdamOptimizer(learning_rate=0.001).minimize(loss)
+
+# Convert logits to label indexes
+correct_pred = tf.argmax(logits, 1)
+
+# Define an accuracy metric
+accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
+
+
+print("images_flat: ", images_flat)
+print("logits: ", logits)
+print("loss: ", loss)
+print("predicted_labels: ", correct_pred)
+
+
+#------------------------------------
+Running The Neural Network
+#------------------------------------
+
+tf.set_random_seed(1234)
+sess = tf.Session()
+
+sess.run(tf.global_variables_initializer())
+
+for i in range(201):
+        print('EPOCH', i)
+        _, accuracy_val = sess.run([train_op, accuracy], feed_dict={x: images28, y: labels})
+        if i % 10 == 0:
+            print("Loss: ", loss)
+        print('DONE WITH EPOCH')
+
+
+#------------------------------------
+Running The Neural Network
+#------------------------------------
+
+tf.set_random_seed(1234)
+
+with tf.Session() as sess:
+    sess.run(tf.global_variables_initializer())
+    for i in range(201):
+        _, loss_value = sess.run([train_op, loss], feed_dict={x: images28, y: labels})
+        if i % 10 == 0:
+            print("Loss: ", loss)
+
+#------------------------------------
+Evaluating Your Neural Network
+#------------------------------------
+
+# Import `matplotlib`
+import matplotlib.pyplot as plt
+import random
+
+# Pick 10 random images
+sample_indexes = random.sample(range(len(images28)), 10)
+sample_images = [images28[i] for i in sample_indexes]
+sample_labels = [labels[i] for i in sample_indexes]
+
+# Run the "correct_pred" operation
+predicted = sess.run([correct_pred], feed_dict={x: sample_images})[0]
+                        
+# Print the real and predicted labels
+print(sample_labels)
+print(predicted)
+
+# Display the predictions and the ground truth visually.
+fig = plt.figure(figsize=(10, 10))
+for i in range(len(sample_images)):
+    truth = sample_labels[i]
+    prediction = predicted[i]
+    plt.subplot(5, 2,1+i)
+    plt.axis('off')
+    color='green' if truth == prediction else 'red'
+    plt.text(40, 10, "Truth:        {0}\nPrediction: {1}".format(truth, prediction), 
+             fontsize=12, color=color)
+    plt.imshow(sample_images[i],  cmap="gray")
+
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+# Import `skimage`
+from skimage import transform
+
+# Load the test data
+test_images, test_labels = load_data(test_data_directory)
+
+# Transform the images to 28 by 28 pixels
+test_images28 = [transform.resize(image, (28, 28)) for image in test_images]
+
+# Convert to grayscale
+from skimage.color import rgb2gray
+test_images28 = rgb2gray(np.array(test_images28))
+
+# Run predictions against the full test set.
+predicted = sess.run([correct_pred], feed_dict={x: test_images28})[0]
+
+# Calculate correct matches 
+match_count = sum([int(y == y_) for y, y_ in zip(test_labels, predicted)])
+
+# Calculate the accuracy
+accuracy = match_count / len(test_labels)
+
+# Print the accuracy
+print("Accuracy: {:.3f}".format(accuracy))
+
+
+
+
+
+
+
+
+
+
+
+
+---
+#####################################################################
+#
+#   Python TensorFlow Tutorial – Build a Neural Network
+#   http://adventuresinmachinelearning.com/python-tensorflow-tutorial/
+#
+#####################################################################
+
+import tensorflow as tf
+
+# first, create a TensorFlow constant
+const = tf.constant(2.0, name="const")
+    
+# create TensorFlow variables
+b = tf.Variable(2.0, name='b')
+c = tf.Variable(1.0, name='c')
+
+# now create some operations
+d = tf.add(b, c, name='d')
+e = tf.add(c, const, name='e')
+a = tf.multiply(d, e, name='a')
+
+# setup the variable initialisation
+init_op = tf.global_variables_initializer()
+
+# start the session
+with tf.Session() as sess:
+    # initialise the variables
+    sess.run(init_op)
+    # compute the output of the graph
+    a_out = sess.run(a)
+    print("Variable a is {}".format(a_out))
+
+
+# 2.1 The TensorFlow placeholder
+# create TensorFlow variables
+b = tf.placeholder(tf.float32, [None, 1], name='b')
+a_out = sess.run(a, feed_dict={b: np.arange(0, 10)[:, np.newaxis]})
+
+
+# 3.0 A Neural Network Example -------------------------------------
+
+from tensorflow.examples.tutorials.mnist import input_data
+mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
+
+# 3.1 Setting things up ------------------------------------------
+
+# Python optimisation variables
+learning_rate = 0.5
+epochs = 10
+batch_size = 100
+
+# declare the training data placeholders
+# input x - for 28 x 28 pixels = 784
+x = tf.placeholder(tf.float32, [None, 784])
+# now declare the output data placeholder - 10 digits
+y = tf.placeholder(tf.float32, [None, 10])
+
+# now declare the weights connecting the input to the hidden layer
+W1 = tf.Variable(tf.random_normal([784, 300], stddev=0.03), name='W1')
+b1 = tf.Variable(tf.random_normal([300]), name='b1')
+# and the weights connecting the hidden layer to the output layer
+W2 = tf.Variable(tf.random_normal([300, 10], stddev=0.03), name='W2')
+b2 = tf.Variable(tf.random_normal([10]), name='b2')
+
+
+# calculate the output of the hidden layer
+hidden_out = tf.add(tf.matmul(x, W1), b1)
+hidden_out = tf.nn.relu(hidden_out)
+
+# now calculate the hidden layer output - in this case, let's use a softmax activated
+# output layer
+y_ = tf.nn.softmax(tf.add(tf.matmul(hidden_out, W2), b2))
+
+y_clipped = tf.clip_by_value(y_, 1e-10, 0.9999999)
+cross_entropy = -tf.reduce_mean(tf.reduce_sum(y * tf.log(y_clipped)
+                         + (1 - y) * tf.log(1 - y_clipped), axis=1))
+
+# add an optimiser
+optimiser = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cross_entropy)
+
+
+# finally setup the initialisation operator
+init_op = tf.global_variables_initializer()
+
+# define an accuracy assessment operation
+correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
+accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+
+# 3.2 Setting up the training ---------------------------------
+
+# start the session
+with tf.Session() as sess:
+   # initialise the variables
+   sess.run(init_op)
+   total_batch = int(len(mnist.train.labels) / batch_size)
+   for epoch in range(epochs):
+        avg_cost = 0
+        for i in range(total_batch):
+            batch_x, batch_y = mnist.train.next_batch(batch_size=batch_size)
+             _, c = sess.run([optimiser, cross_entropy], 
+                         feed_dict={x: batch_x, y: batch_y})
+            avg_cost += c / total_batch
+        print("Epoch:", (epoch + 1), "cost =", "{:.3f}".format(avg_cost))
+   print(sess.run(accuracy, feed_dict={x: mnist.test.images, y: mnist.test.labels}))
+
+
+
+###################################################################################
+#
+#   Keras Tutorial: Deep Learning in Python
+#   https://www.datacamp.com/community/tutorials/deep-learning-python
+#
+###################################################################################
+
+
+#---------------------
+Loading In The Data
+#---------------------
+
+# Import pandas 
+import pandas as pd
+
+# Read in white wine data 
+white = ___________("http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv", sep=';')
+
+# Read in red wine data 
+red = ___________("http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv", sep=';')
+
+#---------------------
+Explore Data
+#---------------------
+
+# Print info on white wine
+_____(white.____())
+
+# Print info on red wine
+_____(red.____())
+
+
+# First rows of `red` 
+red.____()
+
+# Last rows of `white`
+white.____()
+
+# Take a sample of 5 rows of `red`
+red.______(5)
+
+# Describe `white`
+white.________()
+
+# Double check for null values in `red`
+pd.isnull(red)
+
+
+
+
+#---------------------
+Alcohol
+#---------------------
+
+
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(1, 2)
+
+ax[0].hist(red.alcohol, 10, facecolor='red', alpha=0.5, label="Red wine")
+ax[1].hist(white.alcohol, 10, facecolor='white', ec="black", lw=0.5, alpha=0.5, label="White wine")
+
+fig.subplots_adjust(left=0, right=1, bottom=0, top=0.5, hspace=0.05, wspace=1)
+ax[0].set_ylim([0, 1000])
+ax[0].set_xlabel("Alcohol in % Vol")
+ax[0].set_ylabel("Frequency")
+ax[1].set_xlabel("Alcohol in % Vol")
+ax[1].set_ylabel("Frequency")
+#ax[0].legend(loc='best')
+#ax[1].legend(loc='best')
+fig.suptitle("Distribution of Alcohol in % Vol")
+
+plt.show()
+
+
+#---------------------
+Sulphates
+#---------------------
+
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+
+ax[0].scatter(red['quality'], red["sulphates"], color="red")
+ax[1].scatter(white['quality'], white['sulphates'], color="white", edgecolors="black", lw=0.5)
+
+ax[0].set_title("Red Wine")
+ax[1].set_title("White Wine")
+ax[0].set_xlabel("Quality")
+ax[1].set_xlabel("Quality")
+ax[0].set_ylabel("Sulphates")
+ax[1].set_ylabel("Sulphates")
+ax[0].set_xlim([0,10])
+ax[1].set_xlim([0,10])
+ax[0].set_ylim([0,2.5])
+ax[1].set_ylim([0,2.5])
+fig.subplots_adjust(wspace=0.5)
+fig.suptitle("Wine Quality by Amount of Sulphates")
+
+plt.show()
+
+
+#---------------------
+Acidity
+#---------------------
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+np.random.seed(570)
+
+redlabels = np.unique(red['quality'])
+whitelabels = np.unique(white['quality'])
+
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+redcolors = np.random.rand(6,4)
+whitecolors = np.append(redcolors, np.random.rand(1,4), axis=0)
+
+for i in range(len(redcolors)):
+    redy = red['alcohol'][red.quality == redlabels[i]]
+    redx = red['volatile acidity'][red.quality == redlabels[i]]
+    ax[0].scatter(redx, redy, c=redcolors[i])
+for i in range(len(whitecolors)):
+    whitey = white['alcohol'][white.quality == whitelabels[i]]
+    whitex = white['volatile acidity'][white.quality == whitelabels[i]]
+    ax[1].scatter(whitex, whitey, c=whitecolors[i])
+    
+ax[0].set_title("Red Wine")
+ax[1].set_title("White Wine")
+ax[0].set_xlim([0,1.7])
+ax[1].set_xlim([0,1.7])
+ax[0].set_ylim([5,15.5])
+ax[1].set_ylim([5,15.5])
+ax[0].set_xlabel("Volatile Acidity")
+ax[0].set_ylabel("Alcohol")
+ax[1].set_xlabel("Volatile Acidity")
+ax[1].set_ylabel("Alcohol") 
+#ax[0].legend(redlabels, loc='best', bbox_to_anchor=(1.3, 1))
+ax[1].legend(whitelabels, loc='best', bbox_to_anchor=(1.3, 1))
+#fig.suptitle("Alcohol - Volatile Acidity")
+fig.subplots_adjust(top=0.85, wspace=0.7)
+
+plt.show()
+
+
+#---------------------
+Preprocess Data
+#---------------------
+
+# Add `type` column to `red` with value 1
+___['type'] = 1
+
+# Add `type` column to `white` with value 0
+_____['type'] = 0
+
+# Append `white` to `red`
+wines = red.______(white, ignore_index=True)
+
+
+#---------------------
+Intermezzo: Correlation Matrix
+#---------------------
+
+import seaborn as sns
+corr = wines.corr()
+sns.heatmap(corr, 
+            xticklabels=corr.columns.values,
+            yticklabels=corr.columns.values)
+sns.plt.show()
+
+#---------------------
+Train and Test Sets
+#---------------------
+
+# Import `train_test_split` from `sklearn.model_selection`
+from sklearn.model_selection import train_test_split
+
+# Specify the data 
+X=wines.ix[:,0:11]
+
+# Specify the target labels and flatten the array 
+y=np.ravel(wines.type)
+
+# Split the data up in train and test sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+
+
+#---------------------
+Standardize The Data
+#---------------------
+
+
+# Import `StandardScaler` from `sklearn.preprocessing`
+from sklearn.preprocessing import StandardScaler
+
+# Define the scaler 
+scaler = StandardScaler().fit(X_train)
+
+# Scale the train set
+X_train = scaler.transform(X_train)
+
+# Scale the test set
+X_test = scaler.transform(X_test)
+
+#---------------------
+Model Data
+#---------------------
+
+# Import `Sequential` from `keras.models`
+from keras.models import Sequential
+
+# Import `Dense` from `keras.layers`
+from keras.layers import Dense
+
+# Initialize the constructor
+model = Sequential()
+
+# Add an input layer 
+model.add(Dense(12, activation='relu', input_shape=(11,)))
+
+# Add one hidden layer 
+model.add(Dense(8, activation='relu'))
+
+# Add an output layer 
+model.add(Dense(1, activation='sigmoid'))
+
+# Model output shape
+model.___________
+
+# Model summary
+model.__________
+
+# Model config
+model.get_config()
+
+# List all weight tensors 
+model.get_weights()
+
+
+#----------------------
+Compile and Fit
+#----------------------
+
+model.compile(loss='binary_crossentropy',
+              optimizer='adam',
+              metrics=['accuracy'])
+                   
+model.fit(X_train, y_train,epochs=20, batch_size=1, verbose=1)
+
+
+#----------------------
+Predict Values
+#----------------------
+
+y_pred = model.predict(X_test)
+
+
+#----------------------
+Evaluate Model
+#----------------------
+
+score = model.evaluate(X_test, y_test,verbose=1)
+print(score)
+
+# Import the modules from `sklearn.metrics`
+from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, cohen_kappa_score
+
+# Confusion matrix
+confusion_matrix(y_test, y_pred)
+
+# Precision 
+precision_score(y_test, y_pred)
+
+# Recall
+recall_score(y_test, y_pred)
+
+# F1 score
+f1_score(y_test,y_pred)
+
+# Cohen's kappa
+cohen_kappa_score(y_test, y_pred)
+
+
+#----------------------
+Predicting Wine Quality
+#----------------------
+
+# Isolate target labels
+y = wines.________
+
+# Isolate data
+X = wines.drop('quality', axis=_) 
+
+
+# Scale the data with `StandardScaler`
+X = ________________.fit_transform(X)
+
+
+#----------------------
+Model Neural Network Architecture
+#----------------------
+
+# Import `Sequential` from `keras.models`
+from keras.models import Sequential
+
+# Import `Dense` from `keras.layers`
+from keras.layers import Dense
+
+# Initialize the model
+model = Sequential()
+
+# Add input layer 
+model.add(Dense(64, input_dim=12, activation='relu'))
+    
+# Add output layer 
+model.add(Dense(1))
+
+
+#----------------------
+Compile The Model, Fit The Data
+#----------------------
+
+import numpy as np
+from sklearn.model_selection import StratifiedKFold
+
+seed = 7
+np.random.seed(seed)
+
+kfold = StratifiedKFold(n_splits=5, shuffle=True, random_state=seed)
+for train, test in kfold.split(X, Y):
+    model = Sequential()
+    model.add(Dense(64, input_dim=12, activation='relu'))
+    model.add(Dense(1))
+    model.compile(optimizer='rmsprop', loss='mse', metrics=['mae'])
+    model.fit(X[train], Y[train], epochs=10, verbose=1)
+
+
+#----------------------
+Evaluate Model
+#----------------------
+
+mse_value, mae_value = model.evaluate(X[test], Y[test], verbose=0)
+
+print(mse_value)
+print(mae_value)
+
+from sklearn.metrics import r2_score
+r2_score(Y[test], y_pred)
+
+#----------------------
+Model Fine-Tuning
+#----------------------
+
+
+# Adding Layers
+model = Sequential()
+model.add(Dense(64, input_dim=12, activation='relu'))
+model.add(Dense(64, activation='relu'))
+model.add(Dense(1))
+
+# Adding Hidden Units
+model = Sequential()
+model.add(Dense(128, input_dim=12, activation='relu'))
+model.add(Dense(1))
+
+
+
+
+# Some More Experiments: Optimization Parameters
+
+
+from keras.optimizers import RMSprop
+rmsprop = RMSprop(lr=0.0001)
+model.compile(optimizer=rmsprop, loss='mse', metrics=['mae'])
+
+
+from keras.optimizers import SGD, RMSprop
+sgd=SGD(lr=0.1)
+model.compile(optimizer=sgd, loss='mse', metrics=['mae'])
+
+
+
+###################################################################
+#
+#   Python Machine Learning: Scikit-Learn Tutorial
+#   https://www.datacamp.com/community/tutorials/machine-learning-python
+#
+###################################################################
+
+
+#-------------------------------
+# Loading Your Data Set
+#-------------------------------
+
+# Import `datasets` from `sklearn`
+from sklearn import ________
+
+# Import the `pandas` library as `pd`
+import ______ as __
+
+# Load in the data with `read_csv()`
+digits = pd.read_csv("http://archive.ics.uci.edu/ml/machine-learning-databases/optdigits/optdigits.tra", header=None)
+
+# Print out `digits`
+print(______)
+
+#-------------------------------
+# Explore Your Data
+#-------------------------------
+
+# Get the keys of the `digits` data
+print(digits.______)
+
+# Print out the data
+print(digits.____)
+
+# Print out the target values
+print(digits.______)
+
+# Print out the description of the `digits` data
+print(digits.DESCR)
+
+
+# Isolate the `digits` data
+digits_data = digits.data
+
+# Inspect the shape
+print(digits_data.shape)
+
+# Isolate the target values with `target`
+digits_target = digits.______
+
+# Inspect the shape
+print(digits_target._____)
+
+# Print the number of unique labels
+number_digits = len(np.unique(digits.target))
+
+# Isolate the `images`
+digits_images = digits.images
+
+# Inspect the shape
+print(digits_images.shape)
+
+print(np.all(digits.images.reshape((1797,64)) == digits.data))
+
+#-------------------------------
+# Visualize Your Data Images With matplotlib
+#-------------------------------
+
+
+# Import matplotlib
+import matplotlib.pyplot as plt
+
+# Figure size (width, height) in inches
+fig = plt.figure(figsize=(6, 6))
+
+# Adjust the subplots 
+fig.subplots_adjust(left=0, right=1, bottom=0, top=1, hspace=0.05, wspace=0.05)
+
+# For each of the 64 images
+for i in range(64):
+    # Initialize the subplots: add a subplot in the grid of 8 by 8, at the i+1-th position
+    ax = fig.add_subplot(8, 8, i + 1, xticks=[], yticks=[])
+    # Display an image at the i-th position
+    ax.imshow(digits.images[i], cmap=plt.cm.binary, interpolation='nearest')
+    # label the image with the target value
+    ax.text(0, 7, str(digits.target[i]))
+
+# Show the plot
+plt.show()
+
+
+
+
+# Import matplotlib
+import matplotlib.pyplot as plt 
+
+# Join the images and target labels in a list
+images_and_labels = list(zip(digits.images, digits.target))
+
+# for every element in the list
+for index, (image, label) in enumerate(images_and_labels[:8]):
+    # initialize a subplot of 2X4 at the i+1-th position
+    plt.subplot(2, 4, index + 1)
+    # Don't plot any axes
+    plt.axis('off')
+    # Display images in all subplots 
+    plt.imshow(image, cmap=plt.cm.gray_r,interpolation='nearest')
+    # Add a title to each subplot
+    plt.title('Training: ' + str(label))
+
+# Show the plot
+plt.show()
+
+
+#-------------------------------------------------------------
+# Visualizing Your Data: Principal Component Analysis (PCA)
+#-------------------------------------------------------------
+
+# Create a Randomized PCA model that takes two components
+randomized_pca = RandomizedPCA(n_components=2)
+
+# Fit and transform the data to the model
+reduced_data_rpca = randomized_pca.fit_transform(digits.data)
+
+# Create a regular PCA model 
+pca = PCA(n_components=2)
+
+# Fit and transform the data to the model
+reduced_data_pca = pca.fit_transform(digits.data)
+
+# Inspect the shape
+reduced_data_pca.shape
+
+# Print out the data
+print(reduced_data_rpca)
+print(reduced_data_pca)
+
+#--------------------------------
+
+
+
+colors = ['black', 'blue', 'purple', 'yellow', 'white', 'red', 'lime', 'cyan', 'orange', 'gray']
+for i in range(len(colors)):
+    x = reduced_data_rpca[:, 0][digits.target == i]
+    y = reduced_data_rpca[:, 1][digits.target == i]
+    plt.scatter(x, y, c=colors[i])
+plt.legend(digits.target_names, bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+plt.xlabel('First Principal Component')
+plt.ylabel('Second Principal Component')
+plt.title("PCA Scatter Plot")
+plt.show()
+
+
+#---------------------------------------------------
+# Preprocessing Your Data
+#---------------------------------------------------
+
+# Import
+from sklearn.preprocessing import scale
+
+# Apply `scale()` to the `digits` data
+data = _____(digits.data)
+
+
+# Import `train_test_split`
+from sklearn.cross_validation import ________________
+
+# Split the `digits` data into training and test sets
+X_train, X_test, y_train, y_test, images_train, images_test = train_test_split(data, digits.target, digits.images, test_size=0.25, random_state=42)
+
+
+# Number of training features
+n_samples, n_features = X_train.shape
+
+# Print out `n_samples`
+print(_________)
+
+# Print out `n_features`
+print(__________)
+
+# Number of Training labels
+n_digits = len(np.unique(y_train))
+
+# Inspect `y_train`
+print(len(_______))
+
+
+#---------------------------------------------------
+# Clustering The digits Data
+#---------------------------------------------------
+
+# Import the `cluster` module
+from sklearn import ________
+
+# Create the KMeans model
+clf = cluster.KMeans(init='k-means++', n_clusters=10, random_state=42)
+
+# Fit the training data `X_train`to the model
+clf.fit(________)
+
+
+
+
+# Import matplotlib
+import matplotlib.pyplot as plt
+
+# Figure size in inches
+fig = plt.figure(figsize=(8, 3))
+
+# Add title
+fig.suptitle('Cluster Center Images', fontsize=14, fontweight='bold')
+
+# For all labels (0-9)
+for i in range(10):
+    # Initialize subplots in a grid of 2X5, at i+1th position
+    ax = fig.add_subplot(2, 5, 1 + i)
+    # Display images
+    ax.imshow(clf.cluster_centers_[i].reshape((8, 8)), cmap=plt.cm.binary)
+    # Don't show the axes
+    plt.axis('off')
+
+# Show the plot
+plt.show()
+
+
+
+
+
+# Predict the labels for `X_test`
+y_pred=clf.predict(X_test)
+
+# Print out the first 100 instances of `y_pred`
+print(y_pred[:100])
+
+# Print out the first 100 instances of `y_test`
+print(y_test[:100])
+
+# Study the shape of the cluster centers
+clf.cluster_centers_._____
+
+
+
+
+
+
+# Import `Isomap()`
+from sklearn.manifold import Isomap
+
+# Create an isomap and fit the `digits` data to it
+X_iso = Isomap(n_neighbors=10).fit_transform(X_train)
+
+# Compute cluster centers and predict cluster index for each sample
+clusters = clf.fit_predict(X_train)
+
+# Create a plot with subplots in a grid of 1X2
+fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+
+# Adjust layout
+fig.suptitle('Predicted Versus Training Labels', fontsize=14, fontweight='bold')
+fig.subplots_adjust(top=0.85)
+
+# Add scatterplots to the subplots 
+ax[0].scatter(X_iso[:, 0], X_iso[:, 1], c=clusters)
+ax[0].set_title('Predicted Training Labels')
+ax[1].scatter(X_iso[:, 0], X_iso[:, 1], c=y_train)
+ax[1].set_title('Actual Training Labels')
+
+# Show the plots
+plt.show()
+
+
+
+
+
+
+
+
+
+# Import `PCA()`
+from sklearn.decomposition import PCA
+
+# Model and fit the `digits` data to the PCA model
+X_pca = PCA(n_components=2).fit_transform(X_train)
+
+# Compute cluster centers and predict cluster index for each sample
+clusters = clf.fit_predict(X_train)
+
+# Create a plot with subplots in a grid of 1X2
+fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+
+# Adjust layout
+fig.suptitle('Predicted Versus Training Labels', fontsize=14, fontweight='bold')
+fig.subplots_adjust(top=0.85)
+
+# Add scatterplots to the subplots 
+ax[0].scatter(X_pca[:, 0], X_pca[:, 1], c=clusters)
+ax[0].set_title('Predicted Training Labels')
+ax[1].scatter(X_pca[:, 0], X_pca[:, 1], c=y_train)
+ax[1].set_title('Actual Training Labels')
+
+# Show the plots
+plt.show()
+
+
+
+
+#--------------------------------------------------
+# Evaluation of Your Clustering Model
+#--------------------------------------------------
+
+# Import `metrics` from `sklearn`
+from sklearn import _______
+
+# Print out the confusion matrix with `confusion_matrix()`
+print(metrics.confusion_matrix(y_test, y_pred))
+
+
+from sklearn.metrics import homogeneity_score, completeness_score, v_measure_score, adjusted_rand_score, adjusted_mutual_info_score, silhouette_score
+print('% 9s' % 'inertia    homo   compl  v-meas     ARI AMI  silhouette')
+print('%i   %.3f   %.3f   %.3f   %.3f   %.3f    %.3f'
+          %(clf.inertia_,
+      homogeneity_score(y_test, y_pred),
+      completeness_score(y_test, y_pred),
+      v_measure_score(y_test, y_pred),
+      adjusted_rand_score(y_test, y_pred),
+      adjusted_mutual_info_score(y_test, y_pred),
+      silhouette_score(X_test, y_pred, metric='euclidean')))
+
+
+
+#--------------------------------------------------
+# Trying Out Another Model: Support Vector Machines
+#--------------------------------------------------
+
+
+# Import `train_test_split`
+from sklearn.cross_validation import train_test_split
+
+# Split the data into training and test sets 
+X_train, X_test, y_train, y_test, images_train, images_test = train_test_split(digits.data, digits.target, digits.images, test_size=0.25, random_state=42)
+
+# Import the `svm` model
+from sklearn import svm
+
+# Create the SVC model 
+svc_model = svm.SVC(gamma=0.001, C=100., kernel='linear')
+
+# Fit the data to the SVC model
+svc_model.fit(X_train, y_train)
+
+
+
+# Split the `digits` data into two equal sets
+X_train, X_test, y_train, y_test = train_test_split(digits.data, digits.target, test_size=0.5, random_state=0)
+
+# Import GridSearchCV
+from sklearn.grid_search import GridSearchCV
+
+# Set the parameter candidates
+parameter_candidates = [
+  {'C': [1, 10, 100, 1000], 'kernel': ['linear']},
+  {'C': [1, 10, 100, 1000], 'gamma': [0.001, 0.0001], 'kernel': ['rbf']},
+]
+
+# Create a classifier with the parameter candidates
+clf = GridSearchCV(estimator=svm.SVC(), param_grid=parameter_candidates, n_jobs=-1)
+
+# Train the classifier on training data
+clf.fit(X_train, y_train)
+
+# Print out the results 
+print('Best score for training data:', clf.best_score_)
+print('Best `C`:',clf.best_estimator_.C)
+print('Best kernel:',clf.best_estimator_.kernel)
+print('Best `gamma`:',clf.best_estimator_.gamma)
+
+
+
+# Apply the classifier to the test data, and view the accuracy score
+clf.score(X_test, y_test)  
+
+# Train and score a new classifier with the grid search parameters
+svm.SVC(C=10, kernel='rbf', gamma=0.001).fit(X_train, y_train).score(X_test, y_test)
+
+# Predict the label of `X_test`
+print(svc_model.predict(______))
+
+# Print `y_test` to check the results
+print(______)
+
+
+
+
+
+
+
+# Import matplotlib
+import matplotlib.pyplot as plt
+
+# Assign the predicted values to `predicted`
+predicted = svc_model.predict(X_test)
+
+# Zip together the `images_test` and `predicted` values in `images_and_predictions`
+images_and_predictions = list(zip(images_test, predicted))
+
+# For the first 4 elements in `images_and_predictions`
+for index, (image, prediction) in enumerate(images_and_predictions[:4]):
+    # Initialize subplots in a grid of 1 by 4 at positions i+1
+    plt.subplot(1, 4, index + 1)
+    # Don't show axes
+    plt.axis('off')
+    # Display images in all subplots in the grid
+    plt.imshow(image, cmap=plt.cm.gray_r, interpolation='nearest')
+    # Add a title to the plot
+    plt.title('Predicted: ' + str(prediction))
+
+# Show the plot
+plt.show()
+
+
+
+
+# Import `metrics`
+from sklearn import metrics
+
+# Print the classification report of `y_test` and `predicted`
+print(metrics.classification_report(______, _________))
+
+# Print the confusion matrix of `y_test` and `predicted`
+print(metrics.confusion_matrix(______, _________))
+
+
+
+
+
+
+
+# Import `Isomap()`
+from sklearn.manifold import Isomap
+
+# Create an isomap and fit the `digits` data to it
+X_iso = Isomap(n_neighbors=10).fit_transform(X_train)
+
+# Compute cluster centers and predict cluster index for each sample
+predicted = svc_model.predict(X_train)
+
+# Create a plot with subplots in a grid of 1X2
+fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+
+# Adjust the layout
+fig.subplots_adjust(top=0.85)
+
+# Add scatterplots to the subplots 
+ax[0].scatter(X_iso[:, 0], X_iso[:, 1], c=predicted)
+ax[0].set_title('Predicted labels')
+ax[1].scatter(X_iso[:, 0], X_iso[:, 1], c=y_train)
+ax[1].set_title('Actual Labels')
+
+
+# Add title
+fig.suptitle('Predicted versus actual labels', fontsize=14, fontweight='bold')
+
+# Show the plot
+plt.show()
+
+
+
+
+
+
+
+##################################################################
+#
+#   Convolutional Neural Networks in Python with Keras
+#   https://www.datacamp.com/community/tutorials/convolutional-neural-networks-python
+#
+##################################################################
+
+#-------------------
+# Load the Data
+#-------------------
+
+from keras.datasets import fashion_mnist
+(train_X,train_Y), (test_X,test_Y) = fashion_mnist.load_data()
+
+
+#-------------------
+Analyze the Data
+#-------------------
+
+
+import numpy as np
+from keras.utils import to_categorical
+import matplotlib.pyplot as plt
+%matplotlib inline
+print('Training data shape : ', train_X.shape, train_Y.shape)
+print('Testing data shape : ', test_X.shape, test_Y.shape)
+
+
+
+# Find the unique numbers from the train labels
+classes = np.unique(train_Y)
+nClasses = len(classes)
+print('Total number of outputs : ', nClasses)
+print('Output classes : ', classes)
+
+
+
+plt.figure(figsize=[5,5])
+
+# Display the first image in training data
+plt.subplot(121)
+plt.imshow(train_X[0,:,:], cmap='gray')
+plt.title("Ground Truth : {}".format(train_Y[0]))
+
+# Display the first image in testing data
+plt.subplot(122)
+plt.imshow(test_X[0,:,:], cmap='gray')
+plt.title("Ground Truth : {}".format(test_Y[0]))
+
+
+
+#-------------------
+Data Preprocessing
+#-------------------
+
+train_X = train_X.reshape(-1, 28,28, 1)
+test_X = test_X.reshape(-1, 28,28, 1)
+train_X.shape, test_X.shape
+
+
+train_X = train_X.astype('float32')
+test_X = test_X.astype('float32')
+train_X = train_X / 255.
+test_X = test_X / 255.
+
+
+# Change the labels from categorical to one-hot encoding
+train_Y_one_hot = to_categorical(train_Y)
+test_Y_one_hot = to_categorical(test_Y)
+
+# Display the change for category label using one-hot encoding
+print('Original label:', train_Y[0])
+print('After conversion to one-hot:', train_Y_one_hot[0])
+
+
+from sklearn.model_selection import train_test_split
+train_X,valid_X,train_label,valid_label = train_test_split(train_X, train_Y_one_hot, test_size=0.2, random_state=13)
+
+
+train_X.shape,valid_X.shape,train_label.shape,valid_label.shape
+
+#------------------
+The Network
+#------------------
+
+#------------------
+Model the Data
+#------------------
+
+
+import keras
+from keras.models import Sequential,Input,Model
+from keras.layers import Dense, Dropout, Flatten
+from keras.layers import Conv2D, MaxPooling2D
+from keras.layers.normalization import BatchNormalization
+from keras.layers.advanced_activations import LeakyReLU
+
+"""
+batch_size = 64
+epochs = 20
+num_classes = 10
+"""
+
+#------------------------------------------------------------------
+#   Neural Network Architecture
+#------------------------------------------------------------------
+
+fashion_model = Sequential()
+fashion_model.add(Conv2D(32, kernel_size=(3, 3),activation='linear',input_shape=(28,28,1),padding='same'))
+fashion_model.add(LeakyReLU(alpha=0.1))
+fashion_model.add(MaxPooling2D((2, 2),padding='same'))
+fashion_model.add(Conv2D(64, (3, 3), activation='linear',padding='same'))
+fashion_model.add(LeakyReLU(alpha=0.1))
+fashion_model.add(MaxPooling2D(pool_size=(2, 2),padding='same'))
+fashion_model.add(Conv2D(128, (3, 3), activation='linear',padding='same'))
+fashion_model.add(LeakyReLU(alpha=0.1))                  
+fashion_model.add(MaxPooling2D(pool_size=(2, 2),padding='same'))
+fashion_model.add(Flatten())
+fashion_model.add(Dense(128, activation='linear'))
+fashion_model.add(LeakyReLU(alpha=0.1))                  
+fashion_model.add(Dense(num_classes, activation='softmax'))
+
+
+#------------------------------------------------------------------
+#   Compile the Model
+#------------------------------------------------------------------
+
+
+fashion_model.compile(loss=keras.losses.categorical_crossentropy, optimizer=keras.optimizers.Adam(),metrics=['accuracy'])
+fashion_model.summary()
+
+#------------------------------------------------------------------
+#   Train the Model
+#------------------------------------------------------------------
+fashion_train = fashion_model.fit(train_X, train_label, batch_size=batch_size,epochs=epochs,verbose=1,validation_data=(valid_X, valid_label))
+
+
+
+
+
+#------------------------------------------------------------------
+#   Model Evaluation on the Test Set
+#------------------------------------------------------------------
+test_eval = fashion_model.evaluate(test_X, test_Y_one_hot, verbose=0)
+print('Test loss:', test_eval[0])
+print('Test accuracy:', test_eval[1])
+
+
+
+accuracy = fashion_train.history['acc']
+val_accuracy = fashion_train.history['val_acc']
+loss = fashion_train.history['loss']
+val_loss = fashion_train.history['val_loss']
+epochs = range(len(accuracy))
+plt.plot(epochs, accuracy, 'bo', label='Training accuracy')
+plt.plot(epochs, val_accuracy, 'b', label='Validation accuracy')
+plt.title('Training and validation accuracy')
+plt.legend()
+plt.figure()
+plt.plot(epochs, loss, 'bo', label='Training loss')
+plt.plot(epochs, val_loss, 'b', label='Validation loss')
+plt.title('Training and validation loss')
+plt.legend()
+plt.show()
+
+
+
+
+#------------------------------------------------------------------
+#   Adding Dropout into the Network
+#------------------------------------------------------------------
+
+
+batch_size = 64
+epochs = 20
+num_classes = 10
+
+fashion_model = Sequential()
+fashion_model.add(Conv2D(32, kernel_size=(3, 3),activation='linear',padding='same',input_shape=(28,28,1)))
+fashion_model.add(LeakyReLU(alpha=0.1))
+fashion_model.add(MaxPooling2D((2, 2),padding='same'))
+fashion_model.add(Dropout(0.25))
+fashion_model.add(Conv2D(64, (3, 3), activation='linear',padding='same'))
+fashion_model.add(LeakyReLU(alpha=0.1))
+fashion_model.add(MaxPooling2D(pool_size=(2, 2),padding='same'))
+fashion_model.add(Dropout(0.25))
+fashion_model.add(Conv2D(128, (3, 3), activation='linear',padding='same'))
+fashion_model.add(LeakyReLU(alpha=0.1))                  
+fashion_model.add(MaxPooling2D(pool_size=(2, 2),padding='same'))
+fashion_model.add(Dropout(0.4))
+fashion_model.add(Flatten())
+fashion_model.add(Dense(128, activation='linear'))
+fashion_model.add(LeakyReLU(alpha=0.1))           
+fashion_model.add(Dropout(0.3))
+fashion_model.add(Dense(num_classes, activation='softmax'))
+fashion_model.summary()
+
+
+fashion_model.compile(loss=keras.losses.categorical_crossentropy, optimizer=keras.optimizers.Adam(),metrics=['accuracy'])
+fashion_train_dropout = fashion_model.fit(train_X, train_label, batch_size=batch_size,epochs=epochs,verbose=1,validation_data=(valid_X, valid_label))
+fashion_model.save("fashion_model_dropout.h5py")
+
+
+#------------------------------------------------------------------
+#   Model Evaluation on the Test Set
+#------------------------------------------------------------------
+
+test_eval = fashion_model.evaluate(test_X, test_Y_one_hot, verbose=1)
+print('Test loss:', test_eval[0])
+print('Test accuracy:', test_eval[1])
+
+
+accuracy = fashion_train_dropout.history['acc']
+val_accuracy = fashion_train_dropout.history['val_acc']
+loss = fashion_train_dropout.history['loss']
+val_loss = fashion_train_dropout.history['val_loss']
+epochs = range(len(accuracy))
+plt.plot(epochs, accuracy, 'bo', label='Training accuracy')
+plt.plot(epochs, val_accuracy, 'b', label='Validation accuracy')
+plt.title('Training and validation accuracy')
+plt.legend()
+plt.figure()
+plt.plot(epochs, loss, 'bo', label='Training loss')
+plt.plot(epochs, val_loss, 'b', label='Validation loss')
+plt.title('Training and validation loss')
+plt.legend()
+plt.show()
+
+#------------------------------------------------------------------
+#   Predict Labels
+#------------------------------------------------------------------
+
+
+predicted_classes = fashion_model.predict(test_X)
+predicted_classes = np.argmax(np.round(predicted_classes),axis=1)
+predicted_classes.shape, test_Y.shape
+
+
+correct = np.where(predicted_classes==test_Y)[0]
+print "Found %d correct labels" % len(correct)
+for i, correct in enumerate(correct[:9]):
+    plt.subplot(3,3,i+1)
+    plt.imshow(test_X[correct].reshape(28,28), cmap='gray', interpolation='none')
+    plt.title("Predicted {}, Class {}".format(predicted_classes[correct], test_Y[correct]))
+    plt.tight_layout()
+
+
+incorrect = np.where(predicted_classes!=test_Y)[0]
+print "Found %d incorrect labels" % len(incorrect)
+for i, incorrect in enumerate(incorrect[:9]):
+    plt.subplot(3,3,i+1)
+    plt.imshow(test_X[incorrect].reshape(28,28), cmap='gray', interpolation='none')
+    plt.title("Predicted {}, Class {}".format(predicted_classes[incorrect], test_Y[incorrect]))
+    plt.tight_layout()
+
+
+#------------------------------------------------------------------
+#   Classification Report
+#------------------------------------------------------------------
+
+
+from sklearn.metrics import classification_report
+target_names = ["Class {}".format(i) for i in range(num_classes)]
+print(classification_report(test_Y, predicted_classes, target_names=target_names))
+
