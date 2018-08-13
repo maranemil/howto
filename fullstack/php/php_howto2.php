@@ -562,8 +562,95 @@ shell> php example.php -a 1 -b 2 -- test
 
 
 
+#
+$shortopts  = "";
+$shortopts .= "c:"; // Required value
+$shortopts .= "h::"; // Optional value
+$shortopts .= "v::"; // Optional value
+$shortopts .= "d::"; // Optional value
+
+$longopts  = array(
+    "config:",       // Required value
+    "help::",        // Optional value
+    "verbose::",     // Optional value
+    "debug::",       // Optional value
+);
+$argTerminal = getopt($shortopts, $longopts);
 
 
+
+
+#######################################################
+#
+# Colors in php CLI
+#
+#######################################################
+
+http://blog.lenss.nl/2012/05/adding-colors-to-php-cli-script-output/
+https://www.if-not-true-then-false.com/2010/php-class-for-coloring-php-command-line-cli-scripts-output-php-output-colorizing-using-bash-shell-colors/
+http://tldp.org/LDP/abs/html/colorizing.html
+
+echo -n "          "
+echo -e '\E[37;44m'"\033[1mContact List\033[0m" 	        	# White on blue background
+echo -e "\033[1mChoose one of the following persons:\033[0m"	# Bold
+echo -en '\E[47;34m'"\033[1mE\033[0m"   						# Blue
+echo "vans, Roland"                     						# "[E]vans, Roland"
+echo -en '\E[47;35m'"\033[1mJ\033[0m"   						# Magenta
+echo -en '\E[47;32m'"\033[1mS\033[0m"   						# Green
+echo -en '\E[47;31m'"\033[1mZ\033[0m"   						# Red
+
+
+Black 0;30
+Blue 0;34
+Green 0;32
+Cyan 0;36
+Red 0;31
+Purple 0;35
+Brown 0;33
+Light Gray 0;37
+Dark Gray 1;30
+Light Blue 1;34
+Light Green 1;32
+Light Cyan 1;36
+Light Red 1;31
+Light Purple 1;35
+Yellow 1;33
+White 1;37
+
+$this->fg_colors['black'] = '0;30';
+$this->fg_colors['dark_gray'] = '1;30';
+$this->fg_colors['blue'] = '0;34';
+$this->fg_colors['light_blue'] = '1;34';
+$this->fg_colors['green'] = '0;32';
+$this->fg_colors['light_green'] = '1;32';
+$this->fg_colors['cyan'] = '0;36';
+$this->fg_colors['light_cyan'] = '1;36';
+$this->fg_colors['red'] = '0;31';
+$this->fg_colors['light_red'] = '1;31';
+$this->fg_colors['purple'] = '0;35';
+$this->fg_colors['light_purple'] = '1;35';
+$this->fg_colors['brown'] = '0;33';
+$this->fg_colors['yellow'] = '1;33';
+$this->fg_colors['light_gray'] = '0;37';
+$this->fg_colors['white'] = '1;37';
+
+$this->bg_color['black'] = '40';
+$this->bg_color['red'] = '41';
+$this->bg_color['green'] = '42';
+$this->bg_color['yellow'] = '43';
+$this->bg_color['blue'] = '44';
+$this->bg_color['magenta'] = '45';
+$this->bg_color['cyan'] = '46';
+$this->bg_color['light_gray'] = '47';
+
+
+
+PHP
+
+echo "\033[31m some colored text \033[0m some white text \n"; #
+echo "\033[32m some colored text \033[0m some white text \n"; #
+
+print "Using Conf:  \033[1m \033[32m OK \033[0m" .PHP_EOL; # bold + green
 
 
 
