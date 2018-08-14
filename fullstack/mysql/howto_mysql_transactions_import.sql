@@ -18,4 +18,4 @@
 
 
 -- Test import / . In SQL file add: START TRANSACTION; and COMMIT; before import
--- mysqldump --single-transaction --insert-ignore --user dom_backend --password --host 1.1.1.1  --debug-info --verbose db table < table.sql
+-- mysqldump --single-transaction --insert-ignore --user backend --password --host 1.1.1.1  --debug-info --verbose db table < table.sql
