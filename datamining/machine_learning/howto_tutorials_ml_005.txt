@@ -1,0 +1,760 @@
+
+
+
+
+
+
+##########################################################################################
+#
+#	Convolutional Neural Networks in Python with Keras - import data
+#	https://keras.io/datasets/
+#	https://www.programcreek.com/python/example/97467/keras.datasets.reuters.load_data
+#	https://www.datacamp.com/community/tutorials/convolutional-neural-networks-python
+#
+##########################################################################################
+
+
+IMDB Movie reviews sentiment classification
+
+from keras.datasets import imdb
+(x_train, y_train), (x_test, y_test) = imdb.load_data(path="imdb.npz",
+                                                      num_words=None,
+                                                      skip_top=0,
+                                                      maxlen=None,
+                                                      seed=113,
+                                                      start_char=1,
+                                                      oov_char=2,
+                                                      index_from=3)
+
+Reuters newswire topics classification
+
+from keras.datasets import reuters
+(x_train, y_train), (x_test, y_test) = reuters.load_data(path="reuters.npz",
+                                                         num_words=None,
+                                                         skip_top=0,
+                                                         maxlen=None,
+                                                         test_split=0.2,
+                                                         seed=113,
+                                                         start_char=1,
+                                                         oov_char=2,
+                                                         index_from=3)
+
+
+MNIST database of handwritten digits
+
+from keras.datasets import mnist
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+
+Fashion-MNIST database of fashion articles
+
+from keras.datasets import fashion_mnist
+(x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
+
+Boston housing price regression dataset
+
+from keras.datasets import boston_housing
+(x_train, y_train), (x_test, y_test) = boston_housing.load_data()
+
+----
+
+def get_reuters_dataset(batch_size, max_words):
+    (X_train, y_train), (X_test, y_test) = reuters.load_data(nb_words=max_words, test_split=0.2)
+    nb_classes = np.max(y_train) + 1
+    tokenizer = Tokenizer(nb_words=max_words)
+    X_train = tokenizer.sequences_to_matrix(X_train, mode='binary')
+    X_test = tokenizer.sequences_to_matrix(X_test, mode='binary')
+    y_train = np_utils.to_categorical(y_train, nb_classes)
+    y_test = np_utils.to_categorical(y_test, nb_classes)
+
+    batch_iterator = SimpleBatchIterator(
+        X_train,
+        y_train,
+        batch_size,
+        autoloop=True)
+    test_batch_iterator = SimpleBatchIterator(
+        X_test,
+        y_test,
+        len(X_test),
+        autoloop=True)
+    return batch_iterator, test_batch_iterator, nb_classes
+
+
+
+
+##########################################################################################
+#
+#	Import data in Tensorflow - Fashion-MNIST with tf.Keras
+#	https://www.tensorflow.org/api_docs/python/tf/keras/datasets/imdb/load_data
+#	https://www.tensorflow.org/tutorials/keras/basic_classification
+#	https://www.tensorflow.org/api_docs/python/tf/keras/datasets/mnist/load_data
+#	https://www.programcreek.com/python/example/97467/keras.datasets.reuters.load_data
+#	https://www.programcreek.com/python/example/100764/keras.datasets.imdb.load_data
+#	https://medium.com/tensorflow/hello-deep-learning-fashion-mnist-with-keras-50fcff8cd74a
+#
+##########################################################################################
+
+# tf.keras.datasets.imdb.load_data
+
+------------- imdb --------------
+
+tf.keras.datasets.imdb.load_data(
+    path='imdb.npz',
+    num_words=None,
+    skip_top=0,
+    maxlen=None,
+    seed=113,
+    start_char=1,
+    oov_char=2,
+    index_from=3,
+    **kwargs
+)
+
+
+------ fashion_mnist -------------
+
+# TensorFlow and tf.keras
+import tensorflow as tf
+from tensorflow import keras
+
+# Helper libraries
+import numpy as np
+import matplotlib.pyplot as plt
+
+print(tf.__version__)
+fashion_mnist = keras.datasets.fashion_mnist
+(train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()
+
+
+
+##########################################################################################
+#
+#	Part 7 : Load Data and Create Model
+#	p7_load_data_create_model.py
+#	https://gist.github.com/samisaboss/988527e974e193d98ec0e229bca64ea8
+#
+##########################################################################################
+
+
+import numpy as np
+import tensorflow as tf
+from keras.models import Model
+from keras.layers import Input, Activation, Dense, Conv2D, MaxPooling2D, ZeroPadding2D, Flatten
+from keras.optimizers import Adam
+from keras.utils.np_utils import to_categorical
+from keras.callbacks import TensorBoard
+from keras.datasets import fashion_mnist
+
+(train_x, train_y), (test_x, test_y) = fashion_mnist.load_data()
+
+train_x = train_x.astype('float32') / 255.
+test_x = test_x.astype('float32') / 255.
+
+train_x = np.reshape(train_x, (len(train_x), 28, 28, 1))
+test_x = np.reshape(test_x, (len(test_x), 28, 28, 1))
+
+train_y = to_categorical( train_y )
+test_y = to_categorical( test_y )
+
+
+##########################################################################################
+#
+#	Fashion-MNIST with tf.Keras
+#	https://medium.com/tensorflow/hello-deep-learning-fashion-mnist-with-keras-50fcff8cd74a
+#	https://www.analyticsvidhya.com/blog/2018/06/unsupervised-deep-learning-computer-vision/
+#
+##########################################################################################
+
+# Note in Colab you can type "pip install" directly in the notebook
+!pip install -q -U tensorflow>=1.8.0
+import tensorflow as tf
+import numpy as np
+import matplotlib.pyplot as plt
+# Load the fashion-mnist pre-shuffled train data and test data
+(x_train, y_train), (x_test, y_test) = tf.keras.datasets.fashion_mnist.load_data()
+print("x_train shape:", x_train.shape, "y_train shape:", y_train.shape)
+
+
+#--------------------------
+# Visualize the data
+#--------------------------
+
+# Show one of the images from the training dataset
+plt.imshow(x_train[img_index])
+
+#--------------------------
+# Data normalization
+#--------------------------
+
+x_train = x_train.astype('float32') / 255
+x_test = x_test.astype('float32') / 255
+
+#--------------------------
+# Create the model architecture
+#--------------------------
+
+model = tf.keras.Sequential()
+# Must define the input shape in the first layer of the neural network
+model.add(tf.keras.layers.Conv2D(filters=64, kernel_size=2, padding='same', activation='relu', input_shape=(28,28,1)))
+model.add(tf.keras.layers.MaxPooling2D(pool_size=2))
+model.add(tf.keras.layers.Dropout(0.3))
+model.add(tf.keras.layers.Conv2D(filters=32, kernel_size=2, padding='same', activation='relu'))
+model.add(tf.keras.layers.MaxPooling2D(pool_size=2))
+model.add(tf.keras.layers.Dropout(0.3))
+model.add(tf.keras.layers.Flatten())
+model.add(tf.keras.layers.Dense(256, activation='relu'))
+model.add(tf.keras.layers.Dropout(0.5))
+model.add(tf.keras.layers.Dense(10, activation='softmax'))
+# Take a look at the model summary
+model.summary()
+
+#--------------------------
+#	Compile the model
+#--------------------------
+
+model.compile(loss='categorical_crossentropy',
+             optimizer='adam',
+             metrics=['accuracy'])
+
+#--------------------------
+#	 Train the model
+#--------------------------
+model.fit(x_train,
+         y_train,
+         batch_size=64,
+         epochs=10,
+         validation_data=(x_valid, y_valid),
+         callbacks=[checkpointer])
+
+#--------------------------
+#	Test Accuracy
+#--------------------------
+# Evaluate the model on test set
+score = model.evaluate(x_test, y_test, verbose=0)
+# Print test accuracy
+print('\n', 'Test accuracy:', score[1])
+
+#--------------------------
+# Visualize the predictions
+#--------------------------
+model.predict(x_test)
+
+
+
+
+
+
+
+
+
+
+##########################################################################################
+#
+#	Essentials of Deep Learning: Exploring Unsupervised Deep Learning Algorithms for Computer Vision
+#	https://www.analyticsvidhya.com/blog/2018/06/unsupervised-deep-learning-computer-vision/
+#
+##########################################################################################
+
+
+from keras.datasets import fashion_mnist
+
+%pylab inline
+import os
+import keras
+import numpy as np
+import pandas as pd
+import keras.backend as K
+
+from time import time
+from sklearn.cluster import KMeans
+from keras import callbacks
+from keras.models import Model
+from keras.optimizers import SGD
+from keras.layers import Dense, Input
+from keras.initializers import VarianceScaling
+from keras.engine.topology import Layer, InputSpec
+
+from scipy.misc import imread
+from sklearn.metrics import accuracy_score, normalized_mutual_info_score
+
+# Populating the interactive namespace from numpy and matplotlib
+
+(train_x, train_y), (val_x, val_y) = fashion_mnist.load_data()
+train_x = train_x/255.
+val_x = val_x/255.
+
+train_x = train_x.reshape(-1, 784)
+val_x = val_x.reshape(-1, 784)
+
+# let’s define the autoencoder model
+# this is our input placeholder
+input_img = Input(shape=(784,))
+
+# "encoded" is the encoded representation of the input
+encoded = Dense(2000, activation='relu')(input_img)
+encoded = Dense(500, activation='relu')(encoded)
+encoded = Dense(500, activation='relu')(encoded)
+encoded = Dense(10, activation='sigmoid')(encoded)
+
+# "decoded" is the lossy reconstruction of the input
+decoded = Dense(500, activation='relu')(encoded)
+decoded = Dense(500, activation='relu')(decoded)
+decoded = Dense(2000, activation='relu')(decoded)
+decoded = Dense(784)(decoded)
+
+# this model maps an input to its reconstruction
+autoencoder = Model(input_img, decoded)
+autoencoder.summary()
+
+#  this model maps an input to its encoded representation
+encoder = Model(input_img, encoded)
+autoencoder.compile(optimizer='adam', loss='mse')
+
+estop = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1, mode='auto')
+train_history = autoencoder.fit(train_x, train_x, epochs=500, batch_size=2048, validation_data=(val_x, val_x), callbacks=[estop])
+
+pred = autoencoder.predict(val_x)
+plt.imshow(pred[0].reshape(28, 28), cmap='gray')
+plt.imshow(val_x[0].reshape(28, 28), cmap='gray')
+
+
+#-----------------------------------------------
+# Sparse Image Compression using a Sparse AutoEncoder
+#-----------------------------------------------
+
+from keras.datasets import fashion_mnist
+%pylab inline
+import os
+import keras
+import numpy as np
+import pandas as pd
+import keras.backend as K
+from keras import regularizers
+
+
+from time import time
+from sklearn.cluster import KMeans
+from keras import callbacks
+from keras.models import Model
+from keras.optimizers import SGD
+from keras.layers import Dense, Input
+from keras.initializers import VarianceScaling
+from keras.engine.topology import Layer, InputSpec
+
+from scipy.misc import imread
+from sklearn.metrics import accuracy_score, normalized_mutual_info_score
+(train_x, train_y), (val_x, val_y) = fashion_mnist.load_data()
+
+train_x = train_x/255.
+val_x = val_x/255.
+
+train_x = train_x.reshape(-1, 784)
+val_x = val_x.reshape(-1, 784)
+
+# this is our input placeholder
+input_img = Input(shape=(784,))
+
+# "encoded" is the encoded representation of the input
+encoded = Dense(2000, activation='relu')(input_img)
+encoded = Dense(500, activation='relu',
+                activity_regularizer=regularizers.l1(10e-10))(encoded)
+encoded = Dense(500, activation='relu',
+                activity_regularizer=regularizers.l1(10e-10))(encoded)
+encoded = Dense(10, activation='sigmoid',
+                activity_regularizer=regularizers.l1(10e-10))(encoded)
+
+# "decoded" is the lossy reconstruction of the input
+decoded = Dense(500, activation='relu')(encoded)
+decoded = Dense(500, activation='relu')(decoded)
+decoded = Dense(2000, activation='relu')(decoded)
+decoded = Dense(784)(decoded)
+
+# this model maps an input to its reconstruction
+autoencoder = Model(input_img, decoded)
+autoencoder.summary()
+
+#  this model maps an input to its encoded representation
+encoder = Model(input_img, encoded)
+autoencoder.compile(optimizer='adam', loss='mse')
+estop = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1, mode='auto')
+train_history = autoencoder.fit(train_x, train_x, epochs=200, batch_size=2048, validation_data=(val_x, val_x), callbacks=[estop])
+
+pred = autoencoder.predict(val_x)
+plt.imshow(pred[0].reshape(28, 28), cmap='gray')
+plt.imshow(val_x[0].reshape(28, 28), cmap='gray')
+
+
+
+#-----------------------------------------------
+# Image Denoising with Denoising AutoEncoders
+#-----------------------------------------------
+
+from keras.datasets import fashion_mnist
+%pylab inline
+import os
+import keras
+import numpy as np
+import pandas as pd
+import keras.backend as K
+
+from time import time
+from sklearn.cluster import KMeans
+from keras import callbacks
+from keras.models import Model
+from keras.optimizers import SGD
+from keras.layers import Dense, Input, Conv2D, MaxPool2D, UpSampling2D
+from keras.initializers import VarianceScaling
+from keras.engine.topology import Layer, InputSpec
+
+from scipy.misc import imread
+from sklearn.metrics import accuracy_score, normalized_mutual_info_score
+(train_x, train_y), (val_x, val_y) = fashion_mnist.load_data()
+
+from imgaug import augmenters as iaa
+seq = iaa.Sequential([iaa.SaltAndPepper(0.2)])
+
+train_x_aug = seq.augment_images(train_x)
+val_x_aug = seq.augment_images(val_x)
+
+train_x = train_x/255.
+val_x = val_x/255.
+
+train_x = train_x.reshape(-1, 28, 28, 1)
+val_x = val_x.reshape(-1, 28, 28, 1)
+
+train_x_aug = train_x_aug/255.
+val_x_aug = val_x_aug/255.
+
+train_x_aug = train_x_aug.reshape(-1, 28, 28, 1)
+val_x_aug = val_x_aug.reshape(-1, 28, 28, 1)
+
+
+# this is our input placeholder
+input_img = Input(shape=(28, 28, 1))
+
+# "encoded" is the encoded representation of the input
+encoded = Conv2D(64, (3, 3), activation='relu', padding='same')(input_img)
+encoded = MaxPool2D((2, 2), padding='same')(encoded)
+encoded = Conv2D(32, (3, 3), activation='relu', padding='same')(encoded)
+encoded = MaxPool2D((2, 2), padding='same')(encoded)
+encoded = Conv2D(16, (3, 3), activation='relu', padding='same')(encoded)
+encoded = MaxPool2D((2, 2), padding='same')(encoded)
+
+# "decoded" is the lossy reconstruction of the input
+decoded = Conv2D(16, (3, 3), activation='relu', padding='same')(encoded)
+decoded = UpSampling2D((2, 2))(decoded)
+decoded = Conv2D(32, (3, 3), activation='relu', padding='same')(decoded)
+decoded = UpSampling2D((2, 2))(decoded)
+decoded = Conv2D(64, (3, 3), activation='relu')(decoded)
+decoded = UpSampling2D((2, 2))(decoded)
+decoded = Conv2D(1, (3, 3), padding='same')(decoded)
+
+# this model maps an input to its reconstruction
+autoencoder = Model(input_img, decoded)
+autoencoder.summary()
+
+#  this model maps an input to its encoded representation
+encoder = Model(input_img, encoded)
+autoencoder.compile(optimizer='adam', loss='mse')
+estop = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1, mode='auto')
+train_history = autoencoder.fit(train_x_aug, train_x, epochs=500, batch_size=2048, validation_data=(val_x_aug, val_x), callbacks=[estop])
+pred = autoencoder.predict(val_x)
+plt.imshow(val_x[0].reshape(28, 28), cmap='gray')
+plt.imshow(val_x_aug[0].reshape(28, 28), cmap='gray')
+plt.imshow(pred[0].reshape(28, 28), cmap='gray')
+
+
+#-----------------------------------------------
+#	Image Generation with Variational AutoEncoders
+#-----------------------------------------------
+
+from keras.datasets import fashion_mnist
+
+
+%pylab inline
+import os
+import keras
+import numpy as np
+import pandas as pd
+import keras.backend as K
+
+from time import time
+from sklearn.cluster import KMeans
+from keras import callbacks
+from keras.models import Model, Sequential
+from keras.optimizers import SGD
+from keras.layers import Dense, Input, Lambda, Layer, Add, Multiply
+from keras.initializers import VarianceScaling
+from keras.engine.topology import Layer, InputSpec
+
+from scipy.misc import imread
+from sklearn.metrics import accuracy_score, normalized_mutual_info_score
+
+(train_x, train_y), (val_x, val_y) = fashion_mnist.load_data()
+train_x = train_x/255.
+val_x = val_x/255.
+
+train_x = train_x.reshape(-1, 784)
+val_x = val_x.reshape(-1, 784)
+
+
+
+# this is our input placeholder
+input_img = Input(shape=(784,))
+
+# "encoded" is the encoded representation of the input
+encoded = Dense(500, activation='relu')(input_img)
+
+z_mu = Dense(10)(encoded)
+z_log_sigma = Dense(10)(encoded)
+
+class KLDivergenceLayer(Layer):
+
+    """ Identity transform layer that adds KL divergence
+    to the final model loss.
+    """
+
+    def __init__(self, *args, **kwargs):
+        self.is_placeholder = True
+        super(KLDivergenceLayer, self).__init__(*args, **kwargs)
+
+    def call(self, inputs):
+
+        mu, log_sigma = inputs
+
+        kl_batch = - .5 * K.sum(1 + log_sigma -
+                                K.square(mu) -
+                                K.exp(log_sigma), axis=-1)
+
+        self.add_loss(K.mean(kl_batch), inputs=inputs)
+
+        return inputs
+
+z_mu, z_log_sigma = KLDivergenceLayer()([z_mu, z_log_sigma])
+z_sigma = Lambda(lambda t: K.exp(.5*t))(z_log_sigma)
+
+eps = Input(tensor=K.random_normal(shape=(K.shape(input_img)[0],10)))
+z_eps = Multiply()([z_sigma, eps])
+z = Add()([z_mu, z_eps])
+
+decoder = Sequential([
+    Dense(500, input_dim=10, activation='relu'),
+    Dense(784, activation='sigmoid')
+])
+
+decoded = decoder(z)
+
+# this model maps an input to its reconstruction
+autoencoder = Model([input_img, eps], decoded)
+autoencoder.summary()
+
+def nll(y_true, y_pred):
+    """ Negative log likelihood (Bernoulli). """
+
+    # keras.losses.binary_crossentropy gives the mean
+    # over the last axis. we require the sum
+    return K.sum(K.binary_crossentropy(y_true, y_pred), axis=-1)
+
+autoencoder.compile(optimizer='adam', loss=nll)
+estop = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1, mode='auto')
+train_history = autoencoder.fit(train_x, train_x, epochs=500, batch_size=2048, validation_data=(val_x, val_x), callbacks=[estop])
+pred = autoencoder.predict(val_x)
+plt.imshow(pred[0].reshape(28, 28), cmap='gray')
+plt.imshow(val_x[0].reshape(28, 28), cmap='gray')
+
+
+##########################################################################################
+#
+#	CNN - Convolution neural networks - Dress recognition
+#	https://narengowda.github.io/cnn-convolution-neural-networks-dress-recognition/
+#	https://hk.saowen.com/a/3cc6a6914bdbf2ae64b72150124f485487e0de2a2d2d619c6dd8f06ae2824766
+#	http://www.pythonexample.com/search/pytorch-vs-tensorflow/219
+#	http://cican17.com/autoencoder-in-keras/
+#
+##########################################################################################
+
+import numpy as np
+from keras.utils import to_categorical
+import matplotlib.pyplot as plt
+% matplotlib inline
+from keras.datasets import fashion_mnist
+
+(train_X,train_Y), (test_X,test_Y) = fashion_mnist.load_data()
+
+print "X shape = ", train_X.shape, " Y shape", train_Y.shape
+
+# Y, output categories (sample)
+print "sample Y = ", train_Y[:5]
+
+print "Training samples count = ", len(train_X)
+print "Testing samples count = ", len(test_X)
+# 6:1 ratio for train vs test datasets
+
+
+X shape =  (60000, 28, 28)  Y shape (60000,)
+sample Y =  [9 0 0 3 0]
+Training samples count =  60000
+Testing samples count =  10000
+
+
+plt.imshow(train_X[0], cmap='gray')
+print "Below Image belongs to =", train_Y[0]
+
+
+# Below Image belongs to = 9
+
+plt.imshow(train_X[1], cmap='gray')
+print "Below Image belongs to =", train_Y[1]
+
+#Below Image belongs to = 0
+
+#-----------------------------------------------
+# Data Preprocessing
+#-----------------------------------------------
+
+
+# Step 1
+# convert each 28 x 28 image of the train and test set into a matrix
+# of size 28 x 28 x 1 which is fed into the network
+temp_train_X = train_X
+train_X = train_X.reshape(-1, 28, 28, 1)
+test_X = test_X.reshape(-1, 28, 28, 1)
+print train_X.shape, test_X.shape
+
+
+(60000, 28, 28, 1) (10000, 28, 28, 1)
+
+
+# Convert to float
+train_X = train_X.astype('float32')
+test_X = test_X.astype('float32')
+# convert pixels to 0 or 1
+
+train_X = train_X / 255.
+test_X = test_X / 255.
+
+
+# Convert class labels to ONE HOT ENCODER
+# Y = [SHIRT, SHOE, TIE] ==One Hot Encode=== [[SHORT, SHOE, TIE], [1, 0, 0], [0, 1, 0], [0, 0, 1]]
+# creates y axis those many number sof labels
+# Keras use to_categorical method whic does automatically
+train_Y_one_hot = to_categorical(train_Y)
+test_Y_one_hot = to_categorical(test_Y)
+print "few hot encoded y axis = ", test_Y[0:5]
+print "===" * 15
+print train_Y_one_hot[0], train_Y[0]
+print train_X.shape, train_Y_one_hot.shape
+
+
+
+from sklearn.model_selection import train_test_split
+train_X, valid_X, train_label, valid_label = train_test_split(train_X, train_Y_one_hot, test_size=0.2, random_state=13)
+
+
+## Best Convolution layers tutorials
+
+from IPython.display import HTML
+HTML('<iframe width="560" height="315" src="https://www.youtube.com/embed/FmpDIaiMIeA" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>')
+
+
+# Convolution -> Relu -> Pooling   (Repeat repeat repeat)
+# [http://brohrer.github.io/how_convolutional_neural_networks_work.html](http://brohrer.github.io/how_convolutional_neural_networks_work.html "http://brohrer.github.io/how_convolutional_neural_networks_work.html")
+
+import keras
+from keras.models import Sequential,Input,Model
+from keras.layers import Dense, Dropout, Flatten
+from keras.layers import Conv2D, MaxPooling2D
+from keras.layers.normalization import BatchNormalization
+from keras.layers.advanced_activations import LeakyReLU
+
+
+batch_size = 64
+epochs = 20
+num_classes = 10
+
+
+fashion_model = Sequential()
+fashion_model.add(Conv2D(32, kernel_size=(3, 3),activation='linear',input_shape=(28,28,1),padding='same'))
+fashion_model.add(LeakyReLU(alpha=0.1))
+fashion_model.add(MaxPooling2D((2, 2),padding='same'))
+fashion_model.add(Conv2D(64, (3, 3), activation='linear',padding='same'))
+fashion_model.add(LeakyReLU(alpha=0.1))
+fashion_model.add(MaxPooling2D(pool_size=(2, 2),padding='same'))
+fashion_model.add(Conv2D(128, (3, 3), activation='linear',padding='same'))
+fashion_model.add(LeakyReLU(alpha=0.1))
+fashion_model.add(MaxPooling2D(pool_size=(2, 2),padding='same'))
+fashion_model.add(Flatten())
+fashion_model.add(Dense(128, activation='linear'))
+fashion_model.add(LeakyReLU(alpha=0.1))
+fashion_model.add(Dense(num_classes, activation='softmax'))
+
+
+fashion_model.compile(loss=keras.losses.categorical_crossentropy, optimizer=keras.optimizers.Adam(),metrics=['accuracy'])
+fashion_model.summary()
+
+fashion_train = fashion_model.fit(train_X, train_label, batch_size=batch_size,epochs=epochs,verbose=1,validation_data=(valid_X, valid_label))
+
+### The training accuracuy is 99%(acc), awesome.
+
+### From the val_loss: 0.4138 it shows us that the model is overfitting
+
+#### To avoid overfitting we have to have a droupout layer
+
+### Before that lets evaluate using test data
+
+test_eval = fashion_model.evaluate(test_X, test_Y_one_hot, verbose=0)
+print "Test Loss=",test_eval[0], " Test Accuracy=",test_eval[1]
+
+
+Test Loss= 0.448352068252  Test Accuracy= 0.9124
+
+
+predicted_classes = fashion_model.predict(test_X)
+print "predicted= ", predicted_classes[0]
+# Its not like expected label(looks like hot encoded version but variying values),
+# lets find the max in each predicted output
+
+
+predicted=  [  3.36922089e-19   3.71982040e-14   7.71334506e-18   3.38777328e-15
+2.33446251e-16   5.07623034e-15   3.01408459e-19   8.75168205e-09
+5.17265352e-17   1.00000000e+00]
+
+
+predicted_classes = np.argmax(np.round(predicted_classes),axis=1)
+print predicted_classes[0]
+
+print "predicted vs test shapes = ", predicted_classes.shape, test_Y.shape
+print "predicted= ",predicted_classes[:10], " Test=", test_Y[:10]
+# Looks like its working
+
+
+predicted vs test shapes =  (10000,) (10000,)
+predicted=  [9 2 1 1 6 1 4 6 5 7]  Test= [9 2 1 1 6 1 4 6 5 7]
+
+
+# Lets get correct and incorrect ones
+correct_ones = np.where(predicted_classes == test_Y)[0]
+incorrect_ones = np.where(predicted_classes != test_Y)[0]
+
+print "There are ", len(correct_ones), " Correct ones"
+print "There are ", len(incorrect_ones), " Incorrect ones"
+
+
+There are  9118  Correct ones
+There are  882  Incorrect ones
+
+
+# Letsplot correct ones
+for i, pred in enumerate(correct_ones[:9]):
+plt.subplot(3, 3, i+1)
+plt.imshow(test_X[i].reshape(28,28), cmap='gray')
+plt.title("pred={} act={}".format(pred, test_Y[i]))
+plt.tight_layout()
+
+
+
+# Letsplot INCORRECT/WRONG ones
+for i, pred in enumerate(incorrect_ones[:9]):
+  plt.subplot(3, 3, i+1)
+  plt.imshow(test_X[i].reshape(28,28), cmap='gray')
+  plt.title("pred={} act={}".format(pred, test_Y[i]))
+  plt.tight_layout()
