@@ -186,3 +186,5 @@ print(predictions)
 prediction = predictions[0]
 
 np.argmax(prediction)
+
+
