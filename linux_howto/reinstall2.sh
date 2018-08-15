@@ -228,3 +228,72 @@ gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true
 # https://www.ubuntupit.com/19-best-gnome-shell-extensions-ubuntu-gnome-desktop/
 # https://extensions.gnome.org/extension/602/window-list/
 https://wiki.gnome.org/Projects/GnomeShellIntegrationForChrome/Installation
+
+
+##########################################################################
+#
+#   Find Linux / UNIX Kernel Version Command
+#   https://www.cyberciti.biz/faq/howto-find-out-what-kernel-version-running/
+#   https://www.cyberciti.biz/faq/find-print-linux-unix-kernel-version/
+#   https://www.tecmint.com/find-linux-kernel-version-distribution-name-version-number/
+#
+##########################################################################
+
+uname -a
+uname -r
+uname -mrsn
+cat /proc/version
+cat /etc/os-release
+
+  -a, --all                print all information
+  -s, --kernel-name        print the kernel name
+  -n, --nodename           print the network node hostname
+  -r, --kernel-release     print the kernel release
+  -v, --kernel-version     print the kernel version
+  -m, --machine            print the machine hardware name
+  -p, --processor          print the processor type or "unknown"
+  -i, --hardware-platform  print the hardware platform or "unknown"
+  -o, --operating-system   print the operating system
+
+
+
+##########################################################################
+#
+#  Debian install VBoxLinuxAdditions in virtualbox - howto
+#
+##########################################################################
+
+Installing Guest Additions on Debian
+https://virtualboxes.org/doc/installing-guest-additions-on-debian/
+
+Follow these steps to install the Guest Additions on your Debian virtual machine:
+
+    Login as root;
+    Update your APT database with apt-get update;
+    Install the latest security updates with apt-get upgrade;
+    Install required packages with apt-get install build-essential module-assistant;
+    Configure your system for building kernel modules by running m-a prepare;
+    Click on Install Guest Additions… from the Devices menu, then run mount /media/cdrom.
+    Run sh /media/cdrom/VBoxLinuxAdditions.run, and follow the instructions on screen.
+
+------------
+
+https://unix.stackexchange.com/questions/286934/how-to-install-virtualbox-guest-additions-in-a-debian-virtual-machine
+
+apt-get update
+apt-get upgrade
+apt-get install virtualbox-guest-dkms virtualbox-guest-x11 linux-headers-$(uname -r)
+
+FIX:
+
+# Login as root
+su
+
+# edit nano /etc/apt/sources.list
+# comment out following
+deb cdrom:[Debian GNU/Linux 9.5.0 _Stretch_ - Official amd64 xfce-CD Binary-1 20180714-10:25]/ stre$
+
+# run update and install
+apt-get update
+apt-get updgrade
+apt-get install virtualbox-guest-dkms virtualbox-guest-x11 linux-headers-$(uname -r)
