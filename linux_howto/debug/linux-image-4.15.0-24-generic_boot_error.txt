@@ -1,0 +1,76 @@
+######################################################################
+#
+# BUG: failure to boot with linux-image-4.15.0-24-generic
+#
+######################################################################
+
+apt list --installed linux-image-*
+
+Listing... Done
+linux-image-4.15.0-29-generic/bionic-updates,bionic-security,now 4.15.0-29.31 amd64 [installed,automatic]
+linux-image-4.15.0-32-generic/bionic-updates,bionic-security,now 4.15.0-32.35 amd64 [installed,automatic]
+linux-image-generic/bionic-updates,bionic-security,now 4.15.0.32.34 amd64 [installed,automatic]
+
+cat /var/log/apt/term.log
+
+#sudo apt-get install --reinstall linux-image-4.15.0-23-generic linux-headers-4.15.0-23 linux-modules-extra-4.15.0-23-generic linux-modules-4.15.0-23 generic linux headers-4.15.0-23-generic
+
+# SIMULATE linux-headers-4.15.0-23
+
+apt update
+apt install -f
+apt install --reinstall linux-headers-4.15.0-23 linux-headers-4.15.0-23-generic linux-modules-4.15.0-23-generic linux-modules-extra-4.15.0-23-generic linux-image-4.15.0-23-generic
+
+sudo rm -rf /var/lib/apt/lists/*
+apt clean
+
+#sudo apt-get remove linux-image-4.15.0.24-generic linux-headers-4.15.0.24-generic
+
+dpkg -l | grep linux-image
+sudo apt-get purge linux-image-<version/name>
+sudo apt-get purge linux-headers-<version/name>
+
+sudo apt-get install -f
+sudo apt-get clean
+sudo apt-get update
+
+uname -a
+dpkg -l | grep linux-image
+
+sudo apt install haveged # https://wiki.archlinux.org/index.php/Haveged
+sudo apt install rng-tools
+
+/dev/hda1 -c 1
+sudo tune2fs -c 1 /dev/hda1
+
+# failure to boot with linux-image-4.15.0-24-generic
+# package linux-headers-4.15.0-32-generic 4.15.0-32.35 failed to install/upgrade
+# package linux-modules-4.15.0-24-generic 4.15.0-24.26 failed to install/upgrade
+# Kernel 4.15.0 fails to boot with linux-modules-extra
+# https://bugs.launchpad.net/ubuntu/+bug/1779827
+# https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1787204
+# https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1787130
+# https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1786676
+# https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1780806
+# https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1787130
+# https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1787204
+# https://bugs.launchpad.net/ubuntu/+bug/1779827
+# https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1779950
+# https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1779772
+# https://bugs.launchpad.net/ubuntu/bionic/+source/linux/+bug/1779827
+# https://bugs.launchpad.net/ubuntu/bionic/+source/linux/+bug/1779827
+
+Why did Bionic kernel update to 4.15.0-24 get removed from the repos?
+# https://askubuntu.com/questions/1052159/why-did-bionic-kernel-update-to-4-15-0-24-get-removed-from-the-repos
+# https://askubuntu.com/questions/1052159/why-did-bionic-kernel-update-to-4-15-0-24-get-removed-from-the-repos/1052210
+# https://askubuntu.com/questions/1052159/why-did-bionic-kernel-update-to-4-15-0-24-get-removed-from-the-repos?rq=1
+# https://askubuntu.com/questions/1052174/why-a-system-crash-after-latest-kernel-upgrade-to-4-15-0-24
+# https://askubuntu.com/questions/1052174/why-a-system-crash-after-latest-kernel-upgrade-to-4-15-0-24/1052936
+
+# https://www.ubuntuupdates.org/package/canonical_kernel_team/bionic/main/base/linux-tools-4.15.0-24
+# https://www.ubuntuupdates.org/package/canonical_kernel_team/bionic/main/base/linux
+# https://www.ubuntuupdates.org/package/canonical_kernel_team/bionic/main/base/linux-headers-4.15.0-24
+
+# https://www.linuxuprising.com/2018/07/ubuntu-1804-linux-kernel-update-causes.html
+# https://forums.linuxmint.com/viewtopic.php?t=272232
+
