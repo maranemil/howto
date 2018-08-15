@@ -204,4 +204,27 @@ dpkg -l | grep nfs-kernel-server
 
 
 
+##########################################################
+#
+#   Install GNOME_Tweak_Tool
+#
+###########################################################
 
+https://wiki.ubuntuusers.de/GNOME_Tweak_Tool/
+
+sudo apt-get install gnome-tweak-tool
+sudo apt install gnome-tweak-tool
+gnome-tweaks
+
+gnome-shell --version
+GNOME Shell 3.28.2
+
+sudo apt install gnome-shell-extensions
+
+gsettings set org.gnome.shell.extensions.dash-to-dock dock-position BOTTOM
+gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true
+gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true
+
+# https://www.ubuntupit.com/19-best-gnome-shell-extensions-ubuntu-gnome-desktop/
+# https://extensions.gnome.org/extension/602/window-list/
+https://wiki.gnome.org/Projects/GnomeShellIntegrationForChrome/Installation
