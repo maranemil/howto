@@ -1,0 +1,897 @@
+
+Fashion-MNIST with tf.Keras
+https://nextjournal.com/gkoehler/digit-recognition-with-keras
+https://github.com/keras-team/keras/blob/master/examples/mnist_cnn.py
+https://machinelearningmastery.com/handwritten-digit-recognition-using-convolutional-neural-networks-python-keras/
+https://medium.com/tensorflow/hello-deep-learning-fashion-mnist-with-keras-50fcff8cd74a
+
+###############################################################################################
+#
+# 	Read Test Data directily from source Keras
+#	https://github.com/keras-team/keras/blob/master/keras/datasets/imdb.py
+#	https://github.com/NikhilHeda/Advanced-Machine-Learning---Notebooks/blob/master/imdb.npz
+#	https://github.com/NikhilHeda/Advanced-Machine-Learning---Notebooks
+#	https://github.com/keras-team/keras/tree/master/keras/datasets
+#	https://keras.io/datasets/
+#
+###############################################################################################
+
+path = get_file(path,
+                    origin='https://s3.amazonaws.com/text-datasets/imdb.npz',
+                    file_hash='599dadb1135973df5b59232a0e9a887c')
+
+
+"""
+
+imdb.npz content:
+	x_train.npy
+	y_train.npy
+	x_test.npy
+	y_test.npy
+
+
+934e 554d 5059 0100 4600 7b27 6465 7363
+7227 3a20 273c 6938 272c 2027 666f 7274
+7261 6e5f 6f72 6465 7227 3a20 4661 6c73
+652c 2027 7368 6170 6527 3a20 2832 3530
+3030 2c29 2c20 7d20 2020 2020 2020 200a
+0100 0000 0000 0000 0100 0000 0000 0000
+0100 0000 0000 0000 0100 0000 0000 0000
+0100 0000 0000 0000 0100 0000 0000 0000
+0100 0000 0000 0000 0100 0000 0000 0000
+
+....
+
+NEP 1 — A Simple File Format for NumPy Arrays
+https://github.com/numpy/numpy/blob/067cb067cb17a20422e51da908920a4fbb3ab851/doc/neps/nep-0001-npy-format.rst
+https://stackoverflow.com/questions/4090080/what-is-the-way-data-is-stored-in-npy
+https://github.com/numpy/numpy/blob/master/numpy/lib/format.py
+https://github.com/numpy/numpy/blob/master/numpy/lib/npyio.py
+https://github.com/matthieuheitz/npy_viewer
+https://www.kaggle.com/pankrzysiu/keras-imdb-reviews
+https://support.hdfgroup.org/HDF5/
+
+import numpy as np
+dt=np.dtype([('outer','(3,)<i4'), ...   ('outer2',[('inner','(10,)<i4'),('inner2','f8')])])
+a=np.array([((1,2,3),((10,11,12,13,14,15,16,17,18,19),3.14)), ...  ((4,5,6),((-1,-2,-3,-4,-5,-6,-7,-8,-9,-20),6.28))],dt)
+np.save('filename.npy', a)
+
+# data = np.load('filename.npy', mmap_mode='r')
+
+"""
+
+with np.load(path) as f:
+x_train, labels_train = f['x_train'], f['y_train']
+x_test, labels_test = f['x_test'], f['y_test']
+
+np.random.seed(seed)
+indices = np.arange(len(x_train))
+np.random.shuffle(indices)
+x_train = x_train[indices]
+labels_train = labels_train[indices]
+
+indices = np.arange(len(x_test))
+np.random.shuffle(indices)
+x_test = x_test[indices]
+labels_test = labels_test[indices]
+
+xs = np.concatenate([x_train, x_test])
+labels = np.concatenate([labels_train, labels_test])
+
+if start_char is not None:
+    xs = [[start_char] + [w + index_from for w in x] for x in xs]
+elif index_from:
+    xs = [[w + index_from for w in x] for x in xs]
+
+if maxlen:
+    xs, labels = _remove_long_seq(maxlen, xs, labels)
+    if not xs:
+        raise ValueError('After filtering for sequences shorter than maxlen=' +
+                         str(maxlen) + ', no sequence was kept. '
+                         'Increase maxlen.')
+if not num_words:
+    num_words = max([max(x) for x in xs])
+
+# by convention, use 2 as OOV word
+# reserve 'index_from' (=3 by default) characters:
+# 0 (padding), 1 (start), 2 (OOV)
+if oov_char is not None:
+    xs = [[w if (skip_top <= w < num_words) else oov_char for w in x] for x in xs]
+else:
+    xs = [[w for w in x if skip_top <= w < num_words] for x in xs]
+
+idx = len(x_train)
+x_train, y_train = np.array(xs[:idx]), np.array(labels[:idx])
+x_test, y_test = np.array(xs[idx:]), np.array(labels[idx:])
+
+return (x_train, y_train), (x_test, y_test)
+
+
+
+
+###############################################################################################
+#
+#	Why you should start using .npy file more often
+#	https://towardsdatascience.com/why-you-should-start-using-npy-file-more-often-df2a13cc0161
+#
+###############################################################################################
+
+#--------------------------------
+# SAVE DATA
+#--------------------------------
+
+import numpy as np
+import time
+# 1 million samples
+n_samples=1000000
+# Write random floating point numbers as string on a local CSV file
+with open('fdata.txt', 'w') as fdata:
+    for _ in range(n_samples):
+        fdata.write(str(10*np.random.random())+',')
+# Read the CSV in a list, convert to ndarray (reshape just for fun) and time it
+t1=time.time()
+with open('fdata.txt','r') as fdata:
+    datastr=fdata.read()
+lst = datastr.split(',')
+lst.pop()
+array_lst=np.array(lst,dtype=float).reshape(1000,1000)
+t2=time.time()
+print(array_lst)
+print('\nShape: ',array_lst.shape)
+print(f"Time took to read: {t2-t1} seconds.")
+np.save('fnumpy.npy', array_lst)
+
+
+#--------------------------------
+# READ DATA
+#--------------------------------
+
+t1=time.time()
+array_reloaded = np.load('fnumpy.npy')
+t2=time.time()
+print(array_reloaded)
+print('\nShape: ',array_reloaded.shape)
+print(f"Time took to load: {t2-t1} seconds.")
+
+
+#--------------------------------
+# READ DATA
+#--------------------------------
+
+t1=time.time()
+array_reloaded = np.load('fnumpy.npy').reshape(10000,100)
+t2=time.time()
+print(array_reloaded)
+print('\nShape: ',array_reloaded.shape)
+print(f"Time took to load: {t2-t1} seconds.")
+
+###############################################################################################
+#
+#	numpy.load
+#	https://docs.scipy.org/doc/numpy/reference/generated/numpy.load.html
+#	http://www.scipy-lectures.org/numpy/numpy.html
+#
+###############################################################################################
+
+If the file contains pickle data, then whatever object is stored in the pickle is returned.
+
+If the file is a .npy file, then a single array is returned.
+If the file is a .npz file, then a dictionary-like object is returned, containing {filename: array} key-value pairs, one for each file in the archive.
+If the file is a .npz file, the returned value supports the context manager protocol in a similar fashion to the open function:
+
+with load('foo.npz') as data:
+    a = data['a']
+The underlying file descriptor is closed when exiting the ‘with’ block.
+
+Examples
+
+Store data to disk, and load it again:
+
+>>>
+>>> np.save('/tmp/123', np.array([[1, 2, 3], [4, 5, 6]]))
+>>> np.load('/tmp/123.npy')
+array([[1, 2, 3],
+       [4, 5, 6]])
+
+
+Store compressed data to disk, and load it again:
+
+>>>
+>>> a=np.array([[1, 2, 3], [4, 5, 6]])
+>>> b=np.array([1, 2])
+>>> np.savez('/tmp/123.npz', a=a, b=b)
+>>> data = np.load('/tmp/123.npz')
+>>> data['a']
+array([[1, 2, 3],
+       [4, 5, 6]])
+>>> data['b']
+array([1, 2])
+>>> data.close()
+
+
+
+###############################################################################################
+#
+# Transform data into numpy array
+#
+###############################################################################################
+
+https://docs.scipy.org/doc/numpy-1.13.0/reference/generated/numpy.asarray.html
+https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.as_matrix.html
+
+Examples
+
+Convert a list into an array:
+
+>>> a = [1, 2]
+>>> np.asarray(a)
+array([1, 2])
+Existing arrays are not copied:
+
+>>> a = np.array([1, 2])
+>>> np.asarray(a) is a
+True
+If dtype is set, array is copied only if dtype does not match:
+
+>>> a = np.array([1, 2], dtype=np.float32)
+>>> np.asarray(a, dtype=np.float32) is a
+True
+>>> np.asarray(a, dtype=np.float64) is a
+False
+Contrary to asanyarray, ndarray subclasses are not passed through:
+
+>>> issubclass(np.matrix, np.ndarray)
+True
+>>> a = np.matrix([[1, 2]])
+>>> np.asarray(a) is a
+False
+>>> np.asanyarray(a) is a
+True
+
+
+https://stackoverflow.com/questions/13187778/convert-pandas-dataframe-to-numpy-array-preserving-index
+
+import numpy as np
+import pandas as pd
+
+index = [1, 2, 3, 4, 5, 6, 7]
+a = [np.nan, np.nan, np.nan, 0.1, 0.1, 0.1, 0.1]
+b = [0.2, np.nan, 0.2, 0.2, 0.2, np.nan, np.nan]
+c = [np.nan, 0.5, 0.5, np.nan, 0.5, 0.5, np.nan]
+df = pd.DataFrame({'A': a, 'B': b, 'C': c}, index=index)
+df = df.rename_axis('ID')
+
+label   A    B    C
+ID
+1   NaN  0.2  NaN
+2   NaN  NaN  0.5
+3   NaN  0.2  0.5
+4   0.1  0.2  NaN
+5   0.1  0.2  0.5
+6   0.1  NaN  0.5
+7   0.1  NaN  NaN
+
+df = df.values
+
+array([[nan, 0.2, nan],
+       [nan, nan, 0.5],
+       [nan, 0.2, 0.5],
+       [0.1, 0.2, nan],
+       [0.1, 0.2, 0.5],
+       [0.1, nan, 0.5],
+       [0.1, nan, nan]])
+
+
+numpy_matrix = df.as_matrix()
+
+array([[nan, 0.2, nan],
+       [nan, nan, 0.5],
+       [nan, 0.2, 0.5],
+       [0.1, 0.2, nan],
+       [0.1, 0.2, 0.5],
+       [0.1, nan, 0.5],
+       [0.1, nan, nan]])
+
+df.reset_index().values
+df.reset_index().values.ravel().view(dtype=[('index', int), ('A', float), ('B', float), ('C', float)])
+
+mah_np_array = df.as_matrix(columns=None)
+mah_np_array = df.values
+
+
+
+
+
+###############################################################################################
+#
+#	NumPy Tutorial: Data analysis with Python
+#	https://www.dataquest.io/blog/numpy-tutorial-python/
+#
+###############################################################################################
+
+winequality-red.csv
+
+"fixed acidity";"volatile acidity";"citric acid";"residual sugar";"chlorides";"free sulfur dioxide";"total sulfur dioxide";"density";"pH";"sulphates";"alcohol";"quality"
+7.4;0.7;0;1.9;0.076;11;34;0.9978;3.51;0.56;9.4;5
+7.8;0.88;0;2.6;0.098;25;67;0.9968;3.2;0.68;9.8;5
+
+# read data
+
+import csv
+with open('winequality-red.csv', 'r') as f:
+    wines = list(csv.reader(f, delimiter=';'))
+print(wines[:3])
+
+# Divide the sum of all the elements in qualities by the total number of elements in qualities to the get the mean.
+qualities = [float(item[-1]) for item in wines[1:]]
+sum(qualities) / len(qualities)
+
+# Numpy 2-Dimensional Arrays
+# Creating A NumPy Array
+
+import numpy as np
+wines = np.array(wines[1:], dtype=np.float)
+wines
+wines.shape
+
+# Alternative NumPy Array Creation Methods
+
+import numpy as np
+empty_array = np.zeros((3,4))
+empty_array
+
+np.random.rand(3,4)
+
+# Using NumPy To Read In Files
+wines = np.genfromtxt("winequality-red.csv", delimiter=";", skip_header=1)
+
+# Indexing NumPy Arrays
+wines[2,3]
+
+# Slicing NumPy Arrays
+wines[0:3,3]
+wines[:3,3]
+wines[:,3]
+wines[3,:]
+wines[:,:]
+
+# Assigning Values To NumPy Arrays
+wines[1,5] = 10
+wines[:,10] = 50
+
+# 1-Dimensional NumPy Arrays
+third_wine = wines[3,:]
+third_wine[1]
+np.random.rand(3)
+
+# N-Dimensional NumPy Arrays
+year_one = [
+    [500,505,490],
+    [810,450,678],
+    [234,897,430],
+    [560,1023,640]
+]
+
+earnings = [
+            [
+                [500,505,490],
+                [810,450,678],
+                [234,897,430],
+                [560,1023,640]
+            ],
+            [
+                [600,605,490],
+                [345,900,1000],
+                [780,730,710],
+                [670,540,324]
+            ]
+          ]
+
+earnings = np.array(earnings)
+earnings[0,0,0]
+earnings.shape
+earnings[:,0,0]
+earnings[:,0,:]
+
+# NumPy Data Types
+#https://docs.scipy.org/doc/numpy/reference/arrays.dtypes.html
+wines.dtype
+dtype('float64')
+
+float -- numeric floating point data.
+int -- integer data.
+string -- character data.
+object -- Python objects.
+
+
+# Converting Data Types
+wines.astype(int)
+
+int_wines = wines.astype(int)
+int_wines.dtype.name
+
+np.int32
+numpy.int32
+wines.astype(np.int32)
+
+# NumPy Array Operations
+# Single Array Math
+
+# add 10 points to each quality score
+wines[:,11] + 10
+
+# multiply each of the quality score by 2
+wines[:,11] * 2
+
+# Multiple Array Math
+wines[:,11] + wines[:,11]
+wines[:,10] * wines[:,11]
+
+
+# Broadcasting
+rand_array = np.random.rand(12)
+wines + rand_array
+
+# NumPy Array Methods
+# finds the sum of all the elements in an array by default
+wines[:,11].sum()
+
+#find the sums for each of the remaining axes across each row
+wines.sum(axis=0)
+
+wines.sum(axis=0).shape
+
+# sum of each row
+wines.sum(axis=1)
+
+
+numpy.ndarray.mean — finds the mean of an array.
+numpy.ndarray.std — finds the standard deviation of an array.
+numpy.ndarray.min — finds the minimum value in an array.
+numpy.ndarray.max — finds the maximum value in an array.
+
+
+NumPy Array Comparisons
+
+wines[:,11] > 5    # see which wines have a quality rating higher than 5
+wines[:,11] == 10  # see if any wines have a quality rating equal to 10
+
+
+# Subsetting
+
+select rows in wines where the quality is over 7
+
+high_quality = wines[:,11] > 7
+wines[high_quality,:][:3,:]
+
+
+high_quality_and_alcohol = (wines[:,10] > 10) & (wines[:,11] > 7)
+wines[high_quality_and_alcohol,10:]
+
+high_quality_and_alcohol = (wines[:,10] > 10) & (wines[:,11] > 7)
+wines[high_quality_and_alcohol,10:] = 20
+
+
+
+
+# Reshaping NumPy Arrays
+
+np.transpose(wines).shape # flip the axes, so rows become columns, and vice versa
+wines.ravel()  # turn an array into a one-dimensional representation
+wines[1,:].reshape((2,6))   #  turn the second row of wines into a 2-dimensional array with 2 rows and 6 columns
+
+# Combining NumPy Arrays
+
+white_wines = np.genfromtxt("winequality-white.csv", delimiter=";", skip_header=1)
+white_wines.shape
+
+# Use the vstack function to combine wines and white_wines
+all_wines = np.vstack((wines, white_wines))
+all_wines.shape
+
+
+np.concatenate((wines, white_wines), axis=0)
+
+# https://www.dataquest.io/blog/large_files/numpy-cheat-sheet.pdf
+http://www.scipy-lectures.org/intro/numpy/numpy.html
+
+
+Chapter 4. NumPy Basics: Arrays and Vectorized Computation
+https://www.safaribooksonline.com/library/view/python-for-data/9781449323592/ch04.html
+https://docs.scipy.org/doc/numpy-1.10.0/reference/generated/numpy.genfromtxt.html
+
+
+###############################################################################################
+
+Exploring features
+
+https://www.kaggle.com/cast42/exploring-features
+https://www.kaggle.com/cast42/correlation-pairs
+
+###############################################################################################
+
+# Based on https://www.kaggle.com/benhamner/d/uciml/iris/python-data-visualizations/notebook
+# First, we'll import pandas, a data processing and CSV file I/O library
+import pandas as pd
+import numpy as np
+
+# We'll also import seaborn, a Python graphing library
+import warnings # current version of seaborn generates a bunch of warnings that we'll ignore
+warnings.filterwarnings("ignore")
+import seaborn as sns
+
+import matplotlib.pyplot as plt
+sns.set(style="white", color_codes=True)
+
+# Next, we'll load the train and test dataset, which is in the "../input/" directory
+train = pd.read_csv("../input/train.csv") # the train dataset is now a Pandas DataFrame
+test = pd.read_csv("../input/test.csv") # the train dataset is now a Pandas DataFrame
+
+# Let's see what's in the trainings data - Jupyter notebooks print the result of the last thing you do
+train.head()
+
+# Press shift+enter to execute this cell
+
+# happy customers have TARGET==0, unhappy custormers have TARGET==1
+# A little less then 4% are unhappy => unbalanced dataset
+df = pd.DataFrame(train.TARGET.value_counts())
+df['Percentage'] = 100*df['TARGET']/train.shape[0]
+df
+
+# Top-10 most common values
+train.var3.value_counts()[:10]
+
+
+
+# 116 values in column var3 are -999999
+# var3 is suspected to be the nationality of the customer
+# -999999 would mean that the nationality of the customer is unknown
+train.loc[train.var3==-999999].shape
+
+
+# Replace -999999 in var3 column with most common value 2
+# See https://www.kaggle.com/cast42/santander-customer-satisfaction/debugging-var3-999999
+# for details
+train = train.replace(-999999,2)
+train.loc[train.var3==-999999].shape
+
+
+
+
+Add feature that counts the number of zeros in a row
+In [6]:
+X = train.iloc[:,:-1]
+y = train.TARGET
+
+X['n0'] = (X==0).sum(axis=1)
+train['n0'] = X['n0']
+
+
+num_var4 : number of bank products
+In [7]:
+# According to dmi3kno (see https://www.kaggle.com/cast42/santander-customer-satisfaction/exploring-features/comments#115223)
+# num_var4 is the number of products. Let's plot the distribution:
+train.num_var4.hist(bins=100)
+plt.xlabel('Number of bank products')
+plt.ylabel('Number of customers in train')
+plt.title('Most customers have 1 product with the bank')
+plt.show()
+
+
+# Let's look at the density of the of happy/unhappy customers in function of the number of bank products
+sns.FacetGrid(train, hue="TARGET", size=6) \
+   .map(plt.hist, "num_var4") \
+   .add_legend()
+plt.title('Unhappy cosutomers have less products')
+plt.show()
+
+
+train[train.TARGET==1].num_var4.hist(bins=6)
+plt.title('Amount of unhappy customers in function of the number of products');
+
+
+train.var38.describe()
+
+# How is var38 looking when customer is unhappy ?
+train.loc[train['TARGET']==1, 'var38'].describe()
+
+# Histogram for var 38 is not normal distributed
+train.var38.hist(bins=1000);
+
+train.var38.map(np.log).hist(bins=1000);
+# where is the spike between 11 and 12  in the log plot ?
+train.var38.map(np.log).mode()
+
+# What are the most common values for var38 ?
+train.var38.value_counts()
+
+# the most common value is very close to the mean of the other values
+train.var38[train['var38'] != 117310.979016494].mean()
+
+# what if we exclude the most common value
+train.loc[~np.isclose(train.var38, 117310.979016), 'var38'].value_counts()
+
+
+# Look at the distribution
+train.loc[~np.isclose(train.var38, 117310.979016), 'var38'].map(np.log).hist(bins=100);
+
+
+# Above plot suggest we split up var38 into two variables
+# var38mc == 1 when var38 has the most common value and 0 otherwise
+# logvar38 is log transformed feature when var38mc is 0, zero otherwise
+train['var38mc'] = np.isclose(train.var38, 117310.979016)
+train['logvar38'] = train.loc[~train['var38mc'], 'var38'].map(np.log)
+train.loc[train['var38mc'], 'logvar38'] = 0
+
+#Check for nan's
+print('Number of nan in var38mc', train['var38mc'].isnull().sum())
+print('Number of nan in logvar38',train['logvar38'].isnull().sum())
+
+train['var15'].describe()
+#Looks more normal, plot the histogram
+train['var15'].hist(bins=100);
+
+# Let's look at the density of the age of happy/unhappy customers
+sns.FacetGrid(train, hue="TARGET", size=6) \
+   .map(sns.kdeplot, "var15") \
+   .add_legend()
+plt.title('Unhappy customers are slightly older');
+
+train.saldo_var30.hist(bins=100)
+plt.xlim(0, train.saldo_var30.max());
+
+# improve the plot by making the x axis logarithmic
+train['log_saldo_var30'] = train.saldo_var30.map(np.log)
+
+
+# Let's look at the density of the age of happy/unhappy customers for saldo_var30
+sns.FacetGrid(train, hue="TARGET", size=6) \
+   .map(sns.kdeplot, "log_saldo_var30") \
+   .add_legend();
+
+
+
+# Explore the interaction between var15 (age) and var38
+sns.FacetGrid(train, hue="TARGET", size=10) \
+   .map(plt.scatter, "var38", "var15") \
+   .add_legend();
+
+sns.FacetGrid(train, hue="TARGET", size=10) \
+   .map(plt.scatter, "logvar38", "var15") \
+   .add_legend()
+plt.ylim([0,120]); # Age must be positive ;-)
+
+# Exclude most common value for var38
+sns.FacetGrid(train[~train.var38mc], hue="TARGET", size=10) \
+   .map(plt.scatter, "logvar38", "var15") \
+   .add_legend()
+plt.ylim([0,120]);
+
+
+# What is distribution of the age when var38 has it's most common value ?
+sns.FacetGrid(train[train.var38mc], hue="TARGET", size=6) \
+   .map(sns.kdeplot, "var15") \
+   .add_legend();
+
+
+# What is density of n0 ?
+sns.FacetGrid(train, hue="TARGET", size=6) \
+   .map(sns.kdeplot, "n0") \
+   .add_legend()
+plt.title('Unhappy customers have a lot of features that are zero');
+
+
+
+
+
+Select the most important features¶
+
+from sklearn.feature_selection import SelectPercentile
+from sklearn.feature_selection import f_classif,chi2
+from sklearn.preprocessing import Binarizer, scale
+
+# First select features based on chi2 and f_classif
+p = 3
+
+X_bin = Binarizer().fit_transform(scale(X))
+selectChi2 = SelectPercentile(chi2, percentile=p).fit(X_bin, y)
+selectF_classif = SelectPercentile(f_classif, percentile=p).fit(X, y)
+
+chi2_selected = selectChi2.get_support()
+chi2_selected_features = [ f for i,f in enumerate(X.columns) if chi2_selected[i]]
+print('Chi2 selected {} features {}.'.format(chi2_selected.sum(),
+   chi2_selected_features))
+f_classif_selected = selectF_classif.get_support()
+f_classif_selected_features = [ f for i,f in enumerate(X.columns) if f_classif_selected[i]]
+print('F_classif selected {} features {}.'.format(f_classif_selected.sum(),
+   f_classif_selected_features))
+selected = chi2_selected & f_classif_selected
+print('Chi2 & F_classif selected {} features'.format(selected.sum()))
+features = [ f for f,s in zip(X.columns, selected) if s]
+print (features)
+
+# Make a dataframe with the selected features and the target variable
+X_sel = train[features+['TARGET']]
+X_sel['var36'].value_counts()
+
+# Let's plot the density in function of the target variabele
+sns.FacetGrid(train, hue="TARGET", size=6) \
+   .map(sns.kdeplot, "var36") \
+   .add_legend()
+plt.title('If var36 is 0,1,2 or 3 => less unhappy customers');
+
+
+# var36 in function of var38 (most common value excluded)
+sns.FacetGrid(train[~train.var38mc], hue="TARGET", size=10) \
+   .map(plt.scatter, "var36", "logvar38") \
+   .add_legend();
+sns.FacetGrid(train[(~train.var38mc) & (train.var36 < 4)], hue="TARGET", size=10) \
+   .map(plt.scatter, "var36", "logvar38") \
+   .add_legend()
+plt.title('If var36==0, only happy customers');
+
+
+# Let's plot the density in function of the target variabele, when var36 = 99
+sns.FacetGrid(train[(~train.var38mc) & (train.var36 ==99)], hue="TARGET", size=6) \
+   .map(sns.kdeplot, "logvar38") \
+   .add_legend();
+
+train.num_var5.value_counts()
+train[train.TARGET==1].num_var5.value_counts()
+train[train.TARGET==0].num_var5.value_counts()
+
+sns.FacetGrid(train, hue="TARGET", size=6) \
+   .map(plt.hist, "num_var5") \
+   .add_legend();
+
+sns.FacetGrid(train, hue="TARGET", size=6) \
+   .map(sns.kdeplot, "num_var5") \
+   .add_legend();
+
+sns.pairplot(train[['var15','var36','logvar38','TARGET']], hue="TARGET", size=2, diag_kind="kde");
+train[['var15','var36','logvar38','TARGET']].boxplot(by="TARGET", figsize=(12, 6));
+
+
+# A final multivariate visualization technique pandas has is radviz# A fina
+# Which puts each feature as a point on a 2D plane, and then simulates
+# having each sample attached to those points through a spring weighted
+# by the relative value for that feature
+from pandas.tools.plotting import radviz
+radviz(train[['var15','var36','logvar38','TARGET']], "TARGET");
+
+
+features
+radviz(train[features+['TARGET']], "TARGET");
+sns.pairplot(train[features+['TARGET']], hue="TARGET", size=2, diag_kind="kde");
+
+
+Correlations
+cor_mat = X.corr()
+f, ax = plt.subplots(figsize=(15, 12))
+# Draw the heatmap with the mask and correct aspect ratio
+sns.heatmap(cor_mat,linewidths=.5, ax=ax);
+cor_mat = X_sel.corr()
+
+f, ax = plt.subplots(figsize=(15, 12))
+# Draw the heatmap with the mask and correct aspect ratio
+sns.heatmap(cor_mat,linewidths=.5, ax=ax);
+
+# only important correlations and not auto-correlations
+threshold = 0.7
+important_corrs = (cor_mat[abs(cor_mat) > threshold][cor_mat != 1.0]) \
+    .unstack().dropna().to_dict()
+unique_important_corrs = pd.DataFrame(
+    list(set([(tuple(sorted(key)), important_corrs[key]) \
+    for key in important_corrs])), columns=['attribute pair', 'correlation'])
+# sorted by absolute value
+unique_important_corrs = unique_important_corrs.ix[
+    abs(unique_important_corrs['correlation']).argsort()[::-1]]
+unique_important_corrs
+
+
+
+Clusters
+
+
+# Recipe from https://github.com/mgalardini/python_plotting_snippets/blob/master/notebooks/clusters.ipynb
+import matplotlib.patches as patches
+from scipy.cluster import hierarchy
+from scipy.stats.mstats import mquantiles
+from scipy.cluster.hierarchy import dendrogram, linkage
+In [56]:
+# Correlate the data
+# also precompute the linkage
+# so we can pick up the
+# hierarchical thresholds beforehand
+
+from sklearn.preprocessing import scale
+from sklearn.preprocessing import StandardScaler
+
+# scale to mean 0, variance 1
+train_std = pd.DataFrame(scale(X_sel))
+train_std.columns = X_sel.columns
+m = train_std.corr()
+l = linkage(m, 'ward')
+
+
+# Plot the clustermap
+# Save the returned object for further plotting
+mclust = sns.clustermap(m,
+               linewidths=0,
+               cmap=plt.get_cmap('RdBu'),
+               vmax=1,
+               vmin=-1,
+               figsize=(14, 14),
+               row_linkage=l,
+               col_linkage=l)
+
+
+
+
+
+# Threshold 1: median of the
+# distance thresholds computed by scipy
+t = np.median(hierarchy.maxdists(l))
+In [59]:
+# Plot the clustermap
+# Save the returned object for further plotting
+mclust = sns.clustermap(m,
+               linewidths=0,
+               cmap=plt.get_cmap('RdBu'),
+               vmax=1,
+               vmin=-1,
+               figsize=(12, 12),
+               row_linkage=l,
+               col_linkage=l)
+
+# Draw the threshold lines
+mclust.ax_col_dendrogram.hlines(t,
+                               0,
+                               m.shape[0]*10,
+                               colors='r',
+                               linewidths=2,
+                               zorder=1)
+mclust.ax_row_dendrogram.vlines(t,
+                               0,
+                               m.shape[0]*10,
+                               colors='r',
+                               linewidths=2,
+                               zorder=1)
+
+# Extract the clusters
+clusters = hierarchy.fcluster(l, t, 'distance')
+for c in set(clusters):
+    # Retrieve the position in the clustered matrix
+    index = [x for x in range(m.shape[0])
+             if mclust.data2d.columns[x] in m.index[clusters == c]]
+    # No singletons, please
+    if len(index) == 1:
+        continue
+
+    # Draw a rectangle around the cluster
+    mclust.ax_heatmap.add_patch(
+        patches.Rectangle(
+            (min(index),
+             m.shape[0] - max(index) - 1),
+                len(index),
+                len(index),
+                facecolor='none',
+                edgecolor='r',
+                lw=3)
+        )
+
+plt.title('Cluster matrix')
+
+pass
+
+
+
+
+
+
+###############################################################################################
+
+How to Index, Slice and Reshape NumPy Arrays for Machine Learning in Python
+https://machinelearningmastery.com/index-slice-reshape-numpy-arrays-machine-learning-python/
+
+###############################################################################################
