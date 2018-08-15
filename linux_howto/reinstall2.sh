@@ -70,6 +70,10 @@ exit
 alias deo1ssh='ssh -Ax emil@mm.example.org'
 alias deo1='sudo mount -v -o noatime -t nfs 192.168.1.1:/home/emil/ dev_mount/'
 
+cd ~/
+mkdir dev_mount
+
+
 #############################################
 #
 #	Generating a new SSH key
