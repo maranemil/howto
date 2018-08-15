@@ -1,6 +1,11 @@
 #!/bin/bash
 
+###############################################################
+#
+# Restore Ubuntu Software/Settings after new Install
 # fresh install ubuntu 18.04
+#
+###############################################################
 
 sudo apt install chromium-browser -y
 sudo apt install gimp -y
