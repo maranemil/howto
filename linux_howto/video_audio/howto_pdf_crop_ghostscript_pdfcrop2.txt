@@ -860,5 +860,137 @@ mogrify -resize 100000 *.jpg
 
 
 
+###################################################################
+#
+# JPEG2PDF  ImageMagick - cmd argv
+#
+###################################################################
+
+http://www.imagemagick.org/Usage/formats/#png_density
+https://www.translatorscafe.com/unit-converter/en/typography/7-4/
+https://wiki.ubuntuusers.de/ImageMagick/
+https://www.unitconverters.net/typography/millimeter-to-pixel-x.htm
+https://gitlab.mister-muffin.de/josch/img2pdf
+http://www.imagemagick.org/Usage/formats/#png_density
+http://www.imagemagick.org/script/command-line-options.php#resize
+http://www.imagemagick.org/script/command-line-processing.php#geometry
+http://www.imagemagick.org/Usage/basics/#cmdline
+http://imagemagick.sourceforge.net/http/www/miff.html
+https://linux.die.net/man/1/gs
+https://www.ghostscript.com/doc/current/Use.htm
+http://milan.kupcevic.net/ghostscript-ps-pdf/
+
+
+-units PixelsPerCentimeter
+-units PixelsPerInch
+
+
+identify -verbose doc-0100.jpg.pdf   | head -12
+
+Format: PDF (Portable Document Format)
+Mime type: application/pdf
+Class: DirectClass
+Geometry: 867x584+0+0
+Resolution: 72x72
+Print size: 12.0417x8.11111
+Units: Undefined
+Type: TrueColorAlpha
+Endianess: Undefined
+Colorspace: sRGB
+Depth: 16/8-bit
+
+
+# https://de.wikipedia.org/wiki/Punktdichte
+Auflösung von 1200 dpi horizontal und 600 dpi vertikal
+25,4 mm ÷ 1200 = 0,0212 mm = 21,2 µm.
+25,4 mm ÷ 600 = 0,0423 mm = 42,3 µm.
+21,2 µm × 42,3 µm = 897 µm².
+
+So about 25.4 mm per inch will result in
+11 * 25.4 = 279.4mm
+8.5 * 25.4 = 215.9mm
+
+
+animate - spielt mehrere Bilder schnell hintereinander ab
+convert - liest Bilder, bearbeitet sie und speichert sie ab
+compare - vergleicht 2 Bilder und gibt die Unterschiede als Bilddatei aus
+composite - überlagert mehrere Bilder zu einem Bild
+conjure - führt Skripte in der Skriptsprache von ImageMagick aus
+display - stellt Bilder auf einem X-Server dar
+identify - gibt Dateiformat, Bildgröße usw. von Bilddateien aus
+import - macht Bildschirmfotos
+montage - fasst mehrere Bilder zu einem großen Einzelbild zusammen
+mogrify - wie convert, nur dass die Eingabedatei durch die Ausgabedatei ersetzt wird!
+stream - liest aus Bilddateien Teile aus und gibt sie als Rohdaten, Fließkommazahlen oder ähnliches aus
+
+
+
+# http://www.imagemagick.org/Usage/basics/#cmdline
+
+Simple Image Processing Operators will modify all images that have already been read into memory. Each image is modified separately to every other image. They include operations such as...
+-crop  -repage  -border  -frame  -trim  -chop  -draw  -annotate  -resize  -scale  -sample  -thumbnail  -magnify  -adaptive-resize  -liquid-resize  -distort  -morpohology  -sparse-color  -rotate  -swirl  -implode  -wave  -flip  -flop  -transpose  -transverse  -blur  -gaussian-blur  -convolve  -shadow  --radial-blur  -motion-blur  -sharpen  -unsharp  -adaptive-sharpen  -adaptive-blur  -noise  -despeckle  -median  -negate  -level  -level-color  -gamma  -auto-level  -auto-gamma  -sigmoidial-contrast  -normalize  -linear-stretch  -contrast-stretch  -colorize  -tint  -modulate  -contrast  -equalize  -sepia-tone  -solarize  -recolor  -opaque  -transparent  -colors  -map  -ordered-dither  -random-dither  -raise  -paint  -sketch  -charcoal  -edge  -vignette  -emboss  -shade  -poloroid  -encipher  -decipher  -stegano  -evaluate  -function  -alpha  -colorspace  -separate
+
+
+Miscellaneous Special Operators are operators that do things in either an unusual or non-standard ways (compared to the above).
+-geometry  -version  -list  -bench  -concurrent  -preview
+
+
+
+convert in.png -density XX -units PixelsPerInch out.png
+convert -units PixelsPerInch image -density 300 resultimage
+convert -units PixelsPerInch image -resample 300 resultimage # If resampling to 300dpi is needed
+convert png.png -background white -page a4 -gravity center myoutput.pdf
+
+
+# Create image from no source - only bg
+convert -size 40x20 xc:red  xc:blue    -append   -rotate 90    append_rotate.gif
+convert -size 40x20 xc:red  xc:blue  -rotate 90  -append    append_rotate_bad.gif
+convert  eye.gif news.gif -append    storm.gif tree.gif   -background skyblue +append  result.gif
+
+# Create TXT
+mogrify -format gif  -size 200x200  -pointsize 18 \
+          -font Candice -gravity north  -annotate 0 "%f" \
+          -font Ravie   -gravity Center -annotate 0 "%f" \
+          -font Gecko   -gravity south  -annotate 0 "%f" \
+          -size 100x64   xc:gold  xc:orange   xc:tomato
+
+
+# Create Circle icons
+convert  -size 32x32 xc:none -draw 'circle 15.5,15.5 15.5,0'  circle.gif
+mogrify  -alpha Set -draw 'image Dst_In 0,0 0,0 "circle.gif"'  mogrify_*.gif
+
+# Do Negative Invert Colors
+convert   eye.gif  storm.gif  -negate  +append  cmd_negate.gif
+
+# Write TXT in image
+convert -pointsize 24  -font Ubuntu label:Outside  \(  label:Inside  -font Gecko  label:Inside \)  label:Outside -append   cmd_settings.gif
+
+# Write TXT in image
+ convert -respect-parenthesis -font Ubuntu   label:"This is a line of plain text."  \( -font Candice -pointsize 16 -fill red -undercolor lightblue  label:"A line using a lot of different settings." \)  label:"Text is back to normal -- like Magick\!"  -append  cmd_settings_lots.gif
+
+# Add sequence images
+convert font_[0-3].gif -delete 1 +append  seq_delete.gif
+
+# complex processing sequence to generate a red button on a black background.
+
+convert -size 30x30 xc:black -fill white  -draw 'circle 15,15 5,15' \
+          \( +clone -shade 110x90 -normalize -negate -alpha Off \) \
+          \( +clone -clone -2 -compose Plus -composite \) \
+          \( -clone 0 -shade 110x50 -normalize -alpha Off \) \
+          \( +clone -gamma 1,0,0 \) \
+          \( -clone 2,-1  -compose Multiply -composite \) \
+          -append  seq_process_fx.gif
+
+
+ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH -dFIXEDMEDIA -g867x584    -sOutputFile=output.pdf input.pdf
+
+
+
+
+
+
+
+
+
 
 
