@@ -226,20 +226,18 @@ my $foo = 1; # string
 my @colors = ("red","green","blue"); # array
 # Hashes
 my %colors = (  "red",   "#ff0000",
-                    "green", "#00ff00",
-                    "blue",  "#0000ff",
-                    "black", "#000000",
-                    "white", "#ffffff"
-                     );
+                "green", "#00ff00",
+                "blue",  "#0000ff",
+                "black", "#000000",
+                "white", "#ffffff"
+            );
 
 
-$hash = { 'Man' => 'Bill',
-          'Woman' => 'Mary,
-          'Dog' => 'Ben'
+$hash = {
+     'Man' => 'Bill',
+     'Woman' => 'Mary',
+     'Dog' => 'Ben'
 };
-
-
-
 
 #!/usr/bin/perl
 # Function definition

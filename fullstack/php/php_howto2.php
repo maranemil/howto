@@ -51,19 +51,6 @@ echo "<br>";
 $result = array_filter($array);
 var_dump($result);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 ############################################################
 #
 #	An API with repeating parameters
@@ -130,7 +117,7 @@ $this->soapWrapper->add('bsedemo', function ($service) {
 
 });
 
-------------
+// ------------
 
 $a = [
     'properties' => [
@@ -145,7 +132,7 @@ $a = [
     ],
 ];
 
-------------
+// ------------
 
 $ITEMSITM = new stdClass();
 foreach ($parsItem as $item) {
@@ -159,7 +146,7 @@ $queryData = ['yourFieldName' => $multipleSearchValues];
 $results = $client->YourApiMethod($queryData);
 print_r($results);
 
------
+// -----
 
 class Book {
     /** @var string */
@@ -174,11 +161,10 @@ class Tag {
     public $tag;
 }
 
-------
+// ------
 $array = ['lets', 'test', 'it'];
 $response = new stdClass();
 $response->results = $array;
-
 
 $array = ['lets', 'test', 'it'];
 $response = new stdClass();
@@ -186,7 +172,6 @@ $response->results = new ArrayObject();
 foreach($array as $item) {
   $response->results->append($item);
 }
-
 
 $array = ['lets', 'test', 'it'];
 $response = new stdClass();
@@ -196,8 +181,7 @@ foreach($array as $item) {
     $response->results->append($soapVar);
 }
 
------
-
+// -----
 
 $wsdl = 'https://your.api/path?wsdl';
 $client = new SoapClient($wsdl);
@@ -222,7 +206,6 @@ $options = array(
   )
 );
 
-
 $soapClient = new SoapClient($wsdl);
 $soapClient->__call('createDomain', array(
     new SoapParam('10', 'telnums'),
@@ -231,7 +214,7 @@ $soapClient->__call('createDomain', array(
 ));
 
 
----------------
+// ---------------
 
 $client = new SOAPClient($wsdl, array(
     'classmap' => array(
@@ -239,13 +222,6 @@ $client = new SOAPClient($wsdl, array(
         // all the other types
     )
 ));
-
-
-
-
-
-
-
 
 ##########################################################
 #
@@ -258,7 +234,6 @@ $client = new SOAPClient($wsdl, array(
 #   http://php.net/manual/de/function.basename.php
 #
 #########################################################
-
 
 $ext = pathinfo($filename, PATHINFO_EXTENSION);
 #
@@ -285,14 +260,6 @@ echo $ext['filename'] . '<br/>';  // Returns file
 
 
 
-
-
-
-
-
-
-
-
 #------------------------------------
 # PHP Regex groups captures
 #------------------------------------
@@ -305,11 +272,15 @@ print_r($matches[0]);
 #------------------------------------
 # Regex Special Character Definitions
 #------------------------------------
+/*
 http://php.net/manual/de/function.preg-replace.php
 http://www.rexegg.com/regex-capture.html
 http://www.rexegg.com/regex-php.html
 https://lzone.de/examples/PHP%20preg_replace
 https://regexone.com/references/php
+*/
+
+/*
 
 The following should be escaped if you are trying to match that character
 
@@ -360,18 +331,18 @@ Even More Special Characters
 \z Match only at end of string
 \G Match only where previous m//g left off (works only with /g)
 
-
-
-
+*/
 
 ##########################################################
 #
 #   Generate Range 0-100 A-Z
 #
 ##########################################################
+/*
 http://php.net/manual/de/function.range.php
 http://php.net/manual/de/function.array-reverse.php
 http://php.net/manual/de/function.date.php
+*/
 
 print_r( array_reverse( range( 1, 12 ) ));
 # output 12,11,10,9,8,7,6,5,4,3,2,1
@@ -388,17 +359,16 @@ print_r( range( 11, 20, -3 ) );
 $a = array_map(function($n) { return sprintf('sample_%03d', $n); }, range(1, 12) );
 print_r($a);
 
-Array
+/*Array
 (
     [0] => sample_050
     [1] => sample_051
     [2] => sample_052
     ...
-)
+)*/
 
 var_dump( range('1', '2') ); // outputs  array(2) { [0]=> int(1) [1]=> int(2) }
 var_dump( array_map('strval', range('1', '2')) ); // outputs  array(2) { [0]=> string(1) "1" [1]=> string(1) "2" }
-
 
 # fill an array to get a hash with 0-9 numerical values
 range(0,9);
@@ -410,9 +380,6 @@ $MultiArray = array_map(function($n) { return array_map(function($n) { return nu
 
 var_dump($SimpleArray);
 var_dump($MultiArray);
-
-
-
 
 
 #########################################################################################
@@ -443,7 +410,7 @@ while(!feof($file))
 	flush();
 }
 
-------------------------
+//------------------------
 
 // File to download.
 $file = '/path/to/file';
@@ -476,7 +443,7 @@ while (!feof($fh)) {
 // Exit to make sure not to output anything else.
 exit;
 
-------------------------
+// ------------------------
 
 header('Content-Description: File Transfer');
 header('Content-Type: application/octet-stream');
@@ -488,7 +455,7 @@ header('Content-Length: ' . filesize($path));
 readfile($path);
 exit;
 
------------------
+// ------------------------
 
 // ...extra code to populate $path and $filename
 
@@ -503,7 +470,7 @@ header('Content-Length: ' . filesize($path));
 readfile($path);
 exit;
 
----------
+// ------------------------
 
 // We'll be outputting a PDF
 header('Content-Type: application/pdf');
@@ -514,15 +481,12 @@ header('Content-Disposition: attachment; filename="downloaded.pdf"');
 // The PDF source is in original.pdf
 readfile('original.pdf');
 
----------------
+// ------------------------
 
 header('Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($fn)).' GMT', true, 200);
 header('Content-Length: '.filesize($fn));
 header('Content-Type: image/png');
 print file_get_contents($fn);
-
-
-
 
 #######################################################
 #
@@ -531,7 +495,7 @@ print file_get_contents($fn);
 #
 #######################################################
 
-<?php
+
 // Script example.php
 $shortopts  = "";
 $shortopts .= "f:";  // Required value
@@ -546,20 +510,18 @@ $longopts  = array(
 );
 $options = getopt($shortopts, $longopts);
 var_dump($options);
-?>
-
-shell> php example.php -f "value for f" -v -a --required value --optional="optional value" --option
 
 
-<?php
+// shell> php example.php -f "value for f" -v -a --required value --optional="optional value" --option
+
+
+
 // Script example.php
 $optind = null;
 $opts = getopt('a:b:', [], $optind);
 $pos_args = array_slice($argv, $optind);
 var_dump($pos_args);
-shell> php example.php -a 1 -b 2 -- test
-
-
+// shell> php example.php -a 1 -b 2 -- test
 
 
 #
@@ -578,18 +540,16 @@ $longopts  = array(
 $argTerminal = getopt($shortopts, $longopts);
 
 
-
-
 #######################################################
 #
 # Colors in php CLI
 #
 #######################################################
-
+/*
 http://blog.lenss.nl/2012/05/adding-colors-to-php-cli-script-output/
 https://www.if-not-true-then-false.com/2010/php-class-for-coloring-php-command-line-cli-scripts-output-php-output-colorizing-using-bash-shell-colors/
 http://tldp.org/LDP/abs/html/colorizing.html
-
+*/
 echo -n "          "
 echo -e '\E[37;44m'"\033[1mContact List\033[0m" 	        	# White on blue background
 echo -e "\033[1mChoose one of the following persons:\033[0m"	# Bold
@@ -599,7 +559,7 @@ echo -en '\E[47;35m'"\033[1mJ\033[0m"   						# Magenta
 echo -en '\E[47;32m'"\033[1mS\033[0m"   						# Green
 echo -en '\E[47;31m'"\033[1mZ\033[0m"   						# Red
 
-
+/*
 Black 0;30
 Blue 0;34
 Green 0;32
@@ -616,6 +576,7 @@ Light Red 1;31
 Light Purple 1;35
 Yellow 1;33
 White 1;37
+*/
 
 $this->fg_colors['black'] = '0;30';
 $this->fg_colors['dark_gray'] = '1;30';
@@ -643,18 +604,11 @@ $this->bg_color['magenta'] = '45';
 $this->bg_color['cyan'] = '46';
 $this->bg_color['light_gray'] = '47';
 
-
-
-PHP
+// PHP
 
 echo "\033[31m some colored text \033[0m some white text \n"; #
 echo "\033[32m some colored text \033[0m some white text \n"; #
-
 print "Using Conf:  \033[1m \033[32m OK \033[0m" .PHP_EOL; # bold + green
-
-
-
-
 
 
 
@@ -666,8 +620,3 @@ $images = array("file1.jpg", "file2.jpg");
 $pdf = new Imagick($images);
 $pdf->setImageFormat('pdf');
 $pdf->writeImages('combined.pdf', true);
-
-
-
-
-
