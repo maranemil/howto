@@ -1,11 +1,11 @@
-
+<?php
 
 ############################################################
-
-strip properties of an object that are null?
-https://stackoverflow.com/questions/4352203/any-php-function-that-will-strip-properties-of-an-object-that-are-null
-https://www.tutorialrepublic.com/faq/how-to-remove-empty-values-from-an-array-in-php.php
-
+#
+#   strip properties of an object that are null?
+#   https://stackoverflow.com/questions/4352203/any-php-function-that-will-strip-properties-of-an-object-that-are-null
+#   https://www.tutorialrepublic.com/faq/how-to-remove-empty-values-from-an-array-in-php.php
+#
 ############################################################
 
 // --------------
@@ -651,6 +651,21 @@ echo "\033[31m some colored text \033[0m some white text \n"; #
 echo "\033[32m some colored text \033[0m some white text \n"; #
 
 print "Using Conf:  \033[1m \033[32m OK \033[0m" .PHP_EOL; # bold + green
+
+
+
+
+
+
+
+#--------------------------------------------------
+# combine JPG's into one PDF with PHP
+#--------------------------------------------------
+
+$images = array("file1.jpg", "file2.jpg");
+$pdf = new Imagick($images);
+$pdf->setImageFormat('pdf');
+$pdf->writeImages('combined.pdf', true);
 
 
 

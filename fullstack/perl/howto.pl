@@ -164,3 +164,96 @@ sub getpwuid {
 print scalar getpwuid $<
 my $login = getlogin() || (getpwuid($<))[0] || "Intruder!!";
 print $login;
+
+
+
+
+
+
+
+
+#--------------------------------------------------
+###########################################
+#perl vars and ENV vars Subroutine
+###########################################
+
+=head ##your code to comment
+
+http://perl-seiten.privat.t-online.de/html/perl_spevar.html
+https://learn.perl.org/docs/keywords.html
+http://perldoc.perl.org/perlvar.html
+http://www.cgi101.com/book/ch2/text.html
+http://www.ntu.edu.sg/home/ehchua/programming/webprogramming/Perl2_Regexe.html
+http://jkorpela.fi/perl/regexp.html
+https://perldoc.perl.org/perlvar.html
+http://www-cgi.cs.cmu.edu/afs/cs/user/rgs/mosaic/pl-data.html
+https://perldoc.perl.org/search.html?q=Id
+https://perldoc.perl.org/Pod/Simple/Search.html
+https://python-redmine.com/resources/version.html
+https://www.tutorialspoint.com/perl/perl_subroutines.htm
+http://www.tutorialspoint.com/perl/perl_oo_perl.htm
+https://perldoc.perl.org/perlobj.html
+https://www.tutorialspoint.com/perl/perl_arrays.htm
+https://perlmaven.com/array-references-in-perl
+https://perlmaven.com/perl-arrays
+
+=cut
+
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+=for comment
+
+$0 ($PROGRAM_NAME)
+$^O ($OSNAME)
+$$ ($PROCESS_ID)
+$< ($REAL_USER_ID,$UID)
+$? ($CHILD_ERROR)
+$@ ($EVAL_ERROR)
+
+
+getppid - get parent process ID
+getpwuid - get passwd record given user ID
+getgrgid - get group record given group user ID
+waitpid - wait for a particular child process to die
+shmget - get SysV shared memory segment identifier
+wantarray - get void vs scalar vs list context of current subroutine call
+
+=cut
+
+my $foo = 1; # string
+my @colors = ("red","green","blue"); # array
+# Hashes
+my %colors = (  "red",   "#ff0000",
+                    "green", "#00ff00",
+                    "blue",  "#0000ff",
+                    "black", "#000000",
+                    "white", "#ffffff"
+                     );
+
+
+$hash = { 'Man' => 'Bill',
+          'Woman' => 'Mary,
+          'Dog' => 'Ben'
+};
+
+
+
+
+#!/usr/bin/perl
+# Function definition
+sub Average {
+   # get total number of arguments passed.
+   $n = scalar(@_);
+   $sum = 0;
+   foreach $item (@_) {
+      $sum += $item;
+   }
+   $average = $sum / $n;
+   return $average;
+}
+# Function call
+$num = Average(10, 20, 30);
+print "Average for the given numbers : $num\n";
+
