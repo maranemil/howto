@@ -620,3 +620,38 @@ $images = array("file1.jpg", "file2.jpg");
 $pdf = new Imagick($images);
 $pdf->setImageFormat('pdf');
 $pdf->writeImages('combined.pdf', true);
+
+
+
+#--------------------------------------------------
+# test string length by char encoding
+#--------------------------------------------------
+
+$str = 'Hello I am a very very very very long search string';
+echo $str . "\n\n<hr>";
+echo base64_encode(gzcompress($str, 9)) . "\n\n<hr>";
+echo bin2hex(gzcompress($str, 9)) . "\n\n<hr>";
+echo urlencode(gzcompress($str, 9)) . "\n\n<hr>";
+
+
+$input = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+
+// percent-encoding on plain text [string(454)]
+var_dump(urlencode($input));
+echo "<hr>";
+
+// deflated input [string(352)]
+$output = rtrim(strtr(base64_encode(gzdeflate($input, 9)), '+/', '-_'), '=');
+var_dump($output);
+echo "<hr>";
+
+// decode
+#$output2 = gzinflate(base64_decode(strtr($output, '-_', '+/')));
+#var_dump($output2);
+#echo "<hr>";
+
+// urlencode base64_encode gzcompress [string(372)]
+$out = urlencode(base64_encode(gzcompress($input)));
+var_dump($out);
+echo "<hr>";
+
