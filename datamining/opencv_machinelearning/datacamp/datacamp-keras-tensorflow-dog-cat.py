@@ -9,6 +9,12 @@
 # sudo pip install tqdm
 # sudo pip install --upgrade tensorflow
 
+
+# https://pythonprogramming.net/forecasting-predicting-machine-learning-tutorial/
+# https://www.tensorflow.org/api_docs/python/tf/keras/Model
+# https://www.tensorflow.org/tutorials/keras/basic_regression
+# https://www.tensorflow.org/guide/keras
+
 import numpy as np
 import matplotlib.pyplot as plt
 import os
