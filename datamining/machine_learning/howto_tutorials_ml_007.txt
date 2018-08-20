@@ -1,0 +1,204 @@
+
+############################################################
+#
+#   Introduction to Deep Learning - Deep Learning basics with Python, TensorFlow and Keras p.1
+#   https://pythonprogramming.net/introduction-deep-learning-python-tensorflow-keras/
+#
+############################################################
+
+
+# pip install --upgrade tensorflow
+# import tensorflow.keras as keras
+# import tensorflow as tf
+# print(tf.__version__)
+
+import tensorflow as tf  # deep learning library. Tensors are just multi-dimensional arrays
+
+mnist = tf.keras.datasets.mnist  # mnist is a dataset of 28x28 images of handwritten digits and their labels
+(x_train, y_train),(x_test, y_test) = mnist.load_data()  # unpacks images to x_train/x_test and labels to y_train/y_test
+
+x_train = tf.keras.utils.normalize(x_train, axis=1)  # scales data between 0 and 1
+x_test = tf.keras.utils.normalize(x_test, axis=1)  # scales data between 0 and 1
+
+model = tf.keras.models.Sequential()  # a basic feed-forward model
+model.add(tf.keras.layers.Flatten())  # takes our 28x28 and makes it 1x784
+model.add(tf.keras.layers.Dense(128, activation=tf.nn.relu))  # a simple fully-connected layer, 128 units, relu activation
+model.add(tf.keras.layers.Dense(128, activation=tf.nn.relu))  # a simple fully-connected layer, 128 units, relu activation
+model.add(tf.keras.layers.Dense(10, activation=tf.nn.softmax))  # our output layer. 10 units for 10 classes. Softmax for probability distribution
+
+model.compile(optimizer='adam',  # Good default optimizer to start with
+              loss='sparse_categorical_crossentropy',  # how will we calculate our "error." Neural network aims to minimize loss.
+              metrics=['accuracy'])  # what to track
+
+model.fit(x_train, y_train, epochs=3)  # train the model
+
+val_loss, val_acc = model.evaluate(x_test, y_test)  # evaluate the out of sample data with model
+print(val_loss)  # model's loss (error)
+print(val_acc)  # model's accuracy
+
+# save model
+model.save('epic_num_reader.model')
+
+# load back
+new_model = tf.keras.models.load_model('epic_num_reader.model')
+
+# predictions
+predictions = new_model.predict(x_test)
+print(predictions)
+
+
+import numpy as np
+print(np.argmax(predictions[0]))
+plt.imshow(x_test[0],cmap=plt.cm.binary)
+plt.show()
+
+
+############################################################
+#
+#   Loading in your own data - Deep Learning basics with Python, TensorFlow and Keras p.2
+#   https://pythonprogramming.net/loading-custom-data-deep-learning-python-tensorflow-keras/
+#
+#   700MB  12500 img cats /  12500 img cats
+#   https://www.microsoft.com/en-us/download/confirmation.aspx?id=54765
+#   https://download.microsoft.com/download/3/E/1/3E1C3F21-ECDB-4869-8368-6DEBA77B919F/kagglecatsanddogs_3367a.zip
+#
+############################################################
+
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+import cv2
+from tqdm import tqdm
+
+DATADIR = "PetImages/"
+CATEGORIES = ["Dog", "Cat"]
+
+for category in CATEGORIES:  # do dogs and cats
+    path = os.path.join(DATADIR,category)  # create path to dogs and cats
+    for img in os.listdir(path):  # iterate over each image per dogs and cats
+        img_array = cv2.imread(os.path.join(path,img) ,cv2.IMREAD_GRAYSCALE)  # convert to array
+        plt.imshow(img_array, cmap='gray')  # graph it
+        plt.show()  # display!
+
+        break  # we just want one for now so break
+    break  #...and one more!
+print(img_array)
+print(img_array.shape)
+
+IMG_SIZE = 50
+
+new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))
+plt.imshow(new_array, cmap='gray')
+plt.show()
+
+training_data = []
+
+def create_training_data():
+    for category in CATEGORIES:  # do dogs and cats
+
+        path = os.path.join(DATADIR,category)  # create path to dogs and cats
+        class_num = CATEGORIES.index(category)  # get the classification  (0 or a 1). 0=dog 1=cat
+
+        for img in tqdm(os.listdir(path)):  # iterate over each image per dogs and cats
+            try:
+                img_array = cv2.imread(os.path.join(path,img) ,cv2.IMREAD_GRAYSCALE)  # convert to array
+                new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))  # resize to normalize data size
+                training_data.append([new_array, class_num])  # add this to our training_data
+            except Exception as e:  # in the interest in keeping the output clean...
+                pass
+            #except OSError as e:
+            #    print("OSErrroBad img most likely", e, os.path.join(path,img))
+            #except Exception as e:
+            #    print("general exception", e, os.path.join(path,img))
+
+create_training_data()
+print(len(training_data))
+
+
+import random
+random.shuffle(training_data)
+
+for sample in training_data[:10]:
+    print(sample[1])
+
+
+X = []
+y = []
+
+for features,label in training_data:
+    X.append(features)
+    y.append(label)
+
+print(X[0].reshape(-1, IMG_SIZE, IMG_SIZE, 1))
+X = np.array(X).reshape(-1, IMG_SIZE, IMG_SIZE, 1)
+
+#---------------------------
+# SAVE TRAINED DATA
+#---------------------------
+
+import pickle
+
+pickle_out = open("X.pickle","wb")
+pickle.dump(X, pickle_out)
+pickle_out.close()
+
+pickle_out = open("y.pickle","wb")
+pickle.dump(y, pickle_out)
+pickle_out.close()
+
+#---------------------------
+# We can always load it in to our current script, or a totally new one by doing:
+#---------------------------
+
+pickle_in = open("X.pickle","rb")
+X = pickle.load(pickle_in)
+
+pickle_in = open("y.pickle","rb")
+y = pickle.load(pickle_in)
+
+############################################################
+#
+#   Convolutional Neural Networks - Deep Learning basics with Python, TensorFlow and Keras p.3
+#   https://pythonprogramming.net/convolutional-neural-network-deep-learning-python-tensorflow-keras/?completed=/loading-custom-data-deep-learning-python-tensorflow-keras/
+#
+############################################################
+
+import tensorflow as tf
+from tensorflow.keras.datasets import cifar10
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
+from tensorflow.keras.layers import Conv2D, MaxPooling2D
+
+import pickle
+
+pickle_in = open("X.pickle","rb")
+X = pickle.load(pickle_in)
+
+pickle_in = open("y.pickle","rb")
+y = pickle.load(pickle_in)
+
+X = X/255.0
+
+model = Sequential()
+
+model.add(Conv2D(256, (3, 3), input_shape=X.shape[1:]))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(Conv2D(256, (3, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(Flatten())  # this converts our 3D feature maps to 1D feature vectors
+
+model.add(Dense(64))
+
+model.add(Dense(1))
+model.add(Activation('sigmoid'))
+
+model.compile(loss='binary_crossentropy',
+              optimizer='adam',
+              metrics=['accuracy'])
+
+model.fit(X, y, batch_size=32, epochs=3, validation_split=0.3)
