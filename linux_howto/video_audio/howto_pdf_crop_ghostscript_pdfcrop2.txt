@@ -986,11 +986,121 @@ convert -size 30x30 xc:black -fill white  -draw 'circle 15,15 5,15' \
 
 
 
+################################################################################
+#
+#
+#
+################################################################################
 
 
 
 
+<<
+/BleedBox[85.012 137.535 510.208 704.465]
+/Contents 2752 0 R
+/CropBox[0 0 595.22 842]
+/MediaBox[0 0 595.22 842]
+/Parent 7421 0 R
+/Resources 2751 0 R
+/Rotate 0/
+TrimBox[99.185 151.709 496.035 690.291]
+/Type
+/Page
+>>
+
+mogrify -format pdf -define pdf:use-trimbox=true /TEMP/foo.pdf
+convert -define pdf:use-cropbox=true -density 72 a.jpg b.pdf
+convert -define pdf:use-trimbox=true  img.png out.png
+gs -o outfile.pdf -sDEVICE=pdfwrite  -dCompatibilityLevel=1.4 -c "[/CropBox [320 0 612 430] /PAGES pdfmark" -f input.pdf # crop bottom right
+
+ gs -sDEVICE=pdfwrite -dPDFFitPage=true -dBATCH -dNOPAUSE -dDEVICEWIDTHPOINTS=300 -dDEVICEHEIGHTPOINTS=300 -sOutputFile=im-0100.jpg.pdf im-0100.jpg
 
 
+
+https://www.prepressure.com/pdf/basics/page-boxes
+https://blog.josephscott.org/2009/11/16/imagemagick-convert-pdf-to-jpg-partial-image-size-problem/
+
+Requires Ghostscript to read. By default, ImageMagick sets the page size to the MediaBox. Some PDF files, however, have a CropBox or TrimBox that is smaller than the MediaBox and may include white space, registration or cutting marks outside the CropBox or TrimBox. To force ImageMagick to use the CropBox or TrimBox rather than the MediaBox, use -define (e.g. -define pdf:use-cropbox=true or -define pdf:use-trimbox=true). Use -density to improve the appearance of your PDF rendering (e.g. -density 300×300).
+
+The MediaBox is used to specify the width and height of the page. For the average user, this probably equals the actual page size. For prepress use, this is not the case as we prefer our pages to be defined slightly oversized so that we can see the bleed (Images or other elements touching an outer edge of a printed page need to extend beyond the edge of the paper to compensate for inaccuracies in trimming the page), the crop marks and useful information such as the file name or the date and time when the file was created. This means that PDF files used in graphic arts usually have a MediaBox which is larger then the trimmed page size.
+
+
+The CropBox defines the region that the PDF viewer application is expected to display or print. So if a PDF contains a CropBox definition, Acrobat uses it for screen display and printing. For prepress use, the CropBox is pretty irrelevant. The GWG industry association recommends not to use it at all.
+
+
+The TrimBox defines the intended dimensions of the finished page. Contrary to the CropBox, the TrimBox is very important because it defines the actual page size that gets printed. The imposition programs and workflows that I know all use the TrimBox as the basis for positioning pages on a press sheet. By default the TrimBox equals the CropBox.
+The BleedBox determines the region to which the page contents needs to be clipped when output in a production environment. Usually the BleedBox is 3 to 5 millimeters larger than the TrimBox. It is nice to know the size of the BleedBox but it isn’t that important in graphic arts. Most prepress systems allow you to define the amount of bleed yourself and ignore the BleedBox. By default the BleedBox equals the CropBox.
+
+
+The ArtBox is a bit of a special case. It was originally added to indicate the area covered by the artwork of the page. It is never used for that but can be handy in a few cases:
+On a PDF page that contains an advertisement, the ArtBox can be used to define the location of that ad. This allows you to place that PDF on another page but only use the area covered by the advert.
+A more common use of the ArtBox is as a means to indicate the safety zone. When creating a poster that will be placed in a lightbox, the designer must make sure text and logo’s aren’t positioned too close to the edge. If the poster is not mounted properly, this could cause that text or logo to disappear behind the frame of the lightbox. In book design, there is also a margin where you cannot put text because the binding might make it difficult to read text that is too close to the spine. The area where it is safe to place graphic elements is called the safety zone or text safe area. The ArtBox can be used to indicate the dimensions of this part of the page.
+
+
+-density 300 sets the dpi that the PDF is rendered at.
+-trim removes any edge pixels that are the same color as the corner pixels.
+-quality 100 sets the JPEG compression quality to the highest quality.
+
+convert           \
+   -verbose       \
+   -density 150   \
+   -trim          \
+    test.pdf      \
+   -quality 100   \
+   -flatten       \
+   -sharpen 0x1.0 \
+    24-18.jpg
+
+
+convert -quality 100 -density 300 -geometry 200   test.pdf test_image.jpg
+convert -density 300 -background white test.pdf test_image.jpg
+convert -geometry 1600x1600 -density 200x200 -quality 100 test.pdf test_image.jpg
+mogrify -rotate "90<" -crop 567x439+0+0 -resize 800 -format jpeg document.pdf
+convert -verbose  img.jpg img.pdf && identify -verbose img.pdf | head -10
+
+convert -size 476x476 xc:none -strip lapras.png -geometry +1+1 -composite lapras2.png -geometry +239+1 -composite phaser.png -geometry +1+239 -composite wtf.png -geometry +239+239 -composite healthbar.png -geometry +283+239 -composite -quality 100% png32:atlas.png
+
+convert -geometry 1024x768 -density 200 -colorspace RGB foo.pdf bar%02d.jpg
+
+gs \
+   -sDEVICE=jpeg   \
+   -o bar_%03d.jpg \
+   -dJPEGQ=95      \
+   -r600x600       \
+   -g4960x7016     \
+   foo.pdf
+
+gs \
+   -sDEVICE=jpeg   \
+   -o bar_%03d_200dpi_q80.jpg \
+   -dJPEGQ=80      \
+   -r200x200       \
+   -g1653x2339     \
+   foo.pdf
+
+gs \
+   -sDEVICE=jpeg   \
+   -o bar_%03d_default_a4.jpg \
+   -sPAPERSIZE=a4 \
+   foo.pdf
+
+
+-------------------------------------------------------------------
+
+JPG file "test.jpg":
+Geometry: 1664x2256+0+0
+Resolution: 200x200
+
+PDF file "test.pdf":
+Geometry: 599x812+0+0
+Resolution: 72x72
+
+
+The pixels size 599 = 1664 * 72/200
+
+306 / 25,4 = 12
+206 / 25,4 = 8,1
+
+-------------------------------------------------------------------
 
 
