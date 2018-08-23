@@ -703,3 +703,20 @@ exit('Login Failed');
 echo $ssh->exec('pwd');
 echo $ssh->exec('ls -la');
 
+
+########################################################################
+#
+#   Text CLI TErminal Colors PHP
+#
+########################################################################
+
+  /*
+    * 30m grey
+    * 31m red
+    * 32m green
+    * 33m yellow
+    * 34m blue
+    * 35m magenta
+    * 36m blue azure
+    * 37m white
+   */
