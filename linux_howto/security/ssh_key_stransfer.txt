@@ -1,4 +1,22 @@
 
+
+######################################################################
+#
+# Generating a new SSH key and restore old SHH key
+#
+######################################################################
+
+ssh-keygen -t rsa -b 4096 -C "gento@foo.org"
+eval "$(ssh-agent -s)"
+
+# Reimport SSH KEY
+cp /path/to/my/key/id_rsa ~/.ssh/id_rsa
+cp /path/to/my/key/id_rsa.pub ~/.ssh/id_rsa.pub
+
+chmod 400 ~/.ssh/id_rsa
+ssh-add ~/.ssh/id_rsa
+
+
 ######################################################################
 #
 # Export ssh pub private key - copy ssh private keys to another computer
@@ -159,6 +177,84 @@ cp my_rsa_private ~/.ssh/
 ssh -A ....
 
 # done!
+
+
+
+
+
+
+
+
+###################################################################
+#
+#	SSH Essentials: Working with SSH Servers, Clients, and Keys
+#	https://www.digitalocean.com/community/tutorials/ssh-essentials-working-with-ssh-servers-clients-and-keys
+#	https://help.ubuntu.com/community/SSH/OpenSSH/Configuring
+#	https://debian-administration.org/article/530/SSH_with_authentication_key_instead_of_password
+#
+###################################################################
+
+ssh-keygen
+
+# Generate an SSH Key Pair with a Larger Number of Bits
+ssh-keygen -b 4096
+
+# Removing or Changing the Passphrase on a Private Key
+# If you need to change the password or add one.
+# To change or remove the passphrase, simply type:
+
+ssh-keygen -p
+
+# Your identification has been saved in /root/.ssh/id_rsa.
+# Your public key has been saved in /root/.ssh/id_rsa.pub.
+
+
+# Displaying the SSH Key Fingerprint
+ssh-keygen -l
+
+# Copying your Public SSH Key to a Server Without SSH-Copy-ID
+cat ~/.ssh/id_rsa.pub | ssh username@remote_host "mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys"
+
+
+mkdir -p ~/.ssh
+echo public_key_string >> ~/.ssh/authorized_keys
+
+#----------------------------------------
+#	Connecting to a Remote Server
+#----------------------------------------
+
+ssh remote_host
+ssh username@remote_host
+
+# Running a Single Command on a Remote Server
+ssh username@remote_host command_to_run
+
+# Logging into a Server with a Different Port
+ssh -p port_num username@remote_host
+
+# Forwarding your SSH Credentials to Use on a Server
+ssh -A username@remote_host
+
+# Disabling Password Authentication
+
+PermitRootLogin without-password
+PermitRootLogin yes
+
+sudo nano /etc/ssh/sshd_config
+PasswordAuthentication no|yes
+AllowUsers user1 user2
+AllowGroups sshmembers
+
+sudo service ssh restart
+sudo service sshd restart
+sudo systemctl restart ssh
+
+# Change local passwd
+sudo passwd username
+
+# How to change password in SSH
+ssh -l <username> <servername>
+passwd
 
 
 
