@@ -655,3 +655,51 @@ $out = urlencode(base64_encode(gzcompress($input)));
 var_dump($out);
 echo "<hr>";
 
+
+
+
+########################################################################
+#
+#   Class 'Net_SSH2' not found in… when using phpseclib FIX
+#   https://stackoverflow.com/questions/30300391/class-net-ssh2-not-found-in-when-using-phpseclib/30306921
+#   https://github.com/phpseclib/docs
+#   http://php.net/manual/de/function.get-include-path.php
+#   https://github.com/phpseclib/phpseclib/blob/master/phpseclib/Net/SSH2.php
+#
+########################################################################
+
+On github.com there are two branches (in addition to the master branch) - 1.0 and 2.0. 2.0 is namespaced so to call that you'd need to do \phpseclib\Net\SSH2.
+
+If you downloaded the zip file from phpseclib.sourceforge.net then you're running the 1.0 branch. If that's what you're running you'll need to update the include path. eg.
+
+set_include_path(get_include_path() . PATH_SEPARATOR . 'phpseclib');
+require 'phpseclib/Net/SSH2.php';
+$ssh = new \Net_SSH2('localhost');
+
+If you're running the 2.0 branch (or master branch) you'll need to use an auto loader. Example:
+
+<?php
+// https://raw.githubusercontent.com/composer/composer/master/src/Composer/Autoload/ClassLoader.php
+
+ini_set('error_reporting', E_ALL); // E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED
+ini_set('display_errors', true);
+ini_set('display_startup_errors', true);
+
+#include('autoloader.php');
+include('vendor/autoload.php');
+
+$loader = new \Composer\Autoload\ClassLoader();
+$loader->addPsr4('phpseclib\\', __DIR__.'/phpseclib');
+$loader->register();
+
+use \phpseclib\Crypt\RSA;
+$rsa = new RSA();
+
+
+$ssh = new \phpseclib\Net\SSH2('www.domain.tld');
+if (!$ssh->login('username', 'password')) {
+exit('Login Failed');
+}
+echo $ssh->exec('pwd');
+echo $ssh->exec('ls -la');
+
