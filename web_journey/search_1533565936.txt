@@ -303,12 +303,21 @@ $objDom->encoding = 'UTF-8';
 $objDom->formatOutput = true;
 $objDom->preserveWhiteSpace = true;
 $objDom->load('file.xml', LIBXML_NOBLANKS); //ADD THIS!
-
 //$objDom->add a bunch of xml stuff;
 
-$domElm = $objDom->createElement("foo");
-$objDom->appendChild($domElm);
-$objDom->setAttribute("foo","goo");
+$objXpath       = new DOMXpath($objDom);
+$objDOMNodeList = $objXpath->query("//myelement");
+
+for ($i = 0; $i < $objDOMNodeList->length; $i++) {
+
+    $objDomElement = $objDOMNodeList->item($i);
+    $domElm = $objDom->createElement("foo");
+    $objDom->appendChild($domElm);
+    $objDOMNodeList->item($i)->parentNode->insertBefore($domElm); # go a level up
+    $objDom->setAttribute("foo","goo");
+
+}
+
 #print $objDom->saveXML();
 $objDom->save('file.xml');
 
