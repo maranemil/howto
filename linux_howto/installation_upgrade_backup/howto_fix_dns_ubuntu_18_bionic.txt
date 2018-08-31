@@ -1,0 +1,73 @@
+
+###########################################################
+#
+#	FIX Resolved 99%: DNS_PROBE_FINISHED_NXDOMAIN in Linux
+#
+#	Diese Website ist nicht erreichbar
+#	Die Server-IP-Adresse von www.pb.de wurde nicht gefunden.
+#	DNS_PROBE_FINISHED_NXDOMAIN
+#	DNS_PROBE_FINISHED_NO_INTERNET
+#
+#	DNS Cloudflare 1.1.1.1
+#	DNS GTE/Verizon 4.4.4.4 (for Verizon customers)
+#	DNS Google 8.8.8.8 und 8.8.4.4
+#
+###########################################################
+
+sudo nano /etc/dhcp/dhclient.conf
+supersede domain-name-servers 8.8.8.8, 8.8.4.4;
+sudo service network-manager restart
+
+
+# optional
+# Flush DNS Cache in Linux
+sudo /etc/init.d/dns-clean
+sudo /etc/init.d/dns-clean start
+sudo /etc/init.d/networking restart
+sudo /etc/init.d/networking force-reload
+sudo systemd-resolve --flush-caches
+sudo service network-manager restart
+
+# sudo apt-get install nscd
+# sudo /etc/init.d/nscd restart
+
+# sudo /etc/init.d/dnsmasq restart
+# cat /etc/dnsmasq.conf
+
+-----------------------------
+
+2.
+sudo nano /etc/network/interfaces
+dns-nameservers 8.8.8.8 8.8.4.4
+
+
+# optional
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto eth0
+iface eth0 inet static
+        address 192.168.1.2
+        netmask 255.255.255.0
+        network 192.168.0.0
+        broadcast 192.168.1.255
+        gateway 192.168.1.1
+        dns-nameservers 75.75.75.75 75.75.76.76
+        dns-search local
+
+
+-----------------------------
+
+3. VM ?
+sudo nano /etc/systemd/resolved.conf
+uncomment #DNSSEC=allow-downgrade and replace allow-downgrade with off .
+
+4. no! cannot be edited!
+sudo nano /etc/resolv.conf
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+sudo chattr +i /etc/resolv.conf
+sudo service network-manager restart
+
