@@ -1635,4 +1635,66 @@ foreach my $key ( sort keys %$data ) {
 
 
 
+#############################################################
+python
+#############################################################
+# Ingesting a CSV
+# python generator_csv.py
+# cat data.csv | psql -h localhost -p 5432 feeds -c "COPY blog_feed (author, content) FROM STDIN WITH (FORMAT CSV, HEADER TRUE);"
 
+import csv
+import datetime
+from faker import Faker
+
+fake = Faker()
+MAX_RANGE = 1000000
+
+with open('data.csv', 'w') as csvfile:
+    field_names = ['author', 'content']
+    writer = csv.DictWriter(csvfile, fieldnames=field_names)
+    writer.writeheader()
+    for i in range(0, MAX_RANGE):
+        writer.writerow({
+            'author': fake.name(),
+            'content': fake.sentence(nb_words=16, variable_nb_words=True),
+        })
+
+
+
+# Ingesting JSON Data
+# python generator_json.py
+# cat data.json | psql -h localhost -p 5432 feeds -c "COPY news_feed (data) FROM STDIN;"
+# https://info.crunchydata.com/blog/fast-csv-and-json-ingestion-in-postgresql-with-copy
+
+import csv
+import datetime
+import json
+import uuid
+from faker import Faker
+
+fake = Faker()
+MAX_RANGE = 1000000
+datetime_end = datetime.datetime.now()
+datetime_start = datetime_end - datetime.timedelta(days=365)
+
+# geneate JSON
+with open('data.json', 'w') as f:
+    for i in range(0, MAX_RANGE):
+        f.write(json.dumps({
+            'id': str(uuid.uuid4()),
+            'author': fake.name(),
+            'content': fake.sentence(nb_words=16, variable_nb_words=True),
+            'source': fake.company(),
+            'published_at': fake.date_time_between_dates(
+                datetime_start=datetime_start,
+                datetime_end=datetime_end,
+            ).isoformat()
+        }) + "\n")
+
+
+import psycopg2
+conn = psycopg2.connect("host=localhost dbname=postgres user=postgres")
+cur = conn.cursor()
+insert_query = "INSERT INTO users VALUES {}".format("(10, 'hello@dataquest.io', 'Some Name', '123 Fake St.')")
+cur.execute(insert_query)
+conn.commit()

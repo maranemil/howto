@@ -1,4 +1,8 @@
 
+git config --global user.name "Administrator"
+git config --global user.email "admin@example.com"
+
+
 howto
 =====
  
