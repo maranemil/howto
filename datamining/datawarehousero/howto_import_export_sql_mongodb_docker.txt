@@ -1287,3 +1287,352 @@ mysqlcheck -o -A
 
 
 
+############################################################################################
+
+
+
+
+
+
+Import and Export Data
+https://docs.mongodb.com/compass/master/import-export/
+https://docs.mongodb.com/manual/reference/program/mongoimport/
+https://docs.mongodb.com/manual/reference/program/mongoimport/#use
+https://docs.mongodb.com/manual/reference/program/mongoexport/
+
+--type <json|csv|tsv>
+
+use test
+db.traffic.insert( { _id: 1, volume: NumberLong('2980000'), date: new Date() } )
+
+
+mongoimport --db users --collection contacts --file contacts.json
+mongoexport --db users --collection contacts --out contacts.json
+
+
+https://www.npmjs.com/package/json2csv-cli
+https://www.npmjs.com/package/json2csv
+https://www.techwalla.com/articles/how-to-convert-json-to-csv-in-python
+http://blog.appliedinformaticsinc.com/how-to-parse-and-convert-json-to-csv-using-python/
+
+sudo apt install npm -y
+npm i json2csv
+npm install json2csv
+npm install -g json2csv
+npm install json2csv --save
+npm install json2csv-cli
+
+which npm
+/usr/bin/npm
+
+
+json2csv -i input.json -f carModel,price,color -p
+json2csv -i input.json -f carModel,price,color -o out.csv
+json2csv -f price
+
+
+# Initial creation of csv with headings
+$ json2csv -i test.json -f name,version > test.csv
+# Append additional rows
+$ json2csv -i test.json -f name,version --no-header >> test.csv
+
+
+Install CLI
+npm install json2csv-cli -g
+Install Api
+npm install --save json2csv-cli
+
+j2c --json [file.json] --csv [file.csv]
+
+
+npm install -g npx
+npx json2csv -i test.json -f name,version > test.csv
+
+
+https://pypi.org/project/json_to_csv/
+https://pypi.org/project/json2xml2csv/
+https://pypi.org/project/json2csv/
+pip install json2csv
+pip install json2xml2csv
+pip install json_to_csv
+
+------------------------------------------------
+PY
+#import json
+#json_parsed = json.loads(json_data)
+------------------------------------------------
+import json
+import csv
+employee_parsed = json.loads(employee_data)
+emp_data = employee_parsed['employee_details']
+# open a file for writing
+employ_data = open('/tmp/EmployData.csv', 'w')
+# create the csv writer object
+csvwriter = csv.writer(employ_data)
+count = 0
+for emp in emp_data:
+      if count == 0:
+             header = emp.keys()
+             csvwriter.writerow(header)
+             count += 1
+      csvwriter.writerow(emp.values())
+employ_data.close()
+
+
+
+------------------------------------------------
+https://github.com/trizen/perl-scripts/blob/master/Converters/json2csv.pl
+https://metacpan.org/pod/distribution/App-TextTableUtils/bin/json2csv
+
+
+
+
+#!/usr/bin/perl
+
+# Author: Daniel "Trizen" Șuteu
+# Date: 08 March 2016
+# License: GPLV3
+# Website: https://github.com/trizen
+
+# Converts a stream of newline separated json data to csv format.
+# Related to: https://github.com/jehiah/json2csv
+
+use 5.010;
+use strict;
+use warnings;
+
+use Text::CSV qw();
+use JSON qw(from_json);
+use Getopt::Std qw(getopts);
+use Text::ParseWords qw(quotewords);
+
+use open IO => ':encoding(UTF-8)', ':std';
+
+my %opt;
+getopts('k:i:o:p:d:', \%opt);
+
+my $in  = \*ARGV;
+my $out = \*STDOUT;
+
+if (defined($opt{i})) {
+    open $in, '<', $opt{i}
+      or die "Can't open file `$opt{i}' for reading: $!";
+}
+
+if (defined($opt{o})) {
+    open $out, '>', $opt{o}
+      or die "Can't open file `$opt{o}' for writing: $!";
+}
+
+sub usage {
+    my ($code) = @_;
+    print <<"EOT";
+usage: $0 [options] [< input.json] [> output.csv]
+
+options:
+    -k fields.0,and,nested.fields,to,output
+    -i /path/to/input.json (optional; default is stdin)
+    -o /path/to/output.csv (optional; default is stdout)
+    -d delimiter separator for csv (default: ",")
+    -p print csv header row
+
+example:
+    $0 -k user.name,list.0,remote_ip -i input.json -o output.csv
+
+EOT
+    exit($code);
+}
+
+$opt{k} // usage(1);
+
+sub unescape {
+    my ($str) = @_;
+
+    my %esc = (
+               a => "\a",
+               t => "\t",
+               r => "\r",
+               n => "\n",
+               e => "\e",
+               b => "\b",
+               f => "\f",
+              );
+
+    $str =~ s{(?<!\\)(?:\\\\)*\\([@{[keys %esc]}])}{$esc{$1}}g;
+    $str;
+}
+
+my @fields = map { [quotewords(qr/\./, 0, $_)] } quotewords(qr/\s*,\s*/, 1, $opt{k});
+
+say($opt{p}) if defined($opt{p});
+
+my $csv = Text::CSV->new(
+                         {
+                          eol      => "\n",
+                          sep_char => defined($opt{d}) ? unescape($opt{d}) : ",",
+                         }
+                        )
+  or die "Cannot use CSV: " . Text::CSV->error_diag();
+
+sub extract {
+    my ($json, $fields) = @_;
+
+    my @row;
+    foreach my $field (@{$fields}) {
+        my $ref = $json;
+
+        foreach my $key (@{$field}) {
+            if (    ref($ref) eq 'ARRAY'
+                and $key =~ /^[-+]?[0-9]+\z/
+                and exists($ref->[$key])) {
+                $ref = $ref->[$key];
+            }
+            elsif (ref($ref) eq 'HASH'
+                   and exists($ref->{$key})) {
+                $ref = $ref->{$key};
+            }
+            else {
+                local $" = ' -> ';
+                warn "[!] Field `$key' (from `@{$field}') does not exists in JSON.\n";
+                $ref = undef;
+                last;
+            }
+        }
+
+        push @row, $ref;
+    }
+
+    \@row;
+}
+
+while (defined(my $line = <$in>)) {
+    my $data = extract(from_json($line), \@fields);
+    $csv->print($out, $data);
+}
+
+
+
+
+------------------------------------------------
+# https://github.com/hashref/json2csv/blob/master/bin/json2csv
+------------------------------------------------
+
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use JSON;
+use Text::CSV;
+
+our $VERSION = '0.01';
+
+my $in_file  = $ARGV[0];
+my $out_file = $ARGV[0];
+$out_file =~ s/\.\w+$/\.csv/;
+
+my $csv = Text::CSV->new( { binary => 1, eol => "\n" } );
+my $json = JSON->new->utf8();
+
+my $count  = 0;
+my @header = ();
+my @out    = ();
+
+open my $in, "<:encoding(utf8)", $in_file or die "$in_file: $!\n";
+while ( my $row = <$in> ) {
+    my $data = $json->decode($row);
+    if ($data) {
+        if ( $count++ == 0 ) {
+            @header = keys %{$data};
+            $csv->combine(@header);
+            push @out, $csv->string();
+        }
+
+        my @array = ();
+        foreach my $key (@header) {
+            push @array, $data->{$key};
+        }
+        $csv->combine(@array);
+        push @out, $csv->string();
+    }
+}
+close($in);
+
+open my $out, ">:encoding(utf8)", $out_file or die "$out_file: $!\n";
+foreach my $line (@out) {
+    print $out $line;
+}
+close($out);
+
+--------------------------------------
+
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use JSON::PP;
+use CGI;
+
+my $json = JSON::PP->new->utf8;
+#my $json_text = CGI->new->param('aws.json');
+#my $perl_scalar = $json->decode( $json_text );
+
+local $/;
+
+open( my $fh, '<', 'aws.json' );
+my $json_text = <$fh>;
+my $perl_scalar = decode_json($json_text);
+
+#print encode_json($perl_scalar);
+print $json->utf8->encode($perl_scalar);
+
+--------------------------------------
+
+use strict;
+use warnings;
+use JSON;
+use Data::Dumper;
+
+local $/;
+my $data = from_json(<DATA>);
+print Dumper $data;
+
+my @columns = qw ( col1 col2 col3 );
+
+print join( ",", "key", @columns ), "\n";
+foreach my $key ( sort keys %$data ) {
+    print join( ",", $key, @{ $data->{$key} }{@columns} ), "\n";
+}
+
+--------------------------------------
+
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use JSON;
+use Text::CSV;
+use Data::Dumper;
+
+local $/;
+my $data = from_json ( <DATA> );
+print Dumper $data;
+
+my $csv = Text::CSV -> new ( { 'binary' => 1 } );
+my @columns = qw ( col1 col2 col3 );
+$csv -> column_names ( @columns );
+
+foreach my $key ( sort keys %$data ) {
+    $csv -> print_hr ( \*STDOUT, $data->{$key} );
+    print "\n";
+}
+
+foreach my $key ( sort keys %$data ) {
+    my $row = [ $key, @{$data->{$key}}{@columns} ];
+    $csv -> print ( \*STDOUT, $row );
+    print "\n";
+}
+
+
+
+
+
+
