@@ -1698,3 +1698,85 @@ cur = conn.cursor()
 insert_query = "INSERT INTO users VALUES {}".format("(10, 'hello@dataquest.io', 'Some Name', '123 Fake St.')")
 cur.execute(insert_query)
 conn.commit()
+
+
+
+# Ingesting JSON Data
+# python generator_json.py
+# cat data.json | psql -h localhost -p 5432 feeds -c "COPY news_feed (data) FROM STDIN;"
+# https://info.crunchydata.com/blog/fast-csv-and-json-ingestion-in-postgresql-with-copy
+
+import csv
+import datetime
+import json
+import uuid
+from faker import Faker
+
+fake = Faker()
+MAX_RANGE = 1000000
+datetime_end = datetime.datetime.now()
+datetime_start = datetime_end - datetime.timedelta(days=365)
+
+# geneate JSON
+with open('data.json', 'w') as f:
+    for i in range(0, MAX_RANGE):
+        f.write(json.dumps({
+            'id': str(uuid.uuid4()),
+            'author': fake.name(),
+            'content': fake.sentence(nb_words=16, variable_nb_words=True),
+            'source': fake.company(),
+            'published_at': fake.date_time_between_dates(
+                datetime_start=datetime_start,
+                datetime_end=datetime_end,
+            ).isoformat()
+        }) + "\n")
+
+
+
+http://initd.org/psycopg/docs/install.html#prerequisites
+https://wiki.postgresql.org/wiki/Psycopg2_Tutorial
+https://www.postgresql.org/docs/9.4/static/backup-dump.html
+https://www.postgresql.org/docs/9.1/static/backup-dump.html
+http://www.postgresqltutorial.com/postgresql-json/
+http://www.postgresqltutorial.com/
+http://www.postgresqltutorial.com/postgresql-insert/
+http://www.postgresqltutorial.com/postgresql-update/
+http://www.postgresqltutorial.com/postgresql-delete/
+http://www.postgresqltutorial.com/postgresql-alter-table/
+http://www.postgresqltutorial.com/postgresql-drop-table/
+http://www.postgresqltutorial.com/postgresql-truncate-table/
+https://www.interserver.net/tips/kb/export-import-postgresql-database/
+https://www.a2hosting.com/kb/developer-corner/postgresql/import-and-export-a-postgresql-database
+https://info.crunchydata.com/blog/fast-csv-and-json-ingestion-in-postgresql-with-copy
+##########
+
+https://zonca.github.io/2013/10/how-to-log-exceptions-in-python.html
+https://code.tutsplus.com/tutorials/error-handling-logging-in-python--cms-27932
+
+
+####################################################################
+#
+# Import MySQL character - Must be UTF-8 General CI
+#
+####################################################################
+
+show character set;
+SET NAMES 'utf8';
+
+ALTER TABLE `mytable` CHANGE `UrbanRural` `UrbanRural` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;
+
+truncate table mytable;
+LOAD DATA LOCAL INFILE 'mytable.csv' INTO TABLE mytable CHARACTER SET 'utf8' FIELDS TERMINATED BY '","' LINES TERMINATED BY '\n';
+
+
+UPDATE coduri_postale SET Judet = REPLACE (Judet, '"', '') WHERE 1;
+UPDATE coduri_postale SET Denumire = REPLACE (Denumire, '"', '') WHERE 1;
+UPDATE coduri_postale SET Localitati = REPLACE (Localitati, '"', '') WHERE 1;
+
+SELECT * FROM coduri_postale WHERE Localitati LIKE 'L-V%';
+UPDATE coduri_postale SET Program =  Localitati WHERE Localitati LIKE 'L-V%';
+UPDATE coduri_postale SET Localitati =  NULL WHERE Localitati LIKE 'L-V%';
+
+
+UPDATE coduri_postale SET Program = REPLACE (Program, '"', '') WHERE 1;
+UPDATE coduri_postale SET Program = REPLACE (Program, ',', '') WHERE 1;
