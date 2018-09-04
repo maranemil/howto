@@ -1,0 +1,242 @@
+
+https://github.com/Uberi/speech_recognition/blob/master/examples/audio_transcribe.py
+https://github.com/Uberi/speech_recognition
+https://github.com/Uberi/speech_recognition
+https://github.com/mozilla/DeepSpeech
+https://github.com/gooofy/py-kaldi-asr
+https://sourceforge.net/projects/cmusphinx/files/Acoustic%20and%20Language%20Models/
+https://cmusphinx.github.io/wiki/
+https://cmusphinx.github.io/wiki/tutorialsphinx4/
+https://en.wikipedia.org/wiki/List_of_speech_recognition_software
+https://github.com/OpenNewsLabs/offline_speech_to_text
+https://github.com/cmusphinx/pocketsphinx
+https://github.com/traceypooh/audio2text/blob/master/Dockerfile
+
+
+
+
+
+
+
+
+#!/usr/bin/env python3
+
+import speech_recognition as sr
+
+# obtain path to "english.wav" in the same folder as this script
+from os import path
+AUDIO_FILE = path.join(path.dirname(path.realpath(__file__)), "english.wav")
+# AUDIO_FILE = path.join(path.dirname(path.realpath(__file__)), "french.aiff")
+# AUDIO_FILE = path.join(path.dirname(path.realpath(__file__)), "chinese.flac")
+
+# use the audio file as the audio source
+r = sr.Recognizer()
+with sr.AudioFile(AUDIO_FILE) as source:
+    audio = r.record(source)  # read the entire audio file
+
+# recognize speech using Sphinx
+try:
+    print("Sphinx thinks you said " + r.recognize_sphinx(audio))
+except sr.UnknownValueError:
+    print("Sphinx could not understand audio")
+except sr.RequestError as e:
+    print("Sphinx error; {0}".format(e))
+
+
+
+
+
+
+
+
+
+
+
+
+
+https://github.com/zicen/douban/blob/master/getMp4.py
+
+
+#coding=utf8
+import re
+
+
+f = open('MP4.txt', 'r',encoding='utf8')
+allStr = f.read()
+results=re.findall("(?isu)(http\://[a-zA-Z0-9\%\.\?/&\=\:]+mp4)",allStr)
+mp42file = open('MP42.txt','w')
+for i in results:
+    mp42file.write(str(i)+'\r\n')  #\r\n为换行符
+f.close()
+mp42file.close()
+
+
+# https://github.com/develra/Hackathon_Team_NSA/blob/master/wav2text.py
+# https://raw.githubusercontent.com/develra/Hackathon_Team_NSA/master/wav2text.py
+
+import speech_recognition as sr
+import sys
+import os
+import subprocess
+import requests
+import json
+
+#Th .wav file to interpret
+soundFile=sys.argv[1]
+#The file to write the results to, usually .txt
+outfile = sys.argv[2]
+
+
+
+outf = open(str(outfile), 'w')
+r = sr.Recognizer()
+with sr.WavFile(soundFile) as source:
+	audio = r.record(source)
+try:
+	list = r.recognize(audio,True)
+	best_prediction = {}
+	best_prediction["confidence"] = -1
+	best_prediction["text"]=""
+	for prediction in list:
+		if best_prediction["confidence"]<prediction["confidence"]:
+			best_prediction=prediction
+		#print(" " + prediction["text"] + " (" + str(prediction["confidence"]*100) + "%)")
+	print(best_prediction["text"])
+	#for word in best_prediction["text"].split(' '):
+		#outf.write(word+' ')
+		#payload = [{"word":str(word), "variance":""}]
+		#print payload
+		#headers = {'content-type': 'application/json'}
+		#cb = requests.post("http://104.236.60.203:5000/words/", data=json.dumps(payload), headers=headers)
+		#print (cb)
+	outf.write(best_prediction["text"])
+	outf.close()
+	subprocess.call(["python", "/home/pi/Hackathon_Team_NSA/nsaStem/nsaStem.py"])
+except LookupError:
+	print("Could not understand audio - ignoring input")
+	payload = [{"word":"team_nsa", "variance":""}]
+	headers = {'content-type': 'application/json'}
+	cb = requests.post("http://104.236.60.203:5000/words/", data=json.dumps(payload), headers=headers)
+try:
+	subprocess.call(["rm", soundFile])
+except IOError:
+	pass
+
+
+
+# https://gist.github.com/rgs1/0261f98677d3c4161ee7401d771a4537
+
+
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import argparse
+import os
+import sys
+import time
+
+import requests
+
+
+def get_params():
+    """ get the cmdline params """
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        'audio_file',
+        type=str
+    )
+    parser.add_argument(
+        'gs_prefix',
+        type=str
+    )
+
+    return parser.parse_args()
+
+
+RECOGNIZE_REQ_URL = 'https://speech.googleapis.com/v1/speech:longrunningrecognize'
+RECOGNIZE_REP_URL = 'https://speech.googleapis.com/v1/operations/'
+STORAGE_URL = 'https://storage.googleapis.com/'
+
+
+def gs_upload(file_path, gs_prefix, session, headers):
+    filename = os.path.basename(file_path)
+    gs_path = os.path.join('gs://', gs_prefix, filename)
+    url = os.path.join(STORAGE_URL, gs_prefix, filename)
+
+    with open(file_path, 'r') as f:
+        resp = session.put(url, files={'file': f}, headers=headers)
+        if resp.status_code != 200:
+            print resp.content
+            print 'Error when uploading file to GS: %d' % resp.status_code
+            sys.exit(1)
+
+    return gs_path
+
+
+def audio2text(audio_file, gs_prefix, headers):
+    session = requests.Session()
+
+    # upload the audio file
+    gs_path = gs_upload(audio_file, gs_prefix, session, headers)
+
+    # submit the request
+    data = {
+        'config': {
+            'encoding': 'OGG_OPUS',  # default format for whatsapp audio
+            'sample_rate_hertz': 16000,
+            'language_code': 'es-ES',
+        },
+        'audio': {
+            'uri': gs_path
+        }
+    }
+    resp = session.post(RECOGNIZE_REQ_URL, json=data, headers=headers)
+    if resp.status_code != 200:
+        print 'Bad status code when submitting audio: %d' % resp.status_code
+        sys.exit(2)
+
+    # poll until the result is ready
+    operation_id = resp.json()['name']
+    result_url = '%s%s' % (RECOGNIZE_REP_URL, operation_id)
+    while True:
+        resp = session.get(result_url, headers=headers)
+        if resp.status_code != 200:
+            print 'Bad status code when fetching results: %d' % resp.status_code
+            time.sleep(5)
+            continue
+
+        data = resp.json()
+        done = data.get('done', False)
+        if not done:
+            print 'Result is not ready yet.. sleeping'
+            time.sleep(5)
+            continue
+
+        results = data['response'].get('results')
+        if not results:
+            print 'Results not ready yet.. sleeping'
+            time.sleep(5)
+            continue
+
+        text_fragments = []
+        for res in results:
+            # TODO pick up the alternative with the highest confidence
+            transcript = res['alternatives'][0]['transcript']
+            text_fragments.append(transcript)
+
+        print ''.join(text_fragments)
+        break
+
+
+if __name__ == '__main__':
+    auth_token = os.environ.get('AUTH_TOKEN')
+    if auth_token is None:
+        print "AUTH_TOKEN not find in the environment"
+        sys.exit(1)
+
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer %s' % auth_token,
+    }
+    params = get_params()
+    audio2text(params.audio_file, params.gs_prefix, headers)
