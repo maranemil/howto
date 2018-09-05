@@ -1,0 +1,95 @@
+
+
+-----------------------------------
+Batch Vid files
+-----------------------------------
+
+for i in url_1 url_2; do wget --limit-rate=600k --continue "$i"; done
+for f in *.mp4; do ffmpeg -i "$f" -crf 28 -y -threads 2 -y -preset ultrafast -acodec copy  -loglevel panic  "$f"C2.mp4 ; done
+for f in *.mp4; do time ffmpeg -i "$f" -crf 28 -y -threads 2 -c:v libx264 -loglevel error -tune fastdecode -acodec copy -c:a copy -preset veryfast "$f"C2.mp4 ; done
+
+for f in *.mp4; do time ffmpeg -i "$f" -preset ultrafast -acodec copy -threads 2 -vf eq=0.9:0:0.1:0:1:1:0:0 -crf 35  -y -c:v libx264 -acodec copy -c:a copy  "$f"C2.mp4 ; done
+
+-----------------------------------
+
+
+time ffmpeg -i in.mp4 -preset ultrafast -acodec copy -threads 2 -vf eq=0.9:0:0.1:0:1:1:0:0 -crf 35  -y out.mp4
+time ffmpeg -i in.mp4 -b:v 1000 -b:a 96   -q:a 330 -cutoff 10000 -y   out.mp4
+
+-acodec libmp3lame -b:a 8k -ac 1
+-c:a aac -b:a 32k
+-ac 1  # Mix a single stereo stream down to a mono stream
+-af "pan=mono|c0=c1" #  pan audio filter to include only the right channel https://trac.ffmpeg.org/wiki/AudioChannelManipulation
+
+-----------------------------------
+FFMPEG -loglevel
+-----------------------------------
+{ "quiet"  , AV_LOG_QUIET   },
+{ "panic"  , AV_LOG_PANIC   },
+{ "fatal"  , AV_LOG_FATAL   },
+{ "error"  , AV_LOG_ERROR   },
+{ "warning", AV_LOG_WARNING },
+{ "info"   , AV_LOG_INFO    },
+{ "verbose", AV_LOG_VERBOSE },
+{ "debug"  , AV_LOG_DEBUG   },
+
+
+-----------------------------------
+FFMPEG -tune
+-----------------------------------
+film – intended for high-bitrate/high-quality movie content. Lower deblocking is used here.
+animation – intended for cartoons, etc., where deblocking is boosted to compensate for larger, flat areas. More reference frames are used.
+grain – this should be used for material that is already grainy. Here, the grain won't be filtered out as much.
+stillimage – like the name says, it optimizes for still image encoding by lowering the deblocking filter.
+psnr and ssim – these are debugging modes to optimize for good PSNR and SSIM values only. Better metrics don't necessarily mean better quality though.
+fastdecode – disables CABAC and the in-loop deblocking filter to allow for faster decoding on devices with lower computational power.
+zerolatency – optimization for fast encoding and low latency streaming
+
+-----------------------------------
+FFMPEG -preset
+-----------------------------------
+ultrafast 	45x    - 6min - 4h / x240 - size 1/2
+superfast 	32x
+veryfast    31x
+faster		18x
+fast 		17x 	- 18min - 4h / x240 - size 1/4
+medium 		12x - default
+slow 		7x
+slower 		5x
+veryslow    2x
+
+
+
+-----------------------------------
+11 min   - 200mb
+06 min   - 100mb
+-----------------------------------
+
+ffmpeg -i input.mp4  -q:a 330 -cutoff 15000 output.wav
+ffmpeg -i in.mp4 -crf 30 out.mp4
+ffmpeg -i in.mp4 -crf 30 -vf format=gray,format=yuv422p   out.mp4
+
+-vcodec h264
+-vcodec mpeg2_qsv
+-vcodec vc1_qsv
+-vcodec hevc_qsv
+-b:v 800K
+-preset veryfast
+-vframes 2000
+-framerate 50
+-filter:v select="mod(n-1\,2)"  # skip frames
+-filter:v select="not(mod(n-1\,2))"
+-format rawvideo
+-vf scale=-1:240
+-vf scale=-1:144
+
+ffmpeg -i in.mp4 -crf 30 -vf scale=-1:240  out.mp4
+ffmpeg -i input.mp4 -vcodec h264 -acodec mp2 crf 30 -vf scale=-1:360 -preset ultrafast output.mp4
+ffmpeg -i input.avi -vcodec msmpeg4v2 output.avi
+ffmpeg -i input.mp4 -acodec mp2 output.mp4
+ffmpeg -i input.mp4 -b 1000000 output.mp4
+ffmpeg -i input.mp4 -vcodec libx264 -crf 20 output.mp4
+ffmpeg -i <inputfilename> -s 640x480 -b:v 512k -vcodec mpeg1video -acodec copy <outputfilename>
+ffmpeg -i input.mp4 -c:v libx264 -crf 24 -b:v 1M -c:a aac output.mp4
+ffmpeg -i <input.mp4> -b:v 2048k -s 1000x600 -fs 2048k -vcodec mpeg4 -acodec copy <output.mp4>
+ffmpeg -i android_record1.mp4 -crf 18 -r 30 ../corrected/output.mp4
