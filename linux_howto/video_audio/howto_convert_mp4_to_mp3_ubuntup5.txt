@@ -1,8 +1,10 @@
 
 
------------------------------------
-Batch Vid files
------------------------------------
+############################################################
+#
+#   Batch Vid files
+#
+############################################################
 
 for i in url_1 url_2; do wget --limit-rate=600k --continue "$i"; done
 for f in *.mp4; do ffmpeg -i "$f" -crf 28 -y -threads 2 -y -preset ultrafast -acodec copy  -loglevel panic  "$f"C2.mp4 ; done
@@ -93,3 +95,51 @@ ffmpeg -i <inputfilename> -s 640x480 -b:v 512k -vcodec mpeg1video -acodec copy <
 ffmpeg -i input.mp4 -c:v libx264 -crf 24 -b:v 1M -c:a aac output.mp4
 ffmpeg -i <input.mp4> -b:v 2048k -s 1000x600 -fs 2048k -vcodec mpeg4 -acodec copy <output.mp4>
 ffmpeg -i android_record1.mp4 -crf 18 -r 30 ../corrected/output.mp4
+
+
+
+############################################################
+#
+# Audio Compression
+#
+############################################################
+
+-acodec libmp3lame -ab 128k
+-acodec libmp3lame -aq 5
+-acodec mp3 -ab 128k
+-acodec mp3 -b:a 320k
+-codec:a libmp3lame -qscale:a 4 -q:a 4
+-vol 509 -acodec flac -compression_level 8 -ac 2
+
+"--colormatrix bt709" for HD
+-vf eq=brightness=0.06:saturation=2 -c:a copy
+-x264opts colormatrix=bt709
+eq=contrast=1:brightness=0:saturation=1:gamma=1
+
+
+############################################################
+############################################################
+
+time ffmpeg -i in.mp4 -acodec libmp3lame  -crf 35 -q:a 9 -aq 9 -ac 2 -y -threads 2 -preset ultrafast out.mp4  # 5x
+
+...
+
+time ffmpeg -i in.mp4 -acodec libmp3lame  -crf 28 -q:a 9 -ac 2 -y -aq 5 -vf eq=0.4:0:0.1:0:1:1:0:0 -threads 2 -preset ultrafast out.mp4
+
+time ffmpeg -i in.mp4 -acodec libmp3lame  -crf 28 -q:a 9 -ac 2 -y -aq 5 -threads 2 -preset ultrafast out.mp4
+
+ffmpeg -i in.mp4 -acodec libmp3lame  -crf 38   -x264opts colormatrix=bt709  -y -threads 3 -preset ultrafast  -vf eq=contrast=0.8:brightness=0:saturation=0.5:gamma=1.7  out.mp4
+
+
+############################################################
+
+How to stream audio using FFMPEG?
+
+############################################################
+
+Stream in real time
+$ ffmpeg -f avfoundation -i ":1" -t 10 -f mpegts "tcp://remote_host_or_IP_:port"
+Set remote computer to "listen"
+ffplay -i tcp://local_host_or_IP_addr:port?listen -hide_banner
+
+
