@@ -14,7 +14,6 @@ for f in *.mp4; do time ffmpeg -i "$f" -preset ultrafast -acodec copy -threads 2
 
 -----------------------------------
 
-
 time ffmpeg -i in.mp4 -preset ultrafast -acodec copy -threads 2 -vf eq=0.9:0:0.1:0:1:1:0:0 -crf 35  -y out.mp4
 time ffmpeg -i in.mp4 -b:v 1000 -b:a 96   -q:a 330 -cutoff 10000 -y   out.mp4
 
@@ -118,6 +117,9 @@ eq=contrast=1:brightness=0:saturation=1:gamma=1
 
 
 ############################################################
+#
+# Compress 5X
+#
 ############################################################
 
 time ffmpeg -i in.mp4 -acodec libmp3lame  -crf 35 -q:a 9 -aq 9 -ac 2 -y -threads 2 -preset ultrafast out.mp4  # 5x
@@ -125,9 +127,7 @@ time ffmpeg -i in.mp4 -acodec libmp3lame  -crf 35 -q:a 9 -aq 9 -ac 2 -y -threads
 ...
 
 time ffmpeg -i in.mp4 -acodec libmp3lame  -crf 28 -q:a 9 -ac 2 -y -aq 5 -vf eq=0.4:0:0.1:0:1:1:0:0 -threads 2 -preset ultrafast out.mp4
-
 time ffmpeg -i in.mp4 -acodec libmp3lame  -crf 28 -q:a 9 -ac 2 -y -aq 5 -threads 2 -preset ultrafast out.mp4
-
 ffmpeg -i in.mp4 -acodec libmp3lame  -crf 38   -x264opts colormatrix=bt709  -y -threads 3 -preset ultrafast  -vf eq=contrast=0.8:brightness=0:saturation=0.5:gamma=1.7  out.mp4
 
 
@@ -142,4 +142,62 @@ $ ffmpeg -f avfoundation -i ":1" -t 10 -f mpegts "tcp://remote_host_or_IP_:port"
 Set remote computer to "listen"
 ffplay -i tcp://local_host_or_IP_addr:port?listen -hide_banner
 
+
+###############################################################################
+#
+#	https://trac.ffmpeg.org/wiki/How%20to%20speed%20up%20/%20slow%20down%20a%20video
+#	https://davidwalsh.name/video-speed
+#	http://ffmpeg.org/ffmpeg-all.html#atempo
+#	https://gist.github.com/LightningStalker/f30119cf8f772bf805873dd47c15ce31
+#
+###############################################################################
+
+speed up
+
+ffmpeg -i input.mkv -filter_complex "[0:v]setpts=0.5*PTS[v];[0:a]atempo=2.0[a]" -map "[v]" -map "[a]" output.mkv # double speed  2x
+ffmpeg -i input.mkv -filter_complex "[0:v]setpts=0.75*PTS[v];[0:a]atempo=1.333333[a]" -map "[v]" -map "[a]" output.mkv # double speed  1.25x
+ffmpeg -i input.mkv -filter_complex "[0:v]setpts=1*PTS[v];[0:a]atempo=1[a]" -map "[v]" -map "[a]" output.mkv   # same speed
+ffmpeg -i input.mkv -r 16 -filter:v "setpts=0.25*PTS" output.mkv  # 4x
+
+slow
+ffmpeg -i input.mkv -filter:v "setpts=2.0*PTS" output.mkv
+ffmpeg -i input.mkv -filter:v "minterpolate='mi_mode=mci:mc_mode=aobmc:vsbmc=1:fps=120'" output.mkv
+
+
+
+###############################################################################
+
+Sharp and Unsharp
+
+###############################################################################
+
+ffmpeg -i output2.avi -vf unsharp=7:7:-2:7:7:-2 output3.avi # unsharp
+ffmpeg -i output2.avi -vf unsharp=5:5:1.5:5:5:0.0 output3.avi  # sharp
+ffmpeg -i output2.avi -vf unsharp=3:5:3 output3.avi  # sharp
+
+
+###############################################################################
+
+slow motion video
+
+###############################################################################
+
+ffmpeg -i input.mkv -filter_complex \
+"[0:v]trim=0:10,setpts=PTS-STARTPTS[v1]; \
+ [0:v]trim=10:30,setpts=PTS-STARTPTS[v2]; \
+ [0:v]trim=start=30,setpts=PTS-STARTPTS[v3]; \
+ [v2]setpts=PTS/0.5[slowv]; \
+ [v1][slowv][v3]concat=n=3:v=1:a=0[out]" \
+-map [out] output.mp4
+
+
+ffmpeg -i input.mkv -filter_complex \
+"[0:v]trim=0:10,setpts=PTS-STARTPTS[v1]; \
+ [0:v]trim=10:30,setpts=(PTS-STARTPTS)*2[v2]; \
+ [0:v]trim=start=30,setpts=PTS-STARTPTS[v3]; \
+ [0:a]atrim=0:10,asetpts=PTS-STARTPTS[a1]; \
+ [0:a]atrim=10:30,asetpts=PTS-STARTPTS,atempo=0.5[a2]; \
+ [0:a]atrim=start=30,asetpts=PTS-STARTPTS[a3]; \
+ [v1][a1][v2][a2][v3][a3]concat=n=3:v=1:a=1[v][a]" \
+-map [v] -map [a] output.mp4
 
