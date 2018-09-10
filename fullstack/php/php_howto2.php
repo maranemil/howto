@@ -720,3 +720,92 @@ echo $ssh->exec('ls -la');
     * 36m blue azure
     * 37m white
    */
+
+
+
+
+
+########################################################################
+#
+#   Make a Zip
+#
+########################################################################
+
+
+# http://php.net/manual/de/ziparchive.addfile.php
+
+$zip = new ZipArchive;
+if ($zip->open('test.zip') === TRUE) {
+    $zip->addFile('/pfad/zur/datei.txt', 'neuername.txt');
+    $zip->close();
+    echo 'ok';
+} else {
+    echo 'Fehler';
+}
+
+
+
+
+########################################################################
+#
+# Download Headers that actually work
+# https://perishablepress.com/http-headers-file-downloads/
+#
+########################################################################
+
+// http headers for zip downloads
+header("Pragma: public");
+header("Expires: 0");
+header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+header("Cache-Control: public");
+header("Content-Description: File Transfer");
+header("Content-type: application/octet-stream");
+header("Content-Disposition: attachment; filename=\"".$filename."\"");
+header("Content-Transfer-Encoding: binary");
+header("Content-Length: ".filesize($filepath.$filename));
+ob_end_flush();
+@readfile($filepath.$filename);
+
+
+
+########################################################################
+#
+#   Import CSV to Array
+#   http://www.php.net/manual/de/function.str-getcsv.php
+#
+########################################################################
+
+$csv = array_map('str_getcsv', file('data.csv'));
+
+
+$csv = array_map('str_getcsv', file($file));
+array_walk($csv, function(&$a) use ($csv) {
+  $a = array_combine($csv[0], $a);
+});
+array_shift($csv); # remove column header
+
+########################################################################
+#
+# Read Excel
+# http://www.osakac.ac.jp/labs/koeda/tmp/phpexcel/Documentation/API/PHPExcel/PHPExcel_IOFactory.html
+# https://github.com/PHPOffice/PHPExcel/issues/1331
+# https://github.com/PHPOffice/PHPExcel/issues/1076
+# https://hotexamples.com/examples/-/PHPExcel_IOFactory/-/php-phpexcel_iofactory-class-examples.html
+#
+########################################################################
+
+/** PHPExcel_IOFactory */
+require_once '../Classes/PHPExcel/IOFactory.php';
+$objPHPExcel = \PHPExcel_IOFactory::load("excel_files/temp_files.xlsx"));
+$objWorksheet = $objPHPExcel->getActiveSheet();
+$highestRow = $objWorksheet->getHighestRow();
+$highestColumn = \PHPExcel_Cell::columnIndexFromString($objWorksheet->getHighestColumn());
+
+for ($row = 3; $row <= $highestRow; ++$row) {
+    for($col = 0; $col <= $highestColumn; ++$col) {
+        $cellValue = $objWorksheet->getCellByColumnAndRow($col, $row) ;
+    }
+}
+
+// $filetype = PHPExcel_IOFactory::identify($dirpath . '/' . $filename);
+// PHPExcel_Settings::setZipClass(PHPExcel_Settings::ZIPARCHIVE);
