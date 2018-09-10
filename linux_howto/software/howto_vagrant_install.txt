@@ -81,3 +81,141 @@ https://github.com/ckan/ckan/wiki/How-to-Create-a-CentOS-Vagrant-Base-Box
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+#######################################################################
+#
+#  	virtualbox vagrant  ubuntu
+#
+#######################################################################
+
+sudo apt install virtualbox -y
+sudo apt install vagrant -y
+
+# build and start vm
+sudo vagrant init ubuntu/trusty64; vagrant up --provider virtualbox
+
+# login
+user: vagrant / passwd: vagrant
+
+VBoxManage list vms
+VBoxManage list runningvms
+
+VBoxManage startvm mpxvm_default_1536414539253_4905 --type gui
+VBoxManage startvm mpxvm_default_1536414539253_4905 --type sdl
+VBoxManage startvm "mpxvm_default_1536414539253_4905" --type headless
+VBoxManage controlvm mpxvm_default_1536414539253_4905 poweroff soft
+
+VBoxHeadless --startvm mpxvm_default_1536414539253_4905 --vnc --vncport 5901 --vncpass passw
+VBoxManage controlvm mpxvm_default_1536414539253_4905 pause
+VBoxManage controlvm mpxvm_default_1536414539253_4905 resume
+VBoxManage controlvm mpxvm_default_1536414539253_4905 reset
+VBoxManage controlvm mpxvm_default_1536414539253_4905 poweroff
+VBoxManage controlvm mpxvm_default_1536414539253_4905 savestate
+
+#get ip
+VBoxManage guestproperty get mpxvm_default_1536414539253_4905 "/VirtualBox/GuestInfo/Net/0/V4/IP"
+Value: 10.0.2.15
+
+ssh -Axv vagrant@10.0.2.15
+
+#######################################################################
+#
+#	docker ubuntu
+#
+#######################################################################
+
+sudo apt install docker docker.io -y
+sudo -i
+docker pull ubuntu
+docker images
+docker ps
+docker container ls
+
+#docker run -it --name myubuntu -d ubuntu:latest
+docker rm /myubuntu
+docker run --name myubuntu --rm -i -t ubuntu /bin/bash
+
+apt update && apt upgrade -y
+apt install apt-utils -y
+apt install apache2 composer mysql-client mysql-server vim -y
+service apache2 start && service mysql start
+service apache2 status && service mysql status
+php -v && apache2 -v && mysql --version
+hostname -I
+
+vi /var/www/html/index.html
+exit
+
+# access again same container with preinstalled lamp
+docker --name myubuntu  -it ubuntu /bin/bash
+
+docker ps
+docker ps -l
+docker ps -a
+
+docker kill 63ac4963d56a
+docker exec -it myubuntu /bin/bash
+
+ref
+https://docs.docker.com/engine/reference/commandline/exec/#run-docker-exec-on-a-running-container
+https://docs.docker.com/docker-for-mac/networking/#use-cases-and-workarounds
+https://medium.com/dot-debug/running-chrome-in-a-docker-container-a55e7f4da4a8
+
+
+sudo docker container ls
+sudo docker image ls
+docker rm $(docker ps -a -f status=exited -q)
+docker images purge
+docker rmi $(docker images -a -q)
+
+
+############################
+
+docker run -it -d --rm -p 8000:8000  cd6d8154f1e1 /bin/bash
+docker container inspect
+
+docker network ls
+docker network create mynewbridge
+docker run --net=mynewbridge -p 80:80  ubuntu
+
+#docker network create --subnet=172.18.0.0/16 mynet123
+
+#docker network create --subnet=172.18.0.0/16 mynet123
+#docker run --net mynet123 --ip 172.18.0.22 -it ubuntu bash
+ip addr
+--hostname to specify a hostname
+--add-host to add more entries to /etc/hosts
+
+#sudo docker run -it --net mynewbridge --ip 172.18.0.2 cd6d8154f1e1 /bin/bash
+#sudo docker run -i -t --net=none -h test --add-host test:127.0.0.1 ubuntu /bin/bash
+
+docker network create --subnet 172.18.8.0/23 --gateway 172.18.8.1 docker-net
+docker run --ti --net docker-net --ip 172.18.9.30 centos
+
+# https://stackoverflow.com/questions/27937185/assign-static-ip-to-docker-container
+
+docker run --name dns --restart=always -d -p 172.16.177.20:53:53/udp dns
+docker run --name registry --restart=always -d -p 172.16.177.12:80:5000 registry
+docker run --name cache --restart=always -d -p 172.16.177.13:80:3142 -v /data/cache:/var/cache/apt-cacher-ng cache
+docker run --name mirror --restart=always -d -p 172.16.177.19:80:80 -v /data/mirror:/usr/share/nginx/html:ro mirror
+docker run --cap-add=NET_ADMIN -dit imagename /bin/sh -c "/sbin/ip addr add 172.17.0.12 dev eth0; bash"
+
+
+
+
+
+
+
+
+
+

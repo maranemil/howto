@@ -1,3 +1,83 @@
+#######################################################################
+#
+#	lxd
+#
+#######################################################################
+
+https://tutorials.ubuntu.com/tutorial/tutorial-setting-up-lxd-1604#4
+https://www.linode.com/docs/applications/containers/access-an-apache-web-server-inside-a-lxd-container/
+https://linuxcontainers.org/lxd/getting-started-cli/
+https://lxd.readthedocs.io/en/latest/containers/
+
+sudo apt install lxd
+sudo apt install lxd-client lxd-tools
+sudo adduser <USER> lxd
+newgrp lxd
+sudo apt install zfsutils-linux
+sudo apt install lxd zfsutils-linux
+
+sudo lxd init
+lxc list
+lxc launch ubuntu:16.04
+lxc launch ubuntu:16.04 web
+lxc launch ubuntu:14.04 my-ubuntu
+lxc launch ubuntu-daily:16.04 my-ubuntu-dev
+lxc launch images:centos/6/amd64 my-centos
+
+Using a remote LXD as an image server
+lxc remote add my-images 1.2.3.4
+lxc launch my-images:image-name your-container
+
+Manually importing an image
+lxc image import <file> --alias my-alias
+
+Creating stirring-beagle
+Starting stirring-beagle
+
+lxc exec stirring-beagle -- ls -la
+lxc stop stirring-beagle
+lxc delete stirring-beagle
+
+lxc exec prepared-airedale -- ls -la
+lxc stop prepared-airedale
+lxc delete prepared-airedale
+
+
+lxc exec mycontainer -- apt update
+lxc exec mycontainer -- apt upgrade
+lxc exec mycontainer -- sudo --login --user ubuntu
+lxc info mycontainer --show-log
+
+lxc launch ubuntu:16.04 web
+lxc exec web -- apt update
+lxc exec web -- apt install apache2
+
+sudo apt install iptables-persistent
+
+How to make your LXD containers get IP addresses from your LAN using macvlan
+https://blog.simos.info/how-to-make-your-lxd-container-get-ip-addresses-from-your-lan/
+
+lxc profile list
+lxc profile copy default lanprofile
+lxc profile list
+lxc profile show lanprofile
+ip route show default 0.0.0.0/0
+
+lxc profile device set lanprofile eth0 nictype macvlan
+lxc profile device set lanprofile eth0 parent enp5s12
+lxc profile show lanprofile
+
+Launching LXD containers with the new profile
+
+lxc launch -p lanprofile ubuntu:16.04 net1
+lxc launch -p lanprofile ubuntu:16.04 net2
+lxc exec net1 ip route
+lxc exec net2 ip route
+lxc exec net1 -- ping -c 3 192.168.1.7
+
+
+#######################################################################
+
 apt install lxd lxd-client
 sudo lxd init
 
