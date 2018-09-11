@@ -128,6 +128,18 @@ Value: 10.0.2.15
 
 ssh -Axv vagrant@10.0.2.15
 
+
+
+
+
+
+
+
+
+
+
+
+
 #######################################################################
 #
 #	docker ubuntu
@@ -209,6 +221,93 @@ docker run --name registry --restart=always -d -p 172.16.177.12:80:5000 registry
 docker run --name cache --restart=always -d -p 172.16.177.13:80:3142 -v /data/cache:/var/cache/apt-cacher-ng cache
 docker run --name mirror --restart=always -d -p 172.16.177.19:80:80 -v /data/mirror:/usr/share/nginx/html:ro mirror
 docker run --cap-add=NET_ADMIN -dit imagename /bin/sh -c "/sbin/ip addr add 172.17.0.12 dev eth0; bash"
+
+
+
+
+
+#####################################################
+#
+#	How to save a Docker container state
+#   - run image-id in container and do changes
+#   - exit,get container-id and commit to container-id changes to an image:version
+#
+#####################################################
+
+
+https://docs.docker.com/glossary/?term=Dockerfile
+https://docs.docker.com/glossary/?term=image
+https://docs.docker.com/glossary/?term=container
+https://docs.docker.com/glossary/?term=build
+https://docs.docker.com/engine/reference/commandline/commit/#commit-a-container-with-new-configurations
+https://docs.docker.com/engine/reference/commandline/rm/#remove-a-link-specified-with---link-on-the-default-bridge-network
+
+
+sudo apt install docker docker.io -y
+sudo -i
+docker pull ubuntu
+docker pull debian
+---------------------------------
+Force-remove a running container
+docker rm --force redis
+Remove all stopped containers
+docker rm $(docker ps -a -q)
+Remove a container and its volumes
+docker rm -v ubuntu
+---------------------------------
+docker images
+docker ps
+docker container ls
+
+docker run --name myubuntu --rm -i -t ubuntu /bin/bash
+docker run --name mydebian --rm -i -t debian /bin/bash
+-------------------
+apt update && apt install htop
+exit
+------------------
+docker ps -a
+------------------
+docker run --name myubuntu --rm -i -t gifted_wilson/testimage:version1 /bin/bash
+------------------
+docker container ls # get container-id
+------------------
+docker commit 530f2906782a gifted_wilson/testimage:version2
+------------------
+docker run --name myubuntu --rm -i -t gifted_wilson/testimage:version2 /bin/bash
+------------------
+docker image rm 4f974c81cf45 # get image-id
+------------------
+
+*
+*
+*
+*
+*
+
+
+# Accessing and modifying the container
+docker pull nginx
+docker run --name nginx-template-base -p 8080:80 -e TERM=xterm -d nginx
+docker exec -it CONTAINER_ID bash
+docker commit CONTAINER_ID nginx-template
+docker run --name nginx-dev -p 8080:80 -e TERM=xterm -d nginx-template
+------------------
+docker run ubuntu apt-get install -y ping
+docker ps -l
+docker commit <container_id> iman/ping
+docker run iman/ping ping www.google.com
+------------------
+docker ps
+docker commit c3f279d17e0a  svendowideit/testimage:version3
+docker images
+------------------
+docker start f357e2faab77 # restart it in the background
+docker attach f357e2faab77 # reattach the terminal & stdin
+------------------
+docker run -it ubuntu /bin/bash
+docker ps -a
+docker commit <containerid> <name>/testiamge:version1
+
 
 
 
