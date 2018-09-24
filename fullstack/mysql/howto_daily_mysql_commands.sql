@@ -201,7 +201,13 @@ mysql> SET @init_vector = RANDOM_BYTES(16);
 mysql> SET @crypt_str = AES_ENCRYPT('text',@key_str,@init_vector);
 mysql> SELECT AES_DECRYPT(@crypt_str,@key_str,@init_vector);
 
-
-
-
 */
+
+-- ##################################################################
+--
+-- mySQL select IN range
+--
+-- ##################################################################
+
+SELECT job FROM mytable WHERE id BETWEEN 10 AND 15;
+SELECT job FROM mytable WHERE id > 10 AND id < 15;

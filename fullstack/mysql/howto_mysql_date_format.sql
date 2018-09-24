@@ -124,3 +124,34 @@ SELECT [activity_dt], count(*) FROM table1 GROUP BY minute( activity_dt ) , minu
 SELECT STR_TO_DATE(SUBSTRING('20180328160604.png',1,8), '%Y%m%d')
 SELECT * FROM table WHERE STR_TO_DATE(SUBSTRING(table.field,1,8), '%Y%m%d') < DATE_SUB(NOW(),INTERVAL 1 WEEK)
 
+https://www.w3resource.com/mysql/date-and-time-functions/mysql-dayname-function.php
+https://www.php-einfach.de/mysql-tutorial/mysql-datumfunktion-zeitfunktion/#DAY_MONTH_und_YEAR
+
+
+
+#####################################################################
+#
+#  DAYNAME DAYOFWEEK
+#
+#####################################################################
+
+SELECT DAYNAME('2008-05-15'); # Thursday
+SELECT DAYOFWEEK('2008-05-15'); # 5
+SELECT MONTH('2008-05-15'); # 5
+SELECT YEAR('2008-05-15'); # 2008
+SELECT DAY('2008-05-15'); # 15
+
+/*
+Funktion	Beschreibung
+
+SECOND()	Gibt die Sekunden zurück.
+MINUTE()	Gibt die Minuten zurück.
+HOUR()		Gibt die Stunden zurück.
+DAY()		Gibt den Tag zurück.
+DAYOFWEEK()	Gibt den Wochentag (1=Sonntag, 7=Samstag) zurück.
+MONTH()		Gibt den Monat (als Zahl) zurück.
+YEAR()		Gibt das Jahr zurück.
+NOW()		Gibt das aktuelle Datum und die aktuelle Zeit zurück ('YYYY-MM-DD HH:MM:SS').
+DATE_SUB()	Zieht vom ersten Argument eine Zeitspanne ab.
+DATE_ADD()	Addierst auf das erste Argument eine Zeitspanne.
+*/
