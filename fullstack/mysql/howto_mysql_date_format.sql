@@ -155,3 +155,29 @@ NOW()		Gibt das aktuelle Datum und die aktuelle Zeit zurück ('YYYY-MM-DD HH:MM:
 DATE_SUB()	Zieht vom ersten Argument eine Zeitspanne ab.
 DATE_ADD()	Addierst auf das erste Argument eine Zeitspanne.
 */
+
+
+
+
+
+/*
+https://dev.mysql.com/doc/refman/8.0/en/regexp.html#operator_not-regexp
+https://dev.mysql.com/doc/refman/8.0/en/regexp.html
+https://www.w3resource.com/mysql/string-functions/mysql-not-regexp-function.php
+*/
+
+# REGEXP NEGATION
+
+SELECT * FROM author WHERE country NOT REGEXP '^U';
+SELECT 'Michael!' REGEXP '.*';
+
+# https://www.w3schools.com/sql/func_mysql_coalesce.asp
+
+# Return the first non-null expression in a list:
+SELECT COALESCE(NULL, NULL, NULL, 'W3Schools.com', NULL, 'Example.com');
+
+
+# Select integer
+SELECT
+  CAST(count(number) as UNSIGNED) as average,
+FROM stats
