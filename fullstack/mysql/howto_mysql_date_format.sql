@@ -124,10 +124,6 @@ SELECT [activity_dt], count(*) FROM table1 GROUP BY minute( activity_dt ) , minu
 SELECT STR_TO_DATE(SUBSTRING('20180328160604.png',1,8), '%Y%m%d')
 SELECT * FROM table WHERE STR_TO_DATE(SUBSTRING(table.field,1,8), '%Y%m%d') < DATE_SUB(NOW(),INTERVAL 1 WEEK)
 
-https://www.w3resource.com/mysql/date-and-time-functions/mysql-dayname-function.php
-https://www.php-einfach.de/mysql-tutorial/mysql-datumfunktion-zeitfunktion/#DAY_MONTH_und_YEAR
-
-
 
 #####################################################################
 #
@@ -142,6 +138,10 @@ SELECT YEAR('2008-05-15'); # 2008
 SELECT DAY('2008-05-15'); # 15
 
 /*
+
+https://www.w3resource.com/mysql/date-and-time-functions/mysql-dayname-function.php
+https://www.php-einfach.de/mysql-tutorial/mysql-datumfunktion-zeitfunktion/#DAY_MONTH_und_YEAR
+
 Funktion	Beschreibung
 
 SECOND()	Gibt die Sekunden zurück.
