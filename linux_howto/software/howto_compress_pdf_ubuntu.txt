@@ -1,0 +1,59 @@
+
+
+#######################################################################################################
+#
+#   http://milan.kupcevic.net/ghostscript-ps-pdf/
+#   https://askubuntu.com/questions/113544/how-can-i-reduce-the-file-size-of-a-scanned-pdf-file
+#
+#######################################################################################################
+
+identify -verbose testpdf.pdf
+identify -verbose testpdf.pdf | grep "Print size"
+
+-dPDFSETTINGS=/screen   (screen-view-only quality, 72 dpi images)
+-dPDFSETTINGS=/ebook    (low quality, 150 dpi images)
+-dPDFSETTINGS=/printer  (high quality, 300 dpi images)
+-dPDFSETTINGS=/prepress (high quality, color preserving, 300 dpi imgs)
+-dPDFSETTINGS=/default  (almost identical to /screen)
+
+
+convert -density 200x200 -quality 60 -compress jpeg input.pdf output.pdf # BAD QUALITY!!!!
+convert -compress Zip -density 150x150 input.pdf output.pdf # BAD QUALITY!!!!
+
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/screen -dNOPAUSE -dQUIET -dBATCH -sOutputFile=output.pdf input.pdf # BAD QUALITY!!!!
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=output.pdf $INPUTFILE   # best option for quality 80MB from 2GB !!!!!!
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH -sOutputFile=output.pdf $INPUTFILE   # best option for quality 400MB from 2GB !!!!!
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE -dQUIET -dBATCH -sOutputFile=output.pdf $INPUTFILE   # best option for quality 400MB from 2GB !!!!!
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dDownsampleColorImages=true  -dNOPAUSE  -dBATCH -sOutputFile=output.pdf input.pdf  # -dColorImageResolution=150 # BAD QUALITY!!!!
+
+--------------------
+
+Where:
+-dPDFSETTINGS=/screen lower quality, smaller size. (72 dpi)
+-dPDFSETTINGS=/ebook for better quality, but slightly larger pdfs. (150 dpi)
+-dPDFSETTINGS=/prepress output similar to Acrobat Distiller "Prepress Optimized" setting (300 dpi)
+-dPDFSETTINGS=/printer selects output similar to the Acrobat Distiller "Print Optimized" setting (300 dpi)
+-dPDFSETTINGS=/default selects output intended to be useful across a wide variety of uses, possibly at the expense of a larger output file
+
+--------------------
+
+#!/bin/sh
+gs  -q -dNOPAUSE -dBATCH -dSAFER \
+    -sDEVICE=pdfwrite \
+    -dCompatibilityLevel=1.3 \
+    -dPDFSETTINGS=/screen \
+    -dEmbedAllFonts=true \
+    -dSubsetFonts=true \
+    -dColorImageDownsampleType=/Bicubic \
+    -dColorImageResolution=72 \
+    -dGrayImageDownsampleType=/Bicubic \
+    -dGrayImageResolution=72 \
+    -dMonoImageDownsampleType=/Bicubic \
+    -dMonoImageResolution=72 \
+    -sOutputFile=out.pdf \
+     $1
+
+--------------------
+
+sudo update-alternatives --config java
+
