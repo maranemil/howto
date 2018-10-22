@@ -882,6 +882,101 @@ cpu-limit = no
 high-priority = yes
 
 
+
+
+#############################################################################
+#
+#   Optimise Ubuntu LIMIT CPU
+#
+#############################################################################
+
+https://en.wikipedia.org/wiki/Nohup
+http://blog.scoutapp.com/articles/2014/11/04/restricting-process-cpu-usage-using-nice-cpulimit-and-cgroups
+https://linux.101hacks.com/unix/nohup-command/
+https://wiki.ubuntuusers.de/nohup/
+
+
+# This is useful when you need to run a CPU intensive task as a background or batch job.
+# nice ranges from -20 (most favorable scheduling) to 19 (least favorable).
+nice matho-primes 0 9999999999 > /dev/null &
+renice +10 1234 # Where 1234 is the PID
+
+
+# cpulimit
+cpulimit -l 50 matho-primes 0 9999999999 > /dev/null &
+cpulimit -l 50 -p 1234
+
+# cgroups
+# create two groups with different CPU resources
+
+sudo cgcreate -g cpu:/cpulimited
+sudo cgcreate -g cpu:/lesscpulimited
+sudo cgset -r cpu.shares=512 cpulimited
+
+sudo cgexec -g cpu:cpulimited /usr/local/bin/matho-primes 0 9999999999 > /dev/null &
+sudo cgexec -g cpu:lesscpulimited /usr/local/bin/matho-primes 0 9999999999 > /dev/null &
+sudo cgexec -g cpu:cpulimited /usr/local/bin/matho-primes 0 9999999999 > /dev/null &
+
+
+
+# Unix Nohup: Run a Command or Shell-Script Even after You Logout
+nohup command-with-options &
+nohup sh custom-script.sh &
+nohup bash -c "sleep 10; touch abc" &
+nohup bash -c "sleep 10; touch abc" </dev/null &>/dev/null &
+
+
+#  Cpufrequtils
+https://wiki.debianforum.de/Cpufrequtils
+https://packages.debian.org/cpufrequtils
+https://wiki.ubuntuusers.de/Prozessortaktung/
+
+sudo apt-get install indicator-cpufreq
+sudo apt-get install cpufrequtils
+sudo apt-get install xfce4-cpufreq-plugin
+
+sudo apt-get install cpufrequtils
+cpufreq-info
+# update-rc.d -f cpufrequtils remove # laptop-mode disable from starting at boot to save a few miliseconds
+
+cp /usr/share/doc/cpufrequtils/examples/cpufrequtils.sample /etc/default/cpufrequtils
+cpufreq-info --help
+cpufreq-set --help
+cpufreq-info -g
+
+cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor # powersave
+cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor # powersave
+cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq  # 3900000
+cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors # performance powersave
+echo performance | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor # update mode
+
+# powersave userspace ondemand conservative performance
+
+sudo apt-get install sysfsutils
+
+Konfigurationsdatei /etc/sysfs.conf
+devices/system/cpu/cpu0/cpufreq/scaling_governor = ondemand
+devices/system/cpu/cpu0/cpufreq/scaling_min_freq = 1000000
+
+sudo update-rc.d ondemand disable
+lsmod | less
+
+grep MHz /proc/cpuinfo
+
+	cpu MHz		: 1673.122
+	cpu MHz		: 1691.457
+	cpu MHz		: 1597.969
+	cpu MHz		: 1663.639
+	cpu MHz		: 1637.088
+	cpu MHz		: 1668.695
+	cpu MHz		: 1657.356
+	cpu MHz		: 1621.414
+
+# Install CPUTool
+sudo apt install cputool
+cputool --cpu-limit 45 -p 2801
+
+
 #############################################################################
 #
 # Get apps list
