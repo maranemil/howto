@@ -809,4 +809,91 @@ diff -U3 --minimal "$@" |
 
 
 
+#############################################################################
+#
+#   How to get CPU info
+#
+#############################################################################
+
+https://askubuntu.com/questions/218567/any-way-to-check-the-clock-speed-of-my-processor
+
+lscpu | grep MHz
+
+    CPU MHz:             1633.116
+    CPU max MHz:         3900,0000
+    CPU min MHz:         1600,0000
+
+cat /var/log/kern.log | grep "MHz processor"
+cat /proc/cpuinfo | grep "MHz"
+
+    cpu MHz		: 2606.742
+    cpu MHz		: 2592.891
+    cpu MHz		: 2188.983
+    cpu MHz		: 1911.491
+    cpu MHz		: 2418.023
+    cpu MHz		: 2229.400
+    cpu MHz		: 2436.235
+    cpu MHz		: 2440.247
+
+lshw -c cpu | grep capacity
+
+    capacity: 3900MHz
+
+
+# sudo dmidecode -t processor | grep "Speed"
+# cat /var/log/dmesg | grep "MHz processor"
+
+
+sudo watch -n 1  cat /sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_cur_freq
+cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_max_freq
+
+    3900000
+    3900000
+    3900000
+    3900000
+    3900000
+    3900000
+    3900000
+    3900000
+
+#############################################################################
+#
+#   Optimise Ubuntu
+#
+#   https://linuxwiki.de/Debian/Installation
+#   https://www.systutorials.com/docs/linux/man/5-pulse-daemon.conf/
+#
+#############################################################################
+
+sudo sysctl -w vm.swappiness=10
+
+lspci -tv
+
+    -[0000:00]-+-00.0  Intel Corporation Xeon E3-1200 v2/3rd Gen Core processor DRAM Controller
+           +-01.0-[01]--+-00.0  NVIDIA Corporation GK107 [GeForce GT 640 OEM]
+           |            \-00.1  NVIDIA Corporation GK107 HDMI Audio Controller
+
+
+free -h
+cat /proc/sys/kernel/watchdog # 1
+
+sudo nano /etc/pulse/daemon.conf
+cpu-limit = no
+high-priority = yes
+
+
+#############################################################################
+#
+# Get apps list
+#
+#############################################################################
+
+# cp /etc/apt/sources.list
+dpkg -l | grep browser
+apt list | grep browser
+systemctl start rc-local.service
+apt-get install firmware-linux
+apt-get --yes --force-yes dist-upgrade
+
+
 
