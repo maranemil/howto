@@ -809,3 +809,37 @@ for ($row = 3; $row <= $highestRow; ++$row) {
 
 // $filetype = PHPExcel_IOFactory::identify($dirpath . '/' . $filename);
 // PHPExcel_Settings::setZipClass(PHPExcel_Settings::ZIPARCHIVE);
+
+
+
+########################################################################
+#
+#   Importing data to HIVE HDFS  Presto - SymfonyLive London 2017 - Michael Cullum - Hadoop Symfony & PHP
+#   https://www.youtube.com/watch?v=V7WuJ4bQnC0
+#
+########################################################################
+
+
+while read filename; do
+	echo $filename
+	hadoop fs -put /path/$filename /tmp/
+	echo "LOAD DATA INPATH '/tmp/$filename'
+	INTO TABLE temp_csv;
+
+	INSERT INTO TABLE temp_orc
+	SELECT * FROM temp_csv;
+
+	TRUNCATE TABLE temp_csv;" | hive
+done
+
+...
+
+/opt/presto/bin/presto-cli --server hadoop.localhost:8080 --catalog hive --chema curr_dns
+SELECT max(rtt) from curr_dns where pool=0
+
+...
+
+$socket = new \SamKnows\Presto\Client\RemoteHost('http','cordinator.localhost','8080')
+$conn = new \SamKnows\Presto\Client\HttpConnection($socket, new NullLogger()....)
+
+
