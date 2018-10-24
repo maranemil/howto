@@ -1,0 +1,146 @@
+<html>
+  <head>
+    <!-- Load TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.13.0"> </script>
+
+    <!-- Place your code in the script tag below. You can also use an external .js file -->
+    <script>
+
+    	console.clear()
+
+      // http://blog.tristansokol.com/2018/06/23/my-first-tensorflow.js-project/
+
+      // ---------------------------------------------------
+
+      tf.scalar(3.14).print();
+      let a = tf.scalar(2);
+      let b = tf.scalar(3);
+
+      console.log('a: '+a.dataSync()[0]+', b: '+b.dataSync()[0]);
+      console.log('Addition with constants:'+ a.add(b).dataSync()[0]);
+      console.log('Multiplication with constants:'+ a.mul(b).dataSync()[0]);
+
+      // ---------------------------------------------------
+
+      const xzs = tf.tensor2d([1,2,3,4,5], [5,1]).print();
+      const yzs = tf.tensor2d([10,20,30,40,50], [5,1]).print();
+
+      // ---------------------------------------------------
+
+      let a1 = tf.tensor2d([[3, 3]]);
+      let b1 = tf.tensor2d([[2], [2]]);
+      a1.matMul(b1).print();
+
+      const trainX = [3.3, 4.4, 5.5, 6.71, 6.93, 6.182, 7.59, 2.167, 7.042, 10.791 ];
+      const trainY = [1.7, 2.76, 2.09, 3.19, 1.694, 2.596, 2.53, 1.221, 2.827, 3.465];
+
+      console.log(trainX);
+      console.log(trainY);
+
+      tf.scalar(3.14).print(); // one value 3.14
+      tf.tensor1d([1, 2, 3]).print(); // 1d 1,2,3
+      tf.fill([2, 2], 4).print(); // fill with 4
+      tf.randomNormal([2, 1]).print();
+      tf.randomUniform([2, 2]).print();
+      // Pass an array of values to create a vector.
+			tf.tensor([1, 2, 3, 4]).print();
+      // Pass a nested array of values to make a matrix or a higher
+      // dimensional tensor.
+      tf.tensor([[1, 2], [3, 4]]).print();
+      // Pass a flat array and specify a shape yourself.
+			tf.tensor([1, 2, 3, 4], [2, 2]).print();
+      // Pass a nested array.
+			tf.tensor2d([[1, 2], [3, 4]]).print();
+      // Pass a flat array and specify a shape.
+			tf.tensor2d([1, 2, 3, 4], [2, 2]).print();
+      // https://www.tensorflow.org/api_docs/python/tf/range
+      // https://js.tensorflow.org/api/0.13.0/#real
+      // https://js.tensorflow.org/api/0.13.0/#range
+
+      /*const trainX = tf.range(1, 3 ,0.25 ).print();
+      const trainY = tf.range(1, 3, 0.25 ).print();
+
+      console.log(trainX);
+      console.log(trainY);
+      console.log(trainYo); */
+
+      const m2 = tf.variable(tf.scalar(Math.random()));
+      const b2 = tf.variable(tf.scalar(Math.random()));
+
+      function predict(x) {
+        return tf.tidy(function() {
+          return m2.mul(x).add(b2);
+        });
+      }
+
+      function loss(prediction, actualValues) {
+        // Having a good error function is key for training a machine learning model
+        const error = prediction.sub(actualValues).square().mean();
+        return error;
+      }
+
+      const learningRate = 0.01;
+			const optimizer = tf.train.sgd(learningRate);
+
+      function train() {
+        optimizer.minimize(function()  {
+          const predsYs = predict(tf.tensor1d(trainX));
+          stepLoss = loss(predsYs, tf.tensor1d(trainY))
+          console.log(stepLoss.dataSync()[0])
+          return stepLoss;
+        });
+        //plot();
+      }
+
+      console.log(train())
+
+
+
+    /*
+      // Our coefficient variables
+      const m = tf.variable(tf.scalar(Math.random())) // slope
+      const b = tf.variable(tf.scalar(Math.random())) // y intercept
+		  function predict(x) {
+        return tf.tidy(() => {
+          // Create a vector of x values
+          const xVector = tf.tensor1d(x)
+          // y = mx + b
+          const yPred = xVector.mul(this.m).add(this.b)
+          return yPred
+        });
+     }
+    // loss function: mean squared error
+		const loss = (yPred, y) =>  yPred.sub(y).square().mean()
+		// optimiser: stochastic gradient descent
+		const learningRate = 0.5
+		const optimizer = tf.train.sgd(learningRate)
+
+    // train function: running in the Two.js animation loop ~60 times per second
+    // optimiser.minimize() automatically adjusts our tf.variable coefficents
+    const train = () => {
+      tf.tidy(() => {
+        if (x_vals.length > 0) {
+          const y = tf.tensor1d(y_vals)
+          optimiser.minimize(() => loss(predict(x_vals), y))
+        }
+      })
+    }
+
+    // getting values from tensors is async
+    predict([-1, 1]).data().then(yVals => {
+      // plot the Two.js line on the canvas
+      two.makeLine(
+        // x1, y1
+        -1 * width, height * yVals[0]),
+        // x2, y2
+        1 * width, height * yVals[1]
+    })
+      */
+
+
+    </script>
+  </head>
+
+  <body>
+  </body>
+</html>
