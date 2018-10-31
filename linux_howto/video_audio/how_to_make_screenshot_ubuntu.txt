@@ -81,3 +81,115 @@ TMP_AVI=$(mktemp /tmp/outXXXXXXXXXX.avi)
 ffmpeg -s "$W"x"$H" -y -f x11grab -i :0.0+$X,$Y -vcodec huffyuv -r 25 $TMP_AVI && convert -set delay 5 -layers Optimize $TMP_AVI out.gif
 
 
+
+
+
+###############################################
+#--------------------------------
+capture screen
+#--------------------------------
+###############################################
+
+ffmpeg -f x11grab -s xga -r 30 -i :0.0 -qscale 0.1 -vcodec huffyuv grab.avi
+ffmpeg -f x11grab -s SZ -r 30 -i :0.0 -qscale 0 -vcodec huffyuv grab.avi
+
+ffmpeg -f x11grab -video_size 1920x1080 -framerate 30 -i :1 \
+       -vcodec libx264 -preset ultrafast -qp 0 -pix_fmt yuv444p \
+       video.mkv
+
+capture screen and webcam overlay
+
+ffmpeg -f x11grab -thread_queue_size 64 -video_size 1920x1080 -framerate 30 -i :1 \
+       -f v4l2 -thread_queue_size 64 -video_size 320x180 -framerate 30 -i /dev/video0 \
+       -filter_complex 'overlay=main_w-overlay_w:main_h-overlay_h:format=yuv444' \
+       -vcodec libx264 -preset ultrafast -qp 0 -pix_fmt yuv444p \
+       video.mkv
+
+#--------------------------------
+Gnome Shell and Wayland: Python
+#--------------------------------
+
+#!/usr/bin/env python3
+from dbus import SessionBus, Interface
+from os import getcwd, path
+from sys import argv
+
+BUS_NAME = 'org.gnome.Shell.Screencast'
+PATH_NAME = '/org/gnome/Shell/Screencast'
+INTERFACE_NAME = BUS_NAME
+PIPELINE='x264enc pass=qual quantizer=0 speed-preset=ultrafast ! queue ! matroskamux'
+
+if path.isabs(argv[1]):
+    name = argv[1]
+else:
+    name = path.join(getcwd(), argv[1])
+
+bus = SessionBus()
+screen_cast = bus.get_object(BUS_NAME, PATH_NAME)
+screen_cast = Interface(screen_cast, INTERFACE_NAME)
+
+ret, name = screen_cast.Screencast(name, {'pipeline': PIPELINE})
+
+if not ret:
+    print('Error starting screencast.')
+    raise SystemExit(1)
+
+try:
+    i = input()
+except (EOFError, KeyboardInterrupt):
+    pass
+finally:
+    screen_cast.StopScreencast()
+
+
+#--------------------------------
+Streaming live WebM video with FFmpeg
+#--------------------------------
+
+# webcam
+ffmpeg -f video4linux2 -s 640x480 -r 25 -i /dev/video0 -f alsa -i pulse http://localhost:8090/feed1.ffm
+
+# screen
+ffmpeg -f x11grab -r 25 -s 1280x800 -i :0.0 -f alsa -i pulse http://localhost:8090/feed1.ffm
+
+# get webcam capabilities
+ffmpeg -f video4linux2 -list_formats all -i /dev/video0
+
+# ffmpeg: recording the screen.
+ffmpeg -f x11grab -r 25 -s 640x480 -i :0.0+1,53 out.webm
+
+
+#--------------------------------
+Record Video
+#--------------------------------
+
+# Record Video + Audio to MKV Format
+ffmpeg -video_size 1366x768 -framerate 25 -f x11grab -i :0.0 -f pulse -ac 2 -i default myvideo_$(date +%d_%B_%Y_%H:%M).mkv
+
+# Record Video + Audio to WEBM Format
+ffmpeg -video_size 1366x768 -framerate 25 -f x11grab -i :0.0 -f pulse -ac 2 -i default -vcodec vp8 -acodec libvorbis myvideo_$(date +%d_%B_%Y_%H:%M).webm
+
+
+# Record Video + Audio to OGV Format
+ffmpeg -video_size 1366x768 -framerate 6 -f x11grab -i :0.0 -f pulse -ac 2 -i default -codec:v libtheora -qscale:v 7 -codec:a libvorbis -qscale:a 5  myvideo_$(date +%d_%B_%Y_%H:%M).ogv
+
+
+#--------------------------------
+Capturing your Desktop / Screen Recording
+#--------------------------------
+
+ffmpeg -video_size 1024x768 -framerate 25 -f x11grab -i :0.0+100,200 output.mp4
+ffmpeg -video_size 1024x768 -framerate 25 -f x11grab -i :0.0+100,200 -f alsa -ac 2 -i hw:0 output.mkv
+ffmpeg -video_size 1024x768 -framerate 25 -f x11grab -i :0.0+100,200 -f pulse -ac 2 -i default output.mkv
+
+
+https://trac.ffmpeg.org/wiki/Encode/VP8
+https://trac.ffmpeg.org/wiki/Encode/VP9
+https://trac.ffmpeg.org/wiki/Capture/Desktop
+http://www.ubuntubuzz.com/2016/11/3-ffmpeg-command-lines-for-screen-recording-audio-gnulinux-mkv-webm-ogv-formats.html
+https://gist.github.com/mrdoob/1325393/afb0c2bb87043f910f7b941cbbef90a8394644ee
+https://unix.stackexchange.com/questions/73622/how-to-get-near-perfect-screen-recording-quality
+https://www.virag.si/2012/11/streaming-live-webm-video-with-ffmpeg/
+
+
+
