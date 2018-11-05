@@ -255,3 +255,69 @@ sub Average {
 $num = Average(10, 20, 30);
 print "Average for the given numbers : $num\n";
 
+
+
+##############################################################################
+#
+#	Unsuccessful stat on filename containing newline at
+#       /usr/share/perl5/XML/Simple.pm line 927, <DATA> line 1 (#1)
+#    (W newline) A file operation was attempted on a filename, and that
+#    operation failed, PROBABLY because the filename contained a newline,
+#    PROBABLY because you forgot to chomp() it off.  See perlfunc/chomp.
+#
+#   Unsuccessful stat on filename containing newline at
+#        /usr/share/perl5/XML/Simple.pm line 940, <DATA> line 1 (#1)
+#
+##############################################################################
+
+
+
+
+
+
+
+#############################################################################
+#
+#	Malformed xref in PDF file  at
+#	C:/Perl/site/lib/PDF/API3/Compat/API2/Basic/PDF/File.pm line 1198
+#
+#	Malformed xref in PDF file  at /usr/lib/perl5/site_perl/5.8.8/PDF/API2/Basic/PDF/File.pm
+#	line 1198.
+#
+#	Malformed xref in PDF file at
+#	/opt/local/perl5/5.8.6-thread/lib/site_perl/5.8.6/PDF/API2/Basic/PDF/File.pm line 1238.
+#
+#	bug in GS-ESP 8.15.3, making it unusable for some PDF
+#	files. I falsely assumed that PDF::API2 was the culprit, but I can
+#	reproduce this without using PDF::API2 at all. Or it could be caused the the version of Adobe (Adobe 9 #   seems to give some people this error) that created it.
+#
+# 	PDF Does :: API2 Unterstützung PDF 1.5+ mit Druck XRef zu lesen
+#
+##############################################################################
+
+#   https://metacpan.org/pod/distribution/PDF-OCR2/lib/PDF/OCR2.pod####
+#   https://imagemagick.org/script/formats.php
+#   http://imager.perl.org/docs/Imager/Files.html
+#   https://metacpan.org/pod/distribution/Imager/lib/Imager/Files.pod
+#   https://stackoverflow.com/questions/6800886/does-pdfapi2-support-reading-pdf-1-5-with-compressed-xref
+#   https://www.apt-browse.org/browse/debian/wheezy/main/all/libpdf-api2-perl/2.019-1+deb7u1/file/usr/share/perl5/PDF/API2/Basic/PDF/File.pm
+#   https://github.com/ssimms/pdfapi2/blob/master/lib/PDF/API2/Basic/PDF/File.pm
+#   https://stackoverrun.com/de/q/1717543
+#   https://metacpan.org/pod/PDF::OCR2
+
+# FIX? PDF version > 1.5
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -o out.pdf in.pdf
+
+##############################################################################
+#
+#	Cannot create image mask for file
+#
+##############################################################################
+
+#   http://imager.perl.org/docs/Imager/Files.html
+#   https://metacpan.org/pod/Wx::Perl::Imagick
+#   https://docstore.mik.ua/orelly/linux/cgi/ch13_02.htm
+#   https://imagemagick.org/script/formats.php
+#   https://imagemagick.org/script/perl-magick.php
+#   http://imagemagick.sourceforge.net/http/www/perl.html
+

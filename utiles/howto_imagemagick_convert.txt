@@ -564,3 +564,72 @@ mogrify -format jpg *.jp2
 mogrify -format jpg *.png
 
 -------------------------------------
+
+
+
+
+
+##############################################################################
+#
+#   RGB 3 Channels ImageMagick
+#
+##############################################################################
+
+https://imagemagick.org/script/color-management.php
+https://github.com/ImageMagick/ImageMagick/issues/162
+http://www.imagemagick.org/Usage/masking/#masked_compose
+http://www.imagemagick.org/Usage/masking/#alpha
+http://www.imagemagick.org/Usage/masking/
+https://imagemagick.org/script/convert.php
+https://gist.github.com/iCreateJB/4979468
+
+magick myimage.png -colorspace RGB -separate myimage_channels_%d.png
+magick myimage.png -set colorspace RGB -separate myimage_channels_%d.png
+magick myimage.png -set colorspace RGB -colorspace HSL -separate myimage_channels_%d.png
+
+convert 4.png -define png:color-type=2 5.png
+convert 5.png -type TrueColor -quality 90  6.png
+identify -verbose 6.png | grep "Type"
+
+convert logo: -resize 50% -colorspace gray -transparent white logo2gt.png
+convert logo2gt.png -type Truecolor -define png:color-type=6 -debug coder logo2gt_t6.png
+identify -verbose -debug coder -log %e file.png
+
+convert -size 100x100 gradient: -colorspace Gray r1.png
+convert rose: -colorspace gray -threshold 45% -depth 1 -type bilevel out_bw3.bmp
+convert rose: -colorspace gray  -type palette out_bw5.bmp
+
+convert rose: -mask rose_bg_mask.png \
+          -modulate 110,100,33.3  +mask rose_blue.png
+
+----
+
+convert -verbose basn3p04.png basn3p04_default.png
+generates a 16c paletted PNG from the 15c input. Ok, except that it added the color white, reported separately here.
+
+convert -type TrueColor -verbose basn3p04.png basn3p04_truecolor.png
+generates the same paletted PNG as (1), not the TrueColor you'd expect.
+
+convert -verbose basn0g04.png basn0g04_default.png
+generates a 4-bit grayscale PNG just like the input. All good.
+
+convert -type Palette -verbose basn0g04.png basn0g04_palette.png
+generates the same grayscale PNG as (3), failing to force Palette.
+
+convert -type TrueColor -verbose basn0g04.png basn0g04_truecolor.png
+again generates the same output as (3), failing to force TrueColor.
+
+convert -verbose basn3p04.png basn3p04_default.bmp
+generates a 15c indexed color BMP. All good. (Note that for BMP no color white is added which was a problem with PNG.)
+
+convert -type TrueColor -verbose basn3p04.png basn3p04_truecolor.bmp
+generates a TrueColor BMP. Again all good.
+
+convert -verbose basn0g04.png basn0g04_default.bmp
+also generates a TrueColor BMP though the input was 4-bit grayscale. Somewhat reasonable since there's no native grayscale BMP subformat, but a 4-bit palette would've been more efficient than 24-bit; there's only 16 grays.
+
+convert -type Palette -verbose basn0g04.png basn0g04_palette.bmp
+still generates a TrueColor BMP from the 4-bit grayscale input, failing to force Palette.
+
+
+
