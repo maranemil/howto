@@ -843,3 +843,35 @@ $socket = new \SamKnows\Presto\Client\RemoteHost('http','cordinator.localhost','
 $conn = new \SamKnows\Presto\Client\HttpConnection($socket, new NullLogger()....)
 
 
+
+
+################################################
+#
+#   SSH PHP Libs
+#
+################################################
+
+/*
+
+http://php.net/manual/de/function.ssh2-exec.php
+http://php.net/manual/de/function.ssh2-connect.php
+http://php.net/manual/en/book.ssh2.php
+
+http://prdownloads.sourceforge.net/phpshell/phpshell-2.4.zip?download
+https://kvz.io/blog/2007/07/24/make-ssh-connections-with-php/
+http://phpshell.sourceforge.net/
+https://www.phpclasses.org/package/2477-PHP-SSH-client-implementation-in-pure-PHP.html
+
+
+https://github.com/roke22/PHP-SSH2-Web-Client
+https://github.com/nickola/web-console
+
+https://github.com/rkitover/net-ssh2
+https://metacpan.org/pod/Net::SSH2
+http://phpseclib.sourceforge.net/
+http://phpseclib.sourceforge.net/ssh/examples.html
+
+*/
+
+
+

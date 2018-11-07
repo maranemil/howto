@@ -235,9 +235,57 @@ for file in video_*.mp4; do mv -i "$file" "${file/video_/}"; done  # pattern to 
 for file in aro_tty-mIF-*_opt; do mv -i "${file}" "${file/-mIF-/-mImpFRA-}"; done # replace -mIF with -mImpFRA-
 for f in *_opt; do a="$(echo $f | sed s/-mIF-/-mImpFRA-/)" &&  mv "$f" "$a"; done
 
----------------------------
-random
----------------------------
+
+
+#####################################################################
+#
+#	BATCH RENAME
+#	Renaming hundreds of files at once for proper sorting
+#
+#	https://stackoverflow.com/questions/3211595/renaming-files-in-a-folder-to-sequential-numbers
+#	https://askubuntu.com/questions/473236/renaming-hundreds-of-files-at-once-for-proper-sorting
+#
+#####################################################################
+
+Rename batch 1-x
+ls | cat -n | while read n f; do mv "$f" "$n.extension"; done
+
+Rename batch 0001-000x
+ls | cat -n | while read n f; do mv "$f" `printf "%04d.extension" $n`; done
+
+rename -N 0001 -X 's/.*/$N/' *.jpg
+rename -N 0001 's/.*/$N.jpg/' *.jpg
+rename -e 's/.*/$N.jpg/' *.jpg
+rename -e 's/.*/photo-$N.jpg/' *.jpg
+rename 's/\d+/sprintf("%05d",$&)/e' *.jpg
+
+num=0; for i in *; do mv "$i" "$(printf '%04d' $num).${i#*.}"; ((num++)); done
+ls -1 -c | xargs rename -n 's/.*/our $i; sprintf("%04d.jpg", $i++)/e'
+ls -1 -c | xargs rename -n 's/.*/our $i; if(!$i) { $i=123; } sprintf("%04d.jpg", $i++)/e'
+ls *.JPG| awk 'BEGIN{ a=0 }{ printf "mv %s gopro_%04d.jpg\n", $0, a++ }' | bash
+
+
+touch {1..19}.jpg
+rename 's/\d+/sprintf("%05d", $&)/e' *.jpg
+
+touch track_{9..11}.mp3 && ls
+rename 's/\d+/sprintf("%02d", $&)/e' *.mp3 && ls
+
+for f in *.jpg ; do if [[ $f =~ [0-9]+\. ]] ; then  mv $f `printf "%.5d" "${f%.*}"`.jpg  ; fi ; done
+for f in *.jpg ; do if [[ $f =~ [0-9]+\. ]] ; then echo mv $f `printf "%.5d" "${f%.*}"`.jpg  ; fi ; done
+
+
+
+
+
+
+
+
+#####################################################################
+#
+#   $RANDOM
+#
+#####################################################################
 
 echo $(($RANDOM % 100 + 1))
 echo $(( ( RANDOM % 10 )  + 1 ))

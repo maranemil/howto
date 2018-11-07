@@ -188,4 +188,95 @@ replace in settings xterm with gnome-terminal
 
 
 
+#####################################################################
+#
+#   Replace transparency in PNG images with white background
+#
+#####################################################################
+
+http://www.fmwconcepts.com/imagemagick/tidbits/image.php
+https://stackoverflow.com/questions/2322750/replace-transparency-in-png-images-with-white-background
+https://superuser.com/questions/1298159/imagemagick-how-to-change-images-background-color-with-anti-aliasing
+https://unix.stackexchange.com/questions/228881/alpha-removal-with-imagemagick-is-bad-but-only-with-a-white-background
+https://gist.github.com/MohamedAlaa/d9b54cd856b3edce1510
+https://github.com/ImageMagick/ImageMagick/issues/220
+
+convert -flatten img1.png img1-white.png
+convert image.png -background white -alpha remove white.png
+convert png.png -resize 500x400  -background white -flatten  png_small.jpg
+convert foo.pdf -background "#FFFFFF" -flatten foo.jpg
+
+convert -density 750 -alpha remove -alpha off a.pdf a.png
+convert -density 100 -alpha remove -alpha off a.pdf 90-white.png
+convert -density 300 -alpha remove -alpha off a.pdf png24:300-white-24.png
+
+convert fox.jpg ( -clone 0 -fuzz 11% -transparent white -blur 0x1 ) -compose copy_opacity -composite fox_transparent_fuzzed_blurry_mask.png
+
+convert fox.jpg -type Grayscale -negate -fill white -fuzz 11% +opaque "#000000" -blur 0x1 fox_blur_mask.jpg
+convert fox.jpg fox_blur_mask.jpg -compose copy_opacity -composite fox_transparent_blur_mask_result.png
+
+convert fox.jpg -bordercolor white -border 1x1 -fuzz 11% -fill none -floodfill +0+0 white -shave 1x1 fox_flood_2_minimal.png
+
+*
+*
+*
+
+Remove white background color of an image in ImageMagick
+$ convert  your.jpg  -transparent white  your.png
+
+Flatten a transparent image with a white background:
+convert -flatten img1.png img1-white.png
+
+Make an image transparent
+convert -transparent '#FFFFFF' nontransparent.gif transparent.png
+convert an image into tiles
+convert -size 3200x3200 tile:single_tile.png final.png
+
+making a montage from a collection of images
+montage -geometry +0+0 -background transparent *png montage.png
+
+inverting colors
+convert before.png -negate after.png
+
+generating a favicon
+convert large_image.png -resize 16x16! favicon.ico
+
+Resize keep aspect ratio
+convert input.jpg -resize 250x90 output.jpg
+
+Resize keep minimum image size
+convert input.jpg -resize '250x90^' output.jpg
+
+Clone
+This code reads in the image, copys it with +clone, resizes and saves it. Then resizes and saves the next size. The part of the code within the ( ) has no effect on any of the other part of the code.
+
+convert input.jpg \( +clone -resize 600x600 -write first_save.jpg +delete \) -resize 60x60 thumbnail.jpg
+Speed up jpg resize
+Defining the size of the jpg when loading it will speed up the resizing process. This is done by adding the -size option.
+
+convert -define jpeg:size=250x90 input.jpg -resize 250x90 output.jpg
+adding numbers to a tiled image
+I also once needed to add numbers to a individual parts of a tiled image. I found it easier to script this with Ruby rather than use the shell's looping constructs:
+
+cmd = (0..324).to_a.inject([]) do |cmd,n|
+  y=(n/25*32)+15; x=((n%25)*32)+15
+  cmd << "-draw 'fill red text #{x},#{y} \"#{n}\"'"
+end
+
+convert img.png #{cmd.join(' ')} annotated_img.png
+
+---
+
+gs -q -dQUIET -dSAFER -dBATCH -dNOPAUSE -dNOPROMPT -dMaxBitmap=500000000 -dAlignToPixels=0 -dGridFitTT=1 -sDEVICE=pngalpha -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -r50 -sOutputFile=test_cmyk_blue_gs-%d.png test_cmyk_blue.pdf
+
+convert -colorspace rgb -verbose test_cmyk_blue.pdf i:\test.pn
+convert -background "#FF0000" test_rgb.pdf -flatten testrgb.png
+convert test_rgb.pdf -background "#FF0000" -flatten testrgb.png
+
+
+
+
+
+
+
 
