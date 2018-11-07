@@ -321,3 +321,23 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -o out.pdf in.pdf
 #   https://imagemagick.org/script/perl-magick.php
 #   http://imagemagick.sourceforge.net/http/www/perl.html
 
+
+
+
+######################################################################
+#
+#   Unsuccessful stat on filename containing newline
+#   means that you have a filename containing a newline. Which is perfectly explainable, because#
+#
+#   https://stackoverflow.com/questions/2652261/why-does-perl-complain-about-unsuccessful-stat-on-filename-containing-newline
+#   https://www.perlmonks.org/?node_id=671517
+#
+######################################################################
+
+#According to perldiag if any file operation fails and the filename happens to contain a newline character, the warning "Unsuccessful on filename containing newline" will be emitted.
+#The assumption is that, as you say, the filename has come from standard input or similar, and the user has forgotten to chomp the newline away. You might want to pass the string through chomp anyway, just to see if it works.
+#There is some evidence that &CORE::stat mtime might be broken with some combinations of OS patchlevel and ActiveState Perl versions - a suggested workaround is to use the File::stat module like so:
+
+#my $sb = stat($File::Find::name);
+#my $mtime = scalar localtime $sb->mtime;
+#...you might find File::stat's object representation to be more convenient than the list returned by CORE::stat.
