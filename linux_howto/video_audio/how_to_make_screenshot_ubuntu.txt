@@ -1,3 +1,75 @@
+###############################################
+------------------------------
+Screen default 1
+------------------------------
+###############################################
+
+ffmpeg -video_size [resolution] -framerate [framerate] -f x11grab -i :0.0 -f pulse -ac 2 -i [source] myvid_$(date +%s).mkv
+
+ffmpeg -v warning -video_size 1920x1080 -framerate 25 -f x11grab -i :0.0  myvid_$(date +%s).mov
+
+ffmpeg -video_size 1920x1080 -framerate 25 -f x11grab -i :0.0 -f pulse -ac 2 -i 0 myvid_$(date +%s).mov
+
+ffmpeg -video_size 1920x1080 -f x11grab -i :0 -y -r 10 myvid_$(date +%s).mov
+
+ffmpeg -f x11grab -video_size 1920x1080 -framerate 25 -i :0.0 myvid_$(date +%s).mov
+
+###############################################
+------------------------------
+# virtualbox
+------------------------------
+###############################################
+
+ffmpeg -f x11grab -video_size 1920x1080 -framerate 5 -i :0.0 myvid_$(date +%s).mov
+
+convert
+ffmpeg -i myvid.mov -ss 00:00:59 -threads 2 -preset ultrafast -y myvid2.mov
+ffmpeg -i myvid.mov -r 30 -ss 00:00:59 -threads 2 -preset ultrafast -y myvid2.mov
+
+###############################################
+------------------------------
+Screen default 2
+------------------------------
+###############################################
+
+ffmpeg -f x11grab -video_size 1366x768 -r 25 -i :0.0+1920,300 myvid_$(date +%s).mov
+
+
+
+
+
+
+
+###############################################
+#--------------------------------
+capture screen
+#--------------------------------
+###############################################
+
+ffmpeg -f x11grab -s xga -r 30 -i :0.0 -qscale 0.1 -vcodec huffyuv grab.avi
+ffmpeg -f x11grab -s SZ -r 30 -i :0.0 -qscale 0 -vcodec huffyuv grab.avi
+
+ffmpeg -f x11grab -video_size 1920x1080 -framerate 30 -i :1 \
+       -vcodec libx264 -preset ultrafast -qp 0 -pix_fmt yuv444p \
+       video.mkv
+
+capture screen and webcam overlay
+
+ffmpeg -f x11grab -thread_queue_size 64 -video_size 1920x1080 -framerate 30 -i :1 \
+       -f v4l2 -thread_queue_size 64 -video_size 320x180 -framerate 30 -i /dev/video0 \
+       -filter_complex 'overlay=main_w-overlay_w:main_h-overlay_h:format=yuv444' \
+       -vcodec libx264 -preset ultrafast -qp 0 -pix_fmt yuv444p \
+       video.mkv
+
+
+
+
+
+
+
+
+
+
 https://askubuntu.com/questions/107726/how-to-create-animated-gif-images-of-a-screencast
 https://unix.stackexchange.com/questions/113695/gif-screencasting-the-unix-way
 https://github.com/phw/peek
@@ -83,27 +155,6 @@ ffmpeg -s "$W"x"$H" -y -f x11grab -i :0.0+$X,$Y -vcodec huffyuv -r 25 $TMP_AVI &
 
 
 
-
-###############################################
-#--------------------------------
-capture screen
-#--------------------------------
-###############################################
-
-ffmpeg -f x11grab -s xga -r 30 -i :0.0 -qscale 0.1 -vcodec huffyuv grab.avi
-ffmpeg -f x11grab -s SZ -r 30 -i :0.0 -qscale 0 -vcodec huffyuv grab.avi
-
-ffmpeg -f x11grab -video_size 1920x1080 -framerate 30 -i :1 \
-       -vcodec libx264 -preset ultrafast -qp 0 -pix_fmt yuv444p \
-       video.mkv
-
-capture screen and webcam overlay
-
-ffmpeg -f x11grab -thread_queue_size 64 -video_size 1920x1080 -framerate 30 -i :1 \
-       -f v4l2 -thread_queue_size 64 -video_size 320x180 -framerate 30 -i /dev/video0 \
-       -filter_complex 'overlay=main_w-overlay_w:main_h-overlay_h:format=yuv444' \
-       -vcodec libx264 -preset ultrafast -qp 0 -pix_fmt yuv444p \
-       video.mkv
 
 #--------------------------------
 Gnome Shell and Wayland: Python
