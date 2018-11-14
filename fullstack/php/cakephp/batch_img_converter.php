@@ -34,3 +34,15 @@ else{
 }
 usleep(rand(130000,180000));
 
+/*
+
+find . -name "*.jpg" | xargs convert -resize 50%
+find . -name "*.jpg" | xargs mogrify -resize 50%
+find . -type f -size +6200k | xargs mogrify -resize 1600x
+
+
+find . -maxdepth 1 -type f -name '*.png' -exec sh -c \
+'identify -format "%[fx:(h>400 && w>400)]\n" "$0" | grep -q 1' {} \; -print0 \
+| xargs -0 mogrify -resize '400x400'
+
+*/
