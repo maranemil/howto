@@ -8,6 +8,9 @@
 find . -type f -print -quit -name "*jpg" | xargs identify | cut  -c  1-25,31-40 | xargs echo
 # convert
 find . -type f  -name "*jpg" | xargs identify | xargs -l  php ./myscript.php
+find . -type f -size +100k -name "*jpg" | xargs identify | xargs -l  php ./myscript.php
+# search
+grep --colour -r -ainH -m 1 "<html" . | cut -c 1-120 > html.txt
 */
 
 
