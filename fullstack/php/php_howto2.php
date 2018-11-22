@@ -940,3 +940,64 @@ app.use(function(req, res, next) {
 
 
 
+
+
+
+################################################################
+
+Finding the Union, Intersection, or Difference of Two Arrays
+
+################################################################
+
+http://phptester.net/
+https://www.techrepublic.com/article/17-useful-functions-for-manipulating-arrays-in-php/
+https://www.oreilly.com/library/view/php-cookbook/1565926811/ch04s24.html
+http://php.net/manual/de/function.array-intersect.php
+
+$aRed = array( 5, 14, 19, 72, 77, 86);
+
+$arU = array(
+	"1" => array(5, 14, 19, 72, 77, 86),
+	"2" => array(19,14,5),
+	"3" => array(21,33,44)
+);
+
+foreach($arU as $key => $item){
+	//print_r(count(array_diff_assoc($item,$aRed)));
+	print_r(array_diff_assoc($item,$aRed));
+	echo "<br>";
+}
+echo "<hr>";
+foreach($arU as $key => $item){
+	//print_r(count(array_diff_assoc($item,$aRed)));
+	print_r(array_diff($item,$aRed));
+	echo "<br>";
+}
+echo "<hr>";
+foreach($arU as $key => $item){
+	//print_r(count(array_diff_assoc($item,$aRed)));
+	print_r(array_intersect($item,$aRed));
+	echo "<br>";
+
+	if(count(array_intersect($item,$aRed)) != count($aRed)){
+		echo "not identical";
+		echo "<br>";
+	}
+
+}
+echo "<hr>";
+
+/*
+Array ( )
+Array ( [0] => 19 [2] => 5 )
+Array ( [0] => 21 [1] => 33 [2] => 44 )
+
+Array ( )
+Array ( )
+Array ( [0] => 21 [1] => 33 [2] => 44 )
+
+Array ( [0] => 5 [1] => 14 [2] => 19 [3] => 72 [4] => 77 [5] => 86 )
+Array ( [0] => 19 [1] => 14 [2] => 5 )  not identical
+Array ( )  not identical
+*/
+
