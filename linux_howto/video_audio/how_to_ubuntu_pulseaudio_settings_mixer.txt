@@ -1,0 +1,147 @@
+
+###########################################################
+
+Sound enhancers/equalizer?
+
+https://wiki.ubuntuusers.de/Mixer/
+https://wiki.ubuntuusers.de/PulseAudio/
+https://wiki.debianforum.de/Audiokonfiguration
+https://wiki.ubuntuusers.de/Alsamixer/
+https://www.omgubuntu.co.uk/2017/06/install-pulse-effects-ubuntu-ppa
+https://launchpad.net/~yunnxx/+archive/ubuntu/gnome3/+files/pulseeffects_1.312entornosgnulinuzesty-1ubuntu1_amd64.deb
+https://www.maketecheasier.com/pulse-audio-equalizer-ubuntu/
+https://wiki.ubuntuusers.de/Sound_Problembehebung/
+https://www.systutorials.com/docs/linux/man/5-pulse-daemon.conf/
+http://www.ajvg.com/Linux-Skype-Audio-Problem-deutsch.htm
+https://lists.freedesktop.org/archives/pulseaudio-discuss/2016-May/026285.html
+https://trac.ffmpeg.org/wiki/audio%20types
+https://manpages.debian.org/testing/pulseaudio-utils/paplay.1.en.html
+https://www.systutorials.com/docs/linux/man/5-pulse-daemon.conf/
+
+default-sample-format= The default sampling format. Specify one of u8, s16le, s16be, s24le, s24be, s24-32le, s24-32be, s32le, s32be float32le, float32be, ulaw, alaw. Depending on the endianness of the CPU the formats s16ne, s16re, s24ne, s24re, s24-32ne, s24-32re, s32ne, s32re, float32ne, float32re (for native, resp. reverse endian) are available as aliases.
+default-sample-rate= The default sample frequency.
+default-sample-channels The default number of channels.
+default-channel-map The default channel map.
+alternate-sample-rate The alternate sample frequency.
+
+default-fragments= The default number of fragments. Defaults to 4.
+default-fragment-size-msec=The duration of a single fragment. Defaults to 25ms (i.e. the total buffer is thus 100ms long).
+
+enable-deferred-volume= Enable deferred volume for the sinks that support it. This feature is enabled by default.
+deferred-volume-safety-margin-usec= The amount of time (in usec) by which the HW volume increases are delayed and HW volume decreases are advanced. Defaults to 8000 usec.
+deferred-volume-extra-delay-usec= The amount of time (in usec) by which HW volume changes are delayed. Negative values are also allowed. Defaults to 0.
+
+
+DE alaw            PCM A-law
+DE f32be           PCM 32-bit floating-point big-endian
+DE f32le           PCM 32-bit floating-point little-endian
+DE f64be           PCM 64-bit floating-point big-endian
+DE f64le           PCM 64-bit floating-point little-endian
+DE mulaw           PCM mu-law
+DE s16be           PCM signed 16-bit big-endian
+DE s16le           PCM signed 16-bit little-endian
+DE s24be           PCM signed 24-bit big-endian
+DE s24le           PCM signed 24-bit little-endian
+DE s32be           PCM signed 32-bit big-endian
+DE s32le           PCM signed 32-bit little-endian
+DE s8              PCM signed 8-bit
+DE u16be           PCM unsigned 16-bit big-endian
+DE u16le           PCM unsigned 16-bit little-endian
+DE u24be           PCM unsigned 24-bit big-endian
+DE u24le           PCM unsigned 24-bit little-endian
+DE u32be           PCM unsigned 32-bit big-endian
+DE u32le           PCM unsigned 32-bit little-endian
+DE u8              PCM unsigned 8-bit
+
+
+###########################################################
+
+cat /etc/pulse/daemon.conf
+nano /etc/pulse/daemon.conf
+
+; resample-method = speex-float-1
+; default-sample-format = s16le
+; default-sample-rate = 44100
+
+resample-method = src-sink-medium-quality
+default-sample-format = s24le
+default-sample-rate = 96000
+
+or
+
+default-sample-format = s16le
+default-sample-rate = 22050
+alternate-sample-rate = 24000
+enable-remixing = yes
+
+pulseaudio -k && pulseaudio --start
+
+# pulseaudio -D
+
+# Digital Stereo (HDMI) * * * * * *
+default-sample-format = s16le
+default-sample-rate = 22050
+alternate-sample-rate = 24000
+default-channel-map = front-left,front-right
+default-sample-channels = 2
+
+# Digital Mono (HDMI) * * * * * * *
+default-sample-format = s16le
+default-sample-rate = 16000
+alternate-sample-rate = 24000
+default-channel-map = mono
+default-sample-channels = 1
+
+... ... ...
+
+dpkg -l paman
+dpkg -l pavucontrol
+sudo apt-get install pavucontrol
+sudo apt-get install paman pavucontrol
+
+... ... ...
+
+sudo apt-get install pulseaudio-equalizer
+sudo apt update && sudo apt install pulseaudio-equalizer
+sudo apt-get install pulseaudio-equalizer
+sudo apt install jackeq
+sudo apt install jack-rack
+sudo apt install gnome-alsamixer
+sudo apt install aumix
+sudo apt install alsamixer
+# pulseaudio-equalizer-gtk
+# aplay -l
+
+... ... ...
+
+cat /proc/asound/cards
+lspci | grep -i audio
+echo normal:; aplay -l; echo sudo:; sudo aplay -l
+speaker-test --channels 2 --rate 48000 --device hw:0,3
+sudo apt-get install alsa-utils alsamixergui
+
+... ... ...
+
+cat /proc/asound/cards
+alsamixer -D hw:2
+# oder
+alsamixer -D hw:NVidia
+alsamixer -D equal
+sudo apt-get install libasound2-plugin-equal
+
+... ... ...
+
+sudo apt-get install libsdl1.2debian-pulseaudio pulseaudio-module-gconf pulseaudio-module-lirc pulseaudio-module-x11 pulseaudio-module-zeroconf pulseaudio-module-bluetooth
+
+pulseaudio -k    # Beendet PulseAudio
+pulseaudio -D    # Neustart als daemon
+
+~/.config/pulse/daemon.conf
+
+high-priority = yes       # default  no
+rlimit-nice = 31          # default  31, Werte größer als 31 werden auf 31 gesetzt
+nice-level = -11          # default -11, kleinstmöglicher Wert: (20 - rlimit-nice), kleiner heißt mehr CPU-%
+
+realtime-scheduling = yes # default no
+rlimit-rtprio = 9         # default  9, Werte von 1 bis 99 erlaubt
+realtime-priority = 9     # default  5, höchstmöglicher Wert: rlimit-rtprio, höher heißt mehr Priorität

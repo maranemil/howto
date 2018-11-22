@@ -875,3 +875,68 @@ http://phpseclib.sourceforge.net/ssh/examples.html
 
 
 
+
+
+
+################################################
+#
+#   No 'Access-Control-Allow-Origin' header is present on the requested resource. ﻿ ​
+#
+################################################
+
+/*
+https://www.moxio.com/blog/12/how-to-make-a-cross-domain-request-in-javascript-using-cors
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Server-Side_Access_Control
+https://developer.tizen.org/dev-guide/2.4/org.tizen.tutorials/html/web/w3c/security/cors_tutorial_w.htm
+
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+*/
+
+<?php header('Access-Control-Allow-Origin: *'); ?>
+
+/*
+
+PHP
+
+//Set Access-Control-Allow-Origin with PHP
+header('Access-Control-Allow-Origin: http://site-a.com', false);
+
+//Set Access-Control-Allow-Origin with PHP
+header('Access-Control-Allow-Origin: http://site-a.com', false);
+
+header('Access-Control-Allow-Origin: http://admin.example.com');
+header("Access-Control-Allow-Credentials: true");
+header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
+header('Access-Control-Max-Age: 1000');
+header('Access-Control-Allow-Headers: Content-Type, Content-Range, Content-Disposition, Content-Description');
+
+
+// Raw header
+Access-Control-Allow-Origin: *
+// How to send the response header with PHP
+header("Access-Control-Allow-Origin: *");
+// How to send the response header with Apache (.htaccess)
+Header set Access-Control-Allow-Origin "*"
+// How to send the response header with Nginx
+add_header 'Access-Control-Allow-Origin' '*';
+// How to send the response header with Express.js
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    next();
+});
+
+
+# htaccess
+<FilesMatch "\.(ttf|otf|eot|woff|woff2)$">
+    <IfModule mod_headers.c>
+        Header set Access-Control-Allow-Origin "http://example.com"
+    </IfModule>
+</FilesMatch>
+
+*/
+
+
+
+
+
