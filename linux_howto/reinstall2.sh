@@ -297,3 +297,43 @@ deb cdrom:[Debian GNU/Linux 9.5.0 _Stretch_ - Official amd64 xfce-CD Binary-1 20
 apt-get update
 apt-get updgrade
 apt-get install virtualbox-guest-dkms virtualbox-guest-x11 linux-headers-$(uname -r)
+
+
+
+
+
+#########################################################
+#
+# add new user in mysql mariadb
+#
+#########################################################
+
+https://dev.mysql.com/doc/refman/8.0/en/default-privileges.html
+
+sudo mysql -u root -p
+use mysql;
+show tables;
+describe user;
+
+GRANT ALL PRIVILEGES ON *.* TO 'blabla'@'localhost' IDENTIFIED BY 'blabla';
+SET PASSWORD FOR 'blabla'@'localhost' = PASSWORD('blabla');
+ALTER USER 'blabla'@'localhost' IDENTIFIED BY 'blabla';
+update user set authentication_string=password('blabla') where user='blabla';
+flush privileges;
+quit
+
+#########################################################
+#
+# php change config
+#
+#########################################################
+
+php -i | grep ini
+sudo nano /etc/php/7.2/cli/php.ini
+sudo nano /etc/php/7.2/apache2/php.ini
+
+sudo find / -name php.ini
+/etc/php/7.2/cli/php.ini
+/etc/php/7.2/apache2/php.ini
+
+sudo service apache2 restart
