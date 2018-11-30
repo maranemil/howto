@@ -26,8 +26,8 @@ from sklearn.datasets import load_iris
 iris = load_iris()
 print iris.feature_names
 print iris.target_names
-print iris.data[0]
-print iris.target0]
+print iris.data[0];
+print iris.target[0];
 for i in range(len(iris.target)):
 	print "Example %d: label %s, features %s" % (i,iris.target[i], iris.data[i])
 
@@ -107,7 +107,7 @@ ggpairs(df, aes(colour = Irisart, alpha = 0.4))
 
 """
 
-Python IRIS
+# Python IRIS
 import pandas as pd
 import seaborn as sns
 df = pd.read_csv('IrisData.csv', delimiter=',', header=0, index_col=False)
@@ -137,5 +137,9 @@ sepal_length	sepal_width	petal_length	petal_width	species
 6.4	2.8	5.6	2.1	virginica
 
 """
+
+
+
+
 
 
