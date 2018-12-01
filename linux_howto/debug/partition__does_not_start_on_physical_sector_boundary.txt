@@ -1,0 +1,214 @@
+
+#################################################################
+#
+#   How to correct “Partition does not start on physical sector boundary” on Linux
+#
+#################################################################
+
+sudo fdisk -l
+fdisk -l /dev/sda
+lshw
+sudo gparted
+sudo fdisk /dev/sdb
+
+fdisk -lu
+
+Help:
+
+  Generic
+   d   delete a partition
+   F   list free unpartitioned space
+   l   list known partition types
+   n   add a new partition
+   p   print the partition table
+   t   change a partition type
+   v   verify the partition table
+   i   print information about a partition
+
+  Misc
+   m   print this menu
+   x   extra functionality (experts only)
+
+  Script
+   I   load disk layout from sfdisk script file
+   O   dump disk layout to sfdisk script file
+
+  Save & Exit
+   w   write table to disk and exit
+   q   quit without saving changes
+
+  Create a new label
+   g   create a new empty GPT partition table
+   G   create a new empty SGI (IRIX) partition table
+   o   create a new empty DOS partition table
+   s   create a new empty Sun partition table
+
+
+# parted -a optimal /dev/sda
+(parted) mklabel msdos
+(parted) q
+
+# parted -a optimal /dev/sdb
+(parted) mkpart primary ext4 0% 100%
+
+# mkfs -t ext4 /dev/sdd1
+# e2label /dev/sda1 wd-red
+
+# gdisk
+
+sudo gdisk
+GPT fdisk (gdisk) version 1.0.3
+
+Type device filename, or press <Enter> to exit: /dev/sdb
+The protective MBR's 0xEE partition is oversized! Auto-repairing.
+
+Partition table scan:
+  MBR: protective
+  BSD: not present
+  APM: not present
+  GPT: present
+
+Found valid GPT with protective MBR; using GPT.
+
+Command (? for help): ?
+b	back up GPT data to a file
+c	change a partition's name
+d	delete a partition
+i	show detailed information on a partition
+l	list known partition types
+n	add a new partition
+o	create a new empty GUID partition table (GPT)
+p	print the partition table
+q	quit without saving changes
+r	recovery and transformation options (experts only)
+s	sort partitions
+t	change a partition's type code
+v	verify disk
+w	write table to disk and exit
+x	extra functionality (experts only)
+?	print this menu
+
+
+fdisk -c -u /dev/sdb
+
+Command (m for help): p
+Disk /dev/sdb: 931.5 GiB, 1000204886016 bytes, 1953525168 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+Disklabel type: gpt
+Disk identifier: 2946BF91-9788-43DF-885C-300FFF216B36
+
+Device      Start        End    Sectors   Size Type
+/dev/sdb1      34     262177     262144   128M Microsoft reserved
+/dev/sdb2  264192 1953523711 1953259520 931.4G Microsoft basic data
+
+Partition 1 does not start on physical sector boundary.
+
+parted -l
+fdisk -l
+parted -a optimal /dev/sdb
+
+# mkpart primary 1MiB -1s
+
+sudo mount -vvv -t ext4 /dev/sdb /mnt/
+sudo mount -vvv  /dev/sdb /mnt/
+sudo parted /dev/sdb print
+mount -vvv -t ext4 /dev/sdb1 /mnt/
+
+############################################
+#
+#   wrong fs type, bad option, bad superblock
+#
+############################################
+
+sudo fsck /dev/sdb
+sudo e2fsck /dev/sdb
+sudo e2fsck -n /dev/sdb
+
+/*
+fsck from util-linux 2.31.1
+e2fsck 1.44.1 (24-Mar-2018)
+ext2fs_open2: Bad magic number in super-block
+fsck.ext2: Superblock invalid, trying backup blocks...
+fsck.ext2: Bad magic number in super-block while trying to open /dev/sdb
+
+The superblock could not be read or does not describe a valid ext2/ext3/ext4
+filesystem.  If the device is valid and it really contains an ext2/ext3/ext4
+filesystem (and not swap or ufs or something else), then the superblock
+is corrupt, and you might try running e2fsck with an alternate superblock:
+    e2fsck -b 8193 <device>
+ or
+    e2fsck -b 32768 <device>
+
+Found a gpt partition table in /dev/sdb
+*/
+
+sudo mount -t auto /dev/sdb /mnt
+dmesg | grep sdb
+lsblk -f
+lsblk
+
+---------------------------
+sudo badblocks -vsn /dev/sdb
+smartctl -A /dev/sdb
+
+# mkfs.ext4 /dev/sdb
+# sudo mount /dev/sdb /media/Data
+# sudo mount -a
+# dmesg | tail
+
+sudo apt install nfs-common
+sudo apt install cifs-utils
+# mount -t nfs 192.168.1.5:/home/shared /mnt/common
+# sudo mount -t ext2 /dev/md0 /mnt/cloudbox/
+# sudo mount -t ntfs /dev/md0 /mnt/cloudbox/
+
+sudo mount /dev/sdb2 /media/Data
+dmesg | tail
+
+sudo fsck -y /dev/sdb
+e2fsck -b 8193 /dev/sdb
+e2fsck -b 32768 /dev/sdb
+sudo fsck -f -y /dev/sdb
+
+sudo mount -a
+mkfs.ext4 -L /home2 /dev/sdb1
+mkfs.ext4 -L /home2 /dev/sdb2
+
+sudo mount -t cifs /dev/sdb /media
+sudo mount -t cifs -o  /dev/sdb /media
+
+---------------------------------------------------
+
+sudo parted -a optimal /dev/sdb
+
+GNU Parted 3.2
+Using /dev/sdb
+Welcome to GNU Parted! Type 'help' to view a list of commands.
+(parted) help
+  align-check TYPE N                        check partition N for TYPE(min|opt)
+        alignment
+  help [COMMAND]                           print general help, or help on
+        COMMAND
+  mklabel,mktable LABEL-TYPE               create a new disklabel (partition
+        table)
+  mkpart PART-TYPE [FS-TYPE] START END     make a partition
+  name NUMBER NAME                         name partition NUMBER as NAME
+  print [devices|free|list,all|NUMBER]     display the partition table,
+        available devices, free space, all found partitions, or a particular
+        partition
+  quit                                     exit program
+  rescue START END                         rescue a lost partition near START
+        and END
+  resizepart NUMBER END                    resize partition NUMBER
+  rm NUMBER                                delete partition NUMBER
+  select DEVICE                            choose the device to edit
+  disk_set FLAG STATE                      change the FLAG on selected device
+  disk_toggle [FLAG]                       toggle the state of FLAG on selected
+        device
+  set NUMBER FLAG STATE                    change the FLAG on partition NUMBER
+  toggle [NUMBER [FLAG]]                   toggle the state of FLAG on partition
+        NUMBER
+  unit UNIT                                set the default unit to UNIT
+  version                                  display the version number and
