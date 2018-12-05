@@ -181,3 +181,48 @@ SELECT COALESCE(NULL, NULL, NULL, 'W3Schools.com', NULL, 'Example.com');
 SELECT
   CAST(count(number) as UNSIGNED) as average,
 FROM stats
+
+
+
+
+
+#############################################################
+#
+#   MySQL row_number – adding a row number for each row
+#
+#   http://www.mysqltutorial.org/mysql-row_number/
+#   https://blog.sqlauthority.com/2014/03/08/mysql-generating-row-number-for-each-row-using-variable/
+#   https://www.tech-recipes.com/rx/17470/mysql-how-to-get-row-number-order-5/
+#   https://www.xaprb.com/blog/2006/12/02/how-to-number-rows-in-mysql/
+#
+#############################################################
+
+SET @row_number = 0;
+SELECT (@row_number:=@row_number + 1) AS num, firstName, lastName
+FROM employees LIMIT 5;
+
+SELECT (@row_number:=@row_number + 1) AS num, firstName, lastName
+FROM employees,(SELECT @row_number:=0) AS t LIMIT 5;
+
+#############################################################
+#
+#  SQL Date Interval Week
+#
+#   http://www.mysqltutorial.org/mysql-date-functions/
+#   http://www.java2s.com/Tutorial/MySQL/0280__Date-Time-Functions/DATESUBcurdateINTERVAL1WEEK.htm
+#   https://discourse.looker.com/t/how-to-count-only-weekdays-between-two-dates/3345
+#   https://dba.stackexchange.com/questions/24262/get-two-weeks-of-data-but-group-by-a-period-of-7-days
+#   https://dba.stackexchange.com/questions/151245/how-to-get-all-data-before-and-after-10-days-of-interval
+#   https://coursesweb.net/php-mysql/days-between-two-dates-specified-week-php-mysql_t
+#
+#############################################################
+
+
+SELECT LAST_DAY('2016-02-03'); # Returns last day of the month.
+SELECT DAYNAME('2000-01-01') dayname; # Dayname "Saturday"
+SELECT DAYNAME('2012-12-01'), DAYOFWEEK('2012-12-01'); # Saturday 7
+SELECT TIMEDIFF('12:00:00','10:00:00') diff; # Diff
+SELECT WEEK(NOW()) # 48 - Week Number
+SELECT DATE_SUB( DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY), INTERVAL +7 DAY ) # last monday
+SELECT DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY) # current monday
+
