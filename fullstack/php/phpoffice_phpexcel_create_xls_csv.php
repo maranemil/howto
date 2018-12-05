@@ -49,10 +49,12 @@ foreach ($arrSheets as $keySheet => $strSheetName) {
 
    // Get Info
    # get SQL data
-    ...
+   mysql_connect("localhost", "mysql_user", "mysql_password") or die("Keine Verbindung möglich: " . mysql_error());
+   mysql_select_db("mydb");
+   $result = mysql_query("SELECT * name FROM mytable");
 
    $i = 2;
-   while ($row = $db->fetchArray()) {
+   while ($row = mysql_fetch_array($result)) {
 
       // push info into sheet
       $strRow_A = "A" . $i;
@@ -71,6 +73,7 @@ foreach ($arrSheets as $keySheet => $strSheetName) {
       $CSVsheet->setCellValue($strRow_D, $row["col3"]);
       $i++;
    }
+   mysql_free_result($result);
 
    if($spreadsheet->getActiveSheet()->getHighestRow() > 1){
       $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($spreadsheet);
@@ -87,7 +90,8 @@ foreach ($arrSheets as $keySheet => $strSheetName) {
 
 // set first sheet tab active
 $objPHPExcel->setActiveSheetIndex(0);
-$strFilenameXls = FileExport_'.$intWeekNr.'_'.time().'.xlsx';
+$strFilenameXls = 'FileExport_'.$intWeekNr.'_'.time().'.xlsx';
+
 // save Excel 2007 file
 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
 $objWriter->save( $strFilenameXls);
@@ -107,6 +111,7 @@ https://phpspreadsheet.readthedocs.io/en/develop/topics/accessing-cells/
 #########################################################
 */
 
+/*
 require 'phptoexcel/vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -118,3 +123,4 @@ $sheet->setCellValue('A1', 'Hello World !');
 
 $writer = new Xlsx($spreadsheet);
 $writer->save('hello world.xlsx');
+*/
