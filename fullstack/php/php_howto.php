@@ -91,8 +91,12 @@ $str=str_replace(array('ä','ö','ü','ß','Ä','Ö','Ü'),array('ae','oe','ue',
 $letters=utf8_encode($_GET['letters']);
 $letters=utf8_decode(preg_replace("/[^a-zA-Z-äöüÄÜÖß\/]/i","",$letters));
 
+# https://alvinalexander.com/php/how-to-remove-non-printable-characters-in-string-regex
+# Allow only ASCII characters
+$result = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $string);
 
-
+# octal characters to hexadecimal characters
+$result = preg_replace('/[\000-\031\200-\377]/', '', $string);
 
 //-------------------------------------
 // php lazy session
