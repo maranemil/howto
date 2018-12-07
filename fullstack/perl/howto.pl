@@ -270,12 +270,6 @@ print "Average for the given numbers : $num\n";
 #
 ##############################################################################
 
-
-
-
-
-
-
 #############################################################################
 #
 #	Malformed xref in PDF file  at
@@ -322,8 +316,6 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -o out.pdf in.pdf
 #   http://imagemagick.sourceforge.net/http/www/perl.html
 
 
-
-
 ######################################################################
 #
 #   Unsuccessful stat on filename containing newline
@@ -341,3 +333,49 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -o out.pdf in.pdf
 #my $sb = stat($File::Find::name);
 #my $mtime = scalar localtime $sb->mtime;
 #...you might find File::stat's object representation to be more convenient than the list returned by CORE::stat.
+
+
+
+
+######################################################################
+#
+#   The Perl “else if” syntax (elsif)
+#   https://alvinalexander.com/blog/post/perl/perl-if-else-elsif-syntax-example
+#
+######################################################################
+
+if ($condition1)
+{
+  # do something
+}
+elsif ($condition2)
+{
+  # do something else
+}
+elsif ($condition3)
+{
+  # yada
+}
+else
+{
+  # do the 'else' thing
+}
+
+######################################################################
+#
+#   Perl’s numeric and string comparison operators
+#
+######################################################################
+
+=head ## your code to comment
+
+                           Numeric Test      String Test
+Equal                           ==                eq
+Not equal                       !=                ne
+Less than                       <                 lt
+Greater than                    >                 gt
+Less than or equal to           <=                le
+Greater than or equal to        >=                ge
+
+=cut
+
