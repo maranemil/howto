@@ -784,6 +784,23 @@ array_walk($csv, function(&$a) use ($csv) {
 });
 array_shift($csv); # remove column header
 
+############################################################
+#
+#	Split String or Array in group of 3
+#
+############################################################
+
+http://php.net/manual/de/function.array-chunk.php
+http://php.net/manual/de/function.str-split.php
+
+// array
+$input_array = array('a', 'b', 'c', 'd', 'e');
+print_r(array_chunk($input_array, 3));
+
+// string
+$origionalvar = "0123456789";
+$variable = str_split($origionalvar, 3);
+
 ########################################################################
 #
 # Read Excel
