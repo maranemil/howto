@@ -12,6 +12,7 @@ detect car in png -> yolo3 tf
 detect plate in car pngs -> openalpr
 export list
 
+------------------------------------------------------------------------------
 
 https://codelabs.developers.google.com/codelabs/tensorflow-for-poets/#0
 https://www.tensorflow.org/hub/tutorials/image_retraining
@@ -25,7 +26,7 @@ https://github.com/tensorflow/models/blob/master/tutorials/image/imagenet/classi
 https://github.com/tensorflow/models/blob/master/research/nst_blogpost/4_Neural_Style_Transfer_with_Eager_Execution.ipynb
 https://github.com/tensorflow/tensorflow/blob/r1.11/tensorflow/contrib/eager/python/examples/pix2pix/pix2pix_eager.ipynb
 
---------------------------
+------------------------------------------------------------------------------
 
 https://www.youtube.com/watch?v=QfNvhPx5Px8
 https://gist.github.com/jkjung-avt/790a1410b91c170187f8dbdb8cc698c8
@@ -43,3 +44,190 @@ time alpr -r "/usr/share/..../openalpr/runtime_data” sample.jpg
 time alpr --clock -n 1 'Drive around Bendigo-hrD75ebjCms.mp4' > bendigo.txt
 fgrep confidence bendigo.txt| cut -d' ' -f 6 | sort -u | shuf | head
 fgrep 'confidence: 9' bendigo.txt | cut -d' ' -f 6 | sort -u
+
+------------------------------------------------------------------------------
+
+https://github.com/openalpr/openalpr/wiki/Pattern-Matching
+http://doc.openalpr.com/accuracy_improvements.html
+http://doc.openalpr.com/on_premises.html
+https://github.com/openalpr/train-ocr
+http://doc.openalpr.com/opensource.html
+https://github.com/openalpr/openalpr
+https://github.com/anuj-badhwar/Indian-Number-Plate-Recognition-System
+
+------------------------------------------------------------------------------
+
+##############################################################################
+#
+#
+#
+##############################################################################
+
+# --------------------------
+# Slow Installation
+# --------------------------
+
+# git clone https://github.com/anuj-badhwar/Indian-Number-Plate-Recognition-System.git
+git clone https://github.com/openalpr/openalpr
+
+alpr --help
+alpr ../render/frame1.jpg > result.txt
+
+sudo apt-get install tesseract-ocr
+tesseract --list-langs
+
+wget https://tesseract-ocr.googlecode.com/files/eng.traineddata.gz
+wget https://github.com/tesseract-ocr/tessdata/raw/master/eng.traineddata
+gunzip eng.traineddata.gz
+
+ll /usr/share/openalpr/runtime_data/config/
+ll /usr/share/openalpr/runtime_data/ocr/lus.traineddata
+ll /usr/share/openalpr/runtime_data/ocr/lus.traineddata
+sudo cp /usr/share/openalpr/runtime_data/ocr/tessdata/* /usr/share/openalpr/runtime_data/ocr/
+
+
+
+
+=================================================
+# Usage with Python API Tensorflow
+=================================================
+
+# Install Dependency Packages
+
+sudo apt install python3-pip -y
+pip3 install tensorflow
+pip3 install numpy
+pip3 install pandas
+
+
+git clone https://github.com/tensorflow/models
+
+cd models/tutorials/image/imagenet
+python classify_image.py
+python classify_image.py --image_file your_file_here
+python3 classify_image.py --image_file your_file_here
+
+If you wish to supply other JPEG images, you may do so by editing the --image_file argument.
+If you download the model data to a different directory, you will need to point --model_dir to the directory used.
+
+=================================================
+# YOLO detect images
+=================================================
+Installing The Base System (  OpenCV CUDA )
+
+git clone https://github.com/pjreddie/darknet.git
+cd darknet
+make
+
+# mkdir -p obj
+# mkdir -p resutls
+# ./darknet
+# usage: ./darknet <function>
+
+wget https://pjreddie.com/media/files/yolov3.weights #
+wget https://pjreddie.com/media/files/yolo.weights #
+wget https://pjreddie.com/media/files/yolov2.weights #
+wget https://pjreddie.com/media/files/yolo-tiny.weights #
+
+Detection Using A Pre-Trained Model
+
+./darknet detect cfg/yolov3.cfg yolov3.weights data/dog.jpg
+./darknet detector test cfg/coco.data cfg/yolov3.cfg yolov3.weights data/dog.jpg
+
+Multiple Images & Changing The Detection Threshold
+
+./darknet detect cfg/yolov3.cfg yolov3.weights
+./darknet detect cfg/yolov3.cfg yolov3.weights data/dog.jpg -thresh 0
+
+Example
+./darknet detect cfg/yolov3.cfg yolov3.weights  ~/Downloads/baby1.jpg -out baby1_prediction.jpg
+
+
+
+
+
+
+
+
+# --------------------------
+# Quick Installation
+# --------------------------
+
+sudo apt-get update && sudo apt-get install -y openalpr openalpr-daemon openalpr-utils libopenalpr-dev
+sudo apt install ffmpeg -y
+sudo apt install git -y
+sudo apt install youtube-dl -y
+sudo apt install openalpr -y
+
+# -----------------------------------------
+# FLOW
+# -----------------------------------------
+
+#!/bin/bash
+
+# check video formats
+youtube-dl -F jQU_wiBW6M0
+
+# download video
+youtube-dl --format 135 jQU_wiBW6M0
+
+# convert video 2 PNG images - extract every 5 frame
+ffmpeg -i jQU_wiBW6M0.mp4 -s 480x270 -preset ultrafast -vf "select=not(mod(n\,5))" -vsync vfr -q:v 2  render/frame_%03d.png
+
+# resize evntually
+find ../ -name "*.jpg" | xargs mogrify -resize 50%
+
+# count total number of PNG files
+find render/ -name  *.png | wc -l
+
+# @todo - find images with cars ( using yolo3 and tensorflow)
+
+
+# detect plate
+for i in ../render/*.jpg; do alpr -c eu -p ro -n 20  $i >> result.txt; done
+
+# see results
+tail -n 200 result.txt | grep 'pattern_match: 1'
+cat result.txt | grep 'pattern_match: 1'
+
+# save positive result
+cat result.txt | grep 'pattern_match: 1' > result2.txt
+
+# backup
+zip -r render.zip render/
+
+
+---------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
