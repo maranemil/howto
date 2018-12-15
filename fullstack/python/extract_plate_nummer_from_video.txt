@@ -173,6 +173,7 @@ youtube-dl --format 135 jQU_wiBW6M0
 
 # convert video 2 PNG images - extract every 5 frame
 ffmpeg -i jQU_wiBW6M0.mp4 -s 480x270 -preset ultrafast -vf "select=not(mod(n\,5))" -vsync vfr -q:v 2  render/frame_%03d.png
+ffmpeg -i jQU_wiBW6M0.mp4 -preset ultrafast -vf "select=not(mod(n\,10))" -vsync vfr -q:v 2 render/frame_%03d.png
 
 # search in video
 time alpr --clock -n 20 -c eu -p ro jQU_wiBW6M0.mp4  > output.txt
@@ -183,7 +184,12 @@ find ../ -name "*.jpg" | xargs mogrify -resize 50%
 # count total number of PNG files
 find render/ -name  *.png | wc -l
 
-# @todo - find images with cars ( using yolo3 and tensorflow)
+#  find images with cars ( using yolo3 and tensorflow) - with yolo3 takes 26sec, with tensorflow 2sec
+cd ~/Downloads/models/tutorials/image/imagenet
+for i in  ~/Downloads/render/*.png; do python3 classify_image.py --image_file $i  > $i.txt; done
+
+# find car string in tf txt files
+grep ' car ' render/*.txt
 
 # detect plate
 for i in ../render/*.jpg; do alpr -c eu -p ro -n 20  $i >> result.txt; done
