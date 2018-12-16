@@ -175,11 +175,12 @@ youtube-dl --format 135 jQU_wiBW6M0
 ffmpeg -i jQU_wiBW6M0.mp4 -s 480x270 -preset ultrafast -vf "select=not(mod(n\,5))" -vsync vfr -q:v 2  render/frame_%03d.png
 ffmpeg -i jQU_wiBW6M0.mp4 -preset ultrafast -vf "select=not(mod(n\,10))" -vsync vfr -q:v 2 render/frame_%03d.png
 
-# search in video
+# search in video directly
 time alpr --clock -n 20 -c eu -p ro jQU_wiBW6M0.mp4  > output.txt
 
 # resize evntually
 find ../ -name "*.jpg" | xargs mogrify -resize 50%
+for i in render/*.png; do convert -resize 50% $i $i.jpg; done
 
 # count total number of PNG files
 find render/ -name  *.png | wc -l
@@ -192,7 +193,7 @@ for i in  ~/Downloads/render/*.png; do python3 classify_image.py --image_file $i
 grep ' car ' render/*.txt
 
 # detect plate
-for i in ../render/*.jpg; do alpr -c eu -p ro -n 20  $i >> result.txt; done
+for i in render/*.jpg; do alpr -c eu -p ro -n 20  $i >> result.txt; done
 
 # see results
 tail -n 200 result.txt | grep 'pattern_match: 1'
