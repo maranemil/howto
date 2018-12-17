@@ -109,7 +109,6 @@ print(cv2.__version__)
 #pip3 uninstall opencv_python
 #pip3 install opencv_python --user
 
-
 # Create test window
 #cv2.namedWindow("cam_out", cv2.CV_WINDOW_AUTOSIZE)
 # Create vid cap object
