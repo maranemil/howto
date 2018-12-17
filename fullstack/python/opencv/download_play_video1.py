@@ -9,7 +9,9 @@
 #from pytube import YouTube
 
 import numpy as np
-import cv2, pafy
+import cv2
+import os
+#import pafy
 #from pprint import pprint
 
 
@@ -122,7 +124,7 @@ args = vars(ap.parse_args())
 """
 
 
-video = "DrivingDowntown2.mp4";
+video = os.path.expanduser('~/Git/') + "jQU_wiBW6M0Final.mp4";
 cap = cv2.VideoCapture(video)
 width  = int(cap.get(3))
 height = int(cap.get(4))
@@ -130,7 +132,7 @@ fps = int(cap.get(5))
 
 # Define the codec and create VideoWriter object
 #fourcc = cv2.VideoWriter_fourcc(*'H264') # H264 MP4V XVID
-out = cv2.VideoWriter('output999.avi', cv2.VideoWriter_fourcc(*"MJPG"), 30, (width,height),True)
+out = cv2.VideoWriter(os.path.expanduser('~/Git/') + 'output999.avi', cv2.VideoWriter_fourcc(*"MJPG"), 30, (width,height),True)
 
 while(cap.isOpened()):
     ret, frame = cap.read()
@@ -141,7 +143,7 @@ while(cap.isOpened()):
         output = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         out.write(output)
 
-        #cv2.imshow('frame',frame)
+        cv2.imshow('frame',frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
     else:

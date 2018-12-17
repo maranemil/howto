@@ -37,9 +37,7 @@ import time
 # https://www.youtube.com/watch?v=u9DzwcptbrM
 # https://www.youtube.com/watch?v=ZvHXpd9uzN4
 
-
 https://www.youtube.com/watch?v=_YqoKe4rnbw
-
 https://www.youtube.com/watch?v=PGMu_Z89Ao8
 https://www.youtube.com/watch?v=R_XfeQZDWqI
 https://www.youtube.com/watch?v=ZkOsJfT40lY
@@ -95,7 +93,7 @@ exit()
 """
 
 frame_count = 0
-video = "DrivBevCut.mp4";
+video = os.path.expanduser('~/Git/') + "jQU_wiBW6M0Final.mp4";
 cap = cv2.VideoCapture(video)
 frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -113,7 +111,7 @@ print "Seconds per frame using 1/fps :", spf
 
 
 # (*'MJPG') (*'mp42') (*'XVID') (*'X264') (*'H264')
-out = cv2.VideoWriter(  str(time.time()).split('.')[0] + 'output999.avi', cv2.VideoWriter_fourcc(*"MJPG"), 30, (frame_width, frame_height), True)
+out = cv2.VideoWriter(os.path.expanduser('~/Git/') + str(time.time()).split('.')[0] + 'output999.avi', cv2.VideoWriter_fourcc(*"MJPG"), 30, (frame_width, frame_height), True)
 
 # Sorting
 # https://www.geeksforgeeks.org/find-average-list-python/

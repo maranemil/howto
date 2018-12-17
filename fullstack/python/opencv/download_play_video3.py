@@ -6,9 +6,6 @@ pip install scipy
 pip install numpy
 pip install opencv-python
 pip install opencv-contrib-python
-
-
-
 pip install pytesseract
 pip install pafy
 pip install matplotlib
@@ -26,7 +23,7 @@ import cv2
 print(cv2.__version__)
 import json
 import os
-import rect
+#import rect
 
 # importing reduce()
 from functools import reduce
@@ -106,7 +103,7 @@ exit()
 """
 
 frame_count = 0
-video = "DrivingDowntown2a.mp4";
+video = os.path.expanduser('~/Git/') + "jQU_wiBW6M0Final.mp4";
 cap = cv2.VideoCapture(video)
 frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -159,7 +156,7 @@ args = vars(ap.parse_args())
 """
 
 # (*'MJPG') (*'mp42') (*'XVID') (*'X264') (*'H264')
-out = cv2.VideoWriter('output999.avi', cv2.VideoWriter_fourcc(*"MJPG"), 60, (frame_width, frame_height), True)
+out = cv2.VideoWriter(os.path.expanduser('~/Git/') + 'output999.avi', cv2.VideoWriter_fourcc(*"MJPG"), 60, (frame_width, frame_height), True)
 
 # Sorting
 # https://www.geeksforgeeks.org/find-average-list-python/

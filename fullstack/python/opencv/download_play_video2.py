@@ -81,7 +81,7 @@ exit()
 """
 
 frame_count = 0
-video = "DrivingDowntown2a.mp4";
+video = os.path.expanduser('~/Git/') + "jQU_wiBW6M0Final.mp4";
 cap = cv2.VideoCapture(video)
 frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -141,7 +141,7 @@ args = vars(ap.parse_args())
 # fourcc = cv2.VideoWriter_fourcc('X','V','I','D')
 # fourcc = cv2.VideoWriter_fourcc(*'XVID')
 # out = cv2.VideoWriter('output.avi',fourcc, 15.0, (640,480),True)
-out = cv2.VideoWriter('output999.avi', cv2.VideoWriter_fourcc(*"MJPG"), 60, (frame_width, frame_height), True)
+out = cv2.VideoWriter(os.path.expanduser('~/Git/') + 'output999.avi', cv2.VideoWriter_fourcc(*"MJPG"), 60, (frame_width, frame_height), True)
 
 # out = cv2.VideoWriter("output.avi", fourcc, float(spf), (640, 480))
 # vid = cv2.VideoWriter(outvid, fourcc, float(fps), size, is_color)
