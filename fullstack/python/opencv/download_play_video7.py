@@ -38,66 +38,74 @@ frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 width = int(cap.get(3))
 height = int(cap.get(4))
 fps = int(cap.get(5))
+
+# find fps of video file
 fps = cap.get(cv2.CAP_PROP_FPS)
-spf =  2 / fps
+spf =   5/fps
 print ("Frames per second using cap.get(cv2.CAP_PROP_FPS) : {0}".format(fps))
 print ("Seconds per frame using 1/fps :", spf)
+
 # (*'MJPG') (*'mp42') (*'XVID') (*'X264') (*'H264')
 out = cv2.VideoWriter(os.path.expanduser('~/Git/') + 'output999.avi', cv2.VideoWriter_fourcc(*"MJPG"), 30, (width,height),True)
+
+
+def detectShape(cnt):
+    shape = 'unknown'
+    # calculate perimeter using
+    peri = cv2.arcLength(c, True)
+    # apply contour approximation and store the result in vertices
+    vertices = cv2.approxPolyDP(c, 0.04 * peri, True) # 0.04
+    if len(vertices) == 3:
+        shape = 'triangle'
+    elif len(vertices) == 4:
+        x, y, width, height = cv2.boundingRect(vertices)
+        aspectRatio = float(width) / height
+        if aspectRatio >= 0.95 and aspectRatio <= 1.05:
+            shape = "square"
+        else:
+            shape = "rectangle"
+    elif len(vertices) == 5:
+        shape = "pentagon"
+    else:
+        shape = "circle"
+    return shape
+
 while (cap.isOpened()):
     ret, frame = cap.read()
+    frame = cv2.flip(frame, 1)
     frame_count = frame_count + 1
-    #frame = cv2.flip(frame, 1)
-    #frame = cv2.resize(frame, (854, 480))
+    #if frame_count % 4:
+    #    continue
+    if frame_count % 2:
+        continue
     # -------------------------------------------
-    if frame_count % 4:
-        continue
-    if frame_count % 4:
-        continue
-
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    blurred = cv2.GaussianBlur(gray, (15, 15), 0)
-    thresh = cv2.threshold(blurred, 60, 255, cv2.THRESH_BINARY)[1]
-    chan = cv2.medianBlur(blurred, 5)
-    edged = cv2.Canny(chan, 10, 100)
-    # find contours in the thresholded image
+    gray = cv2.bitwise_not(gray)
+    blurred = cv2.GaussianBlur(gray, (17, 17), 4)
+    thresh = cv2.threshold(blurred, 80, 255, cv2.THRESH_BINARY)[1]
     cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
     if(len(cnts)):
         # loop over the contours
         for c in cnts:
-            # compute the center of the contour
-            M = cv2.moments(c)
-            if(M["m10"]==0):
-                continue
-            cX = int(M["m10"] / M["m00"])
-            cY = int(M["m01"] / M["m00"])
-            # draw the contour and center of the shape on the image
-            cv2.drawContours(edged, [c], -1, (0, 255, 0), 2)
-            cv2.circle(edged, (cX, cY), 7, (255, 255, 255), -1)
-            cv2.putText(edged, "*", (cX - 20, cY - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
-            cv2.imshow('frame', edged)
-            #edged = cv2.resize(edged, (854, 480))
-            #out.write(cv2.cvtColor(edged, cv2.COLOR_GRAY2BGR))
+            shape = detectShape(c)
+            if (shape == "rectangle" ): #
+                # compute the center of the contour
+                M = cv2.moments(c)
+                if(M["m10"] == 0):
+                    continue
+                if cv2.contourArea(c) < 90 and cv2.contourArea(c) > 500:  # contour Area
+                    continue
+                cX = int(M["m10"] / M["m00"])
+                cY = int(M["m01"] / M["m00"])
+                alpha = cv2.cvtColor(thresh, cv2.COLOR_GRAY2BGR) #COLOR_GRAY2BGR
+                cv2.drawContours(alpha, [c], -1, (25, 0, 225), 24)
+                cv2.imshow('frame', alpha)
+
     # -------------------------------------------
-    """
-    config = ('-l eng --oem 1 --psm 3')
-    # ll /usr/share/tesseract-ocr/4.00/tessdata
-
-    # Run tesseract OCR on image
-    #textx = pytesseract.image_to_string(frame, config=config)
-    textx = pytesseract.image_to_string(frame, lang='eng')
-
-    # converts image to numpy
-    #textx = get_string(frame)
-    font = cv2.FONT_HERSHEY_SIMPLEX
-    cv2.putText(thresh, textx, (20,100), font, 2,(255,255,255),2,cv2.LINE_AA)
-    """
-    out.write(cv2.cvtColor(edged, cv2.COLOR_GRAY2BGR))
+    out.write(alpha)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
-
-#cv2.imshow('frame', frame)
 cap.release()
 out.release()
 cv2.destroyAllWindows()

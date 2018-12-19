@@ -44,7 +44,7 @@ fps = int(cap.get(5))
 
 # find fps of video file
 fps = cap.get(cv2.CAP_PROP_FPS)
-spf =  10 / fps
+spf =  5 / fps
 print "Frames per second using cap.get(cv2.CAP_PROP_FPS) : {0}".format(fps)
 print "Seconds per frame using 1/fps :", spf
 
@@ -55,12 +55,12 @@ out = cv2.VideoWriter(os.path.expanduser('~/Git/') + str(time.time()).split('.')
 while (cap.isOpened()):
     ret, frame = cap.read()
     frame_count = frame_count + 1
-    frame = cv2.resize(frame, (640, 360))
+    #frame = cv2.resize(frame, (640, 360))
 
     # ------------------------------------------
 
-    # if frame_count % 2:
-    #    continue
+    if frame_count % 2:
+        continue
 
     if ret == False:
         break
@@ -92,12 +92,12 @@ while (cap.isOpened()):
             #cv2.rectangle(hsv, (x, y),  int( x + int(w / 4)), int(y + int(h / 4)), (255, 255, 255), 13)
             cv2.imshow('frame', hsv)
             # frame = cv2.cvtColor(hsv, cv2.COLOR_BGR2HSV)
-            out.write(hsv)
+            #out.write(hsv)
         # break
 
     # gray = cv2.resize(gray, (1280, 720))
-    hsv = cv2.resize(hsv, (640, 360))
-    cv2.imshow('frame', hsv)
+    #hsv = cv2.resize(hsv, (640, 360))
+    #cv2.imshow('frame', hsv)
     # cv2.merge(frame,gray)
     # cv2.resize(frame, (640, 360))
     # frame = cv2.cvtColor(hsv, cv2.COLOR_GRAY2BGR)

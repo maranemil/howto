@@ -124,12 +124,14 @@ out = cv2.VideoWriter(os.path.expanduser('~/Git/') + str(time.time()).split('.')
 while (cap.isOpened()):
     ret, frame = cap.read()
     frame_count = frame_count + 1
-    frame = cv2.resize(frame, (640, 360))
+    #frame = cv2.resize(frame, (640, 360))
 
     # ------------------------------------------
 
-    # if frame_count % 2:
-    #    continue
+    if frame_count % 2:
+        continue
+    if frame_count % 4:
+        continue
 
     if ret == False:
         break
@@ -172,19 +174,17 @@ while (cap.isOpened()):
                 break
 
         cv2.drawContours(gray, [cnt], -1, (255, 0, 0), -1)  # classic overlay without transparency
-
         #x, y, w, h = cv2.boundingRect(contours[0])
         #cv2.rectangle(gray, (x, y), (x + w / 4, y + h / 4), (255, 255, 255), 3)
-
         cv2.imshow('frame', gray)
         frame = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
         # out.write(frame)
 
-    gray = cv2.resize(gray, (1280, 720))
+    #gray = cv2.resize(gray, (1280, 720))
     #gray = cv2.resize(gray, (640,360))
     cv2.imshow('frame', gray)
     # cv2.merge(frame,gray)
-    cv2.resize(frame, (640, 360))
+    #cv2.resize(frame, (640, 360))
     frame = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
     out.write(frame)
 
