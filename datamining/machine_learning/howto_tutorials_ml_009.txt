@@ -1,0 +1,487 @@
+import cv2
+#import optimizer
+import numpy as np
+import os
+from random import shuffle
+from tqdm import tqdm
+import tensorflow as tf
+import matplotlib.pyplot as plt
+#matplotlib inline
+
+# https://blog.francium.tech/build-your-own-image-classifier-with-tensorflow-and-keras-dc147a15e38e
+# all the car images are renamed as car.<<seq num>>.jpeg and truck images
+# are renamed as truck.<<seq num>>.jpeg,
+# because we are going to label the training images based on its name.
+
+train_data = ‘/ImageData/Vechiles/train’
+test_data = ‘/ImageData/Vechiles/test’
+
+def one_hot_label(img):
+	 label = img.split(‘.’)[0]
+	 if label == ‘car’:
+	 ohl = np.array([1,0])
+	 elif label == ‘truck’:
+	 ohl = np.array([0.1])
+	 return ohl
+
+def train_data_with_label():
+	 train_images = []
+	 for i in tqdm(os.listdir(train_data)):
+	 path = os.path.join(train_data, i)
+	 img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+	 img = cv2.resize(img, (64, 64))
+	 train_images.append([np.array(img), one_hot_label(i)])
+	 shuffle(train_images)
+	 return train_images
+
+ def test_data_with_label():
+	 test_images = []
+	 for i in tqdm(os.listdir(test_data)):
+	 path = os.path.join(test_data, i)
+	 img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+	 img = cv2.resize(img, (64, 64))
+	 test_images.append([np.array(img), one_hot_label(i)])
+	 return test_images
+
+from keras.models import Sequential
+#from keras.layers import *
+#from keras.optimizers import *
+from keras.layers import Conv2D
+from keras.layers import MaxPooling2D
+from keras.layers import InputLayer
+from keras.layers import Dense
+from keras.layers import Dropout
+from keras.layers import Flatten
+
+#from keras.layers.convolutional import Convolution2D
+from keras.layers.convolutional import MaxPolling2D
+from keras.layers.core import Activation
+ #from keras.layers.core import Flatten
+
+training_images = train_data_with_label()
+testing_images = test_data_with_label()
+tr_img_data = np.array([i[0] for i in training_images]).reshape(-1,64,64,1)
+tr_lbl_data = np.array([i[1] for i in training_images])
+tst_img_data = np.array([i[0] for i in testing_images]).reshape(-1,64,64,1)
+tst_lbl_data = np.array([i[1] for i in testing_images])
+
+model = Sequential()
+#Keras will internally add batch dimention
+model.add(InputLayer(input_shape =[64,64,1]))
+#model.add(layers.layer(input_shape =[64,64]))
+model.add(Conv2D(filters=32,kernel_size=5,strides=1,padding=’same’,activation=’relu’))
+model.add(MaxPooling2D(pool_size =5,padding =’same’))
+
+model.add(Conv2D(filters=50,kernel_size =5,strides=1,padding=’same’,activation=’relu’))
+model.add(MaxPooling2D(pool_size=5,padding =’same’))
+
+model.add(Conv2D(filters=80,kernel_size=5,strides=1,padding=’same’,activation=’relu’))
+model.add(MaxPooling2D(pool_size=5,padding=’same’))
+
+model.add(Dropout(0.25))
+model.add(Flatten())
+model.add(Dense(512,activation=’relu’))
+model.add(Dropout(rate=0.5))
+model.add(Dense(2,activation=’softmax’))
+optimizer=Adam(lr=1e-3)
+
+model.compile( loss=’categorical_crossentropy’, metrics=[‘accuracy’])
+model.fit(x = tr_img_data, y=tr_lbl_data, epochs=50,batch_size=100)
+model.summary()
+
+fig=plt.figure(figsize=(14,14))
+
+for cnt, data in enumerate(testing_images[10:40]):
+	 y = fig.add_subplot(6,5,cnt+1)
+	 img = data[0]
+	 data = img.reshape(1,64, 64,1)
+	 model_out = model.predict([data])
+
+	 if np.argmax(model_out) == 1:
+	 	str_label = ‘truck’
+
+	  else:
+	 	str_label =’Car’
+
+	y.imshow(img, cmap=’gray’)
+	plt.title(str_label)
+	y.axes.get_xaxis().set_visible(False)
+	y.axes.get_yaxis().set_visisble(False)
+
+
+"""
+https://robopress.robotsandpencils.com/build-your-own-image-classifier-in-less-time-than-it-takes-to-bake-a-pizza-9a7b898264de
+https://www.tensorflow.org/hub/tutorials/image_retraining
+https://github.com/YunYang1994/tensorflow-yolov3
+https://blogs.rstudio.com/tensorflow/posts/2018-11-05-naming-locating-objects/
+https://www.tensorflow.org/guide/datasets
+https://towardsdatascience.com/how-to-use-dataset-in-tensorflow-c758ef9e4428
+https://github.com/FrancescoSaverioZuppichini/Tensorflow-Dataset-Tutorial/blob/master/dataset_tutorial.ipynb
+https://www.tensorflow.org/guide/datasets
+https://www.tensorflow.org/api_docs/python/tf/data/Dataset
+https://www.programcreek.com/python/example/90430/tensorflow.cond
+https://www.tensorflow.org/tutorials/images/image_recognition#usage_with_python_api
+https://github.com/Hvass-Labs/TensorFlow-Tutorials
+https://www.tensorflow.org/api_docs/python/
+https://keras.io/layers/about-keras-layers/
+https://www.dataoptimal.com/machine-learning-from-scratch/
+https://pythonprogramming.net/introduction-deep-learning-python-tensorflow-keras/
+"""
+
+
+"""
+
+https://www.tensorflow.org/tutorials/
+
+import tensorflow as tf
+mnist = tf.keras.datasets.mnist
+
+(x_train, y_train),(x_test, y_test) = mnist.load_data()
+x_train, x_test = x_train / 255.0, x_test / 255.0
+
+model = tf.keras.models.Sequential([
+  tf.keras.layers.Flatten(),
+  tf.keras.layers.Dense(512, activation=tf.nn.relu),
+  tf.keras.layers.Dropout(0.2),
+  tf.keras.layers.Dense(10, activation=tf.nn.softmax)
+])
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+
+model.fit(x_train, y_train, epochs=5)
+model.evaluate(x_test, y_test)
+"""
+
+
+
+
+
+
+
+"""
+#pip install --upgrade tensorflow
+#import tensorflow.keras as keras
+
+import tensorflow as tf
+print(tf.__version__)
+
+mnist = tf.keras.datasets.mnist
+(x_train, y_train),(x_test, y_test) = mnist.load_data() # 28x28 numbers of 0-9
+
+print(x_train[0])
+import matplotlib.pyplot as plt
+
+plt.imshow(x_train[0],cmap=plt.cm.binary)
+plt.show()
+print(y_train[0])
+
+#x_train = tf.keras.utils.normalize(x_train, axis=1)
+#x_test = tf.keras.utils.normalize(x_test, axis=1)
+x_train = tf.keras.utils.normalize(x_train, axis=1).reshape(x_train[0].shape[0], -1)
+x_test = tf.keras.utils.normalize(x_test, axis=1).reshape(x_test[0].shape[0], -1)
+
+
+print(x_train[0])
+
+plt.imshow(x_train[0],cmap=plt.cm.binary)
+plt.show()
+
+model = tf.keras.models.Sequential()
+#model.add(tf.keras.layers.Flatten()) #Flatten the images
+model.add(tf.keras.layers.Dense(128, activation=tf.nn.relu))
+model.add(tf.keras.layers.Dense(128, activation=tf.nn.relu))
+model.add(tf.keras.layers.Dense(10, activation=tf.nn.softmax))
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+
+model.fit(x_train, y_train, epochs=3)
+
+val_loss, val_acc = model.evaluate(x_test, y_test)
+print(val_loss)
+print(val_acc)
+
+
+
+
+# nwew
+# https://pythonprogramming.net/introduction-deep-learning-python-tensorflow-keras/
+
+
+import tensorflow as tf  # deep learning library. Tensors are just multi-dimensional arrays
+
+mnist = tf.keras.datasets.mnist  # mnist is a dataset of 28x28 images of handwritten digits and their labels
+(x_train, y_train),(x_test, y_test) = mnist.load_data()  # unpacks images to x_train/x_test and labels to y_train/y_test
+
+x_train = tf.keras.utils.normalize(x_train, axis=1)  # scales data between 0 and 1
+x_test = tf.keras.utils.normalize(x_test, axis=1)  # scales data between 0 and 1
+
+model = tf.keras.models.Sequential()  # a basic feed-forward model
+model.add(tf.keras.layers.Flatten())  # takes our 28x28 and makes it 1x784
+model.add(tf.keras.layers.Dense(128, activation=tf.nn.relu))  # a simple fully-connected layer, 128 units, relu activation
+model.add(tf.keras.layers.Dense(128, activation=tf.nn.relu))  # a simple fully-connected layer, 128 units, relu activation
+model.add(tf.keras.layers.Dense(10, activation=tf.nn.softmax))  # our output layer. 10 units for 10 classes. Softmax for probability distribution
+
+model.compile(optimizer='adam',  # Good default optimizer to start with
+              loss='sparse_categorical_crossentropy',  # how will we calculate our "error." Neural network aims to minimize loss.
+              metrics=['accuracy'])  # what to track
+
+model.fit(x_train, y_train, epochs=3)  # train the model
+
+val_loss, val_acc = model.evaluate(x_test, y_test)  # evaluate the out of sample data with model
+print(val_loss)  # model's loss (error)
+print(val_acc)  # model's accuracy
+
+# save
+model.save('epic_num_reader.model')
+
+# Load back
+new_model = tf.keras.models.load_model('epic_num_reader.model')
+
+predictions = new_model.predict(x_test)
+print(predictions)
+
+
+import numpy as np
+print(np.argmax(predictions[0]))
+plt.imshow(x_test[0],cmap=plt.cm.binary)
+plt.show()
+"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+# Tensorflow-Deep Learning to Solve Titanic
+# https://www.kaggle.com/linxinzhe/tensorflow-deep-learning-to-solve-titanic
+
+import tensorflow as tf
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# load data
+train_data = pd.read_csv(r"../input/train.csv")
+test_data = pd.read_csv(r"../input/test.csv")
+train_data
+
+#save PassengerId for evaluation
+test_passenger_id=test_data["PassengerId"]
+
+def drop_not_concerned(data, columns):
+    return data.drop(columns, axis=1)
+
+not_concerned_columns = ["PassengerId","Name", "Ticket", "Fare", "Cabin", "Embarked"]
+train_data = drop_not_concerned(train_data, not_concerned_columns)
+test_data = drop_not_concerned(test_data, not_concerned_columns)
+
+train_data.head()
+test_data.head()
+
+def dummy_data(data, columns):
+    for column in columns:
+        data = pd.concat([data, pd.get_dummies(data[column], prefix=column)], axis=1)
+        data = data.drop(column, axis=1)
+    return data
+
+dummy_columns = ["Pclass"]
+train_data=dummy_data(train_data, dummy_columns)
+test_data=dummy_data(test_data, dummy_columns)
+
+test_data.head()
+
+from sklearn.preprocessing import LabelEncoder
+def sex_to_int(data):
+    le = LabelEncoder()
+    le.fit(["male","female"])
+    data["Sex"]=le.transform(data["Sex"])
+    return data
+
+train_data = sex_to_int(train_data)
+test_data = sex_to_int(test_data)
+train_data.head()
+
+from sklearn.preprocessing import MinMaxScaler
+
+def normalize_age(data):
+    scaler = MinMaxScaler()
+    data["Age"] = scaler.fit_transform(data["Age"].values.reshape(-1,1))
+    return data
+train_data = normalize_age(train_data)
+test_data = normalize_age(test_data)
+train_data.head()
+
+
+
+from sklearn.preprocessing import LabelBinarizer
+from sklearn.model_selection import train_test_split
+
+def split_valid_test_data(data, fraction=(1 - 0.8)):
+    data_y = data["Survived"]
+    lb = LabelBinarizer()
+    data_y = lb.fit_transform(data_y)
+
+    data_x = data.drop(["Survived"], axis=1)
+
+    train_x, valid_x, train_y, valid_y = train_test_split(data_x, data_y, test_size=fraction)
+
+    return train_x.values, train_y, valid_x, valid_y
+
+train_x, train_y, valid_x, valid_y = split_valid_test_data(train_data)
+print("train_x:{}".format(train_x.shape))
+print("train_y:{}".format(train_y.shape))
+print("train_y content:{}".format(train_y[:3]))
+
+print("valid_x:{}".format(valid_x.shape))
+print("valid_y:{}".format(valid_y.shape))
+
+
+# Build Neural Network
+from collections import namedtuple
+
+def build_neural_network(hidden_units=10):
+    tf.reset_default_graph()
+    inputs = tf.placeholder(tf.float32, shape=[None, train_x.shape[1]])
+    labels = tf.placeholder(tf.float32, shape=[None, 1])
+    learning_rate = tf.placeholder(tf.float32)
+    is_training=tf.Variable(True,dtype=tf.bool)
+
+    initializer = tf.contrib.layers.xavier_initializer()
+    fc = tf.layers.dense(inputs, hidden_units, activation=None,kernel_initializer=initializer)
+    fc=tf.layers.batch_normalization(fc, training=is_training)
+    fc=tf.nn.relu(fc)
+
+    logits = tf.layers.dense(fc, 1, activation=None)
+    cross_entropy = tf.nn.sigmoid_cross_entropy_with_logits(labels=labels, logits=logits)
+    cost = tf.reduce_mean(cross_entropy)
+
+
+ with tf.control_dependencies(tf.get_collection(tf.GraphKeys.UPDATE_OPS)):
+        optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
+
+    predicted = tf.nn.sigmoid(logits)
+    correct_pred = tf.equal(tf.round(predicted), labels)
+    accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
+
+    # Export the nodes
+    export_nodes = ['inputs', 'labels', 'learning_rate','is_training', 'logits',
+                    'cost', 'optimizer', 'predicted', 'accuracy']
+    Graph = namedtuple('Graph', export_nodes)
+    local_dict = locals()
+    graph = Graph(*[local_dict[each] for each in export_nodes])
+
+    return graph
+
+model = build_neural_network()
+
+
+
+def get_batch(data_x,data_y,batch_size=32):
+    batch_n=len(data_x)//batch_size
+    for i in range(batch_n):
+        batch_x=data_x[i*batch_size:(i+1)*batch_size]
+        batch_y=data_y[i*batch_size:(i+1)*batch_size]
+
+        yield batch_x,batch_y
+
+
+epochs = 200
+train_collect = 50
+train_print=train_collect*2
+
+learning_rate_value = 0.001
+batch_size=16
+
+x_collect = []
+train_loss_collect = []
+train_acc_collect = []
+valid_loss_collect = []
+valid_acc_collect = []
+
+saver = tf.train.Saver()
+with tf.Session() as sess:
+    sess.run(tf.global_variables_initializer())
+    iteration=0
+    for e in range(epochs):
+        for batch_x,batch_y in get_batch(train_x,train_y,batch_size):
+            iteration+=1
+            feed = {model.inputs: train_x,
+                    model.labels: train_y,
+                    model.learning_rate: learning_rate_value,
+                    model.is_training:True
+                   }
+
+            train_loss, _, train_acc = sess.run([model.cost, model.optimizer, model.accuracy], feed_dict=feed)
+
+            if iteration % train_collect == 0:
+                x_collect.append(e)
+                train_loss_collect.append(train_loss)
+                train_acc_collect.append(train_acc)
+
+                if iteration % train_print==0:
+                     print("Epoch: {}/{}".format(e + 1, epochs),
+                      "Train Loss: {:.4f}".format(train_loss),
+                      "Train Acc: {:.4f}".format(train_acc))
+
+                feed = {model.inputs: valid_x,
+                        model.labels: valid_y,
+                        model.is_training:False
+                       }
+                val_loss, val_acc = sess.run([model.cost, model.accuracy], feed_dict=feed)
+                valid_loss_collect.append(val_loss)
+                valid_acc_collect.append(val_acc)
+
+                if iteration % train_print==0:
+                    print("Epoch: {}/{}".format(e + 1, epochs),
+                      "Validation Loss: {:.4f}".format(val_loss),
+                      "Validation Acc: {:.4f}".format(val_acc))
+
+
+    saver.save(sess, "./titanic.ckpt")
+
+
+plt.plot(x_collect, train_loss_collect, "r--")
+plt.plot(x_collect, valid_loss_collect, "g^")
+plt.show()
+plt.plot(x_collect, train_acc_collect, "r--")
+plt.plot(x_collect, valid_acc_collect, "g^")
+plt.show()
+
+model=build_neural_network()
+restorer=tf.train.Saver()
+with tf.Session() as sess:
+    restorer.restore(sess,"./titanic.ckpt")
+    feed={
+        model.inputs:test_data,
+        model.is_training:False
+    }
+    test_predict=sess.run(model.predicted,feed_dict=feed)
+
+test_predict[:10]
+
+from sklearn.preprocessing import Binarizer
+binarizer=Binarizer(0.5)
+test_predict_result=binarizer.fit_transform(test_predict)
+test_predict_result=test_predict_result.astype(np.int32)
+test_predict_result[:10]
+
+
+passenger_id=test_passenger_id.copy()
+evaluation=passenger_id.to_frame()
+evaluation["Survived"]=test_predict_result
+evaluation[:10]
+evaluation.to_csv("evaluation_submission.csv",index=False)
+"""
