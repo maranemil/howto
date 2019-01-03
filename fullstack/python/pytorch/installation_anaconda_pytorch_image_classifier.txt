@@ -1,0 +1,150 @@
+################################################################
+# Installation Anaconda PyTorch Image Classifier 2019-01-03
+################################################################
+
+# Install Sublime-Text
+http://docs.sublimetext.info/en/latest/getting_started/install.html
+https://www.sublimetext.com/3
+https://www.simonewebdesign.it/how-to-install-sublime-text-3-on-debian/
+
+https://download.sublimetext.com/sublime-text_build-3184_amd64.deb
+https://download.sublimetext.com/sublime-text_build-3083_amd64.deb
+https://download.sublimetext.com/sublime-text_build-3083_i386.deb
+sudo dpkg -i sublime-text_build-3083_amd64.deb
+
+# Install Anaconda3
+https://www.anaconda.com/download/#linux
+https://repo.continuum.io/archive/Anaconda3-2018.12-Linux-x86_64.sh
+
+# Install PyTorch
+https://pytorch.org/get-started/locally/
+sudo apt install python3-pip
+pip3 install numpy
+
+# Install with No CUDA
+conda install pytorch-cpu torchvision-cpu -c pytorch
+
+# Python 3.7
+# pip3 install torchvision
+
+# Verification py code
+
+from __future__ import print_function
+import torch
+x = torch.rand(5, 3)
+print(x)
+
+import torch
+torch.cuda.is_available()
+
+# output
+tensor([[0.0984, 0.3053, 0.7373],
+        [0.3186, 0.9387, 0.9019],
+        [0.4804, 0.5632, 0.3632],
+        [0.3016, 0.0113, 0.6889],
+        [0.8297, 0.4443, 0.8181]])
+
+
+# get and run Classifier
+wget https://pytorch.org/tutorials/_downloads/ba100c1433c3c42a16709bb6a2ed0f85/cifar10_tutorial.py
+python cifar10_tutorial.py
+
+# output
+
+Files already downloaded and verified
+  dog   cat  frog  ship
+[1,  2000] loss: 2.163
+[1,  4000] loss: 1.842
+[1,  6000] loss: 1.675
+[1,  8000] loss: 1.597
+[1, 10000] loss: 1.541
+[1, 12000] loss: 1.496
+[2,  2000] loss: 1.418
+[2,  4000] loss: 1.399
+[2,  6000] loss: 1.389
+[2,  8000] loss: 1.333
+[2, 10000] loss: 1.340
+[2, 12000] loss: 1.320
+Finished Training
+GroundTruth:    cat  ship  ship plane
+Predicted:    cat  ship  ship  ship
+Accuracy of the network on the 10000 test images: 54 %
+Accuracy of plane : 53 %
+Accuracy of   car : 66 %
+Accuracy of  bird : 34 %
+Accuracy of   cat : 37 %
+Accuracy of  deer : 58 %
+Accuracy of   dog : 40 %
+Accuracy of  frog : 56 %
+Accuracy of horse : 61 %
+Accuracy of  ship : 76 %
+Accuracy of truck : 56 %
+cpu
+
+
+real	4m58,484s
+user	3m22,689s
+sys	4m10,793s
+
+Ubuntu 18.04 64bit / RAM 3GB / SATA HDD 35GB / Video 128 MB / Vbox
+
+
+# create new datasets
+
+https://github.com/utkuozbulak/pytorch-custom-dataset-examples
+https://jhui.github.io/2018/02/09/PyTorch-Data-loading-preprocess_torchvision/
+https://stanford.edu/~shervine/blog/pytorch-how-to-generate-data-parallel
+https://www.kaggle.com/pinocookie/pytorch-dataset-and-dataloader
+https://www.reddit.com/r/learnmachinelearning/comments/92nh4c/how_do_i_load_images_into_pytorch_for_training/
+https://stackoverflow.com/questions/43441673/trying-to-load-a-custom-dataset-in-pytorch
+
+def load_images(image_size=32, batch_size=64, root="../datasets/MainImageFolder"):
+    transform = transforms.Compose([
+                    transforms.Resize(image_size),
+                    transforms.ToTensor(),
+                    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+    ])
+    train_set = datasets.ImageFolder(root=root, transform=transform)
+    train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=2)
+  return train_loader
+
+
+
+
+
+import torch
+import torchvision
+import torchvision.datasets as dset
+import torchvision.transforms as transforms
+
+
+transform = transforms.Compose(
+                   [transforms.Scale((32,32)),
+                    transforms.ToTensor(),
+                    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+
+trainset = dset.ImageFolder(root="imgs",transform=transform)
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=4,shuffle=True,         num_workers=2)
+
+testset = dset.ImageFolder(root='tests',transform=transform)
+testloader = torch.utils.data.DataLoader(testset, batch_size=4,shuffle=True,     num_workers=2)
+
+classes=('shirt','pants','sock')
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+# functions to show an image
+def imshow(img):
+    img = img / 2 + 0.5     # unnormalize
+    npimg = img.numpy()
+    plt.imshow(np.transpose(npimg, (1, 2, 0)))
+
+# get some random training images
+dataiter = iter(trainloader)
+images, labels = dataiter.next()
+
+# show images
+imshow(torchvision.utils.make_grid(images))
+# print labels
+print(' '.join('%5s' % classes[labels[j]] for j in range(4)))
