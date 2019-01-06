@@ -12,6 +12,11 @@ sudo apt install gimp -y
 sudo apt install filezilla -y
 sudo apt install gnome-commander -y
 sudo apt install git -y
+
+git config --global user.name "Administrator"
+git config --global user.email "admin@example.com"
+
+
 sudo apt install virtualbox -y
 sudo apt install keepass2 -y
 sudo apt install ffmpeg -y
@@ -23,7 +28,7 @@ sudo apt-get install audacity -y
 sudo apt-get install openshot -y
 
 # sublime-text
-wget http://c758482.r82.cf2.rackcdn.com/sublime-text_build-3083_amd64.deb
+wget https://download.sublimetext.com/sublime-text_build-3083_amd64.deb
 sudo dpkg -i sublime-text_build-3083_amd64.deb
 
 # dbeaver
