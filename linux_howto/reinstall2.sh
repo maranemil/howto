@@ -62,7 +62,19 @@ sudo apt install peek -y
 # https://download.jetbrains.com/python/pycharm-community-2018.2.1.tar.gz
 # http://download.jetbrains.com/webide/PhpStorm-2018.1.6.tar.gz
 
+
+# install nvidia
+sudo apt-get update
+sudo apt-get install nvidia-390 # ubuntu 18.10
+sudo apt-get install nvidia-384 # ubuntu 18.04
+
+
 exit
+
+
+
+
+
 
 
 
