@@ -393,10 +393,10 @@ Greater than or equal to        >=                ge
 # https://alvinalexander.com/perl/perl-uppercase-lowercase-string-case
 # https://perldoc.perl.org/functions/lc.html
 
-if ( lc(string) =~ /jpg$/ ){
+if ( lc($string) =~ /jpg$/ ){
     # jpg
 }
-elsif ( lc(string) =~ /png$/ ){
+elsif ( lc($string) =~ /png$/ ){
     # png
 }
 else{
