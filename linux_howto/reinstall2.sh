@@ -13,6 +13,7 @@ sudo apt install filezilla -y
 sudo apt install gnome-commander -y
 sudo apt install git -y
 
+##### Config Git on new location
 git config --global user.name "Administrator"
 git config --global user.email "admin@example.com"
 
@@ -272,8 +273,6 @@ cat /etc/os-release
   -i, --hardware-platform  print the hardware platform or "unknown"
   -o, --operating-system   print the operating system
 
-
-
 ##########################################################################
 #
 #  Debian install VBoxLinuxAdditions in virtualbox - howto
@@ -315,10 +314,6 @@ apt-get update
 apt-get updgrade
 apt-get install virtualbox-guest-dkms virtualbox-guest-x11 linux-headers-$(uname -r)
 
-
-
-
-
 #########################################################
 #
 # add new user in mysql mariadb
@@ -341,6 +336,16 @@ quit
 
 #########################################################
 #
+# Add symlink
+#
+#########################################################
+
+sudo ln -s /home/blabla/WWW/  /var/www/html/wwweb
+http://localhost/wwweb/
+
+
+#########################################################
+#
 # php change config
 #
 #########################################################
@@ -352,5 +357,10 @@ sudo nano /etc/php/7.2/apache2/php.ini
 sudo find / -name php.ini
 /etc/php/7.2/cli/php.ini
 /etc/php/7.2/apache2/php.ini
+
+sudo nano /etc/php/7.2/apache2/php.ini
+
+upload_max_filesize=64M
+post_max_size=64M
 
 sudo service apache2 restart
