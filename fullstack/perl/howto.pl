@@ -379,3 +379,31 @@ Greater than or equal to        >=                ge
 
 =cut
 
+
+######################################################################
+#
+# Regex simple
+#
+######################################################################
+
+# https://perldoc.perl.org/perlre.html
+# http://kirste.userpage.fu-berlin.de/chemnet/use/suppl/perl-regex.html
+# https://perlmaven.com/regex
+# https://www.tutorialspoint.com/perl/perl_regular_expressions.htm
+# https://alvinalexander.com/perl/perl-uppercase-lowercase-string-case
+# https://perldoc.perl.org/functions/lc.html
+
+if ( lc(string) =~ /jpg$/ ){
+    # jpg
+}
+elsif ( lc(string) =~ /png$/ ){
+    # png
+}
+else{
+    # other formats
+}
+
+
+
+
+
