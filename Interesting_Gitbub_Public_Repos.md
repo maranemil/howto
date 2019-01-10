@@ -1,10 +1,16 @@
 ## Interesting gitbub repos
 
 
-
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### Machine Learning A.I.
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+
+
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Tensorflow Style Transfer
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 | *Repo* | URL |*|
 | ------ | ------ | ---- |
@@ -32,8 +38,9 @@
 |Torch implementation of neural style algorithm|https://github.com/mtyka/neural-style|lua|
 
 
-
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Photo Manipulation
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 | *Repo* | URL |*|
 | ------ | ------ | ---- |
@@ -51,14 +58,17 @@
 |DeepDream in a docker environment|https://github.com/ryankennedyio/deep-dream-generator|c++,py|
 |Deepdream Google Dockerfile|https://github.com/sofam/ddd|py|
 
-
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Object Detection
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 | *Repo* | URL |*|
 | ------ | ------ | ---- |
 |Object Detection using Tensorflow API|https://github.com/olafplacha/Object-Detection-using-TF-API|py|
 
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Misc
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 | *Repo* | URL |*|
 | ------ | ------ | ---- |
@@ -106,8 +116,9 @@
 |Regression Analysis for Facebook keywords.|https://github.com/minimaxir/facebook-keyword-regression-analysis|R|
 
 
-
-### PHP
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#### PHP
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 | *Repo* | URL |*|
 |---|---|---|
@@ -122,7 +133,9 @@
 |PHP-Decision-Tree|https://github.com/jincongho/PHP-Decision-Tree|php|
 |PHP-Decision-Tree|https://github.com/kokukuma/php-decision-tree|php|
 
-### OpenCV
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#### OpenCV
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 | *Repo* | URL |*|
 |---|---|---|
@@ -146,8 +159,9 @@
 |YOLO: Real-Time Object Detection|https://pjreddie.com/darknet/yolo/||
 
 
-
-### Tutorials / Learning
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#### Tutorials / Learning
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 | Repo | URL |*|
 |---|---|---|
@@ -192,9 +206,10 @@
 |Project Based Learning|https://github.com/tuvtran/project-based-learning|*|
 
 
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#### Web and apps
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-### Web and apps
 
 | Repo | URL |*|
 |---|---|---|
@@ -221,8 +236,10 @@
 |Laravel-angular-time-tracker|https://github.com/scotch-io/laravel-angular-time-tracker|php|
 
 
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#### Misc
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-### Misc
 
 | Repo | URL |*|
 |---|---|---|
@@ -255,3 +272,45 @@
 |Amazon Marketplace Web Service (MWS) library for Ruby|https://github.com/dmichael/amazon-mws|ruby|
 |JPEG circuit bending glitch art|https://github.com/andreasjansson/glitch|c++|
 |CorruptVideo glitch|https://github.com/martial/CorruptVideo|c++|
+
+
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+####25 Open-Source Machine Learning Repos to Inspire Your Next Project
+https://heartbeat.fritz.ai/25-open-source-machine-learning-repos-to-inspire-your-next-project-3b027a90155
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
++ magenta 							https://github.com/tensorflow/magenta	
++ style2paints						https://github.com/lllyasviel/style2paints
++ CycleGAN PyTorch					https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix
++ Deep voice conversion				https://github.com/andabi/deep-voice-conversion
++ StarGAN in PyTorch 					https://github.com/yunjey/StarGAN
++ Face detection						https://github.com/oarriaga/face_classification
++ facets visualizing ml datasets 		https://github.com/PAIR-code/facets
++ Detectron 							https://github.com/facebookresearch/Detectron
++ video-to-video 						https://github.com/NVIDIA/vid2vid
++ accessible AutoML					https://github.com/jhfjhfj1/autokeras
++ ChatterBot							https://github.com/gunthercox/ChatterBot
++ Fast Style Transfer 				https://github.com/lengstrom/fast-style-transfer
++ Face recognition 					https://github.com/ageitgey/face_recognition
++ Deep photo style transfer 			https://github.com/luanfujun/deep-photo-styletransfer
++ Fast Text (classification)			https://github.com/facebookresearch/fastText
++ AirSim	( drone simulator)			https://github.com/Microsoft/AirSim
++ Image restoration					https://github.com/DmitryUlyanov/deep-image-prior
++ Deep Exemplar-Based Colorization 	https://github.com/msracver/Deep-Exemplar-based-Colorization
++ https://github.com/collections/machine-learning
++ https://github.com/josephmisiti/awesome-machine-learning
++ https://github.com/onmyway133/fantastic-machine-learning
++ https://github.com/lengstrom/fast-style-transfer
++ https://github.com/yunjey/StarGAN
++ https://github.com/lllyasviel/style2paints
++ https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix
++ https://junyanz.github.io/CycleGAN/
+
+
+* https://m.oursky.com/using-tensorflow-and-support-vector-machine-to-create-an-image-classifications-engine-7ee51b5617d5
+* https://towardsdatascience.com/the-10-most-useful-machine-learning-projects-of-the-past-year-2018-5378bbd4919f
+* https://medium.com/@satnalikamayank12/trying-transfer-learning-on-fashion-mnist-c9d4b7e66955
+* https://medium.com/nanonets/how-to-use-deep-learning-when-you-have-limited-data-part-2-data-augmentation-c26971dc8ced
+* http://neupy.com/docs/transfer-learning.html
+* https://www.kernix.com/blog/image-classification-with-a-pre-trained-deep-neural-network_p11
