@@ -407,3 +407,83 @@ else{
 
 
 
+
+######################################################################
+# PERL Regular-Expressions
+######################################################################
+#https://www.regextester.com/95174
+#https://www.regextester.com/
+#https://perldoc.perl.org/perlre.html#Regular-Expressions
+
+if ($file =~ /\.zip$/i) { ... }
+if ($file =~ m/.zip/) { ... }
+$foo =~ m/abc/
+$foo =~ m<abc>
+$foo =~ m/this|that/
+$foo =~ m/this\|that/
+$foo =~ m/fee|fie|foe|fum/
+$foo =~ m/th(is|at) thing/
+
+https://docstore.mik.ua/orelly/perl/cookbook/ch09_11.htm
+https://perldoc.perl.org/File/Basename.html
+https://stackoverflow.com/questions/3940412/how-can-i-check-the-extension-of-a-file-using-perl
+https://alvinalexander.com/blog/post/perl/how-process-every-file-directory-matches-pattern
+
+use File::Basename;
+my @exts = qw(.txt .zip);
+while (my $file = <DATA>) {
+  chomp $file;
+  my ($name, $dir, $ext) = fileparse($file, @exts);
+  given ($ext) {
+    when ('.txt') {
+      say "$file is a text file";
+    }
+    when ('.zip') {
+      say "$file is a zip file";
+    }
+    default {
+      say "$file is an unknown file type";
+    }
+  }
+}
+
+
+
+######################################################################
+#debug a Perl script
+######################################################################
+#http://padre.perlide.org/features/perl5-debugger.html
+#http://perl.mines-albi.fr/DocFr/perldebug.html
+#http://www.drdobbs.com/using-the-perl-debugger/184404744
+#http://www.linux-magazin.de/ausgaben/2005/04/humpeln-zur-diagnose/
+#https://docstore.mik.ua/orelly/perl/prog3/ch20_01.htm
+#https://perldoc.perl.org/perldebug.html
+#https://perldoc.perl.org/perldebug.html#Debugger-Commands
+#https://users.cs.cf.ac.uk/Dave.Marshall/PERL/node152.html
+#https://www.cs.cmu.edu/afs/cs/usr/rgs/mosaic/pl-debug.html
+#https://www.cs.huji.ac.il/labs/parallel/Docs/Perl/pod/perldebug.html
+#https://www.perl.com/pub/2004/08/09/commandline.html/
+######################################################################
+#!/usr/bin/perl -w
+use v5.14;
+use strict;
+use warnings;
+use diagnostics -verbose;
+use diagnostics;
+enable  diagnostics;
+disable diagnostics;
+
+perl -e 'print "Hello World\n"' # executed
+perl -n -e 'some code' file1 # loop
+
+perl -d your_script.pl args
+perl -d:DebugHooks::Terminal script.pl
+perl -d:Trepan script.pl
+perl -d -e 42
+perl -d -e "1;"
+perl -w -d 08lst08.pl
+
+PERL5DB="sub DB::DB { print $var }" perl -d your-script
+#sudo perl -MCPAN -e 'install Devel::Trace'
+perl -d:Trace myscript.pl
+perl -V myscript.pl
