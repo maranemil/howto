@@ -503,3 +503,12 @@ if( lc($sFile) =~ /.jpg$/ ){
     print "match 2 JPG\n";
 }
 
+
+#########################################################
+#
+#	operators logical PERL Python
+#
+#########################################################
+
+#https://www.tutorialspoint.com/perl/perl_operators.htm
+#https://www.programiz.com/python-programming/operators#logical
