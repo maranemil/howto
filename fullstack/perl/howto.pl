@@ -487,3 +487,19 @@ PERL5DB="sub DB::DB { print $var }" perl -d your-script
 #sudo perl -MCPAN -e 'install Devel::Trace'
 perl -d:Trace myscript.pl
 perl -V myscript.pl
+
+
+######################################################################
+#
+#   https://www.tutorialspoint.com/execute_perl_online.php
+#
+######################################################################
+
+$sFile = "somefile.JPG";
+if( lc($sFile) =~ m/.jpg/i ){
+    print "match 1 JPG\n";
+}
+if( lc($sFile) =~ /.jpg$/ ){
+    print "match 2 JPG\n";
+}
+
