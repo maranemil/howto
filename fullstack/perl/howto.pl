@@ -512,3 +512,19 @@ if( lc($sFile) =~ /.jpg$/ ){
 
 #https://www.tutorialspoint.com/perl/perl_operators.htm
 #https://www.programiz.com/python-programming/operators#logical
+
+
+#########################################################
+#
+#   PERL rename vs copy
+#
+#########################################################
+
+#https://perldoc.perl.org/functions/rename.html
+#https://perlmaven.com/how-to-remove-copy-or-rename-a-file-with-perl
+#http://perldoc.perl.org/File/Copy.html
+
+use File::Copy;
+copy("sourcefile","destinationfile") or die "Copy failed: $!";
+copy("Copy.pm",\*STDOUT);
+move("/dev1/sourcefile","/dev2/destinationfile");

@@ -1018,3 +1018,14 @@ Array ( [0] => 19 [1] => 14 [2] => 5 )  not identical
 Array ( )  not identical
 */
 
+
+#############################################################
+#
+#   GET Week Number
+#
+#############################################################
+
+$date = new DateTime("2012-10-18");
+echo $date->format("W");
+echo "<br>";
+echo date('W', strtotime("2012-10-18"));
