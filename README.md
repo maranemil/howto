@@ -73,7 +73,6 @@ Howto
 * ubuntu wallpapers, * tech magazines on web, * xdebug settings
 
 
-
 ##### Config Git on new location
 git config --global user.name "Administrator"
 git config --global user.email "admin@example.com"
@@ -84,6 +83,18 @@ find . -name '*' -size +1M -exec ls -lh {} \; | awk '{ print $9 ": " $5 }'
 
 ##### Check pack
 git verify-pack -v ./.git/objects/pack/pack-......ea.pack
+
+
+##### Utiles Daily
+
+* /usr/lib/chromium-browser/chromium-browser --disable-new-tab-first-run --enable-user-scripts --flag-switches-begin  --disable-accelerated-2d-canvas --disable-gpu-vsync --disable-threaded-animation --disable-webgl --js-flags=--harmony  --flag-switches-end --disable-gpu-process-prelaunch
+* for i in {0..7}; do echo performance | sudo tee /sys/devices/system/cpu/cpu"$i"/cpufreq/scaling_governor ; done
+* lynx t3n.de -accept_all_cookies  -justify
+* sudo sysctl vm.swappiness=20
+* cat /proc/sys/vm/swappiness
+* sync && echo 3 | sudo tee /proc/sys/vm/drop_caches
+* sudo /etc/init.d/dns-clean restart && sudo service network-manager reload
+
  
  
  
