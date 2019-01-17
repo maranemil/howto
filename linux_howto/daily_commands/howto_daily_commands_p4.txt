@@ -335,3 +335,29 @@ sudo dpkg --configure -a
 sudo apt upgrade
 sudo apt dist-upgrade
 sudo reboot
+
+
+
+############################################################################
+#
+#	Convert PNG into JPG with REPLACE extension
+#	https://superuser.com/questions/71028/batch-converting-png-to-jpg-in-linux
+#
+############################################################################
+
+find -name '*.jpg' -print0 | xargs -0 -r mogrify -format png 	# mogrify
+
+for i in *.png ; do convert "$i" "${i%.*}.jpg" ; done			# bash for loop
+ls -1 *.png | xargs -n 1 bash -c 'convert "$0" "${0%.*}.jpg"'	# avoid loops in bash
+ls -1 *.png | parallel convert '{}' '{.}.jpg'    				# GNU Parallel to run multiple jobs at once
+ls -1 *.png | parallel -j 3 convert '{}' '{.}.jpg'				# CPU usage using 3 jobs on my dual-core system
+ls -1 *.png | parallel --eta convert '{}' '{.}.jpg'				# ETA, jobs completed, average time per job
+parallel convert '{}' '{.}.jpg' ::: *.png						# alternative syntax if you are using GNU Parallel.
+parallel convert '{}' '{.}.jpg' -- *.png						# alternative syntax if you are using GNU Parallel.
+
+for img in *.png; do filename=${img%.*} convert "$filename.png" "$filename.jpg"; done
+
+
+for file in *.png; do echo "${file/.png/.jpg/}"; done
+for file in *.png; do convert $file  -density 300x300  ${file/.png/.jpg}; done
+for file in  111 222 333;do convert -density 300x300  $file.jpg  $file.png; done && ls *.png
