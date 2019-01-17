@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.14.1/dist/tf.min.js">
+</script>
+<script>
+
+//-----------------------------------------------------------
+model = tf.sequential();
+model.add(tf.layers.conv2d({inputShape:[28,28,1], filters:16, kernelSize:4}));
+console.log(model.layers[0].weights);
+
+//-----------------------------------------------------------
+// create a sequential model
+model = tf.sequential();
+//model.add(tf.layers.dense({units: 10}));
+//model.add(tf.layers.dense({inputShape: [4], units: 100}));
+model.add(tf.layers.conv2d({
+  inputShape: [28, 28, 1],
+  filters: 32,
+  kernelSize: 4
+}));
+console.log(model.layers[0].weights);
+console.log(model.layers);
+// compile the model like you would do in Keras
+model.compile({
+  optimizer: 'adam',
+  loss: 'categoricalCrossentropy',
+  metrics: ['accuracy']
+});
+
+//-----------------------------------------------------------
+model = tf.sequential();
+model.add(tf.layers.dense({inputShape: [4], units: 100}));
+model.add(tf.layers.dense({units: 4}));
+model.compile({loss: 'categoricalCrossentropy', optimizer: 'sgd'});
+console.log(model.layers[0].weights);
+/*
+model.fit(
+  xData, yData, {
+    batchSize: batchSize,
+    epochs: epochs
+});*/
+
+//-----------------------------------------------------------
+
+var inputs = tf.layers.input({ shape: [256], dtype: DType.float32 });
+var dense1 = tf.layers.dense({ units: 128, activation: 'relu' }).apply(inputs);
+var dense2 = tf.layers.dense({ units: 64, activation: 'relu' }).apply(dense1);
+var outputs = tf.layers.dense({ units: 6, activation: 'softmax' }).apply(dense2);
+model = tf.model({ inputs, outputs });
+model.compile({
+    loss: 'categoricalCrossentropy',
+    optimizer: 'adam',
+});
+
+var numSamples = 2562;
+var xData = new Float32Array(numSamples * 256);
+var yData = new Int32Array(numSamples);
+
+var x = tf.tensor2d(xData, [numSamples, 256], 'float32');
+var y = tf.oneHot(tf.tensor1d(yData, 'float32'), 6);
+
+for (let i = 0; i < 100; i++) {
+     model.fit(x, y, {
+        batchSize: 64,
+        epochs: 5,
+        shuffle: true,
+        validationSplit: .2,
+    });
+}
+
+
+</script>
+
+<!--
+// https://jsfiddle.net/boilerplate/jquery
+
+
+https://js.tensorflow.org/api/0.12.5/
+https://js.tensorflow.org/tutorials/core-concepts.html
+https://github.com/tensorflow/tfjs-examples
+https://github.com/tensorflow/tfjs-examples/tree/master/mnist
+https://js.tensorflow.org/
+https://js.tensorflow.org/setup/
+
+https://qiita.com/tamfoi/items/bd1def3041ac04500e52
+https://github.com/tensorflow/tfjs/issues/200
+https://github.com/tensorflow/tfjs/issues/481
+https://medium.com/ibm-watson-data-lab/bring-machine-learning-to-the-browser-with-tensorflow-js-part-i-16924457291c
+https://beta.observablehq.com/@nsthorat/introduction-to-deeplearn-js
+https://beta.observablehq.com/@nkreeger/visualizing-ml-training-using-tensorflow-js-and-baseball-d
+https://towardsdatascience.com/epoch-vs-iterations-vs-batch-size-4dfb9c7ce9c9
+https://www.tensorflow.org/tutorials/
+https://github.com/keras-team/keras/tree/master/examples
+-->
+
+</body>
+</html>
