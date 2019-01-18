@@ -1,0 +1,92 @@
+
+<html>
+<head>
+    <!-- Load TensorFlow.js -->
+    <!-- Get latest version at https://github.com/tensorflow/tfjs -->
+
+    <!--
+   ################################################
+   #
+   #	tensorflow-js-quick-start angular
+   #	https://angularfirebase.com/lessons/tensorflow-js-quick-start/
+   #
+   ##################################################
+   -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.11.2">
+    </script>
+</head>
+<body>
+<div id="output_field"></div>
+</body>
+<script>
+
+async train(): Promise<any> {
+    // Define a model for linear regression.
+  this.linearModel = tf.sequential();
+  this.linearModel.add(tf.layers.dense({units: 1, inputShape: [1]}));
+
+  // Prepare the model for training: Specify the loss and the optimizer.
+  this.linearModel.compile({loss: 'meanSquaredError', optimizer: 'sgd'});
+
+
+  // Training data, completely random stuff
+  const xs = tf.tensor1d([3.2, 4.4, 5.5]);
+  const ys = tf.tensor1d([1.6, 2.7, 3.5]);
+
+  // Train
+  await this.linearModel.fit(xs, ys)
+  console.log('model trained!')
+}
+
+
+</script>
+<html>
+
+
+<!--
+
+//----------------------------------------------
+// Make a Prediction with the Model
+//----------------------------------------------
+
+predict(val: number) {
+const output = this.linearModel.predict(tf.tensor2d([val], [1, 1])) as any;
+this.prediction = Array.from(output.dataSync())[0]
+}
+
+//----------------------------------------------
+// Load the Model
+//----------------------------------------------
+async loadModel() {
+this.model = await tf.loadModel('/assets/model.json');
+}
+
+
+TensorFlow says {{ prediction }}
+
+<input type="number" (change)="predict($event.target.value)">
+
+//----------------------------------------------
+// Make Predictions from Image Data
+//----------------------------------------------
+
+async predict(imageData: ImageData) {
+
+await tf.tidy(() => {
+
+// Convert the canvas pixels to a Tensor of the matching shape
+let img = tf.fromPixels(imageData, 1);
+img = img.reshape([1, 28, 28, 1]);
+img = tf.cast(img, 'float32');
+
+// Make and format the predications
+const output = this.model.predict(img) as any;
+
+// Save predictions on the component
+this.predictions = Array.from(output.dataSync());
+});
+
+}
+
+-->
