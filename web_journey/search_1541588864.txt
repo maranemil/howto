@@ -235,3 +235,272 @@ elem {
     max-height: stretch;
 }
 
+
+
+
+
+
+
+
+
+
+https://youtu.be/jThL2CbwOeY?t=10
+
+
+--------------------------------
+################################################
+
+
+
+################################################
+
+
+https://linux.die.net/man/1/flock
+https://www.unix.com/shell-programming-and-scripting/268619-use-flock-command-whole-script.html
+https://superuser.com/questions/1270757/gnu-linux-flock-command-how-to-atomically-take-several-locks
+
+Options
+-s, --shared
+Obtain a shared lock, sometimes called a read lock.
+-x, -e, --exclusive
+Obtain an exclusive lock, sometimes called a write lock. This is the default.
+-u, --unlock
+Drop a lock. This is usually not required, since a lock is automatically dropped when the file is closed. However, it may be required in special cases, for example if the enclosed command group may have forked a background process which should not be holding the lock.
+-n, --nb, --nonblock
+Fail (with an exit code of 1) rather than wait if the lock cannot be immediately acquired.
+-w, --wait, --timeout seconds
+Fail (with an exit code of 1) if the lock cannot be acquired within seconds seconds. Decimal fractional values are allowed.
+-o, --close
+Close the file descriptor on which the lock is held before executing command. This is useful if command spawns a child process which should not be hold ing the lock.
+-c, --command command
+Pass a single command to the shell with -c.
+-h, --help
+Print a help message.
+
+
+while ! flock -n -x file <command> ; do sleep $(($RANDOM%5)) ; done
+
+while true
+do  flock -x a flock -nE 101 -s b flock -nE 102 c <command>
+    case $? in
+    101) flock -s b;;
+    102) flock -s c;;
+    *)   break;;
+done
+flock -s b flock -nE 102 flock -nE 100 -x a c <command>
+
+
+http://php.net/manual/en/function.flock.php
+
+$fp = fopen("/tmp/lock.txt", "r+");
+
+if (flock($fp, LOCK_EX)) {  // acquire an exclusive lock
+    ftruncate($fp, 0);      // truncate file
+    fwrite($fp, "Write something here\n");
+    fflush($fp);            // flush output before releasing the lock
+    flock($fp, LOCK_UN);    // release the lock
+} else {
+    echo "Couldn't get the lock!";
+}
+
+fclose($fp);
+
+https://linux.die.net/man/2/flock
+https://linux.die.net/man/1/flock
+http://manpages.ubuntu.com/manpages/trusty/en/man1/flock.1.html
+http://manpages.ubuntu.com/manpages/bionic/de/man1/flock.1.html
+
+
+
+
+################################################
+
+Perl unless Statement
+
+https://www.thoughtco.com/telling-if-file-exists-in-perl-2641090
+https://www.tutorialspoint.com/perl/perl_unless_statement.htm
+
+################################################
+
+
+#!/usr/bin/perl
+$filename = '/path/to/your/file.doc';
+if (-e $filename) {
+print "File Exists!";
+}
+
+unless (-e $filename) {
+print "File Doesn't Exist!";
+}
+
+
+################################################
+
+perl check File exists
+https://perlmaven.com/file-test-operators
+
+################################################
+
+-r File is readable by effective uid/gid.
+-w File is writable by effective uid/gid.
+-x File is executable by effective uid/gid.
+-o File is owned by effective uid.
+-R File is readable by real uid/gid.
+-W File is writable by real uid/gid.
+-X File is executable by real uid/gid.
+-O File is owned by real uid.
+-e File exists.
+-z File has zero size (is empty).
+-s File has nonzero size (returns size in bytes).
+-f File is a plain file.
+-d File is a directory.
+-l File is a symbolic link (false if symlinks aren't supported by the file system).
+-p File is a named pipe (FIFO), or Filehandle is a pipe.
+-S File is a socket.
+-b File is a block special file.
+-c File is a character special file.
+-t Filehandle is opened to a tty.
+-u File has setuid bit set.
+-g File has setgid bit set.
+-k File has sticky bit set.
+-T File is an ASCII or UTF-8 text file (heuristic guess).
+-B File is a "binary" file (opposite of -T).
+-M Script start time minus file modification time, in days.
+-A Same for access time.
+-C Same for inode change time (Unix, may differ for other platforms)
+
+
+
+
+################################################
+
+Perl eval
+
+https://perldoc.perl.org/functions/eval.html
+################################################
+
+# a private exception trap for divide-by-zero
+    eval { local $SIG{'__DIE__'}; $answer = $a / $b; };
+    warn $@ if $@;
+
+
+
+################################################
+
+Perl Command-Line Options
+
+https://www.perl.com/pub/2004/08/09/commandline.html/
+https://perlmaven.com/perl-command-line-options
+
+################################################
+
+#!/usr/bin/perl
+
+perl -v
+perl -V
+-e execute code on the command line
+perl -e 'print qq{Hello World\n}'
+
+################################################
+
+
+https://stackoverflow.com/questions/638975/how-do-i-tell-if-a-regular-file-does-not-exist-in-bash
+https://wiki.ubuntuusers.de/sleep/
+https://www.cyberciti.biz/faq/linux-unix-sleep-bash-scripting/
+http://tldp.org/HOWTO/Bash-Prog-Intro-HOWTO-5.html
+
+################################################
+
+#!/bin/bash
+
+sleep 5
+sleep 5s
+sleep 2m
+sleep 0.1h
+sleep 2h &&
+sleep 30m && killall vlc
+sleep 5d
+
+if [ ! -f /tmp/foo.txt ]; then
+    echo "File not found!"
+else
+	echo "File found!"
+fi
+
+
+
+#!/bin/bash
+FILE=$1
+
+if [ ! -f "$FILE" ]
+then
+    echo "File $FILE does not exist"
+fi
+
+
+if [[ ! -f $FILE ]]; then
+    if [[ -L $FILE ]]; then
+        printf '%s is a broken symlink!\n' "$FILE"
+    else
+        printf '%s does not exist!\n' "$FILE"
+    fi
+fi
+
+
+
+Bash File Testing
+
+-b filename - Block special file
+-c filename - Special character file
+-d directoryname - Check for directory Existence
+-e filename - Check for file existence, regardless of type (node, directory, socket, etc.)
+-f filename - Check for regular file existence not a directory
+-G filename - Check if file exists and is owned by effective group ID
+-G filename set-group-id - True if file exists and is set-group-id
+-k filename - Sticky bit
+-L filename - Symbolic link
+-O filename - True if file exists and is owned by the effective user id
+-r filename - Check if file is a readable
+-S filename - Check if file is socket
+-s filename - Check if file is nonzero size
+-u filename - Check if file set-user-id bit is set
+-w filename - Check if file is writable
+-x filename - Check if file is executable
+
+-e: Returns true if file exists (regular file, directory, or symlink)
+-f: Returns true if file exists and is a regular file
+-d: Returns true if file exists and is a directory
+-h: Returns true if file exists and is a symlink
+
+-r: Returns true if file exists and is readable
+-w: Returns true if file exists and is writable
+-x: Returns true if file exists and is executable
+-s: Returns true if file exists and has a size > 0
+
+
+
+
+
+
+
+https://perldoc.pl/Pod::Usage#DESCRIPTION
+http://romeofox.de/2010/01/15/print_r-fur-perl/
+https://www.tldp.org/LDP/Bash-Beginners-Guide/html/sect_02_03.html
+https://perlmaven.com/how-to-exit-from-perl-script
+https://perldoc.perl.org/functions/sleep.html
+https://perldoc.perl.org/functions/exit.html
+http://perl101.org/command-line-switches.html
+https://de.perlmaven.com/perl-auf-der-kommandozeile
+https://perlmaven.com/perl-command-line-options
+
+
+
+
+
+
+
+
+
+
+
+
