@@ -528,3 +528,97 @@ use File::Copy;
 copy("sourcefile","destinationfile") or die "Copy failed: $!";
 copy("Copy.pm",\*STDOUT);
 move("/dev1/sourcefile","/dev2/destinationfile");
+
+
+
+
+
+################################################
+#
+#Perl eval
+#
+#https://perldoc.perl.org/functions/eval.html
+################################################
+
+# a private exception trap for divide-by-zero
+    eval { local $SIG{'__DIE__'}; $answer = $a / $b; };
+    warn $@ if $@;
+
+
+
+################################################
+#
+#Perl Command-Line Options
+#
+#https://www.perl.com/pub/2004/08/09/commandline.html/
+#https://perlmaven.com/perl-command-line-options
+#
+################################################
+
+#!/usr/bin/perl
+
+perl -v
+perl -V
+#-e execute code on the command line
+perl -e 'print qq{Hello World\n}'
+
+
+################################################
+#
+#   Perl unless Statement
+#
+#   https://www.thoughtco.com/telling-if-file-exists-in-perl-2641090
+#   https://www.tutorialspoint.com/perl/perl_unless_statement.htm
+#
+################################################
+
+
+#!/usr/bin/perl
+$filename = '/path/to/your/file.doc';
+if (-e $filename) {
+    print "File Exists!";
+}
+
+unless (-e $filename) {
+    print "File Doesn't Exist!";
+}
+
+
+################################################
+#
+#   perl check File exists
+#   https://perlmaven.com/file-test-operators
+#
+################################################
+
+=head
+
+-r File is readable by effective uid/gid.
+-w File is writable by effective uid/gid.
+-x File is executable by effective uid/gid.
+-o File is owned by effective uid.
+-R File is readable by real uid/gid.
+-W File is writable by real uid/gid.
+-X File is executable by real uid/gid.
+-O File is owned by real uid.
+-e File exists.
+-z File has zero size (is empty).
+-s File has nonzero size (returns size in bytes).
+-f File is a plain file.
+-d File is a directory.
+-l File is a symbolic link (false if symlinks aren't supported by the file system).
+-p File is a named pipe (FIFO), or Filehandle is a pipe.
+-S File is a socket.
+-b File is a block special file.
+-c File is a character special file.
+-t Filehandle is opened to a tty.
+-u File has setuid bit set.
+-g File has setgid bit set.
+-k File has sticky bit set.
+-T File is an ASCII or UTF-8 text file (heuristic guess).
+-B File is a "binary" file (opposite of -T).
+-M Script start time minus file modification time, in days.
+-A Same for access time.
+-C Same for inode change time (Unix, may differ for other platforms)
+
+=cut
