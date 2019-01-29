@@ -1,0 +1,250 @@
+
+###################################################
+
+Text to numpy
+
+###################################################
+
+https://docs.scipy.org/doc/numpy/reference/generated/numpy.loadtxt.html#numpy.loadtxt
+https://docs.scipy.org/doc/numpy-1.15.0/reference/generated/numpy.loadtxt.html
+https://docs.scipy.org/doc/numpy-1.15.0/reference/generated/numpy.fromstring.html
+https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.as_matrix.html
+https://www.python-course.eu/numpy_reading_writing.php
+
+---------------------------
+
+import numpy as np
+x = np.loadtxt('example.csv')
+
+---------------------------
+
+ Image manipulation and processing using Numpy and Scipy
+
+import cv2
+im = cv2.imread("abc.tiff",mode='RGB')
+print type(im)
+
+---------------------------
+
+from PIL import Image
+import numpy as np
+
+def load_image( infilename ) :
+    img = Image.open( infilename )
+    img.load()
+    data = np.asarray( img, dtype="int32" )
+    return data
+
+def save_image( npdata, outfilename ) :
+    img = Image.fromarray( np.asarray( np.clip(npdata,0,255), dtype="uint8"), "L" )
+    img.save( outfilename )
+
+
+---------------------------
+
+import cv
+import numpy as np
+x = cv.LoadImageM('im.tif')
+im = np.asarray(x)
+im.shape
+Out[5]: (487, 650, 3)
+
+---
+import numpy as np
+from PIL import Image
+
+img = Image.open( filename )
+try:
+    data = np.asarray( img, dtype='uint8' )
+except SystemError:
+    data = np.asarray( img.getdata(), dtype='uint8' )
+
+
+
+
+
+
+
+
+###################################################
+
+ Image to numpy array
+
+###################################################
+
+
+from scipy import misc
+f = misc.face()
+misc.imsave('face.png', f) # uses the Image module (PIL)
+
+import matplotlib.pyplot as plt
+plt.imshow(f)
+plt.show()
+
+# Creating a numpy array from an image file:
+from scipy import misc
+face = misc.face()
+misc.imsave('face.png', face) # First we need to create the PNG file
+
+face = misc.imread('face.png')
+type(face)
+face.shape, face.dtype
+
+---------------------------
+# Opening raw files (camera, 3-D images)
+face.tofile('face.raw') # Create raw file
+face_from_raw = np.fromfile('face.raw', dtype=np.uint8)
+face_from_raw.shape
+face_from_raw.shape = (768, 1024, 3)
+
+---------------------------
+# Working on a list of image files
+for i in range(10):
+    im = np.random.randint(0, 256, 10000).reshape((100, 100))
+    misc.imsave('random_%02d.png' % i, im)
+from glob import glob
+filelist = glob('random*.png')
+filelist.sort()
+
+---------------------------
+# Create matrix
+face = misc.face(gray=True)
+face[0, 40]
+
+---------------------------
+# Slicing
+face[10:13, 20:23]
+face[100:120] = 255
+lx, ly = face.shape
+X, Y = np.ogrid[0:lx, 0:ly]
+mask = (X - lx / 2) ** 2 + (Y - ly / 2) ** 2 > lx * ly / 4
+
+---------------------------
+# Masks
+face[mask] = 0
+# Fancy indexing
+face[range(400), range(400)] = 255
+
+---------------------------
+# Statistical information
+face = misc.face(gray=True)
+face.mean()
+face.max(), face.min()
+
+---------------------------
+# Blur
+from scipy import misc
+face = misc.face(gray=True)
+blurred_face = ndimage.gaussian_filter(face, sigma=3)
+very_blurred = ndimage.gaussian_filter(face, sigma=5)
+
+---------------------------
+# Sharpening
+from scipy import misc
+face = misc.face(gray=True).astype(float)
+blurred_f = ndimage.gaussian_filter(face, 3)
+filter_blurred_f = ndimage.gaussian_filter(blurred_f, 1)
+alpha = 30
+sharpened = blurred_f + alpha * (blurred_f - filter_blurred_f)
+
+---------------------------
+# Edge detection
+im = np.zeros((256, 256))
+im[64:-64, 64:-64] = 1
+im = ndimage.rotate(im, 15, mode='constant')
+im = ndimage.gaussian_filter(im, 8)
+
+
+http://www.degeneratestate.org/posts/2016/Oct/23/image-processing-with-numpy/
+https://kite.com/python/examples/4887/pil-convert-between-a-pil-%60image%60-and-a-numpy-%60array%60
+https://www.kaggle.com/grantrvd/convert-images-to-numpy-arrays
+https://www.kaggle.com/lgmoneda/from-image-files-to-numpy-arrays
+http://scipy-lectures.org/advanced/image_processing/
+https://docs.scipy.org/doc/scipy-0.13.0/reference/generated/scipy.ndimage.imread.html
+http://scikit-image.org/docs/dev/user_guide/numpy_images.html
+https://www.oreilly.com/library/view/programming-computer-vision/9781449341916/ch01.html
+https://www.kaggle.com/grantrvd/convert-images-to-numpy-arrays
+
+###################################################
+
+Convert between a PIL Image and a numpy array
+
+###################################################
+
+from PIL import Image
+import numpy
+im = Image.open("sample2.png")
+np_im = numpy.array(im)
+print np_im.shape
+OUTPUT
+(200, 400, 3)
+
+np_im = np_im - 18
+new_im = Image.fromarray(np_im)
+new_im.save("numpy_altered_sample2.png")
+OUTPUT
+
+---------------------------
+
+from skimage import data
+camera = data.camera()
+type(camera)
+camera.shape
+camera.size
+camera.min(), camera.max()
+camera.mean()
+camera[10, 20]
+camera[3, 10] = 0
+camera[:10] = 0
+
+---------------------------
+
+from PIL import Image
+pil_im = Image.open('empire.jpg')
+pil_im = Image.open('empire.jpg').convert('L')
+pil_im.thumbnail((128,128))
+box = (100,100,400,400)
+region = pil_im.crop(box)
+region = region.transpose(Image.ROTATE_180)
+pil_im.paste(region,box)
+out = pil_im.resize((128,128))
+out = pil_im.rotate(45)
+
+---------------------------
+
+from PIL import Image
+from pylab import *
+im = array(Image.open('empire.jpg'))
+imshow(im)
+hist(im.flatten(),128)
+show()
+
+---------------------------
+
+import numpy as np
+import matplotlib.pylab as plt
+im = plt.imread("BTD.jpg")
+im.shape
+img = to_grayscale(im)
+plti(img, cmap='Greys')
+
+---------------------------
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+train_image1 = plt.imread('../input/train/1_1.tif')
+train_mask1 = plt.imread('../input/train/1_1_mask.tif')
+test_image1 = plt.imread('../input/test/1.tif')
+
+fig, ax = plt.subplots(2, 3)
+for a in ax.reshape(6): a.axis('off')
+fig.set_size_inches(16, 8)  # Just some magic numbers that looked nice on my display
+
+ax[0, 0].imshow(train_image1, cmap='viridis')
+ax[0, 1].imshow(train_mask1, cmap='Greys_r')
+ax[0, 2].imshow(test_image1, cmap='viridis')
+ax[1, 0].matshow(train_image1, cmap='viridis')
+ax[1, 1].matshow(train_mask1, cmap='Greys_r')
+ax[1, 2].matshow(test_image1, cmap='viridis')
+
