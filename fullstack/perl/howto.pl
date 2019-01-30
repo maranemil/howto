@@ -622,3 +622,190 @@ unless (-e $filename) {
 -C Same for inode change time (Unix, may differ for other platforms)
 
 =cut
+
+
+
+###############################################
+#
+# Hello World Program in Perl
+# https://www.tutorialspoint.com/execute_perl_online.php
+#
+################################################
+
+#print "Hello World!\n";
+
+# https://www.tutorialspoint.com/perl/perl_date_time.htm
+
+use POSIX 'strftime';
+print POSIX::strftime('%Y%m%d_%H%M%S', localtime(time));
+print  "\n";
+
+($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime();
+#printf("Time Format - HH:MM:SS\n");
+printf("%02d:%02d:%02d", $hour, $min, $sec);
+
+print  "\n";
+use POSIX qw(strftime);
+print strftime "%Y%m%d_%H%M%S", localtime();
+
+
+####################################################################
+#
+# perl fopen
+#
+####################################################################
+
+#https://perldoc.perl.org/functions/open.html
+#https://docstore.mik.ua/orelly/perl4/cook/ch08_06.htm
+#https://perldoc.perl.org/functions/eof.html
+#https://www.cs.ait.ac.th/~on/O/oreilly/perl/cookbook/ch08_06.htm
+#https://stackoverflow.com/questions/32244474/perl-output-the-log-files
+#https://perlmaven.com/writing-to-files-with-perl
+#https://users.cs.cf.ac.uk/Dave.Marshall/PERL/node241.html
+
+open(my $fh, "<", "input.txt") or die "Can't open < input.txt: $!";
+open(my $fh, ">", "output.txt") or die "Can't open > output.txt: $!";
+open(my $fh, '>', 'some_strange_name/report.txt') or die;
+
+
+my $filename = 'correct_directory_with_typo/report.txt';
+open(my $fh, '>', $filename) or die "Could not open file '$filename'";
+
+my $filename = 'correct_directory_with_typo/report.txt';
+open(my $fh, '>', $filename) or die "Could not open file '$filename' $!";
+
+
+#...
+
+#!/usr/bin/perl -w
+
+
+$LOGFILE = "access.log";
+open(LOGFILE) or die("Could not open log file.");
+foreach $line (<LOGFILE>) {
+
+    ($site, $logName, $fullName, $date, $gmt,
+         $req, $file, $proto, $status, $length) = split(' ',$line);
+    $time = substr($date, 13);
+    $date = substr($date, 1, 11);
+    $req  = substr($req, 1);
+    chop($gmt);
+    chop($proto);
+    # do line-by-line processing.
+}
+close(LOGFILE);
+
+
+#...
+
+$naptime = 1;
+use IO::Handle;
+open (LOGFILE, "/tmp/logfile") or die "can't open /tmp/logfile: $!";
+for (;;) {
+    while (<LOGFILE>) { print }     # or appropriate processing
+    sleep $naptime;
+    LOGFILE->clearerr( );            # clear stdio error flag
+}
+
+#...
+
+#!/usr/bin/perl
+use warnings;
+use Net::Cisco;
+################################### S
+open( OUTPUTS, ">log_Success.txt" );
+open( OUTPUTF, ">log_Fail.txt" );
+################################### E
+open( SWITCHIP, "ip.txt" ) or die "couldn't open ip.txt";
+
+my $count = 0;
+
+while (<SWITCHIP>) {
+    chomp($_);
+    my $switch = $_;
+    my $tl     = 0;
+    my $t      = Net::Telnet::Cisco->new(
+        Host => $switch,
+        Prompt =>
+            '/(?m:^(?:[\w.\/]+\:)?[\w.-]+\s?(?:\(config[^\)]*\))?\s?[\$#>]\s?(?:\(enable\))?\s*$)/',
+        Timeout => 5,
+        Errmode => 'return'
+    ) or $tl = 1;
+
+    my @output = ();
+################################### S
+    if ( $tl != 1 ) {
+        print "$switch Telnet success\n"; # for printing it in screen
+        print OUTPUTS "$switch Telnet success\n"; # it will print it in the log_Success.txt
+    }
+    else {
+        my $telnetstat = "Telnet Failed";
+        print "$switch $telnetstat\n"; # for printing it in screen
+        print OUTPUTF "$switch $telnetstat\n"; # it will print it in the log_Fail.txt
+    }
+################################### E
+    $count++;
+}
+################################### S
+close(SWITCHIP);
+close(OUTPUTS);
+close(OUTPUTF);
+################################### E
+
+
+
+
+####################################################################
+#
+#   Perl next Statement
+#
+####################################################################
+
+#https://www.tutorialspoint.com/perl/perl_next_statement.htm
+#http://www.aip.de/groups/soe/local/handbuch/html/tece.htm
+#https://perldoc.perl.org/functions/continue.html
+#http://www.perltutorial.org/perl-next/
+#https://www.perl.com/article/perl-foreach-loops/
+#http://www.hidemail.de/blog/foreach-perl.shtml
+#https://alvinalexander.com/perl/perl-for-loop-next-continue
+
+#!/usr/local/bin/perl
+$a = 10;
+while( $a < 20 ) {
+   if( $a == 15) {
+      # skip the iteration.
+      $a = $a + 1;
+      next;
+   }
+   print "value of a: $a\n";
+   $a = $a + 1;
+}
+
+#!/usr/bin/perl
+foreach $i (1..100)
+ {
+  next if $i % 2 == 0;
+  print $i, "\n" if $i % 3 == 0;
+ }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
