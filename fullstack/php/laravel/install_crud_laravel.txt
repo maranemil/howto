@@ -1,0 +1,104 @@
+
+https://www.tutsmake.com/laravel-5-7-crud-tutorial-with-example-from-scratch/
+https://www.cyberciti.biz/faq/howto-install-mysql-on-ubuntu-linux-16-04/
+
+sudo apt install git -y
+sudo apt install composer -y
+
+sudo apt install php7.2-mbstring
+sudo apt install php7.2-xml
+sudo apt install php7.2-mysql
+
+sudo apt install mysql-client-core-5.7
+sudo apt install mysql-server mysql-client
+sudo mysql_secure_installation
+sudo mysql -u root -p
+
+use mysql;
+show tables;
+describe user;
+
+GRANT ALL PRIVILEGES ON *.* TO 'blabla'@'localhost' IDENTIFIED BY 'blabla';
+SET PASSWORD FOR 'blabla'@'localhost' = PASSWORD('blabla');
+ALTER USER 'blabla'@'localhost' IDENTIFIED BY 'blabla';
+
+
+sudo apt install apache2 -y
+sudo apt-get install libapache2-mod-php7.2 -y
+
+sudo service mysql restart
+sudo service apache2 restart
+sudo ln -s /home/blabla/wweb/  /var/www/html/wwweb
+
+
+create database homestead;
+
+composer create-project --prefer-dist laravel/laravel LaravelCrud
+
+# set database credential in .env file
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=here your database name here
+DB_USERNAME=here database username here
+DB_PASSWORD=here database password here
+
+php artisan make:model Note -m
+
+--------------------------
+# add in database/migrations file
+--------------------------
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateNotesTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('notes', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('title');
+            $table->text('description');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('notes');
+    }
+}
+
+
+php artisan migrate -v
+--------------------------
+app/Note.php
+--------------------------
+namespace App;
+use Illuminate\Database\Eloquent\Model;
+class Note extends Model
+{
+  protected $fillable = [
+    'title',
+    'description',
+  ];
+}
+
+php artisan make:controller NotesController --resource
+
+
+
+
