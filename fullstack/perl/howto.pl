@@ -795,6 +795,103 @@ foreach $i (1..100)
 
 
 
+################################################
+#
+# compare LIKE / In ARRAY
+#
+################################################
+
+#https://www.tutorialspoint.com/
+#https://www.tutorialspoint.com/codingground.htm
+#https://www.tutorialspoint.com/python3_terminal_online.php
+#https://www.tutorialspoint.com/execute_perl_online.php
+#https://www.go4expert.com/articles/inarray-functionality-perl-t8978/
+#http://antoniolorusso.com/2008/07/09/in_array-in-perl/
+
+#
+# Hello World Program in Perl
+#
+print "Hello World!\n";
+print "~~~~~~~~~~~~~~~~~~~  \n";
+
+my @arrTestOrd  = (40141203,40141205,40141207, 80181203, 80181208, 60191293);
+my @arrTestOrd  = (40141209,60191243);
+#m @arrTestRef  = (40141203,40141205,40141207, 80181203, 80181208, 60191293);
+my @arrTestRef  = (40141233,40141235,40141207, 80181273, 80181208, 60191223);
+
+foreach my $itemOrd (@arrTestOrd) {
+    foreach my $itemRef (@arrTestRef) {
+        if($itemOrd =~ substr($itemRef,0,6)){
+            print substr($itemRef,0,6). "\n";
+            print $itemOrd . " - ". $itemRef . "\n";
+            print "~~~~~~~~~~~~~~~~~~~  \n";
+        }
+        else{
+            print "skiped " . $itemOrd . " - ". $itemRef . "\n";
+            print "~~~~~~~~~~~~~~~~~~~  \n";
+        }
+
+        if( in_array(\@arrTestOrd, $itemRef)) {
+            print "in array " . $itemOrd . " - ". $itemRef . "\n";
+            print "~~~~~~~~~~~~~~~~~~~  \n";
+        }
+        else{
+
+        }
+
+    }
+}
+
+ sub in_array
+ {
+     my ($arr,$search_for) = @_;
+     my %items = map {$_ => 1} @$arr;
+     return (exists($items{$search_for}))?1:0;
+ }
+
+
+################################################
+#
+# search in string
+#
+################################################
+my $string = 'fin_helm';
+my @array = qw/full_plate manteau boots two_handed_sword fin_helm/;
+if(grep $_ eq $string, @array)
+{
+	print "$string is in the array";
+}
+
+
+################################################
+# From http://www.seancolombo.com
+# Equivalent to PHP's in_array.  If the first element is in the array
+# passed in as the second parameter, then the sub-routine returns non-zero.
+# If the element is not in the array, then the sub-routine returns zero.
+################################################
+sub in_array{
+    my $retVal = 0;
+    my $val = shift(@_);
+    foreach my $curr (@_){
+        if($curr eq $val){
+            $retVal = 1;
+            last;
+        }
+    }
+    return $retVal;
+# end in_array()
+}
+
+
+my $needle = "abc";
+my @haystack = ("abc","dce","efg");
+if(in_array($needle, @haystack)){
+    print "Found it!";
+}
+
+
+
+
 
 
 
