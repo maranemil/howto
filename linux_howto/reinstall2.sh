@@ -364,3 +364,14 @@ upload_max_filesize=64M
 post_max_size=64M
 
 sudo service apache2 restart
+
+#########################################################
+#
+#   module music format decoder ubuntu FIX s3m mod xm it
+#   https://wiki.ubuntuusers.de/Codecs/
+#
+#########################################################
+
+sudo apt-get install libxvidcore4 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-fluendo-mp3 gstreamer1.0-libav
+
+
