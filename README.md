@@ -94,6 +94,8 @@ git verify-pack -v ./.git/objects/pack/pack-......ea.pack
 * cat /proc/sys/vm/swappiness
 * sync && echo 3 | sudo tee /proc/sys/vm/drop_caches
 * sudo /etc/init.d/dns-clean restart && sudo service network-manager reload
+* sudo /etc/init.d/dns-clean restart && sudo service network-manager reload && echo 3 | sudo tee /proc/sys/vm/drop_caches && sudo /etc/init.d/networking restart 
+
 
  
  
