@@ -1029,3 +1029,32 @@ $date = new DateTime("2012-10-18");
 echo $date->format("W");
 echo "<br>";
 echo date('W', strtotime("2012-10-18"));
+
+
+
+
+########################################################
+#
+# Exploding new lines in PHP
+#
+# http://php.net/manual/de/function.preg-split.php
+# https://tudorbarbu.ninja/exploding-new-lines-in-php/
+# http://devs.fantastech.co/explode-line-breaks-php/
+# http://phptester.net/
+#
+########################################################
+
+$content = "AAAAAAA
+BBBBBBB
+CCCCCCC";
+$content = "AAAAAAA, BBBBBBB, CCCCCCC";
+$content = "AAAAAAA; BBBBBBB; CCCCCCC";
+
+#$lines = array_map("rtrim", explode("\n", $content));
+$lines = preg_split("~[/\n/,;]~", $content);
+
+#$lines = preg_split( '/\r\n|\r|\n/', $content );
+#$lines = string = preg_split("/\R/", $content);
+print_r($lines );
+
+/*Array ( [0] => AAAAAAA [1] => BBBBBBB [2] => CCCCCCC )*/
