@@ -686,13 +686,7 @@ ps auxf | sort -nr -k 4 | head -5
 ps -eo euser,ruser,suser,fuser,f,comm,label
 
 
-########################################################
-#
-# Print a count of the commits per day in a git repo.
-#
-#######################################################
 
-git log --pretty=format:%cd --date=short | uniq -c
 
 #######################################################
 #
@@ -701,6 +695,41 @@ git log --pretty=format:%cd --date=short | uniq -c
 #######################################################
 
 identify -format "%f F:%[EXIF:Flash]\n" *.jpg | egrep " F:(0|16|24|32)$"
+
+
+#######################################################################
+#
+# git statistics
+#
+#######################################################################
+
+https://stackoverflow.com/questions/1838873/visualizing-branch-topology-in-git/1838938#1838938
+
+git log --pretty=format:"author: %an, %ae %n commiter: %cn, %ce %n --------------- %n Info: %s"
+git log --graph --oneline --full-history --all
+git log --graph --full-history --all
+
+# pretty v1
+git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)'
+
+# pretty v2
+git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n'' %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
+
+# pretty v3
+git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset) %C(bold cyan)(committed: %cD)%C(reset) %C(auto)%d%C(reset)%n''          %C(white)%s%C(reset)%n'' %C(dim white)- %an <%ae> %C(reset) %C(dim white)(committer: %cn <%ce>)%C(reset)'
+
+# count total commits by branchname
+git log branchname --pretty=oneline | wc -l
+git rev-list --all | wc -l
+git log --all --format=%h | wc -l
+
+# count total commits by user
+git shortlog -s
+git shortlog -s -n
+
+# get commits by day
+git log --pretty=format:%cd --date=short | uniq -c
+git log --pretty=format:%cd --date=short | uniq -c | grep -i '2019'
 
 
 
