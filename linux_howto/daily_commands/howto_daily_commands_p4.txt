@@ -581,8 +581,126 @@ I couldn't do new things like Alt+Print Screen but could still reboot no problem
 
 
 
+######################################################
+#
+# PS AUX - managing processes
+#
+######################################################
 
 
+
+
+
+https://wiki.ubuntuusers.de/ps/
+https://www.commandlinefu.com/commands/view/3/display-the-top-ten-running-processes-sorted-by-memory-usage
+http://jagadesh4java.blogspot.com/2012/08/process-based-commands.html
+https://www.sysadmin.md/ps-cheatsheet.html
+http://jagadesh4java.blogspot.com/2012/08/process-based-commands.html
+
+ps aux | sort -nk +4 | tail -n 2
+ps aux | sort -rk 4,4 | head -n 5
+
+ps aux | sort -rk 4,4 | head -n 5 | awk '{print $2}'  |  xargs sudo kill -9
+ps aux | grep -i chromium-browser | sort -rk 4,4 | head -n 2 | tail -2 awk '{print $2}' |  xargs sudo kill -9
+
+watch   '/usr/bin/top -b | head -4 | tail -2'
+top -b | head -4 | tail -1 | awk '{print $6}' # 4G from 8G
+
+
+ps aux --sort -rss | head -2
+ps aux --sort +rss | tail -2
+ps aux --sort -%mem | head --lines=3
+ps -eo size,command --sort -size | head
+ps axo %mem,pid,euser,cmd | sort -nr | head -n 3
+ps aux --sort pmem | grep -i chromium-browser | awk '{print $2, $6, $11}' # show (pid / mem / command)
+ps aux --sort -pmem | grep -i chromium-browser | awk '{print $2, $6, $11}' # show (pid / mem / command)
+ps -aux | grep command # List process based on Commands
+ps aux --sort -pmem # Outputs the highest %MEM at bottom
+
+ps aux --sort -pmem | grep -i chromium-browser | head -4 | tail -2 | awk '{print $2, $6}' # show top mem second line
+ps aux --sort -pmem | grep -i chromium-browser | head -4 | tail -2 | awk '{print $2}' |  xargs sudo kill -9
+
+
+ps aux --sort -pmem | grep -i chromium-browser | head -4 | sed -n 2p | awk '{print $2, $6}'  # show top mem second line
+ps aux --sort -pmem | grep -i chromium-browser | head -4 | awk 'FNR==2' | awk '{print $2, $6}'
+ps aux --sort -pmem | grep -i chromium-browser | head -4 | awk 'NR==2' | awk '{print $2, $6}'
+
+
+top -b -o +%MEM | head -9
+watch --differences -n 2 'ps aux | sort -r -nk +4 | head'
+ps aux | sort -nrk 3 | head
+ps -e -orss=,args= | sort -b -k4,4n | pr -TW$COLUMNS
+ps -e -orss=,pid=,args= | sort -b -k1n | pr -TW$COLUMNS
+ps -e -orss=,args= | sort -b -k1,1n | pr -TW$COLUMNS
+ps -e -orss=,args= | sort -b -k1,1n | pr -TW$COLUMNS
+ps -eorss,args | sort -nr | pr -TW$COLUMNS | head
+ps -fC chromium-browser
+ps -ejH
+ps axjf
+ps ef -o command,vsize,rss,%mem,size --sort -size | head
+ps -eo pid,args,psr
+
+
+ps -f -u username # Lists all current processes for the user named username in full listing format
+ps -o thcount -p 7893 # Return Number of kernal Threads Owned by a process
+ps aux | sort -nk +4 | tail # Display the top running process according by memory usage
+ps hax -o user | sort | uniq -c # Process List By User
+ps aux --sort=%mem,%cpu # Show all process by their memory & CPU Usage
+ps -o %mem= -C chromium-browser # Show How much memory is using
+ps -o pmem= -C chromium-browser # Show How much memory is using
+ps -o %cpu -C chromium-browser # Show How much cpu is using
+ps -Hacl -F S -A f # View Process by Hierarchy
+ps -p $$ # Current Running Shell
+ps -ef --sort=-%cpu # List Process By Highest CPU Usage
+ps -o lstart # Display Date of the Process Started
+ps -e -orss=,args= | sort -b -k1,1n | pr -TW$COLUMNS # Top Memory Usage
+kill -9 `ps -xaw -o state -o ppid | grep Z | grep -v PID | awk '{print $2}'` # Kill Zombie process
+ps -AFl # Show all processes including commandline arguments
+ps -AlFH # Show all processes with threads in tree mode
+ps -e -o pid,args --forest # Show processes in a hierarchy
+ps -U root -u root u # Show list of processes owned by a specific user
+ps uax | grep chromium-browser # Show information for a particular process
+
+
+# Mem usage for PID $pid
+for pid in $(ps -ef | awk '{print $2}'); do cat /proc/$pid/smaps | grep -m 1 -e ^Size: | awk '{print $2}'; done
+for pid in $(ps -ef | awk '{print $2}'); do cat /proc/$pid/smaps | grep -m 1 -e ^Rss: | awk '{print $2}'; done
+for pid in $(ps -ef | awk '{print $2}'); do cat /proc/$pid/smaps | grep -m 1 -e ^Pss: | awk '{print $2}'; done
+
+
+# Get top 5 processes by CPU usage
+ps -e -o pcpu,cpu,nice,state,cputime,args --sort pcpu | sed '/^ 0.0 /d'| tac |head -5
+ps auxf | sort -nr -k 3 | head -5
+
+
+# Get top 5 processes by memory usage
+ps aux | awk '{mem[$11]+=int($6/1024)}; {cpuper[$11]+=$3};{memper[$11]+=$4}; END {for (i in mem) {print cpuper[i]"% ",memper[i]"% ",mem[i]" MB ",i}}' | sort -k3nr | head -n 5
+
+
+# Get top 5 processes by memory usage
+ps -e -orss=,args= | sort -b -k1,1n | pr -TW$COLUMNS| tac | head -5
+ps auxf | sort -nr -k 4 | head -5
+
+
+# Get security info
+ps -eo euser,ruser,suser,fuser,f,comm,label
+
+
+########################################################
+#
+# Print a count of the commits per day in a git repo.
+#
+#######################################################
+
+git log --pretty=format:%cd --date=short | uniq -c
+
+#######################################################
+#
+# Show photo filenames where no flash was used. Uses Imagemagick
+#
+#######################################################
+
+identify -format "%f F:%[EXIF:Flash]\n" *.jpg | egrep " F:(0|16|24|32)$"
 
 
 
