@@ -166,3 +166,47 @@ header('Cache-Control: max-age=0');
 $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
 //force user to download the Excel file without writing it to server's HD
 $objWriter->save('php://output');
+
+
+
+#########################################################
+#
+#
+#
+#########################################################
+
+
+/*
+https://phpspreadsheet.readthedocs.io/en/develop/
+https://phpspreadsheet.readthedocs.io/en/develop/topics/accessing-cells/
+https://artisansweb.net/read-csv-excel-file-php-using-phpspreadsheet/
+https://phpspreadsheet.readthedocs.io/en/develop/topics/reading-and-writing-to-file/
+https://phpspreadsheet.readthedocs.io/en/develop/topics/reading-and-writing-to-file/
+https://phpspreadsheet.readthedocs.io/en/develop/topics/recipes/
+*/
+
+require 'vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
+$spreadsheet = new Spreadsheet();
+$sheet = $spreadsheet->getActiveSheet();
+$sheet->setCellValue('A1', 'Hello World !');
+
+$writer = new Xlsx($spreadsheet);
+$writer->save('hello world.xlsx');
+
+$writer = new \PhpOffice\PhpSpreadsheet\Writer\Xls($spreadsheet);
+$writer->save("05featuredemo.xls");
+
+/* Here there will be some code where you create $spreadsheet */
+
+// redirect output to client browser
+header('Content-Type: application/vnd.ms-excel');
+header('Content-Disposition: attachment;filename="myfile.xls"');
+header('Cache-Control: max-age=0');
+
+$writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xls');
+$writer->save('php://output');
+
