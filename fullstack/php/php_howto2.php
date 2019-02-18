@@ -1058,3 +1058,63 @@ $lines = preg_split("~[/\n/,;]~", $content);
 print_r($lines );
 
 /*Array ( [0] => AAAAAAA [1] => BBBBBBB [2] => CCCCCCC )*/
+
+
+
+#####################################################
+#
+#	PHP - Get key name of array value
+#
+#	key — Fetch a key from an array
+# 	http://php.net/manual/en/function.array-search.php
+# 	http://uk.php.net/manual/en/function.key.php
+#
+#####################################################
+
+$array = array(0 => 'blue', 1 => 'red', 2 => 'green', 3 => 'red');
+$key = array_search('green', $array); // $key = 2;
+$key = array_search('red', $array);   // $key = 1;
+
+
+$arr = array ('first' => 'a', 'second' => 'b', );
+$key = array_search ('a', $arr);
+
+-------
+
+# key($arr);
+$array = array(
+    'fruit1' => 'apple',
+    'fruit2' => 'orange',
+    'fruit3' => 'grape',
+    'fruit4' => 'apple',
+    'fruit5' => 'apple');
+
+// this cycle echoes all associative array
+// key where value equals "apple"
+while ($fruit_name = current($array)) {
+    if ($fruit_name == 'apple') {
+        echo key($array).'<br />';
+    }
+    next($array);
+}
+
+
+#####################################################
+#
+#	parse_ini_file — Parse a configuration file
+#
+#	http://php.net/manual/en/function.parse-ini-file.php
+#	http://php.net/manual/en/function.file.php
+#	http://php.net/manual/en/function.split.php
+#
+#####################################################
+
+
+// Parse without sections
+$ini_array = parse_ini_file("sample.ini");
+print_r($ini_array);
+
+# or $array = split("\n", file_get_contents('filename'));
+
+
+
