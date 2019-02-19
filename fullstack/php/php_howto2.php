@@ -1109,13 +1109,31 @@ while ($fruit_name = current($array)) {
 #
 #####################################################
 
+http://php.net/manual/de/function.split.php (REMOVED in PHP 7.0.0.)
+http://php.net/manual/de/function.parse-ini-file.php
+http://php.net/manual/de/function.preg-split.php
+http://php.net/manual/de/function.explode.php
+http://php.net/manual/de/function.str-split.php
+https://www.reddit.com/r/PHP/comments/18dgn3/why_are_hash_comments_deprecated/
+http://php.net/manual/de/function.parse-ini-file.php (DOES NOT SUPPORT #)
+
 
 // Parse without sections
 $ini_array = parse_ini_file("sample.ini");
 print_r($ini_array);
 
-# or $array = split("\n", file_get_contents('filename'));
-
+// if file with hashes
+$ini_array = explode("\n", file_get_contents('filename'));
+foreach($ini_array as $value){
+	if(preg_match('~host~',$value)){
+		$arTmp = explode("=",$value);
+		print_r($arTmp);
+	}
+		if(preg_match('~user~',$value)){
+		$arTmp = explode("=",$value);
+		print_r($arTmp);
+	}
+}
 
 
 ##########################################################
