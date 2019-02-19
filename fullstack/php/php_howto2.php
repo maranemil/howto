@@ -1184,3 +1184,18 @@ if (is_a($WF, 'WidgetFactory')) {
 if ($WF instanceof WidgetFactory) {
     echo 'Yes, $WF is a WidgetFactory';
 }
+
+
+##########################################################
+#
+#  shell_exec
+#
+##########################################################
+
+http://php.net/manual/en/function.exec.php
+http://php.net/manual/en/function.shell-exec.php
+
+$output = shell_exec('ls -lart');
+echo "<pre>$output</pre>";
+
+echo exec('whoami');
