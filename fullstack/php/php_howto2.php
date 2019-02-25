@@ -1199,3 +1199,22 @@ $output = shell_exec('ls -lart');
 echo "<pre>$output</pre>";
 
 echo exec('whoami');
+
+
+###############################################
+#
+#	Find pathnames matching a pattern
+# 	http://php.net/manual/en/function.glob.php
+#
+###############################################
+
+// get files array
+foreach (glob("*.txt") as $filename) {
+    echo "$filename size " . filesize($filename) . "\n";
+}
+
+// get dir array
+$dirs =  glob('*', GLOB_ONLYDIR);
+foreach ($dirs as $dir) {
+	// do something
+}
