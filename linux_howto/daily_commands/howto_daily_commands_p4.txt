@@ -754,7 +754,101 @@ vlc http://localhost:9091
 
 
 
+####################################################
+#
+#	How To Add Swap Space on Ubuntu 16.04
+#
+####################################################
 
+https://itsfoss.com/swap-size/
+https://www.2daygeek.com/add-extend-increase-swap-space-memory-file-partition-linux/#
+https://devstudioonline.com/article/increase-memory-ram-in-ubuntu-linux-by-using-swap-file
+https://bogdancornianu.com/change-swap-size-in-ubuntu/
+https://tecadmin.net/enable-swap-on-ubuntu/
+https://tutorials.technology/tutorials/03-adding-swap-partition-on-ubuntu-16.html
+http://www.linuxandubuntu.com/home/how-to-create-or-increase-swap-space-in-linux
+https://linuxize.com/post/how-to-add-swap-space-on-ubuntu-18-04/
+https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-16-04
+
+
+Method-1 : Create the swap file using fallocate
+----------
+sudo fallocate -l 1G /swapfile
+ls -lh /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+vi /etc/fstab
+swapon --show
+# cat /proc/swaps
+sudo sysctl vm.swappiness=10
+
+# sudo vim /etc/sysctl.conf
+# vm.swappiness=10
+# sudo sysctl -p
+
+
+Method-2 : Create the swap file using dd command
+----------
+sudo dd if=/dev/zero of=/swapfile1 bs=1G count=1
+ls -lh /swapfile1
+sudo chmod 600 /swapfile1
+sudo mkswap /swapfile1
+sudo swapon /swapfile1
+vi /etc/fstab
+swapon --show
+
+Method-3 : Create the swap file using Hard drive partition
+----------
+sudo mkswap /dev/sda4
+sudo swapon /dev/sda4
+vi /etc/fstab
+swapon --show
+
+
+Increase memory
+----------
+free -m
+mkdir -p /var/swapmemory
+cd /var/swapmemory
+#Here, 1M * 2000 ~= 2GB of swap memory
+dd if=/dev/zero of=swapfile bs=1M count=2000
+mkswap swapfile
+swapon swapfile
+chmod 600 swapfile
+echo "/var/swapmemory/swapfile none swap sw 0 0" >> /etc/fstab
+#cat /proc/meminfo
+free -m
+
+
+Change swap size in Ubuntu 18.04 from 4 GB to 8 GB
+----------
+Turn off all swap processes
+sudo swapoff -a
+
+Resize the swap
+sudo dd if=/dev/zero of=/swapfile bs=1G count=8
+
+if = input file
+of = output file
+bs = block size
+count = multiplier of blocks
+
+Make the file usable as swap
+sudo mkswap /swapfile
+
+Activate the swap file
+sudo swapon /swapfile
+
+Check the amount of swap available
+grep SwapTotal /proc/meminfo
+
+
+Disable and remove a swap file
+----------
+swapoff /var/swapfile # Disable the swap file
+rm /var/swapfile # Delete the swap file
+/var/swapfile none swap sw 0 0  # Remove the entry from “/etc/fstab” file.
 
 
 
