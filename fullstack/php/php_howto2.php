@@ -1218,3 +1218,76 @@ $dirs =  glob('*', GLOB_ONLYDIR);
 foreach ($dirs as $dir) {
 	// do something
 }
+
+
+
+
+
+###############################################
+#
+# 	Exception references
+#
+###############################################
+
+
+https://www.alainschlesser.com/structuring-php-exceptions/
+http://php.net/manual/de/exception.getcode.php
+https://stackify.com/php-try-catch-php-exception-tutorial/
+http://php.net/manual/de/language.exceptions.php
+https://www.codediesel.com/php/handling-multiple-exceptions-in-php-7-1/
+
+
+try {
+    throw new Exception("Some error message", 30);
+} catch(Exception $e) {
+    echo "The exception code is: " . $e->getCode();
+}
+
+try {
+    // run your code here
+}
+catch (exception $e) {
+    //code to handle the exception
+}
+catch (InvalidArgumentException $e) {
+    echo $e->getMessage();
+}
+finally {
+    //optional code that always runs
+}
+
+...
+
+class DivideByZeroException extends Exception {};
+class DivideByNegativeException extends Exception {};
+
+function process_divide($denominator)
+{
+    try
+    {
+        if ($denominator == 0)
+        {
+            throw new DivideByZeroException();
+        }
+        else if ($denominator < 0)
+        {
+            throw new DivideByNegativeException();
+        }
+        else
+        {
+            echo 100 / $denominator;
+        }
+    }
+    catch (DivideByZeroException $ex)
+    {
+        echo "Divide by zero exception!";
+    }
+    catch (DivideByNegativeException $ex)
+    {
+        echo "Divide by negative number exception!";
+    }
+    catch (Exception $x)
+    {
+        echo "UNKNOWN EXCEPTION!";
+    }
+}
