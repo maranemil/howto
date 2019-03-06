@@ -102,4 +102,32 @@ http://php.net/manual/de/language.oop5.abstract.php
 http://php.net/manual/de/language.oop5.static.php
 http://php.net/manual/de/reserved.classes.php
 http://php.net/manual/de/language.types.object.php#language.types.object.casting
+
 */
+
+
+
+#----------------------------------
+# Error Control Operators sign (@). The @-operator works only on expressions.
+#----------------------------------
+/*
+http://php.net/manual/en/language.operators.errorcontrol.php
+http://php.net/manual/de/function.rename.php
+*/
+
+#----------------------------------
+# @tags
+#----------------------------------
+// https://docs.phpdoc.org/references/phpdoc/tags/var.html
+
+
+#----------------------------------
+# Checks if the given key or index exists in the array
+# http://php.net/manual/de/function.array-key-exists.php
+#----------------------------------
+
+$search_array = array('erstes' => 1, 'zweites' => 4);
+if (array_key_exists('erstes', $search_array)) {
+    echo "Das Element 'erstes' ist in dem Array vorhanden";
+}
+
