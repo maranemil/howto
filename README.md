@@ -96,8 +96,10 @@ git verify-pack -v ./.git/objects/pack/pack-......ea.pack
 * sudo /etc/init.d/dns-clean restart && sudo service network-manager reload
 * sudo /etc/init.d/dns-clean restart && sudo service network-manager reload && echo 3 | sudo tee /proc/sys/vm/drop_caches && sudo /etc/init.d/networking restart 
 
+##### Record Screen Ubuntu
 
- 
+* ffmpeg -v warning -video_size 1920x1080 -framerate 5 -f x11grab -i :0.0  myvid_$(date +%s).mov
+* ffmpeg -f x11grab  -follow_mouse centered -show_region 1 -framerate 5 -video_size 4cif -i :0.0 xmvid_$(date +%s).mov
  
  
 
