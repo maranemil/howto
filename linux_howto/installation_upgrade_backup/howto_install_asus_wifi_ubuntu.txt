@@ -83,3 +83,118 @@ sudo /etc/init.d/named restart
 
 http://fossbytes.com/speed-internet-using-command-prompt-cmd/
 http://ubuntuhandbook.org/index.php/2013/07/flush-dns-cache-ubuntu-13-04-12-10/
+
+
+
+
+###############################################################################
+#
+#	Using WPA_Supplicant to Connect to WPA2 Wi-fi from Terminal on Ubuntu 16.04 Server
+#
+###############################################################################
+
+https://www.datamate.org/wlan-ubuntu-server-kommandozeile-nmcli/https://ubuntuforums.org/showthread.php?t=2325768
+https://ubuntuforums.org/showthread.php?t=2325768
+https://www.linuxbabe.com/command-line/ubuntu-server-16-04-wifi-wpa-supplicant
+
+
+lsusb
+iwconfig
+apt-get --no-install-recommends install network-manager
+service network-manager start
+nmcli dev status
+nmcli dev wifi list
+# /etc/network/interfaces
+
+$ nmcli connection add type wifi ifname wlan0 ssid MeinGeheimesWLAN
+$ nmcli connection edit wlan0
+nmcli connection edit wlan0
+nmcli> goto wifi
+nmcli 802-11-wireless> set mode infrastructure
+nmcli 802-11-wireless> back
+nmcli> goto wifi-sec
+nmcli 802-11-wireless-security> set key-mgmt wpa-psk
+nmcli 802-11-wireless-security> set psk MeinWLANPasswort
+nmcli 802-11-wireless-security> save
+nmcli 802-11-wireless-security> quit
+
+nmcli radio wifi on
+
+
+/etc/wpa_supplicant
+# /etc/wpa_supplicant/wpa_supplicant-wlan1.conf
+
+ctrl_interface=/var/run/wpa_supplicant
+ctrl_interface_group=netdev
+update_config=1
+eapol_version=1
+ap_scan=1
+fast_reauth=1
+
+network={
+        ssid="NOT MY ESSID"
+        #psk="NOT MY PASSKEY"
+        psk=a20000000000000000000000
+}
+
+
+
+------------------------------
+
+sudo apt install rfkill
+rfkill list
+sudo systemctl stop NetworkManager
+sudo systemctl disable NetworkManager
+iwconfig
+sudo iwlist wlp3s0 scan | grep ESSID
+sudo apt install wpasupplicant
+
+wpa_supplicant.conf
+wpa_passphrase your-ESSID your-passphrase | sudo tee /etc/wpa_supplicant.conf
+
+sudo wpa_supplicant -c /etc/wpa_supplicant.conf -i wlp3s0
+iwconfig
+
+
+sudo wpa_supplicant -B -c /etc/wpa_supplicant.conf -i wlp3s0
+sudo dhclient wlp3s0
+ifconfig wlp3s0
+sudo dhclient wlp3s0 -r
+
+
+Connecting to Hidden Wireless Network
+/etc/wpa_supplicant.conf
+scan_ssid=1
+
+
+network={
+        ssid="LinuxBabe.Com office network"
+        #psk="12345qwert"
+        psk=68add4c5fee7dc3d0dac810f89b805d6d147c01e281f07f475a3e0195
+        scan_ssid=1
+}
+
+Auto Connect on Startup
+wpa_supplicant.service
+
+sudo cp /lib/systemd/system/wpa_supplicant.service /etc/systemd/system/wpa_supplicant.service
+
+sudo nano /etc/systemd/system/wpa_supplicant.service
+ExecStart=/sbin/wpa_supplicant -u -s -O /run/wpa_supplicant
+ExecStart=/sbin/wpa_supplicant -u -s -c /etc/wpa_supplicant.conf -i wlp3s0
+sudo systemctl enable wpa_supplicant.service
+
+sudo nano /etc/systemd/system/dhclient.service
+
+[Unit]
+Description= DHCP Client
+Before=network.target
+[Service]
+Type=simple
+ExecStart=/sbin/dhclient wlp3s0
+[Install]
+WantedBy=multi-user.target
+
+sudo systemctl enable dhclient.service
+
+
