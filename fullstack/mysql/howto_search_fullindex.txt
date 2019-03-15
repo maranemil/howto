@@ -73,3 +73,42 @@ mysql> SELECT id, title, body, MATCH (title,body)  AGAINST ('mysql tutorial' IN 
 
 
 # ALTER TABLE tbl_query ADD FULLTEXT INDEX `FullText`  (`query_desc` ASC,   `query_desc_details` ASC);
+
+
+
+
+##################################################################
+#
+#	Searching for a keyword across multiple columns
+#	https://mariadb.com/kb/en/library/match-against/
+#	https://mariadb.com/kb/en/library/full-text-index-overview/
+#	https://mariadb.com/kb/en/library/full-text-index-overview/
+#	https://mariadb.com/resources/blog/initial-impressions-of-innodb-fulltext/
+#	http://www.mysqltutorial.org/activating-full-text-searching.aspx
+#
+##################################################################
+
+SELECT *  FROM pages  WHERE CONCAT_WS('', column1, column2, column3) LIKE '%keyword%'
+#----------------------------------------
+SELECT  * FROM    pages WHERE   MATCH(title, content) AGAINST ('keyword' IN BOOLEAN MODE)
+CREATE FULLTEXT INDEX fx_pages_title_content ON pages (title, content)
+
+CREATE TABLE ft_myisam(copy TEXT,FULLTEXT(copy)) ENGINE=MyISAM;
+INSERT INTO ft_myisam(copy) VALUES ('Once upon a time'), ('There was a wicked witch'),
+ ('Who ate everybody up');
+SELECT * FROM ft_myisam WHERE MATCH(copy) AGAINST('wicked');
+
+SELECT id, body, MATCH (title,body) AGAINST
+    ('Security implications of running MySQL as root'
+    IN NATURAL LANGUAGE MODE) AS score
+    FROM articles WHERE MATCH (title,body) AGAINST
+    ('Security implications of running MySQL as root'
+    IN NATURAL LANGUAGE MODE);
+#----------------------------------------
+ALTER TABLE products  ADD FULLTEXT(productDescription,productLine)
+CREATE FULLTEXT INDEX index_name ON table_name(idx_column_name,...)
+CREATE FULLTEXT INDEX address ON offices(addressLine1,addressLine2)
+#----------------------------------------
+ALTER TABLE table ADD FULLTEXT index_name(column1);
+ALTER TABLE `TableName` ADD FULLTEXT INDEX `IndexName` (`ColumnName`);
+ALTER TABLE tbl_query ADD FULLTEXT INDEX `FullText`  (`query_desc` ASC,   `query_desc_details` ASC);
