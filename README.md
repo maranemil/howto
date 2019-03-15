@@ -102,5 +102,7 @@ git verify-pack -v ./.git/objects/pack/pack-......ea.pack
 * ffmpeg -f x11grab  -follow_mouse centered -show_region 1 -framerate 5 -video_size 4cif -i :0.0 xmvid_$(date +%s).mov
  
  
-
+##### Generate Random Pass Ubuntu
+* date +%s | sha256sum | base64 | head -c 24 ; echo "@%&";
+* date +%s | sha1sum | base64 | head -c 12; echo "@%&";
 

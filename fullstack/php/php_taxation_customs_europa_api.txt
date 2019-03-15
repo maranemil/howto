@@ -1,0 +1,73 @@
+
+#####################################################
+#
+#	Wert aus XML-RPC darstellen
+#
+#####################################################
+
+https://evatr.bff-online.de/eVatR
+https://evatr.bff-online.de/eVatR/xmlrpc/
+https://evatr.bff-online.de/eVatR/xmlrpc/beispiel
+https://evatr.bff-online.de/eVatR/xmlrpc/beispiel
+https://www.iban-rechner.de/
+https://www.bw-bank.de/de/home/service/iban-rechner.html
+https://www.bw-bank.de/de/home/service/iban-rechner.html?n=true&stref=service_links
+http://www.iban-bic.com/soapsample.html
+http://www.iban-bic.com/soap0.html
+https://www.iban-rechner.de/iban_validieren.html
+https://www.ptmr.io/blog/umsatzsteuer-id-nummer-mit-php-prufen/
+http://ec.europa.eu/taxation_customs/vies/
+http://ec.europa.eu/taxation_customs/vies/vieshome.do
+https://www.web-grips.de/blog/ust-id-pruefung-in-oxid-anpassen/
+
+Wert aus XML-RPC darstellen
+$xml = simplexml_load_string(file_get_contents("https://evatr.bff-online.de/evatrRPC?UstId_1=DE202763664&UstId_2=ATU61401334"));
+$json = json_encode($xml);
+$array = json_decode($json,TRUE);
+------
+$xml = simplexml_load_string($antwort);
+$json = json_encode($xml);
+#$array = json_decode($json,TRUE);
+#echo $json;
+#echo '<hr><br>';
+print_r(json_decode($json));
+$namen_objekt = json_decode($json);
+echo $namen_objekt->{'data'};
+...
+$tabArr = tableArray::createFromXML($xml)
+  ->flatten()
+  ->fetchAll()
+;
+debug::write($tbl);
+
+------------------------
+<?php
+$vatid = 'ATU12345678'; // Hier die zu überprüfende UID-Nummer einsetzen
+
+$vatid = str_replace(array(' ', '.', '-', ',', ', '), '', trim($vatid));
+$cc = substr($vatid, 0, 2);
+$vn = substr($vatid, 2);
+$client = new SoapClient("http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl");
+
+if($client){
+    $params = array('countryCode' => $cc, 'vatNumber' => $vn);
+    try{
+        $r = $client->checkVat($params);
+        if($r->valid == true){
+            // USt-ID ist gültig
+        } else {
+            // USt-ID ist ungültig
+        }
+
+	// Alle Ergebniszeilen durchlaufen lassen und ausgeben
+        foreach($r as $k=>$prop){
+            echo $k . ': ' . $prop;
+        }
+
+    } catch(SoapFault $e) {
+        echo 'Error, see message: '.$e->faultstring;
+    }
+} else {
+    // Verbindungsfehler, WSDL-Datei nicht erreichbar (passiert manchmal)
+}
+?>
