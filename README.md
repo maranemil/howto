@@ -106,3 +106,10 @@ git verify-pack -v ./.git/objects/pack/pack-......ea.pack
 * date +%s | sha256sum | base64 | head -c 24 ; echo "@%&";
 * date +%s | sha1sum | base64 | head -c 12; echo "@%&";
 
+##### Ziping Unziping multiple Folders
+* for z in *.zip; do unzip $z; done
+* for i in */; do zip -r "${i%/}.zip" "$i"; done
+
+##### Convert Imagick
+* for i in *.png; do convert "$i" "${i%.png}.jpg" && rm "$i" && echo "$i is converted."; done
+* for i in *.png; do convert "$i" "${i%.*}.jpg" ; done
