@@ -376,3 +376,48 @@ sudo service apache2 restart
 sudo apt-get install libxvidcore4 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-fluendo-mp3 gstreamer1.0-libav
 
 
+#########################################################
+#
+# Install LAMP
+#
+#########################################################
+
+#---------------------
+sudo apt install php7.2 php7.2-cli php7.2-common php7.2-curl php7.2-json php7.2-opcache php7.2-gd php7.2-soap php7.2-mbstring php7.2-mysql php7.2-xml php7.2-zip php7.2-intl php7.2-readline php7.2-sqlite3 -y
+#---------------------
+sudo apt install apache2 libapache2-mod-php7.2  -y
+sudo apt -y install curl -y
+sudo apt -y install mysql-server mysql-client -y
+sudo apt install -y mongodb mongodb-clients mongodb-server -y
+#---------------------
+sudo mysql -u root -p
+use mysql;
+show tables;
+describe user;
+GRANT ALL PRIVILEGES ON *.* TO 'blabla'@'localhost' IDENTIFIED BY 'blabla';
+SET PASSWORD FOR 'blabla'@'localhost' = PASSWORD('blabla');
+ALTER USER 'blabla'@'localhost' IDENTIFIED BY 'blabla';
+update user set authentication_string=password('blabla') where user='blabla';
+flush privileges;
+quit
+---------------------
+# search php ini
+php -i | grep 'php.ini'
+#Configuration File (php.ini) Path => /etc/php/7.2/cli
+#Loaded Configuration File => /etc/php/7.2/cli/php.ini
+
+find /etc/ -name 'php.ini'
+#/etc/php/7.2/cli/php.ini
+#/etc/php/7.2/apache2/php.ini
+#---------------------
+sudo service mysql restart
+sudo service apache2 restart
+#---------------------
+mkdir /home/blabla/wweb/
+sudo ln -s /home/blabla/wweb/  /var/www/html/wwweb
+
+#ln -s /realpath  /aliaspath
+#rm aliaspath
+#---------------------
+for z in *.zip; do unzip $z; done
+for i in */; do zip -r "${i%/}.zip" "$i"; done
