@@ -113,3 +113,6 @@ git verify-pack -v ./.git/objects/pack/pack-......ea.pack
 ##### Convert Imagick
 * for i in *.png; do convert "$i" "${i%.png}.jpg" && rm "$i" && echo "$i is converted."; done
 * for i in *.png; do convert "$i" "${i%.*}.jpg" ; done
+
+##### Timestamp
+date +%s > 1552925792
