@@ -1,0 +1,117 @@
+
+###################################################################
+#
+#  print file size in MB
+#
+###################################################################
+
+ls -lh
+ls -lah
+ls -lash
+
+ls -al --block-size=M
+ls --block-size=M
+ll --block-size=M
+
+# ls -l | awk 'BEGIN{mega=1048576} $5 >= mega {$5 = $5/mega "MB"} {print}'
+
+
+###################################################################
+#
+#	Removing files older than 7 days
+#	https://askubuntu.com/questions/589210/removing-files-older-than-7-days/589224
+#	https://unix.stackexchange.com/questions/194863/delete-files-older-than-x-days
+#	https://www.howtogeek.com/howto/ubuntu/delete-files-older-than-x-days-on-linux/
+#	https://linux.die.net/man/1/find
+#
+###################################################################
+
+find /path/to/ -type f -mtime +7 -name '*.gz' -print0 | xargs -r0 rm --
+find /path/to/ -type f -mtime +7 -name '*.gz' -execdir rm -- '{}' \;
+
+find /path/to/ -type f -mtime +7 -exec rm {} \;
+find /path/to/ -mindepth 1 -mtime +7 -delete
+find /path/to/ -maxdepth 1 -type f -mtime +7 -mtime -31 -name 'wncw*.gz' -ls -exec rm {} \;
+
+###################################################################
+#
+#	Common truncate options
+#	http://man7.org/linux/man-pages/man1/truncate.1.html
+#	https://linoxide.com/linux-how-to/use-truncate-command-linux/
+#
+###################################################################
+
+for i in file_prefix*; do echo $i;done
+for i in file_prefix*; do truncate -s0 $i; done
+
+-c, --no-create --> do not create any files
+-o, --io-blocks --> treat SIZE as number of IO blocks instead of bytes
+-r, --reference=RFILE --> base size on RFILE
+-s, --size=SIZE --> set or adjust the file size by SIZE bytes
+--help --> display this help and exit
+--version --> output version information and exit
+
+truncate -s 0 file.txt		# Clear contents
+truncate -s 100K file.txt	# to a specific size
+truncate -s +200K file.txt	# Extend file size
+truncate -s -250K file.txt 	# Reduce file size
+
+The SIZE argument is an integer and optional unit (example: 10K is
+10*1024).  Units are K,M,G,T,P,E,Z,Y (powers of 1024) or KB,MB,...
+(powers of 1000).
+
+SIZE may also be prefixed by one of the following modifying
+characters: '+' extend by, '-' reduce by, '<' at most, '>' at least,
+'/' round down to multiple of, '%' round up to multiple of.
+-------------------------------------------------
+
+
+###################################################################
+#
+# 	Use vars into loop - shell cmd
+#
+###################################################################
+
+https://www.linuxtechi.com/compare-numbers-strings-files-in-bash-script/
+http://mindspill.net/computing/linux-notes/text-manipulation-cut-awk-and-sed/
+
+# Numeric Comparisons
+num1 -eq num2                  check if 1st  number is equal to 2nd number
+num1 -ge num2                  checks if 1st  number  is greater than or equal to 2nd number
+num1 -gt num2                  checks if 1st  number is greater than 2nd number
+num1 -le num2                   checks if 1st number is less than or equal to 2nd number
+num1 -lt num2                   checks if 1st  number  is less than 2nd number
+num1 -ne num2                  checks if 1st  number  is not equal to 2nd number
+
+# Strings Comparisons
+var1 = var2     checks if var1 is the same as string var2
+var1 != var2    checks if var1 is not the same as var2
+var1 < var2     checks if var1 is less than var2
+var1 > var2     checks if var1 is greater than var2
+-n var1             checks if var1 has a length greater than zero
+-z var1             checks if var1 has a length of zero
+
+# Tokenize strings using cut
+cut -d[delimiter] -f[field_number] [filename]
+
+Tokenize strings using awk
+awk '{print $[n]}'
+df | awk '{print $3}' # print 3th column
+
+# create vatiable using terminal
+foo=$(date) echo $foo
+
+# Remove a line from some text using sed
+sed '[n]d' will remove the [n]th line.
+sed '2d'
+
+# Escape spaces with sed / escape all space characters
+sed "s/ /\\\ /g" [file]
+
+for i in {1..30}; do if [ $i != 10 ]; then echo "hello $i"; fi; done
+echo "1  2  3" | cut -d' ' -f3
+
+// for each file get zise and compare if bigger than 100
+for i in *.txt; do foo=$(ls -s $i | cut -d ' ' -f1); echo "foo="$foo; if [ $foo -gt 100 ]; then echo $foo; fi;  ; done
+
+
