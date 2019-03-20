@@ -75,3 +75,16 @@ exit
 db.system.namespaces.count()
 db.stats()
 db.runCommand("logRotate")
+
+
+---------------------------
+
+Fix Failed: line 1, column 2: bare " in non-quoted-field
+
+MongoImport 3.4 documentation says :
+The csv parser accepts that data that complies with RFC RFC 4180. As a result, backslashes are not a valid escape character.
+ If you use double-quotes to enclose fields in the CSV data, you must escape internal double-quote marks by prepending another double-quote.
+
+sed 's/\[""\]//g' FILE-NAME
+
+mongoimport -d datagovro -c contracte -v --type csv --file contracte.csv --drop --ignoreBlanks --mode=insert --bypassDocumentValidation --host=127.0.0.1 -f column1,column2
