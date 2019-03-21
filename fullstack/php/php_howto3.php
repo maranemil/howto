@@ -105,8 +105,6 @@ http://php.net/manual/de/language.types.object.php#language.types.object.casting
 
 */
 
-
-
 #----------------------------------
 # Error Control Operators sign (@). The @-operator works only on expressions.
 #----------------------------------
@@ -131,3 +129,65 @@ if (array_key_exists('erstes', $search_array)) {
     echo "Das Element 'erstes' ist in dem Array vorhanden";
 }
 
+
+############################################################
+#
+# PHP RMTREE
+#
+############################################################
+
+/*
+python rmtree
+https://docs.python.org/2/library/shutil.html
+
+perl rmtree
+https://perldoc.perl.org/File/Path.html
+
+php rmtree
+https://gist.github.com/SteelPangolin/1407308
+https://hotexamples.com/examples/-/PublicFileManager/rmtree/php-publicfilemanager-rmtree-method-examples.html
+https://hotexamples.com/de/examples/-/-/rmtree/php-rmtree-function-examples.html
+*/
+
+
+function rmtree($path)
+{
+	if (is_dir($path))
+	{
+		foreach (scandir($path) as $name)
+		{
+			if (in_array($name, array('.', '..')))
+			{
+				continue;
+			}
+			$subpath = $path.DIRECTORY_SEPARATOR.$name;
+			rmtree($subpath);
+		}
+		rmdir($path);
+	}
+	else
+	{
+		unlink($path);
+	}
+}
+/*
+function rmtree($dir)
+ {
+     if (false === file_exists($dir)) {
+         return false;
+     }
+     $iterator = new DirectoryIterator($dir);
+     foreach ($iterator as $entry) {
+         $basename = $entry->getBasename();
+         if ($entry->isDot() || '.' === $basename[0]) {
+             continue;
+         }
+         if ($entry->isDir()) {
+             rmtree($entry->getPathname());
+         } else {
+             unlink($entry->getPathname());
+         }
+     }
+     rmdir($dir);
+     return true;
+ }*/
