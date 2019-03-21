@@ -45,9 +45,16 @@ db.cars.find({ "name" : "Audi"   })
 db.cars.find({ price : { $gt: 4888 }   })
 db.cars.find().limit(5)
 
+db.getCollection("cars").find().count()
+db.getCollection("cars").find().limit(5)
+db.getCollection("cars").find({"name": {$regex: /Audi/i }}).limit(2)
+db.getCollection("cars").find({"name":  /Audi/i }).limit(1)
+db.getCollection("cars").find({"name":  /Audi/i }).limit(5).sort().pretty()
+db.getCollection("cars").find({"name":  /Audi/i }).toArray()
+db.getCollection("cars").find({"price":  9000 });
+
 # update
 db.cars.updateOne({"name":"Audi"},{$set: {"price":10000}})
-
 
 # delete
 db.cars.deleteOne({"_id": 4})
@@ -58,6 +65,7 @@ db.cars.remove({})
 
 # drop collection
 db.cars.drop()
+db.getCollection("collection_name").drop();
 
 
 # import in mongo
@@ -76,6 +84,10 @@ db.system.namespaces.count()
 db.stats()
 db.runCommand("logRotate")
 
+DBQuery.shellBatchSize = 300
+db.setProfilingLevel(0)
+db.setProfilingLevel(1)
+db.setProfilingLevel(2)
 
 ---------------------------
 
@@ -86,17 +98,17 @@ The csv parser accepts that data that complies with RFC RFC 4180. As a result, b
  If you use double-quotes to enclose fields in the CSV data, you must escape internal double-quote marks by prepending another double-quote.
 
 
-# remove quotes from file
-sed 's/"//g' test.csv > new.csv
-sed 's/"//gw new2.csv' test.csv
+# remove quotes from file 2x
+sed 's/"//g' old.csv > new.csv
 
-/*
-sed 's/\[""\]//g' test.csv > new.csv
-sed 's/"/""/' test.csv > new.csv
-sed "s/\\\\//g" test.csv > new.csv
-*/
+# import as tab delimited from semicolon
+# speficy columns by import
+tr ";" "\t" < new.csv | mongoimport -d datagovro -c contracte -v --type tsv   --drop   -f "field1,field2,field3"
 
+---------------------------
+Test speed
 
-mongoimport -d datagovro -c contracte -v --type csv --file contracte.csv --drop --ignoreBlanks --mode=insert --bypassDocumentValidation --host=127.0.0.1 -f column1,column2
-
+start = new Date;
+db.getCollection("collection_name").find().count();
+print(new Date - start + 'ms')
 
