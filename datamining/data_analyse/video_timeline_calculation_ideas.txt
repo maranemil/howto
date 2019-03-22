@@ -1,0 +1,139 @@
+
+split video in frames ( or play with opencv )
+
+-> 30. fps x 60sec x 40min = 72000 images
+-> 15. fps x 60sec x 40min = 36000 images
+-> 7.5 fps x 60sec x 40min = 18000 images
+-> 3.6 fps x 60sec x 40min = 9000 images
+-> 1.8 fps x 60sec x 40min = 4500 images
+-> 1.0 fps x 60sec x 40min = 2250 images
+-------
+classify images in timeline
+
+- by voice recog ()
+- by face recog ()
+- by color density (hue and saturation RGB or HSV ) - extract color palette ( count top colors) opencv/php
+- by blury
+- by grey scale texture, Fourier, DCT, wavelet, histograms
+
+https://stackoverflow.com/questions/3241929/python-find-dominant-most-common-color-in-an-image
+http://scikit-image.org/docs/dev/auto_examples/features_detection/plot_local_binary_pattern.html
+https://scikit-learn.org/stable/auto_examples/classification/plot_classifier_comparison.html
+https://gogul09.github.io/software/image-classification-python
+https://scikit-ued.readthedocs.io/en/master/tutorials/image.html
+https://iphton.github.io/iphton.github.io/Image-Processing-in-Python-Part-2/#8-bullet
+https://iphton.github.io/iphton.github.io/Image-Processing-in-Python-Part-2/#7-bullet
+https://iphton.github.io/iphton.github.io/Image-Processing-in-Python-Part-2/#10-bullet
+https://iphton.github.io/iphton.github.io/Image-Processing-in-Python-Part-2/#9-bullet
+https://iphton.github.io/iphton.github.io/Image-Processing-in-Python-Part-2/#2-bullet
+https://iphton.github.io/iphton.github.io/Image-Processing-in-Python-Part-2/#1-bullet
+https://iphton.github.io/iphton.github.io/Image-Processing-in-Python-Part-1/#6-bullet
+https://dzone.com/articles/basic-image-data-analysis-using-python-part-2#######
+https://dzone.com/articles/image-data-analysis-using-numpy-amp-opencv
+https://www.pyimagesearch.com/2016/02/15/determining-object-color-with-opencv/
+
+-...
+
+https://towardsdatascience.com/wtf-is-image-classification-8e78a8235acb
+https://www.researchgate.net/post/Color_image_classification_using_neural_network-any_thoughts
+https://www.pyimagesearch.com/2014/01/22/clever-girl-a-guide-to-utilizing-color-histograms-for-computer-vision-and-image-search-engines/
+https://github.com/aoles/BioC2015Oles
+https://de.slideshare.net/ngodvinh7/statistical-learning-and-pattern-analysis-for-image-and-video-processing
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2991255/
+https://www.coursera.org/lecture/data-patterns/8-3-pattern-discovery-for-image-analysis-0aBf3
+
+
+
+import struct
+import Image
+import numpy as np
+import scipy
+import scipy.misc
+import scipy.cluster
+NUM_CLUSTERS = 5
+
+print 'reading image'
+im = Image.open('image.jpg')
+im = im.resize((150, 150))      # optional, to reduce time
+ar = np.asarray(im)
+shape = ar.shape
+ar = ar.reshape(scipy.product(shape[:2]), shape[2]).astype(float)
+print 'finding clusters'
+codes, dist = scipy.cluster.vq.kmeans(ar, NUM_CLUSTERS)
+print 'cluster centres:\n', codes
+vecs, dist = scipy.cluster.vq.vq(ar, codes)         # assign codes
+counts, bins = scipy.histogram(vecs, len(codes))    # count occurrences
+index_max = scipy.argmax(counts)                    # find most frequent
+peak = codes[index_max]
+colour = ''.join(chr(int(c)) for c in peak).encode('hex')
+print 'most frequent is %s (#%s)' % (peak, colour)
+# bonus: save image using only the N most common colours
+c = ar.copy()
+for i, code in enumerate(codes):
+    c[scipy.r_[scipy.where(vecs==i)],:] = code
+scipy.misc.imsave('clusters.png', c.reshape(*shape))
+print 'saved clustered image'
+
+----------------------------------------------------------
+
+from PIL import Image
+
+def compute_average_image_color(img):
+    width, height = img.size
+
+    r_total = 0
+    g_total = 0
+    b_total = 0
+
+    count = 0
+    for x in range(0, width):
+        for y in range(0, height):
+            r, g, b = img.getpixel((x,y))
+            r_total += r
+            g_total += g
+            b_total += b
+            count += 1
+
+    return (r_total/count, g_total/count, b_total/count)
+
+img = Image.open('image.png')
+#img = img.resize((50,50))  # Small optimization
+average_color = compute_average_image_color(img)
+print(average_color)
+
+----------------------------------------------------------
+
+pip install colorthief
+from colorthief import ColorThief
+color_thief = ColorThief('/path/to/imagefile')
+# get the dominant color
+dominant_color = color_thief.get_color(quality=1)
+palette = color_thief.get_palette(color_count=6)
+
+----------------------------------------------------------
+
+// php read pixels colors
+$source_file = $tmpFile;
+$im = ImageCreateFromPng($source_file);
+$imgw = imagesx($im);
+$imgh = imagesy($im);
+
+// iterate pixels
+for ($i = 0; $i < $imgw; $i++) {
+ for ($j = 0; $j < $imgh; $j++) {
+    // get the rgb value for current pixel
+    $rgb = ImageColorAt($im, $i, $j);
+    // extract each value for r, g, b
+    $r = ($rgb >> 16) & 0xFF;
+    $g = ($rgb >> 8) & 0xFF;
+    $b = $rgb & 0xFF;
+    $pixcolors[] = array("r" => $r, "g" => $g, "b" => $b);
+ }
+}
+
+// search colors or do something
+foreach ($pixcolors as $pixelcolor) {
+ if ($pixelcolor["r"] == 255 && $pixelcolor["g"] == 0 && $pixelcolor["b"] == 255) {
+    // found color
+ }
+}
