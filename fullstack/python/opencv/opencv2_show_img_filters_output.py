@@ -145,3 +145,110 @@ cv2.waitKey(0)
 
 
 cv2.destroyAllWindows()
+
+
+
+
+"""
+https://www.pyimagesearch.com/2014/08/18/skin-detection-step-step-example-using-python-opencv/
+https://www.learnopencv.com/color-spaces-in-opencv-cpp-python/
+https://www.pyimagesearch.com/2014/12/01/complete-guide-building-image-search-engine-python-opencv/
+https://lmcaraig.com/image-histograms-histograms-equalization-and-histograms-comparison/
+https://www.whatmatrix.com/portal/intro-to-python-image-processing-in-computational-photography/
+https://www.learnopencv.com/applycolormap-for-pseudocoloring-in-opencv-c-python/
+https://techtutorialsx.com/2018/06/02/python-opencv-converting-an-image-to-gray-scale/
+https://www.codementor.io/isaib.cicourel/image-manipulation-in-python-du1089j1u
+https://www.pyimagesearch.com/2017/06/19/image-difference-with-opencv-and-python/
+
+
+https://www.pyimagesearch.com/2014/06/30/super-fast-color-transfer-images/
+http://www.askaswiss.com/2016/02/how-to-manipulate-color-temperature-opencv-python.html
+"""
+
+img_gray = cv2.imread("img_example.jpg",  cv2.IMREAD_GRAYSCALE)
+x = [0, 128, 255]
+y = [0, 192, 255]
+myLUT = create_LUT_8UC1(x, y)
+img_curved = cv2.LUT(img_gray, myLUT).astype(np.uint8)
+incr_ch_lut = create_LUT_8UC1([0, 64, 128, 192, 256], [0, 70, 140, 210, 256])
+decr_ch_lut = create_LUT_8UC1([0, 64, 128, 192, 256], [0, 30, 80, 120, 192])
+c_b, c_g, c_r = cv2.split(img_bgr_in)
+c_r = cv2.LUT(c_r, incr_ch_lut).astype(np.uint8)
+c_b = cv2.LUT(c_b, decr_ch_lut).astype(np.uint8)
+img_bgr_warm = cv2.merge((c_b, c_g, c_r))
+c_b = cv2.LUT(c_b, decr_ch_lut).astype(np.uint8)
+
+
+# increase color saturation
+c_h, c_s, c_v = cv2.split(cv2.cvtColor(img_rgb_warm,
+    cv2.COLOR_BGR2HSV))
+c_s = cv2.LUT(c_s, self.incr_ch_lut).astype(np.uint8)
+img_bgr_warm = cv2.cvtColor(cv2.merge(
+    (c_h, c_s, c_v)),
+    cv2.COLOR_HSV2BGR)
+
+
+c_b, c_g, c_r = cv2.split(img_bgr_in)
+c_r = cv2.LUT(c_r, self.decr_ch_lut).astype(np.uint8)
+c_b = cv2.LUT(c_b, self.incr_ch_lut).astype(np.uint8)
+img_bgr_cold = cv2.merge((c_b, c_g, c_r))
+ # decrease color saturation
+c_h, c_s, c_v = cv2.split(cv2.cvtColor(img_bgr_cold,
+    cv2.COLOR_BGR2HSV))
+c_s = cv2.LUT(c_s, self.decr_ch_lut).astype(np.uint8)
+img_bgr_cold = cv2.cvtColor(cv2.merge(
+    (c_h, c_s, c_v)),
+    cv2.COLOR_HSV2BGR)
+
+
+#--------------------------------------------
+
+
+im_gray = cv2.imread("pluto.jpg", cv2.IMREAD_GRAYSCALE)
+im_color = cv2.applyColorMap(im_gray, cv2.COLORMAP_JET)
+
+"""
+COLORMAP_AUTUMN	colorscale_autumn
+COLORMAP_BONE	colorscale_bone
+COLORMAP_JET	colorscale_jet
+COLORMAP_WINTER	colorscale_winter
+COLORMAP_RAINBOW	colorscale_rainbow
+COLORMAP_OCEAN	colorscale_ocean
+COLORMAP_SUMMER	colorscale_summer
+COLORMAP_SPRING	colorscale_spring
+COLORMAP_COOL	colorscale_cool
+COLORMAP_HSV	colorscale_hsv
+COLORMAP_PINK	colorscale_pink
+COLORMAP_HOT
+"""
+
+#--------------------------------------------
+
+def show_grayscale_histogram(image):
+    grayscale_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    draw_image_histogram(grayscale_image, [0])
+    plt.show()
+
+def show_rgb_equalized(image):
+    channels = cv2.split(image)
+    eq_channels = []
+    for ch, color in zip(channels, ['B', 'G', 'R']):
+        eq_channels.append(cv2.equalizeHist(ch))
+
+    eq_image = cv2.merge(eq_channels)
+    eq_image = cv2.cvtColor(eq_image, cv2.COLOR_BGR2RGB)
+    plt.imshow(eq_image)
+    plt.show()
+
+def show_hsv_equalized(image):
+    H, S, V = cv2.split(cv2.cvtColor(image, cv2.COLOR_BGR2HSV))
+    eq_V = cv2.equalizeHist(V)
+    eq_image = cv2.cvtColor(cv2.merge([H, S, eq_V]), cv2.COLOR_HSV2RGB)
+    plt.imshow(eq_image)
+    plt.show()
+
+def show_grayscale_equalized(image):
+    grayscale_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    eq_grayscale_image = cv2.equalizeHist(grayscale_image)
+    plt.imshow(eq_grayscale_image, cmap='gray')
+    plt.show()
