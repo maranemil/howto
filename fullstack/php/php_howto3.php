@@ -191,3 +191,20 @@ function rmtree($dir)
      rmdir($dir);
      return true;
  }*/
+
+
+
+############################################################
+#
+# php debug trace
+#
+############################################################
+
+https://www.php.net/manual/de/function.debug-backtrace.php
+https://www.php.net/manual/de/function.debug-print-backtrace.php
+https://www.php.net/manual/en/function.debug-backtrace.php
+
+var_dump(debug_backtrace());
+debug_print_backtrace();
+$e = new Exception();
+print_r($e->getTraceAsString());
