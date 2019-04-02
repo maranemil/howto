@@ -1,0 +1,331 @@
+#############################################
+#
+# feature-selection-techniques
+#
+#############################################
+
+https://scikit-learn.org/stable/modules/feature_selection.html
+https://machinelearningmastery.com/feature-selection-machine-learning-python/
+https://towardsdatascience.com/feature-selection-techniques-in-machine-learning-with-python-f24e7da3f36e
+https://towardsdatascience.com/a-feature-selection-tool-for-machine-learning-in-python-b64dd23710f0
+https://www.datacamp.com/community/tutorials/feature-selection-python
+https://towardsdatascience.com/feature-selection-with-pandas-e3690ad8504b
+https://www.kaggle.com/kanncaa1/feature-selection-and-data-visualization
+https://www.kaggle.com/sz8416/6-ways-for-feature-selection
+
+# 1. Univariate Selection
+
+import pandas as pd
+import numpy as np
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import chi2
+data = pd.read_csv("D://Blogs//train.csv")
+X = data.iloc[:,0:20]  #independent columns
+y = data.iloc[:,-1]    #target column i.e price range
+#apply SelectKBest class to extract top 10 best features
+bestfeatures = SelectKBest(score_func=chi2, k=10)
+fit = bestfeatures.fit(X,y)
+dfscores = pd.DataFrame(fit.scores_)
+dfcolumns = pd.DataFrame(X.columns)
+#concat two dataframes for better visualization
+featureScores = pd.concat([dfcolumns,dfscores],axis=1)
+featureScores.columns = ['Specs','Score']  #naming the dataframe columns
+print(featureScores.nlargest(10,'Score'))  #print 10 best features
+
+# 2. Feature Importance
+
+import pandas as pd
+import numpy as np
+
+data = pd.read_csv("D://Blogs//train.csv")
+X = data.iloc[:,0:20]  #independent columns
+y = data.iloc[:,-1]    #target column i.e price range
+from sklearn.ensemble import ExtraTreesClassifier
+import matplotlib.pyplot as plt
+model = ExtraTreesClassifier()
+model.fit(X,y)
+print(model.feature_importances_) #use inbuilt class feature_importances of tree based classifiers
+#plot graph of feature importances for better visualization
+feat_importances = pd.Series(model.feature_importances_, index=X.columns)
+feat_importances.nlargest(10).plot(kind='barh')
+plt.show()
+
+# 3.Correlation Matrix with Heatmap
+
+import pandas as pd
+import numpy as np
+import seaborn as sns
+data = pd.read_csv("D://Blogs//train.csv")
+X = data.iloc[:,0:20]  #independent columns
+y = data.iloc[:,-1]    #target column i.e price range
+#get correlations of each features in dataset
+corrmat = data.corr()
+top_corr_features = corrmat.index
+plt.figure(figsize=(20,20))
+#plot heat map
+g=sns.heatmap(data[top_corr_features].corr(),annot=True,cmap="RdYlGn")
+
+
+# 2. Recursive Feature Elimination
+
+# Feature Extraction with RFE
+from pandas import read_csv
+from sklearn.feature_selection import RFE
+from sklearn.linear_model import LogisticRegression
+# load data
+url = "https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv"
+names = ['preg', 'plas', 'pres', 'skin', 'test', 'mass', 'pedi', 'age', 'class']
+dataframe = read_csv(url, names=names)
+array = dataframe.values
+X = array[:,0:8]
+Y = array[:,8]
+# feature extraction
+model = LogisticRegression()
+rfe = RFE(model, 3)
+fit = rfe.fit(X, Y)
+print("Num Features: %d") % fit.n_features_
+print("Selected Features: %s") % fit.support_
+print("Feature Ranking: %s") % fit.ranking_
+
+
+
+# ----------------------------------
+
+import pandas as pd
+import numpy as np
+
+# load data
+url = "https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv"
+names = ['preg', 'plas', 'pres', 'skin', 'test', 'mass', 'pedi', 'age', 'class']
+dataframe = pd.read_csv(url, names=names)
+
+data = pd.read_csv("diabetes.csv")
+data.head()
+
+# Import the necessary libraries first
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import chi2
+# Feature extraction
+test = SelectKBest(score_func=chi2, k=4)
+fit = test.fit(X, Y)
+
+# Summarize scores
+np.set_printoptions(precision=3)
+print(fit.scores_)
+
+features = fit.transform(X)
+# Summarize selected features
+print(features[0:5,:])
+
+# Import your necessary dependencies
+from sklearn.feature_selection import RFE
+from sklearn.linear_model import LogisticRegression
+
+# Feature extraction
+model = LogisticRegression()
+rfe = RFE(model, 3)
+fit = rfe.fit(X, Y)
+print("Num Features: %s" % (fit.n_features_))
+print("Selected Features: %s" % (fit.support_))
+print("Feature Ranking: %s" % (fit.ranking_))
+
+# ----------------------------------
+
+import pandas as pd
+import numpy as np
+import gc
+import warnings
+warnings.filterwarnings("ignore")
+application_train = pd.read_csv('../input/application_train.csv')
+
+application_sample1 = application_train.loc[application_train.TARGET==1].sample(frac=0.1, replace=False)
+print('label 1 sample size:', str(application_sample1.shape[0]))
+application_sample0 = application_train.loc[application_train.TARGET==0].sample(frac=0.1, replace=False)
+print('label 0 sample size:', str(application_sample0.shape[0]))
+application = pd.concat([application_sample1, application_sample0], axis=0).sort_values('SK_ID_CURR')
+
+categorical_list = []
+numerical_list = []
+for i in application.columns.tolist():
+    if application[i].dtype=='object':
+        categorical_list.append(i)
+    else:
+        numerical_list.append(i)
+print('Number of categorical features:', str(len(categorical_list)))
+print('Number of numerical features:', str(len(numerical_list)))
+
+from sklearn.preprocessing import Imputer
+application[numerical_list] = Imputer(strategy='median').fit_transform(application[numerical_list])
+
+
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import chi2
+from sklearn.preprocessing import MinMaxScaler
+X_norm = MinMaxScaler().fit_transform(X)
+chi_selector = SelectKBest(chi2, k=100)
+chi_selector.fit(X_norm, y)
+chi_support = chi_selector.get_support()
+chi_feature = X.loc[:,chi_support].columns.tolist()
+print(str(len(chi_feature)), 'selected features')
+
+
+from sklearn.feature_selection import RFE
+from sklearn.linear_model import LogisticRegression
+rfe_selector = RFE(estimator=LogisticRegression(), n_features_to_select=100, step=10, verbose=5)
+rfe_selector.fit(X_norm, y)
+rfe_support = rfe_selector.get_support()
+rfe_feature = X.loc[:,rfe_support].columns.tolist()
+print(str(len(rfe_feature)), 'selected features')
+
+# -----------------------------------------------------
+
+
+
+
+
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+import seaborn as sns # data visualization library
+import matplotlib.pyplot as plt
+# Input data files are available in the "../input/" directory.
+# For example, running this (by clicking run or pressing Shift+Enter) will list the files in the input directory
+import time
+from subprocess import check_output
+print(check_output(["ls", "../input"]).decode("utf8"))
+data = pd.read_csv('../input/data.csv')
+data.head()  # head method show only first 5 rows
+# feature names as a list
+col = data.columns       # .columns gives columns names in data
+print(col)
+# y includes our labels and x includes our features
+y = data.diagnosis                          # M or B
+list = ['Unnamed: 32','id','diagnosis']
+x = data.drop(list,axis = 1 )
+x.head()
+ax = sns.countplot(y,label="Count")       # M = 212, B = 357
+B, M = y.value_counts()
+print('Number of Benign: ',B)
+print('Number of Malignant : ',M)
+x.describe()
+
+# first ten features
+data_dia = y
+data = x
+data_n_2 = (data - data.mean()) / (data.std())              # standardization
+data = pd.concat([y,data_n_2.iloc[:,0:10]],axis=1)
+data = pd.melt(data,id_vars="diagnosis",
+                    var_name="features",
+                    value_name='value')
+plt.figure(figsize=(10,10))
+sns.violinplot(x="features", y="value", hue="diagnosis", data=data,split=True, inner="quart")
+plt.xticks(rotation=90)
+
+# Second ten features
+data = pd.concat([y,data_n_2.iloc[:,10:20]],axis=1)
+data = pd.melt(data,id_vars="diagnosis",
+                    var_name="features",
+                    value_name='value')
+plt.figure(figsize=(10,10))
+sns.violinplot(x="features", y="value", hue="diagnosis", data=data,split=True, inner="quart")
+plt.xticks(rotation=90)
+
+# Second ten features
+data = pd.concat([y,data_n_2.iloc[:,20:31]],axis=1)
+data = pd.melt(data,id_vars="diagnosis",
+                    var_name="features",
+                    value_name='value')
+plt.figure(figsize=(10,10))
+sns.violinplot(x="features", y="value", hue="diagnosis", data=data,split=True, inner="quart")
+plt.xticks(rotation=90)
+plt.figure(figsize=(10,10))
+sns.boxplot(x="features", y="value", hue="diagnosis", data=data)
+plt.xticks(rotation=90)
+
+
+sns.set(style="white")
+df = x.loc[:,['radius_worst','perimeter_worst','area_worst']]
+g = sns.PairGrid(df, diag_sharey=False)
+g.map_lower(sns.kdeplot, cmap="Blues_d")
+g.map_upper(plt.scatter)
+g.map_diag(sns.kdeplot, lw=3)
+
+sns.set(style="whitegrid", palette="muted")
+data_dia = y
+data = x
+data_n_2 = (data - data.mean()) / (data.std())              # standardization
+data = pd.concat([y,data_n_2.iloc[:,0:10]],axis=1)
+data = pd.melt(data,id_vars="diagnosis",
+                    var_name="features",
+                    value_name='value')
+plt.figure(figsize=(10,10))
+tic = time.time()
+sns.swarmplot(x="features", y="value", hue="diagnosis", data=data)
+plt.xticks(rotation=90)
+
+
+data = pd.concat([y,data_n_2.iloc[:,10:20]],axis=1)
+data = pd.melt(data,id_vars="diagnosis",
+                    var_name="features",
+                    value_name='value')
+plt.figure(figsize=(10,10))
+sns.swarmplot(x="features", y="value", hue="diagnosis", data=data)
+plt.xticks(rotation=90)
+
+
+#correlation map
+f,ax = plt.subplots(figsize=(18, 18))
+sns.heatmap(x.corr(), annot=True, linewidths=.5, fmt= '.1f',ax=ax)
+
+#correlation map
+f,ax = plt.subplots(figsize=(14, 14))
+sns.heatmap(x_1.corr(), annot=True, linewidths=.5, fmt= '.1f',ax=ax)
+
+
+
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import f1_score,confusion_matrix
+from sklearn.metrics import accuracy_score
+# split data train 70 % and test 30 %
+x_train, x_test, y_train, y_test = train_test_split(x_1, y, test_size=0.3, random_state=42)
+#random forest classifier with n_estimators=10 (default)
+clf_rf = RandomForestClassifier(random_state=43)
+clr_rf = clf_rf.fit(x_train,y_train)
+ac = accuracy_score(y_test,clf_rf.predict(x_test))
+print('Accuracy is: ',ac)
+cm = confusion_matrix(y_test,clf_rf.predict(x_test))
+sns.heatmap(cm,annot=True,fmt="d")
+
+
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import chi2
+# find best scored 5 features
+select_feature = SelectKBest(chi2, k=5).fit(x_train, y_train)
+print('Score list:', select_feature.scores_)
+print('Feature list:', x_train.columns)
+x_train_2 = select_feature.transform(x_train)
+x_test_2 = select_feature.transform(x_test)
+#random forest classifier with n_estimators=10 (default)
+clf_rf_2 = RandomForestClassifier()
+clr_rf_2 = clf_rf_2.fit(x_train_2,y_train)
+ac_2 = accuracy_score(y_test,clf_rf_2.predict(x_test_2))
+print('Accuracy is: ',ac_2)
+cm_2 = confusion_matrix(y_test,clf_rf_2.predict(x_test_2))
+sns.heatmap(cm_2,annot=True,fmt="d")
+
+
+
+
+# Plot number of features VS. cross-validation scores
+import matplotlib.pyplot as plt
+plt.figure()
+plt.xlabel("Number of features selected")
+plt.ylabel("Cross validation score of number of selected features")
+plt.plot(range(1, len(rfecv.grid_scores_) + 1), rfecv.grid_scores_)
+plt.show()
+
+
+
+
+
+
