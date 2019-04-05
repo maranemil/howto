@@ -9,20 +9,20 @@ header('Content-Type: image/jpeg');
 
 // Get new sizes
 list($width, $height) = getimagesize($filename);
-$newwidth = $width * $percent;
-$newheight = $height * $percent;
+$newWidth = $width * $percent;
+$newHeight = $height * $percent;
 echo "Img Size: ".PHP_EOL;
 print_r(array($width,$height));
 echo "---------------------------------".PHP_EOL;
-$thumb = imagecreatetruecolor($newwidth, $newheight);
+$thumb = imagecreatetruecolor($newWidth, $newHeight);
 $source = imagecreatefromjpeg($filename);
 // Resize
-imagecopyresized($thumb, $source, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
+imagecopyresized($thumb, $source, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
 // get max w/h pixels
 $imgw = imagesx($thumb);
 $imgh = imagesy($thumb);
 echo "Img Resize: ".PHP_EOL;
-print_r(array($imgw,$imgh));
+print_r( array( $imgw, $imgh ) );
 echo "---------------------------------".PHP_EOL;
 // n = total number or pixels
 $n = $imgw*$imgh;

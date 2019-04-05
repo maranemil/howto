@@ -208,3 +208,25 @@ var_dump(debug_backtrace());
 debug_print_backtrace();
 $e = new Exception();
 print_r($e->getTraceAsString());
+
+
+############################################################
+#
+# get user info
+#
+############################################################
+
+$benutzerinfo = posix_getpwnam("tom");
+print_r($benutzerinfo);
+
+/*
+Array
+(
+    [name]    => tom
+    [passwd]  => x
+    [uid]     => 10000
+    [gid]     => 42
+    [gecos]   => "tom,,,"
+    [dir]     => "/home/tom"
+    [shell]   => "/bin/bash"
+)*/
