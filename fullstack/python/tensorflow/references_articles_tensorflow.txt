@@ -1,0 +1,226 @@
+
+
+--------------------------------------------------------------------------------------------
+sudo apt-get install imagemagick
+
+
+--------------------------------------------------------------------------------------------
+https://pillow.readthedocs.io/en/stable/reference/Image.html
+https://pillow.readthedocs.io/en/3.1.x/reference/Image.html
+
+https://www.datacamp.com/community/tutorials/tensorflow-tutorial
+https://gist.github.com/abrahamrhoffman/a121d74a20450321f6fb85d5de08214a
+https://www.oreilly.com/learning/not-another-mnist-tutorial-with-tensorflow
+https://adammonsen.com/post/1519/
+
+
+https://github.com/tensorflow/models/blob/master/tutorials/image/imagenet/classify_image.py
+https://gist.github.com/kwotsin/292eb12600be02b75bf69ff8010d07ce
+https://github.com/MicrocontrollersAndMore/TensorFlow_Tut_2_Classification_Walk-through/blob/master/test.py
+https://github.com/ziwon/learning-tensorflow/blob/master/07-App%26Tips/02-mnist-show.py
+https://www.tensorflow.org/tutorials/images/hub_with_keras
+https://www.tensorflow.org/api_docs/python/tf/Session
+--------------------------------------------------------------------------------------------
+# show predictons
+
+import matplotlib.pyplot as plt
+sudo apt-get install python-tk
+sudo apt-get install python3-tk
+
+
+predictions = sess.run(y, {feed_dict={x: test_images32}})
+for i, image in enumerate(test_images32):
+     plt.imshow(image) # depending on being RGB or gray this might need to be reshaped
+     print(np.argmax(predictions[i]))
+
+
+predicted = sess.run([correct_pred], feed_dict={x: sample_images})[0]
+# Print the real and predicted labels
+print(sample_labels)
+print(predicted)
+# Display the predictions and the ground truth visually.
+fig = plt.figure(figsize=(10, 10))
+for i in range(len(sample_images)):
+    truth = sample_labels[i]
+    prediction = predicted[i]
+    plt.subplot(5, 2,1+i)
+    plt.axis('off')
+    color='green' if truth == prediction else 'red'
+    plt.text(40, 10, "Truth:        {0}\nPrediction: {1}".format(truth, prediction),
+             fontsize=12, color=color)
+    plt.imshow(sample_images[i],  cmap="gray")
+
+
+--------------------------------------------------------------------------------------------
+
+import tensorflow as tf
+import numpy as np
+import cv2
+
+labels = ["airplane","automobile","bird","cat","deer","dog","frog","horse","ship","truck"]
+
+# Load graph and parameters, etc.
+sess=tf.Session()
+saver = tf.train.import_meta_graph('./model/Inception_resnet_v2.ckpt.meta')
+saver.restore(sess, tf.train.latest_checkpoint("./model/"))
+graph = tf.get_default_graph()
+
+# Get tensor names
+x = graph.get_tensor_by_name("Placeholder:0")
+training_flag = graph.get_tensor_by_name("Placeholder_2:0")
+op_to_restore = graph.get_tensor_by_name("final_fully_connected/dense/BiasAdd:0")
+
+# Preprocess imgae imput
+src = cv2.imread("./input/car3.jpg")
+dst = cv2.resize(src, (32, 32), interpolation=cv2.INTER_CUBIC)
+b,g,r = cv2.split(dst)
+b = (b - np.mean(b)) / np.std(b) * .1
+g = (g - np.mean(g)) / np.std(g) * .1
+r = (r - np.mean(r)) / np.std(r) * .1
+src = cv2.merge((b,g,r))
+
+picture = dst.reshape(1, 32, 32, 3)
+feed_dict ={x: picture, training_flag:False}
+
+result_index = sess.run(op_to_restore,feed_dict)
+print(result_index)
+print (labels[np.argmax(result_index)])
+
+--------------------------------------------------------------------------------------------
+
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+import tensorflow as tf
+import numpy as np
+import PIL.Image as pimg
+
+if __name__ == '__main__':
+    image = tf.convert_to_tensor(np.array(pimg.open('image.png'), np.float), tf.float32)
+    bbox = tf.convert_to_tensor([[0.1, 0.1, 0.4, 0.4], [0.5, 0.5, 0.6, 0.7]])
+    with tf.Session() as s:
+        s.run(tf.global_variables_initializer())
+        output = s.run(tf.image.draw_bounding_boxes(tf.expand_dims(image, 0), tf.expand_dims(bbox, 0)))
+        pimg.fromarray(np.uint8(output[0])).save('output.png')
+
+--------------------------------------------------------------------------------------------
+
+94.7% of accuracy.
+image_data = tf.gfile.FastGFile(image_path, 'rb').read()
+predictions = sess.run(softmax_tensor, {'DecodeJpeg/contents:0': image_data})
+
+77% of accuracy.
+image = cv2.imread(image_path)
+image_array = np.asarray(image)
+predictions = sess.run(softmax_tensor, {'DecodeJpeg:0': image_array})
+
+--------------------------------------------------------------------------------------------
+
+
+https://www.tensorflow.org/guide/datasets
+https://www.tensorflow.org/guide
+https://github.com/unography/Tensorflow-Examples/blob/master/retraining-example.py
+
+
+
+##########################################################
+#
+# 25 sec per 500 images on GPU
+#
+##########################################################
+
+import numpy as np
+import tensorflow as tf
+import glob
+import os
+modelFullPath = 'output_graph.pb'
+
+
+def create_graph():
+    """Creates a graph from saved GraphDef file and returns a saver."""
+    # Creates graph from saved graph_def.pb.
+    with tf.gfile.FastGFile(modelFullPath, 'rb') as f:
+        graph_def = tf.GraphDef()
+        graph_def.ParseFromString(f.read())
+        _ = tf.import_graph_def(graph_def, name='')
+
+if __name__ == '__main__':
+
+    imagePath = 'MYFOLDERWITHIMAGES/*.jpg'
+    testimages=glob.glob(imagePath)
+
+    ## init numpy array to hold all predictions
+    all_predictions = np.zeros(shape=(len(testimages),121)) ## 121 categories
+
+
+    # Creates graph from saved GraphDef.
+    create_graph()
+
+    with tf.Session() as sess:
+        softmax_tensor = sess.graph.get_tensor_by_name('final_result:0')
+        for i in range(len(testimages)):
+            image_data1 = tf.gfile.FastGFile(testimages[i], 'rb').read()
+            predictions = sess.run(softmax_tensor,
+                                   {'DecodeJpeg/contents:0': image_data1})
+            all_predictions[i,:] = np.squeeze(predictions)
+            if i % 100 == 0:
+              print(str(i) +' of a total of '+ str(len(testimages)))
+
+
+--------------------------------------------------------------------------------------------
+
+https://serverless.com/blog/using-tensorflow-serverless-framework-deep-learning-image-recognition/
+https://thehive.ai/engineering/simple-ml-serving
+https://heartbeat.fritz.ai/introduction-to-machine-learning-on-android-part-2-building-an-app-to-recognize-handwritten-d58ebc01950
+https://opensource.com/article/17/12/tensorflow-image-classification-part-1
+https://medium.com/@linjunghsuan/create-a-simple-image-classifier-using-tensorflow-a7061635984a
+https://www.digitalocean.com/community/tutorials/how-to-install-and-use-tensorflow-on-ubuntu-16-04
+https://douglasduhaime.com/posts/identifying-similar-images-with-tensorflow.html
+https://www.youtube.com/watch?v=zNTQXqmwm5Q
+https://medium.com/@WuStangDan/step-by-step-tensorflow-object-detection-api-tutorial-part-5-saving-and-deploying-a-model-8d51f56dbcf1
+https://medium.com/coinmonks/part-3-of-3-model-usage-transfer-learning-using-tensorflows-object-detection-model-on-mac-c7a77aa5e0b2
+https://medium.com/coinmonks/part-1-2-step-by-step-guide-to-data-preparation-for-transfer-learning-using-tensorflows-object-ac45a6035b7a
+https://towardsdatascience.com/how-to-train-a-tensorflow-face-object-detection-model-3599dcd0c26f
+https://tensorflow-object-detection-api-tutorial.readthedocs.io/en/latest/training.html
+https://github.com/qdraw/tensorflow-object-detection-tutorial
+https://github.com/OlafenwaMoses/ImageAI/blob/master/examples/image_object_detection.py
+https://github.com/Sid2697/Object-Detection-MobileNet/blob/master/image_object_detection.py
+https://github.com/qdraw/tensorflow-object-detection-tutorial/blob/master/image_object_detection.py
+https://github.com/Sid2697/Object-Detection-MobileNet
+https://blog.goodaudience.com/food-detection-app-using-tensorflow-object-detection-apis-1b9302a9aad2
+https://github.com/kumarkan/Food_Detection/blob/master/README.md
+https://becominghuman.ai/transfer-learning-retraining-inception-v3-for-custom-image-classification-2820f653c557
+
+
+
+
+https://www.tensorflow.org/tutorials/estimators/cnn
+https://jhui.github.io/2017/03/14/TensorFlow-Estimator/
+https://datascience.stackexchange.com/questions/31167/how-to-predict-an-image-using-saved-model
+https://www.tensorflow.org/api_docs/python/tf/saved_model
+https://docs.databricks.com/_static/notebooks/deep-learning/tensorflow-tfrecord.html
+https://github.com/cjimti/aipnd-project/blob/master/predict.py
+https://git.mif.vu.lt/TankBusterPBL/TankBuster/blob/815f5cbe79fb09b06f8b15785231fe871396216c/bin/Tensorflow/Tensorflow/tutorials/image/imagenet/classify_image.py
+https://gitbay.hockeymikey.com/hockeymikey/BNN/blob/master/tflow-testing/imagenet/classify_image.py
+https://gitlab.fit.cvut.cz/sedlam34/mvi-sp/blob/master/classify_image.py
+https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/exporting_models.md
+http://lamastex.org/courses/ScalableDataScience/2016/S1/week9/18_sparklingTensorFlow/034_SampleML_SparkTensorFlow.html
+https://github.com/tensorflow/models/issues/2076
+https://www.oreilly.com/ideas/object-detection-with-tensorflow
+https://github.com/tensorflow/models/blob/master/research/object_detection/utils/visualization_utils_test.py
+https://dedi.live/git/tommasaso/GroupProject/src/d0af00befbe2089cab00bd3a7d984e2d81292e0b/utils/visualization_utils_test.py
+https://cloud.google.com/blog/products/gcp/performing-prediction-with-tensorflow-object-detection-models-on-google-cloud-machine-learning-engine
+https://www.tensorflow.org/tensorboard/r2/image_summaries
+https://jhui.github.io/2017/03/12/TensorBoard-visualize-your-learning/
+https://github.com/tensorflow/models/blob/master/research/object_detection/utils/visualization_utils.py#L323
+https://github.com/tensorflow/models/tree/master/research/object_detection
+https://scm.agreeyamobility.net:8443/shriyash.ingale/YAD2K/blob/master/retrain_yolo.py
+https://towardsdatascience.com/understanding-fundamentals-of-tensorflow-program-and-why-it-is-necessary-94cf5b60e255
+https://www.easy-tensorflow.com/tf-tutorials/tensorboard/tb-visualize-graph
+https://pythonprogramming.net/tensorflow-neural-network-session-machine-learning-tutorial/
+https://github.com/Dataweekends/inception-retrain/blob/master/label_image.py
+https://github.com/tensorflow/tensorflow/issues/16194
+https://github.com/sankit1/cv-tricks.com/blob/master/Tensorflow-tutorials/Adversarial_examples/classify_image.py
+https://github.com/ageitgey/face_recognition/blob/master/examples/identify_and_draw_boxes_on_faces.py
+

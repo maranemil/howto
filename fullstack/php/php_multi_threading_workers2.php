@@ -118,3 +118,85 @@ foreach (range(0, 5) as $i) {
 }
 
 ?>
+
+
+
+
+
+
+
+
+
+sudo apt-get install php-pear
+sudo pecl install pthreads
+pecl channel-update pecl.php.net
+pear config-set temp_dir
+sudo service apache2 restart
+
+
+http://ittips.pandle.net/2012/04/25/thread-safety-in-php/
+https://blog.flowl.info/2015/compile-php-5-6-pthreads-mongo-ubuntu/
+https://blog.programster.org/install-php-7-0-with-pthreads-on-ubuntu-16.04
+https://blog.programster.org/ubuntu16-04-compile-php-7-2-with-pthreads
+https://blog.flowl.info/2015/compile-php-5-6-pthreads-mongo-ubuntu/
+https://de.slideshare.net/RichardBaker26/faster-php-apps-using-queues-and-workers
+
+sudo apt-get install php7.x-dev
+sudo apt-get install php7.0-dev php-pear -y
+sudo apt-get remove php-cli -y
+cd $HOME
+sudo pecl install pthreads
+
+
+php -i | grep -i 'thread'
+Thread Safety => disabled
+
+On debian/ubuntu
+Thread Safety enable.
+# aptitude install apache2-mpm-worker libapache2-mod-fcgid php5-cgi && a2enmod fcgid && /etc/init.d/apache2 restartThread Safety disable.
+# aptitude install apache2-mpm-prefork libapache2-mod-php5 && a2dismod fcgid && /etc/init.d/apache2 restart
+
+---
+
+https://www.php.net/manual/de/class.thread.php
+https://www.php.net/manual/de/class.worker.php
+https://www.php.net/manual/de/class.thread.php
+
+<?php
+class AsyncOperation extends Thread {
+  public function __construct($arg){
+    $this->arg = $arg;
+  }
+
+  public function run(){
+    if($this->arg){
+      printf("Hello %s\n", $this->arg);
+    }
+  }
+}
+$thread = new AsyncOperation("World");
+if($thread->start())
+  $thread->join();
+
+
+
+class workerThread extends Thread {
+public function __construct($i){
+  $this->i=$i;
+}
+
+public function run(){
+  while(true){
+   echo $this->i;
+   sleep(1);
+  }
+}
+}
+
+for($i=0;$i<50;$i++){
+$workers[$i]=new workerThread($i);
+$workers[$i]->start();
+}
+
+
+?>
