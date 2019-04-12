@@ -230,3 +230,20 @@ Array
     [dir]     => "/home/tom"
     [shell]   => "/bin/bash"
 )*/
+
+
+############################################################
+#
+# AVG Value
+#
+############################################################
+
+$a = array_filter($a);
+$average = array_sum($a)/count($a);
+echo $average;
+
+
+if(count($a)) {
+    $a = array_filter($a);
+    echo $average = array_sum($a)/count($a);
+}
