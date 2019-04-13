@@ -6,6 +6,11 @@
 
 //  replace FastGFile with GFile
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+0 = all messages are logged (default behavior)
+1 = INFO messages are not printed
+2 = INFO and WARNING messages are not printed
+3 = INFO, WARNING, and ERROR messages are not printed
 // set Debug Level to 3
 
 import os
@@ -60,15 +65,31 @@ import tensorflow as tf
 def run_inference_on_image(image):
   ...
 
-  #image_data = tf.gfile.GFile(image, 'rb').read()
-  imager = Image.open(image)
-  size = 256, 256
-  imager.thumbnail(size)
-  image_data = np.array(imager)[:, :, 0:3]  # Select RGB channels only.
 
-  ...
-  #predictions = sess.run(softmax_tensor,{'DecodeJpeg/contents:0': image_data})
-  predictions = sess.run(softmax_tensor,{'DecodeJpeg:0': image_data})
+# pip3 install tensorflow
+image_data = tf.gfile.GFile(image, 'rb').read()
+predictions = sess.run(softmax_tensor,{'DecodeJpeg/contents:0': image_data})
+
+
+# pip3 install Pillow
+from PIL import Image
+imager = Image.open(image)
+size = 156, 156
+imager.thumbnail(size)
+image_data = np.array(imager)[:, :, 0:3]  # Select RGB channels only.
+predictions = sess.run(softmax_tensor, {'DecodeJpeg:0': image_data})
+
+
+# pip install opencv-python
+import cv2
+imager = cv2.imread(image)
+height, width = imager.shape[:2]
+newimg = cv2.resize(imager,  None, fx = 0.2, fy = 0.2)
+image_data = np.array(newimg)[:, :, 0:3]
+#cv2.imshow("Shrinked image", image_data)
+#cv2.waitKey(0)
+#cv2.destroyAllWindows()
+predictions = sess.run(softmax_tensor, {'DecodeJpeg:0': image_data})
 
 
 ############################################################
