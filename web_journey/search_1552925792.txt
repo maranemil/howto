@@ -658,3 +658,145 @@ http://www.internetradio-horen.de/
 ([a-zA-ZßäöüÄÖU\-\s\.]{1,})(.+)
 
 
+
+
+
+https://medium.freecodecamp.org/how-to-play-quidditch-using-the-tensorflow-object-detection-api-b0742b99065d
+https://stackoverflow.com/questions/47242485/running-export-inference-graph-py-gives-difference-in-types-error
+https://github.com/tensorflow/models/blob/master/research/object_detection/export_inference_graph.py
+https://pythonprogramming.net/testing-custom-object-detector-tensorflow-object-detection-api-tutorial/
+https://medium.com/@WuStangDan/step-by-step-tensorflow-object-detection-api-tutorial-part-5-saving-and-deploying-a-model-8d51f56dbcf1
+https://medium.com/coinmonks/part-3-of-3-model-usage-transfer-learning-using-tensorflows-object-detection-model-on-mac-c7a77aa5e0b2
+http://androidkt.com/train-object-detection/
+
+
+
+
+
+
+
+http://nikhedonia.com/frequency-analysis-using-ntlk/
+https://docs.python.org/2/library/csv.html
+https://www.pythonforbeginners.com/files/with-statement-in-python
+
+
+https://machinelearningmastery.com/visualize-machine-learning-data-python-pandas/
+https://kite.com/python/examples/5522/numpy-save-an-array-to-a-text-file
+https://scikit-learn.org/0.18/auto_examples/text/document_clustering.html
+https://www.tensorflow.org/tutorials/keras/basic_text_classification
+https://www.tensorflow.org/hub/tutorials/text_classification_with_tf_hub
+https://towardsdatascience.com/text-classification-using-k-nearest-neighbors-46fa8a77acc5
+https://arkadiuszkondas.com/predict-air-pollution-with-k-nearest-neighbors-and-php/
+https://www.ritchieng.com/applying-machine-learning/
+https://www.edureka.co/blog/k-nearest-neighbors-algorithm/
+https://www.kaggle.com/nuke89/k-nearest-neighbors
+https://www.kaggle.com/crowemi/iris-classification-k-nearest-neighbors
+https://medium.com/learning-machine-learning/recommending-animes-using-nearest-neighbors-61320a1a5934
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.KDTree.query.html
+https://towardsdatascience.com/building-a-k-nearest-neighbors-k-nn-model-with-scikit-learn-51209555453a
+https://machinelearningmastery.com/tutorial-to-implement-k-nearest-neighbors-in-python-from-scratch/
+https://stackabuse.com/k-nearest-neighbors-algorithm-in-python-and-scikit-learn/
+https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html
+https://scikit-learn.org/stable/modules/neighbors.html
+https://www.jeremyjordan.me/k-nearest-neighbors/
+https://www.datacamp.com/community/tutorials/k-nearest-neighbor-classification-scikit-learn
+https://www.dataquest.io/blog/k-nearest-neighbors-in-python/
+https://php-ml.readthedocs.io/en/latest/machine-learning/classification/k-nearest-neighbors/
+
+
+
+https://www.howtoinstall.co/en/ubuntu/trusty/dmtx-utils
+
+sudo apt-get update
+sudo apt-get install dmtx-utils
+
+Usage:
+dmtxread -v -U image.jpg | od -An -vtx1
+
+########################################################################
+#
+#	Tensorflow Object Detection API
+#	http://androidkt.com/train-object-detection/
+#	https://androidkt.com/train-image-classifier/
+# 	https://androidkt.com/android-tensorflow/
+#
+########################################################################
+
+git clone https://github.com/tensorflow/models.git
+sudo apt-get install protobuf-compiler python-pil python-lxml
+
+# From tensorflow/models/
+protoc object_detection/protos/*.proto --python_out=.
+
+# Add Libraries to PYTHONPATH
+# From tensorflow/models/
+export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
+
+# Testing the Installation
+# From tensorflow/models/
+python object_detection/builders/model_builder_test.py
+
+
+# Preparing Inputs
+# From the tensorflow/models/ directory
++ annotations
+     -xmls
+     -trainval.txt
++ images
++ label.pbtxt
+
+# LabelImg is a graphical image annotation tool that is written in Python.
+https://github.com/tzutalin/labelImg
+Save image annotations xml in /annotations/xmls folder
+Create trainval.txt in annotations folder which content name of the images without extension.Use the following command to generate trainval.txt.
+
+# From the tensorflow/models/ directory
+ls images | grep ".jpg" | sed s/.jpg// > annotations/trainval.txt
+
+# Label Maps
+Create label.pbtxt file with the following label map:
+
+item {
+  id: 1
+  name: 'Dog'
+}
+
+# Generating the Pet TFRecord files.
+# From the tensorflow/models/ directory
+python object_detection/create_pet_tf_record.py
+--label_map_path=object_detection/label.pbtxt
+--data_dir=`pwd`
+--output_dir=`pwd
+
+# You should end up with two TFRecord files named    pet_train.record and pet_val.record in the tensorflow/modelsdirectory.
+
+# 4.Training the model
+# From the tensorflow/models/ directory
+python object_detection/train.py
+--logtostderr
+--pipeline_config_path=/tensorflow/models/object_detection/samples/configs/ssd_mobilenet_v1_pets.config
+--train_dir=/tensorflow/models/pet
+
+
+# 5.Running the Evaluation Job
+
+# From the tensorflow/models/ directory
+python object_detection/eval.py \
+    --logtostderr \
+    --pipeline_config_path=${PATH_TO_YOUR_PIPELINE_CONFIG} \
+    --checkpoint_dir=${PATH_TO_TRAIN_DIR} \
+    --eval_dir=${PATH_TO_EVAL_DIR}
+
+# 6.Running TensorBoard
+tensorboard --logdir=${PATH_TO_MODEL_DIRECTORY}
+
+# 7.Exporting the Tensorflow Graph
+# From the tensorflow/models/ directory
+python object_detection/export_inference_graph.py
+--input_type image_tensor
+--pipeline_config_path=/tensorflow/models/object_detection/samples/configs/ssd_mobilenet_v1_pets.config
+--trained_checkpoint_prefix  pet/model.ckpt-200
+--output_directory parrot/exported_model_directory
+
+
+
