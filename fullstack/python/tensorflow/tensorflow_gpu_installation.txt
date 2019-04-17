@@ -1,0 +1,1165 @@
+
+
+
+
+
+/////////////////////////////////////////////////
+// CLEAN
+/////////////////////////////////////////////////
+
+sudo apt-get remove nvidia-cuda-toolkit
+sudo apt-get purge nvidia-cuda-toolkit
+sudo apt-get remove --auto-remove nvidia-cuda-toolkit
+sudo apt-get purge --auto-remove nvidia-cuda-toolkit
+sudo apt-get autoremove --purge cuda
+
+sudo apt purge python3-pip
+~/.local/lib/python3.6/site-packages && rm -rf ../*
+
+# rm /usr/local/cuda-*
+# sudo rm -rf /usr/local/cuda-10.1/
+
+To remove CUDA Toolkit:
+$ sudo apt-get --purge remove "*cublas*" "cuda*"
+
+To remove NVIDIA Drivers:
+$ sudo apt-get --purge remove "*nvidia*"
+
+
+sudo shutdown -r now
+
+/////////////////////////////////////////////////
+// REINSTALL
+/////////////////////////////////////////////////
+
+sudo apt-get update
+
+# nvidia driver
+sudo apt install nvidia-384 nvidia-384-dev nvidia-settings
+#or
+sudo /bin/sh ./NVIDIA-Linux-x86_64*.run
+sudo reboot
+
+nvidia-smi -q -d CLOCK
+sudo nvidia-smi --auto-boost-default=ENABLED -i 0
+nvidia-smi -q -d SUPPORTED_CLOCKS
+nvidia-smi -q
+
+nvidia-smi -q | head
+sudo nvidia-persistenced
+nvidia-smi -L
+glxinfo | grep OpenGL
+dpkg -l |grep -i nvidia
+nvidia-xconfig --enable-all-gpus --cool-bits=12
+
+systemctl status nvidia-persistenced.service
+
+nvidia-settings -a [gpu:0]/GPUPowerMizerMode=1
+nvidia-smi --gom=COMPUTE
+nvidia-smi -q -d SUPPORTED_CLOCKS
+nvidia-smi -q -d CLOCK
+nvidia-smi -q -d PERFORMANCE
+
+which nvidia-persistenced
+systemctl status nvidia-persistenced
+sudo systemctl enable nvidia-persistenced
+ps -aux|grep -e nvidia
+ls /lib/udev/rules.d/|grep -e hot
+cat /lib/udev/rules.d/80-hotplug-cpu-mem.rules
+sudo systemctl mask nvidia-persistenced.service
+journalctl -xe
+
+
+sudo apt-get install -f
+sudo apt-get upgrade
+
+----------------------
+Purpose	Command
+https://pubs.cray.com/content/H-2003/Rev%20E./cs-stormtm-hardware-guide/nvidia-gpu-boost-and-autoboost
+----------------------
+View the supported clocks								nvidia-smi–q –d SUPPORTED_CLOCKS
+Set one of the supported clocks							nvidia-smi -ac <MEM clock, Graphics clock>
+Make the clock settings persistent driver unload		nvidia-smi -pm 1
+Make the clock settings revert to base clocks 			nvidia-smi -pm 0
+To view the clock in use								nvidia-smi -q –d CLOCK
+To reset clocks back to the base clock 					nvidia-smi –rac
+To allow “non-root” access to change graphics clock		nvidia-smi -acp 0
+Enable auto boosting the GPU clocks						nvidia-smi --auto-boost-default=ENABLED -i 1
+Disable auto boosting the GPU clocks					nvidia-smi --auto-boost-default=ENABLED -i 0
+To allow “non-root” access to set autoboost				nvidia-smi --auto-boost-permission=UNRESTRICTED -i 0
+
+
+# sudo nvidia-smi -pm 1
+# sudo nvidia-smi -pl 75
+# nvidia-settings -a [gpu:0]/GPUGraphicsClockOffset[3]=200
+# nvidia-settings -a [gpu:0]/GPUMemoryTransferRateOffset[3]=1200
+# nvidia-settings -a [gpu:1]/GPUGraphicsClockOffset[3]=200
+# nvidia-settings -a [gpu:1]/GPUMemoryTransferRateOffset[3]=1000
+# nvidia-settings -a [gpu:1]/GPUFanControlState=1
+# nvidia-settings -a [fan:1]/GPUTargetFanSpeed=80
+
+----------------------
+LINUX X64 (AMD64/EM64T) DISPLAY DRIVER / NVIDIA-Linux-x86_64-418.56.run
+----------------------
+https://www.nvidia.com/Download/driverResults.aspx/145182/en-us
+chmod +x ./NVIDIA-Solaris-x86-387.34.run
+sudo ./NVIDIA-Solaris-x86-387.34.run
+
+
+# nvidia-settings -a '[gpu:0]/GPUFanControlState=1'
+# nvidia-settings -a '[gpu:0]/GPUGraphicsMemoryOffset[3]=100'
+# sudo ln -s /usr/lib/nvidia-375/bin/nvidia-persistenced /usr/bin/nvidia-persistenced
+# sudo ln -s /usr/lib/nvidia-418/bin/nvidia-persistenced /usr/bin/nvidia-persistenced
+# sudo nvidia-smi --auto-boost-default=0
+# sudo nvidia-smi -ac 2505,1177
+
+----------------------
+# CONDA
+----------------------
+wget https://repo.continuum.io/archive/Anaconda3-2018.12-Linux-x86_64.sh
+wget https://repo.continuum.io/archive/Anaconda3-5.1.0-Linux-x86_64.sh
+sha256sum Anaconda3-5.1.0-Linux-x86_64.sh
+#bash Anaconda3-2018.12-Linux-x86_64.sh
+bash Anaconda3-5.1.0-Linux-x86_64.sh
+
+----------------------
+# CUDA
+----------------------
+sudo dpkg -i cuda-repo-ubuntu1810-10-1-local-10.1.105-418.39_1.0-1_amd64.deb
+sudo apt-key add /var/cuda-repo-10-1-local-10.1.105-418.39/7fa2af80.pub
+sudo apt-get update
+sudo apt-get install cuda-libraries-10-1
+sudo apt-get install cuda
+
+nvcc --version # Cuda compilation tools, release 9.1, V9.1.85
+sudo apt install nvidia-cuda-toolkit
+# sudo /usr/local/cuda-10.1/bin/cuda-install-samples-10.1.sh --<target directory>
+sudo /usr/bin/nvidia-settings
+sudo /usr/bin/nvidia-cuda-mps-control
+Cannot find MPS control daemon process
+sudo /usr/bin/nvidia-bug-report.sh
+sudo apt-get --purge remove cuda
+nvcc --version
+sudo apt-get install cuda
+sudo apt-get --purge remove nvidia-384
+#sudo apt-get --purge remove nvidia-390
+
+
+nvcc --version # Cuda compilation tools, release 9.1, V9.1.85
+# CHANGE CUDA VERSION
+export PATH=/usr/local/cuda-10.1/bin${PATH:+:${PATH}}
+export LD_LIBRARY_PATH=/usr/local/cuda-10.1/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+nvcc --version
+cat /proc/driver/nvidia/version
+nvcc --version # Cuda compilation tools, release 10.1, V10.1.105
+
+
+
+
+####################################################################
+####################################################################
+
+# Add NVIDIA package repository
+sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
+wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.1.85-1_amd64.deb
+sudo apt install ./cuda-repo-ubuntu1604_9.1.85-1_amd64.deb
+wget http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1604/x86_64/nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb
+sudo apt install ./nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb
+#sudo dpkg -i --force-overwrite ./nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb
+sudo apt update
+
+# Install CUDA and tools. Include optional NCCL 2.x
+sudo apt install cuda9.0 cuda-cublas-9-0 cuda-cufft-9-0 cuda-curand-9-0 \
+    cuda-cusolver-9-0 cuda-cusparse-9-0 libcudnn7=7.2.1.38-1+cuda9.0 \
+    libnccl2=2.2.13-1+cuda9.0 cuda-command-line-tools-9-0
+
+# Optional: Install the TensorRT runtime (must be after CUDA install)
+sudo apt update
+sudo apt install libnvinfer4=4.1.2-1+cuda9.0
+shareimprove this answer
+answered Nov 13 '18 at 16:58
+
+python3 -c "import tensorflow; print(tensorflow.__version__)"
+python3 -c "import tensorflow as tf; print(tf.contrib.eager.num_gpus())"
+
+
+####################################################################
+
+nvidia-smi --query-gpu=memory.free --format=csv
+
+http://www.aymeric.net/journal/2016/01/install-tensorflow-with-cuda-3-0-compute-compatibility-devices/
+https://steadforce.com/de/first-steps-with-tensorflow-part-2/
+
+https://databricks.com/tensorflow/using-a-gpu
+http://developercongress2017.openpowerfoundation.org/wp-content/uploads/2017/05/OpenPower-Intro-to-TensorFlow.pdf
+https://learning.acm.org/binaries/content/assets/leaning-center/webinar-slides/2016/martinwicke_tensorflow_webinarslides.pdf
+https://www.tensorflow.org/guide/using_gpu
+https://askubuntu.com/questions/1063795/installing-tensorflow-with-gpu-support-libcublas-so-9-0-missing-after-installin
+https://github.com/hadim/docker-tensorflow-builder#builds
+
+
+####################################################################
+https://wonikjang.github.io/multi-gpus%20uses%20within%20tensorflow/2017/12/20/multi_GPU.html
+
+# ===== Script A.py ===== #
+# Configuration Declaration
+a = tf.ConfigProto()
+# Assign GPU number to Configuration
+a.gpu_options.visible_device_list= "0"
+# Finally, allocate Configuration to Session
+sess = tf.Session(config=a)
+init = tf.global_variables_initializer()
+sess.run(init)
+# ===== Script B.py ===== #
+# Configuration Declaration
+b = tf.ConfigProto()
+# Assign GPU number to Configuration
+b.gpu_options.visible_device_list= "1"
+# Finally, allocate Configuration to Session
+sess = tf.Session(config=b)
+init = tf.global_variables_initializer()
+sess.run(init)
+
+
+
+
+
+
+
+
+
+
+#I tensorflow/compiler/xla/service/platform_util.cc:194] StreamExecutor cuda device (0) is of
+#insufficient compute capability: 3.5 required, device is 3.0
+#2019-04-17 13:48:31.332346: F tensorflow/stream_executor/lib/statusor.cc:34] Attempting to fetch value instead of handling error #Internal: no supported devices found for platform CUDA
+
+#2019-04-17 13:50:22.350756: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:998] successful NUMA node read from SysFS had #negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+#2019-04-17 13:50:22.351262: I tensorflow/compiler/xla/service/platform_util.cc:194] StreamExecutor cuda device (0) is of insufficient #compute capability: 3.5 required, device is 3.0
+#2019-04-17 13:50:22.351362: F tensorflow/stream_executor/lib/statusor.cc:34] Attempting to fetch value instead of handling error #Internal: no supported devices found for platform CUDA
+
+
+https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/
+Index of /compute/machine-learning/repos/ubuntu1804/x86_64
+
+
+tensorflow_gpu-1.12.0    3.5-3.6    MSVC 2015 update 3    Bazel 0.15.0    7    9
+tensorflow_gpu-1.11.0    3.5-3.6    MSVC 2015 update 3    Bazel 0.15.0    7    9
+tensorflow_gpu-1.10.0    3.5-3.6    MSVC 2015 update 3    Cmake v3.6.3    7    9
+tensorflow_gpu-1.9.0    3.5-3.6    MSVC 2015 update 3    Cmake v3.6.3    7    9
+tensorflow_gpu-1.8.0    3.5-3.6    MSVC 2015 update 3    Cmake v3.6.3    7    9
+tensorflow_gpu-1.7.0    3.5-3.6    MSVC 2015 update 3    Cmake v3.6.3    7    9
+tensorflow_gpu-1.6.0    3.5-3.6    MSVC 2015 update 3    Cmake v3.6.3    7    9
+tensorflow_gpu-1.5.0    3.5-3.6    MSVC 2015 update 3    Cmake v3.6.3    7    9
+tensorflow_gpu-1.4.0    3.5-3.6    MSVC 2015 update 3    Cmake v3.6.3    6    8
+tensorflow_gpu-1.3.0    3.5-3.6    MSVC 2015 update 3    Cmake v3.6.3    6    8
+tensorflow_gpu-1.2.0    3.5-3.6    MSVC 2015 update 3    Cmake v3.6.3    5.1    8
+tensorflow_gpu-1.1.0    3.5    		MSVC 2015 update 3    Cmake v3.6.3    5.1    8
+tensorflow_gpu-1.0.0    3.5    		MSVC 2015 update 3    Cmake v3.6.3    5.1    8
+
+
+
+from tensorflow.python.client import device_lib
+device_lib.list_local_devices()
+
+#https://github.com/bazelbuild/bazel/releases
+#bazel-0.24.1-linux-x86_64
+#chmod +x bazel-0.24.1-linux-x86_64.sh
+#./bazel-0.24.1-linux-x86_64.sh
+#export PATH="$PATH:$HOME/bin"
+
+bazel build --config=opt --config=cuda --local_resources 2048,.5,1.0 //tensorflow/tools/pip_package:build_pip_package
+bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg
+
+/usr/local/cuda-10.1/samples
+make
+sudo make -k
+
+sudo apt install numactl
+sudo apt install python3-dev python3-pip
+pip3 install virtualenv --user
+pip install -U pip six numpy wheel setuptools mock
+pip install -U keras_applications==1.0.6 --no-deps
+pip install -U keras_preprocessing==1.0.5 --no-deps
+
+
+
+pip3 install --upgrade tensorflow-gpu --user
+pip3 install --upgrade https://storage.googleapis.com/tensorflow/mac/cpu/tensorflow-1.8.0-py3-none-any.whl --user
+git clone https://github.com/tensorflow/tensorflow.git -b v1.8.0
+./configure
+bazel build --config=cuda --config=opt --action_env PATH --action_env LD_LIBRARY_PATH --action_env DYLD_LIBRARY_PATH //tensorflow/tools/pip_package:build_pip_package
+
+
+sudo apt remove bazel
+sudo apt install bazel
+sudo apt install nvidia-cuda-toolkit
+sudo dpkg -i libcudnn7_7.5.0.56-1+cuda10.0_amd64.deb libcudnn7-dev_7.5.0.56-1+cuda10.0_amd64.deb
+cat /usr/local/cuda/version.txt # CUDA Version 10.1.105
+
+git clone https://github.com/tensorflow/tensorflow.git
+cd tensorflow
+git checkout r1.13
+
+wget https://github.com/tensorflow/tensorflow/archive/v1.13.1.tar.gz
+tar xfz v1.13.1.tar.gz
+cd tensorflow-1.13.1
+./configure
+
+bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package # CPU
+bazel build --config=opt --config=cuda //tensorflow/tools/pip_package:build_pip_package # GPU
+
+
+bazel build -c opt --copt=-march="haswell" --config=cuda //tensorflow/tools/pip_package:build_pip_package
+bazel build -c opt --copt=-march="haswell" --config=cuda //tensorflow/tools/pip_package:build_pip_package
+
+wget -c https://developer.nvidia.com/compute/cuda/9.0/Prod/local_installers/cuda_9.0.176_384.81_linux-run
+chmod 777 cuda_9.0.176_384.81_linux-run
+sudo sh ./cuda_9.0.176_384.81_linux-run
+export PATH=/usr/local/cuda/bin${PATH:+:${PATH}}
+export LD_LIBRARY_PATH=/usr/local/cuda/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+export CUDA_HOME=/usr/local/cuda
+
+
+
+bazel build -c opt --copt=-mavx --copt=-mavx2 --copt=-mfma --copt=-mfpmath=both --copt=-msse4.2 --config=cuda -k //tensorflow/tools/pip_package:build_pip_package
+
+
+sudo ln -s /usr/local/cuda-9.0/lib64/libcufft.so /usr/lib/libcufft.so.9.0
+sudo ln -s /usr/local/cuda-10.1/lib64/libcufft.so /usr/lib/libcufft.so.10.1
+
+
+sudo ln -s /usr/bin/python3 /usr/bin/python
+
+./bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg
+./bazel-bin/tensorflow/tools/pip_package/build_pip_package --nightly_flag /tmp/tensorflow_pkg
+pip3 install /tmp/tensorflow_pkg/tensorflow-1.13.1-cp36-cp36m-linux_x86_64.whl
+
+
+python3 -c "import tensorflow as tf; print(tf.contrib.eager.num_gpus())"
+python3 -c "import tensorflow; print(tensorflow.__version__)"
+
+docker run -it -d --hostname ubuntu18-04 --name ubuntu18-04 -v data:/data ubuntu:latest /bin/bash
+docker volume create data
+docker run -it -d --memory=4096M --cpus=2 --hostname tfstack --name tfstack \
+   -v data:/data --runtime=nvidia nvidia/cuda /bin/bash
+
+////////////////////////////////////////////////////////////
+
+https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/
+
+https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/libcudnn7-dev_7.5.0.56-1+cuda10.1_amd64.deb
+https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/libcudnn7_7.5.0.56-1+cuda10.1_amd64.deb
+
+https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/nvidia-machine-learning-repo-ubuntu1804_1.0.0-1_amd64.deb
+
+
+
+
+///////// -----------------------
+
+# https://medium.com/@mccann.matt/compiling-tensorflow-with-cuda-3-0-support-42d8fe0bf3b5
+sudo apt-get install -y nvidia-384 nvidia-modprobe
+sudo reboot
+nvidia-smi
+
+
+# Add NVIDIA package repository
+sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
+wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.1.85-1_amd64.deb
+sudo apt install ./cuda-repo-ubuntu1604_9.1.85-1_amd64.deb
+wget http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1604/x86_64/nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb
+sudo apt install ./nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb
+sudo apt update
+
+# Install CUDA toolkit and supporting libraries
+sudo apt install cuda9.0 cuda-cublas-9-0 cuda-cufft-9-0 cuda-curand-9-0 \
+    cuda-cusolver-9-0 cuda-cusparse-9-0 libcudnn7=7.2.1.38-1+cuda9.0 \
+    libnccl2=2.2.13-1+cuda9.0 cuda-command-line-tools-9-0
+
+# Add a symlink to our libcudnn install
+sudo ln -s /usr/lib/x86_64-linux-gnu/libcudnn.so.7 /usr/local/cuda-9.0/lib64/
+
+# Install the CUDA dev packages
+sudo apt install cuda-cufft-dev-9-0 cuda-cublas-dev-9-0 cuda-curand-dev-9-0 \
+  cuda-cusolver-dev-9-0 cuda-cusparse-dev-9-0 cuda-driver-dev-9-0
+
+# Install and upgrade pip
+$ sudo apt-get install python3-pip python-dev
+$ pip3 install --upgrade pip
+
+# Install the required Python packages
+pip3 install --user numpy keras_applications keras_preprocessing mock
+
+# Install the backport of enum (required by the modern TensorFlow releases)
+sudo apt-get install -y python-enum34
+
+# Install Oracle Java 8 (required by Bazel)
+sudo apt-get install software-properties-common swig
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install oracle-java8-installer
+
+# Install Bazel itself
+sudo apt-get install -y wget
+wget https://github.com/bazelbuild/bazel/releases/download/0.19.1/bazel-0.19.1-installer-linux-x86_64.sh
+chmod +x ./bazel-0.19.1-installer-linux-x86_64.sh
+./bazel-0.19.1-installer-linux-x86_64.sh
+
+# Clone TensorFlow
+git clone https://github.com/tensorflow/tensorflow
+
+# Check out r1.12
+cd tensorflow
+git reset --hard a6d8ffae097d0132989ae4688d224121ec6d8f35
+
+cat tools/bazel.rc >> .tf_configure.bazelrc
+
+# Compile TensorFlow - Prepare to wait a while :)
+bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package
+bazel build --config=opt --config=mk1 --config=cuda --copt=-mavx --copt=-msse4.2 --copt=-msse4.1 //tensorflow/tools/pip_package:build_pip_package
+
+export TF_NEED_CUDA=1
+/*
+export TF_CUDA_VERSION="$(nvcc --version | sed -n 's/^.*release \(.*\),.*/\1/p')"
+    export TF_CUDNN_VERSION="$(sed -n 's/^#define CUDNN_MAJOR\s*\(.*\).*/\1/p' $CUDNN_INSTALL_PATH/include/cudnn.h)"*/
+
+sed -i -E 's#\.tf_configure\.bazelrc#tools/bazel.rc#' .bazelrc
+
+# Build the TensorFlow python packages
+bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg
+
+# Install the TensorFlow python packages
+pip3 install --user /tmp/tensorflow_pkg/tensorflow-*.whl
+https://cloud-atlas.readthedocs.io/zh_CN/latest/machine_learning/build_tensorflow_from_source.html
+
+
+nvidia-smi | grep "Driver Version" | awk '{print $6}'  # 418.39
+
+cd /usr/local/cuda-10.0/samples/1_Utilities/deviceQuery
+$ sudo make
+$ ./deviceQuery
+
+pip3 install tensorflow-gpu
+
+///////// -----------------------
+
+git clone https://github.com/tensorflow/tensorflow
+git checkout r1.8
+sudo pip install /tmp/tensorflow_pkg/tensorflow*.whl
+
+# Ubuntu 18-04
+# https://www.pugetsystems.com/labs/hpc/Install-TensorFlow-with-GPU-Support-the-Easy-Way-on-Ubuntu-18-04-without-installing-CUDA-1170/
+# https://www.pugetsystems.com/labs/hpc/The-Best-Way-to-Install-TensorFlow-with-GPU-Support-on-Windows-10-Without-Installing-CUDA-1187/
+# https://www.pugetsystems.com/labs/hpc/Install-TensorFlow-with-GPU-Support-the-Easy-Way-on-Ubuntu-18-04-without-installing-CUDA-1170/
+# https://www.pytorials.com/install-tensorflow141-gpu/
+# https://developer.nvidia.com/rdp/cudnn-archive
+
+python --version
+conda update conda
+conda update anaconda
+conda update python
+conda update --all
+conda create --name tf-gpu
+conda create --name tf_gpu tensorflow-gpu
+conda activate tf-gpu
+conda install tensorflow-gpu
+conda install ipykernel
+conda install keras
+conda install tensorflow-gpu keras-gpu
+conda install -c aaronzs tensorflow-gpu
+conda install -c anaconda cudatoolkit
+conda install -c anaconda cudnn
+conda install --yes numpy wheel bazel==0.18.1
+
+
+
+python -m ipykernel install --user --name tf-gpu --display-name "TensorFlow-GPU"
+pip3 install jupyter  --user
+jupyter notebook
+tensorboard --logdir=./logs --port 6006
+
+sudo apt-get install nvidia-cuda-dev libcupti-dev
+sudo apt --fix-broken install
+sudo dpkg -i --force-overwrite /var/cuda-repo-10-1-local-10.1.105-418.39/./libcublas-dev_10.1.0.105-1_amd64.deb
+sudo apt-get -f install
+sudo apt install --reinstall nvidia-cuda-dev
+sudo dpkg -i --force-overwrite /var/cache/apt/archives/nvidia-cuda-dev_9.1.85-4ubuntu1_amd64.deb
+sudo apt-get -f install
+
+
+
+
+import tensorflow as tf
+sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
+
+
+#https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&target_distro=Ubuntu&target_version=1810&target_type=deblocal
+# https://developer.nvidia.com/cuda-90-download-archive
+
+sudo dpkg -i cuda-repo-ubuntu1704-9-0-local_9.0.176-1_amd64.deb
+sudo dpkg -i cuda-repo-ubuntu1810-10-1-local-10.1.105-418.39_1.0-1_amd64.deb
+sudo dpkg -i nvidia-machine-learning-repo-ubuntu1804_1.0.0-1_amd64.deb
+
+sudo apt-get install cuda-9-0 # Unable to locate package cuda-9-0
+sudo apt-get install cuda-10-1
+# sudo apt install tensorflow-cuda-latest
+
+You might want to run 'apt --fix-broken install' to correct these.
+The following packages have unmet dependencies:
+ cuda-libraries-dev-10-1 : Depends: libcublas-dev (>= 10.1.0.105) but it is not going to be installed
+ cuda-samples-10-1 : Depends: libcublas-dev (>= 10.1.0.105) but it is not going to be installed
+ cuda-visual-tools-10-1 : Depends: libcublas-dev (>= 10.1.0.105) but it is not going to be installed
+E: Unmet dependencies. Try 'apt --fix-broken install' with no packages (or specify a solution).
+
+bazel test -c opt --config=cuda --test_output=streamed tensorflow/contrib/distributions:chi2_test
+
+
+
+//////////
+https://medium.com/@lookfwd/install-tensorflow-1-12-gpu-on-g3-aws-ubuntu-18-04-instances-4cd884f06ec2
+//////////
+wget https://developer.nvidia.com/compute/cuda/9.0/Prod/local_installers/cuda_9.0.176_384.81_linux-run
+chmod +x cuda_9.0.176_384.81_linux-run
+$ sudo ./cuda_9.0.176_384.81_linux-run --override
+
+
+export PATH=/usr/local/cuda-9.0/bin${PATH:+:${PATH}}
+export LD_LIBRARY_PATH=/usr/local/cuda-9.0/lib64:${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+
+
+wget https://developer.nvidia.com/compute/cuda/9.0/Prod/patches/1/cuda_9.0.176.1_linux-run
+wget https://developer.nvidia.com/compute/cuda/9.0/Prod/patches/2/cuda_9.0.176.2_linux-run
+wget https://developer.nvidia.com/compute/cuda/9.0/Prod/patches/3/cuda_9.0.176.3_linux-run
+wget https://developer.nvidia.com/compute/cuda/9.0/Prod/patches/4/cuda_9.0.176.4_linux-run
+sudo sh cuda_9.0.176.1_linux-run
+sudo sh cuda_9.0.176.2_linux-run
+sudo sh cuda_9.0.176.3_linux-run
+sudo sh cuda_9.0.176.4_linux-run
+
+
+tar -xzf cudnn-9.0-linux-x64-v7.3.1.20.tgz
+$ sudo cp cuda/lib64/libcudnn* /usr/local/cuda-9.0/lib64/
+$ sudo cp cuda/include/cudnn.h /usr/local/cuda-9.0/include/
+watch -n 2 nvidia-smi
+
+
+whereis cudnn.h
+locate cudnn.h
+
+
+Invalid path to cuDNN 7 toolkit. None of the following files can be found:
+/usr/local/cuda-10.1/lib64/libcudnn.so.7
+/usr/local/cuda-10.1/libcudnn.so.7
+
+
+# pip3 and packages
+sudo apt-get --reinstall install python3-pip
+pip3 install --upgrade pip
+
+
+# pip3 install numpy pandas tensorflow-gpu --user
+# pip3 install numpy pandas tensorflow --user
+# pip3 install tensorflow-gpu==1.2.1
+# Could not find a version that satisfies the requirement tensorflow-gpu==1.2.1
+# (from versions: 1.13.0rc1, 1.13.0rc2, 1.13.1, 2.0.0a0)
+
+
+# pip3 uninstall tensorflow
+# pip3 uninstall tensorflow-gpu
+# pip3 install tensorflow==1.4.1 --user
+# pip3 install tensorflow-gpu==1.4.1 --user
+
+
+pip3 uninstall tensorflow
+pip3 uninstall tensorflow-gpu
+pip3 install tensorflow==1.8.0 --user
+pip3 install tensorflow-gpu==1.8.0 --user
+
+
+pip3 install tf-nightly-gpu --user
+pip3 install --upgrade tensorflow-gpu
+
+
+# Successfully uninstalled tensorboard-1.13.1
+# Successfully installed tensorboard-1.8.0 tensorflow-1.8.0
+# Successfully installed tensorflow-gpu-1.8.0
+
+
+# nvidia cuda kit
+sudo apt install nvidia-cuda-toolkit
+
+
+# conda cuda
+conda install cudatoolkit
+conda install cudnn
+# conda install -c fragcolor cuda9.0
+# ImportError: libcublas.so.9.0: cannot open shared object file: No such file or directory
+conda install -c fragcolor cuda10.0
+
+
+
+# conda install pytorch cudatoolkit=8.0
+CUDA 8.0: conda install pytorch torchvision cuda80 -c pytorch
+CUDA 9.2: conda install pytorch torchvision -c pytorch
+CUDA 10.0: conda install pytorch torchvision cuda100 -c pytorch
+No CUDA: conda install pytorch-cpu torchvision-cpu -c pytorch
+
+
+########################################################################
+https://github.com/tensorflow/tensorflow/issues/12388
+https://docs.anaconda.com/anaconda/user-guide/tasks/gpu-packages/
+https://hackernoon.com/setting-up-your-gpu-machine-to-be-deep-learning-ready-96b61a7df278
+########################################################################
+
+
+conda create -n tt  anaconda python
+conda source activate tt
+#source activate tt
+
+
+conda install tensorflow-gpu==1.11 cudatoolkit==9.0 cudnn==7.1.2 h5py
+
+
+#conda install pytorch -c pytorch
+#pip3 install torchvision
+#conda install tensorflow-gpu
+
+
+pip3 install pillow h5py keras
+pip3 uninstall tensorflow
+pip3 install tensorflow-gpu
+
+
+# reboot after installing the driver!
+
+
+git clone https://github.com/fchollet/keras.git
+cd keras/examples
+python mnist_cnn.py
+
+pip3 install --ignore-installed --upgrade tensorflow-gpu
+pip3 install tensorflow-gpu==1.13.1
+
+
+ls -al /usr/local/cuda/lib64
+sudo ldconfig -v
+export LD_LIBRARY_PATH=/usr/local/cuda/lib64/
+
+
+git clone https://github.com/soumith/cudnn.torch.git -b R7 && cd cudnn.torch && luarocks make cudnn-scm-1.rockspec
+
+
+
+
+https://docs.nvidia.com/deeplearning/sdk/cudnn-install/index.html
+
+########################################################################
+########################################################################
+
+
+# Python Dependencies
+sudo apt install python3-dev python3-pip
+pip3 install -U --user six numpy wheel mock
+pip3 install -U --user keras_applications==1.0.6 --no-deps
+pip3 install -U --user keras_preprocessing==1.0.5 --no-deps
+
+# Installing Bazel
+sudo apt-get install pkg-config zip g++ zlib1g-dev unzip python
+wget https://github.com/bazelbuild/bazel/releases/download/0.23.0/bazel-0.23.0-installer-linux-x86_64.sh
+chmod +x bazel-0.23.0-installer-linux-x86_64.sh
+./bazel-0.23.0-installer-linux-x86_64.sh --user
+
+# Downloading TensorFlow source code
+git clone https://github.com/tensorflow/tensorflow.git
+cd tensorflow
+git checkout r1.12
+
+# Configure the build
+./configure
+bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package
+
+
+
+########################################################################
+########################################################################
+https://www.pyimagesearch.com/2016/07/04/how-to-install-cuda-toolkit-and-cudnn-for-deep-learning/
+
+sudo apt-get update
+$ sudo apt-get upgrade
+$ sudo apt-get install build-essential cmake git unzip pkg-config
+$ sudo apt-get install libopenblas-dev liblapack-dev
+$ sudo apt-get install linux-image-generic linux-image-extra-virtual
+$ sudo apt-get install linux-source linux-headers-generic
+
+sudo nano /etc/modprobe.d/blacklist-nouveau.conf
+
+lacklist nouveau
+blacklist lbm-nouveau
+options nouveau modeset=0
+alias nouveau off
+alias lbm-nouveau off
+
+
+echo options nouveau modeset=0 | sudo tee -a /etc/modprobe.d/nouveau-kms.conf
+$ sudo update-initramfs -u
+$ sudo reboot
+
+wget http://developer.download.nvidia.com/compute/cuda/7.5/Prod/local_installers/cuda_7.5.18_linux.run
+chmod +x cuda_7.5.18_linux.run
+mkdir installers
+$ sudo ./cuda_7.5.18_linux.run -extract=`pwd`/installers
+
+NVIDIA-Linux-x86_64-352.39.run
+cuda-linux64-rel-7.5.18-19867135.run
+cuda-samples-linux-7.5.18-19867135.run
+
+sudo ./NVIDIA-Linux-x86_64-352.39.run
+$ modprobe nvidia
+$ sudo ./cuda-linux64-rel-7.5.18-19867135.run
+$ sudo ./cuda-samples-linux-7.5.18-19867135.run
+
+nano ~/.bashrc
+
+# CUDA Toolkit
+export CUDA_HOME=/usr/local/cuda-7.5
+export LD_LIBRARY_PATH=${CUDA_HOME}/lib64:$LD_LIBRARY_PATH
+export PATH=${CUDA_HOME}/bin:${PATH}
+
+source ~/.bashrc
+
+
+scp -i EC2KeyPair.pem ~/Downloads/cudnn-7.5-linux-x64-v5.0-ga.tgz ubuntu@<ip_address>:~
+cd ~
+$ tar -zxf cudnn-7.5-linux-x64-v5.0-ga.tgz
+$ cd cuda
+$ sudo cp lib64/* /usr/local/cuda/lib64/
+$ sudo cp include/* /usr/local/cuda/include/
+cd ~
+$ rm -rf cuda installers
+$ rm -f cuda_7.5.18_linux.run cudnn-7.5-linux-x64-v5.0-ga.tgz
+
+########################################################################
+########################################################################
+
+
+http://queirozf.com/entries/installing-cuda-tk-and-tensorflow-on-a-clean-ubuntu-16-04-install
+
+sudo chmod +x NVIDIA-Linux-x86_64-375.26.run
+$ sudo ./NVIDIA-Linux-x86_64-375.26.run
+
+sudo chmod +x cuda_8.0.44_linux.run
+$ sudo sh cuda_8.0.44_linux.run
+touch /etc/ld.so.conf/cuda-8-0.conf << /usr/local/cuda/lib
+
+sudo ldconfig
+
+cd $ /path/to/NVIDIA_CUDA-8.0_Samples/
+$ make
+./deviceQuery
+/NVIDIA_CUDA-8.0_Samples/bin/x86_64/linux/release$ ./deviceQuery
+# GPU Max Clock rate:                            1176 MHz (1.18 GHz)
+
+
+sudo tar -xzvf cudnn-8.0-linux-x64-v5.1.tgz
+$ sudo cp cuda/include/cudnn.h /usr/local/cuda/include
+$ sudo cp cuda/lib64/libcudnn* /usr/local/cuda/lib64
+$ sudo chmod a+r /usr/local/cuda/include/cudnn.h /usr/local/cuda/lib64/libcudnn*
+
+~/.bashrc << export CUDA_HOME=/usr/local/cuda
+
+source ~/.bashrc
+
+nano /etc/ld.so.conf.d/cuda-8-0.conf
+
+add:
+/usr/local/cuda/lib64
+/usr/local/cuda/extras/CUPTI/lib64
+
+sudo ldconfig
+
+sudo apt-get install libopenblas-dev liblapack-dev gfortran
+sudo apt-get install git python-dev python3-dev python-numpy python3-numpy build-essential python-pip python3-pip python-virtualenv swig python-wheel libcurl3-dev
+virtualenv --system-site-packages -p python3 tf-venv3
+source tf-venv3/bin/activate
+pip install --upgrade pip
+pip install --upgrade tensorflow-gpu
+
+# sudo nvidia-uninstall
+# pip3 install tf-nightly-gpu
+
+########################################################################
+########################################################################
+
+nvidia-smi # Processes: GPU Memory  0
+nvcc -V # Cuda compilation tools, release 9.1, V9.1.85
+ls -la /usr/local/cuda/lib64/libcudnn*
+sudo nano ~/.bash_profile
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-7.5/lib64
+export CUDA_HOME=/usr/local/cuda
+export PATH=/usr/local/cuda-7.5/bin:$PATH
+
+sudo apt-get install nvidia-cuda-toolkit
+sudo apt-get install nvidia-cuda-361-updates
+sudo apt install libcudart7.5
+(download and extract cudann)
+sudo cp include/cudnn.h /usr/include
+sudo cp lib64/libcudnn* /usr/lib/x86_64-linux-gnu/
+sudo chmod a+r /usr/lib/x86_64-linux-gnu/libcudnn*
+nvidia-smi
+nvcc -V
+
+
+########################################################################
+########################################################################
+TensorFlow GPU CUDA 10 Ubuntu 18.04
+https://gist.github.com/christianramsey/52b74ecc4048f8e3e9ae84afc3ee810b
+
+# Add NVIDIA package repository
+sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
+wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1804_10.0.130-1_amd64.deb
+sudo apt install ./cuda-repo-ubuntu1804_10.0.130-1_amd64.deb
+wget http://developer.download.nvidia.com/compute/machine-learning/repos/https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/nvidia-machine-learning-repo-ubuntu1804_1.0.0-1_amd64.deb
+sudo apt install ./nvidia-machine-learning-repo-ubuntu1804_1.0.0-1_amd64.deb
+sudo apt update
+
+# Install CUDA and tools. Include optional NCCL 2.x
+sudo apt install cuda10.0 cuda-cublas-10-0 cuda-cufft-10-0 cuda-curand-10-0 \
+    cuda-cusolver-10-0 cuda-cusparse-10-0 libcudnn7 \
+    libnccl2 cuda-command-line-tools-10-0
+
+# Optional: Install the TensorRT runtime (must be after CUDA install)
+sudo apt update
+sudo apt install libnvinfer4=4.1.2-1+cuda10.0
+
+pip install --no-cache-dir tensorflow-gpu
+# pip install --no-cache-dir tf-nightly-gpu
+
+
+
+
+
+
+
+
+########################################################################
+########################################################################
+
+
+sudo apt-get install openjdk-8-jdk git python-dev python3-dev python-numpy python3-numpy python-six python3-six build-essential python-pip python3-pip python-virtualenv swig python-wheel python3-wheel libcurl3-dev libcupti-dev
+
+sudo add-apt-repository ppa:graphics-drivers/ppa
+$ sudo apt update
+
+
+cd ~/Downloads
+$ wget https://developer.nvidia.com/compute/cuda/8.0/Prod2/local_installers/cuda_8.0.61_375.26_linux-run
+$ sudo sh cuda_8.0.61_375.26_linux.run --override --silent --toolkit
+
+tar -xzvf cudnn-8.0-linux-x64-v6.0.tgz
+$ sudo cp cuda/include/cudnn.h /usr/local/cuda/include
+$ sudo cp cuda/lib64/libcudnn* /usr/local/cuda/lib64
+$ sudo chmod a+r /usr/local/cuda/include/cudnn.h /usr/local/cuda/lib64/libcudnn*
+
+
+
+# https://alliseesolutions.wordpress.com/2016/09/08/install-gpu-tensorflow-from-sources-w-ubuntu-16-04-and-cuda-8-0/
+
+
+
+########################################################################
+########################################################################
+
+git clone https://github.com/NVIDIA/nccl.git
+cd nccl/
+make CUDA_HOME=/usr/local/cuda
+sudo make install
+sudo mkdir -p /usr/local/include/external/nccl_archive/src
+sudo ln -s /usr/local/include/nccl.h /usr/local/include/external/nccl_archive/src/nccl.h
+
+
+
+git clone --recurse-submodules https://github.com/tensorflow/serving ~/serving
+cd ~/serving/tensorflow
+./configure
+bazel clean --expunge && export TF_NEED_CUDA=1
+bazel build --config=opt --config=cuda tensorflow_serving/...
+sudo /opt/bitnami/ctlscript.sh stop tensorflowserving
+
+
+
+########################################################################
+https://github.com/tensorflow/tensorflow/issues/17629
+https://developer.nvidia.com/cuda-toolkit
+########################################################################
+
+sudo apt-get install openjdk-8-jdk
+echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+sudo apt-get install curl
+curl https://bazel.build/bazel-release.pub.gpg | sudo apt-key add -
+sudo apt-get update && sudo apt-get install bazel
+
+#clone tf code:
+
+git clone https://github.com/tensorflow/tensorflow.git
+cd tensorflow
+git pull
+git checkout r1.9
+./configure
+
+
+Please specify the location of python. [Default is /usr/bin/python]: /usr/bin/python3.6
+/usr/bin/python3
+Do you wish to build TensorFlow with jemalloc as malloc support? [Y/n]: enter
+Do you wish to build TensorFlow with Google Cloud Platform support? [Y/n]: enter
+Do you wish to build TensorFlow with Hadoop File System support? [Y/n]: enter
+Do you wish to build TensorFlow with Amazon S3 File System support? [Y/n]: enter
+Do you wish to build TensorFlow with Apache Kafka Platform support? [Y/n]: enter
+Do you wish to build TensorFlow with XLA JIT support? [y/N]: enter
+Do you wish to build TensorFlow with GDR support? [y/N]: enter
+Do you wish to build TensorFlow with VERBS support? [y/N]: enter
+Do you wish to build TensorFlow with OpenCL SYCL support? [y/N]: enter
+Do you wish to build TensorFlow with CUDA support? [y/N]: Y
+/usr/local/cuda-10.1/
+# locate libcudnn
+Please specify the cuDNN version you want to use. [Leave empty to default to cuDNN 7.0]: 7.3.1
+/home/emil/anaconda3/lib/
+Do you want to use clang as CUDA compiler? [y/N]
+
+
+StreamExecutor cuda device (0) is of insufficient compute capability: 3.5 required, device is 3.0
+pip install tf-nightly --user
+pip install tf-nightly-gpu --user
+
+
+build:
+
+bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package
+bazel-bin/tensorflow/tools/pip_package/build_pip_package tensorflow_pkg
+cd tensorflow_pkg
+sudo pip3 install tensorflow*.whl
+testing:
+
+import tensorflow as tf
+hello = tf.constant('Hello, TensorFlow!')
+sess = tf.Session()
+print(sess.run(hello))
+
+import tensorflow as tf
+tf.Session(config=tf.ConfigProto(log_device_placement=True))
+
+import tensorflow as tf
+tf.test.is_gpu_available()
+
+import tensorflow as tf
+tf.test.is_built_with_cuda()
+tf.test.is_gpu_available()
+
+from tensorflow.python.client import device_lib
+device_lib.list_local_devices()
+
+
+
+
+
+systemctl status nvidia-persistenced
+sudo systemctl enable nvidia-persistenced
+/usr/bin/nvidia-persistenced --verbose
+cat /proc/driver/nvidia/version
+setenforce 0
+sudo apt-get purge cuda-drivers-diagnostic  nvidia-384-diagnostic
+
+
+
+ll /usr/local/cuda/lib64/libcublas.so.9.0
+export PATH=/usr/local/cuda-9.0/bin${PATH:+:$PATH}}
+export LD_LIBRARY_PATH=/usr/local/cuda-9.0/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}
+# pip3 install tensorflow-gpu==1.5
+nvcc --version
+
+
+/////////////////////////////////////////////////
+// CHECK
+/////////////////////////////////////////////////
+
+nvcc -V
+nvcc --version
+nvidia-smi
+
+lspci | grep -i nvidia
+ldconfig -v | grep libcu
+pip3 list | grep tensorflow-gpu
+sudo find / -name libcublas.so.*
+conda list | grep cuda
+dpkg -l | grep -i nvidia
+
+sudo find / -name "libcublas.so.10.0"
+sudo find / -name libcublas.so.*
+
+python3
+import tensorflow as tf
+print(tf.__version__)
+tf.test.gpu_device_name()
+---------------------------------------------------------------
+
+
+
+
+
+/home/emil/anaconda3/pkgs/cudatoolkit-10.0.130-0/lib/libcublas.so.10.0
+/home/emil/anaconda3/lib/libcublas.so.10.0
+
+
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH=/usr/local/cuda-10.0/lib64
+export PATH=$PATH:/usr/local/cuda-10.0/bin
+export CUDA_HOME=$CUDA_HOME:/usr/local/cuda-10.0
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-9.0/lib64
+
+
+export LD_LIBRARY_PATH=/usr/local/cuda-9.1/lib64:$LD_LIBRARY_PATH
+export PATH=/usr/local/cuda-9.1/bin:$PATH
+
+
+conda install pytorch torchvision -c pytorch
+
+pip3 install tensorflow-gpu  # stable
+pip3 install tensorflow-gpu==2.0.0-alpha0
+pip3 install --extra-index-url https://developer.download.nvidia.com/compute/redist/jp/v411 tensorflow-gpu==1.13.0rc0+nv19.2 --user
+pip3 install --extra-index-url https://developer.download.nvidia.com/compute/redist/jp/v42 tensorflow-gpu==1.13.1+nv19.3 --user
+pip3 install --extra-index-url https://developer.download.nvidia.com/compute/redist/jp/v411 tensorflow-gpu #####
+sudo apt-get install libhdf5-serial-dev hdf5-tools
+sudo apt-get install libhdf5-100 libhdf5-serial-dev libhdf5-dev libhdf5-cpp-100
+
+
+export LD_LIBRARY_PATH=:/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64
+export CUDA_HOME=/usr/local/cuda
+ldconfig -p | grep -i cuda-10.1
+
+conda install -c anaconda cudatoolkit==9.0
+sudo ldconfig /usr/local/cuda/lib64
+
+
+cd /usr/local/cuda-10.1/samples
+sudo make
+./deviceQuery
+./bandwidthTest
+
+
+
+
+
+
+https://www.tensorflow.org/install/docker
+https://www.tensorflow.org/install/gpu
+https://www.tensorflow.org/install/gpu
+
+https://www.codingforentrepreneurs.com/blog/install-tensorflow-gpu-windows-cuda-cudnn/
+https://www.cs.virginia.edu/~mwb7w/cuda_support/libcudart.html
+https://www.pyimagesearch.com/2019/01/30/ubuntu-18-04-install-tensorflow-and-keras-for-deep-learning/##
+https://www.jianshu.com/p/e735c2b1a1a7
+http://modudiv.blogspot.com/2019/02/teimporterror-libcublasso100-cuda-ubuntu.html
+https://www.cs.virginia.edu/~mwb7w/cuda_support/libcudart.html
+https://www.pytorials.com/how-to-install-tensorflow-gpu-with-cuda-10-0-for-python-on-ubuntu/######
+http://modudiv.blogspot.com/2019/02/teimporterror-libcublasso100-cuda-ubuntu.html ###
+
+
+# sudo apt-get install gcc-6 g++-6
+
+export PATH=/usr/local/cuda-9.0/bin${PATH:+:${PATH}}
+export LD_LIBRARY_PATH=/usr/local/cuda-9.0/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-9.0/extras/CUPTI/lib64
+
+
+ sudo dpkg -i cuda-repo-ubuntu1604_9.0.176-1_amd64.deb
+$ sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
+$ sudo apt-get update
+$ sudo apt-get install cuda-9-0
+
+
+chmod +x cuda_9.0.176_384.81_linux-run
+$ sudo ./cuda_9.0.176_384.81_linux-run --override
+
+# NVIDIA CUDA Toolkit
+export PATH=/usr/local/cuda-9.0/bin:$PATH
+export LD_LIBRARY_PATH=/usr/local/cuda-9.0/lib64
+
+
+# Add NVIDIA package repositories
+wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-repo-ubuntu1804_10.0.130-1_amd64.deb
+sudo dpkg -i cuda-repo-ubuntu1804_10.0.130-1_amd64.deb
+sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
+sudo apt-get update
+wget http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/nvidia-machine-learning-repo-ubuntu1804_1.0.0-1_amd64.deb
+sudo apt install ./nvidia-machine-learning-repo-ubuntu1804_1.0.0-1_amd64.deb
+sudo apt-get update
+
+# Install NVIDIA driver
+sudo apt-get install --no-install-recommends nvidia-driver-410
+# Reboot. Check that GPUs are visible using the command: nvidia-smi
+
+# Install development and runtime libraries (~4GB)
+sudo apt-get install --no-install-recommends \
+    cuda-10-0 \
+    libcudnn7=7.4.1.5-1+cuda10.0  \
+    libcudnn7-dev=7.4.1.5-1+cuda10.0
+
+
+# Install TensorRT. Requires that libcudnn7 is installed above.
+sudo apt-get update && \
+        sudo apt-get install nvinfer-runtime-trt-repo-ubuntu1804-5.0.2-ga-cuda10.0 \
+        && sudo apt-get update \
+        && sudo apt-get install -y --no-install-recommends libnvinfer-dev=5.0.2-1+cuda10.0
+
+
+
+
+
+---------------------
+
+
+
+
+
+
+
+
+
+#import tensorflow as tf
+#from tensorflow.python.client import device_lib
+#print(device_lib.list_local_devices())
+
+import tensorflow as tf
+hello = tf.constant('Hello, TensorFlow!')
+#sess = tf.Session()
+sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
+with tf.Session() as sess:
+  devices = sess.list_devices()
+print(sess.run(hello))
+
+
+import tensorflow as tf
+print(tf.__version__)
+
+
+import tensorflow as tf
+with tf.device('/gpu:0'):
+    a = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape=[2, 3], name='a')
+    b = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape=[3, 2], name='b')
+    c = tf.matmul(a, b)
+
+with tf.Session() as sess:
+    print (sess.run(c))
+
+
+---
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-9.0/lib64
+export PATH=$PATH:/usr/local/cuda-9.0/bin
+export CUDA_HOME=$CUDA_HOME:/usr/local/cuda-9.0
+
+apt-get install libcublas8.0 libcusolver8.0 libcudart8.0 libcufft8.0 libcurand8.0
+
+pip3 install tensorflow-gpu
+pip3 install tensorflow

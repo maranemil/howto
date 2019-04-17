@@ -128,6 +128,33 @@ for op in graph.get_operations():
 
 ############################################################
 #
+# using gpu flow operations
+#
+############################################################
+
+
+#with tf.device("/cpu:0"):
+with tf.device("/gpu:0"):
+
+  # Setup operations
+  #config = tf.ConfigProto(device_count = {'GPU': 1})
+  #gpu_options = tf.GPUOptions(visible_device_list="0")
+  #config=tf.ConfigProto(log_device_placement=True)
+  #with tf.Session(config=config) as sess:
+
+  with tf.Session() as sess:
+  #with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
+  #with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)) as sess:
+
+    softmax_tensor = sess.graph.get_tensor_by_name('softmax:0') # pool_3:0 softmax:0
+    pool_3 = sess.graph.get_tensor_by_name('pool_3:0')
+    predictions , pool3_val = sess.run([softmax_tensor, pool_3], {'DecodeJpeg:0': image_data})
+    predictions = np.squeeze(predictions)
+
+
+
+############################################################
+#
 #   Bilderkennung mit Tensorflow in Ubuntu 17.04/18.04/19.04
 #
 ############################################################
