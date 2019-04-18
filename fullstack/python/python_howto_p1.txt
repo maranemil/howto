@@ -149,3 +149,145 @@ if (system("ls") == 0) {
 }
 
 # strace -f -o strace.log perl yourscript.pl
+
+
+
+###################################################################
+#
+# convert imagemagick
+#
+###################################################################
+
+
+convert example.png -resize 200 example.png
+convert example.png -resize x100 example.png
+
+
+###################################################################
+#
+# 	multiprocessing
+# 	https://docs.python.org/2/library/multiprocessing.html
+#
+###################################################################
+
+
+from multiprocessing import Pool
+import random
+from random import shuffle
+
+def f(x):
+    return int(random.randint(1, 500)) * int(random.random() * 100) * pow(x,28)
+
+if __name__ == '__main__':
+    pool = Pool(processes=80)              # start 4 worker processes
+    result = pool.apply_async(f, [10])    # evaluate "f(10)" asynchronously
+    print (result.get(timeout=1))           # prints "100" unless your computer is *very* slow
+    print (pool.map(f, range(10)))          # prints "[0, 1, 4,..., 81]"
+
+from multiprocessing import Process, Queue
+def f(q):
+    q.put([42, None, 'hello'])
+if __name__ == '__main__':
+    q = Queue()
+    p = Process(target=f, args=(q,))
+    p.start()
+    print (q.get())    # prints "[42, None, 'hello']"
+    p.join()
+
+from multiprocessing import Process, Pipe
+
+def f(conn):
+    conn.send([42, None, 'hello'])
+    conn.close()
+
+if __name__ == '__main__':
+    parent_conn, child_conn = Pipe()
+    p = Process(target=f, args=(child_conn,))
+    p.start()
+    print (parent_conn.recv())   # prints "[42, None, 'hello']"
+    p.join()
+
+
+###################################################################
+#
+# 	chunks py3 Break A List Into N-Sized Chunks
+#
+###################################################################
+
+def chunks(l, n):
+    """Yield successive n-sized chunks from l."""
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
+
+import pprint
+pprint.pprint(list(chunks(range(10, 75), 10)))
+[[10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+ [20, 21, 22, 23, 24, 25, 26, 27, 28, 29],
+ [30, 31, 32, 33, 34, 35, 36, 37, 38, 39],
+ [40, 41, 42, 43, 44, 45, 46, 47, 48, 49],
+ [50, 51, 52, 53, 54, 55, 56, 57, 58, 59],
+ [60, 61, 62, 63, 64, 65, 66, 67, 68, 69],
+ [70, 71, 72, 73, 74]]
+
+
+lst = range(50)
+In [26]: np.array_split(lst,5)
+Out[26]:
+[array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+ array([10, 11, 12, 13, 14, 15, 16, 17, 18, 19]),
+ array([20, 21, 22, 23, 24, 25, 26, 27, 28, 29]),
+ array([30, 31, 32, 33, 34, 35, 36, 37, 38, 39]),
+ array([40, 41, 42, 43, 44, 45, 46, 47, 48, 49])]
+
+###################################################################
+#
+#	read JSON
+#	https://www.w3schools.com/python/python_json.asp
+#	https://docs.python.org/3/library/json.html
+#	https://realpython.com/python-json/
+#
+###################################################################
+
+
+import json
+with open('bzero.json') as file:
+    json.load(file)
+
+
+with open('bzero.json',encoding='utf-8') as f:
+    data = (line.strip() for line in f) #Erzeugt Generator Objekt
+    data_json = "[{0}]".format(','.join(data))
+data = json.loads(data_json)
+
+
+with open("data_file.json", "w") as write_file:
+    json.dump(data, write_file)
+
+
+blackjack_hand = (8, "Q")
+encoded_hand = json.dumps(blackjack_hand)
+decoded_hand = json.loads(encoded_hand)
+
+
+
+
+import json
+# some JSON:
+x =  '{ "name":"John", "age":30, "city":"New York"}'
+# parse x:
+y = json.loads(x)
+# the result is a Python dictionary:
+print(y["age"])
+
+
+import json
+# a Python object (dict):
+x = {
+  "name": "John",
+  "age": 30,
+  "city": "New York"
+}
+# convert into JSON:
+y = json.dumps(x)
+# the result is a JSON string:
+print(y)

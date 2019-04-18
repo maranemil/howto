@@ -43,7 +43,24 @@ import sys
 import tarfile
 import cv2
 
+import logging
+logging.getLogger('tensorflow').disabled = True
+#logging.getLogger('tensorflow').setLevel(logging.DEBUG)
+
+import os
+#os.putenv("TF_CPP_MIN_LOG_LEVEL", "3")
 os.environ['TF_CPP_MIN_LOG_LEVEL']='3'
+os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   # see issue #152
+os.environ["CUDA_VISIBLE_DEVICES"]="-1" # ensure that a TF process only runs on CPU
+
+"""
+if tf.test.gpu_device_name():
+    print('GPU found')
+else:
+    print("No GPU found")
+"""
+
+
 
 import PIL
 from PIL import Image, ImageOps
@@ -129,6 +146,31 @@ with tf.Graph().as_default() as graph:
 for op in graph.get_operations():
     print(op.name)
 """
+
+
+############################################################
+#
+# using only cpu flow operations
+#
+############################################################
+
+  sess_config = tf.ConfigProto(
+    device_count={'GPU': -1, 'CPU': 8},
+    device_filters=['/job:ps', '/job:master'],
+    #device_filters=['/job:master'],
+    #isolate_session_state=False,
+    operation_timeout_in_ms=800,
+    use_per_session_threads=2,
+    allow_soft_placement=True, # True or False
+    log_device_placement=False, # False or True
+    intra_op_parallelism_threads=2,
+    inter_op_parallelism_threads=2
+  )
+  with tf.Session(config=sess_config) as sess:
+    # do something
+
+
+
 
 
 ############################################################
