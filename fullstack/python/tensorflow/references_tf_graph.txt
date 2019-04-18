@@ -1,0 +1,261 @@
+#############################################################
+
+https://www.tensorflow.org/api_docs/python/tf/nn/softmax
+https://www.dotnetperls.com/softmax-tensorflow
+https://github.com/pinae/TensorFlow-MNIST-example/blob/master/onelayer-softmax.py
+https://www.programcreek.com/python/example/90568/tensorflow.get_default_graph
+https://gist.github.com/CMCDragonkai/eed035162d28eb51a5db2e1ae8a19903
+
+#############################################################
+
+
+import tensorflow as tf
+
+# Use softmax on vector.
+x = [0., -1., 2., 3.]
+softmax_x = tf.nn.softmax(x)
+
+# Create 2D tensor and use soft max on the second dimension.
+y = [5., 4., 6., 7., 5.5, 6.5, 4.5, 4.]
+y_reshape = tf.reshape(y, [2, 2, 2])
+softmax_y = tf.nn.softmax(y_reshape, 1)
+
+session = tf.Session()
+print("X")
+print(x)
+print("SOFTMAX X")
+print(session.run(softmax_x))
+print("Y")
+print(session.run(y_reshape))
+print("SOFTMAX Y")
+print(session.run(softmax_y))
+
+
+---------------
+
+
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+from __future__ import division, print_function, unicode_literals
+import tensorflow as tf
+from time import time
+
+# Download the dataset
+from tensorflow.examples.tutorials.mnist import input_data
+mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
+
+x = tf.placeholder(tf.float32, [None, 784])
+W = tf.Variable(tf.zeros([784, 10]))
+b = tf.Variable(tf.zeros([10]))
+
+# define the model
+y = tf.nn.softmax(tf.matmul(x, W) + b)
+
+# correct labels
+y_ = tf.placeholder(tf.float32, [None, 10])
+
+# define the loss function
+cross_entropy = tf.reduce_mean(-tf.reduce_sum(y_ * tf.log(y), reduction_indices=[1]))
+
+# define a training step
+train_step = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy)
+
+# initialize the graph
+init = tf.initialize_all_variables()
+sess = tf.Session()
+sess.run(init)
+
+# train
+print("Starting the training...")
+start_time = time()
+for i in range(1000):
+    batch_xs, batch_ys = mnist.train.next_batch(100)
+    sess.run(train_step, feed_dict={x: batch_xs, y_: batch_ys})
+print("The training took %.4f seconds." % (time() - start_time))
+
+# validate
+correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
+accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+print("Accuracy: %.4f" % (sess.run(accuracy, feed_dict={x: mnist.test.images, y_: mnist.test.labels})))
+
+---------------
+
+# working with tensorflow explicitly
+
+import tensorflow as tf
+
+# first we create a dataflow graph
+# we can create multiple graphs for multiple models
+
+graph = tf.Graph()
+
+# to create nodes (operations) and edges (tensors)
+# on this graph, we have to use it within a context
+
+# in haskell terms
+# the graph is a monadic context
+# the unit constructor is like tf.constant
+# the bind operator is overloaded automatically
+# for arithmetic operations and function application
+# the below python code could be translated as
+# `return 1 >>= (\a -> return 2 >>= (\b -> return a + b))`
+
+with graph.as_default() as graph:
+    a = tf.constant(1)
+    b = tf.constant(2)
+    c = a + b
+    print(a) # Tensor("Const:0", shape=(), dtype=int32)
+    print(b) # Tensor("Const_1:0", shape=(), dtype=int32)
+    print(c) # Tensor("add:0", shape=(), dtype=int32)
+
+    # it is possible to construct operations that are not linked
+    # to the rest of the graph, not sure what they are used for yet
+
+# the graph is now filled with 3 operations and 3 tensors
+
+print(graph.get_operations())
+# [<tf.Operation 'Const' type=Const>,
+#  <tf.Operation 'Const_1' type=Const>,
+#  <tf.Operation 'add' type=Add>]
+
+print([op.values() for op in graph.get_operations()])
+# [(<tf.Tensor 'Const:0' shape=() dtype=int32>,),
+#  (<tf.Tensor 'Const_1:0' shape=() dtype=int32>,),
+#  (<tf.Tensor 'add:0' shape=() dtype=int32>,)]
+
+# every operation may take multiple input tensors
+# and return multiple output tensors
+# this is why each tensor name always has a suffix `:n`
+# where `n` is the output index
+
+# so the above graph is just a monadic action
+# it has not been evaluated yet
+# to evaluate it, we need an interpreter
+# our interpreter in tensorflow is the session
+
+# we place it within a resource context
+# because we would like to make sure that at the
+# end, the session is closed and resources are cleared
+
+# note that we must construct the session with the graph
+
+with tf.Session(graph=graph) as sess:
+
+    # now that our session has loaded the graph
+    # we must run the graph
+    # but you don't actually "run" the whole graph
+
+    # you run the tensors or operations in the graph
+    # you gain access to lazy and partial evaluation
+    # explicitly by asking about a tensor or operation
+    # in the graph
+
+    # if you evaluate an tensor, you will get back the values
+    # if you evaluate an operation, you will get back None
+
+    # if you were using tf.Variable as well
+    # here is where you initialise them
+    # tf.global_variables_initializer() is an operation
+    # but it's not defined as part of the graph
+    # instead it represents the initial feed of variable values
+    # into the variable operations and tensors of the graph
+    sess.run(tf.global_variables_initializer())
+
+    c_result = sess.run(c)
+
+    print(c_result) # 3
+
+    # we do not have references to the operations
+    # we have to get it from the graph
+    add_result = sess.run(sess.graph.get_operation_by_name('add'))
+
+    print(add_result)
+
+    # you can also get tensors by name if you don't have a reference
+    b_result = sess.run(sess.graph.get_tensor_by_name('Const_1:0'))
+
+    print(b_result) # 2
+
+
+# once the session is closed
+# the values for each tensor is thrown away
+# the graph still remains as a graph
+# but only the session keeps the values
+# unless you have retained the values by assigning
+# them to variables
+
+# this means you can have multiple graphs to represent multiple models
+
+# then use multiple sessions, where each session is an interpretation
+# of the graph, and the values are kept live statefully in the session
+
+# if you only save the graph, you save the model of execution, but
+# but without any of the values
+
+# if you save the session, you're saving the values as well
+
+# many tensorflow tutorials start with a default graph and default
+# session, this can make the overall architecture of tensorflow
+# needlessly implicit and confusing, you only need implicitness
+# for interactive computation!
+# for engineering you want explicitness!
+
+# the final step is understanding evaluation device placement
+# while session evaluation takes place on a particular device
+# or set of devices (CPU/GPU)
+# you can't actually easily decide for the session object
+# instead currently you allocate device placement while building
+# the graph, which doesn't make sense at all, since it makes
+# the graph unportable and less generic
+# furthermore, multiple sessions can share the same devices
+# you could think that there is a "scheduling" of a sessions
+# on a device, but it's actually more a "scheduling" of graph
+# operations on devices, just grouped under a particular session
+# hopefully this is made better in the future
+
+# for more information checkout: http://muratbuffalo.blogspot.com.au/2017/01/my-first-impressions-after-week-of.html
+
+------------------
+
+import tensorflow as tf
+
+graph1 = tf.Graph()
+graph2 = tf.Graph()
+
+with graph1.as_default() as graph:
+  a = tf.constant(0, name='a')
+  graph1_init_op = tf.global_variables_initializer()
+
+with graph2.as_default() as graph:
+  a = tf.constant(1, name='a')
+  graph2_init_op = tf.global_variables_initializer()
+
+sess1 = tf.Session(graph=graph1)
+sess2 = tf.Session(graph=graph2)
+sess1.run(graph1_init_op)
+sess2.run(graph2_init_op)
+
+# Both tensor names are a!
+print(sess1.run(graph1.get_tensor_by_name('a:0'))) # prints 0
+print(sess2.run(graph2.get_tensor_by_name('a:0'))) # prints 1
+
+with sess1.as_default() as sess:
+  print(sess.run(sess.graph.get_tensor_by_name('a:0'))) # prints 0
+
+with sess2.as_default() as sess:
+  print(sess.run(sess.graph.get_tensor_by_name('a:0'))) # prints 1
+
+with graph2.as_default() as g:
+  with sess1.as_default() as sess:
+    print(tf.get_default_graph() == graph2) # prints True
+    print(tf.get_default_session() == sess1) # prints True
+
+    # This is the interesting line
+    print(sess.run(sess.graph.get_tensor_by_name('a:0'))) # prints 0
+    print(sess.run(g.get_tensor_by_name('a:0'))) # fails
+
+print(tf.get_default_graph() == graph2) # prints False
+print(tf.get_default_session() == sess1) # prints False
+You don't need to call sess.graph.as_de
+
+

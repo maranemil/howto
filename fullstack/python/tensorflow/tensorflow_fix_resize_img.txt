@@ -60,12 +60,14 @@ import tensorflow as tf
 
 
 # pylint: disable=line-too-long
-DATA_URL = 'http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz' # 88931400 bytes / 88Mb
+FILENET = 'inception-2015-12-05.tgz'
+DATA_URL = 'http://download.tensorflow.org/models/image/imagenet/'+FILENET # 88931400 bytes / 88Mb
 #DATA_URL = 'http://download.tensorflow.org/models/inception_v4_2016_09_09.tar.gz' # 171177982 bytes / 171Mb
 # pylint: enable=line-too-long
 
 
 
+# time python3 classify_image.py --image_file cropped_panda.jpg  --model_dir .
 
 def run_inference_on_image(image):
   ...
@@ -78,10 +80,13 @@ predictions = sess.run(softmax_tensor,{'DecodeJpeg/contents:0': image_data})
 
 # pip3 install Pillow
 from PIL import Image
-imager = Image.open(image)
-size = 156, 156
-imager.thumbnail(size)
+#imager = Image.open(image).convert('LA').convert('RGB')
+imager = Image.open(image).convert('RGB')
+size = 240, 240
+imager.thumbnail(size, Image.ANTIALIAS)
 image_data = np.array(imager)[:, :, 0:3]  # Select RGB channels only.
+#plt.imshow(image_data)
+#plt.show()
 predictions = sess.run(softmax_tensor, {'DecodeJpeg:0': image_data})
 
 
@@ -150,6 +155,12 @@ with tf.device("/gpu:0"):
     pool_3 = sess.graph.get_tensor_by_name('pool_3:0')
     predictions , pool3_val = sess.run([softmax_tensor, pool_3], {'DecodeJpeg:0': image_data})
     predictions = np.squeeze(predictions)
+
+
+
+def main(_):
+  if not os.path.exists(FILENET):
+    maybe_download_and_extract()
 
 
 
