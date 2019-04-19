@@ -1,0 +1,161 @@
+##############################################################
+#
+#   main py script PYTHON - using 4x parallel processes with Tensorflow CPU
+#
+##############################################################
+
+from multiprocessing import Pool
+import random
+from random import shuffle
+import os
+import codecs, json
+import numpy as np
+import pandas as pd
+
+def benchmark(x):
+  return int(random.randint(1, 5)) * int(random.random() * 5) * pow(x,2)
+
+def start_batch(file,intPipeline):
+      cmd = 'php parser.php  ' + file + ' ' + str(intPipeline)
+      print(cmd)
+      os.system(cmd)
+
+if __name__ == '__main__':
+
+  cmd = "prepare_list.php 12345678"
+  os.system(cmd)
+
+  with open('prepare_list.json') as file:
+      dir_list = json.load(file)
+  print("total images for batch: " + str(len(dir_list)))
+  splitted_list = np.array_split(dir_list,4) # increase number for more batches
+
+  #print("total files for batch: " + str(len(splitted_list)))
+
+  pool = Pool(processes=4)  # start 4 worker processes
+  for idx,list in enumerate(splitted_list):
+      pd_list = pd.Series(list).to_json(orient='values');
+      batch_file_name = 'batch_data_'+str(idx)+'.json'
+      json.dump(pd_list, codecs.open(batch_file_name, 'w', encoding='utf-8'),
+     	 separators=(',', ':'), sort_keys=True, indent=4)
+      ### this saves the array in .json format
+      result = pool.apply_async(start_batch, [batch_file_name,12345678])
+
+      #result = pool.apply_async(benchmark, [10])
+      #print (result.get(timeout=1))       	# prints "100" unless your computer is *very* slow
+      #print (pool.map(start_batch, range(10)))      	# prints "[0, 1, 4,..., 81]"
+
+  print("Done!")
+
+
+##############################################################
+#
+#   parser.php PHP
+#
+##############################################################
+
+<?php
+
+if(empty($argv[1])){
+    die("no bacth file defined!");
+}
+else{
+    $jsonFile = $argv[1];
+}
+
+if(empty($argv[2])){
+    die("no pipeline defined!");
+}
+else{
+    $intPipeline = $argv[2];
+}
+
+$dirRootPath = '2019-04-16/'.$intPipeline.'/';
+$remoteBatchPath = '/media/emil/Data/Batch/';
+
+$jsonRead = json_encode(file_get_contents($jsonFile));
+$arrScanImgImp = (array) json_decode($jsonRead,true);
+
+$convertTmp = explode(",",substr($arrScanImgImp[0],2,-2));
+foreach ( $convertTmp as $convertLine) {
+    $arrScanImg[]  = stripslashes(stripslashes($convertLine));
+}
+
+if(!is_dir('/home/emil/Git/models/tutorials/image/imagenet/'.$intPipeline.'/')){
+    mkdir('/home/emil/Git/models/tutorials/image/imagenet/'.$intPipeline.'/');
+}
+
+$start = time();
+foreach ($arrScanImg as $strcanImg) {
+    $strcanImg = str_replace('"', '',$strcanImg);
+    $cmd = 'cd /home/emil/Git/models/tutorials/image/imagenet/ && ';
+    $cmd.= 'python3 classify_image.py --image_file='.$remoteBatchPath.$strcanImg.' --model_dir . --num_top_predictions 10 ';
+    $cmd.= ' > /home/emil/Git/models/tutorials/image/imagenet/'.$intPipeline.'/'.basename($strcanImg).'.txt';
+    #echo $cmd.PHP_EOL;
+    exec($cmd);
+
+    // mogrify -resize 100 *.jpg
+    $cmd2 = 'convert '.$strcanImg.' -resize 150 ';
+    $cmd2.= '/home/emil/Git/models/tutorials/image/imagenet/'.$intPipeline.'/'.basename($strcanImg);
+    exec($cmd2);
+    #break;
+}
+
+$end = time();
+echo PHP_EOL;
+echo "start:".date("Y-m-d H:i:s",$start).PHP_EOL;
+echo "end:".date("Y-m-d H:i:s",$end).PHP_EOL;
+
+##############################################################
+#
+# prepare batch files PHP
+#
+##############################################################
+
+<?php
+$intPipeline = $argv[1];
+if(empty($intPipeline)){
+    die("No Pipeline defined!");
+}
+$dirRootPath = '2019-04-16/'.$intPipeline.'/';
+$remoteBatchPath = '/media/emil/Data/Batch/';
+
+// read level_1
+$arrPipelineItems = array_diff(scandir($dirRootPath), array('..', '.'));
+#print_r($arrPipelineItems);
+foreach($arrPipelineItems as $dPipelineItems){
+    $arrPipelineItemsTmp[] =  $dirRootPath.$dPipelineItems;
+}
+#print_r($arrPipelineItemsTmp);
+
+// read level_2
+foreach ($arrPipelineItemsTmp as $dPipelineItemsTmp) {
+    // foreaech dir read subdir
+    $arrPipelineItemsIBNTmp = array_diff(scandir($dPipelineItemsTmp), array('..', '.'));
+    foreach ($arrPipelineItemsIBNTmp as $dPipelineItemsIBNTmp) {
+   	 if(strlen($dPipelineItemsIBNTmp) == 8 && is_dir($dPipelineItemsTmp."/".$dPipelineItemsIBNTmp)  ){
+   		 #echo $dPipelineItemsTmp."/".$dPipelineItemsIBNTmp.PHP_EOL;
+   			 $arrPipelineItemsIBN[] = $dPipelineItemsTmp."/".$dPipelineItemsIBNTmp;
+   	 }
+    }
+}
+#print_r($arrPipelineItemsIBN);
+
+// read img jpg
+foreach ($arrPipelineItemsIBN as $dirIBNImgs) {
+    $dirIBNImgsList = array_diff(scandir($dirIBNImgs), array('..', '.'));
+    #print_r($dirIBNImgsList);
+    foreach ($dirIBNImgsList as $strIBNImgsList) {
+   	 if(preg_match('~.jpg~', $strIBNImgsList)){
+   		 #echo $dirIBNImgs."/".$strIBNImgsList.PHP_EOL;
+   		 $arrScanImg[] = $dirIBNImgs."/".$strIBNImgsList;
+   	 }
+    }
+    #die();
+}
+
+print(count($arrScanImg)).PHP_EOL;
+#print_r(min($arrScanImg)).PHP_EOL;
+print_r(exec('ls -la '.$remoteBatchPath.''.min($arrScanImg))).PHP_EOL;
+echo PHP_EOL;
+file_put_contents("prepare_list.json",json_encode($arrScanImg));
