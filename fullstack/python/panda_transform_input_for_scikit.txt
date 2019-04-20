@@ -1,0 +1,341 @@
+###############################################################################
+
+How To Change Column Names and Row Indexes in Pandas
+https://towardsdatascience.com/encoding-categorical-features-21a2651a065c
+https://archive.ics.uci.edu/ml/datasets/chronic_kidney_disease
+https://archive.ics.uci.edu/ml/machine-learning-databases/00336/
+
+
+###############################################################################
+
+@relation Chronic_Kidney_Disease
+
+@attribute 'age' numeric
+@attribute 'bp'  numeric
+@attribute 'sg' {1.005,1.010,1.015,1.020,1.025}
+@attribute 'al' {0,1,2,3,4,5}
+@attribute 'su' {0,1,2,3,4,5}
+@attribute 'rbc' {normal,abnormal}
+@attribute 'pc' {normal,abnormal}
+@attribute 'pcc' {present,notpresent}
+@attribute 'ba' {present,notpresent}
+@attribute 'bgr'  numeric
+@attribute 'bu' numeric
+@attribute 'sc' numeric
+@attribute 'sod' numeric
+@attribute 'pot' numeric
+@attribute 'hemo' numeric
+@attribute 'pcv' numeric
+@attribute 'wbcc' numeric
+@attribute 'rbcc' numeric
+@attribute 'htn' {yes,no}
+@attribute 'dm' {yes,no}
+@attribute 'cad' {yes,no}
+@attribute 'appet' {good,poor}
+@attribute 'pe' {yes,no}
+@attribute 'ane' {yes,no}
+@attribute 'class' {ckd,notckd}
+
+@data
+48,80,1.020,1,0,?,normal,notpresent,notpresent,121,36,1.2,?,?,15.4,44,7800,5.2,yes,yes,no,good,no,no,ckd
+7,50,1.020,4,0,?,normal,notpresent,notpresent,?,18,0.8,?,?,11.3,38,6000,?,no,no,no,good,no,no,ckd
+62,80,1.010,2,3,normal,normal,notpresent,notpresent,423,53,1.8,?,?,9.6,31,7500,?,no,yes,no,poor,no,yes,ckd
+
+
+
+# load data
+df = pd.read_csv(‘datasets/chronic_kidney_disease.csv’, header=None,
+ names=[‘age’, ‘bp’, ‘sg’, ‘al’, ‘su’, ‘rbc’, ‘pc’, ‘pcc’, ‘ba’, ‘bgr’, ‘bu’, ‘sc’, ‘sod’, ‘pot’,
+ ‘hemo’, ‘pcv’, ‘wc’, ‘rc’, ‘htn’, ‘dm’, ‘cad’, ‘appet’, ‘pe’, ‘ane’, ‘class’])
+# head of df
+df.head(10)
+
+# Categorical boolean mask
+categorical_feature_mask = X.dtypes==object
+# filter categorical columns using mask and turn it into a list
+categorical_cols = X.columns[categorical_feature_mask].tolist()
+
+# import labelencoder
+from sklearn.preprocessing import LabelEncoder
+# instantiate labelencoder object
+le = LabelEncoder()
+
+# apply le on categorical feature columns
+X[categorical_cols] = X[categorical_cols].apply(lambda col: le.fit_transform(col))
+X[categorical_cols].head(10)
+
+# import OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder
+# instantiate OneHotEncoder
+ohe = OneHotEncoder(categorical_features = categorical_feature_mask, sparse=False )
+# categorical_features = boolean mask for categorical columns
+# sparse = False output an array not sparse matrix
+
+# apply OneHotEncoder on categorical feature columns
+X_ohe = ohe.fit_transform(X) # It returns an numpy array
+
+# DictVectorizer
+
+# turn X into dict
+X_dict = X.to_dict(orient='records') # turn each row as key-value pairs
+# show X_dict
+X_dict
+
+# DictVectorizer
+from sklearn.feature_extraction import DictVectorizer
+# instantiate a Dictvectorizer object for X
+dv_X = DictVectorizer(sparse=False)
+# sparse = False makes the output is not a sparse matrix
+
+# apply dv_X on X_dict
+X_encoded = dv_X.fit_transform(X_dict)
+# show X_encoded
+X_encoded
+
+# Get dummies
+X = pd.get_dummies(X, prefix_sep='_', drop_first=True)
+# X head
+X.head()
+
+
+
+###############################################################################
+How To Change Column Names and Row Indexes in Pandas
+https://cmdlinetips.com/2018/03/how-to-change-column-names-and-row-indexes-in-pandas/
+###############################################################################
+
+
+import pandas as pd
+
+data_url = 'http://bit.ly/2cLzoxH'
+# read data from url as pandas dataframe
+gapminder = pd.read_csv(data_url)
+
+print(gapminder.head(3))
+"""
+      country  year       pop continent  lifeExp   gdpPercap
+0  Afghanistan  1952   8425333      Asia   28.801  779.445314
+1  Afghanistan  1957   9240934      Asia   30.332  820.853030
+2  Afghanistan  1962  10267083      Asia   31.997  853.100710
+"""
+
+gapminder.columns
+Index(['country', 'year', 'pop', 'continent', 'lifeExp', 'gdpPercap'], dtype='object')
+
+gapminder.columns = ['country','year','population','continent','life_exp','gdp_per_cap']
+gapminder.head(3)
+
+gapminder.rename(columns={'pop':'population','lifeExp':'life_exp','gdpPercap':'gdp_per_cap'}, inplace=True)
+print(gapminder.columns)
+
+Index([u'country', u'year', u'population', u'continent', u'life_exp',
+       u'gdp_per_cap'],
+      dtype='object')
+
+gapminder.head(3)
+
+
+gapminder.rename(columns={'pop':'population'}, inplace=True)
+
+print(gapminder.columns)
+Index([u'country', u'year', u'population', u'continent', u'lifeExp',
+       u'gdpPercap'],
+      dtype='object')
+
+gapminder.head(3)
+gapminder.rename(columns=lambda x: x[0:3], inplace=True)
+gapminder.head(3)
+
+gapminder.rename(index={0:'zero',1:'one'}, inplace=True)
+print(gapminder.head(4))
+gapminder.rename(columns={'lifeExp':'life_exp'},
+                 index={0:'zero',1:'one'},
+                 inplace=True)
+print(gapminder.head(4))
+
+
+
+###############################################################################
+sklearn.preprocessing.LabelEncoder
+https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html
+###############################################################################
+
+
+>>> from sklearn import preprocessing
+>>> le = preprocessing.LabelEncoder()
+>>> le.fit([1, 2, 2, 6])
+LabelEncoder()
+>>> le.classes_
+array([1, 2, 6])
+>>> le.transform([1, 1, 2, 6])
+array([0, 0, 1, 2]...)
+>>> le.inverse_transform([0, 0, 1, 2])
+array([1, 1, 2, 6])
+
+>>> le = preprocessing.LabelEncoder()
+>>> le.fit(["paris", "paris", "tokyo", "amsterdam"])
+LabelEncoder()
+>>> list(le.classes_)
+['amsterdam', 'paris', 'tokyo']
+>>> le.transform(["tokyo", "tokyo", "paris"])
+array([2, 2, 1]...)
+>>> list(le.inverse_transform([2, 2, 1]))
+['tokyo', 'tokyo', 'paris']
+
+
+
+
+###############################################################################
+Convert Pandas Categorical Data For Scikit-Learn
+https://chrisalbon.com/machine_learning/preprocessing_structured_data/convert_pandas_categorical_column_into_integers_for_scikit-learn/
+###############################################################################
+
+
+# Import required packages
+from sklearn import preprocessing
+import pandas as pd
+
+raw_data = {'patient': [1, 1, 1, 2, 2],
+        'obs': [1, 2, 3, 1, 2],
+        'treatment': [0, 1, 0, 1, 0],
+        'score': ['strong', 'weak', 'normal', 'weak', 'strong']}
+df = pd.DataFrame(raw_data, columns = ['patient', 'obs', 'treatment', 'score'])
+
+# Create a label (category) encoder object
+le = preprocessing.LabelEncoder()
+# Fit the encoder to the pandas column
+le.fit(df['score'])
+# View the labels (if you want)
+list(le.classes_)
+# Apply the fitted encoder to the pandas column
+le.transform(df['score'])
+# Convert some integers into their category names
+list(le.inverse_transform([2, 2, 1]))
+
+
+###############################################################################
+Guide to Encoding Categorical Values in Python
+https://pbpython.com/categorical-encoding.html
+###############################################################################
+
+import pandas as pd
+import numpy as np
+
+# Define the headers since the data does not have any
+headers = ["symboling", "normalized_losses", "make", "fuel_type", "aspiration",
+           "num_doors", "body_style", "drive_wheels", "engine_location",
+           "wheel_base", "length", "width", "height", "curb_weight",
+           "engine_type", "num_cylinders", "engine_size", "fuel_system",
+           "bore", "stroke", "compression_ratio", "horsepower", "peak_rpm",
+           "city_mpg", "highway_mpg", "price"]
+
+# Read in the CSV file and convert "?" to NaN
+df = pd.read_csv("http://mlr.cs.umass.edu/ml/machine-learning-databases/autos/imports-85.data",
+                  header=None, names=headers, na_values="?" )
+df.head()
+df.dtypes
+
+obj_df = df.select_dtypes(include=['object']).copy()
+obj_df.head()
+obj_df[obj_df.isnull().any(axis=1)]
+obj_df["num_doors"].value_counts()
+obj_df = obj_df.fillna({"num_doors": "four"})
+
+
+
+###############################################################################
+Convert Pandas Categorical Data For SciKit-Learn
+http://damianmingle.com/convert-pandas-categorical-data-for-scikit-learn/
+###############################################################################
+
+
+# Bring in libraries
+from sklearn import preprocessing
+import pandas as pd
+
+# Create the data
+raw_data = {'clinical_trial': [1, 2, 1, 2, 2],
+            'observation': [1, 2, 3, 1, 1],
+            'protocol': [0, 1, 0, 1, 0],
+            'outcome': ['excellent', 'poor', 'normal', 'poor', 'excellent']}
+
+# Fill the DataFrame
+df = pd.DataFrame(raw_data, columns = ['clinical_trial', 'observation', 'protocol', 'outcome'])
+
+
+# Create a label encoder object
+le = preprocessing.LabelEncoder()
+
+# Fit the encoder object (le) to a pandas field with categorical data
+le.fit(df['outcome'])
+LabelEncoder()
+
+# Display labels
+list(le.classes_)
+
+# Apply the label encoder object to a pandas column
+le.transform(df['outcome'])
+
+# Reverse numerical values into categorical names
+list(le.inverse_transform([2, 0, 2]))
+
+
+
+
+###############################################################################
+Aggregation and Grouping
+https://jakevdp.github.io/PythonDataScienceHandbook/03.08-aggregation-and-grouping.html
+###############################################################################
+
+
+import numpy as np
+import pandas as pd
+import seaborn as sns
+planets = sns.load_dataset('planets')
+planets.shape
+
+rng = np.random.RandomState(42)
+ser = pd.Series(rng.rand(5))
+ser.sum()
+ser.mean()
+
+df = pd.DataFrame({'A': rng.rand(5),
+                   'B': rng.rand(5)})
+df
+df.mean()
+df.mean(axis='columns')
+planets.dropna().describe()
+
+df = pd.DataFrame({'key': ['A', 'B', 'C', 'A', 'B', 'C'],
+                   'data': range(6)}, columns=['key', 'data'])
+df
+df.groupby('key')
+df.groupby('key').sum()
+planets.groupby('method')
+planets.groupby('method')['orbital_period']
+planets.groupby('method')['orbital_period'].median()
+planets.groupby('method')['year'].describe().unstack()
+
+for (method, group) in planets.groupby('method'):
+    print("{0:30s} shape={1}".format(method, group.shape))
+
+
+rng = np.random.RandomState(0)
+df = pd.DataFrame({'key': ['A', 'B', 'C', 'A', 'B', 'C'],
+                   'data1': range(6),
+                   'data2': rng.randint(0, 10, 6)},
+                   columns = ['key', 'data1', 'data2'])
+df
+df.groupby('key').aggregate(['min', np.median, max])
+df.groupby('key').aggregate({'data1': 'min',
+                             'data2': 'max'})
+
+
+
+
+
+
+
+
+
+
