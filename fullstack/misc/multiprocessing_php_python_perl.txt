@@ -1,0 +1,122 @@
+/////////////////////////////////////////////////////
+//
+//  How to run a perl script in parallel
+//  fork  https://perlmaven.com/fork
+//
+/////////////////////////////////////////////////////
+
+use strict;
+use warnings;
+use 5.010;
+say "Process ID: $$";
+
+my $n = 3;
+my $forks = 0;
+for (1 .. $n) {
+  my $pid = fork;
+  if (not defined $pid) {
+     warn 'Could not fork';
+     next;
+  }
+  if ($pid) {
+    $forks++;
+    say "In the parent process PID ($$), Child pid: $pid Num of fork child processes: $forks";
+  } else {
+    say "In the child process PID ($$)";
+    sleep 2;
+    say "Child ($$) exiting";
+    exit;
+  }
+}
+for (1 .. $forks) {
+   my $pid = wait();
+   say "Parent saw $pid exiting";
+}
+say "Parent ($$) ending";
+
+--------------------------
+Fork
+--------------------------
+
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use Parallel::ForkManager;
+
+my $manager = Parallel::ForkManager->new(2);    #2 concurrent
+my $params = '1,2,3,4,5';
+my @all_params = split( /,/, $params );
+foreach my $entry (@all_param) {
+   $manager->start and next;
+   #your code to run in parallel here;
+   print $entry;
+   $manager->finish;
+}
+
+
+--------------------------
+Thread
+--------------------------
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use threads;
+use Thread::Queue
+
+my $work_q = Thread::Queue->new;
+sub worker {
+   while ( my $item = $work_q->dequeue ) {
+      print $item, "\n";
+   }
+}
+my $params = '1,2,3,4,5';
+my @all_params = split( /,/, $params );
+$work_q->enqueue(@all_params);
+$work_q->end;
+threads->create( \&worker ) for 1 .. 2;    #2 in parallel
+foreach my $thr ( threads->list ) {
+   $thr->join;
+}
+
+
+--------------------------
+Using IO::Select and multiple open calls to parallelise:
+--------------------------
+
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use IO::Select;
+
+my $params = '1,2,3,4,5';
+my @all_params = split( /,/, $params );
+foreach my $param ( @all_params ) {
+   open ( my $io, '-|', "program_name $param" );
+   $select -> add ( $io );
+}
+while ( my $fh = $select -> can_read ) {
+   my $line = <$fh>;
+   print $line;
+}
+
+--------------------------
+Workers
+--------------------------
+# https://metacpan.org/pod/Parallel::Workers
+
+use Parallel::Workers;
+#Workers that use Eval action with a trantransaction controller
+my $worker=Parallel::Workers->new(maxworkers=>4,timeout=>10, backend=>"Eval");
+my $id=$worker->create(hosts => \@named, command=>"`date`",
+                       transaction=>{error=>TRANSACTION_TERM, type=>'SCALAR',regex => qr/.+/m});
+my $info=$worker->info();
+#Workers that use SSH action with a trantransaction controller
+$worker=Parallel::Workers->new(
+                                maxworkers=>16,timeout=>10,
+                                backend=>"SSH", constructor =>{user=>'demo',pass=>'demo'}
+                              );
+$id=$worker->create(hosts => \@hosts, command=>"cat /proc/cmdline",
+                                  transaction=>{error=>TRANSACTION_TERM, type=>'SCALAR',regex => qr/.+/m});
