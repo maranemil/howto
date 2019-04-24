@@ -906,5 +906,28 @@ http://www.grun1.com/utils/timeDiff.cfm
 
 
 
+#################################################
+#
+# parallelized GNU
+# https://gist.github.com/gtfierro/8324883
+#
+#################################################
+
+# number of cores over which the process will be parallelized
+num_cores=$1
+
+# converts each of the PDFs into TIFF images so that tesseract can interact with them
+ind . -name '*.pdf' | parallel --gnu -j $NUMCORES convert -depth 8 -density 200 {}[0-19] {}.tif
+
+# runs OCR on the found TIFF files and converts them to text. Assumes English, but you can supply
+# extra arguments to tesseract
+find . -name '*.tif' | parallel -j $NUMCORES tesseract -l eng {} {}
+find . -name '*.pdf' | parallel convert -depth 8 -density 200 {} {.}.tif
+find . -name '*.tif' | parallel tesseract -l eng {} {}
+
+
+
+
+
 
 
