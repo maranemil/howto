@@ -3,6 +3,9 @@
 # # https://repl.it/
 # pip3 install -U nltk
 
+# pip3 install matplotlib --user
+# pip3 install nltk --user
+
 """
 https://www.nltk.org/book/ch01.html
 https://www.nltk.org/book/ch01.html
@@ -26,7 +29,7 @@ import pandas as pd
 default_stopwords = set(stopwords.words('english'))
 
 #sentence = "The Italian far-right interior minister, Matteo Salvini, will meet the former British prime minister Tony Blair in Rome to discuss controversial plans to extend a gas pipeline that will run from Azerbaijan to Puglia in southern Italy."
-list = pd.read_csv("test.csv")
+list = pd.read_csv("test.csv",  error_bad_lines=False)
 sentence = ''
 with open('test.csv', 'rb') as csvfile:
     sentence = str(csvfile.read()).replace('\\n', ' ')
