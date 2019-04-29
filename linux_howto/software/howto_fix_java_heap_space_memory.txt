@@ -1,0 +1,52 @@
+#####################################################################
+#
+#   How to resolve the issue java.lang.OutOfMemoryError: Java heap space
+#
+#   https://docs.oracle.com/javase/7/docs/technotes/tools/windows/java.html#nonstandard
+#   https://blog.codecentric.de/2011/03/java-speicher-konfiguration-und-uberwachung-3-akt/
+#   https://docs.oracle.com/cd/E15523_01/web.1111/e13814/jvm_tuning.htm#PERFM168
+#   https://docs.oracle.com/javase/8/docs/technotes/tools/windows/java.html
+#   https://www.codeflow.site/de/article/java__find-out-your-java-heap-memory-size
+#
+#####################################################################
+
+java -version
+# Java SE Runtime Environment 8
+
+java -Xmx512M -Xms64M -jar heap512.jar
+java -Xmx2048M -Xms64M -jar heap512.jar
+java -Xmx1024M -Xms64M -jar heap512.jar
+
+java -Xms512m -Xmx1024m JavaApp
+java -Xms512m -Xmx1024m JavaApp
+java -Xss512k JavaApp
+java -Xns10m -Xms512m -Xmx512m
+java -ms32m -mx200m -verbosegc -classpath $CLASSPATH
+
+java -Xmx1073741824 com.mycompany.MyClass
+java -Xmx1048576k com.mycompany.MyClass
+java -Xmx1024m com.mycompany.MyClass
+java -Xmx1g com.mycompany.MyClass
+
+-Xmx128m setzt den Maximalwert auf 128 Megabyte
+-Xms128m setzt den Startwert(Minimalwert) auf 128 Megabyte
+-Xmn128m
+
+java -XX:+PrintFlagsFinal -version | grep -iE 'HeapSize|PermSize|ThreadStackSize'
+
+java -XX:+PrintFlagsFinal -Xms512m -Xmx1024m -Xss512k -XX:PermSize=64m -XX:MaxPermSize=128m
+    -version | grep -iE 'HeapSize|PermSize|ThreadStackSize'
+
+java -XX:+PrintFlagsFinal -Xms512m -Xmx1024m -Xss512k -XX:PermSize=64m -XX:MaxPermSize=128m
+	-version | grep -iE 'HeapSize|PermSize|ThreadStackSize'
+
+java -XX:+PrintFlagsFinal {your-java-program} | grep HeapSize
+
+InitialHeapSize = 1GB
+MaxHeapSize = 16GB
+ThreadStackSize = 1024
+
+jstat
+jstat -gc 4188
+
+-Xms2g -Xmx2g -XX:NewRatio=4 -XX:MaxPermSize=512m -XX:SurvivorRatio=6
