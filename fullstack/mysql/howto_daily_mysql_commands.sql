@@ -211,3 +211,26 @@ mysql> SELECT AES_DECRYPT(@crypt_str,@key_str,@init_vector);
 
 SELECT job FROM mytable WHERE id BETWEEN 10 AND 15;
 SELECT job FROM mytable WHERE id > 10 AND id < 15;
+
+
+
+############################################
+#
+# install mysql-workbench in Ubuntu 19.04
+#
+############################################
+
+/*
+
+https://ubuntu.pkgs.org/18.10/ubuntu-universe-amd64/libzip4_1.1.2-1.1_amd64.deb.html
+libzip4_1.1.2-1.1_amd64.deb
+
+https://dev.mysql.com/downloads/workbench/
+https://dev.mysql.com/get/Downloads/MySQLGUITools/mysql-workbench-community_8.0.16-1ubuntu18.04_amd64.deb
+mysql-workbench-community_8.0.16-1ubuntu18.04_amd64.deb
+
+
+mysql-workbench
+mysql-workbench-community
+
+*/
