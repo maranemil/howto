@@ -1,0 +1,326 @@
+[ Matrix Features ]
+[ 2D Classify ] ( items(x) / samples(y) )
+[ Nltk TOP ]
+[ World map ]
+[ Decision tree ]
+[ 3D Scatter Plot ]
+
+#####################################################################
+#
+#   3D Scatter Plot with Python and Matplotlib
+#	3D plot  [ items(x) / samples(x) / (z) = 5x^2 - 4y^4]  --- where xy -2 to +2
+#
+#####################################################################
+
+"""
+https://pythonprogramming.net/matplotlib-3d-scatterplot-tutorial/
+https://www.youtube.com/watch?v=6ljHxJQ47Uk
+https://matplotlib.org/mpl_toolkits/mplot3d/tutorial.html
+https://matplotlib.org/mpl_toolkits/mplot3d/tutorial.html#scatter-plots
+https://matplotlib.org/api/_as_gen/mpl_toolkits.mplot3d.axes3d.Axes3D.html
+https://cran.r-project.org/web/packages/scatterplot3d/vignettes/s3d.pdf
+"""
+
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+x =[1,2,3,4,5,6,7,8,9,10]
+y =[5,6,2,3,13,4,1,2,4,8]
+z =[2,3,3,3,5,7,9,11,9,10]
+ax.scatter(x, y, z, c='r', marker='o')
+ax.set_xlabel('X Label')
+ax.set_ylabel('Y Label')
+ax.set_zlabel('Z Label')
+plt.show()
+
+
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+import matplotlib.pyplot as plt
+import numpy as np
+x = [1000,1000,1000,1000,1000,5000,5000,5000,5000,5000,10000,10000,10000,10000,10000]
+y = [13,21,29,37,45,13,21,29,37,45,13,21,29,37,45]
+z = [75.2,79.21,80.02,81.2,81.62,84.79,87.38,87.9,88.54,88.56,88.34,89.66,90.11,90.79,90.87]
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+ax.plot_trisurf(x, y, z, cmap=cm.jet, linewidth=0.2)
+plt.show()
+
+#####################################################################
+#
+#	Decision Tree Classification in Python
+#	https://www.datacamp.com/community/tutorials/decision-tree-classification-python
+#	https://scikit-learn.org/stable/modules/tree.html
+#	https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html
+#	https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html#sklearn.tree.DecisionTreeRegressor
+#
+#####################################################################
+
+import pandas as pd
+from sklearn.tree import DecisionTreeClassifier # Import Decision Tree Classifier
+from sklearn.model_selection import train_test_split # Import train_test_split function
+from sklearn import metrics #Import scikit-learn metrics module for accuracy calculation
+col_names = ['pregnant', 'glucose', 'bp', 'skin', 'insulin', 'bmi', 'pedigree', 'age', 'label']
+# load dataset
+pima = pd.read_csv("pima-indians-diabetes.csv", header=None, names=col_names)
+pima.head()
+"""
+	pregnant	glucose	bp	skin	insulin	bmi	pedigree	age	label
+0	6	148	72	35	0	33.6	0.627	50	1
+1	1	85	66	29	0	26.6	0.351	31	0
+"""
+# Feature Selection
+#split dataset in features and target variable
+feature_cols = ['pregnant', 'insulin', 'bmi', 'age','glucose','bp','pedigree']
+X = pima[feature_cols] # Features
+y = pima.label # Target variable
+# Splitting Data
+# Split dataset into training set and test set
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1) # 70% training and 30% test
+# Building Decision Tree Model
+# Create Decision Tree classifer object
+clf = DecisionTreeClassifier()
+# Train Decision Tree Classifer
+clf = clf.fit(X_train,y_train)
+#Predict the response for test dataset
+y_pred = clf.predict(X_test)
+# Evaluating Model
+# Model Accuracy, how often is the classifier correct?
+print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
+# --------------------------
+# Visualizing Decision Trees
+# pip install graphviz
+# pip install pydotplus
+from sklearn.tree import export_graphviz
+from sklearn.externals.six import StringIO
+from IPython.display import Image
+import pydotplus
+dot_data = StringIO()
+export_graphviz(clf, out_file=dot_data,
+                filled=True, rounded=True,
+                special_characters=True,feature_names = feature_cols,class_names=['0','1'])
+graph = pydotplus.graph_from_dot_data(dot_data.getvalue())
+graph.write_png('diabetes.png')
+Image(graph.create_png())
+# --------------------------
+# Optimizing Decision Tree Performance
+# Create Decision Tree classifer object
+clf = DecisionTreeClassifier(criterion="entropy", max_depth=3)
+# Train Decision Tree Classifer
+clf = clf.fit(X_train,y_train)
+#Predict the response for test dataset
+y_pred = clf.predict(X_test)
+# Model Accuracy, how often is the classifier correct?
+print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
+# --------------------------
+# Visualizing Decision Trees
+from sklearn.externals.six import StringIO
+from IPython.display import Image
+from sklearn.tree import export_graphviz
+import pydotplus
+dot_data = StringIO()
+export_graphviz(clf, out_file=dot_data,
+                filled=True, rounded=True,
+                special_characters=True, feature_names = feature_cols,class_names=['0','1'])
+graph = pydotplus.graph_from_dot_data(dot_data.getvalue())
+graph.write_png('diabetes.png')
+Image(graph.create_png())
+# --------------------------------------------------
+
+
+###############################################################################
+#
+#   Solving A Simple Classification Problem with Python — Fruits Lovers’ Edition
+#   https://towardsdatascience.com/solving-a-simple-classification-problem-with-python-fruits-lovers-edition-d20ab6b071d2
+#   https://machinelearningmastery.com/implement-decision-tree-algorithm-scratch-python/
+#   https://stackabuse.com/decision-trees-in-python-with-scikit-learn/
+#   https://towardsdatascience.com/how-to-build-a-gender-classifier-in-python-using-scikit-learn-13c7bb502f2e
+#
+###############################################################################
+
+"""
+fruit_label fruit_name fruit_subtype mass width height color_score
+1	apple 	granny_smith	192	8.4	7.3	0.55
+2	apple 	granny_smith	152	8.3	7.2	0.54
+"""
+
+import pandas as pd
+import matplotlib.pyplot as plt
+fruits = pd.read_table('fruit_data_with_colors.txt')
+fruits.head()
+print(fruits.shape)
+print(fruits['fruit_name'].unique())
+print(fruits.groupby('fruit_name').size())
+
+
+import seaborn as sns
+sns.countplot(fruits['fruit_name'],label="Count")
+plt.show()
+
+# Visualization
+fruits.drop('fruit_label', axis=1).plot(kind='box', subplots=True, layout=(2,2), sharex=False, sharey=False, figsize=(9,9), title='Box Plot for each input variable')
+plt.savefig('fruits_box')
+plt.show()
+
+
+import pylab as pl
+fruits.drop('fruit_label' ,axis=1).hist(bins=30, figsize=(9,9))
+pl.suptitle("Histogram for each numeric input variable")
+plt.savefig('fruits_hist')
+plt.show()
+
+
+from pandas.tools.plotting import scatter_matrix
+from matplotlib import cm
+feature_names = ['mass', 'width', 'height', 'color_score']
+X = fruits[feature_names]
+y = fruits['fruit_label']
+cmap = cm.get_cmap('gnuplot')
+scatter = pd.scatter_matrix(X, c = y, marker = 'o', s=40, hist_kwds={'bins':15}, figsize=(9,9), cmap = cmap)
+plt.suptitle('Scatter-matrix for each input variable')
+plt.savefig('fruits_scatter_matrix')
+
+
+# Statistical Summary
+# Create Training and Test Sets and Apply Scaling
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+
+# Build Models
+# Logistic Regression
+from sklearn.linear_model import LogisticRegression
+logreg = LogisticRegression()
+logreg.fit(X_train, y_train)
+print('Accuracy of Logistic regression classifier on training set: {:.2f}'
+     .format(logreg.score(X_train, y_train)))
+print('Accuracy of Logistic regression classifier on test set: {:.2f}'
+     .format(logreg.score(X_test, y_test)))
+
+
+
+# Decision Tree
+from sklearn.tree import DecisionTreeClassifier
+clf = DecisionTreeClassifier().fit(X_train, y_train)
+print('Accuracy of Decision Tree classifier on training set: {:.2f}'
+     .format(clf.score(X_train, y_train)))
+print('Accuracy of Decision Tree classifier on test set: {:.2f}'
+     .format(clf.score(X_test, y_test)))
+
+
+# K-Nearest Neighbors
+from sklearn.neighbors import KNeighborsClassifier
+knn = KNeighborsClassifier()
+knn.fit(X_train, y_train)
+print('Accuracy of K-NN classifier on training set: {:.2f}'
+     .format(knn.score(X_train, y_train)))
+print('Accuracy of K-NN classifier on test set: {:.2f}'
+     .format(knn.score(X_test, y_test)))
+
+
+# Linear Discriminant Analysis
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+lda = LinearDiscriminantAnalysis()
+lda.fit(X_train, y_train)
+print('Accuracy of LDA classifier on training set: {:.2f}'
+     .format(lda.score(X_train, y_train)))
+print('Accuracy of LDA classifier on test set: {:.2f}'
+     .format(lda.score(X_test, y_test)))
+
+
+# Gaussian Naive Bayes
+from sklearn.naive_bayes import GaussianNB
+gnb = GaussianNB()
+gnb.fit(X_train, y_train)
+print('Accuracy of GNB classifier on training set: {:.2f}'
+     .format(gnb.score(X_train, y_train)))
+print('Accuracy of GNB classifier on test set: {:.2f}'
+     .format(gnb.score(X_test, y_test)))
+
+# Support Vector Machine
+from sklearn.svm import SVC
+svm = SVC()
+svm.fit(X_train, y_train)
+print('Accuracy of SVM classifier on training set: {:.2f}'
+     .format(svm.score(X_train, y_train)))
+print('Accuracy of SVM classifier on test set: {:.2f}'
+     .format(svm.score(X_test, y_test)))
+
+
+
+
+from sklearn.metrics import classification_report
+from sklearn.metrics import confusion_matrix
+pred = knn.predict(X_test)
+print(confusion_matrix(y_test, pred))
+print(classification_report(y_test, pred))
+
+
+# Plot the Decision Boundary of the k-NN Classifier
+#---------------------------------------------------------------
+import matplotlib.cm as cm
+from matplotlib.colors import ListedColormap, BoundaryNorm
+import matplotlib.patches as mpatches
+import matplotlib.patches as mpatches
+X = fruits[['mass', 'width', 'height', 'color_score']]
+y = fruits['fruit_label']
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
+def plot_fruit_knn(X, y, n_neighbors, weights):
+    X_mat = X[['height', 'width']].as_matrix()
+    y_mat = y.as_matrix()
+# Create color maps
+    cmap_light = ListedColormap(['#FFAAAA', '#AAFFAA', '#AAAAFF','#AFAFAF'])
+    cmap_bold  = ListedColormap(['#FF0000', '#00FF00', '#0000FF','#AFAFAF'])
+clf = neighbors.KNeighborsClassifier(n_neighbors, weights=weights)
+    clf.fit(X_mat, y_mat)
+# Plot the decision boundary by assigning a color in the color map
+    # to each mesh point.
+
+    mesh_step_size = .01  # step size in the mesh
+    plot_symbol_size = 50
+
+    x_min, x_max = X_mat[:, 0].min() - 1, X_mat[:, 0].max() + 1
+    y_min, y_max = X_mat[:, 1].min() - 1, X_mat[:, 1].max() + 1
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, mesh_step_size),
+                         np.arange(y_min, y_max, mesh_step_size))
+    Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
+# Put the result into a color plot
+    Z = Z.reshape(xx.shape)
+    plt.figure()
+    plt.pcolormesh(xx, yy, Z, cmap=cmap_light)
+# Plot training points
+    plt.scatter(X_mat[:, 0], X_mat[:, 1], s=plot_symbol_size, c=y, cmap=cmap_bold, edgecolor = 'black')
+    plt.xlim(xx.min(), xx.max())
+    plt.ylim(yy.min(), yy.max())
+patch0 = mpatches.Patch(color='#FF0000', label='apple')
+    patch1 = mpatches.Patch(color='#00FF00', label='mandarin')
+    patch2 = mpatches.Patch(color='#0000FF', label='orange')
+    patch3 = mpatches.Patch(color='#AFAFAF', label='lemon')
+    plt.legend(handles=[patch0, patch1, patch2, patch3])
+plt.xlabel('height (cm)')
+plt.ylabel('width (cm)')
+plt.title("4-Class classification (k = %i, weights = '%s')"
+           % (n_neighbors, weights))
+plt.show()
+plot_fruit_knn(X_train, y_train, 5, 'uniform')
+
+
+k_range = range(1, 20)
+scores = []
+for k in k_range:
+    knn = KNeighborsClassifier(n_neighbors = k)
+    knn.fit(X_train, y_train)
+    scores.append(knn.score(X_test, y_test))
+plt.figure()
+plt.xlabel('k')
+plt.ylabel('accuracy')
+plt.scatter(k_range, scores)
+plt.xticks([0,5,10,15,20])
+
+
+
