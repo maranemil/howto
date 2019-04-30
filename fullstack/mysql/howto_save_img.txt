@@ -1,0 +1,40 @@
+
+CREATE TABLE MyTable (id INT, image BLOB);
+INSERT INTO MyTable (id, image) VALUES(1, LOAD_FILE('/tmp/your_image.png'));
+
+CREATE TABLE tbl_images (
+ id tinyint(3) unsigned NOT NULL auto_increment,
+ image blob NOT NULL,
+ PRIMARY KEY (id)
+);
+
+
+<form enctype="multipart/form-data" action="insert.php" method="post" name="changer">
+<input name="MAX_FILE_SIZE" value="102400" type="hidden">
+<input name="image" accept="image/jpeg" type="file">
+<input value="Submit" type="submit">
+
+
+$query = mysql_query("SELECT * FROM tbl_images WHERE id='".$id."'");
+$row = mysql_fetch_array($query);
+$content = $row['image'];
+header('Content-type: image/jpg');
+     echo $content;
+}
+
+
+if (isset($_FILES['image']) && $_FILES['image']['size'] > 0) {
+// Temporary file name stored on the server
+$tmpName = $_FILES['image']['tmp_name'];
+// Read the file
+$fp = fopen($tmpName, 'r');
+$data = fread($fp, filesize($tmpName));
+$data = addslashes($data);
+fclose($fp);
+// Create the query and insert
+// into our database.
+$query = "INSERT INTO tbl_images ";
+$query .= "(image) VALUES ('$data')";
+$results = mysql_query($query, $link);
+
+# 2 kilobytes * 120 000 = 240 megabytes
