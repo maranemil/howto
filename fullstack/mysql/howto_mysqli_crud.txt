@@ -1,0 +1,90 @@
+###############################################################
+
+MySQLi
+https://www.php-einfach.de/mysql-tutorial/crashkurs-mysqli/
+
+###############################################################
+
+#------------------------------
+# connect
+#------------------------------
+$mysqli = new mysqli("localhost", "user", "password", "database");
+if ($mysqli->connect_errno) {
+    die("Verbindung fehlgeschlagen: " . $mysqli->connect_error);
+}
+
+#------------------------------
+# update
+#------------------------------
+$sql = "UPDATE tabelle SET spalte = 'Wert' WHERE id = 1";
+$mysqli->query($sql);
+
+#------------------------------
+# update with prepare
+#------------------------------
+$sql = "UPDATE user SET email = ?, passwort = ? WHERE id = ?";
+$statement = $mysqli->prepare($sql);
+$statement->bind_param('ssi', $email, $passwort, $id);
+//Variablen Werte zuweisen
+$id= 1;
+$email = "ein@beispiel.de";
+$passwort = "neues passwort";
+$statement->execute();
+
+#------------------------------
+# SELECT
+#------------------------------
+$id = 100;
+$sql = "SELECT * FROM tabelle WHERE id < ?";
+$statement = $mysqli->prepare($sql);
+$statement->bind_param('i', $id);
+$statement->execute();
+$result = $statement->get_result();
+while($row = $result->fetch_object()) {
+  echo $row->spaltenname;
+}
+//Alternativ mit fetch_assoc():
+while($row = $result->fetch_assoc()) {
+  echo $row['spaltenname'];
+}
+
+#------------------------------
+# COUNT
+#------------------------------
+//Prepared statement mit INSERT/DELETE/UPDATE-Anweisung für $statement
+$statement->execute();
+$count = $statement->affected_rows;
+echo $count;
+
+
+
+#------------------------------
+#------------------------------
+//Prepared statement mit SELECT-Anweisung für $statement
+$statement->execute();
+$result = $statement->get_result();
+$count = $result->num_rows;
+echo $count;
+
+
+
+
+
+#------------------------------
+#------------------------------
+$sql = "INSERT INTO user (email, passwort) VALUES (?,?)";
+$statement = $mysqli->prepare($sql);
+$statement->bind_param('ss', $email, $pw);
+$email = "neu@test.de";
+$pw = "testPW";
+$statement->execute();
+$new_id = $statement->insert_id;
+echo $new_id;
+
+
+#------------------------------
+#------------------------------
+//Prepared statement in $statement
+if(!$statement->execute()) {
+  echo "Query fehlgeschlagen: ".$statement->error;
+}
