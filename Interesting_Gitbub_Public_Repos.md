@@ -314,3 +314,17 @@ https://heartbeat.fritz.ai/25-open-source-machine-learning-repos-to-inspire-your
 * https://medium.com/nanonets/how-to-use-deep-learning-when-you-have-limited-data-part-2-data-augmentation-c26971dc8ced
 * http://neupy.com/docs/transfer-learning.html
 * https://www.kernix.com/blog/image-classification-with-a-pre-trained-deep-neural-network_p11
+
+
+
+
+
+
+
+
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#### Google ML crash-course
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+https://www.youtube.com/watch?v=cKxRvEZd3Mw&list=PLOU2XLYxmsIIuiBfYad6rFYQU_jL2ryal
+https://developers.google.com/machine-learning/crash-course/prereqs-and-prework
+
