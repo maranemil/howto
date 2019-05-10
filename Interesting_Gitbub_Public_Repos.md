@@ -327,4 +327,7 @@ https://heartbeat.fritz.ai/25-open-source-machine-learning-repos-to-inspire-your
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 https://www.youtube.com/watch?v=cKxRvEZd3Mw&list=PLOU2XLYxmsIIuiBfYad6rFYQU_jL2ryal
 https://developers.google.com/machine-learning/crash-course/prereqs-and-prework
-
+https://pytorch.org/tutorials/
+https://www.tensorflow.org/tutorials/
+https://www.tensorflow.org/tutorials/keras/basic_classification
+https://www.tensorflow.org/tutorials/images/hub_with_keras
