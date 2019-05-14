@@ -564,15 +564,13 @@ https://github.com/emukans/lu-computer-networks/blob/c534e66a42a701fe28781443eb9
 https://github.com/soupyman/tsf/blob/98dbee73f65b04679c62e23af1f3dfd1549ccc45/win/code/Utility/CRC.h
 https://github.com/blahlt/notes/wiki/CRC
 
-function crc4($strHexCode) {
-      $sequence = "";
-      $gp = "10011";
-
+/*
+function crc4ck($strHexCode) {
+      $sequence = ""; $gp = "10011";
       for ($i = 0; $i < strlen($strHexCode); $i++ ) {
          $strBinChar = "";
          $charAsInt = $strHexCode[$i];
          $strBinChar.= decbin(ord($charAsInt));
-         // prepend with zeros to get 8 bit binary strings
          $fillBy = 8 - strlen($strBinChar);
          for ($l=0; $l < $fillBy; $l++) {
             $strBinChar="0".$strBinChar;
@@ -595,11 +593,60 @@ function crc4($strHexCode) {
                $remainder.="0";
             }
          }
-
          $sequence = $remainder.$sequence;
       }
-
       return dechex(bindec($sequence));
    }
+    echo crc4ck('2222');
+*/
 
-echo crc4('2222');
+
+/*
+https://github.com/zxing/zxing/issues/365
+
+Raw bytes expected:
+44 45 41 12 20 01 2d 82  1b a1 00 3e 25 f3 25 1d
+00 04 97 02 1e 47 11 00  00 06 ea 30 46 42 30 31
+39 32 38 34 35 32 33 54  49 34
+
+Raw bytes displayed:
+45 46 42 13 21 e7 18 ae  70 5a 89 a5 99 6d e9 4d
+14 a2 1b b4 dd dd 8f 4e  ad 32 c7 63 dc b8 64 f5
+79 0f ad 3c d7 69 ff 92  28 df 6a ea
+
+Barcode:        1 of 1  Type:   DataMatrix              Page 1 of 1
+Length:         42      Rotation:       none
+Module:         6.7pix  Rectangle:      {X=36,Y=43,Width=175,Height=174}
+Barcode Text processing:
+    Converted Character Set: ISO-8859-1
+    Formatted: specialChar
+
+Binary Data in barcode (Hex-ASCII display)
+
+0000  44 45 41 12 20 01 2d 82  1b a1 00 3e 25 f3 25 1d  | DEA~ ~-~~~~>%~%~ |
+0010  00 04 97 02 1e 47 11 00  00 06 ea 30 46 42 30 31  | ~~~~~G~~~~~0FB01 |
+0020  39 32 38 34 35 32 33 54  49 34                    | 9284523TI4       |
+
+
+https://online-barcode-reader.inliteresearch.com/default.aspx
+
+*/
+
+/*
+function setFrankierID($arrSend){
+  $strLimiterHx = ""; $strOrdnungskennzeichen = substr($arrSend["Account"]), 0, 2); $strSequenceFrID = $this->dec2hexConv(sprintf("%04d", $arrSend["Ordnungskennzeichen"]), 2) . "{$strLimiterHx}"; $strSequenceFrID.= $this->dec2hexConv(substr($arrSend["Kundennummer"], 0, 8), 7). "{$strLimiterHx}";
+  $strListNumber = str_pad($strListNumber,4,0,STR_PAD_LEFT); $strSequenceFrID .= $this->dec2hexConv($arrSend["ListNr"], 4) . "{$strLimiterHx}"; $strSequenceFrID .= $this->dec2hexConv($arrSend["SendID"], 6) . "{$strLimiterHx}"; $strCRC4 = strtoupper($this->crc4((string) $strSequenceFrID));
+  $strSequenceFrID.= $strCRC4; $strReturnFrID = substr($strSequenceFrID,0,2).' '. substr($strSequenceFrID,2,4).' '. substr($strSequenceFrID,6,4).' '. substr($strSequenceFrID,10,2).' '. substr($strSequenceFrID,12,4).' '. substr($strSequenceFrID,16,4);
+  return $strReturnFrID;
+}*/
+
+function setMatrixCode($arrSend){
+  $strLimiterHx = ""; $intVerProd = 12; $strSplitCDbg = "%";  $sequeceDataMatrix = "444541{$strLimiterHx}"; /* F1 - F3 */
+  $sequeceDataMatrix .= $this->dec2hexConv("18", 2).$strLimiterHx; /* F4 */  $sequeceDataMatrix .= $this->dec2hexConv($intVerProd, 2) . "{$strLimiterHx}"; /* F5 */  $sequeceDataMatrix .= $this->dec2hexConv($arrSend["KdId"], 10) . "{$strLimiterHx}"; /* F6 - F10 */
+  $sequeceDataMatrix .= $this->dec2hexConv(str_replace(".", "",    str_pad( substr($arrSend["PackPrice"], 0,4),  6,  "0",  STR_PAD_LEFT )   ), 4) . "{$strLimiterHx}"; /* F11 - F12 */
+  $sequeceDataMatrix .= $this->dec2hexConv(date("zy", strtotime(date("Y-m-d H:i:s", strtotime(date("Y-m-d H:i:s") . ' +1 day')))), 4) . "{$strLimiterHx}"; /* F13 - F14 */ $sequeceDataMatrix .= $this->dec2hexConv("00021", 4) . "{$strLimiterHx}"; /* F15 - F16 */
+  $sequeceDataMatrix .= $this->dec2hexConv(str_pad($arrSend["PackNr"], 8,"0", STR_PAD_LEFT), 6) . "{$strLimiterHx}"; /* F17 - F19 */ $sequeceDataMatrix .= $this->dec2hexConv(substr(str_replace(" ", "", $arrSend["Ident"], 2, 2), 2) . "{$strLimiterHx}"; /* F20 */
+  $sequeceDataMatrix .= $this->dec2hexConv(sprintf("%04d", str_pad($arrSend["ListNr"],4,0,STR_PAD_LEFT)), 4);  $sequeceDataMatrix .= "0000000000000000000000000000000000000000"; /* 42 bytes */ $sequeceDataMatrix = hex2bin($sequeceDataMatrix); //  Encoded zB: DEA#$#3S....
+  $sequeceDataMatrix = utf8_decode(utf8_encode($sequeceDataMatrix)); // 26x26 or 32x32
+  return $sequeceDataMatrix;
+}
