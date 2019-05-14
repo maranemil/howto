@@ -257,17 +257,40 @@ function CRC_16($data, $generatorPolynomial, $seed = 0x0000)
     return $rp;
 }
 
-function dec2hexConv($strIn, $nrChars) {
-
+    function dec2hexConv($strIn, $nrChars) {
       //return $strIn;
       $strHexa = str_pad(strtoupper(dechex($strIn)), $nrChars, "0", STR_PAD_LEFT); 
     // strtoupper
       if (strlen($strHexa) != $nrChars) {
          throw new Exception("Number of Hexa Chars not match!");
       }
-
       return $strHexa;
    }
+
+    echo dec2hexConv("90", 4);
+    echo "<br>";
+    echo dec2hexConv("9191", 4);
+    echo "<br>";
+    echo dec2hexConv("9279", 4);
+    echo "<br>";
+    echo dec2hexConv("9280", 4);
+    echo "<br>";
+    echo dec2hexConv("450", 4);
+    echo "<br>";
+    echo dec2hexConv("232", 4);
+    echo "<br>";
+
+    /*
+    Beispiel für Produktschlüssel:
+    ’00 5A’ Dialogpost/Katalog Standard (dez. 90)
+    ’23 E7’ Dialogpost/Katalog Standard Premiumadress Basis (dez. 9191)
+    ’24 3F’ Pressesendung E+0 mit PREMIUMADRESS Basis (dezimal 9279)
+    ’24 40’ Pressesendung E+1 mit PREMIUMADRESS Basis (dezimal 9280)
+    ’01 C2’ PSdg E+0 ohne PREMIUMADRESS (dezimal 450)
+    Darstellung in hexadezimaler Form.
+    */
+
+
 
 
 //0A312C288013B5A94B02XF
@@ -528,3 +551,55 @@ IBM           8005         0000            yes              yes            no
 # https://www.can-cia.org/can-knowledge/can/crc/
 # https://www.lammertbies.nl/comm/info/crc-calculation.html
 # https://github.com/maranemil/howto/blob/9a47ec930c7b891928cfbce3da65709205d0b55f/utiles/howto_crc_check_string.txt
+
+
+
+
+https://github.com/lamario/CRC_Simulation/blob/624cdc18fc091daf8814da86f7b1fc53cf4c8777/crc_simulation/crc_simulation/crc_simulation.py
+https://github.com/AdrianSiwiec/audio-comunicator/blob/468102c348d413622af7cfd3a0dde2b0f92905a1/encoder.py
+https://github.com/PetreCatalin/Proiecte-Facultate/blob/788cf4e725637f114c9034d8ff0a036ebb3480bc/CRC/serverCRC.py
+https://github.com/L4mbd4/inlk-13/blob/0aa9dff9ced7a3058504b739ee6804b848e1e39a/Netzwerke/Buchstaben.py
+https://github.com/kejriwalrahul/Channel-Transmission-Simulation/blob/fa1b69589c2b9046393f54ae61c8051683419164/code/crc.cpp
+https://github.com/emukans/lu-computer-networks/blob/c534e66a42a701fe28781443eb9e0b9e29188d84/md2/task1.py
+https://github.com/soupyman/tsf/blob/98dbee73f65b04679c62e23af1f3dfd1549ccc45/win/code/Utility/CRC.h
+https://github.com/blahlt/notes/wiki/CRC
+
+function crc4($strHexCode) {
+      $sequence = "";
+      $gp = "10011";
+
+      for ($i = 0; $i < strlen($strHexCode); $i++ ) {
+         $strBinChar = "";
+         $charAsInt = $strHexCode[$i];
+         $strBinChar.= decbin(ord($charAsInt));
+         // prepend with zeros to get 8 bit binary strings
+         $fillBy = 8 - strlen($strBinChar);
+         for ($l=0; $l < $fillBy; $l++) {
+            $strBinChar="0".$strBinChar;
+         }
+         $sequence.=$strBinChar;
+      }
+      if(substr($sequence,0,1)== 0){
+         $sequence = substr($sequence,1,strlen($sequence));
+      }
+      $sequence.="0000";
+      while (strlen($sequence) >= strlen($gp) ) {
+         $remainder = "";
+         $part = substr($sequence,0, strlen($gp) );
+         $sequence = substr($sequence, strlen($gp), strlen($sequence));
+         for ($j=0; $j < strlen($part); $j++) {
+            if ($part[$j] != $gp[$j] ) {
+               $remainder.="1";
+            }
+            else if (strlen($remainder) > 0) {
+               $remainder.="0";
+            }
+         }
+
+         $sequence = $remainder.$sequence;
+      }
+
+      return dechex(bindec($sequence));
+   }
+
+echo crc4('2222');
