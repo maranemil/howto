@@ -109,23 +109,15 @@ $CancelReason = array(
     "MerchandiseNotReceive" => "MerchandiseNotReceive",
 );
 
-
-// Shipwire service type
-private
-$arrAmazonShippingLevel = array(
-    "Standard" => "GD",
-    "Expedited" => "2D",
-    "SecondDay" => "2D",
-    "NextDay" => "1D",
-    "Express" => "1D",
+private $arrCarrierCodes = array(
+  "USPS", "UPS", "UPSMI", "FedEx", "DHL", "Fastway", "GLS", "GO!", "Hermes Logistik Gruppe",
+   "Royal Mail", "Parcelforce", "City Link", "TNT", "Target", "SagawaExpress", "NipponExpress",
+    "YamatoTransport", "DHL Global Mail", "UPS Mail Innovations", "FedEx SmartPost", "OSM", "OnTrac",
+     "Streamlite", "Newgistics", "Canada Post", "Blue Package", "Chronopost", "Deutsche Post", "DPD",
+      "La Poste", "Parcelnet", "Poste Italiane", "SDA", "Smartmail", "FEDEX_JP", "JP_EXPRESS", "NITTSU",
+       "SAGAWA", "YAMATO", "BlueDart", "AFL/Fedex", "Aramex", "India Post", "Professional", "DTDC", "Overnite Express",
+        "First Flight", "Delhivery", "Lasership", "Yodel", "Other", "Amazon Shipping", "Seur", "Correos", "MRW",
+         "Endopack", "Chrono Express", "Nacex", "Otro", "Correios", "Toll Global Express", "China Post", "AUSSIE_POST",
+          "EUB", "Australia Post", "Yun Express", "Fastway", "4PX", "YANWEN", "SF Express"
+  // . All other carriers must use the CarrierName field.
 );
-
-
-private
-$arrCarrierCodes = array(
-    "USPS", "UPS", "FedEx", "DHL", "Fastway", "GLS", "GO!",
-    "Hermes Logistik Gruppe", "Royal Mail", "Parcelforce", "City Link", "TNT", "Target",
-    "SagawaExpress", "NipponExpress", "YamatoTransport"
-    // . All other carriers must use the CarrierName field.
-);
-
