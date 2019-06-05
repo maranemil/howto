@@ -1,0 +1,36 @@
+
+https://de.wikipedia.org/wiki/Private_IP-Adresse
+https://tools.ietf.org/html/rfc1918
+https://tools.ietf.org/html/rfc1519
+https://ip.rst.im/ip/192.168.0.0/16
+https://ip.rst.im/ip/192.168.0.0/24
+http://jodies.de/ipcalc?host=192.168.0.0&mask1=16&mask2=255.255.255.0
+https://rolfrost.de/netcalc.html?net=192.168.0.0&cidr=16
+
+# apt-get install iptables
+
+# block outer ips
+iptables -P INPUT DROP && iptables -P OUTPUT DROP && iptables -A OUTPUT -o eth0 -p tcp -d 192.168.0.0/16 -j ACCEPT && iptables -A INPUT -i eth0 -p tcp -s 192.168.0.0/16 -j ACCEPT
+
+iptables -F && iptables -P INPUT DROP && iptables -P OUTPUT DROP && iptables -A OUTPUT -o eth0 -d 192.168.0.0/16 -j ACCEPT && iptables -A INPUT -i eth0 -s 192.168.0.0/16 -j ACCEPT && iptables -A INPUT -i lo -j ACCEPT && iptables -A OUTPUT -o lo -j ACCEPT
+
+# zum zurücksetzen:
+iptables -P INPUT ACCEPT && iptables -P OUTPUT ACCEPT && iptables -F
+
+---------------------
+
+https://it-muecke.de/node/20161115-hosts-allow-und-deny
+http://www.freekb.net/Article?id=1091
+https://linux.die.net/man/5/hosts.allow
+
+/etc/hosts.allow
+
+ALL: 192.168.0.0/24
+ALL: 192.168.0.
+ALL: .example.com
+in.ftpd: .example.com
+
+/etc/hosts.deny
+
+ALL: ALL EXCEPT 192.168.0.2
+ALL: ALL EXCEPT www.example.com
