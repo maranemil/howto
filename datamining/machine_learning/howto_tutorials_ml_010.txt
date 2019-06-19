@@ -1,0 +1,1113 @@
+######################################################################
+
+Sign Language Recognition In Pytorch
+https://towardsdatascience.com/sign-language-recognition-in-pytorch-5d72688f98b7
+https://github.com/pawangeek/pytorch-notebooks/blob/master/MNIST-sign-language-detector/sign-language-detector.ipynb
+https://www.kaggle.com/dude431/sign-language-detector/
+
+######################################################################
+
+import numpy as np
+import pandas as pd
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+from torch.autograd import Variable
+
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+
+data_raw = pd.read_csv('../input/sign_mnist_train.csv', sep=",")
+test_data_raw = pd.read_csv('../input/sign_mnist_test.csv', sep=",")
+
+labels = data_raw['label']
+data_raw.drop('label', axis=1, inplace=True)
+labels_test = test_data_raw['label']
+test_data_raw.drop('label', axis=1, inplace=True)
+
+data = data_raw.values
+labels = labels.values
+
+test_data = test_data_raw.values
+labels_test = labels_test.values
+
+pixels = data[10].reshape(28, 28)
+plt.subplot(221)
+sns.heatmap(data=pixels)
+
+pixels = data[12].reshape(28, 28)
+plt.subplot(222)
+sns.heatmap(data=pixels)
+
+pixels = data[20].reshape(28, 28)
+plt.subplot(223)
+sns.heatmap(data=pixels)
+
+pixels = data[32].reshape(28, 28)
+plt.subplot(224)
+sns.heatmap(data=pixels)
+
+reshaped = []
+for i in data:
+    reshaped.append(i.reshape(1, 28, 28))
+data = np.array(reshaped)
+
+reshaped_test = []
+for i in test_data:
+    reshaped_test.append(i.reshape(1,28,28))
+test_data = np.array(reshaped_test)
+
+x = torch.FloatTensor(data)
+y = torch.LongTensor(labels.tolist())
+
+test_x = torch.FloatTensor(test_data)
+test_y = torch.LongTensor(labels_test.tolist())
+
+
+
+class Network(nn.Module):
+
+    def __init__(self):
+        super(Network, self).__init__()
+        self.conv1 = nn.Conv2d(1, 10, 3)
+        self.pool1 = nn.MaxPool2d(2)
+
+        self.conv2 = nn.Conv2d(10, 20, 3)
+        self.pool2 = nn.MaxPool2d(2)
+
+        self.conv3 = nn.Conv2d(20, 30, 3)
+        self.dropout1 = nn.Dropout2d()
+
+        self.fc3 = nn.Linear(30 * 3 * 3, 270)
+        self.fc4 = nn.Linear(270, 26)
+
+        self.softmax = nn.LogSoftmax(dim=1)
+
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = F.relu(x)
+        x = self.pool1(x)
+
+        x = self.conv2(x)
+        x = F.relu(x)
+        x = self.pool2(x)
+
+        x = self.conv3(x)
+        x = F.relu(x)
+        x = self.dropout1(x)
+
+        x = x.view(-1, 30 * 3 * 3)
+        x = F.relu(self.fc3(x))
+        x = F.relu(self.fc4(x))
+
+        return self.softmax(x)
+
+    def test(self, predictions, labels):
+
+        self.eval()
+        correct = 0
+        for p, l in zip(predictions, labels):
+            if p == l:
+                correct += 1
+
+        acc = correct / len(predictions)
+        print("Correct predictions: %5d / %5d (%5f)" % (correct, len(predictions), acc))
+
+    def evaluate(self, predictions, labels):
+
+        correct = 0
+        for p, l in zip(predictions, labels):
+            if p == l:
+                correct += 1
+
+        acc = correct / len(predictions)
+        return(acc)
+
+
+
+
+!pip install torchsummary
+from torchsummary import summary
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+model = Network().to(device)
+summary(model, (1, 28, 28))
+
+net = Network()
+
+optimizer = optim.SGD(net.parameters(),0.001, momentum=0.7)
+loss_func = nn.CrossEntropyLoss()
+
+loss_log = []
+acc_log = []
+
+for e in range(50):
+    for i in range(0, x.shape[0], 100):
+        x_mini = x[i:i + 100]
+        y_mini = y[i:i + 100]
+
+        optimizer.zero_grad()
+        net_out = net(Variable(x_mini))
+
+        loss = loss_func(net_out, Variable(y_mini))
+        loss.backward()
+        optimizer.step()
+
+        if i % 1000 == 0:
+            #pred = net(Variable(test_data_formated))
+            loss_log.append(loss.item())
+            acc_log.append(net.evaluate(torch.max(net(Variable(test_x[:500])).data, 1)[1], test_y[:500]))
+
+    print('Epoch: {} - Loss: {:.6f}'.format(e + 1, loss.item()))
+
+
+plt.figure(figsize=(10,8))
+plt.plot(loss_log[2:])
+plt.plot(acc_log)
+plt.plot(np.ones(len(acc_log)), linestyle='dashed')
+plt.show()
+
+predictions = net(Variable(test_x))
+net.test(torch.max(predictions.data, 1)[1], test_y)
+
+
+######################################################################
+
+Data Pre-processing for Deep Learning models (Deep Learning with Keras – Part 2)
+https://www.marktechpost.com/2019/06/14/data-pre-processing-for-deep-learning-models-deep-learning-with-keras-part-2/
+
+######################################################################
+
+
+from keras.datasets import boston_housing
+# data is returned as a tuple for the training and the testing datasets
+(X_train, y_train), (X_test, y_test) = boston_housing.load_data()
+
+print(X_train[0])
+# Output
+
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+X_normalized = scaler.fit_transform(X_train)
+print(X_normalized[0])
+# Output
+
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X_train)
+print(X_scaled[0])
+# Output
+
+
+import numpy as np
+data = np.array(['small', 'medium', 'small', 'large', 'xlarge', 'large'])
+from sklearn.preprocessing import LabelEncoder
+encoder = LabelEncoder()
+data_encoded = encoder.fit_transform(data)
+print(data_encoded)
+# Output
+
+import numpy as np
+data = np.array(['red', 'blue', 'orange', 'white', 'red', 'orange', 'white', 'red'])
+from sklearn.preprocessing import LabelBinarizer
+encoder = LabelBinarizer()
+data_encoded = encoder.fit_transform(data)
+print(data_encoded)
+# Output
+
+
+######################################################################
+
+polynomial_logistic_regression.py
+https://gist.github.com/BrambleXu/52b0aaf10987015a078d36c97729dace
+
+######################################################################
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# read data
+data = np.loadtxt("non_linear_data.csv", delimiter=',', skiprows=1)
+train_x = data[:, 0:2]
+train_y = data[:, 2]
+
+# plot data points
+# plt.plot(train_x[train_y == 1, 0], train_x[train_y == 1, 1], 'o')
+# plt.plot(train_x[train_y == 0, 0], train_x[train_y == 0, 1], 'x')
+# plt.show()
+
+# initialize parameter
+theta = np.random.randn(4)
+
+# standardization
+mu = train_x.mean(axis=0)
+sigma = train_x.std(axis=0)
+
+def standardizer(x):
+    return (x - mu) / sigma
+std_x = standardizer(train_x)
+
+# add x0 and x3 to get matrix
+def to_matrix(x):
+    x0 = np.ones([x.shape[0], 1]) # (20, 1)
+    x3 = x[:, 0, np.newaxis] ** 2 # (20, 1)
+    return np.hstack([x0, x, x3])
+
+mat_x = to_matrix(std_x) # (20, 4)
+
+
+# sigmoid function
+def f(x):
+    """
+    theta: (4,)
+    x: (n, 4)
+    return sigmoid(x) -> (4, 1)
+    """
+    return 1 / (1 + np.exp(-np.dot(x, theta)))
+
+# classify sample to 0 or 1
+def classify(x):
+    return (f(x) >= 0.5).astype(np.int)
+
+# update times
+epoch = 2000
+
+# learning rate
+ETA = 1e-3
+
+# accuracy log
+accuracies = []
+
+# update parameter
+for _ in range(epoch):
+    """
+    f(mat_x) - train_y: (20,)
+    mat_x: (20, 4)
+    theta: (4,)
+
+    dot production: (20,) x (20, 4) -> (4,)
+    """
+    theta = theta - ETA * np.dot(f(mat_x) - train_y, mat_x)
+
+    result = classify(mat_x) == train_y # result is [Ture, False, ...]
+    accuracy = sum(result) / len(result)
+    accuracies.append(accuracy)
+
+
+## plot line
+# x1 = np.linspace(-2, 2, 100)
+# x2 = - (theta[0] + x1 * theta[1] + theta[3] * x1**2) / theta[2]
+
+# plt.plot(std_x[train_y == 1, 0], std_x[train_y == 1, 1], 'o') # train data of class 1
+# plt.plot(std_x[train_y == 0, 0], std_x[train_y == 0, 1], 'x') # train data of class 0
+# plt.plot(x1, x2, linestyle='dashed') # plot the line we learned
+# plt.show()
+
+# plot accuracy line
+x = np.arange(len(accuracies))
+plt.plot(x, accuracies)
+plt.show()
+
+
+######################################################################
+
+logistic_regression.py
+https://gist.github.com/BrambleXu/2640af09b1f43b93c2d951ba91ca3d5c
+
+######################################################################
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# read data
+data = np.loadtxt("linear_data.csv", delimiter=',', skiprows=1)
+train_x = data[:, 0:2]
+train_y = data[:, 2]
+
+# initialize parameter
+theta = np.random.randn(3)
+
+# standardization
+mu = train_x.mean(axis=0)
+sigma = train_x.std(axis=0)
+def standardizer(x):
+    return (x - mu) / sigma
+std_x = standardizer(train_x)
+
+# get matrix
+def to_matrix(std_x):
+    return np.array([[1, x1, x2] for x1, x2 in std_x])
+mat_x = to_matrix(std_x)
+
+# dot product
+def f(x):
+    return np.dot(x, theta)
+
+# sigmoid function
+def f(x):
+    return 1 / (1 + np.exp(-np.dot(x, theta)))
+
+# update times
+epoch = 2000
+
+# learning rate
+ETA = 1e-3
+
+# update parameter
+for _ in range(epoch):
+    """
+    f(mat_x) - train_y: (20,)
+    mat_x: (20, 3)
+    theta: (3,)
+
+    dot production: (20,) x (20, 3) -> (3,)
+    """
+    theta = theta - ETA * np.dot(f(mat_x) - train_y, mat_x)
+
+
+
+# plot line
+x1 = np.linspace(-2, 2, 100)
+x2 = - (theta[0] + x1 * theta[1]) / theta[2]
+
+plt.plot(std_x[train_y == 1, 0], std_x[train_y == 1, 1], 'o') # train data of class 1
+plt.plot(std_x[train_y == 0, 0], std_x[train_y == 0, 1], 'x') # train data of class 0
+plt.plot(x1, x2, linestyle='dashed') # plot the line we learned
+plt.show()
+
+
+######################################################################
+
+Regression with Keras (Deep Learning with Keras – Part 3)
+https://www.marktechpost.com/2019/06/17/regression-with-keras-deep-learning-with-keras-part-3/
+
+######################################################################
+
+from keras.datasets import boston_housing
+(X_train, y_train), (X_test, y_test) = boston_housing.load_data()
+
+# let us view on sample from the features
+print(X_train[0], y_train[0])
+# output
+
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+
+# first we fit the scaler on the training dataset
+scaler.fit(X_train)
+
+# then we call the transform method to scale both the training and testing data
+X_train_scaled = scaler.transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# a sample output
+print(X_train_scaled[0])
+
+from keras import models, layers
+model = models.Sequential()
+
+model.add(layers.Dense(8, activation='relu', input_shape=[X_train.shape[1]]))
+model.add(layers.Dense(16, activation='relu'))
+
+# output layer
+model.add(layers.Dense(1))
+model.compile(optimizer='rmsprop', loss='mse', metrics=['mae'])
+history = model.fit(X_train_scaled, y_train, validation_split=0.2, epochs=100)
+
+model.evaluate(X_test_scaled, y_test)
+# output
+
+# we get a sample data (the first 2 inputs from the training data)
+to_predict = X_train_scaled[:2]
+# we call the predict method
+predictions = model.predict(to_predict)
+# print the predictions
+print(predictions)
+# output
+# array([[13.272537], [39.808475]], dtype=float32)
+# print the real values
+print(y_train[:2])
+# array([15.2, 42.3])
+
+
+
+######################################################################
+
+Machine Learning Project Walk-Through — Part 2 Non-Linear Separable Problem
+https://towardsdatascience.com/an-equation-to-code-machine-learning-project-walk-through-in-python-part-2-non-linear-d193c3c23bac
+
+
+######################################################################
+
+"""
+x1,x2,y
+0.54508775,2.34541183,0
+0.32769134,13.43066561,0
+4.42748117,14.74150395,0
+2.98189041,-1.81818172,1
+"""
+
+# 1 Look at the data
+#---------------------------------
+import numpy as np
+import matplotlib.pyplot as plt
+# read data
+data = np.loadtxt("non_linear_data.csv", delimiter=',', skiprows=1)
+train_x = data[:, 0:2]
+train_y = data[:, 2]
+# plot data points
+plt.plot(train_x[train_y == 1, 0], train_x[train_y == 1, 1], 'o')
+plt.plot(train_x[train_y == 0, 0], train_x[train_y == 0, 1], 'x')
+plt.show()
+
+
+# 2 Non-Linear separable problem
+#---------------------------------
+import numpy as np
+import matplotlib.pyplot as plt
+# read data
+data = np.loadtxt("linear_data.csv", delimiter=',', skiprows=1)
+train_x = data[:, 0:2]
+train_y = data[:, 2]
+# initialize parameter
+theta = np.random.randn(4)
+
+
+# 3 Standardization
+#---------------------------------
+import numpy as np
+import matplotlib.pyplot as plt
+# read data
+data = np.loadtxt("linear_data.csv", delimiter=',', skiprows=1)
+train_x = data[:, 0:2]
+train_y = data[:, 2]
+# initialize parameter
+theta = np.random.randn(4)
+# standardization
+mu = train_x.mean(axis=0)
+sigma = train_x.std(axis=0)
+def standardizer(x):
+    return (x - mu) / sigma
+std_x = standardizer(train_x)
+
+
+# 4 add bias and polynomial term
+#---------------------------------
+import numpy as np
+import matplotlib.pyplot as plt
+# read data
+data = np.loadtxt("linear_data.csv", delimiter=',', skiprows=1)
+train_x = data[:, 0:2]
+train_y = data[:, 2]
+# initialize parameter
+theta = np.random.randn(4)
+# standardization
+mu = train_x.mean(axis=0)
+sigma = train_x.std(axis=0)
+def standardizer(x):
+    return (x - mu) / sigma
+std_x = standardizer(train_x)
+# add x0 and x1^2 to get matrix
+def to_matrix(x):
+    x0 = np.ones([x.shape[0], 1])
+    x3 = x[:, 0, np.newaxis] ** 2
+    return np.hstack([x0, x, x3])
+mat_x = to_matrix(std_x)
+# dot product
+def f(x):
+    return np.dot(x, theta)
+
+
+# 5 Sigmoid function
+#---------------------------------
+import numpy as np
+import matplotlib.pyplot as plt
+# read data
+data = np.loadtxt("linear_data.csv", delimiter=',', skiprows=1)
+train_x = data[:, 0:2]
+train_y = data[:, 2]
+# initialize parameter
+theta = np.random.randn(4)
+# standardization
+mu = train_x.mean(axis=0)
+sigma = train_x.std(axis=0)
+def standardizer(x):
+    return (x - mu) / sigma
+std_x = standardizer(train_x)
+# add x0 and x1^2 to get matrix
+def to_matrix(x):
+    x0 = np.ones([x.shape[0], 1])
+    x3 = x[:, 0, np.newaxis] ** 2
+    return np.hstack([x0, x, x3])
+mat_x = to_matrix(std_x)
+# change dot production to sigmoid function
+def f(x):
+    return 1 / (1 + np.exp(-np.dot(x, theta)))
+
+
+
+# 6 Likelihood function
+#---------------------------------
+import numpy as np
+import matplotlib.pyplot as plt
+# read data
+data = np.loadtxt("linear_data.csv", delimiter=',', skiprows=1)
+train_x = data[:, 0:2]
+train_y = data[:, 2]
+# initialize parameter
+theta = np.random.randn(4)
+# standardization
+mu = train_x.mean(axis=0)
+sigma = train_x.std(axis=0)
+def standardizer(x):
+    return (x - mu) / sigma
+std_x = standardizer(train_x)
+# add x0 and x1^2 to get matrix
+def to_matrix(x):
+    x0 = np.ones([x.shape[0], 1])
+    x3 = x[:, 0, np.newaxis] ** 2
+    return np.hstack([x0, x, x3])
+mat_x = to_matrix(std_x)
+# sigmoid function
+def f(x):
+    return 1 / (1 + np.exp(-np.dot(x, theta)))
+# update times
+epoch = 2000
+# learning rate
+ETA = 1e-3
+# update parameter
+for _ in range(epoch):
+    """
+    f(mat_x) - train_y: (20,)
+    mat_x: (20, 4)
+    theta: (4,)
+
+    dot production: (20,) x (20, 4) -> (4,)
+    """
+    theta = theta - ETA * np.dot(f(mat_x) - train_y, mat_x)
+
+
+# 8 Plot the line
+#---------------------------------
+# plot line
+x1 = np.linspace(-2, 2, 100)
+x2 = - (theta[0] + x1 * theta[1] + theta[3] * x1**2) / theta[2]
+plt.plot(std_x[train_y == 1, 0], std_x[train_y == 1, 1], 'o') # train data of class 1
+plt.plot(std_x[train_y == 0, 0], std_x[train_y == 0, 1], 'x') # train data of class 0
+plt.plot(x1, x2, linestyle='dashed') # plot the line we learned
+plt.show()
+
+
+# 9 Accuracy
+#---------------------------------
+import numpy as np
+import matplotlib.pyplot as plt
+# read data
+data = np.loadtxt("linear_data.csv", delimiter=',', skiprows=1)
+train_x = data[:, 0:2]
+train_y = data[:, 2]
+# initialize parameter
+theta = np.random.randn(4)
+# standardization
+mu = train_x.mean(axis=0)
+sigma = train_x.std(axis=0)
+def standardizer(x):
+    return (x - mu) / sigma
+std_x = standardizer(train_x)
+# add x0 and x1^2 to get matrix
+def to_matrix(x):
+    x0 = np.ones([x.shape[0], 1])
+    x3 = x[:, 0, np.newaxis] ** 2
+    return np.hstack([x0, x, x3])
+mat_x = to_matrix(std_x)
+# sigmoid function
+def f(x):
+    return 1 / (1 + np.exp(-np.dot(x, theta)))
+# classify sample to 0 or 1
+def classify(x):
+    return (f(x) >= 0.5).astype(np.int)
+# update times
+epoch = 2000
+# learning rate
+ETA = 1e-3
+# accuracy log
+accuracies = []
+# update parameter
+for _ in range(epoch):
+    theta = theta - ETA * np.dot(f(mat_x) - train_y, mat_x)
+    result = classify(mat_x) == train_y
+    accuracy = sum(result) / len(result)
+    accuracies.append(accuracy)
+# plot accuracy line
+x = np.arange(len(accuracies))
+plt.plot(x, accuracies)
+plt.show()
+
+
+
+# 10 Summary
+#---------------------------------
+import numpy as np
+import matplotlib.pyplot as plt
+
+# read data
+data = np.loadtxt("non_linear_data.csv", delimiter=',', skiprows=1)
+train_x = data[:, 0:2]
+train_y = data[:, 2]
+
+# plot data points
+# plt.plot(train_x[train_y == 1, 0], train_x[train_y == 1, 1], 'o')
+# plt.plot(train_x[train_y == 0, 0], train_x[train_y == 0, 1], 'x')
+# plt.show()
+
+# initialize parameter
+theta = np.random.randn(4)
+
+# standardization
+mu = train_x.mean(axis=0)
+sigma = train_x.std(axis=0)
+
+def standardizer(x):
+    return (x - mu) / sigma
+std_x = standardizer(train_x)
+
+# add x0 and x3 to get matrix
+def to_matrix(x):
+    x0 = np.ones([x.shape[0], 1]) # (20, 1)
+    x3 = x[:, 0, np.newaxis] ** 2 # (20, 1)
+    return np.hstack([x0, x, x3])
+
+mat_x = to_matrix(std_x) # (20, 4)
+
+
+# sigmoid function
+def f(x):
+    """
+    theta: (4,)
+    x: (n, 4)
+    return sigmoid(x) -> (4, 1)
+    """
+    return 1 / (1 + np.exp(-np.dot(x, theta)))
+
+# classify sample to 0 or 1
+def classify(x):
+    return (f(x) >= 0.5).astype(np.int)
+
+# update times
+epoch = 2000
+
+# learning rate
+ETA = 1e-3
+
+# accuracy log
+accuracies = []
+
+# update parameter
+for _ in range(epoch):
+    """
+    f(mat_x) - train_y: (20,)
+    mat_x: (20, 4)
+    theta: (4,)
+
+    dot production: (20,) x (20, 4) -> (4,)
+    """
+    theta = theta - ETA * np.dot(f(mat_x) - train_y, mat_x)
+
+    result = classify(mat_x) == train_y # result is [Ture, False, ...]
+    accuracy = sum(result) / len(result)
+    accuracies.append(accuracy)
+
+
+## plot line
+# x1 = np.linspace(-2, 2, 100)
+# x2 = - (theta[0] + x1 * theta[1] + theta[3] * x1**2) / theta[2]
+
+# plt.plot(std_x[train_y == 1, 0], std_x[train_y == 1, 1], 'o') # train data of class 1
+# plt.plot(std_x[train_y == 0, 0], std_x[train_y == 0, 1], 'x') # train data of class 0
+# plt.plot(x1, x2, linestyle='dashed') # plot the line we learned
+# plt.show()
+
+# plot accuracy line
+x = np.arange(len(accuracies))
+plt.plot(x, accuracies)
+plt.show()
+
+
+
+######################################################################
+
+Natural Language Processing Classification Using Deep Learning And Word2Vec
+https://medium.com/@matego.dofmaster/natural-language-processing-classification-using-deep-learning-and-word2vec-50cbadd3bd6a
+
+######################################################################
+
+positiveFiles = pd.read_csv("rt-polaritydata/pos.csv", sep='delimiter', header=None)
+negativeFiles = pd.read_csv("rt-polaritydata/neg.csv", sep='delimiter', header=None)
+
+positiveFiles.columns = ['review']
+negativeFiles.columns = ['review']
+
+ones = []
+zeros = []
+for i in range(5331):
+    ones.append(1)
+    zeros.append(0)
+
+positiveFiles['label'] = ones
+negativeFiles['label'] = zeros
+reviews = positiveFiles
+reviews = reviews.append(negativeFiles)
+reviews.head()
+
+
+# 2.1 Tokenization
+#---------------------------------
+
+df_clean = reviews
+from nltk.tokenize import RegexpTokenizer
+t = time()
+
+
+tokenizer = RegexpTokenizer(r'\w+')
+df_clean['clean'] = df_clean['review'].astype('str')
+df_clean.dtypes
+
+df_clean["tokens"] = df_clean["clean"].apply(tokenizer.tokenize)
+# delete Stop Words
+
+print('Time to tokenize everything: {} mins'.format(round((time() - t) / 60, 2)))
+df_clean.head()
+
+
+
+# 2.2 : Use the pre-trained Google news Dataset
+#---------------------------------
+import gensim
+w2v_model = gensim.models.KeyedVectors.load_word2vec_format('model/GoogleNews-vectors-negative300.bin', binary=True)
+
+
+# 2.2 Bis Training the model yourself on your datas
+#---------------------------------
+#WORD2VEC()
+cores = multiprocessing.cpu_count() # Count the number of cores in a computer, important for a parameter of the model
+w2v_model = Word2Vec(min_count=20,
+                     window=2,
+                     size=300,
+                     sample=6e-5,
+                     alpha=0.03,
+                     min_alpha=0.0007,
+                     negative=20,
+                     workers=cores-1)
+
+#BUILD_VOCAB()
+t = time()
+w2v_model.build_vocab(df_clean["tokens"], progress_per=1000)
+print('Time to build vocab: {} mins'.format(round((time() - t) / 60, 2)))
+
+#TRAIN()
+w2v_model.train(df_clean["tokens"], total_examples=w2v_model.corpus_count, epochs=10000, report_delay=1)
+print('Time to train the model: {} mins'.format(round((time() - t) / 60, 2)))
+
+
+
+# 2.3 The results
+#---------------------------------
+
+#words similar to movie
+w2v_model.wv.most_similar(positive=["movie"])
+
+#Words similar to fiction
+w2v_model.wv.most_similar(positive=["fiction"])
+
+#words similar to good
+w2v_model.wv.most_similar(positive=["good"])
+
+
+
+# 2.5 A little bit of DATA Visualisation
+#---------------------------------
+
+# defining the chart
+output_notebook()
+plot_tfidf = bp.figure(plot_width=700, plot_height=600, title="A map of 10000 word vectors",
+    tools="pan,wheel_zoom,box_zoom,reset,hover,previewsave",
+    x_axis_type=None, y_axis_type=None, min_border=1)
+
+# getting a list of word vectors. limit to 10000. each is of 200 dimensions
+word_vectors = [w2v_model[w] for w in list(w2v_model.wv.vocab.keys())[:5000]]
+
+# dimensionality reduction. converting the vectors to 2d vectors
+tsne_model = TSNE(n_components=2, verbose=1, random_state=0)
+tsne_w2v = tsne_model.fit_transform(word_vectors)
+
+# putting everything in a dataframe
+tsne_df = pd.DataFrame(tsne_w2v, columns=['x', 'y'])
+tsne_df['words'] = list(w2v_model.wv.vocab.keys())[:5000]
+
+# plotting. the corresponding word appears when you hover on the data point.
+plot_tfidf.scatter(x='x', y='y', source=tsne_df)
+hover = plot_tfidf.select(dict(type=HoverTool))
+hover.tooltips={"word": "@words"}
+show(plot_tfidf)
+
+
+
+# 3.1 Train test split
+#---------------------------------
+#First defining the X (input), and the y (output)
+y = reviews['label'].values
+X = np.array(df_clean["tokens"])
+
+#And here is the train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
+
+
+# 3.2 Building the vectors
+#---------------------------------
+vectorizer = TfidfVectorizer(analyzer=lambda x: x, min_df=10)
+matrix = vectorizer.fit_transform([x for x in X_train])
+tfidf = dict(zip(vectorizer.get_feature_names(), vectorizer.idf_))
+print ('vocab size :', len(tfidf))
+
+def plot_word_cloud(terms):
+    text = terms.index
+    text = ' '.join(list(text))
+    # lower max_font_size
+    wordcloud = WordCloud(max_font_size=40).generate(text)
+    plt.figure(figsize=(25, 25))
+    plt.imshow(wordcloud, interpolation="bilinear")
+    plt.axis("off")
+    plt.show()
+
+tfidf2 = pd.DataFrame(columns=['tfidf']).from_dict(dict(tfidf), orient='index')
+tfidf2.columns = ['tfidf']
+plot_word_cloud(tfidf2.sort_values(by=['tfidf'], ascending=True).head(100))
+
+
+def buildWordVector(tokens, size):
+    vec = np.zeros(size).reshape((1, size))
+    count = 0.
+    for word in tokens:
+        try:
+            vec += w2v_model[word].reshape((1, size)) * tfidf[word]
+            count += 1.
+        except KeyError: # handling the case where the token is not
+                         # in the corpus. useful for testing.
+            continue
+    if count != 0:
+        vec /= count
+    return vec
+
+train_vecs_w2v = np.concatenate([buildWordVector(z, 300) for z in map(lambda x: x, X_train)])
+train_vecs_w2v = scale(train_vecs_w2v)
+
+test_vecs_w2v = np.concatenate([buildWordVector(z, 300) for z in map(lambda x: x, X_test)])
+test_vecs_w2v = scale(test_vecs_w2v)
+
+print ('shape for training set : ',train_vecs_w2v.shape,
+      '\nshape for test set : ', test_vecs_w2v.shape)
+
+
+
+4.1 Build the neural network
+#---------------------------------
+
+model = Sequential()
+
+model.add(Dense(128, activation='relu', input_dim=300))
+model.add(Dropout(0.7))
+model.add(Dense(1, activation='sigmoid'))
+model.compile(optimizer='adadelta',
+              loss='binary_crossentropy',
+              metrics=['accuracy'])
+model.summary()
+
+
+
+4.2 Train the neural network
+#---------------------------------
+
+history = model.fit(train_vecs_w2v, y_train, epochs=20, batch_size=50,
+                   validation_data=(test_vecs_w2v,y_test))
+loss, accuracy = model.evaluate(train_vecs_w2v, y_train, verbose=False)
+print("Training Accuracy: {:.4f}".format(accuracy))
+loss, accuracy = model.evaluate(test_vecs_w2v, y_test, verbose=False)
+print("Testing Accuracy:  {:.4f}".format(accuracy))
+
+
+def plot_history(history):
+    acc = history.history['acc']
+    val_acc = history.history['val_acc']
+    loss = history.history['loss']
+    val_loss = history.history['val_loss']
+    x = range(1, len(acc) + 1)
+
+    plt.figure(figsize=(12, 5))
+    plt.subplot(1, 2, 1)
+    plt.plot(x, acc, 'b', label='Training acc')
+    plt.plot(x, val_acc, 'r', label='Validation acc')
+    plt.title('Training and validation accuracy')
+    plt.legend()
+    plt.subplot(1, 2, 2)
+    plt.plot(x, loss, 'b', label='Training loss')
+    plt.plot(x, val_loss, 'r', label='Validation loss')
+    plt.title('Training and validation loss')
+    plt.legend()
+plot_history(history)
+
+
+
+all_words = [word for tokens in X for word in tokens]
+all_sentence_lengths = [len(tokens) for tokens in X]
+ALL_VOCAB = sorted(list(set(all_words)))
+print("%s words total, with a vocabulary size of %s" % (len(all_words), len(ALL_VOCAB)))
+print("Max sentence length is %s" % max(all_sentence_lengths))
+
+
+####################### CHANGE THE PARAMETERS HERE #####################################
+EMBEDDING_DIM = 300 # how big is each word vector
+MAX_VOCAB_SIZE = 18399# how many unique words to use (i.e num rows in embedding vector)
+MAX_SEQUENCE_LENGTH = 53 # max number of words in a comment to use
+
+
+
+from keras.preprocessing.text import Tokenizer
+from keras.preprocessing.sequence import pad_sequences
+tokenizer = Tokenizer(num_words=MAX_VOCAB_SIZE, lower=True, char_level=False)
+tokenizer.fit_on_texts(reviews["review"].tolist())
+training_sequences = tokenizer.texts_to_sequences(X_train.tolist())
+
+train_word_index = tokenizer.word_index
+print('Found %s unique tokens.' % len(train_word_index))
+
+train_embedding_weights = np.zeros((len(train_word_index)+1, EMBEDDING_DIM))
+for word,index in train_word_index.items():
+    train_embedding_weights[index,:] = w2v_model[word] if word in w2v_model else np.random.rand(EMBEDDING_DIM)
+print(train_embedding_weights.shape)
+
+
+######################## TRAIN AND TEST SET #################################
+train_cnn_data = pad_sequences(training_sequences, maxlen=MAX_SEQUENCE_LENGTH)
+test_sequences = tokenizer.texts_to_sequences(X_test.tolist())
+test_cnn_data = pad_sequences(test_sequences, maxlen=MAX_SEQUENCE_LENGTH)
+
+
+# 5.2 Define the CNN
+#---------------------------------
+
+from keras.layers import concatenate
+def ConvNet(embeddings, max_sequence_length, num_words, embedding_dim, trainable=False, extra_conv=True):
+
+    embedding_layer = Embedding(num_words,
+                            embedding_dim,
+                            weights=[embeddings],
+                            input_length=max_sequence_length,
+                            trainable=trainable)
+
+    sequence_input = Input(shape=(max_sequence_length,), dtype='int32')
+    embedded_sequences = embedding_layer(sequence_input)
+
+    # Yoon Kim model (https://arxiv.org/abs/1408.5882)
+    convs = []
+    filter_sizes = [3,4,5]
+
+    for filter_size in filter_sizes:
+        l_conv = Conv1D(filters=128, kernel_size=filter_size, activation='relu')(embedded_sequences)
+        l_pool = MaxPooling1D(pool_size=3)(l_conv)
+        convs.append(l_pool)
+
+    l_merge = concatenate([convs[0],convs[1],convs[2]],axis=1)
+
+    # add a 1D convnet with global maxpooling, instead of Yoon Kim model
+    conv = Conv1D(filters=128, kernel_size=3, activation='relu')(embedded_sequences)
+    pool = MaxPooling1D(pool_size=3)(conv)
+
+    if extra_conv==True:
+        x = Dropout(0.5)(l_merge)
+    else:
+        # Original Yoon Kim model
+        x = Dropout(0.5)(pool)
+    x = Flatten()(x)
+    x = Dense(128, activation='relu')(x)
+    # Finally, we feed the output into a Sigmoid layer.
+    # The reason why sigmoid is used is because we are trying to achieve a binary classification(1,0)
+    # for each of the 6 labels, and the sigmoid function will squash the output between the bounds of 0 and 1.
+    preds = Dense(1,activation='sigmoid')(x)
+
+    model = Model(sequence_input, preds)
+    model.compile(loss='binary_crossentropy',
+                  optimizer='adadelta',
+                  metrics=['acc'])
+    model.summary()
+    return model
+
+model = ConvNet(train_embedding_weights, MAX_SEQUENCE_LENGTH, len(train_word_index)+1, EMBEDDING_DIM, False)
+
+
+history = model.fit(x_train, y_tr, epochs=10, batch_size=50,
+                   validation_data=(x_test,y_test))
+loss, accuracy = model.evaluate(x_train, y_train, verbose=False)
+print("Training Accuracy: {:.4f}".format(accuracy))
+loss, accuracy = model.evaluate(x_test, y_test, verbose=False)
+print("Testing Accuracy:  {:.4f}".format(accuracy))
+
+
+
+############################################################################
+
+Implementing k-means Clustering with TensorFlow
+https://www.altoros.com/blog/using-k-means-clustering-in-tensorflow/
+
+############################################################################
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+import tensorflow as tf
+
+
+
+points_n = 200
+clusters_n = 3
+iteration_n = 100
+
+points = tf.constant(np.random.uniform(0, 10, (points_n, 2)))
+centroids = tf.Variable(tf.slice(tf.random_shuffle(points), [0, 0], [clusters_n, -1]))
+
+
+points_expanded = tf.expand_dims(points, 0)
+centroids_expanded = tf.expand_dims(centroids, 1)
+
+distances = tf.reduce_sum(tf.square(tf.subtract(points_expanded, centroids_expanded)), 2)
+assignments = tf.argmin(distances, 0)
+
+means = []
+for c in range(clusters_n):
+    means.append(tf.reduce_mean(
+      tf.gather(points,
+                tf.reshape(
+                  tf.where(
+                    tf.equal(assignments, c)
+                  ),[1,-1])
+               ),reduction_indices=[1]))
+
+new_centroids = tf.concat(means, 0)
+
+update_centroids = tf.assign(centroids, new_centroids)
+init = tf.global_variables_initializer()
+
+with tf.Session() as sess:
+  sess.run(init)
+  for step in range(iteration_n):
+    [_, centroid_values, points_values, assignment_values] = sess.run([update_centroids, centroids, points, assignments])
+
+  print("centroids", centroid_values)
+
+plt.scatter(points_values[:, 0], points_values[:, 1], c=assignment_values, s=50, alpha=0.5)
+plt.plot(centroid_values[:, 0], centroid_values[:, 1], 'kx', markersize=15)
+plt.show()
