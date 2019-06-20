@@ -317,17 +317,20 @@ https://heartbeat.fritz.ai/25-open-source-machine-learning-repos-to-inspire-your
 
 
 
-
-
-
-
-
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#### Google ML crash-course
+#### Google ML / Stanford / crash-course
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-https://www.youtube.com/watch?v=cKxRvEZd3Mw&list=PLOU2XLYxmsIIuiBfYad6rFYQU_jL2ryal
-https://developers.google.com/machine-learning/crash-course/prereqs-and-prework
-https://pytorch.org/tutorials/
-https://www.tensorflow.org/tutorials/
-https://www.tensorflow.org/tutorials/keras/basic_classification
-https://www.tensorflow.org/tutorials/images/hub_with_keras
+
+* https://www.youtube.com/watch?v=cKxRvEZd3Mw&list=PLOU2XLYxmsIIuiBfYad6rFYQU_jL2ryal
+* https://developers.google.com/machine-learning/crash-course/prereqs-and-prework
+* https://pytorch.org/tutorials/
+* https://www.tensorflow.org/tutorials/
+* https://www.tensorflow.org/tutorials/keras/basic_classification
+* https://www.tensorflow.org/tutorials/images/hub_with_keras
+* https://stanford.edu/~shervine/teaching/cs-230/cheatsheet-convolutional-neural-networks
+* https://stanford.edu/~shervine/teaching/cs-230/cheatsheet-recurrent-neural-networks
+* https://stanford.edu/~shervine/teaching/cs-230/cheatsheet-deep-learning-tips-and-tricks
+* https://www.coursera.org/lecture/machine-learning/cost-function-rkTp3
+* https://web.stanford.edu/class/cs20si/
+* https://www.youtube.com/watch?v=UzxYlbK2c7E&list=PLA89DCFA6ADACE599
+* https://www.youtube.com/watch?v=PySo_6S4ZAg
