@@ -246,3 +246,23 @@ if(count($a)) {
     $a = array_filter($a);
     echo $average = array_sum($a)/count($a);
 }
+
+
+############################################################
+#
+#   How to output in CLI during execution of PHP Unit tests?
+#
+#   https://stackoverflow.com/questions/7493102/how-to-output-in-cli-during-execution-of-php-unit-tests
+#   https://hotexamples.com/examples/codeception.util/Debug/setOutput/php-debug-setoutput-method-examples.html
+#   https://hotexamples.com/examples/codeception.util/Debug/-/php-debug-class-examples.html
+#   https://phpunit.de/manual/6.5/en/appendixes.assertions.html
+#
+############################################################
+
+fwrite(STDOUT, __METHOD__ . "\n");
+fwrite(STDERR, "LOG: Message 2!\n");
+file_put_contents('php://stderr', "LOG: Message 3!\n", FILE_APPEND);
+
+# codeception with debug active
+use \Codeception\Util\Debug as UnitDebug;
+UnitDebug::debug("~~~test~~");
