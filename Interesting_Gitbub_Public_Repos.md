@@ -336,3 +336,4 @@ https://heartbeat.fritz.ai/25-open-source-machine-learning-repos-to-inspire-your
 * https://web.stanford.edu/class/cs20si/
 * https://www.youtube.com/watch?v=UzxYlbK2c7E&list=PLA89DCFA6ADACE599
 * https://www.youtube.com/watch?v=PySo_6S4ZAg
+* https://www.youtube.com/watch?v=6ZVf1jnEKGI&list=PLZoTAELRMXVMdJ5sqbCK2LiM0HhQVWNzm
