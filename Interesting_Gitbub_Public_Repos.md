@@ -337,3 +337,9 @@ https://heartbeat.fritz.ai/25-open-source-machine-learning-repos-to-inspire-your
 * https://www.youtube.com/watch?v=UzxYlbK2c7E&list=PLA89DCFA6ADACE599
 * https://www.youtube.com/watch?v=PySo_6S4ZAg
 * https://www.youtube.com/watch?v=6ZVf1jnEKGI&list=PLZoTAELRMXVMdJ5sqbCK2LiM0HhQVWNzm
+* https://ai.google/education/
+* https://www.nvidia.com/en-au/deep-learning-ai/education/
+* https://www.coursera.org/courses?query=machine%20learning%20andrew%20ng
+* https://www.coursera.org/collections/tensorflow-deeplearning-ai
+* https://www.edx.org/micromasters/columbiax-artificial-intelligence
+* https://eu.udacity.com/course/intro-to-machine-learning--ud120
