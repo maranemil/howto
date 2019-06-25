@@ -266,3 +266,25 @@ file_put_contents('php://stderr', "LOG: Message 3!\n", FILE_APPEND);
 # codeception with debug active
 use \Codeception\Util\Debug as UnitDebug;
 UnitDebug::debug("~~~test~~");
+
+
+
+
+
+
+#############################
+# Asynchronous soap calls
+#############################
+
+https://tideways.com/profiler/blog/using-http-client-timeouts-in-php
+https://medium.com/@mouneyrac/php-soap-does-asynchronous-calls-sometimes-d09fd991f7a3
+
+$options = array(“features” => SOAP_WAIT_ONE_WAY_CALLS);
+$soapclient = new SoapClient($wsdl, $options);
+
+ini_set('default_socket_timeout', 1);
+$client = new SOAPClient($wsdl, array('connection_timeout' => 1));
+
+// quick and dirty
+sleep(15);
+

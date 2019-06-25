@@ -71,6 +71,11 @@ sudo apt-get install nvidia-390 # ubuntu 18.10
 sudo apt-get install nvidia-384 # ubuntu 18.04
 
 
+
+
+# install multi screen software
+sudo apt install tmux -y
+# https://extensions.gnome.org/extension/28/gtile/
 exit
 
 
