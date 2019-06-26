@@ -343,3 +343,6 @@ https://heartbeat.fritz.ai/25-open-source-machine-learning-repos-to-inspire-your
 * https://www.coursera.org/collections/tensorflow-deeplearning-ai
 * https://www.edx.org/micromasters/columbiax-artificial-intelligence
 * https://eu.udacity.com/course/intro-to-machine-learning--ud120
+* https://www.coursera.org/specializations/tensorflow-in-practice
+* https://see.stanford.edu/Course/CS229
+* https://developers.google.com/machine-learning/crash-course/
