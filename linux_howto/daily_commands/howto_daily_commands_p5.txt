@@ -206,3 +206,30 @@ unset HISTFILE
 export HISTSIZE=50000
 export HISTFILESIZE=50000
 export HISTTIMEFORMAT="%d/%m/%y %T "
+
+
+
+
+###############################################
+#
+#	rm -rf "device or resource busy”
+#	rm: cannot remove `html': Device or resource busy
+#	https://unix.stackexchange.com/questions/11238/how-to-get-over-device-or-resource-busy
+#	https://www.linuxquestions.org/questions/linux-general-1/how-to-remove-a-busy-file-519420/
+#	https://github.com/mpartel/bindfs/issues/64
+#
+###############################################
+
+lsof +D /path
+kill(1)
+
+lsof +D /var/www/html
+/sbin/fuser -m /var/www/html
+
+lsof +D ./ | awk '{print $2}' | tail -n +2 | xargs kill -9
+
+ps -ef | grep name-of-busy-dir
+sudo kill -15 pid-here
+
+umount -l
+fuser -vm /home/test13/files
