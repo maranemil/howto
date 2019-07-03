@@ -1,0 +1,771 @@
+-------------------------
+
+model = Sequential()
+model.add(Conv2D(4, kernel_size=(3,3), padding='same', activation='relu', input_shape = (80,80,1)))
+model.add(MaxPool2D(pool_size=(2, 2)))
+model.add(Conv2D(8, kernel_size=(3,3), padding='same', activation='relu'))
+model.add(MaxPool2D(pool_size=(2, 2)))
+model.add(Conv2D(16, kernel_size=(3,3), padding='same', activation='relu'))
+model.add(MaxPool2D(pool_size=(2, 2)))
+model.add(Flatten())
+model.add(Dense(2, activation='softmax'))
+
+model.fit(x, y, sample_weight=R, epochs=1)
+model.compile(optimizer='rmsprop',loss='sparse_categorical_crossentropy')
+
+-------------------------
+
+Cloning voice
+https://towardsdatascience.com/you-can-now-speak-using-someone-elses-voice-with-deep-learning-8be24368fa2b
+
+
+git clone https://github.com/CorentinJ/Real-Time-Voice-Cloning.git
+pip3 install -r requirements.txt
+python demo_toolbox.py -d <datasets_root>
+
+
+Automatic Beatles lyrics generation.
+https://github.com/EugenHotaj/beatles
+
+An implementation of a deep learning recommendation model (DLRM)
+https://github.com/facebookresearch/dlrm
+
+-----
+
+Building a Recommender System, Part 2
+https://www.kdnuggets.com/2019/07/building-recommender-system-part-2.html
+
+import pandas as pd
+import numpy as np
+
+np.random.seed(42)
+
+ratings = pd.read_csv(RATING_DATA_FILE,
+                    sep='::',
+                    engine='python',
+                    encoding='latin-1',
+                    names=['userid', 'movieid', 'rating', 'timestamp'])
+
+movies = pd.read_csv(os.path.join(MOVIELENS_DIR, MOVIE_DATA_FILE),
+                    sep='::',
+                    engine='python',
+                    encoding='latin-1',
+                    names=['movieid', 'title', 'genre']).set_index("movieid")
+
+
+rating_counts = ratings.groupby("movieid")["rating"].count().sort_values(ascending=False)
+
+# only the 500 most popular movies
+pop_ratings = ratings[ratings["movieid"].isin((rating_counts).index[0:500])]
+pop_ratings = pop_ratings.set_index(["movieid", "userid"])
+
+rating_counts = ratings.groupby("movieid")["rating"].count().sort_values(ascending=False)
+
+# only the 500 most popular movies
+pop_ratings = ratings[ratings["movieid"].isin((rating_counts).index[0:500])]
+pop_ratings = pop_ratings.set_index(["movieid", "userid"])
+
+
+import tensorflow as tf
+
+from keras.layers import Input, Dense, Lambda
+from keras.models import Model, load_model as keras_load_model
+from keras import losses
+from keras.callbacks import EarlyStopping
+
+ENCODING_DIM = 25
+ITEM_COUNT = 500
+
+import tensorflow as tf
+
+from keras.layers import Input, Dense, Lambda
+from keras.models import Model, load_model as keras_load_model
+from keras import losses
+from keras.callbacks import EarlyStopping
+
+ENCODING_DIM = 25
+ITEM_COUNT = 500
+prefs[prefs == 0]
+
+def lambda_mse(frac=0.8):
+    """
+    Specialized loss function for recommender model.
+
+    :param frac: Proportion of weight to give to novel ratings.
+    :return: A loss function for use in a Lambda layer.
+    """
+
+def lossfunc(xarray):
+x_in, y_true, y_pred = xarray
+zeros = tf.zeros_like(y_true)
+
+novel_mask = tf.not_equal(x_in, y_true)
+known_mask = tf.not_equal(x_in, zeros)
+
+y_true_1 = tf.boolean_mask(y_true, novel_mask)
+y_pred_1 = tf.boolean_mask(y_pred, novel_mask)
+
+y_true_2 = tf.boolean_mask(y_true, known_mask)
+y_pred_2 = tf.boolean_mask(y_pred, known_mask)
+
+unknown_loss = losses.mean_squared_error(y_true_1, y_pred_1)
+known_loss = losses.mean_squared_error(y_true_2, y_pred_2)
+
+# remove nans
+unknown_loss = tf.where(tf.is_nan(unknown_loss), 0.0, unknown_loss)
+
+return frac*unknown_loss + (1.0 - frac)*known_loss
+return lossfunc
+
+
+def final_loss(y_true, y_pred):
+    """
+    Dummy loss function for wrapper model.
+    :param y_true: true value (not used, but required by Keras)
+    :param y_pred: predicted value
+    :return: y_pred
+    """
+    return y_pred
+
+original_inputs = recommender.input
+y_true_inputs = Input(shape=(ITEM_COUNT, ))
+original_outputs = recommender.output
+# give 80% of the weight to guessing the missings, 20% to reproducing the knowns
+loss = Lambda(lambda_mse(0.8))([original_inputs, y_true_inputs, original_outputs])
+
+wrapper_model = Model(inputs=[original_inputs, y_true_inputs], outputs=[loss])
+wrapper_model.compile(optimizer='adadelta', loss=final_loss)
+
+
+def generate(pref_matrix, batch_size=64, mask_fraction=0.2):
+    """
+    Generate training triplets from this dataset.
+
+    :param batch_size: Size of each training data batch.
+    :param mask_fraction: Fraction of ratings in training data input to mask. 0.2 = hide 20% of input ratings.
+    :param repeat: Steps between shuffles.
+    :return: A generator that returns tuples of the form ([X, y], zeros) where X, y, and zeros all have
+             shape[0] = batch_size. X, y are training inputs for the recommender.
+    """
+
+    def select_and_mask(frac):
+        def applier(row):
+            row = row.copy()
+            idx = np.where(row != 0)[0]
+            if len(idx) > 0:
+                masked = np.random.choice(idx, size=(int)(frac*len(idx)), replace=False)
+                row[masked] = 0
+            return row
+        return applier
+
+    indices = np.arange(pref_matrix.shape[0])
+    batches_per_epoch = int(np.floor(len(indices)/batch_size))
+    while True:
+        np.random.shuffle(indices)
+
+        for batch in range(0, batches_per_epoch):
+            idx = indices[batch*batch_size:(batch+1)*batch_size]
+
+            y = np.array(pref_matrix[idx,:])
+            X = np.apply_along_axis(select_and_mask(frac=mask_fraction), axis=1, arr=y)
+
+            yield [X, y], np.zeros(batch_size)
+
+
+[X, y], _ = next(generate(pref_matrix.fillna(0).values))
+len(X[X != 0])/len(y[y != 0])
+# returns 0.8040994014148377
+
+def fit(wrapper_model, pref_matrix, batch_size=64, mask_fraction=0.2, epochs=1, verbose=1, patience=0):
+    stopper = EarlyStopping(monitor="loss", min_delta=0.00001, patience=patience, verbose=verbose)
+    batches_per_epoch = int(np.floor(pref_matrix.shape[0]/batch_size))
+
+    generator = generate(pref_matrix, batch_size, mask_fraction)
+
+    history = wrapper_model.fit_generator(
+        generator,
+        steps_per_epoch=batches_per_epoch,
+        epochs=epochs,
+        callbacks = [stopper] if patience > 0 else []
+    )
+
+    return history
+
+
+# stop after 3 epochs with no improvement
+fit(wrapper_model, pref_matrix.fillna(0).values, batch_size=125, epochs=100, patience=3)
+# Loss of 0.6321
+
+
+def predict(ratings, recommender, mean_0, mean_i, movies):
+    # add a dummy user that's seen all the movies so when we generate
+    # the ratings matrix, it has the appropriate columns
+    dummy_user = movies.reset_index()[["movieid"]].copy()
+    dummy_user["userid"] = -99999
+    dummy_user["rating"] = 0
+    dummy_user = dummy_user.set_index(["movieid", "userid"])
+
+    ratings = ratings["rating"]
+
+    ratings = ratings - mean_0
+    ratings = ratings - mean_i
+    mean_u = ratings.groupby("userid").mean()
+    ratings = ratings - mean_u
+
+    ratings = ratings.append(dummy_user["rating"])
+
+    pref_mat = ratings.reset_index()[["userid", "movieid", "rating"]].pivot(index="userid", columns="movieid", values="rating")
+    X = pref_mat.fillna(0).values
+    y = recommender.predict(X)
+
+    output = pd.DataFrame(y, index=pref_mat.index, columns=pref_mat.columns)
+    output = output.iloc[1:] # drop the bad user
+
+    output = output.add(mean_u, axis=0)
+    output = output.add(mean_i, axis=1)
+    output = output.add(mean_0)
+
+    return output
+
+
+
+
+sample_ratings = pd.DataFrame([
+    {"userid": 1, "movieid": 2858, "rating": 1}, # american beauty
+    {"userid": 1, "movieid": 260, "rating": 5},  # star wars
+    {"userid": 1, "movieid": 480, "rating": 5},  # jurassic park
+    {"userid": 1, "movieid": 593, "rating": 2},  # silence of the lambs
+    {"userid": 1, "movieid": 2396, "rating": 2}, # shakespeare in love
+    {"userid": 1, "movieid": 1197, "rating": 5}  # princess bride
+]).set_index(["movieid", "userid"])
+
+# predict and print the top 10 ratings for this user
+y = predict(sample_ratings, recommender, mean_0, mean_i, movies.loc[(rating_counts).index[0:500]]).transpose()
+preds = y.sort_values(by=1, ascending=False).head(10)
+
+preds["title"] = movies.loc[preds.index]["title"]
+preds
+
+
+sample_ratings2 = pd.DataFrame([
+    {"userid": 1, "movieid": 2858, "rating": 5}, # american beauty
+    {"userid": 1, "movieid": 260, "rating": 1},  # star wars
+    {"userid": 1, "movieid": 480, "rating": 1},  # jurassic park
+    {"userid": 1, "movieid": 593, "rating": 1},  # silence of the lambs
+    {"userid": 1, "movieid": 2396, "rating": 5}, # shakespeare in love
+    {"userid": 1, "movieid": 1197, "rating": 5}  # princess bride
+]).set_index(["movieid", "userid"])
+
+y = predict(sample_ratings2, recommender, mean_0, mean_i, movies.loc[(rating_counts).index[0:500]]).transpose()
+preds = y.sort_values(by=1, ascending=False).head(10)
+
+preds["title"] = movies.loc[preds.index]["title"]
+preds
+
+
+
+starwars = decoder.get_weights()[0][:,33]
+esb = decoder.get_weights()[0][:,144]
+americanbeauty = decoder.get_weights()[0][:,401]
+
+np.sqrt(((starwars - esb)**2).sum())
+# 0.209578
+
+np.sqrt(((starwars - americanbeauty)**2).sum())
+# 0.613659
+
+
+
+---------------------------------------------------
+https://www.marktechpost.com/2019/06/24/deep-learning-with-keras-part-4-classification/
+
+
+from keras.datasets import mnist
+(X_train, y_train), (X_test, y_test) = mnist.load_data()
+X_train_final = X_train.reshape(-1, 28*28) / 255.
+X_test_final = X_test.reshape(-1, 28*28) / 255.
+from keras.utils import to_categorical
+y_train_final = to_categorical(y_train)
+y_test_final = to_categorical(y_test)
+
+# Building the Network
+
+from keras import models, layers
+model = models.Sequential()
+model.add(layers.Dense(512, activation='relu', input_shape=(28*28, )))
+model.add(layers.Dense(10, activation='softmax'))
+model.compile('rmsprop', 'categorical_crossentropy', metrics=['acc'])
+
+Training the Model
+history = model.fit(X_train_final, y_train_final, epochs=10, batch_size=128, validation_split=0.2)
+model.evaluate(X_test_final, y_test_final)
+
+---------------------------------------------------
+
+Machine Learning with sklearn and pytorch
+https://www.kaggle.com/parthshxh/machine-learning-with-sklearn-and-pytorch
+
+
+
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+import torch
+from torch import nn
+import torch.nn.functional as F
+from torch import optim
+import sklearn
+import os
+print(os.listdir("../input"))
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import matplotlib.pylab as pylab
+import seaborn as sns
+
+%matplotlib inline
+mpl.style.use('ggplot')
+sns.set_style('white')
+pylab.rcParams['figure.figsize'] =12,8
+
+path =  "../input/"
+
+df_train = pd.read_csv(f'{path}train.csv', index_col = 'PassengerId')
+df_test = pd.read_csv(f'{path}test.csv', index_col = 'PassengerId')
+
+target = df_train['Survived']
+target.columns = ['Survived']
+df_train = df_train.drop(labels = 'Survived', axis = 1)
+df_train['Training_set']= True
+df_test['Training_set'] = False
+
+df_full = pd.concat([df_train,df_test])
+df_full.info()
+df_full.isnull().sum()[df_full.isnull().sum()>0]
+df_full = df_full.drop(labels = ['Ticket','Name', 'Cabin'], axis = 1)
+df_full
+df_full.Age = df_full.Age.fillna(df_full.Age.mean())
+df_full.Fare = df_full.Fare.fillna(df_full.Fare.mean())
+df_full.Embarked = df_full.fillna(df_full.Embarked.mode()[0])
+
+df_full = df_full.interpolate()
+df_full = pd.get_dummies(df_full)
+df_full
+df_train = df_full[df_full['Training_set']==True]
+df_test = df_full[df_full['Training_set']==False]
+
+df_train.drop(labels = 'Training_set', inplace = True, axis = 1)
+df_test.drop(labels ='Training_set', inplace = True, axis = 1)
+
+
+torch.manual_seed(2) #setting a seed so that the results are reproducible
+msk = np.random.randn(len(df_train)) < 0.8
+training_features = torch.tensor(df_train[msk].values.astype('float32'))
+dev_features = torch.tensor(df_train[~msk].values.astype('float32'))
+training_labels = torch.tensor(target[msk].values)
+dev_labels = torch.tensor(target[~msk].values)
+test_features = torch.tensor(df_test.values.astype('float32'))
+
+
+
+model = nn.Sequential(nn.Linear(10,5),nn.ReLU(),nn.Dropout(p=0.2),nn.Linear(5,5),nn.ReLU(), nn.Dropout(p=0.1),nn.Linear(5,2),nn.LogSoftmax(dim =1))
+criterion = nn.NLLLoss()
+optimizer = optim.Adam(model.parameters(), lr = 0.003)
+
+
+
+def evaluate(model,test_features,test_labels=None,print_acc_and_cost = False, testing = False):
+    with torch.no_grad():
+        test_loss =0
+        log_preds = model(test_features)
+        preds=torch.exp(log_preds)
+        preds, survived = torch.max(preds, 1)
+        if(testing):
+            loss = criterion(log_preds,test_labels)
+            equals = survived==test_labels.view(*survived.shape)
+            accuracy = torch.mean(equals.type(torch.FloatTensor))
+            test_loss += loss.item()
+            if(print_acc_and_cost):
+                print(f'Testing accuracy : {accuracy*100:.3f}%')
+                print(f'Testing Loss : {test_loss:.3f}')
+            return test_loss
+        else:
+            return survived
+        #print(survived)
+
+
+epochs = 1000
+steps = 0
+training_losses,testing_losses = [],[]
+for e in range(epochs):
+    running_loss = 0
+    optimizer.zero_grad()
+
+    log_outputs = model(training_features)
+    loss = criterion(log_outputs,training_labels)
+
+    loss.backward()
+    outputs = torch.exp(log_outputs)
+
+    optimizer.step()
+    steps += 1
+    running_loss += loss.item()
+    training_losses.append(running_loss)
+    if(steps%100==0):
+        with torch.no_grad():
+            model.eval()
+            print(f'Epoch : {e+1}/{epochs}...')
+            testing_losses.append(evaluate(model,dev_features, test_labels = dev_labels, print_acc_and_cost=True, testing = True))
+        print(f'Training loss {running_loss:.3f}\n')
+    else:
+        with torch.no_grad():
+            model.eval()
+            testing_losses.append(evaluate(model,dev_features, test_labels = dev_labels, print_acc_and_cost=False, testing = True))
+    model.train()
+
+plt.plot(training_losses,label='Training loss')
+plt.plot(testing_losses, label='Testing loss')
+plt.xlabel("Epochs")
+plt.ylabel("Loss")
+plt.title("3 Layer Neural Network\n")
+plt.legend(frameon = False)
+
+
+
+
+survived = evaluate(model,test_features)
+my_submission = pd.DataFrame({'PassengerId':df_test.index,'Survived':survived})
+my_submission.to_csv('./submission.csv', index = False)
+!ls
+
+
+np.random.seed(0)
+from sklearn import model_selection
+X_train, X_val, y_train, y_val = model_selection.train_test_split(df_train,target, test_size = 0.2, train_size = 0.8, random_state = 0 )
+#print(X_train.shape,y_train.shape,X_val.shape, y_val.shape)
+
+
+
+
+from sklearn import tree
+from sklearn import ensemble
+from sklearn import linear_model
+from sklearn import gaussian_process
+from sklearn import naive_bayes
+from sklearn import neighbors
+from sklearn import svm
+from sklearn import discriminant_analysis
+from xgboost.sklearn import XGBClassifier
+
+
+
+MLA = [
+    ensemble.AdaBoostClassifier(),
+    ensemble.BaggingClassifier(),
+    ensemble.GradientBoostingClassifier(),
+    ensemble.ExtraTreesClassifier(),
+    ensemble.RandomForestClassifier(n_estimators = 100, random_state = 0),
+
+    gaussian_process.GaussianProcessClassifier(),
+
+    naive_bayes.BernoulliNB(),
+    naive_bayes.GaussianNB(),
+
+    neighbors.KNeighborsClassifier(),
+
+    svm.SVC(probability=True),
+    svm.NuSVC(probability = True),
+    svm.LinearSVC(),
+
+    tree.DecisionTreeClassifier(),
+    tree.ExtraTreeClassifier(),
+
+    discriminant_analysis.LinearDiscriminantAnalysis(),
+    discriminant_analysis.QuadraticDiscriminantAnalysis(),
+
+    XGBClassifier(),
+
+    linear_model.LogisticRegressionCV(),
+    linear_model.PassiveAggressiveClassifier(),
+    linear_model.RidgeClassifierCV(),
+    linear_model.SGDClassifier(),
+    linear_model.Perceptron()
+]
+
+MLA_columns = ['MLA_names', 'MLA_parameters', 'MLA_Train_Accuracy_Mean'
+               ,'MLA_Test_Accuracy_Mean', 'MLA_Test_Accuracy_3*STD',
+               'MLA_Time']
+MLA_compare = pd.DataFrame(columns = MLA_columns)
+
+import warnings
+warnings.filterwarnings('ignore')
+MLA_Predict = y_val
+row_index = 0
+for alg in MLA:
+    MLA_name = alg.__class__.__name__
+    MLA_compare.loc[row_index, 'MLA_names'] = MLA_name
+    MLA_compare.loc[row_index, 'MLA_parameters'] = str(alg.get_params())
+    cv_results = model_selection.cross_validate(alg, X_train, y_train, cv=3, return_train_score = True)
+    MLA_compare.loc[row_index, 'MLA_Time'] = cv_results['fit_time'].mean()
+    MLA_compare.loc[row_index, 'MLA_Train_Accuracy_Mean'] = cv_results["train_score"].mean()
+    MLA_compare.loc[row_index, 'MLA_Test_Accuracy_Mean'] = cv_results['test_score'].mean()
+    MLA_compare.loc[row_index, 'MLA_Test_Accuracy_3*STD'] = cv_results['test_score'].std()*3
+
+    alg.fit(X_train, y_train)
+    MLA_Predict[MLA_name] = alg.predict(X_val)
+    row_index += 1
+    print(".", end="")
+MLA_compare.sort_values(by = 'MLA_Test_Accuracy_Mean', ascending = False, inplace = True)
+MLA_compare
+
+
+sns.barplot(x = 'MLA_Test_Accuracy_Mean', y = 'MLA_names', data = MLA_compare, color = 'm')
+
+plt.title('Machine Learning Algorithms Accuracy Score \n')
+plt.ylabel('Algortithm')
+plt.xlabel('Accuracy Test Score (%)')
+
+
+
+np.random.seed(0)
+from sklearn import model_selection
+X_train, X_val, y_train, y_val = model_selection.train_test_split(df_train,target, test_size = 0.2, train_size = 0.8, random_state = 0 )
+#print(X_train.shape,y_train.shape,X_val.shape, y_val.shape)
+
+np.random.seed(0)
+from sklearn import model_selection
+X_train, X_val, y_train, y_val = model_selection.train_test_split(df_train,target, test_size = 0.2, train_size = 0.8, random_state = 0 )
+#print(X_train.shape,y_train.shape,X_val.shape, y_val.shape)
+
+train_score = np.mean(model_selection.cross_val_score(alg, X_train, y_train, cv=5))
+
+alg.fit(X_train, y_train)
+survived = alg.predict(X_val)
+
+print(train_score)
+#print(test_score)
+#print(survived.shape,y_val.shape,X_val.shape)
+equals = survived == y_val.values.reshape(*survived.shape)
+print(f"Accuracy = {np.mean(equals.astype(int))*100:.3f}%")
+
+
+survived_test = alg.predict(df_test)
+submission = pd.DataFrame({'PassengerId':df_test.index,'Survived':survived_test})
+#submission.to_csv('./submission.csv',index=False)
+!ls
+
+
+--------------------------------------------------------
+Automated Intent Classification Using Deep Learning
+https://www.searchenginejournal.com/automated-intent-classification-using-deep-learning/311309/#close
+
+!pip install tensorflow-gpu==1.13.1
+!pip install ludwig
+!gsutil cp gs://dataset-uploader/bbc/bbc-text.csv .
+
+
+!ludwig experiment --data_csv bbc-text.csv --model_definition_file model_definition.yaml
+
+#https://github.com/uber/ludwig/issues/267#issuecomment-497304317
+from ludwig import visualize
+visualize.learning_curves(['/content/results/experiment_run_0/training_statistics.json'],None)
+
+
+gtrends_topics=["DAZN's Jamie Rice on UCL Final, Joshua's First US Fight and Original Global Content", "What date is London Pride 2019, what events are ha…ning in the capital and what's this year's route?", "2019 Memorial Tournament leaderboard: Live coverage, Tiger Woods score, golf scores on Saturday", "Live | AFGvAUS: Warner, Finch start 208-run chase against Afghanistan", "Exclusive: Martin Jol reveals Daniel Levy's amazing reaction beside him in stand to Ajax victory", "Ties with China beneficial, its envoy tells new El Salvador leader", "Knockout! Watch Frank Camacho finish Nick Hein on the feet at UFC Stockholm", "Police Ramp Up Security For Rock N' Roll Marathon", "Here's what Princess Diana Hated about Prince Charles", "Aleksandar Rakic vs Jimi Manuwa live streaming: Watch UFC online on ESPN+", "Lyndhurst, New Jersey Communities Rally To Support Kick-Off Of Pride Month", "Van Dijk and Wanyama to do battle in Champions League final", "The Latest: Djokovic into 4th round without dropping a set", "Tottenham Hotspur could spend big to land Leicester City star this summer - report", "LOOK: Put pride in your stride with Adidas' LGBTQ+ Pride Month release", "Queen Elizabeth Reportedly Warned Prince William Before Marrying Kate: 'Enough Was Enough'", "BTS live stream Wembley: How to watch tonight's landmark concert"]
+test_df = pd.DataFrame(gtrends_topics, columns=["text"])
+test_df.to_csv("test_data.csv")
+
+
+
+from ludwig.api import LudwigModel
+model = LudwigModel.load("results/experiment_run_0/model")
+predictions = model.predict(test_df)
+test_df.join(predictions)[["text", "category_predictions"]]
+
+
+
+
+#https://colab.research.google.com/notebooks/io.ipynb
+from google.colab import files
+uploaded = files.upload()
+for fn in uploaded.keys():
+  print('User uploaded file "{name}" with length {length} bytes'.format(
+      name=fn, length=len(uploaded[fn])))
+df = pd.read_csv("Question_Classification_Dataset.csv", index_col=0)
+
+
+
+
+!ludwig experiment --data_csv Question_Classification_Dataset.csv   --model_definition_file model_definition.yaml
+
+
+model = LudwigModel.load("results/experiment_run_3/model")
+test_df = pd.read_csv("Question Report_Page 1_Table.csv")
+#we rename Query to Questions to match what the model expects
+predictions = model.predict(test_df.rename(columns={'Query': 'Questions'} ))
+test_df.join(predictions)[["Query", "Category0_predictions"]]
+
+test_df.join(predictions)[["Query", "Category0_predictions", "Clicks", "Impressions"]].groupby("Category0_predictions").sum()
+
+
+
+
+
+
+
+#python -m spacy download en_core_web_lg
+import spacy
+nlp = spacy.load('en_core_web_lg')
+tokens = nlp(u'hotel resort car bike')
+#comparing 4 words
+for token1 in tokens:
+    for token2 in tokens:
+        print(token1.text, token2.text, token1.similarity(token2))
+
+
+
+
+!unzip atis-dataset-clean.zip
+#From https://www.kaggle.com/siddhadev/atis-dataset-clean/home
+#unzip atis-dataset-clean.zip
+df = pd.read_csv("atis.train.csv", index_col=0)
+df.groupby("intent").count()
+
+
+!ludwig experiment   --data_csv atis.train.csv   --model_definition_file model_definition.yaml
+
+test_df = pd.read_csv("atis.test.csv", index_col=0)
+model = LudwigModel.load("results/experiment_run_6/model")
+predictions = model.predict(test_df)
+test_df.reset_index().join(predictions)[["tokens", "intent_predictions", "slots_predictions"]]
+
+
+
+-------------------------------------------------------------------
+Summarizing popular Text-to-Image Synthesis methods with Python
+https://towardsdatascience.com/summarizing-popular-text-to-image-synthesis-methods-with-python-dc12d0075286
+
+
+
+Library and Usage
+git clone https://github.com/zsdonghao/text-to-image.git [TensorFlow 1.0+, TensorLayer 1.4+, NLTK : for tokenizer]
+python downloads.py [download Oxford-102 flower dataset and caption files(run this first)]
+python data_loader.py [load data for further processing]
+python train_txt2im.py [train a text to image model]
+python utils.py  [helper functions]
+python models.py [models]
+
+
+
+
+
+Library and Usage
+git clone https://github.com/akanimax/BMSG-GAN.git [PyTorch]
+python train.py --depth=7 \
+                  --latent_size=512 \
+                  --images_dir=<path to images> \
+                  --sample_dir=samples/exp_1 \
+                  --model_dir=models/exp_1
+
+
+
+
+
+Library and Usage
+git clone https://github.com/akanimax/T2F.git
+pip install -r requirements.txt
+mkdir training_runs
+mkdir training_runs/generated_samples training_runs/losses training_runs/saved_models
+train_network.py --config=configs/11.comf
+
+
+
+Library and Usage
+git clone git@github.com:komiya-m/MirrorGAN.git [python 3.6.8, keras 2.2.4, tensor-flow 1.12.0]
+Dependencies : easydict, pandas, tqdm
+python main_clevr.py
+cd MirrorGAN
+python pretrain_STREAM.py
+python train.py
+
+
+
+
+Library and Usage
+git clone https://github.com/yitong91/StoryGAN.git   [Python 2.7, PyTorch, cv2]
+python main_clevr.py
+
+
+
+
+Library and Usage
+git clone https://github.com/chen0040/keras-text-to-image.git
+import os
+import sys
+import numpy as np
+from random import shuffle
+
+
+def train_DCGan_text_image():
+    seed = 42
+    np.random.seed(seed)
+    current_dir = os.path.dirname(__file__)
+    # add the keras_text_to_image module to the system path
+    sys.path.append(os.path.join(current_dir, '..'))
+    current_dir = current_dir if current_dir is not '' else '.'
+    img_dir_path = current_dir + '/data/pokemon/img'
+    txt_dir_path = current_dir + '/data/pokemon/txt'
+    model_dir_path = current_dir + '/models'
+    img_width = 32
+    img_height = 32
+    img_channels = 3
+    from keras_text_to_image.library.dcgan import DCGan
+    from keras_text_to_image.library.utility.img_cap_loader import load_normalized_img_and_its_text
+    image_label_pairs = load_normalized_img_and_its_text(img_dir_path, txt_dir_path, img_width=img_width, img_height=img_height)
+
+    shuffle(image_label_pairs)
+    gan = DCGan()
+    gan.img_width = img_width
+    gan.img_height = img_height
+    gan.img_channels = img_channels
+    gan.random_input_dim = 200
+    gan.glove_source_dir_path = './very_large_data'
+    batch_size = 16
+    epochs = 1000
+    gan.fit(model_dir_path=model_dir_path, image_label_pairs=image_label_pairs,
+            snapshot_dir_path=current_dir + '/data/snapshots',
+            snapshot_interval=100,
+            batch_size=batch_size,
+            epochs=epochs)
+def load_generate_image_DCGaN():
+    seed = 42
+    np.random.seed(seed)
+    current_dir = os.path.dirname(__file__)
+    sys.path.append(os.path.join(current_dir, '..'))
+    current_dir = current_dir if current_dir is not '' else '.'
+    img_dir_path = current_dir + '/data/pokemon/img'
+    txt_dir_path = current_dir + '/data/pokemon/txt'
+    model_dir_path = current_dir + '/models'
+    img_width = 32
+    img_height = 32
+    from keras_text_to_image.library.dcgan import DCGan
+    from keras_text_to_image.library.utility.image_utils import img_from_normalized_img
+    from keras_text_to_image.library.utility.img_cap_loader import load_normalized_img_and_its_text
+
+    image_label_pairs = load_normalized_img_and_its_text(img_dir_path, txt_dir_path, img_width=img_width, img_height=img_height)
+
+    shuffle(image_label_pairs)
+
+    gan = DCGan()
+    gan.load_model(model_dir_path)
+
+    for i in range(3):
+        image_label_pair = image_label_pairs[i]
+        normalized_image = image_label_pair[0]
+        text = image_label_pair[1]
+
+        image = img_from_normalized_img(normalized_image)
+        image.save(current_dir + '/data/outputs/' + DCGan.model_name + '-generated-' + str(i) + '-0.png')
+        for j in range(3):
+            generated_image = gan.generate_image_from_text(text)
+            generated_image.save(current_dir + '/data/outputs/' + DCGan.model_name + '-generated-' + str(i) + '-' + str(j) + '.png')
+
+

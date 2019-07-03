@@ -346,3 +346,6 @@ https://heartbeat.fritz.ai/25-open-source-machine-learning-repos-to-inspire-your
 * https://www.coursera.org/specializations/tensorflow-in-practice
 * https://see.stanford.edu/Course/CS229
 * https://developers.google.com/machine-learning/crash-course/
+* https://www.lynda.com/Spark-DataFrames-tutorials/Apache-Spark-Deep-Learning-Essential-Training/806165-2.html
+* https://www.coursera.org/learn/natural-language-processing-tensorflow
+* https://www.coursera.org/learn/tensorflow-sequences-time-series-and-prediction
