@@ -1,3 +1,56 @@
+
+#############################################
+#
+# Generate Random Sequences from same track
+#
+#############################################
+
+--------------------------------------------
+SPLIT WAV N FILES 1 SECOND LENGTH
+--------------------------------------------
+ffmpeg -i somefile.wav -map 0 -f segment -segment_time 1 -c copy zmix/out%03d.wav
+ffmpeg -i somefile.wav -map 0 -f segment -segment_time 1 -af "volume=12dB" zmix/out%03d.wav
+ffmpeg -i somefile.wav -map 0 -f segment -segment_time 1 -af "volume=6dB, equalizer=f=440:width_type=o:width=2:g=-5,areverse" zmix/out%03d.wav
+ffmpeg -i somefile.wav -map 0 -f segment -segment_time 1 -af "volume=6dB,equalizer=f=40:width_type=o:width=2:g=-7,areverse" -y zmix/out%03d.wav
+ffmpeg -i somefile.wav -map 0 -f segment -segment_time 1  -segment_time_delta 0.9 -af "volume=9dB,equalizer=f=540:width_type=o:width=2:g=-9,areverse" -y zmix/out%03d.wav
+
+--------------------------------------------
+CONCAT 4 WAVS - Rand(10+x)
+--------------------------------------------
+
+ffmpeg -i out0$(((RANDOM%10)+10)).wav  -i out0$(((RANDOM%10)+10)).wav  -i out0$(((RANDOM%10)+10)).wav  -i out0$(((RANDOM%10)+10)).wav  -filter_complex '[0:0][1:0][2:0][3:0]concat=n=4:v=0:a=1[out]' -vf reverse -map '[out]' zmix_$(date +%s).wav
+ffmpeg -i out0$(((RANDOM%10)+10)).wav  -i out0$(((RANDOM%10)+10)).wav  -i out0$(((RANDOM%10)+10)).wav  -i out0$(((RANDOM%10)+10)).wav  -filter_complex '[0:0][1:0][2:0][3:0]concat=n=4:v=0:a=1[out]'  -vf areverse -vf "atempo=0.9992323"     -map '[out]'    zmix_$(date +%s).wav
+ffmpeg -i out0$(((RANDOM%10)+20)).wav  -i out0$(((RANDOM%10)+50)).wav  -i out0$(((RANDOM%10)+30)).wav  -i out0$(((RANDOM%10)+20)).wav  -filter_complex '[0:0][1:0][2:0][3:0]concat=n=4:v=0:a=1[out]'  -vf areverse     -map '[out]'    zmix_$(date +%s).wav
+
+--------------------------------------------
+EQ How to use equalizer on ffmpeg
+https://superuser.com/questions/695843/how-to-use-equalizer-on-ffmpeg
+https://johnjohnston.info/106/tag/ffmpeg/
+--------------------------------------------
+f – central frequency in Hz
+width_type – for defining the bandwidth, can be one of h (Hz), q (Q), o (octave) or s (slope).
+w – the value of the chosen bandwidth
+g – the gain
+
+ffmpeg -i input.wav -af "equalizer=f=1000:width_type=h:width=200:g=-10" output.wav
+ffmpeg -i input.wav -af "equalizer=f=440:width_type=o:width=2:g=5" output.wav
+ffmpeg -i input.wav -af "equalizer=f=440:width_type=o:width=2:g=5,equalizer=f=1000:width_type=h:width=200:g=-10" output.wav
+
+--------------------------------------------
+https://www.yesik.it/blog/2018-sox
+http://sox.sourceforge.net/Docs/Features
+sox long.mp3 short.mp3 trim 10
+--------------------------------------------
+
+
+
+
+
+
+
+
+
+
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 # cut videos
