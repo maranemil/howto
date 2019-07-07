@@ -348,3 +348,14 @@ https://heartbeat.fritz.ai/25-open-source-machine-learning-repos-to-inspire-your
 * https://www.youtube.com/watch?v=cKxRvEZd3Mw&list=PLOU2XLYxmsIIuiBfYad6rFYQU_jL2ryal
 * https://www.youtube.com/watch?v=PySo_6S4ZAg
 * https://www.youtube.com/watch?v=UzxYlbK2c7E&list=PLA89DCFA6ADACE599
+
+
+
+* https://ocw.mit.edu/courses/mathematics/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/
+* https://ocw.mit.edu/courses/mathematics/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/video-lectures/
+* https://ocw.mit.edu/courses/mathematics/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/video-lectures/
+* https://www.eventbrite.com/e/200-python-deep-dive-spark-and-aimachine-learning-kafka-for-data-science-and-data-engineering-tickets-61414465319
+* https://icml.cc/Conferences/2019/Schedule?showParentSession=4839
+
+
+
