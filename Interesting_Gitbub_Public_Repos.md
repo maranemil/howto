@@ -356,6 +356,9 @@ https://heartbeat.fritz.ai/25-open-source-machine-learning-repos-to-inspire-your
 * https://ocw.mit.edu/courses/mathematics/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/video-lectures/
 * https://www.eventbrite.com/e/200-python-deep-dive-spark-and-aimachine-learning-kafka-for-data-science-and-data-engineering-tickets-61414465319
 * https://icml.cc/Conferences/2019/Schedule?showParentSession=4839
+* https://executive-education.mit.edu/mit-machine-learning-online-short-course-lf/
+* https://learning.udacity.com/cloud-devops-engineer-9991/
+* https://www.udemy.com/der-komplette-webentwickler-2/
 
 
 
