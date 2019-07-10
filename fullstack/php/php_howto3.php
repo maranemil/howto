@@ -269,9 +269,6 @@ UnitDebug::debug("~~~test~~");
 
 
 
-
-
-
 #############################
 # Asynchronous soap calls
 #############################
@@ -290,10 +287,6 @@ sleep(15);
 
 
 
-
-
-
-
 ###########################
 Basic Usage PHP imagick
 ###########################
@@ -306,5 +299,31 @@ $image->thumbnailImage(100, 0);
 echo $image;
 
 
+###########################
+# write console output for codeception
+###########################
+
+fwrite(STDERR, "Msg here.\n");
+exit(1); //
+
+
+###########################
+# limit output avoiding to write footer into download file
+###########################
+
+if(file_exists($file)) {
+    header('Content-Description: File Transfer');
+    header('Content-Type: application/octet-stream');
+    header('Content-Disposition: attachment; filename='.basename($file));
+    header('Content-Transfer-Encoding: binary');
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+    header('Pragma: public');
+    header('Content-Length: ' . filesize($file)); // most important
+    ob_clean();
+    flush();
+    readfile($file);
+    exit;
+}
 
 

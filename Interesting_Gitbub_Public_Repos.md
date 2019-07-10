@@ -325,6 +325,13 @@ https://heartbeat.fritz.ai/25-open-source-machine-learning-repos-to-inspire-your
 * https://developers.google.com/machine-learning/crash-course/
 * https://developers.google.com/machine-learning/crash-course/prereqs-and-prework
 * https://eu.udacity.com/course/intro-to-machine-learning--ud120
+* https://executive-education.mit.edu/mit-machine-learning-online-short-course-lf/
+* https://icml.cc/Conferences/2019/Schedule?showParentSession=4839
+* https://learning.udacity.com/cloud-devops-engineer-9991/
+* https://ocw.mit.edu/courses/audio-video-courses/
+* https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-0001-introduction-to-computer-science-and-programming-in-python-fall-2016/lecture-videos/
+* https://ocw.mit.edu/courses/mathematics/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/
+* https://ocw.mit.edu/courses/mathematics/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/video-lectures/
 * https://pytorch.org/tutorials/
 * https://see.stanford.edu/Course/CS229
 * https://stanford.edu/~shervine/teaching/cs-230/cheatsheet-convolutional-neural-networks
@@ -338,27 +345,22 @@ https://heartbeat.fritz.ai/25-open-source-machine-learning-repos-to-inspire-your
 * https://www.coursera.org/lecture/machine-learning/cost-function-rkTp3
 * https://www.coursera.org/specializations/tensorflow-in-practice
 * https://www.edx.org/micromasters/columbiax-artificial-intelligence
+* https://www.edx.org/school/mitx
+* https://www.eventbrite.com/e/200-python-deep-dive-spark-and-aimachine-learning-kafka-for-data-science-and-data-engineering-tickets-61414465319
 * https://www.lynda.com/Spark-DataFrames-tutorials/Apache-Spark-Deep-Learning-Essential-Training/806165-2.html
+* https://www.media.mit.edu/videos/mltalks-videos/
 * https://www.newworldai.com/artificial-intelligence-complete-lectures-01-23/
 * https://www.nvidia.com/en-au/deep-learning-ai/education/
 * https://www.tensorflow.org/tutorials/
 * https://www.tensorflow.org/tutorials/images/hub_with_keras
 * https://www.tensorflow.org/tutorials/keras/basic_classification
+* https://www.udemy.com/der-komplette-webentwickler-2/
+* https://www.youtube.com/user/MIT
 * https://www.youtube.com/watch?v=6ZVf1jnEKGI&list=PLZoTAELRMXVMdJ5sqbCK2LiM0HhQVWNzm
 * https://www.youtube.com/watch?v=cKxRvEZd3Mw&list=PLOU2XLYxmsIIuiBfYad6rFYQU_jL2ryal
 * https://www.youtube.com/watch?v=PySo_6S4ZAg
 * https://www.youtube.com/watch?v=UzxYlbK2c7E&list=PLA89DCFA6ADACE599
 
-
-
-* https://ocw.mit.edu/courses/mathematics/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/
-* https://ocw.mit.edu/courses/mathematics/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/video-lectures/
-* https://ocw.mit.edu/courses/mathematics/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/video-lectures/
-* https://www.eventbrite.com/e/200-python-deep-dive-spark-and-aimachine-learning-kafka-for-data-science-and-data-engineering-tickets-61414465319
-* https://icml.cc/Conferences/2019/Schedule?showParentSession=4839
-* https://executive-education.mit.edu/mit-machine-learning-online-short-course-lf/
-* https://learning.udacity.com/cloud-devops-engineer-9991/
-* https://www.udemy.com/der-komplette-webentwickler-2/
 
 
 
