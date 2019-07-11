@@ -327,3 +327,25 @@ if(file_exists($file)) {
 }
 
 
+###########################
+Suppress output terminal
+###########################
+
+# https://serverfault.com/questions/41964/how-to-hide-the-output-of-a-shell-application-in-linux
+# https://stackoverflow.com/questions/6708145/how-to-hide-system-output
+# https://www.php.net/manual/de/function.system.php
+
+program > /dev/null # standard output - you'll still see any errors
+program &> /dev/null # redirect all output, including errors.
+program 2>&1  # This sends 2 (stderr) into 1 (stdout), and sends stdout to file.log
+
+Display output in php
+<?php echo "Hello, "; system("ls -l"); echo "world!\n"; ?>
+
+Suppress output in php
+<?php echo "Hello, "; exec("ls -l"); echo "world!\n"; ?>
+
+# or
+# <?php  ob_start();  echo '<pre>';  $last_line = system('ls');  ob_clean();  echo 'nothing returned!';  ?>
+
+
