@@ -55,3 +55,63 @@ ini_set('mysql.long_query_time', 0);
 echo "Done \n";
 
 usleep(rand(100000,300000));
+
+
+
+###################################################################
+#
+# PHP CLI Options
+#
+###################################################################
+
+https://www.php.net/manual/de/features.commandline.usage.php
+#!/usr/bin/php -n -ddisplay_errors=E_ALL
+
+//-----------------------------
+//  classic
+//-----------------------------
+
+#!/usr/bin/php
+<?php
+var_dump($argv);
+?>
+
+
+1:  #!/usr/bin/php   							# standard way to start a script
+2:  #!/usr/bin/env  php							# uses "env" to find where PHP is installed
+3:  #!/usr/bin/php -n							# ignore the system's PHP.ini, and go with the defaults
+4:  #!/usr/bin/php -ddisplay_errors=E_ALL		# set exactly one configuration variable
+5:  #!/usr/bin/php -n -ddisplay_errors=E_ALL	# will not (as of 2013) work on Linux.
+
+
+# declare(strict_types=1);
+
+# ini_set('error_reporting', E_ERROR);
+# ini_set('error_reporting', false);
+
+ini_set('display_errors', false);
+ini_set('display_startup_errors', false);
+
+ini_set('memory_limit', '2500M'); // 2G
+#proc_nice(19);
+
+ini_set('html_errors', false);
+ini_set('ignore_repeated_errors', true);
+ini_set('ignore_repeated_source', true);
+
+
+ini_set('zlib.output_handler', false);
+ini_set('zlib.output_compression', 0);
+ini_set("zlib.output_compression_level",0);
+
+ini_set('output_handler', false);
+ini_set('output_buffering', false);
+ini_set('implicit_flush', true);
+
+ini_set('max_execution_time', 30);
+ini_set('default_socket_timeout', 30);
+
+#ini_set('mysql.connect_timeout', 30);
+#ini_set('mysql.cache_size', 16000); // '2000'
+#ini_set('mysql.cache_type', 0);
+#ini_set('mysql.query_cache_strip_comments', true);
