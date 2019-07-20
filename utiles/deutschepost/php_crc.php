@@ -632,21 +632,55 @@ https://online-barcode-reader.inliteresearch.com/default.aspx
 
 */
 
-/*
-function setFrankierID($arrSend){
-  $strLimiterHx = ""; $strOrdnungskennzeichen = substr($arrSend["Account"]), 0, 2); $strSequenceFrID = $this->dec2hexConv(sprintf("%04d", $arrSend["Ordnungskennzeichen"]), 2) . "{$strLimiterHx}"; $strSequenceFrID.= $this->dec2hexConv(substr($arrSend["Kundennummer"], 0, 8), 7). "{$strLimiterHx}";
-  $strListNumber = str_pad($strListNumber,4,0,STR_PAD_LEFT); $strSequenceFrID .= $this->dec2hexConv($arrSend["ListNr"], 4) . "{$strLimiterHx}"; $strSequenceFrID .= $this->dec2hexConv($arrSend["SendID"], 6) . "{$strLimiterHx}"; $strCRC4 = strtoupper($this->crc4((string) $strSequenceFrID));
-  $strSequenceFrID.= $strCRC4; $strReturnFrID = substr($strSequenceFrID,0,2).' '. substr($strSequenceFrID,2,4).' '. substr($strSequenceFrID,6,4).' '. substr($strSequenceFrID,10,2).' '. substr($strSequenceFrID,12,4).' '. substr($strSequenceFrID,16,4);
-  return $strReturnFrID;
-}*/
 
-function setMatrixCode($arrSend){
-  $strLimiterHx = ""; $intVerProd = 12; $strSplitCDbg = "%";  $sequeceDataMatrix = "444541{$strLimiterHx}"; /* F1 - F3 */
-  $sequeceDataMatrix .= $this->dec2hexConv("18", 2).$strLimiterHx; /* F4 */  $sequeceDataMatrix .= $this->dec2hexConv($intVerProd, 2) . "{$strLimiterHx}"; /* F5 */  $sequeceDataMatrix .= $this->dec2hexConv($arrSend["KdId"], 10) . "{$strLimiterHx}"; /* F6 - F10 */
-  $sequeceDataMatrix .= $this->dec2hexConv(str_replace(".", "",    str_pad( substr($arrSend["PackPrice"], 0,4),  6,  "0",  STR_PAD_LEFT )   ), 4) . "{$strLimiterHx}"; /* F11 - F12 */
-  $sequeceDataMatrix .= $this->dec2hexConv(date("zy", strtotime(date("Y-m-d H:i:s", strtotime(date("Y-m-d H:i:s") . ' +1 day')))), 4) . "{$strLimiterHx}"; /* F13 - F14 */ $sequeceDataMatrix .= $this->dec2hexConv("00021", 4) . "{$strLimiterHx}"; /* F15 - F16 */
-  $sequeceDataMatrix .= $this->dec2hexConv(str_pad($arrSend["PackNr"], 8,"0", STR_PAD_LEFT), 6) . "{$strLimiterHx}"; /* F17 - F19 */ $sequeceDataMatrix .= $this->dec2hexConv(substr(str_replace(" ", "", $arrSend["Ident"], 2, 2), 2) . "{$strLimiterHx}"; /* F20 */
-  $sequeceDataMatrix .= $this->dec2hexConv(sprintf("%04d", str_pad($arrSend["ListNr"],4,0,STR_PAD_LEFT)), 4);  $sequeceDataMatrix .= "0000000000000000000000000000000000000000"; /* 42 bytes */ $sequeceDataMatrix = hex2bin($sequeceDataMatrix); //  Encoded zB: DEA#$#3S....
-  $sequeceDataMatrix = utf8_decode(utf8_encode($sequeceDataMatrix)); // 26x26 or 32x32
-  return $sequeceDataMatrix;
+
+
+
+// PHP --- crc mode---------------------------
+// check crc32
+
+$data = "0A312C288256B000";
+
+function crc($data){
+
+   $i = 0;
+   $crc = 0;
+
+   $crc_table = array
+   (
+      0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50a5, 0x60c6, 0x70e7,
+      0x8108, 0x9129, 0xa14a, 0xb16b, 0xc18c, 0xd1ad, 0xe1ce, 0xf1ef
+   );
+
+   $data = hex2bin($data);
+   $l = 0;
+   while($l < strlen($data)){
+
+      $byte = $data[$l];
+      $i = (($crc >> 12) ^ (ord($byte) >> 4));
+      $crc = ($crc_table[$i & 0x0F] ^ ($crc << 4));
+      $i = (($crc >> 12) ^ ord($byte));
+      $crc = ($crc_table[$i & 0x0F] ^ ($crc << 4));
+      $l++;
+
+   }
+
+   return ($crc & 0xFFFF);
 }
+
+
+echo crc($data);
+
+# https://stackoverflow.com/questions/1834541/crc-4-implementation-in-c-sharp
+# https://stackoverflow.com/questions/38084462/translate-crc-alrgorythm-from-c-to-php
+
+# http://php.net/manual/de/function.hash-file.php
+# http://php.net/manual/de/function.crc32.php
+# http://php.net/manual/en/function.hash-file.php
+
+echo hash("crc32", __FILE__).PHP_EOL;
+echo hash("crc32b", __FILE__).PHP_EOL;
+hash_file('crc32', __FILE__).PHP_EOL;
+
+
+

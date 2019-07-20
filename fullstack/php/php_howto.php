@@ -181,57 +181,6 @@ if (php_sapi_name() == "cli") {
 
 
 
-
-// PHP --- crc mode---------------------------
-// check crc32
-
-$data = "0A312C288256B000";
-
-function crc($data){
-
-   $i = 0;
-   $crc = 0;
-
-   $crc_table = array
-   (
-      0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50a5, 0x60c6, 0x70e7,
-      0x8108, 0x9129, 0xa14a, 0xb16b, 0xc18c, 0xd1ad, 0xe1ce, 0xf1ef
-   );
-
-   $data = hex2bin($data);
-   $l = 0;
-   while($l < strlen($data)){
-
-      $byte = $data[$l];
-      $i = (($crc >> 12) ^ (ord($byte) >> 4));
-      $crc = ($crc_table[$i & 0x0F] ^ ($crc << 4));
-      $i = (($crc >> 12) ^ ord($byte));
-      $crc = ($crc_table[$i & 0x0F] ^ ($crc << 4));
-      $l++;
-
-   }
-
-   return ($crc & 0xFFFF);
-}
-
-
-echo crc($data);
-
-# https://stackoverflow.com/questions/1834541/crc-4-implementation-in-c-sharp
-# https://stackoverflow.com/questions/38084462/translate-crc-alrgorythm-from-c-to-php
-
-# http://php.net/manual/de/function.hash-file.php
-# http://php.net/manual/de/function.crc32.php
-# http://php.net/manual/en/function.hash-file.php
-
-echo hash("crc32", __FILE__).PHP_EOL;
-echo hash("crc32b", __FILE__).PHP_EOL;
-hash_file('crc32', __FILE__).PHP_EOL;
-
-
-
-
-
 #################################################
 #
 # PHP Sorting find duplicates

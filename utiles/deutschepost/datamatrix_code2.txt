@@ -17,15 +17,13 @@ $strMatrixCode = trim(str_pad($strMatrixCode,56,"0",  STR_PAD_RIGHT));
 echo "<br> Encode: ";
 echo $strMatrixCode;
 $DpCode = hex2bin ($strMatrixCode);
+
 // $DpCode = utf8_decode(utf8_encode(hex2bin ($strMatrixCode))); // keep the same byte size length
 // $matrixStrLen = strlen(utf8_decode(utf8_encode(hex2bin($strMatrixCode)))); // check if 42 bytes
 
 echo "<br> Decode: ";
 echo  $DpDeCode = strtoupper(bin2hex ($DpCode));
 
-// https://www.deutschepost.de/content/dam/dpag/images/P_p/Premiumadress/mlfvm_8_premiumadress_1_1.pdf
-// https://www.deutschepost.de/content/dam/dpag/images/D_d/DV-Freimachung/dp_datamatrixcode-dv-freimachung_1.4.0.pdf
-// https://www.deutschepost.de/content/dam/dpag/images/D_d/dialogpostmanager/anleitung_premiumadress_datamatrix.pdf
 
 $DpFrankierart = array(
 	"0x01"=>'Stampit 2003',
@@ -118,28 +116,7 @@ echo substr($DpDeCode,32,6). " = Laufende Sendunsnummer ".hexdec(substr($DpDeCod
 echo substr($DpDeCode,38,2). " = Teilnahmenummer ".hexdec(substr($DpDeCode,38,2))." {$breakLn}";
 echo substr($DpDeCode,40,4). " = Einlieferunsgnummer ".hexdec(substr($DpDeCode,40,4))." {$breakLn}";
 echo substr($DpDeCode,44,12). " = Restliche ungenutzte Bytes (bis f42 mit ‚00‘ gefüllt){$breakLn}";
-
-
-
-
-
-
-Outout --------------
-
-Encode: 444541122400499602D200B9478d003301B6690A0000000000000000
-Decode: 444541122400499602D200B9478D003301B6690A0000000000000000
-
-444541 = DEA
-12 = DV-Freimachung = 18 Frankiertart
-24 = Version Produkt und Preisliste 36
-00499602D2 = Kundennummer 1234567890
-00B9 = Entgelt 185
-478D = Einlieferungsdatum 18317
-0033 = Produktschlüssel 51 = Postkarte
-01B669 = Laufende Sendunsnummer 112233
-0A = Teilnahmenummer 10
-0000 = Einlieferunsgnummer 0
-000000000000 = Restliche ungenutzte Bytes (bis f42 mit ‚00‘ gefüllt)
+----------------------------------------------------------------------
 
 
 *
@@ -154,26 +131,6 @@ Decode: 444541122400499602D200B9478D003301B6690A0000000000000000
 *
 
 <?php
-
-// Inhalt Hexcode DataMatrix 22x22 Type DataMatrix (ECC200)
-$hexadecimal =  "444541". // Deutsche Post - DEA
-		str_pad(strtoupper(dechex("18")),2,"0", STR_PAD_LEFT).	// Frankiertart und Version
-		str_pad(strtoupper(dechex("36")),2,"0", STR_PAD_LEFT).	// Version Produkt und Preisliste
-		str_pad(strtoupper(dechex(intval("1234567890"))),10,"0", STR_PAD_LEFT).	// Kundennummer
-		str_pad(strtoupper(dechex(185)),4,"0", STR_PAD_LEFT). // Entgelt
-		str_pad(dechex(date("zy",strtotime(date("Y-m-d H:i:s")))),4,"0", STR_PAD_LEFT). // Einlieferungsdatum 0091
-		str_pad(strtoupper(dechex(51)),4,"0", STR_PAD_LEFT). // Produktschlüssel 51
-		str_pad(strtoupper(dechex("112233")),6,"0", STR_PAD_LEFT). // Laufende Sendunsnummer
-		"0A".  // Teilnahmenummer
-		"0000";  // Einlieferunsgnummer
-
-$hexadecimal = trim(str_pad($hexadecimal,56,"0",  STR_PAD_RIGHT));
-
-echo "<br> Encode: ";
-echo $hexadecimal;
-$DpCode = hex2bin ($hexadecimal);
-echo "<br> Decode: ";
-echo  $DpDeCode = strtoupper(bin2hex ($DpCode));
 
 // ------------------------------------------
 
@@ -287,13 +244,7 @@ function hex_dump2($string, array $options = null) {
 }
 
 
-// http://www.philaseiten.de/cgi-bin/index.pl?PR=48705
-// http://www.philaseiten.de/cgi-bin/index.pl?ST=4187&da=1&F=280
-// http://www.philastempel.de/stempel/zeigen/124805
-// https://www.deutschepost.de/content/dam/dpag/images/P_p/Premiumadress/mlfvm_8_premiumadress_1_1.pdf
-// http://www.bctester.de/de/download.html
-// https://gist.github.com/5263/1208694
-// http://www.jolschimke.de/2-d-barcode/die-neuen-absenderfreistempel-frankit.html
+
 
 ---- OUTPUT -----
 
@@ -319,59 +270,10 @@ Raw bytes:
 00000020 00 |.|
 00000021
 
-
-
 *
 *
 *
 *
-*
-*
-*
-*
-*
-*
-
-http://phptester.net/
-http://www.writephponline.com/
-http://sandbox.onlinephpfunctions.com/
-http://sandbox.onlinephpfunctions.com/
-
-http://tutorialspots.com/php-convert-string-to-binary-1665.html
-http://board.phpbuilder.com/showthread.php?10229240-ascii-value-to-8-bit-binary-value
-https://www.hurgh.org/ascbinhex.php
-http://psoug.org/snippet/PHP-Binary-to-Text-Text-to-Binary_380.htm
-https://igor.io/2012/09/24/binary-parsing.html
-https://gist.github.com/hutt/8978333
-https://www.w3schools.com/php/func_misc_unpack.asp
-http://php.net/manual/de/function.base-convert.php
-http://www.jonasjohn.de/snippets/php/hex-string.htm
-https://www.easycalculation.com/ascii-hex.php
-http://hex2bin.onlinephpfunctions.com/
-https://stackoverflow.com/questions/43476750/datamatrix-16x48-with-tcpdf-library-for-php
-https://codebeautify.org/string-hex-converter
-http://www.binaryhexconverter.com/decimal-to-hex-converter
-
-https://github.com/tecnickcom/TCPDF
-http://www.spbas.com/docs/api/v3.2.0/framework/package-globals.html#ENC_BASE256
-https://tcpdf.org/docs/srcdoc/tc-lib-barcode/source-class-Com.Tecnick.Barcode.Type.Square.Datamatrix.Steps/
-https://svn.osgeo.org/fusion/trunk/lib/tcpdf/datamatrix.php
-https://gitlab.die-netzmacher.de/typo3/t3_tcpdf/blob/t0725/tcpdf/include/barcodes/datamatrix.php
-https://fossies.org/dox/OCSNG_UNIX_SERVER-2.3.1/Steps_8php_source.html
-http://www.web-development-blog.com/archives/create-pdf-documents-online-with-tcpdf/
-https://tcpdf.org/examples/
-https://www.ibm.com/developerworks/library/os-tcpdf/index.html
-https://www.setasign.com/products/fpdi/demos/tcpdf-demo/
-
-dechex()
-hex2bin()
-
-https://www.browserling.com/tools/binary-to-text
-http://roubaixinteractive.com/PlayGround/Binary_Conversion/Binary_To_Text.asp
-http://roubaixinteractive.com/PlayGround/Binary_Conversion/Binary_To_Text.asp
-http://www.unit-conversion.info/texttools/convert-text-to-binary/
-http://www.rapidtables.com/convert/number/binary-to-ascii.htm
-http://www.online-toolz.com/tools/text-binary-convertor.php
 
 -------------------------------------------------------------
 
@@ -422,7 +324,6 @@ https://www.genesis-mining.com/datacenters
 <?php
 /*
 
-
 echo $bin = hex2bin ( trim( $strfinal ));
 echo "<br>";
 //echo $bin = chr(241).str_replace(";", chr(241), $bin);
@@ -439,67 +340,15 @@ echo "<br>";
 #echo "<br>";
 #echo bindec($bin);
 
-
-
 -------------------
 
+$digest = md5('string');
+for ($i=strlen($digest); $i>10; $i-=10)
+{
+$new = base_convert(substr($digest, $i-10, 10), 16, 36) . $new;
+}
+$new = base_convert(substr($digest, 0, $i), 16, 36) . $new;
 
-
-https://grandzebu.net/informatique/codbar-en/datamatrix.htm
-http://www.idautomation.com/barcode-faq/2d/data-matrix/
-http://barcode-coder.com/en/datamatrix-specification-104.html
-
-https://github.com/ademarre/binary-to-text-php
-http://phpseclib.sourceforge.net/documentation/math.html
-https://api.phpseclib.org/master/phpseclib/Math/BigInteger.html
-https://github.com/phpseclib/phpseclib/blob/master/phpseclib/Math/BigInteger.php
-https://gist.github.com/bandoche/5711038
-https://github.com/devicenull/PHP-Google-Authenticator/blob/master/base32.php
-https://github.com/ademarre/binary-to-text-php/blob/master/Base2n.php
-https://github.com/ademarre/binary-to-text-php
-https://github.com/ademarre/binary-to-text-php
-
-  $digest = md5('string');
-  for ($i=strlen($digest); $i>10; $i-=10)
-  {
-    $new = base_convert(substr($digest, $i-10, 10), 16, 36) . $new;
-  }
-  $new = base_convert(substr($digest, 0, $i), 16, 36) . $new;
-
-
-
-Post-Unternehmen: DEA
-Frankierart: 18 (HEX:12)
-Version Produkte/Preise: 36 (HEX:24)
-
-Kundennummer: 5156094909
-Frankierwert: 84,80 Euro
-Einlieferungsdatum: 31.12.2085
-Produktschlüssel: 38944
-laufende Sendungsnummer: 04595733
-Teilnahmenummer: 87
-Entgeltabrechnungsnummer: 50108
-Ankündigung Inhalt Datenelement HEX: 2d
-Kundenindividuelle Informationen: 0d 0a 20 0d 0a 20
-
-
-44 45 41 12 24 01 33 53 ef bf bd 21 ef bf bd 46 15 57 ef bf bd 2d 0d 0a 20 0d 0a 20
-
-Post-Unternehmen: DEA
-Frankierart: 18 (HEX:12)
-Version Produkte/Preise: 36 (HEX:24)
-
-Kundennummer: 5156106175
-Frankierwert: 484,17 Euro
-Einlieferungsdatum: 31.12.2076
-Produktschlüssel: 48454
-laufende Sendungsnummer: 01398767
-Teilnahmenummer: 2936
-Entgeltabrechnungsnummer: 48429
-Ankündigung Inhalt Datenelement HEX: 0d
-Kundenindividuelle Informationen: 0a 20 0d 0a 20
-
---
 
 http://datamatrix.kaywa.com/
 http://phptester.net/
@@ -507,32 +356,7 @@ https://gist.github.com/5263/1208694
 
 DEA###-#À###"###(õx##>####################
 
-
-Hex: (42)(84)
-44 45 41 12 18 01 2d 98 c0 00 00 91 22 08 00 15 28 f5 78 04 00 3e 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-
-Dt. Post AG:
-Post-Unternehmen: DEA
-Frankierart: 18 (HEX:12)
-Version Produkte/Preise: 24 (HEX:18)
-Kundennummer: 5059952640
-Frankierwert: 1,45 Euro
-Einlieferungsdatum: 27.03.2012
-Produktschlüssel: 21
-laufende Sendungsnummer: 02684280
-Teilnahmenummer: 4
-Entgeltabrechnungsnummer: 062
-Ankündigung Inhalt Datenelement HEX: 00
-Kundenindividuelle Informationen: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-
 ------------------------------------
-https://github.com/zxing/zxing/issues/365
-http://www.onlinebarcodereader.com/de.html
-https://github.com/sonm-io/Calculator/blob/master/functions.php
-https://github.com/JackBekket/Calculator/blob/master/functions.php
-https://volksbetrugpunktnet.wordpress.com/2014/05/03/versanddatum-der-briefe-des-beitragsservice-gez-uberprufen/
-https://www.antispam-ev.de/forum/showthread.php?38992-Global-Payments-BV-oder-wie-man-Umsatz-generiert/page2
-https://stackoverflow.com/questions/1057572/how-can-i-get-a-hex-dump-of-a-string-in-php
 
 Examples
 
@@ -545,6 +369,7 @@ Code:
 0040  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  | ~~~~~~~~~~~~~~~~ |
 0050  e0 c9 44 6f                                       | ~~Do             |
 ----------------------------------------------------------------------------
+
 Frankierart 3 Frankit
 Produkt-ID 1 Standardbrief
 Frankierwert 70 Eurocent
@@ -562,6 +387,7 @@ Code:
 0040  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  | ~~~~~~~~~~~~~~~~ |
 0050  73 4c 66 8f                                       | sLf~             |
 ----------------------------------------------------------------------------
+
 Frankierart 3 Frankit
 Produkt-ID 1 Standardbrief
 Frankierwert 70 Eurocent
@@ -596,9 +422,6 @@ The output's radix relates to the value of $bitsPerCharacter as follows:
 6: base-64
 7: base-128
 8: base-256
-
-
-
 
 
 <?php
@@ -861,12 +684,6 @@ class FixedBitNotation
 }
 
 
-
-
-
-
-
-
 <?php
 $modifiedBase64 = new FixedBitNotation(6, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_', TRUE, TRUE);
 $encoded = $modifiedBase64->encode("encode this \xBF\xC2\xBF");
@@ -956,82 +773,3 @@ $high128chars = "\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8A\x8B\x8C\x8D\x8E\x8
 
 $base128 = new FixedBitNotation(7, $high128chars, TRUE);
 $encoded = $base128->encode('encode this');
-
-
-
-############################################################
-#
-#	CODE 128 AUTO TCPDF
-#
-############################################################
-
-https://tcpdf.org/docs/srcdoc/TCPDF/class-TCPDFBarcode/
-https://tcpdf.org/docs/srcdoc/TCPDF/source-class-TCPDFBarcode/#950-1280
-https://tcpdf.org/examples/example_027/
-https://tcpdf.org/examples/example_027/
-https://tcpdf.org/docs/srcdoc/TCPDF/class-TCPDFBarcode/
-https://barcode.tec-it.com/de/Code128
-https://tcpdf.org/docs/fonts/
-https://github.com/sortex/tcpdf/blob/master/fonts/freesans.php
-http://www.endmemo.com/sconvert/pixelpoint.php
-
-https://www.deutschepost.com/en/business-customers/packet/international-packets.html
-https://api-qa.deutschepost.com/dpi-apidoc/#/introduction/getting-started:
-https://www.deutschepost.de/content/dam/dpag/images/B_b/Briefe_ins_Ausland/warenpostinternational/dp-int-warenpost-international-harmonisiertes-label-20181211.pdf
-https://www.deutschepost.de/content/dam/dpag/images/B_b/Briefe_ins_Ausland/warenpostinternational/dp-warenpost-international-broschuere-022019.pdf
-https://www.deutschepost.de/content/dam/dpag/images/B_b/Briefe_ins_Ausland/downloads/dp-brief-international-handlingbroschuere-012019.pdf
-
-
-
-
-bcTester
-https://www.bctester.de/de/home.html
-
-Matrixcode-Checker
-https://www.deutschepost.de/de/p/premiumadress/downloads.html
-
-
-
-
-
-https://philaseiten.de/cgi-bin/index.pl?ST=9813&CP=3&F=1
-https://www.philaseiten.de/cgi-bin/index.pl?da=1&F=1&ST=9813&page=1
-https://www.philaseiten.de/cgi-bin/index.pl?PR=191373
-https://www.philaseiten.de/cgi-bin/index.pl?ST=9813&F=343
-http://jolschimke.de/2-d-barcode/frankit-kommt-im-neuen-gewand.html
-https://www.philaseiten.de/cgi-bin/index.pl?F=357&ST=1107&page=3
-https://www.compador.de/frankierung-fuer-infrastrukturrabatt-2018/
-https://www.te-postline.de/service/informationen/deutsche-post-ag/
-https://www.francotyp.de/service-support/service-informationen/newsletter/fp-newsletter-archiv/neuer-infrastrukturrabatt
-
-
-https://gist.github.com/5263/1208694
-https://www.deutschepost.de/premiumadresslabel/
-https://www.deutschepost.de/content/dam/dpag/images/P_p/Premiumadress/nutzungsvorgaben_premiumadress-label.pdf
-https://www.direktmarketingcenter.de/fileadmin/Download-Center/Handbuch_Premiumadress_-_Stand_Oktober_2017.pdf
-https://www.deutschepost.de/content/dam/dpag/images/P_p/Premiumadress/downloads/dp-premiumadress-handbuch-09-2017-en.pdf
-
-https://www.tc.dpcom.de/downloads/Integrationshandbuch.pdf
-https://www.tc.dpcom.de/downloads/Ablaufdiagramme_Handbuch.pdf
-https://www.tc.dpcom.de/downloads/Benutzerhandbuch.pdf
-https://www.tc.dpcom.de/downloads/Integrationshandbuch.pdf
-https://www.tc.dpcom.de/downloads/Teilleistungshandbuch.pdf
-https://www.tc.dpcom.de/downloads/Connect_Handbuch.pdf
-
-https://www.direktmarketingcenter.de/fileadmin/Download-Center/Handbuch_Premiumadress_-_Stand__Januar_2017.pdf
-
-https://www.post.ch/-/media/post/gk/dokumente/handbuch-barcodes-und-datatmatrix-codes-fuer-briefsendungen.pdf?
-https://www.deutschepost.de/content/dam/dpag/images/R_r/responseplus/dp-spezifikation-datamatrixcode-antwort.pdf
-https://www.royalmail.com/sites/default/files/Royal-Mail-Mailmark-barcode-definition-document-September-2015.pdf
-https://www.deutschepost.de/content/dam/dpag/images/D_d/dialogpostmanager/anleitung_premiumadress_datamatrix.pdf
-https://www.direktmarketingcenter.de/fileadmin/Download-Center/Handbuch_Premiumadress_-_Stand_Oktober_2017.pdf
-https://www.direktmarketingcenter.de/fileadmin/Download-Center/Premiumadress-Produktbroschuere-Stand_Januar_2017.pdf
-https://www.direktmarketingcenter.de/fileadmin/Download-Center/Kundenpra__sentation_Premiumadress_-_Stand_Sept_2013.pdf
-https://www.deutschepost.de/content/dam/dpag/images/D_d/DV-Freimachung/dp_datamatrixcode-dv-freimachung_1.4.0.pdf
-https://www.deutschepost.de/content/dam/dpag/images/D_d/DV-Freimachung/dp-datamatrixcode-dv-freimachung_1.5.2.pdf
-https://www.deutschepost.de/content/dam/dpag/images/D_d/DV-Freimachung/dp-datamatrixcode-dv-freimachung_1.5.2.pdf
-https://www.deutschepost.de/de/p/premiumadress/downloads/agb_premiumadress.html
-
-https://www.deutschepost.de/content/dam/dpag/images/D_d/DV-Freimachung/dp-frankier-id-berechnungstool-072018.zip
-https://www.deutschepost.de/de/d/dv_freimachung/download_dv_freimachung.html
--------------
