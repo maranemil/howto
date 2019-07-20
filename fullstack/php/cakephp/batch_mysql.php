@@ -20,40 +20,36 @@
 $mysqli = new mysqli("localhost", "username", "password", "dbname");
 $result = $mysqli->query("SELECT lastname FROM employees");
 while ($row = mysqli_fetch_array($result)){
-	echo $row["employees"].PHP_EOL;
+echo $row["employees"].PHP_EOL;
 }
-*/
+ */
 
 /*
 $myPDO = new PDO('mysql:host=localhost;dbname=dbname', 'username', 'password');
 $myPDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $result = $myPDO->query("SELECT lastname FROM employees");
-*/
+ */
 
 /*
 mysql_connect('localhost','username','password');
 mysql_select_db("dbname");
 $result = mysql_query('SELECT lastname FROM employees');
-*/
+ */
 
-/*
- $link = mysqli_connect("localhost", "my_user", "my_password", "my_db");
-   // did we connected?
-  if (!$link) {
+$link = mysqli_connect("localhost", "my_user", "my_password", "my_db");
+// did we connected?
+if (!$link) {
     echo "Error: Unable to connect to MySQL." . PHP_EOL;
     echo "Debugging errno: " . mysqli_connect_errno() . PHP_EOL;
     echo "Debugging error: " . mysqli_connect_error() . PHP_EOL;
     exit;
-   }
-   // run some query
-   $query = "SELECT * FROM table";
-   $result = mysql_query($query);
-    while ($line = mysql_fetch_array($result))
-   {
-      foreach ($line as $value)
-       {
-         print "$value\n";
-      }
-   }
-     mysqli_close($link);
-*/
+}
+// run some query
+$query = "SELECT * FROM table";
+$result = mysql_query($query);
+while ($line = mysql_fetch_array($result)) {
+    foreach ($line as $value) {
+        print "$value\n";
+    }
+}
+mysqli_close($link);

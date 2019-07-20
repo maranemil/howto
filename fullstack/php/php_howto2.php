@@ -16,30 +16,29 @@ $object = (object) array_filter((array) $object, function ($val) {
     return !is_null($val);
 });
 
-
 // --------------
-$someObject = (array)$someObject;
-array_walk_recursive($someObject, function($v,$k) use (&$someObject) {
-    if($someObject[$k] == null) {
+$someObject = (array) $someObject;
+array_walk_recursive($someObject, function ($v, $k) use (&$someObject) {
+    if ($someObject[$k] == null) {
         unset($someObject[$k]);
     }
 });
 
-$someObject = (object)$someObject;
+$someObject = (object) $someObject;
 var_dump($someObject);
-
-
 
 // --------------
 // Setup
-$obj = (object) array('foo' => NULL, 'bar' => 'baz');
+$obj = (object) array('foo' => null, 'bar' => 'baz');
 // equivalent to array_filter
-array_walk($obj, function($v,$k) use ($obj) {
-    if(empty($v)) unset($obj->$k);
+array_walk($obj, function ($v, $k) use ($obj) {
+    if (empty($v)) {
+        unset($obj->$k);
+    }
+
 });
 // output
 print_r($obj);
-
 
 // --------------
 // filter
@@ -53,9 +52,9 @@ var_dump($result);
 
 ############################################################
 #
-#	An API with repeating parameters
-#	Multiple Query Parameters of Same Name
-#	Serializing an Array as a Sequence of Elements
+#    An API with repeating parameters
+#    Multiple Query Parameters of Same Name
+#    Serializing an Array as a Sequence of Elements
 #
 ############################################################
 
@@ -88,46 +87,47 @@ https://zendframework.github.io/zend-soap/wsdl/
 https://stackoverflow.com/questions/3617398/soapclient-how-to-pass-multiple-elements-with-same-name
 https://beberlei.de/2014/01/31/soap_and_php_in_2014.html
 ---------
-*/
+ */
 
+/*
 public class Group{
-    [XmlArrayItem(Type = typeof(Employee)),
-    XmlArrayItem(Type = typeof(Manager))]
-    public Employee[] Employees;
+[XmlArrayItem(Type = typeof(Employee)),
+XmlArrayItem(Type = typeof(Manager))]
+public Employee[] Employees;
 }
 public class Employee{
-    public string Name;
+public string Name;
 }
 public class Manager:Employee{
-    public int Level;
+public int Level;
 }
 
 public class Group{
-    [XmlElement]
-    public Employee[] Employees;
-}
+[XmlElement]
+public Employee[] Employees;
+}*/
 
 // ------------
-
+/*
 $this->soapWrapper->add('bsedemo', function ($service) {
-  $service
-    ->wsdl('http://bsestarmfdemo.bseindia.com/MFOrderEntry/MFOrder.svc?singleWsdl')
-    ->trace(true)
-    ->header('Content-type','application/soap+xml; charset=utf-8');
+$service
+->wsdl('http://bsestarmfdemo.bseindia.com/MFOrderEntry/MFOrder.svc?singleWsdl')
+->trace(true)
+->header('Content-type','application/soap+xml; charset=utf-8');
 
 });
-
+ */
 // ------------
 
 $a = [
     'properties' => [
         [
-          'name' => 'invtype',
-          'value' => 'foo'
+            'name' => 'invtype',
+            'value' => 'foo',
         ],
         [
-          'name' => 'item_number',
-          'value' => 'foo'
+            'name' => 'item_number',
+            'value' => 'foo',
         ],
     ],
 ];
@@ -148,7 +148,8 @@ print_r($results);
 
 // -----
 
-class Book {
+class Book
+{
     /** @var string */
     public $title;
     /** @var string */
@@ -156,7 +157,8 @@ class Book {
     /** @var Tag[] */
     public $tags;
 }
-class Tag {
+class Tag
+{
     /** @var string */
     public $tag;
 }
@@ -169,15 +171,15 @@ $response->results = $array;
 $array = ['lets', 'test', 'it'];
 $response = new stdClass();
 $response->results = new ArrayObject();
-foreach($array as $item) {
-  $response->results->append($item);
+foreach ($array as $item) {
+    $response->results->append($item);
 }
 
 $array = ['lets', 'test', 'it'];
 $response = new stdClass();
 $response->results = new ArrayObject();
-foreach($array as $item) {
-    $soapVar = new SoapVar($item,XSD_STRING,NULL,NULL,'result');
+foreach ($array as $item) {
+    $soapVar = new SoapVar($item, XSD_STRING, null, null, 'result');
     $response->results->append($soapVar);
 }
 
@@ -190,20 +192,19 @@ $queryData = ['yourFieldName' => $multipleSearchValues];
 $results = $client->YourApiMethod($queryData);
 print_r($results);
 
-
 $obj = new StdClass();
 foreach ($telnums as $telnum) {
     $obj->telnums[] = $telnum;
 }
 
 $options = array(
-  'createDomainRequest' => array(
-    'telnums' => array(
-      '10',
-      '20',
-      '30'
-    )
-  )
+    'createDomainRequest' => array(
+        'telnums' => array(
+            '10',
+            '20',
+            '30',
+        ),
+    ),
 );
 
 $soapClient = new SoapClient($wsdl);
@@ -213,14 +214,13 @@ $soapClient->__call('createDomain', array(
     new SoapParam('30', 'telnums'),
 ));
 
-
 // ---------------
 
 $client = new SOAPClient($wsdl, array(
     'classmap' => array(
         'Person' => 'DHL\Intraship\Person',
         // all the other types
-    )
+    ),
 ));
 
 ##########################################################
@@ -235,6 +235,7 @@ $client = new SOAPClient($wsdl, array(
 #
 #########################################################
 
+/*
 $ext = pathinfo($filename, PATHINFO_EXTENSION);
 #
 $path_info = pathinfo('/foo/bar/baz.bill');
@@ -257,8 +258,7 @@ echo $ext['dirname'] . '<br/>';   // Returns folder/directory
 echo $ext['basename'] . '<br/>';  // Returns file.html
 echo $ext['extension'] . '<br/>'; // Returns .html
 echo $ext['filename'] . '<br/>';  // Returns file
-
-
+ */
 
 #------------------------------------
 # PHP Regex groups captures
@@ -267,7 +267,6 @@ $pattern = "/([\w|\d])+/";
 $string = "[abc - 123 - def - 456 - ghi - 789 - jkl]";
 preg_match_all($pattern, $string, $matches);
 print_r($matches[0]);
-
 
 #------------------------------------
 # Regex Special Character Definitions
@@ -278,14 +277,14 @@ http://www.rexegg.com/regex-capture.html
 http://www.rexegg.com/regex-php.html
 https://lzone.de/examples/PHP%20preg_replace
 https://regexone.com/references/php
-*/
+ */
 
 /*
 
 The following should be escaped if you are trying to match that character
 
 \ ^ . $ | ( ) [ ]
-* + ? { } ,
+ * + ? { } ,
 
 Special Character Definitions
 \ Quote the next metacharacter
@@ -295,7 +294,7 @@ $ Match the end of the line (or before newline at the end)
 | Alternation
 () Grouping
 [] Character class
-* Match 0 or more times
+ * Match 0 or more times
 + Match 1 or more times
 ? Match 1 or 0 times
 {n} Match exactly n times
@@ -331,7 +330,7 @@ Even More Special Characters
 \z Match only at end of string
 \G Match only where previous m//g left off (works only with /g)
 
-*/
+ */
 
 ##########################################################
 #
@@ -342,45 +341,43 @@ Even More Special Characters
 http://php.net/manual/de/function.range.php
 http://php.net/manual/de/function.array-reverse.php
 http://php.net/manual/de/function.date.php
-*/
+ */
 
-print_r( array_reverse( range( 1, 12 ) ));
+print_r(array_reverse(range(1, 12)));
 # output 12,11,10,9,8,7,6,5,4,3,2,1
 
-print_r(  range( 12, 1 ));
+print_r(range(12, 1));
 # output 12,11,10,9,8,7,6,5,4,3,2,1
 
-print_r( range( 12, 1, -3 ) );
+print_r(range(12, 1, -3));
 # output 12 9 6 3 1
 
-print_r( range( 11, 20, -3 ) );
+print_r(range(11, 20, -3));
 # output 11 14 17 20
 
-$a = array_map(function($n) { return sprintf('sample_%03d', $n); }, range(1, 12) );
+$a = array_map(function ($n) {return sprintf('sample_%03d', $n);}, range(1, 12));
 print_r($a);
 
 /*Array
 (
-    [0] => sample_050
-    [1] => sample_051
-    [2] => sample_052
-    ...
+[0] => sample_050
+[1] => sample_051
+[2] => sample_052
+...
 )*/
 
-var_dump( range('1', '2') ); // outputs  array(2) { [0]=> int(1) [1]=> int(2) }
-var_dump( array_map('strval', range('1', '2')) ); // outputs  array(2) { [0]=> string(1) "1" [1]=> string(1) "2" }
+var_dump(range('1', '2')); // outputs  array(2) { [0]=> int(1) [1]=> int(2) }
+var_dump(array_map('strval', range('1', '2'))); // outputs  array(2) { [0]=> string(1) "1" [1]=> string(1) "2" }
 
 # fill an array to get a hash with 0-9 numerical values
-range(0,9);
+range(0, 9);
 array_fill(0, 10, '');
 
-
-$SimpleArray = array_map(function($n) { return null; }, range(1, 3) );
-$MultiArray = array_map(function($n) { return array_map(function($n) { return null; }, range(1, 2) ); }, range(1, 3) );
+$SimpleArray = array_map(function ($n) {return null;}, range(1, 3));
+$MultiArray = array_map(function ($n) {return array_map(function ($n) {return null;}, range(1, 2));}, range(1, 3));
 
 var_dump($SimpleArray);
 var_dump($MultiArray);
-
 
 #########################################################################################
 #
@@ -399,15 +396,14 @@ var_dump($MultiArray);
 #
 #########################################################################################
 
-Handling large file sizes
+# Handling large file sizes
 
 set_time_limit(0);
-$file = @fopen($file_path,"rb");
-while(!feof($file))
-{
-	print(@fread($file, 1024*8));
-	ob_flush();
-	flush();
+$file = @fopen($file_path, "rb");
+while (!feof($file)) {
+    print(@fread($file, 1024 * 8));
+    ob_flush();
+    flush();
 }
 
 //------------------------
@@ -447,7 +443,7 @@ exit;
 
 header('Content-Description: File Transfer');
 header('Content-Type: application/octet-stream');
-header('Content-Disposition: attachment; filename='.$filename);
+header('Content-Disposition: attachment; filename=' . $filename);
 header('Expires: 0');
 header('Cache-Control: must-revalidate');
 header('Pragma: public');
@@ -462,7 +458,7 @@ exit;
 ob_clean();
 header('Content-Description: File Transfer');
 header('Content-Type: application/octet-stream');
-header('Content-Disposition: attachment; filename='.$filename);
+header('Content-Disposition: attachment; filename=' . $filename);
 header('Expires: 0');
 header('Cache-Control: must-revalidate');
 header('Pragma: public');
@@ -483,8 +479,8 @@ readfile('original.pdf');
 
 // ------------------------
 
-header('Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($fn)).' GMT', true, 200);
-header('Content-Length: '.filesize($fn));
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s', filemtime($fn)) . ' GMT', true, 200);
+header('Content-Length: ' . filesize($fn));
 header('Content-Type: image/png');
 print file_get_contents($fn);
 
@@ -495,26 +491,22 @@ print file_get_contents($fn);
 #
 #######################################################
 
-
 // Script example.php
-$shortopts  = "";
-$shortopts .= "f:";  // Required value
+$shortopts = "";
+$shortopts .= "f:"; // Required value
 $shortopts .= "v::"; // Optional value
 $shortopts .= "abc"; // These options do not accept values
 
-$longopts  = array(
-    "required:",     // Required value
-    "optional::",    // Optional value
-    "option",        // No value
-    "opt",           // No value
+$longopts = array(
+    "required:", // Required value
+    "optional::", // Optional value
+    "option", // No value
+    "opt", // No value
 );
 $options = getopt($shortopts, $longopts);
 var_dump($options);
 
-
 // shell> php example.php -f "value for f" -v -a --required value --optional="optional value" --option
-
-
 
 // Script example.php
 $optind = null;
@@ -523,41 +515,43 @@ $pos_args = array_slice($argv, $optind);
 var_dump($pos_args);
 // shell> php example.php -a 1 -b 2 -- test
 
-
 #
-$shortopts  = "";
+$shortopts = "";
 $shortopts .= "c:"; // Required value
 $shortopts .= "h::"; // Optional value
 $shortopts .= "v::"; // Optional value
 $shortopts .= "d::"; // Optional value
 
-$longopts  = array(
-    "config:",       // Required value
-    "help::",        // Optional value
-    "verbose::",     // Optional value
-    "debug::",       // Optional value
+$longopts = array(
+    "config:", // Required value
+    "help::", // Optional value
+    "verbose::", // Optional value
+    "debug::", // Optional value
 );
 $argTerminal = getopt($shortopts, $longopts);
-
 
 #######################################################
 #
 # Colors in php CLI
 #
 #######################################################
+
 /*
 http://blog.lenss.nl/2012/05/adding-colors-to-php-cli-script-output/
 https://www.if-not-true-then-false.com/2010/php-class-for-coloring-php-command-line-cli-scripts-output-php-output-colorizing-using-bash-shell-colors/
 http://tldp.org/LDP/abs/html/colorizing.html
-*/
+ */
+
+/*
 echo -n "          "
-echo -e '\E[37;44m'"\033[1mContact List\033[0m" 	        	# White on blue background
-echo -e "\033[1mChoose one of the following persons:\033[0m"	# Bold
-echo -en '\E[47;34m'"\033[1mE\033[0m"   						# Blue
-echo "vans, Roland"                     						# "[E]vans, Roland"
-echo -en '\E[47;35m'"\033[1mJ\033[0m"   						# Magenta
-echo -en '\E[47;32m'"\033[1mS\033[0m"   						# Green
-echo -en '\E[47;31m'"\033[1mZ\033[0m"   						# Red
+echo -e '\E[37;44m'"\033[1mContact List\033[0m"                 # White on blue background
+echo -e "\033[1mChoose one of the following persons:\033[0m"    # Bold
+echo -en '\E[47;34m'"\033[1mE\033[0m"                           # Blue
+echo "vans, Roland"                                             # "[E]vans, Roland"
+echo -en '\E[47;35m'"\033[1mJ\033[0m"                           # Magenta
+echo -en '\E[47;32m'"\033[1mS\033[0m"                           # Green
+echo -en '\E[47;31m'"\033[1mZ\033[0m"                           # Red
+ */
 
 /*
 Black 0;30
@@ -576,8 +570,8 @@ Light Red 1;31
 Light Purple 1;35
 Yellow 1;33
 White 1;37
-*/
-
+ */
+/*
 $this->fg_colors['black'] = '0;30';
 $this->fg_colors['dark_gray'] = '1;30';
 $this->fg_colors['blue'] = '0;34';
@@ -603,14 +597,12 @@ $this->bg_color['blue'] = '44';
 $this->bg_color['magenta'] = '45';
 $this->bg_color['cyan'] = '46';
 $this->bg_color['light_gray'] = '47';
-
+ */
 // PHP
 
 echo "\033[31m some colored text \033[0m some white text \n"; #
 echo "\033[32m some colored text \033[0m some white text \n"; #
-print "Using Conf:  \033[1m \033[32m OK \033[0m" .PHP_EOL; # bold + green
-
-
+print "Using Conf:  \033[1m \033[32m OK \033[0m" . PHP_EOL; # bold + green
 
 #--------------------------------------------------
 # combine JPG's into one PDF with PHP
@@ -621,8 +613,6 @@ $pdf = new Imagick($images);
 $pdf->setImageFormat('pdf');
 $pdf->writeImages('combined.pdf', true);
 
-
-
 #--------------------------------------------------
 # test string length by char encoding
 #--------------------------------------------------
@@ -632,7 +622,6 @@ echo $str . "\n\n<hr>";
 echo base64_encode(gzcompress($str, 9)) . "\n\n<hr>";
 echo bin2hex(gzcompress($str, 9)) . "\n\n<hr>";
 echo urlencode(gzcompress($str, 9)) . "\n\n<hr>";
-
 
 $input = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
 
@@ -655,9 +644,6 @@ $out = urlencode(base64_encode(gzcompress($input)));
 var_dump($out);
 echo "<hr>";
 
-
-
-
 ########################################################################
 #
 #   Class 'Net_SSH2' not found in… when using phpseclib FIX
@@ -668,17 +654,17 @@ echo "<hr>";
 #
 ########################################################################
 
-On github.com there are two branches (in addition to the master branch) - 1.0 and 2.0. 2.0 is namespaced so to call that you'd need to do \phpseclib\Net\SSH2.
+/*On github.com there are two branches (in addition to the master branch) - 1.0 and 2.0. 2.0 is namespaced so to call that you'd need to do \phpseclib\Net\SSH2.
 
 If you downloaded the zip file from phpseclib.sourceforge.net then you're running the 1.0 branch. If that's what you're running you'll need to update the include path. eg.
+ */
 
 set_include_path(get_include_path() . PATH_SEPARATOR . 'phpseclib');
 require 'phpseclib/Net/SSH2.php';
 $ssh = new \Net_SSH2('localhost');
 
-If you're running the 2.0 branch (or master branch) you'll need to use an auto loader. Example:
+/*If you're running the 2.0 branch (or master branch) you'll need to use an auto loader. Example:*/
 
-<?php
 // https://raw.githubusercontent.com/composer/composer/master/src/Composer/Autoload/ClassLoader.php
 
 ini_set('error_reporting', E_ALL); // E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED
@@ -686,23 +672,21 @@ ini_set('display_errors', true);
 ini_set('display_startup_errors', true);
 
 #include('autoloader.php');
-include('vendor/autoload.php');
+include 'vendor/autoload.php';
 
 $loader = new \Composer\Autoload\ClassLoader();
-$loader->addPsr4('phpseclib\\', __DIR__.'/phpseclib');
+$loader->addPsr4('phpseclib\\', __DIR__ . '/phpseclib');
 $loader->register();
 
 use \phpseclib\Crypt\RSA;
 $rsa = new RSA();
 
-
 $ssh = new \phpseclib\Net\SSH2('www.domain.tld');
 if (!$ssh->login('username', 'password')) {
-exit('Login Failed');
+    exit('Login Failed');
 }
 echo $ssh->exec('pwd');
 echo $ssh->exec('ls -la');
-
 
 ########################################################################
 #
@@ -710,20 +694,16 @@ echo $ssh->exec('ls -la');
 #
 ########################################################################
 
-  /*
-    * 30m grey
-    * 31m red
-    * 32m green
-    * 33m yellow
-    * 34m blue
-    * 35m magenta
-    * 36m blue azure
-    * 37m white
-   */
-
-
-
-
+/*
+ * 30m grey
+ * 31m red
+ * 32m green
+ * 33m yellow
+ * 34m blue
+ * 35m magenta
+ * 36m blue azure
+ * 37m white
+ */
 
 ########################################################################
 #
@@ -731,20 +711,16 @@ echo $ssh->exec('ls -la');
 #
 ########################################################################
 
-
 # http://php.net/manual/de/ziparchive.addfile.php
 
 $zip = new ZipArchive;
-if ($zip->open('test.zip') === TRUE) {
+if ($zip->open('test.zip') === true) {
     $zip->addFile('/pfad/zur/datei.txt', 'neuername.txt');
     $zip->close();
     echo 'ok';
 } else {
     echo 'Fehler';
 }
-
-
-
 
 ########################################################################
 #
@@ -760,13 +736,11 @@ header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
 header("Cache-Control: public");
 header("Content-Description: File Transfer");
 header("Content-type: application/octet-stream");
-header("Content-Disposition: attachment; filename=\"".$filename."\"");
+header("Content-Disposition: attachment; filename=\"" . $filename . "\"");
 header("Content-Transfer-Encoding: binary");
-header("Content-Length: ".filesize($filepath.$filename));
+header("Content-Length: " . filesize($filepath . $filename));
 ob_end_flush();
-@readfile($filepath.$filename);
-
-
+@readfile($filepath . $filename);
 
 ########################################################################
 #
@@ -777,22 +751,21 @@ ob_end_flush();
 
 $csv = array_map('str_getcsv', file('data.csv'));
 
-
 $csv = array_map('str_getcsv', file($file));
-array_walk($csv, function(&$a) use ($csv) {
-  $a = array_combine($csv[0], $a);
+array_walk($csv, function (&$a) use ($csv) {
+    $a = array_combine($csv[0], $a);
 });
 array_shift($csv); # remove column header
 
 ############################################################
 #
-#	Split String or Array in group of 3
+#    Split String or Array in group of 3
 #
 ############################################################
-
+/*
 http://php.net/manual/de/function.array-chunk.php
 http://php.net/manual/de/function.str-split.php
-
+ */
 // array
 $input_array = array('a', 'b', 'c', 'd', 'e');
 print_r(array_chunk($input_array, 3));
@@ -812,6 +785,7 @@ $variable = str_split($origionalvar, 3);
 ########################################################################
 
 /** PHPExcel_IOFactory */
+/*
 require_once '../Classes/PHPExcel/IOFactory.php';
 $objPHPExcel = \PHPExcel_IOFactory::load("excel_files/temp_files.xlsx"));
 $objWorksheet = $objPHPExcel->getActiveSheet();
@@ -819,15 +793,13 @@ $highestRow = $objWorksheet->getHighestRow();
 $highestColumn = \PHPExcel_Cell::columnIndexFromString($objWorksheet->getHighestColumn());
 
 for ($row = 3; $row <= $highestRow; ++$row) {
-    for($col = 0; $col <= $highestColumn; ++$col) {
-        $cellValue = $objWorksheet->getCellByColumnAndRow($col, $row) ;
-    }
+for($col = 0; $col <= $highestColumn; ++$col) {
+$cellValue = $objWorksheet->getCellByColumnAndRow($col, $row) ;
 }
+}*/
 
 // $filetype = PHPExcel_IOFactory::identify($dirpath . '/' . $filename);
 // PHPExcel_Settings::setZipClass(PHPExcel_Settings::ZIPARCHIVE);
-
-
 
 ########################################################################
 #
@@ -836,31 +808,30 @@ for ($row = 3; $row <= $highestRow; ++$row) {
 #
 ########################################################################
 
-
+/*
 while read filename; do
-	echo $filename
-	hadoop fs -put /path/$filename /tmp/
-	echo "LOAD DATA INPATH '/tmp/$filename'
-	INTO TABLE temp_csv;
+echo $filename
+hadoop fs -put /path/$filename /tmp/
+echo "LOAD DATA INPATH '/tmp/$filename'
+INTO TABLE temp_csv;
 
-	INSERT INTO TABLE temp_orc
-	SELECT * FROM temp_csv;
+INSERT INTO TABLE temp_orc
+SELECT * FROM temp_csv;
 
-	TRUNCATE TABLE temp_csv;" | hive
+TRUNCATE TABLE temp_csv;" | hive
 done
+ */
 
-...
+/*
 
 /opt/presto/bin/presto-cli --server hadoop.localhost:8080 --catalog hive --chema curr_dns
 SELECT max(rtt) from curr_dns where pool=0
+ */
 
-...
-
+/*
 $socket = new \SamKnows\Presto\Client\RemoteHost('http','cordinator.localhost','8080')
 $conn = new \SamKnows\Presto\Client\HttpConnection($socket, new NullLogger()....)
-
-
-
+ */
 
 ################################################
 #
@@ -879,7 +850,6 @@ https://kvz.io/blog/2007/07/24/make-ssh-connections-with-php/
 http://phpshell.sourceforge.net/
 https://www.phpclasses.org/package/2477-PHP-SSH-client-implementation-in-pure-PHP.html
 
-
 https://github.com/roke22/PHP-SSH2-Web-Client
 https://github.com/nickola/web-console
 
@@ -888,12 +858,7 @@ https://metacpan.org/pod/Net::SSH2
 http://phpseclib.sourceforge.net/
 http://phpseclib.sourceforge.net/ssh/examples.html
 
-*/
-
-
-
-
-
+ */
 
 ################################################
 #
@@ -908,9 +873,9 @@ https://developer.tizen.org/dev-guide/2.4/org.tizen.tutorials/html/web/w3c/secur
 
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 
-*/
+ */
 
-<?php header('Access-Control-Allow-Origin: *'); ?>
+header('Access-Control-Allow-Origin: *');
 
 /*
 
@@ -928,7 +893,6 @@ header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
 header('Access-Control-Max-Age: 1000');
 header('Access-Control-Allow-Headers: Content-Type, Content-Range, Content-Disposition, Content-Description');
 
-
 // Raw header
 Access-Control-Allow-Origin: *
 // How to send the response header with PHP
@@ -939,67 +903,59 @@ Header set Access-Control-Allow-Origin "*"
 add_header 'Access-Control-Allow-Origin' '*';
 // How to send the response header with Express.js
 app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    next();
+res.header("Access-Control-Allow-Origin", "*");
+next();
 });
-
 
 # htaccess
 <FilesMatch "\.(ttf|otf|eot|woff|woff2)$">
-    <IfModule mod_headers.c>
-        Header set Access-Control-Allow-Origin "http://example.com"
-    </IfModule>
+<IfModule mod_headers.c>
+Header set Access-Control-Allow-Origin "http://example.com"
+</IfModule>
 </FilesMatch>
 
-*/
-
-
-
-
-
-
-
+ */
 
 ################################################################
-
-Finding the Union, Intersection, or Difference of Two Arrays
-
+# Finding the Union, Intersection, or Difference of Two Arrays
 ################################################################
 
+/*
 http://phptester.net/
 https://www.techrepublic.com/article/17-useful-functions-for-manipulating-arrays-in-php/
 https://www.oreilly.com/library/view/php-cookbook/1565926811/ch04s24.html
 http://php.net/manual/de/function.array-intersect.php
+ */
 
-$aRed = array( 5, 14, 19, 72, 77, 86);
+$aRed = array(5, 14, 19, 72, 77, 86);
 
 $arU = array(
-	"1" => array(5, 14, 19, 72, 77, 86),
-	"2" => array(19,14,5),
-	"3" => array(21,33,44)
+    "1" => array(5, 14, 19, 72, 77, 86),
+    "2" => array(19, 14, 5),
+    "3" => array(21, 33, 44),
 );
 
-foreach($arU as $key => $item){
-	//print_r(count(array_diff_assoc($item,$aRed)));
-	print_r(array_diff_assoc($item,$aRed));
-	echo "<br>";
+foreach ($arU as $key => $item) {
+    //print_r(count(array_diff_assoc($item,$aRed)));
+    print_r(array_diff_assoc($item, $aRed));
+    echo "<br>";
 }
 echo "<hr>";
-foreach($arU as $key => $item){
-	//print_r(count(array_diff_assoc($item,$aRed)));
-	print_r(array_diff($item,$aRed));
-	echo "<br>";
+foreach ($arU as $key => $item) {
+    //print_r(count(array_diff_assoc($item,$aRed)));
+    print_r(array_diff($item, $aRed));
+    echo "<br>";
 }
 echo "<hr>";
-foreach($arU as $key => $item){
-	//print_r(count(array_diff_assoc($item,$aRed)));
-	print_r(array_intersect($item,$aRed));
-	echo "<br>";
+foreach ($arU as $key => $item) {
+    //print_r(count(array_diff_assoc($item,$aRed)));
+    print_r(array_intersect($item, $aRed));
+    echo "<br>";
 
-	if(count(array_intersect($item,$aRed)) != count($aRed)){
-		echo "not identical";
-		echo "<br>";
-	}
+    if (count(array_intersect($item, $aRed)) != count($aRed)) {
+        echo "not identical";
+        echo "<br>";
+    }
 
 }
 echo "<hr>";
@@ -1016,8 +972,7 @@ Array ( [0] => 21 [1] => 33 [2] => 44 )
 Array ( [0] => 5 [1] => 14 [2] => 19 [3] => 72 [4] => 77 [5] => 86 )
 Array ( [0] => 19 [1] => 14 [2] => 5 )  not identical
 Array ( )  not identical
-*/
-
+ */
 
 #############################################################
 #
@@ -1029,9 +984,6 @@ $date = new DateTime("2012-10-18");
 echo $date->format("W");
 echo "<br>";
 echo date('W', strtotime("2012-10-18"));
-
-
-
 
 ########################################################
 #
@@ -1055,31 +1007,26 @@ $lines = preg_split("~[/\n/,;]~", $content);
 
 #$lines = preg_split( '/\r\n|\r|\n/', $content );
 #$lines = string = preg_split("/\R/", $content);
-print_r($lines );
+print_r($lines);
 
 /*Array ( [0] => AAAAAAA [1] => BBBBBBB [2] => CCCCCCC )*/
 
-
-
 #####################################################
 #
-#	PHP - Get key name of array value
+#    PHP - Get key name of array value
 #
-#	key — Fetch a key from an array
-# 	http://php.net/manual/en/function.array-search.php
-# 	http://uk.php.net/manual/en/function.key.php
+#    key — Fetch a key from an array
+#     http://php.net/manual/en/function.array-search.php
+#     http://uk.php.net/manual/en/function.key.php
 #
 #####################################################
 
 $array = array(0 => 'blue', 1 => 'red', 2 => 'green', 3 => 'red');
 $key = array_search('green', $array); // $key = 2;
-$key = array_search('red', $array);   // $key = 1;
+$key = array_search('red', $array); // $key = 1;
 
-
-$arr = array ('first' => 'a', 'second' => 'b', );
-$key = array_search ('a', $arr);
-
--------
+$arr = array('first' => 'a', 'second' => 'b');
+$key = array_search('a', $arr);
 
 # key($arr);
 $array = array(
@@ -1093,22 +1040,22 @@ $array = array(
 // key where value equals "apple"
 while ($fruit_name = current($array)) {
     if ($fruit_name == 'apple') {
-        echo key($array).'<br />';
+        echo key($array) . '<br />';
     }
     next($array);
 }
 
-
 #####################################################
 #
-#	parse_ini_file — Parse a configuration file
+#    parse_ini_file — Parse a configuration file
 #
-#	http://php.net/manual/en/function.parse-ini-file.php
-#	http://php.net/manual/en/function.file.php
-#	http://php.net/manual/en/function.split.php
+#    http://php.net/manual/en/function.parse-ini-file.php
+#    http://php.net/manual/en/function.file.php
+#    http://php.net/manual/en/function.split.php
 #
 #####################################################
 
+/*
 http://php.net/manual/de/function.split.php (REMOVED in PHP 7.0.0.)
 http://php.net/manual/de/function.parse-ini-file.php
 http://php.net/manual/de/function.preg-split.php
@@ -1116,7 +1063,7 @@ http://php.net/manual/de/function.explode.php
 http://php.net/manual/de/function.str-split.php
 https://www.reddit.com/r/PHP/comments/18dgn3/why_are_hash_comments_deprecated/
 http://php.net/manual/de/function.parse-ini-file.php (DOES NOT SUPPORT #)
-
+ */
 
 // Parse without sections
 $ini_array = parse_ini_file("sample.ini");
@@ -1124,26 +1071,26 @@ print_r($ini_array);
 
 // if file with hashes
 $ini_array = explode("\n", file_get_contents('filename'));
-foreach($ini_array as $value){
-	if(preg_match('~host~',$value)){
-		$arTmp = explode("=",$value);
-		print_r($arTmp);
-	}
-		if(preg_match('~user~',$value)){
-		$arTmp = explode("=",$value);
-		print_r($arTmp);
-	}
+foreach ($ini_array as $value) {
+    if (preg_match('~host~', $value)) {
+        $arTmp = explode("=", $value);
+        print_r($arTmp);
+    }
+    if (preg_match('~user~', $value)) {
+        $arTmp = explode("=", $value);
+        print_r($arTmp);
+    }
 }
 
-
 ##########################################################
 #
-#	Klassen und Objekte
-#	http://php.net/manual/de/language.oop5.php
-#	http://php.net/manual/en/language.oop5.basic.php
+#    Klassen und Objekte
+#    http://php.net/manual/de/language.oop5.php
+#    http://php.net/manual/en/language.oop5.basic.php
 #
 ##########################################################
 
+/*
 class Classy {
 
 const       STAT = 'S' ; // no dollar sign for constants (they are always static)
@@ -1155,56 +1102,56 @@ protected  $prot = 'Protected' ;
 function __construct( ){  }
 
 public function showMe( ){
-    print '<br> self::STAT: '  .  self::STAT ; // refer to a (static) constant like this
-    print '<br> self::$stat: ' . self::$stat ; // static variable
-    print '<br>$this->stat: '  . $this->stat ; // legal, but not what you might think: empty result
-    print '<br>$this->publ: '  . $this->publ ; // refer to an object variable like this
-    print '<br>' ;
+print '<br> self::STAT: '  .  self::STAT ; // refer to a (static) constant like this
+print '<br> self::$stat: ' . self::$stat ; // static variable
+print '<br>$this->stat: '  . $this->stat ; // legal, but not what you might think: empty result
+print '<br>$this->publ: '  . $this->publ ; // refer to an object variable like this
+print '<br>' ;
 }
 }
 $me = new Classy( ) ;
-$me->showMe( ) ;
+$me->showMe( ) ;*/
 
 ##########################################################
 #
-#	Verwendung von instanceof mit ererbten Klassen
-#	Checks if the object is of this class or has this class as one of its parents
-#	http://php.net/manual/de/internals2.opcodes.instanceof.php
-#	http://php.net/manual/de/language.operators.type.php
-#	http://php.net/manual/de/function.is-a.php
+#    Verwendung von instanceof mit ererbten Klassen
+#    Checks if the object is of this class or has this class as one of its parents
+#    http://php.net/manual/de/internals2.opcodes.instanceof.php
+#    http://php.net/manual/de/language.operators.type.php
+#    http://php.net/manual/de/function.is-a.php
 #
 ##########################################################
 
+/*
 class WidgetFactory {   var $oink = 'moo'; }
 $WF = new WidgetFactory();
 
 if (is_a($WF, 'WidgetFactory')) {
-  echo "yes, \$WF is still a WidgetFactory\n";
+echo "yes, \$WF is still a WidgetFactory\n";
 }
 if ($WF instanceof WidgetFactory) {
-    echo 'Yes, $WF is a WidgetFactory';
-}
-
+echo 'Yes, $WF is a WidgetFactory';
+}*/
 
 ##########################################################
 #
 #  shell_exec
 #
 ##########################################################
-
+/*
 http://php.net/manual/en/function.exec.php
 http://php.net/manual/en/function.shell-exec.php
+ */
 
 $output = shell_exec('ls -lart');
 echo "<pre>$output</pre>";
 
 echo exec('whoami');
 
-
 ###############################################
 #
-#	Find pathnames matching a pattern
-# 	http://php.net/manual/en/function.glob.php
+#    Find pathnames matching a pattern
+#     http://php.net/manual/en/function.glob.php
 #
 ###############################################
 
@@ -1214,80 +1161,62 @@ foreach (glob("*.txt") as $filename) {
 }
 
 // get dir array
-$dirs =  glob('*', GLOB_ONLYDIR);
+$dirs = glob('*', GLOB_ONLYDIR);
 foreach ($dirs as $dir) {
-	// do something
+    // do something
 }
 
-
-
-
-
 ###############################################
 #
-# 	Exception references
+#     Exception references
 #
 ###############################################
 
-
+/*
 https://www.alainschlesser.com/structuring-php-exceptions/
 http://php.net/manual/de/exception.getcode.php
 https://stackify.com/php-try-catch-php-exception-tutorial/
 http://php.net/manual/de/language.exceptions.php
 https://www.codediesel.com/php/handling-multiple-exceptions-in-php-7-1/
-
+ */
 
 try {
     throw new Exception("Some error message", 30);
-} catch(Exception $e) {
+} catch (Exception $e) {
     echo "The exception code is: " . $e->getCode();
 }
 
 try {
     // run your code here
-}
-catch (exception $e) {
+} catch (exception $e) {
     //code to handle the exception
-}
-catch (InvalidArgumentException $e) {
+} catch (InvalidArgumentException $e) {
     echo $e->getMessage();
-}
-finally {
+} finally {
     //optional code that always runs
 }
 
-...
-
-class DivideByZeroException extends Exception {};
-class DivideByNegativeException extends Exception {};
+class DivideByZeroException extends Exception
+{};
+class DivideByNegativeException extends Exception
+{};
 
 function process_divide($denominator)
 {
     try
     {
-        if ($denominator == 0)
-        {
+        if ($denominator == 0) {
             throw new DivideByZeroException();
-        }
-        else if ($denominator < 0)
-        {
+        } else if ($denominator < 0) {
             throw new DivideByNegativeException();
-        }
-        else
-        {
+        } else {
             echo 100 / $denominator;
         }
-    }
-    catch (DivideByZeroException $ex)
-    {
+    } catch (DivideByZeroException $ex) {
         echo "Divide by zero exception!";
-    }
-    catch (DivideByNegativeException $ex)
-    {
+    } catch (DivideByNegativeException $ex) {
         echo "Divide by negative number exception!";
-    }
-    catch (Exception $x)
-    {
+    } catch (Exception $x) {
         echo "UNKNOWN EXCEPTION!";
     }
 }

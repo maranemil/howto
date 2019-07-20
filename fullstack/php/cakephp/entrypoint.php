@@ -6,9 +6,7 @@
  * Time: 23:52
  */
 
-
 echo "BATCH \n";
-
 define('APP_DIR', 'app');
 define('DS', DIRECTORY_SEPARATOR);
 define('ROOT', dirname(__FILE__));

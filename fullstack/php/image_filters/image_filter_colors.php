@@ -1,6 +1,6 @@
 <?php
 $image = imagecreatefromjpeg('pexels-photo-1910014.jpg');
-for($ias = 0; $ias < 12; $ias++){
+for ($ias = 0; $ias < 12; $ias++) {
     imagefilter($image, IMG_FILTER_BRIGHTNESS, -$ias); # -100/+100
     imagefilter($image, IMG_FILTER_CONTRAST, -$ias); # -50/+50
     #imagefilter($image, IMG_FILTER_GRAYSCALE);
@@ -8,11 +8,11 @@ for($ias = 0; $ias < 12; $ias++){
 }
 imagedestroy($image);
 
-$strHTMLIMG='';
-for($ias = 0; $ias < 12; $ias++){
-    $strHTMLIMG.='<div style="float: left; margin: 5px">';
-    $strHTMLIMG.='<img src="output/img_filter_'.$ias.'.jpg" class="plotimg" />';
-    $strHTMLIMG.='</div>';
+$strHTMLIMG = '';
+for ($ias = 0; $ias < 12; $ias++) {
+    $strHTMLIMG .= '<div style="float: left; margin: 5px">';
+    $strHTMLIMG .= '<img src="output/img_filter_' . $ias . '.jpg" class="plotimg" />';
+    $strHTMLIMG .= '</div>';
 }
 $strHTML = '
 <!DOCTYPE html>
@@ -36,7 +36,7 @@ $strHTML = '
 
 <div class="container">
     <div class="col-md-12">
-    '.$strHTMLIMG.'
+    ' . $strHTMLIMG . '
     </div>
 </div>
 
@@ -44,9 +44,7 @@ $strHTML = '
 </html>
 ';
 
-file_put_contents(__FILE__.".html",$strHTML);
-
-
+file_put_contents(__FILE__ . ".html", $strHTML);
 
 /*
 imagefilter($image, IMG_FILTER_COLORIZE, 100, 0, 0); # -100,-100,-100 - 100,100,100
@@ -59,12 +57,9 @@ imagefilter($image, IMG_FILTER_SELECTIVE_BLUR);
 imagefilter($image, IMG_FILTER_MEAN_REMOVAL);
 imagefilter($image, IMG_FILTER_SMOOTH, 5);
 imagefilter($image, IMG_FILTER_NEGATE);
-*/
-
+ */
 
 /*
-
-
 
 https://davidwalsh.name/php-image-filter
 https://www.phpied.com/image-fun-with-php-part-2/
@@ -82,6 +77,4 @@ https://stocksnap.io/
 https://stocksnap.io/photo/XQESGTCJEV
 https://www.pexels.com/photo/woman-standing-against-wall-wearing-yellow-turtleneck-sweater-1910014/
 https://www.pexels.com/
-*/
-
-
+ */

@@ -9,9 +9,9 @@ header('Content-Type: image/jpeg');
 list($width, $height) = getimagesize($filename);
 $newWidth = $width * $percent;
 $newHeight = $height * $percent;
-echo "Img Size: ".PHP_EOL;
-print_r(array($width,$height));
-echo "---------------------------------".PHP_EOL;
+echo "Img Size: " . PHP_EOL;
+print_r(array($width, $height));
+echo "---------------------------------" . PHP_EOL;
 $thumb = imagecreatetruecolor($newWidth, $newHeight);
 $source = imagecreatefromjpeg($filename);
 // Resize
@@ -19,52 +19,50 @@ imagecopyresized($thumb, $source, 0, 0, 0, 0, $newWidth, $newHeight, $width, $he
 // get max w/h pixels
 $imgw = imagesx($thumb);
 $imgh = imagesy($thumb);
-echo "Img Resize: ".PHP_EOL;
-print_r( array( $imgw, $imgh ) );
-echo "---------------------------------".PHP_EOL;
+echo "Img Resize: " . PHP_EOL;
+print_r(array($imgw, $imgh));
+echo "---------------------------------" . PHP_EOL;
 // n = total number or pixels
-$n = $imgw*$imgh;
+$n = $imgw * $imgh;
 $histo = array();
-for ($i=0; $i<$imgw; $i++)
-{
-        for ($j=0; $j<$imgh; $j++)
-        {
-       // get the rgb value for current pixel
-                $rgb = ImageColorAt($thumb, $i, $j);
-                // extract each value for r, g, b
-                $r = ($rgb >> 16) & 0xFF;
-                $g = ($rgb >> 8) & 0xFF;
-                $b = $rgb & 0xFF;
-                // get the Value from the RGB value
-                $V = round(($r + $g + $b) / 3);
-                $arrV[] = array(
-                    "r"=> intval($r),
-                    "g"=> intval($g),
-                    "b"=> intval($b)
-                );
-                $arrHex[] = sprintf("#%02x%02x%02x", $r, $g, $b);
-                // add the point to the histogram
-                //$histo[$V] += intval($V/$n);
-        }
+for ($i = 0; $i < $imgw; $i++) {
+    for ($j = 0; $j < $imgh; $j++) {
+        // get the rgb value for current pixel
+        $rgb = ImageColorAt($thumb, $i, $j);
+        // extract each value for r, g, b
+        $r = ($rgb >> 16) & 0xFF;
+        $g = ($rgb >> 8) & 0xFF;
+        $b = $rgb & 0xFF;
+        // get the Value from the RGB value
+        $V = round(($r + $g + $b) / 3);
+        $arrV[] = array(
+            "r" => intval($r),
+            "g" => intval($g),
+            "b" => intval($b),
+        );
+        $arrHex[] = sprintf("#%02x%02x%02x", $r, $g, $b);
+        // add the point to the histogram
+        //$histo[$V] += intval($V/$n);
+    }
 }
 //print_r($arrV[0]);
-echo "---------------------------------".PHP_EOL;
+echo "---------------------------------" . PHP_EOL;
 $countHex = array_count_values($arrHex);
 $arReference = array_filter($countHex);
-$average = array_sum($arReference)/count($arReference);
-echo "Average:".$average.PHP_EOL;
+$average = array_sum($arReference) / count($arReference);
+echo "Average:" . $average . PHP_EOL;
 $max = max($arReference);
-echo "Max: ".$max.PHP_EOL;
-echo "---------------------------------".PHP_EOL;
-echo "Top 5 hex colors: ".PHP_EOL;
+echo "Max: " . $max . PHP_EOL;
+echo "---------------------------------" . PHP_EOL;
+echo "Top 5 hex colors: " . PHP_EOL;
 arsort($countHex);
-$top5 = array_slice($countHex,0, 5);
+$top5 = array_slice($countHex, 0, 5);
 print_r($top5);
-echo "---------------------------------".PHP_EOL;
+echo "---------------------------------" . PHP_EOL;
 // print_r( hexdec( key($top5))); //
-echo "Top color: ".PHP_EOL;
+echo "Top color: " . PHP_EOL;
 list($r, $g, $b) = sscanf(key($top5), "#%02x%02x%02x");
-echo key($top5)."-> $r $g $b"; // rgb color nr 1
+echo key($top5) . "-> $r $g $b"; // rgb color nr 1
 print PHP_EOL;
 
 // print colors in terminal
@@ -74,11 +72,11 @@ print PHP_EOL;
 
 $strHTML = '<img src="stat.jpg"  width="300px"/>';
 $jsonColors = json_encode($top5);
-$arrColors = json_decode($jsonColors,true);
-foreach($arrColors as $hexColor => $count){
-	$strHTML.= '<div style="background: '.$hexColor.';width:300px"><span style="color:white">'.$hexColor . "( ".$count.')</span></div>';
+$arrColors = json_decode($jsonColors, true);
+foreach ($arrColors as $hexColor => $count) {
+    $strHTML .= '<div style="background: ' . $hexColor . ';width:300px"><span style="color:white">' . $hexColor . "( " . $count . ')</span></div>';
 }
 
-file_put_contents(__FILE__.".html",$strHTML);
+file_put_contents(__FILE__ . ".html", $strHTML);
 imagejpeg($thumb, 'stat.jpg');
 imagedestroy($thumb);

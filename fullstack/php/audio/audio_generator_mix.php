@@ -7,7 +7,7 @@
 # https://ffmpeg.org/ffmpeg-filters.html
 # ffmpeg -f concat -safe 0 -i <(for f in ./*.wav; do echo "file '$PWD/$f'"; done) -c copy output.wav
 
-$cmdMix = "ffmpeg   ";
+$cmdMix = "ffmpeg ";
 
 // get files array
 // http://php.net/manual/en/function.shuffle.php
@@ -15,10 +15,10 @@ $cmdMix = "ffmpeg   ";
 $arrFiles = glob("gen4/*.wav");
 shuffle($arrFiles);
 foreach ($arrFiles as $filename) {
-	#echo "$filename size " . filesize($filename) . "\n";
-	if(rand(1,10) == 2){
-		$cmdMix .= " -i '{$filename}' ";
-	}
+    #echo "$filename size " . filesize($filename) . "\n";
+    if (rand(1, 10) == 2) {
+        $cmdMix .= " -i '{$filename}' ";
+    }
 }
 
 #$cmdMix .= "  -filter_complex \"[0:0][1:0] amix=inputs=3:duration=longest:dropout_transition=3\"" ;
@@ -58,22 +58,20 @@ ffmpeg -i first.flac -i second.flac -filter_complex acrossfade=d=10:c1=exp:c2=ex
 Cross fade from one input to another but without overlapping:
 ffmpeg -i first.flac -i second.flac -filter_complex acrossfade=d=10:o=0:c1=exp:c2=exp output.flac
 
-
 chorus=0.7:0.9:55:0.4:0.25:2
 
 setpts=0.5*PTS double the speed
 setpts=0.25*PTS speed up (4x) video
 setpts=2.0*PTS slow down
 -filter:v setpts=4.0*PTS
-*/
+ */
 
-$cmdMix .= " -filter:v setpts=4.0*PTS -vcodec copy -y  output_".date("YmdHis").".wav";
+$cmdMix .= " -filter:v setpts=4.0*PTS -vcodec copy -y  output_" . date("YmdHis") . ".wav";
 echo $cmdMix;
 
 #shell_exec($cmdMix);
 exec($cmdMix, $out);
 print_r($out);
-
 
 # https://music.tutsplus.com/articles/12-places-you-can-download-quality-edm-samples-for-free--audio-20765
 
@@ -89,7 +87,6 @@ print_r($out);
 
 /*
 https://www.wavealchemy.co.uk/evolve/pid184/
-
 
 https://freesound.org/people/jobro/sounds/39148/
 https://freesound.org/people/HerbertBoland/sounds/29699/
@@ -128,6 +125,4 @@ https://freesound.org/people/InSintesi/sounds/383927/
 https://freesound.org/people/Tom8Music/sounds/392630/
 https://freesound.org/people/IanStarGem/sounds/271077/
 https://freesound.org/people/SSS_Samples/sounds/431594/
-*/
-
-
+ */

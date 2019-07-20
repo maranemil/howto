@@ -136,7 +136,7 @@ define('ENABLE_MARKETPLACE_SUPPORT', FALSE);
 define('ENABLE_INTELLIGENT_SEARCH_HELP', FALSE);
 define('ENABLE_INTELLIGENT_SEARCH_MARKETPLACE', FALSE);
 define('ENABLE_APP_NEWS', FALSE);
-define('WHITE_LABEL_LOGO_SRC', 'path to logo file')
+define('WHITE_LABEL_LOGO_SRC', 'path to logo file');
 define('WHITE_LABEL_APP_NAME', 'My Application');
 define('WHITE_LABEL_DASHBOARD_BACKGROUND_SRC','path to background image');
 
@@ -192,7 +192,7 @@ define('DIR_REL', '');
 define('REDIRECT_TO_BASE_URL', false);
 define('BASE_URL', 'http://localhost');
 define('BASE_URL', 'http://concrete5.dev');
-define('DIR_REL', '/concrete5_v2'); to define('DIR_REL', '');
+define('DIR_REL', '/concrete5_v2'); // to define('DIR_REL', '');
 
 ####################################
 
