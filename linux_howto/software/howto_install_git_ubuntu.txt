@@ -1728,3 +1728,533 @@ MAC Xcode : git mergetool -t opendiff
 #Things that changed
 
 >------>  New Commit # Point where the conflict ends
+
+
+
+##############################################################
+#
+#   Command line instructions
+#
+##############################################################
+
+Git global setup
+
+git config --global user.name "Administrator"
+git config --global user.email "admin@example.com"
+
+Create a new repository
+
+git clone http://pc-X551CA/root/mytest.git
+cd mytest
+touch README.md
+git add README.md
+git commit -m "add README"
+git push -u origin master
+
+Existing folder
+
+cd existing_folder
+git init
+git remote add origin http://pc-X551CA/root/mytest.git
+git add .
+git commit
+git push -u origin master
+
+Existing Git repository
+
+cd existing_repo
+git remote add origin http://pc-X551CA/root/mytest.git
+git push -u origin --all
+git push -u origin --tags
+
+
+
+
+
+##############################################################
+#
+#   Check git branch
+#
+##############################################################
+
+ls -ld /usr/local
+ls -lA /usr/local
+find /usr/local -user root
+cd /usr/local
+git branch
+git status
+git stash -p
+git shelve
+--------------------------------------------------------------
+
+$ git --version
+git version 1.7.5.4
+$ which git
+/usr/bin/git
+
+--------------------------------------------------------------
+git add
+git commit -a
+git help status
+git status -uno
+git status -s # short format
+git status -b # branch format
+
+
+##############################################################
+#
+#   rebase with stash and pull --rebase
+#
+##############################################################
+
+git status
+git stash
+#git stash list
+#git stash apply
+#git stash apply --index
+git pull -r
+#git pull --rebase
+git stash pop
+
+--------------------------------------------------------------
+
+git stash -u             	# This will stash everything, including unstaged files
+git stash pop stash@{1}  	# This will apply your original stash
+git stash drop 			# remove your "safe" stash.
+git stash drop [stash-id] 	# (default is the latest stash, see all with git stash list).
+
+--------------------------------------------------------------
+
+usage: git stash list [<options>]
+   or: git stash show [<stash>]
+   or: git stash drop [-q|--quiet] [<stash>]
+   or: git stash ( pop | apply ) [--index] [-q|--quiet] [<stash>]
+   or: git stash branch <branchname> [<stash>]
+   or: git stash [save [--patch] [-k|--[no-]keep-index] [-q|--quiet]
+                       [-u|--include-untracked] [-a|--all] [<message>]]
+   or: git stash clear
+
+--------------------------------------------------------------
+
+# Show what git will be remove
+git clean -n
+
+# If all is good
+git clean -f
+
+# If not all is good, see
+git clean --help
+
+# Finish
+git stash pop
+
+
+
+
+##############################################################
+#
+#   fix rebase error
+#
+##############################################################
+
+--------------------------------------------------------------
+# rebase error
+# Cannot rebase: Your index contains uncommitted changes.
+# You have unstaged changes.
+# Please commit or stash them.
+--------------------------------------------------------------
+
+git status
+#git checkout -- <file name>
+git reset --hard
+git stash
+git pull --rebase
+#git pull --no-rebase
+git stash apply stash@{0}
+git stash pop
+#git stash applies
+#git fetch && git merge --ff-only origin/master
+git checkout somebranch
+
+git update-index -q --ignore-submodules --refresh
+git diff-files --ignore-submodules
+git diff-index --cached --ignore-submodules HEAD --
+
+git fetch
+git rebase -p origin/master
+
+
+
+
+##############################################################
+#
+#   unstash
+#
+##############################################################
+
+git stash show -p stash@{0} | git apply -R
+git stash show -p | git apply -R
+
+git config --global alias.stash-unapply '!git stash show -p | git apply -R'
+$ git stash apply
+$ #... work work work
+$ git stash-unapply
+
+git stash branch testchanges
+
+##############################################################
+#
+#   config git
+#
+##############################################################
+
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
+
+git config core.fscache true 	# Enable the filesystem cache
+git config core.ignoreStat true # Avoid inspecting large working trees
+--------------------------------------------------------------
+
+git log --graph --all
+
+--------------------------------------------------------------
+
+git rm --cached .idea/*
+
+git commit -a
+git add -u
+git reset HEAD path/to/file
+git commit
+
+git commit -a
+git update-index --assume-unchanged <file>
+git update-index --no-assume-unchanged <file>
+
+git status
+git update-index --assume-unchanged README.textile
+git update-index --no-assume-unchanged README.textile
+
+
+git update-index --assume-unchanged [<file>...]
+git update-index --skip-worktree [<file>...]
+git update-index --no-assume-unchanged my-file.php
+
+git config --global alias.ignore 'update-index --skip-worktree'
+git config --global alias.unignore 'update-index --no-skip-worktree'
+git config --global alias.ignored '!git ls-files -v | grep "^S"'
+
+------------------------------------------------
+##############################################################
+#
+#   remove cache
+#
+##############################################################
+
+git rm --cached file1 file2 dir/file3
+git rm --cached `git ls-files -i --exclude-from=.gitignore`
+#git ls-files -i --exclude-from=.gitignore | xargs git rm --cached
+#git ls-files -i -z --exclude-from=.gitignore | xargs -0 git rm --cached
+#git ls-files -i --exclude-from=.gitignore | %{git rm --cached $_}
+
+git rm --cached .
+git rm -r --cached .
+git add .
+git commit -m "Removing all files in .gitignore"
+
+git clean -h
+git clean -xdn
+
+
+
+
+
+
+
+######################################
+#
+# Git Commands Examples
+#
+#####################################
+
+git checkout developer
+Your branch is behind 'origin/develop' by 2 commits, and can be fast-forwarded.
+Your branch is behind  commits, and can be fast-forwarded.
+
+git branch -a
+
+  developer
+  master
+
+git branch -b <new_branch>
+
+-------------------------------------------------------------
+
+Changes to be committed:
+#   (use "git reset HEAD <file>..." to unstage)
+#
+#	new file:   htdocs/css/jquery-ui-1.12.0.custom.css
+#	new file:   htdocs/javascript/jquery/jquery-ui-1.12.1.custom.js
+#
+# Changed but not updated:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#	modified:   htdocs/css/jquery-ui-1.12.0.custom.css
+#
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+
+-------------------------------------------------------------
+
+git commit -a -m "scripts" test.php    # single file
+git commit -m "scripts"  test.php    test2.php    # multiple files
+
+#########################################################
+#
+# Your branch is ahead of 'origin/master' by x commits FIX
+# http://stackoverflow.com/questions/16288176/your-branch-is-ahead-of-origin-master-by-3-commits
+#
+#########################################################
+
+git reset --hard origin/master
+
+# 4 simple commands
+git checkout <branch_name>
+git pull -s recursive -X theirs
+git status
+git reset --hard origin/<branch_name>
+git fetch
+
+# git push origin branch
+# git pull origin branch
+
+# git fetch origin other-branch && git merge other-branch
+# git fetch origin other-branch
+# git fetch
+# git pull -- pull is a combination of fetch and merge
+
+$ git merge origin/other-branch
+# Fix merge conflicts, if they occur
+# Add merge conflict fixes
+$ git commit  # And commit the merge!
+
+--------------------------------------------------------------
+
+/etc/aliases
+/etc/passwd
+
+Create a file named ~/.ssh/config and put this in there:
+
+Host h
+User christopher
+HostName my.domain.top
+Now you only have to type ssh h and it does the same thing!
+
+You can also use a wildcard:
+
+Host *
+User christopher
+
+--------------------------------------------------------------
+
+git ls-files -m
+git status | grep modified
+git status -uno
+git status -s | grep '^M'
+git status -s | awk '{if ($1 == "M") print $2}'
+git status -s | awk '$1 == "M" { print $2 }'
+git diff --name-only
+git diff --name-only --diff-filter=M
+git log -n1 --oneline --name-status | grep '^M'
+https://git-scm.com/docs/git-status/1.7.0
+
+# https://git-scm.com/docs/git-checkout
+
+--------------------------------------------------------------
+
+#brew upgrade
+#brew update -v
+#brew --config
+
+--------------------------------------------------------------
+
+ls -ld /usr/local
+ls -lA /usr/local
+find /usr/local -user root
+cd /usr/local
+git branch
+git status
+git stash -p
+git shelve
+---------
+$ git --version
+git version 1.7.5.4
+$ which git
+/usr/bin/git
+------
+git add
+git commit -a
+git help status
+git status -uno
+git status -s # short format
+git status -b # branch format
+
+--------------------------------------------------------------
+# rebase stash
+
+git status
+git stash
+#git stash list
+#git stash apply
+#git stash apply --index
+git pull -r
+#git pull --rebase
+git stash pop
+
+----
+
+git stash -u             	# This will stash everything, including unstaged files
+git stash pop stash@{1}  	# This will apply your original stash
+git stash drop 			# remove your "safe" stash.
+git stash drop [stash-id] 	# (default is the latest stash, see all with git stash list).
+
+----
+
+usage: git stash list [<options>]
+   or: git stash show [<stash>]
+   or: git stash drop [-q|--quiet] [<stash>]
+   or: git stash ( pop | apply ) [--index] [-q|--quiet] [<stash>]
+   or: git stash branch <branchname> [<stash>]
+   or: git stash [save [--patch] [-k|--[no-]keep-index] [-q|--quiet]
+                       [-u|--include-untracked] [-a|--all] [<message>]]
+   or: git stash clear
+
+--------------------------------------------------------------
+
+# Show what git will be remove
+git clean -n
+
+# If all is good
+git clean -f
+
+# If not all is good, see
+git clean --help
+
+# Finish
+git stash pop
+
+--------------------------------------------------------------
+
+#unstash
+
+git stash show -p stash@{0} | git apply -R
+git stash show -p | git apply -R
+
+git config --global alias.stash-unapply '!git stash show -p | git apply -R'
+$ git stash apply
+$ #... work work work
+$ git stash-unapply
+
+git stash branch testchanges
+
+------------------------------------------------
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
+
+git config core.fscache true 	# Enable the filesystem cache
+git config core.ignoreStat true # Avoid inspecting large working trees
+------------------------------------------------
+--color
+git log --graph --all
+------------------------------------------------
+
+git rm --cached .idea/*
+
+git commit -a
+git add -u
+git reset HEAD path/to/file
+git commit
+
+git commit -a
+git update-index --assume-unchanged <file>
+git update-index --no-assume-unchanged <file>
+
+git status
+git update-index --assume-unchanged README.textile
+git update-index --no-assume-unchanged README.textile
+
+git update-index --assume-unchanged [<file>...]
+git update-index --skip-worktree [<file>...]
+git update-index --no-assume-unchanged my-file.php
+
+git config --global alias.ignore 'update-index --skip-worktree'
+git config --global alias.unignore 'update-index --no-skip-worktree'
+git config --global alias.ignored '!git ls-files -v | grep "^S"'
+
+------------------------------------------------
+
+# remove
+
+git rm --cached file1 file2 dir/file3
+git rm --cached `git ls-files -i --exclude-from=.gitignore`
+#git ls-files -i --exclude-from=.gitignore | xargs git rm --cached
+#git ls-files -i -z --exclude-from=.gitignore | xargs -0 git rm --cached
+#git ls-files -i --exclude-from=.gitignore | %{git rm --cached $_}
+
+git rm --cached .
+git rm -r --cached .
+git add .
+git commit -m "Removing all files in .gitignore"
+
+git clean -h
+git clean -xdn
+
+
+
+
+##################################################
+#
+#	Git error on commit after merge - fatal: cannot do a partial commit during a merge
+#	fatal: cannot do a partial commit during a merge.
+# 	Fix: git commit -i my_filename
+#
+##################################################
+
+------------------------------------------------------------
+
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly:
+
+    git config --global user.name "Your Name"
+    git config --global user.email you@example.com
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+-----------------------------------------------------------
+
+warning: push.default is unset; its implicit value has changed in
+Git 2.0 from 'matching' to 'simple'. To squelch this message
+and maintain the traditional behavior, use:
+
+  git config --global push.default matching
+
+To squelch this message and adopt the new behavior now, use:
+
+  git config --global push.default simple
+
+When push.default is set to 'matching', git will push local branches
+to the remote branches that already exist with the same name.
+
+Since Git 2.0, Git defaults to the more conservative 'simple'
+behavior, which only pushes the current branch to the corresponding
+remote branch that 'git pull' uses to update the current branch.
+
+See 'git help config' and search for 'push.default' for further information.
+(the 'simple' mode was introduced in Git 1.7.11. Use the similar mode
+'current' instead of 'simple' if you sometimes use older versions of Git)
+
+----------------------------------------------------

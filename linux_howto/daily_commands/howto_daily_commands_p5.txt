@@ -256,3 +256,155 @@ https://imagemagick.org/script/command-line-processing.php
 
 magick 'images.gif[0]' image.png
 magick 'images.gif[0-3]' images.mng
+
+
+##############################################################
+#
+#   Generate SSH KEY
+#   https://git-scm.com/book/be/v2/Git-on-the-Server-Generating-Your-SSH-Public-Key
+#   https://git-scm.com/book/de/v1/Git-auf-dem-Server-Einrichten-des-Servers
+#
+##############################################################
+
+
+sudo adduser git
+#sudo adduser user group
+#sudo deluser user group
+#sudo usermod -a -G groupName userName
+su git
+cd
+mkdir .ssh
+
+ssh-keygen -t rsa -b 4096 -C "test@some.com" 	# add ssh key
+eval "$(ssh-agent -s)"  						# Start the ssh-agent in the background
+ssh-add ~/.ssh/id_rsa  							# Add your SSH key to the ssh-agent
+cat /home/xyz/.ssh/id_rsa.pub  				    # print ssh key in terminal
+#sudo tail -1 /home/xyz/.ssh/id_rsa.pub         # print ssh key in terminal
+#xclip -sel clip < ~/.ssh/id_rsa.pub 			# copy ssh key to clipboard
+ssh -T git@github.com 							# test ssh connection
+ssh-keygen -p									# Start the SSH key creation process - Regenerate string in key
+
+
+https://help.github.com/articles/connecting-to-github-with-ssh/
+https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/
+https://help.github.com/articles/testing-your-ssh-connection/
+
+
+
+##############################################################
+#
+#   copy ssh key into slave machine
+#
+##############################################################
+
+hostname
+ssh-keygen -t rsa
+
+cat ~/.ssh/id_rsa.pub | ssh user@123.45.56.78 "mkdir -p ~/.ssh && cat >>  ~/.ssh/authorized_keys"
+cat ~/.ssh/id_rsa.pub | ssh user@hostname 'cat >> ~/.ssh/authorized_keys'
+cat ~/.ssh/id_rsa.pub | ssh user@hostname 'cat >> .ssh/authorized_keys'
+
+sudo service ssh restart
+
+## https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2
+https://www.digitalocean.com/community/tutorials/how-to-configure-ssh-key-based-authentication-on-a-linux-server
+https://www.howtogeek.com/168147/add-public-ssh-key-to-remote-server-in-a-single-command/
+https://www.cyberciti.biz/faq/how-to-set-up-ssh-keys-on-linux-unix/
+http://www.commandlinefu.com/commands/view/610/add-your-public-ssh-key-to-a-server-in-one-command
+http://www.computerhope.com/unix/uhostnam.htm
+https://www.cyberciti.biz/faq/find-my-linux-machine-name/
+https://www.cyberciti.biz/faq/howto-restart-ssh/
+
+
+
+#######################################################################
+#
+# Firewall Settings
+#
+#######################################################################
+
+sudo apt-get install ufw gufw
+sudo apt-get install ufw
+
+sudo ufw status
+sudo ufw status verbose
+sudo ufw enable
+sudo ufw disable
+sudo ufw reset
+
+
+sudo ufw allow|deny|reject SERVICE
+sudo ufw allow ssh
+sudo ufw allow https
+sudo ufw allow proto tcp from any to 123.456.78.90 port 22
+
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw allow  22/udp
+
+sudo ufw allow 443
+sudo ufw allow ftp
+sudo ufw allow 21/tcp
+
+sudo ufw allow 6000:6007/tcp
+sudo ufw allow 6000:6007/udp
+
+sudo ufw allow from 15.15.15.51
+
+sudo ufw default allow      # alles erlauben
+sudo ufw default deny       # alles verbieten
+
+ufw app list
+ufw app info 'Apache Full'
+
+# https://wiki.ubuntuusers.de/ufw/
+
+sudo ufw allow 1000:2000/tcp
+sudo ufw allow 1000:2000/udp
+
+sudo ufw delete allow ssh
+sudo ufw delete allow 80/tcp
+sudo ufw delete allow 1000:2000/tcp
+
+sudo ufw allow 80/tcp
+sudo ufw deny 80/tcp
+
+# https://www.digitalocean.com/community/tutorials/how-to-setup-a-firewall-with-ufw-on-an-ubuntu-and-debian-cloud-server
+# https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-with-ufw-on-ubuntu-14-04
+
+# https://help.ubuntu.com/lts/serverguide/firewall.html
+# https://help.ubuntu.com/community/UFW
+
+# ----------------------------
+
+sudo apt-get install ufw
+sudo ufw enable
+sudo ufw default deny
+sudo ufw allow|deny [service]
+sudo ufw allow smtp #25/tcp (smtp)
+sudo ufw allow 22/tcp # 22/tcp (ssh)
+sudo ufw allow 53 # (tcp/udp)
+sudo ufw allow from 192.168.1.100
+sudo ufw allow proto udp 192.168.0.1 port 53 to 192.168.0.2 port 53
+sudo ufw deny smtp
+sudo ufw delete allow smtp
+sudo ufw status
+
+sudo apt-get install ufw
+sudo ufw enable
+sudo ufw default deny
+sudo ufw enable|disable
+sudo ufw logging on|off
+sudo ufw default allow|deny
+sudo ufw allow|deny [service]
+
+sudo ufw status
+sudo ufw allow 53
+sudo ufw delete allow 53
+sudo ufw allow 80/tcp
+sudo ufw delete allow 80/tcp
+sudo ufw allow smtp
+sudo ufw delete allow smtp
+sudo ufw allow from 192.168.254.254
+sudo ufw delete allow from 192.168.254.254
+

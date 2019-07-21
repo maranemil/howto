@@ -261,3 +261,81 @@ sudo apt-get install p7zip p7zip-full p7zip-rar
   u : Update files to archive
   x : eXtract files with full paths
 
+
+
+
+##############################################################
+#
+#   install gitlab ce
+#   https://about.gitlab.com/downloads/#ubuntu1604
+#   https://about.gitlab.com/installation/
+#   https://www.linode.com/docs/applications/development/install-gitlab-on-ubuntu-14-04-trusty-tahr
+#   https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-gitlab-on-ubuntu-16-04
+#   https://www.digitalocean.com/community/tutorials/how-to-use-passwd-and-adduser-to-manage-passwords-on-a-linux-vps
+#
+##############################################################
+
+sudo apt-get install curl openssh-server ca-certificates postfix
+curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh | sudo bash
+sudo apt-get install gitlab-ce
+
+#sudo apt-get install git
+#sudo apt-get install postfix
+
+#curl -LJO https://packages.gitlab.com/gitlab/gitlab-ce/packages/ubuntu/xenial/gitlab-ce-XXX.deb/download
+#dpkg -i gitlab-ce-XXX.deb
+
+sudo gitlab-ctl reconfigure
+sudo gitlab-ctl reconfigure
+sudo gitlab-ctl restart
+sudo gitlab-ctl tail nginx
+
+# go to localhost and login using root as user with your new passwd
+
+sudo ufw status
+sudo ufw allow http
+sudo ufw allow OpenSSH
+
+
+sudo gitlab-ctl status
+
+gitlab-ctl stop
+gitlab-ctl tail
+
+netstat -plnt | grep :8080
+curl -v http://127.0.0.1:8080
+sudo ufw status
+
+lsb_release -a
+
+sudo -u git -H editor /opt/gitlab/embedded/service/gitlab-shell/config.yml
+
+I'm not sure what changes if any I should make to the file(its in the default state)
+Some parts that may be relevant
+
+# GitLab user. git by default
+user: git
+
+# Url to gitlab instance. Used for api calls. Should end with a slash.
+gitlab_url: "http://127.0.0.1:8080"
+
+
+# vi /etc/gitlab/gitlab.rb   (change only these lines, uncomment if required)
+unicorn['port'] = 8081
+gitlab_git_http_server['auth_backend'] = "http://localhost:8081"
+
+# gitlab-ctl reconfigure  (to apply the changes)
+# gitlab-ctl restart
+# lsof -i:8081        (check whether unicorn has started properly)
+
+
+
+##############################################################
+#
+#   Apple Macbook pro running MacOS X
+#
+##############################################################
+
+#brew upgrade
+#brew update -v
+#brew --config
