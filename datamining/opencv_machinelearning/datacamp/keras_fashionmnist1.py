@@ -16,7 +16,6 @@ from keras.layers import Conv2D, MaxPooling2D
 from keras import backend as K
 
 model_path = sys.argv[1]
-
 batch_size = 128
 num_classes = 10
 epochs = 12
