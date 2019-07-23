@@ -200,4 +200,45 @@ plt.show()
 
 
 
+
+
+
 # /usr/bin/python3 -m pip install -U autopep8 --user
+
+
+"""
+https://www.tensorflow.org/guide/keras
+https://www.tensorflow.org/guide
+https://www.tensorflow.org/guide/datasets
+https://www.tensorflow.org/guide/datasets_for_estimators
+https://www.tensorflow.org/guide/graphs
+https://www.tensorflow.org/guide/tensors
+https://www.tensorflow.org/install
+https://www.tensorflow.org/guide/variables
+https://www.tensorflow.org/guide/saved_model
+https://www.tensorflow.org/guide/low_level_intro
+https://www.tensorflow.org/guide/debugger
+https://www.tensorflow.org/tutorials
+https://www.tensorflow.org/tutorials/images/hub_with_keras
+https://www.tensorflow.org/hub/common_issues
+https://www.tensorflow.org/hub/basics
+https://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html#sphx-glr-beginner-blitz-cifar10-tutorial-py
+https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html
+https://pytorch.org/tutorials/
+https://cran.rstudio.com/web/packages/keras/vignettes/sequential_model.html
+https://machinelearningmastery.com/dropout-regularization-deep-learning-models-keras/
+https://keras.io/layers/core/
+https://keras.io/getting-started/sequential-model-guide/
+https://keras.io/
+https://www.tensorflow.org/tutorials/load_data/tf_records
+https://keras.io/getting-started/faq/
+https://www.tensorflow.org/tutorials/load_data/images
+https://www.tensorflow.org/tutorials/sequences/audio_recognition
+https://www.tensorflow.org/tutorials/sequences/recurrent_quickdraw
+https://github.com/tensorflow/models/blob/master/tutorials/rnn/quickdraw/train_model.py
+https://www.tensorflow.org/tutorials/images/transfer_learning
+https://www.tensorflow.org/tutorials/images/deep_cnn
+https://www.tensorflow.org/tutorials/sequences/text_generation
+https://www.tensorflow.org/tutorials/sequences/recurrent
+https://github.com/tensorflow/docs/blob/master/site/en/tutorials/images/hub_with_keras.ipynb
+"""
