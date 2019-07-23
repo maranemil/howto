@@ -9,18 +9,25 @@
 #
 ################################################################
 
-from keras.layers import Conv2D, MaxPooling2D, ZeroPadding2D
-from keras.layers import Dense, Activation, Dropout, Flatten
-from keras import optimizers
-from keras.models import Sequential
+from keras.layers import Conv2D, MaxPooling2D, ZeroPadding2D, Dense, Activation, Dropout, Flatten
+from keras import optimizers, applications
 from keras.preprocessing.image import ImageDataGenerator, img_to_array, load_img
-from keras import applications
-from keras.models import load_model
+from keras.models import Sequential, load_model
 from keras.preprocessing.image import img_to_array, load_img
 
 import numpy as np
 import cv2
 import pandas as pd
+import matplotlib.pyplot as plt
+from PIL import Image
+
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+
+import os
+import sys
+
 
 img_width = 120
 img_height = 120
@@ -54,6 +61,7 @@ print("Loaded model from disk")
 # evaluate loaded model on test data
 # Define X_test & Y_test data first
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+# model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
 model.evaluate_generator(generator=validation_generator, steps=8)
 
 prediction = model.predict_generator(validation_generator, steps=16, verbose=1)
@@ -65,7 +73,61 @@ predictions = [labels[k] for k in predicted_class_indices]
 print(predictions)
 
 
-# imgdd = 'data/validation/dogs/dog.1009.jpg'
+
+
+# image = 'data/validation/dogs/dog.1009.jpg'
+image = 'data/validation/cats/cat.6.jpg'
+imager = Image.open(image).convert('RGB')
+size = 240, 240
+imager.thumbnail(size, Image.ANTIALIAS)
+image_data = np.array(imager)[:, :, 0:4]  # Select RGB channels only.
+
+"""
+im = cv2.imread('data/train/cats/cat.6.jpg')
+im = cv2.resize(im,  (img_rows, img_cols)) 
+#im.reshape(( img_rows, img_cols))
+print(im.shape) # (28,28)
+"""
+
+#batch = np.expand_dims(im,axis=0)
+#print(batch.shape) # (1, 28, 28)
+#batch = np.expand_dimes(batch,axis=3)
+#print(batch.shape) # (1, 28, 28,1)
+... # build the model
+model.predict(image_data)
+
+
+"""
+img = np.random.random((4, 4, 3))
+#fname = 'data/train/cats/cat.6.jpg'
+#img = Image.open(fname).convert("L")
+classes = model.predict_classes(img)
+print (classes)
+"""
+
+#arr = np.asarray(image)
+#plt.imshow(arr, cmap='gray', vmin=0, vmax=255)
+#plt.show()
+
+
+"""
+img =  plt.imread('data/train/cats/cat.6.jpg');
+plt.gray()
+classes = model.predict_classes(img)
+print (classes)
+"""
+
+"""
+img = cv2.imread('data/train/cats/cat.6.jpg')
+img = cv2.resize(img,(28,28))
+img = np.reshape(img,[28,28,3])
+classes = model.predict_classes(img)
+print (classes)
+"""
+
+
+
+
 
 
 """
@@ -91,5 +153,19 @@ https://www.kaggle.com/fanconic/densenet169-approach-test-accuracy-0-897
 http://faroit.com/keras-docs/1.2.0/preprocessing/image/
 http://faroit.com/keras-docs/1.0.5/preprocessing/image/
 https://github.com/jessicayung/self-driving-car-nd/blob/master/p3-behavioural-cloning/p3-behavioural-cloning.ipynb
+
+https://www.degeneratestate.org/posts/2016/Oct/23/image-processing-with-numpy/
+https://scikit-image.org/docs/dev/user_guide/numpy_images.html
+https://keras.io/layers/convolutional/
+http://scipy-lectures.org/advanced/image_processing/
+
+https://stackoverflow.com/questions/41563720/error-when-checking-model-input-expected-convolution2d-input-1-to-have-4-dimens
+https://www.kaggle.com/crawford/resize-and-save-images-as-numpy-arrays-128x128
+
+https://towardsdatascience.com/transform-grayscale-images-to-rgb-using-pythons-matplotlib-6a0625d992dd
+https://stackoverflow.com/questions/43469281/how-to-predict-input-image-using-trained-model-in-keras
+https://stackoverflow.com/questions/49057149/expected-conv2d-1-input-to-have-shape-28-28-1-but-got-array-with-shape-1-2
+
+https://stackoverflow.com/questions/38774977/reshape-array-to-rgb-matrix
 
 """
