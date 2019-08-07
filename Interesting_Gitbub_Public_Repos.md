@@ -355,14 +355,15 @@ https://heartbeat.fritz.ai/25-open-source-machine-learning-repos-to-inspire-your
 * https://www.tensorflow.org/tutorials/images/hub_with_keras
 * https://www.tensorflow.org/tutorials/keras/basic_classification
 * https://www.udemy.com/der-komplette-webentwickler-2/
-* https://www.youtube.com/user/MIT
-* https://www.youtube.com/watch?v=6ZVf1jnEKGI&list=PLZoTAELRMXVMdJ5sqbCK2LiM0HhQVWNzm
-* https://www.youtube.com/watch?v=cKxRvEZd3Mw&list=PLOU2XLYxmsIIuiBfYad6rFYQU_jL2ryal
-* https://www.youtube.com/watch?v=PySo_6S4ZAg
-* https://www.youtube.com/watch?v=UzxYlbK2c7E&list=PLA89DCFA6ADACE599
+* https://www.youtube.com/user/MIT#MIT OpenCourseWare
+* https://www.youtube.com/watch?v=6ZVf1jnEKGI&list=PLZoTAELRMXVMdJ5sqbCK2LiM0HhQVWNzm#Natural Language Processing|Tokenization
+* https://www.youtube.com/watch?v=cKxRvEZd3Mw&list=PLOU2XLYxmsIIuiBfYad6rFYQU_jL2ryal#Machine Learning Recipes
+* https://www.youtube.com/watch?v=PySo_6S4ZAg#Stanford CS230: Deep Learning
+* https://www.youtube.com/watch?v=UzxYlbK2c7E&list=PLA89DCFA6ADACE599#Machine Learning (Stanford)
 * https://www.youtube.com/watch?v=MhkGQAoc7bc&list=PLoYCgNOIyGABj2GQSlDRjgvXtqfDxKm5b#reactjs
-* https://www.youtube.com/playlist?list=PLoRl3Ht4JOcdU872GhiYWf6jwrk_SNhz9#mlcoursera
-* https://www.youtube.com/watch?v=E3l_aeGjkeI&feature=youtu.be
+* https://www.youtube.com/playlist?list=PLoRl3Ht4JOcdU872GhiYWf6jwrk_SNhz9#Neural Networks for Machine Learning
+* https://www.youtube.com/watch?v=E3l_aeGjkeI&feature=youtu.be#Machine Learning Tutorial 
+* https://www.youtube.com/playlist?list=PLZoTAELRMXVNUcr7osiU7CCm8hcaqSzGw#Data Science Projects
 
 
 
