@@ -318,7 +318,7 @@ https://heartbeat.fritz.ai/25-open-source-machine-learning-repos-to-inspire-your
 
 
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#### Google ML / Stanford / crash-course
+#### Google ML / Stanford / crash-courses
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * https://ai.google/education/
@@ -364,6 +364,8 @@ https://heartbeat.fritz.ai/25-open-source-machine-learning-repos-to-inspire-your
 * https://www.youtube.com/playlist?list=PLoRl3Ht4JOcdU872GhiYWf6jwrk_SNhz9#Neural Networks for Machine Learning
 * https://www.youtube.com/watch?v=E3l_aeGjkeI&feature=youtu.be#Machine Learning Tutorial 
 * https://www.youtube.com/playlist?list=PLZoTAELRMXVNUcr7osiU7CCm8hcaqSzGw#Data Science Projects
+* https://www.youtube.com/watch?v=wBp0Rb-ZJak#The Complete Linux Course
+* https://www.youtube.com/watch?v=ImtZ5yENzgE#Laravel PHP Framework Tutorial
 
 
 
