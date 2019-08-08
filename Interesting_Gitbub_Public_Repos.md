@@ -355,6 +355,12 @@ https://heartbeat.fritz.ai/25-open-source-machine-learning-repos-to-inspire-your
 * https://www.tensorflow.org/tutorials/images/hub_with_keras
 * https://www.tensorflow.org/tutorials/keras/basic_classification
 * https://www.udemy.com/der-komplette-webentwickler-2/
+
+
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#### Youtube crash-courses
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 * https://www.youtube.com/user/MIT#MIT OpenCourseWare
 * https://www.youtube.com/watch?v=6ZVf1jnEKGI&list=PLZoTAELRMXVMdJ5sqbCK2LiM0HhQVWNzm#Natural Language Processing|Tokenization
 * https://www.youtube.com/watch?v=cKxRvEZd3Mw&list=PLOU2XLYxmsIIuiBfYad6rFYQU_jL2ryal#Machine Learning Recipes
