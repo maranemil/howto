@@ -366,6 +366,23 @@ https://heartbeat.fritz.ai/25-open-source-machine-learning-repos-to-inspire-your
 * https://www.youtube.com/playlist?list=PLZoTAELRMXVNUcr7osiU7CCm8hcaqSzGw#Data Science Projects
 * https://www.youtube.com/watch?v=wBp0Rb-ZJak#The Complete Linux Course
 * https://www.youtube.com/watch?v=ImtZ5yENzgE#Laravel PHP Framework Tutorial
+* https://www.youtube.com/watch?v=7x2YZhEj9Dw#Deep Learning Tutorial with Python
+* https://www.youtube.com/watch?v=E3l_aeGjkeI#Machine Learning Tutorial 
+* https://www.youtube.com/watch?v=F9UC9DY-vIU#Kotlin Course - Tutorial for Beginners
+* https://www.youtube.com/watch?v=OK_JCtrrv-c#PHP Programming Language Tutorial
+* https://www.youtube.com/watch?v=0uvWRwLs5Zo#Learn Ethical Hacking
+* https://www.youtube.com/watch?v=JMUxmLyrhSk#Artificial Intelligence Full Course
+* https://www.youtube.com/watch?v=Bo0guUbL5uo#Symfony PHP Framework Tutorial 
+* https://www.youtube.com/watch?v=ImtZ5yENzgE#Laravel PHP Framework Tutorial 
+* https://www.youtube.com/watch?v=qw--VYLpxG4#Learn PostgreSQL Tutorial
+* https://www.youtube.com/watch?v=RLtyhwFtXQA#Learn Node.js
+* https://www.youtube.com/watch?v=ieTHC78giGQ#CSS Full Course
+* https://www.youtube.com/watch?v=4deVCNJq3qc#Learn Vue.js
+* https://www.youtube.com/watch?v=YS4e4q9oBaU#Learn Go Programming
+* https://www.youtube.com/watch?v=PkZNo7MFNFg#Learn JavaScript
+* https://www.youtube.com/watch?v=ua-CiDNNj30#Learn Data Science Tutorial
+* https://www.youtube.com/watch?v=a07iwuDWhys#Learn Machine Learn
+
 
 
 
