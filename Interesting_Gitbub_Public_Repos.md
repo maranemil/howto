@@ -388,6 +388,9 @@ https://heartbeat.fritz.ai/25-open-source-machine-learning-repos-to-inspire-your
 * https://www.youtube.com/watch?v=PkZNo7MFNFg#Learn JavaScript
 * https://www.youtube.com/watch?v=ua-CiDNNj30#Learn Data Science Tutorial
 * https://www.youtube.com/watch?v=a07iwuDWhys#Learn Machine Learn
+* https://www.youtube.com/watch?v=ScDWrogElmo#React Project - Beach Resort
+* https://www.youtube.com/watch?v=DLX62G4lc44#Learn React.js - Full Course for Beginners - Tutorial 2019
+* https://www.youtube.com/watch?v=WTOnKNjiPWU#Learn JavaScript: Full-Stack From Scratch
 
 
 
