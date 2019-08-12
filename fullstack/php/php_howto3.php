@@ -248,9 +248,9 @@ file_put_contents('php://stderr', "LOG: Message 3!\n", FILE_APPEND);
 use \Codeception\Util\Debug as UnitDebug;
 UnitDebug::debug("~~~test~~");
 
-#############################
+###################################################################################
 # Asynchronous soap calls
-#############################
+###################################################################################
 /*
 https://tideways.com/profiler/blog/using-http-client-timeouts-in-php
 https://medium.com/@mouneyrac/php-soap-does-asynchronous-calls-sometimes-d09fd991f7a3
@@ -265,9 +265,10 @@ $client = new SOAPClient($wsdl, array('connection_timeout' => 1));
 sleep(15);
 
 /*
-###########################
+#################################################################################
 Basic Usage PHP imagick
-###########################*/
+#################################################################################
+*/
 /*https://www.php.net/manual/de/imagick.examples-1.php*/
 
 header('Content-type: image/jpeg');
@@ -277,16 +278,16 @@ $image = new Imagick('image.jpg');
 $image->thumbnailImage(100, 0);
 echo $image;
 
-###########################
+#################################################################################
 # write console output for codeception
-###########################
+#################################################################################
 
 fwrite(STDERR, "Msg here.\n");
 exit(1); //
 
-###########################
+#################################################################################
 # limit output avoiding to write footer into download file
-###########################
+#################################################################################
 
 if (file_exists($file)) {
     header('Content-Description: File Transfer');
@@ -303,9 +304,9 @@ if (file_exists($file)) {
     exit;
 }
 
-###########################
-#Suppress output terminal
-###########################
+#################################################################################
+#   Suppress output terminal
+#################################################################################
 
 # https://serverfault.com/questions/41964/how-to-hide-the-output-of-a-shell-application-in-linux
 # https://stackoverflow.com/questions/6708145/how-to-hide-system-output
@@ -328,3 +329,36 @@ echo "world!\n";
 
 # or
 # <?php  ob_start();  echo '<pre>';  $last_line = system('ls');  ob_clean();  echo 'nothing returned!';
+
+
+#################################################################################
+#
+#	Do You Clone the DateTime Objects?
+#	http://axiac.ro/blog/dont-forget-to-clone-the-datetime-objects/
+#	https://stackoverflow.com/questions/2579458/how-do-i-deep-copy-a-datetime-object
+#	https://www.php.net/manual/en/class.datetime.php
+#
+#	Later edit (August 2017)
+#	Since PHP 5.5 it’s better to use DateTimeImmutable objects whenever it’s possible. They cannot be modified after they are
+#	created (they behave like true
+#	Value Objects). The methods declared in DateTimeInterface that modify the DateTime objects automatically create and return
+#	clones for DateTimeImmutable #objects.
+#
+#################################################################################
+
+$date1 = new DateTime();
+$date2 = new DateTime();
+$date2 = clone $date1;
+$date2->add(new DateInterval('P3Y'));
+
+$date1 = new DateTime();
+$date2 = clone $date1;
+$date2->add(new DateInterval('P3Y'));
+
+$date1 = new DateTimeImmutable();
+$date2 = $date1->add(new DateInterval('P3Y'));
+
+$date1 = new DateTime();
+$date2 = (clone $date1)->modify('+3 years');
+
+$date = \DateTimeImmutable::createFromMutable($mutableDate)
