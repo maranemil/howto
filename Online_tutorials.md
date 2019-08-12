@@ -111,12 +111,24 @@
 * https://www.youtube.com/watch?v=ImtZ5yENzgE#Laravel PHP Framework Tutorial 
 
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#### Ethical Hacking crash-courses
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* https://www.youtube.com/watch?v=0uvWRwLs5Zo#Learn Ethical Hacking
+* https://www.youtube.com/watch?v=2_lswM1S264#Ethical Hacking 101: Web App Penetration Testing
+* https://www.youtube.com/watch?v=3Kq1MIfTWCE#Full Ethical Hacking Course - Network Penetration
+* https://www.youtube.com/watch?v=uIkxsBgkpj8#Improve Cybersecurity Skills with CTFs - PicoCTF
+* https://www.youtube.com/watch?v=lZAoFs75_cs#Linux for Ethical Hackers (Kali Linux Tutorial)
+* https://www.youtube.com/watch?v=S6S5JF6Gou0#Penetration Testing: Gophish Tutorial (Phishing Framework)
+* https://www.youtube.com/watch?v=TbMKwl11itQ#Create a Keylogger with Python - Tutorial
+
+
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### MISC crash-courses
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * https://www.youtube.com/watch?v=wBp0Rb-ZJak#The Complete Linux Course
 * https://www.youtube.com/watch?v=F9UC9DY-vIU#Kotlin Course - Tutorial for Beginners
-* https://www.youtube.com/watch?v=0uvWRwLs5Zo#Learn Ethical Hacking
 * https://www.youtube.com/watch?v=qw--VYLpxG4#Learn PostgreSQL Tutorial
 * https://www.youtube.com/watch?v=ieTHC78giGQ#CSS Full Course
 * https://www.youtube.com/watch?v=YS4e4q9oBaU#Learn Go Programming
@@ -125,10 +137,4 @@
 * https://www.youtube.com/watch?v=F5mRW0jo-U4#Python Django Web Framework - Full Course for Beginners
 * https://www.youtube.com/watch?v=8DvywoWv6fI#Python for Everybody - Full Course with Dr. Chuck
 * https://www.youtube.com/watch?v=E-1xI85Zog8#MongoDB with Python Crash Course - Tutorial for Beginners
-* https://www.youtube.com/watch?v=2_lswM1S264#Ethical Hacking 101: Web App Penetration Testing
-* https://www.youtube.com/watch?v=3Kq1MIfTWCE#Full Ethical Hacking Course - Network Penetration
-* https://www.youtube.com/watch?v=uIkxsBgkpj8#Improve Cybersecurity Skills with CTFs - PicoCTF
-* https://www.youtube.com/watch?v=lZAoFs75_cs#Linux for Ethical Hackers (Kali Linux Tutorial)
-* https://www.youtube.com/watch?v=S6S5JF6Gou0#Penetration Testing: Gophish Tutorial (Phishing Framework)
-* https://www.youtube.com/watch?v=TbMKwl11itQ#Create a Keylogger with Python - Tutorial
 * https://www.youtube.com/watch?v=pmKyG3NBY_k&list=PLWKjhJtqVAbl1AfjiGyYxwpdAPi5v-1OU#Style Fancy Buttons: CSS Tutorial
