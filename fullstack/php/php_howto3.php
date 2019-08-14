@@ -372,3 +372,20 @@ $date = \DateTimeImmutable::createFromMutable($mutableDate)
 #################################################################################
 
 print_r(array_keys($myArr));
+
+#################################################################################
+#
+# loops
+#
+#################################################################################
+
+while(list($key, $value) = each($array1)){
+    print $key . " - " . $value."<br>";
+	unset($array1[$key]);
+	continue;
+}
+foreach($array1 as $key => $value){
+    print $key . " - " . $value."<br>";
+	unset($array1[$key]);
+	continue;
+}
