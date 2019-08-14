@@ -362,3 +362,13 @@ $date1 = new DateTime();
 $date2 = (clone $date1)->modify('+3 years');
 
 $date = \DateTimeImmutable::createFromMutable($mutableDate)
+
+
+#################################################################################
+#
+#   PHP: Return all the keys of an array
+#   https://www.php.net/manual/de/function.array-keys.php
+#
+#################################################################################
+
+print_r(array_keys($myArr));
