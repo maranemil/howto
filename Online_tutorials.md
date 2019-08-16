@@ -138,3 +138,25 @@
 * https://www.youtube.com/watch?v=8DvywoWv6fI#Python for Everybody - Full Course with Dr. Chuck
 * https://www.youtube.com/watch?v=E-1xI85Zog8#MongoDB with Python Crash Course - Tutorial for Beginners
 * https://www.youtube.com/watch?v=pmKyG3NBY_k&list=PLWKjhJtqVAbl1AfjiGyYxwpdAPi5v-1OU#Style Fancy Buttons: CSS Tutorial
+
+
+
+* https://www.youtube.com/watch?v=Mu1I89BeKxM#Python Full Course for Beginners
+* https://www.youtube.com/watch?v=fqMOX6JJhGo#Docker
+* https://www.youtube.com/watch?v=pTJJsmejUOQ#
+* https://www.youtube.com/watch?v=t2CEgPsws3U#js
+* https://www.youtube.com/watch?v=D6esTdOLXh4#Python Django Crash Course
+* https://www.youtube.com/watch?v=Ke90Tje7VS0#react
+* https://www.youtube.com/watch?v=_uQrJ0TkZlc#python
+* https://www.youtube.com/watch?v=sBws8MSXN7A#react
+* https://www.youtube.com/watch?v=jUfEn032IL8#angular
+* https://www.youtube.com/watch?v=3Kq1MIfTWCE#hacking
+* https://www.youtube.com/watch?v=_bYFu9mBnr4#c++
+* https://www.youtube.com/watch?v=4C4zqhXwCKs#arangodb
+* https://www.youtube.com/watch?v=U9T6YkEDkMo#react_app
+* https://www.youtube.com/watch?v=2PGnYjbYuUo#linux
+* https://www.youtube.com/watch?v=8z2qRln9tnc#vue
+* https://www.youtube.com/watch?v=gyiwFcrVRCM#Plant App - React Native
+* https://www.youtube.com/watch?v=-edmQKcOW8s#react
+* https://www.youtube.com/watch?v=Wy9q22isx3U#vue
+* https://www.youtube.com/watch?v=DFKHh7_zzJc#tf
