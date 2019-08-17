@@ -118,7 +118,10 @@ git verify-pack -v ./.git/objects/pack/pack-......ea.pack
 date +%s > 1552925792
 
 ##### Add Swap Space on Ubuntu 18.04
-* sudo fallocate -l 4G /swapfile2 && sudo chmod 600 /swapfile2 && sudo  mkswap /swapfile2 && sudo swapon /swapfile2
+* sudo fallocate -l 6G /swapfile2 && sudo chmod 600 /swapfile2 && sudo mkswap /swapfile2 && sudo swapon /swapfile2 && sudo sysctl vm.swappiness=20
+
+##### Stop Services 
+sudo service mysql stop &&  sudo service apache2 stop &&  sudo service openvpn stop && sudo service virtualbox stop && service --status-all
 
 ##### Split audio file in 1 sec pieces FFMPEG
 * ffmpeg -i in.wav -map 0 -f segment -segment_time 1 -af "volume=6dB,equalizer=f=40:width_type=o:width=2:g=-7,areverse" -y dir/out%03d.wav
