@@ -160,3 +160,11 @@
 * https://www.youtube.com/watch?v=-edmQKcOW8s#react
 * https://www.youtube.com/watch?v=Wy9q22isx3U#vue
 * https://www.youtube.com/watch?v=DFKHh7_zzJc#tf
+
+* https://www.youtube.com/watch?v=-ETQ97mXXF0#Data Science Full Course
+* https://www.youtube.com/watch?v=C5QFHp1oAws#HTML5, CSS3
+* https://www.youtube.com/watch?v=fqMOX6JJhGo&t=11s#Docker Tutorial
+* https://www.youtube.com/watch?v=4deVCNJq3qc&t=11s#Learn Vue.js
+* https://www.youtube.com/watch?v=Fdf5aTYRW0E#Angular Crash Course - 2019
+* https://www.youtube.com/watch?v=sBws8MSXN7A&t=13s#React JS Crash Course - 2019
+* https://www.youtube.com/watch?v=Wy9q22isx3U&t=18s#Vue JS Crash Course - 2019
