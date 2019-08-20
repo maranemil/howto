@@ -168,3 +168,4 @@
 * https://www.youtube.com/watch?v=Fdf5aTYRW0E#Angular Crash Course - 2019
 * https://www.youtube.com/watch?v=sBws8MSXN7A&t=13s#React JS Crash Course - 2019
 * https://www.youtube.com/watch?v=Wy9q22isx3U&t=18s#Vue JS Crash Course - 2019
+* https://www.youtube.com/watch?v=9Wbfk16jEOk#Learn Python and Django
