@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+    <style>
+	.axis {
+	  font: 8px sans-serif;
+	}
+
+	.axis path,
+	.axis line {
+	  fill: none;
+	  stroke: #000;
+	  shape-rendering: crispEdges;
+	}
+	</style>
+</head>
+<body>
+<!--
+
+https://gist.githubusercontent.com/zigahertz/1ee4965ff76514517bb7ce6af21e5d44/raw/8a981554001c8103b4f15a9668cd3fcf06185196/index.html
+https://gist.github.com/zigahertz/1ee4965ff76514517bb7ce6af21e5d44
+http://www.d3noob.org/2014/02/making-bar-chart-in-d3js.html
+http://bl.ocks.org/d3netxer/10a28b7aee406f4e7fce
+
+date,value
+2016-03-02T00:00:00-05:00,53
+2016-03-03T00:00:00-05:00,165
+2016-03-04T00:00:00-05:00,269
+2016-03-05T00:00:00-05:00,344
+2016-03-06T00:00:00-05:00,376
+2016-03-07T00:00:00-05:00,410
+2016-03-08T00:00:00-05:00,421
+2016-03-09T00:00:00-05:00,405
+2016-03-10T00:00:00-05:00,376
+2016-03-11T00:00:00-05:00,359
+2016-03-12T00:00:00-05:00,392
+2016-03-13T00:00:00-05:00,433
+2016-03-14T00:00:00-05:00,455
+2016-03-15T00:00:00-05:00,478
+-->
+<script src="https://d3js.org/d3.v4.0.0-alpha.29.min.js"></script>
+<script>
+
+var margin = {top: 20, right: 20, bottom: 70, left: 40},
+    width = 600 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
+
+// Parse the date / time
+var	parseDate = d3.isoParse
+
+var x = d3.scaleBand().rangeRound([0, width], .35).padding(0.1);
+var y = d3.scaleLinear().range([height, 0]);
+
+var xAxis = d3.axisBottom()
+    .scale(x)
+    .tickFormat(d3.timeFormat("%Y-%m-%d %H:%i"));
+
+var yAxis = d3.axisLeft()
+    .scale(y)
+    .ticks(10);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+d3.csv("barchart_datetime1.csv", function(error, data) {
+
+    data.forEach(function(d) {
+        d.date = parseDate(d.date);
+        d.value = +d.value;
+    });
+
+  x.domain(data.map(function(d) { return d.date; }));
+  y.domain([0, d3.max(data, function(d) { return d.value; })]);
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+    .selectAll("text")
+      .style("text-anchor", "end")
+      .attr("dx", "-.8em")
+      .attr("dy", "-.55em")
+      .attr("transform", "rotate(-90)" );
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Value");
+
+  svg.selectAll("bar")
+      .data(data)
+    .enter().append("rect")
+      .style("fill", "steelblue")
+      .attr("x", function(d) { return x(d.date); })
+      .attr("width", x.bandwidth())
+      .attr("y", function(d) { return y(d.value); })
+      .attr("height", function(d) { return height - y(d.value); });
+
+});
+
+</script>
+</body>
+</html>
