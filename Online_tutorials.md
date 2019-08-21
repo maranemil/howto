@@ -39,7 +39,7 @@
 * https://www.tensorflow.org/tutorials/images/hub_with_keras
 * https://www.tensorflow.org/tutorials/keras/basic_classification
 * https://www.udemy.com/der-komplette-webentwickler-2/
-
+* https://www.coursera.org/lecture/machine-learning-sas/early-stopping-6D2RK#Maschinelles Lernen mittels Sas Viya
 
 
 ### Youtube crash-courses
@@ -159,7 +159,7 @@
 * https://www.youtube.com/watch?v=8z2qRln9tnc#vue
 * https://www.youtube.com/watch?v=gyiwFcrVRCM#Plant App - React Native
 * https://www.youtube.com/watch?v=-edmQKcOW8s#react
-* https://www.youtube.com/watch?v=Wy9q22isx3U#vue
+* * https://www.youtube.com/watch?v=Wy9q22isx3U#vue
 * https://www.youtube.com/watch?v=DFKHh7_zzJc#tf
 
 * https://www.youtube.com/watch?v=-ETQ97mXXF0#Data Science Full Course
@@ -170,3 +170,10 @@
 * https://www.youtube.com/watch?v=sBws8MSXN7A&t=13s#React JS Crash Course - 2019
 * https://www.youtube.com/watch?v=Wy9q22isx3U&t=18s#Vue JS Crash Course - 2019
 * https://www.youtube.com/watch?v=9Wbfk16jEOk#Learn Python and Django
+
+* https://www.youtube.com/watch?v=k32voqQhODc#Flexbox Tutorial (CSS)
+* https://www.youtube.com/watch?v=QCvL-DWcojc#Blockchain Full Course - 4 Hours
+* https://www.youtube.com/watch?v=SWYqp7iY_Tc#Git & GitHub Crash Course
+* https://www.youtube.com/watch?v=KibbYf9avko#Make a Custom Website from Scratch with WP
+* https://www.youtube.com/watch?v=YZvRrldjf1Y#Build an E-commerce Website with Django and Python
+* https://www.youtube.com/watch?v=x14G4DCk4nY#Scratch Tutorial for Beginners
