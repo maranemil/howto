@@ -389,3 +389,52 @@ foreach($array1 as $key => $value){
 	unset($array1[$key]);
 	continue;
 }
+
+// PHP | Check if two arrays contain same elements
+// http://phptester.net/
+// https://www.php.net/manual/de/function.array-diff.php
+// https://www.php.net/manual/de/language.operators.array.php
+// https://www.geeksforgeeks.org/php-check-if-two-arrays-contain-same-elements/
+// https://eddmann.com/posts/handling-array-equality-in-php/
+// http://thinkofdev.com/equal-identical-and-array-comparison-in-php/
+// https://stackoverflow.com/questions/8283464/php-check-if-arrays-are-identical/8283475
+// https://stackoverflow.com/questions/5678959/php-check-if-two-arrays-are-equal
+
+
+$arM = array(
+	1 => array(
+		'1' => 12,
+		'3' => 14,
+		'6' => 11
+	),
+	2 => array(
+		'1' => 12,
+		'3' => 14,
+		'6' => 11
+	),
+	3 => array(
+		'3' => 14,
+		'1' => 12,
+		'6' => 11
+	),
+	4 => array(
+		'1' => 11,
+		'3' => 14,
+		'6' => 11
+	)
+);
+
+$arN = $arM;
+$bNotSame = 0;
+foreach($arM as $keyMM=>$arrMM){
+	foreach($arN as $keyNN=>$arrNN){
+		if($arrMM != $arrNN){
+			echo "<br>".$keyNN." not identical ".$keyMM;
+		}
+		$result = array_diff($arrMM,$arrNN);
+		if(count($result)){
+			$bNotSame = 1;
+		}
+	}
+}
+echo "<br>". $bNotSame;
