@@ -226,3 +226,62 @@ SELECT WEEK(NOW()) # 48 - Week Number
 SELECT DATE_SUB( DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY), INTERVAL +7 DAY ) # last monday
 SELECT DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY) # current monday
 
+
+
+
+#############################################################
+#
+# Format CRON Format as DateTime
+#
+#############################################################
+
+/*
+https://forums.mysql.com/read.php?20,508361,508361#REPLY
+https://crontab.guru/
+https://www.w3schools.com/sql/func_mysql_cast.asp
+https://dev.mysql.com/doc/refman/8.0/en/user-variables.html
+https://dev.mysql.com/doc/refman/5.5/en/string-functions.html#function_substring
+https://dev.mysql.com/doc/refman/5.5/en/date-and-time-functions.html#function_date-format
+https://dev.mysql.com/doc/refman/5.5/en/string-functions.html#function_substring-index
+https://coderwall.com/p/zzgo-w/splitting-strings-with-mysql
+https://www.w3resource.com/mysql/string-functions/mysql-substring_index-function.php
+https://www.gyrocode.com/articles/how-to-split-and-search-in-comma-separated-values-in-mysql/
+https://www.periscopedata.com/blog/splitting-comma-separated-values-in-mysql
+https://stackoverflow.com/questions/5928599/equivalent-of-explode-to-work-with-strings-in-mysql
+https://www.w3schools.com/sql/func_mysql_substring_index.asp
+*/
+
+# minute hour day(month) month day(week)
+
+#SET @cron = '* 20/21 * * *';
+#SET @cron = '11 12 13 8 3';
+SET @cron = '55 * * 9 *';
+
+SELECT
+CONCAT(
+   # Date
+	YEAR(NOW()),"-",
+	IF( SUBSTR( SUBSTRING_INDEX(@cron," ",-2),1,2) = '*',   MONTH(NOW()),   SUBSTRING_INDEX( SUBSTRING_INDEX(@cron," ",4)    ," ",-1)    )  ,"-",
+	IF( SUBSTR( SUBSTRING_INDEX(@cron," ",-3),1,2) = '*',   DAY(NOW() + INTERVAL 1 DAY),   CAST( SUBSTRING_INDEX( SUBSTRING_INDEX(@cron," ",3)    ," ",-1)  AS INT)   )  ," ",
+    # Time
+    IF( SUBSTR( SUBSTRING_INDEX(@cron," ",-4),1,2) = '*',   HOUR(NOW()),   CAST(  SUBSTRING_INDEX(  SUBSTRING_INDEX(@cron," ",2)    ," ",-1)   AS INT)     ) , ":",
+    IF( SUBSTR( SUBSTRING_INDEX(@cron," ",-5),1,2) = '*',   MINUTE(NOW()) ,  CAST(  SUBSTRING_INDEX(  SUBSTRING_INDEX(@cron," ",1)    ," ",-1)   AS INT)           ) , ":",
+    "00"
+) AS DATEOUTPUT;
+
+--  IF( SUBSTR( SUBSTRING_INDEX(@cron," ",-5),1,2)  = '*', MINUTE(NOW()),   "00") as CRONMIN,
+--  IF( SUBSTR( SUBSTRING_INDEX(@cron," ",-4),1,2) = '*',   HOUR(NOW()),   SUBSTRING_INDEX(  SUBSTRING_INDEX(@cron," ",2)    ," ",-1)    ) as CRONHOUR,
+ -- IF( SUBSTR( SUBSTRING_INDEX(@cron," ",-3),1,2) = '*',   DAY(NOW()),   SUBSTRING_INDEX( SUBSTRING_INDEX(@cron," ",3)    ," ",-1)    ) as CRONDAY,
+ -- IF( SUBSTR( SUBSTRING_INDEX(@cron," ",-2),1,2) = '*',   MONTH(NOW()),   SUBSTRING_INDEX( SUBSTRING_INDEX(@cron," ",4)    ," ",-1)    ) as CRONMONTH,
+ -- IF( SUBSTR( SUBSTRING_INDEX(@cron," ",-1),1,2) = '*',   DAYOFWEEK(NOW()),   SUBSTRING_INDEX( SUBSTRING_INDEX(@cron," ",5)    ," ",-1)    ) as CRONDAYWEEK
+
+/*
+SUBSTR( SUBSTRING_INDEX(@cron," ",-5),1,2)  as CRONMIN1,
+SUBSTR( SUBSTRING_INDEX(@cron," ",-4),1,2)  as CRONMIN2,
+SUBSTR( SUBSTRING_INDEX(@cron," ",-3),1,2)  as CRONMIN3,
+SUBSTR( SUBSTRING_INDEX(@cron," ",-2),1,2)  as CRONMIN4,
+SUBSTR( SUBSTRING_INDEX(@cron," ",-1),1,2)  as CRONMIN5
+*/
+
+
+
