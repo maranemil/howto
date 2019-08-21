@@ -8,7 +8,7 @@ Howto
 
 ##### AviSynth FX
 
-* Kaleidoscope Effects, * Use Image Mask in videos, * Mix videos, * Add subtitle, * Cut and Loop videos
+* Kaleidoscope Effects, Use Image Mask in videos, Mix videos, Add subtitle, Cut and Loop videos
 
 ##### commandlinefu.com 
 
@@ -20,21 +20,18 @@ Howto
 
 ##### Data Mining
 
-* resources, * weka usage, * tenserflow usage and installation, * php ann examples
-* python scipy usage and installation, * data mining tools, * data mining examples
+* resources, weka usage, tenserflow usage and installation, php ann examples, python scipy usage and installation, data mining tools, data mining examples
 
 ##### Linux Usage
 
 * installation, configuration and settings on 
-* Ubuntu 14.04 LTS
-* Ubuntu 15.04 LTS
-* Ubuntu 16.04 LTS
+###### Ubuntu 14.04 LTS , Ubuntu 15.04 LTS , Ubuntu 16.04 LTS
 
-- distros iso ftp addresses, - ubuntu installation on macbook pro 13,  
-- musik software trackers milkytracker, - antivirus sophos, - lampp xampp installation 
-- backup linux, - apache caching, - ffmpeg convert examples mp4 mp3 mkv mpeg avi
-- rsync examples, - cpu real time logs, - cyberciti tutorials, 
-- daily commands in ubuntu, - disable startup services, - how to install elasticsearch
+- distros iso ftp addresses, ubuntu installation on macbook pro 13,  
+- musik software trackers milkytracker, antivirus sophos, lampp xampp installation 
+- backup linux, apache caching, ffmpeg convert examples mp4 mp3 mkv mpeg avi
+- rsync examples, cpu real time logs, cyberciti tutorials 
+- daily commands in ubuntu, disable startup services, how to install elasticsearch
 - how to edit efi boot mac , - get dir size ubuntu, - hdd defrag examples
 - zsh install, - asus wifi config, - htop cpug install, - docker installation
 - git installation, - mfc-j265 printeer installation, - mongodb redis instalaltion
@@ -51,8 +48,7 @@ Howto
  
 ##### PHP 5.X - 7.X - tutorials 
  
- - configuration and settings PHP 5.X - 7.X
-  
+ - configuration and settings PHP 5.X - 7.X  
  
 ##### SugarCRM 7.X - tutorials 
  
@@ -80,10 +76,8 @@ git config --global user.email "admin@example.com"
 ##### Check repo file Sizes
 find . -name '*' -size +1M -exec ls -lh {} \; | awk '{ print $9 ": " $5 }'
 
-
 ##### Check pack
 git verify-pack -v ./.git/objects/pack/pack-......ea.pack
-
 
 ##### Utiles Daily
 
@@ -100,7 +94,6 @@ git verify-pack -v ./.git/objects/pack/pack-......ea.pack
 * ffmpeg -v warning -an -video_size 1366x768 -framerate 5 -f x11grab -i :0.0 myvid_$(date +%s).mp4*
 * ffmpeg -v warning -video_size 1920x1080 -framerate 5 -f x11grab -i :0.0  myvid_$(date +%s).mov
 * ffmpeg -f x11grab  -follow_mouse centered -show_region 1 -framerate 5 -video_size 4cif -i :0.0 xmvid_$(date +%s).mov
- 
  
 ##### Generate Random Pass Ubuntu
 * date +%s | sha256sum | base64 | head -c 24 ; echo "@%&";
