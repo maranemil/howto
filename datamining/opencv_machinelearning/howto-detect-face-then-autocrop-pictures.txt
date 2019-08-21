@@ -1,0 +1,311 @@
+#########################################
+#
+#   detect-face-then-autocrop-pictures
+#
+##########################################
+
+https://stackoverflow.com/questions/13211745/detect-face-then-autocrop-pictures
+https://pythonpath.wordpress.com/2012/05/08/pil-to-opencv-image/
+https://www.lucaamore.com/?p=638
+https://www.quora.com/How-can-I-detect-an-object-from-static-image-and-crop-it-from-the-image-using-openCV
+https://cloudinary.com/visualweb/display/IMMC/Face+Cropping
+https://heartbeat.fritz.ai/opencv-python-cheat-sheet-from-importing-images-to-face-detection-52919da36433
+https://www.fritz.ai/features/image-segmentation.html
+https://towardsdatascience.com/object-detection-via-color-based-image-segmentation-using-python-e9b7c72f0e11
+http://gregblogs.com/computer-vision-cropping-faces-from-images-using-opencv2/
+https://www.digitalocean.com/community/tutorials/how-to-detect-and-extract-faces-from-an-image-with-opencv-and-python
+
+#----------------------------------------------------------------------------
+https://github.com/opencv/opencv/blob/master/data/haarcascades/haarcascade_frontalface_default.xml
+#----------------------------------------------------------------------------
+
+#!/usr/bin/python
+
+import cv2
+image_path = "./Path/To/Photo.extension"
+face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+image = cv2.imread(image_path)
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+faces = face_cascade.detectMultiScale(
+    gray,
+    scaleFactor= 1.1,
+    minNeighbors= 5,
+    minSize=(10, 10)
+)
+faces_detected = format(len(faces)) + " faces detected!"
+print(faces_detected)
+# Draw a rectangle around the faces
+for (x, y, w, h) in faces:
+    cv2.rectangle(image, (x, y), (x+w, y+h), (255, 255, 0), 2)
+viewImage(image,faces_detected)
+
+
+
+
+
+
+
+
+
+
+#----------------------------------------------------------------------------
+facechop.py
+
+-Takes an image and detects a face in it.
+-For each face, an image file is generated
+    -the images are strictly of the faces
+#----------------------------------------------------------------------------
+
+import cv2
+def facechop(image):
+    facedata = "haarcascade_frontalface_default.xml"
+    cascade = cv2.CascadeClassifier(facedata)
+    img = cv2.imread(image)
+    minisize = (img.shape[1],img.shape[0])
+    miniframe = cv2.resize(img, minisize)
+    faces = cascade.detectMultiScale(miniframe)
+    for f in faces:
+        x, y, w, h = [ v for v in f ]
+        cv2.rectangle(img, (x,y), (x+w,y+h), (255,255,255))
+        sub_face = img[y:y+h, x:x+w]
+        face_file_name = "faces/face_" + str(y) + ".jpg"
+        cv2.imwrite(face_file_name, sub_face)
+    cv2.imshow(image, img)
+    return
+
+if __name__  '__main__':
+    facechop("beatles.jpg")
+
+    while(True):
+        key = cv2.waitKey(20)
+        if key in [27, ord('Q'), ord('q')]:
+            break
+
+
+#----------------------------------------------------------------------------
+# Face Detection Test (OpenCV)
+#
+# thanks to:
+# http://japskua.wordpress.com/2010/08/04/detecting-eyes-with-python-opencv
+#----------------------------------------------------------------------------
+
+#!/usr/bin/python
+
+import cv
+import time
+import Image
+
+def DetectFace(image, faceCascade):
+
+    min_size = (20,20)
+    image_scale = 2
+    haar_scale = 1.1
+    min_neighbors = 3
+    haar_flags = 0
+
+    # Allocate the temporary images
+    grayscale = cv.CreateImage((image.width, image.height), 8, 1)
+    smallImage = cv.CreateImage(
+            (
+                cv.Round(image.width / image_scale),
+                cv.Round(image.height / image_scale)
+            ), 8 ,1)
+
+    # Convert color input image to grayscale
+    cv.CvtColor(image, grayscale, cv.CV_BGR2GRAY)
+
+    # Scale input image for faster processing
+    cv.Resize(grayscale, smallImage, cv.CV_INTER_LINEAR)
+
+    # Equalize the histogram
+    cv.EqualizeHist(smallImage, smallImage)
+
+    # Detect the faces
+    faces = cv.HaarDetectObjects(
+            smallImage, faceCascade, cv.CreateMemStorage(0),
+            haar_scale, min_neighbors, haar_flags, min_size
+        )
+
+    # If faces are found
+    if faces:
+        for ((x, y, w, h), n) in faces:
+            # the input to cv.HaarDetectObjects was resized, so scale the
+            # bounding box of each face and convert it to two CvPoints
+            pt1 = (int(x * image_scale), int(y * image_scale))
+            pt2 = (int((x + w) * image_scale), int((y + h) * image_scale))
+            cv.Rectangle(image, pt1, pt2, cv.RGB(255, 0, 0), 5, 8, 0)
+
+    return image
+
+#----------
+# M A I N
+#----------
+
+capture = cv.CaptureFromCAM(0)
+#capture = cv.CaptureFromFile(&quot;test.avi&quot;)
+
+#faceCascade = cv.Load(&quot;haarcascades/haarcascade_frontalface_default.xml&quot;)
+#faceCascade = cv.Load(&quot;haarcascades/haarcascade_frontalface_alt2.xml&quot;)
+faceCascade = cv.Load(&quot;haarcascades/haarcascade_frontalface_alt.xml&quot;)
+#faceCascade = cv.Load(&quot;haarcascades/haarcascade_frontalface_alt_tree.xml&quot;)
+
+while (cv.WaitKey(15)==-1):
+    img = cv.QueryFrame(capture)
+    image = DetectFace(img, faceCascade)
+    cv.ShowImage(&quot;face detection test&quot;, image)
+
+cv.ReleaseCapture(capture)
+
+
+
+
+#####################################################
+# Find the contours in the image, and then crop it
+#####################################################
+
+import cv2
+#reading the image
+image = cv2.imread("example.jpg")
+edged = cv2.Canny(image, 10, 250)
+cv2.imshow("Edges", edged)
+cv2.waitKey(0)
+
+#applying closing function
+kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (7, 7))
+closed = cv2.morphologyEx(edged, cv2.MORPH_CLOSE, kernel)
+cv2.imshow("Closed", closed)
+cv2.waitKey(0)
+
+#finding_contours
+(cnts, _) = cv2.findContours(closed.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+for c in cnts:
+	peri = cv2.arcLength(c, True)
+	approx = cv2.approxPolyDP(c, 0.02 * peri, True)
+	cv2.drawContours(image, [approx], -1, (0, 255, 0), 2)
+cv2.imshow("Output", image)
+cv2.waitKey(0)
+
+import cv2
+image = cv2.imread("example.jpg")
+gray=cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
+edged = cv2.Canny(image, 10, 250)
+(cnts, _) = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+idx = 0
+for c in cnts:
+	x,y,w,h = cv2.boundingRect(c)
+	if w>50 and h>50:
+		idx+=1
+		new_img=image[y:y+h,x:x+w]
+		cv2.imwrite(str(idx) + '.png', new_img)
+cv2.imshow("im",image)
+cv2.waitKey(0)
+
+
+
+
+
+
+#############################################################
+# This function is used to find the corners of the object
+# and the dimensions of the object
+#############################################################
+
+def transform(pos):
+
+	pts=[]
+	n=len(pos)
+	for i in range(n):
+		pts.append(list(pos[i][0]))
+
+	sums={}
+	diffs={}
+	tl=tr=bl=br=0
+	for i in pts:
+		x=i[0]
+		y=i[1]
+		sum=x+y
+		diff=y-x
+		sums[sum]=i
+		diffs[diff]=i
+	sums=sorted(sums.items())
+	diffs=sorted(diffs.items())
+	n=len(sums)
+	rect=[sums[0][1],diffs[0][1],diffs[n-1][1],sums[n-1][1]]
+	#	   top-left   top-right   bottom-left   bottom-right
+
+	h1=np.sqrt((rect[0][0]-rect[2][0])**2 + (rect[0][1]-rect[2][1])**2)		#height of left side
+	h2=np.sqrt((rect[1][0]-rect[3][0])**2 + (rect[1][1]-rect[3][1])**2)		#height of right side
+	h=max(h1,h2)
+
+	w1=np.sqrt((rect[0][0]-rect[1][0])**2 + (rect[0][1]-rect[1][1])**2)		#width of upper side
+	w2=np.sqrt((rect[2][0]-rect[3][0])**2 + (rect[2][1]-rect[3][1])**2)		#width of lower side
+	w=max(w1,w2)
+
+	return int(w),int(h),rect
+
+######################################################################
+#
+#   Face detect and crop by using OpenCV
+#   https://gist.github.com/tilfin/98bbba47fdc4ac10c4069cce5fabd834
+#
+######################################################################
+
+import cv2
+import sys
+import os
+
+class FaceCropper(object):
+    CASCADE_PATH = "data/haarcascades/haarcascade_frontalface_default.xml"
+
+    def __init__(self):
+        self.face_cascade = cv2.CascadeClassifier(self.CASCADE_PATH)
+
+    def generate(self, image_path, show_result):
+        img = cv2.imread(image_path)
+        if (img is None):
+            print("Can't open image file")
+            return 0
+
+        #img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        faces = self.face_cascade.detectMultiScale(img, 1.1, 3, minSize=(100, 100))
+        if (faces is None):
+            print('Failed to detect face')
+            return 0
+
+        if (show_result):
+            for (x, y, w, h) in faces:
+                cv2.rectangle(img, (x,y), (x+w, y+h), (255,0,0), 2)
+            cv2.imshow('img', img)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+
+        facecnt = len(faces)
+        print("Detected faces: %d" % facecnt)
+        i = 0
+        height, width = img.shape[:2]
+
+        for (x, y, w, h) in faces:
+            r = max(w, h) / 2
+            centerx = x + w / 2
+            centery = y + h / 2
+            nx = int(centerx - r)
+            ny = int(centery - r)
+            nr = int(r * 2)
+
+            faceimg = img[ny:ny+nr, nx:nx+nr]
+            lastimg = cv2.resize(faceimg, (32, 32))
+            i += 1
+            cv2.imwrite("image%d.jpg" % i, lastimg)
+
+
+if __name__ == '__main__':
+    args = sys.argv
+    argc = len(args)
+
+    if (argc != 2):
+        print('Usage: %s [image file]' % args[0])
+        quit()
+
+    detecter = FaceCropper()
+    detecter.generate(args[1], True)
