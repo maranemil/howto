@@ -284,4 +284,59 @@ SUBSTR( SUBSTRING_INDEX(@cron," ",-1),1,2)  as CRONMIN5
 */
 
 
+#SET @cron = '*/4 * 5,6-12 * *';
+SET @cron = '8-6 * 5,6-12 * *';
+SELECT
+@CRONMIN:=
+	LPAD (
+		IF ( SUBSTR( SUBSTRING_INDEX(@cron," ",-5),1,2) LIKE '*%' ,  '00' ,
+			IF ( SUBSTR( SUBSTRING_INDEX(@cron," ",-5),1,2) LIKE '%,%' , SUBSTRING_INDEX( SUBSTR( SUBSTRING_INDEX(@cron," ",-5),1,2)   ,',' ,1),
+				IF ( SUBSTR( SUBSTRING_INDEX(@cron," ",-5),1,2) LIKE '%-%' , SUBSTRING_INDEX( SUBSTR( SUBSTRING_INDEX(@cron," ",-5),1,2) , '-',1),   '00'    )
+			)
+        )
+    ,2,'0') as CRONMIN,
+    @CRONHOUR := LPAD (
+		IF ( SUBSTR( SUBSTRING_INDEX(@cron," ",-4),1,2) LIKE '*%' , HOUR(NOW()) ,
+			IF ( SUBSTR( SUBSTRING_INDEX(@cron," ",-4),1,2) LIKE '%,%' , SUBSTRING_INDEX( SUBSTR( SUBSTRING_INDEX(@cron," ",-4),1,2)   ,',' ,1),
+			   IF ( SUBSTR( SUBSTRING_INDEX(@cron," ",-4),1,2) LIKE '%-%' , SUBSTRING_INDEX( SUBSTR( SUBSTRING_INDEX(@cron," ",-4),1,2) , '-',1), HOUR(NOW())    )
+		)
+	)
+    ,2,'0') as CRONHOUR,
+    @CRONDAY:= LPAD (
+		IF ( SUBSTR( SUBSTRING_INDEX(@cron," ",-3),1,2) LIKE '*%' , DAY(NOW()) ,
+			IF ( SUBSTR( SUBSTRING_INDEX(@cron," ",-3),1,2) LIKE '%,%' , SUBSTRING_INDEX( SUBSTR( SUBSTRING_INDEX(@cron," ",-3),1,2)   ,',' ,1),
+			   IF ( SUBSTR( SUBSTRING_INDEX(@cron," ",-3),1,2) LIKE '%-%' , SUBSTRING_INDEX( SUBSTR( SUBSTRING_INDEX(@cron," ",-3),1,2) , '-',1), DAY(NOW())   )
+		)
+	)	 ,2,'0') as CRONDAY,
+    @CRONMONTH:= LPAD (
+    	IF ( SUBSTR( SUBSTRING_INDEX(@cron," ",-2),1,2) LIKE '*%' , MONTH(NOW()) ,
+			IF ( SUBSTR( SUBSTRING_INDEX(@cron," ",-2),1,2) LIKE '%,%' , SUBSTRING_INDEX( SUBSTR( SUBSTRING_INDEX(@cron," ",-2),1,2)   ,',' ,1),
+			   IF ( SUBSTR( SUBSTRING_INDEX(@cron," ",-2),1,2) LIKE '%-%' , SUBSTRING_INDEX( SUBSTR( SUBSTRING_INDEX(@cron," ",-2),1,2) , '-',1),  MONTH(NOW())    )
+		)
+	)   ,2,'0') as CRONMONTH,
+    @CRONDAYWEEK:= LPAD (
+        	IF ( SUBSTR( SUBSTRING_INDEX(@cron," ",-1),1,2) LIKE '*%' , DAYOFWEEK(NOW()) ,
+			IF ( SUBSTR( SUBSTRING_INDEX(@cron," ",-1),1,2) LIKE '%,%' , SUBSTRING_INDEX( SUBSTR( SUBSTRING_INDEX(@cron," ",-1),1,2)   ,',' ,1),
+			   IF ( SUBSTR( SUBSTRING_INDEX(@cron," ",-1),1,2) LIKE '%-%' , SUBSTRING_INDEX( SUBSTR( SUBSTRING_INDEX(@cron," ",-1),1,2) , '-',1),  DAYOFWEEK(NOW())    )
+		)
+	)  ,2,'0') as CRONDAYWEEK ,
+     CONCAT(YEAR(NOW()),'-',@CRONMONTH,'-',@CRONDAY,' ',@CRONHOUR,':',@CRONMIN,':00')    AS NEXTCRONDATE
+     #GROUP BY @CRONMONTH,@CRONDAY,@CRONHOUR,@CRONMIN, NEXTCRONDATE
+
+-- IF( SUBSTR( SUBSTRING_INDEX(@cron," ",-5),1,2)  = '*', MINUTE(NOW()),   "00") as CRONMIN
+ -- IF( SUBSTR( SUBSTRING_INDEX(@cron," ",-4),1,2) = '*',   HOUR(NOW()),   SUBSTRING_INDEX(  SUBSTRING_INDEX(@cron," ",2)    ," ",-1)    ) as CRONHOUR,
+-- IF( SUBSTR( SUBSTRING_INDEX(@cron," ",-3),1,2) = '*',   DAY(NOW()),   SUBSTRING_INDEX( SUBSTRING_INDEX(@cron," ",3)    ," ",-1)    ) as CRONDAY,
+-- IF( SUBSTR( SUBSTRING_INDEX(@cron," ",-2),1,2) = '*',   MONTH(NOW()),   SUBSTRING_INDEX( SUBSTRING_INDEX(@cron," ",4)    ," ",-1)    ) as CRONMONTH,
+-- IF( SUBSTR( SUBSTRING_INDEX(@cron," ",-1),1,2) = '*',   DAYOFWEEK(NOW()),   SUBSTRING_INDEX( SUBSTRING_INDEX(@cron," ",5)    ," ",-1)    ) as CRONDAYWEEK
+
+/*
+https://crontab.guru/#
+https://dev.mysql.com/doc/refman/8.0/en/case.html
+https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_date-sub
+https://stackoverflow.com/questions/9052815/mysql-use-a-value-from-a-select-in-the-select-itself
+https://stackoverflow.com/questions/21676224/how-to-write-nested-if-else-if-in-mysql
+https://www.w3resource.com/mysql/string-functions/mysql-lpad-function.php
+*/
+
+
 
