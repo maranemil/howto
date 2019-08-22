@@ -110,13 +110,13 @@ git verify-pack -v ./.git/objects/pack/pack-......ea.pack
 ##### Timestamp
 date +%s > 1552925792
 
-##### Add Swap Space on Ubuntu 18.04
+##### Add temporary Swap file on Ubuntu 18.04
 * sudo fallocate -l 6G /swapfile2 && sudo chmod 600 /swapfile2 && sudo mkswap /swapfile2 && sudo swapon /swapfile2 && sudo sysctl vm.swappiness=20
+* sudo swapoff -a && sudo fallocate -l 4G /swapfile3 && sudo chmod 600 /swapfile3 && sudo mkswap /swapfile3 && sudo swapon /swapfile3 -a && swapon -s && swapon --show
+* sudo sudo rm /swapfile3 
 
-##### update swap file in Ubuntu to 4GB
+##### Expand Swap file in Ubuntu to 4GB or more
 * sudo swapoff -a && sudo dd if=/dev/zero of=/swapfile bs=500M count=8 && sudo mkswap /swapfile && sudo swapon /swapfile -a && swapon -s && swapon --show 
-* sudo swapoff -a && sudo fallocate -l 4G /swapfile3 && sudo chmod 600 /swapfile3 && sudo mkswap /swapfile3 && sudo swapon /swapfile3 -a && swapon -s && swapon --show 
-* sudo sudo rm /swapfile3
 * echo "vm.swappiness=10" | sudo tee -a /etc/sysctl.conf
 * echo 3 | sudo tee /proc/sys/vm/drop_caches
 
