@@ -504,3 +504,46 @@ sudo debugfs -R 'stat <X>' /dev/sda1
 # crtime: 0x4e81cacc:966104fc -- mon Sep 27 14:38:28 2013
 
 
+####################################################################
+#
+#	scp wildcard not working in zsh
+#	https://unix.stackexchange.com/questions/106980/scp-command-working-in-bash-doesnt-work-in-zsh
+#	https://unix.stackexchange.com/questions/130958/scp-wildcard-not-working-in-zsh/130967
+#
+####################################################################
+
+Fix: add quoted path
+
+scp luna4:"/u/paige/maye/src/diviner/notebooks/plots/hk_*" .
+scp 'remote.host.com:files*' .
+scp 'abc@123:/home/se/exports/201405091107/*' .
+
+[Extra:]
+To turn globbing off for scp remote paths, but otherwise leave globbing the same (from here) add this to your .zshrc -
+
+# Disable globbing on the remote path.
+alias scp='noglob scp_wrap'
+function scp_wrap {
+  local -a args
+  local i
+  for i in "$@"; do case $i in
+    (*:*) args+=($i) ;;
+    (*) args+=(${~i}) ;;
+  esac; done
+  command scp "${(@)args}"
+}
+
+
+####################################################################
+#
+# grep search recursively certain file extensions
+# https://stackoverflow.com/questions/12516937/grep-but-only-certain-file-extensions
+# https://stackoverflow.com/questions/13335837/how-to-grep-for-a-file-extension/18347128
+# https://unix.stackexchange.com/questions/422464/search-by-file-extension-using-grep-command-in-var-run
+#
+####################################################################
+
+grep -r -i --include \*.h --include \*.cpp 'string' .
+
+
+
