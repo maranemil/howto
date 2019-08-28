@@ -1,0 +1,157 @@
+#####################################################################
+#
+#   Run Your Java App as a Service on Ubuntu
+#   https://dzone.com/articles/run-your-java-application-as-a-service-on-ubuntu
+#
+#####################################################################
+
+[Step 1:] Create a Service
+sudo vim /etc/systemd/system/my-webapp.service
+
+Copy/paste the following into the file /etc/systemd/system/my-webapp.service:
+
+[Unit]
+Description=My Webapp Java REST Service
+[Service]
+User=ubuntu
+# The configuration file application.properties should be here:
+#change this to your workspace
+WorkingDirectory=/home/ubuntu/workspace
+#path to executable.
+#executable is a bash script which calls jar file
+ExecStart=/home/ubuntu/workspace/my-webapp
+SuccessExitStatus=143
+TimeoutStopSec=10
+Restart=on-failure
+RestartSec=5
+[Install]
+WantedBy=multi-user.target
+
+[Step 2:] Create a Bash Script to Call Your Service
+Here’s the bash script that calls your JAR file: my-webapp
+
+#!/bin/sh
+sudo /usr/bin/java -jar my-webapp-1.0-SNAPSHOT.jar server config.yml
+
+Don't forget to give your script execute permission: sudo chmod u+x my-webapp
+
+[Step 3:] Start the Service
+sudo systemctl daemon-reload
+sudo systemctl enable my-webapp.service
+sudo systemctl start my-webapp
+sudo systemctl status my-webapp
+
+[Step 4:] Set Up Logging
+First, run: sudo journalctl --unit=my-webapp . See real-time logs by using the -f option.
+
+If you want to trim them, use -n <# of lines> to view the specified number of lines of the log:
+sudo journalctl -f -n 1000 -u my-webapp
+
+
+Tail the live log using the -f option:
+sudo journalctl -f -u my-webapp
+
+
+Stop the service by using:
+sudo systemctl stop my-webapp
+
+
+https://www.baeldung.com/spring-boot-app-as-a-service
+https://superuser.com/questions/944244/running-a-java-process-from-systemd
+http://www.jcgonzalez.com/linux-java-service-wrapper-example
+https://medium.com/@sulmansarwar/run-your-java-application-as-a-service-on-ubuntu-544531bd6102####
+https://stackoverflow.com/questions/11203483/run-a-java-application-as-a-service-on-linux
+https://computingforgeeks.com/how-to-run-java-jar-application-with-systemd-on-linux/####
+
+
+
+
+#####################################################################
+How to run Java Jar Application with Systemd on Linux
+https://computingforgeeks.com/how-to-run-java-jar-application-with-systemd-on-linux/####
+#####################################################################
+Step 1: Create an Application User and group
+
+sudo groupadd -r appmgr
+sudo useradd -r -s /bin/false -g appmgr jvmapps
+id jvmapps
+
+Step 2: Create Systemd Service
+sudo vim /etc/systemd/system/myapp.service
+
+[Unit]
+Description=Manage Java service
+
+[Service]
+WorkingDirectory=/opt/prod
+ExecStart=/bin/java -Xms128m -Xmx256m -jar myapp.jar
+User=jvmapps
+Type=simple
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+
+sudo chown -R jvmapps:appmgr /opt/prod
+sudo systemctl daemon-reload
+sudo systemctl start myapp.service
+sudo systemctl status myapp
+sudo systemctl enable myapp
+sudo systemctl restart myapp
+
+
+#####################################################################
+Run your Java application as a Service on Ubuntu
+https://medium.com/@sulmansarwar/run-your-java-application-as-a-service-on-ubuntu-544531bd6102####
+#####################################################################
+
+Step 1 — Create a service
+sudo vim /etc/systemd/system/my-webapp.service
+
+copy/paste following into the file /etc/systemd/system/my-webapp.service
+[Unit]
+Description=My Webapp Java REST Service
+[Service]
+User=ubuntu
+# The configuration file application.properties should be here:
+#change this to your workspace
+WorkingDirectory=/home/ubuntu/workspace
+#path to executable.
+#executable is a bash script which calls jar fileExecStart=/home/ubuntu/workspace/my-webapp
+SuccessExitStatus=143
+TimeoutStopSec=10
+Restart=on-failure
+RestartSec=5
+[Install]
+WantedBy=multi-user.target
+
+
+Step 2 — Create bash script to call your service
+Here’s the bash script that calls your jar file: my-webapp
+#!/bin/sh
+sudo /usr/bin/java -jar my-webapp-1.0-SNAPSHOT.jar server config.yml
+
+Don’t forget to give your script execute permission
+sudo chmod u+x my-webapp
+Step 3 — Start service
+sudo systemctl daemon-reload
+sudo systemctl enable my-webapp.service
+sudo systemctl start my-webapp
+sudo systemctl status my-webapp
+Step 4 — Setup Logging
+sudo journalctl --unit=my-webapp
+See realtime logs using -f option.
+Use -n <# of lines> to view specified number of lines of log
+sudo journalctl -f -n 1000 -u my-webapp
+
+
+Tail the live log using -f option
+sudo journalctl -f -u my-webapp
+Stop the service
+sudo systemctl stop my-webapp
+Thats it.
+
+
+
+
