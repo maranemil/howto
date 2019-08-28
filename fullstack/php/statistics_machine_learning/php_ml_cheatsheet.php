@@ -23,6 +23,29 @@ https://devhub.io/repos/php-ai-php-ml
 
 http://www.inf.u-szeged.hu/~ormandi/ai2/06-naiveBayes-example.pdf
 https://github.com/amacgregor/phpml-exercise/blob/master/classifyTweets.php
+
+https://github.com/php-ai/php-ml
+https://php-ml.readthedocs.io/en/latest/
+https://imasters.com/development/machine-learning-php-php-ml/?trace=1519021197&source=single
+https://www.sitepoint.com/how-to-analyze-tweet-sentiments-with-php-machine-learning/
+https://riptutorial.com/php/example/19397/classification-using-php-ml
+https://arkadiuszkondas.com/text-data-classification-with-bbc-news-article-dataset/
+http://mlg.ucd.ie/datasets/bbc.html
+https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfTransformer.html
+
+twitter dataset
+http://cs.stanford.edu/people/alecmgo/trainingandtestdata.zip
+bbc
+http://mlg.ucd.ie/datasets/bbc.html
+http://mlg.ucd.ie/files/datasets/bbc.zip
+
+https://medium.com/@himanshu_23732/sentiment-analysis-with-sentiment140-e6b0c789e0ce
+http://help.sentiment140.com/for-students/
+https://github.com/ClimbsRocks/nlpSentiment
+https://www.geeksforgeeks.org/twitter-sentiment-analysis-using-python/
+https://towardsdatascience.com/another-twitter-sentiment-analysis-bb5b01ebad90
+
+
 */
 
 
@@ -136,3 +159,39 @@ $dataset->getTrainLabels();
 $dataset->getTestSamples();
 $dataset->getTestLabels();
 
+
+// -----------------------------------------------------
+// transform string data csv to array
+// -----------------------------------------------------
+declare(strict_types=1);
+namespace PhpmlExamples;
+
+include 'vendor/autoload.php';
+use Phpml\Dataset\CsvDataset;
+use Phpml\Dataset\ArrayDataset;
+use Phpml\FeatureExtraction\TokenCountVectorizer;
+use Phpml\Tokenization\WordTokenizer;
+use Phpml\CrossValidation\StratifiedRandomSplit;
+use Phpml\FeatureExtraction\TfIdfTransformer;
+use Phpml\Metric\Accuracy;
+use Phpml\Classification\SVC;
+use Phpml\SupportVectorMachine\Kernel;
+
+$dataset = new CsvDataset('data/languages.csv', 1);
+$vectorizer = new TokenCountVectorizer(new WordTokenizer());
+$tfIdfTransformer = new TfIdfTransformer();
+$samples = [];
+foreach ($dataset->getSamples() as $sample) {
+    $samples[] = $sample[0];
+}
+
+$vectorizer->fit($samples);
+$vectorizer->transform($samples);
+$tfIdfTransformer->fit($samples);
+$tfIdfTransformer->transform($samples);
+$dataset = new ArrayDataset($samples, $dataset->getTargets());
+$randomSplit = new StratifiedRandomSplit($dataset, 0.1);
+$classifier = new SVC(Kernel::RBF, 10000);
+$classifier->train($randomSplit->getTrainSamples(), $randomSplit->getTrainLabels());
+$predictedLabels = $classifier->predict($randomSplit->getTestSamples());
+echo 'Accuracy: '.Accuracy::score($randomSplit->getTestLabels(), $predictedLabels);
