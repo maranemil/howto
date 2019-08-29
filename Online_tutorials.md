@@ -177,3 +177,5 @@
 * https://www.youtube.com/watch?v=KibbYf9avko#Make a Custom Website from Scratch with WP
 * https://www.youtube.com/watch?v=YZvRrldjf1Y#Build an E-commerce Website with Django and Python
 * https://www.youtube.com/watch?v=x14G4DCk4nY#Scratch Tutorial for Beginners
+* https://www.youtube.com/watch?v=hT3j87FMR6M#Intermediate React Tutorial - Todoist Clone
+* https://www.youtube.com/watch?v=_8V5o2UHG0E#Data Visualization with D3.js
