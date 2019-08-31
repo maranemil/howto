@@ -159,9 +159,8 @@
 * https://www.youtube.com/watch?v=8z2qRln9tnc#vue
 * https://www.youtube.com/watch?v=gyiwFcrVRCM#Plant App - React Native
 * https://www.youtube.com/watch?v=-edmQKcOW8s#react
-* * https://www.youtube.com/watch?v=Wy9q22isx3U#vue
+* https://www.youtube.com/watch?v=Wy9q22isx3U#vue
 * https://www.youtube.com/watch?v=DFKHh7_zzJc#tf
-
 * https://www.youtube.com/watch?v=-ETQ97mXXF0#Data Science Full Course
 * https://www.youtube.com/watch?v=C5QFHp1oAws#HTML5, CSS3
 * https://www.youtube.com/watch?v=fqMOX6JJhGo&t=11s#Docker Tutorial
@@ -170,7 +169,6 @@
 * https://www.youtube.com/watch?v=sBws8MSXN7A&t=13s#React JS Crash Course - 2019
 * https://www.youtube.com/watch?v=Wy9q22isx3U&t=18s#Vue JS Crash Course - 2019
 * https://www.youtube.com/watch?v=9Wbfk16jEOk#Learn Python and Django
-
 * https://www.youtube.com/watch?v=k32voqQhODc#Flexbox Tutorial (CSS)
 * https://www.youtube.com/watch?v=QCvL-DWcojc#Blockchain Full Course - 4 Hours
 * https://www.youtube.com/watch?v=SWYqp7iY_Tc#Git & GitHub Crash Course
@@ -179,7 +177,6 @@
 * https://www.youtube.com/watch?v=x14G4DCk4nY#Scratch Tutorial for Beginners
 * https://www.youtube.com/watch?v=hT3j87FMR6M#Intermediate React Tutorial - Todoist Clone
 * https://www.youtube.com/watch?v=_8V5o2UHG0E#Data Visualization with D3.js
-
 * https://www.youtube.com/watch?v=7nafaH9SddU#Node.js API Authentication With JWT
 * https://www.youtube.com/watch?v=fBNz5xF-Kx4#Node.js Crash Course
 * https://www.youtube.com/watch?v=qSRrxpdMpVc#React Native Tutorial for Beginners
@@ -194,3 +191,11 @@
 * https://www.youtube.com/watch?v=9Jry5-82I68#MIT Binary Search
 * https://www.youtube.com/watch?v=6FOq4cUdH8k#Node.js With Passport Authentication
 * https://www.youtube.com/watch?v=KEEKn7Me-ms&list=PLI1t_8YX-ApvMthLj56t1Rf-Buio5Y8KL#Algorithms: Recursion
+
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#### Recruiting insights
+####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* https://www.youtube.com/watch?v=wxaKwHvyWoU#5 Recruiting Strategies for Hiring the Best Technology Talent
+* https://www.youtube.com/watch?v=ElmiQQa74lI#Think like a recruiter to get discovered | Brian Xu
+* https://www.youtube.com/watch?v=ccCblUZFM0w#How to Become a Data Scientist in 2017
