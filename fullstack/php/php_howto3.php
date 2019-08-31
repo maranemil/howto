@@ -390,6 +390,7 @@ foreach($array1 as $key => $value){
 	continue;
 }
 
+#################################################################################
 // PHP | Check if two arrays contain same elements
 // http://phptester.net/
 // https://www.php.net/manual/de/function.array-diff.php
@@ -399,7 +400,7 @@ foreach($array1 as $key => $value){
 // http://thinkofdev.com/equal-identical-and-array-comparison-in-php/
 // https://stackoverflow.com/questions/8283464/php-check-if-arrays-are-identical/8283475
 // https://stackoverflow.com/questions/5678959/php-check-if-two-arrays-are-equal
-
+#################################################################################
 
 $arM = array(
 	1 => array(
@@ -438,3 +439,14 @@ foreach($arM as $keyMM=>$arrMM){
 	}
 }
 echo "<br>". $bNotSame;
+
+
+#################################################################################
+#
+#   How to put string in array, split by new line in PHP ?
+#   https://www.geeksforgeeks.org/how-to-put-string-in-array-split-by-new-line-in-php/
+#
+#################################################################################
+
+$arr = explode("\n", $str);
+$arr= preg_split ('/\n/', $str);

@@ -180,17 +180,17 @@
 * https://www.youtube.com/watch?v=hT3j87FMR6M#Intermediate React Tutorial - Todoist Clone
 * https://www.youtube.com/watch?v=_8V5o2UHG0E#Data Visualization with D3.js
 
-https://www.youtube.com/watch?v=7nafaH9SddU#Node.js API Authentication With JWT
-https://www.youtube.com/watch?v=fBNz5xF-Kx4#Node.js Crash Course
-https://www.youtube.com/watch?v=qSRrxpdMpVc#React Native Tutorial for Beginners
-https://www.youtube.com/watch?v=-MlNBTSg_Ww#React.js Hooks Crash Course
-https://www.youtube.com/watch?v=FAQxdm0bTaw#Dynamic Programming - AtCoder
-https://www.youtube.com/watch?v=b6QhQSnKNSc#Square Root Decomposition
-https://www.youtube.com/watch?v=mZomeS0tLxY#jamovi for Data Analysis
-https://www.youtube.com/watch?v=dTXzxSlhTDM#Fullstack Autocomplete Search
-https://www.youtube.com/watch?v=C6EWVBNCxsc#MIT Cache Algorithms
-https://www.youtube.com/watch?v=s-CYnVz-uh4#MIT Breadth-First Search
-https://www.youtube.com/watch?v=6LOwPhPDwVc#MIT Searching and Sorting
-https://www.youtube.com/watch?v=9Jry5-82I68#MIT Binary Search
-https://www.youtube.com/watch?v=6FOq4cUdH8k#Node.js With Passport Authentication
-https://www.youtube.com/watch?v=KEEKn7Me-ms&list=PLI1t_8YX-ApvMthLj56t1Rf-Buio5Y8KL#Algorithms: Recursion
+* https://www.youtube.com/watch?v=7nafaH9SddU#Node.js API Authentication With JWT
+* https://www.youtube.com/watch?v=fBNz5xF-Kx4#Node.js Crash Course
+* https://www.youtube.com/watch?v=qSRrxpdMpVc#React Native Tutorial for Beginners
+* https://www.youtube.com/watch?v=-MlNBTSg_Ww#React.js Hooks Crash Course
+* https://www.youtube.com/watch?v=FAQxdm0bTaw#Dynamic Programming - AtCoder
+* https://www.youtube.com/watch?v=b6QhQSnKNSc#Square Root Decomposition
+* https://www.youtube.com/watch?v=mZomeS0tLxY#jamovi for Data Analysis
+* https://www.youtube.com/watch?v=dTXzxSlhTDM#Fullstack Autocomplete Search
+* https://www.youtube.com/watch?v=C6EWVBNCxsc#MIT Cache Algorithms
+* https://www.youtube.com/watch?v=s-CYnVz-uh4#MIT Breadth-First Search
+* https://www.youtube.com/watch?v=6LOwPhPDwVc#MIT Searching and Sorting
+* https://www.youtube.com/watch?v=9Jry5-82I68#MIT Binary Search
+* https://www.youtube.com/watch?v=6FOq4cUdH8k#Node.js With Passport Authentication
+* https://www.youtube.com/watch?v=KEEKn7Me-ms&list=PLI1t_8YX-ApvMthLj56t1Rf-Buio5Y8KL#Algorithms: Recursion

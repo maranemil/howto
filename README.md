@@ -130,3 +130,7 @@ sudo service mysql stop &&  sudo service apache2 stop &&  sudo service openvpn s
 * echo ".idea/*" >> .gitignore
 * git commit -am "remove .idea"
 
+##### Remove chromium Cache
+* rm -r ~/.cache/chromium/Default/Cache/*
+
+
