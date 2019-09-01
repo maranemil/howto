@@ -211,3 +211,87 @@ https://github.com/uditkumawat/Sentiment-Analysis-In-Python-using-nltk/blob/mast
 https://github.com/Kamaldeep-j/Sentiment-Analysis-Python-NLTK/blob/master/sentiment-analysis/test.py
 https://github.com/PatGaston3/Sentiment-Analysis/blob/master/AnalyzeSentiment.py
 https://github.com/maranemil/howto/blob/master/fullstack/python/nltk/nltk_replit2.py
+
+
+###################################################
+
+
+
+
+https://www.tensorflow.org/tutorials/representation/word2vec
+https://nlp.stanford.edu/projects/glove/
+https://scikit-learn.org/stable/tutorial/text_analytics/working_with_text_data.html
+https://scikit-learn.org/stable/modules/feature_extraction.html
+https://stackabuse.com/text-classification-with-python-and-scikit-learn/
+https://towardsdatascience.com/multi-class-text-classification-with-scikit-learn-12f1e60e0a9f
+https://towardsdatascience.com/machine-learning-nlp-text-classification-using-scikit-learn-python-and-nltk-c52b92a7c73a
+https://www.tensorflow.org/hub/tutorials/text_classification_with_tf_hub
+https://www.tensorflow.org/tutorials/keras/basic_text_classification
+https://www.tensorflow.org/beta/tutorials/text/text_classification_rnn
+https://medium.com/tensorflow/building-a-text-classification-model-with-tensorflow-hub-and-estimators-3169e7aa568
+https://medium.com/tensorflow/text-classification-using-tensorflow-js-an-example-of-detecting-offensive-language-in-browser-e2b94e3565ce
+https://becominghuman.ai/deep-learning-using-tensorflow-and-nltk-analyzing-corpuss-sentiments-part-1-bec9d6c1051
+https://towardsdatascience.com/tagged/text-mining
+https://github.com/Hvass-Labs/TensorFlow-Tutorials
+
+from nltk.stem import WordNetLemmatizer
+
+stemmer = WordNetLemmatizer()
+
+for sen in range(0, len(X)):
+    # Remove all the special characters
+    document = re.sub(r'\W', ' ', str(X[sen]))
+
+    # remove all single characters
+    document = re.sub(r'\s+[a-zA-Z]\s+', ' ', document)
+
+    # Remove single characters from the start
+    document = re.sub(r'\^[a-zA-Z]\s+', ' ', document)
+
+    # Substituting multiple spaces with single space
+    document = re.sub(r'\s+', ' ', document, flags=re.I)
+
+    # Removing prefixed 'b'
+    document = re.sub(r'^b\s+', '', document)
+
+    # Converting to Lowercase
+    document = document.lower()
+
+    # Lemmatization
+    document = document.split()
+
+    document = [stemmer.lemmatize(word) for word in document]
+    document = ' '.join(document)
+
+    documents.append(document)
+
+from sklearn.feature_extraction.text import CountVectorizer
+vectorizer = CountVectorizer(max_features=1500, min_df=5, max_df=0.7, stop_words=stopwords.words('english'))
+X = vectorizer.fit_transform(documents).toarray()
+
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+tfidfconverter = TfidfVectorizer(max_features=1500, min_df=5, max_df=0.7, stop_words=stopwords.words('english'))
+X = tfidfconverter.fit_transform(documents).toarray()
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+classifier = RandomForestClassifier(n_estimators=1000, random_state=0)
+classifier.fit(X_train, y_train)
+y_pred = classifier.predict(X_test)
+
+
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+print(confusion_matrix(y_test,y_pred))
+print(classification_report(y_test,y_pred))
+print(accuracy_score(y_test, y_pred))
+
+with open('text_classifier', 'wb') as picklefile:
+    pickle.dump(classifier,picklefile)
+with open('text_classifier', 'rb') as training_model:
+    model = pickle.load(training_model)
+
+y_pred2 = model.predict(X_test)
+print(confusion_matrix(y_test, y_pred2))
+print(classification_report(y_test, y_pred2))
+print(accuracy_score(y_test, y_pred2))
