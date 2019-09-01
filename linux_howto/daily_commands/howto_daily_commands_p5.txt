@@ -587,3 +587,69 @@ rm ~/.cache/google-chrome
 
 [chromium]
 rm -r ~/.cache/chromium/Default/Cache/*
+
+
+###########################################################
+#
+# pdf to text converter
+#
+###########################################################
+
+https://unix.stackexchange.com/questions/4759/is-there-some-sort-of-pdf-to-text-converter
+http://manpages.ubuntu.com/manpages/bionic/man1/pdftotext.1.html
+https://superuser.com/questions/207603/how-to-extract-text-from-pdf-in-script-on-linux
+https://www.systutorials.com/241554/how-to-convert-pdf-to-text-with-format-kept-on-linux/
+https://askubuntu.com/questions/52040/is-there-a-better-pdf-to-text-converter-than-pdftotext
+https://www.linuxuprising.com/2019/05/how-to-convert-pdf-to-text-on-linux-gui.html
+https://www.cyberciti.biz/faq/converter-pdf-files-to-text-format-command/
+https://www.howtogeek.com/228531/how-to-convert-a-pdf-file-to-editable-text-using-the-command-line-in-linux/
+https://stackoverflow.com/questions/6510272/convert-doc-to-txt-via-commandline
+https://superuser.com/questions/165978/how-to-extract-the-text-from-ms-office-documents-in-linux
+https://ask.libreoffice.org/en/question/1671/is-there-a-command-line-tool-to-convert-documents-to-plain-text-files/
+https://askubuntu.com/questions/1116529/how-to-create-a-word-document-in-docx-form-with-terminal
+https://www.linode.com/docs/tools-reference/tools/manipulate-text-from-the-command-line-with-sed/
+https://askubuntu.com/questions/113544/how-can-i-reduce-the-file-size-of-a-scanned-pdf-file
+
+
+sudo apt-get install ghostscript
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/screen -dNOPAUSE -dQUIET -dBATCH -sOutputFile=output.pdf input.pdf
+
+-dPDFSETTINGS=/screen lower quality, smaller size. (72 dpi)
+-dPDFSETTINGS=/ebook for better quality, but slightly larger pdfs. (150 dpi)
+-dPDFSETTINGS=/prepress output similar to Acrobat Distiller "Prepress Optimized" setting (300 dpi)
+-dPDFSETTINGS=/printer selects output similar to the Acrobat Distiller "Print Optimized" setting (300 dpi)
+-dPDFSETTINGS=/default selects output intended to be useful across a wide variety of uses, possibly at the expense of a larger output file
+
+
+sudo apt install docx2txt
+sudo apt install abiword
+
+for file in *.pdf; do pdftotext -layout "$file"; done
+for file in *.docx; do docx2txt "$file"; done
+for file in *.doc; do abiword --to=txt  "$file"; done
+for file in *.pdf; do gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/screen -dNOPAUSE -dQUIET -dBATCH -sOutputFile="$file".cp1.pdf "$file"; done
+
+# other formats
+pdftotext -layout input.pdf output.txt
+pdftotext -layout file.pdf file.txt
+pdftotext [options] [PDF-file [text-file]]
+ebook-convert file.pdf file.txt
+abiword --to=txt file.pdf
+
+sudo apt install calibre
+sudo apt install poppler-utils
+dpkg –s poppler-utils
+
+
+catdoc foo.doc > foo.txt
+docx2txt foo.docx
+abiword --to=txt myfile.doc
+abiword --to=txt --to-name=output.txt myfile.doc
+abiword --to=doc myfile.odt
+abiword --to=odt myfile.doc
+libreoffice --invisible --convert-to pdf file1.ppt
+soffice --headless --convert-to odt *.docx
+soffice --headless --convert-to txt  file1.DOC
+loffice --convert-to docx foo.odt
+echo "Hello" | pandoc -o out.docx
+libreoffice --convert-to docx file.txt
