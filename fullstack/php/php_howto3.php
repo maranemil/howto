@@ -450,3 +450,60 @@ echo "<br>". $bNotSame;
 
 $arr = explode("\n", $str);
 $arr= preg_split ('/\n/', $str);
+
+
+#################################################################################
+#
+#   NPL PHP
+#
+#################################################################################
+/*
+https://www.php.net/manual/en/function.strtok.php
+https://www.php.net/strtok
+http://phptester.net/
+https://www.php.net/manual/en/function.split.php
+https://www.php.net/manual/en/function.explode.php
+https://www.php.net/manual/en/tokenizer.examples.php
+https://github.com/soloproyectos-php/text-tokenizer
+http://php-nlp-tools.com/
+https://github.com/angeloskath/php-nlp-tools
+https://github.com/agentile/PHP-Stanford-NLP
+*/
+
+$string = "This is\tan example\nstring";
+/* Use tab and newline as tokenizing characters as well  */
+$tok = strtok($string, " \n\t");
+
+while ($tok !== false) {
+    echo "Word=$tok<br />";
+    $tok = strtok(" \n\t");
+}
+
+#################################################################################
+#
+#   How do I make a secure connection to a CXF service using php
+#   Apache CXF Client mit Basic Authentication
+#   Accessing WS-Security protected (UsernameToken) WebService using PHP5 Soap
+#   Using their example and the PHP code they posted on the website: soap-wsse.php and xmlseclibs.php, I have been able to test my CXF-powered webservice.
+#   http://sastriawan.blogspot.com/2010/01/accessing-ws-security-protected.html
+#   https://github.com/hglattergotz/ExactTarget-PHP-SOAP-API/blob/master/soap-wsse.php
+#
+#################################################################################
+
+require('soap-wsse.php');
+
+class mySoap extends SoapClient {
+   function __doRequest($request, $location, $saction, $version) {
+    $doc = new DOMDocument('1.0');
+    $doc->loadXML($request);
+    $objWSSE = new WSSESoap($doc);
+    $objWSSE->addUserToken("admin", "admin", false);
+    return parent::__doRequest($objWSSE->saveXML(), $location, $saction, $version);
+   }
+}
+
+$wsdl = 'http://localhost:9090/WS?wsdl';
+$sClient = new mySoap($wsdl, array('trace'=>1));
+$wrapper->word = new SoapVar("Echo testing", XSD_STRING);
+$result = $sClient->echo($wrapper);
+print_r($result->return);
