@@ -1,5 +1,9 @@
+import matplotlib.image as mpimg
+import matplotlib.pyplot as plt
+import numpy as np
 from __future__ import absolute_import, division, print_function, unicode_literals
 import os
+import sys
 import tensorflow as tf
 from tensorflow import keras
 print("TensorFlow version is ", tf.__version__)
@@ -10,8 +14,7 @@ print("TensorFlow version is ", tf.__version__)
 # pip3 install matplotlib --user
 # pip3 install --ignore-installed --upgrade matplotlib
 # pip3 install numpy --user
-
-
+# sudo apt-get install python3-tk
 
 
 """
@@ -33,11 +36,19 @@ https://pytorch.org/tutorials/beginner/transfer_learning_tutorial.html
 https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html
 https://pytorch.org/tutorials/beginner/saving_loading_models.html
 https://pytorch.org/tutorials/beginner/pytorch_with_examples.html
+
+
+https://www.tensorflow.org/api_docs/python/tf/keras/optimizers/SGD
+https://keras.io/optimizers/
+https://machinelearningmastery.com/how-to-reduce-overfitting-with-dropout-regularization-in-keras/
+https://keras.io/layers/core/
+https://www.programcreek.com/python/example/104284/keras.optimizers.SGD
+https://www.programcreek.com/python/example/89706/keras.layers.Dropout
+https://www.tensorflow.org/api_docs/python/tf/keras/layers/Dropout
+https://keras.io/layers/pooling/
+https://github.com/keras-team/keras-applications/blob/master/keras_applications/mobilenet_v2.py
 """
 
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
 
 zip_file = tf.keras.utils.get_file(origin="https://storage.googleapis.com/mledu-datasets/cats_and_dogs_filtered.zip",
                                    fname="cats_and_dogs_filtered.zip", extract=True)
@@ -47,77 +58,97 @@ validation_dir = os.path.join(base_dir, 'validation')
 
 # Directory with our training cat pictures
 train_cats_dir = os.path.join(train_dir, 'cats')
-print ('Total training cat images:', len(os.listdir(train_cats_dir)))
+print('Total training cat images:', len(os.listdir(train_cats_dir)))
 
 # Directory with our training dog pictures
 train_dogs_dir = os.path.join(train_dir, 'dogs')
-print ('Total training dog images:', len(os.listdir(train_dogs_dir)))
+print('Total training dog images:', len(os.listdir(train_dogs_dir)))
 
 # Directory with our validation cat pictures
 validation_cats_dir = os.path.join(validation_dir, 'cats')
-print ('Total validation cat images:', len(os.listdir(validation_cats_dir)))
+print('Total validation cat images:', len(os.listdir(validation_cats_dir)))
 
 # Directory with our validation dog pictures
 validation_dogs_dir = os.path.join(validation_dir, 'dogs')
-print ('Total validation dog images:', len(os.listdir(validation_dogs_dir)))
+print('Total validation dog images:', len(os.listdir(validation_dogs_dir)))
 
 
-image_size = 160 # All images will be resized to 160x160
-batch_size = 32
+image_size = 32  # All images will be resized to 160x160
+batch_size = 16  # 32
 
 # Rescale all images by 1./255 and apply image augmentation
 train_datagen = keras.preprocessing.image.ImageDataGenerator(
-                rescale=1./255)
+    rescale=1./255)
 
-validation_datagen = keras.preprocessing.image.ImageDataGenerator(rescale=1./255)
+validation_datagen = keras.preprocessing.image.ImageDataGenerator(
+    rescale=1./255)
 
 # Flow training images in batches of 20 using train_datagen generator
 train_generator = train_datagen.flow_from_directory(
-                train_dir,  # Source directory for the training images
-                target_size=(image_size, image_size),
-                batch_size=batch_size,
-                # Since we use binary_crossentropy loss, we need binary labels
+    train_dir,  # Source directory for the training images
+    target_size=(image_size, image_size),
+    batch_size=batch_size,
+    # Since we use binary_crossentropy loss, we need binary labels
                 class_mode='binary')
 
 # Flow validation images in batches of 20 using test_datagen generator
 validation_generator = validation_datagen.flow_from_directory(
-                validation_dir, # Source directory for the validation images
-                target_size=(image_size, image_size),
-                batch_size=batch_size,
-                class_mode='binary')
+    validation_dir,  # Source directory for the validation images
+    target_size=(image_size, image_size),
+    batch_size=batch_size,
+    class_mode='binary')
 
 IMG_SHAPE = (image_size, image_size, 3)
 
 # Create the base model from the pre-trained model MobileNet V2
 base_model = tf.keras.applications.MobileNetV2(input_shape=IMG_SHAPE,
                                                include_top=False,
+                                               # alpha=0.5,
+                                               input_tensor=None,
+                                               pooling=None,
+                                               # classes=10000,
                                                weights='imagenet')
 
 base_model.trainable = False
 # Let's take a look at the base model architecture
 base_model.summary()
 
-model = tf.keras.Sequential([
-  base_model,
-  keras.layers.GlobalAveragePooling2D(),
-  keras.layers.Dense(1, activation='sigmoid')
-])
+# sys.exit()
 
+model = tf.keras.Sequential([
+    base_model,
+    # keras.layers.GlobalAveragePooling2D(),
+    keras.layers.GlobalMaxPooling2D(),  # maxpool_layer
+    keras.layers.Dropout(0.5),
+    keras.layers.Dense(1, activation='sigmoid')  # prediction_layer
+])
+"""
 model.compile(optimizer=tf.keras.optimizers.RMSprop(lr=0.0001),
               loss='binary_crossentropy',
               metrics=['accuracy'])
+"""
+learning_rate = 0.0001
+"""
+model.compile(optimizer=tf.keras.optimizers.Adam(lr=learning_rate), 
+              loss='binary_crossentropy',
+              metrics=['accuracy'])
+"""
+model.compile(optimizer=tf.keras.optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True),
+              loss='mean_squared_error', metrics=['accuracy'])
+
 
 model.summary()
 len(model.trainable_variables)
 
-epochs = 2 # 10
+
+epochs = 2  # 10
 steps_per_epoch = train_generator.n // batch_size
 validation_steps = validation_generator.n // batch_size
 
 history = model.fit_generator(train_generator,
-                              steps_per_epoch = steps_per_epoch,
+                              steps_per_epoch=steps_per_epoch,
                               epochs=epochs,
-                              workers=2, # 4
+                              workers=2,  # 4
                               validation_data=validation_generator,
                               validation_steps=validation_steps)
 
@@ -127,7 +158,7 @@ val_acc = history.history['val_acc']
 
 loss = history.history['loss']
 val_loss = history.history['val_loss']
-
+"""
 plt.figure(figsize=(8, 8))
 plt.subplot(2, 1, 1)
 plt.plot(acc, label='Training Accuracy')
@@ -145,7 +176,7 @@ plt.ylabel('Cross Entropy')
 plt.ylim([0,max(plt.ylim())])
 plt.title('Training and Validation Loss')
 plt.show()
-
+"""
 
 base_model.trainable = True
 # Let's take a look to see how many layers are in the base model
@@ -156,16 +187,16 @@ fine_tune_at = 100
 
 # Freeze all the layers before the `fine_tune_at` layer
 for layer in base_model.layers[:fine_tune_at]:
-  layer.trainable =  False
+    layer.trainable = False
 
-model.compile(optimizer = tf.keras.optimizers.RMSprop(lr=2e-5),
+model.compile(optimizer=tf.keras.optimizers.RMSprop(lr=2e-5),
               loss='binary_crossentropy',
               metrics=['accuracy'])
 model.summary()
 len(model.trainable_variables)
 
 history_fine = model.fit_generator(train_generator,
-                                   steps_per_epoch = steps_per_epoch,
+                                   steps_per_epoch=steps_per_epoch,
                                    epochs=epochs,
                                    workers=4,
                                    validation_data=validation_generator,
@@ -176,6 +207,7 @@ val_acc += history_fine.history['val_acc']
 
 loss += history_fine.history['loss']
 val_loss += history_fine.history['val_loss']
+"""
 plt.figure(figsize=(8, 8))
 plt.subplot(2, 1, 1)
 plt.plot(acc, label='Training Accuracy')
@@ -193,3 +225,4 @@ plt.plot([epochs-1,epochs-1], plt.ylim(), label='Start Fine Tuning')
 plt.legend(loc='upper right')
 plt.title('Training and Validation Loss')
 plt.show()
+"""
