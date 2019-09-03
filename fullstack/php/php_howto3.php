@@ -490,6 +490,18 @@ while ($tok !== false) {
 #
 #################################################################################
 
+// https://github.com/robrichards/xmlseclibs
+// http://webhelp.easi.utoronto.ca/sis/web_services/php/soap-wsse.php.html
+// https://github.com/koenedaele/Services/blob/master/vendor/wse-php/soap-wsse.php
+// https://github.com/hglattergotz/ExactTarget-PHP-SOAP-API/blob/master/soap-wsse.php
+// https://github.com/koenedaele/Services/blob/master/vendor/wse-php/soap-wsse.php
+
+// https://packagist.org/packages/wsdltophp/wssecurity
+// https://github.com/WsdlToPhp/WsSecurity
+// https://packagist.org/packages/osucomm/ws-soap
+// https://github.com/electrickite/WsSoap
+
+
 require('soap-wsse.php');
 
 class mySoap extends SoapClient {
