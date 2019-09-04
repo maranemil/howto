@@ -65,5 +65,8 @@ print(test_labels[0])
 
 
 """
+https://www.tensorflow.org/tutorials/eager/custom_training_walkthrough
+https://www.tensorflow.org/tutorials/eager/custom_training
+
 https://colab.research.google.com/github/lmoroney/mlday-tokyo/blob/master/Lab2-Computer-Vision.ipynb#scrollTo=7mAyndG3kVlK
 """
