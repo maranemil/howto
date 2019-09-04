@@ -516,7 +516,28 @@ https://raw.githubusercontent.com/koenedaele/Services/master/vendor/wse-php/soap
 https://github.com/koenedaele/Services/blob/master/vendor/wse-php/soap-wsa.php
 https://github.com/robrichards/wse-php/blob/master/examples/soap-wsa-example.php
 https://github.com/artisaninweb/laravel-soap
+
+http://sebastianviereck.de/dhl-retoure-modul-php/
+http://andrecatita.com/code-snippets/php-soap-wsse-oasis-security/
+https://gist.github.com/jbuchbinder/9530892
+https://hotexamples.com/examples/-/-/curl_setopt/php-curl_setopt-function-examples.html
+
+
+https://hotexamples.com/de/examples/-/SoapHeader/-/php-soapheader-class-examples.html
+http://khbrainh.com/index.php/2018/11/25/php-soapclient-use-__soapcall-with-wssecurityheader/
+https://profikoder.com/question/21529043-soap-client-verursacht-500-oder-502-fehler-mit-php
+https://www.php.de/forum/webentwicklung/php-fortgeschrittene/107011-erledigt-soap-server-und-ws-security-timestamp-amp-signatur
+http://www.mikeobrien.net/blog/adding-wss-usernametoken-with-native
+https://stackoverflow.com/questions/17796173/send-xml-with-php-via-post/17796669#17796669
+https://www.programcreek.com/java-api-examples/?code=kleini/bricklink/bricklink-master/dataobjects/src/main/java/de/deutschepost/dpdhl/wsprovider/dataobjects/WSSUsernameTokenSecurityHandler.java
+https://www.playframework.com/documentation/2.7.x/JavaXmlRequests
+https://itqna.net/questions/86685/consume-webservice-soap-php-problem-header
+
+
+
 */
+
+// v1 --------------------
 
 require('soap-wsa.php');
 require('soap-wsse.php');
@@ -538,7 +559,7 @@ $result = $sClient->echo($wrapper);
 print_r($result->return);
 
 
-// --------------------
+// v2 --------------------
 
 ini_set('display_errors', true);
 ini_set('display_startup_errors', true);
@@ -584,3 +605,66 @@ $request = array(
 );
 $results = $client->FunctionName($request);
 var_dump($results);
+
+// v3 --------------------
+ini_set('display_errors', true);
+ini_set('display_startup_errors', true);
+error_reporting(E_ALL);
+
+require 'soap-wsa.php';
+require 'soap-wsse.php';
+$end_point = "https://sop-ws.example.de/sbb/services/Invoke?wsdl";
+
+function getRequestXml()
+{
+    $request = '<?xml version="1.0" encoding="UTF-8"?>
+    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+    xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
+    xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+    <soap:Header>
+    <wsse:Security soap:mustUnderstand="1">
+        <!--  -->
+    </wsse:Security>
+    </soap:Header>
+    <soap:Body>
+    <!-- Hier im SOAP-Body steht der Request im , der sog. "Payload" der SOAP-Message -->
+    </soap:Body>
+    </soap:Envelope>';
+    return $request;
+}
+
+function curlSoapRequest($xmlRequest,$end_point)
+{
+    $header = array(
+        "Content-type: text/xml;charset=\"utf-8\"",
+        "Accept: text/xml",
+        "Cache-Control: no-cache",
+        "Pragma: no-cache",
+        "Content-length: " . strlen($xmlRequest),
+    );
+    $soap_do = curl_init();
+    curl_setopt($soap_do, CURLOPT_URL, $end_point);
+    curl_setopt($soap_do, CURLOPT_CONNECTTIMEOUT, 10);
+    curl_setopt($soap_do, CURLOPT_TIMEOUT, 10);
+    curl_setopt($soap_do, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($soap_do, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($soap_do, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($soap_do, CURLOPT_POST, true);
+    curl_setopt($soap_do, CURLOPT_POSTFIELDS, $xmlRequest);
+    curl_setopt($soap_do, CURLOPT_HTTPHEADER, $header);
+    $response = curl_exec($soap_do);
+    if (!$response) {
+        $err = 'Curl error: ' . curl_error($soap_do);
+    } else {
+        /* var_dump(htmlentities($response));*/
+    }
+    curl_close($soap_do);
+    return $response;
+}
+
+$xmlRequest = getRequestXml();
+$response = curlSoapRequest($xmlRequest,$end_point);
+print_r($response);
