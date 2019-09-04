@@ -501,7 +501,24 @@ while ($tok !== false) {
 // https://packagist.org/packages/osucomm/ws-soap
 // https://github.com/electrickite/WsSoap
 
+/*
+vendor/wse-php/soap-wsa.php
+https://github.com/robrichards/wse-php
+https://packagist.org/packages/robrichards/wse-php
+https://packagist.org/packages/robrichards/xmlseclibs
 
+
+https://packagist.org/packages/course-hero/wse-php
+https://packagist.org/packages/tilleuls/wse-php
+https://github.com/koenedaele/Services/tree/master/vendor/wse-php
+https://github.com/koenedaele/Services/blob/master/vendor/wse-php/soap-wsa.php
+https://raw.githubusercontent.com/koenedaele/Services/master/vendor/wse-php/soap-wsa.php
+https://github.com/koenedaele/Services/blob/master/vendor/wse-php/soap-wsa.php
+https://github.com/robrichards/wse-php/blob/master/examples/soap-wsa-example.php
+https://github.com/artisaninweb/laravel-soap
+*/
+
+require('soap-wsa.php');
 require('soap-wsse.php');
 
 class mySoap extends SoapClient {
