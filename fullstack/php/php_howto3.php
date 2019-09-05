@@ -668,3 +668,38 @@ function curlSoapRequest($xmlRequest,$end_point)
 $xmlRequest = getRequestXml();
 $response = curlSoapRequest($xmlRequest,$end_point);
 print_r($response);
+
+
+/*
+#######################################
+CRON for PHP: Calculate the next or previous run date and determine if a CRON expression is due
+https://packagist.org/packages/dragonmantank/cron-expression
+https://packagist.org/packages/mtdowling/cron-expression [deprecated]
+https://github.com/dragonmantank/cron-expression
+https://github.com/mtdowling/cron-expression
+#####################################
+*/
+
+require_once 'vendor/autoload.php';
+
+// Works with predefined scheduling definitions
+$arCrons = [
+"*/30 * * * *",
+"33 4 * * *",
+"*/10 * * * *",
+"30 6 * * *",
+"31 4 * * *",
+];
+
+$cron = Cron\CronExpression::factory('@daily');
+$cron->isDue();
+foreach($arCrons as $dCrons){
+	$cron = Cron\CronExpression::factory($dCrons);
+    #$strDate =  $cron->getNextRunDate()->format('Y-m-d H:i:s');
+	#$strDate =  $cron->getNextRunDate()->format('Y-m-d');
+	#$strDate =  $cron->getNextRunDate()->format('c');
+	$strDate =  $cron->getNextRunDate()->format('H:i:s');
+	#echo $strDate.PHP_EOL;
+	$arList[] = $strDate;
+}
+print_r(array_count_values($arList));
