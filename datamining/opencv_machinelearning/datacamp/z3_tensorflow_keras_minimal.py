@@ -67,6 +67,48 @@ print(test_labels[0])
 """
 https://www.tensorflow.org/tutorials/eager/custom_training_walkthrough
 https://www.tensorflow.org/tutorials/eager/custom_training
-
 https://colab.research.google.com/github/lmoroney/mlday-tokyo/blob/master/Lab2-Computer-Vision.ipynb#scrollTo=7mAyndG3kVlK
+
+
+
+
+https://codelabs.developers.google.com/codelabs/tfjs-training-classfication/index.html#0
+https://codelabs.developers.google.com/codelabs/cloud-tensorflow-mnist/#7
+https://codelabs.developers.google.com/codelabs/cloud-tensorflow-mnist/#7
+https://www.tensorflow.org/tutorials/
+https://colab.research.google.com/github/tensorflow/docs/blob/r2.0rc/site/en/tutorials/_index.ipynb#scrollTo=h3IKyzTCDNGo
+https://repl.it/repls/FarawayBronzePrinter
 """
+
+
+import warnings
+warnings.filterwarnings('ignore',category=FutureWarning)
+import tensorflow as tf
+print(tf.__version__)
+print(tf.version.GIT_VERSION, tf.version.VERSION)
+mnist = tf.keras.datasets.fashion_mnist
+(training_images, training_labels) ,  (test_images, test_labels) = mnist.load_data()
+training_images = training_images/255.0
+test_images = test_images/255.0
+"""
+model = tf.keras.models.Sequential([tf.keras.layers.Flatten(),
+                                    tf.keras.layers.Dense(512, activation=tf.nn.relu),
+                                    tf.keras.layers.Dense(10, activation=tf.nn.softmax)])
+
+model.compile(optimizer = 'adam',
+              loss = 'sparse_categorical_crossentropy')
+"""
+model = tf.keras.models.Sequential([
+  tf.keras.layers.Flatten(input_shape=(28, 28)),
+  tf.keras.layers.Dense(64, activation=tf.nn.relu),
+  tf.keras.layers.Dropout(0.8),
+  tf.keras.layers.Dense(10, activation=tf.nn.softmax)
+])
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+model.fit(training_images, training_labels, epochs=5)
+model.evaluate(test_images, test_labels)
+classifications = model.predict(test_images)
+print(classifications[0])
+print(test_labels[0])
