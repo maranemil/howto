@@ -1,0 +1,84 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>
+        <!--
+        https://hotexamples.com/examples/-/geoPHP/-/php-geophp-class-examples.html
+        http://mappingandco.com/blog/create-a-featurecollection-object-from-a-postgis-query/
+        -->
+
+        <script type="text/javascript">
+            var map;
+            function initMap() {
+                map = new OpenLayers.Map("info");
+                var mapnik = new OpenLayers.Layer.OSM();
+                map.addLayer(mapnik);
+
+                map.addControl(new OpenLayers.Control.ScaleLine());
+                map.addControl(new OpenLayers.Control.OverviewMap());
+                map.addControl(new OpenLayers.Control.MousePosition());
+                map.addControl(new OpenLayers.Control.LayerSwitcher());
+
+                //map.addControl(new OpenLayers.Control.SelectFeature(cities,{autoActivate:true, hover:true, onSelect:addPopup, onUnselect:removePopup}));
+
+
+                geojson_layer = new OpenLayers.Layer.Vector("GeoJSON", {
+                    styleMap: new OpenLayers.StyleMap({
+                        "default": new OpenLayers.Style({
+                        pointRadius: "${size}",
+                        fillColor: "#ffcc66",
+                        fillOpacity: 0.8,
+                        strokeColor: "#cc6633",
+                        strokeWidth: 2,
+                        strokeOpacity: 0.8 } ),
+                        "select": { fillColor: "#8aeeef",
+                        strokeColor: "#32a8a9",
+                        labelYOffset:13,
+                        label:"${name}"} //Text entspricht feature.attributes.name
+                    }),
+                    projection: new OpenLayers.Projection("EPSG:4326"),
+                    strategies: [new OpenLayers.Strategy.Fixed()],
+                    protocol: new OpenLayers.Protocol.HTTP({
+                        url: "open_maps.json",
+                        format: new OpenLayers.Format.GeoJSON()
+                    })
+                });
+                map.addLayer(geojson_layer);
+                map.setCenter(
+                    new OpenLayers.LonLat(9.73,52.37, ).transform(
+                        new OpenLayers.Projection("EPSG:4326"),
+                        map.getProjectionObject()
+                    ), 10
+                );
+            }
+        </script>
+        <style type="text/css">
+            body {
+                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            }
+            #header{
+                height:3em;
+            }
+            #wiki {
+                position: absolute;
+                right: 10px;
+                height:91%;
+                width: 49%;
+                top:3em;
+            }
+            #openlayers {
+                position: absolute;
+                width: 49%;
+                top: 3em;
+                left: 10;
+                bottom: 2em;
+            }
+        </style>
+    </head>
+    <body onload="initMap()">
+    </div>
+        <div id="info">
+        </div>
+    </body>
+
+</html>
