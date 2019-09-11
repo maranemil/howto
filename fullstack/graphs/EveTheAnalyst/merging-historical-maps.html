@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>My map</title>
+    <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="map.css">
+    <style></style>
+</head>
+<body>
+<div id="container" class="svg-container"></div>
+<script type="text/javascript">
+    var w = 1400;
+    var h = 700;
+    var svg = d3.select("div#container").append("svg").attr("preserveAspectRatio", "xMinYMin meet").style("background-color","#4365bd")
+    .attr("viewBox", "0 0 " + w + " " + h)
+    .classed("svg-content", true);
+    var projection = d3.geoMercator().translate([w/2, h/2]).scale(2600).center([22,52]);
+    var path = d3.geoPath().projection(projection);
+
+// load data
+var europe_data = d3.json("merging-historical-maps-europe.json");
+var region_data = d3.json("merging-historical-maps-innerlines.json");
+var area_data = d3.json("merging-historical-maps-palatinates.json");
+var layer1 = svg.selectAll('path');
+var layer2 = svg.selectAll('path');
+
+Promise.all([europe_data, region_data, area_data]).then(function(values){
+
+	// draw the map of Europe
+    var europe = layer2.append("g")
+        .data(values[0].features)
+        .enter()
+        .append("path")
+        .attr("class","europe")
+        .attr("d", path);
+
+	// draw the map of Poland
+	var poland = layer1.append("g")
+        .data(values[0].features.filter(function(d){return d.properties.Name=="Poland"}))
+        .enter()
+        .append("path")
+        .attr("class","poland")
+        .attr("d", path);
+
+	// draw the Polish regions
+	var regions = layer1.append("g")
+        .data([values[1]])
+        .enter()
+        .append("path")
+        .attr("class","regions")
+        .attr("d", path);
+
+	// print the country names
+    var countrynames = svg.selectAll("text")
+        .data(values[0].features)
+        .enter()
+        .append("text")
+		.text(function(d) {return d.properties.Name;})
+		.attr("transform", function(d) { return "translate(" + path.centroid(d) + ")"; })
+	    .attr("dx", "-3em")
+		.attr("dy", "0.5em")
+		.attr("class","countrynames");
+
+	// print the region names
+	var regionnames = regions.append("text")
+        .data(values[2].features)
+        .enter()
+        .append("text")
+		.text(function(d) {return d.properties.PALATINATE_NAME;})
+		.attr("transform", function(d) { return "translate(" + path.centroid(d) + ")"; })
+		.attr("dx", "-2em")
+		.attr("dy", "0em")
+		.attr("class","regionnames");
+    });
+
+
+</script>
+
+<style>
+
+/*
+
+https://bl.ocks.org/EveTheAnalyst/9eb1f498c2639b5911015a1de1cd7f4b
+view-source:https://bl.ocks.org/EveTheAnalyst/raw/9eb1f498c2639b5911015a1de1cd7f4b/
+https://bl.ocks.org/EveTheAnalyst/raw/9eb1f498c2639b5911015a1de1cd7f4b/
+
+https://bl.ocks.org/EveTheAnalyst/raw/9eb1f498c2639b5911015a1de1cd7f4b/europe.json
+https://bl.ocks.org/EveTheAnalyst/raw/9eb1f498c2639b5911015a1de1cd7f4b/innerlines.json
+https://bl.ocks.org/EveTheAnalyst/raw/9eb1f498c2639b5911015a1de1cd7f4b/palatinates.json
+
+*/
+    .europe {
+	fill: #e2d2ab;
+	stroke: #bc9a42;
+	stroke-width: 0.5;
+}
+
+.regions {
+	fill: none;
+	stroke: #967b35;
+	stroke-width: 0.5;
+}
+
+.poland {
+	fill: #cdb370;
+	stroke: #bc9a42;
+	stroke-width: 0.5;
+}
+
+.regionnames {
+	text-transform: uppercase;
+	font-family: "Franklin Gothic Book", Arial;
+	font-size: 12px;
+	fill: #967b35;
+}
+
+.countrynames {
+	font-family:  "Franklin Gothic Book", Arial;
+	font-weight: 300;
+	text-transform: uppercase;
+	letter-spacing: 4px;
+	font-size: 16px;
+	fill: #967b35;
+}
+</style>
+
+
+</body>
+</html>

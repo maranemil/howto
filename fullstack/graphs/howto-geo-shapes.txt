@@ -1,0 +1,130 @@
+##############################################
+
+SVG political map of Italy
+https://bl.ocks.org/fabiovalse/546e3a5080dc6d6f86b08d5635929d1c
+
+##############################################
+
+## Installing topojson & ogr2ogr
+sudo npm install -g topojson
+sudo npm install -g ndjson-cli
+sudo npm install -g json-to-ndjson
+
+## Download official boundaries
+wget http://www.istat.it/storage/cartografia/confini_amministrativi/non_generalizzati/2016/Limiti_2016_WGS84.zip
+
+## Unzip package
+unzip Limiti_2016_WGS84.zip
+
+## Convert Shapefile to GeoJSON
+ogr2ogr -f GeoJSON -s_srs Limiti_2016_WGS84/Com2016_WGS84/Com2016_WGS84.prj -t_srs EPSG:4326 towns.geojson Limiti_2016_WGS84/Com2016_WGS84/Com2016_WGS84.shp
+
+ogr2ogr -f GeoJSON -s_srs Limiti_2016_WGS84/CMProv2016_WGS84/CMprov2016_WGS84.prj -t_srs EPSG:4326 provinces.geojson Limiti_2016_WGS84/CMProv2016_WGS84/CMprov2016_WGS84.shp
+
+ogr2ogr -f GeoJSON -s_srs Limiti_2016_WGS84/Reg2016_WGS84/Reg_2016_WGS84.prj -t_srs EPSG:4326 regions.geojson Limiti_2016_WGS84/Reg2016_WGS84/Reg_2016_WGS84.shp
+
+## Convert GeoJSON to NDJSON
+json-to-ndjson -p 'features.*' -o towns.ndjson towns.geojson
+json-to-ndjson -p 'features.*' -o provinces.ndjson provinces.geojson
+json-to-ndjson -p 'features.*' -o regions.ndjson regions.geojson
+
+## Create final NDJSON
+cat towns.ndjson > final.ndjson
+cat provinces.ndjson >> final.ndjson
+cat regions.ndjson >> final.ndjson
+
+## Create final GeoJSON
+cat final.ndjson | ndjson-reduce 'p.features.push(d), p' '{type: "FeatureCollection", features: []}' > final.geojson
+
+## Convert GeoJSON to TopoJSON
+geo2topo --out final.topo.json final.geojson
+
+## Simplify TopoJSON
+toposimplify -p 1 -f < final.topo.json > final.simplified.topo.json
+
+## country
+topomerge -f "d.properties.REGIONE != undefined" -k "d.type" country=final < final.simplified.topo.json > italy.topo.json
+index.html
+
+
+https://gdal.org/programs/ogr2ogr.html
+ogr2ogr -where FID='PT' pt.geojson CNTR_RG_10M_2016_4326.geojson # Extracting a single country
+ogr2ogr -where "FID in ('PT','ES')" ptes.geojson CNTR_RG_10M_2016_4326.geojson # Extracting a set of countrie
+
+
+
+
+
+
+
+
+############################################
+OpenStreetMap Data Extracts geo shapes
+############################################
+https://geojson-maps.ash.ms/##
+https://wiki.openstreetmap.org/wiki/Shapefiles
+https://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/administrative-units-statistical-units/countries####
+http://download.geofabrik.de/
+http://download.geofabrik.de/europe.html
+https://www.diva-gis.org/gdata
+https://osmdata.openstreetmap.de/
+https://www.interline.io/osm/extracts/
+http://osm2shp.ru/
+https://download.bbbike.org/osm/bbbike/
+https://www.geofabrik.de/de/data/index.html
+https://www.geofabrik.de/de/data/geofabrik-osm-gis-standard-0.7.pdf
+
+
+https://mapshaper.org/
+https://geojson-maps.ash.ms/
+http://geojson.io/#map=2/20.0/0.0
+http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3
+
+https://export.hotosm.org/en/v3/
+https://extract.bbbike.org/
+https://osmaxx.hsr.ch/pages/downloads/
+https://github.com/geometalab/osmaxx-symbology/tree/master/osmaxx-symbology/OSMaxx_point_symbols/svg
+https://wambachers-osm.website/boundaries/
+https://www.geofabrik.de/de/data/shapefiles.html
+
+
+[d3js Germany regions]
+http://bl.ocks.org/oscar6echo/4423770####
+https://gist.github.com/oscar6echo/4423770
+http://tommykrueger.com/projects/d3tests/maps-germany.php####
+https://observablehq.com/@sto3psl/map-of-germany-in-d3-js
+https://geojson.org/geojson-spec.html
+https://bl.ocks.org/EveTheAnalyst/9eb1f498c2639b5911015a1de1cd7f4b####
+https://bl.ocks.org/EveTheAnalyst/f2964f0dd889a55638d2d82e5c2fe18f####
+
+[d3js US regions]
+https://observablehq.com/@d3/choropleth
+https://observablehq.com/@d3/hexbin-map
+http://bl.ocks.org/mbostock/raw/4090846/us.json
+
+[d3js Italy regions]
+https://bl.ocks.org/fabiovalse/546e3a5080dc6d6f86b08d5635929d1c
+
+[worldmap]
+http://bl.ocks.org/wiesson/ef18dba71256d526eb42
+https://www.d3-graph-gallery.com/graph/choropleth_hover_effect.html
+
+[misc]
+https://medium.com/@mbostock/command-line-cartography-part-1-897aa8f8ca2c
+https://www.toptal.com/javascript/a-map-to-perfection-using-d3-js-to-make-beautiful-web-maps
+https://maori.geek.nz/d3-js-tips-tricks-and-tools-for-creating-and-working-with-maps-60fbac74eee0####
+https://geoexamples.com/d3/2015/09/25/d3-creating-EUROSTAT-maps.html###
+https://medium.com/@andybarefoot/making-a-map-using-d3-js-8aa3637304ee###
+http://datawanderings.com/2018/08/19/extracting-countries-from-geojson-with-ogr2ogr/
+http://datawanderings.com/2019/07/08/merging-historical-maps/
+https://ggplot2.tidyverse.org/reference/
+http://joyofdata.de/zoomer-stock-quotes/zoomer.html
+https://www.joyofdata.de/blog/ratio-men-women-in-eu/
+https://www.joyofdata.de/blog/nuts-classification-for-regional-statistics/
+https://livebook.manning.com/book/d3js-in-action-second-edition/chapter-3/195
+http://geoexamples.blogspot.com/2013/10/using-eurostats-data-with-d3js.html
+http://epp.eurostat.ec.europa.eu/cache/GISCO/geodatafiles/NUTS_2010_10M_SH.zip
+https://developers.google.com/chart/interactive/docs/gallery/geochart
+https://code.highcharts.com/mapdata/
+https://jsfiddle.net/gh/get/library/pure/highslide-software/highcharts.com/tree/master/samples/mapdata/custom/europe
+https://superset.incubator.apache.org/visualization.html

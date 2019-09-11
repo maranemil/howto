@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>My map</title>
+    <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="map.css">
+    <style></style>
+</head>
+<body>
+<div id="container" class="svg-container"></div>
+<script type="text/javascript">
+    var w = 1400;
+    var h = 700;
+    var svg = d3.select("div#container").append("svg").attr("preserveAspectRatio", "xMinYMin meet").style("background-color","#c9e8fd")
+    .attr("viewBox", "0 0 " + w + " " + h)
+    .classed("svg-content", true);
+    var projection = d3.geoMercator().translate([w/2, h/2]).scale(2200).center([0,40]);
+    var path = d3.geoPath().projection(projection);
+
+  // load data
+var worldmap = d3.json("making-a-map-in-d3-js-v-5_countries.geojson");
+var cities = d3.csv("making-a-map-in-d3-js-v-5_cities.csv");
+
+Promise.all([worldmap, cities]).then(function(values){
+ // draw map
+    svg.selectAll("path")
+        .data(values[0].features)
+        .enter()
+        .append("path")
+        .attr("class","continent")
+        .attr("d", path),
+ // draw points
+    svg.selectAll("circle")
+        .data(values[1])
+        .enter()
+        .append("circle")
+		.attr("class","circles")
+        .attr("cx", function(d) {return projection([d.Longitude, d.Lattitude])[0];})
+        .attr("cy", function(d) {return projection([d.Longitude, d.Lattitude])[1];})
+        .attr("r", "1px"),
+ // add labels
+    svg.selectAll("text")
+        .data(values[1])
+        .enter()
+        .append("text")
+		.text(function(d) {
+			   		return d.City;
+			   })
+		.attr("x", function(d) {return projection([d.Longitude, d.Lattitude])[0] + 5;})
+		.attr("y", function(d) {return projection([d.Longitude, d.Lattitude])[1] + 15;})
+		.attr("class","labels");
+
+    });
+
+</script>
+<style>
+/*https://bl.ocks.org/EveTheAnalyst/f2964f0dd889a55638d2d82e5c2fe18f*/
+    .continent {
+	fill: #f0e4dd;
+	stroke: #e0cabc;
+	stroke-width: 0.5;
+}
+
+.circles {
+	fill: #3c373d;
+}
+
+.labels {
+	font-family: sans-serif;
+	font-size: 11px;
+	fill: #3c373d;
+}
+</style>
+</body>
+</html>

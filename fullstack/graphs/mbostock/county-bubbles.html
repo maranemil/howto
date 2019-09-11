@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.land {
+  fill: #ddd;
+}
+
+.border {
+  fill: none;
+  stroke: #fff;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.bubble {
+  fill: brown;
+  fill-opacity: .5;
+  stroke: #fff;
+  stroke-width: .5px;
+}
+
+.bubble :hover {
+  stroke: #000;
+}
+
+.legend circle {
+  fill: none;
+  stroke: #ccc;
+}
+
+.legend text {
+  fill: #777;
+  font: 10px sans-serif;
+  text-anchor: middle;
+}
+
+</style>
+<body>
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script src="//d3js.org/topojson.v1.min.js"></script>
+<script>
+
+/*https://bl.ocks.org/mbostock/9943478*/
+/*https://bl.ocks.org/mbostock/raw/9943478/*/
+
+var width = 960,
+    height = 600;
+
+var formatNumber = d3.format(",.0f");
+
+var path = d3.geo.path()
+    .projection(null);
+
+var radius = d3.scale.sqrt()
+    .domain([0, 1e6])
+    .range([0, 15]);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+var legend = svg.append("g")
+    .attr("class", "legend")
+    .attr("transform", "translate(" + (width - 50) + "," + (height - 20) + ")")
+  .selectAll("g")
+    .data([1e6, 5e6, 1e7])
+  .enter().append("g");
+
+legend.append("circle")
+    .attr("cy", function(d) { return -radius(d); })
+    .attr("r", radius);
+
+legend.append("text")
+    .attr("y", function(d) { return -2 * radius(d); })
+    .attr("dy", "1.3em")
+    .text(d3.format(".1s"));
+
+d3.json("county-bubbles-us.json", function(error, us) {
+  if (error) throw error;
+
+  svg.append("path")
+      .datum(topojson.feature(us, us.objects.nation))
+      .attr("class", "land")
+      .attr("d", path);
+
+  svg.append("path")
+      .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+      .attr("class", "border border--state")
+      .attr("d", path);
+
+  svg.append("g")
+      .attr("class", "bubble")
+    .selectAll("circle")
+      .data(topojson.feature(us, us.objects.counties).features
+        .sort(function(a, b) { return b.properties.population - a.properties.population; }))
+    .enter().append("circle")
+      .attr("transform", function(d) { return "translate(" + path.centroid(d) + ")"; })
+      .attr("r", function(d) { return radius(d.properties.population); })
+    .append("title")
+      .text(function(d) {
+        return d.properties.name
+            + "\nPopulation " + formatNumber(d.properties.population);
+      });
+});
+
+d3.select(self.frameElement).style("height", height + "px");
+
+
+/*
+Makefile
+all: us.json
+
+clean:
+	rm -rf -- us.json build
+
+.PHONY: all clean
+
+build/gz_2010_us_050_00_20m.shp: build/gz_2010_us_050_00_20m.zip
+	unzip -od $(dir $@) $<
+	touch $@
+
+build/gz_2010_us_050_00_20m.zip:
+	mkdir -p $(dir $@)
+	curl -o $@ http://www2.census.gov/geo/tiger/GENZ2010/gz_2010_us_050_00_20m.zip
+
+build/counties.json: build/gz_2010_us_050_00_20m.shp ACS_12_5YR_B01003_with_ann.csv
+	node_modules/.bin/topojson \
+		-o $@ \
+		--id-property='STATE+COUNTY,Id2' \
+		--external-properties=ACS_12_5YR_B01003_with_ann.csv \
+		--properties='name=Geography,population=+d.properties["Estimate; Total"]' \
+		--projection='width = 960, height = 600, d3.geo.albersUsa() \
+			.scale(1280) \
+			.translate([width / 2, height / 2])' \
+		--simplify=.5 \
+		-- counties=$<
+
+build/states.json: build/counties.json
+	node_modules/.bin/topojson-merge \
+		-o $@ \
+		--in-object=counties \
+		--out-object=states \
+		--key='d.id.substring(0, 2)' \
+		-- $<
+
+us.json: build/states.json
+	node_modules/.bin/topojson-merge \
+		-o $@ \
+		--in-object=states \
+		--out-object=nation \
+		-- $<
+
+
+package.json#
+{
+  "name": "anonymous",
+  "private": true,
+  "version": "0.0.1",
+  "dependencies": {
+    "topojson": "1"
+  }
+}
+LI
+
+
+*/
+
+
+
+</script>
