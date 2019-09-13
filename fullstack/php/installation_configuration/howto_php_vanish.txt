@@ -1,0 +1,131 @@
+####################################################################################################
+#
+#   Your First Varnish Setup
+#   https://www.sitepoint.com/getting-started-with-varnish/
+#   https://medium.com/@amine.kouis/speed-up-your-php-app-load-time-with-varnish-memcached-redis-and-cdn-88b35a317ddc
+#
+####################################################################################################
+
+sudo apt-get install apache2 php5
+$ echo '<?php echo date('h:i:s') . 'Hello, world!'; | sudo tee /var/www/world.php
+
+sudo apt-get install varnish
+
+Cfg:
+/etc/default/varnish
+
+DAEMON_OPTS="-a :6081
+             -T localhost:6082
+             -f /etc/varnish/default.vcl
+             -S /etc/varnish/secret
+             -s malloc,256m"
+
+/etc/varnish/default.vcl
+
+backend default {
+    .host = "127.0.0.1";
+    .port = "80";
+}
+
+sudo service varnish start
+
+// Configuring Varnish
+
+/etc/varnish/default.vcl
+# it should be 8080 and not 80.
+
+sub vcl_fetch {
+  set beresp.ttl = 5s;
+}
+
+sudo service varnish restart
+
+####################################################################################################
+#
+#   Configure Varnish Cache And Speed Up Your Application Load Time 10x Faster
+#   https://www.cloudways.com/blog/varnish-cache/
+#   https://book.varnish-software.com/4.0/
+#
+####################################################################################################
+
+sudo apt install php-fpm
+sudo nano /etc/nginx/sites-available/default
+
+server {
+       listen 80 default_server;
+       listen [::]:80 default_server;
+       root /var/www/html;
+       index index.php;
+       server_name YOUR_SERVER_IP;
+       location / {
+               try_files $uri $uri/ =404;
+       }
+       location ~ \.php$ {
+               include snippets/fastcgi-php.conf;
+               fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+       }
+       location ~ /\.ht {
+               deny all;
+       }
+}
+
+sudo systemctl reload nginx
+
+sudo apt install -y varnish
+systemctl start varnish
+systemctl enable varnish
+
+server {
+       listen 8080 default_server;
+       listen [::]:8080 default_server;
+       root /var/www/html;
+}
+
+sudo systemctl reload nginx
+
+sudo nano /etc/default/varnish
+
+DAEMON_OPTS=”-a :6081 \
+    -T localhost:6082 \
+    -f /etc/varnish/default.vcl \
+    -S /etc/varnish/secret \
+    -s malloc,256m”
+
+
+sudo nano /etc/varnish/default.vcl
+
+backend default {
+   .host = "127.0.0.1";
+   .port = "8080";
+}
+
+sudo cp /lib/systemd/system/varnish.service /etc/systemd/system/
+sudo nano /etc/systemd/system/varnish.service
+
+[Unit]
+Description=Varnish HTTP accelerator
+Documentation=https://www.varnish-cache.org/docs/4.1/ man:varnishd
+[Service]
+Type=simple
+LimitNOFILE=131072
+LimitMEMLOCK=82000
+ExecStart=/usr/sbin/varnishd -j unix,user=vcache -F -a :6081 -T localhost:6082 -f /etc/varnish/default.v$
+ExecReload=/usr/share/varnish/reload-vcl
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+[Install]
+WantedBy=multi-user.target
+//
+ExecStart=/usr/sbin/varnishd -j unix,user=vcache -F -a :6081 -T localhost:6082 -f /etc/varnish/default.vcl -S /etc/varnish/secret -s malloc,256m
+
+...
+
+systemctl daemon-reload
+systemctl restart varnish
+sudo service nginx restart
+
+
+
+
