@@ -87,6 +87,7 @@ chrome://flags
 --no-sandbox
 --site-per-process
 
+firefox -purgecaches  -no-remote -new-tab -console
 
 * for i in {0..7}; do echo performance | sudo tee /sys/devices/system/cpu/cpu"$i"/cpufreq/scaling_governor ; done
 
