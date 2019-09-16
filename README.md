@@ -101,6 +101,9 @@ firefox -purgecaches  -no-remote -new-tab -console
 * lynx t3n.de -accept_all_cookies  -justify
 
 * sudo sysctl vm.swappiness=20
+* sudo sysctl -w vm.swappiness=20 && sudo sysctl vm.vfs_cache_pressure=50
+
+
 * cat /proc/sys/vm/swappiness
 * sync && echo 3 | sudo tee /proc/sys/vm/drop_caches
 * sudo /etc/init.d/dns-clean restart && sudo service network-manager reload
