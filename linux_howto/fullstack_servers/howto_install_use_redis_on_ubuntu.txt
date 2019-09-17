@@ -1,119 +1,7 @@
 
-
-####################################
-# Install mongodb
-####################################
-http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/
-
-
-
-#sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10 # Import the MongoDB public key
-#echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list # Generate a file with the MongoDB repository url
-#deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen
-
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
-sudo echo "deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen" | tee -a /etc/apt/sources.list.d/10gen.list
-#echo "deb http://repo.mongodb.org/apt/ubuntu "$(lsb_release -sc)"/mongodb-org/3.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb.list
-
-sudo apt-get update
-#sudo apt-cache search mongodb
-sudo apt-get install -y mongodb-org
-#sudo apt-get install mongodb-10gen
-#sudo apt-get install mongodb-org
-#sudo bash ./mongo_install.bash
-
-####################################
-# config mongodb
-####################################
-
-Edit Config:
-/etc/mongodb.conf
-verbose = true
-dbpath = /data/db
-logpath = /var/log/mongodb.log
-logappend = true
-port = 27017
-
-####################################
-#  mongodb start stop status
-####################################
-
-ps aux | grep mongodb
-ps aux | grep mongo
-
-sudo service mongod start
-sudo service mongod stop
-sudo service mongod status
-
-service mongodb start
-service mongodb stop
-service mongodb restart
-
-####################################
-#  mongodb cli console
-####################################
-
-mongostat
-mongostat --rowcount 5 2
-mongo
-mongo --version
-mongo --port 22222
-
-test mongo:
-
-> use mydb;
-> db.test.save( { tecadmin: 100 } )
-> db.test.find()
-
-  { "_id" : ObjectId("52b0dc8285f8a8071cbb5daf"), "tecadmin" : 100 }
-
-
-
-
-
-#######################################
-# Install opcache
-#######################################
-
-#sudo apt-get install php-apc
-sudo php5enmod opcache
-#in php.ini opcache.enable=1
-
-#/etc/php5/cli/conf.d
-#/etc/php5/apache2/conf.d/user.ini
-
-zend_extension=opcache.so
-opcache.memory_consumption=128
-opcache.max_accelerated_files=2500
-opcache.interned_strings_buffer=8
-opcache.revalidate_freq=60
-opcache.fast_shutdown=1
-
--------------------------------
-
-# zend_extension=/usr/lib/php7.0/extensions/opcache.so;
-zend_extension=opcache.so;
-opcache.enable=1;
-opcache.memory_consumption=32; # 64 or 128
-opcache.interned_strings_buffer=8;
-opcache.max_accelerated_files=3000; # 2000 to 4000
-opcache.revalidate_freq=180; # bis 240
-opcache.fast_shutdown=0;
-opcache.enable_cli=0;
-opcache.revalidate_path=0;
-opcache.validate_timestamps=2;
-opcache.max_file_size=0;
-opcache.file_cache=/kunden/homepages/mein-pfad/htdocs/.opcache;
-opcache.file_cache_only=1;
-
-
-
-
-
-
-#######################################
+#################################################################################
 # Install Redis
-#######################################
+#################################################################################
 
 sudo apt-add-repository ppa:chris-lea/redis-server
 sudo apt-get update
@@ -150,16 +38,16 @@ redis-cli
 
 sudo update-rc.d redis_6379 defaults # add Redis to boot start
 
-#####################################
+#################################################################################
 # Remove Redis
-#####################################
+#################################################################################
 
 sudo apt-get purge--auto-remove redis-server
 
 
-#####################################
+#################################################################################
 # Redis Test
-#####################################
+#################################################################################
 
 SET users:TestUser "job: Worker, born:1992"
 GET users:TestUser "job: Worker, born:1992"
@@ -167,15 +55,13 @@ GET users:TestUser "job: Worker, born:1992"
 References:
 https://www.digitalocean.com/community/tutorials/how-to-install-and-use-redis
 
-
-
-############################################
+#################################################################################
 #
 #	CLI Redis
 #	http://redis.io/topics/rediscli
 #	http://2bits.com/articles/installing-configuring-redis-drupal-7-other-memcached-alternatives.html
 #
-############################################
+#################################################################################
 
 sudo apt-add-repository ppa:chris-lea/redis-server
 sudo apt-get update
@@ -243,12 +129,12 @@ SLOWLOG RESET
 # wait for some time
 SLOWLOG GET 25
 
-############################################
+#################################################################################
 #
 #	CLI Queries  cheat-sheet Redis
 #	http://lzone.de/cheat-sheet/Redis
 #
-############################################
+#################################################################################
 
 Here is a short list of some basic data extraction commands:
 Type	Syntax and Explanation
@@ -328,7 +214,6 @@ hincrbrfloat myhash field2 1.123445
 ---------------------------------------------------------------------------------
 Sets	FIXME
 Sorted Sets	FIXME
-
 -----------------------------------------------------------
 
 redis-cli INFO
@@ -425,11 +310,11 @@ cluster_enabled:0
 # Keyspace
 
 
-###########################
+#################################################################################
 #
 #	Redis GUI Tools
 #
-###########################
+#################################################################################
 
 https://github.com/erikdubbelboer/phpRedisAdmin/releases # phpRedisAdmin OK
 https://github.com/sasanrose/phpredmin # php
@@ -573,6 +458,148 @@ $ redis-cli
 130) "127.0.0.1"
 
 
+#################################################################################
+#
+#   Telnet Redis
+#
+#################################################################################
 
+[Testing Database Connectivity with Telnet]
+---------------------------------------------
+telnet 192.168.155.1 6379
+MONITOR
+CONFIG GET databases
+SELECT 1
+CLIENT LIST
+KEYS *
+SCAN 1
+LINDEX mylist 1
+LRANGE mylist 0 10
+LRANGE list-key 0 1
+QUIT
+
+
+[Testing Database Connectivity with redis-cli]
+---------------------------------------------
+redis-cli -h 127.0.0.1
+-p 19836 -a astrongpassword
+
+redis-cli -n 2 (selects db 2)
+redis-cli monitor
+
+SELECT [index]
+SELECT 1
+
+CLIENT LIST
+ECHO "Hello World!"
+PING "hello world"
+PING
+QUIT
+LINDEX mylist [key_index]
+
+
+[FIX Redis:: ERR invalid DB index]
+---------------------------------------------
+# ? increase the number of databases to 128
+locate redis.conf
+/etc/redis/redis.conf
+
+tcp://127.0.0.1:6379
+Increase the databases number to 128, change REDIS_DATABASE number to 1
+
+
+[benchmark]
+---------------------------------------------
+redis-benchmark -c 10 -n 100000 -q
+redis-benchmark -c 10 -n 100000 -q
+
+
+https://redis.io/commands/scan
+https://redis.io/commands/lrange
+https://redis.io/commands
+https://redis.io/commands/select
+https://redis.io/commands/client-list
+https://redis.io/commands/select
+https://docs.redislabs.com/latest/rs/administering/database-operations/creating-database/
+https://redis.io/commands/info
+https://www.dailysmarty.com/posts/redis-lists
+https://laravel.com/api/5.2/Illuminate/Redis/Database.html
+https://www.mikeperham.com/2015/09/24/storing-data-with-redis/
+https://www.tutorialspoint.com/redis/redis_lists.htm
+https://redislabs.com/ebook/part-1-getting-started/chapter-1-getting-to-know-redis/1-2-what-redis-data-structures-look-like/1-2-2-lists-in-redis/
+https://blog.faodailtechnology.com/getting-started-with-redis-i-ed55578f36d1
+https://medium.com/@RedisLabs/indexing-with-redis-e3a9b09ceec6
+https://redis.io/topics/indexes
+https://redislabs.com/blog/indexing-with-redis/
+https://redis.io/commands/MONITOR
+https://gist.github.com/peterjaap/fef241113b9fe3de9709
+https://lzone.de/cheat-sheet/Redis
+https://github.com/nrk/predis/issues/48
+
+
+[py redis]
+---------------------------------------------
+from redis.sentinel import Sentinel
+
+# with IP based connections, a list of known node IP addresses is constructed
+# to allow connection even if any one of the nodes in the list is unavailable.
+sentinel_list = [
+(10.0.0.44', 8001),
+('10.0.0.45', 8001),
+('10.0.0.45', 8001)
+]
+
+# change this to the db name you want to connect
+db_name = 'db1'
+
+sentinel = Sentinel(sentinel_list, socket_timeout=0.1)
+r = sentinel.master_for(db_name, socket_timeout=0.1)
+
+# set key "foo" to value "bar"
+print r.set('foo', 'bar')
+# set value for key "foo"
+print r.get('foo')
+
+[py redis]
+---------------------------------------------
+import redis
+r = redis.Redis(
+host='redis-19836.c9.us-east-1-2.ec2.cloud.redislabs.com',
+port=19836)
+
+# set key "foo" to value “bar”
+print(r.set('foo', 'bar'))
+# set value for key "foo"
+print(r.get('foo'))
+
+[Sidekiq job]
+# Use DB 4 for all job data
+redis = { url: 'redis://localhost:6379/4' }
+Sidekiq.configure_client do |config|
+  config.redis = redis
+end
+Sidekiq.configure_server do |config|
+  config.redis = redis
+end
+
+
+
+
+[redisTelnetCli.sh bash]
+---------------------------------------------
+#!/usr/bin/expect
+
+set timeout 20
+set name [lindex $argv 0]
+set password [lindex $argv 2]
+set port [lindex $argv 1]
+set command [lindex $argv 3]
+spawn telnet $name $port
+
+expect "Escape character is '^]'."
+send "auth $password\n"
+expect "+OK"
+send "$command\n"
+expect "+OK"
 
 
