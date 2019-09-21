@@ -151,4 +151,7 @@ sudo service mysql stop &&  sudo service apache2 stop &&  sudo service openvpn s
 ##### Remove chromium Cache
 * rm -r ~/.cache/chromium/Default/Cache/*
 
-
+##### Users management
++ sudo adduser newuser
++ sudo deluser newuser
++ sudo deluser --remove-home newuser
