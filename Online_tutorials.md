@@ -191,6 +191,8 @@
 * https://www.youtube.com/watch?v=9Jry5-82I68#MIT Binary Search
 * https://www.youtube.com/watch?v=6FOq4cUdH8k#Node.js With Passport Authentication
 * https://www.youtube.com/watch?v=KEEKn7Me-ms&list=PLI1t_8YX-ApvMthLj56t1Rf-Buio5Y8KL#Algorithms: Recursion
+* https://www.youtube.com/watch?v=xnt2xSNRNn0#Quantum Physics Full Course
+
 
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Recruiting insights
