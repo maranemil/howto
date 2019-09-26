@@ -723,3 +723,48 @@ array_walk($csv, function(&$a) use ($csv) {
   $a = array_combine($csv[0], $a);
 });
 array_shift($csv); # remove column header
+
+
+#----------------------------------------
+# 	Get last day of previus month
+# 	How to find the last monday of the month
+#----------------------------------------
+
+$d = new DateTime( date("Y-m-d") );
+$d->modify( 'last day of previous month' );
+echo $d->format( 'Y-m-d' ), "\n";
+
+// v2
+echo date("Ymd", strtotime("last Friday of August 2019"));
+
+#----------------------------------------
+# 	PHP - Add null character to string
+#	About php's string in "\0"
+#	What does \0 stand for? [duplicate]
+#----------------------------------------
+
+// add
+$s = 'hello';
+while(strlen($s) < 32) $s .= "\0";
+
+// add null
+$result = str_pad($str, 32, "\0");
+echo strlen($result); // output: 32
+
+// remove null
+$clean = str_replace(chr(0), '', $input);
+
+
+#----------------------------------------
+#   PHP - Probleme mit Undefined offset
+#----------------------------------------
+
+// use isset()
+
+
+#----------------------------------------
+#   Rurn CSV into array
+#   str_getcsv on a tab-separated file
+#----------------------------------------
+
+array_map(function($v){return str_getcsv($v, "\t");}, file('file.csv'));
