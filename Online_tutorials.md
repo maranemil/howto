@@ -40,7 +40,7 @@
 * https://www.tensorflow.org/tutorials/keras/basic_classification
 * https://www.udemy.com/der-komplette-webentwickler-2/
 * https://www.coursera.org/lecture/machine-learning-sas/early-stopping-6D2RK#Maschinelles Lernen mittels Sas Viya
-
+* https://codelabs.developers.google.com/codelabs/tensorflow-lab3-convolutions/#3
 
 ### Youtube crash-courses
 ###~~~~~~~~~~~~~~~~~~~~~~~~~~~~
