@@ -193,6 +193,11 @@
 * https://www.youtube.com/watch?v=KEEKn7Me-ms&list=PLI1t_8YX-ApvMthLj56t1Rf-Buio5Y8KL#Algorithms: Recursion
 * https://www.youtube.com/watch?v=xnt2xSNRNn0#Quantum Physics Full Course
 
+* https://www.youtube.com/watch?v=6g4O5UOH304#TensorFlow 2.0 Full Tutorial
+* https://www.youtube.com/watch?v=BzcBsTou0C0#Pytorch Introduction - Deep Learning
+* https://www.youtube.com/watch?v=8t0vNu2fCCM#Gatsby JS - The Great Gatsby Bootcamp
+* https://www.youtube.com/watch?v=xC8CGv1CyFk#C++ interview with a Google engineer
+
 
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Recruiting insights
