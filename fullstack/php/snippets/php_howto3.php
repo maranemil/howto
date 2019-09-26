@@ -703,3 +703,23 @@ foreach($arCrons as $dCrons){
 	$arList[] = $strDate;
 }
 print_r(array_count_values($arList));
+
+
+
+
+#####################################
+#
+# CSV Import
+# https://www.php.net/manual/de/function.str-getcsv.php
+#
+#####################################
+
+// Handy one liner to parse a CSV file into an array
+$csv = array_map('str_getcsv', file('data.csv'));
+
+// read csv
+$csv = array_map('str_getcsv', file($file));
+array_walk($csv, function(&$a) use ($csv) {
+  $a = array_combine($csv[0], $a);
+});
+array_shift($csv); # remove column header
