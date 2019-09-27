@@ -200,3 +200,39 @@ echo $array['number'] . PHP_EOL; //42
 $object = new StdClass;
 $object->foo = 'bar';
 json_encode($object);
+
+
+
+##############################################################
+#
+#   Creating a SOAP call using PHP with an XML body
+#   https://stackoverflow.com/questions/15300843/creating-a-soap-call-using-php-with-an-xml-body
+#
+##############################################################
+
+
+$client = new SoapClient(
+    null,
+    array(
+        'location' => 'https://example.com/ExampleWebServiceDL/services/ExampleHandler',
+        'uri' => 'http://example.com/wsdl',
+        'trace' => 1,
+        'use' => SOAP_LITERAL,
+    )
+);
+$params = new \SoapVar("<Acquirer><Id>MyId</Id><UserId>MyUserId</UserId><Password>MyPassword</Password></Acquirer>", XSD_ANYXML);
+$result = $client->Echo($params);
+
+
+$client = new SoapClient(
+    null,
+    array(
+        'location' => 'https://example.com/ExampleWebServiceDL/services/ExampleHandler',
+        'uri' => 'http://example.com/wsdl',
+        'trace' => 1,
+        'use' => SOAP_LITERAL,
+        'style' => SOAP_DOCUMENT,
+    )
+);
+$params = new \SoapVar("<Echo><Acquirer><Id>MyId</Id><UserId>MyUserId</UserId><Password>MyPassword</Password></Acquirer></Echo>", XSD_ANYXML);
+$result = $client->MethodNameIsIgnored($params);
