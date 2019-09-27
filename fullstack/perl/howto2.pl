@@ -88,3 +88,6 @@ https://github.com/emcconville/wand/issues/155
 http://docs.wand-py.org/en/0.5.4/guide/colorspace.html
 
 =cut
+
+
+
