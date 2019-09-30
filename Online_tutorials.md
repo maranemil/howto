@@ -198,6 +198,14 @@
 * https://www.youtube.com/watch?v=8t0vNu2fCCM#Gatsby JS - The Great Gatsby Bootcamp
 * https://www.youtube.com/watch?v=xC8CGv1CyFk#C++ interview with a Google engineer
 
+* https://www.youtube.com/watch?v=rfscVS0vtbw#Learn Python - Full Course for Beginners [Tutorial]
+* https://www.youtube.com/watch?v=vLnPwxZdW4Y#C++ Tutorial for Beginners - Full Course
+* https://www.youtube.com/watch?v=grEKMHGYyns#Learn Java 8 - Full Tutorial for Beginners
+* https://www.youtube.com/watch?v=KJgsSFOSQv0#C Programming Tutorial for Beginners
+* https://www.youtube.com/watch?v=HXV3zeQKqGY#SQL Tutorial - Full course for beginners
+* https://www.youtube.com/watch?v=ImtZ5yENzgE#Laravel PHP Framework Tutorial
+* https://www.youtube.com/watch?v=PkZNo7MFNFg#Learn JavaScript - Full Course for Beginners
+* https://www.youtube.com/watch?v=_8V5o2UHG0E#Data Visualization with D3.js
 
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Recruiting insights
