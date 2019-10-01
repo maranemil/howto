@@ -707,6 +707,46 @@ print_r(array_count_values($arList));
 
 
 
+// get count for next 24h
+// https://github.com/dragonmantank/cron-expression
+// https://github.com/mtdowling/cron-expression/issues/66
+
+$start = time();
+// workaround count - takes 0 seconds
+$cron=Cron\CronExpression::factory("*/3 * * * *");
+$rd = null;
+$rds = array();
+for ($i = 0; $i < 1440; $i++) {
+   $rd = $cron->getNextRunDate($rd);
+   if(strtotime($rd->format("Y-m-d H:i:s")) < time() + 86400) {
+	  $rds[] = $rd;
+   }
+}
+echo "Count0: ".count($rds)."<br>";
+// classic count - takes 40 seconds
+$cron=Cron\CronExpression::factory("*/3 * * * *");
+$arr = $cron->getMultipleRunDates(1440);
+$intCount = 0;
+foreach($arr as $itemDate){
+   if(strtotime($itemDate->format("Y-m-d H:i:s")) < time() + 86400){
+	  $intCount++;
+   }
+}
+echo "Count1: ".$intCount."<br>";
+// workaround2 count - takes 0 seconds
+$cron=Cron\CronExpression::factory("*/3 * * * *");
+$arrNextTwo = $cron->getMultipleRunDates(2);
+$intMin = date_diff($arrNextTwo[1],$arrNextTwo[0])->format("%i");
+$count = round(1440 / $intMin);
+echo "Count2: ". $count."<br>";
+
+$end = time();
+echo "<br>";
+echo ($end - $start)/60;
+
+// count result 480
+
+
 #####################################
 #
 # CSV Import
