@@ -155,3 +155,13 @@ sudo service mysql stop &&  sudo service apache2 stop &&  sudo service openvpn s
 + sudo adduser newuser
 + sudo deluser newuser
 + sudo deluser --remove-home newuser
+
+##### Disable services
+* sudo service apache2 status
+* sudo update-rc.d -f apache2 disable
+* sudo update-rc.d apache2 enable
+* sudo update-rc.d apache2 disable
+
+* service --status-all
+* sudo systemctl disable apache2
+* sudo systemctl disable mysql
