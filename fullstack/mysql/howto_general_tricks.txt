@@ -623,3 +623,51 @@ SELECT @A:=SUM(salary) FROM table1 WHERE type=1;
 UPDATE table2 SET summary=@A WHERE type=1;
 COMMIT;
 
+
+
+
+######################################################
+Getting started with the SQL Profiler
+https://dev.mysql.com/doc/refman/5.5/en/show-profile.html
+http://download.nust.na/pub6/mysql/tech-resources/articles/using-new-query-profiler.html
+https://dev.mysql.com/doc/internals/en/optimizer-tracing-typical-usage.html
+######################################################
+
+
+SET profiling = 1;
+call your_procedure;
+SHOW PROFILES;
+SET profiling = 0;
+
+tail -f /var/log/mysql/mysql.log
+----
+
+set profiling=1
+select count(*) from client where broker_id=2
+select sum(duration) from information_schema.profiling where query_id=1;
+show profile for query 1;
+show profiles;
+show profile for query 4;
+show profile cpu for query 4;
+set profiling=0;
+------
+
+SELECT @@profiling;
+SET profiling = 1;
+SHOW PROFILES;
+SHOW PROFILE;
+SHOW PROFILE FOR QUERY 1;
+SHOW PROFILE CPU FOR QUERY 2;
+SHOW PROFILE FOR QUERY 2;
+SELECT STATE, FORMAT(DURATION, 6) AS DURATION FROM INFORMATION_SCHEMA.PROFILING WHERE QUERY_ID = 2 ORDER BY SEQ;
+SET profiling = 0;
+
+Using the Profiler for Tuning Queries
+
+# Turn tracing on (it's off by default):
+SET optimizer_trace="enabled=on";
+SELECT ...; # your query here
+SELECT * FROM INFORMATION_SCHEMA.OPTIMIZER_TRACE;
+# possibly more queries...
+# When done with tracing, disable it:
+SET optimizer_trace="enabled=off";
