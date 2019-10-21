@@ -1,0 +1,78 @@
+#########################################
+#
+#   perl dependency checking
+#
+#########################################
+
+https://www.perlmonks.org/?node_id=203148
+http://blogs.perl.org/users/rlauer/2019/01/perl-dependency-checking.html
+https://metacpan.org/pod/Module::ScanDeps
+https://metacpan.org/pod/Dependencies::Searcher
+https://metacpan.org/pod/release/RSAVAGE/GraphViz2-2.22/lib/GraphViz2.pm
+http://deps.cpantesters.org/
+https://metacpan.org/pod/release/DCANTRELL/CPAN-FindDependencies-2.42/lib/CPAN/FindDependencies.pm
+https://metacpan.org/pod/release/BDFOY/Module-Extract-Use-1.03/lib/Module/Extract/Use.pm
+https://metacpan.org/pod/Carton
+https://metacpan.org/pod/distribution/Perl-PrereqScanner/bin/scan-perl-prereqs
+https://metacpan.org/pod/distribution/Module-ScanDeps/script/scandeps.pl
+https://metacpan.org/pod/Test::Prereq
+https://perlmaven.com/how-to-fetch-the-cpan-dependency-tree-of-a-perl-module
+https://metacpan.org/pod/release/RSAVAGE/GraphViz2-2.22/lib/GraphViz2.pm
+https://www.perlmonks.org/?node_id=1191333
+https://docs.perl6.org/language/modules
+
+
+cpan -i `said-script --list-deps`
+cpan -i `cat required-modules`
+
+
+perl -c -MListDependencies scriptname
+perl -MListDependencies -MModule::Name -e1
+perl -MListDependencies -e'use Module::Name'
+
+
+
+[Module::ScanDeps - Recursively scan Perl code for dependencies]
+[https://metacpan.org/pod/Module::ScanDeps]
+
+
+scandeps.pl
+scandeps.pl foo.pl
+scandeps.pl -Rc foo.pl
+scandeps.pl foo.pl | wc -l
+scandeps.pl -R foo.pl | wc -l
+scandeps.pl -Rc foo.pl | wc -l
+
+
+% scandeps.pl *.pm          # Print PREREQ_PM section for *.pm
+% scandeps.pl -e "use utf8" # Read script from command line
+% scandeps.pl -B *.pm       # Include core modules
+% scandeps.pl -V *.pm       # Show autoload/shared/data files
+% scandeps.pl *.pm          # Print PREREQ_PM section for *.pm
+% scandeps.pl -e 'STRING'   # Scan an one-liner
+% scandeps.pl -B *.pm       # Include core modules
+% scandeps.pl -V *.pm       # Show autoload/shared/data files
+% scandeps.pl -R *.pm       # Don't recurse
+% scandeps.pl -C CACHEFILE  # use CACHEFILE to cache dependencies
+
+
+use Module::ScanDeps;
+# standard usage
+my $hash_ref = scan_deps(
+    files   => [ 'a.pl', 'b.pl' ],
+    recurse => 1,
+);
+# shorthand; assume recurse == 1
+my $hash_ref = scan_deps( 'a.pl', 'b.pl' );
+# App::Packer::Frontend compatible interface
+# see App::Packer::Frontend for the structure returned by get_files
+my $scan = Module::ScanDeps->new;
+$scan->set_file( 'a.pl' );
+$scan->set_options( add_modules => [ 'Test::More' ] );
+$scan->calculate_info;
+my $files = $scan->get_files;
+
+
+
+# Not perfect, but gives you a start on the Perl modules in use.
+grep -rh ^use --include="*.pl" --include="*.pm" . | sort | uniq -c
