@@ -208,6 +208,9 @@
 * https://www.youtube.com/watch?v=PkZNo7MFNFg#Learn JavaScript - Full Course for Beginners
 * https://www.youtube.com/watch?v=_8V5o2UHG0E#Data Visualization with D3.js
 * https://www.youtube.com/watch?v=GhQdlIFylQ8#C-Tutorial
+* https://www.youtube.com/watch?v=cI3FOYIMSYE#Python Django
+
+
 
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Recruiting insights
