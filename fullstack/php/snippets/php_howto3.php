@@ -929,3 +929,31 @@ class Child extends Foo {
 (new Child)->bar();
 
 
+// -------------------
+
+abstract class AStat {
+	protected static $arrBuffer = null;
+	protected function __construct($arrStatus) {
+		self::$arrBuffer = $arrStatus;
+	}
+	public function getItem(){
+		return self::$arrBuffer;
+	}
+}
+class A extends AStat{
+	 public function __construct($arrStatus) {
+	  parent::__construct($arrStatus);
+   }
+}
+class B extends AStat{
+	 public function __construct($arrStatus) {
+	  parent::__construct($arrStatus);
+   }
+}
+$artest1 = array("1","2");
+$artest2 = array("4","5");
+print "<pre>";
+print_r((new A($artest1))->getItem());
+print_r((new B($artest2))->getItem());
+
+
