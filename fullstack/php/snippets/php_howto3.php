@@ -808,3 +808,124 @@ $clean = str_replace(chr(0), '', $input);
 #----------------------------------------
 
 array_map(function($v){return str_getcsv($v, "\t");}, file('file.csv'));
+
+
+
+#----------------------------------------
+#
+# Abstract test
+#
+#----------------------------------------
+/*
+https://www.php.net/manual/de/function.get-called-class.php
+https://www.php.net/manual/de/reflectionclass.isabstract.php
+https://hotexamples.com/examples/-/-/get_called_class/php-get_called_class-function-examples.html
+https://www.mail-archive.com/php-bugs@lists.php.net/msg126881.html
+https://github.com/krakjoe/pthreads/issues/474
+http://php3.globe.de/manual/fa/function.get-called-class.php
+https://bugs.php.net/bug.php?id=72916
+http://phptester.net/
+*/
+
+abstract class Foo {
+        function __call($f, $a) {
+                return $this->{$f}($a[0]);
+        }
+}
+
+class Bar extends Foo {
+        public function test($a) {
+                print $a ." Bar <br>";
+        }
+}
+
+
+class Dar extends Foo {
+        public function test($a) {
+                print $a ." Dar <br>";
+        }
+}
+
+$bar = new Bar();
+$dar = new Dar();
+$bar->test('bello');
+$dar->test('dello');
+
+// -------------------
+
+interface TestInterface { }
+trait     TestTrait { }
+$interfaceClass = new ReflectionClass('TestInterface');
+$traitClass     = new ReflectionClass('TestTrait');
+var_dump($interfaceClass->isAbstract());
+var_dump($traitClass->isAbstract());
+
+// -------------------
+
+abstract class Foo {
+        function __call($f, $a) {
+                return call_user_func_array(array($this, $f), $a);
+        }
+        private function test() {
+
+		}
+}
+class Bar extends Foo {
+        private function test($a) {
+                print ($a);
+        }
+}
+$bar = new Bar();
+$bar->test('hello');
+
+// -------------------
+
+class BBDebug
+{
+
+    public static function call()
+    {
+        $instance = new AADebug();
+        return $instance->wrapFunc();
+    }
+}
+
+class AADebug
+{
+    public static function r()
+    {
+        echo get_called_class();
+    }
+
+    public function wrapFunc()
+    {
+        AADebug::r();
+    }
+}
+
+BBDebug::call();
+
+// -------------------
+
+
+class Foo {
+    protected static function getClass() {
+        return get_called_class();
+    }
+
+    public function bar() {
+        echo 'Foo: ', Foo::getClass(), "\n";
+        echo 'self: ', self::getClass(), "\n";
+        echo 'static: ', static::getClass(), "\n";
+    }
+}
+
+class Child extends Foo {
+    protected static function getClass() {
+        return 'x';
+    }
+}
+
+(new Child)->bar();
+
+
