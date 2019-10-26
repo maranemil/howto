@@ -144,6 +144,9 @@ sudo service mysql stop &&  sudo service apache2 stop &&  sudo service openvpn s
 ##### Split audio file in 1 sec pieces FFMPEG
 * ffmpeg -i in.wav -map 0 -f segment -segment_time 1 -af "volume=6dB,equalizer=f=40:width_type=o:width=2:g=-7,areverse" -y dir/out%03d.wav
 
+##### Cut Video
+* ffmpeg -i movie.mp4 -ss 00:00:03 -t 00:00:08 -async 1 cut.mp4
+
 ##### Add git ignore
 * echo ".idea/*" >> .gitignore
 * git commit -am "remove .idea"
