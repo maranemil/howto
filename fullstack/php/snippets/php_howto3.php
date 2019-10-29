@@ -812,10 +812,9 @@ array_map(function($v){return str_getcsv($v, "\t");}, file('file.csv'));
 
 
 #----------------------------------------
-#
-# Abstract test
-#
+#   Abstract test
 #----------------------------------------
+
 /*
 https://www.php.net/manual/de/function.get-called-class.php
 https://www.php.net/manual/de/reflectionclass.isabstract.php
@@ -962,7 +961,7 @@ print_r((new B($artest2))->getItem());
 
 
 #----------------------------------------
-#Remove specific value from array
+#   Remove specific value from array
 #----------------------------------------
 /*
 http://phptester.net/
@@ -991,8 +990,8 @@ print_r($messages);
 
 
 #----------------------------------------
-# self:: vs className:: inside static className methods in PHP
-# https://stackoverflow.com/questions/3481085/self-vs-classname-inside-static-classname-methods-in-php
+#   self:: vs className:: inside static className methods in PHP
+#   https://stackoverflow.com/questions/3481085/self-vs-classname-inside-static-classname-methods-in-php
 #----------------------------------------
 <?php
 class A {
@@ -1017,5 +1016,45 @@ C::baz(); //B
 
 $instance = new Myclass();
 $variable = $instance::$foo
+
+
+#----------------------------------------
+#   Predefined Constants
+#----------------------------------------
+/*
+https://www.php.net/manual/en/array.constants.php
+https://www.php.net/manual/de/function.sort.php
+https://www.php.net/manual/en/function.sort.php
+https://www.php.net/manual/de/function.array-multisort.php
+https://www.php.net/manual/de/function.array-keys.php
+
+SORT_FLAG_CASE SORT_NATURAL
+
+
+SORT_ASC
+SORT_DESC
+SORT_REGULAR
+SORT_NUMERIC
+SORT_STRING
+SORT_LOCALE_STRING
+SORT_NATURAL
+SORT_FLAG_CASE
+
+
+SORT_REGULAR - compare items normally (don't change types)
+SORT_NUMERIC - compare items numerically
+SORT_STRING - compare items as strings
+SORT_LOCALE_STRING - compare items as strings, using setlocale()
+SORT_NATURAL - compare items as strings using "natural ordering" like natsort()
+SORT_FLAG_CASE - can be combined (bitwise OR) with SORT_STRING or SORT_NATURAL to sort strings case-insensitively
+*/
+
+$ar = array(
+       array("10", 11, 100, 100, "a"),
+       array(   1,  2, "2",   3,   1)
+      );
+array_multisort($ar[0], SORT_ASC, SORT_STRING,
+                $ar[1], SORT_NUMERIC, SORT_DESC);
+var_dump($ar);
 
 
