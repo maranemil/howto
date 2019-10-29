@@ -957,3 +957,65 @@ print_r((new A($artest1))->getItem());
 print_r((new B($artest2))->getItem());
 
 
+
+
+
+
+#----------------------------------------
+#Remove specific value from array
+#----------------------------------------
+/*
+http://phptester.net/
+https://stackoverflow.com/questions/7225070/php-array-delete-by-value-not-key
+https://www.php.net/manual/en/function.array-filter.php
+https://thisinterestsme.com/php-removing-an-element-from-an-array/
+https://arjunphp.com/remove-specific-value-array-using-php/
+https://stackoverflow.com/questions/369602/deleting-an-element-from-an-array-in-php
+https://www.php.net/manual/en/function.array-splice.php
+*/
+
+// using array_diff
+$messages = array(1,2,3,4,5,6);
+$del_val = 3;
+print "<pre>";
+print_r($messages = array_diff($messages,array($del_val)));
+
+
+// using unset
+$del_val = 6;
+$key = 6;
+if (($key = array_search($del_val, $messages)) !== false) {
+    unset($messages[$key]);
+}
+print_r($messages);
+
+
+#----------------------------------------
+# self:: vs className:: inside static className methods in PHP
+# https://stackoverflow.com/questions/3481085/self-vs-classname-inside-static-classname-methods-in-php
+#----------------------------------------
+<?php
+class A {
+    static function foo() {
+        echo get_called_class();
+    }
+}
+class B extends A {
+    static function bar() {
+        self::foo();
+    }
+    static function baz() {
+        B::foo();
+    }
+}
+class C extends B {}
+
+C::bar(); //C
+C::baz(); //B
+
+
+
+$instance = new Myclass();
+$variable = $instance::$foo
+
+
