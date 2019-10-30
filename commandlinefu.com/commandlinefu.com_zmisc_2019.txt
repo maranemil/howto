@@ -1,0 +1,94 @@
+Search and Replace across multiple files
+grep -lr -e '<oldword>' * | xargs sed -i 's/<oldword>/<newword>/g'
+
+Search and replace in multiple files recursively
+grep -lr "foo" . | xargs sed -i "s/foo/bar/g"
+
+Change your e-mail address in multiple files
+sed -i 's/oldname@example.com/newname@example.com/g' `grep oldname@example.com -rl .`
+
+Use grep to get multiple patterns.
+egrep -wi --color 'warning|error|critical'
+
+Capture screen and mic input using FFmpeg and ALSA
+a=$(xwininfo |gawk 'BEGIN {FS="[x+ \t]*"} /-geometry/ {print int(($3+1)/2)*2"x"int(($4+1)/2)*2"+"$5"+"$6}') ; echo ${a} ; ffmpeg -f x11grab -s ${a} -r 10 -i :0.0 -sameq -f mp4 -s wvga -y /tmp/out.mpg
+
+Gets the X11 Screen resolution
+xrandr | sed -n '/\*/ s/\s*\([0-9x]*\).*/\1/ p'
+
+Find text in contents with multiple filename
+find ./$(PATH) -name '*.h' -o -name '*.c' -type f | xargs grep --color -E '*Data*'
+
+Display live hosts on the network
+sudo apt  install nmap -y
+nmap -sP "$(ip -4 -o route get 1 | cut -d ' ' -f 7)"/24 | grep report | cut -d ' ' -f 5-
+
+remove exact phrase from multiple files
+grep -r "mystring" . |uniq | cut -d: -f1 | xargs sed -i "s/mystring//"
+
+find the device when you only know the mount point
+df | grep -w /media/KINGSTON | awk {'print $1'}
+
+Console clock
+while sleep 1; do tput sc; tput cup 0 $(($(tput cols)-29)); date; tput rc; done &
+
+Top 10 Memory Processes
+ps aux | sort -rk 4,4 | head -n 10
+
+Graphical tree of sub-directories with files
+find . -print | sed -e 's;[^/]*/;|-- ;g;s;-- |; |;g'
+
+restart Bluetooth from terminal
+sudo systemctl restart bluetooth
+
+Create backup copy of file, adding suffix of the date of the file modification (NOT today's date)
+cp file{,.$(date -r file "+%y%m%d")}
+cp file{,.$(date -d @$(stat -c '%Y' file) "+%y%m%d")}
+
+Check difference between two file directories recursively
+diff <(tree /dir/one) <(tree /dir/two)
+
+Perform Real-time Process Monitoring Using Watch Utility
+watch -n 1 'ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%mem | head'
+
+Rotate a video file by 90 degrees CW
+ffmpeg -i in.mov -c copy -metadata:s:v:0 rotate=90 out.mov
+ffmpeg -i in.mov -vf "transpose=1" out.mov
+
+nmap get all active online ips from specific network
+nmap -n -sn 192.168.1.0/24 -oG - | awk '/Up$/{print $2}'
+
+Show whats going on restoring files from a spectrum protect backup
+watch -n60 -d 'lsof -w /filesysname|grep -v NAME|awk '\''{$7=int($7/1073741824) " GB"; print $7, $9}'\'''
+
+List all ubuntu installed packages in a single line
+dpkg --get-selections | grep -Evw 'deinstall$' | cut -f1 | sort -u | xargs
+dpkg --get-selections | grep -v deinstall | sort -u | cut -f 1 | tr '\r\n' ' ' | sed '$s/ $/\n/'
+
+Convert & rename all filenames to lower case
+convmv --lower --notest FILE
+
+Find all clients connected to HTTP or HTTPS ports
+ss -o state established '( dport = :http or sport = :https )'
+
+
+Check whether laptop is running on battery or cable 1 = on ac, 0 = on bat
+cat /sys/class/power_supply/AC/online
+
+shell bash iterate number range with for loop
+for i in $(seq 1 5) ; do echo $i ; done
+for i in {1..10}; do echo $i; done
+for((i=1;i<=10;i++)){ echo $i; }
+
+Which processes are listening on a specific port (e.g. port 80)
+sudo apt install net-tools -y
+netstat -nap|grep 80|grep LISTEN
+
+Watch TCP, UDP open ports in real time with socket summary.
+watch ss -stplu
+
+
+
+
+
+
