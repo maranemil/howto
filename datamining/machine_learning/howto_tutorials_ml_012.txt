@@ -1,0 +1,373 @@
+
+#######################################################
+#
+# Import datasets
+#
+#######################################################
+
+https://www.google.com/imghp?hl=en
+https://chrome.google.com/webstore/detail/fatkun-batch-download-ima/nnjjahlikiabnchcpehcpkdeckfgnohf
+
+https://pytorch.org/tutorials/beginner/data_loading_tutorial.html
+https://pytorch.org/tutorials/beginner/transfer_learning_tutorial.html
+
+https://github.com/gvsi/instagram-like-predictor
+https://towardsdatascience.com/predict-the-number-of-likes-on-instagram-a7ec5c020203
+
+
+http://millionsongdataset.com/musixmatch/
+https://www.tensorflow.org/datasets/catalog/cats_vs_dogs
+https://www.tensorflow.org/datasets/catalog/overview
+https://github.com/zalandoresearch/fashion-mnist
+http://www.cs.toronto.edu/~kriz/cifar.html
+https://storage.googleapis.com/openimages/web/index.html
+https://storage.googleapis.com/openimages/web/download.html
+https://github.com/cvdfoundation/open-images-dataset#download-images-with-bounding-boxes-annotations
+https://www.cs.toronto.edu/~kriz/cifar.html
+http://www.robots.ox.ac.uk/~vgg/data/flowers/102/index.html
+https://www.plant-image-analysis.org/dataset
+http://millionsongdataset.com/
+http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html
+https://github.com/mdeff/fma
+http://help.sentiment140.com/for-students/
+https://archive.ics.uci.edu/ml/machine-learning-databases/20newsgroups-mld/
+https://archive.ics.uci.edu/ml/datasets/Twenty+Newsgroups
+http://ai.stanford.edu/~amaas/data/sentiment/
+http://visualgenome.org/api/v0/api_home.html
+http://vis-www.cs.umass.edu/lfw/#download
+http://www.emilio.ferrara.name/datasets/
+https://github.com/openimages/dataset
+http://cvgl.stanford.edu/projects/groupdiscovery/
+https://research.google.com/youtube-bb/download.html
+http://www.cs.unc.edu/~jtighe/Papers/ECCV10/
+https://www.cityscapes-dataset.com/
+http://www.vision.caltech.edu/Image_Datasets/CaltechPedestrians/datasets/USA/
+https://data.vision.ee.ethz.ch/cvl/rrothe/imdb-wiki/
+https://computing.ece.vt.edu/~santol/projects/zsl_via_visual_abstraction/parse/index.html
+https://github.com/BathVisArtData/PeopleArt
+https://github.com/BathVisArtData/PhotoArt50
+https://sites.google.com/site/dilipprasad/home/singapore-maritime-dataset
+https://github.com/dasabir/RAiD_Dataset
+http://www.gavrila.net/Datasets/Daimler_Pedestrian_Benchmark_D/Daimler_Pedestrian_Segmentatio/daimler_pedestrian_segmentatio.html
+http://www.vision.caltech.edu/Image_Datasets/CaltechPedestrians/
+https://asankagp.github.io/aerialgaitdataset/
+http://vision.stanford.edu/aditya86/ImageNetDogs/
+https://people.eecs.berkeley.edu/~nzhang/piper.html
+https://www.dropbox.com/s/35ithckx6vqryob/Monkeys_Faces_Dataset.tar?dl=0
+
+
+
+
+
+
+
+On Building an Instagram Street Art Dataset and Detection Model
+https://blog.floydhub.com/instagram-street-art/
+https://instaloader.github.io/cli-options.html
+https://www.floydhub.com/rememberlenny/datasets/streetart-notstreetart
+https://github.com/rememberlenny/streetart-notstreetart
+
+pip install instaloader
+pip3 install instaloader --user
+instaloader --no-videos --no-metadata-json --no-captions "#streetart"
+https://www.instagram.com/explore/locations/212988663/new-york-new-york/
+instaloader --no-videos --no-metadata-json --no-captions "%212988663"
+
+import random
+import shutil
+import os
+from imutils import paths
+
+# Set up paths for original images and training/validation/test
+ORIGINAL_IMAGES = "dataset/images"
+TRAINING_PATH = "dataset/training"
+VALIDATION_PATH = "dataset/validation"
+TESTING_PATH = "dataset/testing"
+
+# Define the percentage of images used in training (80%),
+# and the amount of validation data
+TRAINING_SPLIT = 0.8
+VALIDATION_SPLIT = 0.1
+
+
+
+# Access and shuffle original images
+imagePaths = list(paths.list_images(ORIGINAL_IMAGES))
+random.seed(42)
+random.shuffle(imagePaths)
+
+# Compute the training and testing split
+i = int(len(imagePaths) * TRAINING_SPLIT)
+trainingPaths = imagePaths[:i]
+testingPaths = imagePaths[i:]
+
+# Use part of the training data for validation
+i = int(len(trainingPaths) * VALIDATION_SPLIT)
+validationPaths = trainingPaths[:i]
+trainingPaths = trainingPaths[i:]
+
+# Define the datasets
+datasets = [
+  ("training", trainingPaths, TRAINING_PATH),
+  ("validation", validationPaths, VALIDATION_PATH),
+  ("testing", testingPaths, TESTING_PATH)
+]
+
+
+
+for (dType, imagePaths, baseOutput) in datasets:
+  # If output directory doesn't exit, create it
+  if not os.path.exists(baseOutput):
+    os.makedirs(baseOutput)
+
+  # Loop over the input image paths
+  for inputPath in imagePaths:
+    # Extract the filename of the input image along with its
+    # corresponding class label
+    filename = inputPath.split(os.path.sep)[-1]
+    label = inputPath.split(os.path.sep)[-2]
+    # Build the path to the label directory
+    labelPath = os.path.sep.join([baseOutput, label])
+    # If label output directory doesn't exist, create it
+    if not os.path.exists(labelPath):
+      os.makedirs(labelPath)
+
+    # Construct the path to the destination image and then copy
+    # the image itself
+    p = os.path.sep.join([labelPath, filename])
+    shutil.copy2(inputPath, p)
+
+
+from keras.preprocessing.image import ImageDataGenerator
+from keras.optimizers import SGD
+from pyimagesearch.resnet import ResNet
+from sklearn.metrics import classification_report
+from imutils import paths
+
+import numpy as np
+
+NUM_EPOCHS = 30
+BATCH_SIZE = 32
+
+TRAINING_PATH = "dataset/training"
+VALIDATION_PATH = "dataset/validation"
+TESTING_PATH = "dataset/testing"
+MODEL_NAME = "streetart_classifer.model"
+
+# Determine the total number of image paths in training, validation,
+# and testing directories
+totalTrain = len(list(paths.list_images(TRAINING_PATH)))
+totalVal = len(list(paths.list_images(VALIDATION_PATH)))
+totalTest = len(list(paths.list_images(TESTING_PATH)))
+
+
+
+# Initialize the training training data augmentation object
+trainAug = ImageDataGenerator(
+  rescale=1 / 255.0,
+  rotation_range=20,
+  zoom_range=0.05,
+  width_shift_range=0.05,
+  height_shift_range=0.05,
+  shear_range=0.05,
+  horizontal_flip=True,
+  fill_mode="nearest")
+
+# Initialize the validation (and testing) data augmentation object
+valAug = ImageDataGenerator(rescale=1 / 255.0)
+
+
+# Initialize the training generator
+trainGen = trainAug.flow_from_directory(
+  TRAINING_PATH,
+  class_mode="categorical",
+  target_size=(64, 64),
+  color_mode="rgb",
+  shuffle=True,
+  batch_size=BATCH_SIZE)
+
+# Initialize the validation generator
+valGen = valAug.flow_from_directory(
+  VALIDATION_PATH,
+  class_mode="categorical",
+  target_size=(64, 64),
+  color_mode="rgb",
+  shuffle=False,
+  batch_size=BATCH_SIZE)
+
+# Initialize the testing generator
+testGen = valAug.flow_from_directory(
+  TESTING_PATH,
+  class_mode="categorical",
+  target_size=(64, 64),
+  color_mode="rgb",
+  shuffle=False,
+  batch_size=BATCH_SIZE)
+
+
+
+# Initialize our Keras implementation of ResNet model and compile it
+model = ResNet.build(64, 64, 3, 2, (2, 2, 3),
+  (32, 64, 128, 256), reg=0.0005)
+opt = SGD(lr=1e-1, momentum=0.9, decay=1e-1 / NUM_EPOCHS)
+model.compile(loss="binary_crossentropy", optimizer=opt,
+  metrics=["accuracy"])
+
+# Train our Keras model
+H = model.fit_generator(
+  trainGen,
+  steps_per_epoch=totalTrain // BATCH_SIZE,
+  validation_data=valGen,
+  validation_steps=totalVal // BATCH_SIZE,
+  epochs=NUM_EPOCHS)
+
+# Reset the testing generator and then use our trained model to
+# make predictions on the data
+print("[INFO] evaluating network...")
+testGen.reset()
+predIdxs = model.predict_generator(testGen,
+  steps=(totalTest // BATCH_SIZE) + 1)
+
+# For each image in the testing set we need to find the index of the
+# label with corresponding largest predicted probability
+predIdxs = np.argmax(predIdxs, axis=1)
+# show a nicely formatted classification report
+print(classification_report(testGen.classes, predIdxs,
+  target_names=testGen.class_indices.keys()))
+
+
+# Save the neural network to disk
+print("[INFO] serializing network to '{}'...".format(MODEL_NAME))
+model.save(MODEL_NAME)
+
+...
+
+from keras.preprocessing.image import img_to_array
+from keras.models import load_model
+import numpy as np
+import random
+import cv2
+from imutils import build_montages
+from IPython.display import Image
+
+
+MODEL_NAME = 'save_model.model'
+MONTAGE_FILENAME = 'streetart_photo.png'
+IMAGES_PATH = 'dataset/testing'
+
+model = load_model(MODEL_NAME)
+
+imagePaths = list(paths.list_images(IMAGES_PATH))
+random.shuffle(imagePaths)
+imagePaths = imagePaths[:1]
+
+# initialize our list of results
+results = []
+
+# loop over our sampled image paths
+print("[INFO] evaluating model against test set...")
+for p in imagePaths:
+        # load our original input image
+        orig = cv2.imread(p)
+
+        # pre-process our image by converting it from BGR to RGB channel
+        # ordering (since our Keras mdoel was trained on RGB ordering),
+        # resize it to 64x64 pixels, and then scale the pixel intensities
+        # to the range [0, 1]
+        image = cv2.cvtColor(orig, cv2.COLOR_BGR2RGB)
+        image = cv2.resize(image, (64, 64))
+        image = image.astype("float") / 255.0
+
+        # order channel dimensions (channels-first or channels-last)
+        # depending on our Keras backend, then add a batch dimension to
+        # the image
+        image = img_to_array(image)
+        image = np.expand_dims(image, axis=0)
+
+        # make predictions on the input image
+        pred = model.predict(image)
+        print(pred)
+        not_street_art_probability = pred.item(0)
+        street_art_probability = pred.item(1)
+        pred = pred.argmax(axis=1)[0]
+
+        # an index of zero is the 'Not street art' label while an index of
+        # one is the 'Street art found' label
+        label = "Not street art ({0})".format(not_street_art_probability) if pred == 0 else "Street art found ({0})".format(street_art_probability)
+        color = (255, 0, 0) if pred == 0 else (0, 255, 0)
+
+        # resize our original input (so we can better visualize it) and
+        # then draw the label on the image
+        orig = cv2.resize(orig, (800, 800))
+        cv2.putText(orig, label, (3, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                color, 2)
+
+        # add the output image to our list of results
+        results.append(orig)
+
+montage = build_montages(results, (800, 800), (1, 1))[0]
+cv2.imwrite(MONTAGE_FILENAME, montage)
+img = cv2.imread(MONTAGE_FILENAME)
+
+Image(filename=MONTAGE_FILENAME)
+
+# Example for using build_montage, and not part of the street art model evaluation
+import cv2
+from imutils import build_montages
+
+IMAGES_PATH = 'dataset/testing'
+imagePaths = list(paths.list_images(IMAGES_PATH))
+imagePaths = imagePaths[:3]
+img_list = []
+
+for p in imagePaths:
+# load our original input image
+orig = cv2.imread(p)
+img_list.append(orig)
+
+# convert image list into a montage of 256x256 images tiled in a 3x1 montage
+montages = build_montages(img_list, (256, 256), (3, 1))
+
+# iterate through montages and display
+for montage in montages:
+cv2.imshow('montage image', montage)
+cv2.waitKey(0)
+
+................
+A State-Of-The-Art Image Classifier on Your Dataset in Less Than 10 Minutes
+#https://gist.github.com/SalChem
+https://towardsdatascience.com/https-medium-com-drchemlal-deep-learning-tutorial-1-f94156d79802
+
+tar --warning=no-unknown-keyword -xzf Monkeys_Faces_Dataset.tar
+
+matplotlib inline
+
+from fastai.vision import *
+from fastai.metrics import error_rate
+
+bs = 64  #batch size: if your GPU is running out of memory, set a smaller batch size, i.e 16
+sz = 224 #image size
+PATH = './Monkeys Faces/'
+classes = []
+for d in os.listdir(PATH):
+    if os.path.isdir(os.path.join(PATH, d)) and not d.startswith('.'):
+        classes.append(d)
+print ("There are ", len(classes), "classes:\n", classes)
+for c in classes:
+    print ("Class:", c)
+    verify_images(os.path.join(PATH, c), delete=True);
+
+data  = ImageDataBunch.from_folder(PATH, ds_tfms=get_transforms(), size=sz, bs=bs, valid_pct=0.2).normalize(imagenet_stats)
+print ("There are", len(data.train_ds), "training images and", len(data.valid_ds), "validation images." )
+data.show_batch(rows=3, figsize=(7,8))
+learn = cnn_learner(data, models.resnet34, metrics=accuracy)
+learn.fit_one_cycle(4)
+interp = ClassificationInterpretation.from_learner(learn)
+interp.plot_confusion_matrix(figsize=(12,12), dpi=60)
+interp.plot_top_losses(9, figsize=(15,11), heatmap=False)
+
+path = './' #The path of your test image
+img = open_image(get_image_files(path)[0])
+pred_class,pred_idx,outputs = learn.predict(img)
+img.show()
+print ("It is a", pred_class)
