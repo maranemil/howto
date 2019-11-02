@@ -19,6 +19,11 @@ git verify-pack -v ./.git/objects/pack/pack-......ea.pack
 
 /usr/lib/chromium-browser/chromium-browser  --enable-user-ripts --flag-switches-begin --disable-accelerated-2d-canvas --disable-gpu-vsync --disable-threaded-animation --disable-webgl --js-flags=--harmony --flag-switches-end --disable-gpu-process-prelaunch  --no-experiments --disable-notifications --no-referrers --new-window --enable-low-end-device-mode --restore-last-session --no-sandbox
 
+sudo /etc/init.d/dns-clean reload && echo 2 | sudo tee /proc/sys/vm/drop_caches && sudo service network-manager reload && sudo sysctl -w vm.swappiness=20 && sudo sysctl vm.vfs_cache_pressure=70
+
+
+/usr/lib/chromium-browser/chromium-browser  --enable-user-scripts --flag-switches-begin --disable-accelerated-2d-canvas --disable-gpu-vsync --disable-threaded-animation --disable-webgl --js-flags=--harmony --flag-switches-end --disable-gpu-process-prelaunch  --no-experiments --disable-notifications --no-referrers --new-window --enable-low-end-device-mode --restore-last-session  --no-sandbox --disable-gpu  --disable-software-rasterizer --enable-gpu-rasterization
+
 chrome://flags
 --no-sandbox
 --site-per-process
@@ -102,3 +107,15 @@ sudo service mysql stop &&  sudo service apache2 stop &&  sudo service openvpn s
 * service --status-all
 * sudo systemctl disable apache2
 * sudo systemctl disable mysql
+
+
+##### clear Browser Data
+chrome://settings/clearBrowserData
+
+ll ~/.cache/chromium/Default/
+rm -rf ~/.cache/chromium
+rm -rf ~/.cache/google-chrome
+rm ~/.cache/google-chrome
+rm ~/.config/google-chrome/Default/
+rm ~/.mozilla/firefox/*.default/cookies.sqlite
+rm -r ~/.cache/mozilla/firefox/*.default/*
