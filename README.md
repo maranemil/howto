@@ -68,3 +68,8 @@ Howto
 * python scrapping tools, * generate random sound in linux howto, * ubuntu software list
 * ubuntu wallpapers, * tech magazines on web, * xdebug settings
 
+##### What is my disk quota? - GitHub Help
+
+* File and repository size limitations.
+* https://help.github.com/en/github/managing-large-files/what-is-my-disk-quota
+* We recommend repositories be kept under 1GB each. Repositories have a hard limit of 100GB. If you reach 75GB you'll receive a warning from Git in your terminal when you push. This limit is easy to stay within if large files are kept out of the repository.
