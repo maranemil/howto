@@ -1058,3 +1058,55 @@ array_multisort($ar[0], SORT_ASC, SORT_STRING,
 var_dump($ar);
 
 
+
+
+
+
+###################################################
+#
+#   Benchmark: PHP7 Serialization
+#   https://blobfolio.com/2017/03/benchmark-php7-serialization/
+#   https://stackoverflow.com/questions/804045/preferred-method-to-store-php-arrays-json-encode-vs-serialize
+#
+###################################################
+
+// Make a big, honkin test array
+// You may need to adjust this depth to avoid memory limit errors
+$testArray = fillArray(0, 5);
+
+// Time json encoding
+$start = microtime(true);
+json_encode($testArray);
+$jsonTime = microtime(true) - $start;
+echo "JSON encoded in $jsonTime seconds<br>";
+
+// Time serialization
+$start = microtime(true);
+serialize($testArray);
+$serializeTime = microtime(true) - $start;
+echo "PHP serialized in $serializeTime seconds<br>";
+
+// Compare them
+if ($jsonTime < $serializeTime) {
+    printf("json_encode() was roughly %01.2f%% faster than serialize()<br>", ($serializeTime / $jsonTime - 1) * 200);
+}
+else if ($serializeTime < $jsonTime ) {
+    printf("serialize() was roughly %01.2f%% faster than json_encode()<br>", ($jsonTime / $serializeTime - 1) * 200);
+} else {
+    echo "Impossible!\n";
+}
+
+function fillArray( $depth, $max ) {
+    static $seed;
+    if (is_null($seed)) {
+        $seed = array('a', 2, 'c', 4, 'e', 6, 'g', 8, 'i', 10);
+    }
+    if ($depth < $max) {
+        $node = array();
+        foreach ($seed as $key) {
+            $node[$key] = fillArray($depth + 1, $max);
+        }
+        return $node;
+    }
+    return 'empty';
+}
