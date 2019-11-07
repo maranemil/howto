@@ -694,3 +694,98 @@ SET optimizer_trace="enabled=off";
 SELECT * FROM table ORDER BY CHAR_LENGTH(column);
 SELECT * FROM table ORDER BY LENGTH(column);
 SELECT field1 FROM table WHERE LENGTH(field) > 10;
+
+
+
+
+####################################################
+#
+# Optimize Queries
+#
+####################################################
+
+// -----------------------------------------------
+MYSQLND_QC_ENABLE_SWITCH
+MAX_EXECUTION_TIME
+NO_RANGE_OPTIMIZATION
+EXPLAIN
+STRAIGHT_JOIN
+IGNORE INDEX
+USE INDEX
+FORCE INDEX
+// -----------------------------------------------
+
+https://dev.mysql.com/doc/refman/5.7/en/optimizer-hints.html
+https://dev.mysql.com/doc/refman/8.0/en/index-hints.html
+https://mysqlserverteam.com/new-optimizer-hints-in-mysql/
+
+/*" . MYSQLND_QC_ENABLE_SWITCH . "*/" . "SELECT id FROM test WHERE id = 1
+mysqlnd_qc_is_select()
+mysqlnd_set_cache_condition()
+mysqlnd_qc.cache_by_default = 1
+
+
+// -----------------------------------------------
+Hint 					Name							Description	Applicable Scopes
+BKA, NO_BKA				Affects Batched Key Access join processing	Query block, table
+BNL, NO_BNL				Affects Block Nested-Loop join processing	Query block, table
+MAX_EXECUTION_TIME		Limits statement execution time	Global
+MRR, NO_MRR				Affects	Multi-Range Read optimization	Table, index
+NO_ICP					Affects Index Condition Pushdown optimization	Table, index
+NO_RANGE_OPTIMIZATION	Affects range optimization	Table, index
+QB_NAME					Assigns name to query block	Query block
+SEMIJOIN, NO_SEMIJOIN	Affects semijoin strategies	Query block
+SUBQUERY				Affects materialization, IN-to-EXISTS subquery stratgies	Query block
+
+// -----------------------------------------------
+https://www.dbrnd.com/2016/10/mysql-select-with-index-hint-option-to-optimize-the-query-use-index-force-index-ignore-index/
+https://www.percona.com/blog/2015/04/30/optimizer-hints-mysql-5-7-7-missed-manual/
+// -----------------------------------------------
+
+// Create a sample table:
+
+CREATE TABLE tbl_EmployeeDetails
+(
+    EmpID INTEGER PRIMARY KEY
+    ,EmpName VARCHAR(50)
+    ,EmpSalary BIGINT
+    ,DepartmentName VARCHAR(50)
+);
+
+// Insert few sample Records:
+
+INSERT INTO tbl_EmployeeDetails VALUES
+(1,'Anvesh',80000,'Sales')
+,(2,'Neevan',90000,'Sales')
+,(3,'Jenny',50000,'Production')
+,(4,'Roy',60000,'Production')
+,(5,'Martin',30000,'Research')
+,(6,'Mahi',85000,'Research')
+,(7,'Kruti',45000,'Research')
+,(8,'Manish',75000,'Research');
+
+// Create few sample Indexes:
+
+CREATE INDEX idx_tbl_EmployeeDetails_EmpName ON tbl_EmployeeDetails (EmpName);
+CREATE INDEX idx_tbl_EmployeeDetails_DepartmentName ON tbl_EmployeeDetails (DepartmentName);
+CREATE INDEX idx_tbl_EmployeeDetails_EmpName_EmpSalary ON tbl_EmployeeDetails (EmpName,EmpSalary);
+
+// Using USE INDEX:
+
+SELECT *FROM tbl_EmployeeDetails USE INDEX (idx_tbl_EmployeeDetails_EmpName)
+WHERE EmpName = 'Roy';
+
+SELECT *FROM tbl_EmployeeDetails USE INDEX (idx_tbl_EmployeeDetails_EmpName_EmpSalary)
+WHERE EmpName = 'Roy' AND EmpSalary > 50000;
+
+// Using IGNORE INDEX:
+
+SELECT *FROM tbl_EmployeeDetails IGNORE INDEX (idx_tbl_EmployeeDetails_EmpName)
+WHERE EmpName = 'Roy' AND EmpSalary > 50000;
+
+// Using FORCE INDEX:
+
+SELECT *FROM tbl_EmployeeDetails FORCE INDEX (idx_tbl_EmployeeDetails_EmpName)
+WHERE EmpName = 'Roy' AND EmpSalary > 50000;
+
+
