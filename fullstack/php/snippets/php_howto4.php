@@ -58,3 +58,28 @@ Devtrue
 Memstatic
 
 */
+
+
+####################################################
+#
+#   Array Funktionen range
+#   https://www.php.net/manual/de/function.range.php
+#   http://phptester.net/
+#
+####################################################
+
+$t0 = microtime(true);
+for ($i = 0; $i < 100000; $i++) {}
+echo 'for loop: ' . (microtime(true) - $t0) . ' s', PHP_EOL;
+
+$t0 = microtime(true);
+foreach (range(0, 100000) as $i) {}
+echo 'foreach + range loop: ' . (microtime(true) - $t0) . ' s', PHP_EOL;
+
+// ----------------------------------------------
+
+foreach(range(0,10000) as $i) {} // 3.847 ms 0.0014
+for($i = 0; $i < 10000; ++$i) {} // 0.663 ms 0.0034
+
+for($i = 0; $i < 1000; ++$i) {} // faster
+for($i = 0; $i < 1000; $i++) {}
