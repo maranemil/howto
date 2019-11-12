@@ -87,6 +87,7 @@ for($i = 0; $i < 1000; $i++) {}
 ####################################################
 #
 #	Get the first element of an array
+#   https://stackoverflow.com/questions/1921421/get-the-first-element-of-an-array
 #
 ####################################################
 
