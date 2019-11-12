@@ -83,3 +83,23 @@ for($i = 0; $i < 10000; ++$i) {} // 0.663 ms 0.0014
 
 for($i = 0; $i < 1000; ++$i) {} // faster
 for($i = 0; $i < 1000; $i++) {}
+
+####################################################
+#
+#	Get the first element of an array
+#
+####################################################
+
+array_shift(array_values($array));
+array_pop(array_reverse($array));
+array_shift(array_slice($array, 0, 1));
+array_values($array)[0];
+
+$my_array = ['IT', 'rules', 'the', 'world'];
+$first_key = array_key_first($my_array);
+$first_value = $my_array[$first_key];
+$last_key = array_key_last($my_array);
+$last_value = $my_array[$last_key];
+
+$array[key($array)] #  to get first element
+key($array) # to get first key.
