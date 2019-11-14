@@ -104,3 +104,20 @@ $last_value = $my_array[$last_key];
 
 $array[key($array)] #  to get first element
 key($array) # to get first key.
+
+
+####################################################
+#
+#   Crop an image to the given rectangle
+#   https://www.php.net/manual/de/function.imagecrop.php
+#
+####################################################
+
+$im = imagecreatefrompng('example.png');
+$size = min(imagesx($im), imagesy($im));
+$im2 = imagecrop($im, ['x' => 0, 'y' => 0, 'width' => $size, 'height' => $size]);
+if ($im2 !== FALSE) {
+    imagepng($im2, 'example-cropped.png');
+    imagedestroy($im2);
+}
+imagedestroy($im);
