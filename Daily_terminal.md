@@ -143,3 +143,17 @@ rm -r ~/.cache/mozilla/firefox/*.default/*
 ##### stop Services
 * service --status-all
 * sudo service network-manager reload && sudo service bluetooth stop && sudo service virtualbox stop
+
+##### list packages
+
+dpkg --get-selections | grep -v deinstall
+sudo dpkg-query -l | less
+apt list --installed
+sudo apt list --installed | less
+apt list
+dpkg -l
+snap list
+pip list
+pip install --upgrade pip
+aptitude search '~i!~M'
+sudo apt-get autoremove
