@@ -121,3 +121,67 @@ if ($im2 !== FALSE) {
     imagedestroy($im2);
 }
 imagedestroy($im);
+
+
+#######################################################################
+#
+#	Void return types are for PHP 7.1 From the RFC
+#	Version: 0.2.1
+#	Date: 2015-02-14 (v0.1, later withdrawn), 2015-10-14 (v0.2, revival)
+#	Author: Andrea Faulds, ajf@ajf.me
+#	Status: Implemented (PHP 7.1)
+#
+#######################################################################
+
+/*
+types: int, string, null, bool, class objects, void.
+
+https://wiki.php.net/rfc/void_return_type
+https://www.php.net/manual/de/migration70.new-features.php
+https://www.php.net/manual/de/migration71.new-features.php
+https://www.php.net/manual/de/functions.returning-values.php
+https://www.php.net/manual/de/function.create-function.php
+https://www.php.net/manual/de/functions.arguments.php
+*/
+
+public static function setResponseCode(int $code) : void
+{
+    http_response_code($code);
+
+}
+
+function should_return_nothing(): void {
+    return 1; // Fatal error: A void function must not return a value
+}
+
+function lacks_return(): void {
+    // valid
+}
+
+function returns_nothing(): void {
+    return; // valid
+}
+
+function returns_one(): void {
+    return 1; // Fatal error: A void function must not return a value
+}
+
+function returns_null(): void {
+    return null; // Fatal error: A void function must not return a value
+}
+
+function foobar(void $foo) {
+	// Fatal error: void cannot be used as a parameter type
+}
+
+class Foo
+{
+    public function bar(): void {
+    }
+}
+
+class Foobar extends Foo
+{
+    public function bar(): array { // Fatal error: Declaration of Foobar::bar() must be compatible with Foo::bar(): void
+    }
+}
