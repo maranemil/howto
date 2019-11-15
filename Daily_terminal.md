@@ -1,15 +1,15 @@
 
 ##### Config Git on new location
-git config --global user.name "Administrator"
-git config --global user.email "admin@example.com"
+* git config --global user.name "Administrator"
+* git config --global user.email "admin@example.com"
 
 
 ##### Check repo file Sizes
-find . -name '*' -size +1M -exec ls -lh {} \; | awk '{ print $9 ": " $5 }'
+* find . -name '*' -size +1M -exec ls -lh {} \; | awk '{ print $9 ": " $5 }'
 
 
 ##### Check pack
-git verify-pack -v ./.git/objects/pack/pack-......ea.pack
+* git verify-pack -v ./.git/objects/pack/pack-......ea.pack
 
 
 ##### Utiles Daily
@@ -75,7 +75,7 @@ git verify-pack -v ./.git/objects/pack/pack-......ea.pack
 
 
 ##### Timestamp
-date +%s > 1552925792
+* date +%s > 1552925792
 
 
 ##### Add temporary Swap file on Ubuntu 18.04
@@ -129,31 +129,43 @@ sudo service mysql stop &&  sudo service apache2 stop &&  sudo service openvpn s
 
 
 ##### clear Browser Data
-chrome://settings/clearBrowserData
-
-ll ~/.cache/chromium/Default/
-rm -rf ~/.cache/chromium
-rm -rf ~/.cache/google-chrome
-rm ~/.cache/google-chrome
-rm ~/.config/google-chrome/Default/
-rm ~/.mozilla/firefox/*.default/cookies.sqlite
-rm -r ~/.cache/mozilla/firefox/*.default/*
+* chrome://settings/clearBrowserData
+* ll ~/.cache/chromium/Default/
+* rm -rf ~/.cache/chromium
+* rm -rf ~/.cache/google-chrome
+* rm ~/.cache/google-chrome
+* rm ~/.config/google-chrome/Default/
+* rm ~/.mozilla/firefox/*.default/cookies.sqlite
+* rm -r ~/.cache/mozilla/firefox/*.default/*
 
 
 ##### stop Services
 * service --status-all
 * sudo service network-manager reload && sudo service bluetooth stop && sudo service virtualbox stop
 
-##### list packages
 
-dpkg --get-selections | grep -v deinstall
-sudo dpkg-query -l | less
-apt list --installed
-sudo apt list --installed | less
-apt list
-dpkg -l
-snap list
-pip list
-pip install --upgrade pip
-aptitude search '~i!~M'
-sudo apt-get autoremove
+##### list packages
+* dpkg --get-selections | grep -v deinstall
+* dpkg -l
+* dpkg-query -l | less
+* apt list --installed
+* apt list --installed | less
+* apt list
+* snap list
+* pip list
+* pip3 list
+* aptitude search '~i!~M'
+
+
+##### remove packages
+* dpkg -r <package> 
+* apt remove --purge <package> 
+* snap remove <package>
+* pip uninstall <package>
+
+
+##### clean install update
+* https://wiki.ubuntuusers.de/apt/apt-get/
+* pip install --upgrade pip
+* sudo apt-get autoremove
+* sudo apt-get autoclean
