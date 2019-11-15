@@ -185,3 +185,17 @@ class Foobar extends Foo
     public function bar(): array { // Fatal error: Declaration of Foobar::bar() must be compatible with Foo::bar(): void
     }
 }
+
+/*
+How to alias a function in PHP
+https://stackoverflow.com/questions/1688711/how-to-alias-a-function-in-php
+https://www.php.net/manual/en/function.runkit-function-copy.php
+https://gist.github.com/nathanbrauer/cdd286351f68a1b4e3a5
+*/
+
+# PHP 5.6+ only
+use function sleep as wait;
+
+# PHP 5.3
+$wait = function($v) { return sleep($v); };
+function wait() {  return call_user_func_array("sleep", func_get_args()); }
