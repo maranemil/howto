@@ -238,3 +238,119 @@ Print Size	Aspect Ratio
 Print Size	Size (cm)	MinPixels	OptimumResolution
 Stubby Cooler	13x9		440		1600x800 -  4,37  x 3,1
 Beer Coasters -	13x9		440		1600x800  - 5,8 x  4.23
+
+
+###########################################################
+#
+# CropBox
+#
+###########################################################
+
+gs -sDEVICE=pdfwrite -o marked.pdf -c "[/CropBox [54 54 1314 810] /PAGES pdfmark" -f original.pdf
+gs -o cropped.pdf -sDEVICE=pdfwrite -dDEVICEWIDTHPOINTS=595 -dDEVICEHEIGHTPOINTS=842 -dFIXEDMEDIA -c "24 72 translate" -c " 0 0 535 722 rectclip" -f original.pdf
+
+https://www.adobe.com/content/dam/acom/en/devnet/acrobat/pdfs/pdfmark_reference.pdf
+http://milan.kupcevic.net/ghostscript-ps-pdf/
+https://www.mediaevent.de/tutorial/svg-transform.html
+
+
+MediaBox [0 0 612 858]
+CropBox [0 0 612 858]
+BleedBox [0 0 612 858]
+TrimBox [8 8 603 850]
+
+https://onlinepngtools.com/crop-png
+org 3200x3200
+CY - 1880
+CX - 1070
+WH - 1064
+
+
+###############################################################
+#
+# 	Page Coordinate System User Coordinate system
+#	https://docs.devexpress.com/OfficeFileAPI/120032/pdf-document-api/coordinate-systems
+#
+###############################################################
+
+https://itextpdf.com/en/resources/books/best-itext-7-questions-stackoverflow/where-origin-xy-pdf-page
+https://stackoverflow.com/questions/8158295/what-dimensions-do-the-coordinates-in-pdf-cropbox-refer-to
+https://www.pdfscripting.com/public/PDF-Page-Coordinates.cfm
+https://stackoverflow.com/questions/139655/convert-pixels-to-points
+https://www.ghostscript.com/doc/9.22/Use.htm
+https://im-coder.com/zuschneiden-eines-pdf-hinzufuegen-crop-box-mit-ghostscript.html
+https://github.com/thumbor/thumbor/wiki/Detection-algorithms
+
+
+Convert World Coordinates to Page Coordinates
+----------------------
+x = (unitX / dpiX) * 72;
+y = cropBox.Height - (unitY / dpiY) * 72.
+
+Point X1 value = (0 / 200) * 72 = 0
+Point Y1 value = 300 - (0 / 200) * 72 = 300 (equal to crop box height)
+Point X2 value = (400 / 200) * 72 = 144
+Point Y2 value = (300 - (600 / 200) * 72) = 84
+
+Convert Page Coordinates to World Coordinates
+----------------------
+unitX= (x / 72) * dpiX;
+unitY = ((cropBox.Height - y) / 72) * dpiY.
+
+unitX1= (0 / 72) * 200 = 0;
+unitY1 = ((300 - 300) / 72) * 200 = 0.
+unitX2= (144 / 72) * 200 = 400;
+unitY2 = ((300 - 84) / 72) * 200 = 600.
+
+Convert User Coordinates to World Coordinates
+----------------------
+UnitX = (Xu / 72) * dpiX;
+UnitY = ((cropBox.Height - Yu) / 72) * dpiY;
+
+Xu = rect.Left – cropBox.Left;
+Yu = rect.Bottom – cropBox.Bottom;
+UnitX = ((rect.Left – cropBox.Left) / 72) * dpiX;
+UnitY = ((cropBox.Height – rect.Bottom + cropBox.Bottom) / 72 ) * dpiY = ((cropBox.Top – rect.Bottom) / 72 ) * dpiY.
+
+
+Ghostscript
+
+     ****************************************************
+ 610 ----------------------X 420,610                    *
+     |                     |                            *
+     |                     |                            *
+     |                     |                            *
+     |                     |                            *
+     |                     |                            *
+     |                     |                            *
+     |                     |                            *
+     |0,315                |                            *
+ 315 X----------------------                            *
+     *                                                  *
+     *                                                  *
+     *                                                  *
+     *                                                  *
+     *                                                  *
+     *                                                  *
+     *                                                  *
+     *                                                  *
+   0 ****************************************************
+     0                    420
+
+
+pdfinfo -box -f 1 -l 3 original.pdf
+pdfinfo -box -f 1 -l 3 marked.pdf
+
+
+
+There are 72 points in an inch (that is what a point is, 1/72 of an inch)
+on a system set for 150dpi, there are 150 pixels per inch.
+1 in = 72pt = 150px (for 150dpi setting)
+
+x = (y/150) * 72                (2) for 150dpi system
+points = (pixels / 150) * 72    (3) for 150dpi system
+
+gs -sDEVICE=pdfwrite -o marked.pdf -c "[/CropBox [54 54 1314 810] /PAGES pdfmark"  -f original.pdf
+
+
+
