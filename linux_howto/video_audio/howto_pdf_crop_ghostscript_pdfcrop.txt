@@ -546,4 +546,62 @@ units -t '133 inch' 'mm'
 
 
 
+300 cm is 118.11 inches, which at 150 dpi works out at a bitmap up to 17717 pixels.
+200 cm is 78.74 inches, at 150 dpi that works out to 11811 pixels.
+
+
+units -t '112.9 cm' 'inch'
+> 44.448819
+
+https://www.koethen.de/verlagshersteller/rechner/umrechnung-cm-in-pixel.html
+https://www.pixelcalculator.com/
+https://www.blitzresults.com/de/pixel/
+https://www.blitzrechner.de/pixel-zentimeter-umrechnen/
+https://www.din-formate.de/pixelrechner-bildaufloesung-druckmasse-mm-cm-dpi-ppi-pixelkalkulator-fotogroesse-berechnen-fotos-bilder-poster-drucken.html
+
+cm2px > 112.9cm * dpi 300 = 13335
+
+
+----
+
+
+##############################################################
+#
+#   pdf splitten, joinen, größe verändern unter linux mittels command line
+#
+##############################################################
+https://dissidenz.noblogs.org/post/2016/07/21/pdf-splitten-joinen-grose-verandern-unter-linux-mittels-command-line/
+https://stackoverflow.com/questions/20899192/how-to-split-single-pdf-page-in-half-vertically-using-ghostscript
+https://stackoverflow.com/questions/40131804/how-to-limit-pdf-rasterization-size-when-using-imagemagick-ghostscript
+
+
+nützliche programme: ghostscript, pdftk, pdfinfo u. pdfcrop
+
+mit pdfcrop kann eins ganz gut schnittmarken entfernen.
+
+pdfcrop --bbox "8.5 8.5 603.5 850.5" --clip input.pdf output.pdf
+mit ghostscript ist es bisschen komplizierter, dafür geht aber auch mehr
+
+sed 's#CropBox#CrapBox#g' original.pdf > no_cropbox.pdf
+gs -sDEVICE=pdfwrite -o fixed.pdf -c "[/CropBox [8.6415 8.449 603.6415 850.449] /PAGES pdfmark" -f no_cropbox.pdf
+mit pdftk gehen paar sachen einfach, wie seite drehen o. gerade/ungerade seiten zammischen. siehe: https://www.pdflabs.com/docs/pdftk-cli-examples/
+
+pdftk A=even.pdf B=odd.pdf shuffle A B output collated.pdf
+zum splitten mit ghostscript zuerst mit pdfinfo (oder anderem tool) größe rausfinden, dann folgendes befolgen: http://superuser.com/questions/235074/how-can-i-split-a-pdfs-pages-down-the-middle/235401#235401
+
+gs -o left.pdf -sDEVICE=pdfwrite -g6038x8589 -c "<</PageOffset [0 0]>> setpagedevice" -f input.pdf
+gs -o right.pdf -sDEVICE=pdfwrite -g6038x8589 -c "<</PageOffset [-604 0]>> setpagedevice" -f input.pdf
+mit gs kann sich eins auch irgend die seiten zusammenstellen (wobei mit pdftk ist’s wahrscheinlich einfacher):
+
+gs -o output.pdf -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dSAFER -dFirstPage=2 -dLastPage=16 -f input.pdf
+pdftk in.pdf cat 1-12 14-end output out1.pdf
+zum größe u. qualität verändern.
+
+gs -o output.pdf -sDEVICE=pdfwrite -sPAPERSIZE=a4 -dFIXEDMEDIA -dPDFSETTINGS=/ebook -dPDFFitPage -dCompatibilityLevel=1.4 input.pdf
+This was written by C wie Zebra. Posted on Thursday, July 21, 2016, at 04:07. Filed under Category. Bookmark the permalink. Follow comments here with the RSS feed. Both comments and trackbacks are currently closed.
+‹ surveillance self-defence copyright bzw. urheberrecht ›
+
+
+
+
 
