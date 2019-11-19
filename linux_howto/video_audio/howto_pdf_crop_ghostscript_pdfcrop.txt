@@ -395,3 +395,93 @@ https://drawisland.com/
 https://editor.method.ac/
 https://www.pixilart.com/draw
 https://www.drawsvg.org/
+
+
+
+
+
+###############################################################
+CropBox rectangle
+###############################################################
+https://ghostscript.com/~robin/pdf_reference17.pdf
+https://www.ghostscript.com/doc/9.50/Use.htm#Other_parameters
+https://stackoverflow.com/questions/8158295/what-dimensions-do-the-coordinates-in-pdf-cropbox-refer-to
+https://www.ghostscript.com/doc/current/Use.htm
+
+
+-dUseCropBox
+-dFitPage
+
+(Optional; inheritable) A rectangle, expressed in default user space units,
+defining the visible region of default user space. When the page is displayed or printed, its contents are to be clipped (cropped) to this rectangle
+and then imposed on the output medium in some implementationdefined manner (see Section 10.10.1, “Page Boundaries”). Default value:
+the value of MediaBox.
+
+Note: In PostScript, the origin of default user space always corresponds to the lowerleft corner of the output medium. While this convention is common in PDF documents as well, it is not required; the page dictionary’s CropBox entry can specify any
+rectangle of default user space to be made visible on the medium.
+
+Note: The default for the size of the unit in default user space (1⁄72 inch) is approximately the same as a point, a unit widely used in the printing industry. It is not exactly the same, however; there is no universal definition of a point.
+
+Conceptually, user space is an infinite plane. Only a small portion of this plane
+corresponds to the imageable area of the output device: a rectangular region defined by the CropBox entry in the page dictionary. The region of default user
+space that is viewed or printed can be different for each page and is described in
+Section 10.10.1, “Page Boundaries.”
+
+
+These boundaries are specified by the MediaBox, CropBox, BleedBox, TrimBox,
+and ArtBox entries, respectively, in the page object dictionary (see Table 3.27 on
+page 145). All of them are rectangles expressed in default user space units. The
+crop, bleed, trim, and art boxes should not ordinarily extend beyond the boundaries of the media box. If they do, they are effectively reduced to their intersection with the media box. Figure 10.3 illustrates the relationships among these
+boundaries. (The crop box is not shown in the figure because it has no defined relationship with any of the other boundaries.)
+
+
+Page Objects
+
+MediaBox (inheritable)
+• CropBox (inheritable)
+• Resources (inheritable)
+• Contents
+• Rotate (inheritable)
+• AA
+• Annots
+
+
+###############################################################
+#
+###############################################################
+gs -o left.pdf -sDEVICE=pdfwrite -g7230x9960 -c "<</PageOffset [0 0]>> setpagedevice" -f gatefold.pdf
+gs -o right.pdf -sDEVICE=pdfwrite -g7230x9960 -c "<</PageOffset [-693 0]>> setpagedevice" -f gatefold.pdf
+
+
+###############################################################
+Image Size Goal for desired Print Size Calculator
+###############################################################
+https://www.scantips.com/lights/resize2.html
+375x375mm
+300dpi
+
+Pixels per mm = 300 dpi / 25.4 = 11.811 dpmm
+(375 mm x 11.811 dpmm) x (375 mm x 11.811 dpmm)  = 4429 x 4429 pixels goal
+19.616 megapixels, Aspect ratio 1:1 (1:1)
+
+
+# Read/Write Portable Document Format ImageMagick
+https://github.com/ImageMagick/ImageMagick/blob/master/coders/pdf.c
+
+
+time -l convert wp.pdf'[0]' -resize 150x150 -quality 75 thumb.jpg
+
+gs -q -dQUIET -dSAFER -dBATCH -dNOPAUSE -dNOPROMPT -dMaxBitmap=500000000 -dAlignToPixels=0 -dGridFitTT=2 -sDEVICE=pngalpha -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -r72x72 -dFirstPage=1 -dLastPage=1 -sOutputFile=out.pdf -f input.pdf
+
+gs -q -dBATCH -dMaxBitmap=50000000 -dNOPAUSE -sDEVICE=ppmraw -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -r72x72 -dFirstPage=1 -dLastPage=1 -sOutputFile=out.pdf -- input.pdf -c quit
+
+time -l gs -sDEVICE=jpeg -o thumb.jpg -dJPEGQ=75 -dFirstPage=1 -dLastPage=1  -dPDFFitPage -dDEVICEWIDTHPOINTS=150 -dDEVICEHEIGHTPOINTS=84 wp.pdf
+
+pdfinfo -box page_boxes.pdf
+
+
+
+
+
+
+
