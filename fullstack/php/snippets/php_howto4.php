@@ -199,3 +199,25 @@ use function sleep as wait;
 # PHP 5.3
 $wait = function($v) { return sleep($v); };
 function wait() {  return call_user_func_array("sleep", func_get_args()); }
+
+/*
+----------------------------------------------------
+PHP 7.2 each() function deprecated ·
+https://github.com/NagVis/nagvis/issues/142
+----------------------------------------------------
+*/
+
+while (list($key, $value) = each($params)) {}
+// turns into
+foreach($params as $k => $v) {}
+
+$fruit = array('a' => 'apple', 'b' => 'banana', 'c' => 'cranberry');
+reset($fruit);
+// if(count($fruit) > 0) while (list($key, $val) = each($fruit)) echo "$key => $val<br>";
+while (list($key, $val) = each($fruit)) {
+    echo "$key => $val<br>";
+}
+
+foreach($fruit as $key => $val){
+	 echo "$key => $val<br>";
+}
