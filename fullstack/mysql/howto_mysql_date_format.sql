@@ -340,3 +340,35 @@ https://www.w3resource.com/mysql/string-functions/mysql-lpad-function.php
 
 
 
+
+###################################################
+#
+#   Difference in HOURS from two time fields in MySQL
+#   https://stackoverflow.com/questions/11579946/only-show-hours-in-mysql-datediff
+#   https://stackoverflow.com/questions/1770594/how-to-calculate-difference-in-hours-decimal-between-two-dates-in-sql-server
+#
+###################################################
+
+SELECT TIMESTAMPDIFF(HOUR, start_time, end_time) as `difference` FROM timeattendance WHERE id = '1484'
+SELECT HOUR(TIMEDIFF(end_time, start_time)) as difference FROM timeattendance WHERE id = '1484';
+SELECT TIMEDIFF ( "2012-01-02 13:00:00", "2012-01-01 12:00:00") / 3600
+SELECT ( UNIX_TIMESTAMP("2012-01-02 13:00:00") -  UNIX_TIMESTAMP("2012-01-01 12:00:00") ) / 3600
+SELECT DATEDIFF(second, start_date, end_date) / 3600.0
+
+
+###################################################
+#
+#   Difference in minutes from two time fields in MySQL
+#   https://stackoverflow.com/questions/5070111/difference-in-minutes-from-two-time-fields-in-mysql
+#
+###################################################
+
+TIMESTAMPDIFF(MINUTE, start_time, end_time)
+SELECT (TIME_TO_SEC(end_time) - TIME_TO_SEC(start_time))/60 AS `minutes`
+SELECT SUBTIME(end_time, start_time)
+UNIX_TIMESTAMP(event1)-UNIX_TIMESTAMP(event2)
+
+
+MINUTE(TIMEDIFF(o.date_input,NOW())) as diff_hours   	# 0  when > 1h else minutes as output
+TIMESTAMPDIFF(HOUR,o.date_input,NOW())  as diff_hours 	# 1 h
+TIMESTAMPDIFF(MINUTE, o.date_input,NOW()) as diff_min	# 60 min
