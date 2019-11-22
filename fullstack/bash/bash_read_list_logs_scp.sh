@@ -1,4 +1,12 @@
 #!/bin/bash
+
+# check last 30 files ordered by date
+# ll -t | head -30
+
+# find log files
+# find . -type f -iname *file.log > list.txt
+
+# copy log files
 input="list.txt"
 while IFS= read -r line
 do
@@ -8,6 +16,10 @@ do
 	scp user@server:~/path_backupfiles$LINE $(date +%s).log
 	sleep 2
 done < "$input"
+
+# show fist and last line from log files
+#for i in *.log; do cat $i | head -n 1; cat $i | tail -n 1 ;echo "...................." ;done
+
 
 # https://www.cyberciti.biz/faq/linux-unix-sleep-bash-scripting/
 # http://tldp.org/LDP/Bash-Beginners-Guide/html/sect_09_05.html
