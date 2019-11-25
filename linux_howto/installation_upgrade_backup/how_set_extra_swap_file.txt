@@ -142,7 +142,57 @@ sudo nano /etc/fstab
 
 sudo nano /etc/sysctl.conf
 vm.swappiness = 10
-
-
-
 sudo sysctl -p /etc/sysctl.conf
+
+#######################################################
+#
+#	KVM Tuning Tuning Linux Dirty Data Parameters
+#
+#######################################################
+
+https://docs.gluster.org/en/latest/Administrator%20Guide/Linux%20Kernel%20Tuning/
+https://linux-club.de/wiki/opensuse/Tipp:_Swapverhalten_optimieren
+https://www.cyberciti.biz/faq/linux-kernel-tuning-virtual-memory-subsystem/
+https://www.netcup-wiki.de/wiki/KVM_Tuning
+https://lonesysadmin.net/2013/12/22/better-linux-disk-caching-performance-vm-dirty_ratio/
+https://linuxwiki.de/proc/sys/vm
+https://www.vertica.com/kb/Tuning-Linux-Dirty-Data-Parameters-for-Vertica/Content/BestPractices/Tuning-Linux-Dirty-Data-Parameters-for-Vertica.htm
+
+-----------------------------
+set for SSD
+-----------------------------
+sudo sysctl -w vm.swappiness=10
+sudo sysctl -w vm.vfs_cache_pressure=80
+sudo sysctl -w vm.dirty_ratio=10
+sudo sysctl -w vm.dirty_background_ratio=5
+sudo sysctl net.core.busy_read=50
+sudo sysctl net.core.busy_poll=50
+
+-----------------------------
+read
+-----------------------------
+sudo cat /proc/sys/vm/swappiness
+sudo cat /proc/sys/vm/vfs_cache_pressure
+sysctl kernel.sched_migration_cost_ns
+sysctl kernel.sched_min_granularity_ns
+sysctl net.core.busy_read
+sysctl net.core.busy_poll
+sysctl vm.dirty_ratio
+sysctl vm.dirty_background_ratio
+sysctl vm.swappiness
+
+sysctl -a | grep 'vm.swappiness'
+sysctl -a | grep 'vm.vfs_cache_pressure'
+
+
+sysctl vm.dirty_ratio vm.dirty_background_ratio vm.swappiness
+
+sysctl vm.min_free_kbytes vm.dirty_ratio vm.dirty_background_ratio vm.dirty_writeback_centisecs vm.vfs_cache_pressure vm.swappiness
+vm.min_free_kbytes = 3705
+vm.dirty_ratio = 20
+vm.dirty_background_ratio = 10
+vm.dirty_writeback_centisecs = 500
+vm.vfs_cache_pressure = 50
+vm.swappiness = 1
+
+sudo sync && sudo sysctl -w vm.drop_caches=3
