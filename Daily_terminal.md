@@ -170,3 +170,6 @@ sudo service mysql stop &&  sudo service apache2 stop &&  sudo service openvpn s
 * pip install --upgrade pip
 * sudo apt-get autoremove
 * sudo apt-get autoclean
+
+#####  system  monitoring
+* gnome-system-monitor
