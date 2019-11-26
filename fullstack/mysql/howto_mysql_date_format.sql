@@ -382,11 +382,11 @@ TIMESTAMPDIFF(MINUTE, o.date_input,NOW()) as diff_min	# 60 min
 ###################################################
 
 SELECT DISTINCT item_id,
-TIMESTAMPDIFF(HOUR,start_date,NOW()) as diff_hours,
-TIMESTAMPDIFF(MINUTE, start_date,NOW()) as diff_min
+TIMESTAMPDIFF(HOUR,start_date,NOW()) as diff_hours, -- get diff in hours
+TIMESTAMPDIFF(MINUTE, start_date,NOW()) as diff_min -- get diff in minutes
 FROM <table>
-WHERE start_date > DATE (NOW() - INTERVAL 60 day)
-ORDER BY diff_min DESC
+WHERE start_date > DATE (NOW() - INTERVAL 60 day) -- from last 60 days
+ORDER BY diff_min DESC -- sort by diff hours desc
 
 
 
@@ -402,11 +402,12 @@ ORDER BY diff_min DESC
 
 SELECT DISTINCT item_id, end_date,
 SUBSTRING_INDEX(field_text,'/',1) as start_date,
-TIMESTAMPDIFF(HOUR,SUBSTRING_INDEX(field_text,'/',1),end_date) as diff_hours
+TIMESTAMPDIFF(HOUR,SUBSTRING_INDEX(field_text,'/',1),end_date) as diff_hours -- get diff in hours
 FROM <table>
-WHERE end_date > DATE (NOW() - INTERVAL 30 day)
-AND STR_TO_DATE(SUBSTRING_INDEX(field_text,'/',1), '%Y-%m-%d %H:%i:%s') IS NOT NULL -- validate date
-AND TIMESTAMPDIFF(HOUR,SUBSTRING_INDEX(field_text,'/',1),end_date) > 5
+WHERE end_date > DATE (NOW() - INTERVAL 30 day) -- from last 30 days
+AND STR_TO_DATE(SUBSTRING_INDEX(field_text,'/',1), '%Y-%m-%d %H:%i:%s') IS NOT NULL -- valid date
+AND DATEDIFF(DATE_FORMAT(end_date,'%Y-%m-%d'), SUBSTRING_INDEX(field_text,'/',1)) = 0 -- must be from the same day
+AND TIMESTAMPDIFF(HOUR,SUBSTRING_INDEX(field_text,'/',1),end_date) > 5 -- where diff hours bigger than 5
 
 
 
