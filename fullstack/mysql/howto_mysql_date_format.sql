@@ -372,3 +372,43 @@ UNIX_TIMESTAMP(event1)-UNIX_TIMESTAMP(event2)
 MINUTE(TIMEDIFF(o.date_input,NOW())) as diff_hours   	# 0  when > 1h else minutes as output
 TIMESTAMPDIFF(HOUR,o.date_input,NOW())  as diff_hours 	# 1 h
 TIMESTAMPDIFF(MINUTE, o.date_input,NOW()) as diff_min	# 60 min
+
+
+
+###################################################
+#
+# Select difference in minutes or hours (start_date,now())
+#
+###################################################
+
+SELECT DISTINCT item_id,
+TIMESTAMPDIFF(HOUR,start_date,NOW()) as diff_hours,
+TIMESTAMPDIFF(MINUTE, start_date,NOW()) as diff_min
+FROM <table>
+WHERE start_date > DATE (NOW() - INTERVAL 60 day)
+ORDER BY diff_min DESC
+
+
+
+
+###################################################
+#
+#   Select difference in hours (start_date,end_date)
+#   Transform text in dateformat if possible with SUBSTRING_INDEX
+#   field_text is 2019-11-21 15:39:03/text<info>
+#   use STR_TO_DATE to validate string as dateformat
+#
+###################################################
+
+SELECT DISTINCT item_id, end_date,
+SUBSTRING_INDEX(field_text,'/',1) as start_date,
+TIMESTAMPDIFF(HOUR,SUBSTRING_INDEX(field_text,'/',1),end_date) as diff_hours
+FROM <table>
+WHERE end_date > DATE (NOW() - INTERVAL 30 day)
+AND STR_TO_DATE(SUBSTRING_INDEX(field_text,'/',1), '%Y-%m-%d %H:%i:%s') IS NOT NULL -- validate date
+AND TIMESTAMPDIFF(HOUR,SUBSTRING_INDEX(field_text,'/',1),end_date) > 5
+
+
+
+
+
