@@ -221,3 +221,24 @@ while (list($key, $val) = each($fruit)) {
 foreach($fruit as $key => $val){
 	 echo "$key => $val<br>";
 }
+
+
+/*
+---------------------------------
+[declare type and allow NULL as input]
+---------------------------------
+http://sandbox.onlinephpfunctions.com/
+http://sandbox.onlinephpfunctions.com/#7.2.4
+http://phptester.net/#7.0
+http://www.writephponline.com/
+https://www-coding.de/php-code-online-testen/
+*/
+
+declare(strict_types = 1);
+function setInt(?int $int): void{
+	echo $int."<br/ >";
+}
+
+setInt(1);
+setInt(null);
+setInt("1");
