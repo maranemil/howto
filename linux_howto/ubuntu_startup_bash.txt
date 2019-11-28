@@ -8,14 +8,8 @@ sudo nano start.sh
 # Fix for Ubuntu 16.04 :::
 systemctl daemon-reload
 
-
 # Stop some services :::
-service apache2 stop
-service mysql stop
-service teamviewerd stop
-#service virtualbox stop
-#service elasticsearch stop
-service redis-server stop
+service apache2 stop && service mysql stop && #service virtualbox stop && #service elasticsearch stop && service redis-server stop
 
 # Do some cleaning in xampp :::
 truncate -s0 /opt/lampp/logs/error_log
@@ -46,6 +40,26 @@ echo powersave | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 echo powersave | sudo tee /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
 
 for i in {0..7}; do echo performance | sudo tee /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor ; done
+
+# -----------------------------------
+# CLEAN CACHE STOP TRACKERS
+# -----------------------------------
+
+# stop services
+sudo service mysql stop && sudo service apache2 stop && sudo service openvpn stop && sudo service virtualbox stop && sudo service bluetooth stop
+
+# boost dynamic caching in ram
+sudo sysctl -w vm.swappiness=10 && sudo sysctl -w vm.vfs_cache_pressure=50 && sudo sysctl -w vm.dirty_ratio=10 && sudo sysctl -w vm.dirty_background_ratio=5 && sudo sync
+
+# clear journalctl big files
+sudo journalctl --vacuum-size=200M && du -hs /var/log/journal/
+
+# stop tracker
+tracker daemon pause
+
+# start chromium
+/usr/lib/chromium-browser/chromium-browser ----flag-switches-begin --disable-threaded-animation ---js-flags=--harmony --flag-switches-end ---no-experiments --disable-notifications --no-referrers --new-window --enable-low-end-device-mode --restore-last-session
+
 
 
 
