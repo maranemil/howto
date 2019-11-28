@@ -173,3 +173,12 @@ sudo service mysql stop &&  sudo service apache2 stop &&  sudo service openvpn s
 
 #####  system  monitoring
 * gnome-system-monitor
+
+
+##### ubuntu optimisation - disable tracking and clear journalctl file
+* gsettings set org.freedesktop.Tracker.Miner.Files low-disk-space-limit 1
+* gsettings set org.freedesktop.Tracker.Miner.Files enable-monitors false
+* gsettings set org.freedesktop.Tracker.Miner.Files crawling-interval -2
+* tracker daemon pause
+* sudo journalctl --vacuum-size=200M && du -hs /var/log/journal/
+
