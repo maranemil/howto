@@ -23,6 +23,25 @@ SELECT DATE_SUB(NOW(),INTERVAL 1 MONTH) # 7 months ago
 DATEDIFF(NOW(),'2016-09-27') = 0 				        // 0 days difference
 DATEDIFF(DATE_FORMAT(NOW(),'%Y-%m-%d'),NOW()) = 0)		// 0 days difference
 
+
+SELECT
+DATE_FORMAT(STR_TO_DATE('01.10.2019','%d.%m.%Y'),'%Y-%m-%d %h:%i%p') date1,
+DATE_FORMAT(STR_TO_DATE('01.10.2019','%d.%m.%Y'),'%Y-%m-%d %H:%i:%s') date2,
+STR_TO_DATE('2011-12-21', '%Y-%m-%d %h:%i%p') date3,
+STR_TO_DATE('2011-12-21', '%Y-%m-%d %H:%i:%s') date4,
+DATE_FORMAT(STR_TO_DATE('2011-12-21', '%Y-%m-%d %H:%i:%s'),'%Y-%m-%d 23:59:59') date5
+
+
+# output
+2019-10-01 12:00AM
+2019-10-01 00:00:00
+2011-12-21 00:00:00
+2011-12-21 00:00:00
+2011-12-21 23:59:59
+
+
+
+
 # fieldx != "" AND fieldx IS NOT NULL
 
 # last_7_days
