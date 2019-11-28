@@ -1,4 +1,3 @@
-
 ########################################################
 #
 #	5 Simple Ways To Free Up Space on Ubuntu
@@ -27,9 +26,6 @@ du -h /var/lib/snapd/snaps
 
 BleachBit > bleachbit_2.2_all_ubuntu1810.deb
 Stacer > https://github.com/oguzhaninan/Stacer > sudo apt-get install stacer -y
-
-
-
 
 ########################################################
 #
@@ -74,4 +70,76 @@ find [PFAD] -type d -empty
 
 ll /var/crash/*
 sudo rm /var/crash/*
+
+###################################################################
+#
+# 	Clear journalctl
+#
+###################################################################
+
+https://unix.stackexchange.com/questions/139513/how-to-clear-journalctl
+
+du -hs /var/log/journal/
+ls -lath /var/log/journal/*/ | tail -n 2
+
+sudo journalctl --vacuum-time=10d
+sudo journalctl --vacuum-time=2d
+sudo journalctl --vacuum-size=2G
+sudo journalctl --vacuum-size=200M && du -hs /var/log/journal/
+
+sudo journalctl --rotate
+sudo journalctl --vacuum-time=1s
+sudo systemctl restart systemd-journald
+
+###################################################################
+#
+# 	Clear Tracker
+#
+###################################################################
+
+https://wiki.gnome.org/Projects/Tracker/Documentation/Configuration
+
+org.freedesktop.Tracker.Miner.Files.low-disk-space-limit
+gsettings set org.freedesktop.Tracker.Miner.Files low-disk-space-limit 1
+gsettings set org.freedesktop.Tracker.Miner.Files enable-monitors false
+gsettings set org.freedesktop.Tracker.Miner.Files crawling-interval -2
+
+tracker --help
+tracker reset
+tracker status
+tracker-preferences
+tracker daemon pause
+
+
+Available tracker commands are:
+   daemon    Start, stop, pause and list processes responsible for indexing content
+   extract   Extract information from a file
+   info      Show information known about local files or items indexed
+   index     Backup, restore, import and (re)index by MIME type or file name
+   reset     Reset or remove index and revert configurations to defaults
+   search    Search for content indexed or show content by type
+   sparql    Query and update the index using SPARQL or search, list and tree the ontology
+   sql       Query the database at the lowest level using SQL
+   status    Show the indexing progress, content statistics and index state
+   tag       Create, list or delete tags for indexed content
+
+
+###################################################################
+#
+# 	Clear cache  ?
+#
+###################################################################
+
+home/user/cache/
+home/user/cache/pip
+home/user/cache/chromium
+home/user/cache/google-chrome
+home/user/cache/tracker
+
+chrome://chrome-urls/
+
+
+pip --no-cache-dir install scipy
+
+
 
