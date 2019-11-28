@@ -183,4 +183,9 @@ sudo service mysql stop &&  sudo service apache2 stop &&  sudo service openvpn s
 * gsettings set org.freedesktop.Tracker.Miner.Files crawling-interval -2
 * tracker daemon pause
 * sudo journalctl --vacuum-size=200M && du -hs /var/log/journal/
+* ps aux | grep zeitgeist
+* zeitgeist-daemon -r --log-level=DEBUG
+* zeitgeist-daemon --quit 
+* pkill -c zeitgeist-daemon
+* kill <zeitgeist-daemon-PID>
 
