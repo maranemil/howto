@@ -142,7 +142,9 @@ sudo service mysql stop &&  sudo service apache2 stop &&  sudo service openvpn s
 
 ##### stop Services
 * service --status-all
-* sudo service network-manager reload && sudo service bluetooth stop && sudo service virtualbox stop
+* sudo service network-manager reload 
+* sudo service bluetooth stop && sudo service virtualbox stop
+* sudo service whoopsie stop && sudo service cups stop && sudo service cups-browsed stop
 
 
 ##### list packages
