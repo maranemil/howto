@@ -259,3 +259,30 @@ class DummyItem{
     }
 }
 
+
+
+
+/*
+[]php read class without namespace]
+https://coderwall.com/p/cpxxxw/php-get-class-name-without-namespace
+https://www.php.net/manual/de/reflectionclass.getshortname.php
+*/
+
+namespace MyCustomNameSpace;
+class MyCustomClass{
+
+	public function __construct(){
+		echo __CLASS__."<br>";
+		echo substr(strrchr(__CLASS__, "\ "), 1)."<br>";
+		echo (new \ReflectionClass($this))->getShortName()."<br>";
+	}
+
+}
+
+new MyCustomClass();
+
+/*
+MyCustomNameSpace\MyCustomClass
+MyCustomClass
+MyCustomClass
+*/
