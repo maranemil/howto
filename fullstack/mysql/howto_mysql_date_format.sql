@@ -5,6 +5,11 @@
 #
 ###################################################
 
+# https://mariadb.com/kb/en/library/date_format/
+# https://www.w3resource.com/mysql/date-and-time-functions/mysql-date_format-function.php
+# http://www.mysqltutorial.org/mysql-date_format/
+
+
 /*
 
 SELECT DATE_ADD(NOW(), INTERVAL 5 DAY) # 5 days in future
