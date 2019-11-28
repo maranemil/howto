@@ -98,18 +98,29 @@ sudo systemctl restart systemd-journald
 ###################################################################
 
 https://wiki.gnome.org/Projects/Tracker/Documentation/Configuration
+https://github.com/Pelagicore/tracker-ivi/blob/master/data/gschemas/org.freedesktop.Tracker.Miner.Files.gschema.xml.in
+https://www.systutorials.com/docs/linux/man/5-tracker-miner-fs.cfg/
+https://www.reddit.com/r/Fedora/comments/9a0kic/how_do_i_disable_and_remove_gnome_tracker/
 
-org.freedesktop.Tracker.Miner.Files.low-disk-space-limit
 gsettings set org.freedesktop.Tracker.Miner.Files low-disk-space-limit 1
 gsettings set org.freedesktop.Tracker.Miner.Files enable-monitors false
 gsettings set org.freedesktop.Tracker.Miner.Files crawling-interval -2
 
+[crawling-interval]
+Interval in days to check whether the filesystem is up to date in the database.
+0 forces crawling anytime, -1 forces it only after unclean shutdowns, and -2
+disables it entirely.
+
+[enable-monitors]
+Set to false to completely disable any file monitoring
+
+[low-disk-space-limit]
+Disk space threshold in MB at which to pause indexing, or -1 to disable
 tracker --help
 tracker reset
 tracker status
 tracker-preferences
 tracker daemon pause
-
 
 Available tracker commands are:
    daemon    Start, stop, pause and list processes responsible for indexing content
@@ -122,6 +133,24 @@ Available tracker commands are:
    sql       Query the database at the lowest level using SQL
    status    Show the indexing progress, content statistics and index state
    tag       Create, list or delete tags for indexed content
+
+###################################################################
+#
+# 	Remove Tracker
+#
+###################################################################
+
+tracker daemon -t
+
+gsettings set org.freedesktop.Tracker.Miner.Files enable-monitors false
+gsettings set org.freedesktop.Tracker.Miner.Files ignored-files "['*']"
+gsettings set org.freedesktop.Tracker.Miner.Files crawling-interval -2
+Looking at the source code of Tracker,  the -2 indicates that Tracker should be disabled.
+
+The next step is to kill all current Tracker processes:
+pkill tracker
+and, finally, clear the Tracker cache
+rm -rf ~/.cache/tracker
 
 
 ###################################################################
