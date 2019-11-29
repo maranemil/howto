@@ -26,7 +26,8 @@ svcutil /t:metadata urlService?singleWSDL
 Le fichier est produit dans le répertoire courant.
 
 Exemple :
-C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin>svcutil /t:metadata https://uat.centiro.com/Universe.Services/TMSBasic/Wcf/c1/i1/TMSBasic/TMSBasic.svc?singleWSDL
+C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin>svcutil /t:metadata
+https://uat.centiro.com/Universe.Services/TMSBasic/Wcf/c1/i1/TMSBasic/TMSBasic.svc?singleWSDL
 
 Note : Dans certains cas, le fichier WSDL produit, bien qu'unique, est refusé lors de l'inscription du service dans Adélia Studio car non conforme pour son parseur WSDL.
 Cela arrive notamment  dans le cas d'un <wsdl:import> avec un targetNamespace différent dans chacun des fichiers WSDL sources.
