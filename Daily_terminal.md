@@ -188,4 +188,7 @@ sudo service mysql stop &&  sudo service apache2 stop &&  sudo service openvpn s
 * zeitgeist-daemon --quit 
 * pkill -c zeitgeist-daemon
 * kill <zeitgeist-daemon-PID>
+sudo find / -name '*' -size +1G
+sudo find / -type f -name '*.log' -size +20M
+sudo truncate -s0 error_log
 
