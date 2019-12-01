@@ -100,6 +100,9 @@
 * https://www.youtube.com/watch?v=CNuI8OWsppg#Applied Deep Learning with PyTorch - Full Course
 * https://www.youtube.com/watch?v=X2vAabgKiuM#Tutorial with Python & NLTK
 * https://www.youtube.com/watch?v=EoYfa6mYOG4#Learn TensorFlow.js
+* https://www.youtube.com/watch?v=GwIo3gDZCVQ#Machine Learning Full Course - Learn Machine Learning 10 Hours 
+* https://www.youtube.com/watch?v=DooxDIRAkPA#Deep Learning Full Course - Learn Deep Learning in 6 Hours| Edureka
+
 
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### PHP crash-courses
