@@ -286,3 +286,51 @@ MyCustomNameSpace\MyCustomClass
 MyCustomClass
 MyCustomClass
 */
+
+
+
+
+#############################################
+#
+# Read Disk space
+#
+#############################################
+
+$bytes = disk_total_space(__DIR__);
+$si_prefix = array( 'B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB' );
+$base = 1024;
+$class = min((int)log($bytes , $base) , count($si_prefix) - 1);
+echo "TOTAL SPACE<br />";
+echo sprintf('%1.2f' , $bytes / pow($base,$class)) . ' ' . $si_prefix[$class] . '<br />';
+
+$bytes = disk_free_space(__DIR__);
+$si_prefix = array( 'B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB' );
+$base = 1024;
+$class = min((int)log($bytes , $base) , count($si_prefix) - 1);
+echo "FREE SPACE<br />";
+echo sprintf('%1.2f' , $bytes / pow($base,$class)) . ' ' . $si_prefix[$class] . '<br />';
+
+$path_parts = pathinfo(__DIR__);
+echo $path_parts['dirname'], "<br />";
+echo $path_parts['basename'], "<br />";
+echo $path_parts['extension'], "<br />";
+echo $path_parts['filename'], "<br />"; // seit PHP 5.2.0s
+
+// https://www.phpliveregex.com/
+// https://regex101.com/
+$output = shell_exec('df -h -T');
+echo "<pre>$output</pre>";
+if(preg_match('/[8-9]0%/',$output)){
+   echo "warning!<br />";
+}
+
+// Use awk to pull out the columns you actually want
+#$output = shell_exec('df -h -T | awk \'{print $1 " " $3 " " $5}\'');
+#echo "<pre>$output</pre>";
+/*
+df -h --output=source,target
+df -hx tmpfs --output=source,target
+df -hT
+cat /proc/mounts
+https://www.cyberciti.biz/faq/linux-check-disk-space-command/
+*/
