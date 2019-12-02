@@ -213,7 +213,18 @@
 * https://www.youtube.com/watch?v=GhQdlIFylQ8#C-Tutorial
 * https://www.youtube.com/watch?v=cI3FOYIMSYE#Python Django
 
-
+https://www.youtube.com/watch?v=vtPkZShrvXQ#Spring Boot Tutorial for Beginners (Java Framework)
+https://www.youtube.com/watch?v=WGJJIrtnfpk#Python Full Course - Learn Python in 12 Hours 
+https://www.youtube.com/watch?v=xxpc-HPKN28#Statistics - A Full University Course on Data Science Basics in 8 Hours 
+https://www.youtube.com/watch?v=hQAHSlTtcmY#Learn React In 30 Minutes
+https://www.youtube.com/watch?v=-RCnNyD0L-s#Node.js Passport Login System Tutorial
+https://www.youtube.com/watch?v=KDn_j48yoAo#Learn Rust Programming In 1 Video
+https://www.youtube.com/watch?v=RBSGKlAvoiM#Data Structures Easy to Advanced Course 
+https://www.youtube.com/watch?v=sBws8MSXN7A#React JS Crash Course - 2019
+https://www.youtube.com/watch?v=fqMOX6JJhGo#Docker Tutorial for Beginners
+https://www.youtube.com/watch?v=YZvRrldjf1Y&t=13s#How to Build an E-commerce Website with Django and Python
+https://www.youtube.com/watch?v=PkZNo7MFNFg&t=24s#Learn JavaScript - Full Course for Beginners
+https://www.youtube.com/watch?v=HXV3zeQKqGY&t=10s#SQL Tutorial - Full course for beginners
 
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Recruiting insights
