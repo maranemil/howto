@@ -334,3 +334,25 @@ df -hT
 cat /proc/mounts
 https://www.cyberciti.biz/faq/linux-check-disk-space-command/
 */
+
+ssh [servername] " df -hk [partition_name]"
+ssh [servername] " df -hk [partition_name]"
+
+shell_exec("ssh user@host.com mkdir /testing");
+system('ssh -i /home/me/keys/key.pem user@ip-xx-xxx-xxx-xxx-end.ip "ls"');
+
+https://www.php.net/manual/de/function.ssh2-exec.php
+https://serverfault.com/questions/328541/ssh-command-from-php-script-nothing-yet-work-at-cmd-line
+
+
+<?php
+include('Net/SSH2.php');
+
+$ssh = new Net_SSH2('www.domain.tld');
+if (!$ssh->login('username', 'password')) {
+    exit('Login Failed');
+}
+
+echo $ssh->exec('pwd');
+echo $ssh->exec('ls -la');
+?>
