@@ -110,6 +110,7 @@
 * cat /proc/sys/vm/swappiness
 * sync && echo 3 | sudo tee /proc/sys/vm/drop_caches
 * echo 3 | sudo tee /proc/sys/vm/drop_caches && sudo /etc/init.d/networking restart 
+* sudo swapoff -a && sudo swapon -a && printf '\n%s\n' 'Swap Cleared'
 
 ##### DNS Flush networking
 * sudo /etc/init.d/dns-clean restart && sudo /etc/init.d/networking force-reload && sudo /etc/init.d/nscd restart && sudo service network-manager restart
