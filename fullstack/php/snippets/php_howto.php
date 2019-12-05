@@ -921,6 +921,44 @@ $array = json_decode($json, true);
 print "<pre>";
 print_r($array);
 
+
+/*
+############################################################
+
+PHP ERROR LEVEL
+
+############################################################
+ */
+/*
+
+E_ALL ^ E_NOTICE
+E_ALL & ~ E_NOTICE
+E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED
+E_ALL - ( E_NOTICE + E_WARNING ))
+E_ALL - E_NOTICE
+error_reporting(E_ALL — (E_NOTICE + E_WARNING));
+
+https://www.sbarjatiya.com/notes_wiki/index.php/PHP_Error_reporting
+https://www.sbarjatiya.com/notes_wiki/index.php/PHP_Error_reporting
+https://www.peterkropff.de/tutorials/php_fehler/error_reporting.htm
+
+
+1 E_ERROR
+2 E_WARNING
+4 E_PARSE
+8 E_NOTICE
+16 E_CORE_ERROR
+32 E_CORE_WARNING
+64 E_COMPILE_ERROR
+128 E_COMPILE_WARNING
+256 E_USER_ERROR
+512 E_USER_WARNING
+1024 E_USER_NOTICE
+2047 E_ALL
+2048 E_STRICT
+
+*/
+
 /*
 ############################################################
 
