@@ -1,0 +1,98 @@
+
+------------------------------------------
+Setting Up Caching Smarty
+------------------------------------------
+https://www.smarty.net/docs/en/caching.tpl
+https://www.smarty.net/docsv2/en/caching.tpl
+https://www.smarty.net/docsv2/de/caching.tpl
+https://www.smarty.net/docs/en/caching.tpl
+
+require('Smarty.class.php');
+$smarty = new Smarty;
+//$smarty->setCaching(Smarty::CACHING_LIFETIME_CURRENT);
+$smarty->caching = 1;
+$smarty->compile_check = true;
+$smarty->display('index.tpl');
+
+
+
+require('Smarty.class.php');
+$smarty = new Smarty;
+$smarty->caching = 2; // lifetime is per cache
+// set the cache_lifetime for index.tpl to 5 minutes
+$smarty->cache_lifetime = 300;
+$smarty->display('index.tpl');
+// set the cache_lifetime for home.tpl to 1 hour
+$smarty->cache_lifetime = 3600;
+$smarty->display('home.tpl');
+$smarty->cache_lifetime = 30; // 30 seconds
+$smarty->display('home.tpl');
+
+
+
+------------------------------------------
+how long it took to generate the page
+------------------------------------------
+https://www.smarty.net/forums/viewtopic.php?p=5750
+https://www.smarty.net/forums/viewtopic.php?p=49589
+
+
+class util {
+	function timer($mode='begin', $msg='')	{
+		global $_timer_blocks, $_timer_history;
+		switch ($mode) {
+			case 'begin':
+				$_timer_blocks[] =array(microtime(), $msg);
+			break;
+
+			case 'end':
+				$last = array_pop($_timer_blocks);
+				$_start = $last[0];
+				$_msg = $last[1];
+				list($a_micro, $a_int) = explode(' ', $_start);
+				list($b_micro, $b_int) = explode(' ', microtime());
+				$elapsed = ($b_int - $a_int) + ($b_micro - $a_micro);
+				$_timer_history[] = array($elapsed, $_msg, "$_msg [".round($elapsed, 4)."s ".(round(1/$elapsed, 2))."/s]");
+				if ($msg) {
+					return "$_msg: {$elapsed}s \n";
+				}
+				return $elapsed;
+			break;
+
+			case 'list':
+				$o = '';
+				foreach ($_timer_history as $mark) {
+					$o .= $mark[2] . " \n";
+				}
+				return $o;
+			break;
+
+			case 'stop':
+				$result = '';
+				while(!empty($_timer_blocks)) {
+					$result .= util::timer('end', $msg);
+				}
+				return $result;
+			break;
+		}
+	}
+}
+
+class SmartyExample extends Smarty {
+	function SmartyExample()
+	{
+		// the following registers the static class method util::timer() as the "timer" modifier
+		$class = 'util';
+		$this->register_modifier('timer', array($class, 'timer'));
+		// setup smarty as fits your needs...
+		$this->Smarty();
+	}
+}
+
+
+util::timer('begin', 'Page'); // starts a timer block with the message 'Page'
+include_once 'SmartyExample.class.php';
+$smarty = new SmartyExample();
+// ... your app work goes here
+$smarty->display('example.tpl'); // this template discharges the timer
+echo 'history: '.util::timer('list'); // returns a history of timed block results
