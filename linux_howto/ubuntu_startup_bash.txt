@@ -108,3 +108,18 @@ sudo journalctl --vacuum-size=50M && du -hs /var/log/journal/
 tracker daemon pause
 zeitgeist-daemon --quit --vacuum
 
+# -----------------------------------
+# CLEAN CACHE STOP TRACKERS HDD
+# -----------------------------------
+
+
+echo 1 | sudo tee /proc/sys/vm/drop_caches
+sudo service network-manager reload
+sudo sysctl -w vm.swappiness=10 && sudo sysctl vm.vfs_cache_pressure=60
+sudo sysctl -w net.ipv4.ip_forward=1
+sudo /etc/init.d/dns-clean reload
+sudo sysctl -w vm.dirty_ratio=10 && sudo sysctl -w vm.dirty_background_ratio=5
+
+for i in {0..3}; do echo performance | sudo tee /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor; echo $i; done
+
+/usr/lib/chromium-browser/chromium-browser  --enable-user-scripts --flag-switches-begin --disable-accelerated-2d-canvas --disable-gpu-vsync --disable-threaded-animation --disable-webgl --js-flags=--harmony --flag-switches-end --disable-gpu-process-prelaunch  --no-experiments --disable-notifications --no-referrers --new-window  --restore-last-session    --disable-software-rasterizer --enable-gpu-rasterization --enable-low-end-device-mode --enable-low-res-tiling
