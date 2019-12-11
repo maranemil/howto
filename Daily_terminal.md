@@ -170,6 +170,14 @@
 * sudo apt-get autoremove
 * sudo apt-get autoclean
 
+##### clean cache folder
+* sudo rm -rf .cache/pip/http/*
+* find ~/.cache/ -type f -atime +365 -delete
+* find ~/.cache/pip/http/ -depth -type f -atime +365 
+* find ~/.cache/pip/ -depth -type f -atime +3
+* ? ~/.local/lib/pythonX.X/site-packages
+
+
 #####  system  monitoring
 * gnome-system-monitor
 * baobab [GNOME Disk Usage Analyzer]
