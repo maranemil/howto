@@ -334,7 +334,7 @@ df -hT
 cat /proc/mounts
 https://www.cyberciti.biz/faq/linux-check-disk-space-command/
 */
-
+/*
 ssh [servername] " df -hk [partition_name]"
 ssh [servername] " df -hk [partition_name]"
 
@@ -343,9 +343,9 @@ system('ssh -i /home/me/keys/key.pem user@ip-xx-xxx-xxx-xxx-end.ip "ls"');
 
 https://www.php.net/manual/de/function.ssh2-exec.php
 https://serverfault.com/questions/328541/ssh-command-from-php-script-nothing-yet-work-at-cmd-line
+*/
 
 
-<?php
 include('Net/SSH2.php');
 
 $ssh = new Net_SSH2('www.domain.tld');
@@ -355,4 +355,80 @@ if (!$ssh->login('username', 'password')) {
 
 echo $ssh->exec('pwd');
 echo $ssh->exec('ls -la');
-?>
+
+
+#############################################
+#
+# Proof of Concept remove items on each iteration
+#
+#############################################
+
+class refetch{
+	public $fetchlist = array();
+	public function __construct($operator,$kitems){
+		$this->setFetchList($kitems);
+		$this->refetchItems();
+
+	}
+	public function refetchItems(){
+		foreach($this->fetchlist as $key => $item){
+			// fetch item
+			if((rand(1,8) % 2) == 1){
+				//  remove in list
+				echo " Removed ".$item."<br>";
+				if (($key = array_search($item, $this->fetchlist)) !== false) {
+					unset($this->fetchlist[$key]);
+				}
+			}
+			else{
+				// if fail - do nothing
+			}
+		}
+    }
+	public function setFetchList($kitems){
+		$this->fetchlist = $kitems;
+	}
+	public function getFetchList(){
+		return $this->fetchlist;
+	}
+}
+
+$oplist = array_map(function ($n) {return $n;}, range(10000, 10002));
+$kitems = array_map(function ($n) {return sprintf('sample_%03d', $n);}, range(1, 12));
+
+echo "<pre>";
+#echo (rand(1,8)%2)."<br>";
+print_r($oplist);
+#print_r($kitems);
+
+foreach ($oplist as $operator){
+	echo "Before:".implode(",", $kitems)."<br>";
+	$obrefetch = new refetch($operator,$kitems);
+	$kitems = $obrefetch->getFetchList();
+	echo "After:". implode(",", $kitems)."<hr>";
+}
+
+/*
+Array
+(
+    [0] => 10000
+    [1] => 10001
+    [2] => 10002
+)
+Before:sample_001,sample_002,sample_003,sample_004,sample_005,sample_006,sample_007,sample_008,sample_009,sample_010,sample_011,sample_012
+ Removed sample_004
+ Removed sample_008
+ Removed sample_009
+ Removed sample_012
+After:sample_001,sample_002,sample_003,sample_005,sample_006,sample_007,sample_010,sample_011
+Before:sample_001,sample_002,sample_003,sample_005,sample_006,sample_007,sample_010,sample_011
+ Removed sample_001
+ Removed sample_005
+ Removed sample_007
+ Removed sample_011
+After:sample_002,sample_003,sample_006,sample_010
+Before:sample_002,sample_003,sample_006,sample_010
+ Removed sample_002
+ Removed sample_003
+After:sample_006,sample_010
+*/
