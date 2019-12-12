@@ -225,6 +225,8 @@ https://www.youtube.com/watch?v=fqMOX6JJhGo#Docker Tutorial for Beginners
 https://www.youtube.com/watch?v=YZvRrldjf1Y&t=13s#How to Build an E-commerce Website with Django and Python
 https://www.youtube.com/watch?v=PkZNo7MFNFg&t=24s#Learn JavaScript - Full Course for Beginners
 https://www.youtube.com/watch?v=HXV3zeQKqGY&t=10s#SQL Tutorial - Full course for beginners
+https://www.youtube.com/watch?v=8DvywoWv6fI#Python for Everybody - Full Course with Dr. Chuck
+
 
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Recruiting insights
