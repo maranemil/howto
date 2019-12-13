@@ -378,7 +378,8 @@ class refetch{
 				echo " Removed ".$item."<br>";
 				if (($key = array_search($item, $this->fetchlist)) !== false) {
 					unset($this->fetchlist[$key]); # remove by key
-					//$this->fetchlist = array_diff($this->fetchlist,$item); # alternative by value
+					//$this->fetchlist = array_diff($this->fetchlist,array($item)); # alternative by value
+					//$this->fetchlist = array_diff(array_values($this->fetchlist),array($item)); # alternative by value
 				}
 			}
 			else{
