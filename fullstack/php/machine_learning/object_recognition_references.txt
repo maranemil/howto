@@ -59,3 +59,122 @@ https://scikit-image.org/docs/stable/auto_examples/
 https://scikit-learn.org/stable/
 https://pytorch.org/tutorials/
 
+
+
+##############################################################
+#
+#   Image to pixel array
+#
+##############################################################
+--------------------------------------------------------------
+
+PHP Load image into array, 2 bit
+https://stackoverflow.com/questions/8240550/php-load-image-into-array-2-bit
+
+$image = imagecreatefrompng("input.png");
+$width = imagesx($image);
+$height = imagesy($image);
+$colors = array();
+
+for ($y = 0; $y < $height; $y++)
+{
+    for ($x = 0; $x < $width; $x++)
+    {
+        $rgb = imagecolorat($image, $x, $y);
+        $r = ($rgb >> 16) & 0xFF;
+        $g = ($rgb >> 8) & 0xFF;
+        $b = $rgb & 0xFF;
+
+        $black = ($r == 0 && $g == 0 && $b == 0);
+        $colors[$x][$y] = $black;
+    }
+}
+
+--------------------------------------------------------------
+Convert jpg image to bytes
+image create froms tring
+
+$data = 'iVBORw0KGgoAAAANSUhEUgAAABwAAAASCAMAAAB/2U7WAAAABl'
+       . 'BMVEUAAAD///+l2Z/dAAAASUlEQVR4XqWQUQoAIAxC2/0vXZDr'
+       . 'EX4IJTRkb7lobNUStXsB0jIXIAMSsQnWlsV+wULF4Avk9fLq2r'
+       . '8a5HSE35Q3eO2XP1A1wQkZSgETvDtKdQAAAABJRU5ErkJggg==';
+$data = base64_decode($data);
+
+$im = imagecreatefromstring($data);
+if ($im !== false) {
+    header('Content-Type: image/png');
+    imagepng($im);
+    imagedestroy($im);
+}
+else {
+    echo 'An error occurred.';
+}
+
+
+--------------------------------------------------------------
+
+
+$array = array();
+foreach(str_split(file_get_contents('image.jpg')) as $byte){
+  array_push($array, ord($byte));
+}
+
+
+--------------------------------------------------------------
+
+imageconvolution
+https://www.php.net/manual/de/function.imageconvolution.php
+https://www.php.net/manual/de/function.imagecolorsforindex.php
+https://www.php.net/manual/de/ref.image.php
+
+# Embossing
+$image = imagecreatefromgif('http://www.php.net/images/php.gif');
+$emboss = array(array(2, 0, 0), array(0, -1, 0), array(0, 0, -1));
+imageconvolution($image, $emboss, 1, 127);
+header('Content-Type: image/png');
+imagepng($image, null, 9);
+
+
+# Gaussian blur
+$image = imagecreatetruecolor(180,40);
+// Writes the text and apply a gaussian blur on the image
+imagestring($image, 5, 10, 8, 'Gaussian Blur Text', 0x00ff00);
+$gaussian = array(array(1.0, 2.0, 1.0), array(2.0, 4.0, 2.0), array(1.0, 2.0, 1.0));
+imageconvolution($image, $gaussian, 16, 0);
+// Rewrites the text for comparison
+imagestring($image, 5, 10, 18, 'Gaussian Blur Text', 0x00ff00);
+header('Content-Type: image/png');
+imagepng($image, null, 9);
+
+# sharpen setting for thumbnail creation:
+$sharpenMatrix = array
+(
+	array(-1.2, -1, -1.2),
+	array(-1, 20, -1),
+	array(-1.2, -1, -1.2)
+);
+
+// calculate the sharpen divisor
+$divisor = array_sum(array_map('array_sum', $sharpenMatrix));
+
+$offset = 0;
+
+// apply the matrix
+imageconvolution($img, $sharpenMatrix, $divisor, $offset);
+
+--------------------------------------------------------------
+
+https://github.com/libvips/php-vips
+https://github.com/php-ai/php-ml
+https://github.com/deltastateonline/ml-php
+https://riptutorial.com/php/example/19397/classification-using-php-ml
+https://php-ml.readthedocs.io/en/latest/
+https://arkadiuszkondas.com/whats-new-in-php-ml-0-7-0/
+https://www.sitepoint.com/how-to-analyze-tweet-sentiments-with-php-machine-learning/
+https://de.slideshare.net/AgbagbaraOmokhoa/machine-learning-in-php-84584718
+
+
+
+
+
+
