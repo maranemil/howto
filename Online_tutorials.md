@@ -229,6 +229,21 @@
 * https://www.youtube.com/watch?v=LsNW4FPHuZE#Learn Unreal Engine (with C++) 
 * https://www.youtube.com/watch?v=YXPyB4XeYLA#Tkinter Course Python Tutorial
 
+
+https://www.youtube.com/watch?v=e1IyzVyrLSU#Python Django Crash Course 2019
+https://www.youtube.com/watch?v=MBl-3Yb30FA#Robotic Process Automation Full Course
+https://www.youtube.com/watch?v=9M4XKi25I2M#JavaScript Programming All-in-One Tutorial Series
+https://www.youtube.com/watch?v=09_LlHjoEiY#Algorithms Course - Graph Theory Tutorial from a Google Engineer
+https://www.youtube.com/watch?v=Wy9q22isx3U#Vue JS Crash Course - 2019
+https://www.youtube.com/watch?v=JT80XhYJdBw#Python Django Tutorial 2020 
+https://www.youtube.com/watch?v=F5mRW0jo-U4#Python Django Web Framework 
+
+
+
+
+
+
+
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Recruiting insights
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
