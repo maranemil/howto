@@ -248,6 +248,11 @@
 * https://www.youtube.com/watch?v=cSKfRcEDGUs#Train an Image Classifier with TensorFlow for Poets
 * https://www.youtube.com/watch?v=MhkGQAoc7bc#Reactjs Javascript Introduction
 * https://www.youtube.com/watch?v=f79MRyMsjrQ#Python Tutorial for Programmers
+* https://www.youtube.com/watch?v=_8V5o2UHG0E#Data Visualization with D3.js - Full Tutorial Course
+* https://www.youtube.com/watch?v=ua-CiDNNj30#Learn Data Science Tutorial - Full Course for Beginners
+* https://www.youtube.com/watch?v=4deVCNJq3qc#Learn Vue.js - Full Course for Beginners - 2019
+* https://www.youtube.com/watch?v=bemDFpNooA8#Basic Computer Vision with ML
+* https://www.youtube.com/watch?v=YS4e4q9oBaU#Learn Go Programming - Golang Tutorial for Beginners
 
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Recruiting insights
