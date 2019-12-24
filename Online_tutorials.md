@@ -239,6 +239,9 @@
 * https://www.youtube.com/watch?v=kqdsC_Oj9Gk#TypeScript - Beyond the Basics - Eric Potter
 * https://www.youtube.com/watch?v=NihZYkNpslE#PHP Tutorial 2020
 * https://www.youtube.com/watch?v=WFr2WgN9_xE#Python Machine Learning
+* https://www.youtube.com/watch?v=-ETQ97mXXF0#Learn Data Science in 10 Hours
+* https://www.youtube.com/watch?v=Ia-UEYYR44s#AWS Certified Solutions Architect
+* https://www.youtube.com/watch?v=I-dml1IDyBc#Complete TypeScript Course
 
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Recruiting insights
