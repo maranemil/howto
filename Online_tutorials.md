@@ -247,7 +247,7 @@
 * https://www.youtube.com/watch?v=4vN1tHpCkA0#neural network for classification | TensorFlow.js 
 * https://www.youtube.com/watch?v=cSKfRcEDGUs#Train an Image Classifier with TensorFlow for Poets
 * https://www.youtube.com/watch?v=MhkGQAoc7bc#Reactjs Javascript Introduction
-
+* https://www.youtube.com/watch?v=f79MRyMsjrQ#Python Tutorial for Programmers
 
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Recruiting insights
