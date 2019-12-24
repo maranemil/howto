@@ -242,6 +242,12 @@
 * https://www.youtube.com/watch?v=-ETQ97mXXF0#Learn Data Science in 10 Hours
 * https://www.youtube.com/watch?v=Ia-UEYYR44s#AWS Certified Solutions Architect
 * https://www.youtube.com/watch?v=I-dml1IDyBc#Complete TypeScript Course
+* https://www.youtube.com/watch?v=Gj0iyo265bc#Classifying Handwritten Digits with TF.Learn 
+* https://www.youtube.com/watch?v=pbCExciEbrc#TensorFlow.js in your browser
+* https://www.youtube.com/watch?v=4vN1tHpCkA0#neural network for classification | TensorFlow.js 
+* https://www.youtube.com/watch?v=cSKfRcEDGUs#Train an Image Classifier with TensorFlow for Poets
+* https://www.youtube.com/watch?v=MhkGQAoc7bc#Reactjs Javascript Introduction
+
 
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Recruiting insights
