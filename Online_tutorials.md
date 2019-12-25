@@ -253,6 +253,10 @@
 * https://www.youtube.com/watch?v=4deVCNJq3qc#Learn Vue.js - Full Course for Beginners - 2019
 * https://www.youtube.com/watch?v=bemDFpNooA8#Basic Computer Vision with ML
 * https://www.youtube.com/watch?v=YS4e4q9oBaU#Learn Go Programming - Golang Tutorial for Beginners
+* https://www.youtube.com/watch?v=m_u6P5k0vP0#Full Stack React & Firebase Tutorial
+* https://www.youtube.com/watch?v=GZvSYJDk-us#APIs for Beginners 
+* https://www.youtube.com/watch?v=DLX62G4lc44#Learn React JS
+
 
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Recruiting insights
