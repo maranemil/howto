@@ -257,6 +257,8 @@
 * https://www.youtube.com/watch?v=GZvSYJDk-us#APIs for Beginners 
 * https://www.youtube.com/watch?v=DLX62G4lc44#Learn React JS
 
+https://www.youtube.com/watch?v=vNHpsC5ng_E&list=PLF206E906175C7E07#Java Design Patterns Tutorial
+https://www.youtube.com/watch?v=I7VKUGblZOQ&list=PLGJDCzBP5j3xGaW0AGlaVHK2TMEr2XkP9#PHP Design Patterns
 
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Recruiting insights
