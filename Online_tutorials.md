@@ -259,7 +259,9 @@
 
 https://www.youtube.com/watch?v=vNHpsC5ng_E&list=PLF206E906175C7E07#Java Design Patterns Tutorial
 https://www.youtube.com/watch?v=I7VKUGblZOQ&list=PLGJDCzBP5j3xGaW0AGlaVHK2TMEr2XkP9#PHP Design Patterns
-
+https://www.youtube.com/watch?v=tdIIJuPh3SI#Miguel Grinberg - Flask at Scale
+https://www.youtube.com/watch?v=DWgD5iloSHs#Dave Anderson - Building Evolutionary API with GraphQL and Python
+https://www.youtube.com/watch?v=nrzLdMWTRMM#Miguel Grinberg - Microservices with Python and Flask - PyCon 2017
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Recruiting insights
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
