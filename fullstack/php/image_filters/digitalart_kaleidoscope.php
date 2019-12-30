@@ -84,4 +84,4 @@ imagecopy($im, $stamp, imagesx($im) - $sx - 0, imagesy($im) - $sy - 0, 0, 0, ima
 
 #header('Content-type: image/png');
 imagepng($im,'example_wrap_out.png');
-imagedestroy($im);
+imagedestroy($im);, 
