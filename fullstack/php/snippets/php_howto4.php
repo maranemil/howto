@@ -434,3 +434,64 @@ Before:sample_002,sample_003,sample_006,sample_010
  Removed sample_003
 After:sample_006,sample_010
 */
+
+
+
+
+#######################################################################
+#
+#   ERR Declaration of B::foo() should be compatible with A::foo($bar = null)
+#   https://stackoverflow.com/questions/36079651/silence-declaration-should-be-compatible-warnings-in-php-7
+#
+#   FIX:
+#
+#   - public function foo()
+#   + public function foo($bar = null)
+#
+#######################################################################
+
+
+# FIX Workaround code legacy disable warning
+
+if (PHP_MAJOR_VERSION >= 7) {
+    set_error_handler(function ($errno, $errstr) {
+       return strpos($errstr, 'Declaration of') === 0;
+    }, E_WARNING);
+}
+
+if (PHP_MAJOR_VERSION >= 7) {
+    set_error_handler(function ($errno, $errstr, $file) {
+        return strpos($file, 'path/to/legacy/library') !== false &&
+            strpos($errstr, 'Declaration of') === 0;
+    }, E_WARNING);
+}
+
+
+#######################################################################
+#
+#   Correctly determine if date string is a valid date in that format
+#   https://stackoverflow.com/questions/19271381/correctly-determine-if-date-string-is-a-valid-date-in-that-format
+#   https://www.php.net/manual/de/function.checkdate.php
+#
+#######################################################################
+
+function validateDate($date, $format = 'Y-m-d')
+{
+    $d = DateTime::createFromFormat($format, $date);
+    // The Y ( 4 digits year ) returns TRUE for any integer with any number of digits so changing the comparison from == to === fixes the issue.
+    return $d && $d->format($format) === $date;
+}
+
+var_dump(validateDate('2013-13-01'));  // false
+var_dump(validateDate('20132-13-01')); // false
+var_dump(validateDate('2013-11-32'));  // false
+var_dump(validateDate('2012-2-25'));   // false
+var_dump(validateDate('2013-12-01'));  // true
+var_dump(validateDate('1970-12-01'));  // true
+var_dump(validateDate('2012-02-29'));  // true
+var_dump(validateDate('2012', 'Y'));   // true
+var_dump(validateDate('12012', 'Y'));  // false
+
+
+var_dump(checkdate(12, 31, 2000));
+var_dump(checkdate(2, 29, 2001));
