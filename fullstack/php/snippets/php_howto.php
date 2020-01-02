@@ -715,6 +715,12 @@ DATE_W3C - World Wide Web Consortium (example: 2013-04-12T15:52:01+00:00)
 
 echo substr(date(DATE_ISO8601, time()), 0, -5); // 2018-04-30T10:25:04
 
+// 2 years back from now
+echo date("Y", strtotime('-2 years', time()));
+
+// 2 years in future from now
+echo date("Y", strtotime('+2 years', time()));
+
 ######################################################################
 #
 # xml2array input output
