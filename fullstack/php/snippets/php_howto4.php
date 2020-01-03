@@ -492,6 +492,41 @@ var_dump(validateDate('2012-02-29'));  // true
 var_dump(validateDate('2012', 'Y'));   // true
 var_dump(validateDate('12012', 'Y'));  // false
 
-
 var_dump(checkdate(12, 31, 2000));
 var_dump(checkdate(2, 29, 2001));
+
+##################################################
+#
+# Get date interval range php7 DateTime
+#
+##################################################
+
+// https://www.php.net/manual/de/class.dateperiod.php
+// https://www.php.net/manual/de/function.cal-days-in-month.php
+// https://www.php.net/manual/en/datetime.formats.date.php
+// https://www.geeksforgeeks.org/return-all-dates-between-two-dates-in-an-array-in-php/
+// https://www.codementor.io/tips/1170438972/how-to-get-an-array-of-all-dates-between-two-dates-in-php
+
+$begin = new DateTime( '2012-08-01' );
+$end = new DateTime( '2012-08-31' );
+$end = $end->modify( '+1 day' );
+
+$interval = new DateInterval('P1D');
+$daterange = new DatePeriod($begin, $interval ,$end);
+
+foreach($daterange as $date){
+    echo $date->format("Y-m-d") . "<br>";
+}
+
+//Nice example from PHP Spring Conference (thanks to Johannes Schlüter and David Zülke)
+/*
+
+$begin = new DateTime( '2007-12-31' );
+$end = new DateTime( '2009-12-31 23:59:59' );
+
+$interval = DateInterval::createFromDateString('last thursday of next month');
+$period = new DatePeriod($begin, $interval, $end, DatePeriod::EXCLUDE_START_DATE);
+
+foreach ( $period as $dt )
+  echo $dt->format( "l Y-m-d H:i:s\n" ). "<br>";
+  */
