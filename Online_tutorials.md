@@ -261,7 +261,7 @@
 * https://www.youtube.com/watch?v=tdIIJuPh3SI#Miguel Grinberg - Flask at Scale
 * https://www.youtube.com/watch?v=DWgD5iloSHs#Dave Anderson - Building Evolutionary API with GraphQL and Python
 * https://www.youtube.com/watch?v=nrzLdMWTRMM#Miguel Grinberg - Microservices with Python and Flask - PyCon 2017
-
+* https://www.youtube.com/watch?v=ztHopE5Wnpc#Database Design Course
 
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Recruiting insights
