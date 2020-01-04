@@ -262,6 +262,18 @@
 * https://www.youtube.com/watch?v=DWgD5iloSHs#Dave Anderson - Building Evolutionary API with GraphQL and Python
 * https://www.youtube.com/watch?v=nrzLdMWTRMM#Miguel Grinberg - Microservices with Python and Flask - PyCon 2017
 * https://www.youtube.com/watch?v=ztHopE5Wnpc#Database Design Course
+https://www.youtube.com/watch?v=zF34dRivLOw#Rust Crash Course | Rustlang
+https://www.youtube.com/watch?v=3Kq1MIfTWCE#Network Penetration Testing
+https://www.youtube.com/watch?v=xnt2xSNRNn0#Quantum Physics Full Course 
+https://www.youtube.com/watch?v=oflN6WZOzxw#Red Hat Linux Course complete
+https://www.youtube.com/watch?v=_bYFu9mBnr4#C++ Programming All-in-One Tutorial Series
+https://www.youtube.com/watch?v=mUQZ1qmKlLY#C++ Tutorial from Basic to Advance
+https://www.youtube.com/watch?v=GhQdlIFylQ8#C# Tutorial
+https://www.youtube.com/watch?v=9Pzj7Aj25lw#SQL Basics for Beginners
+https://www.youtube.com/watch?v=KJgsSFOSQv0#C Programming Tutorial for Beginners
+https://www.youtube.com/watch?v=WFr2WgN9_xE#Python Machine Learning & AI Mega Course
+https://www.youtube.com/watch?v=LsNW4FPHuZE#Learn Unreal Engine
+
 
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Recruiting insights
