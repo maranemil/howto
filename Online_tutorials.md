@@ -273,7 +273,11 @@ https://www.youtube.com/watch?v=9Pzj7Aj25lw#SQL Basics for Beginners
 https://www.youtube.com/watch?v=KJgsSFOSQv0#C Programming Tutorial for Beginners
 https://www.youtube.com/watch?v=WFr2WgN9_xE#Python Machine Learning & AI Mega Course
 https://www.youtube.com/watch?v=LsNW4FPHuZE#Learn Unreal Engine
-
+https://www.youtube.com/watch?v=YS4e4q9oBaU#Learn Go Programming
+https://www.youtube.com/watch?v=7CqJlxBYj-M#Learn the MERN Stack
+https://www.youtube.com/watch?v=Wm6CUkswsNw#Build An HTML5 Website
+https://www.youtube.com/watch?v=r0Ogt-q956I#Deep Learning Crash Course
+https://www.youtube.com/watch?v=09_LlHjoEiY#Algorithms Course graph Theory Tutorial
 
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Recruiting insights
