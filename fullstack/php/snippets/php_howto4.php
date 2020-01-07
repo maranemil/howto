@@ -530,3 +530,15 @@ $period = new DatePeriod($begin, $interval, $end, DatePeriod::EXCLUDE_START_DATE
 foreach ( $period as $dt )
   echo $dt->format( "l Y-m-d H:i:s\n" ). "<br>";
   */
+
+
+#####################################################################
+#
+#   Random Unique md5
+#
+#####################################################################
+
+echo (microtime(1));
+echo "<br>";
+echo substr(md5(rand()), 0, 10);
+echo "<hr>";
