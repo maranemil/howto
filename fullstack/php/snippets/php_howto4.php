@@ -542,3 +542,15 @@ echo (microtime(1));
 echo "<br>";
 echo substr(md5(rand()), 0, 10);
 echo "<hr>";
+
+
+echo microtime(true);
+usleep(100);
+echo "<br>";
+echo microtime(true);
+usleep(100);
+
+echo "<br>";
+echo mt_rand(100, 10000);
+echo "<br>";
+echo mt_rand(100, 10000);
