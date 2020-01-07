@@ -146,6 +146,11 @@
 * sudo service mysql stop &&  sudo service apache2 stop &&  sudo service openvpn stop && sudo service virtualbox stop 
 * service --status-all
 
+
+##### Accessing local data on VM using python SimpleHTTPServer
+* python -m SimpleHTTPServer
+* http://localhost:8000
+
 ##### list packages
 * dpkg --get-selections | grep -v deinstall
 * dpkg -l
