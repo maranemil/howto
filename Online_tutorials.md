@@ -40,6 +40,8 @@
 * https://www.tensorflow.org/tutorials/keras/basic_classification
 * https://www.coursera.org/lecture/machine-learning-sas/early-stopping-6D2RK#Maschinelles Lernen mittels Sas Viya
 * https://codelabs.developers.google.com/codelabs/tensorflow-lab3-convolutions/#3
+* https://help.github.com/en/github/writing-on-github/organizing-information-with-tables
+* https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
 
 
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
