@@ -47,8 +47,8 @@
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-|link  |title |
-|---|---|
+| Link URL  | Title |
+|-----------|-------|
 | https://www.youtube.com/playlist?list=PLoRl3Ht4JOcdU872GhiYWf6jwrk_SNhz9 | Neural Networks for Machine Learning |
 | https://www.youtube.com/playlist?list=PLZoTAELRMXVNUcr7osiU7CCm8hcaqSzGw | Data Science Projects |
 | https://www.youtube.com/user/MIT | MIT OpenCourseWare |
