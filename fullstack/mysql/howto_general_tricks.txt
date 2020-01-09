@@ -1034,3 +1034,26 @@ SELECT GROUP_CONCAT(cnt SEPARATOR ' , ') cnt
     FROM table1
    GROUP BY fk_company
 ) q
+
+
+
+############################################################
+#   Disable ONLY_FULL_GROUP_BY
+############################################################
+https://stackoverflow.com/questions/23921117/disable-only-full-group-by
+Error in query (1055): Expression # this is incompatible with sql_mode=only_full_group_by
+-----------------------------------------------
+SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
+sudo service mysql restart
+
+
+############################################################
+#   Block Nested Loop making things slower
+############################################################
+https://bugs.mysql.com/bug.php?id=69721
+https://dev.mysql.com/doc/refman/5.6/en/bnl-bka-optimization.html
+https://mariadb.com/kb/en/block-based-join-algorithms/
+
+SET optimizer_switch='mrr=on,mrr_cost_based=off,batched_key_access=on';
+SET SESSION optimizer_switch='block_nested_loop=off';
+set optimizer_switch='block_nested_loop=off'
