@@ -1,0 +1,564 @@
+#-------------------------------------
+# TF2 intro
+#-------------------------------------
+
+
+import tensorflow as tf
+import numpy as np
+from tensorflow import keras
+
+model = tf.keras.Sequential([keras.layers.Dense(units=1, input_shape=[1])])
+model.compile(optimizer='sgd', loss='mean_squared_error')
+
+xs = np.array([-1.0, 0.0, 1.0, 2.0, 3.0, 4.0], dtype=float)
+ys = np.array([-2.0, 1.0, 4.0, 7.0, 10.0, 13.0], dtype=float)
+
+model.fit(xs, ys, epochs=500)
+print(model.predict([10.0]))
+
+https://codelabs.developers.google.com/codelabs/tensorflow-lab1-helloworld/
+
+------------------------------------------------------
+
+https://colab.research.google.com/github/lmoroney/mlday-tokyo/blob/master/Lab1-Hello-ML-World.ipynb
+
+import tensorflow as tf
+import numpy as np
+from tensorflow import keras
+
+model = tf.keras.Sequential([keras.layers.Dense(units=1, input_shape=[1])])
+model.compile(optimizer='sgd', loss='mean_squared_error')
+xs = np.array([-1.0, 0.0, 1.0, 2.0, 3.0, 4.0], dtype=float)
+ys = np.array([-2.0, 1.0, 4.0, 7.0, 10.0, 13.0], dtype=float)
+print(model.predict([10.0]))
+
+
+------------------------------------------------------
+
+https://www.tensorflow.org/guide/keras/overview?hl=de
+
+from __future__ import absolute_import, division, print_function, unicode_literals
+import tensorflow as tf
+from tensorflow import keras
+
+#-------------------------------------
+# Build a simple model
+#-------------------------------------
+
+from tensorflow.keras import layers
+model = tf.keras.Sequential()
+# Adds a densely-connected layer with 64 units to the model:
+model.add(layers.Dense(64, activation='relu'))
+# Add another:
+model.add(layers.Dense(64, activation='relu'))
+# Add a softmax layer with 10 output units:
+model.add(layers.Dense(10, activation='softmax'))
+
+#-------------------------------------
+# Configure the layers
+#-------------------------------------
+
+# Create a sigmoid layer:
+layers.Dense(64, activation='sigmoid')
+# Or:
+layers.Dense(64, activation=tf.keras.activations.sigmoid)
+# A linear layer with L1 regularization of factor 0.01 applied to the kernel matrix:
+layers.Dense(64, kernel_regularizer=tf.keras.regularizers.l1(0.01))
+# A linear layer with L2 regularization of factor 0.01 applied to the bias vector:
+layers.Dense(64, bias_regularizer=tf.keras.regularizers.l2(0.01))
+# A linear layer with a kernel initialized to a random orthogonal matrix:
+layers.Dense(64, kernel_initializer='orthogonal')
+# A linear layer with a bias vector initialized to 2.0s:
+layers.Dense(64, bias_initializer=tf.keras.initializers.Constant(2.0))
+
+#-------------------------------------
+# Train and evaluate
+#-------------------------------------
+
+model = tf.keras.Sequential([
+# Adds a densely-connected layer with 64 units to the model:
+layers.Dense(64, activation='relu', input_shape=(32,)),
+# Add another:
+layers.Dense(64, activation='relu'),
+# Add a softmax layer with 10 output units:
+layers.Dense(10, activation='softmax')])
+model.compile(optimizer=tf.keras.optimizers.Adam(0.01),
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+
+
+# Configure a model for mean-squared error regression.
+model.compile(optimizer=tf.keras.optimizers.Adam(0.01),
+              loss='mse',       # mean squared error
+              metrics=['mae'])  # mean absolute error
+
+# Configure a model for categorical classification.
+model.compile(optimizer=tf.keras.optimizers.RMSprop(0.01),
+              loss=tf.keras.losses.CategoricalCrossentropy(),
+              metrics=[tf.keras.metrics.CategoricalAccuracy()])
+
+#-------------------------------------
+# Train from NumPy data
+#-------------------------------------
+
+import numpy as np
+data = np.random.random((1000, 32))
+labels = np.random.random((1000, 10))
+model.fit(data, labels, epochs=10, batch_size=32)
+
+
+
+import numpy as np
+data = np.random.random((1000, 32))
+labels = np.random.random((1000, 10))
+val_data = np.random.random((100, 32))
+val_labels = np.random.random((100, 10))
+model.fit(data, labels, epochs=10, batch_size=32,
+          validation_data=(val_data, val_labels))
+
+
+
+#-------------------------------------
+# Train from tf.data datasets
+#-------------------------------------
+
+# Instantiates a toy dataset instance:
+dataset = tf.data.Dataset.from_tensor_slices((data, labels))
+dataset = dataset.batch(32)
+
+model.fit(dataset, epochs=10)
+dataset = tf.data.Dataset.from_tensor_slices((data, labels))
+dataset = dataset.batch(32)
+
+val_dataset = tf.data.Dataset.from_tensor_slices((val_data, val_labels))
+val_dataset = val_dataset.batch(32)
+
+model.fit(dataset, epochs=10,
+          validation_data=val_dataset)
+
+#-------------------------------------
+# Evaluate and predict
+#-------------------------------------
+
+# With Numpy arrays
+data = np.random.random((1000, 32))
+labels = np.random.random((1000, 10))
+
+model.evaluate(data, labels, batch_size=32)
+
+# With a Dataset
+dataset = tf.data.Dataset.from_tensor_slices((data, labels))
+dataset = dataset.batch(32)
+
+model.evaluate(dataset)
+
+result = model.predict(data, batch_size=32)
+print(result.shape)
+
+
+#-------------------------------------
+# Build complex models
+#-------------------------------------
+
+inputs = tf.keras.Input(shape=(32,))  # Returns an input placeholder
+
+# A layer instance is callable on a tensor, and returns a tensor.
+x = layers.Dense(64, activation='relu')(inputs)
+x = layers.Dense(64, activation='relu')(x)
+predictions = layers.Dense(10, activation='softmax')(x)
+
+model = tf.keras.Model(inputs=inputs, outputs=predictions)
+
+# The compile step specifies the training configuration.
+model.compile(optimizer=tf.keras.optimizers.RMSprop(0.001),
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+
+# Trains for 5 epochs
+model.fit(data, labels, batch_size=32, epochs=5)
+
+#-------------------------------------
+# Model subclassing
+#-------------------------------------
+
+class MyModel(tf.keras.Model):
+
+  def __init__(self, num_classes=10):
+    super(MyModel, self).__init__(name='my_model')
+    self.num_classes = num_classes
+    # Define your layers here.
+    self.dense_1 = layers.Dense(32, activation='relu')
+    self.dense_2 = layers.Dense(num_classes, activation='sigmoid')
+
+  def call(self, inputs):
+    # Define your forward pass here,
+    # using layers you previously defined (in `__init__`).
+    x = self.dense_1(inputs)
+    return self.dense_2(x)
+
+
+model = MyModel(num_classes=10)
+
+# The compile step specifies the training configuration.
+model.compile(optimizer=tf.keras.optimizers.RMSprop(0.001),
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+
+# Trains for 5 epochs.
+model.fit(data, labels, batch_size=32, epochs=5)
+
+
+
+
+#-------------------------------------
+# Custom layers
+#-------------------------------------
+
+class MyLayer(layers.Layer):
+
+  def __init__(self, output_dim, **kwargs):
+    self.output_dim = output_dim
+    super(MyLayer, self).__init__(**kwargs)
+
+  def build(self, input_shape):
+    # Create a trainable weight variable for this layer.
+    self.kernel = self.add_weight(name='kernel',
+                                  shape=(input_shape[1], self.output_dim),
+                                  initializer='uniform',
+                                  trainable=True)
+
+  def call(self, inputs):
+    return tf.matmul(inputs, self.kernel)
+
+  def get_config(self):
+    base_config = super(MyLayer, self).get_config()
+    base_config['output_dim'] = self.output_dim
+    return base_config
+
+  @classmethod
+  def from_config(cls, config):
+    return cls(**config)
+
+model = tf.keras.Sequential([
+    MyLayer(10),
+    layers.Activation('softmax')])
+
+# The compile step specifies the training configuration
+model.compile(optimizer=tf.keras.optimizers.RMSprop(0.001),
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+
+# Trains for 5 epochs.
+model.fit(data, labels, batch_size=32, epochs=5)
+
+
+#-------------------------------------
+# Callbacks
+#-------------------------------------
+
+callbacks = [
+  # Interrupt training if `val_loss` stops improving for over 2 epochs
+  tf.keras.callbacks.EarlyStopping(patience=2, monitor='val_loss'),
+  # Write TensorBoard logs to `./logs` directory
+  tf.keras.callbacks.TensorBoard(log_dir='./logs')
+]
+model.fit(data, labels, batch_size=32, epochs=5, callbacks=callbacks,
+          validation_data=(val_data, val_labels))
+
+
+
+#-------------------------------------
+# Save and restore
+#-------------------------------------
+
+model = tf.keras.Sequential([
+layers.Dense(64, activation='relu', input_shape=(32,)),
+layers.Dense(10, activation='softmax')])
+
+model.compile(optimizer=tf.keras.optimizers.Adam(0.001),
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+
+#-------------------------------------
+# Save weights to a TensorFlow Checkpoint file
+#-------------------------------------
+
+model.save_weights('./weights/my_model')
+
+# Restore the model's state,
+# this requires a model with the same architecture.
+model.load_weights('./weights/my_model')
+
+#-------------------------------------
+# Save weights to a HDF5 file
+#-------------------------------------
+
+model.save_weights('my_model.h5', save_format='h5')
+
+# Restore the model's state
+model.load_weights('my_model.h5')
+
+
+#-------------------------------------
+# Save just the model configuration
+#-------------------------------------
+
+# Serialize a model to JSON format
+json_string = model.to_json()
+json_string
+import json
+import pprint
+pprint.pprint(json.loads(json_string))
+
+fresh_model = tf.keras.models.model_from_json(json_string)
+
+yaml_string = model.to_yaml()
+print(yaml_string)
+fresh_model = tf.keras.models.model_from_yaml(yaml_string)
+
+
+
+
+#-------------------------------------
+# Save the entire model in one file
+#-------------------------------------
+
+# Create a simple model
+model = tf.keras.Sequential([
+  layers.Dense(10, activation='softmax', input_shape=(32,)),
+  layers.Dense(10, activation='softmax')
+])
+model.compile(optimizer='rmsprop',
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+model.fit(data, labels, batch_size=32, epochs=5)
+
+#-------------------------------------
+# Save entire model to a HDF5 file
+#-------------------------------------
+
+model.save('my_model.h5')
+
+# Recreate the exact same model, including weights and optimizer.
+model = tf.keras.models.load_model('my_model.h5')
+
+
+
+https://www.tensorflow.org/tutorials/load_data/csv?hl=de
+https://www.tensorflow.org/tutorials/keras/classification?hl=de
+https://www.tensorflow.org/tutorials/quickstart/beginner?hl=de
+https://www.tensorflow.org/install
+https://www.tensorflow.org/guide/?hl=de
+https://www.tensorflow.org/tensorboard?hl=de
+https://www.tensorflow.org/datasets?hl=de
+https://www.tensorflow.org/guide/eager?hl=de
+https://www.tensorflow.org/guide/checkpoint?hl=de
+https://www.tensorflow.org/guide/data?hl=de
+https://www.tensorflow.org/guide/effective_tf2?hl=de
+https://www.tensorflow.org/datasets/overview?hl=de
+https://www.tensorflow.org/tutorials/quickstart/beginner
+https://www.tensorflow.org/guide/keras/overview
+https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/guide/keras/overview.ipynb
+
+
+
+
+
+
+
+
+
+
+
+https://github.com/tensorflow/hub/blob/master/examples/colab/object_detection.ipynb
+
+
+#@title Imports and function definitions
+
+# Currently %tensorflow_version 2.x installs beta1, which doesn't work here.
+# %tensorflow_version can likely be used after 2.0rc0
+!pip install tf-nightly-gpu-2.0-preview
+
+# For running inference on the TF-Hub module.
+import tensorflow as tf
+
+import tensorflow_hub as hub
+
+# For downloading the image.
+import matplotlib.pyplot as plt
+import tempfile
+from six.moves.urllib.request import urlopen
+from six import BytesIO
+
+# For drawing onto the image.
+import numpy as np
+from PIL import Image
+from PIL import ImageColor
+from PIL import ImageDraw
+from PIL import ImageFont
+from PIL import ImageOps
+
+# For measuring the inference time.
+import time
+
+# Check available GPU devices.
+print("The following GPU devices are available: %s" % tf.test.gpu_device_name())
+
+def display_image(image):
+  fig = plt.figure(figsize=(20, 15))
+  plt.grid(False)
+  plt.imshow(image)
+
+
+def download_and_resize_image(url, new_width=256, new_height=256,
+                              display=False):
+  _, filename = tempfile.mkstemp(suffix=".jpg")
+  response = urlopen(url)
+  image_data = response.read()
+  image_data = BytesIO(image_data)
+  pil_image = Image.open(image_data)
+  pil_image = ImageOps.fit(pil_image, (new_width, new_height), Image.ANTIALIAS)
+  pil_image_rgb = pil_image.convert("RGB")
+  pil_image_rgb.save(filename, format="JPEG", quality=90)
+  print("Image downloaded to %s." % filename)
+  if display:
+    display_image(pil_image)
+  return filename
+
+
+def draw_bounding_box_on_image(image,
+                               ymin,
+                               xmin,
+                               ymax,
+                               xmax,
+                               color,
+                               font,
+                               thickness=4,
+                               display_str_list=()):
+  """Adds a bounding box to an image."""
+  draw = ImageDraw.Draw(image)
+  im_width, im_height = image.size
+  (left, right, top, bottom) = (xmin * im_width, xmax * im_width,
+                                ymin * im_height, ymax * im_height)
+  draw.line([(left, top), (left, bottom), (right, bottom), (right, top),
+             (left, top)],
+            width=thickness,
+            fill=color)
+
+  # If the total height of the display strings added to the top of the bounding
+  # box exceeds the top of the image, stack the strings below the bounding box
+  # instead of above.
+  display_str_heights = [font.getsize(ds)[1] for ds in display_str_list]
+  # Each display_str has a top and bottom margin of 0.05x.
+  total_display_str_height = (1 + 2 * 0.05) * sum(display_str_heights)
+
+  if top > total_display_str_height:
+    text_bottom = top
+  else:
+    text_bottom = bottom + total_display_str_height
+  # Reverse list and print from bottom to top.
+  for display_str in display_str_list[::-1]:
+    text_width, text_height = font.getsize(display_str)
+    margin = np.ceil(0.05 * text_height)
+    draw.rectangle([(left, text_bottom - text_height - 2 * margin),
+                    (left + text_width, text_bottom)],
+                   fill=color)
+    draw.text((left + margin, text_bottom - text_height - margin),
+              display_str,
+              fill="black",
+              font=font)
+    text_bottom -= text_height - 2 * margin
+
+
+def draw_boxes(image, boxes, class_names, scores, max_boxes=10, min_score=0.1):
+  """Overlay labeled boxes on an image with formatted scores and label names."""
+  colors = list(ImageColor.colormap.values())
+
+  try:
+    font = ImageFont.truetype("/usr/share/fonts/truetype/liberation/LiberationSansNarrow-Regular.ttf",
+                              25)
+  except IOError:
+    print("Font not found, using default font.")
+    font = ImageFont.load_default()
+
+  for i in range(min(boxes.shape[0], max_boxes)):
+    if scores[i] >= min_score:
+      ymin, xmin, ymax, xmax = tuple(boxes[i])
+      display_str = "{}: {}%".format(class_names[i].decode("ascii"),
+                                     int(100 * scores[i]))
+      color = colors[hash(class_names[i]) % len(colors)]
+      image_pil = Image.fromarray(np.uint8(image)).convert("RGB")
+      draw_bounding_box_on_image(
+          image_pil,
+          ymin,
+          xmin,
+          ymax,
+          xmax,
+          color,
+          font,
+          display_str_list=[display_str])
+      np.copyto(image, np.array(image_pil))
+  return image
+
+
+image_url = "https://farm1.staticflickr.com/4032/4653948754_c0d768086b_o.jpg"  #@param
+downloaded_image_path = download_and_resize_image(image_url, 1280, 856, True)
+
+
+module_handle = "https://tfhub.dev/google/faster_rcnn/openimages_v4/inception_resnet_v2/1" #@param ["https://tfhub.dev/google/openimages_v4/ssd/mobilenet_v2/1", "https://tfhub.dev/google/faster_rcnn/openimages_v4/inception_resnet_v2/1"]
+
+detector = hub.load(module_handle).signatures['default']
+
+def load_img(path):
+  img = tf.io.read_file(path)
+  img = tf.image.decode_jpeg(img, channels=3)
+  return img
+
+def run_detector(detector, path):
+  img = load_img(path)
+
+  converted_img  = tf.image.convert_image_dtype(img, tf.float32)[tf.newaxis, ...]
+  start_time = time.time()
+  result = detector(converted_img)
+  end_time = time.time()
+
+  result = {key:value.numpy() for key,value in result.items()}
+
+  print("Found %d objects." % len(result["detection_scores"]))
+  print("Inference time: ", end_time-start_time)
+
+  image_with_boxes = draw_boxes(
+      img.numpy(), result["detection_boxes"],
+      result["detection_class_entities"], result["detection_scores"])
+
+  display_image(image_with_boxes)
+
+
+run_detector(detector, downloaded_image_path)
+
+image_urls = ["https://farm7.staticflickr.com/8092/8592917784_4759d3088b_o.jpg",
+              "https://farm6.staticflickr.com/2598/4138342721_06f6e177f3_o.jpg",
+              "https://c4.staticflickr.com/9/8322/8053836633_6dc507f090_o.jpg"]
+
+for image_url in image_urls:
+  start_time = time.time()
+  image_path = download_and_resize_image(image_url, 640, 480)
+  run_detector(detector, image_path)
+  end_time = time.time()
+  print("Inference time:")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
