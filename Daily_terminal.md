@@ -12,7 +12,12 @@
 ##### Surf web
 * lynx t3n.de -accept_all_cookies  -justify
 
- 
+##### List 
+* list first 30 folders
+* ll -t | head -30 
+* list all folders from last 24 hours
+* find folder/ -maxdepth 2 -type f -name "*.json" -mtime -1 -exec grep -i 'string' {} \; 
+  
 ##### Generate Random Pass Ubuntu
 * date +%s | sha256sum | base64 | head -c 24 ; echo "@%&";
 * date +%s | sha1sum | base64 | head -c 12; echo "@%&";
