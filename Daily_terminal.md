@@ -26,10 +26,10 @@
 * date +%s | sha1sum | base64 | head -c 12; echo "@%&";
 
 ##### Ziping Unziping multiple Folders
-> unzip
-* for z in *.zip; do unzip $z; done
-> zip
-* for i in */; do zip -r "${i%/}.zip" "$i"; done
+cmd     | example
+--------|---------
+unzip   | for z in *.zip; do unzip $z; done
+zip     | for i in */; do zip -r "${i%/}.zip" "$i"; done
 
 ##### Convert Imagick
 * for i in *.png; do convert "$i" "${i%.png}.jpg" && rm "$i" && echo "$i is converted."; done
