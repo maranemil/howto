@@ -32,6 +32,19 @@ cmd     | example
 unzip   | for z in *.zip; do unzip $z; done
 zip     | for i in */; do zip -r "${i%/}.zip" "$i"; done
 
+
+##### Change date modified created file
+ * -a = accessed / -m = modified / -t = timestamp
+ 
+desc|cmd
+-----|-----
+generate file| touch {1..19}.jpg
+change date |touch -d "October 31"  filename.txt
+change date |touch -d '14:24' file.txt
+change date |touch -d "2 hours ago" filename
+
+
+
 ##### Convert Imagick
 * for i in *.png; do convert "$i" "${i%.png}.jpg" && rm "$i" && echo "$i is converted."; done
 * for i in *.png; do convert "$i" "${i%.*}.jpg" ; done
