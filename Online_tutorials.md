@@ -212,16 +212,26 @@
 | https://www.youtube.com/watch?v=WTOnKNjiPWU | Learn JavaScript: Full-Stack From Scratch |
 | https://www.youtube.com/watch?v=wxaKwHvyWoU | 5 Recruiting Strategies for Hiring the Best Technology Talent |
 | https://www.youtube.com/watch?v=Wy9q22isx3U | Vue JS Crash Course - 2019 |
-| https://www.youtube.com/watch?v=Wy9q22isx3U&t=18s | Vue JS Crash Course - 2019 |
 | https://www.youtube.com/watch?v=x14G4DCk4nY | Scratch Tutorial for Beginners |
 | https://www.youtube.com/watch?v=X2vAabgKiuM | Tutorial with Python & NLTK |
 | https://www.youtube.com/watch?v=xC8CGv1CyFk | C++ interview with a Google engineer |
 | https://www.youtube.com/watch?v=xnt2xSNRNn0 | Quantum Physics Full Course |
 | https://www.youtube.com/watch?v=xxpc-HPKN28 | Statistics - A Full University Course on Data Science Basics in 8 Hours  |
 | https://www.youtube.com/watch?v=YS4e4q9oBaU | Learn Go Programming - Golang Tutorial for Beginners |
-| https://www.youtube.com/watch?v=YS4e4q9oBaU&t=9s |  Learn Go Programming - Golang Tutorial for Beginners |
 | https://www.youtube.com/watch?v=YXPyB4XeYLA | Tkinter Course Python Tutorial |
-| https://www.youtube.com/watch?v=YZvRrldjf1Y&t=13s | How to Build an E-commerce Website with Django and Python |
+| https://www.youtube.com/watch?v=YZvRrldjf1Y | How to Build an E-commerce Website with Django and Python |
 | https://www.youtube.com/watch?v=zF34dRivLOw | Rust Crash Course | Rustlang |
 | https://www.youtube.com/watch?v=ztHopE5Wnpc | Database Design Course |
 | https://www.youtube.com/watch?v=gm1QtePAYTM | Canvas Crash Course Traversy Media | 
+| https://www.youtube.com/watch?v=T3TpdPmTLso | Mathematics for Machine Learning full Course | 
+| https://www.youtube.com/watch?v=WoFwXj4p4Sc | TD Learning, Game Theory | Stanford CS221 | 
+| https://www.youtube.com/watch?v=BDqvzFY72mg | Introduction to Power and Politics  | 
+| https://www.youtube.com/watch?v=vSuK2C89yjA | Stanford Webinar - Design Thinking | 
+| https://www.youtube.com/watch?v=eC3MGJIn3Us | Learn Assembly Language | 
+| https://www.youtube.com/watch?v=F_Riqjdh2oM | Quantum Computing for Computer Scientists | 
+| https://www.youtube.com/watch?v=I3Dk3i4GpU8 | Salesforce Full Course | 
+| https://www.youtube.com/watch?v=1vbXmCrkT3Y | Big Data & Hadoop Full Course  | 
+| https://www.youtube.com/watch?v=TlB_eWDSMt4 | Node.js Tutorial for Beginners | 
+| https://www.youtube.com/watch?v=NU_1StN5Tkk | Design Patterns in Plain English | 
+
+
