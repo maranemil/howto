@@ -3,8 +3,9 @@
 #### [Misc]
 
 ##### Config Git on new location
-* git config --global user.name "Administrator"
-* git config --global user.email "admin@example.com"
+- [x] git config --global user.name "Administrator"
+- [x] git config --global user.email "admin@example.com"
+- [ ] ...
 
 ##### Check repo file Sizes
 * find . -name '*' -size +1M -exec ls -lh {} \; | awk '{ print $9 ": " $5 }'
@@ -202,3 +203,6 @@ zip     | for i in */; do zip -r "${i%/}.zip" "$i"; done
 * sudo find / -type f -name '*.log' -size +20M
 * sudo truncate -s0 error_log
 
+### markup reference
+
+https://guides.github.com/features/mastering-markdown/
