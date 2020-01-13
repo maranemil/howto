@@ -1,3 +1,6 @@
+### [Daily CMDs] 
+
+#### [Misc]
 
 ##### Config Git on new location
 * git config --global user.name "Administrator"
@@ -13,18 +16,19 @@
 * lynx t3n.de -accept_all_cookies  -justify
 
 ##### List 
-* list first 30 folders
+> list first 30 folders
 * ll -t | head -30 
-* list all folders from last 24 hours
+> list all folders from last 24 hours
 * find folder/ -maxdepth 2 -type f -name "*.json" -mtime -1 -exec grep -i 'string' {} \; 
   
 ##### Generate Random Pass Ubuntu
 * date +%s | sha256sum | base64 | head -c 24 ; echo "@%&";
 * date +%s | sha1sum | base64 | head -c 12; echo "@%&";
 
-
 ##### Ziping Unziping multiple Folders
+> unzip
 * for z in *.zip; do unzip $z; done
+> zip
 * for i in */; do zip -r "${i%/}.zip" "$i"; done
 
 ##### Convert Imagick
@@ -46,11 +50,7 @@
 
 
 
-
-
-
-
-#### Audio Video
+#### [Audio Video]
 
 ##### Split audio file in 1 sec pieces FFMPEG
 * ffmpeg -i in.wav -map 0 -f segment -segment_time 1 -af "volume=6dB,equalizer=f=40:width_type=o:width=2:g=-7,areverse" -y dir/out%03d.wav
@@ -66,7 +66,7 @@
 
 
 
-####  Manage SWAP
+####  [Manage SWAP]
 
 ##### Add temporary Swap file on Ubuntu 18.04
 * sudo fallocate -l 6G /swapfile2 && sudo chmod 600 /swapfile2 && sudo mkswap /swapfile2 && sudo swapon /swapfile2 && sudo sysctl vm.swappiness=20
@@ -82,26 +82,23 @@
 
 
 
-#### Clean and Boost OS
+#### [Clean and Boost OS]
 
 
 ##### Utiles Daily
-
+> chrome chromium light loading
 * /usr/lib/chromium-browser/chromium-browser --disable-new-tab-first-run --enable-user-scripts --flag-switches-begin  --disable-accelerated-2d-canvas --disable-gpu-vsync --disable-threaded-animation --disable-webgl --js-flags=--harmony  --flag-switches-end --disable-gpu-process-prelaunch --no-sandbox
-
 * /usr/lib/chromium-browser/chromium-browser  --enable-user-scripts --flag-switches-begin --disable-accelerated-2d-canvas --disable-gpu-vsync --disable-threaded-animation --disable-webgl --js-flags=--harmony --flag-switches-end --disable-gpu-process-prelaunch --process-per-site --enable-low-end-device-mode --no-sandbox
-
 * /usr/lib/chromium-browser/chromium-browser  --enable-user-scripts --flag-switches-begin --disable-accelerated-2d-canvas --disable-gpu-vsync --disable-threaded-animation --disable-webgl --js-flags=--harmony --flag-switches-end --disable-gpu-process-prelaunch --enable-low-end-device-mode --no-sandbox --enable-low-res-tiling --process-per-site
-
 * /usr/lib/chromium-browser/chromium-browser  --enable-user-ripts --flag-switches-begin --disable-accelerated-2d-canvas --disable-gpu-vsync --disable-threaded-animation --disable-webgl --js-flags=--harmony --flag-switches-end --disable-gpu-process-prelaunch  --no-experiments --disable-notifications --no-referrers --new-window --enable-low-end-device-mode --restore-last-session --no-sandbox
-
 * /usr/lib/chromium-browser/chromium-browser  --enable-user-scripts --flag-switches-begin --disable-accelerated-2d-canvas --disable-gpu-vsync --disable-threaded-animation --disable-webgl --js-flags=--harmony --flag-switches-end --disable-gpu-process-prelaunch  --no-experiments --disable-notifications --no-referrers --new-window --enable-low-end-device-mode --restore-last-session  --no-sandbox --disable-gpu  --disable-software-rasterizer --enable-gpu-rasterization
 
-* chrome://flags
---no-sandbox --site-per-process --process-per-site --enable-low-end-device-mode --disk-cache-size=104857600
-
+> chrome://flags
+* --no-sandbox --site-per-process --process-per-site --enable-low-end-device-mode --disk-cache-size=104857600
+> firefox
 * firefox -purgecaches  -no-remote -new-tab -console
 
+> boost cpu
 * for i in {0..7}; do echo performance | sudo tee /sys/devices/system/cpu/cpu"$i"/cpufreq/scaling_governor ; done
 
 
@@ -151,7 +148,6 @@
 * sudo service mysql stop &&  sudo service apache2 stop &&  sudo service openvpn stop && sudo service virtualbox stop 
 * service --status-all
 
-
 ##### Accessing local data on VM using python SimpleHTTPServer
 * python -m SimpleHTTPServer
 * http://localhost:8000
@@ -187,11 +183,9 @@
 * find ~/.cache/pip/ -depth -type f -atime +3
 * ? ~/.local/lib/pythonX.X/site-packages
 
-
 #####  system  monitoring
 * gnome-system-monitor
 * baobab [GNOME Disk Usage Analyzer]
-
 
 ##### ubuntu optimisation - disable tracking and clear journalctl file
 * gsettings set org.freedesktop.Tracker.Miner.Files low-disk-space-limit 1
