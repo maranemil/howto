@@ -554,3 +554,55 @@ echo "<br>";
 echo mt_rand(100, 10000);
 echo "<br>";
 echo mt_rand(100, 10000);
+
+
+
+################################################
+#
+#	ZipArchive error
+#
+################################################
+/*
+https://www.php.net/manual/de/function.iconv.php
+https://www.php.net/manual/de/class.ziparchive.php
+https://www.php.net/manual/de/ziparchive.extractto.php
+https://www.php.net/manual/de/ziparchive.renamename.php
+https://www.php.net/manual/de/ziparchive.open.php
+https://www.php.net/manual/de/class.ziparchive.php
+https://github.com/yakamara/redaxo_yform/issues/616
+
+ZIPARCHIVE::ER_EXISTS - 10
+ZIPARCHIVE::ER_INCONS - 21
+ZIPARCHIVE::ER_INVAL - 18
+ZIPARCHIVE::ER_MEMORY - 14
+ZIPARCHIVE::ER_NOENT - 9
+ZIPARCHIVE::ER_NOZIP - 19
+ZIPARCHIVE::ER_OPEN - 11
+ZIPARCHIVE::ER_READ - 5
+ZIPARCHIVE::ER_SEEK - 4
+*/
+
+$zip = new ZipArchive;
+$res = $zip->open('test.zip');
+if ($res === TRUE) {
+    $zip->renameName('aktueller_name.txt','neuer_name.txt');
+    $zip->close();
+} else {
+    echo 'Fehler, Code:' . $res;
+}
+
+
+################################################
+#
+#	Iconv php call bash
+#
+################################################
+/*
+https://www.php.net/manual/de/function.iconv.php
+https://wiki.ubuntuusers.de/Skripte/Zeichensatzkonvertierung/
+*/
+exec("iconv -f ISO-8859-15 -t UTF-8 -o utf8datei.txt isodatei.txt");
+exec("iconv -f ISO-8859-14 Agreement.txt -t UTF-8 -o agreement.txt");
+
+
+
