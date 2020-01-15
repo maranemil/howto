@@ -233,7 +233,7 @@
 | https://www.youtube.com/watch?v=1vbXmCrkT3Y | Big Data & Hadoop Full Course  | 
 | https://www.youtube.com/watch?v=TlB_eWDSMt4 | Node.js Tutorial for Beginners | 
 | https://www.youtube.com/watch?v=NU_1StN5Tkk | Design Patterns in Plain English | 
-| https://www.youtube.com/watch?v=-EPMOaV7h_Q | SQL Server Tutorial For Beginners
+| https://www.youtube.com/watch?v=-EPMOaV7h_Q | SQL Server Tutorial For Beginners  |
 | https://www.youtube.com/watch?v=Qqx_wzMmFeA | JavaScript | 
 | https://www.youtube.com/watch?v=QS5ljM78FuM | What is Java | 
 
