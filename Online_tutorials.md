@@ -228,5 +228,6 @@
 | https://www.youtube.com/watch?v=YZvRrldjf1Y | How to Build an E-commerce Website with Django and Python |
 | https://www.youtube.com/watch?v=zF34dRivLOw | Rust Crash Course  Rustlang |
 | https://www.youtube.com/watch?v=ztHopE5Wnpc | Database Design Course |
+| https://www.youtube.com/watch?v=4TIvB8zDFio | Ultimate Freelancing Guide for Web Developers |
 
 
