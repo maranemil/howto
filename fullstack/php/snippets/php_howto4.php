@@ -629,6 +629,27 @@ https://www.geeksforgeeks.org/exception-handling-in-php/
 https://www.php.net/manual/de/class.exception.php
 https://blog.jetbrains.com/phpstorm/2017/11/bring-exceptions-under-control/
 
+
+Exception Analysis Unhandled exception JAVA
+https://blog.jetbrains.com/phpstorm/2017/09/phpstorm-2017-3-eap-173-2290/
+https://www.jetbrains.com/help/idea/php.html
+http://www.avajava.com/tutorials/lessons/how-do-i-surround-code-with-a-try-catch-block.html
+https://docs.oracle.com/javase/tutorial/essential/exceptions/runtime.html
+https://www.php.net/manual/en/class.errorexception.php
+https://www.php.net/manual/de/ref.errorfunc.php
+https://www.programcreek.com/java-api-examples/?api=com.intellij.psi.controlFlow.AnalysisCanceledException
+https://stackoverflow.com/questions/334319/does-wrapping-everything-in-try-catch-blocks-constitute-defensive-programming
+https://www.baeldung.com/java-chained-exceptions
+https://stackoverflow.com/questions/5020876/what-is-the-advantage-of-chained-exceptions
+https://www.php.net/manual/de/exception.construct.php
+https://rollbar.com/guides/php-exception-handling/#
+https://www.codediesel.com/php/handling-multiple-exceptions-in-php-7-1/
+https://www.codementor.io/@ahmedkhan847/how-php-7-handles-exceptions-class-errors-5k28fku72
+https://docs.oracle.com/javase/tutorial/essential/exceptions/
+http://www.fuwjax.com/how-slow-are-java-exceptions/
+
+
+
 Lists of Throwable and Exception tree as of 7.2.0
 
     Error
