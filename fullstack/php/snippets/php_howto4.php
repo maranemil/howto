@@ -607,6 +607,7 @@ exec("iconv -f ISO-8859-14 Agreement.txt -t UTF-8 -o agreement.txt");
 ################################################
 #
 #   Lists of Throwable and Exception tree as of 7.2.0
+#   Unhandled Exception - IntelliJ Platform PhpStorm
 #
 ################################################
 
