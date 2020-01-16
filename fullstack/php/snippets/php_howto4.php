@@ -604,5 +604,57 @@ https://wiki.ubuntuusers.de/Skripte/Zeichensatzkonvertierung/
 exec("iconv -f ISO-8859-15 -t UTF-8 -o utf8datei.txt isodatei.txt");
 exec("iconv -f ISO-8859-14 Agreement.txt -t UTF-8 -o agreement.txt");
 
+################################################
+#
+#   Lists of Throwable and Exception tree as of 7.2.0
+#
+################################################
+
+/*
+https://www.php.net/manual/en/function.set-exception-handler.php
+https://www.php.net/manual/en/function.set-error-handler.php
+https://www.php.net/manual/en/language.exceptions.php
+https://www.php.net/manual/en/language.exceptions.extending.php
+https://www.php.net/manual/de/class.errorexception.php
+https://www.php.net/manual/de/class.error.php
+https://www.php.net/manual/de/language.errors.php7.php
+https://www.php.net/manual/en/language.errors.php7.php
+https://www.php.net/manual/en/class.throwable.php
+https://www.php.net/manual/en/language.errors.php7.php
+https://www.php.net/manual/de/language.exceptions.php
+http://phptester.net/
+
+Lists of Throwable and Exception tree as of 7.2.0
+
+    Error
+      ArithmeticError
+        DivisionByZeroError
+      AssertionError
+      ParseError
+      TypeError
+        ArgumentCountError
+    Exception
+      ClosedGeneratorException
+      DOMException
+      ErrorException
+      IntlException
+      LogicException
+        BadFunctionCallException
+          BadMethodCallException
+        DomainException
+        InvalidArgumentException
+        LengthException
+        OutOfRangeException
+      PharException
+      ReflectionException
+      RuntimeException
+        OutOfBoundsException
+        OverflowException
+        PDOException
+        RangeException
+        UnderflowException
+        UnexpectedValueException
+      SodiumException
+*/
 
 
