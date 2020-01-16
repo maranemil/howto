@@ -623,6 +623,10 @@ https://www.php.net/manual/en/class.throwable.php
 https://www.php.net/manual/en/language.errors.php7.php
 https://www.php.net/manual/de/language.exceptions.php
 http://phptester.net/
+https://stackify.com/php-try-catch-php-exception-tutorial/
+https://www.geeksforgeeks.org/exception-handling-in-php/
+https://www.php.net/manual/de/class.exception.php
+https://blog.jetbrains.com/phpstorm/2017/11/bring-exceptions-under-control/
 
 Lists of Throwable and Exception tree as of 7.2.0
 
