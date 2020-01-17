@@ -227,7 +227,61 @@ wget -r -np -R "index.html*" http://example.com/configs/.vim/
 
 
 
+#########################################################
+#
+#	Run cron job only if it isn't already running
+#
+#########################################################
 
+https://stackoverflow.com/questions/2366693/run-cron-job-only-if-it-isnt-already-running
+https://github.com/phpservermon/phpservermon/issues/317
+https://bencane.com/2015/09/22/preventing-duplicate-cron-job-executions/
+
+
+ps ufx | grep cron
+ps -ef|grep '[m]yscript'
+ps -fu $LOGNAME | grep '[m]yscript'
+
+-------------------
+
+#!/bin/sh
+if ps -ef | grep -v grep | grep doctype.php ; then
+        exit 0
+else
+        /home/user/bin/doctype.php >> /home/user/bin/spooler.log &
+        #mailing program
+        /home/user/bin/simplemail.php "Print spooler was not running...  Restarted."
+        exit 0
+fi
+
+-------------------
+
+#!/bin/bash
+mkdir -p "$HOME/tmp"
+PIDFILE="$HOME/tmp/myprogram.pid"
+if [ -e "${PIDFILE}" ] && (ps -u $(whoami) -opid= |
+                           grep -P "^\s*$(cat ${PIDFILE})$" &> /dev/null); then
+  echo "Already running."
+  exit 99
+fi
+/path/to/myprogram > $HOME/tmp/myprogram.log &
+echo $! > "${PIDFILE}"
+chmod 644 "${PIDFILE}"
+
+-------------------
+
+#php
+if (shell_exec('ps aux | grep ' . __FILE__ . ' | wc  -l') > 1) {
+    exit('already running...');
+}
+// do stuff
+-------------------
+#php
+$pid = shell_exec('pidof -x cron.php');
+if ($pid) {
+    exit('script is already running');
+}
+system("nohup cron.php > /dev/null &");
 
 
 

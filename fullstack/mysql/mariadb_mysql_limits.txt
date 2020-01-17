@@ -37,3 +37,47 @@ Using the innodb_page_size system variable, you can configure the size in bytes 
 
 MariaDB instances using one page size cannot use data files or log files from an instance using a different page size.
 When using a Page Size of 4KB or 8KB, the maximum index key length is lowered proportionately.
+
+
+
+#########################################################
+#
+#	Partitioning
+#	https://dev.mysql.com/doc/refman/8.0/en/partitioning.html
+#	http://mysql.rjweb.org/doc.php/summarytables
+#	https://dba.stackexchange.com/questions/208427/how-to-optimize-mysql-table-of-2-billions-rows
+#	https://dev.mysql.com/doc/refman/5.6/en/optimizing-innodb.html
+#	https://www.oracle.com/partners/en/knowledge-zone/mysql-5-5-innodb-myisam-522945.pdf
+#	https://github.com/major/MySQLTuner-perl
+#
+#########################################################
+
+How to optimize mysql table of 2 billions rows?
+
+Use InnoDB.
+Normalize entityType or turn it into an ENUM.
+Change INT UNSIGNED (always 4 bytes) into a suitable sized int)
+
+If the 3-column key is unique, then make it the PRIMARY KEY and toss id
+id, if kept, will need to be BIGINT UNSIGNED -- you are getting too close to the 4 billion limit of INT UNSIGNED.
+
+The optimal order for the index: (entityId, entityType, timeStamp), or possibly (entityId, timeStamp)
+Minimize the number of indexes on a DataWarehouse table.
+
+For purging data after a year, DELETE will be painful. Instead PARTITION BY RANGE and use months: http://mysql.rjweb.org/doc.php/partitionmaint
+If you get in trouble with the ingestion rate: http://mysql.rjweb.org/doc.php/staging_table
+
+If you keep id, then do this trick:
+PRIMARY KEY (entityId, timeStamp, id) INDEX(id)
+
+-----
+
+--log-queries-not-using-indexes enabled,
+show databases;
+select schema_name "Database" from information_schema.schemata;
+show create table information_schema.schemata\G
+show global status like 'uptime'; select * from information_schema.global_status where variable_name='uptime';
+
+
+
+
