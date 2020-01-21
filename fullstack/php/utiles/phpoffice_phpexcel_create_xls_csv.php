@@ -175,7 +175,6 @@ $objWriter->save('php://output');
 #
 #########################################################
 
-
 /*
 https://phpspreadsheet.readthedocs.io/en/develop/
 https://phpspreadsheet.readthedocs.io/en/develop/topics/accessing-cells/
@@ -209,4 +208,50 @@ header('Cache-Control: max-age=0');
 
 $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xls');
 $writer->save('php://output');
+
+
+
+
+
+#########################################################
+#
+#   write a newline character n in a cell altenter
+#
+#########################################################
+
+/*
+ * https://phpspreadsheet.readthedocs.io/en/latest/topics/accessing-cells/
+ * https://phpspreadsheet.readthedocs.io/en/latest/topics/worksheets/
+ * https://phpspreadsheet.readthedocs.io/en/latest/topics/reading-and-writing-to-file/#csv-comma-separated-values
+ * https://phpspreadsheet.readthedocs.io/en/latest/topics/recipes/#write-a-newline-character-n-in-a-cell-altenter
+ * https://phpspreadsheet.readthedocs.io/en/latest/
+ * https://phpspreadsheet.readthedocs.io/en/latest/
+ * https://github.com/PHPOffice/PhpSpreadsheet/releases/tag/1.7.0
+ * https://github.com/PHPOffice/PhpSpreadsheet/releases
+ * https://phpspreadsheet.readthedocs.io/en/latest/#installation
+ * */
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+
+$str1 = "My String1";
+$str2 = "My String2";
+
+$spreadsheet = new Spreadsheet();
+$spreadsheet->getActiveSheet()->getCell('A1')->setValue($str1 . PHP_EOL . $str2);
+$spreadsheet->getActiveSheet()->getStyle('A1')->getAlignment()->setWrapText(true);
+$spreadsheet->getActiveSheet()->getCell('B1')->setValue("wello norld");
+#$spreadsheet->getActiveSheet()->getStyle('B1')->getAlignment()->setWrapText(true);
+# write an Excel XLS
+$writer = new \PhpOffice\PhpSpreadsheet\Writer\Xls($spreadsheet);
+$writer->save("05featuredemo.xls");
+
+/*
+# write an CSV
+$writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($spreadsheet);
+$writer->setDelimiter(';');
+$writer->setEnclosure('');
+$writer->setLineEnding("\r\n");
+$writer->setSheetIndex(0);
+$writer->setUseBOM(true);
+$writer->save("05featuredemo.csv");*/
 
