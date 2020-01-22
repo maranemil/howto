@@ -491,9 +491,36 @@ var_dump(validateDate('1970-12-01'));  // true
 var_dump(validateDate('2012-02-29'));  // true
 var_dump(validateDate('2012', 'Y'));   // true
 var_dump(validateDate('12012', 'Y'));  // false
-
 var_dump(checkdate(12, 31, 2000));
 var_dump(checkdate(2, 29, 2001));
+
+
+/*
+How to Validate Date String in PHP
+https://www.codexworld.com/how-to/validate-date-input-string-in-php/
+https://www.php.net/manual/en/function.date.php
+http://wifo5-03.informatik.uni-mannheim.de/bizer/rdfapi/phpdoc/sparql/_sparql---FilterFunctions.php.html
+https://www.geeksforgeeks.org/php-checkdate-function/
+*/
+
+function validateDate($date, $format = 'Y-m-d'){
+    $d = DateTime::createFromFormat($format, $date);
+    return $d && $d->format($format) === $date;
+}
+
+var_dump(validateDate('2018-12-01'));
+var_dump(validateDate('2018-2-5', 'Y-n-j'));
+
+// ----
+
+$month = 12;
+$day = 31;
+$year = 2017;
+// returns a boolean value after validation of date
+var_dump(checkdate($month, $day, $year));
+
+
+
 
 ##################################################
 #
