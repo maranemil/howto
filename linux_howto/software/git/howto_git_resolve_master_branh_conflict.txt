@@ -77,14 +77,12 @@ git reset --hard HEAD~3  # go back in time
 git reset --hard HEAD@{1}  # oops, that was a mistake, undo it!
 git stash apply  # and bring back my working tree changes
 
-
-resources
+[resources]
 https://www.atlassian.com/git/tutorials/saving-changes/git-stash
 https://www.atlassian.com/git/tutorials/undoing-changes/git-reset
 http://www.artificialworlds.net/presentations/difficult-merges-in-git/difficult-merges-in-git.html
 https://jwiegley.github.io/git-from-the-bottom-up/3-Reset/4-doing-a-hard-reset.html
 https://www.theserverside.com/video/How-to-use-the-git-reset-hard-command-to-change-a-commit-history
-
 
 #######################################################
 #
@@ -106,8 +104,78 @@ git clean -fd
 #To remove ignored files, run
 git clean -f -X or git clean -fX
 
+#############################################################################
+#
+#   Reset Current Branch to Here
+#   https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000713344--Reset-Current-Branch-to-Here-on-local-untracked-branch-commit-history-lost-
+#   https://stackoverflow.com/questions/5473/how-can-i-undo-git-reset-hard-head1
+#   https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging
+#
+#############################################################################
+
+git reset --hard <sha1 of desired commit>
+git reset / git reflog
+
+git reset --hard HEAD@{1}	# go one commit backward
+git reset --hard HEAD^ 		# go one commit backward
+git reset --hard f6e5064 	# reset to specific commit
 
 
+[test reset]
 
+$ git init 						# Initialized empty Git repository in .git/
+$ echo "testing reset" > file1
+$ git add file1
+$ git commit -m 'added file1' 	# Created initial commit 1a75c1d: added file1  1 files changed, 1 insertions(+), 0 deletions(-)  create mode 100644 file1
+$ echo "added new file" > file2
+$ git add file2
+$ git commit -m 'added file2' 	# Created commit f6e5064: added file2  1 files changed, 1 insertions(+), 0 deletions(-)  create mode 100644 file2
+$ git reset --hard HEAD^ 		# HEAD is now at 1a75c1d... added file1
+$ cat file2						# cat: file2: No such file or directory
+$ git reflog					# 1a75c1d... HEAD@{0}: reset --hard HEAD^: updating HEAD     f6e5064... HEAD@{1}: commit: added file2
+$ git reset --hard f6e5064 		# HEAD is now at f6e5064... added file2
+$ cat file2						# added new file
+
+#############################################################################
+#
+#   What's the difference between git reset --mixed, --soft, and --hard?
+#   https://stackoverflow.com/questions/2530060/in-plain-english-what-does-git-reset-do
+#   https://stackoverflow.com/questions/3528245/whats-the-difference-between-git-reset-mixed-soft-and-hard
+#
+#############################################################################
+
+--soft: uncommit changes, changes are left staged (index).
+--mixed (default): uncommit + unstage changes, changes are left in working tree.
+--hard: uncommit + unstage + delete changes, nothing left.
+
+#############################################################################
+#
+#   Restore a deleted folder in a Git repo
+#   https://stackoverflow.com/questions/30875205/restore-a-deleted-folder-in-a-git-repo
+#
+#############################################################################
+
+Files are deleted from working tree but not committed yet:
+git checkout -- path/to/folder
+
+If the deletion is already indexed, you should reset that first:
+git reset -- path/to/folder
+git checkout -- path/to/folder
+
+Restore the full working tree (not a single folder), but lose all uncommitted changes
+git reset --hard HEAD
+
+When files are deleted in some commit in the past:
+git rev-list -n 1 HEAD -- <file_path>
+git checkout <deleting_commit>^ -- <file_path>
+
+Restore the full working tree from a distant commit
+git reset --hard <revision>
+
+If you have not yet commited your changes you can revert content or a directory:
+git checkout -- removed_directory
+
+If you want to revert all changes do:
+git reset --hard HEAD
 
 
