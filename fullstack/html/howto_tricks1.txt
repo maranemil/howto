@@ -87,3 +87,90 @@ https://html-online.com/editor/
 
 FIX: Add autocomplete:
 <input type="password" name="password"> to <input type="password" name="password" autocomplete="on">
+
+
+##################################################################
+#
+#	Referrer-Policy: no-referrer-when-downgrade / Remote Address: *:80
+#
+##################################################################
+
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy
+https://www.w3.org/TR/referrer-policy/
+https://www.scip.ch/?labs.20180308
+https://scotthelme.co.uk/a-new-security-header-referrer-policy/
+https://www.blackhillsinfosec.com/fix-missing-referrer-policy-website/
+https://www.chromestatus.com/feature/6251880185331712
+https://searchengineland.com/need-know-referrer-policy-276185
+https://help.nextcloud.com/t/the-referrer-policy-http-header-is-not-set-to-no-referrer/36613/20
+https://github.com/w3c/webappsec-referrer-policy/issues/94
+
+
+
+ERR: Failed to set referrer policy: The value 'http://example.com/comic/' is not one of 'always', 'default', 'never', 'no-referrer', 'no-referrer-when-downgrade', 'origin', 'origin-when-crossorigin', or 'unsafe-url'. The referrer policy has been left unchanged.
+
+FIX: Referrer-Policy: strict-origin-when-cross-origin;
+FIX: X-Permitted-Cross-Domain-Policies: none;
+
+This is the default behavior if no policy is specified, or if the provided value is invalid. The origin, path, and querystring of the URL are sent as a referrer when the protocol security level stays the same (HTTP→HTTP, HTTPS→HTTPS) or improves (HTTP→HTTPS), but isn't sent to less secure destinations (HTTPS→HTTP).
+
+
+#-----------------
+[HTML]
+#-----------------
+<meta name="referrer" content="origin">
+<a href="http://example.com" referrerpolicy="origin">
+<a href="http://example.com" rel="noreferrer">
+
+<meta name="referrer" content="origin">
+<!-- Following this link will send the origin as the referrer. -->
+<a href="http://nonsecure-partner.com">Click me</a>
+<!-- iframe.html will be requested with the document's full URL as the referrer. -->
+<iframe src="https://advertising-partner.com/iframe.html" referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+
+
+Specifying a fallback policy
+Referrer-Policy: no-referrer, strict-origin-when-cross-origin
+
+Browser Cache-> Referrer Policy->?
+
+#-----------------
+# apache2
+#-----------------
+<VirtualServer>
+    <IfModule headers_module>
+    	RequestHeader set X-HTTPS 1
+        Header set Referrer-Policy "no-referrer-when-downgrade"
+    </IfModule>
+</VirtualServer>
+
+or .htaccess
+
+<IfModule mod_env.c>
+    # Add security and privacy related headers
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set X-Robots-Tag "none"
+    Header set X-Download-Options "noopen"
+    Header set X-Permitted-Cross-Domain-Policies "none"
+    Header set Referrer-Policy "no-referrer"
+    SetEnv modHeadersAvailable true
+</IfModule>
+
+<IfModule mod_headers.c>
+	Header always set Strict-Transport-Security “max-age=15552000; includeSubDomains”
+	Header always set Referrer-Policy no-referrer
+</IfModule>
+
+sudo service apache restart
+
+#-----------------
+#server nginx
+#-----------------
+server {
+    # Configuration
+    add_header Referrer-Policy no-referrer always;
+}
+
+
