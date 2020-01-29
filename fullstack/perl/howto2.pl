@@ -90,4 +90,53 @@ http://docs.wand-py.org/en/0.5.4/guide/colorspace.html
 =cut
 
 
+###########################################
+#
+#   Classes and Objects in Perl
+#
+###########################################
+
+=head
+https://www.codesdope.com/perl-classes-and-objects/
+https://perldoc.perl.org/perlobj.html
+https://www.tutorialspoint.com/perl/perl_object_oriented.htm
+http://wwwacs.gantep.edu.tr/docs/perl-ebook/ch19.htm
+http://learnperl.scratchcomputing.com/tutorials/objects/
+https://www.perltutorial.org/perl-oop/
+https://metacpan.org/pod/perlootut
+https://www.perl.com/article/25/2013/5/20/Old-School-Object-Oriented-Perl/
+https://www.geeksforgeeks.org/perl-classes-in-oop/
+https://www.manning.com/books/object-oriented-perl
+https://metacpan.org/pod/Moose::Manual
+https://metacpan.org/pod/Moose
+=cut
+
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+package Student;
+
+#constructor
+sub new{
+
+  #the package name 'Student' is in the default array @_
+  #shift will take package name 'student' and assign it to variable 'class'
+  my $class = shift;
+
+  #object
+  my $self = {
+    'name' => shift,
+    'roll_number' => shift
+  };
+
+  #blessing self to be object in class
+  bless $self, $class;
+
+  #returning object from constructor
+  return $self;
+}
+
+my $obj = new Student("Sam",01);
+print "$obj->{'name'}\n";
 
