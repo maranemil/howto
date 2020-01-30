@@ -293,6 +293,14 @@ https://code-maven.com/slides/perl-programming/solution-parse-ini-file
 https://perlmaven.com/reading-configuration-files-in-perl
 http://perl.mines-albi.fr/perl5.6.1/site_perl/5.6.1/Config/IniFiles.html
 https://manpages.debian.org/stretch/libconfig-inifiles-perl/Config::IniFiles.3pm.en.html
+https://www.codesdope.com/perl-classes-and-objects/
+https://www.tutorialspoint.com/perl/perl_files.htm
+https://www.tutorialspoint.com/perl/perl_object_oriented.htm
+https://perldoc.perl.org/functions/open.html
+https://perlmaven.com/open-and-read-from-files
+https://perldoc.perl.org/perlobj.html
+http://www.hidemail.de/blog/open-perl.shtml
+https://perlmaven.com/trim
 
 =cut
 
