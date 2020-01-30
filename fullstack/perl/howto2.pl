@@ -37,9 +37,11 @@ https://imagemagick.org/script/perl-magick.php
 
 
 
-################################################
-# Using Imagemagick
-################################################
+#######################################################################
+#
+#   Using Imagemagick
+#
+#######################################################################
 
 #!/usr/local/bin/perl -w
 #!/usr/bin/perl
@@ -90,11 +92,11 @@ http://docs.wand-py.org/en/0.5.4/guide/colorspace.html
 =cut
 
 
-###########################################
+#######################################################################
 #
 #   Classes and Objects in Perl
 #
-###########################################
+#######################################################################
 
 =head
 https://www.codesdope.com/perl-classes-and-objects/
@@ -140,3 +142,56 @@ sub new{
 my $obj = new Student("Sam",01);
 print "$obj->{'name'}\n";
 
+
+#######################################################################
+#
+#   How can I determine the local machine's IP addresses from Perl?
+#
+#######################################################################
+
+=head
+
+https://stackoverflow.com/questions/330458/how-can-i-determine-the-local-machines-ip-addresses-from-perl
+http://fseitz.de/blog/index.php?/archives/114-Perl-Hostname-zu-IP-Adresse-ermitteln.html
+http://fseitz.de/blog/index.php?/archives/128-Perl-Erreichbarkeit-eines-Host-pruefen.html
+https://www.perl-community.de/bat/poard/thread/19795
+https://www.perlmonks.org/?node_id=44734
+https://www.tutorialspoint.com/perl/perl_socket_programming.htm
+https://docstore.mik.ua/orelly/perl2/prog/ch16_05.htm
+
+=cut
+
+# v1
+use Sys::Hostname;
+use Socket;
+my($addr)=inet_ntoa((gethostbyname(hostname))[4]);
+print "$addr\n";
+
+# v2
+use Net::Address::IP::Local;
+# Get the local system's IP address that is "en route" to "the internet":
+my $address      = Net::Address::IP::Local->public;
+
+# v3
+use Socket;
+use Sys::Hostname;
+my $hostname = hostname();
+my     $name ='yahoo.com';
+my       $ip = inet_ntoa(scalar(gethostbyname($name)) || 'localhost');
+my     $myip = inet_ntoa(scalar(gethostbyname($hostname)));
+print $ip, "\n", $myip;
+
+
+#######################################################################
+#
+#   sleep in Perl
+#   http://www.hidemail.de/blog/perl-sleep.shtml
+#
+#######################################################################
+
+#!/usr/bin/perl
+use strict;
+
+print "Ich schlafe jetzt 10 Sekunden...\n";
+sleep(10);
+print "Nun bin ich wieder wach!\n";
