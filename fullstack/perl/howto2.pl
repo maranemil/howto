@@ -195,3 +195,157 @@ use strict;
 print "Ich schlafe jetzt 10 Sekunden...\n";
 sleep(10);
 print "Nun bin ich wieder wach!\n";
+
+
+#######################################################################
+#
+#   Read project path
+#
+#######################################################################
+
+=head
+
+how to get the exact full path to a file in perl - Stack Overflow
+https://stackoverflow.com/questions/12291180/how-to-get-the-exact-full-path-to-a-file-in-perl
+https://perldoc.perl.org/File/Basename.html
+https://alvinalexander.com/perl/edu/articles/pl020002
+https://alvinalexander.com/perl/edu/qanda/plqa00014
+https://perldoc.perl.org/Env.html
+https://perldoc.perl.org/perlvar.html#General-Variables
+https://www.regular-expressions.info/perl.html
+https://stackoverflow.com/questions/3440363/perl-use-s-replace-and-return-new-string/3440474
+https://caveofprogramming.com/perl-tutorial/perl-replace-substring.html
+https://stackoverflow.com/questions/84932/how-do-i-get-the-full-path-to-a-perl-script-that-is-executing/90721
+https://stackoverflow.com/questions/4045253/converting-relative-path-into-absolute-path
+
+=cut
+
+#!/usr/bin/perl
+use Cwd;
+
+my $dir = getcwd;			# absolute path to current dir
+use Cwd 'abs_path';
+my $abs_path = abs_path($file);
+
+
+
+#!/usr/bin/perl
+use Cwd;
+use Cwd 'abs_path';
+
+print getcwd."\n";			# absolute path to current dir
+print basename($0)."\n"; 	# current file name
+print getcwd($0)."\n";		# absolute path to current dir
+print abs_path($0)."\n";	# absolute path to current dir + basename(filename)
+print __FILE__."\n";		# aka basename($0)
+
+
+use File::Basename;
+my $dirname = dirname(__FILE__); # current dir
+print $dirname."\n";
+
+
+use FindBin;
+print "The actual path to this is: $FindBin::Bin/$FindBin::Script\n";
+# absolute path to current dir + basename(filename)
+
+
+use Cwd qw(abs_path);
+my $path = abs_path($0); # absolute path to current dir + basename(filename)
+print "$path\n";
+
+#-------------------------------------------------
+# read ENV
+#-------------------------------------------------
+print $ENV{'PATH'}; # env perl
+foreach (sort keys %ENV) {
+  print "$_  =  $ENV{$_}\n";
+}
+
+
+#-------------------------------------------------
+# Get absolute path Project referenced to a file ***
+#-------------------------------------------------
+
+sub replace {
+    my ($from,$to,$string) = @_;
+    $string =~s/$from/$to/ig;                          #case-insensitive/global (all occurrences)
+    return $string;
+}
+
+use Cwd;
+use Cwd 'abs_path';
+use File::Basename;
+my $ABS_PATH = replace("current/path/file.pm","",abs_path(__FILE__));
+
+
+#######################################################################
+#
+#	Read Ini Files
+#
+#######################################################################
+
+=head
+
+https://metacpan.org/pod/Config::IniFiles
+https://stackoverflow.com/questions/2014862/how-can-i-access-ini-files-from-perl
+https://code-maven.com/slides/perl-programming/solution-parse-ini-file
+https://perlmaven.com/reading-configuration-files-in-perl
+http://perl.mines-albi.fr/perl5.6.1/site_perl/5.6.1/Config/IniFiles.html
+https://manpages.debian.org/stretch/libconfig-inifiles-perl/Config::IniFiles.3pm.en.html
+
+=cut
+
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Data::Dumper qw(Dumper);
+use Config::IniFiles;
+my $cfg = Config::IniFiles->new( -file => "/path/configfile.ini" );
+print "The value is " . $cfg->val( 'Section', 'Parameter' ) . "."
+  if $cfg->val( 'Section', 'Parameter' );
+
+
+
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Data::Dumper qw(Dumper);
+use Config::Tiny;
+$Config = Config::Tiny->read( 'file.conf' );
+my $one = $Config->{section}->{one};
+my $Foo = $Config->{section}->{Foo};
+
+
+
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Data::Dumper qw(Dumper);
+use Config::Tiny;
+my $filename = shift or die "Usage: $0 filename\n";
+open my $fh, '<', $filename or die "Could not open '$filename' $!";
+my $data = Config::Tiny->read( $filename );
+print Dumper $data;
+
+
+#!/usr/bin/perl
+my $searched_string;
+my $key;
+my $localConfig = "/path/to/file.txt";
+open (FILE, $localConfig) or die "Can't open: $!";
+#while(<FILE>) {
+#    print "$_";
+#}
+while (<FILE>) {
+    if ($_ =~ m"^searched_string") {
+        ($key, $searched_string) = split(/=/, $_);
+        #print "$_";
+    }
+}
+$searched_string =~ s/^\s+|\s+$//g; // trim left right
+#$this->{'searched_string'} = $searched_string;
+
+
+
+
