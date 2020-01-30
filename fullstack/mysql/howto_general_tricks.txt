@@ -1142,5 +1142,24 @@ http://sqlfiddle.com/#!9/71953/4
 
 
 
-https://www.script-example.com/php-suchstring
-http://www.ichmaschine.org/
+######################################################################################
+#
+# INSERT DUPLICATE WITH IF CHECK == WHERE EXISTS / WHERE NOT EXISTS
+#
+######################################################################################
+
+# https://stackoverflow.com/questions/2469457/insert-on-duplicate-key-update-with-where
+# https://stackoverflow.com/questions/23673721/mysql-two-tables-copy-one-column/56566608#56566608
+# https://stackoverflow.com/questions/3164505/mysql-insert-record-if-not-exists-in-table/3164595
+# https://www.codeproject.com/Questions/1090743/Mysql-insert-record-if-not-exists-already
+# https://www.mysqltutorial.org/mysql-exists/
+# https://ypereirareis.github.io/blog/2016/03/22/mysql-insert-ignore-alternatives/
+# https://stackoverflow.com/questions/1361340/how-to-insert-if-not-exists-in-mysql
+
+INSERT INTO `mytable` (`col1`, `col2`, `col3`, `col4`)
+		SELECT *
+			FROM (SELECT 'some_string_or_id',  NOW(), 4, 1 ) as tmp
+			WHERE EXISTS (
+					SELECT `col1` FROM  `mytable` WHERE `col4` = 1 AND `col1`= 'some_string_or_id'
+			)  LIMIT 1
+ON DUPLICATE KEY UPDATE col2 = NOW(), col3= ROUND(RAND()*5);
