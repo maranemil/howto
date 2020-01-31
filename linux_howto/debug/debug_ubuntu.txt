@@ -91,3 +91,87 @@ netstat -l -p -a -n
 
 # setting LLMNR=no in /etc/systemd/resolved.conf
 systemctl restart systemd-resolved.service
+
+
+######################################################################################
+
+
+
+journalctl -p 3 -xb
+journalctl -b0 -p4
+dmesg | grep -i acpi\ error
+lshw -numeric -class video
+lspci -k | grep -iEA5 'vga|3d|display'
+lspci -vvn | grep -i VGA
+lspci -vvnn
+xrandr -q
+lspci
+inxi -Fxz
+lspci -nnk
+lsmod
+uname -a
+dmidecode
+cat /proc/cmdline
+lsb_release -rd
+
+cat /proc/sys/fs/file-max
+grep fs.file /etc/sysctl.conf
+ulimit -a
+
+# https://wiki.ubuntuusers.de/Bootoptionen/
+
+sudo x86_energy_perf_policy -v normal
+sudo x86_energy_perf_policy -v performance
+
+cat /proc/cpuinfo | grep -i mhz
+cat /proc/cpuinfo | grep "model name"
+cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+
+
+VALUE STRING        EPB  EPP
+performance         0    0
+balance-performance 4    128
+normal, default     6    128
+balance-power       8    192
+power               15   255
+
+
+sudo ubuntu-drivers autoinstall
+sudo reboot
+systemctl poweroff --force
+sudo shutdown now -P
+
+
+lsmod | grep acpi
+sudo modprobe thinkpad_acpi
+sudo modprobe -rfv rt5390sta
+sudo modprobe -v rt2800pci
+sudo update-initramfs -u -t
+
+# HIDE error msgs during boot, still exists in dmesg results.
+sudo bash -c "echo ‘kernel.printk = 3 3 3 3’ > /etc/sysctl.d/20-quiet-printk.conf’"
+
+
+sudo gedit /etc/default/grub
+"quiet splash nolapic"
+sudo update-grub
+
+
+sudo nano /etc/default/grub
+GRUB_CMDLINE_LINUX_DEFAULT="quiet loglevel=3"
+#GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+
+
+cd /etc/default
+sudo vi grub
+GRUB_CMDLINE_LINUX_DEFAULT=“quiet splash pci=noacpi”
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash acpi_osi=Linux acpi_backlight=vendor"
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash acpi=off"
+sudo update-grub
+
+
+sudo apt install acpi
+acpi -i
+acpi=off # allows the system to boot, try to isolate the ACPI issue
+
