@@ -517,7 +517,67 @@ $o->_initialize('test2'); # set a string
 
 
 
+########################################################################
+#
+#   Check if instance of
+#
+########################################################################
+
+# https://www.tutorialspoint.com/execute_perl_online.php
+# https://perldoc.perl.org/functions/ref.html
+# https://mojolicious.org/perldoc/perlobj
+# https://www.perl.com/article/52/2013/12/11/Implementing-the-singleton-pattern-in-Perl/
+# https://metacpan.org/pod/Class::Singleton
+
+use strict;
+use warnings;
+
+package Example;
+sub new {
+    my $self = {};
+    bless($self, shift);
+    return $self;
+}
+
+#use Example;
+use Scalar::Util;
+use Scalar::Util qw(blessed);
+my $exp = Example->new();
+
+if (blessed $exp eq 'Example') {
+    print " instance of 1 \n";
+}
+
+if ($exp->isa('Example')) {
+    print " instance of 2 \n";
+}
 
 
+
+
+
+
+########################################################################
+#
+#   Create singleton
+#
+########################################################################
+
+package MySingletonClass;
+use strict;
+use warnings;
+use feature 'state';
+
+sub new {
+    my ($class) = @_;
+    state $instance;
+
+    if (! defined $instance) {
+        $instance = bless {}, $class;
+    }
+    return $instance;
+}
+
+my $singleton = MySingletonClass->new();
 
 
