@@ -351,7 +351,10 @@ while (<FILE>) {
         #print "$_";
     }
 }
-$searched_string =~ s/^\s+|\s+$//g; // trim left right
+#while (defined($_ =<FILE>)) {
+    #print "$_";
+#}
+$searched_string =~ s/^\s+|\s+$//g; # trim left right
 #$this->{'searched_string'} = $searched_string;
 
 
