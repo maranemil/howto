@@ -413,3 +413,38 @@ my $child2 = Proc::PID::File->new(name => "lock.2");
 
 $do->something() if $child1->alive();
 $child1->release();
+
+
+###################################################
+#
+#   read argv + opts + read file
+#
+###################################################
+
+#!/usr/bin/perl -w
+# MSERGEANT / IO-KQueue-0.34 / examples / tail.pl
+
+use IO::KQueue;
+use Getopt::Std;
+
+my $START = 10;
+my %opts;
+
+getopts('h', \%opts);
+help() if $opts{h};
+my $file = shift(@ARGV) || "-";
+open(my $fh, $file) || die "$0: open($file): $!";
+
+my @buf;
+while (<$fh>) {
+    $buf[$. % $START] = $_;
+}
+
+sub help {
+    print <<EOT;
+$0 [-h] [file]
+
+Tail a file forever, like tail -F.
+EOT
+    exit(0);
+}
