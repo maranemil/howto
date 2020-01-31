@@ -371,23 +371,22 @@ $searched_string =~ s/^\s+|\s+$//g; // trim left right
 ###################################################
 
 =head
-https://metacpan.org/pod/Proc::PID::File
-http://perl.apache.org/docs/1.0/guide/guide
+http://cpancover.com/latest/Proc-PID-File-1.29/blib-lib-Proc-PID-File-pm--branch.html
 http://man7.org/linux/man-pages/man5/proc.5.html
-https://www.cyberciti.biz/faq/how-can-i-find-out-perl-version/
-https://metacpan.org/pod/Proc::PID::File
 http://manpages.ubuntu.com/manpages/trusty/man3/Proc::PID::File.3pm.html
-https://www.perl.com/article/1/2013/3/24/3-quick-ways-to-find-out-the-version-number-of-an-installed-Perl-module-from-the-terminal/
-https://www.lemoda.net/perl/module-version/index.html
-https://metacpan.org/pod/version
-https://perldoc.perl.org/functions/use.html
-https://perldoc.perl.org/functions/require.html
-https://metacpan.org/pod/release/NWETTERS/Proc-PID-File-1.3/File.pm
-https://packages.debian.org/sid/perl/libproc-pid-file-perl
+http://perl.apache.org/docs/1.0/guide/guide
+https://centos.pkgs.org/6/epel-i386/perl-Proc-PID-File-1.27-1.el6.noarch.rpm.html
 https://centos.pkgs.org/7/epel-x86_64/perl-Proc-PID-File-1.27-9.el7.noarch.rpm.html
 https://code.activestate.com/ppm/Proc-PID-File/
-https://centos.pkgs.org/6/epel-i386/perl-Proc-PID-File-1.27-1.el6.noarch.rpm.html
-http://cpancover.com/latest/Proc-PID-File-1.29/blib-lib-Proc-PID-File-pm--branch.html
+https://metacpan.org/pod/Proc::PID::File
+https://metacpan.org/pod/release/NWETTERS/Proc-PID-File-1.3/File.pm
+https://metacpan.org/pod/version
+https://packages.debian.org/sid/perl/libproc-pid-file-perl
+https://perldoc.perl.org/functions/require.html
+https://perldoc.perl.org/functions/use.html
+https://www.cyberciti.biz/faq/how-can-i-find-out-perl-version/
+https://www.lemoda.net/perl/module-version/index.html
+https://www.perl.com/article/1/2013/3/24/3-quick-ways-to-find-out-the-version-number-of-an-installed-Perl-module-from-the-terminal/
 =cut
 
 # TEST Pkg in terminal
