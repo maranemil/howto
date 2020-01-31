@@ -357,3 +357,56 @@ $searched_string =~ s/^\s+|\s+$//g; // trim left right
 
 
 
+
+###################################################
+#
+#	WARNING
+#	Use of uninitialized value $fh in pattern match (m//) at /usr/share/perl5/Proc/PID/File.pm line 288.
+#
+#	Package:	 		Proc::PID::File
+#	Installation: 		sudo apt-get install libproc-pid-file-perl
+#	Get Pkg version: 	perl -MProc::PID::File -le 'print $Proc::PID::File::VERSION' # 1.27
+#	Get Perl version:	perl -V
+#
+###################################################
+
+=head
+https://metacpan.org/pod/Proc::PID::File
+http://perl.apache.org/docs/1.0/guide/guide
+http://man7.org/linux/man-pages/man5/proc.5.html
+https://www.cyberciti.biz/faq/how-can-i-find-out-perl-version/
+https://metacpan.org/pod/Proc::PID::File
+http://manpages.ubuntu.com/manpages/trusty/man3/Proc::PID::File.3pm.html
+https://www.perl.com/article/1/2013/3/24/3-quick-ways-to-find-out-the-version-number-of-an-installed-Perl-module-from-the-terminal/
+https://www.lemoda.net/perl/module-version/index.html
+https://metacpan.org/pod/version
+https://perldoc.perl.org/functions/use.html
+https://perldoc.perl.org/functions/require.html
+https://metacpan.org/pod/release/NWETTERS/Proc-PID-File-1.3/File.pm
+https://packages.debian.org/sid/perl/libproc-pid-file-perl
+https://centos.pkgs.org/7/epel-x86_64/perl-Proc-PID-File-1.27-9.el7.noarch.rpm.html
+https://code.activestate.com/ppm/Proc-PID-File/
+https://centos.pkgs.org/6/epel-i386/perl-Proc-PID-File-1.27-1.el6.noarch.rpm.html
+http://cpancover.com/latest/Proc-PID-File-1.29/blib-lib-Proc-PID-File-pm--branch.html
+=cut
+
+# TEST Pkg in terminal
+# perl -MProc::PID::File -wE'die if Proc::PID::File->running({dir => "."})'
+# perl -MProc::PID::File -wE'die if Proc::PID::File->running({dir => "/tmp", name =>"test.pl"})'
+
+# usage
+use warnings;
+use strict;
+use Data::Dumper;
+use Proc::PID::File;
+die("$0: Already running!\n") if (Proc::PID::File->running('dir' => '/tmp', name => $0 . '_' . basename($conf)));
+
+# usage
+use Proc::PID::File;
+die "Already running!" if Proc::PID::File->running();
+
+my $child1 = Proc::PID::File->new(name => "lock.1");
+my $child2 = Proc::PID::File->new(name => "lock.2");
+
+$do->something() if $child1->alive();
+$child1->release();
