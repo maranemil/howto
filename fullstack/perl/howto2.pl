@@ -448,3 +448,76 @@ Tail a file forever, like tail -F.
 EOT
     exit(0);
 }
+
+
+
+###################################################
+#
+# Classes Packages Perl Dummy test
+#
+###################################################
+
+=head
+https://alvinalexander.com/blog/post/perl/how-to-traverse-loop-items-elements-perl-hash
+https://perlmaven.com/perl-arrays
+http://wwwacs.gantep.edu.tr/docs/perl-ebook/ch19.htm
+https://www.geeksforgeeks.org/perl-classes-in-oop/
+https://www.tutorialspoint.com/perl/perl_object_oriented.htm
+https://perldoc.perl.org/perlobj.html
+https://www.tutorialspoint.com/execute_perl_online.php
+https://www.perl.com/article/perl-foreach-loops/
+https://www.tutorialspoint.com/perl/perl_oo_perl.htm
+https://users.cs.cf.ac.uk/Dave.Marshall/PERL/node123.html
+
+=cut
+
+package TestPkgClass1;
+sub new{
+    my $class = shift;
+    my $self = {
+      'string' => shift
+    };
+    bless $self, $class;
+    return $self;
+}
+
+sub _initialize {
+    my ($this,$value)  = @_;
+    $this->{'string'} = $value;
+    print ">> ". $this->{'string'}." \n";
+}
+
+my $o = new TestPkgClass1();
+$o->_initialize('test1'); # set a string
+
+
+package TestPkgClass2;
+sub new{
+    my ($class, %options)   = @_;
+    while (($key, $value) = each (%options))
+    {
+        $value = $options{$key};
+        print "  $key costs $value \n";
+    }
+    my $self = {
+      'string' => shift
+    };
+    bless $self, $class;
+    return $self;
+}
+sub _initialize {
+    my ($this,$value)  = @_;
+    $this->{'string'} = $value;
+    print ">> ". $this->{'string'}." \n";
+}
+
+my @options = (1 => "Foo", 2=> "Bar", 3=> "Baz"); # set an array
+my $o = new TestPkgClass2(@options);
+$o->_initialize('test2'); # set a string
+
+
+
+
+
+
+
