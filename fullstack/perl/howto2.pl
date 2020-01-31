@@ -351,6 +351,7 @@ while (<FILE>) {
         #print "$_";
     }
 }
+close(FILE);
 #while (defined($_ =<FILE>)) {
     #print "$_";
 #}
