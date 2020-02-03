@@ -37,3 +37,40 @@ public class HelloWorld {
         System.out.println("Hello, World");
     }
 }
+
+/*
+https://www.w3schools.in/java-program/call-method-in-same-class/
+https://www.homeandlearn.co.uk/java/java_method_calling.html
+*/
+
+public class CallingMethodsInSameClass
+{
+ // Method definition performing a Call to another Method
+ public static void main(String[] args) {
+  Method1(); // Method being called.
+  Method2(); // Method being called.
+ }
+
+ // Method definition to call in another Method
+ public static void Method1() {
+  System.out.println("Hello World!");
+ }
+
+ // Method definition performing a Call to another Method
+ public static void Method2() {
+  Method1(); // Method being called.
+ }
+}
+
+
+/*
+https://www.jdoodle.com/online-java-compiler/
+*/
+public class MyClass {
+    public static void main(String args[]) {
+      int x=10;
+      int y=25;
+      int z=x+y;
+      System.out.println("Sum of x+y = " + z);
+    }
+}
