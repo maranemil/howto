@@ -229,5 +229,6 @@
 | https://www.youtube.com/watch?v=zF34dRivLOw | Rust Crash Course  Rustlang |
 | https://www.youtube.com/watch?v=ztHopE5Wnpc | Database Design Course |
 | https://www.youtube.com/watch?v=4TIvB8zDFio | Ultimate Freelancing Guide for Web Developers |
+| https://www.youtube.com/watch?v=3u7MQz1EyPY | Power BI Full Course |
 
 
