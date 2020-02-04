@@ -256,6 +256,8 @@ print "$path\n";
 
 #-------------------------------------------------
 # read ENV
+# or print values in terminal
+# perl -MCPAN -e 'foreach (sort keys %ENV) {   print "$_  =  $ENV{$_}\n"; }'
 #-------------------------------------------------
 print $ENV{'PATH'}; # env perl
 foreach (sort keys %ENV) {
