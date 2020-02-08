@@ -29,6 +29,10 @@ sudo apt-get install audacity -y
 sudo apt-get install openshot -y
 sudo apt-get install gnome-mpv -y
 
+
+sudo snap install code --classic
+sudo snap install pycharm-community --classic
+
 # sublime-text
 wget https://download.sublimetext.com/sublime-text_build-3083_amd64.deb
 sudo dpkg -i sublime-text_build-3083_amd64.deb
