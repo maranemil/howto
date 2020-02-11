@@ -51,9 +51,6 @@
 
 | Link URL  | Title |
 |-----------|-------|
-| https://www.youtube.com/playlist?list=PLoRl3Ht4JOcdU872GhiYWf6jwrk_SNhz9 | Neural Networks for Machine Learning |
-| https://www.youtube.com/playlist?list=PLZoTAELRMXVNUcr7osiU7CCm8hcaqSzGw | Data Science Projects |
-| https://www.youtube.com/user/MIT | MIT OpenCourseWare |
 | https://www.youtube.com/watch?v=-edmQKcOW8s | react |
 | https://www.youtube.com/watch?v=-EPMOaV7h_Q | SQL Server Tutorial For Beginners  |
 | https://www.youtube.com/watch?v=-ETQ97mXXF0 | Learn Data Science in 10 Hours |
@@ -75,7 +72,6 @@
 | https://www.youtube.com/watch?v=6FOq4cUdH8k | Node.js With Passport Authentication |
 | https://www.youtube.com/watch?v=6g4O5UOH304 | TensorFlow 2.0 Full Tutorial |
 | https://www.youtube.com/watch?v=6LOwPhPDwVc | MIT Searching and Sorting |
-| https://www.youtube.com/watch?v=6ZVf1jnEKGI&list=PLZoTAELRMXVMdJ5sqbCK2LiM0HhQVWNzm | Natural Language Processing Tokenization |
 | https://www.youtube.com/watch?v=7CqJlxBYj-M | Learn the MERN Stack |
 | https://www.youtube.com/watch?v=7nafaH9SddU | Node.js API Authentication With JWT |
 | https://www.youtube.com/watch?v=7x2YZhEj9Dw | Deep Learning Tutorial with Python |
@@ -102,7 +98,6 @@
 | https://www.youtube.com/watch?v=C6EWVBNCxsc | MIT Cache Algorithms |
 | https://www.youtube.com/watch?v=ccCblUZFM0w | How to Become a Data Scientist in 2017 |
 | https://www.youtube.com/watch?v=cI3FOYIMSYE | Python Django |
-| https://www.youtube.com/watch?v=cKxRvEZd3Mw&list=PLOU2XLYxmsIIuiBfYad6rFYQU_jL2ryal | Machine Learning Recipes |
 | https://www.youtube.com/watch?v=CNuI8OWsppg | Applied Deep Learning with PyTorch - Full Course |
 | https://www.youtube.com/watch?v=cSKfRcEDGUs | Train an Image Classifier with TensorFlow for Poets |
 | https://www.youtube.com/watch?v=D6esTdOLXh4 | Python Django Crash Course |
@@ -141,10 +136,8 @@
 | https://www.youtube.com/watch?v=hQAHSlTtcmY | Learn React In 30 Minutes |
 | https://www.youtube.com/watch?v=hT3j87FMR6M | Intermediate React Tutorial - Todoist Clone |
 | https://www.youtube.com/watch?v=HXV3zeQKqGY | SQL Tutorial - Full course for beginners |
-| https://www.youtube.com/watch?v=HXV3zeQKqGY&t=10s | SQL Tutorial - Full course for beginners |
 | https://www.youtube.com/watch?v=I-dml1IDyBc | Complete TypeScript Course |
 | https://www.youtube.com/watch?v=I3Dk3i4GpU8 | Salesforce Full Course | 
-| https://www.youtube.com/watch?v=I7VKUGblZOQ&list=PLGJDCzBP5j3xGaW0AGlaVHK2TMEr2XkP9 | PHP Design Patterns |
 | https://www.youtube.com/watch?v=Ia-UEYYR44s | AWS Certified Solutions Architect |
 | https://www.youtube.com/watch?v=ieTHC78giGQ | CSS Full Course |
 | https://www.youtube.com/watch?v=ImtZ5yENzgE | Laravel PHP Framework Tutorial  |
@@ -154,7 +147,6 @@
 | https://www.youtube.com/watch?v=k32voqQhODc | Flexbox Tutorial (CSS) |
 | https://www.youtube.com/watch?v=KDn_j48yoAo | Learn Rust Programming In 1 Video |
 | https://www.youtube.com/watch?v=Ke90Tje7VS0 | React |
-| https://www.youtube.com/watch?v=KEEKn7Me-ms&list=PLI1t_8YX-ApvMthLj56t1Rf-Buio5Y8KL | Algorithms: Recursion |
 | https://www.youtube.com/watch?v=KibbYf9avko | Make a Custom Website from Scratch with WP |
 | https://www.youtube.com/watch?v=KJgsSFOSQv0 | C Programming Tutorial for Beginners |
 | https://www.youtube.com/watch?v=kqdsC_Oj9Gk | TypeScript - Beyond the Basics - Eric Potter |
@@ -163,7 +155,6 @@
 | https://www.youtube.com/watch?v=m_HJ3juuFvo | Javascript Project Tutorial: Budget App |
 | https://www.youtube.com/watch?v=m_u6P5k0vP0 | Full Stack React & Firebase Tutorial |
 | https://www.youtube.com/watch?v=MBl-3Yb30FA | Robotic Process Automation Full Course |
-| https://www.youtube.com/watch?v=MhkGQAoc7bc&list=PLoYCgNOIyGABj2GQSlDRjgvXtqfDxKm5b | Reactjs |
 | https://www.youtube.com/watch?v=Mu1I89BeKxM | Python Full Course for Beginners |
 | https://www.youtube.com/watch?v=mUQZ1qmKlLY | C++ Tutorial from Basic to Advance |
 | https://www.youtube.com/watch?v=mZomeS0tLxY | jamovi for Data Analysis |
@@ -176,7 +167,6 @@
 | https://www.youtube.com/watch?v=pbCExciEbrc | TensorFlow.js in your browser |
 | https://www.youtube.com/watch?v=pgKbZ-AfH_c | Logistic Regression Tutorial |
 | https://www.youtube.com/watch?v=PkZNo7MFNFg | Learn JavaScript - Full Course for Beginners |
-| https://www.youtube.com/watch?v=pmKyG3NBY_k&list=PLWKjhJtqVAbl1AfjiGyYxwpdAPi5v-1OU | Style Fancy Buttons: CSS Tutorial |
 | https://www.youtube.com/watch?v=pTJJsmejUOQ | Flutter Course |
 | https://www.youtube.com/watch?v=PySo_6S4ZAg | Stanford CS230: Deep Learning |
 | https://www.youtube.com/watch?v=QCvL-DWcojc | Blockchain Full Course - 4 Hours |
@@ -187,7 +177,7 @@
 | https://www.youtube.com/watch?v=qw--VYLpxG4 | Learn PostgreSQL Tutorial |
 | https://www.youtube.com/watch?v=r0Ogt-q956I | Deep Learning Crash Course |
 | https://www.youtube.com/watch?v=RBSGKlAvoiM | Data Structures Easy to Advanced Course  |
-| https://www.youtube.com/watch?v=rfscVS0vtbw | Learn Python - Full Course for Beginners [Tutorial] |
+| https://www.youtube.com/watch?v=rfscVS0vtbw | Learn Python - Full Course for Beginners Tutorial |
 | https://www.youtube.com/watch?v=RLtyhwFtXQA | Learn Node.js - Full Tutorial for Beginners |
 | https://www.youtube.com/watch?v=s-CYnVz-uh4 | MIT Breadth-First Search |
 | https://www.youtube.com/watch?v=S6S5JF6Gou0 | Penetration Testing: Gophish Tutorial (Phishing Framework) |
@@ -203,11 +193,8 @@
 | https://www.youtube.com/watch?v=u7n9t1cBei8 | Theory of Neural Networks - Deep Learning Without Frameworks |
 | https://www.youtube.com/watch?v=U9T6YkEDkMo | React App |
 | https://www.youtube.com/watch?v=U_P23SqJaDc | Cyber Security Full Course for Beginner |
-| https://www.youtube.com/watch?v=ua-CiDNNj30&list=PLWKjhJtqVAblQe2CCWqV4Zy3LY01Z8aF1 | Learn Data Science Tutorial |
 | https://www.youtube.com/watch?v=uIkxsBgkpj8 | Improve Cybersecurity Skills with CTFs - PicoCTF |
-| https://www.youtube.com/watch?v=UzxYlbK2c7E&list=PLA89DCFA6ADACE599 | Machine Learning (Stanford) |
 | https://www.youtube.com/watch?v=vLnPwxZdW4Y | C++ Tutorial for Beginners - Full Course |
-| https://www.youtube.com/watch?v=vNHpsC5ng_E&list=PLF206E906175C7E07 | Java Design Patterns Tutorial |
 | https://www.youtube.com/watch?v=vSuK2C89yjA | Stanford Webinar - Design Thinking | 
 | https://www.youtube.com/watch?v=vtPkZShrvXQ | Spring Boot Tutorial for Beginners (Java Framework) |
 | https://www.youtube.com/watch?v=wBp0Rb-ZJak | The Complete Linux Course |
@@ -230,5 +217,42 @@
 | https://www.youtube.com/watch?v=ztHopE5Wnpc | Database Design Course |
 | https://www.youtube.com/watch?v=4TIvB8zDFio | Ultimate Freelancing Guide for Web Developers |
 | https://www.youtube.com/watch?v=3u7MQz1EyPY | Power BI Full Course |
+| https://www.youtube.com/watch?v=6g4O5UOH304 | TensorFlow 2.0 Full Tutorial |
+| https://www.youtube.com/watch?v=0Lt9w-BxKFQ | Scikit-Learn Tutorial |
+| https://www.youtube.com/watch?v=d1CIV9irQAY | Image Analysis in Python with SciPy and Scikit Image |
+| https://www.youtube.com/watch?v=arXiv-TM7DY | Image Analysis in Python with SciPy and scikit-image  |
+| https://www.youtube.com/watch?v=TYqBtau0bYw | Preliminaries (Log Structured File System) |
+| https://www.youtube.com/watch?v=11MS8JN8XPg | B-Trees, Fractal Trees, Heaps and Log Structured Merge Trees |
+| https://www.youtube.com/watch?v=vgSJlnXXkyg | SILK: Preventing Latency Spikes in Log-Structured Merge Key-Value Stores|
+| https://www.youtube.com/watch?v=A_F94FV21Ek | Lecture 4: Compression, Codes, Entropy |
+| https://www.youtube.com/watch?v=WPKw-gBWZ1I | Decodierbarkeit , Elias-Fano Kodierung, Paritätscodes, Block-Codes|
+| https://www.youtube.com/watch?v=SJlanT9tAl4 | Codierungsbäume, Quellencodierungstheorem, Shannon-Fano Codierung |
+| https://www.youtube.com/watch?v=1-Xoy5w5ydM | Revisiting Signatures for Search |
+| https://www.youtube.com/watch?v=e6pT-GyT0hk | Descriptive Statistics Cross Tabulation |
+| https://www.youtube.com/watch?v=pb1GOwgui14 | SIMD Single instruction, multiple data  |
+| https://www.youtube.com/watch?v=8QiwqtU52Gg | 1000 Basic Italian Vocab Expressions |
+| https://www.youtube.com/watch?v=PKIypT8vmIc | Microservices Gateway Pattern |
+
+
+
+| Link URL  | Playlist |
+|-----------|-------|
+| https://www.youtube.com/playlist?list=PLoRl3Ht4JOcdU872GhiYWf6jwrk_SNhz9 | Neural Networks for Machine Learning |
+| https://www.youtube.com/playlist?list=PLZoTAELRMXVNUcr7osiU7CCm8hcaqSzGw | Data Science Projects |
+| https://www.youtube.com/user/MIT | MIT OpenCourseWare |
+| https://www.youtube.com/watch?v=6ZVf1jnEKGI&list=PLZoTAELRMXVMdJ5sqbCK2LiM0HhQVWNzm | Natural Language Processing Tokenization |
+| https://www.youtube.com/watch?v=cKxRvEZd3Mw&list=PLOU2XLYxmsIIuiBfYad6rFYQU_jL2ryal | Machine Learning Recipes |
+| https://www.youtube.com/watch?v=I7VKUGblZOQ&list=PLGJDCzBP5j3xGaW0AGlaVHK2TMEr2XkP9 | PHP Design Patterns |
+| https://www.youtube.com/watch?v=KEEKn7Me-ms&list=PLI1t_8YX-ApvMthLj56t1Rf-Buio5Y8KL | Algorithms: Recursion |
+| https://www.youtube.com/watch?v=MhkGQAoc7bc&list=PLoYCgNOIyGABj2GQSlDRjgvXtqfDxKm5b | Reactjs |
+| https://www.youtube.com/watch?v=pmKyG3NBY_k&list=PLWKjhJtqVAbl1AfjiGyYxwpdAPi5v-1OU | Style Fancy Buttons: CSS Tutorial |
+| https://www.youtube.com/watch?v=ua-CiDNNj30&list=PLWKjhJtqVAblQe2CCWqV4Zy3LY01Z8aF1 | Learn Data Science Tutorial |
+| https://www.youtube.com/watch?v=vNHpsC5ng_E&list=PLF206E906175C7E07 | Java Design Patterns Tutorial |
+| https://www.youtube.com/watch?v=UzxYlbK2c7E&list=PLA89DCFA6ADACE599 | Machine Learning (Stanford) |
+| https://www.youtube.com/playlist?list=PLZoTAELRMXVNUcr7osiU7CCm8hcaqSzGw | Data Science Projects |
+| https://www.youtube.com/playlist?list=PLblh5JKOoLUICTaGLRoHQDuF_7q2GfuJF | Machine Learning |
+| https://www.youtube.com/playlist?list=PLBv09BD7ez_448q9kRfZRxYb3cbeEanRb | IR7 Inverted Indexing |
+| https://www.youtube.com/playlist?list=PLaZQkZp6WhWxU3kA6wV0nb5dY1SXDEKWH | Classifications |
+| https://www.youtube.com/channel/UCU3OMAQMsRi0RixSUNfC3aA | CakePHP |
 
 
