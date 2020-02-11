@@ -77,6 +77,9 @@ change date |touch -d "2 hours ago" filename
 * ffmpeg -v warning -video_size 1920x1080 -framerate 5 -f x11grab -i :0.0  myvid_$(date +%s).mov
 * ffmpeg -f x11grab  -follow_mouse centered -show_region 1 -framerate 5 -video_size 4cif -i :0.0 xmvid_$(date +%s).mov
 
+##### Copy Audio and compress video
+* ffmpeg -i file.mp4 -crf 18 -acodec copy file_compressed.mp4 
+
 
 
 
