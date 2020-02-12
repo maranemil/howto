@@ -232,7 +232,7 @@
 | https://www.youtube.com/watch?v=pb1GOwgui14 | SIMD Single instruction, multiple data  |
 | https://www.youtube.com/watch?v=8QiwqtU52Gg | 1000 Basic Italian Vocab Expressions |
 | https://www.youtube.com/watch?v=PKIypT8vmIc | Microservices Gateway Pattern |
-
+| https://www.youtube.com/watch?v=njKP3FqW3Sk | MIT Introduction to Deep Learning | 
 
 
 | Link URL  | Playlist |
