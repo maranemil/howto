@@ -236,6 +236,7 @@
 | https://www.youtube.com/watch?v=QKfk7YFILws | Computer Networking Complete Course by Google | 
 | https://www.youtube.com/watch?v=1Rs2ND1ryYc | CSS Tutorial - Zero to Hero | 
 
+
 | Link URL  | Playlist |
 |-----------|-------|
 | https://www.youtube.com/playlist?list=PLoRl3Ht4JOcdU872GhiYWf6jwrk_SNhz9 | Neural Networks for Machine Learning |
