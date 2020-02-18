@@ -233,8 +233,8 @@
 | https://www.youtube.com/watch?v=8QiwqtU52Gg | 1000 Basic Italian Vocab Expressions |
 | https://www.youtube.com/watch?v=PKIypT8vmIc | Microservices Gateway Pattern |
 | https://www.youtube.com/watch?v=njKP3FqW3Sk | MIT Introduction to Deep Learning | 
-https://www.youtube.com/watch?v=QKfk7YFILws  Computer Networking Complete Course by Google
-https://www.youtube.com/watch?v=1Rs2ND1ryYc  CSS Tutorial - Zero to Hero
+| https://www.youtube.com/watch?v=QKfk7YFILws | Computer Networking Complete Course by Google | 
+| https://www.youtube.com/watch?v=1Rs2ND1ryYc | CSS Tutorial - Zero to Hero | 
 
 | Link URL  | Playlist |
 |-----------|-------|
