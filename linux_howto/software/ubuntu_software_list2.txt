@@ -402,8 +402,11 @@ apt-get update
 apt install adobe-flashplugin browser-plugin-freshplayer-pepperflash
 
 #########################################################
+#
 #   Disabling GNOME Tracker and Other Info
+#
 #########################################################
+
 tracker-miner-fs is not supposed to be run by the user since it is started by its .desktop
        file when the user logs in. It can also  be  started  manually  of  course  for  debugging
        purposes. You can not run more than one instance of this at the same time.
@@ -440,14 +443,18 @@ gsettings set org.freedesktop.Tracker.Miner.Files enable-monitors false
 echo y | LANG=en tracker reset -r
 
 ############################################################
+#
 #   GNOME Disk Usage Analyzer
+#
 ############################################################
 
 sudo apt-get install baobab
 
 ############################################################
+#
 #	Remove Adobe Flash Player - Version: 32.0.0.293
 #	chrome://components/
+#
 ############################################################
 
 sudo apt-get remove flashplugin-installer
@@ -499,7 +506,9 @@ about:addons
 about:config
 
 ############################################################
+#
 #   Best Git Clients for Linux
+#
 ############################################################
 
 sudo apt install gitblade
@@ -507,8 +516,10 @@ sudo snap install gitkraken
 sudo apt install gitg
 
 ############################################################
+#
 #   Gnome Shell window snap to quarters of screen
 #   Automatic Window Tiling
+#
 ############################################################
 
 sudo apt install gnome-shell-extensions chrome-gnome-shell
@@ -530,7 +541,9 @@ https://fedoramagazine.org/getting-started-i3-window-manager/
 https://www.tecmint.com/best-tiling-window-managers-for-linux/
 
 ############################################################
-#   terminal
+#
+#   Terminal tiling apps
+#
 ############################################################
 
 https://i3wm.org/
@@ -557,7 +570,9 @@ sudo apt install darktable
 
 
 ############################################################
-#   screenfetch
+#
+#   Screenfetch
+#
 ############################################################
 
 uname -a
@@ -568,8 +583,11 @@ sudo apt-get install screenfetch
 screenfetch
 
 ############################################################
+#
 #   JackEQ
+#
 ############################################################
+
 https://wiki.ubuntuusers.de/JACK/Grafische_Konfiguration/#JackEQ
 http://djcj.org/jackeq/?id=2
 
@@ -577,12 +595,135 @@ sudo apt-get install qjackctl
 sudo apt-get install jackeq
 
 ############################################################
-monodevelop ubuntu 19.10
-https://www.monodevelop.com/download/#fndtn-download-lin-ubuntu
+#
+#   MonoDevelop ubuntu 19.10 - required JVM + windows libs
+#   https://www.monodevelop.com/download/#fndtn-download-lin-ubuntu
+#
 ############################################################
+
 sudo apt install apt-transport-https dirmngr
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
 echo "deb https://download.mono-project.com/repo/ubuntu vs-bionic main" | sudo tee /etc/apt/sources.list.d/mono-official-vs.list
 sudo apt update
-
 sudo apt-get install monodevelop
+
+###########################################
+#
+#   Nagios in Ubuntu
+#
+###########################################
+
+https://www.digitalocean.com/community/tutorials/how-to-create-nagios-plugins-with-php-on-ubuntu-12-10
+https://github.com/pulse00/nagios-php
+
+# Install NRPE on client VPS
+apt-get install -y php5 nagios-nrpe-server
+useradd nrpe && update-rc.d nagios-nrpe-server defaults
+
+Create your PHP Script
+#!/usr/bin/php
+<?php
+$used_space=chop(shell_exec("df -h / | grep -v Filesystem | awk '{print $5}'"));
+
+switch ($used_space) {
+        case "$used_space" < "85%":
+        print "OK - $used_space of disk space used.";
+        exit(0);
+
+        case "$used_space" == "85%":
+        print "WARNING - $used_space of disk space used.";
+        exit(1);
+
+        case $used_space > "85%":
+        print "CRITICAL - $used_space of disk space used.";
+        exit(2);
+
+        default:
+        print "UNKNOWN - $used_space of disk space used.";
+        exit(3);
+}
+?>
+
+# chmod +x /usr/lib/nagios/plugins/usedspace.php
+
+Step 3 - Add Your Script to NRPE configuration on client host
+Config Nagios
+/etc/nagios/nrpe.cfg and add the following lines to it:
+----
+log_facility=daemon
+pid_file=/var/run/nagios/nrpe.pid
+server_port=5666
+nrpe_user=nrpe
+nrpe_group=nrpe
+allowed_hosts=198.211.117.251
+dont_blame_nrpe=1
+debug=0
+command_timeout=60
+connection_timeout=300
+include_dir=/etc/nagios/nrpe.d/
+
+command[usedspace_php]=/usr/lib/nagios/plugins/usedspace.php
+----
+service nagios-nrpe-server restart
+
+4. Add Your New Command to Nagios Checks on Nagios Monitoring Server
+Define new command in /etc/nagios/objects/commands.cfg
+
+define command{
+        command_name    usedspace_php
+        command_line    $USER1$/check_nrpe -H $HOSTADDRESS$ -c usedspace_php
+        }
+
+-----
+
+add cfg
+
+/etc/nagios/servers/UbuntuDroplet.cfg
+
+define service {
+        use                             generic-service
+        host_name                       UbuntuDroplet
+        service_description             Custom Disk Checker In PHP
+        check_command                   usedspace_php
+        }
+
+
+service nagios restart
+
+
+################################################################
+#
+#   How to Install Ntfy in Linux
+#   http://www.tecmint.com/ntfy-get-desktop-or-phone-alerts-for-linux-commands/
+#
+################################################################
+
+sudo pip install ntfy
+sudo apt-get install libdbus-glib-1-dev libdbus-1-dev [On Debian/Ubuntu]
+sudo yum install dbus-1-glib-devel libdbus-1-devel    [On Fedora/CentOS]
+pip install --user dbus-python
+
+eval  "$(ntfy shell-integration)" # Integrate Ntfy with Linux Shells
+export AUTO_NTFY_DONE_IGNORE="vim screen meld"
+
+How to Use Nfty in Linux
+
+ntfy send "This is TecMint, we’re testing ntfy"
+ntfy done sleep 5
+ntfy -t 'TecMint' send "Using custom notification title"
+ntfy send ":wink: Using emoji extra! :joy:"
+ntfy done --pid 2099
+
+sudo add-apt-repository ppa:jconti/recent-notifications
+sudo apt update && sudo apt install indicator-notifications
+
+ntfy -h
+
+Install Additional Ntfy Features
+pip install ntfy[pid]
+pip install ntfy[emoji]
+pip install ntfy[xmpp]
+pip install ntfy[telegram]
+pip install ntfy[instapush]
+pip install ntfy[slack]
+pip install ntfy[pid,emjoi,xmpp, telegram]
