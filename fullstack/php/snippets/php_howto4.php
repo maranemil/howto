@@ -711,3 +711,12 @@ Lists of Throwable and Exception tree as of 7.2.0
 */
 
 
+################################################
+#
+# Remove unwanted chars
+#
+################################################
+
+$str = "Z przyjemnością przei i zostaną Państwu doręczone<br> najszybciej.";
+echo preg_replace('/[^\00-\255]+/u', '', $str);
+
