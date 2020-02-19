@@ -720,3 +720,65 @@ Lists of Throwable and Exception tree as of 7.2.0
 $str = "Z przyjemnością przei i zostaną Państwu doręczone<br> najszybciej.";
 echo preg_replace('/[^\00-\255]+/u', '', $str);
 
+################################################
+# FILTER_SANITIZE_STRING
+################################################
+/*
+http://php.net/manual/en/filter.filters.sanitize.php
+http://php.net/manual/de/filter.filters.sanitize.php
+*/
+// prevent XSS
+$_GET   = filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING);
+$_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+
+
+
+################################################
+#   CURLOPT_DNS_CACHE_TIMEOUT
+################################################
+/*
+https://linux.die.net/man/3/curl_easy_setopt
+http://manpages.ubuntu.com/manpages/xenial/man3/CURLOPT_DNS_CACHE_TIMEOUT.3.html
+https://curl.haxx.se/libcurl/c/CURLOPT_DNS_CACHE_TIMEOUT.html
+https://open.frostly.com/rust-slack/curl_sys/constant.CURLOPT_DNS_CACHE_TIMEOUT.html
+*/
+
+# CURLOPT_DNS_CACHE_TIMEOUT
+/*
+CURL *curl = curl_easy_init();
+if(curl) {
+  curl_easy_setopt(curl, CURLOPT_URL, "http://example.com/foo.bin");
+  // only reuse addresses for a very short time
+  curl_easy_setopt(curl, CURLOPT_DNS_CACHE_TIMEOUT, 2L);
+  ret = curl_easy_perform(curl);
+  // in this second request, the cache will not be used if more than
+   //  two seconds have passed since the previous name resolve
+  ret = curl_easy_perform(curl);
+  curl_easy_cleanup(curl);
+}
+*/
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 1);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($ch, CURLOPT_DNS_CACHE_TIMEOUT, 0);
+curl_setopt($ch, CURLOPT_RESOLVE, $resolveparam);
+curl_setopt($ch, CURLOPT_URL, "https://example.com/some/path");
+curl_setopt($ch, CURLOPT_VERBOSE, 1);
+$result = curl_exec($ch);
+$info = curl_getinfo($ch);
+
+##################################
+#
+#	Transfer-Encoding
+#
+##################################
+/*
+https://developer.mozilla.org/de/docs/Web/HTTP/Headers/Transfer-Encoding
+http://docs.telerik.com/fiddler/Configure-Fiddler/Tasks/FirefoxHTTPS
+*/
+Transfer-Encoding: chunked
+Transfer-Encoding: compress
+Transfer-Encoding: deflate
+Transfer-Encoding: gzip
+Transfer-Encoding: identity
