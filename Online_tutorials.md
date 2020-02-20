@@ -256,5 +256,6 @@
 | https://www.youtube.com/playlist?list=PLBv09BD7ez_448q9kRfZRxYb3cbeEanRb | IR7 Inverted Indexing |
 | https://www.youtube.com/playlist?list=PLaZQkZp6WhWxU3kA6wV0nb5dY1SXDEKWH | Classifications |
 | https://www.youtube.com/channel/UCU3OMAQMsRi0RixSUNfC3aA | CakePHP |
+| https://www.youtube.com/watch?v=3bxAm3XIFmk&list=PLBArW4dCYWbT5-dSATFcn6Tuqv-WKdyaR  | DEv to Architecture |
 
 
