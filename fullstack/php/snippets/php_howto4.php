@@ -777,8 +777,35 @@ $info = curl_getinfo($ch);
 https://developer.mozilla.org/de/docs/Web/HTTP/Headers/Transfer-Encoding
 http://docs.telerik.com/fiddler/Configure-Fiddler/Tasks/FirefoxHTTPS
 */
+
+/*
 Transfer-Encoding: chunked
 Transfer-Encoding: compress
 Transfer-Encoding: deflate
 Transfer-Encoding: gzip
 Transfer-Encoding: identity
+*/
+
+################################################################
+#
+#	nl2br + br2nl
+#
+################################################################
+/*
+https://www.ask-sheldon.com/br2nl/
+https://www.informatikzentrale.de/htmlspecialchars-stripslashes.html
+https://www.php.net/manual/en/function.nl2br.php
+https://stackoverflow.com/questions/37909602/line-breaks-using-htmlspecialchars
+http://phptester.net/
+https://www.php.net/manual/de/function.htmlspecialchars.php
+*/
+
+function br2nl($string)
+{
+    return preg_replace('/\<br(\s*)?\/?\>/i', "\n", $string);
+}
+
+$a = "Wer reitet so spät durch Nacht und Wind?\nEs ist der Vater mit seinem Kind.\nEr hält den Knaben ...";
+$a = htmlspecialchars(nl2br($a));
+echo $a;
+
