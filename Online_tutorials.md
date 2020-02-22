@@ -235,7 +235,7 @@
 | https://www.youtube.com/watch?v=njKP3FqW3Sk | MIT Introduction to Deep Learning | 
 | https://www.youtube.com/watch?v=QKfk7YFILws | Computer Networking Complete Course by Google | 
 | https://www.youtube.com/watch?v=1Rs2ND1ryYc | CSS Tutorial - Zero to Hero | 
-
+| https://www.youtube.com/watch?v=UrwbeOIlc68 | IoT Tutorial for Beginners | 
 
 | Link URL  | Playlist |
 |-----------|-------|
