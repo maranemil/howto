@@ -236,6 +236,11 @@
 | https://www.youtube.com/watch?v=QKfk7YFILws | Computer Networking Complete Course by Google | 
 | https://www.youtube.com/watch?v=1Rs2ND1ryYc | CSS Tutorial - Zero to Hero | 
 | https://www.youtube.com/watch?v=UrwbeOIlc68 | IoT Tutorial for Beginners | 
+| https://www.youtube.com/watch?v=u2zsY-2uZiE | Data Science Tutorial 11 Hours | 
+| https://www.youtube.com/watch?v=h0gWfVCSGQQ | IoT Full Course | 
+| https://www.youtube.com/watch?v=3kdX-P8JZyc | Bootstrap 4 Portfolio | 
+
+
 
 | Link URL  | Playlist |
 |-----------|-------|
