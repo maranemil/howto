@@ -1,0 +1,129 @@
+###############################################################
+#
+#   namespaces in jquery Examples
+#
+###############################################################
+
+https://stackoverflow.com/questions/527089/is-it-possible-to-create-a-namespace-in-jquery
+----------------------------------------------------------------------------
+// include jQuery first.
+jQuery.namespace = function() {
+    var a=arguments, o=null, i, j, d;
+    for (i=0; i<a.length; i=i+1) {
+        d=a[i].split(".");
+        o=window;
+        for (j=0; j<d.length; j=j+1) {
+            o[d[j]]=o[d[j]] || {};
+            o=o[d[j]];
+        }
+    }
+    return o;
+};
+
+// definition
+jQuery.namespace( 'jQuery.debug' );
+jQuery.debug.test1 = function()
+{
+    alert( 'test1 function' );
+};
+jQuery.debug.test2 = function()
+{
+    alert( 'test2 function' );
+};
+// usage
+jQuery.debug.test1();
+jQuery.debug.test2();
+----------------------------------------------------------------------------
+(function ($) {
+    // do not overwrite the namespace, if it already exists
+    $.MyNamespace = $.MyNamespace || {};
+    $.MyNamespace.MyPlugin = function () {/*here's the logic*/}
+})($);
+$.MyNamespace.MyPlugin ();
+----------------------------------------------------------------------------
+jQuery.extend
+jQuery.fn.exten
+----------------------------------------------------------------------------
+;(function($){
+    var options= {
+        root: function(){ //you don't have to call it 'root', of course :)
+            //identify the function from within itself with arguments.callee
+            var fn= arguments.callee;
+            //'this' at this level is the jquery object list matching your given selector
+            //we equate fn.prototype to this
+            //thus when we call a new instance of root, we are returned 'this'
+            fn.prototype= this;
+            fn.value= function(){
+                //Note: "new this" will work in the below line of code as well,
+                //because in the current context, 'this' is fn;
+                //I use fn to make the code more intuitive to understand;
+                var context= new fn;
+                console.log(context, fn.prototype); //test
+                return context.html(); //test
+            }
+            return this;
+        }
+    }
+
+    //you can obviously append additional nested properties in this manner as well
+    options.root.position= function(){
+        var context= new this; //in this context, fn is undefined, so we leverage 'this'
+
+        console.log(context, this.prototype); //test
+        return context.offset(); //test
+    }
+
+    //don't forget to extend in the end :)
+    $.fn.extend(options);
+
+})(jQuery);
+
+;$(function(){
+    var div= $('div#div')
+        .root();
+
+    console.log(div.root.value());
+    console.log(div.root.position());
+});
+----------------------------------------------------------------------------
+(function($){
+    $.namespace = $.sub();
+    $.fn.test = function(){ return 1 };
+    $.namespace.fn.test = function() { return 2};
+})(jQuery);
+console.log($('*').test(), $.namespace('*').test());
+----------------------------------------------------------------------------
+https://jquery.com/
+----------------------------------------------------------------------------
+$.fn.myPlugin = function() {
+  return $(this).each(function() {
+    // do stuff
+  });
+};
+
+$.fn.myPlugin = function() {
+  var myNamespace = {
+    // your stuff
+  };
+};
+----------------------------------------------------------------------------
+var myApp = {};
+(function(context) {
+    var id = 0;
+
+    context.next = function() {
+        return id++;
+    };
+
+    context.reset = function() {
+        id = 0;
+    }
+})(myApp);
+
+window.console && console.log(
+    myApp.next(),
+    myApp.next(),
+    myApp.reset(),
+    myApp.next()
+); //0, 1, undefined, 0
+----------------------------------------------------------------------------
