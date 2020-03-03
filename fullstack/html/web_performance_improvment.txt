@@ -1,0 +1,700 @@
+
+########################################################################
+#
+#	[Violation] Forced reflow while executing JavaScript took 30ms
+#	Warning Forced reflow is a likely performance bottleneck.
+#
+########################################################################
+
+https://github.com/jlmakes/scrollreveal/issues/335
+https://gist.github.com/paulirish/5d52fb081b3570c81e3a
+https://www.chromestatus.com/feature/5527160148197376
+https://developer.mozilla.org/en-US/docs/Web/API/Console/time
+https://github.com/jlmakes/scrollreveal/issues/209
+https://bmt-systems.com/blog/preventing-forced-reflows-with-strategic-javascript-ii
+https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame
+https://www.mediaevent.de/javascript/requestAnimationFrame.html
+https://www.npmjs.com/package/fastdom
+https://developers.google.com/web/tools/chrome-devtools/rendering-tools/forced-synchronous-layouts
+https://developers.google.com/speed/docs/insights/browser-reflow
+https://css-tricks.com/using-requestanimationframe/
+https://developers.google.com/web/fundamentals/performance/rendering/avoid-large-complex-layouts-and-layout-thrashing?hl=en
+https://developer.chrome.com/devtools/docs/demos/too-much-layout
+http://wilsonpage.co.uk/preventing-layout-thrashing/
+https://www.phpied.com/rendering-repaint-reflowrelayout-restyle/
+https://developers.google.com/speed/docs/insights/browser-reflow?hl=en
+https://www.html5rocks.com/en/tutorials/speed/layers/
+https://www.igvita.com/slides/2012/web-performance-for-the-curious/#1
+http://jankfree.org/
+https://wiki.selfhtml.org/wiki/JavaScript/Window/requestAnimationFrame
+
+
+https://www.youtube.com/watch?v=ZHxbs5WEQzE
+https://www.youtube.com/watch?v=tS6oP1NveoI
+https://www.youtube.com/watch?v=rNsC1VI9388
+https://www.youtube.com/watch?v=W6NZfCO5SIk
+
+
+---------------------------------------
+JS Test
+---------------------------------------
+
+function someMethodIThinkMightBeSlow() {
+    const startTime = performance.now();
+    // Do the normal stuff for this function
+    const duration = performance.now() - startTime;
+    console.log(`someMethodIThinkMightBeSlow took ${duration}ms`);
+	console.time(label); // mozilla
+
+}
+setTimeout(someMethodIThinkMightBeSlow());
+// Promise.resolve().then(someMethodIThinkMightBeSlow);
+
+
+---------------------------------------
+mpn NodeJS Test
+---------------------------------------
+
+git clone https://github.com/volnei/webpack-scrollreveal.git
+npm install
+npm run build
+npm update scrollreveal
+
+// require('scrollreveal')().reveal('.sreveal');
+import ScrollReveal from 'scrollreveal'
+// import 'scrollreveal'
+// const ScrollReveal = require('scrollreveal').default
+
+;(function ($) {
+  var options = {};
+  window.sr = ScrollReveal({ reset: true });
+  window.sr.reveal('.box')
+  sr.reveal('div', {opacity: 0.9,duration:3000});
+  sr.reveal('.sr-item', { viewFactor: 0.6, duration: 500 });
+  sr.reveal('.sr-item--seq', { viewFactor: 0.6, duration: 500 }, 50);
+})(jQuery);
+
+
+
+
+#########################################################
+#
+#	[Violation] Added non-passive event listener to a scroll-blocking <some> event.
+#	[Violation] Added non-passive event listener to a scroll-blocking
+#	[Violation] 'DOMContentLoaded' handler took
+#
+#	Consider marking event handler as 'passive' to make the page more responsive. See <URL>
+# 	jquery-x.x.x.js:4597 [Violation] Added non-passive event listener to a scroll-blocking 'touchstart' event.
+#	Consider marking event handler as 'passive' to make the page more responsive
+#
+#########################################################
+
+<script src="https://code.jquery.com/jquery-2.x-git.js"></script>
+<script src="https://code.jquery.com/jquery-2.2.4.js"></script>
+
+https://www.chromestatus.com/feature/5745543795965952
+https://rbyers.github.io/scroll-latency.html
+https://github.com/RByers/rbyers.github.io/blob/master/scroll-latency.js
+https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
+https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
+https://wiki.selfhtml.org/wiki/JavaScript/DOM/EventTarget/addEventListener
+https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Fehler/Not_defined
+https://airbrake.io/blog/javascript-error-handling/referenceerror-x-is-not-defined
+https://medium.com/@devlucky/about-passive-event-listeners-224ff620e68c
+https://stackoverflow.com/questions/46094912/added-non-passive-event-listener-to-a-scroll-blocking-touchstart-event
+https://datatables.net/forums/discussion/54100/using-ajax-method-url-ajax-arrays-txt-as-a-server-side#latest
+https://stackoverflow.com/questions/41218507/violation-long-running-javascript-task-took-xx-ms
+https://www.mediaevent.de/javascript/event-listener.html
+https://stackoverflow.com/questions/7398290/unable-to-understand-usecapture-parameter-in-addeventlistener
+https://developer.mozilla.org/de/docs/Web/API/EventTarget/addEventListener
+https://www.w3schools.com/jsref/met_element_addeventlistener.asp
+https://developer.mozilla.org/de/docs/Web/API/Document/body
+https://stackoverflow.com/questions/7069458/prevent-touchstart-when-swiping/32120668#32120668
+https://stackoverflow.com/questions/20615605/prevent-touchstart-when-page-scrolling-on-mobile
+https://developers.google.com/web/tools/chrome-devtools/evaluate-performance/
+https://stackoverflow.com/questions/41218507/violation-long-running-javascript-task-took-xx-ms/41218580
+
+
+http://cdn.datatables.net/1.10.20/js/jquery.dataTables.js
+https://code.jquery.com/jquery/
+https://code.jquery.com/jquery-2.2.4.js
+https://code.jquery.com/jquery-2.x-git.js
+
+// FIX !!!
+(function () {
+    if (typeof EventTarget !== "undefined") {
+        let func = EventTarget.prototype.addEventListener;
+        EventTarget.prototype.addEventListener = function (type, fn, capture) {
+            this.func = func;
+            if(typeof capture !== "boolean"){
+                capture = capture || {};
+                capture.passive = false;
+            }
+            this.func(type, fn, capture);
+        };
+    };
+}());
+
+
+/*$(function () {
+	jQuery.event.special.mousewheel = {
+		setup: function (_, ns, handle) {
+			this.addEventListener("mousewheel", handle, {passive: true, capture: true, once: false});
+		}
+	};
+	jQuery.event.special.touchstart = {
+		setup: function (_, ns, handle) {
+			this.addEventListener("touchstart", handle, {passive: true, capture: true, once: false});
+		}
+	};
+});*/
+
+$(function () {
+
+	/*jQuery.event.special.touchstart = {
+		setup: function( _, ns, handle ){
+			this.addEventListener("touchstart",handle , function(e) {
+				console.log(e.defaultPrevented);  // will be false
+				e.preventDefault();   // does nothing since the listener is passive
+                e.stopImmediatePropagation();
+				console.log(e.defaultPrevented);  // still false
+			}, {passive: false, capture: false});
+		}
+	};*/
+
+    /*jQuery.event.special.mousewheel = {
+        setup: function( _, ns, handle ){
+            if ( ns.includes("noPreventDefault") ) {
+                this.addEventListener("mousewheel", handle, { passive: false });
+				//this.addEventListener('mousewheel', handle, {capture: true});
+
+            } else {
+                this.addEventListener("mousewheel", handle, { passive: true });
+
+            }
+        }
+    };
+    jQuery.event.special.touchstart = {
+        setup: function( _, ns, handle ){
+            if ( ns.includes("noPreventDefault") ) {
+                this.addEventListener("touchstart", handle, { passive: false });
+				//this.addEventListener('touchstart', handle, {capture: true});
+            } else {
+                this.addEventListener("touchstart", handle, { passive: true });
+            }
+        }
+    };
+
+	jQuery.event.special.touchstart = {
+		setup: function( _, ns, handle ){
+			if ( ns.includes("noPreventDefault") ) {
+				this.addEventListener("touchstart", handle, { passive: false });
+			} else {
+				this.addEventListener("touchstart", handle, { passive: true });
+			}
+		}
+	};
+
+    jQuery.event.special.touchmove = {
+        setup: function( _, ns, handle ){
+            if ( ns.includes("noPreventDefault") ) {
+                this.addEventListener("touchmove", handle, { passive: false });
+				//this.addEventListener('touchmove', handle, {capture: true});
+            } else {
+                this.addEventListener("touchmove", handle, { passive: true });
+            }
+        }
+    };
+*/
+});
+
+/*
+
+document.addEventListener('touchstart', function(e) {
+	//console.log(e.defaultPrevented);  // will be false
+	e.preventDefault();   // does nothing since the listener is passive
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+	//console.log(e.defaultPrevented);  // still false
+}, {passive: true});
+document.removeEventListener('touchstart', function(e) {});
+
+
+//SET THE FLAG
+let scrolling = false;
+let endScrolling;
+
+$(window).on("scroll", function(e) {
+	e.preventDefault();
+	scrolling = true;
+	endScrolling = window.setTimeout(function() {
+		scrolling = false;
+		window.clearTimeout(endScrolling);
+	}, 20);
+});
+
+*/
+
+
+#########################################################
+#
+#	DevTools failed to parse SourceMap
+#
+#########################################################
+
+https://stackoverflow.com/questions/36051891/esri-failed-to-parse-source-map
+https://stackoverflow.com/questions/44267503/devtools-failed-to-parse-sourcemap
+https://webpack.js.org/guides/code-splitting/
+https://laracasts.com/discuss/channels/vue/vuerouter-failed-to-parse-sourcemap?page=0
+https://cmty.app/nuxt/nuxt.js/issues/c2463
+
+Source code of CSS/JS we usually minified/compress. Now if we want to debug those minified files then we have to add following line at the end of minified file
+
+/*# sourceMappingURL=bootstrap.min.css.map */
+To Remove Warning: remove /*# sourceMappingURL=bootstrap.min.css.map */ from the end of minified file
+
+
+
+To fix it go to Developer Tools Settings of Chrome, and uncheck:
+"Enable JavaScript source maps"
+"Enable CSS source maps"
+Then refresh Chrome.
+
+
+#########################################################
+#
+#	jquery versions
+#
+#########################################################
+
+https://code.jquery.com/jquery/
+https://blog.jquery.com/2016/05/20/jquery-1-12-4-and-2-2-4-released/
+https://blog.jquery.com/2016/05/20/jquery-1-12-4-and-2-2-4-released/
+https://wordpress.stackexchange.com/questions/244537/why-does-wordpress-use-outdated-jquery-v1-12-4
+
+
+
+#########################################################
+#
+#	CSS Performance Hacks / CSS Containment + Will-change / CSS Flexbox / CSS Grid
+#
+#########################################################
+
+https://www.youtube.com/watch?v=0xx_dkv9DEY&feature=youtu.be&t=204
+https://www.youtube.com/watch?v=KCtOt9OXvAM
+https://www.youtube.com/watch?v=hAzhayTnhEI
+https://www.youtube.com/watch?v=PoRJizFvM7s
+https://www.youtube.com/watch?v=V_Kr9OSfDeU
+
+
+https://www.sitepoint.com/10-ways-minimize-reflows-improve-performance/
+https://readium.org/readium-css/docs/CSS25-performance_hacks.html
+https://css-tricks.com/snippets/css/a-guide-to-flexbox/
+https://www.w3schools.com/css/css3_flexbox.asp
+https://wiki.selfhtml.org/wiki/CSS/Tutorials/Flexbox/Flex-Container
+https://developer.mozilla.org/de/docs/Web/CSS/CSS_Flexible_Box_Layout/Grundlegende_Konzepte_der_Flexbox
+https://medium.com/better-programming/web-performance-dom-reflow-76ac7c4d2d4f
+https://jakearchibald.com/2013/solving-rendering-perf-puzzles/
+http://perfectionkills.com/profiling-css-for-fun-and-profit-optimization-notes/
+https://www.sitepoint.com/optimizing-css-performance/
+https://developers.google.com/web/fundamentals/performance/rendering/reduce-the-scope-and-complexity-of-style-calculations
+https://www.hongkiat.com/blog/writing-better-css/
+https://developers.google.com/web/fundamentals/performance/rendering/reduce-the-scope-and-complexity-of-style-calculations
+https://dev.to/prototyp/improving-css-performance-and-file-size-an-in-depth-guide-4mb5
+https://www.w3schools.com/jquery/css_width.asp
+http://wilsonpage.co.uk/introducing-layout-boundaries/
+https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching?hl=en
+https://developers.google.com/web/fundamentals/performance/critical-rendering-path/measure-crp?hl=en
+https://www.sderosiaux.com/articles/2015/03/01/perfmatters/
+https://dev.opera.com/articles/css-will-change-property/
+https://www.html5rocks.com/en/tutorials/speed/layers/
+https://www.phpied.com/rendering-repaint-reflowrelayout-restyle/
+https://www.html5rocks.com/en/tutorials/speed/scrolling/
+https://www.html5rocks.com/en/tutorials/speed/animations/
+https://wiki.mozilla.org/Gecko:Reflow_Refactoring
+https://css-tricks.com/browser-painting-and-considerations-for-web-performance/
+https://chromium.googlesource.com/chromium/src/+/master/third_party/blink/renderer/core/css/style-invalidation.md
+https://blog.logrocket.com/how-css-works-parsing-painting-css-in-the-critical-rendering-path-b3ee290762d3/
+https://www.html5rocks.com/en/tutorials/speed/high-performance-animations/
+https://developer.mozilla.org/en-US/docs/Web/CSS/contain
+https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Statements/async_function
+https://javascript.info/async-await
+https://alligator.io/js/async-functions/
+https://developer.mozilla.org/en-US/docs/Web/API/ParentNode/childElementCount
+
+
+1. Use Best-Practice Layout Techniques CSS Flexbox / CSS Grid
+-------------------------------------------
+// table-layout: fixed + flexbox
+
+.container {
+  display: flex; /* or inline-flex */
+}
+
+.container {
+  flex-direction: row | row-reverse | column | column-reverse;
+}
+
+
+2. Indicate Which Elements Will Animate
+-------------------------------------------
+body > .sidebar {
+	will-change: transform;
+	will-change: transform, opacity;
+	/* Will use 'transform' to slide it out when the user requests. */
+	/* will-change: [transform|scroll-position|contents|any css property] */
+}
+
+*,
+*::before,
+*::after {
+	will-change: all;
+}
+
+
+3. contain: size layout style paint
+-------------------------------------------
+.box {
+  contain: layout size; /* Won't change size and won't affect layout */
+}
+
+
+4. Avoid using !important to override the cascade.
+5. Minimize the Number of CSS Rules
+6. Minimize DOM depths
+7. Remove Complex Animations From the Flow with ( position: absolute; or position: fixed; )
+8. Modify Hidden Elements with display: none;
+9. Blend out elements that flow out ( overflow: hidden; )
+10. Use async and defer on js script
+11. Image resizing srcset on <img> or use <picture>
+
+12. DOM element count - console.log(document.getElementsByTagName("*").length) or console.log($("*").length);
+- 1000 for a mobile application is a good number.
+- 4000 for twitter.com
+- 2500 for amazon and facebook
+
+
+var $;
+$ = document.querySelectorAll.bind(document);
+$('*').length;
+
+
+13. Background-size ( background-size ) - dont using it
+14. CSS gradients - are performance consuming
+15. :hover and scrolling /  active: :not(.scrolling) div:hover.
+16. CSS classes on body - not add classes
+17. avoid using @import
+18. Resources caching - ETag - If-None-Match - Cache-Control
+
+19. throttle the events that can be called numerous times: onscroll, onmousemove, onresize, ondragover.
+20. Event handlers -  (scrollTop, mouse position…) / requestAnimationFrame(fn)
+21. Browser events - DOMContentLoaded
+22. never use setTimeout() or setInterval() to throttle event handlers such as onscroll or onresize.
+23. transformZ(0) aka the null transform hack - done by using transform: translateZ(0) or transform: translate3d(0,0,0).
+24. Reading values from the DOM - Calling getComputedStyle() (or .css() in jQuery) is a bad idea.
+25. Meta viewport - <meta name="viewport" content="width=device-width, initial-scale=1.0">
+26. Chrome DevTools - chrome://tracing/
+
+27. Suppress animations
+
+body {
+    /*text-rendering: optimizeLegibility;*/
+    text-rendering: optimizeSpeed;
+    animation: none;
+    /*image-rendering: smooth;*/
+    /*image-rendering: optimizeSpeed;*/
+}
+@media (prefers-reduced-motion: reduce) {
+    body {
+        animation: none;
+    }
+}
+
+*,
+*::before,
+*::after {
+    will-change: all;
+}
+
+
+
+
+
+
+
+########################################################################
+
+[dns-prefetching]
+
+########################################################################
+
+https://www.chromium.org/developers/design-documents/dns-prefetching
+https://github.com/FortAwesome/Font-Awesome/wiki/Troubleshooting
+https://github.com/FortAwesome/Font-Awesome/wiki/Troubleshooting#im-hosting-fonts-on-my-server-and-icons-dont-show-up
+https://fontawesome.com/v4.7.0/get-started/
+https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css
+<link rel="stylesheet" href="https://cdnjs.Cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+https://varvy.com/rel/dns-prefetch.html
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-DNS-Prefetch-Control
+<link rel="dns-prefetch" href="//www.mozilla.org/contribute/">
+<meta http-equiv="x-dns-prefetch-control" content="off">
+
+
+
+
+########################################################################
+
+[Improving Font Rendering With CSS]
+
+########################################################################
+
+https://gist.github.com/aliang/899154/172f3c53f249068e15e56ff6821e78e77c713737
+https://gist.github.com/kolber/452577
+https://developer.mozilla.org/de/docs/Web/CSS/text-rendering
+https://css-tricks.com/almanac/properties/t/text-rendering/
+https://developer.mozilla.org/de/docs/Web/CSS/hyphens
+https://www.w3schools.com/cssref/css3_pr_hyphens.asp
+https://css-tricks.com/almanac/properties/h/hyphenate/
+https://gist.github.com/agragregra/25f26a76cbfb9b5bb430
+https://www.w3schools.com/cssref/css3_pr_animation-play-state.asp
+http://onezeronull.com/2016/10/06/disable-css-transitions-and-animations-temporarily-or-permanently/
+https://dev.webonomic.nl/how-to-disable-css-transforms-transistions-and-animations/comment-page-1
+https://developer.mozilla.org/en-US/docs/Web/CSS/zoom
+
+-webkit-font-smoothing: antialiased;
+-webkit-transform: translateZ(0px);
+-moz-osx-font-smoothing: grayscale;
+
+text-rendering: optimizeSpeed;
+text-rendering: optimizeLegibility;
+text-rendering: geometricPrecision;
+
+p.legibility {
+  text-rendering: optimizeLegibility;
+}
+p.speed {
+  text-rendering: optimizeSpeed;
+}
+body {
+  text-rendering: optimizeLegibility;
+}
+
+
+* {
+/*CSS transitions*/
+	-o-transition-property: none !important;
+	-moz-transition-property: none !important;
+	-ms-transition-property: none !important;
+	-webkit-transition-property: none !important;
+	transition-property: none !important;
+/*CSS transforms*/
+	-o-transform: none !important;
+	-moz-transform: none !important;
+	-ms-transform: none !important;
+	-webkit-transform: none !important;
+	transform: none !important;
+/*CSS animations*/
+	-webkit-animation: none !important;
+	-moz-animation: none !important;
+	-o-animation: none !important;
+	-ms-animation: none !important;
+	animation: none !important;
+}
+
+
+*, :before, :after {
+	 /*CSS transitions*/
+	 transition-property: none !important;
+	 /*CSS transforms*/
+	 transform: none !important;
+	 /*CSS animations*/
+	 animation: none !important;
+ }
+
+.notransition {
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -o-transition: none !important;
+  transition: none !important;
+}
+
+....
+
+
+body {
+    /*-webkit-font-smoothing: subpixel-antialiased;*/
+    /*-webkit-transform: translateZ(0px);*/
+    -webkit-font-smoothing: grayscale;
+    -webkit-backface-visibility:hidden;
+    -moz-font-smoothing: grayscale;
+    -webkit-transition: none !important;
+    -moz-transition: none !important;
+    -o-transition: none !important;
+    transition: none !important;
+    /*text-rendering: optimizeLegibility;*/
+    text-rendering: optimizeSpeed;
+    animation: none;
+    -webkit-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+    /*image-rendering: smooth;*/
+    /*image-rendering: optimizeSpeed;*/
+}
+@media (prefers-reduced-motion: reduce) {
+    body {
+        animation: none;
+    }
+}
+
+
+
+Source map error: request failed with status 404
+Source Map URL: jquery-1.10.2.min.map[Learn More]
+
+generate a source map
+https://gruntjs.com/
+https://www.html5rocks.com/en/tutorials/developertools/sourcemaps/
+
+java -jar compiler.jar \
+     --js script.js \
+     --create_source_map ./script-min.js.map \
+     --source_map_format=V3 \
+     --js_output_file script-min.js
+
+
+
+
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+
+
+
+<!-- Minified Bootstrap 3 CSS-->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<!--Minified jQuery 3 JS-->
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<!--Latest Bootstrap 3 JS-->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+
+########################################################################
+"[Violation] Forced reflow while executing JavaScript took "
+changing the logging from “all levels” to uncheck the “verbose.”
+########################################################################
+
+Reflow is the name of the web browser process for re-calculating the positions and geometries of elements in the document, for the purpose of re-rendering part or all of the document. Because reflow is a user-blocking operation in the browser, it is useful for developers to understand how to improve reflow time and also to understand the effects of various document properties (DOM depth, CSS rule efficiency, different types of style changes) on reflow time. Sometimes reflowing a single element in the document may require reflowing its parent elements and also any elements which follow it.
+
+What forces layout / reflow
+
+Box metrics
+Scroll stuff
+Focus
+getComputedStyle
+window
+Forms
+Mouse events
+document
+Range
+SVG
+
+https://bmt-systems.com/blog/preventing-forced-reflows-with-strategic-javascript-ii
+https://stackoverflow.com/questions/41218507/violation-long-running-javascript-task-took-xx-ms
+
+
+
+
+
+########################################################################
+image rendering
+########################################################################
+
+https://developer.mozilla.org/de/docs/Web/CSS/image-rendering
+https://css-tricks.com/almanac/properties/i/image-rendering/
+https://www.hosteurope.de/blog/web-performance-optimierung-der-kritische-rendering-pfad/
+https://de.odwebdesign.net/how-to-optimize-for-legibility-using-text-rendering/
+https://www.w3.org/TR/2011/WD-html5-20110525/rendering.html
+https://developer.mozilla.org/en-US/docs/Web/CSS/table-layout
+https://www.css-wiki.com/css-eigenschaft/table-layout
+https://www.sitepoint.com/10-ways-minimize-reflows-improve-performance/
+https://css-tricks.com/almanac/properties/t/table-layout/
+https://css-tricks.com/fixing-tables-long-strings/
+https://www.w3schools.com/cssref/pr_tab_table-layout.asp
+
+
+/* speed up */
+body {
+	-webkit-font-smoothing:auto;
+  	text-rendering: optimizeLegibility;
+	image-rendering: pixelated;
+	table-layout: fixed;
+}
+
+img {
+  /*image-rendering: auto;
+  image-rendering: crisp-edges;*/
+  image-rendering: pixelated;
+}
+
+
+
+########################################################################
+animation reduce
+########################################################################
+
+https://blog.prototypr.io/getting-up-to-speed-with-high-performance-web-58b740042892
+https://developers.google.com/web/updates/2019/03/prefers-reduced-motion
+https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion
+https://www.devbridge.com/articles/building-a-faster-rocket-achieving-quicker-app-load-times/
+https://developers.google.com/web/tools/lighthouse/audits/first-contentful-paint
+https://webplatform.news/issues/2019-05-10
+https://wicg.github.io/largest-contentful-paint/
+https://www.heise.de/developer/artikel/a11y-Reduced-Motion-4356171.html
+https://www.sitepoint.com/10-ways-minimize-reflows-improve-performance/
+
+
+@media (prefers-reduced-motion: reduce) {
+    animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animation {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01s !important;
+    transition-duration: .01s !important;
+  }
+}
+
+########################################################################
+table-layout: fixed
+########################################################################
+<link rel="preconnect" href="[https://maps.google.com](https://maps.google.com/)" crossorigin />
+<link rel="preload" href="scripts/dist/application.js" as="script" type="text/javascript" />
+<script async type="text/javascript" src="SomePathToNonCritical"></script>
+<script defer type="text/javascript" src="SomePathToNonCritical"></script>
+
+body {
+    -webkit-font-smoothing: subpixel-antialiased;
+    text-rendering: optimizeLegibility;
+    animation: none;
+    image-rendering: optimizeSpeed ;
+}
+@media (prefers-reduced-motion: reduce) {
+    body {
+        animation: none;
+    }
+}
