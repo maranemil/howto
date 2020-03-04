@@ -248,6 +248,31 @@
 | https://www.youtube.com/watch?v=_8V5o2UHG0E | Data Visualization with D3.js |
 | https://www.youtube.com/watch?v=T3TpdPmTLso | Mathematics for Machine Learning |
 | https://www.youtube.com/watch?v=tPYj3fFJGjk | TensorFlow 2.0 Complete Course |
+| https://www.youtube.com/watch?v=tPYj3fFJGjk | TensorFlow 2.0 Complete Course | 
+| https://www.youtube.com/watch?v=Hf4MJH0jDb4 | React Native Crash Course 2020 |
+| https://www.youtube.com/watch?v=_z9nzEUgro4 | Laravel 6 Advanced Service Container |
+| https://www.youtube.com/watch?v=nu5mdN2JIwM | Sass Crash Course |
+| https://www.youtube.com/watch?v=jV8B24rSN5o | CSS Grid Layout Crash Course |
+| https://www.youtube.com/watch?v=ZCweh0Q8tyE | Directives in Vue.js 2.0 - Vue.js Fundamentals |
+| https://www.youtube.com/watch?v=7PpJsho5aak | Laravel 7 |
+| https://www.youtube.com/watch?v=-56x56UppqQ | MongoDB Crash Course |
+| https://www.youtube.com/watch?v=4deVCNJq3qc | Learn Vue.js - Full Course for Beginners | 
+| https://www.youtube.com/watch?v=5lVQgZzLMHc | Vuex Crash Course | 
+| https://www.youtube.com/watch?v=Wy9q22isx3U | Vue JS Crash Course |
+| https://www.youtube.com/watch?v=DJ6PD_jBtU0 | Full Stack Vue.js & Laravel |
+| https://www.youtube.com/watch?v=ahCwqrYpIuM | TypeScript - The Basics |
+| https://www.youtube.com/watch?v=qgRUr-YUk1Q | JavaScript Modules in 100 Seconds |
+| https://www.youtube.com/watch?v=g2o22C3CRfU | Big-O Notation in 100 Seconds |
+| https://www.youtube.com/watch?v=DC471a9qrU4 | Array Map in 100 Seconds |
+| https://www.youtube.com/watch?v=vn3tm0quoqE | The Async Await Episode I Promised |
+| https://www.youtube.com/watch?v=RvYYCGs45L4 | JavaScript Promise in 100 Seconds |
+| https://www.youtube.com/watch?v=tVCYa_bnITg | Array Reduce in 100 seconds |
+| https://www.youtube.com/watch?v=rf60MejMz3E | Recursion in 100 Seconds |
+| https://www.youtube.com/watch?v=m3OjWNFREJo | Electron JS in 100 Seconds |
+| https://www.youtube.com/watch?v=D9oIu6jiYLk | Laravel Airlock with Vue for SPA Auth |
+| https://www.youtube.com/watch?v=82hnvUYY6QA | AJAX Crash Course (Vanilla JavaScript) |
+| https://www.youtube.com/watch?v=0ik6X4DJKCc | JavaScript DOM Crash Course |
+
 
 
 | Link URL  | Playlist |
@@ -272,4 +297,5 @@
 | https://www.youtube.com/watch?v=3bxAm3XIFmk&list=PLBArW4dCYWbT5-dSATFcn6Tuqv-WKdyaR  | DEv to Architecture |
 | https://www.youtube.com/watch?v=ia1KSZCG2Bs&list=PLQ176FUIyIUYB2JG1htieA8yYqYAtKGB4 | JetBrains Videos | 
 | https://www.youtube.com/watch?v=AHK20LWEWXQ&list=PLQ176FUIyIUbfeFz-2EbDzwExRlD0Bc-w | JetBrains Videos | 
+| https://www.youtube.com/watch?v=hdI2bqOjy3c&list=PLillGF-RfqbbnEGy3ROiLWk7JMCuSyQtX |  JavaScript Crash Course  | 
 
