@@ -272,7 +272,7 @@
 | https://www.youtube.com/watch?v=D9oIu6jiYLk | Laravel Airlock with Vue for SPA Auth |
 | https://www.youtube.com/watch?v=82hnvUYY6QA | AJAX Crash Course (Vanilla JavaScript) |
 | https://www.youtube.com/watch?v=0ik6X4DJKCc | JavaScript DOM Crash Course |
-
+| https://www.youtube.com/watch?v=NjN00cM18Z4  | TypeScript Tutorial for Angular and React Developers |
 
 
 | Link URL  | Playlist |
