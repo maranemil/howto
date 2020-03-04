@@ -240,7 +240,14 @@
 | https://www.youtube.com/watch?v=u2zsY-2uZiE | Data Science Tutorial 11 Hours | 
 | https://www.youtube.com/watch?v=h0gWfVCSGQQ | IoT Full Course | 
 | https://www.youtube.com/watch?v=3kdX-P8JZyc | Bootstrap 4 Portfolio | 
-
+| https://www.youtube.com/watch?v=nu5mdN2JIwM | Sass Crash Course |
+| https://www.youtube.com/watch?v=2eEe5LnEbks | Introduction to Linux | 
+| https://www.youtube.com/watch?v=rPSL1alFIjI | Functional Programming in Java |
+| https://www.youtube.com/watch?v=F5mRW0jo-U4 | Python Django Web Framework |
+| https://www.youtube.com/watch?v=HXV3zeQKqGY | SQL Tutorial |
+| https://www.youtube.com/watch?v=_8V5o2UHG0E | Data Visualization with D3.js |
+| https://www.youtube.com/watch?v=T3TpdPmTLso | Mathematics for Machine Learning |
+| https://www.youtube.com/watch?v=tPYj3fFJGjk | TensorFlow 2.0 Complete Course |
 
 
 | Link URL  | Playlist |
