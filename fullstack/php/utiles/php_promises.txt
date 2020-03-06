@@ -38,6 +38,19 @@ https://voicesoftheelephpant.com/
 https://www.freecodecamp.org/news/promise-all-in-javascript-with-example-6c8c5aea3e32/
 https://www.newline.co/fullstack-react/30-days-of-react/day-15/
 https://www.reddit.com/r/PHP/comments/8lne5f/why_does_php_have_promises_libraries/
+https://stackoverflow.com/questions/31426740/how-to-return-many-promises-in-a-loop-and-wait-for-them-all-to-do-other-stuff
+https://hotexamples.com/de/examples/-/-/GuzzleHttp%5CPromise%5Call/php-guzzlehttp%5Cpromise%5Call-function-examples.html
+https://docs.aws.amazon.com/aws-sdk-php/v3/api/function-GuzzleHttp.Promise.all.html
+https://docs.amazonaws.cn/zh_cn/aws-sdk-php/guide/latest/guide/promises.html
+https://codeandtalk.com/v/zendcon-2015/asynchronous-api-interaction-with-guzzle-session-zendcon-2015
+http://docs.guzzlephp.org/en/latest/quickstart.html
+https://github.com/guzzle/promises/issues/57
+https://hotexamples.com/de/examples/-/-/GuzzleHttp%5CPromise%5Cqueue/php-guzzlehttp%5Cpromise%5Cqueue-function-examples.html
+https://hotexamples.com/de/examples/-/-/GuzzleHttp%5CPromise%5Cqueue/php-guzzlehttp%5Cpromise%5Cqueue-function-examples.html
+https://github.com/guzzle/promises
+
+
+
 
 ----------------------------------------------------
 // Can Guzzle send asynchronous requests?
@@ -228,6 +241,406 @@ class RepLogController extends BaseController
     });
 })(window, jQuery, Routing);
 
+
+
+
+
+
+
+
+
+
+
+
+
+https://medium.com/@ardanirohman/how-to-handle-async-request-concurrency-with-promise-in-guzzle-6-cac10d76220e
+---------------------------------------------------
+// A. Request with Promise
+---------------------------------------------------
+use GuzzleHttp\Promise\Promise;
+
+$promise = new Promise();
+$promise->then(
+    // $onFulfilled
+    function ($value) {
+        echo 'The promise was fulfilled.';
+    },
+    // $onRejected
+    function ($reason) {
+        echo 'The promise was rejected.';
+    }
+);
+
+---------------------------------------------------
+// B. Async Request with Promise
+---------------------------------------------------
+use GuzzleHttp\Client;
+use GuzzleHttp\Promise;
+
+$client = new Client(['base_uri' => 'http://httpbin.org/']);
+
+// Initiate each request but do not block
+$promises = [
+    'image' => $client->getAsync('/image'),
+    'png'   => $client->getAsync('/image/png'),
+    'jpeg'  => $client->getAsync('/image/jpeg'),
+    'webp'  => $client->getAsync('/image/webp')
+];
+
+// Wait on all of the requests to complete. Throws a ConnectException
+// if any of the requests fail
+$results = Promise\unwrap($promises);
+
+// Wait for the requests to complete, even if some of them fail
+$results = Promise\settle($promises)->wait();
+
+// You can access each result using the key provided to the unwrap
+// function.
+echo $results['image']['value']->getHeader('Content-Length')[0]
+echo $results['png']['value']->getHeader('Content-Length')[0]
+
+
+$promise = $client->getAsync('http://httpbin.org/get');
+$promise = $client->deleteAsync('http://httpbin.org/delete');
+$promise = $client->headAsync('http://httpbin.org/get');
+$promise = $client->optionsAsync('http://httpbin.org/get');
+$promise = $client->patchAsync('http://httpbin.org/patch');
+$promise = $client->postAsync('http://httpbin.org/post');
+$promise = $client->putAsync('http://httpbin.org/put');
+
+
+unwrap :
+waits on all of the provided promises and returns the fulfilled values. Returns an array that contains the value of each promise (in the same order the promises were provided). An exception is thrown if any of the promises are rejected.
+
+all :
+given an array of promises, return a promise that is fulfilled when all the items in the array are fulfilled. The promise’s fulfillment value is an array with fulfillment values at respective positions to the original array. If any promise in the array rejects, the returned promise is rejected with the rejection reason.
+
+each :
+given an iterator that yields promises or values, returns a promise that is fulfilled with a null value when the iterator has been consumed or the aggregate promise has been fulfilled or rejected.
+
+settle :
+ returns a promise that is fulfilled when all of the provided promises have been fulfilled or rejected. The returned promise is fulfilled with an array of inspection state arrays.
+
+---------------------------------------------------
+// C. Concurrency in Promise
+---------------------------------------------------
+
+use GuzzleHttp\Promise\EachPromise;
+use GuzzleHttp\Psr7\Response;
+
+$users = ['one', 'two', 'three'];
+
+$promises = (function () use ($users) {
+  foreach ($users as $user) {
+    // don't forget using generator
+    yield $this->getAsync('https://api.demo.com/v1/users?username=' . $user);
+  }
+})();
+
+$eachPromise = new EachPromise($promises, [
+  // how many concurrency we are use
+  'concurrency' => 4,
+  'fulfilled' => function (Response $response) {
+    if ($response->getStatusCode() == 200) {
+      $user = json_decode($response->getBody(), true);
+        // processing response of user here
+      }
+    },
+  'rejected' => function ($reason) {
+    // handle promise rejected here
+  }
+]);
+
+$eachPromise->promise()->wait();
+
+---------------------------------------------------
+// D. Bonus : improve with cache
+---------------------------------------------------
+use GuzzleHttp\Promise\EachPromise;
+use GuzzleHttp\Promise\FulfilledPromise;
+use GuzzleHttp\Psr7\Response;
+use Cache;
+
+$users = ['one', 'two', 'three'];
+$cache = new Cache();
+
+$promises = (function () use ($users, $cache) {
+  foreach ($users as $user) {
+
+    // check cache is exist
+    if ($cache->hasItem('cache_user_' . $user)) {
+      $profile = $cache->getItem($user)->get();
+
+      yield new FulfilledPromise($profile);
+      continue;
+  }
+    // don't forget using generator
+    yield $this->getAsync('https://api.demo.com/v1/users?username=' . $user)
+      ->then(function (Response $response) use ($cache, $user) {
+
+          $profile = json_decode($response->getBody(), true);
+          // save to cache expiry to 300s
+          $cache->put('cache_user_' . $user, $profile, $expiry = 300);
+
+          return $profile;
+      });
+  }
+})();
+$eachPromise = new EachPromise($promises, [
+  // how many concurrency we are use
+  'concurrency' => 4,
+  'fulfilled' => function ($profile) {
+      // process object profile of user here
+    },
+  'rejected' => function ($reason) {
+    // handle promise rejected here
+  }
+]);
+$eachPromise->promise()->wait();
+
+---------------------------------------------------
+// GuzzleHttp Example
+---------------------------------------------------
+https://jeromejaglale.com/doc/php/laravel_asynchronous_guzzle_requests_using_promises
+
+$client = new \GuzzleHttp\Client();
+
+// start request
+$promise = $client->getAsync('http://loripsum.net/api')->then(
+    function ($response) {
+        return $response->getBody();
+    }, function ($exception) {
+        return $exception->getMessage();
+    }
+);
+
+// do other things
+echo '<b>This will not wait for the previous request to finish to be displayed!</b>';
+
+// wait for request to finish and display its response
+$response = $promise->wait();
+echo $response;
+
+---------------------------------------------------
+// Example 2: two Guzzle requests in parallel
+---------------------------------------------------
+
+$client = new \GuzzleHttp\Client();
+
+$promise1 = $client->getAsync('http://loripsum.net/api')->then(
+    function ($response) {
+        return $response->getBody();
+    }, function ($exception) {
+        return $exception->getMessage();
+    }
+);
+
+$promise2 = $client->getAsync('http://loripsum.net/api')->then(
+    function ($response) {
+        return $response->getBody();
+    }, function ($exception) {
+        return $exception->getMessage();
+    }
+);
+
+$response1 = $promise1->wait();
+$response2 = $promise2->wait();
+
+echo $response1;
+echo $response2
+
+
+---------------------------------------------------
+Promising a response
+---------------------------------------------------
+https://stephencoakley.com/2015/06/11/integrating-guzzle-6-asynchronous-requests-with-reactphp
+
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use Psr\Http\Message\ResponseInterface;
+
+$client = new Client();
+$client->getAsync('http://loripsum.net/api')->then(
+    function (ResponseInterface $res) {
+        echo $res->getStatusCode() . "\n";
+    }, function (RequestException $e) {
+        echo $e->getMessage() . "\n";
+        echo $e->getRequest()->getMethod();
+    }
+);
+
+
+
+
+---------------------------------------------------
+Loop
+---------------------------------------------------
+https://www.bountysource.com/issues/22228263-asynchronous-requests-with-requestasync-are-not-actually-sent-until-you-call-wait
+
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Handler\CurlMultiHandler;
+use function GuzzleHttp\Promise\queue as promiseQueue;
+
+use Amp\Loop;
+use Amp\Promise;
+use Amp\Deferred;
+
+Loop::run(function () {
+    $queue = promiseQueue();
+    Loop::repeat(0, [$queue, 'run']);
+
+    /* Request 1 */
+    Loop::defer(function() {
+        $response = yield request("https://www.google.com/");
+        var_dump($response->getBody());
+    });
+
+    /* Request 2 */
+    Loop::defer(function() {
+        $response = yield request("https://www.google.com/");
+        var_dump($response->getBody());
+    });
+
+    /* Request 3 */
+    Loop::defer(function() {
+        $response = yield request("https://www.google.com/");
+        var_dump($response->getBody());
+    });
+
+    /* Request 4 */
+    Loop::defer(function() {
+        $response = yield request("https://www.google.com/");
+        var_dump($response->getBody());
+    });
+});
+
+
+$guzzleClient = null;
+
+function request($url, $method, $options) : Promise
+{
+    global $guzzleClient;
+
+    $deferred = new Deferred;
+
+    /* Create Client - Singleton */
+    if (!$guzzleClient) {
+        $defaultRequestHeaders = [];
+        $defaultRequestHeaders['User-Agent'] = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36';
+
+        $handler = new CurlMultiHandler();
+        Loop::repeat(0, function() use ($handler) {
+            $handler->tick();
+        });
+        $guzzleClient = new GuzzleClient([
+            'headers' => $defaultRequestHeaders,
+            'handler' => HandlerStack::create($handler),
+            'connect_timeout' => 5,
+            'read_timeout' => 5,
+            'timeout' => 5
+        ]);
+    }
+
+    /* Send Request */
+    $guzzleClient
+        ->requestAsync($method, $url, $options)
+        ->then(function($response) use ($deferred) {
+            $deferred->resolve($response);
+        })
+        ->otherwise(function($e) use ($deferred) {
+            if ($e instanceof Throwable) {
+                $deferred->fail($e);
+            } else {
+                $deferred->fail(new Exception($e));
+            }
+        });
+
+    return $deferred->promise();
+}
+
+
+
+
+
+---------------------------------------------------
+Guzzle uses Promises to handle async requests.
+---------------------------------------------------
+https://madewithlove.com/concurrent-http-requests/
+
+$client = new GuzzleHttpClient();
+$promise = $client->requestAsync('GET', 'https://api.github.com/users/hannesvdvreken');
+$promise->then(function (ResponseInterface $response) {
+    $profile = json_decode($response->getBody(), true);
+    // Do something with the profile.
+});
+$promise->wait();
+
+
+---------------------------------------------------
+Guzzle make multiple requests at the same time
+---------------------------------------------------
+$promises = [];
+foreach ($usernames as $username) {
+    $promises[] = $client->requestAsync('GET', 'https://api.github.com/users/'.$username);
+}
+GuzzleHttpPromiseall($promises)->then(function (array $responses) {
+    foreach ($responses as $response) {
+         $profile = json_decode($response->getBody(), true);
+         // Do something with the profile.
+    }
+})->wait();
+
+
+---------------------------------------------------
+protect ourselves from starting all requests at the same
+---------------------------------------------------
+$promises = (function () use ($username) {
+    foreach ($usernames as $username) {
+        yield $client->requestAsync('GET', 'https://api.github.com/users/'.$username);
+    }
+})();
+
+new EachPromise($promises, [
+    'concurrency' => 4,
+    'fulfilled' => function (ResponseInterface $responses) {
+         $profile = json_decode($response->getBody(), true);
+         // Do something with the profile.
+    },
+])->promise()->wait();
+
+
+---------------------------------------------------
+responses could be cached to limit the total data sent over HTTP
+---------------------------------------------------
+
+/** @var PsrCacheCacheItemPoolInterface $cache */
+
+$promises = (function () use ($username) use ($cache) {
+    foreach ($usernames as $username) {
+        if ($cache->hasItem($username)) {
+            $value = $cache->getItem($username)->get();
+
+            yield new GuzzleHttpPromiseFulfilledPromise($value);
+            continue;
+        }
+
+        yield $client->requestAsync('GET', 'https://api.github.com/users/'.$username)
+            ->then(function (ResponseInterface $response) use ($cache, $username) {
+                $profile = json_decode($response->getBody(), true);
+                $cache->save($cache->getItem($username)->set($profile));
+
+                return $profile;
+            });
+    }
+})();
+
+new EachPromise($promises, [
+    'concurrency' => 4,
+    'fulfilled' => function (array $profile) {
+         // Do something with the profile.
+    },
+])->promise()->wait();
 
 
 
