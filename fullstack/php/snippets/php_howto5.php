@@ -1,3 +1,8 @@
+################################################################
+#
+#   GuzzleHttp Promises
+#
+################################################################
 
 // http://docs.guzzlephp.org/en/latest/quickstart.html
 // http://docs.guzzlephp.org/en/stable/faq.html
@@ -120,4 +125,53 @@ while ($p->getState() === 'pending') {
    sleep(1);
 }
 $p->wait();
+
+
+
+
+/* GuzzleHttp installation
+---------------------------------------------
+
+ Did you mean one of these?
+      guzzlehttp/psr7
+      guzzlehttp/ring
+      guzzle/guzzle
+      guzzlehttp/guzzle
+      guzzlehttp/streams
+
+composer require guzzlehttp/psr7
+composer require guzzlehttp/guzzle
+composer require guzzlehttp/streams
+
+---------------------------------------------
+*/
+
+require 'vendor/autoload.php';
+
+use GuzzleHttp\Promise\Promise;
+use GuzzleHttp\Promise\PromiseInterface;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Pool;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
+// ------------------------------------------------------------------------------------
+// request an asynchronous request.
+// ------------------------------------------------------------------------------------
+try{
+    $client  = new GuzzleHttp\Client();
+    $promise = $client->requestAsync('GET', 'http://httpbin.org/get');
+    $promise->then(
+        function ($response) {
+           echo  $response->getStatusCode(). PHP_EOL;
+        },
+        function ($exception) {
+           echo $exception->getMessage(). PHP_EOL;
+        }
+    );
+    $promise->wait();
+}
+catch(Exception $e){
+    echo $e->getMessage();
+}
 
