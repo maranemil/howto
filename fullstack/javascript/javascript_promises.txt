@@ -333,3 +333,121 @@ const taskResolution = (args, period) => {
 taskResolution(args, period)
     .then((data) => {})
     .catch((error) => {});
+
+
+
+
+----------------------------------------------------
+https://github.com/sindresorhus/p-limit
+https://blog.bitsrc.io/understanding-javascript-async-and-await-with-examples-a010b03926ea
+https://medium.com/hackernoon/async-await-essentials-for-production-loops-control-flows-limits-23eb40f171bd
+https://hackernoon.com/lets-make-a-javascript-wait-function-fa3a2eb88f11
+
+var e = document.querySelector('#a')
+
+  var waitForHello = timeoutms => new Promise((r, j)=>{
+    var check = () => {
+      console.warn('checking')
+      if(e.innerHTML == 'Hello world')
+        r()
+      else if((timeoutms -= 100) < 0)
+        j('timed out!')
+      else
+        setTimeout(check, 100)
+    }
+    setTimeout(check, 100)
+  })//setTimeout(()=>{e.innerHTML='Hello world'}, 1000)  (async ()=>{
+    a.innerHTML = 'waiting..'
+    waitForHello(2000)
+  })()
+
+
+Promise.race
+https://italonascimento.github.io/applying-a-timeout-to-your-promises/
+
+
+// Will resolve after 200ms
+let promiseA = new Promise((resolve, reject) => {
+  let wait = setTimeout(() => {
+    clearTimout(wait);
+    resolve('Promise A win!');
+  }, 200)
+})
+
+// Will resolve after 400ms
+let promiseB = new Promise((resolve, reject) => {
+  let wait = setTimeout(() => {
+    clearTimout(wait);
+    resolve('Promise B win!');
+  }, 400)
+})
+
+// Let's race our promises
+let race = Promise.race([
+  promiseA,
+  promiseB
+])
+
+race.then((res) => console.log(res)) // -> Promise A win!
+
+
+----------------------------------------------------
+https://blog.pusher.com/promises-async-await/
+----------------------------------------------------
+function getAPIData(url) {
+      return contentData(url) // returns a promise
+        .catch(e => {
+          return somethingElse(url)  // returns a promise
+        })
+        .then(v => {
+          return someOtherThing(v); // returns a promise
+        })
+        .then(x => {
+          return anotherOtherThing(v)
+        });
+        //   the chain continues with more .then() handlers
+    }
+
+----------------------------------------------------
+https://getstream.io/blog/javascript-promises-and-why-async-await-wins-the-battle/
+https://gist.github.com/nparsons08/8698238fe689329cab7d67841681cbf5#file-validate-password-js
+----------------------------------------------------
+// provided a string (password)
+function validatePassword(password) {
+	// create promise with resolve and reject as params
+	return new Promise((resolve, reject) => {
+		// validate that password matches bambi (the deer)
+		if (password !== 'bambi') {
+			// password doesn't match, return an error with reject
+			return reject('Invalid Password!');
+		}
+
+		// password matches, return a success state with resolve
+		resolve();
+	});
+}
+
+function done(err) {
+	// if an err was passed, console out a message
+	if (err) {
+		console.log(err);
+		return; // stop execution
+	}
+
+	// console out a valid state
+	console.log('Password is valid!');
+}
+
+// dummy password
+const password = 'foo';
+
+// using a promise, call the validate password function
+validatePassword(password)
+	.then(() => {
+		// it was successful
+		done(null);
+	})
+	.catch(err => {
+		// an error occurred, call the done function and pass the err message
+		done(err);
+	});
