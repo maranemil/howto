@@ -1,0 +1,241 @@
+#####################################################
+#
+#	PHP Promises GuzzleHttp / ReactPHP
+#
+#####################################################
+
+http://docs.guzzlephp.org/en/latest/faq.html#can-guzzle-send-asynchronous-requests
+http://docs.guzzlephp.org/en/stable/
+http://docs.guzzlephp.org/en/stable/quickstart.html
+http://docs.php-http.org/en/latest/
+http://docs.php-http.org/en/latest/components/promise.html
+https://afieldguidetoelephpants.net/
+https://blog.wyrihaximus.net/2015/04/reactphp-http/
+https://de.slideshare.net/MarcMorera/when-symfony-met-promises-167235900
+https://de.slideshare.net/wimg/the-promise-of-asynchronous-php
+https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
+https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/guide_promises.html
+https://github.com/guzzle/promises
+https://github.com/guzzle/promises/issues/44
+https://github.com/php-http/documentation
+https://github.com/reactphp/http
+https://github.com/reactphp/promise
+https://github.com/reactphp/promise/issues/43
+https://github.com/request/request-promise
+https://itnext.io/async-and-await-in-javascript-the-extension-to-a-promise-f4e0048964ac
+https://larachat.co/events/january-php-meetup-promises-promises-with-cal-evans
+https://medium.com/async-php/reactive-php-events-d0cd866e9285
+https://reactphp.org/
+https://reactphp.org/promise/
+https://robertbasic.com/blog/reacting-to-promises/
+https://sergeyzhuk.me/2017/06/16/phpreact-promises/
+https://sergeyzhuk.me/2017/07/17/reatcphp-http-server/
+https://sergeyzhuk.me/2017/08/22/reactphp-promise-timers/
+https://sergeyzhuk.me/2017/12/20/reactphp-http-middleware/
+https://sergeyzhuk.me/2018/01/16/reactphp-managing-promises/
+https://thinkster.io/tutorials/iterating-and-rendering-loops-in-react
+https://voicesoftheelephpant.com/
+https://www.freecodecamp.org/news/promise-all-in-javascript-with-example-6c8c5aea3e32/
+https://www.newline.co/fullstack-react/30-days-of-react/day-15/
+https://www.reddit.com/r/PHP/comments/8lne5f/why_does_php_have_promises_libraries/
+
+----------------------------------------------------
+// Can Guzzle send asynchronous requests?
+----------------------------------------------------
+Yes. You can use the requestAsync, sendAsync, getAsync, headAsync, putAsync, postAsync, deleteAsync, and patchAsync methods of a client to send an asynchronous request. The client will return a GuzzleHttp\Promise\PromiseInterface object. You can chain then functions off of the promise.
+
+$promise = $client->requestAsync('GET', 'http://httpbin.org/get');
+$promise->then(function ($response) {
+echo 'Got a response! ' . $response->getStatusCode(); });
+You can force an asynchronous response to complete using the wait() method of the returned promise.
+
+$promise = $client->requestAsync('GET', 'http://httpbin.org/get');
+$response = $promise->wait();
+
+----------------------------------------------------
+// php GuzzleHttp
+----------------------------------------------------
+use GuzzleHttp\Promise\Promise;
+$promise = new Promise();
+$promise->then(
+    // $onFulfilled
+    function ($value) {
+        echo 'The promise was fulfilled.';
+    },
+    // $onRejected
+    function ($reason) {
+        echo 'The promise was rejected.';
+    }
+);
+
+----------------------------------------------------
+// php React
+----------------------------------------------------
+
+$statusCodes = new FetchStatusCodes();
+$promise = $statusCodes->promise();
+$promise
+    ->then(
+        function($value) {
+            var_dump($value);
+        },
+        function($reason) {
+            echo $reason . PHP_EOL;
+        }
+    );
+
+$urls = [
+    'https://example.com/',
+    'https://stackoverflow.com/',
+    'https://www.google.com/',
+    'https://www.google.com/no-such-url',
+    'https://www.google.com:81'
+];
+$statusCodes($urls);
+
+----------------------------------------------------
+// php React
+----------------------------------------------------
+
+$loop = React\EventLoop\Factory::create();
+$server = new React\Http\Server(function (Psr\Http\Message\ServerRequestInterface $request) {
+    return new React\Http\Response(
+        200,
+        array('Content-Type' => 'text/plain'),
+        "Hello World!\n"
+    );
+});
+$socket = new React\Socket\Server(8080, $loop);
+$server->listen($socket);
+echo "Server running at http://127.0.0.1:8080\n";
+$loop->run();
+
+----------------------------------------------------
+// php GuzzleHttp
+----------------------------------------------------
+$client = new GuzzleHttp\Client();
+$res = $client->request('GET', 'https://api.github.com/user', [
+    'auth' => ['user', 'pass']
+]);
+echo $res->getStatusCode();
+// "200"
+echo $res->getHeader('content-type')[0];
+// 'application/json; charset=utf8'
+echo $res->getBody();
+// {"type":"User"...'
+
+// Send an asynchronous request.
+$request = new \GuzzleHttp\Psr7\Request('GET', 'http://httpbin.org');
+$promise = $client->sendAsync($request)->then(function ($response) {
+    echo 'I completed! ' . $response->getBody();
+});
+$promise->wait();
+
+----------------------------------------------------
+// php GuzzleHttp
+----------------------------------------------------
+use GuzzleHttp\Client;
+$client = new Client([
+    // Base URI is used with relative requests
+    'base_uri' => 'http://httpbin.org',
+    // You can set any number of default request options.
+    'timeout'  => 2.0,
+]);
+
+----------------------------------------------------
+// php React
+----------- -----------------------------------------
+
+require 'vendor/autoload.php';
+
+$loop = React\EventLoop\Factory::create();
+$socket = new React\Socket\Server($loop);
+$http = new React\Http\Server($socket, $loop);
+$http->on('request', function ($request, $response) {
+    $response->writeHead(200, array('Content-Type' => 'text/plain'));
+    $response->end("Hello World\n");
+});
+
+$socket->listen(80);
+$loop->run();
+
+----------------------------------------------------
+// Making (and Keeping) a Promise
+----------------------------------------------------
+# https://symfonycasts.com/screencast/javascript/create-your-own-promise
+# web/assets/js/RepLogApp.js
+# https://symfonycasts.com/screencast/javascript/create-your-own-promise
+
+(function(window, $, Routing) {
+    $.extend(window.RepLogApp.prototype, {
+        handleNewFormSubmit: function(e) {
+            this._saveRepLog(formData)
+            .then(function(data) {
+            });
+        },
+        _saveRepLog: function(data) {
+            return $.ajax({
+                url: Routing.generate('rep_log_new'),
+                method: 'POST',
+                data: JSON.stringify(data)
+            });
+        },
+    });
+})(window, jQuery, Routing);
+
+#src/AppBundle/Controller/RepLogController.php
+class RepLogController extends BaseController
+{
+    public function newRepLogAction(Request $request)
+    {
+        //$response = $this->createApiResponse($apiModel);
+        $response = new Response(null, 204);
+    }
+}
+
+#src/AppBundle/Controller/RepLogController.php
+class RepLogController extends BaseController
+{
+    public function newRepLogAction(Request $request)
+    {
+        // setting the Location header... it's a best-practice
+        $response->headers->set(
+            'Location',
+            $this->generateUrl('rep_log_get', ['id' => $repLog->getId()])
+        );
+    }
+}
+
+----------------------------------------------------
+// Making the Second AJAX Call
+----------------------------------------------------
+# web/assets/js/RepLogApp.js
+
+# web/assets/js/RepLogApp.js
+(function(window, $, Routing) {
+    $.extend(window.RepLogApp.prototype, {
+        _saveRepLog: function(data) {
+            return $.ajax({
+            }).then(function(data, textStatus, jqXHR) {
+                $.ajax({
+                    url: jqXHR.getResponseHeader('Location')
+                }).then(function(data) {
+                    console.log('now we are REALLY done');
+                    console.log(data);
+                });
+            });
+        },
+    });
+})(window, jQuery, Routing);
+
+
+
+
+
+
+https://github.com/calevans
+https://www.cloudways.com/blog/cal-evans-interview/
+https://twitter.com/calevans
+https://www.facebook.com/792916594079571/videos/cal-evans-rapid-fire-interview-for-bulgaria-php-conference/1052741174763777/
+https://www.facebook.com/792916594079571/videos/2313800408698157/
+https://www.youtube.com/watch?reload=9&v=EqaDQgDbZfM
