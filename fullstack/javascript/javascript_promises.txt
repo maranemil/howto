@@ -54,8 +54,7 @@ getCurrentTime()
 // Async function to send mail to a list of users.
 ----------------------------------------------------
 const sendMailForUsers = async (users) => {
-  const usersLength = users.length
-
+  const usersLength = users.length;
   for (let i = 0; i < usersLength; i += 100) {
     const requests = users.slice(i, i + 100).map((user) => { // The batch size is 100. We are processing in a set of 100 users.
       return triggerMailForUser(user) // Async function to send the mail.
@@ -69,7 +68,6 @@ const sendMailForUsers = async (users) => {
   }
 }
 sendMailForUsers(userLists)
-
 
 
 ######################################################
@@ -245,3 +243,93 @@ const checkIfDone = () => {
 
 
 
+
+######################################################
+Interval Promise NodeJS
+######################################################
+
+/*
+https://medium.com/@kornatzky/how-to-integrate-intervals-into-a-promises-chain-in-node-js-9cfe9b19ace7
+https://blog.atomist.com/javascript-timer-settimeout/
+*/
+
+https://github.com/andyfleming/interval-promise
+https://github.com/composite/promise-extended-spec
+npm install interval-promise
+
+const interval = require('interval-promise')
+
+// Run a function 10 times with 1 second between each iteration
+interval(async () => {
+    await someOtherPromiseReturningFunction()
+    await another()
+}, 1000, {iterations: 10})
+
+
+var promise = new Promise(function(resolve, reject){
+  var i = 0;
+  setInterval(function(){
+    resolve(++i); // when fired, this promise will flag with DONE.
+  });
+});
+promise.then(function(i){
+  console.log(i);
+}).then(function(i){
+  console.log(i);
+});
+
+...
+
+async function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async funtion main() {
+    setTimeout(async () => {
+        try {
+            await bad();
+        } catch (e) {
+            console.warn("caught: " + e.message)
+        }
+    }, 100);
+    await sleep(200);
+}
+
+async function main() {
+    setTimeout(async () => {
+        console.log("before");
+        await sleep(100);
+        console.log("after");
+    }, 100);
+}
+
+...
+
+setInterval(() => {
+    testLongJobStatus(args).
+        .then((data) => { console.log(data); });
+}, 1000);
+
+...
+
+const taskResolution = (args, period) => {
+  return new Promise((resolve, reject) => {
+    const interval = setInterval(() => {
+      testLongJobStatus(args)
+        .then((data) => {
+             if (data === 'failure') {
+                         clearInterval(interval);
+             reject(Error('fail'));
+           } else if (data === 'success') {
+               resolve('complete')
+           }
+           // keep on waiting
+       });
+    }, period);
+  });
+};
+
+// Integrate the Interval with the Promises Chain
+taskResolution(args, period)
+    .then((data) => {})
+    .catch((error) => {});
