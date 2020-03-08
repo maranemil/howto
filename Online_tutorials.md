@@ -273,6 +273,10 @@
 | https://www.youtube.com/watch?v=82hnvUYY6QA | AJAX Crash Course (Vanilla JavaScript) |
 | https://www.youtube.com/watch?v=0ik6X4DJKCc | JavaScript DOM Crash Course |
 | https://www.youtube.com/watch?v=NjN00cM18Z4  | TypeScript Tutorial for Angular and React Developers |
+| https://www.youtube.com/watch?v=6g4O5UOH304 | TensorFlow 2.0 Crash Course |
+| https://www.youtube.com/watch?v=tPYj3fFJGjk | TensorFlow 2.0 Complete Course |
+
+
 
 
 | Link URL  | Playlist |
