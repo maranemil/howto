@@ -276,11 +276,11 @@
 | https://www.youtube.com/watch?v=6g4O5UOH304 | TensorFlow 2.0 Crash Course |
 | https://www.youtube.com/watch?v=tPYj3fFJGjk | TensorFlow 2.0 Complete Course |
 | https://www.youtube.com/watch?v=A_l0qrPUJds | JAMstack Course |
-| https://www.youtube.com/watch?v=t_ispmWmdjY |  Ruby Programming Language - Full Course  |
-| https://www.youtube.com/watch?v=2qDywOS7VAc |  JavaScript Course for Beginners 2020  |
-| https://www.youtube.com/watch?v=UB1O30fR-EE |  HTML Crash Course For Absolute Beginners  |
-| https://www.youtube.com/watch?v=PkZNo7MFNFg |  Learn JavaScript - Full Course for Beginners  |
-| https://www.youtube.com/watch?v=VWeWViFCzzg |  Intro to Apache Spark Training  |
+| https://www.youtube.com/watch?v=t_ispmWmdjY | Ruby Programming Language - Full Course  |
+| https://www.youtube.com/watch?v=2qDywOS7VAc | JavaScript Course for Beginners 2020  |
+| https://www.youtube.com/watch?v=UB1O30fR-EE | HTML Crash Course For Absolute Beginners  |
+| https://www.youtube.com/watch?v=PkZNo7MFNFg | Learn JavaScript - Full Course for Beginners  |
+| https://www.youtube.com/watch?v=VWeWViFCzzg | Intro to Apache Spark Training  |
 
 
 
