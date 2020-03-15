@@ -307,4 +307,5 @@
 | https://www.youtube.com/watch?v=ia1KSZCG2Bs&list=PLQ176FUIyIUYB2JG1htieA8yYqYAtKGB4 | JetBrains Videos | 
 | https://www.youtube.com/watch?v=AHK20LWEWXQ&list=PLQ176FUIyIUbfeFz-2EbDzwExRlD0Bc-w | JetBrains Videos | 
 | https://www.youtube.com/watch?v=hdI2bqOjy3c&list=PLillGF-RfqbbnEGy3ROiLWk7JMCuSyQtX |  JavaScript Crash Course  | 
+| https://www.youtube.com/watch?v=Y_hzMnRXjhI&list=PLQY2H8rRoyvwLbzbnKJ59NkZvQAW9wLbx |  TensorFlow NLP Zero to Hero | 
 
