@@ -259,3 +259,50 @@ $smarty->setTemplateDir("/path/to/styles/templates");
 $smarty->setCompileDir("/path/to/styles/templates_c");
 $smarty->setCacheDir("/path/to/styles/cache");
 $smarty->setConfigDir("/path/to/styles/configs");
+
+##############################################
+#
+#	xajaxResponse onload
+#
+##############################################
+
+https://www.smarty.net/forums/viewtopic.php?t=6098&sid=70f0c4f5d4bc848e7c1e07989558f76e
+https://www.smarty.net/forums/viewtopic.php?t=7822&sid=512e09a0287a41c02e77e15216cb7884
+https://www.smarty.net/docsv2/de/language.function.include.tpl
+
+---------------------
+some template
+---------------------
+<script>
+	$(function () {
+		setTimeout(function () {
+			xajax_SomeComponent_xSomeFunction();
+		}, 1500);
+	});
+</script>
+
+
+---------------------
+SomeComponent.php
+---------------------
+
+class SomeComponent{
+	public function reload(){
+		$this->registerAjaxMethods(  array(  'xSomeFunction'  ) );
+	}
+
+	public function xSomeFunction() {
+	  $responseObj = new xajaxResponse();
+	  $objSmarty = new Smarty();
+	  $strHTML     = $objSmarty->fetch(DIR_FS_COMPONENTS . __CLASS__. '/SomeComponent.page.tpl');
+	  $responseObj->assign('id_resopnse', 'innerHTML', $strHTML);
+	  return $responseObj;
+	}
+}
+
+---------------------
+Component.page.tpl
+---------------------
+<div class="pull-left col-xs-1">
+     {include file="includes/components/SomeComponent/SomeOtherComponent.page.tpl"}
+</div>
