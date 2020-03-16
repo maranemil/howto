@@ -1,0 +1,280 @@
+
+#########################################################
+#
+#	Getting Started with Django
+#	https://hackersandslackers.com/getting-started-django/
+#
+#########################################################
+
+----------------------------------------
+Installing Django in a Virtual Environment
+----------------------------------------
+python3.8 -m pip install pipenv
+python3.8 -m pipenv shell
+pipenv install django
+python3 -m django --version
+
+django-admin startproject [YOUR_PROJECT_NAME]
+
+----------------------------------------
+Anatomy of a Django App
+----------------------------------------
+/djangotutorial
+  ├── /djangotutorial
+  │   ├── __init__.py
+  │   ├── settings.py
+  │   ├── urls.py
+  │   └── wsgi.py
+  └── manage.py
+
+
+settings.py handles everything imaginable related to configuration
+urls.py is where we set the top-level URLs for our projects.
+wsgi.py where we point webservers like Nginx
+
+
+manage.py
+python3 manage.py runserver deploys our app in "development mode"
+python3 manage.py migrate updates your project's database tables
+python3 manage.py startapp [MY_APP_NAME] is the equivalent of django-admin startproject [YOUR_PROJECT_NAME].
+check out what manage.py can do by running python3 manage.py --help
+
+python3 manage.py runserver
+Now open your browser and check out http://127.0.0.1:8000/:
+----------------------------------------
+Settings.py: The Gist of Django
+----------------------------------------
+import os
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = '$HVG687rTFDuYdtfg8yiuf87fuib&)lw#6btg5_p'
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+ALLOWED_HOSTS = ['0.0.0.0',
+                 '127.0.0.1',
+                 'localhost',
+                 '127.0.0.1:8000',
+                 'example.com']
+
+# Application definition
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+]
+
+# Database
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'myDatabase',
+        'USER': 'root',
+        'PASSWORD': 'password123',
+        'HOST': '534.13.356.35',
+        'PORT': '3306',
+    }
+}
+
+# Database
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/debug.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(PROJECT_DIR, "static")
+]
+
+APPEND_SLASH = True
+
+----------------------------------------
+pip3 install mysqlclient
+
+
+
+----------------------------------------
+Our Base Page Template
+----------------------------------------
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<title>{{title}}</title>
+  <meta charset="utf-8" />
+  <meta name="description" content="This is a description">
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#5eb9d7">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="stylesheet" href="https://use.typekit.net/uqq2lcv.css">
+  <link href="{% static 'css/styles.css' %}" rel="stylesheet" type="text/css">
+</head>
+
+<body class="{{template}}">
+    {% block content %}{%  endblock %}
+</body>
+
+</html>
+
+
+----------------------------------------
+Structure
+----------------------------------------
+
+/djangotutorial
+├── /static
+│   ├── /css
+│   │   └── styles.css
+│   └── /img
+│       └── logo.png
+├── /templates
+│   └── layout.html
+├── __init__.py
+├── settings.py
+├── urls.py
+└── wsgi.py
+
+
+----------------------------------------
+Making a Django "App"
+----------------------------------------
+
+django-admin startapp [YOUR_APP_NAME]
+
+/myapp
+  ├── __init__.py
+  ├── admin.py
+  ├── apps.py
+  ├── /migrations
+  │   └── __init__.py
+  ├── models.py
+  ├── tests.py
+  └── views.py
+
+
+----------------------------------------
+Creating a Homepage
+----------------------------------------
+from django.shortcuts import render
+
+def index(request):
+    context = {'template': 'homepage',
+               'title': 'My Django App',
+               'description': 'You\'ve launched your first Django app!'}
+    return render(request, 'myapp/index.html', context)
+
+
+
+
+/myapp
+├── /templates
+│   └── /myapp
+│       └── index.html
+├── /migrations
+│   └── __init__.py
+├── __init__.py
+├── admin.py
+├── apps.py
+├── models.py
+├── tests.py
+└── views.py
+
+
+----------------------------------------
+index.html / layout.html
+----------------------------------------
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="card">
+        <img src="{% static 'img/logo.png' %}" alt="logo" class="logo" />
+        <h1>Hello world!</h1>
+        <p>{{ description }}</p>
+    </div>
+{%  endblock %}
+
+----------------------------------------
+Setting a URL Route
+----------------------------------------
+
+from django.urls import path
+from . import views
+urlpatterns = [
+    path('', views.index, name='index'),
+]
+
+----------------------------------------
+urls.py
+----------------------------------------
+urlpatterns = [
+    path('', views.index, name='index'),
+    path(r'^home/$', views.index, name='index'),
+    path(r'^home/(?P<user>\w+)$', views.index, name='index'),
+]
+
+
+----------------------------------------
+Activating myapp settings.py
+----------------------------------------
+
+# Application definition
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'myapp',
+]
+
+
+----------------------------------------
+djangotutorial/urls.py
+----------------------------------------
+
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('myapp.urls')),
+]
+
+
+
+
+
