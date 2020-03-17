@@ -148,3 +148,95 @@ sshd in debug mode (sudo rc.d stop sshd, sudo /usr/sbin/sshd -d
 sysctl net.ipv6.conf.all.disable_ipv6
 AddressFamily inet to /etc/ssh/sshd_config
 
+--------------------------------------------------------------------
+
+https://superuser.com/questions/962090/bad-ssh2-cipher-spec-with-protocol-2-ciphers-and-openssh-7-1-server
+https://forum.netcup.de/administration-eines-server-vserver/vserver-server-kvm-server/10975-optimierung-sshd-hinsichtlich-cipher-algorithmen/
+https://unix.stackexchange.com/questions/476120/sshfs-error-bad-ssh2-cipher-spec-arcfour-read-connection-reset-by-peer
+https://www.linuxmintusers.de/index.php?topic=44645.0
+https://wiki.archlinux.de/title/Sshfs
+https://unix.stackexchange.com/questions/94720/connection-reset-by-peer-using-sshfs
+
+sudo apt install openssh-server
+
+
+echo 'chacha20-poly1305@openssh.com,aes128-gcm@openssh.com,aes256-gcm@openss.com,aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,aes192-cbc,aes256-cbc' | sed -e "s/,/ /g"
+for c in chacha20-poly1305@openssh.com aes128-gcm@openssh.com aes256-gcm@openss.com aes128-ctr aes192-ctr aes256-ctr aes128-cbc aes192-cbc aes256-cbc; do sshd -t -o Ciphers=$c; done
+
+
+sudo sshfs -o Ciphers=arcfour,compression=no,nonempty,auto_cache,reconnect,workaround=all root@1.2.3.4:/storage ~/local_mount/
+sudo sshfs -o debug,sshfs_debug,loglevel=debug -o Ciphers=arcfour -o compression=no -o allow_root -o transform_symlinks root@1.2.3.4:/storage ~/local_mount/
+sudo sshfs -o allow_other -d -o debug root@1.2.3.4:/storage ~/local_mount/
+sudo sshfs -o allow_other,debug  root@1.2.3.4:/storage ~/local_mount/
+sudo sshfs -d -o allow_other,debug root@1.2.3.4:/storage ~/local_mount/
+
+sshfs -o sshfs_debug -o debug -o IdentityFile=/pathtoidentityfile sftp://ssh.server.com /mnt/backup_server
+---------------------------------------------------------------------------
+
+https://wiki.ubuntuusers.de/mount/
+http://manpages.ubuntu.com/manpages/xenial/man8/umount.8.html
+https://askubuntu.com/questions/985030/mount-with-atime
+https://wiki.archlinux.org/index.php/fstab
+https://en.wikipedia.org/wiki/Stat_%28system_call%29#Solutions
+https://wiki.archlinux.de/title/Noatime
+https://wiki.ubuntuusers.de/fstab/
+https://www.elektronik-kompendium.de/sites/raspberry-pi/2012181.htm
+https://wiki.debian.org/Vagrant
+
+sudo umount -a
+sudo mount -a
+sudo umount /mnt/sdn
+
+sudo systemctl status nfs-common
+sudo systemctl status nfs-kernel-server
+
+
+[nfs]
+sudo mount -v root@1.2.3.4:/storage ~/backup_server/
+sudo mount -v -o lazytime -t nfs 1.2.3.4:/storage backup_server/
+sudo mount -v -o lazytime -o vers=3 -t ext3 1.2.3.4:/storage backup_server/
+
+strictatime (formerly atime, and formerly the default; strictatime as of 2.6.30) – always update atime, which conforms to the behavior defined by POSIX
+relatime ("relative atime", introduced in 2.6.20 and the default as of 2.6.30) – only update atime under certain circumstances: if the previous atime is older than the mtime or ctime, or the previous atime is over 24 hours in the past
+nodiratime – never update atime of directories, but do update atime of other files
+noatime – never update atime of any file or directory; implies nodiratime; highest performance, but least compatible
+lazytime – update atime according to specific circumstances laid out below
+
+-t, --types fstype / The most common are ext2, ext3, ext4, xfs, btrfs, vfat, sysfs,  proc, nfs and cifs.
+
+---------------------------------------------------------------------
+
+https://itsfoss.com/speed-up-ubuntu-1310/
+https://www.linuxbabe.com/ubuntu/4-tips-speed-up-ubuntu-16-04
+https://easylinuxtipsproject.blogspot.com/p/speed-mint.html
+https://www.techradar.com/au/how-to/how-to-speed-up-ubuntu-1804
+
+sudo apt-get install preload
+systemctl status preload
+sudo apt-get install ntfs-3g # NTFS-Partitionen
+sudo ubuntu-drivers autoinstall
+sudo apt-get install nvidia-driver-435
+sudo apt-get -f install
+sudo dpkg --configure -a
+sudo apt-get --fix-broken install
+sudo apt autoremove
+sudo apt clean
+sudo apt update
+systemd-analyze time
+
+systemctl list-unit-files | grep enabled
+sudo systemctl disable <service-name>
+sudo systemctl disable cups.service
+sudo systemctl disable bluetooth.service
+
+
+service --status-all
+sudo service <name> stop
+---------------------------------------------------------------------
+
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/207671405-stop-Indexing-please-
+
+Edit Custom VM Options
+-XX:+UseG1GC instead of -XX:+UseConcMarkSweepGC
+
+
