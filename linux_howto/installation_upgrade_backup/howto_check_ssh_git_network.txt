@@ -1,0 +1,133 @@
+
+####################################################################
+#
+#   How to make sshfs + VPN + git a tolerable working environment?
+#
+####################################################################
+
+https://serverfault.com/questions/470059/how-to-make-sshfs-vpn-git-a-tolerable-working-environment
+https://stackoverflow.com/questions/7985325/whats-the-fastest-way-to-work-in-git-over-a-slow-network-connection
+https://stackoverflow.com/questions/600079/how-do-i-clone-a-subdirectory-only-of-a-git-repository/28039894#28039894
+https://unix.stackexchange.com/questions/470905/why-addressfamily-needs-to-be-configured-for-x11-forwarding
+https://unix.stackexchange.com/questions/111519/ssh-returns-message-x11-forwarding-request-failed-on-channel-1/249997#249997
+https://superuser.com/questions/1160349/git-is-extremely-slow-on-windows
+https://superuser.com/questions/743331/how-to-assess-why-git-clone-fetch-is-so-slow-inside-hyper-v-server
+https://www.syntevo.com/doc/display/SG/Performance+Tuning
+https://forum.ubuntuusers.de/topic/ssh-x-und-kein-ipv6/#post-6835912
+https://gist.github.com/adrianratnapala/1324845/609085f27055508e360ddeb52dc3d2dd05d4798c
+
+
+sshfs -o Ciphers=arcfour,compression=no,nonempty,auto_cache,reconnect,workaround=all user@development.net:/usr/local/gitdev/ ~/dev/code
+---
+remote setup as <git remote add origin <pathToSharedRepo>>
+<git pull origin <branch> --depth=1> (not at git fetch but git pull)
+git clone -b <branch> <pathToRepo> --depth=<numCommitsWanted>
+
+
+few ways to reduce bandwidth:
+- clone only the branch you need (--single-branch)
+- clone only the most recent versions of files (--depth 1, just like you did) This one implies --single-branch by default.
+clone only the files you need (a.k.a. sparse checkout, like here)
+
+git init <repo>
+cd <repo>
+git remote add origin <url>
+git config core.sparsecheckout true
+echo "finisht/*" >> .git/info/sparse-checkout
+git pull --depth=1 origin master
+
+-------
+
+#!/bin/bash
+
+until $( git pull --depth=1 origin master ); do        # <-- pull command goes here
+    echo "Pulling repository failed; retrying..."
+done
+
+-----------------------
+
+before pulling, you'll need initialize the repo first:
+
+git init <dir>
+cd <dir>
+git remote add origin <repo_url>
+
+---------------------------------------------------------
+Diagnosing why Git is so slow
+https://github.com/msysgit/msysgit/wiki/Diagnosing-why-Git-is-so-slow
+
+Activate Git's own tracing
+GIT_TRACE=1 git stash
+
+export GIT_TRACE_PACKET=1
+export GIT_TRACE=1
+export GIT_CURL_VERBOSE=1
+
+Redirecting output to a file
+exec > "$HOME"/Desktop/debug.txt 2>&1
+
+Enable the filesystem cache  Git for Windows
+git config core.fscache true
+
+Avoid inspecting large working trees' modification times
+git status
+git config core.ignoreStat true
+
+git clone --progress url
+---------------------------------------------------------
+/etc/ssh/sshd_config
+AddressFamily inet
+
+~/.ssh/config.
+host 10.1.1.*
+#ForwardX11 no
+AddressFamily inet
+
+# grep AddressFamily ssh*
+ssh_config:#   AddressFamily any
+
+sudo sysctl -a | grep net.ipv6.conf.*.disable
+
+
+# IPv6 deaktivieren
+net.ipv6.conf.all.disable_ipv6=1
+# scheinen dann nicht explizit notwendig zu sein:
+#net.ipv6.conf.default.disable_ipv6 = 1
+#net.ipv6.conf.eth0.disable_ipv6 = 1
+#net.ipv6.conf.eth1.disable_ipv6 = 1
+#net.ipv6.conf.lo.disable_ipv6 = 1
+
+# hier hingegen muss jeder Parameter gesetzt sein:
+net.ipv6.conf.all.autoconf = 0
+net.ipv6.conf.default.autoconf = 0
+net.ipv6.conf.lo.autoconf = 0
+net.ipv6.conf.eth0.autoconf = 0
+net.ipv6.conf.eth1.autoconf = 0
+
+---------------------------------------------------------
+https://www.ssh.com/ssh/sshd_config
+
+AllowTcpForwarding no
+AllowStreamLocalForwarding no
+GatewayPorts no
+PermitTunnel no
+---------------------------------------------------------
+https://gist.github.com/adrianratnapala/1324845/609085f27055508e360ddeb52dc3d2dd05d4798c
+X11Forwarding yes
+http://man.he.net/man5/sshd_config
+
+
+X11DisplayOffset 10
+X11UseLocalhost yes
+
+ssh -X me@some.box
+ssh -Y me@some.box
+ssh -v -X
+ssh    -- a remote trojan can find find an exploit in your ssh client and take over your local account.
+ssh -X -- as above, but it can also exploit your X server and thus root your box.
+ssh -Y -- as above, but it can also (without needing to find exploits), take screenshots and keylog you.
+---------------------------------------------------------
+sshd in debug mode (sudo rc.d stop sshd, sudo /usr/sbin/sshd -d
+sysctl net.ipv6.conf.all.disable_ipv6
+AddressFamily inet to /etc/ssh/sshd_config
+
