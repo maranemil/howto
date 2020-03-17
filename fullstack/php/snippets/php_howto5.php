@@ -175,3 +175,30 @@ catch(Exception $e){
     echo $e->getMessage();
 }
 
+
+// ------------------------------------------------------------------------------------
+// Fatal error: Uncaught Error: Class ‘WP_Recovery_Mode_Link_Service’ not found
+// Fatal error: Uncaught Error: Class 'FacebookGraphAPIError' not found
+// ------------------------------------------------------------------------------------
+// FIX: https://www.php.net/manual/en/function.class-exists.php
+// class_exists ( string $class_name [, bool $autoload = TRUE ] ) : bool
+
+// Check that the class exists before trying to use it
+if (class_exists('MyClass')) {
+    $myclass = new MyClass();
+}
+
+// Check to see whether the include declared the class
+if (!class_exists('MyClass', true)) {
+	trigger_error("Unable to load class: 'MyClass' ", E_USER_WARNING);
+}
+
+
+/*
+require __DIR__.'/vendor/autoload.php';
+use scratchers\nstest\Container;
+use scratchers\nstest\MyClass;
+
+$obj = Container::get(MyClass::class);
+echo $obj->prop;
+*/
