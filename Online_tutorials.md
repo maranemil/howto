@@ -281,8 +281,9 @@
 | https://www.youtube.com/watch?v=UB1O30fR-EE | HTML Crash Course For Absolute Beginners  |
 | https://www.youtube.com/watch?v=PkZNo7MFNFg | Learn JavaScript - Full Course for Beginners  |
 | https://www.youtube.com/watch?v=VWeWViFCzzg | Intro to Apache Spark Training  |
-| https://www.youtube.com/watch?v=_xkSvufmjEs |  Build and deploy a portfolio website | 
-
+| https://www.youtube.com/watch?v=_xkSvufmjEs | Build and deploy a portfolio website | 
+| https://www.youtube.com/watch?v=BwuLxPH8IDs | TypeScript Course for Beginners 2020 | 
+| https://www.youtube.com/watch?v=njKP3FqW3Sk | MIT Introduction to Deep Learning  | 
 
 | Link URL  | Playlist |
 |-----------|-------|
