@@ -284,6 +284,8 @@
 | https://www.youtube.com/watch?v=_xkSvufmjEs | Build and deploy a portfolio website | 
 | https://www.youtube.com/watch?v=BwuLxPH8IDs | TypeScript Course for Beginners 2020 | 
 | https://www.youtube.com/watch?v=njKP3FqW3Sk | MIT Introduction to Deep Learning  | 
+| https://www.youtube.com/watch?v=k5E2AVpwsko | Angular Tutorial for Beginners | 
+
 
 | Link URL  | Playlist |
 |-----------|-------|
