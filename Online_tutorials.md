@@ -285,7 +285,7 @@
 | https://www.youtube.com/watch?v=BwuLxPH8IDs | TypeScript Course for Beginners 2020 | 
 | https://www.youtube.com/watch?v=njKP3FqW3Sk | MIT Introduction to Deep Learning  | 
 | https://www.youtube.com/watch?v=k5E2AVpwsko | Angular Tutorial for Beginners | 
-
+| https://www.youtube.com/watch?v=iaSUYvmCekI | Convolutional Neural Networks |
 
 | Link URL  | Playlist |
 |-----------|-------|
