@@ -202,3 +202,47 @@ use scratchers\nstest\MyClass;
 $obj = Container::get(MyClass::class);
 echo $obj->prop;
 */
+
+
+
+##############################################################
+/*
+static::class vs get_called_class()
+self::class vs get_class() vs __CLASS__
+
+Understanding difference between
+ __CLASS__, get_class(), and get_called_class() with underlying self/static keyword
+*/
+##############################################################
+/*
+https://gist.github.com/surferxo3/0f6f181c2633996ff3815358d360f567
+https://www.php.net/manual/en/function.get-called-class.php
+https://riptutorial.com/php/example/4661/difference-between---class----get-class---and-get-called-class--
+https://www.leaseweb.com/labs/2014/04/static-versus-self-php/
+https://arueckauer.github.io/posts/2019/11/self-vs.-static/
+https://stackoverflow.com/questions/47798831/difference-staticclass-vs-get-called-class-and-class-vs-get-class-vs-s/49917180
+https://belineperspectives.com/2017/03/13/get_classthis-vs-staticclass/
+*/
+class Foo
+{
+    public function __invoke()
+    {
+        echo 'self: ' . self::class . PHP_EOL;
+        echo 'static: ' . static::class . PHP_EOL;
+        echo 'get_class(): ' . get_class() . PHP_EOL;
+        echo 'get_class($this): ' . get_class($this) . PHP_EOL;
+        echo 'get_called_class(): ' . get_called_class() . PHP_EOL;
+    }
+}
+
+class Bar extends Foo{}
+(new Bar())();
+
+/*
+Output:
+self: Foo
+static: Bar
+get_class(): Foo
+get_class($this): Bar
+get_called_class(): Bar
+*/

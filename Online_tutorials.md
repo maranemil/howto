@@ -286,6 +286,9 @@
 | https://www.youtube.com/watch?v=njKP3FqW3Sk | MIT Introduction to Deep Learning  | 
 | https://www.youtube.com/watch?v=k5E2AVpwsko | Angular Tutorial for Beginners | 
 | https://www.youtube.com/watch?v=iaSUYvmCekI | Convolutional Neural Networks |
+| https://www.youtube.com/watch?v=nU-IIXBWlS4 | Digital Marketing Course Part1 | 
+| https://www.youtube.com/watch?v=ldYcgPKEZC8 | PERN Stack Course | 
+| https://www.youtube.com/watch?v=1LJtg0Ip-SY | Build a Brain Computer App with React Native |  
 
 | Link URL  | Playlist |
 |-----------|-------|
