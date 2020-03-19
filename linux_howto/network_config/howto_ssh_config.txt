@@ -1,0 +1,267 @@
+
+#################################################################################
+#   OpenSSH Config File Examples
+#################################################################################
+
+https://www.cyberciti.biz/faq/create-ssh-config-file-on-linux-unix/
+https://linuxize.com/post/using-the-ssh-config-file/
+----------------------------------------------------------------------------------------
+mkdir -p $HOME/.ssh
+chmod 0700 $HOME/.ssh
+
+vi ~/.ssh/config
+
+### default for all ##
+Host *
+     ForwardAgent no
+     ForwardX11 no
+     ForwardX11Trusted yes
+     User nixcraft
+     Port 22
+     Protocol 2
+     ServerAliveInterval 60
+     ServerAliveCountMax 30
+
+## override as per host ##
+Host server1
+     HostName server1.cyberciti.biz
+     User nixcraft
+     Port 4242
+     IdentityFile /nfs/shared/users/nixcraft/keys/server1/id_rsa
+
+## Home nas server ##
+Host nas01
+     HostName 192.168.1.100
+     User root
+     IdentityFile ~/.ssh/nas01.key
+
+## Login AWS Cloud ##
+Host aws.apache
+     HostName 1.2.3.4
+     User wwwdata
+     IdentityFile ~/.ssh/aws.apache.key
+
+## Login to internal lan server at 192.168.0.251 via our public uk office ssh based gateway using ##
+## $ ssh uk.gw.lan ##
+Host uk.gw.lan uk.lan
+     HostName 192.168.0.251
+     User nixcraft
+     ProxyCommand  ssh nixcraft@gateway.uk.cyberciti.biz nc %h %p 2> /dev/null
+
+## Our Us Proxy Server ##
+## Forward all local port 3128 traffic to port 3128 on the remote vps1.cyberciti.biz server ##
+## $ ssh -f -N  proxyus ##
+Host proxyus
+    HostName vps1.cyberciti.biz
+    User breakfree
+    IdentityFile ~/.ssh/vps1.cyberciti.biz.key
+    LocalForward 3128 127.0.0.1:3128
+
+
+----------------------------------------------------------------------------------------
+
+Host : Defines for which host or hosts the configuration section applies. The section ends with a new Host section or the end of the file. A single * as a pattern can be used to provide global defaults for all hosts.
+
+HostName : Specifies the real host name to log into. Numeric IP addresses are also permitted.
+
+User : Defines the username for the SSH connection.
+
+IdentityFile : Specifies a file from which the user’s DSA, ECDSA or DSA authentication identity is read. The default is ~/.ssh/identity for protocol version 1, and ~/.ssh/id_dsa, ~/.ssh/id_ecdsa and ~/.ssh/id_rsa for protocol version 2.
+
+ProxyCommand : Specifies the command to use to connect to the server. The command string extends to the end of the line, and is executed with the user’s shell. In the command string, any occurrence of %h will be substituted by the host name to connect, %p by the port, and %r by the remote user name. The command can be basically anything, and should read from its standard input and write to its standard output. This directive is useful in conjunction with nc(1) and its proxy support. For example, the following directive would connect via an HTTP proxy at 192.1.0.253:
+
+ProxyCommand /usr/bin/nc -X connect -x 192.1.0.253:3128 %h %p
+
+LocalForward : Specifies that a TCP port on the local machine be forwarded over the secure channel to the specified host and port from the remote machine. The first argument must be [bind_address:]port and the second argument must be host:hostport.
+
+Port : Specifies the port number to connect on the remote host.
+
+Protocol : Specifies the protocol versions ssh(1) should support in order of preference. The possible values are 1 and 2.
+
+ServerAliveInterval : Sets a timeout interval in seconds after which if no data has been received from the server, ssh(1) will send a message through the encrypted channel to request a response from the server. See blogpost “Open SSH Server connection drops out after few or N minutes of inactivity” for more information.
+
+ServerAliveCountMax : Sets the number of server alive messages which may be sent without ssh(1) receiving any messages back from the server. If this threshold is reached while server alive messages are being sent, ssh will disconnect from the server, terminating the session.
+
+
+----------------------------------------------------------------------------------------
+Speed up ssh session
+----------------------------------------------------------------------------------------
+
+## ~/.ssh/config ##
+Host internal
+  HostName 192.168.1.100
+  User vivek
+  ProxyCommand ssh vivek@vpn.nixcraft.net.in -W %h:%p
+  ControlPath ~/.ssh/controlmasters/%r@%h:%p
+  ControlMaster auto
+
+----------------------------------------------------------------------------------------
+# https://www.ssh.com/ssh/config
+----------------------------------------------------------------------------------------
+Enabling X11 forwarding and agent forwarding
+
+ForwardAgent yes
+ForwardX11 yes
+
+----------------------------------------------------------------------------------------
+# https://nerderati.com/2011/03/17/simplify-your-life-with-an-ssh-config-file/
+# https://linux.die.net/man/5/ssh_config
+----------------------------------------------------------------------------------------
+
+$ ssh -f -N -L 9906:127.0.0.1:3306 coolio@database.example.com
+# -f puts ssh in background
+# -N makes it not execute a remote command
+
+Host tunnel
+    HostName database.example.com
+    IdentityFile ~/.ssh/coolio.example.key
+    LocalForward 9906 127.0.0.1:3306
+    User coolio
+
+ssh -f -N tunnel
+
+----------------------------------------------------------------------------------------
+# https://www.digitalocean.com/community/tutorials/how-to-configure-custom-connection-options-for-your-ssh-client
+----------------------------------------------------------------------------------------
+
+touch ~/.ssh/config
+
+Host home
+    VisualHostKey yes
+
+Host cloud*
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    LogLevel QUIET
+
+Host *
+    StrictHostKeyChecking ask
+    UserKnownHostsFile ~/.ssh/known_hosts
+    LogLevel INFO
+    ServerAliveInterval 120
+
+----------------------------------------------------------------------------------------
+https://wiki.ubuntuusers.de/SSH/
+----------------------------------------------------------------------------------------
+
+Host test2
+    HostName test.mynet.local
+    User test
+    CheckHostIP no
+    Cipher blowfish
+
+Host foobar
+    HostName domain.tld
+    Port 55550
+    User fanta
+    IdentityFile ~/.ssh/private_ssh_key_rsa
+
+sudo apt-get install openssh-server
+sudo service ssh restart  # ab Ubuntu 15.04
+
+ForwardAgent yes
+X11Forwarding yes
+X11UseLocalhost no
+ForwardX11 yes
+ForwardX11Trusted yes
+
+----------------------------------------------------------------------------------------
+https://www.onesystems.ch/blog/ssh-config-datei/
+http://man7.org/linux/man-pages/man5/ssh_config.5.html
+----------------------------------------------------------------------------------------
+
+Host myserver
+	HostName host4711.example.com
+	Port 2222
+	User user0815
+	ServerAliveInterval 30
+	ServerAliveCountMax 120
+
+Host github.com
+	IdentityFile ~/.ssh/mygithubkey_dsa
+
+Host tunnel
+	HostName database.example.ch
+	User dbuser
+	IdentityFile ~/.ssh/id_dsa
+	LocalForward 9906 127.0.0.1:3306
+	# forwards local port 9906 to remote port 3306
+	# activate tunnel with: ssh -f -N tunnel
+	# -f puts ssh in background
+	# -N makes it not execute a remote command
+
+Host *.example.ch
+        User root
+        IdentityFile ~/.ssh/id_dsa_example
+
+Host *
+        User root
+        IdentityFile ~/.ssh/id_dsa
+
+----------------------------------------------------------------------------------------
+https://medium.com/tarkalabs/ssh-simplified-using-ssh-config-161406ba75d7
+----------------------------------------------------------------------------------------
+
+2. user’s configuration file (~/.ssh/config)
+3. system-wide configuration file (/etc/ssh/ssh_config)
+
+Host server
+HostName server.com
+User user
+IdentityFile ~/.ssh/server
+IdentitiesOnly yes
+PreferredAuthentications publickey
+
+...
+
+IdentityFile ~/.ssh/default
+ServerAliveInterval 240
+PreferredAuthentications publickey
+Host server
+HostName server.com
+User user
+Host pass-server
+HostName pass-server.com
+User user
+PasswordAuthentication yes
+PreferredAuthentications password # Overrides default
+
+...
+
+Local Port Forwarding:
+.................
+Host server
+HostName server.com
+User user
+RequestTTY no
+LocalForward 8000 localhost:3306
+
+Remote Port Forwarding:
+.................
+Host server
+HostName server.com
+User user
+RequestTTY no
+RemoteForward 4000 localhost:3000
+
+Socks Proxy:
+.................
+Host server
+HostName server.com
+User user
+RequestTTY no
+DynamicForward 5000
+
+----------------------------------------------------------------------------------------
+https://linuxize.com/post/using-the-ssh-config-file/
+----------------------------------------------------------------------------------------
+
+HostName 192.168.10.20
+User oberyn
+LogLevel INFO
+Compression yes
+
+
+
+
+
