@@ -122,8 +122,6 @@ update-rc.d cupsys stop 20 2 3 4 5
 netstat -an --inet | grep LISTEN | grep -v 127.0.0.1
 nmap -p 631 <ip> --script cups-info
 
-
-
 ######################################################
 #
 #   open multiple tabs firefox chrome
@@ -589,3 +587,40 @@ curl --silent --output ./somewhere
 
 wget -O ./somewhere "www.example.com"
 grep --color -P  '<h1*' ./Downloads/example.htm
+
+#########################################################################
+#
+#   Loki takes long time to shut down
+#   Slow shutdown on Ubuntu 16.04 LTS (Stopping thermal daemon/running fit make remote CUPS printers)
+#
+#########################################################################
+
+https://askubuntu.com/questions/760952/slow-shutdown-on-ubuntu-16-04-lts-stopping-thermal-daemon-running-fit-make-remo
+https://01.org/linux-thermal-daemon/documentation/introduction-thermal-daemon
+http://manpages.ubuntu.com/manpages/bionic/man8/thermald.8.html
+https://github.com/intel/thermal_daemon
+https://elementaryos.stackexchange.com/questions/11202/loki-takes-long-time-to-shut-down
+https://wiki.debian.org/thermald
+
+
+sudo systemctl stop cups-browsed.service
+sudo systemctl disable cups-browsed.service
+
+...
+
+sudo systemctl edit cups-browsed.service
+[Service]
+TimeoutStopSec=10
+sudo systemctl daemon-reload
+
+sudo systemctl status cups-browsed
+sudo systemctl is-enabled cups-browsed
+
+...
+
+sudo io.elementary.code /etc/systemd/system.conf
+DefaultTimeoutStartSec=90s
+DefaultTimeoutStopSec=90s
+
+apt-get install thermald
+
