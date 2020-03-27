@@ -756,3 +756,94 @@ ssh -l myName -p 22 hostname
 
 ssh storage
 host storage
+
+
+###############################################
+#
+#   How to Change MTU Value on Linux - Maximum Transmission Unit
+#   Setup MTU (Maximum Transmission Unit)
+#
+###############################################
+
+https://support.purevpn.com/how-to-change-mtu-value-on-linux
+https://de.wikipedia.org/wiki/Maximum_Transmission_Unit
+https://en.wikipedia.org/wiki/Maximum_transmission_unit
+https://www.cyberciti.biz/faq/how-can-i-setup-the-mtu-for-my-network-interface/
+https://www.cyberciti.biz/faq/how-can-i-setup-the-mtu-for-my-network-interface/
+https://www.cyberciti.biz/faq/centos-rhel-redhat-fedora-debian-linux-mtu-size/
+https://mike632t.wordpress.com/2017/11/27/setting-the-mtu-size/
+https://linuxconfig.org/how-to-enable-jumbo-frames-in-linux
+https://www.ibm.com/support/knowledgecenter/en/linuxonibm/liaag/wkvm/wkvm_c_tune_netif.htm
+
+
+ping -c 3 -M do google.com
+ping -c 3 -M do -s 1500 google.com
+ping -c 3 -M do -s 68 google.com
+sudo ifconfig eth0 mtu 1498
+sudo ifconfig eth0 mtu 68
+sudo ifconfig wlp3s0  mtu 300
+sudo ifconfig eth1 mtu 9000 up
+
+ping -c 3 -s 500 -M do 192.168.0.1
+ip link list
+ifconfig eth0 mtu 1400 # or ip link set dev eth0 mtu 1400
+ip link list # or /sbin/ifconfig
+
+
+/etc/network/interfaces
+---------------------------------------
+auto eth0
+iface eth0 inet static
+name Ethernet LAN card
+address 192.168.1.2
+netmask 255.255.255.0
+broadcast 192.168.1.255
+network 192.168.1.0
+gateway 192.168.1.254
+mtu 1400
+post-up /etc/fw.start
+post-down /etc/fw.stop
+
+
+sudo /etc/init.d/networking restart
+sudo service network-manager restart
+
+
+
+nano /etc/sysconfig/network-scripts/ifcfg-eth0
+---------------------------------------
+NAME=eth0
+DEVICE=eth0
+#BOOTPROTO=dhcp
+ONBOOT=yes
+IPADDR=192.168.0.1
+NETMASK=255.255.255.0
+GATEWAY=192.168.0.254
+#USERCTL=no
+#NM_CONTROLLED=yes
+MTU=1492
+
+
+reboot
+
+ifdown eth0
+# ifup eth0
+
+
+nano /etc/network/interfaces
+---------------------------------------
+auto eth0
+iface eth0 inet static
+    address 192.168.0.2
+    netmask 255.255.255.0
+    MTU=1492
+
+
+
+ip ad | grep mtu
+ifconfig| grep mtu
+ip link show | grep mtu
+ip link set eth0 mtu 9000
+ip link set wlan0 mtu 9000
+
+ping -D -s 1550 example.com
