@@ -321,3 +321,6 @@
 | https://www.youtube.com/watch?v=hdI2bqOjy3c&list=PLillGF-RfqbbnEGy3ROiLWk7JMCuSyQtX | JavaScript Crash Course  | 
 | https://www.youtube.com/watch?v=Y_hzMnRXjhI&list=PLQY2H8rRoyvwLbzbnKJ59NkZvQAW9wLbx | TensorFlow NLP Zero to Hero | 
 | https://www.youtube.com/watch?v=ZyhVh-qRZPA&list=PL-osiE80TeTsWmV9i9c58mdDCSskIFdDS | Python Pandas Tutorial |
+| https://www.youtube.com/watch?v=w3GV9pumczQ&list=PLi01XoE8jYogpKUjykd53HjG8a8ruDmW1 | What is Calculus |
+| https://www.youtube.com/watch?v=bY6m6_IIN94&list=PLi01XoE8jYohWFPpC17Z-wWhPOSuh8Er- | Learn Python with Socratica |
+| https://www.youtube.com/watch?v=V5pxUz5EVs0&list=PLi01XoE8jYoiroxK2XtuzPU45LlegtjUh | Geometry |
