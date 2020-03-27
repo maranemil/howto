@@ -315,9 +315,9 @@
 | https://www.youtube.com/playlist?list=PLBv09BD7ez_448q9kRfZRxYb3cbeEanRb | IR7 Inverted Indexing |
 | https://www.youtube.com/playlist?list=PLaZQkZp6WhWxU3kA6wV0nb5dY1SXDEKWH | Classifications |
 | https://www.youtube.com/channel/UCU3OMAQMsRi0RixSUNfC3aA | CakePHP |
-| https://www.youtube.com/watch?v=3bxAm3XIFmk&list=PLBArW4dCYWbT5-dSATFcn6Tuqv-WKdyaR  | DEv to Architecture |
+| https://www.youtube.com/watch?v=3bxAm3XIFmk&list=PLBArW4dCYWbT5-dSATFcn6Tuqv-WKdyaR | DEv to Architecture |
 | https://www.youtube.com/watch?v=ia1KSZCG2Bs&list=PLQ176FUIyIUYB2JG1htieA8yYqYAtKGB4 | JetBrains Videos | 
 | https://www.youtube.com/watch?v=AHK20LWEWXQ&list=PLQ176FUIyIUbfeFz-2EbDzwExRlD0Bc-w | JetBrains Videos | 
-| https://www.youtube.com/watch?v=hdI2bqOjy3c&list=PLillGF-RfqbbnEGy3ROiLWk7JMCuSyQtX |  JavaScript Crash Course  | 
-| https://www.youtube.com/watch?v=Y_hzMnRXjhI&list=PLQY2H8rRoyvwLbzbnKJ59NkZvQAW9wLbx |  TensorFlow NLP Zero to Hero | 
-
+| https://www.youtube.com/watch?v=hdI2bqOjy3c&list=PLillGF-RfqbbnEGy3ROiLWk7JMCuSyQtX | JavaScript Crash Course  | 
+| https://www.youtube.com/watch?v=Y_hzMnRXjhI&list=PLQY2H8rRoyvwLbzbnKJ59NkZvQAW9wLbx | TensorFlow NLP Zero to Hero | 
+| https://www.youtube.com/watch?v=ZyhVh-qRZPA&list=PL-osiE80TeTsWmV9i9c58mdDCSskIFdDS | Python Pandas Tutorial |
