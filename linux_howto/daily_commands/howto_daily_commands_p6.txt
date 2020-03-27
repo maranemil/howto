@@ -653,3 +653,38 @@ ssh -C hostname
          in the configuration files; see the Compression option.
 
 
+
+#########################################################################
+#
+#	OpenVPN Durchsatz optimieren
+#
+#########################################################################
+
+https://blog.doenselmann.com/openvpn-durchsatz-optimieren/
+https://www.ip-phone-forum.de/threads/erstmal-gel%C3%B6st-openvpn-in-der-box-macht-kummer.157922/
+https://github.com/haugene/docker-transmission-openvpn/issues/257
+https://community.openvpn.net/openvpn/ticket/998
+
+proto udp
+port 1194
+dev tun
+; ...
+ifconfig-pool 192.168.200.100 192.168.200.150
+ifconfig 192.168.200.1 192.168.200.
+route 192.168.200.0 255.255.255.0
+push "route 192.168.200.0 255.255.255.0"
+push "route 192.168.0.0 255.255.255.0"
+push "dhcp-option DNS 192.168.0.1"
+push "redirect-gateway"
+max-clients 5
+tun-mtu 1500
+;fragmentation 1300
+mssfix 1300
+cipher BF-CBC
+comp-lzo
+float
+keepalive 10 120
+status /var/log/openvpn.log
+mute-replay-warnings
+
+# sudo systemctl restart openvpn.service
