@@ -292,7 +292,7 @@
 | https://www.youtube.com/watch?v=zTNA0MtZwso | Python Web Development: Understanding Django for Beginners | 
 | https://www.youtube.com/watch?v=dOnAC2Rr-6A | Javascript Full Course | 2020 | 
 | https://www.youtube.com/watch?v=TPMlZxRRaBQ | Tableau for Data Science and Data Visualization | 
-
+| https://www.youtube.com/watch?v=-vHQub0NXI4 | TensorFlow to solve for regression problems | 
 
 
 
@@ -324,3 +324,6 @@
 | https://www.youtube.com/watch?v=w3GV9pumczQ&list=PLi01XoE8jYogpKUjykd53HjG8a8ruDmW1 | What is Calculus |
 | https://www.youtube.com/watch?v=bY6m6_IIN94&list=PLi01XoE8jYohWFPpC17Z-wWhPOSuh8Er- | Learn Python with Socratica |
 | https://www.youtube.com/watch?v=V5pxUz5EVs0&list=PLi01XoE8jYoiroxK2XtuzPU45LlegtjUh | Geometry |
+| https://www.youtube.com/watch?v=lAvIuQIhbOQ&list=PLUPH1EuJOf-fonnlNMajy6p0RxkjU14y- | Tutorial C++ Romanian |
+| https://www.youtube.com/watch?v=-vHQub0NXI4&list=RDCMUC0rqucBdTuFTjJiefW5t-IQ		  | Get started with using TensorFlow | 
+| https://www.youtube.com/watch?v=inN8seMm7UI&list=PLQY2H8rRoyvyK5aEDAI3wUUqC_F0oEroL | Get started with Google Colaboratory |
