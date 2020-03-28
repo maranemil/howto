@@ -111,7 +111,6 @@ change date |touch -d "2 hours ago" filename
 * google-chrome --enable-user-scripts --flag-switches-begin --disable-accelerated-2d-canvas --disable-gpu-vsync --disable-threaded-animation --disable-webgl --js-flags=--harmony --flag-switches-end --disable-gpu-process-prelaunch --no-experiments --disable-notifications --no-referrers --new-window --enable-low-end-device-mode --restore-last-session --disable-gpu --disable-software-rasterizer --enable-gpu-rasterization
 * brave --enable-user-scripts --flag-switches-begin --disable-accelerated-2d-canvas --disable-gpu-vsync --disable-threaded-animation --disable-webgl --js-flags=--harmony --flag-switches-end --disable-gpu-process-prelaunch --no-experiments --disable-notifications --no-referrers --new-window --enable-low-end-device-mode --restore-last-session --disable-gpu --disable-software-rasterizer --enable-gpu-rasterization
 
-
 > chrome://flags
 * --no-sandbox --site-per-process --process-per-site --enable-low-end-device-mode --disk-cache-size=104857600
 > firefox
@@ -119,13 +118,17 @@ change date |touch -d "2 hours ago" filename
 
 > boost cpu
 * for i in {0..7}; do echo performance | sudo tee /sys/devices/system/cpu/cpu"$i"/cpufreq/scaling_governor ; done
-
+* sudo x86_energy_perf_policy -v balance-performance
 
 ##### vm settings
 * sudo sysctl -w vm.swappiness=20
 * sudo sysctl -w vm.swappiness=20 && sudo sysctl vm.vfs_cache_pressure=50 && sudo sysctl -w net.ipv4.ip_forward=1
 * sudo sysctl -w vm.swappiness=10 && sudo sysctl -w vm.vfs_cache_pressure=50 && sudo sysctl -w vm.dirty_ratio=10 && sudo sysctl -w vm.dirty_background_ratio=5 && sudo sync && sudo sysctl -w vm.drop_caches=3
 
+##### wlan mtu
+* ip link show | grep mtu
+* sudo ip link set wlp3s0 mtu 1400 up
+* ping -c 3 -M do -s 400 google.com
 
 ##### Drop cache
 * cat /proc/sys/vm/swappiness
