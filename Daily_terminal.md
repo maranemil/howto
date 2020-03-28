@@ -112,7 +112,6 @@ change date |touch -d "2 hours ago" filename
 * brave --enable-user-scripts --flag-switches-begin --disable-accelerated-2d-canvas --disable-gpu-vsync --disable-threaded-animation --disable-webgl --js-flags=--harmony --flag-switches-end --disable-gpu-process-prelaunch --no-experiments --disable-notifications --no-referrers --new-window --enable-low-end-device-mode --restore-last-session --disable-gpu --disable-software-rasterizer --enable-gpu-rasterization
 
 
-
 > chrome://flags
 * --no-sandbox --site-per-process --process-per-site --enable-low-end-device-mode --disk-cache-size=104857600
 > firefox
