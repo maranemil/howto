@@ -1,0 +1,189 @@
+########################################################
+#
+#	pref stat - recording actions CPU utilization
+#	Linux perf command
+#
+#	https://perf.wiki.kernel.org/index.php/Main_Page
+#	http://www.brendangregg.com/perf.html
+#	https://perf.wiki.kernel.org/index.php/Tutorial
+#
+########################################################
+
+pref record -F 99 -a -g -- sleep 10
+-F - event 99Hz
+
+perf stat: obtain event counts
+perf record: record events for later reporting
+perf report: break down events by process, function, etc.
+perf annotate: annotate assembly or source code with event counts
+perf top: see live event count
+perf bench: run different kernel microbenchmarks
+
+perf list
+perf stat -B dd if=/dev/zero of=/dev/null count=1000000 # Counting with perf stat
+
+...
+
+perf record -e block:block_rq_issue -ag
+ls -l perf.data
+perf report
+
+
+# Listing all currently known events:
+perf list
+
+# Listing sched tracepoints:
+perf list 'sched:*'
+
+
+Counting Events
+# CPU counter statistics for the specified command:
+perf stat command
+
+# Detailed CPU counter statistics (includes extras) for the specified command:
+perf stat -d command
+
+# CPU counter statistics for the specified PID, until Ctrl-C:
+perf stat -p PID
+
+# CPU counter statistics for the entire system, for 5 seconds:
+perf stat -a sleep 5
+
+# Various basic CPU statistics, system wide, for 10 seconds:
+perf stat -e cycles,instructions,cache-references,cache-misses,bus-cycles -a sleep 10
+
+# Various CPU level 1 data cache statistics for the specified command:
+perf stat -e L1-dcache-loads,L1-dcache-load-misses,L1-dcache-stores command
+
+# Various CPU data TLB statistics for the specified command:
+perf stat -e dTLB-loads,dTLB-load-misses,dTLB-prefetch-misses command
+
+# Various CPU last level cache statistics for the specified command:
+perf stat -e LLC-loads,LLC-load-misses,LLC-stores,LLC-prefetches command
+
+# Using raw PMC counters, eg, counting unhalted core cycles:
+perf stat -e r003c -a sleep 5
+
+# PMCs: counting cycles and frontend stalls via raw specification:
+perf stat -e cycles -e cpu/event=0x0e,umask=0x01,inv,cmask=0x01/ -a sleep 5
+
+# Count syscalls per-second system-wide:
+perf stat -e raw_syscalls:sys_enter -I 1000 -a
+
+# Count system calls by type for the specified PID, until Ctrl-C:
+perf stat -e 'syscalls:sys_enter_*' -p PID
+
+# Count system calls by type for the entire system, for 5 seconds:
+perf stat -e 'syscalls:sys_enter_*' -a sleep 5
+
+# Count scheduler events for the specified PID, until Ctrl-C:
+perf stat -e 'sched:*' -p PID
+
+# Count scheduler events for the specified PID, for 10 seconds:
+perf stat -e 'sched:*' -p PID sleep 10
+
+# Count ext4 events for the entire system, for 10 seconds:
+perf stat -e 'ext4:*' -a sleep 10
+
+# Count block device I/O events for the entire system, for 10 seconds:
+perf stat -e 'block:*' -a sleep 10
+
+# Count all vmscan events, printing a report every second:
+perf stat -e 'vmscan:*' -a -I 1000
+
+
+
+Profiling
+# Sample on-CPU functions for the specified command, at 99 Hertz:
+perf record -F 99 command
+
+# Sample on-CPU functions for the specified PID, at 99 Hertz, until Ctrl-C:
+perf record -F 99 -p PID
+
+# Sample on-CPU functions for the specified PID, at 99 Hertz, for 10 seconds:
+perf record -F 99 -p PID sleep 10
+
+# Sample CPU stack traces (via frame pointers) for the specified PID, at 99 Hertz, for 10 seconds:
+perf record -F 99 -p PID -g -- sleep 10
+
+# Sample CPU stack traces for the PID, using dwarf (dbg info) to unwind stacks, at 99 Hertz, for 10 seconds:
+perf record -F 99 -p PID --call-graph dwarf sleep 10
+
+# Sample CPU stack traces for the entire system, at 99 Hertz, for 10 seconds (< Linux 4.11):
+perf record -F 99 -ag -- sleep 10
+
+# Sample CPU stack traces for the entire system, at 99 Hertz, for 10 seconds (>= Linux 4.11):
+perf record -F 99 -g -- sleep 10
+
+# If the previous command didn't work, try forcing perf to use the cpu-clock event:
+perf record -F 99 -e cpu-clock -ag -- sleep 10
+
+# Sample CPU stack traces for a container identified by its /sys/fs/cgroup/perf_event cgroup:
+perf record -F 99 -e cpu-clock --cgroup=docker/1d567f4393190204...etc... -a -- sleep 10
+
+# Sample CPU stack traces for the entire system, with dwarf stacks, at 99 Hertz, for 10 seconds:
+perf record -F 99 -a --call-graph dwarf sleep 10
+
+# Sample CPU stack traces for the entire system, using last branch record for stacks, ... (>= Linux 4.?):
+perf record -F 99 -a --call-graph lbr sleep 10
+
+# Sample CPU stack traces, once every 10,000 Level 1 data cache misses, for 5 seconds:
+perf record -e L1-dcache-load-misses -c 10000 -ag -- sleep 5
+
+# Sample CPU stack traces, once every 100 last level cache misses, for 5 seconds:
+perf record -e LLC-load-misses -c 100 -ag -- sleep 5
+
+# Sample on-CPU kernel instructions, for 5 seconds:
+perf record -e cycles:k -a -- sleep 5
+
+# Sample on-CPU user instructions, for 5 seconds:
+perf record -e cycles:u -a -- sleep 5
+
+# Sample on-CPU user instructions precisely (using PEBS), for 5 seconds:
+perf record -e cycles:up -a -- sleep 5
+
+# Perform branch tracing (needs HW support), for 1 second:
+perf record -b -a sleep 1
+
+# Sample CPUs at 49 Hertz, and show top addresses and symbols, live (no perf.data file):
+perf top -F 49
+
+# Sample CPUs at 49 Hertz, and show top process names and segments, live:
+perf top -F 49 -ns comm,dso
+
+Reporting
+# Show perf.data in an ncurses browser (TUI) if possible:
+perf report
+
+# Show perf.data with a column for sample count:
+perf report -n
+
+# Show perf.data as a text report, with data coalesced and percentages:
+perf report --stdio
+
+# Report, with stacks in folded format: one line per stack (needs 4.4):
+perf report --stdio -n -g folded
+
+# List all events from perf.data:
+perf script
+
+# List all perf.data events, with data header (newer kernels; was previously default):
+perf script --header
+
+# List all perf.data events, with customized fields (< Linux 4.1):
+perf script -f time,event,trace
+
+# List all perf.data events, with customized fields (>= Linux 4.1):
+perf script -F time,event,trace
+
+# List all perf.data events, with my recommended fields (needs record -a; newer kernels):
+perf script --header -F comm,pid,tid,cpu,time,event,ip,sym,dso
+
+# List all perf.data events, with my recommended fields (needs record -a; older kernels):
+perf script -f comm,pid,tid,cpu,time,event,ip,sym,dso
+
+# Dump raw contents from perf.data as hex (for debugging):
+perf script -D
+
+# Disassemble and annotate instructions with percentages (needs some debuginfo):
+perf annotate --stdio
