@@ -429,3 +429,33 @@ console.log(newArray)
 console.log(myObj)
 console.log(JSON.stringify({  myObj }))
 
+#############################################################
+#
+#   Netflix JavaScript Talks - RxJS + Redux + React = Amazing! 25:30 / 31:16
+#   https://www.youtube.com/watch?v=AslncyG8whg
+#
+#############################################################
+
+// ping pong
+const pingPongEpi = (action$,store) =>
+	action.ofType('PING')
+	.delay(1000) // or use debounceTime(1000)
+	.map(action => ({ type: 'PONG' }));
+
+// auto complete
+const autocompleteEpic = (action$,store) =>
+	action.ofType('QUERY')
+	.debounceTime(1000)
+	.switchMap( action =>
+		ajax(url)
+			.map(payload => ({
+				type: 'QUERY_FULFILED',
+				payload
+			}))
+			.takeUntil(action.ofType('CANCEL_QUERY'))
+			.catch(payload => [{
+				type: 'QUERY_FULFILED',
+				payload
+			}])
+
+	);
