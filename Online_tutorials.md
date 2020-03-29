@@ -327,3 +327,4 @@
 | https://www.youtube.com/watch?v=lAvIuQIhbOQ&list=PLUPH1EuJOf-fonnlNMajy6p0RxkjU14y- | Tutorial C++ Romanian |
 | https://www.youtube.com/watch?v=-vHQub0NXI4&list=RDCMUC0rqucBdTuFTjJiefW5t-IQ		  | Get started with using TensorFlow | 
 | https://www.youtube.com/watch?v=inN8seMm7UI&list=PLQY2H8rRoyvyK5aEDAI3wUUqC_F0oEroL | Get started with Google Colaboratory |
+| https://www.youtube.com/watch?v=A60oNJ7mxXY&list=RDCMUCEBb1b_L6zDS3xTUrIALZOw&index=1 | MIT OpenCourseWare |
