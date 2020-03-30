@@ -1,0 +1,246 @@
+###############################################################
+#
+#   Read Write WAV
+#
+###############################################################
+
+https://stackoverflow.com/questions/2060628/reading-wav-files-in-python
+https://wiki.python.org/moin/Audio
+https://docs.python.org/3/library/wave.html
+https://www.tutorialspoint.com/read-and-write-wav-files-using-python-wave
+https://realpython.com/playing-and-recording-sound-python/
+https://docs.python.org/2/library/wave.html
+https://docs.python.org/3/library/wave.html
+https://stackoverflow.com/questions/2890703/how-to-join-two-wav-files-using-python
+https://stackoverflow.com/questions/2890703/how-to-join-two-wav-files-using-python
+https://stackoverflow.com/questions/30619740/downsampling-wav-audio-file
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.io.wavfile.read.html
+https://www.pythonforengineers.com/audio-and-digital-signal-processingdsp-in-python/
+https://docs.python.org/2/library/winsound.html
+https://docs.python.org/3/library/audioop.html
+https://www.programcreek.com/python/example/82393/wave.open
+https://www.programcreek.com/python/example/82393/wave.open
+http://www.cs.uregina.ca/Links/class-info/325/PythonSound/
+https://riptutorial.com/python/example/26642/working-with-wav-files
+https://riptutorial.com/python/example/26642/working-with-wav-files
+http://pymedia.org/tut/play_wav.html
+http://pymedia.org/tut/src/dump_video.py.html
+http://pymedia.org/tut/src/play_wav.py.html
+http://pymedia.org/tut/src/aplayer.py.html
+
+---------------------------------------------------------
+mport time, wave, pymedia.audio.sound as sound
+f= wave.open( 'YOUR FILE NAME', 'rb' )
+sampleRate= f.getframerate()
+channels= f.getnchannels()
+format= sound.AFMT_S16_LE
+snd= sound.Output( sampleRate, channels, format )
+s= f.readframes( 300000 )
+snd.play( s )
+while snd.isPlaying(): time.sleep( 0.05 )
+
+---------------------------------------------------------
+import wave
+with wave.open("path_to_wav_file.wav", "rb") as wav_file:    # Open WAV file in read-only mode.
+    # Get basic information.
+    n_channels = wav_file.getnchannels()      # Number of channels. (1=Mono, 2=Stereo).
+    sample_width = wav_file.getsampwidth()    # Sample width in bytes.
+    framerate = wav_file.getframerate()       # Frame rate.
+    n_frames = wav_file.getnframes()          # Number of frames.
+    comp_type = wav_file.getcomptype()        # Compression type (only supports "NONE").
+    comp_name = wav_file.getcompname()        # Compression name.
+
+    # Read audio data.
+    frames = wav_file.readframes(n_frames)    # Read n_frames new frames.
+    assert len(frames) == sample_width * n_frames
+
+# Duplicate to a new WAV file.
+with wave.open("path_to_new_wav_file.wav", "wb") as wav_file:    # Open WAV file in write-only mode.
+    # Write audio data.
+    params = (n_channels, sample_width, framerate, n_frames, comp_type, comp_name)
+    wav_file.setparams(params)
+    wav_file.writeframes(frames)
+---------------------------------------------------------
+from scipy.io import wavfile
+fs, data = wavfile.read('./output/audio.wav')
+---------------------------------------------------------
+import soundfile as sf
+data, samplerate = sf.read('existing_file.wav')
+---------------------------------------------------------
+import wave, struct
+waveFile = wave.open('sine.wav', 'r')
+length = waveFile.getnframes()
+for i in range(0,length):
+    waveData = waveFile.readframes(1)
+    data = struct.unpack("<h", waveData)
+    print(int(data[0]))
+---------------------------------------------------------
+from scikits import audiolab
+from scipy.io import wavfile
+from sys import argv
+for filetest in argv[1:]:
+    [x, fs, nbBits] = audiolab.wavread(filePath)
+    print '\nReading with scikits.audiolab.wavread: ', x
+    [fs, x] = wavfile.read(filetest)
+    print '\nReading with scipy.io.wavfile.read: ', x
+
+---------------------------------------------------------
+from scipy.io.wavfile import read as wavread
+[samplerate, x] = wavread(audiofilename) # x is a numpy array of integer, representing the samples
+# scale to -1.0 -- 1.0
+if x.dtype == 'int16':
+    nb_bits = 16 # -> 16-bit wav files
+elif x.dtype == 'int32':
+    nb_bits = 32 # -> 32-bit wav files
+max_nb_bit = float(2 ** (nb_bits - 1))
+samples = x / (max_nb_bit + 1.0) # samples is a numpy array
+---------------------------------------------------------
+from scipy.io import wavfile
+rate1,dat1 = wavfile.read(File1)
+rate2,dat2 = wavfile.read(File2)
+
+if len(dat2) > len(dat1):#swap shortest
+    temp = dat2
+    dat2 = dat1
+    dat1 = temp
+
+output = dat1
+for i in range(len(dat2)/2): output[i*2]=dat2[i*2]
+wavfile.write(OUTPUT,rate,dat)
+-----
+import wave, struct, math, random
+sampleRate = 44100.0 # hertz
+duration = 1.0 # seconds
+frequency = 440.0 # hertz
+obj = wave.open('sound.wav','w')
+obj.setnchannels(1) # mono
+obj.setsampwidth(2)
+obj.setframerate(sampleRate)
+for i in range(99999):
+   value = random.randint(-32767, 32767)
+   data = struct.pack('<h', value)
+   obj.writeframesraw( data )
+obj.close()
+---------------------------------------------------------
+import wave
+obj = wave.open('sound.wav','r')
+print( "Number of channels",obj.getnchannels())
+print ( "Sample width",obj.getsampwidth())
+print ( "Frame rate.",obj.getframerate())
+print ("Number of frames",obj.getnframes())
+print ( "parameters:",obj.getparams())
+obj.close()
+---------------------------------------------------------
+from pydub import AudioSegment
+sound = AudioSegment.from_file('myfile.mp3', format='mp3')
+sound.export('myfile.wav', format='wav')
+---------------------------------------------------------
+import audiolab, scipy
+a, fs, enc = audiolab.wavread('file1.wav')
+b, fs, enc = audiolab.wavread('file2.wav')
+c = scipy.vstack((a,b))
+audiolab.wavwrite(c, 'file3.wav', fs, enc)
+---------------------------------------------------------
+import wave
+infiles = ["sound_1.wav", "sound_2.wav"]
+outfile = "sounds.wav"
+
+data= []
+for infile in infiles:
+    w = wave.open(infile, 'rb')
+    data.append( [w.getparams(), w.readframes(w.getnframes())] )
+    w.close()
+
+output = wave.open(outfile, 'wb')
+output.setparams(data[0][0])
+output.writeframes(data[0][1])
+output.writeframes(data[1][1])
+output.close()
+---------------------------------------------------------
+from pydub import AudioSegment
+sound1 = AudioSegment.from_wav("/path/to/file1.wav")
+sound2 = AudioSegment.from_wav("/path/to/file2.wav")
+combined_sounds = sound1 + sound2
+combined_sounds.export("/output/path.wav", format="wav")
+---------------------------------------------------------
+def record_wave(filename='', prefix='wav/'):
+    '''open the input of wave
+    '''
+    pa = PyAudio()
+    stream = pa.open(format = paInt16, channels = 1,
+                    rate = framerate, input = True,
+                    frames_per_buffer = NUM_SAMPLES)
+    save_buffer = []
+    count = 0
+    while count < TIME * 8:
+        string_audio_data = stream.read(NUM_SAMPLES)
+        save_buffer.append(string_audio_data)
+        count += 1
+        print('recording...')
+
+    if filename == '':
+        filename = datetime.now().strftime("%Y-%m-%d_%H_%M_%S")
+    filename += ".wav"
+    save_wave_file(os.path.join(prefix, filename), save_buffer)
+    save_buffer = []
+    return filename
+
+---------------------------------------------------------
+def cutoff(input_wav, output_wav):
+    '''
+    input_wav --- input wav file path
+    output_wav --- output wav file path
+    '''
+
+    # read input wave file and get parameters.
+    with wave.open(input_wav, 'r') as fw:
+        params = fw.getparams()
+        # print(params)
+        nchannels, sampwidth, framerate, nframes = params[:4]
+
+        strData = fw.readframes(nframes)
+        waveData = np.fromstring(strData, dtype=np.int16)
+
+        max_v = np.max(abs(waveData))
+        for i in range(waveData.shape[0]):
+            if abs(waveData[i]) > 0.08 * max_v:
+                break
+
+        for j in range(waveData.shape[0] - 1, 0, -1):
+            if abs(waveData[j]) > 0.08 * max_v:
+                break
+
+    # write new wav file
+    with wave.open(output_wav, 'w') as fw:
+        params = list(params)
+        params[3] = nframes - i - (waveData.shape[0] - 1 - j)
+        fw.setparams(params)
+        fw.writeframes(strData[2 * i:2 * (j + 1)])
+
+---------------------------------------------------------
+def save_wave_file(filename, data):
+    '''save the date to the wav file'''
+    framerate = 16000
+    channels = 1
+    sampwidth = 2
+    wf = wave.open(filename, 'wb')
+    wf.setnchannels(channels)
+    wf.setsampwidth(sampwidth)
+    wf.setframerate(framerate)
+    wf.writeframes(b"".join(data))
+    wf.close()
+
+---------------------------------------------------------
+def writeWav(frames, outName):
+    try:
+        os.remove(outName)
+    except:
+        pass
+    wavFile = wave.open(outName, 'wb')
+    # Channels basically means instruments. We only have one (for now)
+    wavFile.setnchannels(1)
+    wavFile.setsampwidth(2)
+    wavFile.setframerate(RATE)
+    wavFile.writeframes(b''.join(frames))
+    wavFile.close()
+
