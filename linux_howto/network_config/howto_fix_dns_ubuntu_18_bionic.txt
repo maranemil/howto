@@ -69,6 +69,103 @@ sudo systemd-resolve --flush-caches
 sudo systemd-resolve --statistics
 sudo /etc/init.d/dns-clean start
 
+############################################################################
+#
+#  Add Google DNS
+#
+############################################################################
+
+https://askubuntu.com/questions/152593/command-line-to-list-dns-servers-used-by-my-system
+https://serverfault.com/questions/810636/how-to-manage-dns-in-networkmanager-via-console-nmcli
+https://www.comconsult.com/dns-cloud/
+https://unix.stackexchange.com/questions/128220/how-do-i-set-my-dns-when-resolv-conf-is-being-overwritten
+https://linuxize.com/post/how-to-set-dns-nameservers-on-ubuntu-18-04/
+
+nmcli device show wlp3s0 | grep IP4.DNS
+IP4.DNS[1]:192.168.2.1
+
+nmcli -t -f IP4.DNS device show wlp3s0
+IP4.DNS[1]:192.168.2.1
+
+nmcli device show wlp3s0
+nmcli device show wlp3s0 | grep IP4
+
+
+Add Google DNS
+nmcli con # read connectionName
+nmcli con mod <connectionName> ipv4.dns "8.8.8.8 8.8.4.4"
+nmcli con down <connectionName>
+nmcli con up <connectionName>
+
+DNS on Ubuntu 18.04
+https://datawookie.netlify.com/blog/2018/10/dns-on-ubuntu-18.04/
+https://easyengine.io/tutorials/linux/google-public-dns/
+
+nano /etc/resolv.conf
+sudo apt install resolvconf
+
+# Make edits to /etc/resolvconf/resolv.conf.d/head.
+
+sudo nano /etc/resolvconf/resolv.conf.d/head
+sudo nano /etc/resolvconf/resolv.conf.d/base
+nameserver 8.8.4.4
+nameserver 8.8.8.8
+
+cat /etc/resolvconf/resolv.conf.d/head
+nameserver 8.8.4.4
+cat /etc/resolvconf/resolv.conf.d/base
+nameserver 8.8.4.4
+
+sudo service resolvconf restart
+sudo resolvconf -u
+sudo service network-manager restart
+sudo systemctl restart dnsmasq.service
+
+DHCP Client
+sudo nano /etc/dhcp/dhclient.conf
+supersede domain-name-servers 8.8.8.8, 8.8.4.4;
+
+sudo nano /etc/resolv.conf
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+
+#Cloudflare
+nameserver 1.0.0.1
+
+#Google
+#nameserver 8.8.8.8
+#nameserver 8.8.4.4
+
+#Cloudflare
+#nameserver 1.1.1.1
+
+#Classic Config
+#nameserver 192.168.1.1
+#search lan
+
+?
+sudo nano /etc/dnsmasq.conf
+server=1.1.1.1
+server=8.8.8.8
+server=8.8.4.4
+
+cat /etc/network/interfaces
+dns-nameservers 4.4.4.4 8.8.8.8
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ----------------------------------------------------------------------------------------
 
 http://www.ducea.com/2006/08/01/how-to-enable-ip-forwarding-in-linux/
