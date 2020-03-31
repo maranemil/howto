@@ -4,7 +4,7 @@
 #
 ##############################################
 
-# pip3 install pydub
+# pip install pydub
 from pydub import AudioSegment
 
 t1 = 0  # Works in milliseconds
