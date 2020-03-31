@@ -58,6 +58,7 @@ change date |touch -d "2 hours ago" filename
 + sudo adduser newuser
 + sudo deluser newuser
 + sudo deluser --remove-home newuser
++ sudo passwd username
 
 
 
