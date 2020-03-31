@@ -60,8 +60,9 @@ change date |touch -d "2 hours ago" filename
 + sudo deluser --remove-home newuser
 + sudo passwd username
 
-
-
+##### Hostname management
++ sudo nano /etc/hosts
++ sudo nano /etc/hostname
 
 #### [Audio Video]
 
