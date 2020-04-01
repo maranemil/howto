@@ -1,5 +1,6 @@
-
-
+##############################################################
+#
+##############################################################
 
 https://askubuntu.com/questions/1012641/dns-set-to-systemds-127-0-0-53-how-to-change-permanently
 https://wiki.ubuntuusers.de/systemd/networkd/
@@ -75,6 +76,193 @@ sudo service resolvconf stop
 
 cat /etc/resolv.conf
 sudo netstat -tulpen | grep 127.0.0.53
+
+##############################################################
+# ubuntu network stops working after a while
+# Qualcomm Atheros QCA9377 802.11ac Wireless Network Adapter
+##############################################################
+
+https://upcloud.com/community/tutorials/troubleshoot-network-connectivity-linux-server/
+https://askubuntu.com/questions/764786/16-04-network-stops-working
+https://unix.stackexchange.com/questions/298857/ubuntu-wifi-connects-and-works-for-5-minutes-then-stops-working-while-remaining
+https://askubuntu.com/questions/1033679/qualcomm-atheros-weak-wifi-signal-on-ubuntu-18-04
+https://www.maketecheasier.com/fix-wi-fi-not-working-ubuntu/
+http://ubuntuguide.net/fix-cannot-connect-to-wired-internet-problem-in-ubuntu-or-ubuntu-vmware-guest
+https://support.mozilla.org/en-US/kb/firefox-hangs-or-not-responding
+https://www.raspberrypi.org/forums/viewtopic.php?t=188891
+https://medium.com/@foxoman/fix-wifi-not-working-after-suspend-ubuntu-682d04e4bdbd
+
+
+
+
+lspci -nn | grep Network
+
+sudo nano /etc/network/interfaces
+
+auto lo
+iface lo inet loopback
+dns-addresses 8.8.4.4,8.8.8.8
+
+change to
+
+auto wlp3s0
+iface wlp3s0 inet static
+  address 192.168.1.14
+  gateway 192.168.1.1
+  netmask 255.255.255.0
+  network 192.168.1.0
+  broadcast 192.168.1.255
+
+sudo /etc/init.d/networking restart
+
+
+Disable wifi power management with
+sudo iwconfig wlp3s0 power off
+sudo iwconfig <wlan_name> power off
+sudo iwconfig wlan0 power off
+
+sudo  nano /etc/resolv.conf
+nameserver 127.0.0.53
+search home
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+nameserver 1.1.1.1
+
+lspci -nnk
+lsmod
+ifconfig -a
+
+sudo dhclient -v
+--------------------------
+sudo nano /etc/network/interfaces
+auto enp0s3
+iface enp0s3 inet static
+    address 10.5.100.125
+    netmask 255.255.255.0
+    gateway 10.5.100.1
+dns-nameservers 8.8.8.8
+
+
+sudo ip link set dev enp0s3 down
+sudo ip addr flush dev enp0s3
+sudo service networking stop
+sudo service networking start
+sudo ip link set dev enp0s3 up
+sudo service networking status
+--------------------------
+cat /etc/*release
+sudo lsusb
+sudo lspci
+lshw -C network
+sudo lsmod
+lspci -nnk | grep -A2 0280
+--------------------------
+sudo modprobe -rv ath10k_pci
+sudo modprobe -v ath10k_pci ant_sel=1
+lspci | grep 'Network'
+
+sudo apt-get update
+sudo apt-get install linux-headers-generic build-essential
+
+sudo modprobe -rv ath10k_pci
+sudo modprobe -v ath10k_pci ant_sel=2
+
+--------------------------
+sudo nano /etc/modules
+nmcli device show wlp3s0 | grep IP4.DNS
+ip address
+ping 8.8.8.8
+ping -c 4 8.8.8.8
+sudo service network-manager restart
+
+--------------------------
+sudo gedit /etc/network/interfaces
+auto lo
+iface lo inet loopback
+
+auto wlan0
+iface wlan0 inet dhcp
+wpa-essid myssid
+wpa-psk mypasscode
+
+sudo ifdown lo && sudo ifup -v lo
+sudo ifdown wlp3s0 && sudo ifup -v wlp3s0
+--------------------------
+sudo gedit /etc/network/interfaces
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet dhcp
+
+auto eth1
+iface eth1 inet dhcp
+--------------------------
+sudo cat /etc/resolv.conf
+sudo resolvconf -u
+--------------------------
+sudo nano /etc/resolv.conf
+nameserver 94.237.127.9
+nameserver 94.237.40.9
+--------------------------
+sudo nano /etc/network/interfaces
+auto eth0
+iface eth0 inet dhcp
+dns-nameservers 94.237.127.9
+--------------------------
+sudo service networking restart
+sudo service network-manager restart
+sudo ifdown eth0 && sudo ifup eth0
+--------------------------
+sudo apt install traceroute
+traceroute -4 8.8.8.8
+tracepath 8.8.8.8
+--------------------------
+sudo iptables -L  # Firewall settings
+--------------------------
+ifconfig -a
+sudo dhclient wlp3s0
+--------------------------
+sudo nano /etc/network/interfaces
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto eth0
+iface eth0 inet dhcp
+--------------------------
+RESUME
+sudo gedit /etc/systemd/system/wifi-resume.service
+
+#/etc/systemd/system/wifi-resume.service
+#sudo systemctl enable wifi-resume.service
+[Unit]
+Description=Restart networkmanager at resume
+After=suspend.target
+After=hibernate.target
+After=hybrid-sleep.target
+[Service]
+Type=oneshot
+ExecStart=wpa_cli resume
+ExecStart=/bin/systemctl restart NetworkManager.service
+[Install]
+WantedBy=suspend.target
+WantedBy=hibernate.target
+WantedBy=hybrid-sleep.target
+
+
+sudo systemctl enable wifi-resume.service
+
+
+
+
+
+
+
+
+
+
 
 
 
