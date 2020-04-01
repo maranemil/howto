@@ -1,0 +1,82 @@
+
+
+
+https://askubuntu.com/questions/1012641/dns-set-to-systemds-127-0-0-53-how-to-change-permanently
+https://wiki.ubuntuusers.de/systemd/networkd/
+https://www.hiroom2.com/2017/08/24/ubuntu-1610-nameserver-127-0-0-53-en/
+https://qastack.com.de/ubuntu/1012641/dns-set-to-systemds-127-0-0-53-how-to-change-permanently
+https://unix.stackexchange.com/questions/424799/why-doesnt-systemd-resolved-use-my-local-dns-server
+
+------------------------------------------------------------------
+
+systemd-resolve --status
+
+Current DNS Server: 192.168.0.1
+         DNS Servers: 192.168.0.1
+                      8.8.8.8
+                      8.8.4.4
+                      2a02:908:2:a::1
+                      2a02:908:2:b::1
+
+sudo apt install resolvconf
+
+create or modify a file /etc/resolvconf/resolv.conf.d/tail. If you put in this
+file a line nameserver 8.8.8.8
+
+
+this line will be added at the end of /run/resolvconf/resolv.conf
+at boot. /etc/resolv.conf will now be a symbolic link to this fil
+
+
+sudo resolvconf --enable-updates
+cat /etc/systemd/resolved.conf
+sudo service systemd-networkd restart
+sudo systemctl restart systemd-resolved.service
+
+------------------------------------------------------------------
+
+cd /etc/resolvconf/resolv.conf.d/
+sudo nano tail
+
+nslookup google.com
+
+systemctl disable systemd.resolved.service
+reboot
+systemctl enable systemd.resolved.service
+reboot
+
+
+systemctl start systemd-networkd.service
+systemctl start systemd-resolved.service
+systemctl enable systemd-networkd.service
+systemctl enable systemd-resolved.service
+
+
+sudo systemctl disable systemd-resolved
+sudo reboot
+
+
+systemctl stop systemd-resolved
+systemctl mask systemd-resolved
+sudo service systemd-networkd restart
+
+
+sudo systemctl disable systemd-resolved
+sudo systemctl stop systemd-resolved
+sudo systemctl enable unbound-resolvconf
+sudo systemctl enable unbound
+
+sudo systemctl restart systemd-resolved.service
+
+sudo service resolvconf disable-updates
+sudo update-rc.d resolvconf disable
+sudo service resolvconf stop
+
+
+cat /etc/resolv.conf
+sudo netstat -tulpen | grep 127.0.0.53
+
+
+
+
+
