@@ -256,15 +256,90 @@ sudo systemctl enable wifi-resume.service
 
 
 
-
+##############################################################
 Supported Ubuntu virtual machines on Hyper-V
 KVP daemon fails to start on first boot of disco VM
 [Hyper-V] KVP daemon crashes at startup
+##############################################################
+
+
 systemctl status -o cat hv-kvp-daemon.service
 systemctl status hv-kvp-daemon.service
 
 Dependency failed for Hyper-V KVP Proto
 hv-kvp-daemon.service: Job hv-kvp-daemo
+
+ Server returned error NXDOMAIN, mitigating potential DNS violation DVE-2018-0001, retrying transaction with reduced
+
+https://askubuntu.com/questions/1058750/new-alert-keeps-showing-up-server-returned-error-nxdomain-mitigating-potential
+https://usysto.net/ubuntu-18-04-server-returned-error-nxdomain-mitigating-potential-dns-violation_932
+https://88plug.com/linux/fixes-systemd-resolved356-server-returned-error-nxdomain/
+https://forums.linuxmint.com/viewtopic.php?t=286655
+https://agaric.gitlab.io/raw-notes/notes/2019-10-22-change-what-dns-server-is-used-for-nameserver-lookups-in-ubuntu-18/
+
+sudo tcpdump -vv port 53 | grep NXDomain
+sudo tcpdump -vv port 53 | grep NXDomain
+systemd-resolve google.com
+systemctl status systemd-resolved
+
+sudo nano /etc/systemd/resolved.conf
+[Resolve]
+DNS=8.8.8.8 8.8.4.4
+#FallbackDNS=
+#Domains=
+#LLMNR=no
+#MulticastDNS=no
+#DNSSEC=no
+Cache=yes
+DNSStubListener=yes
+
+
+sudo systemctl restart systemd-resolved
+systemctl status systemd-resolved
+
+
+cat /etc/resolv.conf
+cat /run/resolvconf/resolv.conf
+nameserver 127.0.0.53
+sudo systemctl start hv-kvp-daemon.service
+----------------------------------------
+sudo rm /etc/resolv.conf
+sudo ln -s /run/resolvconf/resolv.conf /etc/resolv.conf
+sudo systemctl restart resolvconf
+----------------------------------------
+sudo rm /etc/resolv.conf
+sudo ln -s /var/run/systemd/resolve/resolv.conf /etc/resolv.conf
+sudo systemctl restart resolvconf
+ls -ld /etc/resolv.conf
+----------------------------------------
+ln -fs /run/systemd/resolve/resolv.conf /etc/resolv.conf
+
+
+
+ping -c 3 1.1.1.1
+sudo systemctl status systemd-resolved.service
+sudo systemctl restart systemd-resolved.service
+
+cat /etc/hosts
+cat /run/systemd/resolve/resolv.conf
+
+
+sudo vim /etc/resolvconf/resolv.conf.d/base
+ameserver 1.1.1.1
+nameserver 1.0.0.1
+nameserver 2606:4700:4700::1111
+nameserver 2606:4700:4700::1001
+
+sudo resolvconf -u
+sudo service network-manager restart
+systemd-resolve --status wlp3s0
+
+
+sudo apt update && sudo apt full-upgrade
+sudo systemctl status systemd-resolved.service
+Server returned error NXDOMAIN
+
+
 
 
 
