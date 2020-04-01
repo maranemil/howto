@@ -1,81 +1,71 @@
 ##############################################################
 #
 ##############################################################
-
 https://askubuntu.com/questions/1012641/dns-set-to-systemds-127-0-0-53-how-to-change-permanently
 https://wiki.ubuntuusers.de/systemd/networkd/
 https://www.hiroom2.com/2017/08/24/ubuntu-1610-nameserver-127-0-0-53-en/
 https://qastack.com.de/ubuntu/1012641/dns-set-to-systemds-127-0-0-53-how-to-change-permanently
 https://unix.stackexchange.com/questions/424799/why-doesnt-systemd-resolved-use-my-local-dns-server
-
 ------------------------------------------------------------------
-
 systemd-resolve --status
-
+------------------------------------------------------------------
 Current DNS Server: 192.168.0.1
-         DNS Servers: 192.168.0.1
-                      8.8.8.8
-                      8.8.4.4
-                      2a02:908:2:a::1
-                      2a02:908:2:b::1
-
+     DNS Servers: 192.168.0.1
+                  8.8.8.8
+                  8.8.4.4
+                  2a02:908:2:a::1
+                  2a02:908:2:b::1
+------------------------------------------------------------------
 sudo apt install resolvconf
-
+------------------------------------------------------------------
 create or modify a file /etc/resolvconf/resolv.conf.d/tail. If you put in this
 file a line nameserver 8.8.8.8
-
-
+------------------------------------------------------------------
 this line will be added at the end of /run/resolvconf/resolv.conf
 at boot. /etc/resolv.conf will now be a symbolic link to this fil
-
-
+------------------------------------------------------------------
 sudo resolvconf --enable-updates
 cat /etc/systemd/resolved.conf
 sudo service systemd-networkd restart
 sudo systemctl restart systemd-resolved.service
-
+------------------------------------------------------------------
 ------------------------------------------------------------------
 
 cd /etc/resolvconf/resolv.conf.d/
 sudo nano tail
-
 nslookup google.com
-
 systemctl disable systemd.resolved.service
 reboot
 systemctl enable systemd.resolved.service
 reboot
-
-
+------------------------------------------------------------------
 systemctl start systemd-networkd.service
 systemctl start systemd-resolved.service
 systemctl enable systemd-networkd.service
 systemctl enable systemd-resolved.service
-
-
+------------------------------------------------------------------
 sudo systemctl disable systemd-resolved
 sudo reboot
-
-
+------------------------------------------------------------------
 systemctl stop systemd-resolved
 systemctl mask systemd-resolved
 sudo service systemd-networkd restart
-
-
+------------------------------------------------------------------
 sudo systemctl disable systemd-resolved
 sudo systemctl stop systemd-resolved
 sudo systemctl enable unbound-resolvconf
 sudo systemctl enable unbound
-
+------------------------------------------------------------------
 sudo systemctl restart systemd-resolved.service
-
+------------------------------------------------------------------
 sudo service resolvconf disable-updates
 sudo update-rc.d resolvconf disable
 sudo service resolvconf stop
-
-
+------------------------------------------------------------------
 cat /etc/resolv.conf
 sudo netstat -tulpen | grep 127.0.0.53
+
+
 
 ##############################################################
 # ubuntu network stops working after a while
@@ -91,32 +81,33 @@ http://ubuntuguide.net/fix-cannot-connect-to-wired-internet-problem-in-ubuntu-or
 https://support.mozilla.org/en-US/kb/firefox-hangs-or-not-responding
 https://www.raspberrypi.org/forums/viewtopic.php?t=188891
 https://medium.com/@foxoman/fix-wifi-not-working-after-suspend-ubuntu-682d04e4bdbd
-
-
-
+------------------------------------------------------------------
 
 lspci -nn | grep Network
-
 sudo nano /etc/network/interfaces
-
+------------------------------------------------------------------
 auto lo
 iface lo inet loopback
 dns-addresses 8.8.4.4,8.8.8.8
-
+------------------------------------------------------------------
 change to
-
+------------------------------------------------------------------
 auto wlp3s0
 iface wlp3s0 inet static
-  address 192.168.1.14
-  gateway 192.168.1.1
-  netmask 255.255.255.0
-  network 192.168.1.0
-  broadcast 192.168.1.255
-
+address 192.168.1.14
+gateway 192.168.1.1
+netmask 255.255.255.0
+network 192.168.1.0
+broadcast 192.168.1.255
+------------------------------------------------------------------
 sudo /etc/init.d/networking restart
+------------------------------------------------------------------
 
 
+
+------------------------------------------------------------------
 Disable wifi power management with
+------------------------------------------------------------------
 sudo iwconfig wlp3s0 power off
 sudo iwconfig <wlan_name> power off
 sudo iwconfig wlan0 power off
@@ -133,15 +124,15 @@ lsmod
 ifconfig -a
 
 sudo dhclient -v
---------------------------
+------------------------------------------------------------------
 sudo nano /etc/network/interfaces
 auto enp0s3
 iface enp0s3 inet static
-    address 10.5.100.125
-    netmask 255.255.255.0
-    gateway 10.5.100.1
+address 10.5.100.125
+netmask 255.255.255.0
+gateway 10.5.100.1
 dns-nameservers 8.8.8.8
-
+------------------------------------------------------------------
 
 sudo ip link set dev enp0s3 down
 sudo ip addr flush dev enp0s3
@@ -149,14 +140,14 @@ sudo service networking stop
 sudo service networking start
 sudo ip link set dev enp0s3 up
 sudo service networking status
---------------------------
+------------------------------------------------------------------
 cat /etc/*release
 sudo lsusb
 sudo lspci
 lshw -C network
 sudo lsmod
 lspci -nnk | grep -A2 0280
---------------------------
+------------------------------------------------------------------
 sudo modprobe -rv ath10k_pci
 sudo modprobe -v ath10k_pci ant_sel=1
 lspci | grep 'Network'
@@ -166,16 +157,14 @@ sudo apt-get install linux-headers-generic build-essential
 
 sudo modprobe -rv ath10k_pci
 sudo modprobe -v ath10k_pci ant_sel=2
-
---------------------------
+------------------------------------------------------------------
 sudo nano /etc/modules
 nmcli device show wlp3s0 | grep IP4.DNS
 ip address
 ping 8.8.8.8
 ping -c 4 8.8.8.8
 sudo service network-manager restart
-
---------------------------
+------------------------------------------------------------------
 sudo gedit /etc/network/interfaces
 auto lo
 iface lo inet loopback
@@ -187,7 +176,7 @@ wpa-psk mypasscode
 
 sudo ifdown lo && sudo ifup -v lo
 sudo ifdown wlp3s0 && sudo ifup -v wlp3s0
---------------------------
+------------------------------------------------------------------
 sudo gedit /etc/network/interfaces
 auto lo
 iface lo inet loopback
@@ -197,32 +186,32 @@ iface eth0 inet dhcp
 
 auto eth1
 iface eth1 inet dhcp
---------------------------
+------------------------------------------------------------------
 sudo cat /etc/resolv.conf
 sudo resolvconf -u
---------------------------
+------------------------------------------------------------------
 sudo nano /etc/resolv.conf
 nameserver 94.237.127.9
 nameserver 94.237.40.9
---------------------------
+------------------------------------------------------------------
 sudo nano /etc/network/interfaces
 auto eth0
 iface eth0 inet dhcp
 dns-nameservers 94.237.127.9
---------------------------
+------------------------------------------------------------------
 sudo service networking restart
 sudo service network-manager restart
 sudo ifdown eth0 && sudo ifup eth0
---------------------------
+------------------------------------------------------------------
 sudo apt install traceroute
 traceroute -4 8.8.8.8
 tracepath 8.8.8.8
---------------------------
+------------------------------------------------------------------
 sudo iptables -L  # Firewall settings
---------------------------
+------------------------------------------------------------------
 ifconfig -a
 sudo dhclient wlp3s0
---------------------------
+------------------------------------------------------------------
 sudo nano /etc/network/interfaces
 # The loopback network interface
 auto lo
@@ -231,10 +220,13 @@ iface lo inet loopback
 # The primary network interface
 auto eth0
 iface eth0 inet dhcp
---------------------------
-RESUME
-sudo gedit /etc/systemd/system/wifi-resume.service
 
+
+------------------------------------------------------------------
+RESUME
+------------------------------------------------------------------
+sudo gedit /etc/systemd/system/wifi-resume.service
+----------------------------------------
 #/etc/systemd/system/wifi-resume.service
 #sudo systemctl enable wifi-resume.service
 [Unit]
@@ -250,38 +242,34 @@ ExecStart=/bin/systemctl restart NetworkManager.service
 WantedBy=suspend.target
 WantedBy=hibernate.target
 WantedBy=hybrid-sleep.target
-
-
+----------------------------------------
 sudo systemctl enable wifi-resume.service
-
-
-
+----------------------------------------
 ##############################################################
 Supported Ubuntu virtual machines on Hyper-V
 KVP daemon fails to start on first boot of disco VM
 [Hyper-V] KVP daemon crashes at startup
 ##############################################################
-
-
+----------------------------------------
 systemctl status -o cat hv-kvp-daemon.service
 systemctl status hv-kvp-daemon.service
-
+----------------------------------------
 Dependency failed for Hyper-V KVP Proto
 hv-kvp-daemon.service: Job hv-kvp-daemo
-
- Server returned error NXDOMAIN, mitigating potential DNS violation DVE-2018-0001, retrying transaction with reduced
-
+----------------------------------------
+Server returned error NXDOMAIN, mitigating potential DNS violation DVE-2018-0001, retrying transaction with reduced
+----------------------------------------
 https://askubuntu.com/questions/1058750/new-alert-keeps-showing-up-server-returned-error-nxdomain-mitigating-potential
 https://usysto.net/ubuntu-18-04-server-returned-error-nxdomain-mitigating-potential-dns-violation_932
 https://88plug.com/linux/fixes-systemd-resolved356-server-returned-error-nxdomain/
 https://forums.linuxmint.com/viewtopic.php?t=286655
 https://agaric.gitlab.io/raw-notes/notes/2019-10-22-change-what-dns-server-is-used-for-nameserver-lookups-in-ubuntu-18/
-
+----------------------------------------
 sudo tcpdump -vv port 53 | grep NXDomain
 sudo tcpdump -vv port 53 | grep NXDomain
 systemd-resolve google.com
 systemctl status systemd-resolved
-
+----------------------------------------
 sudo nano /etc/systemd/resolved.conf
 [Resolve]
 DNS=8.8.8.8 8.8.4.4
@@ -292,12 +280,10 @@ DNS=8.8.8.8 8.8.4.4
 #DNSSEC=no
 Cache=yes
 DNSStubListener=yes
-
-
+----------------------------------------
 sudo systemctl restart systemd-resolved
 systemctl status systemd-resolved
-
-
+----------------------------------------
 cat /etc/resolv.conf
 cat /run/resolvconf/resolv.conf
 nameserver 127.0.0.53
@@ -311,33 +297,129 @@ sudo rm /etc/resolv.conf
 sudo ln -s /var/run/systemd/resolve/resolv.conf /etc/resolv.conf
 sudo systemctl restart resolvconf
 ls -ld /etc/resolv.conf
-----------------------------------------
+------------------------------------------------------------------
 ln -fs /run/systemd/resolve/resolv.conf /etc/resolv.conf
-
-
-
+------------------------------------------------------------------
 ping -c 3 1.1.1.1
 sudo systemctl status systemd-resolved.service
 sudo systemctl restart systemd-resolved.service
-
+------------------------------------------------------------------
 cat /etc/hosts
 cat /run/systemd/resolve/resolv.conf
-
-
+------------------------------------------------------------------
 sudo vim /etc/resolvconf/resolv.conf.d/base
 ameserver 1.1.1.1
 nameserver 1.0.0.1
 nameserver 2606:4700:4700::1111
 nameserver 2606:4700:4700::1001
-
+------------------------------------------------------------------
 sudo resolvconf -u
 sudo service network-manager restart
 systemd-resolve --status wlp3s0
-
-
+------------------------------------------------------------------
 sudo apt update && sudo apt full-upgrade
 sudo systemctl status systemd-resolved.service
 Server returned error NXDOMAIN
+
+
+####################################################################
+#
+#   DNS Queries Returning No Answer Section
+#
+####################################################################
+
+https://superuser.com/questions/523917/dns-queries-returning-no-answer-section
+https://blog.dnsimple.com/2015/03/whats-in-a-dns-response/
+https://developers.google.com/speed/public-dns/docs/troubleshooting
+https://lists.isc.org/pipermail/bind-users/2012-July/088182.html
+https://stackoverflow.com/questions/52136176/what-is-additional-section-in-dns-and-how-it-works
+https://mediatemple.net/community/products/dv/204644130/understanding-the-dig-command
+https://askubuntu.com/questions/1040304/dns-issues-with-virtualbox-vm-and-ubuntu-18-04
+https://wiki.archlinux.org/index.php/Systemd-resolved
+http://manpages.ubuntu.com/manpages/cosmic/de/man8/systemd-resolved.service.8.html
+
+
++---------------------+
+| Header              |
++---------------------+
+| Question            | the question for the name server
++---------------------+
+| Answer              | Answers to the question
++---------------------+
+| Authority           | Not used in this project
++---------------------+
+| Additional          | Not used in this project
++---------------------+
+
+
+------------------------------------------------------------------
+# Dynamic resolv.conf(5) file for glibc resolver(3) generated by
+resolvconf(8)
+#     DO NOT EDIT THIS FILE BY HAND -- YOUR CHANGES WILL BE OVERWRITTEN
+# 127.0.0.53 is the systemd-resolved stub resolver.
+# run "systemd-resolve --status" to see details about the actual nameservers.
+nameserver 127.0.0.53
+------------------------------------------------------------------
+
+Zusätzlich stellt systemd-resolved einen lokalen DNS-Stub bereit, der auf der IP-Adresse 127.0.0.53 auf der lokalen Loopback-Schnittstelle auf Anfragen wartet. Programme, die DNS-Anfragen direkt stellen und sämtliche API umgehen, können auf diesen Stub gerichtet werden, um sie mit systemd-resolved zu verbinden. Beachten Sie, dass nachdrücklich empfohlen wird, dass lokale Programme stattdessen das Glibc-NSS oder die Bus-API (wie oben beschrieben) verwenden, da verschiedene Netzwerk-Auflösungskonzepte (wie linklokale Adressierung oder LLMNR-Unicode-Domains) nicht auf das unicast DNS-Protokoll abgebildet werden können.
+
+------------------------------------------------------------------
+
+http://www.ietf.org/rfc/rfc1035.txt and RFC 1035 at page 25
+Recursion Desired - this bit may be set in a query and is copied into the
+response.
+If RD is set, it directs the name server to pursue the query recursively.
+Recursive query support is optional."
+
+------------------------------------------------------------------
+
+dig mx google.com @8.8.8.8 +norecurse
+dig mx google.com @8.8.8.8
+
+Verify that your client can communicate with the Google Public DNS servers
+IPv4/IPv6
+sudo traceroute -n -w 2 -q 2 -m 30 8.8.8.8
+sudo traceroute -n -w 2 -q 2 -m 30 2001:4860:4860::8888
+
+Verify that Google Public DNS can resolve the selected hostname
+IPv4/IPv6
+dig @8.8.8.8 www.example.com.
+dig @2001:4860:4860::8888 www.example.com. AAAA
+
+
+Verify that Google Public DNS can resolve the selected hostname without performing DNSSEC validation
+dig @8.8.8.8 www.example.com. +cd
+dig @2001:4860:4860::8888 www.example.com. AAAA +cd
+
+Verify that another open resolver can resolve the selected hostname
+dig www.example.com. @4.2.2.1
+dig www.example.com. @4.2.2.2
+dig www.example.com. @208.67.222.222
+dig www.example.com. @208.67.220.220
+...
+
+dig @127.0.0.1 -p 9999 google.com. naptr
+dig mt-example.com +short
+
+Use the following command to get the addresses for mt-example.com.
+
+dig mt-example.com A +noall +answer
+Use the following command to get a list of all the mailservers for mt-example.com.
+
+dig mt-example.com MX +noall +answer
+Use the following command to get a list of authoritative DNS servers for mt-example.com.
+
+dig mt-example.com NS +noall +answer
+Use the following command to get a list of all the above in one set of results.
+
+dig mt-example.com ANY +noall +answer
+Use the following command to query using a specific nameserver.
+
+dig @ns1.mediatemple.net mt-example.com
+Use the following to trace the path taken.
+
+dig mt-example.com +trace
+
 
 
 
