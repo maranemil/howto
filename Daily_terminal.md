@@ -173,7 +173,8 @@ change date |touch -d "2 hours ago" filename
 * service --status-all
 
 ##### Accessing local data on VM using python SimpleHTTPServer
-* python -m SimpleHTTPServer
+* python -m SimpleHTTPServer (deprecated python2)
+* python3 -m http.server 8888
 * http://localhost:8000
 
 ##### list packages
