@@ -46,6 +46,16 @@ if ($interval->format('%d') == 0) { // 0 Days ?
 	$caseWF = 'Case0';
 }
 
+// GET TIME WITH MICRO-TIME
+$t = microtime(true);
+$micro = sprintf("%06d",($t - floor($t)) * 1000000);
+#$d = new DateTime( date('Y-m-d H:i:s.'.$micro, $t) );
+#print $d->format("Y-m-d H:i:s.u"); // note at point on "u"
+$d =  = date("Y-m-d H:i:s.u".$micro, $t);
+
+
+
+
 // Note u is microseconds (1 seconds = 1000000 µs).
 
 // date_default_timezone_set('UTC');
