@@ -293,7 +293,7 @@
 | https://www.youtube.com/watch?v=dOnAC2Rr-6A | Javascript Full Course | 2020 | 
 | https://www.youtube.com/watch?v=TPMlZxRRaBQ | Tableau for Data Science and Data Visualization | 
 | https://www.youtube.com/watch?v=-vHQub0NXI4 | TensorFlow to solve for regression problems | 
-
+| https://www.youtube.com/watch?v=kE9875zZkLE | Learn Data Science Today - Data Science Tutorial for Beginners 2020 | 
 
 
 | Link URL  | Playlist |
