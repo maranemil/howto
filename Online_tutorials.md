@@ -294,9 +294,9 @@
 | https://www.youtube.com/watch?v=TPMlZxRRaBQ | Tableau for Data Science and Data Visualization | 
 | https://www.youtube.com/watch?v=-vHQub0NXI4 | TensorFlow to solve for regression problems | 
 | https://www.youtube.com/watch?v=kE9875zZkLE | Learn Data Science Today - Data Science Tutorial for Beginners 2020 | 
-| https://www.youtube.com/watch?v=g9cbGNR6FoE |  Deep Learning From Scratch - Seth Weidman | ODSC East 2019 | 
-| https://www.youtube.com/watch?v=zJ6WbK9zFpI |  Docker for Beginners: Full Course | 
-| https://www.youtube.com/watch?v=Kp3HGwlXwCk |  BASIC JAVASCRIPT PROJECTS | 
+| https://www.youtube.com/watch?v=g9cbGNR6FoE | Deep Learning From Scratch - Seth Weidman | ODSC East 2019 | 
+| https://www.youtube.com/watch?v=zJ6WbK9zFpI | Docker for Beginners: Full Course | 
+| https://www.youtube.com/watch?v=Kp3HGwlXwCk | BASIC JAVASCRIPT PROJECTS | 
 
 | Link URL  | Playlist |
 |-----------|-------|
