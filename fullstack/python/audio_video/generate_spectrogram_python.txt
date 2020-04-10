@@ -233,68 +233,7 @@ if len(yeses) > 1:
     detected = yeses[0].reduce(yeses[1:])
     detected.export("detected.wav", format="WAV")
 
-
-
-
-
 ---------------------------------------------------
-
-https://lukaprincic.si/development-log/ffmpeg-audio-visualization-tricks
-https://ffmpeg.org/ffmpeg-filters.html#ahistogram
-http://www.ffmpeg.org/ffmpeg-filters.html#showspectrumpic
-http://www.ffmpeg.org/ffmpeg-filters.html#drawtext-1
-https://ffmpeg.org/ffmpeg-filters.html#ahistogram
-https://ffmpeg.org/ffmpeg-filters.html#showspectrum-1
-http://www.ffmpeg.org/ffmpeg-filters.html#showwaves
-https://ffmpeg.org/ffmpeg-filters.html#avectorscope
-
-ffmpeg -i INPUT_AUDIO.wav -filter_complex
-"[0:a]avectorscope=s=480x480:zoom=1.5:rc=0:gc=200:bc=0:rf=0:gf=40:bf=0,format=yuv420p[v];
- [v]pad=854:480:187:0[out]"
- -map "[out]" -map 0:a
--b:v 700k -b:a 360k
-OUTPUT_VIDEO.mp4
-
-ffmpeg -i INPUT_AUDIO.wav -filter_complex
-"[0:a]avectorscope=s=480x480:zoom=1.5:rc=0:gc=200:bc=0:rf=0:gf=40:bf=0,format=yuv420p[v]"
- -map "[v]" -map 0:a
--b:v 700k -b:a 360k
-OUTPUT_VIDEO.mp4
-
-ffmpeg -i INPUT.wav -filter_complex
-"[0:a]showwaves=mode=line:s=hd480:colors=White[v]"
--map "[v]" -map 0:a -pix_fmt yuv420p
--b:a 360k -r:a 44100  OUTPUT.mp4
-
-###
-ffmpeg -i INPUT.wav  -filter_complex
-"[0:a]showspectrum=s=854x480:mode=combined:slide=scroll:saturation=1.5:scale=log,format=yuv420p[v]"
- -map "[v]" -map 0:a
- -b:v 700k -b:a 360k OUTPUT.mp4
-
-ffmpeg -i INPUT.wav -filter_complex
-"[0:a]ahistogram=s=hd480:slide=scroll:scale=log,format=yuv420p[v]"
- -map "[v]" -map 0:a
- -b:a 360k OUTPUT.mp4
-
-
-# create a spectrogram as a single frame
-ffmpeg -i INPUT.wav -lavfi
-showspectrumpic=s=hd480:legend=0,format=yuv420p
-SPECTROGRAM.png
-
-# add png to audio - you need to know the length of audio
-ffmpeg -loop 1 -i SPECTROGRAM.png -i INPUT.wav
--s hd480 -t 00:01:00 -pix_fmt yuv420p
--b:a 360k -r:a 44100 OUTPUT.mp4
-
-ffmpeg -i INPUT.wav -filter_complex
-"[0:a]showwaves=mode=line:s=hd480:colors=Yellow@0.5|Blue@0.5:scale=sqrt[v];
- [v]drawtext=text='Rudi Rudi - Still Standing':fontcolor=White@0.5:
- fontsize=30:font=Arvo:x=(w-text_w)/5:y=(h-text_h)/5[out]"
- -map "[out]" -map 0:a -pix_fmt yuv420p
- -b:a 360k -r:a 44100  OUTPUT.mp4
-
 
 
 
