@@ -1,0 +1,301 @@
+###############################################################
+spectrogram python
+###############################################################
+https://docs.scipy.org/doc/scipy-0.19.0/reference/generated/scipy.signal.spectrogram.html
+
+
+
+import matplotlib.pyplot as plt
+from scipy import signal
+from scipy.io import wavfile
+
+sample_rate, samples = wavfile.read('path-to-mono-audio-file.wav')
+frequencies, times, spectrogram = signal.spectrogram(samples, sample_rate)
+
+plt.pcolormesh(times, frequencies, spectrogram)
+plt.imshow(spectrogram)
+plt.ylabel('Frequency [Hz]')
+plt.xlabel('Time [sec]')
+plt.show()
+
+
+---------------------------------------------------
+http://www.frank-zalkow.de/en/code-snippets/create-audio-spectrograms-with-python.html?i=1
+
+
+
+#!/usr/bin/env python
+#coding: utf-8
+""" This work is licensed under a Creative Commons Attribution 3.0 Unported License.
+    Frank Zalkow, 2012-2013 """
+
+import numpy as np
+from matplotlib import pyplot as plt
+import scipy.io.wavfile as wav
+from numpy.lib import stride_tricks
+
+""" short time fourier transform of audio signal """
+def stft(sig, frameSize, overlapFac=0.5, window=np.hanning):
+    win = window(frameSize)
+    hopSize = int(frameSize - np.floor(overlapFac * frameSize))
+
+    # zeros at beginning (thus center of 1st window should be for sample nr. 0)
+    samples = np.append(np.zeros(np.floor(frameSize/2.0)), sig)
+    # cols for windowing
+    cols = np.ceil( (len(samples) - frameSize) / float(hopSize)) + 1
+    # zeros at end (thus samples can be fully covered by frames)
+    samples = np.append(samples, np.zeros(frameSize))
+
+    frames = stride_tricks.as_strided(samples, shape=(cols, frameSize), strides=(samples.strides[0]*hopSize, samples.strides[0])).copy()
+    frames *= win
+
+    return np.fft.rfft(frames)
+
+""" scale frequency axis logarithmically """
+def logscale_spec(spec, sr=44100, factor=20.):
+    timebins, freqbins = np.shape(spec)
+
+    scale = np.linspace(0, 1, freqbins) ** factor
+    scale *= (freqbins-1)/max(scale)
+    scale = np.unique(np.round(scale))
+
+    # create spectrogram with new freq bins
+    newspec = np.complex128(np.zeros([timebins, len(scale)]))
+    for i in range(0, len(scale)):
+        if i == len(scale)-1:
+            newspec[:,i] = np.sum(spec[:,scale[i]:], axis=1)
+        else:
+            newspec[:,i] = np.sum(spec[:,scale[i]:scale[i+1]], axis=1)
+
+    # list center freq of bins
+    allfreqs = np.abs(np.fft.fftfreq(freqbins*2, 1./sr)[:freqbins+1])
+    freqs = []
+    for i in range(0, len(scale)):
+        if i == len(scale)-1:
+            freqs += [np.mean(allfreqs[scale[i]:])]
+        else:
+            freqs += [np.mean(allfreqs[scale[i]:scale[i+1]])]
+
+    return newspec, freqs
+
+""" plot spectrogram"""
+def plotstft(audiopath, binsize=2**10, plotpath=None, colormap="jet"):
+    samplerate, samples = wav.read(audiopath)
+    s = stft(samples, binsize)
+
+    sshow, freq = logscale_spec(s, factor=1.0, sr=samplerate)
+    ims = 20.*np.log10(np.abs(sshow)/10e-6) # amplitude to decibel
+
+    timebins, freqbins = np.shape(ims)
+
+    plt.figure(figsize=(15, 7.5))
+    plt.imshow(np.transpose(ims), origin="lower", aspect="auto", cmap=colormap, interpolation="none")
+    plt.colorbar()
+
+    plt.xlabel("time (s)")
+    plt.ylabel("frequency (hz)")
+    plt.xlim([0, timebins-1])
+    plt.ylim([0, freqbins])
+
+    xlocs = np.float32(np.linspace(0, timebins-1, 5))
+    plt.xticks(xlocs, ["%.02f" % l for l in ((xlocs*len(samples)/timebins)+(0.5*binsize))/samplerate])
+    ylocs = np.int16(np.round(np.linspace(0, freqbins-1, 10)))
+    plt.yticks(ylocs, ["%.02f" % freq[i] for i in ylocs])
+
+    if plotpath:
+        plt.savefig(plotpath, bbox_inches="tight")
+    else:
+        plt.show()
+
+    plt.clf()
+
+plotstft("my_audio_file.wav")
+
+
+--------------------------------------------------
+https://stackoverflow.com/questions/44787437/how-to-convert-a-wav-file-to-a-spectrogram-in-python3
+
+import os
+import wave
+
+import pylab
+def graph_spectrogram(wav_file):
+    sound_info, frame_rate = get_wav_info(wav_file)
+    pylab.figure(num=None, figsize=(19, 12))
+    pylab.subplot(111)
+    pylab.title('spectrogram of %r' % wav_file)
+    pylab.specgram(sound_info, Fs=frame_rate)
+    pylab.savefig('spectrogram.png')
+def get_wav_info(wav_file):
+    wav = wave.open(wav_file, 'r')
+    frames = wav.readframes(-1)
+    sound_info = pylab.fromstring(frames, 'int16')
+    frame_rate = wav.getframerate()
+    wav.close()
+    return sound_info, frame_rate
+
+
+
+--------------------------------------------------
+https://audiosegment.readthedocs.io/en/latest/audiosegment.html
+
+# Example for plotting the FFT using this function
+import matplotlib.pyplot as plt
+import numpy as np
+
+seg = audiosegment.from_file("furelise.wav")
+# Just take the first 3 seconds
+hist_bins, hist_vals = seg[1:3000].fft()
+hist_vals_real_normed = np.abs(hist_vals) / len(hist_vals)
+plt.plot(hist_bins / 1000, hist_vals_real_normed)
+plt.xlabel("kHz")
+plt.ylabel("dB")
+plt.show()
+
+...
+
+# Example usage
+import audiosegment
+import matplotlib.pyplot as plt
+import numpy as np
+
+def visualize(spect, frequencies, title=""):
+    # Visualize the result of calling seg.filter_bank() for any number of filters
+    i = 0
+    for freq, (index, row) in zip(frequencies[::-1], enumerate(spect[::-1, :])):
+        plt.subplot(spect.shape[0], 1, index + 1)
+        if i == 0:
+            plt.title(title)
+            i += 1
+        plt.ylabel("{0:.0f}".format(freq))
+        plt.plot(row)
+    plt.show()
+
+seg = audiosegment.from_file("some_audio.wav").resample(sample_rate_Hz=24000, sample_width=2, channels=1)
+spec, frequencies = seg.filter_bank(nfilters=5)
+visualize(spec, frequencies)
+
+...
+
+# Example for plotting a spectrogram using this function
+import audiosegment
+import matplotlib.pyplot as plt
+
+#...
+seg = audiosegment.from_file("somebodytalking.wav")
+freqs, times, amplitudes = seg.spectrogram(window_length_s=0.03, overlap=0.5)
+amplitudes = 10 * np.log10(amplitudes + 1e-9)
+
+# Plot
+plt.pcolormesh(times, freqs, amplitudes)
+plt.xlabel("Time in Seconds")
+plt.ylabel("Frequency in Hz")
+plt.show()
+
+   ...
+
+# Example usage
+import audiosegment
+import keras
+import keras.models
+import numpy as np
+import sys
+
+class Model:
+    def __init__(self, modelpath):
+        self.model = keras.models.load_model(modelpath)
+
+    def predict(self, seg):
+        _bins, fft_vals = seg.fft()
+        fft_vals = np.abs(fft_vals) / len(fft_vals)
+        predicted_np_form = self.model.predict(np.array([fft_vals]), batch_size=1)
+        prediction_as_int = int(round(predicted_np_form[0][0]))
+        return prediction_as_int
+
+modelpath = sys.argv[1]
+wavpath = sys.argv[2]
+model = Model(modelpath)
+seg = audiosegment.from_file(wavpath).resample(sample_rate_Hz=32000, sample_width=2, channels=1)
+pyes_to_no = 0.3  # The probability of one 30 ms sample being an event, and the next one not
+pno_to_yes = 0.2  # The probability of one 30 ms sample not being an event, and the next one yes
+ptrue_pos_rate = 0.8  # The true positive rate (probability of a predicted yes being right)
+pfalse_neg_rate = 0.3  # The false negative rate (probability of a predicted no being wrong)
+raw_prob = 0.7  # The raw probability of seeing the event in any random 30 ms slice of this file
+events = seg.detect_event(model, ms_per_input=30, transition_matrix=[pyes_to_no, pno_to_yes],
+                          model_stats=[ptrue_pos_rate, pfalse_neg_rate], event_length_s=0.25,
+                          prob_raw_yes=raw_prob)
+nos = [event[1] for event in events if event[0] == 'n']
+yeses = [event[1] for event in events if event[0] == 'y']
+if len(nos) > 1:
+    notdetected = nos[0].reduce(nos[1:])
+    notdetected.export("notdetected.wav", format="WAV")
+if len(yeses) > 1:
+    detected = yeses[0].reduce(yeses[1:])
+    detected.export("detected.wav", format="WAV")
+
+
+
+
+
+---------------------------------------------------
+
+https://lukaprincic.si/development-log/ffmpeg-audio-visualization-tricks
+https://ffmpeg.org/ffmpeg-filters.html#ahistogram
+http://www.ffmpeg.org/ffmpeg-filters.html#showspectrumpic
+http://www.ffmpeg.org/ffmpeg-filters.html#drawtext-1
+https://ffmpeg.org/ffmpeg-filters.html#ahistogram
+https://ffmpeg.org/ffmpeg-filters.html#showspectrum-1
+http://www.ffmpeg.org/ffmpeg-filters.html#showwaves
+https://ffmpeg.org/ffmpeg-filters.html#avectorscope
+
+ffmpeg -i INPUT_AUDIO.wav -filter_complex
+"[0:a]avectorscope=s=480x480:zoom=1.5:rc=0:gc=200:bc=0:rf=0:gf=40:bf=0,format=yuv420p[v];
+ [v]pad=854:480:187:0[out]"
+ -map "[out]" -map 0:a
+-b:v 700k -b:a 360k
+OUTPUT_VIDEO.mp4
+
+ffmpeg -i INPUT_AUDIO.wav -filter_complex
+"[0:a]avectorscope=s=480x480:zoom=1.5:rc=0:gc=200:bc=0:rf=0:gf=40:bf=0,format=yuv420p[v]"
+ -map "[v]" -map 0:a
+-b:v 700k -b:a 360k
+OUTPUT_VIDEO.mp4
+
+ffmpeg -i INPUT.wav -filter_complex
+"[0:a]showwaves=mode=line:s=hd480:colors=White[v]"
+-map "[v]" -map 0:a -pix_fmt yuv420p
+-b:a 360k -r:a 44100  OUTPUT.mp4
+
+###
+ffmpeg -i INPUT.wav  -filter_complex
+"[0:a]showspectrum=s=854x480:mode=combined:slide=scroll:saturation=1.5:scale=log,format=yuv420p[v]"
+ -map "[v]" -map 0:a
+ -b:v 700k -b:a 360k OUTPUT.mp4
+
+ffmpeg -i INPUT.wav -filter_complex
+"[0:a]ahistogram=s=hd480:slide=scroll:scale=log,format=yuv420p[v]"
+ -map "[v]" -map 0:a
+ -b:a 360k OUTPUT.mp4
+
+
+# create a spectrogram as a single frame
+ffmpeg -i INPUT.wav -lavfi
+showspectrumpic=s=hd480:legend=0,format=yuv420p
+SPECTROGRAM.png
+
+# add png to audio - you need to know the length of audio
+ffmpeg -loop 1 -i SPECTROGRAM.png -i INPUT.wav
+-s hd480 -t 00:01:00 -pix_fmt yuv420p
+-b:a 360k -r:a 44100 OUTPUT.mp4
+
+ffmpeg -i INPUT.wav -filter_complex
+"[0:a]showwaves=mode=line:s=hd480:colors=Yellow@0.5|Blue@0.5:scale=sqrt[v];
+ [v]drawtext=text='Rudi Rudi - Still Standing':fontcolor=White@0.5:
+ fontsize=30:font=Arvo:x=(w-text_w)/5:y=(h-text_h)/5[out]"
+ -map "[out]" -map 0:a -pix_fmt yuv420p
+ -b:a 360k -r:a 44100  OUTPUT.mp4
+
+
+
+
+
