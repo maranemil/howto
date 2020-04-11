@@ -297,6 +297,8 @@
 | https://www.youtube.com/watch?v=g9cbGNR6FoE | Deep Learning From Scratch - Seth Weidman | ODSC East 2019 | 
 | https://www.youtube.com/watch?v=zJ6WbK9zFpI | Docker for Beginners: Full Course | 
 | https://www.youtube.com/watch?v=Kp3HGwlXwCk | BASIC JAVASCRIPT PROJECTS | 
+| https://www.youtube.com/watch?v=1Rs2ND1ryYc | CSS Tutorial - Zero to Hero (Complete Course)  | 
+
 
 | Link URL  | Playlist |
 |-----------|-------|
