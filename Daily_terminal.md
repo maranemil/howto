@@ -10,6 +10,14 @@
 ##### Check repo file Sizes
 * find . -name '*' -size +1M -exec ls -lh {} \; | awk '{ print $9 ": " $5 }'
 
+##### rename
+* // rename incremental 000 - 999
+* num=0; for i in *; do mv "$i" "$(printf '%04d' $num).${i#*.}"; ((num++)); done
+
+* // rename random 000 - 999
+* for i in *; do mv "$i" $(($RANDOM % 1000000000)).${i#*.}; done
+
+
 ##### Check pack
 * git verify-pack -v ./.git/objects/pack/pack-......ea.pack
 
