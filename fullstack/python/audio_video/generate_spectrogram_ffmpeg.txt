@@ -1,3 +1,8 @@
+#######################################################
+#
+#  ffmpeg  showspectrum
+#
+#######################################################
 
 https://lukaprincic.si/development-log/ffmpeg-audio-visualization-tricks
 https://ffmpeg.org/ffmpeg-filters.html#ahistogram
@@ -117,6 +122,29 @@ ffmpeg -f lavfi -i smptebars=duration=10:size=640x360:rate=30 smptebars.mp4
 ffmpeg -f lavfi -i color=c=red@0.2:duration=5:s=qcif:r=10 colorsrc.mp4
 ffmpeg -f lavfi -i rgbtestsrc -pix_fmt yuv420p -t 5 rgbtestsrc.mp4
 
+
+#######################################################
+#
+#  ffmpeg  showspectrum
+#
+#######################################################
+
+ffmpeg -i file.wav -lavfi showspectrumpic=s=800x400:mode=separate spectrogram.png
+ffmpeg -i file.wav -lavfi showspectrumpic=s=800x400:mode=separate:color=fiery showwavespic.png
+ffmpeg -i file.wav -lavfi showspectrumpic=s=800x400:mode=separate:color=green showwavespic.png
+ffmpeg -i file.wav -lavfi showspectrumpic=s=800x400:mode=separate:color=magma showwavespic.png
+
+
+ffmpeg -i file.wav -lavfi showwavespic=s=800x400 showwavespic.png
+ffmpeg -i file.wav -lavfi showwavespic=s=800x400:split_channels=1:colors=blue -i color=s=800x400:c=red showwavespic.png
+
+# output red and green on black bg
+ffmpeg -i file.wav -f lavfi -i color=s=800x400:c=black -filter_complex "[0:a]showwavespic=s=800x400:split_channels=1[fg];[1:v][fg]overlay=format=rgb" -frames:v 1 -y showwavespic.png
+
+
+https://ffmpeg.org/ffmpeg-filters.html#showwavespic
+
+sox file.wav -n spectrogram # sox is using ffmpeg
 
 
 
