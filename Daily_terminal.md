@@ -17,6 +17,10 @@
 * // rename random 000 - 999
 * for i in *; do mv "$i" $(($RANDOM % 1000000000)).${i#*.}; done
 
+##### Umount force
+sudo service nfs-kernel-server stop
+sudo umount -f ~/path
+sudo umount -l -f ~/path
 
 ##### Check pack
 * git verify-pack -v ./.git/objects/pack/pack-......ea.pack
