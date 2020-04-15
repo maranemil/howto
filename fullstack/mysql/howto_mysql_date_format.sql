@@ -434,6 +434,20 @@ AND DATEDIFF(DATE_FORMAT(end_date,'%Y-%m-%d'), SUBSTRING_INDEX(field_text,'/',1)
 AND TIMESTAMPDIFF(HOUR,SUBSTRING_INDEX(field_text,'/',1),end_date) > 5 -- where diff hours bigger than 5
 
 
+###################################################
+#
+#   Convert timestamp to date in MySQL query
+#   Convert the timestamp to date time
+#
+###################################################
+
+# https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html
+# https://www.tutorialspoint.com/how-to-convert-timestamp-to-datetime-in-mysql
+
+SELECT FROM_UNIXTIME(1586210400);
+SELECT FROM_UNIXTIME(1586210400, '%Y %D %M %H:%i:%s');
+SELECT DATE_FORMAT(FROM_UNIXTIME(`registration`), '%e %b %Y') AS 'date_formatted';
+SELECT DATE_FORMAT(registration, '%Y-%m-%d');
 
 
 
