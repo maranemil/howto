@@ -78,6 +78,9 @@ change date |touch -d "2 hours ago" filename
 
 #### [Audio Video]
 
+##### Push volume up +4dB
+* ffmpeg -i input.wav -af "volume=4dB" -c:v copy -y  out.wav
+
 ##### Split audio file in 1 sec pieces FFMPEG
 * ffmpeg -i in.wav -map 0 -f segment -segment_time 1 -af "volume=6dB,equalizer=f=40:width_type=o:width=2:g=-7,areverse" -y dir/out%03d.wav
 
