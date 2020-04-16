@@ -24,6 +24,11 @@ echo date("Y-m-d H:i:s", strtotime(date("Y-m-d H:i:s")." +1weeks")); // 2016-03-
 echo '<br>';
 echo date("Y-m-d H:i:s", strtotime(date("Y-m-d H:i:s")." +1month")); // 2016-04-10 10:50:36
 
+//
+echo date('Y-m-d H:i:s', strtotime('+90 day'));
+echo "<br>";
+echo date("Y-m-d H:i:s", strtotime(date("Y-m-d H:i:s")." +90 day"));
+
 ##########
 // http://stackoverflow.com/questions/17909871/getting-date-format-m-d-y-his-u-from-milliseconds
 
