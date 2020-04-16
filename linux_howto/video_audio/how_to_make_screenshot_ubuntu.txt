@@ -5,14 +5,40 @@ Screen default 1
 ###############################################
 
 ffmpeg -video_size [resolution] -framerate [framerate] -f x11grab -i :0.0 -f pulse -ac 2 -i [source] myvid_$(date +%s).mkv
-
 ffmpeg -v warning -video_size 1920x1080 -framerate 25 -f x11grab -i :0.0  myvid_$(date +%s).mov
-
 ffmpeg -video_size 1920x1080 -framerate 25 -f x11grab -i :0.0 -f pulse -ac 2 -i 0 myvid_$(date +%s).mov
-
 ffmpeg -video_size 1920x1080 -f x11grab -i :0 -y -r 10 myvid_$(date +%s).mov
-
 ffmpeg -f x11grab -video_size 1920x1080 -framerate 25 -i :0.0 myvid_$(date +%s).mov
+
+#--------------------------------
+Capturing your Desktop / Screen Recording
+#--------------------------------
+
+ffmpeg -video_size 1024x768 -framerate 25 -f x11grab -i :0.0+100,200 output.mp4
+ffmpeg -video_size 1024x768 -framerate 25 -f x11grab -i :0.0+100,200 -f alsa -ac 2 -i hw:0 output.mkv
+ffmpeg -video_size 1024x768 -framerate 25 -f x11grab -i :0.0+100,200 -f pulse -ac 2 -i default output.mkv
+
+https://trac.ffmpeg.org/wiki/Capture/Desktop
+https://trac.ffmpeg.org/wiki/Encode/VP8
+https://trac.ffmpeg.org/wiki/Encode/VP9
+http://www.ubuntubuzz.com/2016/11/3-ffmpeg-command-lines-for-screen-recording-audio-gnulinux-mkv-webm-ogv-formats.html
+https://gist.github.com/mrdoob/1325393/afb0c2bb87043f910f7b941cbbef90a8394644ee
+https://unix.stackexchange.com/questions/73622/how-to-get-near-perfect-screen-recording-quality
+https://www.virag.si/2012/11/streaming-live-webm-video-with-ffmpeg/
+
+#--------------------------------
+Record Video
+#--------------------------------
+
+# Record Video + Audio to MKV Format
+ffmpeg -video_size 1366x768 -framerate 25 -f x11grab -i :0.0 -f pulse -ac 2 -i default myvideo_$(date +%d_%B_%Y_%H:%M).mkv
+
+# Record Video + Audio to WEBM Format
+ffmpeg -video_size 1366x768 -framerate 25 -f x11grab -i :0.0 -f pulse -ac 2 -i default -vcodec vp8 -acodec libvorbis myvideo_$(date +%d_%B_%Y_%H:%M).webm
+
+
+# Record Video + Audio to OGV Format
+ffmpeg -video_size 1366x768 -framerate 6 -f x11grab -i :0.0 -f pulse -ac 2 -i default -codec:v libtheora -qscale:v 7 -codec:a libvorbis -qscale:a 5  myvideo_$(date +%d_%B_%Y_%H:%M).ogv
 
 
 ###############################################
@@ -53,10 +79,6 @@ Screen default 2
 
 ffmpeg -f x11grab -video_size 1366x768 -r 25 -i :0.0+1920,300 myvid_$(date +%s).mov
 
-
-
-
-
 ###############################################
 #--------------------------------
 # concat
@@ -70,13 +92,6 @@ file myfile2.mov
 file myfile3.mov
 
 $ ffmpeg -f concat -i mylist.txt -c copy output.mov
-
-
-
-
-
-
-
 
 ###############################################
 #--------------------------------
@@ -98,14 +113,6 @@ ffmpeg -f x11grab -thread_queue_size 64 -video_size 1920x1080 -framerate 30 -i :
        -filter_complex 'overlay=main_w-overlay_w:main_h-overlay_h:format=yuv444' \
        -vcodec libx264 -preset ultrafast -qp 0 -pix_fmt yuv444p \
        video.mkv
-
-
-
-
-
-
-
-
 
 
 https://askubuntu.com/questions/107726/how-to-create-animated-gif-images-of-a-screencast
@@ -169,7 +176,7 @@ rm -f "$palette"
 
 
 
-
+#-------------------------------------------------------------------------------
 # --------- ffcast
 #!/bin/bash
 TMP_AVI=$(mktemp /tmp/outXXXXXXXXXX.avi)
@@ -247,38 +254,6 @@ ffmpeg -f video4linux2 -list_formats all -i /dev/video0
 # ffmpeg: recording the screen.
 ffmpeg -f x11grab -r 25 -s 640x480 -i :0.0+1,53 out.webm
 
-
-#--------------------------------
-Record Video
-#--------------------------------
-
-# Record Video + Audio to MKV Format
-ffmpeg -video_size 1366x768 -framerate 25 -f x11grab -i :0.0 -f pulse -ac 2 -i default myvideo_$(date +%d_%B_%Y_%H:%M).mkv
-
-# Record Video + Audio to WEBM Format
-ffmpeg -video_size 1366x768 -framerate 25 -f x11grab -i :0.0 -f pulse -ac 2 -i default -vcodec vp8 -acodec libvorbis myvideo_$(date +%d_%B_%Y_%H:%M).webm
-
-
-# Record Video + Audio to OGV Format
-ffmpeg -video_size 1366x768 -framerate 6 -f x11grab -i :0.0 -f pulse -ac 2 -i default -codec:v libtheora -qscale:v 7 -codec:a libvorbis -qscale:a 5  myvideo_$(date +%d_%B_%Y_%H:%M).ogv
-
-
-#--------------------------------
-Capturing your Desktop / Screen Recording
-#--------------------------------
-
-ffmpeg -video_size 1024x768 -framerate 25 -f x11grab -i :0.0+100,200 output.mp4
-ffmpeg -video_size 1024x768 -framerate 25 -f x11grab -i :0.0+100,200 -f alsa -ac 2 -i hw:0 output.mkv
-ffmpeg -video_size 1024x768 -framerate 25 -f x11grab -i :0.0+100,200 -f pulse -ac 2 -i default output.mkv
-
-
-https://trac.ffmpeg.org/wiki/Encode/VP8
-https://trac.ffmpeg.org/wiki/Encode/VP9
-https://trac.ffmpeg.org/wiki/Capture/Desktop
-http://www.ubuntubuzz.com/2016/11/3-ffmpeg-command-lines-for-screen-recording-audio-gnulinux-mkv-webm-ogv-formats.html
-https://gist.github.com/mrdoob/1325393/afb0c2bb87043f910f7b941cbbef90a8394644ee
-https://unix.stackexchange.com/questions/73622/how-to-get-near-perfect-screen-recording-quality
-https://www.virag.si/2012/11/streaming-live-webm-video-with-ffmpeg/
 
 
 
