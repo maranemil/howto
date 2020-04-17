@@ -960,7 +960,27 @@ SELECT name
  LIMIT 1
 
 
+#########################################################
+#
+#   RANDOM
+#
+#########################################################
 
+-- OPTIMIZED: 300ms
+
+SELECT g.* FROM table g
+   JOIN (SELECT id FROM table WHERE RAND() < (SELECT ((4 / COUNT(*)) * 10) FROM  table)
+    ORDER BY RAND() LIMIT 4) AS z ON z.id= g.id
+
+-- UNOPTIMIZED: 1200ms
+
+SELECT g.* FROM table g ORDER BY RAND() LIMIT 4
+
+-- OPTIMIZED: ?
+
+SELECT t.* FROM table t
+JOIN  (SELECT id  FROM `table`  ORDER BY RAND()) AS z ON z.id= t.id
+WHERE t.isVisible = 1 LIMIT 100;
 
 #########################################################
 #
