@@ -206,6 +206,7 @@ change date |touch -d "2 hours ago" filename
 * python -m SimpleHTTPServer (deprecated python2)
 * python3 -m http.server 8888
 * http://localhost:8000
+* php -S localhost:4000
 
 ##### list packages
 * dpkg --get-selections | grep -v deinstall
