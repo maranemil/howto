@@ -178,3 +178,44 @@ ffplay mixoutfx1.wav -vf "split[a][b];[a]waveform=e=3,split=3[c][d][e];[e]crop=i
 ffmpeg -y -i 049.mp4 -filter_complex  "[0:v] split=4[v0][v1][v2][v3] ;   [v0] format=yuv444p,vectorscope=x=1:y=2,scale=960:540,setsar=1 [v0vs];  [v1] format=yuv444p,vectorscope=x=0:y=1,scale=960:540,setsar=1 [v1vs]; [v2]  format=yuv444p,vectorscope=x=0:y=2,scale=960:540, setsar=1 [v2vs]; [v3]format=yuv444p,scale=960:540,setsar=1[v3];  [v3][v0vs]hstack[vt]; [v1vs][v2vs]hstack[vb];[vt][vb]vstack[v]" -map '[v]' -an -t 20 output.mp4
 
 ffmpeg -y -i 049.mp4 -filter_complex  "[0:v] split=4[v0][v1][v2][v3] ;   [v0] format=yuv444p,vectorscope=x=1:y=2,scale=960:540,setsar=1 [v0vs];  [v1] format=yuv444p,vectorscope=x=0:y=1,scale=960:540,setsar=1 [v1vs]; [v2]  format=yuv444p,vectorscope=x=0:y=2,scale=960:540, setsar=1 [v2vs]; [v3]format=yuv444p,scale=960:540,setsar=1[v3];  [v3][v0vs]hstack[vt]; [v1vs][v2vs]hstack[vb];[vt][vb]vstack[v]" -map '[v]' -t 20 output.mp4
+
+-------------------------------------------
+
+ffmpeg -loop 1 -y -i image8.jpg -i sound11.amr -shortest -acodec copy -vcodec mjpeg result.avi
+
+ffmpeg -loop 1 -i image.jpg -i audio.wav -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p -shortest out.mp4
+
+ffmpeg -r 1 -loop 1 -i ep1.jpg -i ep1.wav -acodec copy -r 1 -shortest -vf scale=1280:720 ep1.flv
+
+To manually choose specific streams
+
+ffmpeg -i video.mp4 -i audio.m4a -map 0:v -map 1:a -c copy -shortest output.mp4
+
+    -map 0:v – From input 0 (the first input, which is video.mp4) choose the video stream(s).
+    -map 1:a – From input 1 (the second input, which is audio.m4a) choose the audio stream(s).
+
+Mixing/combining two audio inputs into one
+
+ffmpeg -i video.webm -i audio.oga -filter_complex \
+"[0:a][1:a]amerge=inputs=2[a]" \
+-map 0:v -map "[a]" -c:v copy -c:a libvorbis -ac 2 -shortest out.webm
+
+ffmpeg -ss 00:00:18.300 -i music.mp3 -loop 1 -i bg.mp4 -i ac%d.png -i dust.mp4 -filter_complex "[1:0]scale=1600:ih*1200/iw, crop=1600:900[a];[a][2:0] overlay=0:0[b]; [3:0] scale=1600:ih*1600/iw, crop=1600:900,setsar=1[c]; [b][c] blend=all_mode='overlay':all_opacity=0.2" -shortest -y output.mp4
+
+
+ffmpeg -f lavfi -i testsrc=s=640x480:d=10 inp.mp4
+#ffplay -f lavfi -i testsrc=s=640x480:d=1
+#ffplay -f lavfi -i sine=frequency=1000:sample_rate=48000:duration=1
+
+ffmpeg  -i inp.wav -i inp.mp4  -filter_complex "[0:a]avectorscope=s=640x518,pad=1280:720[v0];[1:v]scale=1280x720[v1];[v0][v1]overlay=0:H-h[v]" -map "[v]" -y output.mp4
+
+ffmpeg  -i inp.mp4 -i inp.mp4  -filter_complex "[0:v]scale=1280x720,trim=0:13,setpts=PTS-STARTPTS[v0];[1:v]scale=1280x720,trim=0:13,setpts=PTS-STARTPTS[v1];[v0][v1]concat=n=2[v]" -map "[v]" -y output.mp4
+
+
+
+
+
+
+
+
+
