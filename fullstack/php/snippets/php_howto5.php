@@ -246,3 +246,14 @@ get_class(): Foo
 get_class($this): Bar
 get_called_class(): Bar
 */
+
+
+
+
+/*
+https://www.w3schools.com/php/func_array_filter.asp
+https://www.php.net/manual/de/function.array-filter.php
+*/
+
+array_filter ( $array2, 'trim' );
+array_map ( $array2, 'trim' );
