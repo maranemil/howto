@@ -146,5 +146,35 @@ https://ffmpeg.org/ffmpeg-filters.html#showwavespic
 
 sox file.wav -n spectrogram # sox is using ffmpeg
 
+#######################################################################
+https://trac.ffmpeg.org/wiki/FancyFilteringExamples
+https://hhsprings.bitbucket.io/docs/programming/examples/ffmpeg/video_data_visualization/vectorscope.html
+#######################################################################
+
+ffmpeg -i -i mixoutfx1.wav -filter_complex \
+"[0:a]avectorscope=s=640x518,pad=1280:720[vs]; \
+ [0:a]showspectrum=mode=separate:color=intensity:scale=cbrt:s=640x518[ss]; \
+ [0:a]showwaves=s=1280x202:mode=line[sw]; \
+ [vs][ss]overlay=w[bg]; \
+ [bg][sw]overlay=0:H-h[out]" \
+-map "[out]" -map 0:a -c:v libx264 -preset fast -crf 18 output.mp4
 
 
+ffmpeg -i mixoutfx1.wav -filter_complex "[0:a]avectorscope=s=1280x720:draw=line,format=yuv420p[v]" -map "[v]" -map 0:a -t 20  output.mp4
+
+ffmpeg -i mixoutfx1.wav -filter_complex "[0:a]showwaves=s=1280x720:mode=cline:colors=#ff0000,format=yuv420p[v]" -map "[v]" -map 0:a -t 20  -y output.mp4
+
+ffmpeg -i mixoutfx1.wav -filter_complex "[0:a]showcqt=s=1280x720,format=yuv420p[v]" -map "[v]" -map 0:a -t 20  -y output.mp4
+
+
+ffplay -i mixoutfx1.wav -vf "format=yuva444p9,split=2[m][v],[v]vectorscope=b=0.7:m=color:g=green[v],[m][v]overlay=x=W-w:y=H-h"
+
+ffplay -f lavfi -i mandelbrot -vf "format=yuv444p,split=4[a][b][c][d],[a]waveform[aa],[b][aa]vstack[V],[c]waveform=m=0[cc],[d]vectorscope=color4[dd],[cc][dd]vstack[V2],[V][V2]hstack"
+
+ffplay mixoutfx1.wav -vf "split[a][b];[a]waveform=e=3,split=3[c][d][e];[e]crop=in_w:20:0:235,lutyuv=v=180[low];[c]crop=in_w:16:0:0,lutyuv=y=val:v=180[high];[d]crop=in_w:220:0:16,lutyuv=v=110[mid] ; [b][high][mid][low]vstack=4"
+
+
+# for squares into one
+ffmpeg -y -i 049.mp4 -filter_complex  "[0:v] split=4[v0][v1][v2][v3] ;   [v0] format=yuv444p,vectorscope=x=1:y=2,scale=960:540,setsar=1 [v0vs];  [v1] format=yuv444p,vectorscope=x=0:y=1,scale=960:540,setsar=1 [v1vs]; [v2]  format=yuv444p,vectorscope=x=0:y=2,scale=960:540, setsar=1 [v2vs]; [v3]format=yuv444p,scale=960:540,setsar=1[v3];  [v3][v0vs]hstack[vt]; [v1vs][v2vs]hstack[vb];[vt][vb]vstack[v]" -map '[v]' -an -t 20 output.mp4
+
+ffmpeg -y -i 049.mp4 -filter_complex  "[0:v] split=4[v0][v1][v2][v3] ;   [v0] format=yuv444p,vectorscope=x=1:y=2,scale=960:540,setsar=1 [v0vs];  [v1] format=yuv444p,vectorscope=x=0:y=1,scale=960:540,setsar=1 [v1vs]; [v2]  format=yuv444p,vectorscope=x=0:y=2,scale=960:540, setsar=1 [v2vs]; [v3]format=yuv444p,scale=960:540,setsar=1[v3];  [v3][v0vs]hstack[vt]; [v1vs][v2vs]hstack[vb];[vt][vb]vstack[v]" -map '[v]' -t 20 output.mp4
