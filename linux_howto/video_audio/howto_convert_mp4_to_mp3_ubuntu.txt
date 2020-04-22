@@ -1472,4 +1472,40 @@ ffplay  -i out5_yolov3.mp4  -vf "spp=4:10" -threads:1 4
 ffplay  -i out5_yolov3.mp4  -vf "uspp=4:10" -threads:1 4
 
 
+##########################################################
+#
+#   FFMPEG Advanced Techniques Pt2 - Filtergraphs & Timeline
+#   https://www.youtube.com/watch?v=hElDsyuAQDA
+#   https://www.youtube.com/watch?v=M58rc7cxl_s&t=692s
+#
+##########################################################
+
+# simple filter
+ffmpeg -i in.mp4 -vf "eq=saturation=1.3, unsharp" our.mp4
+
+# mix 2 inouts
+ffmpeg -i in.mp4 -i bg.png   -filter_complex "[0]colorkey=color=black:similarity=0.1[keyed];[1][keyed]overlay" out_$(date +%s).mp4
+
+# add blur from 5 to 10 sec
+ffmpeg -i in.mp4 -filter_complex smartblur=lr=5:enable='between(t5,10)'" our.mp4
+
+# concat vids
+ffmpeg -f concat -i list.txt out.avi
+ffmpeg -i in.mp4 -i in2.mp4 -filter_complex "[0][1]concat" out.mp4
+ffmpeg -i in.mp4 -i in2.mp4 -filter_complex "[0][1]concat=n=2" out.mp4
+
+##########################################################
+#
+#  Mix Video with Overlay
+#
+##########################################################
+
+# gen wave
+ffmpeg -i in.wav -filter_complex "[0:a]showwaves=mode=line:s=hd1080:colors=yellow[v]" -map "[v]" -map 0:a -pix_fmt yuv420p -b:a 360k -r:a 44100  out_$(date +%s).mp4
+
+# mix wave + bg
+ffmpeg -i in.mp4 -i input.png   -filter_complex "[0]colorkey=color=black,crop=1920:400,scale=1920:300,pad=iw*200:ih:0:0[keyed];[1][keyed]overlay=y=670" -t 10  out_$(date +%s).mp4
+
+ffmpeg -i in.mp4 -i cover_vd_1920xV1b.png   -filter_complex "[0]colorkey=color=black,crop=1920:400,scale=1920:100,pad=iw*200:ih:0:0[keyed];[1][keyed]overlay=y=770" -t 10  out_$(date +%s).mp4
+
 
