@@ -1233,3 +1233,100 @@ SET GLOBAL slow_query_log = 'ON';
 Turn Off Logging When You’re Done
 SET GLOBAL general_log = 'OFF';
 SET GLOBAL slow_query_log = 'OFF';
+
+##################################################################
+#
+#  Why INSERT IGNORE increments the auto_increment primary key?
+#
+##################################################################
+
+https://stackoverflow.com/questions/5655396/why-insert-ignore-increments-the-auto-increment-primary-key
+https://dev.mysql.com/doc/refman/5.7/en/innodb-auto-increment-handling.html#innodb-auto-increment-lock-modes
+https://dev.mysql.com/doc/refman/8.0/en/innodb-auto-increment-handling.html
+https://www.percona.com/blog/2011/11/29/avoiding-auto-increment-holes-on-innodb-with-insert-ignore/
+https://bugs.mysql.com/bug.php?id=63128
+https://dev.mysql.com/doc/refman/8.0/en/innodb-auto-increment-handling.html
+https://dev.mysql.com/doc/refman/8.0/en/innodb-auto-increment-handling.html
+https://www.xaprb.com/blog/2005/09/22/mutex-tables-in-sql/
+https://www.percona.com/blog/2011/11/29/avoiding-auto-increment-holes-on-innodb-with-insert-ignore/
+https://dba.stackexchange.com/questions/101320/mysql-auto-increment-column-increases-after-insertion-error-occurs
+
+
+QUICK FIX:
+innodb_autoinc_lock_mode = 0 (“traditional” lock mode)
+Add innodb_autoinc_lock_mode=0 to your my.cnf file (/etc/mysql/my.cnf).
+
+set the configuration variable innodb_autoinc_lock_mode to 0 (a.k.a “traditional” lock mode)
+If you'd like to avoid gaps in your auto-increment columns.
+It may incur a performance penalty, though, as this mode has the effect of holding a table lock until the INSERT completes.
+
+
+ELABORATE FIX:
+.........................................
+https://www.db-fiddle.com/
+.........................................
+
+CREATE TABLE foo (
+id int(11) NOT NULL AUTO_INCREMENT,
+name int(11) DEFAULT NULL,
+PRIMARY KEY (id),
+UNIQUE KEY uniqname (name)
+) ENGINE=InnoDB;
+
+insert ignore into foo (name) value('a');
+insert ignore into foo (name) value('a');
+insert ignore into foo (name) value('a');
+insert ignore into foo (name) value('a');
+
+show create table foo;
+
+CREATE TABLE `foo` ( `id` int(11) NOT NULL AUTO_INCREMENT, `name` int(11) DEFAULT NULL, PRIMARY KEY (`id`), UNIQUE KEY `uniqname` (`name`) )
+ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1
+
+AUTO_INCREMENT=5 is FALSE!
+.........................................
+
+FIX ~
+
+create table mutex( i int not null primary key );
+insert into mutex(i) values (1);
+
+CREATE TABLE foo (
+id int(11) NOT NULL AUTO_INCREMENT,
+name int(11) DEFAULT NULL,
+PRIMARY KEY (id),
+UNIQUE KEY uniqname (name)
+) ENGINE=InnoDB;
+
+
+insert into foo(name) select 1 from mutex left outer join foo on foo.name=1 where mutex.i = 1 and foo.name is null;
+insert into foo(name) select 1 from mutex left outer join foo on foo.name=1 where mutex.i = 1 and foo.name is null;
+insert into foo(name) select 1 from mutex left outer join foo on foo.name=1 where mutex.i = 1 and foo.name is null;
+insert into foo(name) select 1 from mutex left outer join foo on foo.name=1 where mutex.i = 1 and foo.name is null;
+
+show create table foo;
+
+CREATE TABLE `foo` ( `id` int(11) NOT NULL AUTO_INCREMENT, `name` int(11) DEFAULT NULL, PRIMARY KEY (`id`), UNIQUE KEY `uniqname` (`name`) )
+ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1
+
+AUTO_INCREMENT=2 is OK!
+
+##################################################################
+#
+#   SQLite Set AUTOINCREMENT == PRIMARY KEY
+#
+##################################################################
+
+https://www.sqlitetutorial.net/sqlite-autoincrement/
+https://www.sqlite.org/autoinc.html
+
+CREATE TABLE people (
+   person_id INTEGER PRIMARY KEY,
+   first_name TEXT NOT NULL,
+   last_name TEXT NOT NULL
+);
+
+INSERT INTO people (first_name, last_name)
+VALUES('John', 'Doe');
+
+
