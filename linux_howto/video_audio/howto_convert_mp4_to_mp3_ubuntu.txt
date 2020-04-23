@@ -251,6 +251,48 @@ ffplay -i GOPR0186cr.mp4 -vf "zoompan=z='min(max(zoom,pzoom)+0.0015,1.5)':d=1:x=
 ffplay -i GOPR0186cr.mp4 -vf select='not(mod(n\,5))'
 
 
+
+
+#################################
+# 	crop video
+#################################
+ffmpeg -i in.mp4 -vf crop=800:600:230:80 out.mp4
+
+#################################
+# 	merge 4 videos in one - 2 by row with overlay
+#################################
+
+[][] x2
+ffmpeg -i in.mp4  -i in2.mp4  -filter_complex "[0:v:0]pad=iw*2:ih[bg]; [bg][1:v:0]overlay=w" -t 53 -y out.mp4
+
+[]
+[]
+ffmpeg -i in.mp4  -i in2.mp4  -filter_complex "[0]pad=iw:ih*2[bg]; [bg][1] overlay=40:600"  -t 53 -y out.mp4
+
+result
+[][]
+[][]
+
+
+
+#################################
+#	FFmpeg - Add logo to video - picture in picture
+#################################
+https://www.openwritings.net/pg/ffmpeg/ffmpeg-add-logo-video
+
+ffmpeg -y -i VIDEO.mp4 -i subscribe.png -filter_complex "overlay=10:10" OUT_1.mp4
+
+# add to center
+ffmpeg -y -i VIDEO.mp4 -i subscribe.png \
+    -filter_complex "overlay=x=(main_w-overlay_w)/2:y=(main_h-overlay_h)/2" \
+        OUT_CENTER.mp4
+
+#################################
+Fade in the first 30 frames of video:
+#################################
+ffmpeg -i in.mp4 -vf fade=in:0:30 -y out.mp4
+
+
 ######################################################
 #
 # Overlay Mix
@@ -1487,7 +1529,7 @@ ffmpeg -i in.mp4 -vf "eq=saturation=1.3, unsharp" our.mp4
 ffmpeg -i in.mp4 -i bg.png   -filter_complex "[0]colorkey=color=black:similarity=0.1[keyed];[1][keyed]overlay" out_$(date +%s).mp4
 
 # add blur from 5 to 10 sec
-ffmpeg -i in.mp4 -filter_complex smartblur=lr=5:enable='between(t5,10)'" our.mp4
+ffmpeg -i in.mp4 -filter_complex "smartblur=lr=5:enable='between(t,50,55)'" out.mp4
 
 # concat vids
 ffmpeg -f concat -i list.txt out.avi

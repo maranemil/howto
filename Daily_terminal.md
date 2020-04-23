@@ -113,6 +113,23 @@ change date |touch -d "2 hours ago" filename
 ##### crop square
 * ffplay -i 046white.mp4 -vf "crop=in_h/1:in_h/1"
 
+##### merge 4 videos in one - 2 by row with overlay
+
+* repeat 2x to merge horizontally 800x600 * 2 = 1600x600
+* ffmpeg -i in.mp4  -i in2.mp4  -filter_complex "[0:v:0]pad=iw*2:ih[bg]; [bg][1:v:0]overlay=w" -t 53 -y out.mp4
+
+* merge vertically - 1600x1200
+* ffmpeg -i in.mp4  -i in2.mp4  -filter_complex "[0]pad=iw:ih*2[bg]; [bg][1] overlay=40:600"  -t 53 -y out.mp4
+
+##### add logo top left padding 10
+* ffmpeg -y -i VIDEO.mp4 -i subscribe.png -filter_complex "overlay=10:10" OUT_1.mp4
+
+
+
+
+
+
+
 ####  [Manage SWAP]
 
 ##### Add temporary Swap file on Ubuntu 18.04
