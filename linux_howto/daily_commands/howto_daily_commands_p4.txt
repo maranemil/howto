@@ -169,12 +169,74 @@ xfce4-terminal -e 'alsamixer'
 
 
 
-######################################
+############################################################################
+#
+#   How to run FFMPEG with NVIDIA
+#
+############################################################################
+
+
+
+----------------------------------------------------------------
+
+https://trac.ffmpeg.org/wiki/HWAccelIntro
+https://developer.nvidia.com/video-encode-decode-gpu-support-matrix
+https://developer.nvidia.com/nvidia-video-codec-sdk
+https://trac.ffmpeg.org/wiki/HWAccelIntro
+
+ffmpeg --enable-nvenc
+
+ffmpeg -hwaccels
+
+Hardware acceleration methods:
+cuda
+vaapi
+opencl
+cuvid
+
+time ffmpeg -i in4.mp4 -y xoutput.mp4                     # 1m45.693s
+time ffmpeg -hwaccel vaapi -i in4.mp4 -y xoutput.mp4      # 2m0.340s
+time ffmpeg -hwaccel opencl -i in4.mp4 -y xoutput.mp4     # 1m59.934s
+
+----------------------------------------------------------------
+
+time ffmpeg -hwaccel cuda -i outputBF.mp4 -pixel_format yuv444p -preset default -y xoutput.mp4 # 2m1.198s
+time ffmpeg -hwaccel cuda -i outputBF.mp4 -pix_fmt yuv420p -c:v libx264 -y xoutput.mp4 # 1m52.538s
+time ffmpeg -hwaccel cuda -i outputBF.mp4 -pix_fmt yuv420p -an -c:v libx264 -crf 14 -y xoutput.mp4 #  2m23.117s
+
+----------------------------------------------------------------
+
+# options
+ffmpeg -hwaccel dxva2 -threads 1 -i INPUT -f null - -benchmark
+ffmpeg -i input -c:v h264_nvenc -profile high444p -pixel_format yuv444p -preset default output.mp4
+ffmpeg -c:v h264_cuvid -i input output
+ffmpeg -hwaccel cuda -i input output
+ffmpeg -hwaccel cuda -hwaccel_output_format cuda -i input -c:v h264_nvenc -preset slow output
+ffmpeg -hwaccel_device 0 -hwaccel cuda -i input -vf scale_npp=-1:720 -c:v h264_nvenc -preset slow output.mkv
+
+----------------------------------------------------------------
+
+fmpeg -hwaccels
+
+Hardware acceleration methods:
+vdpau
+vaapi
+drm
+
+ffmpeg -hwaccel vdpau -i ocm.mp4 -crf 14 -y ocm2.mp4
+
+using cpu capabilities: MMX2 SSE2Fast SSSE3 SSE4.2 AVX
+
+847,54s user 10,62s system 679% cpu 2:06,38 total - vdpau
+897,87s user 4,90s system 676% cpu 2:13,54 total - classic
+
+
+############################################################################
 #
 #   How to install NVIDIA.run?
 #   https://askubuntu.com/questions/149206/how-to-install-nvidia-run?fbclid=IwAR2SntvmIWt4LYchJMeNFkZpxv4Crl0RJiXst4rQElfuhVEM9jgUtSmSFOw
 #
-######################################
+############################################################################
 
 Log out and Hit Ctrl+Alt+F1
 sudo service lightdm stop or sudo lightdm stop
@@ -209,14 +271,11 @@ http://ntown.at/de/knowledgebase/cuda-gpu-accelerated-h264-h265-hevc-video-encod
 ffmpeg -hwaccel cuvid -i jQU_wiBW6M0.mp4  -crf 24 -threads 4 -preset ultrafast  -y outmovie3.mp4   # 2m24.058s
 ffmpeg  -i jQU_wiBW6M0.mp4 -hide_banner   -crf 24 -threads 4 -preset ultrafast -y outmovie2.mp4    # 2m8.413s
 
-
 Hardware acceleration methods:
 ffmpeg -hwaccels
 vdpau
 vaapi
 cuvid
-
-
 
 https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html
 https://www.microway.com/hpc-tech-tips/nvidia-smi_control-your-gpus/
