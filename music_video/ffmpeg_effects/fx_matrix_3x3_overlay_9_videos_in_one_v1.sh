@@ -1,23 +1,23 @@
 #!/bin/sh
 
 # add saturation
-ffmpeg -loglevel quiet -stats -i video1.mp4 -vf "scale=-1:540" -crf 20 -threads 6 -y video1A.mp4
-ffmpeg -loglevel quiet -stats -i video2.mp4 -vf "scale=-1:540" -crf 20 -threads 6 -y video1B.mp4
-ffmpeg -loglevel quiet -stats -i video3.mp4 -vf "scale=-1:540" -crf 20 -threads 6 -y video1C.mp4
-ffmpeg -loglevel quiet -stats -i video4.mp4 -vf "scale=-1:540" -crf 20 -threads 6 -y video1D.mp4
-ffmpeg -loglevel quiet -stats -i video5.mp4 -vf "scale=-1:540" -crf 20 -threads 6 -y video1E.mp4
-ffmpeg -loglevel quiet -stats -i video6.mp4 -vf "scale=-1:540" -crf 20 -threads 6 -y video1F.mp4
-ffmpeg -loglevel quiet -stats -i video7.mp4 -vf "scale=-1:540" -crf 20 -threads 6 -y video1G.mp4
-ffmpeg -loglevel quiet -stats -i video8.mp4 -vf "scale=-1:540" -crf 20 -threads 6 -y video1H.mp4
-ffmpeg -loglevel quiet -stats -i video9.mp4 -vf "scale=-1:540" -crf 20 -threads 6 -y video1I.mp4
+ffmpeg -loglevel quiet -stats -i video1.mp4 -vf "scale=960:540" -crf 18 -threads 6 -y -t 15 video1A.mp4
+ffmpeg -loglevel quiet -stats -i video2.mp4 -vf "scale=960:540" -crf 18 -threads 6 -y -t 15 video1B.mp4
+ffmpeg -loglevel quiet -stats -i video3.mp4 -vf "scale=960:540" -crf 18 -threads 6 -y -t 15 video1C.mp4
+ffmpeg -loglevel quiet -stats -i video4.mp4 -vf "scale=960:540" -crf 18 -threads 6 -y -t 15 video1D.mp4
+ffmpeg -loglevel quiet -stats -i video5.mp4 -vf "scale=960:540" -crf 18 -threads 6 -y -t 15 video1E.mp4
+ffmpeg -loglevel quiet -stats -i video6.mp4 -vf "scale=960:540" -crf 18 -threads 6 -y -t 15 video1F.mp4
+ffmpeg -loglevel quiet -stats -i video7.mp4 -vf "scale=960:540" -crf 18 -threads 6 -y -t 15 video1G.mp4
+ffmpeg -loglevel quiet -stats -i video8.mp4 -vf "scale=960:540" -crf 18 -threads 6 -y -t 15 video1H.mp4
+ffmpeg -loglevel quiet -stats -i video9.mp4 -vf "scale=960:540" -crf 18 -threads 6 -y -t 15 video1I.mp4
 
 
 sleep 1
 
 # mix horizontally x2
-ffmpeg -i video1A.mp4  -i video1B.mp4  -i video1C.mp4 -filter_complex "[0]pad=iw*3:540[bg1];[bg1][1]overlay=w[bg2];[bg2][2]overlay=w+960" -t 5 -y outA.mp4
-ffmpeg -i video1D.mp4  -i video1E.mp4  -i video1F.mp4 -filter_complex "[0]pad=iw*3:540[bg1];[bg1][1]overlay=w[bg2];[bg2][2]overlay=w+960" -t 5 -y outB.mp4
-ffmpeg -i video1G.mp4  -i video1H.mp4  -i video1I.mp4 -filter_complex "[0]pad=iw*3:540[bg1];[bg1][1]overlay=w[bg2];[bg2][2]overlay=w+960" -t 5 -y outC.mp4
+ffmpeg -i video1A.mp4  -i video1B.mp4  -i video1C.mp4 -filter_complex "[0]pad=iw*3:540[bg1];[bg1][1]overlay=w[bg2];[bg2][2]overlay=w+960" -y outA.mp4
+ffmpeg -i video1D.mp4  -i video1E.mp4  -i video1F.mp4 -filter_complex "[0]pad=iw*3:540[bg1];[bg1][1]overlay=w[bg2];[bg2][2]overlay=w+960" -y outB.mp4
+ffmpeg -i video1G.mp4  -i video1H.mp4  -i video1I.mp4 -filter_complex "[0]pad=iw*3:540[bg1];[bg1][1]overlay=w[bg2];[bg2][2]overlay=w+960" -y outC.mp4
 sleep 1
 
 # scale down
@@ -27,7 +27,7 @@ ffmpeg -loglevel quiet -stats -i outC.mp4 -vf scale=-1:540 -y -threads 6 outC1.m
 sleep 1
 
 # mix vertically
-ffmpeg -i outA1.mp4  -i outB1.mp4 -i outC1.mp4  -filter_complex "[0]pad=iw:ih*3[bg];[bg][1]overlay=0:540[bg2];[bg2][2]overlay=0:1080"  -t 20 -y outC.mp4
+ffmpeg -i outA1.mp4  -i outB1.mp4 -i outC1.mp4  -filter_complex "[0]pad=iw:ih*3[bg];[bg][1]overlay=0:540[bg2];[bg2][2]overlay=0:1080"  -y outC.mp4
 
 # add slow motion
 ffmpeg -loglevel quiet -stats -i outC.mp4 -filter:v "setpts=2.0*PTS" -threads 6 outD.mp4
