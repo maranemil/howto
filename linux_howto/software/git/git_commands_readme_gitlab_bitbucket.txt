@@ -104,6 +104,9 @@ git push -u origin --tags
 
 git push --set-upstream origin master
 
+# push changes to branch
+git push --set-upstream origin branch
+
 v
 1. git init .
 2. git checkout -b master
