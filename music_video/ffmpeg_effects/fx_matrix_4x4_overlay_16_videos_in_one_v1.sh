@@ -42,4 +42,4 @@ ffmpeg -i outA1.mp4  -i outB1.mp4 -i outC1.mp4 -i outD1.mp4 -filter_complex "[0]
 ffmpeg -loglevel quiet -stats -i outK.mp4 -filter:v "setpts=2.0*PTS" -threads 6 -y outM.mp4
 
 # add saturation
-ffmpeg -loglevel quiet -stats -i outD.mp4 -vf eq=saturation=1.5 -y outN.mp4
+ffmpeg -loglevel quiet -stats -i outM.mp4 -vf eq=saturation=1.5 -y outN.mp4
