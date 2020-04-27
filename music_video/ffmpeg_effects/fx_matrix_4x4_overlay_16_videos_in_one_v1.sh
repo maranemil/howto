@@ -36,10 +36,10 @@ ffmpeg -loglevel quiet -stats -i outD.mp4 -vf scale=-1:540 -y -threads 6 outD1.m
 sleep 1
 
 # mix vertically
-ffmpeg -i outA1.mp4  -i outB1.mp4 -i outC1.mp4 -i outD1.mp4 -filter_complex "[0]pad=iw:ih*3[bg];[bg][1]overlay=0:540[bg2];[bg2][2]overlay=0:1080[bg3];[bg3][3]overlay=0:1620"  -y outC.mp4
+ffmpeg -i outA1.mp4  -i outB1.mp4 -i outC1.mp4 -i outD1.mp4 -filter_complex "[0]pad=iw:ih*4[bg];[bg][1]overlay=0:540[bg2];[bg2][2]overlay=0:1080[bg3];[bg3][3]overlay=0:1620"  -y outK.mp4
 
 # add slow motion
-ffmpeg -loglevel quiet -stats -i outC.mp4 -filter:v "setpts=2.0*PTS" -threads 6 -y outD.mp4
+ffmpeg -loglevel quiet -stats -i outK.mp4 -filter:v "setpts=2.0*PTS" -threads 6 -y outM.mp4
 
 # add saturation
-ffmpeg -loglevel quiet -stats -i outD.mp4 -vf eq=saturation=1.5 -y outE.mp4
+ffmpeg -loglevel quiet -stats -i outD.mp4 -vf eq=saturation=1.5 -y outN.mp4
