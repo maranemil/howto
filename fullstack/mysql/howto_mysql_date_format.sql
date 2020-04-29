@@ -380,6 +380,12 @@ SELECT ( UNIX_TIMESTAMP("2012-01-02 13:00:00") -  UNIX_TIMESTAMP("2012-01-01 12:
 SELECT DATEDIFF(second, start_date, end_date) / 3600.0
 
 
+# type -> DATETIME and TIMESTAMP :  2038-01-09 03:14:07 / 9999-12-31 23:59:59
+# SELECT UNIX_TIMESTAMP(NOW()) -> 1545194231
+
+# convert back to DATETIME / TIMESTAMP
+date = DATE_FORMAT(FROM_UNIXTIME( ' . $unixtime . '),\'%Y-%m-%d %h:%i:%s\')
+
 ###################################################
 #
 #   Difference in minutes from two time fields in MySQL

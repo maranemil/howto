@@ -257,3 +257,12 @@ https://www.php.net/manual/de/function.array-filter.php
 
 array_filter ( $array2, 'trim' );
 array_map ( $array2, 'trim' );
+
+
+
+/* Extract EMAIL */
+$email = "youremail@somedomain.com";
+$domain_name = substr(strrchr($email, "@"), 1);
+$domain_name1 = explode("@",$email)[1];
+echo "<br>Domain name is :" . $domain_name;
+echo "<br>Domain name is :" . $domain_name1;
