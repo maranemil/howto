@@ -2,6 +2,8 @@
 # FFMPEG Slice FX - Random Videos from pexels.com
 ######################################
 
+# prepare vids
+num=0; for i in *.mp4; do mv "$i" "video$(printf '%01d' $num).mp4"; ((num++)); done
 ######################################
 # Slicebox 4x
 ######################################
