@@ -16,4 +16,9 @@ ffmpeg -i in.mp4 -i in.mp4 -filter_complex  "[1] fade=in:10:1:alpha=1, fade=out:
 # postcard perspective
 ffmpeg -y -i in.mp4 -i in.mp4 -filter_complex "[0]format=bgra[v0]; [1]colorkey=color=black,perspective=x0=0:y0=0:x1=W:y1=180, scale=-1:420, rotate=-0.1745:c=none:ow=rotw(-0.1745):oh=roth(-0.1745)[v1];  [v0][v1] overlay=100:100:eof_action=pass [v]" -map "[v]" out.mp4
 
+# perspective + Flip Horizontal + Interpolate Between
+ffplay -i in.mp4 -vf "hflip,perspective=60:90:889:147:50:615:882:618:enable='not(between(n,1,40)+between(n,70,130))'"
+
+
+
 
