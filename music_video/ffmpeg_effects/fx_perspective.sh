@@ -19,6 +19,12 @@ ffmpeg -y -i in.mp4 -i in.mp4 -filter_complex "[0]format=bgra[v0]; [1]colorkey=c
 # perspective + Flip Horizontal + Interpolate Between
 ffplay -i in.mp4 -vf "hflip,perspective=60:90:889:147:50:615:882:618:enable='not(between(n,1,40)+between(n,70,130))'"
 
+# lenscorrection
+ffplay -i in.mp4 -vf lenscorrection=k1=-0.86:k2=0.5
+ffplay -i in.mp4 -vf lenscorrection=k1=-0.56:k2=0.3
+ffplay -i in.mp4 -vf lenscorrection=k1=-0.227:k2=-0.022
+ffplay -i in.mp4 -vf lenscorrection=k1=-0.08101:k2=0
+
 
 
 
