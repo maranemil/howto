@@ -266,3 +266,81 @@ exiftool -h . > example.html
 
 ffprobe foo.mp4
 
+#######################################################################
+#
+#  FFMPEG tips, tricks and and lessons learned.
+#  https://medium.com/@dernis/ffmpeg-tips-tricks-and-and-lessons-learned-a6f3c1187085#
+#
+#######################################################################
+
+FFMPEG Video Conversion
+
+ffmpeg -i input.mp4 -y -vcodec libx264 -pix_fmt yuv420p -preset fast -crf 24 -vf scale="'w=if(gt(a,16/9),854,-2):h=if(gt(a,16/9),-2,480)'" -codec:a libfdk_aac -b:a 128k -movflags faststart -threads 4 output.mp4
+
+ffmpeg -i input.mp4 self explanatory
+
+-y overwrite files if they exist
+-vcodec libx264 use the h264 codec
+-px_fmt yuv420p select the pixel format for maximum compatibility
+-preset fast choose a basket of settings that will result in faster encoding
+-crf 24 quality setting
+-vf scale=”w=if(gt(a,16/9),854,-2):h=if(gt(a,16/9),-2,480)”
+
+------------------------------------
+FFMPEG Preview Video
+------------------------------------
+
+ffmpeg -i input.mp4 -y -filter_complex "
+[0:v]trim=185.0:188.0,setpts=PTS-STARTPTS[v0];[0:a]atrim=185.0:188.0,asetpts=PTS-STARTPTS[a0];
+[0:v]trim=370.0:373.0,setpts=PTS-STARTPTS[v1]; [0:a]atrim=370.0:373.0,asetpts=PTS-STARTPTS[a1];
+[0:v]trim=555.0:558.0,setpts=PTS-STARTPTS[v2]; [0:a]atrim=555.0:558.0,asetpts=PTS-STARTPTS[a2];
+[0:v]trim=740.0:743.0,setpts=PTS-STARTPTS[v3];[0:a]atrim=740.0:743.0,asetpts=PTS-STARTPTS[a3];
+[v0][a0][v1][a1][v2][a2][v3][a3]concat=n=4:v=1:a=1 [out_v2] [out_a];
+[out_v2]scale='w=if(gt(a,16/9),854,-2):h=if(gt(a,16/9),-2,480)'[out_v]"
+-vcodec libx264
+-pix_fmt yuv420p
+-preset fast
+-crf 24
+-codec:a libfdk_aac
+-b:a 128k -ac 2
+-movflags faststart
+-threads 4
+-map "[out_v]" -map "[out_a]" output.mp4
+
+
+------------------------------------
+CROPPING AND PADDING THE IMAGE
+http://howto-pages.org/ffmpeg/
+------------------------------------
+
+ffmpeg -i in.mp4 -croptop 30 -cropbottom 30 -target ntsc-dvd -aspect 16:9 out.169.mp4
+ffmpeg -i in.mp4 -acodec mp3 -ar 44100 -ab 128k -vcodec msmpeg4v2 -b 500k -s 480x270 -r 15 -padtop 44 -padbottom 46 -padcolor 000000 -f avi outbox.mp4
+ffmpeg -i in.mp4 -cropleft 90 -cropright 90 -target ntsc-dvd  -aspect 4:3 out.mp4
+ffmpeg -i in.wmv -t 10 -c:v mpeg2video -q:v 0 -pix_fmt yuv422p -intra -c:a mp2 -ar 48000 outfile.mp4
+
+screen capture (alsa+x11grab)
+
+ffmpeg  -f alsa -ac 2 -i hw:0  -f x11grab -r 30 -s 1600x900 -i :0.0 -acodec mp3 -vcodec libx264 -preset ultrafast -threads 0  -f matroska -y ofile.mkv
+
+
+------------------------------------
+FFmpeg
+https://offset.skew.org/wiki/User:Mjb/FFmpeg
+http://paulbourke.net/miscellaneous/ffmpeg/FFmpeg_Book.pdf
+------------------------------------
+
+Rotate degrees
+ffmpeg -i inputfile -map_metadata 0 -metadata:s:v rotate="0" -codec copy outputfile
+ffmpeg -i inputfile -vf "vflip,hflip" outputfile
+ffmpeg -i inputfile -vf "vflip,hflip" -metadata:s:v:0 rotate=0 outputfile
+ffmpeg -i input.mp4 -metadata:s:v rotate="0" -vf "hflip,vflip" -c:v libx264 -acodec copy output.mp4
+
+Convert DV AVI to H.264 MP4
+
+ffmpeg -i inputfile.avi -vf "yadif,hue=s=1.25" -c:v libx264 -preset veryslow -crf 20 -tune grain -c:a aac -b:a 160k outputfile.mp4
+ffmpeg -i input.avi -vf "yadif,hue=s=1.25" -c:v libx264 -preset veryslow -pass 1 -b:v 11000k -f mp4 -y NUL
+ffmpeg -i input.avi -vf "yadif,hue=s=1.25" -c:v libx264 -preset veryslow -pass 2 -b:v 11000k -y output.mp4
+
+Make a slideshow for YouTube
+ffmpeg -framerate 30 -loop 1 -i image.jpeg -i audio.m4a -c:a copy -shortest -pix_fmt yuv420p out.mp4
+ffmpeg -framerate 2 -loop 1 -i image.jpeg -i audio.m4a -c:a copy -t duration -vf "scale=min(iw*%h%/ih\,%w%):min(%h%\,ih*%w%/iw),pad=%w%:%h%:(%w%-iw)/2:(%h%-ih)/2" -pix_fmt yuv420p out.mp4
