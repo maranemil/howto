@@ -290,4 +290,5 @@ change date |touch -d "2 hours ago" filename
 
 ### markup reference
 
-https://guides.github.com/features/mastering-markdown/
+* https://guides.github.com/features/mastering-markdown/
+* https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#youtube-videos
