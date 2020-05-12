@@ -23,7 +23,44 @@ sudo mount -a
 sudo umount /media/ramdisk
 sudo rm -r /media/ramdisk
 
-------------
+--------------------------------------------------------------
+https://wiki.ubuntuusers.de/RAM-Disk_erstellen/
+https://wiki.archlinux.org/index.php/Tmpfs
+http://man7.org/linux/man-pages/man5/tmpfs.5.html
+https://techgoat.net/index.php?id=87
+https://docs.docker.com/storage/tmpfs/
+--------------------------------------------------------------
+
+sudo mount -t tmpfs -o size=1g none /tmp
+sudo mount -t tmpfs none /media/ramdisk
+sudo mount -t tmpfs -o size=20% none /media/ramdisk
+sudo mount -t tmpfs -o size=200M none /media/ramdisk
+
+sudo mount -t tmpfs -o size=512m tmpfs /mnt/ramdisk
+sudo mount -t tmpfs -o size=20% none /mnt/ramdisk
+
+--------------------------------------------------------------
+
+sudo mkdir /media/ramdisk
+sudo chmod 777 /media/ramdisk
+
+nano /etc/fstab
+#none    /tmp    tmpfs   size=1g            0 0
+tmpfs    /media/ramdisk    tmpfs    defaults,size=20%      0       0
+#tmpfs   /tmp         tmpfs   rw,nodev,nosuid,size=2G          0  0
+tmpfs /mnt/ramdisk tmpfs nodev,nosuid,noexec,nodiratime,size=1024M 0 0
+
+dmesg | grep RAMDISK
+df -h /mnt/ramdisk
+
+--------------------------------------------------------------
+sudo mkdir /media/ramdisk
+sudo mount -t ramfs ramfs /media/ramdisk
+--------------------------------------------------------------
+nano /etc/fstab
+ramfs   /media/ramdisk     ramfs   defaults        0       0
+
+--------------------------------------------------------------
 sudo nano /etc/sysctl.conf
 vm.swappiness=10
 
