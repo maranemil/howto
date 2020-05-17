@@ -266,3 +266,48 @@ $domain_name = substr(strrchr($email, "@"), 1);
 $domain_name1 = explode("@",$email)[1];
 echo "<br>Domain name is :" . $domain_name;
 echo "<br>Domain name is :" . $domain_name1;
+
+
+
+
+
+
+
+/*
+PHP Worker Performance Benchmarking and Test Results
+https://pagely.com/blog/php-worker-performance-benchmarking/
+https://github.com/pagely/php-worker-benchmarking
+*/
+
+// Benchmarking Encrypt and decrypt a string 50,000 times.
+while ( $times_run < 50000 ) {
+    $encrypted = openssl_encrypt( $string, $method, $key, null, $iv );
+    $decrypted = openssl_decrypt( $encrypted, $method, $key, null, $iv );
+    $times_run++;
+}
+
+
+// Benchmarking Environment
+//
+// #!/bin/bash
+// mkdir -p reports
+//
+// # “num-cores cpuset”
+// for row in “1 0” “2 0-1”
+// do
+//     set — $row
+//     cores=$1
+//     cpuset=$2
+//     for worker in {1,2,8,50,100,200}
+//     do
+//         pworker=$(printf “%03d” $worker)
+//         pcores=$(printf “%02d” $cores)
+//         file=reports/${pcores}core-${pworker}worker.txt
+//         json=reports/${pcores}core-${pworker}worker.json
+//         if [[ ! -f $file ]]
+//         then
+//             ./run-php.sh $cpuset $worker $file
+//             ./run-bench.sh 3 $worker $json >> $file
+//         fi
+//     done
+// done
