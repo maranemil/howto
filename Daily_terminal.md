@@ -183,6 +183,9 @@ change date |touch -d "2 hours ago" filename
 
 > boost cpu
 * for i in {0..7}; do echo performance | sudo tee /sys/devices/system/cpu/cpu"$i"/cpufreq/scaling_governor ; done
+> manage cpu performance
+> http://manpages.ubuntu.com/manpages/bionic/man8/x86_energy_perf_policy.8.html
+* sudo apt install linux-tools-5.4.0-31-generic linux-tools-generic linux-cloud-tools-generic linux-tools-common -y
 * sudo x86_energy_perf_policy -v balance-performance
 
 ##### vm settings
