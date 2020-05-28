@@ -137,3 +137,18 @@ while True:
             break
 # -------------------------------------------------------------------------
 ser.close()
+
+"""
+nlines = final.count('\n')
+print(nlines)
+
+myArray = final.split('\n')
+print(myArray[nlines-1])
+
+
+serial read lib
+https://pyserial.readthedocs.io/en/latest/shortintro.html
+
+mysql write lib
+https://www.tutorialspoint.com/python3/python_database_access.htm 
+"""
