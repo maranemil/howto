@@ -10,9 +10,7 @@
 
 """
 Virtual Serial Port for Linux & Serial Port Simulator in Linux
-
 sudo apt install socat
-
 socat -d -d pty,raw,echo=0 pty,raw,echo=0
 cat < /dev/pts/2
 echo "Test" > /dev/pts/3
@@ -41,7 +39,7 @@ ser.flushInput()
 listInput = []
 while True:
     try:
-        # Read a line and convert it from b'xxx\r\n' to xxx
+        # Read a line
         line = ser.readline().decode('utf-8')[:-1]
         if line:  # If it isn't a blank line
             print(line)
@@ -51,7 +49,9 @@ while True:
     except:
         print("Keyboard Interrupt")
         break
+ser.close()
+"""
 f = open("test_data.csv", "r")
 print(f.read())
-ser.close()
+"""
 exit()

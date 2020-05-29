@@ -135,8 +135,8 @@ while True:
             seq = []
             print(final)
             break
+            ser.close()
 # -------------------------------------------------------------------------
-ser.close()
 
 """
 nlines = final.count('\n')
