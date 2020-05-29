@@ -21,9 +21,10 @@ socat PTY,link=/dev/ttyS10 PTY,link=/dev/ttyS11
 socat PTY,link=/dev/ttyVapor001,mode=666 PTY,link=/dev/ttyVapor002,mode=666
 socat PTY,link=/dev/ttyS2,raw,wait-slave TCP4:127.0.0.1:12321
 """
-
+# https://gist.github.com/Marzogh/723c137a402be7f06dfc1ba0b8517d09
 # https://readthedocs.org/projects/pyserial/downloads/pdf/latest/
 # https://pyserial.readthedocs.io/en/latest/pyserial_api.html
+# https://makersportal.com/blog/2018/2/25/python-datalogger-reading-the-serial-output-from-arduino-to-analyze-data-using-pyserial
 
 import sys ,os
 import time
@@ -35,55 +36,22 @@ import serial
 print(serial.VERSION)
 ser = serial.Serial("/dev/pts/2", 9600, timeout=None)
 ser.write('hello'.encode('utf-8'))
-"""
+time.sleep(1)
+ser.flushInput()
+listInput = []
 while True:
-    # Read a line and convert it from b'xxx\r\n' to xxx
-    line = ser.readline().decode('utf-8')[:-1]
-    if line:  # If it isn't a blank line
-        print(line)
-        #break
+    try:
+        # Read a line and convert it from b'xxx\r\n' to xxx
+        line = ser.readline().decode('utf-8')[:-1]
+        if line:  # If it isn't a blank line
+            print(line)
+            f = open("test_data.csv", "a")
+            f.write(line+";")
+            f.close()
+    except:
+        print("Keyboard Interrupt")
+        break
+f = open("test_data.csv", "r")
+print(f.read())
 ser.close()
 exit()
-"""
-
-ser.flushInput()
-print("connected to: " + ser.portstr)
-print("----------------------------------------------------------------------------")
-seq = []
-list = []
-
-while True:
-    for c in ser.read():
-        seq.append(chr(c))
-        joined_seq = ''.join(str(v) for v in seq)
-        if chr(c) == '\n':
-            buf = StringIO(str(joined_seq).replace('\r\n', ''))
-            # -------------------------------------------------------------------------
-            for x in buf.readlines():
-                value = x.split(':')
-                index_of_interest = 1
-                rest_of_file = itertools.islice(value, index_of_interest, None, 3)
-                all_values = ''
-                # -------------------------------------------------------------------------
-                for line in rest_of_file:
-                    output = ' '.join(line.split())
-                    if output[0:1:1].isdigit():
-                        all_values = output.split()[0]
-                    else:
-                        if value[1].split()[0] == 'No':
-                            all_values = value[2].split()[0]
-                        else:
-                            all_values = output
-                            list.append(all_values)
-
-                final = ';'.join(list)
-                print(final)
-                # seq = []
-                break
-                ser.close()
-
-# -------------------------------------------------------------------------
-
-
-
-
