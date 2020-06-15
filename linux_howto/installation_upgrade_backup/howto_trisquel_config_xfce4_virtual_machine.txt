@@ -75,8 +75,48 @@ $ sudo adduser $USER libvirt-qemu
 ##################################################
 install firefox alternatives
 ##################################################
+
 sudo apt install icecat
 sudo apt install abrowser
+
+##################################################
+Trisquel GNU/Linux Qemu Management
+##################################################
+
+https://manpages.debian.org/testing/qemu-system-x86/qemu-system-x86_64.1.en.html
+https://www.ibm.com/support/knowledgecenter/linuxonibm/com.ibm.linux.z.ldva/ldva_r_qemu-imgCommand.html
+https://wiki.alpinelinux.org/wiki/Qemu
+https://en.wikibooks.org/wiki/QEMU/Images
+https://fedoraproject.org/wiki/How_to_use_qemu
+https://wiki.qemu.org/index.php/Features/Snapshots
+https://blog.programster.org/qemu-img-cheatsheet
+https://techpiezo.com/linux/use-and-implementation-of-backing-file-and-snapshot-in-qemu-kvm/
+https://www.linux-kvm.org/images/6/65/02x08B-Max_Reitz-Backups_with_QEMU.pdf
+https://wiki.qemu.org/Documentation/CreateSnapshot
+
+Create the Virtual Machine
+qemu-img create -f qcow2 /var/lib/libvirt/images/disk1.qcow2 10G
+qemu-img info /var/lib/libvirt/images/disk1.qcow2
+qemu-img resize /var/lib/libvirt/images/disk1.qcow2 20G
+
+Booting the Virtual Machine
+qemu-system-x86_64 -m 512 -nic user -hda /var/lib/libvirt/images/disk1.qcow2
+qemu-system-x86_64 -m 256 -hda disk1.qcow2 -cdrom dvd.iso -enable-kvm
+qemu-system-x86_64 -enable-kvm -name guest=Fedora,debug-threads=on -S -machine pc-i440fx-xenial,ac…
+
+qemu-img info $FILENAME
+qemu-img info --backing-chain $FILENAME
+qemu-img commit $FILEPATH
+
+qemu-img info clean-disk.qcow2
+qemu-img create -f qcow2 -b clean-disk.qcow2 snapshot.qcow2
+qemu-img create -f qcow2 -b centos-cleaninstall.img snapshot.img
+qemu-img info snapshot.qcow2
+
+cp clean-disk.qcow2 new-clean-disk.qcow2
+qemu-img rebase -b new-clean-disk.qcow2 snapshot.qcow2
+qemu-img commit snapshot.qcow2
+
 
 
 
