@@ -311,3 +311,24 @@ while ( $times_run < 50000 ) {
 //         fi
 //     done
 // done
+
+##############################################################
+# singleton
+##############################################################
+/*
+https://www.thewebhatesme.com/allgemein/php-entwurfsmuster-singleton/
+https://phpenthusiast.com/blog/the-singleton-design-pattern-in-php
+https://refactoring.guru/design-patterns/singleton/php/example#
+https://www.thewebhatesme.com/allgemein/php-entwurfsmuster-singleton/
+https://sourcemaking.com/design_patterns/singleton/php/1#
+https://daylerees.com/php-patterns-singleton/
+https://www.php-einfach.de/experte/codeschnipsel/8761-design-patterns-in-php5/
+https://poe-php.de/oop/entwurfsmuster-sinn-und-unsinn-des-singleton
+https://designpatternsphp.readthedocs.io/de/latest/Creational/Singleton/README.html#
+https://phpenthusiast.com/blog/the-singleton-design-pattern-in-php
+https://designpatternsphp.readthedocs.io/de/latest/Creational/Singleton/README.html#
+
+https://www.geeksforgeeks.org/singleton-class-java/
+https://javabeginners.de/Design_Patterns/Singleton_-Pattern.php
+https://www.journaldev.com/1377/java-singleton-design-pattern-best-practices-examples
+*/
