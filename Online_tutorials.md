@@ -334,3 +334,5 @@
 | https://www.youtube.com/watch?v=A60oNJ7mxXY&list=RDCMUCEBb1b_L6zDS3xTUrIALZOw&index=1 | MIT OpenCourseWare |
 | https://www.youtube.com/user/SageSoftwareNA/playlists | Sage Customer Support and Training | 
 | https://www.youtube.com/user/BookkeepingMaster/playlists?app=desktop  | Sage Tutorials | 
+| https://www.youtube.com/watch?v=WWcijE7ifcA&list=PLzvRQMJ9HDiSaisKr7OnM4Fl7JXCDDcmt | Introduction (Get started with Jenkins part 1) |
+| https://www.youtube.com/channel/UCDbRYCyDiyJUqgQ7k4e1_-A | MS Excel Extended - curs online despre Excel |
