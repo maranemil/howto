@@ -14,6 +14,9 @@
 * // rename incremental 000 - 999
 * num=0; for i in *; do mv "$i" "$(printf '%04d' $num).${i#*.}"; ((num++)); done
 
+* // rename incremental 000.xi - 999.xi
+* num=0; for i in *.xi; do mv "$i" "$(printf '%04d' $num).xi"; ((num++)); done
+
 * // rename random 000 - 999
 * for i in *; do mv "$i" $(($RANDOM % 1000000000)).${i#*.}; done
 

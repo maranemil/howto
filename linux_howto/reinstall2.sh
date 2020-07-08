@@ -10,7 +10,7 @@
 sudo apt install chromium-browser -y
 sudo apt install gimp -y
 sudo apt install filezilla -y
-sudo apt install gnome-commander -y
+#sudo apt install gnome-commander -y
 sudo apt install git -y
 
 ##### Config Git on new location
@@ -21,10 +21,11 @@ git config --global user.email "admin@example.com"
 sudo apt install virtualbox -y
 sudo apt install keepass2 -y
 sudo apt install ffmpeg -y
-sudo apt install mysql-workbench -y
+#sudo apt install mysql-workbench -y
 
 sudo apt-get install htop -y
-sudo apt-get install p7zip -y
+#sudo apt-get install p7zip -y
+sudo apt-get install p7zip p7zip-full p7zip-rar -y
 sudo apt-get install audacity -y
 sudo apt-get install openshot -y
 sudo apt-get install gnome-mpv -y
@@ -38,12 +39,12 @@ wget https://download.sublimetext.com/sublime-text_build-3083_amd64.deb
 sudo dpkg -i sublime-text_build-3083_amd64.deb
 
 # dbeaver
-wget https://dbeaver.jkiss.org/files/dbeaver-ce_latest_amd64.deb
-sudo dpkg -i dbeaver-ce_latest_amd64.deb
+#wget https://dbeaver.jkiss.org/files/dbeaver-ce_latest_amd64.deb
+#sudo dpkg -i dbeaver-ce_latest_amd64.deb
 
 # Sqlectron
-wget https://github.com/sqlectron/sqlectron-gui/releases/download/v1.29.0/Sqlectron_1.29.0_amd64.deb
-sudo dpkg -i Sqlectron_1.29.0_amd64.deb
+#wget https://github.com/sqlectron/sqlectron-gui/releases/download/v1.29.0/Sqlectron_1.29.0_amd64.deb
+#sudo dpkg -i Sqlectron_1.29.0_amd64.deb
 
 #https://downloads.mysql.com/archives/get/file/mysql-workbench-community-6.3.9-1ubuntu16.04-amd64.deb
 #https://downloads.mysql.com/archives/get/file/mysql-workbench-community-6.3.9-1ubuntu16.10-amd64.deb
@@ -75,20 +76,10 @@ sudo apt-get install nvidia-390 # ubuntu 18.10
 sudo apt-get install nvidia-384 # ubuntu 18.04
 
 
-
-
 # install multi screen software
 sudo apt install tmux -y
 # https://extensions.gnome.org/extension/28/gtile/
 exit
-
-
-
-
-
-
-
-
 
 # ------------------------------------- extra -------------------------------
 
