@@ -157,6 +157,13 @@ change date |touch -d "2 hours ago" filename
 * ffmpeg -i in.mp4 -i input.png   -filter_complex "[0]colorkey=color=black,crop=1920:400,scale=1920:100,pad=iw*200:ih:0:0[keyed];[1][keyed]overlay=y=770" -t 10  out_$(date +%s).mp4
 
 
+####  [Manage RamDisk]
+
+* sudo mkdir /tmp/ramdisk
+* sudo chmod 777 /tmp/ramdisk
+
+##### allocate 1G for the RAM disk
+* sudo mount -t tmpfs -o size=1024m myramdisk /tmp/ramdisk	
 
 
 #### [Clean and Boost OS]
