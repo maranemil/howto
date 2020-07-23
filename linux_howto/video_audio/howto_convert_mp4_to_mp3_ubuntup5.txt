@@ -361,6 +361,19 @@ ffplay -i out2.mp4  -vf lenscorrection=k1=-0.16:k2=0.12
 ffplay -i out2.mp4  -vf perspective=x0=310:y0=10:x1=1100:y1=5:sense=destination
 ffplay -i out2.mp4  -vf perspective=x0=310:y0=10:x1=1100:y1=5:sense=source
 
+ffplay -i out2.mp4 -vf scale=640x480,perspective=200:0:420:0:0:H:W:H:sense=1
+ffplay -i out2.mp4 -vf perspective=200:0:420:0:0:H:W:H:sense=0.1
+ffplay -i out2.mp4 -vf lenscorrection=k1=-0.9927:k2=-0.002
+ffplay -i out2.mp4 -vf lenscorrection=k1=-0.627:k2=-0.72
+ffplay -i out2.mp4 -vf lenscorrection=k1=0.41:k2=0.4
+ffplay -i out2.mp4 -vf stereo3d=sbsl:ml
+ffplay -i out2.mp4 -af extrastereo=m=2.5
+ffplay -i out2.mp4 -af stereowiden=drymix=0.5
+ffplay -i out2.mp4 -vf loop=loop=-1:size=1:start=0
+ffplay -i out2.mp4 -vf random=frames=2:5
+ffmpeg -i out2.mp4 -vf thumbnail,scale=300:200 -frames:v 1 out.png
+ffplay -f lavfi 'amovie=out2.mp4, asplit [a][out1];[a] avectorscope=zoom=1.3:rc=2:gc=200:bc=10:rf=1:gf=8:bf=7 [out0]'
+
 http://www.astro-electronic.de/FFmpeg_Book.pdf
 http://www.vsubhash.com/sss-dls/ffmpeg-quick-hacks-book-sample.pdf
 
@@ -381,6 +394,26 @@ https://itsfoss.com/ffmpeg/#filters
 ffmpeg -i sample_image.jpg -vf v360=input=fisheye:output=c3x2:id_fov=360 output.jpg
 ffmpeg -i sample_image.jpg -vf v360:input=fisheye:output=e:id_fov=360 output.jpg
 
+ffplay -i out2.mp4 -vf 'lensfun=make=GoPro:model=HERO5 Black:lens_model=fixed lens:mode=geometry:target_geometry=rectilinear'
+ffplay -i out2.mp4 -vf 'lensfun=make=GoPro:model=HERO5 Black:lens_model=fixed lens:mode=geometry:target_geometry=rectilinear:scale=0.4'
+
+ffplay -i out2.mp4 -vf 'lensfun=make=GoPro:model=HERO5 Black:lens_model=fixed lens:mode=geometry:target_geometry=rectilinear:interpolation=lanczos'
+ffplay -i out2.mp4 -vf 'lensfun=make=GoPro:model=HERO5 Black:lens_model=fixed lens:mode=geometry:target_geometry=fisheye_stereographic,v360=input=sg:ih_fov=122.6:iv_fov=94.4:output=flat:d_fov=140:pitch=-105:w=320:h=240'
+
+ffplay -i out2.mp4 -vf 'v360=input=sg:ih_fov=122.6:iv_fov=94.4:output=flat:d_fov=149.2:pitch=-90:w=320:h=240'
+ffplay -i out2.mp4 -vf 'v360=input=sg:ih_fov=122.6:iv_fov=94.4:output=flat:d_fov=149.2:pitch=-105:w=320:h=240'
+ffplay -i out2.mp4 -vf 'v360=input=fisheye:output=c3x2:id_fov=360'
+ffplay -i out2.mp4 -vf 'v360:input=fisheye:output=e:id_fov=360'
+
+ffmpeg version 4.3:- v360 filter
+avfilter: add v360 filter
+ffmpeg -version
+
+
+
+
+
+
 ffmpeg -version:            show version
 ffmpeg -formats:            show available formats
 ffmpeg -codecs:             show available codecs
@@ -392,6 +425,38 @@ ffmpeg -filters:            show available filters
 ffmpeg -pix_fmts:           show available pixel formats
 ffmpeg -layouts:            show standard channel layouts
 ffmpeg -sample_fmts:        show available audio sample formats
+
+
+
+
+https://hhsprings.bitbucket.io/docs/programming/examples/ffmpeg/audio_visualization/_showfreqs_.html
+https://gist.github.com/seyoum/4455e9bed74241bfbd640a8083fd38qb3
+
+https://download.mediathekview.de/stabil/tmp/ffmpeg-4.1.4-win64-static/doc/ffmpeg-filters.html
+https://download.mediathekview.de/stabil/tmp/ffmpeg-4.1.4-win64-static/doc/ffmpeg-filters.html#extrastereo
+https://download.mediathekview.de/stabil/tmp/ffmpeg-4.1.4-win64-static/doc/ffmpeg-filters.html#stereotools
+https://download.mediathekview.de/stabil/tmp/ffmpeg-4.1.4-win64-static/doc/ffmpeg-filters.html#stereowiden
+https://download.mediathekview.de/stabil/tmp/ffmpeg-4.1.4-win64-static/doc/ffmpeg-filters.html#lenscorrection
+https://download.mediathekview.de/stabil/tmp/ffmpeg-4.1.4-win64-static/doc/ffmpeg-filters.html#Examples-122
+https://download.mediathekview.de/stabil/tmp/ffmpeg-4.1.4-win64-static/doc/ffmpeg-filters.html#perspective
+https://download.mediathekview.de/stabil/tmp/ffmpeg-4.1.4-win64-static/doc/ffmpeg-filters.html#random
+https://download.mediathekview.de/stabil/tmp/ffmpeg-4.1.4-win64-static/doc/ffmpeg-filters.html#thumbnail
+https://download.mediathekview.de/stabil/tmp/ffmpeg-4.1.4-win64-static/doc/ffmpeg-filters.html#ahistogram
+https://download.mediathekview.de/stabil/tmp/ffmpeg-4.1.4-win64-static/doc/ffmpeg-utils.html#video-size-syntax
+https://download.mediathekview.de/stabil/tmp/ffmpeg-4.1.4-win64-static/doc/ffmpeg-filters.html#avectorscope
+https://download.mediathekview.de/stabil/tmp/ffmpeg-4.1.4-win64-static/doc/ffmpeg-filters.html#spectrumsynth
+https://www.danielplayfaircal.com/blogging/ffmpeg/lensfun/v360/lenscorrection/fisheye/dodgeball/2020/03/24/correcting-lens-distortion-with-ffmpeg.html
+https://gist.github.com/nickkraakman/e351f3c917ab1991b7c9339e10578049
+https://www.reddit.com/r/ffmpeg/comments/gy5yeb/some_help_with_the_new_v360_filter_for/
+https://manpages.debian.org/experimental/ffmpeg/ffmpeg-filters.1.en.html
+http://oioiiooixiii.blogspot.com/2018/09/ffmpeg-fapa-frame-averaged-pixel-array.html
+https://www.arj.no/tag/ffmpeg/
+https://www.arj.no/2011/07/13/videogram-of-bergensbanen/
+https://www.arj.no/2011/07/13/difference-between-videogram-and-motiongram/
+https://trac.ffmpeg.org/wiki/Scaling
+https://qastack.com.de/superuser/556029/how-do-i-convert-a-video-to-gif-using-ffmpeg-with-reasonable-quality
+https://trac.ffmpeg.org/wiki/colorspace
+https://www.hellocatfood.com/motion-interpolation-for-glitch-aesthetics-using-ffmpeg-part-9/
 
 
 
