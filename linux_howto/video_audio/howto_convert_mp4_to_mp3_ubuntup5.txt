@@ -344,3 +344,56 @@ ffmpeg -i input.avi -vf "yadif,hue=s=1.25" -c:v libx264 -preset veryslow -pass 2
 Make a slideshow for YouTube
 ffmpeg -framerate 30 -loop 1 -i image.jpeg -i audio.m4a -c:a copy -shortest -pix_fmt yuv420p out.mp4
 ffmpeg -framerate 2 -loop 1 -i image.jpeg -i audio.m4a -c:a copy -t duration -vf "scale=min(iw*%h%/ih\,%w%):min(%h%\,ih*%w%/iw),pad=%w%:%h%:(%w%-iw)/2:(%h%-ih)/2" -pix_fmt yuv420p out.mp4
+
+
+
+------------------------------------
+ffmpeg 360 and settings
+------------------------------------
+
+ffmpeg -i in.wav -filter_complex "showfreqs=s=640x320:mode=bar[v]" -map '[v]' -map 0:a:0 -vcodec mpeg4 -b:v 466k -r:v 24 out.mp4
+
+ffmpeg -i in.wav -filter_complex  "showfreqs=s=640x320:mode=bar[v]"  -map '[v]' -map 0:a:0 -vcodec mpeg4 -b:v 466k -r:v 24 out2.mp4
+ffmpeg -i in.wav -filter_complex  "showvolume=w=200:h=40[v]"  -map '[v]' -map 0:a:0 -vcodec mpeg4 -b:v 466k -r:v 24 out3.mp4
+ffmpeg -i in.wav -filter_complex  "showwaves=s=200x40[v]"  -map '[v]' -map 0:a:0 -vcodec mpeg4 -b:v 466k -r:v 24 out4.mp4
+
+ffplay -i out2.mp4  -vf lenscorrection=k1=-0.16:k2=0.12
+ffplay -i out2.mp4  -vf perspective=x0=310:y0=10:x1=1100:y1=5:sense=destination
+ffplay -i out2.mp4  -vf perspective=x0=310:y0=10:x1=1100:y1=5:sense=source
+
+http://www.astro-electronic.de/FFmpeg_Book.pdf
+http://www.vsubhash.com/sss-dls/ffmpeg-quick-hacks-book-sample.pdf
+
+https://stackoverflow.com/questions/49603155/perspective-filter-in-ffmpeg-quality
+http://www.vsubhash.com/ffmpeg-quick-hacks-book.html
+https://hhsprings.bitbucket.io/docs/programming/examples/ffmpeg/manipulating_video_colors/curves.html
+
+https://ffmpeg.org/ffmpeg-filters.html
+https://ffmpeg.org/ffmpeg-filters.html#v360
+
+http://manpages.ubuntu.com/manpages/bionic/man1/ffmpeg-filters.1.html
+https://processors.wiki.ti.com/index.php/Open_Source_Video_Processing_Tools_-_MPlayer,_FFMpeg,_AviSynth,_MKVToolnix,_MP4Box
+https://www.reddit.com/r/ffmpeg/comments/gy5yeb/some_help_with_the_new_v360_filter_for/
+https://linuxize.com/post/how-to-install-ffmpeg-on-ubuntu-18-04/
+https://tecadmin.net/install-ffmpeg-on-linux/
+https://itsfoss.com/ffmpeg/#filters
+
+ffmpeg -i sample_image.jpg -vf v360=input=fisheye:output=c3x2:id_fov=360 output.jpg
+ffmpeg -i sample_image.jpg -vf v360:input=fisheye:output=e:id_fov=360 output.jpg
+
+ffmpeg -version:            show version
+ffmpeg -formats:            show available formats
+ffmpeg -codecs:             show available codecs
+ffmpeg -decoders:           show available decoders
+ffmpeg -encoders:           show available encoders
+ffmpeg -bsfs:               show available bit stream filters
+ffmpeg -protocols:          show available protocols
+ffmpeg -filters:            show available filters
+ffmpeg -pix_fmts:           show available pixel formats
+ffmpeg -layouts:            show standard channel layouts
+ffmpeg -sample_fmts:        show available audio sample formats
+
+
+
+
+
