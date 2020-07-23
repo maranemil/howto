@@ -56,4 +56,4 @@ ffmpeg \
 # ffmpeg -i "$1" -frames 1 -vf "$filters" "${1%.*}".png -y
 # filters="scale=1:1,tile=${width}x${height}" # Used with single line version
 # View ingest progress using: pv "$1" | piped to ffmpeg
-download: video2pixarray.sh
+# download: video2pixarray.sh
