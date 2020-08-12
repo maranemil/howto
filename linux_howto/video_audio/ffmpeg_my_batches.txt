@@ -36,7 +36,6 @@ ffmpeg -i rout.mp4 -codec:v copy -codec:a libmp3lame -q:a 2 rout2.mp4
 extra tests
 -----------------------------------------------------------
 
-
 ffmpeg -i in.wav -ss 00:00:00 -t 01:29:30  cut1.wav
 
 ffmpeg -i in1.mp4 -vf "lenscorrection=cx=0.5:cy=0.7:k1=-0.99:k2=-0.99,hue=s=0" -crf 42 -preset ultrafast -y zzzout.mp4
@@ -48,3 +47,32 @@ ffmpeg -i in2.mp4 -i input2.png -filter_complex "[0]colorkey=color=black,crop=96
 
 
 ffmpeg -i fumix001.wav -i fumix002.wav -i fumix003.wav -i fumix004.wav -i fumix005.wav -i fumix006.wav -i fumix007.wav -i fumix008.wav -i fumix009.wav -i fumix010.wav -i fumix011.wav -i fumix012.wav -i fumix013.wav -i fumix014.wav -i fumix015.wav -i fumix016.wav -i fumix017.wav -i fumix018.wav -i fumix019.wav -i fumix020.wav -i fumix021.wav -i fumix022.wav -i fumix023.wav -i fumix024.wav -i fumix025.wav -i fumix026.wav -i fumix027.wav -i fumix028.wav -i fumix029.wav -i fumix030.wav -i fumix031.wav -i fumix032.wav -i fumix033.wav -i fumix034.wav -i fumix035.wav -i fumix036.wav -i fumix037.wav -i fumix038.wav -i fumix039.wav -i fumix040.wav -i fumix041.wav -i fumix042.wav -i fumix043.wav -i fumix044.wav -i fumix045.wav -i fumix046.wav -i fumix047.wav -i fumix048.wav -i fumix049.wav -i fumix050.wav -i fumix051.wav -i fumix052.wav -i fumix053.wav -i fumix054.wav -i fumix055.wav -i fumix056.wav -i fumix057.wav -i fumix058.wav -i fumix059.wav -i fumix060.wav -i fumix061.wav -i fumix062.wav -i fumix063.wav -i fumix064.wav -i fumix065.wav -i fumix066.wav -filter_complex '[0:0][1:0][2:0][3:0][4:0] [5:0] [6:0] [7:0] [8:0] [9:0] [10:0] [11:0] [12:0] [13:0] [14:0] [15:0] [16:0] [17:0] [18:0] [19:0] [20:0] [21:0] [22:0] [23:0] [23:0] [25:0] [26:0] [27:0] [28:0] [29:0] [30:0] [31:0] [32:0] [33:0] [34:0] [35:0] [36:0] [37:0] [38:0] [39:0] [40:0] [41:0] [42:0] [43:0] [44:0] [45:0] [46:0] [47:0] [48:0] [49:0] [50:0] [51:0] [52:0] [53:0] [54:0] [55:0] [56:0] [57:0] [58:0] [59:0] [60:0] [61:0] [62:0] [63:0] [64:0] [65:0]concat=n=66:v=0:a=1[out]' -map '[out]' zmix_$(date +%s).wav
+
+
+
+
+-----------------------------------------------------------
+Loop same file
+-----------------------------------------------------------
+ffplay -i out.mp4 -vf "loop=5:size=25:start=1" -t 10
+ffplay -i out.mp4 -af 'atrim=5:duration=1,aloop=2:size=8*48000' -t 7
+ffplay -i out.wav -af 'atrim=5:duration=1,aloop=2:size=8*48000' -t 7
+ffmpeg -i out.wav -t 2 -ss 00:00:06 -f wav -  | ffplay -
+
+# mix x2 audios
+ffmpeg -i out.wav -i out.wav   -filter_complex "[0:a]atrim=5:duration=1,aloop=1:size=8*48000[out1];[1:a]atrim=9:duration=1,aloop=1:size=8*48000[out2];[out1][out2]amerge=inputs=2[a]" -map "[a]" -f wav -  | ffplay -
+
+# concat random x3
+ffmpeg -i out.wav -i out.wav -i out.wav  -filter_complex "[0:0]atrim=5:duration=1,aloop=1:size=44*48000[out1];[1:0]atrim=1:duration=1,aloop=0:size=8*48000[out2];[2:0]atrim=22:duration=1,aloop=1:size=8*48000[out3];[out1][out2][out3]concat=n=3:v=0:a=1[a]" -map "[a]" -f wav -  | ffplay -
+
+# mix x2 audios
+ffmpeg -i out.mp4 -i out.mp4  -filter_complex "[0:a]volume=0.15[oo];[oo][1:a]amerge=inputs=2[a]"  -map "[a]" -f wav -  | ffplay -
+ffmpeg -i out.mp4 -i out.mp4  -filter_complex "[0:a]volume=0.95[oo];[oo][1:a]amerge=inputs=2[a]"  -map "[a]" -f wav -  | ffplay -
+
+# mix x2 audios panning
+ffmpeg -i out.mp4 -i out.mp4  -filter_complex "[0:a]volume=0.95[oo];[oo][1:a]amerge=inputs=2,pan=stereo|c0=FL|c1=FR[a]"  -map "[a]" -f wav -  | ffplay -
+ffmpeg -i out.mp4 -i out.mp4  -filter_complex "[0:a]volume=0.95[oo];[oo][1:a]amerge=inputs=2,pan=stereo|c0=c0|c1=c2[a]"  -map "[a]" -f wav -  | ffplay -
+ffmpeg -i out.mp4 -i out.mp4  -filter_complex "[0:a]volume=2.95[oo];[oo][1:a]amerge=inputs=2,pan=stereo|c0=c2|c1=c0[a]"  -map "[a]" -f wav -  | ffplay -
+
+
+https://trac.ffmpeg.org/wiki/AudioChannelManipulation
