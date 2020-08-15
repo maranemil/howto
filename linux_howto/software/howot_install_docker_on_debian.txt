@@ -1,0 +1,83 @@
+########################################################
+#
+#   Docker on Debian
+#
+########################################################
+
+https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-debian-9
+https://linuxize.com/post/how-to-install-and-use-docker-on-debian-10/
+https://www.itzgeek.com/how-tos/linux/debian/how-to-install-docker-on-debian-9.html
+https://goneuland.de/debian-10-buster-docker-installieren/
+https://www.codeflow.site/de/article/how-to-install-and-use-docker-on-debian-10
+https://docs.docker.com/engine/install/debian/
+
+https://hub.docker.com/
+https://docs.docker.com/get-started/overview/
+https://docs.docker.com/engine/reference/commandline/pull/
+https://docs.docker.com/engine/reference/commandline/image_pull/
+https://docs.docker.com/develop/develop-images/dockerfile_best-practices/
+https://github.com/rocker-org/rocker/wiki/How-to-save-data
+https://medium.com/@sh.tsang/docker-tutorial-4-exporting-container-and-saving-image-c3a7d792cfb6
+https://tuhrig.de/difference-between-save-and-export-in-docker/
+https://www.techrepublic.com/article/how-to-commit-changes-to-a-docker-image/
+https://linuxconfig.org/docker-container-backup-and-recovery
+
+
+
+sudo apt update
+sudo apt install apt-transport-https ca-certificates curl gnupg2 software-properties-common
+
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
+sudo apt update
+apt-cache policy docker-ce
+sudo apt install docker-ce
+sudo systemctl status docker
+
+docker pull ubuntu
+docker pull alpine
+docker pull debian
+docker pull clearlinux
+
+docker ps -a
+docker images
+sudo docker images --tree
+docker ps
+docker run -i -t ubuntu /bin/bash -d /home/test
+
+#---------------------------
+# Management
+#---------------------------
+docker ps
+docker commit 4a6dc5142337 demos/ubuntucpp
+docker commit -p  4a6dc5142337  demos/ubuntucpp2
+sha256:c40d63515c2e4d149cf2621dc1fed992e48b1caa6da19f86ff9b4597f7a556a0
+#docker push demos/ubuntucpp
+docker run -i -t demos/ubuntucpp /bin/bash
+sudo docker export c40d63515c2e > /home/export.tar
+sudo docker rm <CONTAINER ID>
+sudo docker rmi <IMAGE ID>
+
+# import the exported tar ball:
+cat /home/export.tar | sudo docker import - ubuntucpp-export:latest
+
+# check the available images
+sudo docker images
+
+
+
+
+#---------------------------
+# Management
+#---------------------------
+sudo docker run -itd --name ubuntu ubuntu:1804 /bin/bash
+sudo docker exec -it ubuntu bash
+sudo docker save ubuntu > ubuntu_save.tar
+sudo docker export ubuntu > ubuntu_export.tar
+sudo docker stop ubuntu
+sudo docker rm ubuntu
+sudo docker rmi ubuntu:18.04
+sudo docker load < ubuntu_save.tar
+cat ubuntu_export.tar | sudo docker import - ubuntu:18.04
+sudo docker run -itd --name ubuntu ubuntu:18.04 /bin/bash
+sudo docker exec -it ubuntu bash
