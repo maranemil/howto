@@ -332,3 +332,30 @@ https://www.geeksforgeeks.org/singleton-class-java/
 https://javabeginners.de/Design_Patterns/Singleton_-Pattern.php
 https://www.journaldev.com/1377/java-singleton-design-pattern-best-practices-examples
 */
+
+##############################################################
+# PDF Output Settings
+##############################################################
+/*
+
+http://www.fpdf.org/en/doc/output.htm
+
+Parameters
+
+dest
+	Destination where to send the document. It can be one of the following:
+	I: send the file inline to the browser. The PDF viewer is used if available.
+	D: send to the browser and force a file download with the name given by name.
+	F: save to a local file with the name given by name (may include a path).
+	S: return the document as a string.
+	The default value is I.
+
+name
+	The name of the file. It is ignored in case of destination S.
+	The default value is doc.pdf.
+
+isUTF8
+	Indicates if name is encoded in ISO-8859-1 (false) or UTF-8 (true).
+	Only used for destinations I and D. The default value is false.
+
+*/
