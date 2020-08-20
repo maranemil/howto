@@ -336,3 +336,9 @@
 | https://www.youtube.com/user/BookkeepingMaster/playlists?app=desktop  | Sage Tutorials | 
 | https://www.youtube.com/watch?v=WWcijE7ifcA&list=PLzvRQMJ9HDiSaisKr7OnM4Fl7JXCDDcmt | Introduction (Get started with Jenkins part 1) |
 | https://www.youtube.com/channel/UCDbRYCyDiyJUqgQ7k4e1_-A | MS Excel Extended - curs online despre Excel |
+| https://www.youtube.com/watch?v=XFqm_ILuhs0&list=PLt1SIbA8guusxiHz9bveV-UHs_biWFegU | Apache Kafka |
+| https://www.youtube.com/watch?v=89yWXXIOisk&list=PLhW3qG5bs-L_ZCOA4zNPSoGbnVQ-rp_dG | Jenkins |
+| https://www.youtube.com/watch?v=B3PE7w-jvjQ&list=RDCMUCGp4UBwpTNegd_4nCpuBcow&start_radio=1 | Codeception support in PhpStorm |
+| https://www.youtube.com/watch?v=EjwD7Pi7J_0&list=RDCMUCGp4UBwpTNegd_4nCpuBcow&start_radio=1 | Code Review Best Practices |
+| https://www.youtube.com/watch?v=HB2T0iWiW50&list=RDCMUCGp4UBwpTNegd_4nCpuBcow&start_radio=1 | PhpStorm plugins for Laravel  |
+| https://www.youtube.com/watch?v=AHK20LWEWXQ&list=PLQ176FUIyIUbfeFz-2EbDzwExRlD0Bc-w | PhpStorm | 
