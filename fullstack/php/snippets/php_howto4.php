@@ -501,6 +501,8 @@ https://www.codexworld.com/how-to/validate-date-input-string-in-php/
 https://www.php.net/manual/en/function.date.php
 http://wifo5-03.informatik.uni-mannheim.de/bizer/rdfapi/phpdoc/sparql/_sparql---FilterFunctions.php.html
 https://www.geeksforgeeks.org/php-checkdate-function/
+https://www.php.net/manual/de/datetime.format.php
+https://stackoverflow.com/questions/12030810/php-date-validation
 */
 
 function validateDate($date, $format = 'Y-m-d'){
@@ -518,8 +520,23 @@ $day = 31;
 $year = 2017;
 // returns a boolean value after validation of date
 var_dump(checkdate($month, $day, $year));
-
-
+//----------------------------------------------------------
+$test_date = '03/22/2010';
+$date = DateTime::createFromFormat('m/d/Y', $test_date);
+$date_errors = DateTime::getLastErrors();
+if ($date_errors['warning_count'] + $date_errors['error_count'] > 0) {
+    $errors[] = 'Some useful error message goes here.';
+}
+echo $date->format("Y-m-d");
+//----------------------------------------------------------
+function validateDate($date, $format = 'Y-m-d H:i:s') {
+    $d = DateTime::createFromFormat($format, $date);
+    return $d && $d->format($format) == $date;
+}
+// Gives "2016-11-10 ..." because Thursday falls on Nov 10
+DateTime::createFromFormat('D M j Y', 'Thu Nov 9 2016');
+// false, Nov 9 is a Wednesday
+validateDate('Thu Nov 9 2016', 'D M j Y');
 
 
 ##################################################
