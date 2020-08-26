@@ -610,7 +610,6 @@ my @arrPrors = (
 
 foreach (@arrPrors){
 	print $_ .  "\n";
-
 }
 
 #perl 5.26.1
