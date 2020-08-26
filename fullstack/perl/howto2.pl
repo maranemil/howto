@@ -582,4 +582,50 @@ sub new {
 
 my $singleton = MySingletonClass->new();
 
+########################################################################
+#
+#   foreach element in range
+#
+########################################################################
+
+=head1 heading
+
+https://rextester.com/l/perl_online_compiler
+https://www.tutorialspoint.com/execute_perl_online.php
+
+
+https://www.tutorialspoint.com/perl/perl_arrays.htm
+https://www.geeksforgeeks.org/perl-array-slices/
+https://users.cs.cf.ac.uk/Dave.Marshall/PERL/node38.html
+https://www.perl.com/article/perl-foreach-loops/
+
+=cut
+
+
+#perl 5.26.1
+my @arrPrors = (
+  11, 12,
+  16 .. 33
+);
+
+foreach (@arrPrors){
+	print $_ .  "\n";
+
+}
+
+#perl 5.26.1
+my @numbers      = ( 1, 3 .. 7 );
+foreach $number ( @numbers ) {
+	print $number. "\n";
+}
+
+=head1 heading
+
+# http://phptester.net/ - PHP
+$arr = [1, ...range(3,7),55];
+foreach($arr as $el){
+	print $el."<br>";
+}
+
+=cut
 
