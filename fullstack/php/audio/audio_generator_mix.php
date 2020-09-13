@@ -21,10 +21,10 @@ foreach ($arrFiles as $filename) {
     }
 }
 
-#$cmdMix .= "  -filter_complex \"[0:0][1:0] amix=inputs=3:duration=longest:dropout_transition=3\"" ;
-#$cmdMix .= "  -filter_complex \"[0:0][1:0] amix=inputs=3:duration=longest\" ";
-#$cmdMix .= "  -filter_complex amix=inputs=3:duration=first:dropout_transition=3 ";
-#$cmdMix .= "  -filter_complex amix=inputs=5:duration=longest:dropout_transition=2 ";
+#$cmdMix .= " -filter_complex \"[0:0][1:0] amix=inputs=3:duration=longest:dropout_transition=3\"" ;
+#$cmdMix .= " -filter_complex \"[0:0][1:0] amix=inputs=3:duration=longest\" ";
+#$cmdMix .= " -filter_complex amix=inputs=3:duration=first:dropout_transition=3 ";
+#$cmdMix .= " -filter_complex amix=inputs=5:duration=longest:dropout_transition=2 ";
 #$cmdMix .= " -filter_complex amix=inputs=3:duration=first:dropout_transition=2100,adelay=0,dynaudnorm=s=3:r=0.6:p=0.5,volume=2 ";
 #$cmdMix .= " -filter_complex [aud11][aud12]amix=inputs=3:duration=first:dropout_transition=0,loudnorm ";
 
@@ -125,4 +125,4 @@ https://freesound.org/people/InSintesi/sounds/383927/
 https://freesound.org/people/Tom8Music/sounds/392630/
 https://freesound.org/people/IanStarGem/sounds/271077/
 https://freesound.org/people/SSS_Samples/sounds/431594/
- */
+*/
