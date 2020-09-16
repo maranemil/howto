@@ -60,7 +60,7 @@ check logs with vim / tail / head / less / grep
 
 #######################################################################
 #
-#
+#   systemctl
 #
 #######################################################################
 
@@ -177,6 +177,10 @@ acpi -i
 acpi=off # allows the system to boot, try to isolate the ACPI issue
 
 ################################################################################
+#
+#   systemd-analyze
+#
+################################################################################
 
 systemd-analyze
 systemd-analyze blame
@@ -229,4 +233,60 @@ sudo nano /etc/pam.d/lightdm
 # remove nopasswdlogin from this line:
 auth    sufficient      pam_succeed_if.so user ingroup nopasswdlogin
 
+--------------------------------------------------------------------------------------
+http://manpages.ubuntu.com/manpages/focal/de/man1/systemd-analyze.1.html
+https://manpages.debian.org/testing/systemd/systemd-analyze.1.en.html
+https://www.freedesktop.org/software/systemd/man/systemd-analyze.html
+https://wiki.archlinux.org/index.php/systemd
+http://www.linuxfromscratch.org/lfs/view/8.2-systemd/chapter06/systemd.html
+https://helpful.knobs-dials.com/index.php/Systemd_notes
+https://github.com/systemd/systemd/blob/master/NEWS
+https://www.freedesktop.org/software/systemd/man/systemctl.html
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_basic_system_settings/managing-services-with-systemd_configuring-basic-system-settings
+--------------------------------------------------------------------------------------
 
+systemctl list-dependencies --reverse plymouth-quit-wait.service
+systemctl list-dependencies plymouth-quit-wait.service
+systemctl disable plymouth-quit-wait.service
+
+systemd-analyze blame
+systemd-analyze critical-chain
+systemd-analyze --user dump
+journalctl -u unitname
+
+systemd-analyze plot > ~/bootup.svg
+systemd-analyze dot 'avahi-daemon.*' | dot -Tsvg >avahi.svg
+eog avahi.svg
+
+systemd-analyze unit-paths | grep '^/run'
+systemd-analyze cat-config systemd/logind.conf
+systemd-analyze security --no-pager systemd-logind.service
+
+systemctl status
+systemctl list-units
+systemctl --failed
+systemctl --state=failed
+systemctl list-unit-files
+
+systemctl status unitname
+systemctl start unitname
+systemctl stop unitname
+systemctl restart unitname
+systemctl reload unitname
+systemctl enable --now unitname
+systemctl disable unitname
+
+systemctl reboot
+systemctl poweroff
+
+systemd-analyze
+systemctl list-unit-files
+systemctl list-unit-files | grep enabled
+systemctl | grep running
+systemctl list-unit-files --state=enabled
+systemctl list-units --type service --state running,failed
+systemctl list-jobs
+systemd-analyze blame
+
+systemctl status /dev/sda
+systemctl status /home
