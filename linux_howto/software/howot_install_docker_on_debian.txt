@@ -155,6 +155,122 @@ https://docs.docker.com/compose/install/
 https://www.hamrodev.com/en/app-development/lamp-docker-tutorial
 https://linuxconfig.org/how-to-create-a-docker-based-lamp-stack-using-docker-compose-on-ubuntu-18-04-bionic-beaver-linux
 https://medium.com/@celsocelante/apache-mariadb-php-docker-compose-c19337fe9117
+https://dev.mysql.com/doc/mysql-installation-excerpt/8.0/en/docker-mysql-getting-started.html
+https://dev.mysql.com/doc/mysql-linuxunix-excerpt/5.6/en/docker-mysql-getting-started.html
+https://docs.docker.com/engine/reference/commandline/image_rm/
+
+docker pull mysql/mysql-server:tag
+docker run --name=mysql1 -d mysql/mysql-server:tag
+
+docker run --name=mysql1 --restart on-failure -d mysql/mysql-server:8.0
+docker run --name=mysql1 --restart on-failure -d mysql/enterprise-server:8.0
+
+docker ps
+docker images
+
+docker logs mysql1
+docker exec -it mysql1 mysql -uroot -p
+mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'password';
+docker stop mysql1
+docker start mysql1
+docker restart mysql1
+docker rm mysql1
+
+docker exec -i some_mysql_container mysql -uroot -ppassword  <<< "select database();"
+docker exec -t -i container_mysql_name /bin/bash
+docker exec -it container_mysql_name mysql -u username -p
+docker exec -t -i container_mysql_name /bin/bash -c "mysql -uroot -proot"
+docker exec ${CONTAINER_NAME} mysql -u ${USER_NAME} -p${PASSWORD} -e "drop schema test; create schema test;"
+docker run -it --rm mysql mysql -h172.17.0.2 -uroot -pmy-secret-pw -e "show databases;"
+docker exec -i _mysql-container-name_ mysql -uroot -proot
+docker run -d -p 3306:3306 tutum/mysql
+docker exec yourcontainername mysql -u root -p
+docker ps
+
+docker run -it --link some-mysql:mysql --rm mysql sh -c 'exec mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD"'
+docker run -it --link <container_name>:<image_name> --rm <image_name> sh -c 'exec mysql -h"<container_ip_address>" -P"<mysql_port_number>" -u"<mysql_username>" -p"<mysql_password>"'
+--------------------------------------------
+docker run --name=my_mysql_instance -d mysql/mysql-server:latest
+docker ps -a
+docker exec -it my_mysql_instance mysql -uroot -p
+mysql -h localhost -P 3306 -u root
+docker inspect my_mysql_instance | grep IPAddress
+--------------------------------------------
+docker run --rm -dit -e MYSQL_ROOT_PASSWORD=pass --name mysql mysql:5.7
+docker logs mysql | tail -n 2
+mysql -h172.17.0.2 -uroot -ppass
+mysql --version
+--------------------------------------------
+#########
+docker run --rm -dit -e MYSQL_ROOT_PASSWORD=pass --name mysql mysql:5.7
+docker exec -t -i mysql /bin/bash
+mysql -uroot -ppass
+lsof -i :3356
+docker logs mysql | tail -n 2
+docker inspect mysql | grep Address
+--------------------------------------------
+
+docker run --rm -d -e MYSQL_ROOT_PASSWORD=pass --name mysql mysql:5.7
+docker run --name mysql -v /my/custom:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=pass -d mysql:5.7
+docker run -p 3326:3306  --rm -dit -e MYSQL_ROOT_PASSWORD=pass --name mysql mysql:5.7
+docker inspect mysql | grep -i ipaddress
+grep -i "ready for start up" <(docker logs mysql 2>&1)
+mysql -h172.17.0.2 -uroot -ppass
+--------------------------------------------
+docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag
+docker run -it --network some-network --rm mysql mysql -hsome-mysql -uexample-user -p
+docker run -it --rm mysql mysql -hsome.mysql.host -usome-mysql-user -p
+docker run --name some-mysql -v /my/custom:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=pass -d mysql:5.7
+docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+docker run -it --rm mysql:tag --verbose --help
+
+
+###########################################
+Persistent data in Docker volumes
+###########################################
+
+docker run -d -e MYSQL_ROOT_PASSWORD=pass -v /home/docker/mysql-data:/var/lib/mysql --name mysqlserver mysql
+docker exec -t -i mysqlserver /bin/bash
+docker stop mysqlserver
+docker rm mysqlserver
+ls /home/docker/mysql-data
+docker inspect mysqlserver
+docker volume create mysql-data
+docker volume create --driver dostorage --name my-volume
+docker run -d --volumes-from mydatacontainer mysql
+docker volume inspect mydatacontainer
+
+###########################################
+docker volume ls
+docker volume create mysql-data
+docker volume inspect mysql-data
+docker run --name persistent-mysql -v mysql-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=passwd -d mysql:5.7
+# docker start persistent-mysql
+docker exec -it persistent-mysql /bin/bash
+--------------------------------------------
+docker images
+docker image rm -f mysql
+--------------------------------------------
+mysql -h localhost -P 3306 --protocol=tcp
+
+# test SQL
+create database testx;
+use testx;
+# test table
+CREATE TABLE guests (
+    id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    firstname VARCHAR(30) NOT NULL,
+    lastname VARCHAR(30) NOT NULL,
+    email VARCHAR(50),
+    reg_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+-h mysql_server_container
+-MYSQL_ROOT_PASSWORD: root
+-p ports "3306:3306"
+-n networks  - net1
+-v volumes "./test/mysql_db:/var/lib/mysql:rw"
 
 
 
