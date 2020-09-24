@@ -1,0 +1,51 @@
+# Turbocharged PHP Development with Xdebug, Docker & PHPStorm
+# https://jump24.co.uk/journal/turbocharged-php-development-with-xdebug-docker-and-phpstorm/
+
+MacOS 10.15 (Catalina)
+PHPStorm 2020.1
+PHP 7.4.4 (from official PHP Dockerfile)
+Docker 19.03.8 (engine) 1.25.5 (compose)
+
+Step One:Installing Xdebug
+
+RUN docker-php-source extract && \
+   pecl install redis && \
+   pecl install imagick && \
+   docker-php-ext-enable imagick && \
+   docker-php-ext-enable redis && \
+   docker-php-source delete
+
+RUN docker-php-source extract && \
+   pecl install redis && \
+   pecl install xdebug && \
+   pecl install imagick && \
+   docker-php-ext-enable imagick && \
+   docker-php-ext-enable redis && \
+   docker-php-source delete
+
+
+Step Two: Configuring Xdebug
+
+zend_extension=xdebug
+xdebug.remote_enable=1
+xdebug.remote_autostart=1
+xdebug.remote_port=9001
+xdebug.remote_host=host.docker.internal
+
+Step Three: Inject Config to Docker (docker-compose)
+
+php:
+   container_name: my_container
+   build: ./path/to/my/php/dockerfile
+   environment:
+       PHP_MEMORY_LIMIT: '128M'
+       DB_HOST: 'mysql'
+       DB_USER: 'root'
+       DB_PASSWORD: 'root'
+       DB_NAME: 'if_your_app_has_a_db'
+       PHP_IDE_CONFIG: 'serverName=myapp.url'
+   volumes:
+       - ./:/var/www/vhost/:cached
+       - ./xdebug-local.ini:/usr/local/etc/php/conf.d/xdebug-local.ini
+
+
