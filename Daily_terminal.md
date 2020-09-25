@@ -121,6 +121,10 @@ change date |touch -d "2 hours ago" filename
 
 ##### crop square
 * ffplay -i 046white.mp4 -vf "crop=in_h/1:in_h/1"
+* ffplay -i in.mp4  -vf "crop=820:640:570:350" 
+
+##### speed up
+ffplay -i in.mp4 -vf "setpts=1/4*PTS"
 
 ##### merge 4 videos in one - 2 by row with overlay
 
