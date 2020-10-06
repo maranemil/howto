@@ -394,3 +394,39 @@ echo $basic->getCost();
 
 $oil = new OilChange(new BasicInsp);
 echo $oil->getCost();
+
+##############################################################
+# get check nummeric
+##############################################################
+
+$data = array_map(
+	"trim",
+	array(1, 1., NULL, 'foo',true,"8ddd",'1350055',"fff"));
+
+/*
+"boolean"
+"integer"
+"double"
+"string"
+"array"
+"object"
+"resource"
+*/
+
+foreach ($data as $value) {
+	echo gettype($value).PHP_EOL.$value, "<br>";
+}
+
+echo "<hr>";
+foreach ($data as $value) {
+	if(is_numeric($value)){
+    	echo $value, "<br>";
+	}
+}
+
+echo "<hr>";
+foreach ($data as $value) {
+	if (preg_match('/^\d+$/', $value)) {
+		echo $value, "<br>";
+	}
+}
