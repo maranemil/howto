@@ -359,3 +359,38 @@ isUTF8
 	Only used for destinations I and D. The default value is false.
 
 */
+
+
+##############################################################
+# Laracast Decorator
+##############################################################
+
+# https://github.com/laracasts/Getting-Jiggy-With-Adapters
+# https://github.com/laracasts/the-specification-pattern-in-php
+
+interface CarServ{
+	public function getCost();
+}
+
+class BasicInsp implements CarServ{
+	public function getCost(){
+		return 25;
+	}
+}
+
+class OilChange implements CarServ{
+	protected $carServ;
+    function __construct(CarServ $carServ){
+		$this->carServ = $carServ;
+	}
+	public function getCost(){
+		return 25 + $this->carServ->getCost();
+	}
+}
+
+
+$basic = new BasicInsp();
+echo $basic->getCost();
+
+$oil = new OilChange(new BasicInsp);
+echo $oil->getCost();
