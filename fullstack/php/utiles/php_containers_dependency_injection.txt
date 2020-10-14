@@ -1,0 +1,228 @@
+https://daylerees.com/container-baking/
+https://github.com/daylerees/container-example
+https://www.youtube.com/watch?v=y7EbrV4ChJs
+
+
+namespace Example\Container;
+
+class Container
+{
+
+	private $bindings =[];
+
+	public function set($abstract, callable $factory){
+		$this->bindings[$abstract] = $factory;
+	}
+
+	public function get($abstract){
+		return $this->bindings[$abstract]($this);
+	}
+}
+
+
+$container = new Container();
+$container->set(User::class, function(Container $c){
+	return new User($c->get(SessionStorage::class))
+});
+$container->set(SessionStorage::class, function(Container $c){
+	return new SessionStorage($c->get(Logger::class))
+});
+$container->set(Logger::class, function(Container $c){
+	return new Logger()
+});
+
+$user = $container->get(User::class);
+$user->setLanguage("de");
+$user->getLanguage();
+
+
+User(SessionStorage(Logger()));
+
+
+public function buildDependencies($reflection){
+	if(!$constructor  = $reflection->getConstructor()){
+		return [];
+	}
+	$params = $constructor->getParameters();
+	return array_map(function($param){
+		if(!type = $param->getType()){
+			throw new RuntimeException();
+		}
+		return $this->get($type);
+	},$params);
+}
+
+public function get($abstract){
+	if(isset($this->bindings[$abstract])){
+		return $this->bindings[$abstract]($this);
+	}
+	$reflection = new ReflectionClass($abstract);
+	$dependencies = $this->buildDependencies($reflection);
+	return reflection->newInstanceArgs($dependencies);
+}
+
+....................
+
+class Container
+{
+    protected $instances = [];
+
+    public function instance($key, $value)
+    {
+        $this->instances[$key] = $value;
+
+        return $this;
+    }
+
+    public function make($key)
+    {
+        if (array_key_exists($key, $this->instances)) {
+            return $this->instances[$key];
+        }
+
+        throw new \Exception('Unable to resolve binding from container.');
+    }
+}
+
+.........
+
+use Example\Container;
+use PHPUnit\Framework\TestCase;
+
+class ContainerTest extends TestCase
+{
+    function test_container_can_be_created()
+    {
+        $container = new Container;
+        $this->assertInstanceOf('Example\Container', $container);
+    }
+
+    function test_instance_can_be_bound_and_resolved_from_the_container()
+    {
+        $instance = new Dummy;
+        $container = new Container;
+        $container->instance(Dummy::class, $instance);
+        $this->assertSame($instance, $container->make(Dummy::class));
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    function test_exception_is_thrown_when_instance_is_not_found()
+    {
+        $container = new Container;
+        $container->make('FakeClass');
+    }
+
+    function test_singleton_bindings_can_be_resolved()  {
+	    $resolver = function() { return new Dummy; };
+	    $container = new Container;
+	    $container->bind(Dummy::class, $resolver);
+	    $this->assertInstanceOf('Dummy', $container->make(Dummy::class));
+	    $dummy = $container->make(Dummy::class);
+	    $this->assertSame($dummy, $container->make(Dummy::class));
+	}
+
+	function test_resolve_class_instance_by_name_without_binding()
+	{
+	    $container = new Container;
+	    $dummy = $container->make(Dummy::class);
+	    $this->assertInstanceOf('Dummy', $dummy);
+	}
+
+}
+
+class Dummy {}
+
+..........
+
+namespace Example;
+
+class Container
+{
+    protected $instances = [];
+
+    protected $bindings = [];
+
+    public function instance($key, $value)
+    {
+        $this->instances[$key] = $value;
+
+        return $this;
+    }
+
+    public function bind($key, $value)
+    {
+        $this->bindings[$key] = $value;
+
+        return $this;
+    }
+
+    public function make($key)  {
+	    if (array_key_exists($key, $this->instances)) {
+	        return $this->instances[$key];
+	    }
+
+	    if (array_key_exists($key, $this->bindings)) {
+	        $resolver = $this->bindings[$key];
+	        return $this->instances[$key] = $resolver();
+	    }
+
+	    throw new \Exception('Unable to resolve binding from container.');
+	}
+
+
+	public function autoResolve($key)
+	{
+	    if (!class_exists($key)) {
+	        return false;
+	    }
+
+	    $reflectionClass = new \ReflectionClass($key);
+
+	    if (!$reflectionClass->isInstantiable()) {
+	        return false;
+	    }
+
+	    if (!$constructor = $reflectionClass->getConstructor()) {
+	        return new $key;
+	    }
+
+	    $params = $constructor->getParameters();
+
+	    $args = [];
+
+	    try {
+	        foreach($params as $param) {
+	            $paramClass = $param->getClass()->getName();
+	            $args[] = $this->make($paramClass);
+	        }
+	    } catch (\Exception $e) {
+	        throw new \Exception('Unable to resolve complex dependencies.');
+	    }
+
+	    return $reflectionClass->newInstanceArgs($args);
+	}
+
+}
+
+
+
+Extremely Defensive PHP - Marco Pivetta
+https://www.youtube.com/watch?v=8d2AtAGJPno
+
+class Train {
+	public function __construct(array $wagons){
+		$this->wagons=(function(Wagon ...$wagons){
+			return $wagons;
+		})(...$wagons);
+	}
+}
+
+https://www.php.net/manual/en/class.datetimeimmutable.php
+
+DateTimeImutable
+Final class
+__clone
+serialize
+__sleep
