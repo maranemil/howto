@@ -430,3 +430,11 @@ foreach ($data as $value) {
 		echo $value, "<br>";
 	}
 }
+
+
+# PHP: equivalent of MySQL's function SUBSTRING_INDEX
+# https://stackoverflow.com/questions/6885793/php-equivalent-of-mysqls-function-substring-index
+
+$str = "www.mysql.com";
+echo implode('.', array_slice(explode('.', $str), 0, 2)); // prints "www.mysql"
+echo implode('.', array_slice(explode('.', $str), -2));   // prints "mysql.com"
