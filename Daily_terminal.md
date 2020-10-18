@@ -315,3 +315,8 @@ ffplay -i in.mp4 -vf "setpts=1/4*PTS"
 
 * https://guides.github.com/features/mastering-markdown/
 * https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#youtube-videos
+
+### HDMI brightness
+
+* xrandr -q | grep " connected"
+* xrandr --output HDMI-1 --brightness 0.5
