@@ -438,3 +438,6 @@ foreach ($data as $value) {
 $str = "www.mysql.com";
 echo implode('.', array_slice(explode('.', $str), 0, 2)); // prints "www.mysql"
 echo implode('.', array_slice(explode('.', $str), -2));   // prints "mysql.com"
+
+# Removes special chars.
+return preg_replace('/[^A-Za-z0-9\-]/', '', $string); //
