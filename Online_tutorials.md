@@ -298,6 +298,8 @@
 | https://www.youtube.com/watch?v=zJ6WbK9zFpI | Docker for Beginners: Full Course | 
 | https://www.youtube.com/watch?v=Kp3HGwlXwCk | BASIC JAVASCRIPT PROJECTS | 
 | https://www.youtube.com/watch?v=1Rs2ND1ryYc | CSS Tutorial - Zero to Hero (Complete Course)  | 
+| https://www.youtube.com/watch?v=zg9ih6SVACc | Data Structures |
+
 
 
 | Link URL  | Playlist |
@@ -342,3 +344,5 @@
 | https://www.youtube.com/watch?v=EjwD7Pi7J_0&list=RDCMUCGp4UBwpTNegd_4nCpuBcow&start_radio=1 | Code Review Best Practices |
 | https://www.youtube.com/watch?v=HB2T0iWiW50&list=RDCMUCGp4UBwpTNegd_4nCpuBcow&start_radio=1 | PhpStorm plugins for Laravel  |
 | https://www.youtube.com/watch?v=AHK20LWEWXQ&list=PLQ176FUIyIUbfeFz-2EbDzwExRlD0Bc-w | PhpStorm | 
+| https://www.youtube.com/watch?list=PLGLfVvz_LVvReUrWr94U-ZMgjYTQ538nT&v=f5OD9CKrZEw | Java Algorithms | 
+| https://www.youtube.com/watch?list=PLGLfVvz_LVvSuz6NuHAzpM52qKM6bPlCV&v=vhYK3pDUijk | Code Refactoring | 
