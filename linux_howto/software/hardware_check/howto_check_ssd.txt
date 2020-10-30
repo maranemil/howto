@@ -1,0 +1,57 @@
+###############################################################
+#
+#   Schreibzugriff SSD überprüfen
+#
+#######################################################
+
+https://qastack.com.de/ubuntu/325283/how-do-i-check-the-health-of-a-ssd
+https://qastack.com.de/ubuntu/404096/with-an-ssd-do-i-need-to-change-my-swappiness-to-increase-ssd-life
+https://wiki.ubuntuusers.de/SSD/Grundlagen/
+https://wiki.ubuntuusers.de/Festplatten-Geschwindigkeitstest/
+https://www.thomas-krenn.com/de/wiki/Linux_I/O_Performance_Tests_mit_dd
+https://wiki.debianforum.de/Festplattendiagnostik-_und_%C3%9Cberwachung
+https://www.linux-bibel-oesterreich.at/2020/05/24/s-m-a-r-t-zustand-der-festplatten-ssds-unter-linux-pruefen/
+https://www.pcwelt.de/a/linux-dateisysteme-fuer-fortgeschrittene,3462970
+
+sudo smartctl -i /dev/sda
+sudo smartctl --all /dev/sda
+sudo smartctl --scan
+
+
+sudo smartctl -a -P show /dev/sda
+sudo smartctl -H /dev/sda # SMART overall-health self-assessment test result: PASSED
+sudo smartctl -t long /dev/sda
+sudo smartctl -c /dev/sda | grep -A 1 "execution status"
+sudo smartctl -X # Test abbrechen
+sudo smartctl -a /dev/sda
+
+
+sudo smartctl -a /dev/sda | grep Total_LBAs_Written | awk '{print $10*512/1024/1024/1024 " GiB"}'
+tune2fs -l
+echo 0 > /proc/sys/vm/swappiness
+sudo smartctl -a /dev/sdb | awk ' ($0 ~ /Total_LBAs_Written/) {print ($10*512)/(1024^3) " GiB"}'
+
+sudo smartctl -a ${device} | awk ' ($0 ~ /Total_LBAs_Written/) { if (($10*512)/(1024^3) > 1000) { msg="TiB"; size=($10*512)/(1024^4); } else { msg="GiB"; size=($10*512)/(1024^3); }; printf "\nThis device has had %.2
+f %s written to it.\n",size,msg; }'
+
+sudo /sbin/blockdev --getalignoff/dev/sda1
+
+
+sudo hdparm -tT /dev/sda  			# Test 1 mit Cache
+sudo hdparm -tT --direct /dev/sda	# Test 2 ohne Cache
+
+
+sudo apt-get install gnome-disk-utility
+sudo gnome-disks
+sudo apt-get install smartmontools
+smartctl -a /dev/sda | grep Media_Wearout_Indicator
+smartctl -a /dev/sda
+
+
+
+Chck ZFS on Linux
+
+sudo apt-get install zfsutils-linux
+sudo zpool create -f dateien /dev/sdb
+sudo zpool list
+sudo zfs set mountpoint=/mnt/dateien files
