@@ -441,3 +441,17 @@ echo implode('.', array_slice(explode('.', $str), -2));   // prints "mysql.com"
 
 # Removes special chars.
 return preg_replace('/[^A-Za-z0-9\-]/', '', $string); //
+
+
+
+# PHP: object equivalent
+# http://phptester.net/
+
+$objphp56 = new stdClass();
+$objphp56->name = "php5.6";
+
+var_dump($objphp56);
+echo "<br>";
+
+$objphp74 = (object)['name' => "php7.4"];
+var_dump($objphp74);
