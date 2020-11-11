@@ -347,3 +347,4 @@
 | https://www.youtube.com/watch?list=PLGLfVvz_LVvReUrWr94U-ZMgjYTQ538nT&v=f5OD9CKrZEw | Java Algorithms | 
 | https://www.youtube.com/watch?list=PLGLfVvz_LVvSuz6NuHAzpM52qKM6bPlCV&v=vhYK3pDUijk | Code Refactoring | 
 | https://www.youtube.com/playlist?list=PL2zq7klxX5ASFejJj80ob9ZAnBHdz5O1t | Data Science Project From Scratch |
+| https://www.youtube.com/watch?v=ZDa-Z5JzLYM&list=PL-osiE80TeTsqhIuOqKhwlXsIBIdSeYtc | Python OOP Tutorial |
