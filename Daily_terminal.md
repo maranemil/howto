@@ -197,7 +197,7 @@ ffplay -i in.mp4 -vf "setpts=1/4*PTS"
 * google-chrome --process-per-site --enable-low-res-tiling --no-referrers --new-window 
 
 
-
+* chromium --process-per-site
 * google-chrome 
 * brave 
 
@@ -206,6 +206,7 @@ ffplay -i in.mp4 -vf "setpts=1/4*PTS"
 > firefox
 * firefox -no-remote -new-tab -console -purgecaches
 * firefox -no-remote -new-window -p sidekick  -new-instance -P 
+* firefox -no-remote -allow-downgrade -private -purgecaches -safe-mode -p sidekick -P
 
 > boost cpu
 * for i in {0..7}; do echo performance | sudo tee /sys/devices/system/cpu/cpu"$i"/cpufreq/scaling_governor ; done
