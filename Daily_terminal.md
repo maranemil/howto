@@ -195,6 +195,8 @@ ffplay -i in.mp4 -vf "setpts=1/4*PTS"
 
 * chromium --process-per-site --purge-memory-button --enable-low-end-device-mode --enable-low-res-tiling --disable-notifications --no-referrers --new-window
 * google-chrome --process-per-site --enable-low-res-tiling --no-referrers --new-window 
+* chromium --process-per-site --no-sandbox --args --js-flags="--max_old_space_size=2192" --purge-memory-button
+* google-chrome --process-per-site --no-sandbox --args --js-flags="--max_old_space_size=2192" --max-old-space-size=2048
 
 
 * chromium --process-per-site
