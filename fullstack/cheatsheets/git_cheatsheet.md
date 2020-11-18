@@ -17,4 +17,8 @@ Delete local Branch if was fully merged	| git branch -d <branchName>	 |
 Create new Branch |	git checkout -b <branchName>	
 Check diff branches	| git diff --name-status master brachname |	git diff --stat --color master brachname
 Check conflict files |	git diff --name-only --diff-filter=U	
-
+Check branch last edit | git for-each-ref --sort='-committerdate:iso8601' --format=' %(committerdate:iso8601)%09%(refname)' refs/heads
+Check branch last edit | git for-each-ref --sort='-committerdate:iso8601' --format=' %(committerdate:iso8601)%09%(refname)' refs/remotes
+Check branch last edit | git for-each-ref --sort='-authordate:iso8601' --format=' %(authordate:relative)%09%(refname:short)' refs/heads
+Print modified files into line | git ls-files --modified |  tr '\n' ' '
+Print modified files  | git ls-files --modified
