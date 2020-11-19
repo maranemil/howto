@@ -1,0 +1,167 @@
+################################################################################################
+Best practices for multi-language database design / Best way to create multi-language database
+################################################################################################
+
+https://stackoverflow.com/questions/929410/what-are-best-practices-for-multi-language-database-design
+https://stackoverflow.com/questions/2227985/whats-the-best-database-structure-to-keep-multilingual-data
+https://stackoverflow.com/questions/316780/schema-for-a-multilanguage-database
+https://stackoverflow.com/questions/3077305/how-to-use-multilanguage-database-schema-with-orm/4745863#4745863
+
+-------------------------------------------
+
+Table "Product":
+ID  : int
+
+
+Table "ProductTranslations"
+ID                 : int      (foreign key referencing the Product)
+Language           : varchar  (e.g. "en-US", "de-CH")
+IsDefault          : bit
+ProductDescription : nvarchar
+
+
+-------------------------------------------
+
+
+SELECT p.price, pt.name, pt.description
+FROM Products p JOIN ProductTranslations pt
+  ON (p.id = pt.id AND pt.lang = "en")
+  WHERE price < 100
+
+
+-------------------------------------------
+
+Product     ProductDetail        Country
+=========   ==================   =========
+ProductId   ProductDetailId      CountryId
+- etc -     ProductId            CountryName
+            CountryId            Language
+            ProductName          - etc -
+            ProductDescription
+            - etc -
+
+-------------------------------------------
+
+
+[ products ]
+id (INT)
+price (DECIMAL)
+title_translation_id (INT, FK)
+
+[ translation ]
+id (INT, PK)
+neutral_text (VARCHAR)
+-- other properties that may be useful (date, creator etc.)
+
+[ translation_text ]
+translation_id (INT, FK)
+language_id (INT, FK)
+text (VARCHAR)
+
+
+
+----------------------------------------------------------------
+https://www.apphp.com/tutorials/index.php?page=multilanguage-database-design-in-mysql
+
+Column Approach
+Multirow Approach
+Single Translation Table Approach
+Additional Translation Table Approach
+
+
+
+-------------------------------------------
+1. Column Approach
+-------------------------------------------
+
+CREATE TABLE app_product (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `date_created` datetime NOT NULL,
+  `price` decimal(10,2) unsigned NOT NULL DEFAULT '0.00',
+  `title_en` varchar(255) NOT NULL,
+  `title_es` varchar(255) NOT NULL,
+  `title_fr` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+-------------------------------------------
+2. Multirow Approach
+-------------------------------------------
+
+CREATE TABLE app_product (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `date_created` datetime NOT NULL,
+  `price` decimal(10,2) unsigned NOT NULL DEFAULT '0.00',
+  `language_id` varchar(2) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+-------------------------------------------
+3. Single Translation Table Approach
+-------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `app_language` (
+  `code` char(2) NOT NULL,
+  `name` varchar(20) NOT NULL,
+  PRIMARY KEY (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `app_product` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `date_created` datetime NOT NULL,
+  `price` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `title` int(11) NOT NULL DEFAULT '0',
+  `description` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `title` (`title`),
+  KEY `description` (`description`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `app_translation` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS `app_translation_entry` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `translation_id` int(11) NOT NULL,
+  `language_code` char(2) NOT NULL,
+  `field_text` text NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `translation_id` (`translation_id`),
+  KEY `language_code` (`language_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
+
+
+-------------------------------------------
+4. Additional Translation Table Approach
+-------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `app_product` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `date_created` datetime NOT NULL,
+  `price` decimal(10,2) NOT NULL DEFAULT '0.00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `app_product_translation` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `product_id` int(11) NOT NULL DEFAULT '0',
+  `language_code` char(2) NOT NULL,
+  `title` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `description` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `translation_id` (`product_id`),
+  KEY `language_code` (`language_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `app_language` (
+  `code` char(2) NOT NULL,
+  `name` varchar(20) NOT NULL,
+  PRIMARY KEY (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+
+
