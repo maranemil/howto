@@ -455,3 +455,77 @@ echo "<br>";
 
 $objphp74 = (object)['name' => "php7.4"];
 var_dump($objphp74);
+
+
+
+##############################################################
+# openweathermap api
+##############################################################
+
+/*
+
+https://christianflach.de/OpenWeatherMap-PHP-API/docs/usage/ ######
+https://github.com/born05/OpenWeatherMap-PHP-Api *******
+https://github.com/cakephp-fr/openweathermap
+https://github.com/cmfcmf/OpenWeatherMap-PHP-API/
+https://github.com/peterbulmer/OpenWeatherMap-PHP-Api
+https://openweathermap.org/api
+https://openweathermap.org/appid
+https://openweathermap.org/current#zip
+https://openweathermap.org/examples
+https://openweathermap.org/examples#php
+https://packagist.org/packages/cloudstash/openweathermap-php-api
+https://packagist.org/packages/cmfcmf/openweathermap-php-api
+https://php-download.com/package/cmfcmf/openweathermap-php-api
+https://phpspreadsheet.readthedocs.io/en/latest/topics/settings/
+https://plugins.cakephp.org/p/1938-openweathermap
+https://www.wetter.com/deutschland/berlin/DE0001020.html
+
+Temperature is available in Fahrenheit, Celsius and Kelvin units.
+For temperature in Fahrenheit use units=imperial
+For temperature in Celsius use units=metric
+Temperature in Kelvin is used by default, no need to use units parameter in API call
+List of all API parameters with units openweathermap.org/weather-data
+
+http://docs.php-http.org/en/latest/clients/guzzle7-adapter.html#
+https://christianflach.de/OpenWeatherMap-PHP-API/docs/usage
+https://christianflach.de/OpenWeatherMap-PHP-API/docs/usage/
+https://docs.guzzlephp.org/en/5.3/http-messages.html#requests
+https://docs.guzzlephp.org/en/stable/psr7.html
+https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/Http/Index.html
+https://guzzle3.readthedocs.io/http-client/client.html
+https://phpspreadsheet.readthedocs.io/en/latest/topics/settings/
+
+composer require "cmfcmf/openweathermap-php-api"
+
+USAGE
+
+*/
+
+
+use Cmfcmf\OpenWeatherMap;
+use Cmfcmf\OpenWeatherMap\Exception as OWMException;
+
+// Must point to composer's autoload file.
+require 'vendor/autoload.php';
+
+// Language of data (try your own language here!):
+$lang = 'de';
+
+// Units (can be 'metric' or 'imperial' [default]):
+$units = 'metric';
+
+// Create OpenWeatherMap object.
+// Don't use caching (take a look into Examples/Cache.php to see how it works).
+$owm = new OpenWeatherMap('YOUR-API-KEY');
+
+try {
+    $weather = $owm->getWeather('Berlin', $units, $lang);
+} catch(OWMException $e) {
+    echo 'OpenWeatherMap exception: ' . $e->getMessage() . ' (Code ' . $e->getCode() . ').';
+} catch(\Exception $e) {
+    echo 'General exception: ' . $e->getMessage() . ' (Code ' . $e->getCode() . ').';
+}
+
+echo $weather->temperature;
+
