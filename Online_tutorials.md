@@ -348,3 +348,5 @@
 | https://www.youtube.com/watch?list=PLGLfVvz_LVvSuz6NuHAzpM52qKM6bPlCV&v=vhYK3pDUijk | Code Refactoring | 
 | https://www.youtube.com/playlist?list=PL2zq7klxX5ASFejJj80ob9ZAnBHdz5O1t | Data Science Project From Scratch |
 | https://www.youtube.com/watch?v=ZDa-Z5JzLYM&list=PL-osiE80TeTsqhIuOqKhwlXsIBIdSeYtc | Python OOP Tutorial |
+| https://www.youtube.com/watch?v=cjXI-yxqGTI&list=PLOspHqNVtKAC-_ZAGresP-i0okHe5FjcJ | IBM Cloud Fundamentals | 
+| https://www.youtube.com/watch?v=cjXI-yxqGTI&list=RDCMUCKWaEZ-_VweaEx1j62do_vQ&start_radio=1  |  IBM Cloud | 
