@@ -338,5 +338,4 @@ ffplay -i in.mp4 -vf "setpts=1/4*PTS"
 * xrandr --verbose |egrep '(Bright|Gamma)'
 * xrandr --output HDMI-1-1 --gamma 0.8:0.8:0.8
 * xrandr --output HDMI-1-1 --gamma 1.0:1.0:1.0
-* xrandr --output HDMI-1-1 --gamma 0.8:0.8:0.8
 * xrandr --output eDP-1-1 --gamma 1.0:1.0:1.0
