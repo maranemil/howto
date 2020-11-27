@@ -529,3 +529,19 @@ try {
 
 echo $weather->temperature;
 
+
+
+/*
+
+##############################################################
+PHP migration 7x-8x
+##############################################################
+
+https://www.php.net/manual/en/migration74.php
+https://www.php.net/manual/en/migration73.php
+https://www.php.net/manual/en/migration72.php
+https://www.php.net/manual/en/migration71.php
+https://www.php.net/manual/en/migration80.php
+https://www.php.net/releases/8.0/de.php?lang=de
+
+*/
