@@ -339,3 +339,11 @@ ffplay -i in.mp4 -vf "setpts=1/4*PTS"
 * xrandr --output HDMI-1-1 --gamma 0.8:0.8:0.8
 * xrandr --output HDMI-1-1 --gamma 1.0:1.0:1.0
 * xrandr --output eDP-1-1 --gamma 1.0:1.0:1.0
+
+### DNS Settings
+
+#### For IPv4:
+* nameserver 8.8.8.8,8.8.4.4,1.1.1.1
+
+#### For IPv6:
+* nameserver 2001:4860:4860::8888,2001:4860:4860::8844
