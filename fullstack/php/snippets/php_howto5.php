@@ -545,3 +545,14 @@ https://www.php.net/manual/en/migration80.php
 https://www.php.net/releases/8.0/de.php?lang=de
 
 */
+
+##############################################################
+#	PHP Only variable references should be returned by reference FIX
+##############################################################
+
+//Before
+return $_config[0] =& $config;
+
+// After
+$_config[0] =& $config;
+return $_config[0];
