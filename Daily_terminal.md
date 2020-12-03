@@ -340,10 +340,10 @@ ffplay -i in.mp4 -vf "setpts=1/4*PTS"
 * xrandr --output HDMI-1-1 --gamma 1.0:1.0:1.0
 * xrandr --output eDP-1-1 --gamma 1.0:1.0:1.0
 
-### DNS Settings
+### DNS Settings Google and Cloudflare
 
 #### For IPv4:
-* nameserver 8.8.8.8,8.8.4.4,1.1.1.1
+* nameserver 8.8.8.8,8.8.4.4,1.1.1.1,1.0.0.1
 
 #### For IPv6:
-* nameserver 2001:4860:4860::8888,2001:4860:4860::8844
+* nameserver 2001:4860:4860::8888,2001:4860:4860::8844, 2606:4700:4700::1111,2606:4700:4700::1001
