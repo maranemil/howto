@@ -1,3 +1,5 @@
+# !/usr/bin/python
+
 #############################################################################
 #
 # Effective Python Penetration Testing von Rejah Rehim
@@ -26,6 +28,7 @@ sudo apt-get install python-wxtools
 """
 
 #!/usr/bin/python
+from __future__ import print_function
 
 import wx
 import platform
@@ -89,12 +92,8 @@ desktopPixmap.save('screendump.png')
 
 """
 
-
-
-from __future__ import print_function
-
 import wx
-from datetime import datetime
+import datetime
 from time import sleep
 
 IS_PHOENIX = True if 'phoenix' in wx.version() else False
@@ -112,11 +111,11 @@ def take_screenshot():
     bmp = EmptyBitmap(width, height)
     mem = wx.MemoryDC(bmp)
     mem.Blit(0, 0, width, height, screen, 0, 0)
-    bmp.SaveFile(str(datetime.now().second) + '.png', wx.BITMAP_TYPE_PNG)
+    bmp.SaveFile(str(datetime.datetime.now().second) + '.png', wx.BITMAP_TYPE_PNG)
 
 MAXPICS = 4
 
-class testfrm(wx.Frame):
+class testFrm(wx.Frame):
     def __init__(self, *args, **kwds):
         wx.Frame.__init__(self, *args, **kwds)
         self.tmr = wx.Timer(self, -1)
@@ -135,5 +134,5 @@ class testfrm(wx.Frame):
 
 if __name__ == '__main__':
     app = wx.App()
-    frm = testfrm(None, -1, wx.version())
+    frm = testFrm(None, -1, wx.version())
     app.MainLoop()
