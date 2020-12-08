@@ -556,3 +556,28 @@ return $_config[0] =& $config;
 // After
 $_config[0] =& $config;
 return $_config[0];
+
+
+##############################################################
+#   pass by ref is not effectively used inside body
+##############################################################
+/*
+http://schlueters.de/blog/archives/125-Do-not-use-PHP-references.html
+https://www.php.net/manual/en/language.references.pass.php
+https://www.php.net/manual/en/language.references.return.php
+https://jonskeet.uk/java/passing.html
+https://www.journaldev.com/3884/java-is-pass-by-value-and-not-pass-by-reference
+
+since PHP 5 objects are automatically passed by reference.
+*/
+
+
+##############################################################
+#   PHP: missing parent constructor call
+##############################################################
+
+class Trout extends Fish {
+    function __construct($name, $flavor, $record) {
+    parent::__construct($name, $flavor, $record);
+}
+
