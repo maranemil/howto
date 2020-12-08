@@ -459,6 +459,50 @@ https://trac.ffmpeg.org/wiki/colorspace
 https://www.hellocatfood.com/motion-interpolation-for-glitch-aesthetics-using-ffmpeg-part-9/
 
 
+################################################################################################
+#
+#	Stop the recording after some period of time / record desktop save every 30 minutes
+#
+################################################################################################
+
+https://askubuntu.com/questions/436956/stop-the-recording-after-some-period-of-time
+https://stackoverflow.com/questions/22763031/record-desktop-save-every-30-minutes
+https://trac.ffmpeg.org/wiki/Capture/Desktop
+
+timeout 3600 avconv -f video4linux2 -r 25 -i /dev/video0  -vcodec mpeg4 -y out.mp4
+timeout 10s ffmpeg -f x11grab  -y -r 1  -video_size 1920x1080 -i :1.0 -vf format=gray -pix_fmt yuv420p myfile
+
+ffmpeg -f v4l2 -i /dev/video0 -t 01:00:00 output
+ffmpeg -f v4l2 -i /dev/video0 -t 3600 output
+
+ffmpeg -f dshow -framerate 30 -i video="screen-capture-recorder" -t 1800 output
+ffmpeg -f dshow -framerate 30 -i video="screen-capture-recorder" -t 00:30:00 output
+
+ffmpeg -f dshow -framerate 30 -i video="screen-capture-recorder" -f segment -segment_time 1800 out%03d.flv
+
+################################################################################################
+#
+#	perfect screen recording quality?
+#
+################################################################################################
+https://unix.stackexchange.com/questions/73622/how-to-get-near-perfect-screen-recording-quality
+
+ffmpeg -f x11grab -s SZ -r 30 -i :0.0 -qscale 0 -vcodec huffyuv grab.avi
+ffmpeg -i grab.avi grab.mkv
+
+
+# check source
+echo $DISPLAY
+:1
+
+# set source
+export DISPLAY=:0.0
+export DISPLAY=localhost:0.0
+firefox &
+
+https://gist.github.com/kfei/ef3c7fb7d4101f7dc537
+https://trac.ffmpeg.org/wiki/Capture/Desktop
+https://github.com/cytopia/ffscreencast
 
 
 

@@ -95,6 +95,21 @@ change date |touch -d "2 hours ago" filename
 * ffmpeg -v warning -video_size 1920x1080 -framerate 5 -f x11grab -i :0.0  myvid_$(date +%s).mov
 * ffmpeg -f x11grab  -follow_mouse centered -show_region 1 -framerate 5 -video_size 4cif -i :0.0 xmvid_$(date +%s).mov
 
+##### Record Screen Ubuntu every X minutes
+
+* ffmpeg -v warning -video_size 1920x1080 -framerate 1 -f x11grab -i :1.0 -f segment -segment_time 60 out%03d.mp4
+* ffmpeg -v warning -video_size 1920x1080 -framerate 1 -f x11grab -i :1.0 myvid_$(date +%s).mp4
+* timeout 10s ffmpeg -f x11grab  -y -r 1  -video_size 1920x1080 -i :1.0 -vf format=gray -pix_fmt yuv420p myfile.mp4
+
+##### check x11grab source
+* echo $DISPLAY
+* :1
+
+##### set x11grab source
+* export DISPLAY=:0.0
+* export DISPLAY=localhost:0.0
+* firefox &
+
 ##### Record Screen Ubuntu with Sound Lenovo
 * ffmpeg -v warning -video_size 1920x1080 -framerate 30 -f x11grab -i :1.0  -f alsa -ac 2 -i default  myvid_$(date +%s).mp4
 
