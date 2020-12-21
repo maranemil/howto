@@ -581,3 +581,8 @@ class Trout extends Fish {
     parent::__construct($name, $flavor, $record);
 }
 
+##############################################################
+# ajax save sql - how to remove %20 and '\xE4' in the url in php
+##############################################################
+
+utf8_decode(urldecode($SQL));
