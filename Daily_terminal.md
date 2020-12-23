@@ -81,8 +81,16 @@ change date |touch -d "2 hours ago" filename
 
 #### [Audio Video]
 
+##### ALSA diagbose
+* sudo apt install pavucontrol -y
+* pavucontrol
+* alsamixer
+* arecord -L
+* arecord -l
+
 ##### Push volume up +4dB
 * ffmpeg -i input.wav -af "volume=4dB" -c:v copy -y  out.wav
+* ffmpeg -i input.mp4 -af "volume=4dB" -vf "crop=1080:1080:570:450,eq=saturation=1.9" -y out.mp4
 
 ##### Split audio file in 1 sec pieces FFMPEG
 * ffmpeg -i in.wav -map 0 -f segment -segment_time 1 -af "volume=6dB,equalizer=f=40:width_type=o:width=2:g=-7,areverse" -y dir/out%03d.wav
@@ -111,7 +119,8 @@ change date |touch -d "2 hours ago" filename
 * firefox &
 
 ##### Record Screen Ubuntu with Sound Lenovo
-* ffmpeg -v warning -video_size 1920x1080 -framerate 30 -f x11grab -i :1.0  -f alsa -ac 2 -i default  myvid_$(date +%s).mp4
+* ffmpeg -v warning -video_size 1920x1080 -framerate 30 -f x11grab -i :1.0 -f alsa -ac 2 -i default myvid_$(date +%s).mp4
+* ffmpeg -v warning -video_size 1920x1080 -framerate 25 -f x11grab -i :1.0 -f alsa -ac 2 -i default myvid_$(date +%s).mp4
 
 ##### Record Screen Ubuntu with Sound ASUS
 * ffmpeg -v warning -video_size 1366x768 -framerate 30 -f x11grab -i :0.0 -f alsa -ac 2 -ar 44100 -i default -probesize 42M -preset ultrafast -pix_fmt yuv420p -vcodec libx264 myvid_$(date +%s).mp4
@@ -135,8 +144,9 @@ change date |touch -d "2 hours ago" filename
 * ffmpeg -i input.mp4 -vf lutrgb="r=negval:g=negval:b=negval" output3.avi
 
 ##### crop square
-* ffplay -i 046white.mp4 -vf "crop=in_h/1:in_h/1"
-* ffplay -i in.mp4  -vf "crop=820:640:570:350" 
+* ffplay -i in.mp4 -vf "crop=in_h/1:in_h/1"
+* ffplay -i in.mp4 -vf "crop=820:640:570:350" 
+* ffplay -i in.mp4 -vf "crop=1080:1080:570:450,eq=saturation=1.9"
 
 ##### speed up
 ffplay -i in.mp4 -vf "setpts=1/4*PTS"
