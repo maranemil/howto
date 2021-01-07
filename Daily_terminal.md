@@ -92,6 +92,9 @@ change date |touch -d "2 hours ago" filename
 * ffmpeg -i input.wav -af "volume=4dB" -c:v copy -y  out.wav
 * ffmpeg -i input.mp4 -af "volume=4dB" -vf "crop=1080:1080:570:450,eq=saturation=1.9" -y out.mp4
 
+##### replace audio in mp4
+* ffmpeg -i input.mp4 -i input.wav -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 out.mp4
+
 ##### Split audio file in 1 sec pieces FFMPEG
 * ffmpeg -i in.wav -map 0 -f segment -segment_time 1 -af "volume=6dB,equalizer=f=40:width_type=o:width=2:g=-7,areverse" -y dir/out%03d.wav
 
