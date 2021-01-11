@@ -233,6 +233,7 @@ ffplay -i in.mp4 -vf "setpts=1/4*PTS"
 
 > chrome://flags
 * --no-sandbox --site-per-process --process-per-site --enable-low-end-device-mode --disk-cache-size=104857600
+* --process-per-site-instance --process-per-site --process-per-tab --single-process --args  –disk-cache-size=10 
 > firefox
 * firefox -no-remote -new-tab -console -purgecaches
 * firefox -no-remote -new-window -p sidekick  -new-instance -P 
