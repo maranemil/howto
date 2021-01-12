@@ -1,0 +1,37 @@
+
+######################################################
+#
+#   How to pair Pi-hole with an OpenVPN
+#
+######################################################
+
+https://www.cyberciti.biz/faq/ubuntu-linux-install-pi-hole-with-a-openvpn/
+https://www.cyberciti.biz/faq/howto-setup-openvpn-server-on-ubuntu-linux-14-04-or-16-04-lts/
+https://www.cyberciti.biz/faq/how-to-updateupgrade-pi-hole-with-an-openvpn-on-ubuntudebian-linux-server/
+
+
+wget https://git.io/vpn -O openvpn-install.sh
+sudo bash openvpn-install.sh
+
+ip a show dev tun0
+ip r | grep default
+
+wget -O basic-install.sh https://install.pi-hole.net
+sudo bash basic-install.sh
+
+# test
+host cyberciti.biz 10.8.0.1
+host pagead2.googlesyndication.com 10.8.0.1
+
+# config
+sudo vi /etc/openvpn/server.conf
+push "dhcp-option DNS 10.8.0.1"
+
+#restart
+sudo systemctl restart openvpn@server
+
+ufw allow proto tcp from 10.8.0.0/24 to 10.8.0.1 port 80
+ufw allow proto tcp from 10.8.0.0/24 to 10.8.0.1 port 53
+ufw allow proto udp from 10.8.0.0/24 to 10.8.0.1 port 53
+
+http://10.8.0.1/admin/
