@@ -1,0 +1,156 @@
+#####################################################
+kill app if exceds memory
+#####################################################
+
+#!/bin/bash
+
+LIMIT=1
+CMD_FREE_RAM="free -h | head -2 | grep Speicher | cut -d: -f 2"
+FREE_RAM_CUT=`eval $CMD_FREE_RAM | cut -c20-20`
+echo "Memory: ....." $FREE_RAM_CUT
+
+if [[ $FREE_RAM_CUT  > 1 ]]; then
+        echo "total memory exceds limits ...." $LIMIT "GB"
+        CMD_CHROME_PDI=`eval ps aux | grep chrome | head -1 | cut -d: -f 1 | cut -c5-16`
+        echo "pid to kill" $CMD_CHROME_PDI
+        `eval kill $CMD_CHROME_PDI`
+    else
+        echo "everything is ok ..."
+fi
+
+
+
+
+
+#####################################################
+resources and examples
+#####################################################
+
+https://alvinalexander.com/linux/unix-linux-process-memory-sort-ps-command-cpu/
+https://askubuntu.com/questions/732794/how-to-show-top-ten-memory-consuming-processes-with-ps
+https://unix.stackexchange.com/questions/92493/sorting-down-processes-by-memory-usage
+https://stackoverflow.com/questions/47560667/linux-kill-process-by-path
+https://upcloud.com/community/tutorials/troubleshoot-linux-memory-issues/
+https://www.2daygeek.com/linux-find-top-memory-consuming-processes/
+https://www.linuxtechi.com/ps-command-examples-monitor-linux-processes/
+https://www.binarytides.com/linux-ps-command/
+https://stackoverflow.com/questions/47560667/linux-kill-process-by-path
+https://stackabuse.com/substrings-in-bash/
+https://man7.org/linux/man-pages/man1/ps.1.html
+https://www.cyberciti.biz/faq/how-to-extract-substring-in-bash/
+https://www.cyberciti.biz/faq/bash-scripting-using-awk/
+https://wiki.ubuntuusers.de/awk/
+http://www.linux-praxis.de/linux1/man/cut.html
+
+
+free  -g
+ps aux --sort -rss | head -5
+ps aux --sort +rss | tail -10
+ps aux --sort=-pcpu,+pmem
+ps -C firefox
+
+top -n 1
+top -c -b -o +%MEM | head -n 20 | tail -15
+top -b -o +%MEM | head -n 20 | tail -15
+
+ps aux | sort -rn -k 5,6
+ps aux | sort -rn -k 5,6 | less
+ps aux | sort -rn -k 5,6 | less -S
+
+ps -eo pid,ppid,%mem,%cpu,cmd --sort=-%mem | head
+
+ps aux --sort -rss | head
+ps aux --sort=vsz,-rss | head -5
+ps aux --sort=+vsz,+rss | head -5
+ps aux --sort=-vsz,-rss | head -5
+ps -eF --sort=-rss
+
+
+ps aux | awk '{print $2, $4, $11}' | sort -k2r | head -n 15
+ps aux --sort pmem
+ps aux | sort -rnk 4 | head -5
+ps aux | head -1; ps aux | sort -rnk 4 | head -5
+ps -ef | awk '{print $2}'
+ps ef -o command,vsize,rss,%mem,size
+
+ps -e -orss=,pid=,comm= | sort -b -k1,1n | tail -15
+ps h -o pid,user,rss,vsz,comm,args | tr -s " "
+ps h -o pid,user,rss,vsz,comm,args | tr -s " " "\012"
+ps -eo size,pid,user,command --sort -size | head -10
+ps -eo size,pid,user,command | sort -k1 -rn | head -10
+ps -eo size,pid,user,command --sort -size | awk '{ hr=$1/1024 ; printf("%13.2f Mb ",hr) } { for ( x=4 ; x<=NF ; x++ ) { printf("%s ",$x) } print "" }'  | head -5
+ps -eo size,user,comm,pid --sort  -size | awk '{ hr=$1/1024 ; printf("%13.2f Mb ",hr) } { for ( x=3 ; x<=NF ; x++ ) { printf("%s ",$x) } print "" }'  | head -15
+ps -eo size,pid,user,command --sort -size | awk ' { hr=$1/1024 ; printf ("%13.2f Mb ",hr) } { for ( x=4 ; x<=NF ; x++ ) { printf ("%s ",$x) } print "" }' | awk ' {total=total + $1} END {print total}'.
+
+# sort by memory
+ps -e -orss=,args= |awk '{print $1 " " $2 }'| awk '{tot[$2]+=$1;count[$2]++} END {for (i in tot) {print tot[i],i,count[i]}}' | sort -n
+ps -e -orss=,comm=,pid=  | awk '{tot[$2]+=$1;count[$2]++} END {for (i in tot) {print tot[i],i,count[i]}}'  |  sort -n
+ps -eo size,pid,user,command --sort -size | awk '{ hr=$1/1024 ; printf("%13.2f Mb ",hr) } { for ( x=4 ; x<=NF ; x++ ) { printf("%s ",$x) } print "" }' | cut -d "" -f2 | cut -d "-" -f1  | head -5
+ps -eo size,pid,user,command --sort -size | awk '{ hr=$1/1024 ; printf("%13.2f Mb ",hr) } { for ( x=4 ; x<=NF ; x++ ) { printf("%s ",$x) } print "" }' | awk '{total=total + $1} END {print total}'
+ps -eo size,pid,comm --sort -size | awk '{ hr=$1/1024 ; printf("%13.2f Mb ",hr) } { for ( x=3 ; x<=NF ; x++ ) { printf("%s ",$x) } print "" }' | head -5
+ps aux | awk '{print $5, $11}' | grep chrome | sort -n | awk '{ hr=$1/1024 ; printf("%13.2f Mb ",hr) } { for ( x=2 ; x<=NF ; x++ ) { printf("%s ",$x) } print " "  }'
+ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%mem | head
+------------------------------
+ps aux | grep chrome | grep -v grep | awk 'BEGIN { sum=0 } {sum=sum+$6; } END {printf("Taille RAM utilisée: %s Mo\n",sum / 1024)}'
+------------------------------
+ps aux | awk '{print $5, $11}' | grep chrome | sort -n
+ps aux --sort -pid | head -5
+ps aux --sort -%mem | head --lines=5
+# ps -o pid,user,vsz,rss,comm,args
+------------------------------
+ps -e -orss=,args= |awk '{print $1 " " $2 }'| awk '{tot[$2]+=$1;count[$2]++} END {for (i in tot) {print tot[i],i,count[i]}}' | sort -n | tail -n1
+------------------------------
+ps aux | grep chrome | head -1
+kill 34204
+------------------------------
+echo "%CPU   %MEM    MEM     PROCESS"
+ps aux | awk '{mem[$11]+=int($6/1024)}; {cpuper[$11]+=$3};{memper[$11]+=$4}; END {for (i in mem) {print cpuper[i]"% ",memper[i]"% ",mem[i]" MB ",i}}' | sort -k3nr | head -n 5
+------------------------------
+ps eo user,pid,vsz,rss $(pgrep -f 'chrome')
+ps -aux | grep 'chrome'
+ps eo user,pid,vsz,rss $(pgrep -f 'chrome')  |  awk '{Total+=$3} END {print Total}'
+------------------------------
+ps -U lime --no-headers -eo rss,vsz,pid,user,comm --sort -rss | grep chrome | head -100  |  awk '{Total+=$2}{Total+=$1} END {print Total/1024/1024}'
+--------
+
+ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%mem | grep chrome | head -50 | awk '{Total+=$5} END {print Total}'
+
+
+ps -eo pid,ppid,%mem,%cpu,comm --sort=-%mem | head
+ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%cpu | head
+ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%mem | head
+
+
+sudo grep -i -r 'out of memory' /var/log/
+free -h
+sudo sysctl -w vm.overcommit_memory=2
+sudo sysctl -w vm.overcommit_ratio=100
+
+ps -A | grep -i stress  # show stress
+ps -C httpd -o pid=  # show all processes
+ps -eo comm,etime,user # show duration
+
+
+ps -C mysqld -o pid=
+ps -o etime -p 3807
+ps -ef | grep php
+
+ps -f --forest -C apache2 # display detailed information
+ps -o pid,uname,comm -C apache2  # all forked  processes
+ps --ppid 2359 #  lists all child
+
+watch -n 1 'ps -e -o pid,uname,cmd,pmem,pcpu --sort=-pmem,-pcpu | head -15'
+ps -eo pid,ppid,cmd,%mem,%cpu,rss,vsz --sort=-%mem | grep chrome | head -50 | awk '{Total+=$7} END {print Total}'
+
+
+${parameter:offset:length} # substring
+
+
+
+
+
+
+
+
+
+
