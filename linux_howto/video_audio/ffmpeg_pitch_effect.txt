@@ -1,0 +1,88 @@
+################################################
+#
+#   ffmpeg pitch
+#
+################################################
+
+https://stackoverflow.com/questions/53374590/ffmpeg-change-tone-frequency-pitch-audio
+https://superuser.com/questions/292833/how-to-change-audio-frequency
+https://www.ffmpeg.org/ffmpeg-filters.html#atempo
+https://www.ffmpeg.org/ffmpeg-filters.html#asetrate
+https://www.ffmpeg.org/ffmpeg-filters.html#atempo
+https://www.ffmpeg.org/ffmpeg-filters.html#asetrate
+https://www.ffmpeg.org/ffmpeg-filters.html#aresample-1
+https://manuelhans.com/blog/2020/01/09/changing-audio-pitch-with-ffmpeg/
+http://johnriselvato.com/ffmpeg-how-to-change-the-pitch-sample-rate-of-an-audio-track-mp3/
+http://www.geekybob.com/post/Adjusting-Pitch-for-MP3-Files-with-FFmpeg##
+https://ubuntuforums.org/archive/index.php/t-2292532.html
+
+ffmpeg -i <input> -af 'asetrate=44100*1/2,atempo=2/1' <output>
+
+ffmpeg -i input.mp3 -af asetrate=44100*0.9,aresample=44100 output.mp3
+ffmpeg -i input.mp3 -af asetrate=44100*0.9,aresample=44100,atempo=1.1 output.mp3
+ffmpeg -i input.mp4 -af asetrate=44100*3/4,atempo=4/3 output.mp4
+ffmpeg -i input.mp4 -af atempo=3/4,asetrate=44100*4/3 output.mp4
+ffmpeg -i input.mp4 -af asetrate=44100*4,atempo=1/2,atempo=1/2 output.mp4
+
+ffmpeg -i input.mp3 -af "asetrate=44100*0.5" output.mp3
+ffmpeg -i input.mp3 -af "asetrate=44100*0.5,aresample=44100" output.mp3
+ffmpeg -i input.mp3 -af "asetrate=44100*0.5,atempo=1.5,aresample=44100" output.mp3
+
+Reduce speed by half:
+ffmpeg -i ./input.mp3 -filter:a "atempo:0.5" -vn ./output.mp3
+
+Double the speed:
+ffmpeg -i ./input.mp3 -filter:a "atempo:2.0" -vn ./output.mp3
+
+Higher pitch (assuming your audio is 44.1KHz):
+ffmpeg -i ./input.mp3 -filter:a "asetrate=r=48K" -vn ./output.mp3
+
+Lower pitch (assuming your audio is 44.1KHz):
+ffmpeg -i ./input.mp3 -filter:a "asetrate=r=36K" -vn ./output.mp3
+
+
+################################################
+#   Audacity batch processing AUDACITY > FILE > EDIT CHAIN
+################################################
+
+http://manual.audacityteam.org/man/Chains_-_for_batch_processing_and_effects_automation
+
+INSERT > CHANGE TEMPO
+INSERT > CHANGE PITCH
+INSERT > EXPORT FLAC
+FILE > APPLY CHAIN > FILES > Choose all files > Select safe processing
+
+
+
+################################################
+#   rubberband
+################################################
+
+https://breakfastquay.com/rubberband/
+https://github.com/breakfastquay/rubberband
+http://manpages.ubuntu.com/manpages/trusty/man1/rubberband.1.html
+https://launchpad.net/ubuntu/+source/rubberband
+https://www.archlinux.de/packages/community/x86_64/rubberband
+https://pypi.org/project/rubberband/
+
+sudo apt install rubberband-cli
+
+rubberband -p 24 in.wav out.wav
+rubberband -p 12 in.wav out.wav
+
+rubberband -t -p <infile.wav> <outfile.wav>
+rubberband -t 1.5 -p 2.0 test.wav output.wav
+
+-t, --time X
+-T, --tempo X
+-p, --pitch X
+-f, --frequency X
+-n, --crisp N - Crispness (N = 0,1,2,3,4,5); default 4 (see below)
+
+################################################
+#   ffmpeg segments
+################################################
+
+https://ffmpeg.org/ffmpeg-formats.html
+ffmpeg -i input.mp4 -map 0 -c copy -f segment -segment_time 1800 -reset_timestamps 1 output_%03d.mp4
+ffmpeg -i in.mkv -f segment -segment_time 10 -segment_format_options movflags=+faststart out%03d.mp4
