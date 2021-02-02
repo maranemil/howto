@@ -350,3 +350,6 @@
 | https://www.youtube.com/watch?v=ZDa-Z5JzLYM&list=PL-osiE80TeTsqhIuOqKhwlXsIBIdSeYtc | Python OOP Tutorial |
 | https://www.youtube.com/watch?v=cjXI-yxqGTI&list=PLOspHqNVtKAC-_ZAGresP-i0okHe5FjcJ | IBM Cloud Fundamentals | 
 | https://www.youtube.com/watch?v=cjXI-yxqGTI&list=RDCMUCKWaEZ-_VweaEx1j62do_vQ&start_radio=1  |  IBM Cloud | 
+| https://www.youtube.com/playlist?list=PLRqwX-V7Uu6YPSwT06y_AEYTqIwbeam3y | Beginners Guide to Machine Learning in JavaScript | 
+
+
