@@ -1,0 +1,34 @@
+#################################################################
+#
+#   debconf: DbDriver config: config.dat is locked by another process:
+#   Resource temporarily unavailable while installing packages
+#
+#################################################################
+
+https://support.plesk.com/hc/en-us/articles/360001346173-Unable-to-update-Plesk-debconf-DbDriver-config-var-cache-debconf-config-dat-is-locked-by-another-process
+https://askubuntu.com/questions/136881/debconf-dbdriver-config-config-dat-is-locked-by-another-process-resource-t
+
+https://unix.stackexchange.com/questions/571943/sudo-apt-autoremove-command-doesnt-work-var-cache-debconf-config-dat-is-lo
+https://ubuntuforums.org/showthread.php?t=2314747
+https://bugs.launchpad.net/ubuntu/+source/debconf/+bug/349469
+
+
+FIX:
+
+sudo fuser -v /var/cache/debconf/config.dat
+sudo kill PID
+sudo kill -9 PID # if the first doesn't work
+
+
+FIX:
+sudo lsof /var/cache/debconf/config.dat
+ps auxf | grep 44515
+kill -9 44515
+
+
+sudo dpkg --configure -a
+sudo apt-get -f install
+
+#sudo dpkg -P $(dpkg -l | egrep '^rc' | awk '{print $2}')
+#sudo update-desktop-database -v
+#sudo apt-get install --reinstall gcc-6-base
