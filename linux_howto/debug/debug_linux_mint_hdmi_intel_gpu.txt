@@ -1,0 +1,366 @@
+
+################################################
+#
+#   Linux Mint - HDMI Fix and Debug for GPU: Intel Iris Xe Graphics G7
+#
+################################################
+
+FIX:
+---------------------------------
+sudo apt install linux-oem-20.04 && sudo reboot 0
+
+DEBUG:
+---------------------------------
+
+inxi -Fxxzd
+xrandr --verbose
+
+
+lspci -nnk | egrep -A3 -i "3D|VGA"
+ls /lib/modprobe.d
+dpkg -l | grep -i nvidia
+mokutil --sb-state # SecureBoot enabled
+
+sudo apt-get install linux-generic
+xrandr --auto
+
+xrandr --addmode HDMI-1 1920x1080_77.00
+inxi -G #
+
+xrandr --output default --gamma 0:0:0 --mode 1920x1080
+
+-------------------
+
+HDMI brightness
+
+xrandr -q | grep " connected"
+xrandr --output HDMI-1 --brightness 0.5
+xrandr --listactivemonitors
+xrandr --output HDMI-1-1 --brightness 0.7
+xrandr --verbose |egrep '(Bright|Gamma)'
+xrandr --output HDMI-1-1 --gamma 0.8:0.8:0.8
+xrandr --output HDMI-1-1 --gamma 1.0:1.0:1.0
+xrandr --output eDP-1-1 --gamma 1.0:1.0:1.0
+
+-------------------------------------------------------
+
+https://askubuntu.com/questions/441040/failed-to-get-size-of-gamma-for-output-default-when-trying-to-add-new-screen-res
+
+sudo apt-get install inxi
+sudo apt-get install nvidia-384
+sudo killlall Xorg
+
+-------------------------------------------------------
+
+https://praxistipps.chip.de/linux-xrandr-failed-to-get-size-of-gamma-for-output-das-koennen-sie-tun_109384
+
+cvt 1200 1000 60.
+xrandr --newmode "1200_1000_60" 99.50 1200 1280 1400 1600 1000 1003 1013 1038 -hsync +vsync.
+xrandr --addmode <Verbindungs_Type> 1200x1000_60.00.
+
+-------------------------------------------------------
+
+
+ /boot/config.txt
+
+    hdmi_force_hotplug=1
+    hdmi_drive=2
+
+reboot
+
+
+nano ~/.config/monitors.xml
+nano /etc/X11/xorg.conf
+rm ~/.config/monitors.xml
+
+nano /etc/X11/xorg.conf
+nano ~/.config/monitors.xml
+rm ~/.config/monitors.xml
+
+https://askubuntu.com/questions/1033785/external-monitor-not-detected-on-ubuntu-18-04
+https://unix.stackexchange.com/questions/81822/hdmi-not-detected-by-xrandr
+https://askubuntu.com/questions/1078539/hdmi-port-not-detected-on-ubuntu-18-04
+
+
+xrandr --output HDMI-1-2 --off --output DVI-I-1-3 --off
+xrandr --output HDMI-1 --auto
+xrandr --output HDMI-1 --mode 1920x1080 --pos 0x0
+xrandr | grep connect
+sudo apt-get install arandr
+
+sudo dpkg-reconfigure lightdm
+sudo apt-get install --reinstall lightdm ubuntu-desktop
+
+xrandr --listmonitors
+lshw -C video
+sudo systemctl status display-manager
+sudo dpkg-reconfigure gdm3
+
+sudo ubuntu-drivers autoinstall
+sudo ubuntu-drivers autoinstall
+
+-------------------------------------------------------
+
+
+inxi -SMCGx
+xrandr --prop
+ls /sys/class/drm
+sudo update-initramfs -uk all
+
+
+sudo apt-add-repository ppa:paulo-miguel-dias/mesa
+sudo apt update
+
+
+https://launchpad.net/~paulo-miguel-dias/+archive/ubuntu/mesa/+packages
+
+sudo apt-get purge 'nvidia*'
+sudo add-apt-repository ppa:graphics-drivers
+sudo apt-get update
+
+
+xrandr --addmode HDMI-1-1 1920x1080
+xrandr --output HDMI-1-1 --mode 1920x1080
+
+-------------------------------------------------------
+
+inxi -G
+uname -r
+inxi -Fxz
+sudo lshw -c video
+xrandr
+sudo prime-select intel
+sudo prime-select nvidia
+
+xrandr --setprovideroutputsource modesetting NVIDIA-0
+xrandr --auto
+inxi -GS
+prime-select query
+mokutil --sb-state
+dpkg -l | grep -i nvidia
+dpkg -l | grep -i mesa
+
+sudo nvidia-xconfig
+lspci -nnk | grep -EA3 "3D|VGA"
+sudo update-initramfs -u
+lspci -nnk | grep -iA2 VGA
+inxi -G
+ glxinfo -B
+sudo lshw -c video
+dmesg | grep drm
+
+dmesg | grep drm
+[   28.323431] [drm] Your graphics device 9a49 is not properly supported by the driver in this
+[   31.023506] systemd[1]: Condition check resulted in Load Kernel Module drm being skipped.
+
+
+apt install linux-oem-20.04 && sudo reboot 0
+sudo apt install xserver-xorg-video-intel
+
+https://debianforum.de/forum/viewtopic.php?t=170284
+https://wiki.ubuntuusers.de/Grafikkarten/Intel/
+
+
+apt-get install bumblebee primus mesa-utils
+adduser $USER bumblebee
+service bumblebeed status
+glxgears
+optirun glxgears
+optirun glxgears -info
+
+
+########################################################
+#
+#   Disable Autosuspend
+#
+########################################################
+
+https://unix.stackexchange.com/questions/91027/how-to-disable-usb-autosuspend-on-kernel-3-7-10-or-above
+https://hamwaves.com/usb.autosuspend/en/
+https://www.andwil.de/weblog/wenn-linux-keine-usb-geraete-mehr-erkennt-autosuspend
+https://askubuntu.com/questions/185274/how-can-i-disable-usb-autosuspend-for-a-specific-device
+https://wiki.bsdforen.de/howto/suspend_resume_thinkpad.txt.html
+http://www.thinkwiki.org/wiki/How_to_reduce_power_consumption#USB_Subsystem
+
+
+cat /sys/module/usbcore/parameters/autosuspend
+cat /sys/module/usbcore/parameters/autosuspend
+
+modprobe usbcore autosuspend=-1
+options usbcore autosuspend=-1
+
+echo -1 >/sys/module/usbcore/parameters/autosuspend
+
+sudo echo "options usbcore autosuspend=-1" | sudo tee /etc/modprobe.d/disable-usb-autosuspend.conf > /dev/null
+
+
+sudo lsusb -v
+
+cat /sys/bus/usb/devices/usb1/power/control
+cat /sys/bus/usb/devices/usb2/power/control
+cat /sys/bus/usb/devices/usb3/power/control
+cat /sys/bus/usb/devices/usb4/power/control
+
+auto
+
+echo 'on' |sudo tee /sys/bus/usb/devices/usb1/power/control
+echo 'on' |sudo tee /sys/bus/usb/devices/usb2/power/control
+echo 'on' |sudo tee /sys/bus/usb/devices/usb3/power/control
+echo 'on' |sudo tee /sys/bus/usb/devices/usb4/power/control
+
+Permanent solution
+sudo nano /etc/udev/rules.d/usb-power.rules
+
+cat /sys/bus/usb/devices/usb1/power/control
+
+GRUB_CMDLINE_LINUX_DEFAULT="quiet usbcore.autosuspend=-1"
+
+#################################################################
+
+5 Ways to Fix a Malfunctioning USB Device or Port on Linux
+command to determine ports of a device (like /dev/ttyUSB0)
+
+#################################################################
+
+https://unix.stackexchange.com/questions/144029/command-to-determine-ports-of-a-device-like-dev-ttyusb0
+http://manpages.ubuntu.com/manpages/bionic/man8/lsusb.8.html
+https://support.lenovo.com/hk/de/solutions/ht080247
+https://linuxhint.com/list-usb-devices-linux/
+https://www.quora.com/How-do-I-enable-and-disable-USB-port-using-terminal-in-Ubuntu
+https://www.tecmint.com/find-usb-device-name-in-linux/
+https://itectec.com/ubuntu/ubuntu-how-to-leave-a-usb-port-powered-during-shutdown-for-charging-mobile/
+https://www.linux.org/threads/usb-port-management.22273/
+https://vitux.com/how-to-manually-mount-unmount-a-usb-device-on-ubuntu/
+https://www.linux-magazine.com/Issues/2018/208/Tutorial-USB-IP
+https://simpleit.rocks/linux/detect-mount-usb-devices-in-linux-console-terminal/
+https://serverfault.com/questions/96663/how-to-determine-usb-version-1-1-or-2-0
+https://www.cyberciti.biz/faq/find-out-linux-serial-ports-with-setserial/
+https://superuser.com/questions/781398/how-can-i-be-sure-that-ive-plugged-a-device-into-a-usb-3-port
+https://askubuntu.com/questions/142050/does-ubuntu-log-when-usb-devices-are-connected
+
+-------------------------------------------------------
+
+lsusb
+lsusb -s 1
+lsusb -t
+lsusb -D /dev/bus/usb/003/002
+
+findmnt
+lsblk --fs
+
+usb-devices
+dmesg | grep -i USB
+dmesg | less
+dmesg | tail
+dmesg | grep tty
+
+tail -n 2 /var/log/syslog
+
+sudo cat /var/log/kern.log | grep usb
+sudo zcat /var/log/kern.log.2.gz | grep usb
+sudo cat /var/log/syslog.1 | grep usb
+sudo zcat /var/log/syslog.2.gz | grep usb
+
+sudo apt install setserial
+sudo setserial -g /dev/ttyS[0123]
+sudo setserial -g /dev/ttyUSB[01]
+
+# lsmod | grep <device_name>
+# sudo modprobe <device_name>
+# tree /sys/devices/platform/<device_name>/
+
+ls /dev/sda*
+df -h
+
+lsblk
+sudo blkid
+sudo fdisk -l
+
+cat /sys/module/usbcore/parameters/autosuspend
+
+sudo nano /etc/default/grub
+
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash usbcore.autosuspend=-1"
+
+sudo update-grub
+
+cat /sys/module/usbcore/parameters/autosuspend
+#cat /sys/devices/platform/<device>/usb_charge
+sudo nano /etc/modprobe.d/usb-storage
+
+########################################################
+#
+#   To disable and enable USB, lets say port 3 and device 2 (you can get the information from lsusb -t)
+#
+########################################################
+
+echo '3-2' |sudo tee /sys/bus/usb/drivers/usb/unbind
+echo '3-2' |sudo tee /sys/bus/usb/drivers/usb/bind
+
+
+
+
+########################################################
+# did not recognise USB path /sys/devices/platform/USBC000:00/power_supply/ucsi-source-psy-USBC000:00129, please report
+########################################################
+
+https://miloserdov.org/?p=3371
+https://superuser.com/questions/352598/how-to-find-the-dev-name-of-my-usb-device
+https://gpsd.gitlab.io/gpsd/troubleshooting.html
+https://linuxconfig.org/how-to-mount-usb-drive-on-kali-linux
+
+
+tail -n 2 /var/log/syslog
+lsof | grep ttyU
+telnet localhost 2947
+ps aux | grep -i gpsd | grep -v grep ; ls /dev/ttyA*
+systemctl status gpsd
+sudo cat /var/log/kern.log | grep usb
+
+########################################################
+dmesg: Lesen des Kernel-Puffers fehlgeschlagen
+dmesg: read kernel buffer failed: Permission denied
+########################################################
+
+https://qastack.com.de/unix/390184/dmesg-read-kernel-buffer-failed-permission-denied
+https://debianforum.de/forum/viewtopic.php?t=164155
+https://unix.stackexchange.com/questions/390184/dmesg-read-kernel-buffer-failed-permission-denied
+
+
+sudo sysctl kernel.dmesg_restrict=0
+dmesg|wc
+cat /dev/kmsg|head|wc
+cat /etc/sysctl.d/10-kernel-hardening.conf
+
+echo 0 > /proc/sys/kernel/dmesg_restrict
+journalctl -k --no-hostname -o short-monotonic
+
+
+#################################################################
+#
+#   DNS FIX
+#
+#################################################################
+
+sudo apt install resolvconf
+
+sudo nano /etc/resolvconf/resolv.conf.d/tail
+nameserver 8.8.8.8,8.8.4.4,1.1.1.1,1.0.0.1
+
+sudo gedit /etc/network/interfaces
+dns-addresses 8.8.4.4,8.8.8.8
+
+sudo nano /etc/dhcp/dhclient.conf
+supersede domain-name-servers 8.8.8.8, 8.8.4.4;
+
+sudo systemctl enable systemd-resolved.service
+sudo systemctl restart systemd-resolved.service
+sudo systemctl restart networkd-dispatcher.service
+sudo service systemd-networkd restart
+
+systemd-resolve --status
+cat /etc/systemd/resolved.conf
+
+sudo nano /etc/systemd/resolved.conf
+nslookup google.com
