@@ -435,7 +435,78 @@ echo "auto" > "/sys/bus/usb/devices/usbX/power/level"
 
 
 
+########################################################
+VT-x is disabled in the BIOS for both all CPU modes (VERR_VMX_MSR_ALL_VMX_DISABLED)
+########################################################
+https://askubuntu.com/questions/1297433/vmx-outside-txt-disabled-by-bios
+https://www.thomas-krenn.com/de/wiki/Virtualisierungsfunktion_Intel_VT-x_aktivieren
 
+
+Quick fix
+Enable virtualization technology in BIOS
+
+lscpu
+cat /etc/default/grub | grep GRUB_CMDLINE_LINUX_DEFAULT
+
+spec_store_bypass_disable=prctl
+
+cat /proc/cpuinfo
+modinfo msr
+
+grep vmx /var/run/dmesg.boot
+grep VT-x /var/run/dmesg.boot
+
+vboxmanage VMNAME --cpus 1
+
+#############################################
+initramfs unpacking failed: Decoding failed
+#############################################
+https://forums.linuxmint.com/viewtopic.php?t=323152
+https://www.linuxmintusers.de/index.php?topic=63137.0
+https://bugs.launchpad.net/ubuntu/+source/ubuntu-meta/+bug/1870260
+https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1835660
+https://askubuntu.com/questions/1245458/getting-the-message-0-283078-initramfs-unpacking-failed-decoding-failed-wh
+
+FIX1:
+sudo nano /etc/initramfs-tools/initramfs.conf
+Change COMPRESS=lz4 to COMPRESS=gzip
+
+Save the changes then:
+CODE: SELECT ALL
+sudo update-initramfs -u
+
+
+FIX2:
+set back compress=lz4 in /etc/initramfs-tools/initramfs.conf
+rebuild your ramdisk with sudo update-initramfs -c -k $(uname -r)
+reboot
+
+Note: Use the sudo update-initramfs -c example, not sudo update-initramfs -u variation.
+
+
+########################################################
+“[Firmware bug]: TPM interrupt not working”
+########################################################
+
+https://askubuntu.com/questions/1196764/failing-installation-of-ubuntu-18-04-w-lenovo-thinkpad-p73-cannot-boot-up-sayin
+https://bugzilla.kernel.org/show_bug.cgi?id=204121
+https://bugzilla.redhat.com/show_bug.cgi?id=1770021
+https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1901134
+https://thinkpad-forum.de/threads/223233-Thinkpad-P43S-hat-Boot-Probleme
+https://sourceforge.net/p/tpmdd/mailman/message/32818899/
+https://bbs.archlinux.de/viewtopic.php?id=33162
+https://forums.linuxmint.com/viewtopic.php?t=334482
+https://pcsupport.lenovo.com/hk/de/products/tablets/miix-series/miix-520-12ikb/downloads/DS503824
+
+FIX
+Turn off TPM in your BIOS.
+Tell Ubuntu to ignore TPM:
+
+echo "blacklist tpm_tis" | sudo tee -a /etc/modprobe.d/tpm_tis.conf
+
+sudo systemctl disable fstrim.timer
+dmesg -l er
+journalctl -k -b -1 -p4
 
 
 
