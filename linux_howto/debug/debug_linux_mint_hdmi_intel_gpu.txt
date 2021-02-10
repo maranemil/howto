@@ -364,3 +364,87 @@ cat /etc/systemd/resolved.conf
 
 sudo nano /etc/systemd/resolved.conf
 nslookup google.com
+
+
+
+#################################################################
+suspend mode disable
+#################################################################
+
+https://unix.stackexchange.com/questions/91027/how-to-disable-usb-autosuspend-on-kernel-3-7-10-or-above
+https://askubuntu.com/questions/185274/how-can-i-disable-usb-autosuspend-for-a-specific-device
+https://www.peterdavehello.org/2015/06/stop-the-annoying-usb-autosuspend-under-ubuntu-linuxmint/
+https://hamwaves.com/usb.autosuspend/en/
+http://manpages.ubuntu.com/manpages/bionic/man8/lsusb.8.html
+https://stackoverflow.com/questions/4702216/controlling-a-usb-power-supply-on-off-with-linux
+https://ok2.de/images/Thinkpad/Maintenance/e14_r14_e15_s3gen2_hmm_en.pdf
+https://wiki.archlinux.org/index.php/Laptop/Lenovo
+https://download.lenovo.com/pccbbs/mobiles_pdf/e14_r14_e15_s3gen2_ug_v2_de.pdf
+https://download.lenovo.com/pccbbs/mobiles_pdf/e14_r14_e15_s3gen2_hmm_en.pdf
+https://gzhls.at/blob/ldb/2/f/d/6/55309fedbd45e6ec120f9c6a8c92f4517d7a.pdf
+
+
+sudo nano /etc/default/grub
+
+update
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash usbcore.autosuspend=-1"
+
+sudo update-grub
+
+cat /sys/module/usbcore/parameters/autosuspend
+And it should display -1
+
+The documentation for the value -1 can be found in the kernel source file drivers/usb/core/hub.c:
+
+1808:    * - If user has indicated to prevent autosuspend by passing
+1809:    *   usbcore.autosuspend = -1 then keep autosuspend disabled.
+
+
+modprobe usbcore autosuspend=-1
+sudo nano /etc/modprobe.d
+options usbcore autosuspend=-1
+echo -1 >/sys/module/usbcore/parameters/autosuspend
+
+sudo echo "options usbcore autosuspend=-1" | sudo tee /etc/modprobe.d/disable-usb-autosuspend.conf > /dev/null
+uname -r
+sudo dpkg-reconfigure linux-image-X.XX-X-amd64
+cat /sys/module/usbcore/parameters/autosuspend
+
+
+echo on | sudo tee /sys/bus/usb/devices/*/power/level >/dev/null
+echo 'on' > '/sys/bus/usb/devices/3-10/power/control'
+
+echo "-1" | sudo tee /sys/bus/usb/devices/*/power/autosuspend_delay_ms
+echo "on" | sudo tee /sys/bus/usb/devices/*/power/control
+
+echo "options usbcore autosuspend=-1" | sudo tee /etc/modprobe.d/disable-usb-autosuspend.conf
+options usbcore autosuspend=-1
+
+--------
+
+# disable external wake-up; do this only once
+echo disabled > /sys/bus/usb/devices/usb1/power/wakeup
+
+echo on > /sys/bus/usb/devices/usb1/power/level       # turn on
+echo suspend > /sys/bus/usb/devices/usb1/power/level  # turn off
+
+echo "0" > "/sys/bus/usb/devices/usbX/power/autosuspend"
+echo "auto" > "/sys/bus/usb/devices/usbX/power/level"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
