@@ -365,6 +365,19 @@ cat /etc/systemd/resolved.conf
 sudo nano /etc/systemd/resolved.conf
 nslookup google.com
 
+...
+
+
+/etc/resolv.conf
+search domain.name
+nameserver 8.8.8.8
+nameserver 1.1.1.1
+nameserver 1.0.0.1
+
+
+nameserver 127.0.0.53
+options edns trust-ad
+search .
 
 
 #################################################################
@@ -534,3 +547,66 @@ https://unix.stackexchange.com/questions/34428/do-virtualbox-or-vmware-use-the-i
 https://superuser.com/questions/376735/when-running-virtual-machines-is-vt-x-support-or-higher-clock-speed-better
 
 
+########################################################
+usb 3-5: device descriptor read/64, error -110
+########################################################
+
+dmesg | grep error
+dmesg | tail
+sudo dmesg | grep remount
+inxi -F && dmesg | grep -i error
+
+GRUB_CMDLINE_LINUX_DEFAULT="nouveau.blacklist=1 quiet splash"
+
+
+grep error /var/log/syslog
+badblocks -v /dev/sda
+smartctl --all /dev/sda
+
+-----------------------
+Debian Bug report logs
+-----------------------
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=833876
+https://bugzilla.redhat.com/show_bug.cgi?id=1317148
+https://packages.debian.org/bullseye/firmware-iwlwifi
+
+firmware-iwlwifi: Direct firmware load for iwlwifi
+
+journalctl -k -p 4 | grep iwlwifi
+lspci -v
+ls /lib/firmware/rtl_nic
+grep CONFIG_R8169 /boot/config-x.x.x
+
+
+
+-----------------------
+usb 3-5: device descriptor read/64, error -110
+-----------------------
+
+https://stackoverflow.com/questions/13653692/device-descriptor-read-64-error-110
+https://unix.stackexchange.com/questions/361838/usb-device-descriptor-read-64-error-110
+https://askubuntu.com/questions/644010/ubuntu-cant-read-my-usb-device-descriptor-read-64-error-110
+https://forums.linuxmint.com/viewtopic.php?t=253053
+https://forums.linuxmint.com/viewtopic.php?t=240477#p1283970
+https://raspberrypi.stackexchange.com/questions/111576/how-to-deal-with-the-error-device-descriptor-read-64-error-32
+https://bbs.archlinux.org/viewtopic.php?id=149384
+https://askubuntu.com/questions/117524/usb-device-not-accepting-address
+
+
+USB error -110 means "Timeout expired before the transfer completed", which could be caused by anything. Most commonly, it's because power was exceeded; the host could not provide enough electric power for the pendrive to operate. Because it has not enough power also the USB stick cannot provide the device descriptor to the host, as a result it cannot be identified and so on. Maybe your motherboard it's overloaded with devices that consume all the available power.
+
+systemctl restart sysstat.service
+inxi -Fxz
+
+Go down to the line that starts with "linux" and erase "quiet splash" (if it is there) at the end of that line. Replace "quiet splash" with "rw systemd.unit=multi-user.target"
+Press F10 to boot.
+
+echo Y > /sys/module/usbcore/parameters/old_scheme_first
+
+
+/etc/default/grub:
+
+change the line that says
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash" to
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash usbcore.old_scheme_first=1"
+run update-grub
