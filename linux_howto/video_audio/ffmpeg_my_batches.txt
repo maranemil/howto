@@ -117,3 +117,14 @@ ffmpeg -i out.mp4 -i out.mp4  -filter_complex "[0:a]volume=2.95[oo];[oo][1:a]am
 
 
 https://trac.ffmpeg.org/wiki/AudioChannelManipulation
+
+-----------------------------------------------------------
+prepare multiple videos for mix
+-----------------------------------------------------------
+
+num=0; for i in *.mp4; do mv "$i" "$(printf '%04d' $num).mp4"; ((num++)); done
+for i in *.mp4; do ffmpeg -i $i -vf scale=-1:1080 -an out/"$i"_out.mp4; done
+ffmpeg -i in.mp4 -vf eq=saturation=1.3 -y -acodec copy  out.mp4
+ffmpeg -i in.mp4 -vf eq=saturation=1.3 -y -codec:a copy  out.mp4
+
+
