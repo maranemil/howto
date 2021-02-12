@@ -154,6 +154,9 @@ change date |touch -d "2 hours ago" filename
 ##### speed up
 ffplay -i in.mp4 -vf "setpts=1/4*PTS"
 
+##### resize
+ffmpeg -i in.mp4 -vf scale=-1:1080 -an out.mp4 
+
 ##### merge 4 videos in one - 2 by row with overlay
 
 * repeat 2x to merge horizontally 800x600 * 2 = 1600x600
