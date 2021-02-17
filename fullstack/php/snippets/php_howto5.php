@@ -598,3 +598,16 @@ echo substr_count($text, 'es'); // 2
 https://www.php.net/manual/de/function.substr-count.php
 https://www.php.net/manual/de/function.count-chars.php
 */
+
+##############################################################
+# array-diff-bug
+##############################################################
+/*
+Returns an array containing all the entries from array1 that are not present in any of the other arrays
+
+Workaround: use array_sum() to check diff: array_sum($arr1) == array_sum($arr2)
+
+https://stackoverflow.com/questions/39222827/php-array-diff-bug
+https://www.php.net/manual/en/function.array-diff.php
+https://stackoverflow.com/questions/2479963/how-does-array-diff-work
+*/
