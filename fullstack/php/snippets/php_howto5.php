@@ -586,3 +586,15 @@ class Trout extends Fish {
 ##############################################################
 
 utf8_decode(urldecode($SQL));
+
+
+##############################################################
+# count chars
+##############################################################
+
+echo substr_count($text, 'es'); // 2
+
+/*
+https://www.php.net/manual/de/function.substr-count.php
+https://www.php.net/manual/de/function.count-chars.php
+*/
