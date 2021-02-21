@@ -351,5 +351,43 @@
 | https://www.youtube.com/watch?v=cjXI-yxqGTI&list=PLOspHqNVtKAC-_ZAGresP-i0okHe5FjcJ | IBM Cloud Fundamentals | 
 | https://www.youtube.com/watch?v=cjXI-yxqGTI&list=RDCMUCKWaEZ-_VweaEx1j62do_vQ&start_radio=1  |  IBM Cloud | 
 | https://www.youtube.com/playlist?list=PLRqwX-V7Uu6YPSwT06y_AEYTqIwbeam3y | Beginners Guide to Machine Learning in JavaScript | 
-
-
+| https://www.youtube.com/watch?v=Nnb9g7y38W8&list=PLu9Yd5dcf2hc0179VReN0jFt0624Nl1Ar  | Python] Course Outline |
+| https://www.youtube.com/watch?v=Tu-LOrLh6E4&list=PLu9Yd5dcf2hddSLH3-5Zgb7MxL2ggHqP0  | Angular] Course Introduction |
+| https://www.youtube.com/watch?v=1O4KlMyVRk8&list=PLu9Yd5dcf2hcO7NX8SY9xHCk1LeNnh7En  | Pandas] Introduction to the Course |
+| https://www.youtube.com/watch?v=BSJNez3NHvM&list=PLu9Yd5dcf2hdNhDhSS4cYV786G4cyoYB3  | Python] Web Scraping Introduction  |
+| https://www.youtube.com/watch?v=MiS6y9kffBs&list=PLS1QulWo1RIbHU_v67CWrHn3eWpaASEtK  | MongoDB to Django Using Djongo |
+| https://www.youtube.com/watch?v=kENidSltTuA&list=PLS1QulWo1RIYbSv5_R2I_QbAcvbyqBCun  | RESTFul API With Flask  |
+| https://www.youtube.com/watch?v=Kja_28SNIow&list=PLS1QulWo1RIZ6OujqIAXmLR3xsDn_ENHI  | Getting Started With Flask |
+| https://www.youtube.com/watch?v=lIM5YQyZ3pc&list=PLS1QulWo1RIa3Q24UOH0DaOBxHNmwJOeO  | Introduction to React JS |
+| https://www.youtube.com/watch?v=bPp_Nr71GxY&list=PLS1QulWo1RIZFMIqY6IMCBkcAQTEvMEIo  | Introduction to the C programming |
+| https://www.youtube.com/watch?v=2EJ03wM0erI&list=PLS1QulWo1RIYWjdoEC1WbT8W3XGGWVXfW  | PHP REST API  |
+| https://www.youtube.com/watch?v=_bi0SqW_4L0&list=PLS1QulWo1RIZTkXbVkjr5Z3m-uMs05u7V  | PyQt5 Tutorial |
+| https://www.youtube.com/watch?v=2WztaC6kyLs&list=PLS1QulWo1RIa7ha9SewcZlsTQVwL7n7oq  | Scikit-Learn   |
+| https://www.youtube.com/watch?v=64VG179N4no&list=PLS1QulWo1RIYZZxQdap7Sd0ARKFI-XVsd  | Redis |
+| https://www.youtube.com/watch?v=mqhxxeeTbu0&list=PLzMcBGfZo4-n4vJJybUVV3Un_NFS5EOgX  | Flask Tutorial  |
+| https://www.youtube.com/watch?v=Vde5SH8e1OQ&list=PLzMcBGfZo4-lB8MZfHPLTEHO9zJDDLpYj  | PyQt5 |
+| https://www.youtube.com/watch?v=ujTCoH21GlA&list=PLzMcBGfZo4-mP7qA9cagf68V06sko5otr  | Python Machine Learning |
+| https://www.youtube.com/watch?v=Lfg8uVS6HVk&list=PLB5jA40tNf3v-K_g4K-4Q7dYnGskPNZjy  | Java |
+| https://www.youtube.com/watch?v=2t3q_hOWw1o&list=PLB5jA40tNf3vh75MBwUb4oqiXFOZ5pYyX  | Web Development Html |
+| https://www.youtube.com/watch?v=yQSEXcf6s2I&list=PLCC34OHNcOtoC6GglhF3ncJ5rLwQrLGnV  | Graphical User Interfaces With Python And TKinter |
+| https://www.youtube.com/watch?v=kKj3L2e5dY4&list=PLCC34OHNcOtpd6DTzCrAHOhhwzUZN6ut0  | Bootstrap 4  |
+| https://www.youtube.com/watch?v=xc23JUl-f2k&list=PLCC34OHNcOtpER8D9QsylMvBWLn5SfUXv  | Using MySQL Databases With Python |
+| https://www.youtube.com/watch?v=8Dv7y33tFzI&list=PLCC34OHNcOtre5nJXBvH6WeJwfxuHjb7q  | Build Websites With Python and Django FAST |
+| https://www.youtube.com/watch?v=EQcsD3ff14E&list=PLCC34OHNcOtoz3tvoN9uDkIAaDYqPqoEr  | Ruby on Rails To-Do List App |
+| https://www.youtube.com/watch?v=MwZwr5Tvyxo&list=PL-osiE80TeTs4UjLw5MM6OjgkjFeUxCYH  | Python Flask |
+| https://www.youtube.com/watch?v=ZyhVh-qRZPA&list=PL-osiE80TeTsWmV9i9c58mdDCSskIFdDS  | Python Pandas  |
+| https://www.youtube.com/watch?v=VBqJ0-imSMU&list=PL1FgJUcJJ03uJQse6KnXB996NYoHZyxGk  | Django & ReactJS Full Stack  |
+| https://www.youtube.com/watch?v=kKSd5F_KDkM&list=PL1FgJUcJJ03s4oCDPlh7ZJe2kycucSSmA  | ReactJS & React Hooks  |
+| https://www.youtube.com/watch?v=bB8q_cYWRcQ&list=PL1FgJUcJJ03sImAsEpAzMTjaTCU7bY3ZD  | PyqtGraph |
+| https://www.youtube.com/watch?v=VNzX2Hf32O8&list=PL1FgJUcJJ03seqWeoTOzQSjgZEYelPBv8  | OpenCV |
+| https://www.youtube.com/watch?v=O8k2SziFAtI&list=PL1FgJUcJJ03saV6tnVM7ihTXKVCsGhwym  | Flask |
+| https://www.youtube.com/watch?v=jhvxAR0qCAE&list=PL1FgJUcJJ03veB3Nha_0JTTfHrsBvj5CS  | Python With Mysql Database |
+| https://www.youtube.com/watch?v=4aKwBEEKkSo&list=PL1FgJUcJJ03vd5wJAZfn0IGWdfpdT1jOB  | Flask Web Development  |
+| https://www.youtube.com/watch?v=pnpL9Sl79g8&list=PL1FgJUcJJ03uwFW8ys2ov2dffKs3ieGYk  | PyQt5 | 
+| https://www.youtube.com/watch?v=yD0_1DPmfKM&list=PLQVvvaa0QuDe9nqlirjacLkBYdgc2inh3  | Django | 
+| https://www.youtube.com/watch?v=G3PvTWRIhZA&list=PLQVvvaa0QuDeF3hP0wQoSxpkqgRcgxMqX  | Go Lang | 
+| https://www.youtube.com/watch?v=OGxgnH8y2NM&list=PLQVvvaa0QuDfKTOs3Keq_kaG2P55YRn5v  | Machine Learning | 
+| https://www.youtube.com/watch?v=mD4KFDmusCc&list=PLXmMXHVSvS-AjwTOtiW1DXFYTgUlrUmHV  | Flask | 
+| https://www.youtube.com/watch?v=bcjq3koKpFE&list=PLXmMXHVSvS-AIM_xZvxAgjXaKXvJae80L  | AJAX Promises in jQuery | 
+| https://www.youtube.com/watch?v=IrclKk_nWHI&list=PLXmMXHVSvS-DvYEVy6JQUAjannaohHXRV  | HTTP Requests in Python | 
+| https://www.youtube.com/watch?v=_X-pjh4Vd10&list=PLei96ZX_m9sXmZJqhaTdIGGOJLStV4YbM  | Fastify | 
