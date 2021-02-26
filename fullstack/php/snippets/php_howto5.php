@@ -611,3 +611,12 @@ https://stackoverflow.com/questions/39222827/php-array-diff-bug
 https://www.php.net/manual/en/function.array-diff.php
 https://stackoverflow.com/questions/2479963/how-does-array-diff-work
 */
+
+##############################################################
+# rand gen
+##############################################################
+$a = str_split("1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM");
+shuffle ($a);
+$r = implode($a);
+$f = substr($r,0,16);
+print $f;
