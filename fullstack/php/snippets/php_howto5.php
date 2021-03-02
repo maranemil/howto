@@ -620,3 +620,15 @@ shuffle ($a);
 $r = implode($a);
 $f = substr($r,0,16);
 print $f;
+
+
+
+##############################################################
+# array read column
+##############################################################
+
+/*
+https://www.php.net/manual/en/function.array-search.php
+https://www.php.net/manual/en/function.extract.php
+https://www.php.net/manual/en/function.array-column.php
+*/
