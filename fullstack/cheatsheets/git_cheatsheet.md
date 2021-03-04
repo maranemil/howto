@@ -22,3 +22,4 @@ Check branch last edit | git for-each-ref --sort='-committerdate:iso8601' --form
 Check branch last edit | git for-each-ref --sort='-authordate:iso8601' --format=' %(authordate:relative)%09%(refname:short)' refs/heads
 Print modified files into line | git ls-files --modified |  tr '\n' ' '
 Print modified files  | git ls-files --modified
+Remove file from commited | git restore --staged <file>
