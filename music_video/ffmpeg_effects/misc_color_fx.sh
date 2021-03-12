@@ -45,27 +45,38 @@ ffmpeg -i input.mp4 -vf fps=fps=3.5 -an -y output.mp4
 
 
 
+# rename
+num=0; for i in *.mp4; do mv "$i" "$(printf '%04d' $num).mp4"; ((num++)); done
 
-#num=0; for i in *.mp4; do mv "$i" "$(printf '%04d' $num).mp4"; ((num++)); done
-
-
-#black video mask
-ffplay -t 7200 -s 1920x1080 -f rawvideo -pix_fmt rgb24  -i /dev/zero
 
 #black video mask
-ffmpeg -t 7200 -s 1920x1080 -f rawvideo -pix_fmt rgb24  -i /dev/zero -i 0001.mp4  -filter_complex "[0:v][1:v] overlay=125:125:enable='between(t,0,20)'" -pix_fmt yuv420p  -y -t 4 output.mp4
+#ffplay -t 7200 -s 1920x1080 -f rawvideo -pix_fmt rgb24  -i /dev/zero
 
 #black video mask
-ffmpeg -t 7200 -s 1280x720 -f rawvideo -pix_fmt rgb24  -i /dev/zero -i 0001.mp4  -filter_complex "[0:v][1:v] overlay=125:125:enable='between(t,0,20)',unsharp=3:3:1.5" -pix_fmt yuv420p  -y -t 4 output.mp4
+#ffmpeg -t 7200 -s 1920x1080 -f rawvideo -pix_fmt rgb24  -i /dev/zero -i 0001.mp4  -filter_complex "[0:v][1:v] overlay=125:125:enable='between(t,0,20)'" -pix_fmt yuv420p  -y -t 4 output.mp4
+
+#black video mask
+#ffmpeg -t 7200 -s 1280x720 -f rawvideo -pix_fmt rgb24  -i /dev/zero -i 0001.mp4  -filter_complex "[0:v][1:v] overlay=125:125:enable='between(t,0,20)',unsharp=3:3:1.5" -pix_fmt yuv420p  -y -t 4 output.mp4
 
 #white video mask
-ffmpeg -f lavfi -i color=white:1920x1080:d=3 -i 0067.mp4  -filter_complex "[0:v][1:v] overlay=125:125:enable='between(t,0,20)',unsharp=3:3:1.5" -pix_fmt yuv420p  -y -t 4 output.mp4
+#ffmpeg -f lavfi -i color=white:1920x1080:d=3 -i 0067.mp4  -filter_complex "[0:v][1:v] overlay=125:125:enable='between(t,0,20)',unsharp=3:3:1.5" -pix_fmt yuv420p  -y -t 4 output.mp4
 
 
-ffmpeg -f lavfi -i color=white:1920x1080 -i 0067.mp4  -filter_complex "[0:v][1:v] overlay=125:125:enable='between(t,0,20)',unsharp=3:3:1.5" -pix_fmt yuv420p  -y -t 4 output.mp4
+#ffmpeg -f lavfi -i color=white:1920x1080 -i 0067.mp4  -filter_complex "[0:v][1:v] overlay=125:125:enable='between(t,0,20)',unsharp=3:3:1.5" -pix_fmt yuv420p  -y -t 4 output.mp4
 
-#batch
-for i in *.mp4; do ffmpeg -i "$i" -vf scale=-1:1080,unsharp=3:5:2 batch/"$i"; done
+#batch h 1080
+#for i in *.mp4; do ffmpeg -i "$i" -vf scale=-1:1080,unsharp=3:5:2 batch/"$i"; done
+
+#batch w 1920
+for i in *.mp4; do ffmpeg -i "$i" -vf scale=1920:-1,unsharp=3:5:2 batch/"$i"; done
+
+
+#white video mask center
+ffmpeg -f lavfi -i color=white:1920x1080 -i in.mp4 -filter_complex "[0:v][1:v] overlay=(W-w)/2:(H-h)/2:enable='between(t,0,20)',unsharp=3:3:1.5" -pix_fmt yuv420p -y -t 4 output.mp4
+
+#black video mask center
+ffmpeg -f lavfi -i color=black:1920x1080 -i in.mp4 -filter_complex "[0:v][1:v] overlay=(W-w)/2:(H-h)/2:enable='between(t,0,20)',unsharp=3:3:1.5" -pix_fmt yuv420p -y -t 4 output.mp4
+
 
 
 
