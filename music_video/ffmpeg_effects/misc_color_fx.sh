@@ -69,13 +69,22 @@ num=0; for i in *.mp4; do mv "$i" "$(printf '%04d' $num).mp4"; ((num++)); done
 
 #batch w 1920
 for i in *.mp4; do ffmpeg -i "$i" -vf scale=1920:-1,unsharp=3:5:2 batch/"$i"; done
+mkdir batch;for i in *.mp4; do ffmpeg -i "$i" -vf scale=1920:-2,unsharp=3:5:2 batch/"$i"; done
 
+#batch
+mkdir batch; for i in *.mp4; do ffmpeg -f lavfi -i color=black:1920x1080 -i "$i" -filter_complex "[0:v][1:v] overlay=(W-w)/2:(H-h)/2:enable='between(t,0,20)',unsharp=3:3:1.5" -pix_fmt yuv420p -t 10 -y batch/"$i"; done
+#batch
+mkdir batch; for i in *.mp4; do ffmpeg -f lavfi -i color=white:1920x1080 -i "$i" -filter_complex "[0:v][1:v] overlay=(W-w)/2:(H-h)/2:enable='between(t,0,20)',unsharp=3:3:1.5" -pix_fmt yuv420p -t 10 -y batch/"$i"; done
 
 #white video mask center
 ffmpeg -f lavfi -i color=white:1920x1080 -i in.mp4 -filter_complex "[0:v][1:v] overlay=(W-w)/2:(H-h)/2:enable='between(t,0,20)',unsharp=3:3:1.5" -pix_fmt yuv420p -y -t 4 output.mp4
 
 #black video mask center
 ffmpeg -f lavfi -i color=black:1920x1080 -i in.mp4 -filter_complex "[0:v][1:v] overlay=(W-w)/2:(H-h)/2:enable='between(t,0,20)',unsharp=3:3:1.5" -pix_fmt yuv420p -y -t 4 output.mp4
+
+
+
+
 
 
 
