@@ -101,3 +101,8 @@ mkdir batch; for i in *.mp4; do ffmpeg -f lavfi -i color=black:1920x1080 -i "$i"
 # batch white bg
 mkdir batch; for i in *.mp4; do ffmpeg -f lavfi -i color=white:1920x1080 -i "$i" -filter_complex "[0:v][1:v] overlay=(W-w)/2:(H-h)/2:enable='between(t,0,20)',unsharp=3:3:1.5" -pix_fmt yuv420p -t 10 -y batch/"$i"; done
 
+# thumb 16 tiles
+f=in.mp4; ffmpeg -y -ss 3 -i "$f" -vf "select=gt(scene\,0.4)" -frames:v 16 -vsync vfr -vf fps=fps=1/7 "${f%}out%02d.jpg"; ffmpeg -y -pattern_type glob -i "$f*.jpg"  -filter_complex scale=360:-1,tile=4x4 "${f%}output.png"
+
+# thumb 9 tiles
+f=in.mp4; ffmpeg -y -ss 3 -i "$f" -vf "select=gt(scene\,0.4)" -frames:v 9 -vsync vfr -vf fps=fps=1/5 "${f%}out%02d.jpg"; ffmpeg -y -pattern_type glob -i "$f*.jpg"  -filter_complex scale=480:-2,tile=3x3 "${f%}output.png"
