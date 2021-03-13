@@ -35,20 +35,6 @@ ffmpeg -i input.mp4 -vf "split [main][tmp]; [tmp] lutrgb="r=negval:g=negval:b=ne
 ffmpeg -i input.mp4 -vf fps=fps=1.5 -an -y output.mp4
 ffmpeg -i input.mp4 -vf fps=fps=3.5 -an -y output.mp4
 
-
-
-
-
-
-
-
-
-
-
-# rename
-num=0; for i in *.mp4; do mv "$i" "$(printf '%04d' $num).mp4"; ((num++)); done
-
-
 #black video mask
 #ffplay -t 7200 -s 1920x1080 -f rawvideo -pix_fmt rgb24  -i /dev/zero
 
@@ -64,30 +50,12 @@ num=0; for i in *.mp4; do mv "$i" "$(printf '%04d' $num).mp4"; ((num++)); done
 
 #ffmpeg -f lavfi -i color=white:1920x1080 -i 0067.mp4  -filter_complex "[0:v][1:v] overlay=125:125:enable='between(t,0,20)',unsharp=3:3:1.5" -pix_fmt yuv420p  -y -t 4 output.mp4
 
-#batch h 1080
-#for i in *.mp4; do ffmpeg -i "$i" -vf scale=-1:1080,unsharp=3:5:2 batch/"$i"; done
-
-#batch w 1920
-for i in *.mp4; do ffmpeg -i "$i" -vf scale=1920:-1,unsharp=3:5:2 batch/"$i"; done
-mkdir batch;for i in *.mp4; do ffmpeg -i "$i" -vf scale=1920:-2,unsharp=3:5:2 batch/"$i"; done
-
-#batch
-mkdir batch; for i in *.mp4; do ffmpeg -f lavfi -i color=black:1920x1080 -i "$i" -filter_complex "[0:v][1:v] overlay=(W-w)/2:(H-h)/2:enable='between(t,0,20)',unsharp=3:3:1.5" -pix_fmt yuv420p -t 10 -y batch/"$i"; done
-#batch
-mkdir batch; for i in *.mp4; do ffmpeg -f lavfi -i color=white:1920x1080 -i "$i" -filter_complex "[0:v][1:v] overlay=(W-w)/2:(H-h)/2:enable='between(t,0,20)',unsharp=3:3:1.5" -pix_fmt yuv420p -t 10 -y batch/"$i"; done
 
 #white video mask center
 ffmpeg -f lavfi -i color=white:1920x1080 -i in.mp4 -filter_complex "[0:v][1:v] overlay=(W-w)/2:(H-h)/2:enable='between(t,0,20)',unsharp=3:3:1.5" -pix_fmt yuv420p -y -t 4 output.mp4
 
 #black video mask center
 ffmpeg -f lavfi -i color=black:1920x1080 -i in.mp4 -filter_complex "[0:v][1:v] overlay=(W-w)/2:(H-h)/2:enable='between(t,0,20)',unsharp=3:3:1.5" -pix_fmt yuv420p -y -t 4 output.mp4
-
-
-
-
-
-
-
 
 #https://www.rapidtables.com/web/color/magenta-color.html
 #https://ffmpeg.org/ffmpeg-filters.html#Examples-70
@@ -99,8 +67,6 @@ ffplay -i a.mp4 -vf "unsharp=3:3:1,edgedetect=low=0.1:high=0.1,curves=preset=lig
 ffmpeg -i a.mp4 -i b.mp4 -filter_complex "[0:v:0]pad=iw*2:ih[bg]; [bg][1:v:0]overlay=w" -strict -2 -t 20 -y c.mp4
 ffmpeg -i c.mp4 -vf scale=-1:1080 -c:v libx264  -preset veryslow d.mp4
 
-
-
 # disco
 ffplay -i a.mp4 -vf "unsharp=3:5:2,eq=saturation=0.2:gamma=0.8:brightness=0.3:contrast=1.4,lutrgb=r=negval:g=negval:b=negval,hue='H=2*PI*t: s=sin(2*PI*t)+1',lutrgb=g=0:b=55,lutrgb=r=negval:g=negval:b=negval,hue='H=2*PI*t: s=sin(2*PI*t)+1'" -fast -threads 2 -strict 2
 
@@ -109,3 +75,29 @@ ffplay -i a.mp4 -vf "unsharp=3:5:2,eq=saturation=0.2:gamma=0.8:brightness=0.3:co
 
 #https://de.wikipedia.org/wiki/Datei:FFmpeg-Logo.svg
 #https://de.wikipedia.org/wiki/Datei:The_GIMP_icon_-_gnome.svg
+
+
+#####################################################
+#
+#   file batches
+#
+#####################################################
+
+# rename
+num=0; for i in *.mp4; do mv "$i" "$(printf '%04d' $num).mp4"; ((num++)); done
+
+# batch h 1080
+#for i in *.mp4; do ffmpeg -i "$i" -vf scale=-1:1080,unsharp=3:5:2 batch/"$i"; done
+
+# batch w 1920
+#for i in *.mp4; do ffmpeg -i "$i" -vf scale=1920:-1,unsharp=3:5:2 batch/"$i"; done
+
+# batch w 1920
+mkdir batch;for i in *.mp4; do ffmpeg -i "$i" -vf scale=1920:-2,unsharp=3:5:2 batch/"$i"; done
+
+# batch black bg
+mkdir batch; for i in *.mp4; do ffmpeg -f lavfi -i color=black:1920x1080 -i "$i" -filter_complex "[0:v][1:v] overlay=(W-w)/2:(H-h)/2:enable='between(t,0,20)',unsharp=3:3:1.5" -pix_fmt yuv420p -t 10 -y batch/"$i"; done
+
+# batch white bg
+mkdir batch; for i in *.mp4; do ffmpeg -f lavfi -i color=white:1920x1080 -i "$i" -filter_complex "[0:v][1:v] overlay=(W-w)/2:(H-h)/2:enable='between(t,0,20)',unsharp=3:3:1.5" -pix_fmt yuv420p -t 10 -y batch/"$i"; done
+
