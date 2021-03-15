@@ -1,0 +1,53 @@
+ffmpeg -i in.mp4 -vf "
+split [main][tmp];
+[tmp]
+
+lutyuv=y=negval:enable='(between(t,3,3.1))',
+
+lutyuv=u='(val-maxval/2)*2+maxval/2':v='(val-maxval/2)*2+maxval/2':enable='(between(t,3,3.4))',
+lutyuv="y=3*val":enable='(between(t,3,3.4))',
+hue=s=3:enable='(between(t,3,3.4))',
+eq=contrast=3:enable='(between(t,3,3.4))',
+
+
+lutyuv="u=128:v=128":enable='(between(t,3.4,3.5))',
+lutyuv=y=gammaval(0.5):enable='(between(t,3.4,3.9))',
+lutrgb=r=0:g=0:enable='(between(t,3.4,3.7))',
+
+
+lutrgb=r=negval:g=negval:b=negval:enable='(between(t,3.7,3.9))',
+lutyuv="y=2*val":enable='(between(t,4.1,4.2))'
+
+[tmp2];
+
+[main][tmp2] overlay=x=W/2  "  -t 6  -y yout2.mp4
+
+
+# -crf 70
+
+# https://github.com/amiaopensource/ffmpeg-artschool/tree/main/bash_scripts
+# https://amiaopensource.github.io/ffmpeg-artschool/scripts.html#bitplane
+# https://amiaopensource.github.io/ffmpeg-artschool/scripts.html#corruptor
+
+# ---- rotate ---
+# transpose=2
+# transpose=2,transpose=2
+# transpose=2,transpose=2,transpose=2
+
+# blend=all_mode='pinlight':repeatlast=1:all_opacity=.5
+# blend=all_mode=heat:c0_opacity=.75:c1_opacity=.25
+
+# addition, addition128, grainmerge, and, average, burn, darken, difference, difference128,
+# grainextract, divide, dodge, freeze, exclusion, extremity, glow, hardlight, hardmix, heat,
+# lighten, linearlight, multiply, multiply128, negation, normal, or, overlay,
+# phoenix, pinlight, reflect, screen, softlight, subtract, vividlight, xor
+
+# overlay=x=W/2
+# overlay=x='if(lte(t,5),-w+(W+w)/2/5*t,(W-w)/2)':y=(H-h)/2
+# overlay=x='if(lte(t,5),(W+w)/2/5*t,(W)/2)':y=(H-h)/2
+# overlay=x=(main_w-overlay_w)/2:y=(main_h-overlay_h)/2
+
+# chromashift=10:10:-15:-15:enable='(between(t,3,3.4))',
+# rgbashift=rh=1:bv=1:gh=-1:bh=5:rv=-1:enable='(between(t,3,4))',
+# rgbashift=rh=15:bv=15:gh=-15:bh=15:rv=-50:enable='(between(t,3,4))'
+# colorbalance=gs=0.9:bh=1:enable='(between(t,3.4,3.5))',
