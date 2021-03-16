@@ -25,6 +25,18 @@ ffplay -i in.mp4 -vf lenscorrection=k1=-0.56:k2=0.3
 ffplay -i in.mp4 -vf lenscorrection=k1=-0.227:k2=-0.022
 ffplay -i in.mp4 -vf lenscorrection=k1=-0.08101:k2=0
 
+# saturate
+ffplay -i in.mp4 -vf "hue=s=4:h=3,eq=saturation=1.2:gamma=0.8:brightness=0.1:contrast=1.8" -an
+
+# perspective fx
+ffplay -i in.mp4 -vf "perspective=660:690:88:147:150:615:982:868,rgbashift=rh=5:rv=-5:gh=-1:bh=-1:bv=-5,shuffleframes=4 3 2 1 0,shuffleplanes=0:2:1:3,hue=s=4:h=3,eq=saturation=1.2:gamma=0.8:brightness=0.1:contrast=1.8"
+
+# perspective fx
+ffplay -i in.mp4 -vf "perspective=660:690:118:147:150:615:982:868,rgbashift=rh=5:rv=-5:gh=-1:bh=-1:bv=-5,shuffleframes=4 3 2 1 0,shuffleplanes=0:2:1:3,hue=s=4:h=3,eq=saturation=1.2:gamma=0.8:brightness=0.1:contrast=1.8"
+
+# perspective fx
+ffplay -i in.mp4 -vf "perspective=860:1160:881:817:915:1315:782:868,hue=s=10:h=10,eq=gamma=0.5:brightness=0.4:contrast=0.6,vflip"
+
 
 
 
