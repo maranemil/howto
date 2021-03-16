@@ -632,3 +632,13 @@ https://www.php.net/manual/en/function.array-search.php
 https://www.php.net/manual/en/function.extract.php
 https://www.php.net/manual/en/function.array-column.php
 */
+
+
+##############################################################
+# decode all chars except  + char - for ajax calls
+##############################################################
+
+$str = "my=apples&are=green+and+red";
+print_r(rawurldecode($str));
+
+
