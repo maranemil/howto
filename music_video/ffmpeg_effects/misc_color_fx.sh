@@ -1,4 +1,42 @@
 
+# edgedetect
+ffplay -i BeeFarm.mp4 -vf edgedetect=low=20/255:high=10/225:mode=wires
+ffplay -i BeeFarm.mp4 -vf edgedetect=20/255:50/255:wires
+ffplay -i BeeFarm.mp4 -vf edgedetect=low=0.8:high=0.1
+
+# crop square
+ffplay -i BeeFarm.mp4 -vf crop=w=600:h=600:x=300:y=300
+
+# draw box
+ffplay -i BeeFarm.mp4 -vf drawbox=x=20:y=20:w=in_w/3:h=ih/2:color=pink
+
+
+# drawgrid
+ffplay -i BeeFarm.mp4 -vf drawgrid=width=100:height=100:thickness=2:color=white@0.9
+
+# geq
+ffplay -i BeeFarm.mp4 -vf "geq=r='X/W*r(X,Y)':g='(1-X/W)*g(X,Y)':b='(H-Y)/H*b(X,Y)'"
+ffplay -i BeeFarm.mp4 -vf "geq=lum_expr='(p(X,Y)+(256-p(X-4,Y-4)))/2"
+
+
+# gen rgb
+ffplay -i BeeFarm.mp4 -vf lutrgb=163:u=5-10:v=5
+
+# add noise
+ffplay -i BeeFarm.mp4 -vf noise=alls=80:allf=t+u
+
+# add pad box
+ffplay -i BeeFarm.mp4 -vf pad=width=in_w+50:height=in_h+50:x=24:y=24:color=yellow
+
+# shuffleplanes
+ffplay -i BeeFarm.mp4 -vf shuffleplanes=0:2:1:3
+
+# unsharp
+ffplay -i BeeFarm.mp4 -vf unsharp=5:5:1.0:5:5:5.0
+ffplay -i BeeFarm.mp4 -vf unsharp=7:7:-2:7:7:-2
+
+# tile
+ffmpeg -ss 00:00:10 -i movie.avi -frames 1 -vf "select=not(mod(n\,1000)),scale=320:240,tile=2x3" out.png
 
 # saturation
 ffplay -i input.mp4 -vf "scale=-1:1080,,eq=saturation=1.9" -an
