@@ -391,3 +391,17 @@
 | https://www.youtube.com/watch?v=bcjq3koKpFE&list=PLXmMXHVSvS-AIM_xZvxAgjXaKXvJae80L  | AJAX Promises in jQuery | 
 | https://www.youtube.com/watch?v=IrclKk_nWHI&list=PLXmMXHVSvS-DvYEVy6JQUAjannaohHXRV  | HTTP Requests in Python | 
 | https://www.youtube.com/watch?v=_X-pjh4Vd10&list=PLei96ZX_m9sXmZJqhaTdIGGOJLStV4YbM  | Fastify | 
+| https://www.youtube.com/watch?v=ccsz9FRy-nk&list=PLC3y8-rFHvwgeQIfSDtEGVvvSEPDkL_1f  | Vue JS 3 Tutorial Introduction | 
+| https://www.youtube.com/watch?v=QFaFIcGhPoM&list=PLC3y8-rFHvwgg3vaYJgHGnModB54rxOk3  | ReactJS Introduction | 
+| https://www.youtube.com/watch?v=9boMnm5X9ak&list=PLC3y8-rFHvwheJHvseC3I0HuYI2f46oAK  | React Redux Tutorials Introduction | 
+| https://www.youtube.com/watch?v=cF2lQ_gZeA8&list=PLC3y8-rFHvwisvxhZ135pogtX7_Oe3Q3A  | React Hooks Tutorial Introduction | 
+| https://www.youtube.com/watch?v=bV8emCBmFHk&list=PLC3y8-rFHvwilEuCqFGTL5Gt5U6deIrsU  | Angular Material Tutorial Introduction | 
+| https://www.youtube.com/watch?v=QFaFIcGhPoM&list=PLC3y8-rFHvwgg3vaYJgHGnModB54rxOk3  | ReactJS Tutorial Introduction | 
+| https://www.youtube.com/watch?v=0eWrpsCLMJQ&list=PLC3y8-rFHvwhBRAgFinJR8KHIrCdTkZcZ  | Angular Tutorial Introduction | 
+| https://www.youtube.com/watch?v=6fj0cpmMiVg&list=PLC3y8-rFHvwhgWwm5J3KqzX47n7dwWNrq  | npm Tutorial for Beginners | 
+| https://www.youtube.com/watch?v=vLvNr3Wa5YI&list=PLC3y8-rFHvwj200LLotCYum_9wmGeTJx9  | Mean Stack Tutorial MongoDb, Express, Angular CLI and Node | 
+| https://www.youtube.com/watch?v=tqBi_Tou6wQ&list=PLC3y8-rFHvwiCJD3WrAFUrIMkGVDE0uqW  | Electron js Tutorial | 
+| https://www.youtube.com/watch?v=saVf5Z60uEo&list=PLC3y8-rFHvwjMjwF25ixu1j1uS63hm4p0  | Vue js 2 Tutorial  | 
+| https://www.youtube.com/watch?v=9gEPiIoAHo8&list=PLC3y8-rFHvwiXX1maB5o-CZAIHy4I_ILv  | MongoDB PHP Tutorial Driver and PHP Library Set Up | 
+| https://www.youtube.com/watch?v=aCOBakZSdmE&list=PLC3y8-rFHvwjfc2yJlldxjodwpUhVvDPg  | AngularJS Tutorial for Beginners  | 
+| https://www.youtube.com/watch?v=YYnf5vJRuUY&list=PLC3y8-rFHvwh11bWtwm3_qKvo46uDmaal  | MongoDB Tutorial for Beginners | 
