@@ -1,0 +1,43 @@
+
+####################################################################
+Automatic video editing
+####################################################################
+
+https://tratt.net/laurie/blog/entries/automatic_video_editing.html
+
+
+https://gist.github.com/vivekhaldar/92368f35da2d8bb8f12734d840d11cfa
+https://gist.github.com/vivekhaldar/595af6c6aa06ed061f6f3f6c97d087c3
+https://github.com/ltratt/aeschylus
+
+https://www.youtube.com/watch?v=gRN16VkHBYk
+https://www.youtube.com/watch?v=Bdoi7BDhrWc
+
+https://obsproject.com/
+
+
+ffmpeg -hide_banner \
+  -i camera0.nut \
+  -filter_complex " \
+    [0:a]pan=mono|c0=c0+c1[a]; \
+    [0:v] \
+      fps=fps=24, \
+      crop=1400:1045:330:0, \
+      vaguedenoiser, \
+      chromakey=3e5b0b:0.04:0.02, \
+      despill=type=green:mix=0.5:expand=0.3:brightness=0:green=-1:blue=0 \
+    [camera0]; \
+      color=c=0x595959:r=24:s=1920x1080 \
+    [screen0]; \
+    [screen0][camera0] \
+      overlay=shortest=1:x=W-w+0:y=H-h+1 \
+    [v]" \
+  -map "[a]" -map "[v]" \
+  -f nut -c:v libx264 -crf 0 -preset ultrafast -c:a flac out.nut
+
+
+  ffmpeg \
+  -use_wallclock_as_timestamps 1 \
+  -f v4l2 -i /dev/video0 \
+  -f sndio -i snd/0 \
+  -map "0:v,1:a" -map "1:a" -copyts recording.mkv
