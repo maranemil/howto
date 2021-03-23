@@ -642,3 +642,18 @@ $str = "my=apples&are=green+and+red";
 print_r(rawurldecode($str));
 
 
+##############################################################
+#   https://www.php.net/manual/de/function.setlocale.php
+##############################################################
+
+# unix cmd check
+locale -a
+
+# set
+setlocale(LC_ALL, 'en_US') or die('Locale not installed');
+setlocale(LC_ALL, 'de_DE@euro', 'de_DE', 'deu_deu');
+setlocale(LC_COLLATE,"de_DE.utf8");
+setlocale (LC_ALL, 'de_DE.utf8');
+
+# install new language pack
+# sudo apt-get install language-pack-es
