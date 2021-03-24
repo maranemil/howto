@@ -678,3 +678,76 @@ grep FPRINT /etc/sysconfig/authconfig
 authconfig --disablefingerprint --update
 
 https://stackoverflow.com/questions/13653692/device-descriptor-read-64-error-110
+
+
+###################################################
+#
+#	What are USB device resets?
+#
+###################################################
+
+new low-speed USB device number 8 using xhci_hcd
+ucsi_acpi USBC000:00: possible UCSI driver bug 2
+
+https://www.spinics.net/lists/linux-usb/msg186772.html
+a/drivers/usb/typec/ucsi/ucsi.h
+
+
+https://askubuntu.com/questions/729558/how-do-i-get-usb-3-0-driver-working-or-check-that-it-is-already-working
+https://superuser.com/questions/668911/what-are-usb-device-resets
+https://www.cyberciti.biz/faq/rhel-redhat-centos-kernel-usb-reset-high-speed-ehci_hcd/
+https://forum.ubuntuusers.de/topic/fehler-reset-low-speed-usb-device-number-using/
+https://forum.odroid.com/viewtopic.php?t=34790
+
+The problem could be in marginal voltage (VBUS) supply to the drives, or VBUS glitches, or signal degradation on signal wires. I would try extremely short high-quality certified cables first, and check if the statistics of error changes.
+
+vi /etc/modprobe.d/usb-core-options
+options usbcore autosuspend=-1
+
+dmesg
+dmesg |grep xhc
+lsusb
+lsusb -t
+lsusb -v
+grep -i xhci /boot/config-$(uname -r)
+lspci -v | grep xhci
+
+
+# cyberciti
+lspci |grep -i ehci
+# lsusb
+# lsusb -v | less
+# vi /etc/modprobe.d/blacklist.conf
+blacklist ehci_hcd
+mkinitrd -o /boot/initrd.$(uname -r).img $(uname -r)
+reboot
+
+# Linux: Disable ehci_hcd Driver
+cd /sys/bus/pci/drivers/ehci_hcd/
+ls -l
+
+cat /sys/module/usbcore/parameters/autosuspend # 2
+ls -l /etc/modprobe.d/
+
+
+# forum.ubuntuusers.de
+Energiesparmodus ist noch Aktiv
+
+cat /sys/module/usbcore/parameters/autosuspend 2
+Teste es mal Temporär mit
+echo "-1" | sudo tee -a /sys/module/usbcore/parameters/autosuspend
+
+cat /etc/modprobe.d/disable-usb-autosuspend.conf
+options usbcore autosuspend=-1
+
+--
+# forum.odroid.com
+Haveged is an entropy gathering daemon that monitors CPU cache timings.
+
+sudo apt install haveged
+sudo systemctl enable haveged
+sudo systemctl start haveged
+
+
+
+

@@ -657,3 +657,16 @@ setlocale (LC_ALL, 'de_DE.utf8');
 
 # install new language pack
 # sudo apt-get install language-pack-es
+
+################################################
+#  sort öäü
+################################################
+/*
+https://sandbox.onlinephpfunctions.com/
+https://www.php.net/manual/de/function.utf8-decode.php
+https://www.php.net/manual/en/function.strtr.php
+*/
+
+$str = strtr(utf8_decode("änderung"), utf8_decode("äåö"), "aao");
+echo $str;
+
