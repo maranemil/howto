@@ -670,3 +670,39 @@ https://www.php.net/manual/en/function.strtr.php
 $str = strtr(utf8_decode("änderung"), utf8_decode("äåö"), "aao");
 echo $str;
 
+
+
+
+
+################################################
+# print iframes with urls
+################################################
+
+#header("X-Frame-Options: GOFORIT");
+
+$str = "
+https://demo.themegrill.com/demos/?theme=Spacious
+https://demo.mageewp.com/peony-style1/
+https://demos.famethemes.com/onepress/
+https://themeisle.com/demo/?theme=Hestia
+http://demos.cryoutcreations.eu/wordpress/septera/
+https://demo.themefreesia.com/event/
+http://www.acmethemes.com/demo/?theme=corporate-plus
+";
+
+$fp = explode("\n",$str);
+$maxItm = count($fp);
+
+echo "Here are ".$maxItm." items<br>";
+
+if(count($fp) > 0) {
+	for($i=0;$i<$maxItm;$i++){
+		if(trim($fp[$i])!=""){
+			echo '<iframe style="width:700px; height: 600px" src="'.$fp[$i].'"></iframe><br>';
+			#echo '<embed style="width:700px; height: 600px" src="'.$fp[$i].'"></embed><br>';
+			echo '<a href="'.$fp[$i].'" target="new">'.$fp[$i].'</a><br>';
+		}
+	}
+}
+
+
