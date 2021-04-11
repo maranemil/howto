@@ -299,7 +299,14 @@
 | https://www.youtube.com/watch?v=Kp3HGwlXwCk | BASIC JAVASCRIPT PROJECTS | 
 | https://www.youtube.com/watch?v=1Rs2ND1ryYc | CSS Tutorial - Zero to Hero (Complete Course)  | 
 | https://www.youtube.com/watch?v=zg9ih6SVACc | Data Structures |
-
+| https://www.youtube.com/watch?v=0B5eIE_1vpU |  Scikit-learn Crash Course | 
+| https://www.youtube.com/watch?v=Oe421EPjeBE |  Node.js and Express.js - Full Course | 
+| https://www.youtube.com/watch?v=w7ejDZ8SWv8 |  React JS Crash Course 2021 | 
+| https://www.youtube.com/watch?v=HchMW8EhWPU | 	 Building a Symfony 3 App  | 
+| https://www.youtube.com/watch?v=w7ejDZ8SWv8 |  React JS Crash Course 2021 | 
+| https://www.youtube.com/watch?v=sBws8MSXN7A | React JS Crash Course (2019) | 
+| https://www.youtube.com/watch?v=qZXt1Aom3Cs | Vue JS Crash Course 2021 | 
+| https://www.youtube.com/watch?v=mTz0GXj8NN0 | Next.js Crash Course 2021 | 
 
 
 | Link URL  | Playlist |
