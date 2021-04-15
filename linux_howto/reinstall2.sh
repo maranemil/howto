@@ -389,6 +389,10 @@ sudo apt install apache2 libapache2-mod-php7.2  -y
 sudo apt -y install curl -y
 sudo apt -y install mysql-server mysql-client -y
 sudo apt install -y mongodb mongodb-clients mongodb-server -y
+
+sudo apt-get install php-mysql
+sudo service apache2 restart
+
 #---------------------
 sudo mysql -u root -p
 use mysql;
