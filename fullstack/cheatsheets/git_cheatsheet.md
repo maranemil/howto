@@ -23,3 +23,6 @@ Check branch last edit | git for-each-ref --sort='-authordate:iso8601' --format=
 Print modified files into line | git ls-files --modified |  tr '\n' ' '
 Print modified files  | git ls-files --modified
 Remove file from commited | git restore --staged <file>
+
+
+

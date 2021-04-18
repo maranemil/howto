@@ -379,3 +379,8 @@ ffmpeg -i in.mp4 -vf scale=-1:1080 -an out.mp4
 
 #### For IPv6:
 * nameserver 2001:4860:4860::8888,2001:4860:4860::8844, 2606:4700:4700::1111,2606:4700:4700::1001
+
+#### Fast VM install 
+* sudo apt install vagrant
+* vagrant init ubuntu/trusty64; vagrant up --provider virtualbox
+* sudo apt install xfce4

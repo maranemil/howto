@@ -113,7 +113,13 @@ ffplay -i a.mp4 -vf "unsharp=3:5:2,eq=saturation=0.2:gamma=0.8:brightness=0.3:co
 
 #https://de.wikipedia.org/wiki/Datei:FFmpeg-Logo.svg
 #https://de.wikipedia.org/wiki/Datei:The_GIMP_icon_-_gnome.svg
+# https://www.programmersought.com/article/223051060/
 
+# red 2
+ffplay -i BeeFarm.mp4 -vf lutrgb=r=val/2:g=val/2:b=val*2:u=18:v=28:y=val*0.9
+
+# cyan
+ffplay -i BeeFarm.mp4 -vf lutrgb=r=val/2:g=val/2:b=val*4:u=48:v=18:y=val*0.9,hue=160,colorlevels=rimin=0.158:gimin=0.08:bimin=0.019,eq=saturation=1.5:gamma=0.8:brightness=0.3:contrast=1.8
 
 #####################################################
 #
