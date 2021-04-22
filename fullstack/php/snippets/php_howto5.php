@@ -706,3 +706,8 @@ if(count($fp) > 0) {
 }
 
 
+################################################
+# sort array column
+################################################
+# https://stackoverflow.com/questions/16138395/sum-values-of-multidimensional-array-by-key-without-loop
+$sumColumn = array_sum(array_column($arr,'fieldname'));
