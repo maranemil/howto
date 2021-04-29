@@ -305,4 +305,39 @@ sudo apt install python3-testresources
 
 
 # https://storage.googleapis.com/download.tensorflow.org/example_images/592px-Red_sunflower.jpg
+
+------------------------------------
+
+https://github.com/kastnerkyle/kaggle-dogs-vs-cats
+https://github.com/shaoanlu/dogs-vs-cats-redux
+
+data sets
+
+https://github.com/maples1993/Cats_vs_Dogs
+https://github.com/ADlead/Dogs-Cats
+https://github.com/vyomshm/Cats-Dogs-with-keras
+
+
+https://www.kaggle.com/gpreda/cats-or-dogs-using-cnn-with-transfer-learning
+https://medium.com/@harsathAI/cats-and-dogs-classifier-convolutional-neural-network-with-python-and-tensorflow-9-steps-of-6259c92802f3
+https://www.tensorflow.org/datasets/catalog/cats_vs_dogs
+https://github.com/vyomshm/Cats-Dogs-with-keras
+
+
+--
+
+https://keras.io/api/preprocessing/
+https://keras.io/api/preprocessing/image/
+https://keras.io/api/models/sequential/
+https://blog.keras.io/building-powerful-image-classification-models-using-very-little-data.html
+https://gist.github.com/fchollet/0830affa1f7f19fd47b06d4cf89ed44d
+https://gist.github.com/fchollet/7eb39b44eb9e16e59632d25fb3119975
+https://www.tensorflow.org/tutorials/images/classification
+https://www.tensorflow.org/tutorials
+
+
+
+
+
+
 """
