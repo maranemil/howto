@@ -628,3 +628,72 @@ foreach($arr as $el){
 
 =cut
 
+
+
+
+
+########################################################################
+# How to properly use the try catch in perl that error.pm
+########################################################################
+
+# https://stackoverflow.com/questions/10342875/how-to-properly-use-the-try-catch-in-perl-that-error-pm-provides
+
+
+use Try::Tiny;
+
+try {
+        die "foo";
+} catch {
+        warn "caught error: $_";
+};
+
+
+# or
+
+eval {
+    die "Oops!";
+    1;
+} or do {
+    my $e = $@;
+    print("Something went wrong: $e\n");
+};
+
+
+
+
+
+########################################################################
+## loop + eval test
+########################################################################
+
+# https://www.tutorialspoint.com/execute_perl_online.php
+# https://onecompiler.com/perl
+# https://ideone.com/
+
+
+# http://technix.github.io/Perl-Analyzer/
+# https://en.wikipedia.org/wiki/Perl::Critic
+# https://github.com/Perl-Critic/Perl-Critic
+# https://en.wikipedia.org/wiki/PerlTidy
+# https://github.com/trizen/perl-scripts/blob/master/Analyzers/perl_code_analyzer.pl
+
+
+
+my @numbers      = ( 1, 3 .. 7 );
+foreach $number ( @numbers ) {
+
+    eval {
+        if($number eq 3){
+            next;
+        }
+        if($number eq 4){
+            next;
+        }
+    };
+
+    if ($@){
+        print $@;
+    }
+
+print $number. "\n";
+}
