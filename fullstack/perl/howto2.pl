@@ -658,10 +658,6 @@ eval {
     print("Something went wrong: $e\n");
 };
 
-
-
-
-
 ########################################################################
 ## loop + eval test
 ########################################################################
@@ -739,5 +735,33 @@ print("\n");
 # Output:
 # 1234
 # 123skip4
+
+#http://perlmeme.org/faqs/manipulating_text/eval.html
+#https://perldoc.perl.org/functions/eval
+#http://perl-seiten.privat.t-online.de/html/perl_eval.html
+#https://users.cs.cf.ac.uk/Dave.Marshall/PERL/node114.html
+#https://www.thegeekstuff.com/2010/05/perl-eval-function/
+#https://www.tutorialspoint.com/perl/perl_eval.htm
+#https://perl.developpez.com/documentations/en/5.8.9/functions/eval.html
+
+eval {  };
+if($@) { print "Error: $@" }
+
+
+eval {}
+or do  { print "Error: $@" }
+
+#https://perldoc.perl.org/functions/substr
+#https://perlmaven.com/perl-split
+#https://perldoc.perl.org/functions/split
+
+try {
+    # do something here
+}
+catch {
+    my @errorCode = split(/\n/,$_ );
+    $errorCode[1] = $errorCode[0] . substr($errorCode[1], 0, -45);
+    $errorMsg = "Error: " .$errorCode[1] . "...";
+};
 
 
