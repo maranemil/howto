@@ -677,8 +677,6 @@ eval {
 # https://en.wikipedia.org/wiki/PerlTidy
 # https://github.com/trizen/perl-scripts/blob/master/Analyzers/perl_code_analyzer.pl
 
-
-
 my @numbers      = ( 1, 3 .. 7 );
 foreach $number ( @numbers ) {
 
@@ -695,5 +693,51 @@ foreach $number ( @numbers ) {
         print $@;
     }
 
-print $number. "\n";
+    print $number. "\n";
 }
+
+##############################################
+#
+# Exiting subroutine via next
+#
+# next cannot be used to exit a block that returns a value such as eval {}, sub {}, # or do {}, and should not be used to exit a grep() or map() operation.
+#
+#
+# https://www.tutorialspoint.com/execute_perl_online.php
+# https://www.perlmonks.org/?node_id=588253
+# https://www.mkssoftware.com/docs/man5/perlfunc.5.asp
+# https://www.mkssoftware.com/docs/perl/pod/perlfunc.asp
+# https://docstore.mik.ua/orelly/perl/prog3/ch29_02.htm
+# https://perldoc.perl.org/perldiag
+# https://perldoc.perl.org/perlsub
+# https://stackoverflow.com/questions/9796333/perl-why-should-last-not-be-used-to-exit-a-grep-or-map
+#
+##############################################
+
+foreach my $var (1, 2, 3, "skip", 4) {
+   eval {                     # This block is ignored.
+      if ($var eq "skip") {
+         next;
+      }
+   };
+   print $var;
+}
+
+print("\n");
+
+foreach my $var (1, 2, 3, "skip", 4) {
+   {                          # This block exits.
+      if ($var eq "skip") {
+         next;
+      }
+   }
+   print $var;
+}
+
+print("\n");
+
+# Output:
+# 1234
+# 123skip4
+
+
