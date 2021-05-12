@@ -13,6 +13,12 @@ tf.config.threading.set_intra_op_parallelism_threads(2)
 !unzip -q kagglecatsanddogs_3367a.zip
 !ls
 !ls PetImages
+
+
+PetImages
+ - Cat
+ - Dog
+
 """
 
 #with tf.device('/CPU:0'):#
