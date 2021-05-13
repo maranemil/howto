@@ -711,3 +711,43 @@ if(count($fp) > 0) {
 ################################################
 # https://stackoverflow.com/questions/16138395/sum-values-of-multidimensional-array-by-key-without-loop
 $sumColumn = array_sum(array_column($arr,'fieldname'));
+
+################################################
+# autoload + namespaces + guzzle
+################################################
+/*
+composer init
+# autoload psr-4 app\\ ./app
+# namespace app;
+composer update
+require_once vendor/autoloader.php
+https://packagist.org/packages/guzzlehttp/guzzle
+*/
+
+################################################
+# pdo
+################################################
+/*
+https://www.php.net/manual/en/pdostatement.fetchall.php
+https://www.php.net/manual/en/pdostatement.fetch.php
+*/
+
+$pdo = new PDO('mysql:host=$host; dbname=$database;', $user, $pass);
+$pdo->setAttribute(PDO::ATTR_ERRMODE,PDP::ERRMODE_EXCEPTION);
+
+# select
+$stmt = $pdo->prepare('SELECT * FROM sometable');
+$stmt->execute();
+$items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+# insert
+$stmt = $pdo->exec('INSERT INTO sometable (somefield) VALUES (NOW)');
+$stmt = $pdo->prepare('INSERT INTO sometable (somefield) VALUE (:somefield)');
+$stmt = bindValue(':somefield', $somefieldValue)
+$stmt->execute();
+
+################################################
+# SERVER POST GET
+################################################
+
+$SERVER["REQUEST_METHOD"] === 'POST'
