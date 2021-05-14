@@ -7,6 +7,9 @@ import PIL
 import image
 import tensorflow as tf
 
+tf.config.threading.set_inter_op_parallelism_threads(2)
+tf.config.threading.set_intra_op_parallelism_threads(2)
+
 from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
