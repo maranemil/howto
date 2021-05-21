@@ -751,3 +751,11 @@ $stmt->execute();
 ################################################
 
 $SERVER["REQUEST_METHOD"] === 'POST'
+
+################################################
+#  composer require
+################################################
+/*
+https://getcomposer.org/doc/03-cli.md#require
+php composer.phar require "symfony/symfony:5.2.*" --ignore-platform-reqs
+*/
