@@ -26,3 +26,11 @@ Remove file from commited | git restore --staged <file>
 Check remote branch last edit | git for-each-ref --sort='-committerdate:iso8601' --format='%(refname:short)%09%(author)%09%(committerdate:iso8601)' refs/remotes/origin
 Check remote branch last edit | git ls-remote --heads origin
 See "git help gc" for manual housekeeping.  | git gc
+remove staged file |git restore --staged <file>
+
+
+#### push existing local repo from cmd line to GitHub 
+
+* git remote add origin <GitHub url>
+* git branch -M main
+* git psuh -u origin main
