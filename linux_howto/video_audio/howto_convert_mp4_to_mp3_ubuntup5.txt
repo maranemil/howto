@@ -530,4 +530,66 @@ for i in *.mp4;do ffprobe  -hide_banner $i 2>&1 | grep -io invalid && rm $i; don
 
 
 
+################################################################################################
+# detect error partial file
+################################################################################################
+
+#
+ffmpeg -v error -i file.avi -f null - 2>error.log
+
+output
+[h264 @ 0x56390a5e8280] Invalid NAL unit size (9140 > 3260).
+[h264 @ 0x56390a5e8280] Error splitting the input into NAL units.
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0x56390a4fd0c0] stream 1, offset 0xaca094: partial file
+kaputt_2475801-720p.mp4: Invalid data found when processing input
+
+ffmpeg -v error -i file.avi -f null - 2>&1 | grep -io -m1 'partial file'
+# partial file
+
+# recursive
+for file in *.mp4; do ffmpeg -v error -i $file -t 5 -ss 00:02:00 -f null - 2>&1 | grep -io -m1 'partial file' && echo $file; done
+
+----------------------------------------------
+
+for file in *.mp4; do ffmpeg -v error -i "$file" -f null - >error.log 2>&1; print "$file"; done
+
+find . -name "*.mp4" -exec ffmpeg -v error -i "{}" -map 0:1 -f null - 2>error.log \;
+
+find . -name "*.mp4" -exec sh -c "ffmpeg -v error -i '{}' -map 0:1 -f null - 2>'{}.log'" \;
+
+
+################################################################################################
+# FFprobeTips
+################################################################################################
+
+https://trac.ffmpeg.org/wiki/FFprobeTips
+https://ffmpeg.org/ffprobe.html
+https://superuser.com/questions/100288/how-can-i-check-the-integrity-of-a-video-file-avi-mpeg-mp4
+https://stackoverflow.com/questions/34077302/quickly-check-the-integrity-of-video-files-inside-a-directory-with-ffmpeg
+https://stackoverflow.com/questions/14093452/grep-only-the-first-match-and-stop
+https://unix.stackexchange.com/questions/269342/how-to-check-if-a-video-is-completely-downloaded
+
+
+# show all info
+ffprobe -v error -show_format -show_streams
+
+# show size
+ffprobe -v error -show_entries format=size -of default=noprint_wrappers=1
+
+# show size only value
+ffprobe -v error -show_entries format=size -of default=noprint_wrappers=1:nokey=1
+
+# show duration
+ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1
+ffprobe -v error -select_streams v:0 -show_entries stream=duration -of default=noprint_wrappers=1:nokey=1
+
+# frame rate
+ffprobe -v error -select_streams v:0 -show_entries stream=avg_frame_rate -of default=noprint_wrappers=1:nokey=1
+
+# size
+ffprobe -v error -select_streams v:0 -show_entries stream=height,width -of csv=s=x:p=0
+
+
+
+
 
