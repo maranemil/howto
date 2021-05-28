@@ -759,3 +759,37 @@ $SERVER["REQUEST_METHOD"] === 'POST'
 https://getcomposer.org/doc/03-cli.md#require
 php composer.phar require "symfony/symfony:5.2.*" --ignore-platform-reqs
 */
+
+
+
+################################################
+#  get quarter
+################################################
+#https://thisinterestsme.com/php-get-quarter-date/
+#https://stackoverflow.com/questions/21185924/get-startdate-and-enddate-for-current-quarter-php
+
+
+//The "n" format character gives us
+//the month number without any leading zeros
+$month = date("n");
+//Calculate the year quarter.
+$yearQuarter = ceil($month / 3);
+//Print it out
+echo "We are currently in Q$yearQuarter of " . date("Y");
+#Getting the quarter of a given date.
+
+
+//Our date.
+$dateStr = '2019-08-19';
+//Get the month number of the date
+//in question.
+$month = date("n", strtotime($dateStr));
+//Divide that month number by 3 and round up
+//using ceil.
+$yearQuarter = ceil($month / 3);
+//Print it out
+echo "The date $dateStr fell in Q$yearQuarter of " . date("Y", strtotime($dateStr));
+
+
+# https://www.w3resource.com/mysql/date-and-time-functions/mysql-quarter-function.php
+# SELECT QUARTER('2009-05-18');
