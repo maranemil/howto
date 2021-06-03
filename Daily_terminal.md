@@ -384,3 +384,6 @@ ffmpeg -i in.mp4 -vf scale=-1:1080 -an out.mp4
 * sudo apt install vagrant
 * vagrant init ubuntu/trusty64; vagrant up --provider virtualbox
 * sudo apt install xfce4
+
+#### Sync folders from drives
+* rsync --ignore-existing --recursive --progress /home/user/folder_sync/ /media/user/external_drive/folder_sync/
