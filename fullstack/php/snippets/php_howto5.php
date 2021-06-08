@@ -793,3 +793,17 @@ echo "The date $dateStr fell in Q$yearQuarter of " . date("Y", strtotime($dateSt
 
 # https://www.w3resource.com/mysql/date-and-time-functions/mysql-quarter-function.php
 # SELECT QUARTER('2009-05-18');
+
+
+
+################################################
+# regex test
+################################################
+
+$str = "035-hot6_line554";
+preg_match('~hot(\d{1,})_line([a-zA-Z0-9]{1,})~', $str, $matches);
+print_r($matches);
+
+echo "<br>";
+preg_match('~hot(\d+)_line([a-zA-Z0-9]+)~', $str, $matches);
+print_r($matches);
