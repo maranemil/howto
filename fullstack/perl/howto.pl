@@ -197,6 +197,10 @@ https://www.tutorialspoint.com/perl/perl_arrays.htm
 https://perlmaven.com/array-references-in-perl
 https://perlmaven.com/perl-arrays
 
+https://metacpan.org/dist/perl/view/pod/perldelta.pod
+https://docs.mojolicious.org/perl
+https://perldoc.perl.org/5.33.9/perldocstyle
+
 =cut
 
 #!/usr/bin/perl

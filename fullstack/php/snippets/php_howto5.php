@@ -807,3 +807,23 @@ print_r($matches);
 echo "<br>";
 preg_match('~hot(\d+)_line([a-zA-Z0-9]+)~', $str, $matches);
 print_r($matches);
+
+
+################################################
+# short negation test phpstorm
+################################################
+
+/*
+https://paiza.io/en/projects/new
+https://wtools.io/php-sandbox
+https://www.w3schools.com/php/php_compiler.asp
+https://3v4l.org/
+http://phptester.net/
+https://extendsclass.com/php.html
+https://sandbox.onlinephpfunctions.com/
+*/
+
+$str = 1;
+echo (empty($str)?false:true);
+echo "<br>";
+echo !empty($str);
