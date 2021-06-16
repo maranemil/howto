@@ -827,3 +827,20 @@ $str = 1;
 echo (empty($str)?false:true);
 echo "<br>";
 echo !empty($str);
+
+
+################################################
+# Deprecated: iconv_set_encoding(): Use of iconv.output_encoding is deprecated in
+################################################
+
+if (function_exists('iconv') && PHP_VERSION_ID < 50600)
+{
+    // These are settings that can be set inside code
+    iconv_set_encoding("internal_encoding", "UTF-8");
+    iconv_set_encoding("input_encoding", "UTF-8");
+    iconv_set_encoding("output_encoding", "UTF-8");
+}
+elseif (PHP_VERSION_ID >= 50600)
+{
+    ini_set("default_charset", "UTF-8");
+}
