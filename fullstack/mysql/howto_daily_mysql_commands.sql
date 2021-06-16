@@ -143,8 +143,17 @@ SET foreign_key_checks = 1;
 -- #
 -- ##################################################################
 
+SET FOREIGN_KEY_CHECKS=0;
+SET FOREIGN_KEY_CHECKS=1;
 
-
+-- #
+-- # https://mariadb.com/kb/en/substring/
+-- # https://mariadb.com/kb/en/max/
+-- # https://mariadb.com/kb/en/min/
+-- # https://mariadb.com/kb/en/left/
+-- # https://mariadb.com/kb/en/select/
+-- # https://mariadb.com/kb/en/getting-data-from-mariadb/
+-- #
 
 
 
