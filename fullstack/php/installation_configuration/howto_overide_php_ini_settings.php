@@ -275,7 +275,108 @@ function INISET_V2()
 }
 
 
+function INISET_V3()
+{
 
+    #declare(strict_types=1);
+
+    // https://www.php.net/manual/en/ini.list.php
+    // https://www.php.net/manual/en/ini.core.php
+    // https://www.php.net/manual/en/info.configuration.php
+    // https://www.php.net/manual/en/function.proc-nice
+    // https://www.php.net/manual/en/errorfunc.configuration.php
+    // https://www.php.net/manual/de/session.configuration.php
+
+    /*
+    High priority  priority < -9
+    Above normal priority  priority < -4
+    Normal priority    priority < 5 & priority > -5
+    Below normal priority  priority > 5
+    Idle priority  priority > 9
+    */
+
+    ini_set('memory_limit', '1512M');
+    ini_set('expose_php', false);
+    ini_set('max_execution_time', 20);
+    ini_set('hard_timeout', 25);
+    ini_set('exit_on_timeout', true);
+    // set_time_limit(30);
+    proc_nice(-6);
+
+    # ERR
+    ini_set('log_errors', 'On');
+    ini_set('error_reporting', 'E_ALL'); // E_ALL
+    ini_set('display_errors', 'On'); // Off
+    ini_set('display_startup_errors', true);
+    ini_set('error_log', '/tmp/error2.log');
+
+    #ini_set('track_errors', true);
+    ini_set('html_errors', false);
+    ini_set('ignore_repeated_errors', true);
+    ini_set('ignore_repeated_source', true);
+    ini_set('ignore_user_abort', false);
+    ini_set('report_memleaks', "1");
+
+    #ini_set('opcache.enable', "1");
+    #ini_set('opcache.memory_consumption', "512");
+
+    ini_set('soap.wsdl_cache_enabled', 1);
+    ini_set('soap.wsdl_cache', 1);
+
+    #ini_set('mysql.connect_timeout', 20);
+    #ini_set('mysql.allow_persistent', "1");
+    #ini_set('mysql.max_persistent', "-1");
+
+    #ini_set('mysqli.allow_persistent', "1");
+    #ini_set('mysqli.max_persistent', "-1");
+
+    #ini_set('mysql.trace_mode', 0);
+    #ini_set('mysql.cache_size', 32600); // '2000'
+    #ini_set('mysql.cache_type', 0);
+    #ini_set('mysql.query_cache_strip_comments', true);
+
+    ini_set('zlib.output_compression', 'On');
+    ini_set('zlib.output_compression_level', '7'); // 2
+    ini_set('zlib.output_handler', '');
+
+    #ini_set('output_handler', false);
+    #ini_set('output_buffering', true);
+    #ini_set('implicit_flush', false);
+
+    #ini_set('xdebug.dump_globals', 'Off');
+    #ini_set('xdebug.default_enable', false);
+    #ini_set("xdebug.var_display_max_depth", -1);
+    #ini_set("xdebug.var_display_max_children", -1);
+    #ini_set("xdebug.var_display_max_data", -1);
+
+    ini_set('session.cache_expire', "180");
+    ini_set('session.gc_maxlifetime', "1440");
+
+    # https://electrictoolbox.com/php-caching-headers/
+    # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Pragma
+    # page is never cached with PHP
+    /*$ts = gmdate("D, d M Y H:i:s") . " GMT";
+    header("Expires: $ts");
+    header("Last-Modified: $ts");
+    header("Pragma: no-cache");
+    header("Cache-Control: no-cache, must-revalidate");*/
+
+    # set the amount of time to cache
+    $seconds_to_cache = 3600;
+    $ts               = gmdate("D, d M Y H:i:s", time() + $seconds_to_cache) . " GMT";
+    header("Expires: $ts");
+    header("Pragma: cache");
+    header("Cache-Control: max-age=$seconds_to_cache");
+    header("User-Cache-Control: max-age=600");
+
+    // session.hash_bits_per_character = 5
+    // phpinfo();
+    // ini_set('session.save_handler', 'redis');
+    // ini_set('session.save_path',    'tcp://127.0.0.1:6379');
+    // echo ini_get('session.save_path');
+
+   return;
+}
 
 
 function INISET_SUGARCRM7()
