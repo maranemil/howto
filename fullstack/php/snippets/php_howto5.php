@@ -844,3 +844,13 @@ elseif (PHP_VERSION_ID >= 50600)
 {
     ini_set("default_charset", "UTF-8");
 }
+
+
+
+
+################################################
+# Transform into nummeric
+# https://stackoverflow.com/questions/9593765/convert-array-values-from-string-to-int
+################################################
+$string = "1,2,3"
+$integerIDs = array_map('intval', explode(',', $string));
