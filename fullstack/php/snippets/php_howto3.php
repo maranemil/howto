@@ -246,6 +246,7 @@ file_put_contents('php://stderr', "LOG: Message 3!\n", FILE_APPEND);
 
 # codeception with debug active
 use \Codeception\Util\Debug as UnitDebug;
+
 UnitDebug::debug("~~~test~~");
 
 ###################################################################################
@@ -268,7 +269,7 @@ sleep(15);
 #################################################################################
 Basic Usage PHP imagick
 #################################################################################
-*/
+ */
 /*https://www.php.net/manual/de/imagick.examples-1.php*/
 
 header('Content-type: image/jpeg');
@@ -330,19 +331,18 @@ echo "world!\n";
 # or
 # <?php  ob_start();  echo '<pre>';  $last_line = system('ls');  ob_clean();  echo 'nothing returned!';
 
-
 #################################################################################
 #
-#	Do You Clone the DateTime Objects?
-#	http://axiac.ro/blog/dont-forget-to-clone-the-datetime-objects/
-#	https://stackoverflow.com/questions/2579458/how-do-i-deep-copy-a-datetime-object
-#	https://www.php.net/manual/en/class.datetime.php
+#    Do You Clone the DateTime Objects?
+#    http://axiac.ro/blog/dont-forget-to-clone-the-datetime-objects/
+#    https://stackoverflow.com/questions/2579458/how-do-i-deep-copy-a-datetime-object
+#    https://www.php.net/manual/en/class.datetime.php
 #
-#	Later edit (August 2017)
-#	Since PHP 5.5 it’s better to use DateTimeImmutable objects whenever it’s possible. They cannot be modified after they are
-#	created (they behave like true
-#	Value Objects). The methods declared in DateTimeInterface that modify the DateTime objects automatically create and return
-#	clones for DateTimeImmutable #objects.
+#    Later edit (August 2017)
+#    Since PHP 5.5 it’s better to use DateTimeImmutable objects whenever it’s possible. They cannot be modified after they are
+#    created (they behave like true
+#    Value Objects). The methods declared in DateTimeInterface that modify the DateTime objects automatically create and return
+#    clones for DateTimeImmutable #objects.
 #
 #################################################################################
 
@@ -361,8 +361,7 @@ $date2 = $date1->add(new DateInterval('P3Y'));
 $date1 = new DateTime();
 $date2 = (clone $date1)->modify('+3 years');
 
-$date = \DateTimeImmutable::createFromMutable($mutableDate)
-
+$date = \DateTimeImmutable::createFromMutable($mutableDate);
 
 #################################################################################
 #
@@ -371,7 +370,7 @@ $date = \DateTimeImmutable::createFromMutable($mutableDate)
 #
 #################################################################################
 
-print_r(array_keys($myArr));
+/* print_r(array_keys($myArr)); */
 
 #################################################################################
 #
@@ -379,16 +378,18 @@ print_r(array_keys($myArr));
 #
 #################################################################################
 
+/*
 while(list($key, $value) = each($array1)){
-    print $key . " - " . $value."<br>";
-	unset($array1[$key]);
-	continue;
+print $key . " - " . $value."<br>";
+unset($array1[$key]);
+continue;
 }
 foreach($array1 as $key => $value){
-    print $key . " - " . $value."<br>";
-	unset($array1[$key]);
-	continue;
+print $key . " - " . $value."<br>";
+unset($array1[$key]);
+continue;
 }
+ */
 
 #################################################################################
 // PHP | Check if two arrays contain same elements
@@ -403,43 +404,42 @@ foreach($array1 as $key => $value){
 #################################################################################
 
 $arM = array(
-	1 => array(
-		'1' => 12,
-		'3' => 14,
-		'6' => 11
-	),
-	2 => array(
-		'1' => 12,
-		'3' => 14,
-		'6' => 11
-	),
-	3 => array(
-		'3' => 14,
-		'1' => 12,
-		'6' => 11
-	),
-	4 => array(
-		'1' => 11,
-		'3' => 14,
-		'6' => 11
-	)
+    1 => array(
+        '1' => 12,
+        '3' => 14,
+        '6' => 11,
+    ),
+    2 => array(
+        '1' => 12,
+        '3' => 14,
+        '6' => 11,
+    ),
+    3 => array(
+        '3' => 14,
+        '1' => 12,
+        '6' => 11,
+    ),
+    4 => array(
+        '1' => 11,
+        '3' => 14,
+        '6' => 11,
+    ),
 );
 
 $arN = $arM;
 $bNotSame = 0;
-foreach($arM as $keyMM=>$arrMM){
-	foreach($arN as $keyNN=>$arrNN){
-		if($arrMM != $arrNN){
-			echo "<br>".$keyNN." not identical ".$keyMM;
-		}
-		$result = array_diff($arrMM,$arrNN);
-		if(count($result)){
-			$bNotSame = 1;
-		}
-	}
+foreach ($arM as $keyMM => $arrMM) {
+    foreach ($arN as $keyNN => $arrNN) {
+        if ($arrMM != $arrNN) {
+            echo "<br>" . $keyNN . " not identical " . $keyMM;
+        }
+        $result = array_diff($arrMM, $arrNN);
+        if (count($result)) {
+            $bNotSame = 1;
+        }
+    }
 }
-echo "<br>". $bNotSame;
-
+echo "<br>" . $bNotSame;
 
 #################################################################################
 #
@@ -448,9 +448,10 @@ echo "<br>". $bNotSame;
 #
 #################################################################################
 
+/*
 $arr = explode("\n", $str);
 $arr= preg_split ('/\n/', $str);
-
+ */
 
 #################################################################################
 #
@@ -468,7 +469,7 @@ https://github.com/soloproyectos-php/text-tokenizer
 http://php-nlp-tools.com/
 https://github.com/angeloskath/php-nlp-tools
 https://github.com/agentile/PHP-Stanford-NLP
-*/
+ */
 
 $string = "This is\tan example\nstring";
 /* Use tab and newline as tokenizing characters as well  */
@@ -507,7 +508,6 @@ https://github.com/robrichards/wse-php
 https://packagist.org/packages/robrichards/wse-php
 https://packagist.org/packages/robrichards/xmlseclibs
 
-
 https://packagist.org/packages/course-hero/wse-php
 https://packagist.org/packages/tilleuls/wse-php
 https://github.com/koenedaele/Services/tree/master/vendor/wse-php
@@ -522,7 +522,6 @@ http://andrecatita.com/code-snippets/php-soap-wsse-oasis-security/
 https://gist.github.com/jbuchbinder/9530892
 https://hotexamples.com/examples/-/-/curl_setopt/php-curl_setopt-function-examples.html
 
-
 https://hotexamples.com/de/examples/-/SoapHeader/-/php-soapheader-class-examples.html
 http://khbrainh.com/index.php/2018/11/25/php-soapclient-use-__soapcall-with-wssecurityheader/
 https://profikoder.com/question/21529043-soap-client-verursacht-500-oder-502-fehler-mit-php
@@ -533,31 +532,30 @@ https://www.programcreek.com/java-api-examples/?code=kleini/bricklink/bricklink-
 https://www.playframework.com/documentation/2.7.x/JavaXmlRequests
 https://itqna.net/questions/86685/consume-webservice-soap-php-problem-header
 
-
-
-*/
+ */
 
 // v1 --------------------
 
-require('soap-wsa.php');
-require('soap-wsse.php');
+require 'soap-wsa.php';
+require 'soap-wsse.php';
 
-class mySoap extends SoapClient {
-   function __doRequest($request, $location, $saction, $version) {
-    $doc = new DOMDocument('1.0');
-    $doc->loadXML($request);
-    $objWSSE = new WSSESoap($doc);
-    $objWSSE->addUserToken("admin", "admin", false);
-    return parent::__doRequest($objWSSE->saveXML(), $location, $saction, $version);
-   }
+class mySoap extends SoapClient
+{
+    public function __doRequest($request, $location, $saction, $version)
+    {
+        $doc = new DOMDocument('1.0');
+        $doc->loadXML($request);
+        $objWSSE = new WSSESoap($doc);
+        $objWSSE->addUserToken("admin", "admin", false);
+        return parent::__doRequest($objWSSE->saveXML(), $location, $saction, $version);
+    }
 }
 
 $wsdl = 'http://localhost:9090/WS?wsdl';
-$sClient = new mySoap($wsdl, array('trace'=>1));
+$sClient = new mySoap($wsdl, array('trace' => 1));
 $wrapper->word = new SoapVar("Echo testing", XSD_STRING);
 $result = $sClient->echo($wrapper);
 print_r($result->return);
-
 
 // v2 --------------------
 
@@ -567,23 +565,25 @@ error_reporting(E_ALL);
 require 'soap-wsa.php';
 require 'soap-wsse.php';
 
-class WsseAuthHeader extends SoapHeader {
+class WsseAuthHeader extends SoapHeader
+{
 
-   private $wss_ns = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd';
+    private $wss_ns = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd';
 
-   function __construct($user, $pass, $ns = null) {
-       if ($ns) {
-           $this->wss_ns = $ns;
-       }
-       $auth = new stdClass();
-       $auth->Username = new SoapVar($user, XSD_STRING, NULL, $this->wss_ns, NULL, $this->wss_ns);
-       $auth->Password = new SoapVar($pass, XSD_STRING, NULL, $this->wss_ns, NULL, $this->wss_ns);
-       $username_token = new stdClass();
-       $username_token->UsernameToken = new SoapVar($auth, SOAP_ENC_OBJECT, NULL, $this->wss_ns, 'UsernameToken', $this->wss_ns);
-       $security_sv = new SoapVar(
-               new SoapVar($username_token, SOAP_ENC_OBJECT, NULL, $this->wss_ns, 'UsernameToken', $this->wss_ns), SOAP_ENC_OBJECT, NULL, $this->wss_ns, 'Security', $this->wss_ns);
-       parent::__construct($this->wss_ns, 'Security', $security_sv, true);
-   }
+    public function __construct($user, $pass, $ns = null)
+    {
+        if ($ns) {
+            $this->wss_ns = $ns;
+        }
+        $auth = new stdClass();
+        $auth->Username = new SoapVar($user, XSD_STRING, null, $this->wss_ns, null, $this->wss_ns);
+        $auth->Password = new SoapVar($pass, XSD_STRING, null, $this->wss_ns, null, $this->wss_ns);
+        $username_token = new stdClass();
+        $username_token->UsernameToken = new SoapVar($auth, SOAP_ENC_OBJECT, null, $this->wss_ns, 'UsernameToken', $this->wss_ns);
+        $security_sv = new SoapVar(
+            new SoapVar($username_token, SOAP_ENC_OBJECT, null, $this->wss_ns, 'UsernameToken', $this->wss_ns), SOAP_ENC_OBJECT, null, $this->wss_ns, 'Security', $this->wss_ns);
+        parent::__construct($this->wss_ns, 'Security', $security_sv, true);
+    }
 }
 
 $username = 'test';
@@ -592,16 +592,16 @@ $wsdl = 'https://sop-ws.example.de/sbb/services/Invoke?wsdl';
 
 $wsse_header = new WsseAuthHeader($username, $password);
 $client = new SoapClient($wsdl, array(
-      "trace" => 1,
-      "exceptions" => 0
-   )
+    "trace" => 1,
+    "exceptions" => 0,
+)
 );
 $client->__setSoapHeaders(array($wsse_header));
 $request = array(
     "functionResponseName" => array(
         'param1' => "string",
-        "param2" => "string"
-    )
+        "param2" => "string",
+    ),
 );
 $results = $client->FunctionName($request);
 var_dump($results);
@@ -636,7 +636,7 @@ function getRequestXml()
     return $request;
 }
 
-function curlSoapRequest($xmlRequest,$end_point)
+function curlSoapRequest($xmlRequest, $end_point)
 {
     $header = array(
         "Content-type: text/xml;charset=\"utf-8\"",
@@ -666,9 +666,8 @@ function curlSoapRequest($xmlRequest,$end_point)
 }
 
 $xmlRequest = getRequestXml();
-$response = curlSoapRequest($xmlRequest,$end_point);
+$response = curlSoapRequest($xmlRequest, $end_point);
 print_r($response);
-
 
 /*
 #######################################
@@ -678,34 +677,31 @@ https://packagist.org/packages/mtdowling/cron-expression [deprecated]
 https://github.com/dragonmantank/cron-expression
 https://github.com/mtdowling/cron-expression
 #####################################
-*/
+ */
 
 require_once 'vendor/autoload.php';
 
 // Works with predefined scheduling definitions
 $arCrons = [
-"*/30 * * * *",
-"33 4 * * *",
-"*/10 * * * *",
-"30 6 * * *",
-"31 4 * * *",
+    "*/30 * * * *",
+    "33 4 * * *",
+    "*/10 * * * *",
+    "30 6 * * *",
+    "31 4 * * *",
 ];
 
 $cron = Cron\CronExpression::factory('@daily');
 $cron->isDue();
-foreach($arCrons as $dCrons){
-	$cron = Cron\CronExpression::factory($dCrons);
+foreach ($arCrons as $dCrons) {
+    $cron = Cron\CronExpression::factory($dCrons);
     #$strDate =  $cron->getNextRunDate()->format('Y-m-d H:i:s');
-	#$strDate =  $cron->getNextRunDate()->format('Y-m-d');
-	#$strDate =  $cron->getNextRunDate()->format('c');
-	$strDate =  $cron->getNextRunDate()->format('H:i:s');
-	#echo $strDate.PHP_EOL;
-	$arList[] = $strDate;
+    #$strDate =  $cron->getNextRunDate()->format('Y-m-d');
+    #$strDate =  $cron->getNextRunDate()->format('c');
+    $strDate = $cron->getNextRunDate()->format('H:i:s');
+    #echo $strDate.PHP_EOL;
+    $arList[] = $strDate;
 }
 print_r(array_count_values($arList));
-
-
-
 
 // get count for next 24h
 // https://github.com/dragonmantank/cron-expression
@@ -713,39 +709,38 @@ print_r(array_count_values($arList));
 
 $start = time();
 // workaround count - takes 0 seconds
-$cron=Cron\CronExpression::factory("*/3 * * * *");
+$cron = Cron\CronExpression::factory("*/3 * * * *");
 $rd = null;
 $rds = array();
 for ($i = 0; $i < 1440; $i++) {
-   $rd = $cron->getNextRunDate($rd);
-   if(strtotime($rd->format("Y-m-d H:i:s")) < time() + 86400) {
-	  $rds[] = $rd;
-   }
+    $rd = $cron->getNextRunDate($rd);
+    if (strtotime($rd->format("Y-m-d H:i:s")) < time() + 86400) {
+        $rds[] = $rd;
+    }
 }
-echo "Count0: ".count($rds)."<br>";
+echo "Count0: " . count($rds) . "<br>";
 // classic count - takes 40 seconds
-$cron=Cron\CronExpression::factory("*/3 * * * *");
+$cron = Cron\CronExpression::factory("*/3 * * * *");
 $arr = $cron->getMultipleRunDates(1440);
 $intCount = 0;
-foreach($arr as $itemDate){
-   if(strtotime($itemDate->format("Y-m-d H:i:s")) < time() + 86400){
-	  $intCount++;
-   }
+foreach ($arr as $itemDate) {
+    if (strtotime($itemDate->format("Y-m-d H:i:s")) < time() + 86400) {
+        $intCount++;
+    }
 }
-echo "Count1: ".$intCount."<br>";
+echo "Count1: " . $intCount . "<br>";
 // workaround2 count - takes 0 seconds
-$cron=Cron\CronExpression::factory("*/3 * * * *");
+$cron = Cron\CronExpression::factory("*/3 * * * *");
 $arrNextTwo = $cron->getMultipleRunDates(2);
-$intMin = date_diff($arrNextTwo[1],$arrNextTwo[0])->format("%i");
+$intMin = date_diff($arrNextTwo[1], $arrNextTwo[0])->format("%i");
 $count = round(1440 / $intMin);
-echo "Count2: ". $count."<br>";
+echo "Count2: " . $count . "<br>";
 
 $end = time();
 echo "<br>";
-echo ($end - $start)/60;
+echo ($end - $start) / 60;
 
 // count result 480
-
 
 #####################################
 #
@@ -759,33 +754,34 @@ $csv = array_map('str_getcsv', file('data.csv'));
 
 // read csv
 $csv = array_map('str_getcsv', file($file));
-array_walk($csv, function(&$a) use ($csv) {
-  $a = array_combine($csv[0], $a);
+array_walk($csv, function (&$a) use ($csv) {
+    $a = array_combine($csv[0], $a);
 });
 array_shift($csv); # remove column header
 
-
 #----------------------------------------
-# 	Get last day of previus month
-# 	How to find the last monday of the month
+#     Get last day of previus month
+#     How to find the last monday of the month
 #----------------------------------------
 
-$d = new DateTime( date("Y-m-d") );
-$d->modify( 'last day of previous month' );
-echo $d->format( 'Y-m-d' ), "\n";
+$d = new DateTime(date("Y-m-d"));
+$d->modify('last day of previous month');
+echo $d->format('Y-m-d'), "\n";
 
 // v2
 echo date("Ymd", strtotime("last Friday of August 2019"));
 
 #----------------------------------------
-# 	PHP - Add null character to string
-#	About php's string in "\0"
-#	What does \0 stand for? [duplicate]
+#     PHP - Add null character to string
+#    About php's string in "\0"
+#    What does \0 stand for? [duplicate]
 #----------------------------------------
 
 // add
 $s = 'hello';
-while(strlen($s) < 32) $s .= "\0";
+while (strlen($s) < 32) {
+    $s .= "\0";
+}
 
 // add null
 $result = str_pad($str, 32, "\0");
@@ -794,22 +790,18 @@ echo strlen($result); // output: 32
 // remove null
 $clean = str_replace(chr(0), '', $input);
 
-
 #----------------------------------------
 #   PHP - Probleme mit Undefined offset
 #----------------------------------------
 
 // use isset()
 
-
 #----------------------------------------
 #   Rurn CSV into array
 #   str_getcsv on a tab-separated file
 #----------------------------------------
 
-array_map(function($v){return str_getcsv($v, "\t");}, file('file.csv'));
-
-
+array_map(function ($v) {return str_getcsv($v, "\t");}, file('file.csv'));
 
 #----------------------------------------
 #   Abstract test
@@ -824,25 +816,30 @@ https://github.com/krakjoe/pthreads/issues/474
 http://php3.globe.de/manual/fa/function.get-called-class.php
 https://bugs.php.net/bug.php?id=72916
 http://phptester.net/
-*/
+ */
 
-abstract class Foo {
-        function __call($f, $a) {
-                return $this->{$f}($a[0]);
-        }
+abstract class Foo
+{
+    public function __call($f, $a)
+    {
+        return $this->{$f}($a[0]);
+    }
 }
 
-class Bar extends Foo {
-        public function test($a) {
-                print $a ." Bar <br>";
-        }
+class Bar extends Foo
+{
+    public function test($a)
+    {
+        print $a . " Bar <br>";
+    }
 }
 
-
-class Dar extends Foo {
-        public function test($a) {
-                print $a ." Dar <br>";
-        }
+class Dar extends Foo
+{
+    public function test($a)
+    {
+        print $a . " Dar <br>";
+    }
 }
 
 $bar = new Bar();
@@ -852,27 +849,34 @@ $dar->test('dello');
 
 // -------------------
 
-interface TestInterface { }
-trait     TestTrait { }
+interface TestInterface
+{}
+trait TestTrait
+{}
 $interfaceClass = new ReflectionClass('TestInterface');
-$traitClass     = new ReflectionClass('TestTrait');
+$traitClass = new ReflectionClass('TestTrait');
 var_dump($interfaceClass->isAbstract());
 var_dump($traitClass->isAbstract());
 
 // -------------------
 
-abstract class Foo {
-        function __call($f, $a) {
-                return call_user_func_array(array($this, $f), $a);
-        }
-        private function test() {
+abstract class Foo
+{
+    public function __call($f, $a)
+    {
+        return call_user_func_array(array($this, $f), $a);
+    }
+    private function test()
+    {
 
-		}
+    }
 }
-class Bar extends Foo {
-        private function test($a) {
-                print ($a);
-        }
+class Bar extends Foo
+{
+    private function test($a)
+    {
+        print($a);
+    }
 }
 $bar = new Bar();
 $bar->test('hello');
@@ -906,59 +910,64 @@ BBDebug::call();
 
 // -------------------
 
-
-class Foo {
-    protected static function getClass() {
+class Foo
+{
+    protected static function getClass()
+    {
         return get_called_class();
     }
 
-    public function bar() {
+    public function bar()
+    {
         echo 'Foo: ', Foo::getClass(), "\n";
         echo 'self: ', self::getClass(), "\n";
         echo 'static: ', static::getClass(), "\n";
     }
 }
 
-class Child extends Foo {
-    protected static function getClass() {
+class Child extends Foo
+{
+    protected static function getClass()
+    {
         return 'x';
     }
 }
 
 (new Child)->bar();
 
-
 // -------------------
 
-abstract class AStat {
-	protected static $arrBuffer = null;
-	protected function __construct($arrStatus) {
-		self::$arrBuffer = $arrStatus;
-	}
-	public function getItem(){
-		return self::$arrBuffer;
-	}
+abstract class AStat
+{
+    protected static $arrBuffer = null;
+    protected function __construct($arrStatus)
+    {
+        self::$arrBuffer = $arrStatus;
+    }
+    public function getItem()
+    {
+        return self::$arrBuffer;
+    }
 }
-class A extends AStat{
-	 public function __construct($arrStatus) {
-	  parent::__construct($arrStatus);
-   }
+class A extends AStat
+{
+    public function __construct($arrStatus)
+    {
+        parent::__construct($arrStatus);
+    }
 }
-class B extends AStat{
-	 public function __construct($arrStatus) {
-	  parent::__construct($arrStatus);
-   }
+class B extends AStat
+{
+    public function __construct($arrStatus)
+    {
+        parent::__construct($arrStatus);
+    }
 }
-$artest1 = array("1","2");
-$artest2 = array("4","5");
+$artest1 = array("1", "2");
+$artest2 = array("4", "5");
 print "<pre>";
 print_r((new A($artest1))->getItem());
 print_r((new B($artest2))->getItem());
-
-
-
-
-
 
 #----------------------------------------
 #   Remove specific value from array
@@ -971,14 +980,13 @@ https://thisinterestsme.com/php-removing-an-element-from-an-array/
 https://arjunphp.com/remove-specific-value-array-using-php/
 https://stackoverflow.com/questions/369602/deleting-an-element-from-an-array-in-php
 https://www.php.net/manual/en/function.array-splice.php
-*/
+ */
 
 // using array_diff
-$messages = array(1,2,3,4,5,6);
+$messages = array(1, 2, 3, 4, 5, 6);
 $del_val = 3;
 print "<pre>";
-print_r($messages = array_diff($messages,array($del_val)));
-
+print_r($messages = array_diff($messages, array($del_val)));
 
 // using unset
 $del_val = 6;
@@ -988,35 +996,37 @@ if (($key = array_search($del_val, $messages)) !== false) {
 }
 print_r($messages);
 
-
 #----------------------------------------
 #   self:: vs className:: inside static className methods in PHP
 #   https://stackoverflow.com/questions/3481085/self-vs-classname-inside-static-classname-methods-in-php
 #----------------------------------------
-<?php
-class A {
-    static function foo() {
+
+class A
+{
+    public static function foo()
+    {
         echo get_called_class();
     }
 }
-class B extends A {
-    static function bar() {
+class B extends A
+{
+    public static function bar()
+    {
         self::foo();
     }
-    static function baz() {
+    public static function baz()
+    {
         B::foo();
     }
 }
-class C extends B {}
+class C extends B
+{}
 
 C::bar(); //C
 C::baz(); //B
 
-
-
 $instance = new Myclass();
-$variable = $instance::$foo
-
+$variable = $instance::$foo;
 
 #----------------------------------------
 #   Predefined Constants
@@ -1030,7 +1040,6 @@ https://www.php.net/manual/de/function.array-keys.php
 
 SORT_FLAG_CASE SORT_NATURAL
 
-
 SORT_ASC
 SORT_DESC
 SORT_REGULAR
@@ -1040,27 +1049,21 @@ SORT_LOCALE_STRING
 SORT_NATURAL
 SORT_FLAG_CASE
 
-
 SORT_REGULAR - compare items normally (don't change types)
 SORT_NUMERIC - compare items numerically
 SORT_STRING - compare items as strings
 SORT_LOCALE_STRING - compare items as strings, using setlocale()
 SORT_NATURAL - compare items as strings using "natural ordering" like natsort()
 SORT_FLAG_CASE - can be combined (bitwise OR) with SORT_STRING or SORT_NATURAL to sort strings case-insensitively
-*/
+ */
 
 $ar = array(
-       array("10", 11, 100, 100, "a"),
-       array(   1,  2, "2",   3,   1)
-      );
+    array("10", 11, 100, 100, "a"),
+    array(1, 2, "2", 3, 1),
+);
 array_multisort($ar[0], SORT_ASC, SORT_STRING,
-                $ar[1], SORT_NUMERIC, SORT_DESC);
+    $ar[1], SORT_NUMERIC, SORT_DESC);
 var_dump($ar);
-
-
-
-
-
 
 ###################################################
 #
@@ -1089,14 +1092,14 @@ echo "PHP serialized in $serializeTime seconds<br>";
 // Compare them
 if ($jsonTime < $serializeTime) {
     printf("json_encode() was roughly %01.2f%% faster than serialize()<br>", ($serializeTime / $jsonTime - 1) * 200);
-}
-else if ($serializeTime < $jsonTime ) {
+} else if ($serializeTime < $jsonTime) {
     printf("serialize() was roughly %01.2f%% faster than json_encode()<br>", ($jsonTime / $serializeTime - 1) * 200);
 } else {
     echo "Impossible!\n";
 }
 
-function fillArray( $depth, $max ) {
+function fillArray($depth, $max)
+{
     static $seed;
     if (is_null($seed)) {
         $seed = array('a', 2, 'c', 4, 'e', 6, 'g', 8, 'i', 10);

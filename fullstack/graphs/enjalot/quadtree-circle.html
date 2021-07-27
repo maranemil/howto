@@ -1,18 +1,28 @@
 <!DOCTYPE html>
-<head>
-    <meta charset="utf-8">
-    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
-    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.12.0/mapbox-gl.js'></script>
-    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.12.0/mapbox-gl.css' rel='stylesheet' />
 
-    <style>
-    body { margin:0;position:fixed;top:0;right:0;bottom:0;left:0; }
+<head>
+  <meta charset="utf-8">
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.12.0/mapbox-gl.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.12.0/mapbox-gl.css' rel='stylesheet' />
+
+  <style>
+    body {
+      margin: 0;
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+
     #map {
-      position:absolute;
+      position: absolute;
       width: 100%;
       height: 100%;
     }
+
     svg {
       position: absolute;
       width: 100%;
@@ -32,13 +42,13 @@
 </head>
 
 <body>
-<div id="map"></div>
-<script>
-/*https://bl.ocks.org/enjalot/eb331a84b3ef877aa6b0004308abfac9*/
-/*https://bl.ocks.org/enjalot/2c7eec93ce68551627d4*/
-/*https://bl.ocks.org/enjalot/0912e1962ed512093895*/
+  <div id="map"></div>
+  <script>
+    /*https://bl.ocks.org/enjalot/eb331a84b3ef877aa6b0004308abfac9*/
+    /*https://bl.ocks.org/enjalot/2c7eec93ce68551627d4*/
+    /*https://bl.ocks.org/enjalot/0912e1962ed512093895*/
 
-		var RADIUS = 1.5; // in degrees
+    var RADIUS = 1.5; // in degrees
     var RADIUS_PX = 45; // in pixels (only used if uncommenting lines 131-137)
 
     mapboxgl.accessToken = 'pk.eyJ1IjoiZW5qYWxvdCIsImEiOiJjaWhtdmxhNTIwb25zdHBsejk0NGdhODJhIn0.2-F2hS_oTZenAWc0BMf_uw'
@@ -47,7 +57,7 @@
     var map = new mapboxgl.Map({
       container: 'map', // container id
       style: 'mapbox://styles/enjalot/cihmvv7kg004v91kn22zjptsc',
-      center: [-96,39],
+      center: [-96, 39],
       zoom: 3.5,
 
     })
@@ -67,51 +77,51 @@
       return new mapboxgl.LngLat(+d.lng, +d.lat)
     }
 
-    d3.csv("quadtree-circle-dots.csv", function(err, data) {
+    d3.csv("quadtree-circle-dots.csv", function (err, data) {
 
       //console.log(data[0], getLL(data[0]), project(data[0]))
       var dots = svg.selectAll("circle.dot")
         .data(data)
 
       dots.enter().append("circle").classed("dot", true)
-      .attr("r", 1)
-      .attr({
-        fill: "#0082a3",
-        "fill-opacity": 0.6,
-        stroke: "#004d60",
-        "stroke-width": 1
-      })
-      .transition().duration(1000)
-      .attr("r", 6)
+        .attr("r", 1)
+        .attr({
+          fill: "#0082a3",
+          "fill-opacity": 0.6,
+          stroke: "#004d60",
+          "stroke-width": 1
+        })
+        .transition().duration(1000)
+        .attr("r", 6)
 
       function render() {
         dots
-        .attr({
-          cx: function(d) {
-            var x = project(d).x;
-            return x
-          },
-          cy: function(d) {
-            var y = project(d).y;
-            return y
-          },
-        })
+          .attr({
+            cx: function (d) {
+              var x = project(d).x;
+              return x
+            },
+            cy: function (d) {
+              var y = project(d).y;
+              return y
+            },
+          })
       }
 
       // re-render our visualization whenever the view changes
-      map.on("viewreset", function() {
+      map.on("viewreset", function () {
         render()
       })
-      map.on("move", function() {
+      map.on("move", function () {
         render()
       })
 
       var quadtree = d3.geom.quadtree()
-        .x(function(d) { return +d.lng })
-        .y(function(d) { return +d.lat })
+        .x(function (d) { return +d.lng })
+        .y(function (d) { return +d.lat })
         (data)
 
-      map.on("mousemove", function(evt) {
+      map.on("mousemove", function (evt) {
         var xy = project(evt.lngLat);
 
         /*
@@ -139,14 +149,14 @@
         // radii derived from the pixel radius set at the top. This gives
         // us a consistently sized circular selection
         var radiusLng = Math.abs(evt.lngLat.lng - map.unproject({ x: evt.point.x + RADIUS_PX, y: evt.point.y }).lng);
-        var radiusLat = Math.abs(evt.lngLat.lat - map.unproject({ x: evt.point.x, y: evt.point.y  + RADIUS_PX}).lat)
+        var radiusLat = Math.abs(evt.lngLat.lat - map.unproject({ x: evt.point.x, y: evt.point.y + RADIUS_PX }).lat)
         quadtree.visit(nearest2(evt.lngLat, radiusLng, radiusLat, hits))
 
         console.log("hits", hits)
 
         var filtered = svg.selectAll("circle.dot")
           .classed("highlight", false)
-          .filter(function(d) { return hits.indexOf(d) >= 0 })
+          .filter(function (d) { return hits.indexOf(d) >= 0 })
           .classed("highlight", true)
 
       })
@@ -156,19 +166,19 @@
     })
 
     function nearest(node, radius, hits) {
-      if(!hits) hits = [];
+      if (!hits) hits = [];
       // we want to find everything within radius
       var r = radius,
-          nx1 = node.lng - r,
-          nx2 = node.lng + r,
-          ny1 = node.lat - r,
-          ny2 = node.lat + r;
-      return function(quad, x1, y1, x2, y2) {
+        nx1 = node.lng - r,
+        nx2 = node.lng + r,
+        ny1 = node.lat - r,
+        ny2 = node.lat + r;
+      return function (quad, x1, y1, x2, y2) {
         if (quad.point && (quad.point !== node)) {
           var x = node.lng - quad.point.lng,
-              y = node.lat - quad.point.lat,
-              l = Math.sqrt(x * x + y * y),
-              r = radius;
+            y = node.lat - quad.point.lat,
+            l = Math.sqrt(x * x + y * y),
+            r = radius;
           if (l < r) {
             hits.push(quad.point)
           } else {
@@ -180,17 +190,17 @@
 
     // compute nearest within ellipse
     function nearest2(node, radiusLng, radiusLat, hits) {
-      if(!hits) hits = [];
+      if (!hits) hits = [];
       // we want to find everything within radius
       var nx1 = node.lng - radiusLng
       var nx2 = node.lng + radiusLng
       var ny1 = node.lat - radiusLat
       var ny2 = node.lat + radiusLat
-      return function(quad, x1, y1, x2, y2) {
+      return function (quad, x1, y1, x2, y2) {
         if (quad.point && (quad.point !== node)) {
           var x = node.lng - quad.point.lng;
           var y = node.lat - quad.point.lat;
-          if (x*x/(radiusLng*radiusLng) + y*y/(radiusLat*radiusLat) < 1) {
+          if (x * x / (radiusLng * radiusLng) + y * y / (radiusLat * radiusLat) < 1) {
             hits.push(quad.point)
           } else {
           }

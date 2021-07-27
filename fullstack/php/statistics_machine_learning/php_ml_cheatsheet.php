@@ -81,10 +81,10 @@ $dataset = new CsvDataset('dataset.csv', 2, true);
 
 use Phpml\Dataset\FilesDataset;
 $dataset = new FilesDataset('path/to/data');
-$dataset->getSamples()[0][0]  // content from file path/to/data/business/001.txt
-$dataset->getTargets()[0]     // business
-$dataset->getSamples()[40][0] // content from file path/to/data/tech/001.txt
-$dataset->getTargets()[0]     // tech
+$dataset->getSamples()[0][0];  // content from file path/to/data/business/001.txt
+$dataset->getTargets()[0];     // business
+$dataset->getSamples()[40][0]; // content from file path/to/data/tech/001.txt
+$dataset->getTargets()[0];     // tech
 
 // -----------------------------------------------------
 // NaiveBayes Classifier
@@ -95,7 +95,7 @@ $classifier = new NaiveBayes();
 $classifier->train($samples, $labels);
 $classifier->predict([3, 1, 1]);
 // return 'a'
-$classifier->predict([[3, 1, 1], [1, 4, 1]);
+$classifier->predict([[3, 1, 1], [1, 4, 1]]);
 // return ['a', 'b']
 
 
@@ -163,8 +163,8 @@ $dataset->getTestLabels();
 // -----------------------------------------------------
 // transform string data csv to array
 // -----------------------------------------------------
-declare(strict_types=1);
-namespace PhpmlExamples;
+#declare(strict_types=1);
+namespace \PhpmlExamples;
 
 include 'vendor/autoload.php';
 use Phpml\Dataset\CsvDataset;

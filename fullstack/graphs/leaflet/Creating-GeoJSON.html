@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8">
+  <title>Title</title>
 </head>
+
 <body>
 
-<div class="serendipity_entry_extended"><a id="extended"></a><h4>Outputting GeoJSON Feature Collections</h4>
-<p>We want the result of all our searches to output as GeoJSON feature collections which look something like
-the below (partially clip from <a href="http://geojson.org/geojson-spec.html#feature-collection-objects" target="_blank">GeoJSON spec</a> </p>
-<pre>{ "type": "FeatureCollection",
+  <div class="serendipity_entry_extended"><a id="extended"></a>
+    <h4>Outputting GeoJSON Feature Collections</h4>
+    <p>We want the result of all our searches to output as GeoJSON feature collections which look something like
+      the below (partially clip from <a href="http://geojson.org/geojson-spec.html#feature-collection-objects"
+        target="_blank">GeoJSON spec</a> </p>
+    <pre>{ "type": "FeatureCollection",
   "features": [
     { "type": "Feature",
       "geometry": {"type": "Point", "coordinates": [102.0, 0.5]},
@@ -30,17 +34,19 @@ the below (partially clip from <a href="http://geojson.org/geojson-spec.html#fea
      ]
    }</pre>
 
-<p>As you can see it's not the nice flat tabular looking thing we relational database
-folks have grown to love.  It's got a few curves here and there and the geometry column is output
-separate from the other fun loving attributes.  This is different from what we showed in
-<a href="/journal/archives/253-PostgreSQL-9.2-Native-JSON-type-support.html">PostgreSQL 9.2 Native JSON type support</a>.</p>
+    <p>As you can see it's not the nice flat tabular looking thing we relational database
+      folks have grown to love. It's got a few curves here and there and the geometry column is output
+      separate from the other fun loving attributes. This is different from what we showed in
+      <a href="/journal/archives/253-PostgreSQL-9.2-Native-JSON-type-support.html">PostgreSQL 9.2 Native JSON type
+        support</a>.
+    </p>
 
-<p>While you need PLV8JS to consume something like this, you can generate something like this
-with barebones PostgreSQL JSON support.  So how do you do that?</p>
-<h4>Setup our test data</h4>
-<p>We'll test using this table:</p>
+    <p>While you need PLV8JS to consume something like this, you can generate something like this
+      with barebones PostgreSQL JSON support. So how do you do that?</p>
+    <h4>Setup our test data</h4>
+    <p>We'll test using this table:</p>
 
-<pre><code><span class="syntax0"><span class="syntax-KEYWORD1">CREATE</span> <span class="syntax-KEYWORD1">TABLE</span> <span class="syntax-FUNCTION">locations</span><span class="syntax-OPERATOR">(</span>loc_id <span class="syntax-KEYWORD1">integer</span> primary key
+    <pre><code><span class="syntax0"><span class="syntax-KEYWORD1">CREATE</span> <span class="syntax-KEYWORD1">TABLE</span> <span class="syntax-FUNCTION">locations</span><span class="syntax-OPERATOR">(</span>loc_id <span class="syntax-KEYWORD1">integer</span> primary key
    , loc_name <span class="syntax-FUNCTION">varchar</span><span class="syntax-OPERATOR">(</span><span class="syntax-DIGIT">70</span><span class="syntax-OPERATOR">)</span>, geog <span class="syntax-FUNCTION">geography</span><span class="syntax-OPERATOR">(</span>POINT<span class="syntax-OPERATOR">)</span> <span class="syntax-OPERATOR">)</span>;
 <span class="syntax-KEYWORD1">INSERT</span> <span class="syntax-KEYWORD1">INTO</span> <span class="syntax-FUNCTION">locations</span><span class="syntax-OPERATOR">(</span>loc_id, loc_name, geog<span class="syntax-OPERATOR">)</span>
  <span class="syntax-KEYWORD1">VALUES</span> <span class="syntax-OPERATOR">(</span><span class="syntax-DIGIT">1</span>, <span class="syntax-LITERAL1">'</span><span class="syntax-LITERAL1">Waltham,</span><span class="syntax-LITERAL1"> </span><span class="syntax-LITERAL1">MA</span><span class="syntax-LITERAL1">'</span>, <span class="syntax-FUNCTION">ST_GeogFromText</span><span class="syntax-OPERATOR">(</span><span class="syntax-LITERAL1">'</span><span class="syntax-LITERAL1">POINT(42.40047</span><span class="syntax-LITERAL1"> </span><span class="syntax-LITERAL1">-71.2577)</span><span class="syntax-LITERAL1">'</span><span class="syntax-OPERATOR">)</span> <span class="syntax-OPERATOR">)</span>
@@ -48,9 +54,9 @@ with barebones PostgreSQL JSON support.  So how do you do that?</p>
    , <span class="syntax-OPERATOR">(</span><span class="syntax-DIGIT">3</span>, <span class="syntax-LITERAL1">'</span><span class="syntax-LITERAL1">TI</span><span class="syntax-LITERAL1"> </span><span class="syntax-LITERAL1">Blvd,</span><span class="syntax-LITERAL1"> </span><span class="syntax-LITERAL1">TX</span><span class="syntax-LITERAL1">'</span>, <span class="syntax-FUNCTION">ST_GeogFromText</span><span class="syntax-OPERATOR">(</span><span class="syntax-LITERAL1">'</span><span class="syntax-LITERAL1">POINT(-96.75724</span><span class="syntax-LITERAL1"> </span><span class="syntax-LITERAL1">32.90977)</span><span class="syntax-LITERAL1">'</span><span class="syntax-OPERATOR">)</span> <span class="syntax-OPERATOR">)</span>;
 </span></code></pre>
 
-<h4>Query to output as FeatureCollection</h4>
-<p>To output as a feature collection, we can do this:</p>
-<pre><code><span class="syntax0"><span class="syntax-KEYWORD1">SELECT</span> <span class="syntax-FUNCTION">row_to_json</span><span class="syntax-OPERATOR">(</span>fc<span class="syntax-OPERATOR">)</span>
+    <h4>Query to output as FeatureCollection</h4>
+    <p>To output as a feature collection, we can do this:</p>
+    <pre><code><span class="syntax0"><span class="syntax-KEYWORD1">SELECT</span> <span class="syntax-FUNCTION">row_to_json</span><span class="syntax-OPERATOR">(</span>fc<span class="syntax-OPERATOR">)</span>
  <span class="syntax-KEYWORD1">FROM</span> <span class="syntax-OPERATOR">(</span> <span class="syntax-KEYWORD1">SELECT</span> <span class="syntax-LITERAL1">'</span><span class="syntax-LITERAL1">FeatureCollection</span><span class="syntax-LITERAL1">'</span> <span class="syntax-KEYWORD1">As</span> <span class="syntax-KEYWORD1">type</span>, <span class="syntax-FUNCTION">array_to_json</span><span class="syntax-OPERATOR">(</span><span class="syntax-FUNCTION">array_agg</span><span class="syntax-OPERATOR">(</span>f<span class="syntax-OPERATOR">)</span><span class="syntax-OPERATOR">)</span> <span class="syntax-KEYWORD1">As</span> features
  <span class="syntax-KEYWORD1">FROM</span> <span class="syntax-OPERATOR">(</span><span class="syntax-KEYWORD1">SELECT</span> <span class="syntax-LITERAL1">'</span><span class="syntax-LITERAL1">Feature</span><span class="syntax-LITERAL1">'</span> <span class="syntax-KEYWORD1">As</span> <span class="syntax-KEYWORD1">type</span>
     , <span class="syntax-FUNCTION">ST_AsGeoJSON</span><span class="syntax-OPERATOR">(</span>lg.geog<span class="syntax-OPERATOR">)</span>::json <span class="syntax-KEYWORD1">As</span> geometry
@@ -60,8 +66,8 @@ with barebones PostgreSQL JSON support.  So how do you do that?</p>
        <span class="syntax-KEYWORD1">ON</span> lg.loc_id <span class="syntax-OPERATOR">=</span> lp.loc_id  <span class="syntax-OPERATOR">)</span> <span class="syntax-KEYWORD1">As</span> f <span class="syntax-OPERATOR">)</span>  <span class="syntax-KEYWORD1">As</span> fc;
 </span></code></pre>
 
-<p>or avoiding a self-join by doing this</p>
-<pre><code><span class="syntax0"><span class="syntax-KEYWORD1">SELECT</span> <span class="syntax-FUNCTION">row_to_json</span><span class="syntax-OPERATOR">(</span>fc<span class="syntax-OPERATOR">)</span>
+    <p>or avoiding a self-join by doing this</p>
+    <pre><code><span class="syntax0"><span class="syntax-KEYWORD1">SELECT</span> <span class="syntax-FUNCTION">row_to_json</span><span class="syntax-OPERATOR">(</span>fc<span class="syntax-OPERATOR">)</span>
  <span class="syntax-KEYWORD1">FROM</span> <span class="syntax-OPERATOR">(</span> <span class="syntax-KEYWORD1">SELECT</span> <span class="syntax-LITERAL1">'</span><span class="syntax-LITERAL1">FeatureCollection</span><span class="syntax-LITERAL1">'</span> <span class="syntax-KEYWORD1">As</span> <span class="syntax-KEYWORD1">type</span>, <span class="syntax-FUNCTION">array_to_json</span><span class="syntax-OPERATOR">(</span><span class="syntax-FUNCTION">array_agg</span><span class="syntax-OPERATOR">(</span>f<span class="syntax-OPERATOR">)</span><span class="syntax-OPERATOR">)</span> <span class="syntax-KEYWORD1">As</span> features
  <span class="syntax-KEYWORD1">FROM</span> <span class="syntax-OPERATOR">(</span><span class="syntax-KEYWORD1">SELECT</span> <span class="syntax-LITERAL1">'</span><span class="syntax-LITERAL1">Feature</span><span class="syntax-LITERAL1">'</span> <span class="syntax-KEYWORD1">As</span> <span class="syntax-KEYWORD1">type</span>
     , <span class="syntax-FUNCTION">ST_AsGeoJSON</span><span class="syntax-OPERATOR">(</span>lg.geog<span class="syntax-OPERATOR">)</span>::json <span class="syntax-KEYWORD1">As</span> geometry
@@ -70,8 +76,8 @@ with barebones PostgreSQL JSON support.  So how do you do that?</p>
    <span class="syntax-KEYWORD1">FROM</span> locations <span class="syntax-KEYWORD1">As</span> lg   <span class="syntax-OPERATOR">)</span> <span class="syntax-KEYWORD1">As</span> f <span class="syntax-OPERATOR">)</span>  <span class="syntax-KEYWORD1">As</span> fc;
 </span></code></pre>
 
-<p>Both above queries output the below, which we've reformatted to fit better on the page</p>
-<pre>{"type":"FeatureCollection",
+    <p>Both above queries output the below, which we've reformatted to fit better on the page</p>
+    <pre>{"type":"FeatureCollection",
 "features":[
   {"type":"Feature","geometry":{"type":"Point","coordinates":[42.400469999999999,-71.2577]},
      "properties":{"loc_id":1,"loc_name":"Waltham, MA"}},
@@ -82,11 +88,15 @@ with barebones PostgreSQL JSON support.  So how do you do that?</p>
 ]
 }</pre>
 
-<p>Now you may be wondering why we need a self join or nested subselect.  Although PostgreSQL 9.2 is smarter now about
-inferring column names in a subquery, thanks to <a href="http://people.planetpostgresql.org/andrew/index.php?/archives/256-Getting-column-names-right-for-composites..html" target="_blank">Andrew Dunstan, Tom Lane, and others</a>, it still is not capable of allowing you to define a row object with nice column
-names without casting to a defined type.  So if you did the shorter: </p>
+    <p>Now you may be wondering why we need a self join or nested subselect. Although PostgreSQL 9.2 is smarter now
+      about
+      inferring column names in a subquery, thanks to <a
+        href="http://people.planetpostgresql.org/andrew/index.php?/archives/256-Getting-column-names-right-for-composites..html"
+        target="_blank">Andrew Dunstan, Tom Lane, and others</a>, it still is not capable of allowing you to define a
+      row object with nice column
+      names without casting to a defined type. So if you did the shorter: </p>
 
-<pre><code><span class="syntax0"><span class="syntax-KEYWORD1">SELECT</span> <span class="syntax-FUNCTION">row_to_json</span><span class="syntax-OPERATOR">(</span>fc<span class="syntax-OPERATOR">)</span>
+    <pre><code><span class="syntax0"><span class="syntax-KEYWORD1">SELECT</span> <span class="syntax-FUNCTION">row_to_json</span><span class="syntax-OPERATOR">(</span>fc<span class="syntax-OPERATOR">)</span>
  <span class="syntax-KEYWORD1">FROM</span> <span class="syntax-OPERATOR">(</span> <span class="syntax-KEYWORD1">SELECT</span> <span class="syntax-LITERAL1">'</span><span class="syntax-LITERAL1">FeatureCollection</span><span class="syntax-LITERAL1">'</span> <span class="syntax-KEYWORD1">As</span> <span class="syntax-KEYWORD1">type</span>, <span class="syntax-FUNCTION">array_to_json</span><span class="syntax-OPERATOR">(</span><span class="syntax-FUNCTION">array_agg</span><span class="syntax-OPERATOR">(</span>f<span class="syntax-OPERATOR">)</span><span class="syntax-OPERATOR">)</span> <span class="syntax-KEYWORD1">As</span> features
  <span class="syntax-KEYWORD1">FROM</span> <span class="syntax-OPERATOR">(</span><span class="syntax-KEYWORD1">SELECT</span> <span class="syntax-LITERAL1">'</span><span class="syntax-LITERAL1">Feature</span><span class="syntax-LITERAL1">'</span> <span class="syntax-KEYWORD1">As</span> <span class="syntax-KEYWORD1">type</span>
     , <span class="syntax-FUNCTION">ST_AsGeoJSON</span><span class="syntax-OPERATOR">(</span>lg.geog<span class="syntax-OPERATOR">)</span>::json <span class="syntax-KEYWORD1">As</span> geometry
@@ -94,8 +104,8 @@ names without casting to a defined type.  So if you did the shorter: </p>
    <span class="syntax-KEYWORD1">FROM</span> locations <span class="syntax-KEYWORD1">As</span> lg   <span class="syntax-OPERATOR">)</span> <span class="syntax-KEYWORD1">As</span> f <span class="syntax-OPERATOR">)</span>  <span class="syntax-KEYWORD1">As</span> fc;
 </span></code></pre>
 
-<p>You get stuck with f1,f2...fn for column names as shown here:</p>
-<pre>{"type":"FeatureCollection",
+    <p>You get stuck with f1,f2...fn for column names as shown here:</p>
+    <pre>{"type":"FeatureCollection",
 "features":[
    {"type":"Feature","geometry":{"type":"Point","coordinates":[42.400469999999999,-71.2577]},
       "properties":{"f1":1,"f2":"Waltham, MA"}},
@@ -103,6 +113,8 @@ names without casting to a defined type.  So if you did the shorter: </p>
      "properties":{"f1":2,"f2":"Manchester, NH"}},
    {"type":"Feature","geometry":{"type":"Point","coordinates":[-96.757239999999996,32.909770000000002]},
      "properties":{"f1":3,"f2":"TI Blvd, TX"}}]
- }</pre></div>
+ }</pre>
+  </div>
 </body>
+
 </html>

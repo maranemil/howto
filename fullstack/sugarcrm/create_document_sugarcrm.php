@@ -46,7 +46,7 @@ fclose($fp);
 
 // http://stackoverflow.com/questions/18241035/sugarcrm-add-document-from-script
 
---------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------
 
 // http://softwarriors.webs.com/apps/blog/show/20850582-create-document-in-sugar
 

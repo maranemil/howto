@@ -1,12 +1,21 @@
 <!DOCTYPE html>
-<head>
-    <meta charset="utf-8">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
-    <link rel="stylesheet" href="https://d19vzq90twjlae.cloudfront.net/leaflet/v0.7.7/leaflet.css" />
-    <script src="https://d19vzq90twjlae.cloudfront.net/leaflet/v0.7.7/leaflet.js"></script>
 
-    <style>
-    body { margin:0;position:fixed;top:0;right:0;bottom:0;left:0; }
+<head>
+  <meta charset="utf-8">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+  <link rel="stylesheet" href="https://d19vzq90twjlae.cloudfront.net/leaflet/v0.7.7/leaflet.css" />
+  <script src="https://d19vzq90twjlae.cloudfront.net/leaflet/v0.7.7/leaflet.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+
     #map {
       height: 100%;
     }
@@ -14,41 +23,41 @@
 </head>
 
 <body>
-<div id="map"></div>
-<script>
-/*http://bl.ocks.org/enjalot/ce1df58ab6680177df71255fc4d5e9db*/
-/*http://bl.ocks.org/enjalot/a3342029863da04c6f70c679ba5edae4*/
+  <div id="map"></div>
+  <script>
+    /*http://bl.ocks.org/enjalot/ce1df58ab6680177df71255fc4d5e9db*/
+    /*http://bl.ocks.org/enjalot/a3342029863da04c6f70c679ba5edae4*/
 
     var map = L.map('map').setView([52, 0], 3);
 
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-     var color = d3.scale.threshold()
+    var color = d3.scale.threshold()
       .domain([0, 1000000, 100000000, 1000000000])
-      .range(["#ffffcc","#c2e699","#78c679","#31a354","#006837"]);
+      .range(["#ffffcc", "#c2e699", "#78c679", "#31a354", "#006837"]);
 
     var color2 = d3.scale.linear()
-    .range(["#ffffcc", "#006837"])
+      .range(["#ffffcc", "#006837"])
 
-// http://enjalot.github.io/wwsd/data/world/ne_50m_admin_0_countries.geojson
+    // http://enjalot.github.io/wwsd/data/world/ne_50m_admin_0_countries.geojson
     var url = "ne_50m_admin_0_countries.geojson"
-    d3.json(url, function(err, data) {
+    d3.json(url, function (err, data) {
 
-      var maxPop = d3.max(data.features, function(d) {
+      var maxPop = d3.max(data.features, function (d) {
         return d.properties.pop_est
       })
 
       color2.domain([0, maxPop])
 
       L.geoJson(data, {
-        style: function(feature) {
+        style: function (feature) {
           return {
             fillColor: color2(feature.properties.pop_est),
-            fillOpacity:0.9,
+            fillOpacity: 0.9,
             weight: 1,
-      		}
+          }
         }
       }).addTo(map)
     })

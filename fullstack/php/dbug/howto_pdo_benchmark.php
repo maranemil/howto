@@ -99,10 +99,10 @@ echo '<strong>{$i}</strong> ';
 print_r(array('memory' => (memory_get_usage() - $mem) / (1024 * 1024), 'seconds' => microtime(TRUE) - $time));
 
 // ~ ~ ~
-
+/*
 fetchAll: [memory] => 31.305999755859
 fetch: [memory] => 0.002532958984375
-
+*/
 // ~ ~ ~
 
 /*

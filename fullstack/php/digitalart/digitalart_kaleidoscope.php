@@ -16,7 +16,7 @@ $filename_tr = 'example-tr.png';
 $im = imagecreatefrompng('example3.png');
 $size = min(imagesx($im), imagesy($im));
 $im2 = imagecrop($im, ['x' => $x, 'y' => $y, 'width' => $width, 'height' => $height]);
-if ($im2 !== FALSE) {
+if ($im2 !== false) {
     $degrees = 180; // 180
     $rotate = imagerotate($im2, $degrees, 0);
     #imagepng($rotate);
@@ -31,30 +31,29 @@ imagedestroy($im);
 $degrees = 180; // 180
 $source = imagecreatefrompng($filename_bl);
 $rotate = imagerotate($source, $degrees, 0);
-imagepng($rotate,$filename_tr);
+imagepng($rotate, $filename_tr);
 imagedestroy($source);
 imagedestroy($rotate);
 
 // top left
 $im = imagecreatefrompng($filename_bl);
 imageflip($im, IMG_FLIP_VERTICAL);
-imagepng($im,$filename_tl);
+imagepng($im, $filename_tl);
 imagedestroy($im);
 
 // bottom right
 $im = imagecreatefrompng($filename_tr);
 imageflip($im, IMG_FLIP_VERTICAL);
-imagepng($im,$filename_br);
+imagepng($im, $filename_br);
 imagedestroy($im);
 
 //
 $im = @imagecreatetruecolor(600, 600)
-      or die('Cannot Initialize new GD image stream');
+or die('Cannot Initialize new GD image stream');
 #$text_color = imagecolorallocate($im, 233, 14, 91);
 #imagestring($im, 1, 5, 5,  'A Simple Text String', $text_color);
-imagepng($im,'example_wrap.png');
+imagepng($im, 'example_wrap.png');
 imagedestroy($im);
-
 
 // -----------------------------------------------------------
 // Load 4 parts into wrap box
@@ -83,5 +82,5 @@ $sy = imagesy($stamp);
 imagecopy($im, $stamp, imagesx($im) - $sx - 0, imagesy($im) - $sy - 0, 0, 0, imagesx($stamp), imagesy($stamp));
 
 #header('Content-type: image/png');
-imagepng($im,'example_wrap_out.png');
-imagedestroy($im);, 
+imagepng($im, 'example_wrap_out.png');
+imagedestroy($im);

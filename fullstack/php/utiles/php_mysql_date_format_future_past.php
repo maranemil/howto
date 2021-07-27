@@ -56,7 +56,7 @@ $t = microtime(true);
 $micro = sprintf("%06d",($t - floor($t)) * 1000000);
 #$d = new DateTime( date('Y-m-d H:i:s.'.$micro, $t) );
 #print $d->format("Y-m-d H:i:s.u"); // note at point on "u"
-$d =  = date("Y-m-d H:i:s.u".$micro, $t);
+$d = date("Y-m-d H:i:s.u".$micro, $t);
 
 
 
@@ -160,32 +160,20 @@ echo date('Y-m-d H:i:s', strtotime("+7 day"));
 // This is what you need for future date from specific date.
 echo date('Y-m-d H:i:s', strtotime('01/01/2010 +7 day'));
 
-
-
-
-
+##########################################################################
+#
+#	How do I add 24 hours to a unix timestamp in php?
+#
 ##########################################################################
 
-How do I add 24 hours to a unix timestamp in php?
-
-##########################################################################
-
-date(DATE_ISO8601, strtotime('+1 day',time())) , 0, -5); // 2018-05-15T15:39:50
-date(DATE_ISO8601, time() + 24*60*60  ) , 0, -5); // 2018-05-15T15:39:50
-
-
-
-
-
-
-
-
+date(DATE_ISO8601, strtotime('+1 day',time()) , 0, -5); // 2018-05-15T15:39:50
+#date(DATE_ISO8601, (time() + 24*60*60  )) , 0, -5); // 2018-05-15T15:39:50
 
 
 ###################################################
-convert filename to date
-Object of class DateInterval could not be converted to string
-date_diff() expects parameter 2 to be DateTimeInterface, string given
+#	convert filename to date
+#	Object of class DateInterval could not be converted to string
+#	date_diff() expects parameter 2 to be DateTimeInterface, string given
 ###################################################
 
 # http://phptester.net
@@ -204,12 +192,11 @@ echo "<br>";
 $diff = date_diff($now,$date );
 echo $diff->format('%d');
 
-output:
+/*output:
 2018-03-30
 2018-03-30 00:00:00
 2018-04-16 00:00:00
-10
-
+10*/
 
 $date_expire = '2014-08-06 00:00:00';
 $date = new DateTime($date_expire);

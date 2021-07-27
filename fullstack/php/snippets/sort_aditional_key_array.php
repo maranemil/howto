@@ -25,8 +25,8 @@ class Article
     {
         $return = array();
         foreach (self::$_instances as $instance) {
-            if (is_a($instance, get_called_class($this))) {
-                if (get_class($instance) === get_class($this)) {
+            if (is_a($instance, get_called_class(self))) { // this
+                if (get_class($instance) === get_class(self)) { // this
                     $return[] = $instance;
                 }
             }
@@ -90,7 +90,7 @@ class Utiles
 foreach (range(1, 3) as $i) {
     $objCategory = new Category();
     $objCategory->id = $i;
-    $objCategory->name = "Category " . str_shuffle("ampw"). microtime();
+    $objCategory->name = "Category " . str_shuffle("ampw") . microtime();
 }
 
 $arrResult = array();
@@ -100,17 +100,17 @@ foreach (range(1, 3) as $i) {
     $arrResult[$obTest->id] = $obTest;
 }
 
-print "--- Category Instances ------------------------------------------------------------".PHP_EOL;
+print "--- Category Instances ------------------------------------------------------------" . PHP_EOL;
 print_r(Category::getInstances());
 
-print "--- Article Instances------------------------------------------------------------".PHP_EOL;
+print "--- Article Instances------------------------------------------------------------" . PHP_EOL;
 print_r($arrResult);
 
 /**
  * sort by object proprety
  */
 #$arrResultRes = Utiles::sortArrayByObjectProperty($arrResult, "category");
-print "--- Sort by usort  ------------------------------------------------------------".PHP_EOL;
+print "--- Sort by usort  ------------------------------------------------------------" . PHP_EOL;
 print_r($arrResultRes);
 
 /**
@@ -136,25 +136,22 @@ foreach ($arrResult as $key => $object) {
 $keys = array_column($arrResultSort, 'category');
 array_multisort($keys, SORT_ASC, $arrResultSort);
 
-print "--- Sort by second key ------------------------------------------------------------".PHP_EOL;
+print "--- Sort by second key ------------------------------------------------------------" . PHP_EOL;
 print_r($arrResultSort);
 
 foreach ($arrResultSort as $arrElem) {
     $arrFinal[$arrElem["article"]->id] = $arrElem["article"];
 }
 
-print "--- Final ARR ------------------------------------------------------------".PHP_EOL;
+print "--- Final ARR ------------------------------------------------------------" . PHP_EOL;
 print_r($arrFinal);
-
-
 
 usort($arrResultSort, function ($a, $b) {
     return $a['category'] <=> $b['category'];
 });
 
-print "--- usort sort 2 ------------------------------------------------------------".PHP_EOL;
+print "--- usort sort 2 ------------------------------------------------------------" . PHP_EOL;
 print_r($arrResultSort);
-
 
 /*
 
@@ -185,23 +182,21 @@ https://www.tutorialspoint.com/sort-multidimensional-array-by-multiple-keys-in-p
 
 php -c /etc/php/7.4/cli/php.ini test.php
 
-
-
-  Array
+Array
 (
-    [0] => stdClass Object
-        (
-            [ID] => 1
-            [name] => Mary Jane
-            [count] => 420
-        )
+[0] => stdClass Object
+(
+[ID] => 1
+[name] => Mary Jane
+[count] => 420
+)
 
-    [1] => stdClass Object
-        (
-            [ID] => 2
-            [name] => Johnny
-            [count] => 234
-        )
+[1] => stdClass Object
+(
+[ID] => 2
+[name] => Johnny
+[count] => 234
+)
 
 )
 
@@ -209,7 +204,7 @@ php -c /etc/php/7.4/cli/php.ini test.php
 #  without closures
 --------------------------------
 function cmp($a, $b) {
-    return strcmp($a->name, $b->name);
+return strcmp($a->name, $b->name);
 }
 usort($your_data, "cmp");
 
@@ -218,7 +213,7 @@ usort($your_data, "cmp");
 --------------------------------
 usort($your_data, function($a, $b)
 {
-    return strcmp($a->name, $b->name);
+return strcmp($a->name, $b->name);
 });
 --------------------------------
 Using arrow functions (from PHP 7.4)
@@ -226,41 +221,39 @@ Using arrow functions (from PHP 7.4)
 
 usort($your_data, fn($a, $b) => strcmp($a->name, $b->name));
 
-
 sort integer values:
 
 // Desc sort
 usort($array,function($first,$second){
-    return $first->number < $second->number;
+return $first->number < $second->number;
 });
 
 // Asc sort
 usort($array,function($first,$second){
-    return $first->number > $second->number;
+return $first->number > $second->number;
 });
 
 // Desc sort
 usort($array,function($first,$second){
-    return strtolower($first->text) < strtolower($second->text);
+return strtolower($first->text) < strtolower($second->text);
 });
 
 // Asc sort
 usort($array,function($first,$second){
-    return strtolower($first->text) > strtolower($second->text);
+return strtolower($first->text) > strtolower($second->text);
 });
 
 --------------------------------------------------------
 
 public static function cmp($a, $b)
 {
-    return strcmp($a->name, $b->name);
+return strcmp($a->name, $b->name);
 }
 usort($your_data, array('YOUR_CLASS_NAME','FUNCTION_NAME'));
 
-
 function my_sort_function($a, $b)
 {
-    return $a->name < $b->name;
+return $a->name < $b->name;
 }
 usort($array, 'my_sort_function');
 var_dump($array);
@@ -268,21 +261,21 @@ var_dump($array);
 --------------------------------------------------------
 
 function sortArrayByKey(&$array,$key,$string = false,$asc = true){
-    if($string){
-        usort($array,function ($a, $b) use(&$key,&$asc)
-        {
-            if($asc)    return strcmp(strtolower($a{$key}), strtolower($b{$key}));
-            else        return strcmp(strtolower($b{$key}), strtolower($a{$key}));
-        });
-    }else{
-        usort($array,function ($a, $b) use(&$key,&$asc)
-        {
-            if($a[$key] == $b{$key}){return 0;}
-            if($asc) return ($a{$key} < $b{$key}) ? -1 : 1;
-            else     return ($a{$key} > $b{$key}) ? -1 : 1;
+if($string){
+usort($array,function ($a, $b) use(&$key,&$asc)
+{
+if($asc)    return strcmp(strtolower($a{$key}), strtolower($b{$key}));
+else        return strcmp(strtolower($b{$key}), strtolower($a{$key}));
+});
+}else{
+usort($array,function ($a, $b) use(&$key,&$asc)
+{
+if($a[$key] == $b{$key}){return 0;}
+if($asc) return ($a{$key} < $b{$key}) ? -1 : 1;
+else     return ($a{$key} > $b{$key}) ? -1 : 1;
 
-        });
-    }
+});
+}
 }
 
 sortArrayByKey($yourArray,"name",true); //String sort (ascending order)
@@ -294,7 +287,7 @@ sortArrayByKey($yourArray,"count",false,false); //number sort (descending order)
 
 $names = array();
 foreach ($my_array as $my_object) {
-    $names[] = $my_object->name; //any object field
+$names[] = $my_object->name; //any object field
 }
 
 array_multisort($names, SORT_ASC, $my_array);
@@ -305,7 +298,7 @@ sort dates
 --------------------------------------------------------
 
 usort($threads,function($first,$second){
-    return strtotime($first->dateandtime) < strtotime($second->dateandtime);
+return strtotime($first->dateandtime) < strtotime($second->dateandtime);
 });
 
 --------------------------------------------------------
@@ -319,11 +312,11 @@ usort($jobs, array($this, "sortJobs")); // Written inside Controller.
 
 class Util
 {
-    public static function sortArrayByName(&$arrayToSort, $meta) {
-        usort($arrayToSort, function($a, $b) use ($meta) {
-            return strcmp($a[$meta], $b[$meta]);
-        });
-    }
+public static function sortArrayByName(&$arrayToSort, $meta) {
+usort($arrayToSort, function($a, $b) use ($meta) {
+return strcmp($a[$meta], $b[$meta]);
+});
+}
 }
 Call it:
 
@@ -335,10 +328,10 @@ sort by number:
 
 function cmp($a, $b)
 {
-    if ($a == $b) {
-        return 0;
-    }
-    return ($a < $b) ? -1 : 1;
+if ($a == $b) {
+return 0;
+}
+return ($a < $b) ? -1 : 1;
 }
 
 $a = array(3, 2, 5, 6, 1);
@@ -349,11 +342,11 @@ usort($a, "cmp");
 
 by char
 
- char:
+char:
 
 function cmp($a, $b)
 {
-    return strcmp($a["fruit"], $b["fruit"]);
+return strcmp($a["fruit"], $b["fruit"]);
 }
 
 $fruits[0]["fruit"] = "lemons";
@@ -369,9 +362,9 @@ $array[1] = array('key_a' => 'x', 'key_b' => 'b');
 $array[2] = array('key_a' => 'y', 'key_b' => 'a');
 
 function build_sorter($key) {
-    return function ($a, $b) use ($key) {
-        return strnatcmp($a[$key], $b[$key]);
-    };
+return function ($a, $b) use ($key) {
+return strnatcmp($a[$key], $b[$key]);
+};
 }
 
 usort($array, build_sorter('key_b'));
@@ -379,16 +372,11 @@ usort($array, build_sorter('key_b'));
 --------------------------------------------------------
 
 usort($in,function($a,$b){
-  return $a['first']   <=> $b['first']  //first asc
-      ?: $a['second']  <=> $b['second'] //second asc
-      ?: $b['third']   <=> $a['third']  //third desc (a b swapped!)
-      //etc
-  ;
+return $a['first']   <=> $b['first']  //first asc
+?: $a['second']  <=> $b['second'] //second asc
+?: $b['third']   <=> $a['third']  //third desc (a b swapped!)
+//etc
+;
 });
 
-
-
-
-
-*/
-
+ */

@@ -6,7 +6,7 @@
  * Time: 16:16
  */
 
-/**
+/*
 http://256cats.com/fast-scraping-with-reactphp-curl-proxies/
 http://256cats.com/scraping-asp-websites-php-dopostback-ajax-emulation/
 http://256cats.com/gimmeproxy-com-free-rotating-proxy-api/
@@ -74,7 +74,7 @@ define('CURL_LOG_FILE', __DIR__.'/request.txt');
  * @return bool|simple_html_dom
  */
 
-public function getDom($url, $post = false) {
+function getDom($url, $post = false) {
 
 	$f = fopen(CURL_LOG_FILE, 'a+'); // curl session log file
 	if($this->lastUrl) $header[] = "Referer: {$this->lastUrl}";

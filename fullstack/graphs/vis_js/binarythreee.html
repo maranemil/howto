@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body> <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.15.1/vis.min.css">
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.15.1/vis.min.js"></script>
 
-<style>
-/*
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+
+<body>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.15.1/vis.min.css">
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.15.1/vis.min.js"></script>
+
+  <style>
+    /*
 
 
 https://jsfiddle.net/crisuwork/8fcw3gph/1/
@@ -25,137 +28,138 @@ https://jsfiddle.net/q1a6o1o8/20/
 */
 
     #graph-visualization {
-  width: 96vw;
-  height: 96vh;
-  border: 1px solid lightgray;
-}
-</style>
+      width: 96vw;
+      height: 96vh;
+      border: 1px solid lightgray;
+    }
+  </style>
 
-<div id="graph-visualization"></div>
-<script type="application/javascript">
-
-
+  <div id="graph-visualization"></div>
+  <script type="application/javascript">
 
 
-var items = [ { child : 'root',   parent : '' },
-  { child : 'node-1', parent : 'root' },
-  { child : 'leaf-1', parent : 'root' },
-  { child : 'dir-1',  parent : 'root' },
-  { child : 'dir-2',  parent : 'dir-1' },
-  { child : 'node-2', parent : 'dir-2' },
-  { child : 'leaf-2', parent : 'dir-2' },
-  { child : 'node-3', parent : 'dir-1' },
-  { child : 'leaf-3', parent : 'dir-1' },
-  { child : 'dir-3',  parent : 'dir-1' },
-  { child : 'node-4', parent : 'dir-3' },
-  { child : 'leaf-4', parent : 'dir-3' },
-  { child : 'root', parent : 'leaf-4' }
 
 
-];
+    var items = [{ child: 'root', parent: '' },
+    { child: 'node-1', parent: 'root' },
+    { child: 'leaf-1', parent: 'root' },
+    { child: 'dir-1', parent: 'root' },
+    { child: 'dir-2', parent: 'dir-1' },
+    { child: 'node-2', parent: 'dir-2' },
+    { child: 'leaf-2', parent: 'dir-2' },
+    { child: 'node-3', parent: 'dir-1' },
+    { child: 'leaf-3', parent: 'dir-1' },
+    { child: 'dir-3', parent: 'dir-1' },
+    { child: 'node-4', parent: 'dir-3' },
+    { child: 'leaf-4', parent: 'dir-3' },
+    { child: 'root', parent: 'leaf-4' }
 
-/*
-var tree = {
-  name: 'root',
-  children: [
-    { name: 'node-1' },
-    { name: 'leaf-1' },
-    { name: 'dir-1',
+
+    ];
+
+    /*
+    var tree = {
+      name: 'root',
       children: [
-        { name: 'dir-2',
+        { name: 'node-1' },
+        { name: 'leaf-1' },
+        { name: 'dir-1',
           children: [
-            { name: 'node-2' },
-            { name: 'leaf-2' }
-          ]
-        },
-        { name: 'node-3' },
-        { name: 'leaf-3' },
-        { name: 'dir-3',
-          children: [
-            { name: 'node-4' },
-            { name: 'leaf-4' }
+            { name: 'dir-2',
+              children: [
+                { name: 'node-2' },
+                { name: 'leaf-2' }
+              ]
+            },
+            { name: 'node-3' },
+            { name: 'leaf-3' },
+            { name: 'dir-3',
+              children: [
+                { name: 'node-4' },
+                { name: 'leaf-4' }
+              ]
+            }
           ]
         }
       ]
-    }
-  ]
-};
-*/
+    };
+    */
 
-var tree = listToTree(items, 'child', 'parent');
-console.log(JSON.stringify(tree, null, 4));
+    var tree = listToTree(items, 'child', 'parent');
+    console.log(JSON.stringify(tree, null, 4));
 
-var graph = treeToGraph(tree, {
-	labelFn : function(index, parentIndex) {
-		return this.name;
-	},
-  edgeLength : 100
-});
-var container = document.getElementById('graph-visualization');
-var network = new vis.Network(container, graph, {edges:{arrows:{to:{enabled:true}}}});
+    var graph = treeToGraph(tree, {
+      labelFn: function (index, parentIndex) {
+        return this.name;
+      },
+      edgeLength: 100
+    });
+    var container = document.getElementById('graph-visualization');
+    var network = new vis.Network(container, graph, { edges: { arrows: { to: { enabled: true } } } });
 
-function listToTree(list, childId, parentId) {
-  function processTree(tree, fn) {
-    fn.call(tree);
-    if (tree.children && tree.children.length > 0) {
-      tree.children.forEach(function(child) {
-        processTree(child, fn);
-      });
-    }
-    return tree;
-  }
-	var nodeCache = {};
-  var root = {};
-  for (var i = 0; i < list.length; i++) {
-    var datum = list[i];
-    datum.children = [];
-    nodeCache[datum[childId]] = datum;
-    if (typeof datum[parentId] === 'undefined' || datum[parentId] === '') {
-      root = {
-      	name : datum[childId],
-        children : datum.children
-      };
-    } else {
-      parentNode = nodeCache[datum[parentId]];
-      parentNode.children.push({
-      	name : datum[childId],
-        children : datum.children
-      });
-    }
-  }
-  return processTree(root, function() {
-  	if (this.children.length < 1) {
-    	delete this.children;
-    }
-  });
-}
-
-function treeToGraph(tree, options) {
-  function traverse(tree, graph, index, parentIndex, level, options) {
-    if (tree instanceof Object) {
-      graph.nodes.push({
-        id : index,
-        label  : options.labelFn.call(tree, index, parentIndex) ,
-        color : vis.util.HSVToHex(level / 6, 0.75, 0.95)
-      });
-      if (parentIndex.length > 0) {
-        graph.edges.push({ from : parentIndex, to : index, length: options.edgeLength });
+    function listToTree(list, childId, parentId) {
+      function processTree(tree, fn) {
+        fn.call(tree);
+        if (tree.children && tree.children.length > 0) {
+          tree.children.forEach(function (child) {
+            processTree(child, fn);
+          });
+        }
+        return tree;
       }
-      if (tree.children && tree.children.length > 0) {
-        tree.children.forEach(function(child, childIndex) {
-          return traverse(child, graph, vis.util.randomUUID(), index, level + 1, options);
-        });
+      var nodeCache = {};
+      var root = {};
+      for (var i = 0; i < list.length; i++) {
+        var datum = list[i];
+        datum.children = [];
+        nodeCache[datum[childId]] = datum;
+        if (typeof datum[parentId] === 'undefined' || datum[parentId] === '') {
+          root = {
+            name: datum[childId],
+            children: datum.children
+          };
+        } else {
+          parentNode = nodeCache[datum[parentId]];
+          parentNode.children.push({
+            name: datum[childId],
+            children: datum.children
+          });
+        }
       }
+      return processTree(root, function () {
+        if (this.children.length < 1) {
+          delete this.children;
+        }
+      });
     }
-    return graph;
-  }
-	return traverse(tree, { nodes : [], edges : [] }, vis.util.randomUUID(), '', 0, options || {});
-}
 
-</script>
+    function treeToGraph(tree, options) {
+      function traverse(tree, graph, index, parentIndex, level, options) {
+        if (tree instanceof Object) {
+          graph.nodes.push({
+            id: index,
+            label: options.labelFn.call(tree, index, parentIndex),
+            color: vis.util.HSVToHex(level / 6, 0.75, 0.95)
+          });
+          if (parentIndex.length > 0) {
+            graph.edges.push({ from: parentIndex, to: index, length: options.edgeLength });
+          }
+          if (tree.children && tree.children.length > 0) {
+            tree.children.forEach(function (child, childIndex) {
+              return traverse(child, graph, vis.util.randomUUID(), index, level + 1, options);
+            });
+          }
+        }
+        return graph;
+      }
+      return traverse(tree, { nodes: [], edges: [] }, vis.util.randomUUID(), '', 0, options || {});
+    }
+
+  </script>
 
 
 
 
 </body>
+
 </html>

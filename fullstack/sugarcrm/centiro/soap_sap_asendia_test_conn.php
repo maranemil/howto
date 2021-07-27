@@ -11,7 +11,6 @@ Adélia Wiki  Base de connaissances Adélia Studio  Articles de conseil
 Comment construire un WSDL à partir de plusieurs WSDL
 https://pid.hardis.fr/confluence/pages/viewpage.action?pageId=225056909
 
-
 Un fichier WSDL peut être "éclaté" en plusieurs fichiers grâce aux directives d'import :
 
 wsdl:import : importation d'un autre fichier WSDL
@@ -49,7 +48,6 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 name="TMSBasic" targetNamespace="http://tempuri.org/"
 xmlns:uio="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
 
-
 Puis réaffecter les éléments qui ne sont pas qualifiés par le bon namespace  :
 <wsdl:binding name="BasicHttpBinding_ITMSBasic" type="tns:ITMSBasic">
 <wsdl:binding name="BasicHttpBinding_ITMSBasic" type="uio:ITMSBasic">
@@ -57,22 +55,23 @@ Puis réaffecter les éléments qui ne sont pas qualifiés par le bon namespace 
 <wsdl:port name="BasicHttpBinding_ITMSBasic" binding="uio:BasicHttpBinding_ITMSBasic">
 
 Pour requalifier correctement ces 2 éléments, le préfixe tns: ("http://example.com/facade/tmsBasic/1/0/servicecontract") est substitué par le nouveau préfixe uio:("http://tempuri.org/").
-*/
+ */
 
 /*
 ini_set('error_reporting', E_ERROR);
 ini_set('display_errors', true);
 ini_set('display_startup_errors', true);
-*/
+ */
 
-class AsendiaSoapConfig {
+class AsendiaSoapConfig
+{
 
-   public static $asendia_wsdl_auth = "https://uat.example.com/Universe.Services/TMSBasic/Wcf/c1/i1/TMSBasic/Authenticate.svc?wsdl";
-   public static $asendia_wsdl_func = "https://uat.example.com/Universe.Services/TMSBasic/Wcf/c1/i1/TMSBasic/TMSBasic.svc?wsdl";
-   public static $asendia_wsdL_user  = "userX";
-   public static $asendia_wsdL_pass =  "passX";
-   public static $CRMID = 'SomeID';
-   public static $MODEOFTRANSPORT = 'SOMEVALUE';
+    public static $asendia_wsdl_auth = "https://uat.example.com/Universe.Services/TMSBasic/Wcf/c1/i1/TMSBasic/Authenticate.svc?wsdl";
+    public static $asendia_wsdl_func = "https://uat.example.com/Universe.Services/TMSBasic/Wcf/c1/i1/TMSBasic/TMSBasic.svc?wsdl";
+    public static $asendia_wsdL_user = "userX";
+    public static $asendia_wsdL_pass = "passX";
+    public static $CRMID = 'SomeID';
+    public static $MODEOFTRANSPORT = 'SOMEVALUE';
 }
 
 /**
@@ -80,142 +79,128 @@ class AsendiaSoapConfig {
  */
 class AsendiaAuthRequest
 {
-   public $Password = ASENDIA_API_PASSWORD;
-   public $UserName = ASENDIA_API_USER;
+    public $Password = ASENDIA_API_PASSWORD;
+    public $UserName = ASENDIA_API_USER;
 }
-
 
 // Create Params for Soap Connection
 $initSoapOptions = array(
-   'soap_version'=> SOAP_1_1,
+    'soap_version' => SOAP_1_1,
     "trace" => true,
     "exceptions" => false,
 );
 
 try {
 
-   $client = new SoapClient(AsendiaSoapConfig::$asendia_wsdl_auth, $initSoapOptions);
-   $argAuth = new AsendiaAuthRequest();
-   $argAuth->UserName = AsendiaSoapConfig::$asendia_wsdL_user;
-   $argAuth->Password = AsendiaSoapConfig::$asendia_wsdL_pass;
+    $client = new SoapClient(AsendiaSoapConfig::$asendia_wsdl_auth, $initSoapOptions);
+    $argAuth = new AsendiaAuthRequest();
+    $argAuth->UserName = AsendiaSoapConfig::$asendia_wsdL_user;
+    $argAuth->Password = AsendiaSoapConfig::$asendia_wsdL_pass;
 
-   $resp = $client->Authenticate($argAuth);
-   //print "<pre>"; print_r($client); // exit;
-   $AuthenticationTicket = $resp->AuthenticationTicket;
-   echo $AuthenticationTicket.PHP_EOL;
+    $resp = $client->Authenticate($argAuth);
+    //print "<pre>"; print_r($client); // exit;
+    $AuthenticationTicket = $resp->AuthenticationTicket;
+    echo $AuthenticationTicket . PHP_EOL;
 
-   try {
+    try {
 
-      $client2 = new SoapClient(AsendiaShoapConfig::$asendia_wsdl_func, array($initSoapOptions));
-      $headers = array();
-      $headers[] = new SoapHeader(
-        "http://example.com/facade/shared/1/0/datacontract",
-        "AuthenticationTicket",
-        $AuthenticationTicket,
-        null,
-        false
-     );
-
-     /*
-        // Alternative Way
-      $client2 = new \Zend\Soap\Client(self::$strWSDL, $arrOptionsSOAP);
-      $client2->addSoapInputHeader(
-          new SoapHeader(
+        $client2 = new SoapClient(AsendiaShoapConfig::$asendia_wsdl_func, array($initSoapOptions));
+        $headers = array();
+        $headers[] = new SoapHeader(
             "http://example.com/facade/shared/1/0/datacontract",
             "AuthenticationTicket",
-            $AuthenticationTicket
-            )
-      );
-     */
+            $AuthenticationTicket,
+            null,
+            false
+        );
 
-      $client2->__setSoapHeaders($headers);
+        /*
+        // Alternative Way
+        $client2 = new \Zend\Soap\Client(self::$strWSDL, $arrOptionsSOAP);
+        $client2->addSoapInputHeader(
+        new SoapHeader(
+        "http://example.com/facade/shared/1/0/datacontract",
+        "AuthenticationTicket",
+        $AuthenticationTicket
+        )
+        );
+         */
 
-      print PHP_EOL;
-      print "-----------------------------__doRequest---------------------------------";
-      print PHP_EOL;
+        $client2->__setSoapHeaders($headers);
 
-      $xmlShippment = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"...</soapenv:Envelope>';
+        print PHP_EOL;
+        print "-----------------------------__doRequest---------------------------------";
+        print PHP_EOL;
 
-      var_dump($result = $client2->__doRequest(
-          $xmlShippment,
-          "http://uat.example.com/Universe.Services/TMSBasic/Wcf/c1/i1/TMSBasic/TMSBasic.svc/xml",
-          "http://example.com/facade/tmsBasic/1/0/servicecontract/ITMSBasic/AddAndPrintShipment",
-          SOAP_1_1
-      ));
+        $xmlShippment = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"...</soapenv:Envelope>';
 
-      //$result = $client2->__soapCall("AddAndPrintShipment", $params);
-      //echo "REQUEST:\n" . htmlentities($client2->__getLastRequest()) . "\n";
-      /*print "Request: \n".$client2->__getLastRequest() ."\n";
-      //print "Response: \n".$client2->__getLastResponse()."\n";
-      //print "Request: \n".$client2->__getLastRequestHeaders() ."\n";
-      //print "Response: \n".$client2->__getLastResponseHeaders()."\n";*/
+        var_dump($result = $client2->__doRequest(
+            $xmlShippment,
+            "http://uat.example.com/Universe.Services/TMSBasic/Wcf/c1/i1/TMSBasic/TMSBasic.svc/xml",
+            "http://example.com/facade/tmsBasic/1/0/servicecontract/ITMSBasic/AddAndPrintShipment",
+            SOAP_1_1
+        ));
 
-      // Deprecated
-      //$client2->__call("AddAndPrintShipment",$params);
+        //$result = $client2->__soapCall("AddAndPrintShipment", $params);
+        //echo "REQUEST:\n" . htmlentities($client2->__getLastRequest()) . "\n";
+        /*print "Request: \n".$client2->__getLastRequest() ."\n";
+        //print "Response: \n".$client2->__getLastResponse()."\n";
+        //print "Request: \n".$client2->__getLastRequestHeaders() ."\n";
+        //print "Response: \n".$client2->__getLastResponseHeaders()."\n";*/
 
-      // Format xml prettify
-      $domxml = new DOMDocument('1.0');
-      $domxml->preserveWhiteSpace = true;
-      $domxml->formatOutput = true;
-      @$domxml->loadHTML($result);
-      $soapXMLResult = $domxml->saveXML(); // formated xml
-      // echo $soapXMLResult;
+        // Deprecated
+        //$client2->__call("AddAndPrintShipment",$params);
 
-      // Transform to array
-      $xml = simplexml_load_string($soapXMLResult, "SimpleXMLElement", LIBXML_NOCDATA);
-      $json = json_encode($xml);
-      $array = json_decode($json,TRUE);
+        // Format xml prettify
+        $domxml = new DOMDocument('1.0');
+        $domxml->preserveWhiteSpace = true;
+        $domxml->formatOutput = true;
+        @$domxml->loadHTML($result);
+        $soapXMLResult = $domxml->saveXML(); // formated xml
+        // echo $soapXMLResult;
 
-      // get information
-      $strIdentifier = $array["body"]["envelope"]["body"]["addandprintshipmentresponse"]["parceldocuments"]["parceldocument"]["identifier"];
+        // Transform to array
+        $xml = simplexml_load_string($soapXMLResult, "SimpleXMLElement", LIBXML_NOCDATA);
+        $json = json_encode($xml);
+        $array = json_decode($json, true);
 
+        // get information
+        $strIdentifier = $array["body"]["envelope"]["body"]["addandprintshipmentresponse"]["parceldocuments"]["parceldocument"]["identifier"];
 
-   } catch (Exception $e) {
-      echo $e->getMessage();
-   }
+    } catch (Exception $e) {
+        echo $e->getMessage();
+    }
 
 } catch (Exception $e) {
-   echo $e->getMessage().PHP_EOL;
-   echo $e->faultstring .PHP_EOL;
+    echo $e->getMessage() . PHP_EOL;
+    echo $e->faultstring . PHP_EOL;
 }
 
-
-
-
-
-
-
-
-
-
-
+##########################################################################
+#
+#  Debug SOAP Conn Response
+#
 ##########################################################################
 
-Debug SOAP Conn Response
-
-##########################################################################
-
-
-$client = new SoapClient(self::$strWsdlDev,array( 'trace' => 1 , 'exceptions' => 0) );
+$client = new SoapClient(self::$strWsdlDev, array('trace' => 1, 'exceptions' => 0));
 $client->__setSoapHeaders(new SoapHeader("http://example.com/facade/shared/1/0/",
     "AuthenticationTicket",
     $this->strAuthTicket
 ));
 $client->__call("AddData", array($objRequestData));
 
-echo "--------------------------------------------------------------".PHP_EOL;
+echo "--------------------------------------------------------------" . PHP_EOL;
 echo "====== REQUEST HEADERS =====" . PHP_EOL;
 var_dump($client->__getLastRequestHeaders());
 echo "========= REQUEST ==========" . PHP_EOL;
 var_dump($client->__getLastRequest());
 
-echo "--------------------------------------------------------------".PHP_EOL;
+echo "--------------------------------------------------------------" . PHP_EOL;
 echo "========= RESPONSE =========" . PHP_EOL;
 var_dump($client->__getLastResponse());
 echo "REQUEST:\n" . html_entity_decode(htmlentities($client->__getLastResponse())) . "\n";
 echo "========= RESPONSE HEADERS=========" . PHP_EOL;
 var_dump($client->__getLastResponseHeaders());
-
 
 $lastRequest = html_entity_decode(htmlentities($client->__getLastRequest()));
 // Format xml prettify
@@ -226,22 +211,4 @@ $domxml->formatOutput = true;
 $soapXMLResult = $domxml->saveXML(); // formated xml
 echo $soapXMLResult;
 
-
 exit;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

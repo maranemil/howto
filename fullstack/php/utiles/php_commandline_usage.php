@@ -72,17 +72,16 @@ https://www.php.net/manual/de/features.commandline.usage.php
 //-----------------------------
 
 #!/usr/bin/php
-<?php
-var_dump($argv);
-?>
+
+// var_dump($argv);
 
 
-1:  #!/usr/bin/php   							# standard way to start a script
-2:  #!/usr/bin/env  php							# uses "env" to find where PHP is installed
-3:  #!/usr/bin/php -n							# ignore the system's PHP.ini, and go with the defaults
-4:  #!/usr/bin/php -ddisplay_errors=E_ALL		# set exactly one configuration variable
-5:  #!/usr/bin/php -n -ddisplay_errors=E_ALL	# will not (as of 2013) work on Linux.
 
+#1:  #!/usr/bin/php   							# standard way to start a script
+#2:  #!/usr/bin/env  php							# uses "env" to find where PHP is installed
+#3:  #!/usr/bin/php -n							# ignore the system's PHP.ini, and go with the defaults
+#4:  #!/usr/bin/php -ddisplay_errors=E_ALL		# set exactly one configuration variable
+#5:  #!/usr/bin/php -n -ddisplay_errors=E_ALL	# will not (as of 2013) work on Linux.
 
 # declare(strict_types=1);
 
