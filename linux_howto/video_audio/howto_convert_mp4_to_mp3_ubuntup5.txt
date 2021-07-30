@@ -579,7 +579,27 @@ ffprobe -v error -select_streams v:0 -show_entries stream=avg_frame_rate -of def
 # size
 ffprobe -v error -select_streams v:0 -show_entries stream=height,width -of csv=s=x:p=0
 
+################################################################################################
+distorse
+################################################################################################
 
+https://opensource.com/article/17/6/ffmpeg-convert-media-file-formats
+
+ffmpeg -i input.mp4 -ss 00:0:00 -t 15 -crf 98 -y part5.mp4
+ffplay -i input.mp4 -sws_flags lanczos -vf format=yuv420p
+ffplay -i input.mp4 -sws_flags lanczos -vf format=rgb8,scale=1280:-2
+ffmpeg -i input.mp4 -c:a copy -c:v vp9 -b:v 1M output.mkv
+ffmpeg -i input.mp4 -c:a copy -c:v vp9 -r 30 output.mkv
+ffmpeg -i input.mkv -c:a copy -s hd720 output.mkv
+ffmpeg -i input.mkv -c:a copy -s 1280x720 output.mkv
+
+ffmpeg -y -hide_banner -vsync 0 -i traideler.mp4  -c copy   -rc:v:0 vbr -tune hq -preset p5 -bf 4 -b_ref_mode 1 -nonref_p 1 -rc-lookahead 75 -spatial-aq 1 -aq-strength 8 -temporal-aq 1 -cq 21 -qmin 1 -qmax 9 -b:v:0 1M -maxrate:v:0 2M  "output.mkv"
+
+ffplay -i in.mp4 -cpu-used 4  -vf "setpts=1.5*PTS,minterpolate='fps=2:mb_size=8:search_param=260:vsbmc=0:scd=none:mc_mode=aobmc:me_mode=bilat:me=epzs',scale=iw*4:ih*4,zoompan=z='if(lte(mod(on,40),20),zoom+0.018,zoom-0.018)':x='iw/2-(iw/zoom)/2':y='ih/2-(ih/zoom)/2':d=5*2:fps=19.97,hue=s=3,shuffleframes=2 1 0,shuffleplanes=0:2:1:3" -an
+
+ffplay -i in.avi -cpu-used 4  -vf "setpts=1.5*PTS,minterpolate='fps=2:mb_size=8:search_param=260:vsbmc=0:scd=none:mc_mode=aobmc:me_mode=bilat:me=epzs',scale=iw*4:ih*4,zoompan=z='if(lte(mod(on,40),20),zoom+0.018,zoom-0.018)':x='iw/2-(iw/zoom)/2':y='ih/2-(ih/zoom)/2':d=5*2:fps=9.97,hue=s=3,shuffleframes=2 1 0,shuffleplanes=1:0:1:3" -an
+
+ffplay -i in.mp4 -cpu-used 4  -vf "setpts=1.5*PTS,minterpolate='fps=3:mb_size=4:search_param=160:vsbmc=1:scd=none:mc_mode=aobmc:me_mode=bilat:me=epzs',scale=1280:-2,unsharp=3:3:3.2" -an -crf 80
 
 
 

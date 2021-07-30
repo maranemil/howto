@@ -242,6 +242,14 @@ ffmpeg -i in.mp4 -vf scale=-1:1080 -an out.mp4
 * firefox -no-remote -new-window -p sidekick  -new-instance -P 
 * firefox -no-remote -allow-downgrade -private -purgecaches -safe-mode -p sidekick -P
 
+
+> open multiple tabs 
+* Chromium:
+* xargs google-chrome --new-tab < urls.txt
+* xargs chromium-browser --new-tab < urls.txt
+* Firefox:
+* xargs -L1 firefox -new-tab < urls.txt
+
 > boost cpu
 * for i in {0..7}; do echo performance | sudo tee /sys/devices/system/cpu/cpu"$i"/cpufreq/scaling_governor ; done
 > manage cpu performance
