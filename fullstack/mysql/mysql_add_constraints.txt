@@ -44,3 +44,93 @@ ALTER TABLE `demo_table`
 
 ALTER TABLE demo_table DROP FOREIGN KEY demo_table_ibfk_3;
 DROP TABLE `demo_table`;
+
+
+
+
+
+
+##################################################################################
+SQL Tutorial - Full Database Course for Beginners
+https://youtu.be/HXV3zeQKqGY?t=8517
+https://www.w3schools.com/sql/sql_foreignkey.asp
+##################################################################################
+
+CREATE TABLE employee(
+	employee_id INT PRIMARY KEY,
+	first_name VARCHAR(40),
+	last_name VARCHAR(40),
+	super_id INT,
+	branch_id INT
+);
+
+CREATE TABLE branch(
+	branch_id INT PRIMARY KEY,
+	branch_name VARCHAR(40),
+	manager_id INT,
+	manager_date DATE,
+ 	FOREIGN_KEY (manager_id) REFERENCES employee(employee_id) ON DELETE SET NULL
+);
+
+ALTER TABLE employee ADD FOREIGN KEY(branch_id) REFERENCES branch(branch_id) ON DELETE SET NULL;
+ALTER TABLE employee ADD FOREIGN KEY(superviser_id) REFERENCES branch(employee_id) ON DELETE SET NULL;
+
+CREATE TABLE client(
+	client_id INT PRIMARY KEY,
+	client_name VARCHAR(40),
+	branch_id INT,
+	FOREIGN_KEY (branch_id) REFERENCES branch(branch_id) ON DELETE SET NULL
+);
+
+
+CREATE TABLE works_with(
+	employee_id INT,
+	client_id INT,
+	total_sales INT,
+	PRIMARY KEY(emp_id,client_id),
+	FOREIGN_KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE ,
+	FOREIGN_KEY (client_id) REFERENCES client(client_id) ON DELETE CASCADE
+);
+
+CREATE TABLE branch_supplier(
+	branch_id INT,
+	supplier_name VARCHAR(40),
+	supplier_type VARCHAR(40),
+	PRIMARY KEY(branch_id,supplier_name),
+	FOREIGN_KEY (branch_id) REFERENCES branch(branch_id) ON DELETE CASCADE
+);
+
+INSERT INTO employee VALUES(100,'David,'Wall',NULL,1);
+INSERT INTO branch VALUES(1,'Corporate',100,NOW());
+UPDATE employee SET branch_id = 1 WHERE employee_id = 100;
+INSERT INTO employee VALUES(101,'Jan,'Son',NULL,1);
+
+# wildcard search for date XXXX-XX-XX
+SELECT date FROM table LIKE '____-10%';
+
+# trigger
+DELIMITER $$
+CREATE
+	TRIGGER my_trigger BEFORE INSERT
+	ON employee
+	FOR EACH ROW BEGIN
+		-- INSERT INTO my_trigger_table VALUES('added new entry');
+		-- INSERT INTO my_trigger_table VALUES(NEW.first_name);
+		IF NEW.first_name = 'John' THEN
+			INSERT INTO my_trigger_table VALUES(NEW.first_name);
+		ELSE
+			INSERT INTO my_trigger_table VALUES('added new entry');
+		END IF;
+	END$$
+DELIMITER;
+
+# ON DELETE CASCADE
+# ON DELETE SET NULL
+# ON UPDATE RESTRICT (throws an error - no action)
+
+# LEFT OUTER JOIN
+
+
+#Second normal form (2NF)  Database normalization
+https://www.edureka.co/blog/normalization-in-sql/
+https://www.w3schools.in/dbms/database-normalization/
