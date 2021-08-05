@@ -395,3 +395,8 @@ ffmpeg -i in.mp4 -vf scale=-1:1080 -an out.mp4
 
 #### Sync folders from drives
 * rsync --ignore-existing --recursive --progress /home/user/folder_sync/ /media/user/external_drive/folder_sync/
+
+#### ubuntu webcam settings
+* sudo apt install v4l-utils
+* v4l2-ctl -d /dev/video0 --set-ctrl=brightness=60,gamma=30,sharpness=2,hue=2,saturation=30
+* v4l2-ctl -d /dev/video0 --set-ctrl=brightness=90,gamma=30,sharpness=2,hue=2,saturation=30
