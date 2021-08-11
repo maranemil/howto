@@ -854,3 +854,17 @@ elseif (PHP_VERSION_ID >= 50600)
 ################################################
 $string = "1,2,3"
 $integerIDs = array_map('intval', explode(',', $string));
+
+
+/*
+################################################
+Read  $_SERVER['HTTP_REFERER'] params
+################################################
+https://stackoverflow.com/questions/4310008/php-how-do-i-get-a-parameter-value-from-serverhttp-referer
+https://www.php.net/manual/en/function.parse-url.php
+https://www.php.net/manual/en/function.parse-str.php
+http://phptester.net/
+*/
+
+parse_str(parse_url($_SERVER['HTTP_REFERER'], PHP_URL_QUERY), $queries);
+echo $queries['q'];
