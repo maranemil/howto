@@ -665,6 +665,7 @@ function INISET_SUGARCRM7()
 
 }
 
+//-----------------------------------------------------
 
 apache_setenv('no-gzip', 1);
 
@@ -696,3 +697,47 @@ ini_set('display_errors', false);
 ini_set('display_startup_errors', false);
 ini_set('error_reporting', E_ERROR);
 
+//-----------------------------------------------------
+// Tune Opcache spped cache
+//-----------------------------------------------------
+
+/*
+https://tideways.com/profiler/blog/fine-tune-your-opcache-configuration-to-avoid-caching-suprises
+https://www.scalingphpbook.com/blog/2014/02/14/best-zend-opcache-settings.html
+https://www.ionos.de/digitalguide/websites/web-entwicklung/websites-beschleunigen-mit-php-7-und-opcache/
+*/
+
+ini_set('opcache.enable', "On");
+ini_set('opcache.memory_consumption', 256);
+ini_set('opcache.interned_strings_buffer', 16);
+ini_set('opcache.max_accelerated_files', 10000);
+ini_set('opcache.revalidate_freq', 180);
+ini_set('opcache.validate_timestamps', 1);
+ini_set('opcache.fast_shutdown', 1);
+
+/*
+opcache.memory_consumption=128 # MB, adjust to your needs
+opcache.max_accelerated_files=10000 # Adjust to your needs
+opcache.max_wasted_percentage=10 # Adjust to your needs
+opcache.validate_timestamps=0
+
+opcache.revalidate_freq=0
+opcache.validate_timestamps=0 (comment this out in your dev environment)
+opcache.max_accelerated_files=7963
+opcache.memory_consumption=192
+opcache.interned_strings_buffer=16
+opcache.fast_shutdown=1
+
+opcache.enable=1;
+opcache.memory_consumption=32;
+opcache.interned_strings_buffer=8;
+opcache.max_accelerated_files=3000;
+opcache.revalidate_freq=180;
+opcache.fast_shutdown=0;
+opcache.enable_cli=0;
+opcache.revalidate_path=0;
+opcache.validate_timestamps=1;
+opcache.max_file_size=0;
+opcache.file_cache=/kunden/homepages/mein-pfad/htdocs/.opcache;
+opcache.file_cache_only=1;
+*/
