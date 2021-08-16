@@ -29,6 +29,7 @@ See "git help gc" for manual housekeeping.  | git gc
 remove staged file |git restore --staged file
 reverse changed files not yet commited | git checkout -- .
 save changes in stash for untracked files | git stash -u
+optimize git |  git gc
 
 #### push existing local repo from cmd line to GitHub 
 
