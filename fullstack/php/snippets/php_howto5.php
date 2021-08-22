@@ -868,3 +868,22 @@ http://phptester.net/
 
 parse_str(parse_url($_SERVER['HTTP_REFERER'], PHP_URL_QUERY), $queries);
 echo $queries['q'];
+
+
+
+/*
+Detecting request type in PHP (GET, POST, PUT or DELETE)
+https://stackoverflow.com/questions/359047/detecting-request-type-in-php-get-post-put-or-delete
+https://www.php.net/manual/de/reserved.variables.request.php
+*/
+
+switch($_SERVER['REQUEST_METHOD'])
+{
+    case 'GET': $the_request = &$_GET; break;
+    case 'POST': $the_request = &$_POST; break;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+     // The request is using the POST method
+}
+
