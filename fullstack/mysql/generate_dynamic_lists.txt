@@ -1,0 +1,90 @@
+
+
+#############################################################
+
+GEN dyn date every 15th minute / every day
+
+#############################################################
+
+https://stackoverflow.com/questions/3538858/mysql-how-to-fill-missing-dates-in-range
+https://stackoverflow.com/questions/3538858/mysql-how-to-fill-missing-dates-in-range
+https://ubiq.co/database-blog/fill-missing-dates-in-mysql/
+https://stackoverflow.com/questions/27954991/how-to-fill-missing-values-in-mysql-query/27956090
+https://stackoverflow.com/questions/54586580/mysql-fill-missing-values-with-0
+
+
+
+SELECT a.Days
+FROM (
+    SELECT FROM_UNIXTIME( FLOOR( UNIX_TIMESTAMP() / (15 * 60) ) * (15 * 60)) - INTERVAL 15 * (a.a + (10 * b.a) + (100 * c.a)) MINUTE AS Days
+    FROM       (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS a
+    CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS b
+    CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS c
+) a
+WHERE a.Days >= curdate() - INTERVAL 3 DAY
+
+// --------------------------------------------------------------------------------
+
+//  GEN dyn date
+
+SELECT a.Days
+    FROM (
+        SELECT curdate() - INTERVAL (a.a + (10 * b.a) + (100 * c.a)) DAY AS Days
+        FROM       (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS a
+        CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS b
+        CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS c
+    ) a
+WHERE a.Days >= curdate() - INTERVAL 3 DAY
+
+// --------------------------------------------------------------------------------
+
+SELECT
+    IF(score IS NULL, 0, score) AS score,
+    b.Days AS date
+FROM
+    (SELECT a.Days
+    FROM (
+        SELECT curdate() - INTERVAL (a.a + (10 * b.a) + (100 * c.a)) DAY AS Days
+        FROM       (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS a
+        CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS b
+        CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS c
+    ) a
+    WHERE a.Days >= curdate() - INTERVAL 3 DAY) b
+LEFT JOIN your_table
+    ON date = b.Days
+ORDER BY b.Days;
+
+
+// --------------------------------------------------------------------------------
+// count without join
+
+SELECT
+    (SELECT
+           count(SUBSTR(ee.`date`,1,10) )
+           FROM `entries` ee
+           WHERE  list.Days = SUBSTR(ee.`date`,1,10)
+           GROUP BY SUBSTR(ee.`date`,1,10)  ) as cnt,
+    list.Days AS date
+FROM
+    (SELECT a.Days
+    FROM (
+        SELECT curdate() - INTERVAL (a.a + (10 * b.a) + (100 * c.a)) DAY AS Days
+        FROM       (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS a
+        CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS b
+        CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS c
+    ) a
+    WHERE a.Days >= curdate() - INTERVAL 3 DAY) list
+
+  GROUP BY list.Days
+ORDER BY list.Days;
+
+// --------------------------------------------------------------------------------
+// gen list
+
+SELECT A.x AS bucket
+FROM
+(select 1 x union select 2 union select 3 union select 4 union select 5 union select 6 union select 7) AS A
+GROUP BY bucket
+ORDER BY bucket;
+
+

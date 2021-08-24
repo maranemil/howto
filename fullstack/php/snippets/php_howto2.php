@@ -258,6 +258,17 @@ echo $ext['dirname'] . '<br/>';   // Returns folder/directory
 echo $ext['basename'] . '<br/>';  // Returns file.html
 echo $ext['extension'] . '<br/>'; // Returns .html
 echo $ext['filename'] . '<br/>';  // Returns file
+
+
+$allowed = array('gif', 'png', 'jpg');
+$filename = $_FILES['video_file']['name'];
+$ext = pathinfo($filename, PATHINFO_EXTENSION);
+if (!in_array($ext, $allowed)) {
+    echo 'error';
+}
+
+
+
  */
 
 #------------------------------------
