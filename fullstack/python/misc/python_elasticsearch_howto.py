@@ -1,4 +1,3 @@
-
 #######################################################
 #
 # 	elasticsearch python
@@ -24,6 +23,7 @@ pip install elasticsearch
 # ------------------------------------------------------
 from datetime import datetime
 from elasticsearch import Elasticsearch
+
 es = Elasticsearch()
 
 doc = {
@@ -51,27 +51,24 @@ from elasticsearch import Elasticsearch
 es = Elasticsearch()
 
 # allow up to 25 connections to each node
-es = Elasticsearch(["host1", "host2"], maxsize=25)
+# es = Elasticsearch(["host1", "host2"], maxsize=25)
 
 # you can specify to sniff on startup to inspect the cluster and load
 # balance across all nodes
-es = Elasticsearch(["seed1", "seed2"], sniff_on_start=True)
+# es = Elasticsearch(["seed1", "seed2"], sniff_on_start=True)
 
 # you can also sniff periodically and/or after failure:
-es = Elasticsearch(["seed1", "seed2"],
-          sniff_on_start=True,
-          sniff_on_connection_fail=True,
-          sniffer_timeout=60)
+# es = Elasticsearch(["seed1", "seed2"],          sniff_on_start=True,          sniff_on_connection_fail=True,          sniffer_timeout=60)
 
 # ------------------------------------------------------
 
 # Example use
-
->>> from datetime import datetime
->>> from elasticsearch import Elasticsearch
+"""
+from datetime import datetime
+from elasticsearch import Elasticsearch
 
 # by default we connect to localhost:9200
->>> es = Elasticsearch()
+es = Elasticsearch()
 
 # create an index in elasticsearch, ignore status code 400 (index already exists)
 >>> es.indices.create(index='my-index', ignore=400)
@@ -84,4 +81,4 @@ es = Elasticsearch(["seed1", "seed2"],
 # but not deserialized
 >>> es.get(index="my-index", doc_type="test-type", id=42)['_source']
 {u'any': u'data', u'timestamp': u'2013-05-12T19:45:31.804229'}
-
+"""
