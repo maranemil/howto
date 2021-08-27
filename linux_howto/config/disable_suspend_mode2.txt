@@ -1,0 +1,152 @@
+##########################################################################
+#
+# UFW blocking WiFi interface after connecting to bluetooth headphone
+#
+##########################################################################
+
+https://www.reddit.com/r/archlinux/comments/ixypud/ufw_blocking_wifi_interface_after_connecting_to/
+https://askubuntu.com/questions/353338/ufw-allow-from-wlan-to-eth
+https://bbs.archlinux.org/viewtopic.php?id=245036
+https://wiki.archlinux.org/title/Network_configuration
+https://forums.linuxmint.com/viewtopic.php?t=190118
+https://msfn.org/board/topic/178027-ufw-rules-dont-affect-wi-fi-hotspot-fedora-29/
+https://security.stackexchange.com/questions/184686/ufw-appears-to-block-connections-from-remote-address-but-nat-is-disabled-on-my
+https://serverfault.com/questions/74023/ufw-on-ubuntu-to-allow-all-traffic-on-lan
+https://www.computerweekly.com/de/ratgeber/Uncomplicated-Firewall-Linux-mit-UFW-und-Gufw-absichern
+https://pimylifeup.com/raspberry-pi-ufw/
+https://blog.heptanalytics.com/configuring-ufw-on-a-linux-machine/
+
+
+BUG
+systemd[1]: systemd-udevd.service: Got notification message from PID 344 (WATCHDOG=1)
+kernel: [UFW BLOCK] IN=wlp2s0 OUT= MAC=53:ea:6f:d5:b9:95:21:f3:b2:8b:5b:2a:08:00 SRC=138.201.81.199 DST=192.168.0.100 LEN=52 TOS=0x00 >
+
+
+FIX
+
+# sudo apt update
+# sudo apt full-upgrade
+# sudo apt-get install ufw gufw
+# ufw allow ssh/tcp
+# ufw allow 22/tcp
+# ufw allow from 192.168.178.15 port 22
+# ufw deny from 10.0.0.0
+# ufw status numbered
+# ufw delete <Nummer>
+# ufw limit ssh/tcp
+# ufw reset
+# sudo ufw allow 22
+# sudo ufw limit 22
+# sudo ufw show added
+# /lib/ufw/ufw-init flush-all
+# tail /var/log/ufw.log
+
+sudo ufw allow in on wlp2s0 to any
+sudo ufw allow from 192.168.0.10/24
+
+# bluetoothctl disconnect
+
+
+sudo nano /etc/default/ufw
+DEFAULT_FORWARD_POLICY="ACCEPT"
+
+sudo nano  /etc/ufw/sysctl.conf
+# net/ipv4/ip_forward=1
+# net/ipv6/conf/default/forwarding=1
+
+
+sudo ufw disable && sudo ufw enable
+iw dev wlp2s0 set power_save of
+
+
+
+lspci
+lspci -nnk | grep -iA2 net
+
+modinfo -p ath9k
+echo "options ath9k btcoex_enable=1" | sudo tee /etc/modprobe.d/ath9k.conf
+
+lsusb
+lsmod | grep bluetooth
+dmesg | grep firmware
+
+sudo apt autoremove
+sudo apt-get install linux-firmware
+
+echo 1 > /sys/module/bluetooth/parameters/disable_ertm
+
+-------------
+
+https://www.suse.com/support/kb/doc/?id=000016942
+
+
+Situation
+USB devices are not detected or avaible for use when plugged into the USB ports.
+
+dmesg command output and messages in /var/log/messages shows output similar to:
+usb 1-6: new high speed USB device using ehci_hcd and address 4
+usb 1-6: device not accepting address 4, error -71
+hub 1-0:1.0: unable to enumerate USB device on port 6
+
+hot fix
+Before implementing the permanent fix, it is suggested that you test it first. Unplug your USB device, and then run,
+echo -1> /sys/module/usbcore/parameters/autosuspend
+Plug your USB device in. If it is detected then continue on to the permenant fix.
+
+permanent fix
+The autosuspend setting can be set at the loading of the USB module. The control of device parameters can be found in /etc/modprobe.conf, /etc/modprobe.conf.local and /etc/modprobe.d.
+Create a file in /etc/modprobe.d called usbcore
+Populate the file with the following
+options usbcore autosuspend=-1
+Save the file
+Run "mkinitrd" (If you are sure that no USB device modules are loaded via the initrd, then you can skip this step)
+Reboot
+
+
+
+https://www.makeuseof.com/tag/fix-usb-device-port-linux/
+
+lsusb
+dmesg | grep -i USB
+dmesg | less
+usb-devices
+cat /sys/module/usbcore/parameters/autosuspend
+
+sudo nano /etc/default/grub
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash" > GRUB_CMDLINE_LINUX_DEFAULT="quiet splash usbcore.autosuspend=-1"
+sudo update-grub
+cat /sys/module/usbcore/parameters/autosuspend
+
+-------------------------------
+[    0.376824] pci 0000:00:07.0: PME# supported from D0 D3hot D3cold
+[    0.376847] pci 0000:00:07.0: DPC: RP PIO log size 0 is invalid
+[    0.376852] fbcon: Taking over console
+
+[    4.955148] power_ctrl_logic 0000:00:00.0: @power_ctrl_logic_probe: fail to add gpio
+[    4.976890] thinkpad_acpi: Unknown/reserved multi mode value 0x0000 for type 4, please report this to ibm-acpi-devel@lists.sourceforge.net
+
+[    4.975379] thinkpad_acpi: ThinkPad ACPI Extras v0.26
+[    4.975380] thinkpad_acpi: http://ibm-acpi.sf.net/
+[    4.975381] thinkpad_acpi: ThinkPad BIOS R1EET28W(1.28 ), EC R1EHT28W
+[    4.975382] thinkpad_acpi: Lenovo ThinkPad E15 Gen 2, model 20TD0003GE
+[    4.976790] thinkpad_acpi: radio switch found; radios are enabled
+[    4.976890] thinkpad_acpi: Unknown/reserved multi mode value 0x0000 for type 4, please report this to ibm-acpi-devel@lists.sourceforge.net
+[    4.977272] thinkpad_acpi: Tablet mode switch found (type: GMMS), currently in laptop mode
+[    4.977282] thinkpad_acpi: This ThinkPad has standard ACPI backlight brightness control, supported by the ACPI video driver
+[    4.977283] thinkpad_acpi: Disabling thinkpad-acpi brightness events by default...
+[    4.986868] thinkpad_acpi: rfkill switch tpacpi_wwan_sw: radio is blocked
+
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash usbcore.autosuspend=-1"
+#GRUB_CMDLINE_LINUX_DEFAULT="quiet splash usbcore.old_scheme_first=1"
+
+https://elixir.bootlin.com/linux/latest/source/drivers/platform/x86/thinkpad_acpi.c
+https://github.com/torvalds/linux/blob/master/drivers/platform/x86/thinkpad_acpi.c
+https://forums.lenovo.com/t5/Ubuntu/E15-gen-2-reboots-1-min-after-recovery-from-suspend/m-p/5081203
+
+mesg | grep S3
+[    0.212858] ACPI: (supports S0 S3 S4 S5)
+
+https://sourceforge.net/p/ibm-acpi/mailman/ibm-acpi-devel/?limit=250&style=flat&viewmonth=201101
+https://sourceforge.net/p/ibm-acpi/mailman/ibm-acpi-devel/?limit=100&viewmonth=201705
+
+
