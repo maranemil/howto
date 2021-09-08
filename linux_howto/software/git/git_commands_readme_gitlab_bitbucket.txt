@@ -31,11 +31,11 @@ git remote add origin git@limex-VirtualBox:root/wtfidid.git
 git push -u origin --all
 git push -u origin --tags
 
-################################
+################################################################
 #
 #   bitbucket
 #
-################################
+################################################################
 
 First start from scratch
 
@@ -132,3 +132,143 @@ https://guides.co/g/bitbucket-101/11158
 
 https://gist.github.com/mandiwise/5954bbb2e95c011885ff
 https://gist.github.com/rosswd/e1afd2b0b0d515517eac
+
+
+################################################################
+#
+#   13 Advanced (but useful) Git Techniques and Shortcuts
+#   https://www.youtube.com/watch?v=ecK3EnyGD8o
+#
+################################################################
+
+# add all files to commit in 2 steps
+git add .
+git commit -m "hi mom"
+
+# add all files to commit in one step
+git commit -am "hi mom"
+
+# correct last commit message
+git commit --amend -m "nicer"
+
+# add files to last commit if remote repo
+git commit --amend --no-edit
+
+# overwite history on remote
+# git push origin master --force
+git push origin master --force-with-lease
+
+
+# revert
+#git revert feature_branch
+git log --oneline
+git revert 453436346
+
+--------------------------------------------------------
+# temp work with stash
+--------------------------------------------------------
+git stash  		# save temp code and remove
+git stash pop	# restore temp code
+
+git stash save coolstuff
+git stash list
+git stash apply 0
+
+# master goes into main mega mucho - rename branch
+git branch -M mega
+
+# nice log view
+git log --graph --oneline --decorate
+
+--------------------------------------------------------
+# stat from last stable
+--------------------------------------------------------
+git bisect start
+git bisect bad
+git bisect good 6d010fd
+
+--------------------------------------------------------
+# mix more fixes in one
+--------------------------------------------------------
+git rebase master --interactive # genearates a to-do file
+
+# file git-rebase-todo
+pick  7er10fd feature complete
+squash  6d010fd 1
+squash  3d010gd 2
+squash  5d010ed 3
+
+git commit --fixup fb5f6999
+git commit --squash fb5f697s
+git rebase -i --autosquash
+
+--------------------------------------------------------
+// git hooks # for js there is and npm pack named husky
+--------------------------------------------------------
+npm install husly -D
+npm set-script prepapre "husky install"
+npm run prepare
+
+// add hook
+npx husky add .husky/pre-commit "npm test"
+git add .husky/pre-commit
+
+// make commit
+git commit -m "new coomit"
+
+--------------------------------------------------------
+// destruction
+--------------------------------------------------------
+git fetch origin
+git reset --hard origin/master
+git clean -df
+rm -rf .git
+
+
+# go to last or previous branch
+git checkout -
+
+# performs a merge without fast-forwarding
+git merge --no-ff
+
+# revert a PR merge and avoid reverting every commit
+git revert merge_commit_id -m 1
+
+# pick the commits(changes) from different branches to current branch
+git cherry-pick
+
+--------------------------------------------------------
+create new branch
+--------------------------------------------------------
+git branch new-branch && git checkout new-branch
+
+or
+
+git checkout -b new-branch
+
+--------------------------------------------------------
+# if you mess up something, can undo almost any operation
+git reflog && git reset
+
+
+# aliases
+alias uncommit="git reset HEAD~1"
+alias recommit="git commit --amend --no-edit"
+alias editcommit="git commit --amend"
+alias gs="git status"
+
+# config
+git config --global alias.magic '! git add . >/dev/null 2>&1 && git status --porcelain | git commit -F -'
+
+# when updating a feature branch from dev / master
+git rebase > git merge
+
+# get feature branch commits into the staged files and proceed to one commit out of all changes.
+git reset --soft master
+
+
+https://git-scm.com/docs/git-checkout
+https://www.atlassian.com/git/tutorials/resetting-checking-out-and-reverting
+https://stackoverflow.com/questions/41101998/git-checkout-vs-git-checkout/41102120
+
+
