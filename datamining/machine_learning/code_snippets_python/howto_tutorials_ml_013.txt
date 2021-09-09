@@ -1,0 +1,648 @@
+
+------------------------------------------------------------------------------------
+
+Machine Learning im Browser
+https://entwickler.de/machine-learning/machine-learning-im-browser/
+
+// create a sequential model
+const model = tf.sequential();
+
+// add a fully connected layer with 10 units (neurons)
+model.add(tf.layers.dense({units: 10}));
+
+// add a convolutional layer to work on a monochrome 28x28 pixel image
+// with 8 filter units
+model.add(tf.layers.conv2d({
+  inputShape: [28, 28, 1],
+  filters: 8
+}));
+
+// compile the model like you would do in Keras
+// the API speaks for itself
+model.compile({
+  optimizer: 'adam',
+  loss: 'categoricalCrossentropy',
+  metrics: ['accuracy']
+});
+
+..
+
+const model = await tf.loadModel('model.json');
+const example = tf.tensor([[150, 45, 10]]);
+const prediction = model.predict(example);
+const value = await prediction.data();
+
+import * as posenet from '@tensorflow-models/posenet';
+import * as tf from '@tensorflow/tfjs';
+
+// load the posenet model
+const model = await posenet.load();
+
+// get the poses from a video element linked to the camera
+const poses = await model.estimateMultiplePoses(video);
+
+// poses contain
+// - confidence score
+// - x, y positions
+
+------------------------------------------------------------------------------------
+
+Creating a Simple Recommender System in Python using Pandas
+https://stackabuse.com/creating-a-simple-recommender-system-in-python-using-pandas/#
+
+
+
+import numpy as np
+import pandas as pd
+
+ratings_data = pd.read_csv("E:\Datasets\ml-latest-small\\ratings.csv")
+ratings_data.head()
+movie_names = pd.read_csv("E:\Datasets\ml-latest-small\\movies.csv")
+movie_names.head()
+movie_data = pd.merge(ratings_data, movie_names, on='movieId')
+movie_data.head()
+movie_data.groupby('title')['rating'].mean().head()
+movie_data.groupby('title')['rating'].mean().sort_values(ascending=False).head()
+movie_data.groupby('title')['rating'].count().sort_values(ascending=False).head()
+ratings_mean_count = pd.DataFrame(movie_data.groupby('title')['rating'].mean())
+ratings_mean_count['rating_counts'] = pd.DataFrame(movie_data.groupby('title')['rating'].count())
+ratings_mean_count.head()
+
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set_style('dark')
+%matplotlib inline
+
+plt.figure(figsize=(8,6))
+plt.rcParams['patch.force_edgecolor'] = True
+ratings_mean_count['rating_counts'].hist(bins=50)
+
+plt.figure(figsize=(8,6))
+plt.rcParams['patch.force_edgecolor'] = True
+ratings_mean_count['rating'].hist(bins=50)
+
+plt.figure(figsize=(8,6))
+plt.rcParams['patch.force_edgecolor'] = True
+sns.jointplot(x='rating', y='rating_counts', data=ratings_mean_count, alpha=0.4)
+
+
+user_movie_rating = movie_data.pivot_table(index='userId', columns='title', values='rating')
+user_movie_rating.head()
+forrest_gump_ratings = user_movie_rating['Forrest Gump (1994)']
+movies_like_forest_gump = user_movie_rating.corrwith(forrest_gump_ratings)
+
+corr_forrest_gump = pd.DataFrame(movies_like_forest_gump, columns=['Correlation'])
+corr_forrest_gump.dropna(inplace=True)
+corr_forrest_gump.head()
+corr_forrest_gump.sort_values('Correlation', ascending=False).head(10)
+corr_forrest_gump = corr_forrest_gump.join(ratings_mean_count['rating_counts'])
+corr_forrest_gump.head()
+corr_forrest_gump[corr_forrest_gump ['rating_counts']>50].sort_values('Correlation', ascending=False).head()
+
+
+----------------------------------------------------------------------------------------
+
+
+Automated Machine Learning in Python
+https://heartbeat.fritz.ai/automated-machine-learning-in-python-5d7ddcf6bb9e
+
+pip install auto-keras
+pip install auto-sklearn
+
+sudo apt-get install build-essential swig
+conda install gxx_linux-64 gcc_linux-64 swig
+
+
+from keras.datasets import mnist
+from autokeras.image.image_supervised import ImageClassifier
+
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+x_train = x_train.reshape(x_train.shape + (1,))
+x_test = x_test.reshape(x_test.shape + (1,))
+
+clf = ImageClassifier(verbose=True)
+clf.fit(x_train, y_train, time_limit=12 * 60 * 60)
+clf.final_fit(x_train, y_train, x_test, y_test, retrain=True)
+y = clf.evaluate(x_test, y_test)
+print(y)
+
+import autosklearn.classification
+import sklearn.model_selection
+import sklearn.datasets
+import sklearn.metrics
+
+X, y = sklearn.datasets.load_digits(return_X_y=True)
+X_train, X_test, y_train, y_test = sklearn.model_selection.train_test_split(X, y, random_state=1)
+automl = autosklearn.classification.AutoSklearnClassifier()
+automl.fit(X_train, y_train)
+y_hat = automl.predict(X_test)
+print("Score of Accuracy", sklearn.metrics.accuracy_score(y_test, y_hat))
+
+---------------------------------------------------------------------------------------------
+
+Natural Language Understanding mit PHP
+https://entwickler.de/php/natural-language-understanding-mit-php/
+
+
+pip install rasa_nlu
+# OR (to get a bleeding edge)
+# git clone https://github.com/RasaHQ/rasa_nlu.git
+cd rasa_nlu
+pip install -r requirements.txt
+pip install -e .
+
+---------------------------------------------------------------------------------------------
+
+Naive Bayes Classification With Sklearn
+Python Code
+https://www.sicara.ai/blog/2018-02-28-naive-bayes-classification-sklearn
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import time
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB, BernoulliNB, MultinomialNB
+
+# Importing dataset
+data = pd.read_csv("data/train.csv")
+
+# Convert categorical variable to numeric
+data["Sex_cleaned"]=np.where(data["Sex"]=="male",0,1)
+data["Embarked_cleaned"]=np.where(data["Embarked"]=="S",0,
+                                  np.where(data["Embarked"]=="C",1,
+                                           np.where(data["Embarked"]=="Q",2,3)
+                                          )
+                                 )
+# Cleaning dataset of NaN
+data=data[[
+    "Survived",
+    "Pclass",
+    "Sex_cleaned",
+    "Age",
+    "SibSp",
+    "Parch",
+    "Fare",
+    "Embarked_cleaned"
+]].dropna(axis=0, how='any')
+
+# Split dataset in training and test datasets
+X_train, X_test = train_test_split(data, test_size=0.5, random_state=int(time.time()))
+
+
+# Instantiate the classifier
+gnb = GaussianNB()
+used_features =[
+    "Pclass",
+    "Sex_cleaned",
+    "Age",
+    "SibSp",
+    "Parch",
+    "Fare",
+    "Embarked_cleaned"
+]
+
+# Train classifier
+gnb.fit(
+    X_train[used_features].values,
+    X_train["Survived"]
+)
+y_pred = gnb.predict(X_test[used_features])
+
+# Print results
+print("Number of mislabeled points out of a total {} points : {}, performance {:05.2f}%"
+      .format(
+          X_test.shape[0],
+          (X_test["Survived"] != y_pred).sum(),
+          100*(1-(X_test["Survived"] != y_pred).sum()/X_test.shape[0])
+))
+
+mean_survival=np.mean(X_train["Survived"])
+mean_not_survival=1-mean_survival
+print("Survival prob = {:03.2f}%, Not survival prob = {:03.2f}%"
+      .format(100*mean_survival,100*mean_not_survival))
+
+
+      mean_fare_survived = np.mean(X_train[X_train["Survived"]==1]["Fare"])
+std_fare_survived = np.std(X_train[X_train["Survived"]==1]["Fare"])
+mean_fare_not_survived = np.mean(X_train[X_train["Survived"]==0]["Fare"])
+std_fare_not_survived = np.std(X_train[X_train["Survived"]==0]["Fare"])
+
+print("mean_fare_survived = {:03.2f}".format(mean_fare_survived))
+print("std_fare_survived = {:03.2f}".format(std_fare_survived))
+print("mean_fare_not_survived = {:03.2f}".format(mean_fare_not_survived))
+print("std_fare_not_survived = {:03.2f}".format(std_fare_not_survived))
+
+
+
+
+from sklearn.naive_bayes import GaussianNB
+gnb = GaussianNB()
+used_features =["Fare"]
+y_pred = gnb.fit(X_train[used_features].values, X_train["Survived"]).predict(X_test[used_features])
+print("Number of mislabeled points out of a total {} points : {}, performance {:05.2f}%"
+      .format(
+          X_test.shape[0],
+          (X_test["Survived"] != y_pred).sum(),
+          100*(1-(X_test["Survived"] != y_pred).sum()/X_test.shape[0])
+))
+print("Std Fare not_survived {:05.2f}".format(np.sqrt(gnb.sigma_)[0][0]))
+print("Std Fare survived: {:05.2f}".format(np.sqrt(gnb.sigma_)[1][0]))
+print("Mean Fare not_survived {:05.2f}".format(gnb.theta_[0][0]))
+print("Mean Fare survived: {:05.2f}".format(gnb.theta_[1][0]))
+
+---------------------------------------------------------------------------------------------
+
+Train Object Detection AI with 6 lines of code
+https://medium.com/deepquestai/train-object-detection-ai-with-6-lines-of-code-6d087063f6ff
+
+
+!wget https://github.com/OlafenwaMoses/ImageAI/releases/download/essential-v4/hololens.zip
+!unzip hololens.zip
+
+pip3 install tensorflow==2.4.0
+pip install keras==2.4.3 numpy==1.19.3 pillow==7.0.0 scipy==1.4.1 h5py==2.10.0 matplotlib==3.3.2 opencv-python keras-resnet==0.2.0
+pip install imageai --upgrade
+
+
+!wget https://github.com/OlafenwaMoses/ImageAI/releases/download/essential-v4/pretrained-yolov3.h5
+
+
+from imageai.Detection.Custom import DetectionModelTrainer
+
+trainer = DetectionModelTrainer()
+trainer.setModelTypeAsYOLOv3()
+trainer.setDataDirectory(data_directory="hololens")
+trainer.setTrainConfig(object_names_array=["hololens"], batch_size=4, num_experiments=100, train_from_pretrained_model="pretrained-yolov3.h5")
+trainer.trainModel()
+
+
+from imageai.Detection.Custom import DetectionModelTrainer
+
+trainer = DetectionModelTrainer()
+trainer.setModelTypeAsYOLOv3()
+trainer.setDataDirectory(data_directory="hololens")
+trainer.evaluateModel(model_path="hololens/models", json_path="hololens/json/detection_config.json", iou_threshold=0.5, object_threshold=0.3, nms_threshold=0.5)
+
+from imageai.Detection.Custom import CustomObjectDetection
+
+detector = CustomObjectDetection()
+detector.setModelTypeAsYOLOv3()
+detector.setModelPath("hololens-ex-60--loss-2.76.h5")
+detector.setJsonPath("detection_config.json")
+detector.loadModel()
+detections = detector.detectObjectsFromImage(input_image="holo3.jpg", output_image_path="holo3-detected.jpg")
+for detection in detections:
+    print(detection["name"], " : ", detection["percentage_probability"], " : ", detection["box_points"])
+
+
+
+---------------------------------------------------------------------------------------------
+
+Getting Started With Pytorch In Google Collab With Free GPU
+
+https://www.marktechpost.com/2021/01/09/getting-started-with-pytorch-in-google-collab-with-free-gpu/
+
+
+conda install pytorch-cpu torchvision-cpu -c pytorch
+
+import torch
+import numpy
+import matplotlib.pyplot as plt
+
+
+## creating a tensor of 3 rows and 2 columns consisting of ones
+>> x = torch.ones(3,2)
+>> print(x)
+tensor([[1., 1.],
+        [1., 1.],
+        [1., 1.]])
+
+## creating a tensor of 3 rows and 2 columns consisting of zeros
+>> x = torch.zeros(3,2)
+>> print(x)
+tensor([[0., 0.],
+        [0., 0.],
+        [0., 0.]])
+
+
+To increase the reproducibility, we often set the random seed to a specific value first.
+>> torch.manual_seed(2)
+#generating tensor randomly
+>> x = torch.rand(3, 2)
+>> print(x)
+#generating tensor randomly from normal distribution
+>> x = torch.randn(3,3)
+>> print(x)
+
+
+#create a tensor
+>> x = torch.tensor([[1, 2],
+                 [3, 4],
+                 [5, 6]])
+>> print(x[:, 1]) # Every row, only the last column
+>> print(x[0, :]) # Every column in first row
+>> y = x[1, 1] # take the element in first row and first column and create a another tensor
+>> print(y)
+
+
+>> x = torch.tensor([[1, 2],
+                 [3, 4],
+                 [5, 6]]) #(3 rows and 2 columns)
+>> y = x.view(2, 3) #reshaping to 2 rows and 3 columns
+
+
+
+>> x = torch.tensor([[1, 2],
+                 [3, 4],
+                 [5, 6]]) #(3 rows and 2 columns)
+>> y = x.view(6,-1) #y shape will be 6x1
+
+
+#Create two tensors
+>> x = torch.ones([3, 2])
+>> y = torch.ones([3, 2])
+
+#adding two tensors
+>> z = x + y #method 1
+>> z = torch.add(x,y) #method 2
+
+#subtracting two tensors
+>> z = x - y #method 1
+>> torch.sub(x,y) #method 2
+>> y.add_(x) #tensor y added with x and result will be stored in y
+
+
+>> x = torch.linspace(0 , 1, steps = 5) #creating a tensor using linspace
+>> x_np = x.numpy() #convert tensor to numpy
+>> print(type(x), type(x_np)) #check the types
+<class 'torch.Tensor'> <class 'numpy.ndarray'>
+
+
+>> a = np.random.randn(5) #generate a random numpy array
+>> a_pt = torch.from_numpy(a) #convert numpy array to a tensor
+>> print(type(a), type(a_pt))
+<class 'numpy.ndarray'> <class 'torch.Tensor'>
+
+# CUDA Support
+
+
+>> print(torch.cuda.device_count())
+>> print(torch.cuda.get_device_name(0))
+
+#Assign cuda GPU located at location '0' to a variable
+>> cuda0 = torch.device('cuda:0')
+#Performing the addition on GPU
+>> a = torch.ones(3, 2, device=cuda0) #creating a tensor 'a' on GPU
+>> b = torch.ones(3, 2, device=cuda0) #creating a tensor 'b' on GPU
+>> c = a + b
+>> print(c)
+tensor([[2., 2.],
+        [2., 2.],
+        [2., 2.]], device='cuda:0')
+
+#moving the result to cpu
+>> c = c.cpu()
+>> print(c)
+tensor([[2., 2.],
+        [2., 2.],
+        [2., 2.]])
+
+# Automatic Differentiation
+
+#create a tensor with requires_grad = True
+>> x = torch.ones([3,2], requires_grad = True)
+>> print(x)
+tensor([[1., 1.],
+        [1., 1.],
+        [1., 1.]], requires_grad=True)
+
+>> y = x + 5 #tensor addition
+>> print(y) #check the result
+tensor([[6., 6.],
+        [6., 6.],
+        [6., 6.]], grad_fn=<AddBackward0>)
+
+
+ >> z = y*y + 1
+>> print(z)
+tensor([[37., 37.],
+        [37., 37.],
+        [37., 37.]], grad_fn=<AddBackward0>)
+>> t = torch.sum(z) #adding all the values in z
+>> print(t)
+tensor(222., grad_fn=<SumBackward0>)
+
+>> t.backward() #peform backpropagation but pytorch will not print any output.
+
+>> print(x.grad)
+tensor([[12., 12.],
+        [12., 12.],
+        [12., 12.]])
+
+
+---------------------------------------------------------------------------------------------
+
+
+
+Transfer Learning
+https://becominghuman.ai/transfer-learning-retraining-inception-v3-for-custom-image-classification-2820f653c557
+https://github.com/wisdal/Image-classification-transfer-learning
+
+Step 1: Preprocessing images
+
+
+label_counts = train.label.value_counts()
+plt.figure(figsize = (12,6))
+sns.barplot(label_counts.index, label_counts.values, alpha = 0.9)
+plt.xticks(rotation = 'vertical')
+plt.xlabel('Image Labels', fontsize =12)
+plt.ylabel('Counts', fontsize = 12)
+plt.show()
+
+---------------------------------------------------------------------------------------------
+
+Transfer Learning with 5 lines of code
+https://medium.com/deepquestai/transfer-learning-with-5-lines-of-code-5e69d0290850
+
+
+
+pip3 install tensorflow==1.13.1
+pip3 install keras==2.2.4
+
+pip3 install opencv-python
+pip3 install numpy==1.16.1
+
+pip3 install imageai --upgrade
+
+wget https://github.com/OlafenwaMoses/prep/releases/download/prep2/fruits_mini_dataset.zip
+unzip fruits_mini_dataset.zip
+
+
+from imageai.Prediction.Custom import ModelTraining
+
+trainer = ModelTraining()
+trainer.setModelTypeAsResNet()
+trainer.setDataDirectory("fruits")
+trainer.trainModel(num_objects=5, num_experiments=50, enhance_data=True, save_full_model=True, batch_size=32, show_network_summary=True, transfer_from_model="resnet50_weights_tf_dim_ordering_tf_kernels.h5", initial_num_objects=1000, transfer_with_full_training=True)
+
+
+https://github.com/OlafenwaMoses/prep/releases/download/prep2/transfer_trained_fruits_model_ex-050_acc-0.862500.h5
+
+
+from imageai.Prediction.Custom import CustomImagePrediction
+import os
+
+predictor = CustomImagePrediction()
+predictor.setModelPath(model_path="transfer_trained_fruits_model_ex-050_acc-0.862500.h5")
+predictor.setJsonPath(model_json="model_class.json")
+predictor.loadFullModel(num_objects=5)
+
+prediction, probability = predictor.predictImage(image_input=os.path.join(os.getcwd(), "sample.jpg"), result_count=1)
+print(prediction, " :", probability)
+
+
+---------------------------------------------------------------------------------------------
+
+
+Implementing Simple Linear Regression Using Python Without scikit-Learn
+https://betterprogramming.pub/simple-linear-regression-using-only-python-5c86af200bca
+
+https://gist.github.com/nanotroy/9b4d5793158ac843b1e7bd7723504909#file-linearreg-py
+
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+class Regression:
+    def __init__(self):
+        pass
+
+    def find_sum(l, p):
+        res = 0
+
+        for i in l:
+            res += i**p
+
+        return res
+
+    def find_mul_sum(l1, l2):
+        res = 0
+
+        for i in range(len(l1)):
+            res += (l1[i]*l2[i])
+
+        return res
+
+    def solve_equ(sum_x, sum_x2, sum_y, sum_xy):
+        # Equation no 1
+        # Ey = a * Ex + b * n
+
+        # Equation no 2
+        # Exy = a * Ex^2 + b * Ex
+
+        n = 30
+
+        p = np.array([[sum_x,n], [sum_x2,sum_x]])
+        q = np.array([sum_y, sum_xy])
+
+        res = np.linalg.solve(p, q)
+
+        return res
+
+    def predict(x, res):
+        y_pred = []
+
+        for i in x:
+            y_pred.append(res[0] * i + res[1])
+
+        return y_pred
+
+def main():
+    x = [1.1,1.3,1.5,2,2.2,2.9,3,3.2,3.2,3.7,3.9,4,4,4.1,4.5,4.9,5.1,5.3,5.9,6,6.8,7.1,7.9,8.2,8.7,9,9.5,9.6,10.3,10.5]
+
+    y = [39343,46205,37731,43525,39891,56642,60150,54445,64445,57189,63218,55794,56957,57081,61111,67938,66029,83088,81363,93940,91738,98273,101302,113812,109431,105582,116969,112635,122391,121872]
+
+    r = Regression
+
+    sum_x = r.find_sum(x, 1)
+    sum_y = r.find_sum(y, 1)
+    sum_x2 = r.find_sum(x, 2)
+    sum_xy = r.find_mul_sum(x, y)
+
+    res = []
+
+    res = r.solve_equ(sum_x, sum_x2, sum_y, sum_xy)
+
+    y_pred = r.predict(x, res)
+
+    plt.scatter(x, y, color = 'red')
+    plt.plot(x, y_pred, color = 'blue')
+    plt.title('Ownression')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.show()
+
+if __name__ == "__main__":
+    main()
+
+
+
+---------------------------------------------------------------------------------------------
+
+https://medium.com/@ageitgey/machine-learning-is-fun-80ea3ec3c471
+
+def estimate_house_sales_price(num_of_bedrooms, sqft, neighborhood):
+  price = 0
+  # In my area, the average house costs $200 per sqft
+  price_per_sqft = 200
+  if neighborhood == "hipsterton":
+    # but some areas cost a bit more
+    price_per_sqft = 400
+  elif neighborhood == "skid row":
+    # and some areas cost less
+    price_per_sqft = 100
+  # start with a base price estimate based on how big the place is
+  price = price_per_sqft * sqft
+  # now adjust our estimate based on the number of bedrooms
+  if num_of_bedrooms == 0:
+    # Studio apartments are cheap
+    price = price — 20000
+  else:
+    # places with more bedrooms are usually
+    # more valuable
+    price = price + (num_of_bedrooms * 1000)
+ return price
+
+
+def estimate_house_sales_price(num_of_bedrooms, sqft, neighborhood):
+  price = <computer, plz do some math for me>
+  return price
+
+
+def estimate_house_sales_price(num_of_bedrooms, sqft, neighborhood):
+ price = 0
+ # a little pinch of this
+ price += num_of_bedrooms * .841231951398213
+ # and a big pinch of that
+ price += sqft * 1231.1231231
+ # maybe a handful of this
+ price += neighborhood * 2.3242341421
+ # and finally, just a little extra salt for good measure
+ price += 201.23432095
+ return price
+
+def estimate_house_sales_price(num_of_bedrooms, sqft, neighborhood):
+  price = 0
+  # a little pinch of this
+  price += num_of_bedrooms * 1.0
+  # and a big pinch of that
+  price += sqft * 1.0
+  # maybe a handful of this
+  price += neighborhood * 1.0
+  # and finally, just a little extra salt for good measure
+  price += 1.0
+  return price
