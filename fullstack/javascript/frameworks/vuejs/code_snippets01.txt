@@ -1,0 +1,273 @@
+
+
+----------------------------------------------------------------------------------------
+
+
+To-dos mit Vue.js
+https://entwickler.de/angular/to-dos-mit-vuejs/
+
+<script>
+  export default {
+    name: 'TodoList',
+    data() {
+      return {todos: [
+        {id: 1, title: 'Get up', done: true},
+        {id: 2, title: 'Eat', done: true},
+        {id: 3, title: 'Sleep', done: false},
+      ]};
+    }
+  }
+</script>
+
+<template>
+  <ul>
+    <li v-for="todo in todos" v-bind:key="todo.id">
+      {{todo.title}}
+    </li>
+  </ul>
+</template>
+
+
+<template>
+  <ul>
+    <li v-for="todo in todos" v-bind:key="todo.id">
+      {{todo.title}}
+      <span v-if="todo.done">P</span>
+      <span v-else>x</span>
+    </li>
+  </ul>
+</template>
+
+
+
+<template>
+  <ul>
+    <li v-for="todo in todos" v-bind:key="todo.id">
+      {{todo.title}}
+      <span v-if="todo.done" v-on:click="toggleState()">P</span>
+      <span v-else @click="toggleState()">x</span>
+    </li>
+  </ul>
+</template>
+
+
+<script>
+  export default {
+    name: 'TodoList',
+    data() {
+      return {todos: []};
+    },
+    methods: {
+      toggleState(id) {
+        const index = this.todos.findIndex((todo) => todo.id === id);
+        const todo = this.todos[index];
+        todo.done = !todo.done;
+      },
+    }
+  }
+</script>
+
+
+<style scoped>
+  ul {
+    list-style: none;
+    padding-left: 0;
+    width: 400px;
+    margin: 0 auto;
+  }
+  li {
+    line-height: 30px;
+    border: 1px solid darkgray;
+    padding: 10px;
+    margin: 2px 0;
+    position: relative;
+  }
+  span {
+    position: absolute;
+    right: 10px;
+  }
+</style>
+
+<template>
+  <ul>
+    <li v-for="todo in todos" v-bind:key="todo.id"
+        v-bind:class="todo.done ? 'done' : 'open'">
+      {{todo.title}}
+      <span v-if="todo.done" v-on:click="toggleState()">P</span>
+      <span v-else @click="toggleState()">x</span>
+    </li>
+  </ul>
+</template>
+…
+<style scoped>
+…
+  .done {
+    background-color: lightgreen;
+  }
+
+  .open {
+    background-color: lightsalmon;
+  }
+</style>
+
+
+<template>
+  <li v-bind:class="todo.done ? 'done' : 'open'">
+      {{todo.title}}
+      <span v-if="todo.done" v-on:click="toggleState(todo.id)">P</span>
+      <span v-else @click="toggleState(todo.id)">x</span>
+    </li>
+</template>
+
+<script>
+  export default {
+    props: ['todo'],
+  }
+</script>
+
+<style scoped>
+  li {
+    line-height: 30px;
+    border: 1px solid darkgray;
+    padding: 10px;
+    margin: 2px 0;
+    position: relative;
+  }
+  span {
+    position: absolute;
+    right: 10px;
+  }
+
+  .done {
+    background-color: lightgreen;
+  }
+
+  .open {
+    background-color: lightsalmon;
+  }
+</style>
+
+
+
+
+
+
+
+
+
+
+<template>
+  <ul>
+    <TodoListItem v-for="todo in todos" v-bind:todo="todo"
+     v-bind:key="todo.id"></TodoListItem>
+  </ul>
+</template>
+<script>
+  export default {
+    props: ['todo'],
+    methods: {
+      toggleState() {
+        this.$emit('toggle-state', this.todo.id);
+      }
+    }
+  }
+</script>
+
+
+
+
+<template>
+  <ul>
+    <TodoListItem v-for="todo in todos" v-bind:todo="todo" v-bind:key="todo.id"
+     v-on:toggle-state="toggleState($event)"></TodoListItem>
+  </ul>
+</template>
+<script>
+  import TodoListItem from './TodoListItem';
+
+  export default {
+    async mounted() {
+      const response = await fetch('/todo');
+      this.todos = await response.json();
+    },
+…
+</script>
+
+
+<template>
+  <form>
+    <div>
+      <label for="title">Title: </label>
+      <input type="text" v-model="todo.title" name="title" id="title">
+    </div>
+    <div>
+      <label for="done">Done: </label>
+      <input type="checkbox" v-model="todo.done" name="done" id="done">
+    </div>
+    <button v-on:click="save">save</button>
+  </form>
+</template>
+
+<script>
+  export default {
+    data() {
+      return {
+        todo: {
+          title: '',
+          done: false
+        }
+      }
+    },
+    methods: {
+      save() {
+        this.$emit('save', this.todo);
+      }
+    }
+  }
+
+</script>
+
+<style scoped></style>
+Listing 14: TodoForm-Komponente
+
+<template>
+  <TodoForm v-if="create" v-on:save="save($event)"></TodoForm>
+  <ul v-else>
+    <TodoListItem v-for="todo in todos" v-bind:todo="todo" v-bind:key="todo.id"
+     v-on:toggle-state="toggleState($event)"></TodoListItem>
+    <button v-on:click="create = true">new</button>
+  </ul>
+</template>
+
+<script>
+  import TodoListItem from './TodoListItem';
+  import TodoForm from './TodoForm';
+
+  export default {
+    async mounted() {…},
+    components: {
+      TodoListItem,
+      TodoForm
+    },
+    name: 'TodoList',
+    data() {
+      return {todos: [], create: false};
+    },
+    methods: {
+      async toggleState(id) {…},
+      async save(todo) {
+        await fetch('/todo', {
+          method: 'POST',
+          headers: {'content-type': 'application/json'},
+          body: JSON.stringify(todo),
+        });
+        this.create = false;
+      }
+    }
+  }
+</script>
+
+<style scoped>
+…
+</style>
+

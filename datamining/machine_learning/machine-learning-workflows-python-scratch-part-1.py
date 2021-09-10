@@ -10,6 +10,7 @@
 ################################################################################################
 
 # -------------------------------
+"""
 
 import pandas as pd
 df = pd.read_csv('iris.csv')
@@ -120,7 +121,6 @@ def to_numeric(dataset, attr_name):
 
 
 import numpy as np
-
 def to_matrix(dataset):
 
     '''
@@ -139,27 +139,21 @@ def to_matrix(dataset):
 
     return dataset.as_matrix()
 
-
-
 # -------------------------------
-
 
 # Load dataset
 data = load_dataset('iris.csv')
-
 print data.head()
-
 # Change categorical class names to numeric values
 data, data_dict = to_numeric(data, 'species')
-
 print data.head()
 print data_dict
-
 # Convert dataset to matrix representation
 ds = to_matrix(data)
-
 print ds[:10]
 
+
+"""
 
 
 
