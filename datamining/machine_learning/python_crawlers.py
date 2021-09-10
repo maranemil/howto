@@ -1,5 +1,5 @@
 
-
+"""
 import sys, thread, Queue, re, urllib, urlparse, time, os, sys
 dupcheck = set()
 q = Queue.Queue(100)
@@ -92,9 +92,8 @@ while True:
 
 #############################################
 
-$ python tinyDirtyIffyGoodEnoughWebCrawler.py http://cnn.com
-
-tinyDirtyIffyGoodEnoughWebCrawler.py
+# $ python tinyDirtyIffyGoodEnoughWebCrawler.py http://cnn.com
+# tinyDirtyIffyGoodEnoughWebCrawler.py
 
 import sys, thread, Queue, re, urllib, urlparse, time, os, sys
 dupcheck = set()
@@ -120,4 +119,6 @@ def getHTML(link):
         pass
 while True:
     thread.start_new_thread( getHTML, (q.get(),))
-    time.sleep(0.5)
+    # time.sleep(0.5)
+
+"""
