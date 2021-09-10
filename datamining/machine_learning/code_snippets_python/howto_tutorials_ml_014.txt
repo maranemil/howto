@@ -1,0 +1,609 @@
+
+
+Finding Correlation Between Many Variables (Multidimensional Dataset) with Python
+
+https://medium.com/@sebastiannorena/finding-correlation-between-many-variables-multidimensional-dataset-with-python-5deb3f39ffb3
+
+
+csv head
+
+[‘arrow’, ‘under’, ‘interior’, ‘theta’, ‘amb’, ‘slice’, ‘delta’, ‘pi’, ‘height’, ‘nu’, ‘night’, ‘dataset’, ‘length’, ‘twi’, ‘x’, ‘wind’, ‘y’, ‘rho’, ‘alpha’]
+
+
+
+
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+data = pd.read_csv('https://www.dropbox.com/s/4jgheggd1dak5pw/data_visualization.csv?raw=1', index_col=0)
+corr = data.corr()
+fig = plt.figure()
+ax = fig.add_subplot(111)
+cax = ax.matshow(corr,cmap='coolwarm', vmin=-1, vmax=1)
+fig.colorbar(cax)
+ticks = np.arange(0,len(data.columns),1)
+ax.set_xticks(ticks)
+plt.xticks(rotation=90)
+ax.set_yticks(ticks)
+ax.set_xticklabels(data.columns)
+ax.set_yticklabels(data.columns)
+plt.show()
+
+
+
+
+How to Calculate Correlation Between Variables in Python
+
+https://machinelearningmastery.com/how-to-use-correlation-to-understand-the-relationship-between-variables/
+
+
+
+# generate related variables
+from numpy import mean
+from numpy import std
+from numpy.random import randn
+from numpy.random import seed
+from matplotlib import pyplot
+# seed random number generator
+seed(1)
+# prepare data
+data1 = 20 * randn(1000) + 100
+data2 = data1 + (10 * randn(1000) + 50)
+# summarize
+print('data1: mean=%.3f stdv=%.3f' % (mean(data1), std(data1)))
+print('data2: mean=%.3f stdv=%.3f' % (mean(data2), std(data2)))
+# plot
+pyplot.scatter(data1, data2)
+pyplot.show()
+
+
+
+
+# calculate the covariance between two variables
+from numpy.random import randn
+from numpy.random import seed
+from numpy import cov
+# seed random number generator
+seed(1)
+# prepare data
+data1 = 20 * randn(1000) + 100
+data2 = data1 + (10 * randn(1000) + 50)
+# calculate covariance matrix
+covariance = cov(data1, data2)
+print(covariance)
+
+
+
+
+# calculate the Pearson's correlation between two variables
+from numpy.random import randn
+from numpy.random import seed
+from scipy.stats import pearsonr
+# seed random number generator
+seed(1)
+# prepare data
+data1 = 20 * randn(1000) + 100
+data2 = data1 + (10 * randn(1000) + 50)
+# calculate Pearson's correlation
+corr, _ = pearsonr(data1, data2)
+print('Pearsons correlation: %.3f' % corr)
+
+
+
+# calculate the spearmans's correlation between two variables
+from numpy.random import randn
+from numpy.random import seed
+from scipy.stats import spearmanr
+# seed random number generator
+seed(1)
+# prepare data
+data1 = 20 * randn(1000) + 100
+data2 = data1 + (10 * randn(1000) + 50)
+# calculate spearman's correlation
+corr, _ = spearmanr(data1, data2)
+print('Spearmans correlation: %.3f' % corr)
+
+---------------------------------------------------------------
+
+
+Get Started with PyTorch – Learn How to Build Quick
+https://www.analyticsvidhya.com/blog/2019/01/guide-pytorch-neural-networks-case-studies/
+
+
+
+
+--------------------------------------
+Building Neural Nets using PyTorch
+
+--------------------------------------
+
+
+import torch
+n_input, n_hidden, n_output = 5, 3, 1
+
+
+## initialize tensor for inputs, and outputs
+x = torch.randn((1, n_input))
+y = torch.randn((1, n_output))
+
+## initialize tensor variables for weights
+w1 = torch.randn(n_input, n_hidden) # weight for hidden layer
+w2 = torch.randn(n_hidden, n_output) # weight for output layer
+
+## initialize tensor variables for bias terms
+b1 = torch.randn((1, n_hidden)) # bias for hidden layer
+b2 = torch.randn((1, n_output)) # bias for output layer
+
+
+
+
+## sigmoid activation function using pytorch
+def sigmoid_activation(z):
+    return 1 / (1 + torch.exp(-z))
+
+## activation of hidden layer
+z1 = torch.mm(x, w1) + b1
+a1 = sigmoid_activation(z1)
+
+## activation (output) of final layer
+z2 = torch.mm(a1, w2) + b2
+output = sigmoid_activation(z2)
+
+
+
+## function to calculate the derivative of activation
+def sigmoid_delta(x):
+  return x * (1 - x)
+
+## compute derivative of error terms
+delta_output = sigmoid_delta(output)
+delta_hidden = sigmoid_delta(a1)
+
+## backpass the changes to previous layers
+d_outp = loss * delta_output
+loss_h = torch.mm(d_outp, w2.t())
+d_hidn = loss_h * delta_hidden
+
+
+learning_rate = 0.1
+w2 += torch.mm(a1.t(), d_outp) * learning_rate
+w1 += torch.mm(x.t(), d_hidn) * learning_rate
+b2 += d_outp.sum() * learning_rate
+b1 += d_hidn.sum() * learning_rate
+
+
+
+-------------------------------------------
+# Handwritten Digital Classification
+
+from torchvision import transforms
+_tasks = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+    ])
+
+
+from torchvision.datasets import MNIST
+## Load MNIST Dataset and apply transformations
+mnist = MNIST("data", download=True, train=True, transform=_tasks)
+
+from torch.utils.data import DataLoader
+from torch.utils.data.sampler import SubsetRandomSampler
+## create training and validation split
+split = int(0.8 * len(mnist))
+index_list = list(range(len(mnist)))
+train_idx, valid_idx = index_list[:split], index_list[split:]
+## create sampler objects using SubsetRandomSampler
+tr_sampler = SubsetRandomSampler(train_idx)
+val_sampler = SubsetRandomSampler(valid_idx)
+
+
+## create iterator objects for train and valid datasets
+trainloader = DataLoader(mnist, batch_size=256, sampler=tr_sampler)
+validloader = DataLoader(mnist, batch_size=256, sampler=val_sampler)
+
+import torch.nn.functional as F
+class Model(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.hidden = nn.Linear(784, 128)
+        self.output = nn.Linear(128, 10)
+
+   def forward(self, x):
+        x = self.hidden(x)
+        x = F.sigmoid(x)
+        x = self.output(x)
+        return x
+model = Model()
+
+
+from torch import optim
+loss_function = nn.CrossEntropyLoss()
+optimizer = optim.SGD(model.parameters(), lr=0.01, weight_decay= 1e-6, momentum = 0.9, nesterov = True)
+
+
+for epoch in range(1, 11): ## run the model for 10 epochs
+    train_loss, valid_loss = [], []
+    ## training part
+    model.train()
+    for data, target in trainloader:
+        optimizer.zero_grad()
+        ## 1. forward propagation
+        output = model(data)
+
+        ## 2. loss calculation
+        loss = loss_function(output, target)
+
+		## 3. backward propagation
+        loss.backward()
+
+        ## 4. weight optimization
+        optimizer.step()
+
+        train_loss.append(loss.item())
+
+    ## evaluation part
+    model.eval()
+    for data, target in validloader:
+        output = model(data)
+        loss = loss_function(output, target)
+        valid_loss.append(loss.item())
+
+
+print ("Epoch:", epoch, "Training Loss: ", np.mean(train_loss), "Valid Loss: ", np.mean(valid_loss))
+
+## dataloader for validation dataset
+dataiter = iter(validloader)
+data, labels = dataiter.next()
+output = model(data)
+_, preds_tensor = torch.max(output, 1)
+preds = np.squeeze(preds_tensor.numpy())
+print ("Actual:", labels[:10])
+print ("Predicted:", preds[:10])
+
+
+
+#-----------------------------------------------------
+## Object Image Classification load the dataset
+#-----------------------------------------------------
+from torchvision.datasets import CIFAR10
+cifar = CIFAR10('data', train=True, download=True, transform=_tasks)
+## create training and validation split
+split = int(0.8 * len(cifar))
+index_list = list(range(len(cifar)))
+train_idx, valid_idx = index_list[:split], index_list[split:]
+## create training and validation sampler objects
+tr_sampler = SubsetRandomSampler(train_idx)
+val_sampler = SubsetRandomSampler(valid_idx)
+## create iterator objects for train and valid datasets
+trainloader = DataLoader(cifar, batch_size=256, sampler=tr_sampler)
+validloader = DataLoader(cifar, batch_size=256, sampler=val_sampler)
+
+
+class Model(nn.Module):
+    def __init__(self):
+        super(Model, self).__init__()
+
+        ## define the layers
+        self.conv1 = nn.Conv2d(3, 16, 3, padding=1)
+        self.conv2 = nn.Conv2d(16, 32, 3, padding=1)
+        self.conv3 = nn.Conv2d(32, 64, 3, padding=1)
+        self.pool = nn.MaxPool2d(2, 2)
+        self.linear1 = nn.Linear(1024, 512)
+        self.linear2 = nn.Linear(512, 10)
+
+    def forward(self, x):
+        x = self.pool(F.relu(self.conv1(x)))
+        x = self.pool(F.relu(self.conv2(x)))
+        x = self.pool(F.relu(self.conv3(x)))
+        x = x.view(-1, 1024) ## reshaping
+        x = F.relu(self.linear1(x))
+        x = self.linear2(x)
+        return x
+
+model = Model()
+
+
+import torch.optim as optim
+loss_function = nn.CrossEntropyLoss()
+optimizer = optim.SGD(model.parameters(), lr=0.01, weight_decay= 1e-6, momentum = 0.9, nesterov = True)
+## run for 30 Epochs
+for epoch in range(1, 31):
+    train_loss, valid_loss = [], []
+
+
+    ## training part
+    model.train()
+    for data, target in trainloader:
+        optimizer.zero_grad()
+        output = model(data)
+        loss = loss_function(output, target)
+        loss.backward()
+        optimizer.step()
+        train_loss.append(loss.item())
+
+    ## evaluation part
+    model.eval()
+    for data, target in validloader:
+        output = model(data)
+        loss = loss_function(output, target)
+        valid_loss.append(loss.item())
+
+
+
+## dataloader for validation dataset
+dataiter = iter(validloader)
+data, labels = dataiter.next()
+output = model(data)
+_, preds_tensor = torch.max(output, 1)
+preds = np.squeeze(preds_tensor.numpy())
+print ("Actual:", labels[:10])
+print ("Predicted:", preds[:10])
+
+
+#-----------------------------------------------------
+# Sentiment Text Classification
+#-----------------------------------------------------
+
+
+train = pd.read_csv("train.csv")
+x_train = train["text"].values
+y_train = train['target'].values
+
+np.random.seed(123)
+torch.manual_seed(123)
+torch.cuda.manual_seed(123)
+torch.backends.cudnn.deterministic = True
+
+from keras.preprocessing import text, sequence
+## create tokens
+tokenizer = Tokenizer(num_words = 1000)
+tokenizer.fit_on_texts(x_train)
+word_index = tokenizer.word_index
+## convert texts to padded sequences
+x_train = tokenizer.texts_to_sequences(x_train)
+x_train = pad_sequences(x_train, maxlen = 70)
+
+
+EMBEDDING_FILE = 'glove.840B.300d.txt'
+embeddings_index = {}
+for i, line in enumerate(open(EMBEDDING_FILE)):
+    val = line.split()
+    embeddings_index[val[0]] = np.asarray(val[1:], dtype='float32')
+embedding_matrix = np.zeros((len(word_index) + 1, 300))
+for word, i in word_index.items():
+    embedding_vector = embeddings_index.get(word)
+    if embedding_vector is not None:
+        embedding_matrix[i] = embedding_vector
+
+
+
+class Model(nn.Module):
+    def __init__(self):
+        super(Model, self).__init__()
+
+        ## Embedding Layer, Add parameter
+        self.embedding = nn.Embedding(max_features, embed_size)
+        et = torch.tensor(embedding_matrix, dtype=torch.float32)
+        self.embedding.weight = nn.Parameter(et)
+        self.embedding.weight.requires_grad = False
+        self.embedding_dropout = nn.Dropout2d(0.1)
+        self.lstm = nn.LSTM(300, 40)
+        self.linear = nn.Linear(40, 16)
+        self.out = nn.Linear(16, 1)
+        self.relu = nn.ReLU()
+   def forward(self, x):
+        h_embedding = self.embedding(x)
+        h_lstm, _ = self.lstm(h_embedding)
+        max_pool, _ = torch.max(h_lstm, 1)
+        linear = self.relu(self.linear(max_pool))
+        out = self.out(linear)
+        return out
+
+model = Model()
+
+
+
+
+from torch.utils.data import TensorDataset
+## create training and validation split
+split_size = int(0.8 * len(train_df))
+index_list = list(range(len(train_df)))
+train_idx, valid_idx = index_list[:split], index_list[split:]
+## create iterator objects for train and valid datasets
+x_tr = torch.tensor(x_train[train_idx], dtype=torch.long)
+y_tr = torch.tensor(y_train[train_idx], dtype=torch.float32)
+train = TensorDataset(x_tr, y_tr)
+trainloader = DataLoader(train, batch_size=128)
+x_val = torch.tensor(x_train[valid_idx], dtype=torch.long)
+y_val = torch.tensor(y_train[valid_idx], dtype=torch.float32)
+valid = TensorDataset(x_val, y_val)
+validloader = DataLoader(valid, batch_size=128)
+
+
+loss_function = nn.BCEWithLogitsLoss(reduction='mean')
+optimizer = optim.Adam(model.parameters())
+
+
+## run for 10 Epochs
+for epoch in range(1, 11):
+    train_loss, valid_loss = [], []
+## training part
+    model.train()
+    for data, target in trainloader:
+        optimizer.zero_grad()
+        output = model(data)
+        loss = loss_function(output, target.view(-1,1))
+        loss.backward()
+        optimizer.step()
+        train_loss.append(loss.item())
+
+    ## evaluation part
+    model.eval()
+    for data, target in validloader:
+        output = model(data)
+        loss = loss_function(output, target.view(-1,1))
+        valid_loss.append(loss.item())
+
+dataiter = iter(validloader)
+data, labels = dataiter.next()
+output = model(data)
+_, preds_tensor = torch.max(output, 1)
+preds = np.squeeze(preds_tensor.numpy())
+Actual: [0 1 1 1 1 0 0 0 0]
+Predicted: [0 1 1 1 1 1 1 1 0 0]
+
+
+-----------------------
+# Image Style Transfer
+-----------------------
+
+from torchvision import models
+# get the features portion from VGG19
+vgg = models.vgg19(pretrained=True).features
+
+# freeze all VGG parameters
+for param in vgg.parameters():
+    param.requires_grad_(False)
+# check if GPU is available
+device = torch.device("cpu")
+if torch.cuda.is_available():
+    device = torch.device("cuda")
+vgg.to(device)
+
+
+from torchvision import transforms as tf
+def transformation(img):
+    tasks = tf.Compose([tf.Resize(400), tf.ToTensor(),
+               tf.Normalize((0.44,0.44,0.44),(0.22,0.22,0.22))])
+    img = tasks(img)[:3,:,:].unsqueeze(0)
+    return img
+img1 = Image.open("image1.jpg").convert('RGB')
+img2 = Image.open("image2.jpg").convert('RGB')
+img1 = transformation(img1).to(device)
+img2 = transformation(img2).to(device)
+
+def get_features(image, model):
+    layers = {'0': 'conv1_1', '5': 'conv2_1',  '10': 'conv3_1',
+              '19': 'conv4_1', '21': 'conv4_2', '28': 'conv5_1'}
+    x = image
+    features = {}
+    for name, layer in model._modules.items():
+        x = layer(x)
+        if name in layers:
+            features[layers[name]] = x
+    return features
+img1_features = get_features(img1, vgg)
+img2_features = get_features(img2, vgg)
+
+def correlation_matrix(tensor):
+    _, d, h, w = tensor.size()
+    tensor = tensor.view(d, h * w)
+    correlation = torch.mm(tensor, tensor.t())
+    return correlation
+correlations = {l: correlation_matrix(img2_features[l]) for l in img2_features}
+
+
+
+weights = {'conv1_1': 1.0, 'conv2_1': 0.8, 'conv3_1': 0.25,
+           'conv4_1': 0.21, 'conv5_1': 0.18}
+
+target = img1.clone().requires_grad_(True).to(device)
+optimizer = optim.Adam([target], lr=0.003)
+
+for ii in range(1, 2001):
+
+    ## calculate the content loss (from image 1 and target)
+    target_features = get_features(target, vgg)
+    loss = target_features['conv4_2'] - img1_features['conv4_2']
+    content_loss = torch.mean((loss)**2)
+
+    ## calculate the style loss (from image 2 and target)
+    style_loss = 0
+    for layer in weights:
+
+        target_feature = target_features[layer]
+        target_corr = correlation_matrix(target_feature)
+        style_corr = correlations[layer]
+
+        layer_loss = torch.mean((target_corr - style_corr)**2)
+        layer_loss *= weights[layer]
+
+        _, d, h, w = target_feature.shape
+        style_loss += layer_loss / (d * h * w)
+
+    total_loss = 1e6 * style_loss + content_loss
+
+    optimizer.zero_grad()
+    total_loss.backward()
+    optimizer.step()
+
+
+def tensor_to_image(tensor):
+    image = tensor.to("cpu").clone().detach()
+    image = image.numpy().squeeze()
+    image = image.transpose(1, 2, 0)
+    image *= np.array((0.22, 0.22, 0.22))
+                       + np.array((0.44, 0.44, 0.44))
+    image = image.clip(0, 1)
+    return image
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 10))
+ax1.imshow(tensor_to_image(img1))
+ax2.imshow(tensor_to_image(target))
+
+
+##################################################################################
+
+Implementing k-means Clustering with TensorFlow
+
+https://www.altoros.com/blog/using-k-means-clustering-in-tensorflow/
+
+import matplotlib.pyplot as plt
+import numpy as np
+import tensorflow as tf
+
+points_n = 200
+clusters_n = 3
+iteration_n = 100
+
+points = tf.constant(np.random.uniform(0, 10, (points_n, 2)))
+centroids = tf.Variable(tf.slice(tf.random_shuffle(points), [0, 0], [clusters_n, -1]))
+
+points_expanded = tf.expand_dims(points, 0)
+centroids_expanded = tf.expand_dims(centroids, 1)
+
+distances = tf.reduce_sum(tf.square(tf.subtract(points_expanded, centroids_expanded)), 2)
+assignments = tf.argmin(distances, 0)
+
+means = []
+for c in range(clusters_n):
+    means.append(tf.reduce_mean(
+      tf.gather(points,
+                tf.reshape(
+                  tf.where(
+                    tf.equal(assignments, c)
+                  ),[1,-1])
+               ),reduction_indices=[1]))
+
+new_centroids = tf.concat(means, 0)
+
+update_centroids = tf.assign(centroids, new_centroids)
+init = tf.global_variables_initializer()
+
+with tf.Session() as sess:
+  sess.run(init)
+  for step in range(iteration_n):
+    [_, centroid_values, points_values, assignment_values] = sess.run([update_centroids, centroids, points, assignments])
+
+  print("centroids", centroid_values)
+
+plt.scatter(points_values[:, 0], points_values[:, 1], c=assignment_values, s=50, alpha=0.5)
+plt.plot(centroid_values[:, 0], centroid_values[:, 1], 'kx', markersize=15)
+plt.show()
+
+
+
+
+
+
