@@ -55,3 +55,51 @@ usort($users, fn($a, $b) => $a['score'] < $b['score']);
 $userHighScoreTitles = array_map(fn($user) => $user['name'] . '(' . $user['score'] . ')', $users);
 return $userHighScoreTitles;
 
+
+
+/*
+http://phptester.net/
+https://www.php.net/manual/de/function.array-diff-assoc.php
+https://www.php.net/manual/de/function.array-intersect.php
+https://www.php.net/manual/de/function.array-merge-recursive.php
+https://www.php.net/manual/de/function.array-merge.php
+*/
+
+
+$arr = array(3);
+print "<pre>";
+print_r(array_intersect(array(1=>1,5=>5),$arr));
+print_r(array_diff_assoc(array(1=>1,5=>5),$arr));
+print_r(array_merge(array(1=>1,5=>5),$arr));
+print_r(array_merge_recursive(array(1=>1,5=>5),$arr));
+print_r(array_unique(array_merge(array(1=>1,5=>5),$arr)));
+
+/*
+Array
+(
+)
+Array
+(
+    [1] => 1
+    [5] => 5
+)
+Array
+(
+    [0] => 1
+    [1] => 5
+    [2] => 3
+)
+Array
+(
+    [0] => 1
+    [1] => 5
+    [2] => 3
+)
+Array
+(
+    [0] => 1
+    [1] => 5
+    [2] => 3
+)
+*/
+
