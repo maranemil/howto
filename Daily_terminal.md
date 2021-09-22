@@ -168,9 +168,16 @@ ffmpeg -i in.mp4 -vf scale=-1:1080 -an out.mp4
 ##### add logo top left padding 10
 * ffmpeg -y -i VIDEO.mp4 -i subscribe.png -filter_complex "overlay=10:10" OUT_1.mp4
 
+#### Prepare video for instagram 
 
+* // crop 1920 into instagram format 608x1080  
+* ffmpeg -i in.mp4 -vf "crop=608:1080:270:150,eq=saturation=1.9" out.mp4
 
-
+* // resize video from 608x1080 to 1080x1920 
+* ffmpeg -i in.mp4 -vf scale=1080:1920 > 1080x1920 out.mp4
+  
+* // replace video sound
+* ffmpeg -i input.mp4 -i input.wav -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 out.mp4
 
 
 
