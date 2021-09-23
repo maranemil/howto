@@ -179,8 +179,6 @@ ffmpeg -i in.mp4 -vf scale=-1:1080 -an out.mp4
 * // replace video sound
 * ffmpeg -i input.mp4 -i input.wav -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 out.mp4
 
-
-
 ####  [Manage SWAP]
 
 ##### Add temporary Swap file on Ubuntu 18.04
