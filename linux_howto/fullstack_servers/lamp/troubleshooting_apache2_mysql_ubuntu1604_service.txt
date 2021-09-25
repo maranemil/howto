@@ -106,3 +106,79 @@ edit:  sudo nano /etc/apache2/sites-available/000-default.conf
 </Directory>
 
 sudo service apache2 restart
+
+
+#########################################################
+Apache error "Could not reliably determine the server's fully qualified domain name"
+https://askubuntu.com/questions/256013/apache-error-could-not-reliably-determine-the-servers-fully-qualified-domain-n
+#########################################################
+
+FIX
+sudo vim /etc/apache2/apache2.conf # add ServerName localhost
+sudo systemctl reload apache2
+
+sudo ln -s ~/Web /var/www/html/wwweb
+
+
+#########################################################
+log install apache
+#########################################################
+
+sudo chmod -R 775 /var/www/html/
+sudo chmod -R 777 /var/www/html/wwweb/
+sudo chmod -R 755 /home/demos/WWW/
+sudo chmod 755 /home/demos/WWW/
+
+sudo chown www-data:www-data wwweb
+sudo chown root:root wwweb
+sudo chown -R root:root /var/www/html/
+
+#  Apache 2.4
+sudo nano /etc/apache2/apache2.conf
+Require all granted
+
+
+sudo systemctl restart apache2
+sudo a2enmod rewrite
+
+sudo nano /etc/apache2/sites-available/000-default.conf
+
+<VirtualHost *:80>
+    <Directory /var/www/html>
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+ll /etc/apache2/sites-enabled
+sudo nano /etc/apache2/sites-enabled/000-default.conf
+
+sudo apt-get install php libapache2-mod-php
+sudo find /var/www/html -type d -exec chmod 755 {} \;
+sudo find /var/www/html -type f -exec chmod 644 {} \;
+sudo systemctl restart apache2.service
+sudo apachectl restart
+
+ll /etc/apache2/sites-available
+sudo vim /etc/apache2/sites-available/000-default.conf
+
+vim delete line > press dd
+
+sudo chgrp -R www-data ~/WWW/
+sudo chgrp -R demos ~/WWW/
+
+systemctl status mysql.service
+systemctl status apache2.service
+sudo apache2ctl configtest
+
+sudo a2enmod actions
+sudo a2enmod php7.4
+sudo a2dismod userdir
+sudo a2enmod userdir
+sudo a2enmod rewrite
+sudo service apache2 restart
+sudo service nginx restart
+
+# sudo chown www-data:www-data -R wwweb
+
