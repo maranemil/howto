@@ -1,0 +1,42 @@
+
+
+
+####################################################################
+
+ Using subquery to delete entries
+
+https://www.tutorialspoint.com/mysql-select-from-a-subquery-and-then-perform-delete
+http://sqlfiddle.com/#!9/faf2f/1
+####################################################################
+
+CREATE TABLE products_playlist (
+  id int(12) NOT NULL,
+  serviceid int(11) DEFAULT NULL,
+  song varchar(500) DEFAULT NULL,
+  hits int(12) NOT NULL DEFAULT 0,
+  created_at timestamp NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+INSERT INTO products_playlist VALUES(1,1,"1",2,DATE_SUB(CURTIME(), INTERVAL 10 MINUTE));
+INSERT INTO products_playlist VALUES(2,2,"1",2,DATE_SUB(CURTIME(), INTERVAL 9 MINUTE));
+INSERT INTO products_playlist VALUES(3,3,"1",2,DATE_SUB(CURTIME(), INTERVAL 8 MINUTE));
+INSERT INTO products_playlist VALUES(4,4,"1",2,DATE_SUB(CURTIME(), INTERVAL 7 MINUTE));
+INSERT INTO products_playlist VALUES(5,5,"1",2,DATE_SUB(CURTIME(), INTERVAL 6 MINUTE));
+INSERT INTO products_playlist VALUES(6,6,"1",2,DATE_SUB(CURTIME(), INTERVAL 5 MINUTE));
+INSERT INTO products_playlist VALUES(7,7,"1",2,DATE_SUB(CURTIME(), INTERVAL 4 MINUTE));
+INSERT INTO products_playlist VALUES(8,8,"1",2,DATE_SUB(CURTIME(), INTERVAL 3 MINUTE));
+INSERT INTO products_playlist VALUES(9,9,"1",2,DATE_SUB(CURTIME(), INTERVAL 2 MINUTE));
+
+
+DELETE from products_playlist
+  WHERE id
+   NOT IN(
+     SELECT * FROM (SELECT id FROM products_playlist
+                    WHERE created_at BETWEEN DATE_SUB(CURTIME(),INTERVAL 10 MINUTE)
+                    AND DATE_ADD(CURTIME(),INTERVAL 1 SECOND)
+                    ORDER BY id DESC LIMIT 3) as t);
+
+
+SELECT * FROM products_playlist;
