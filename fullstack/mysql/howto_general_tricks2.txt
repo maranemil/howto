@@ -38,5 +38,24 @@ DELETE from products_playlist
                     AND DATE_ADD(CURTIME(),INTERVAL 1 SECOND)
                     ORDER BY id DESC LIMIT 3) as t);
 
+DELETE FROM products_playlist
+WHERE id IN (
+    SELECT id
+    FROM
+    (
+       SELECT id,(
+        SELECT COUNT(*)
+        FROM products_playlist tt
+        WHERE
+          tt.serviceid = t1.serviceid
+        AND
+          tt.created_at >= t1.created_at
+        ORDER BY
+           tt.created_at desc
+      ) rn
+      FROM products_playlist t1
+    ) deltable
+    where rn > 10
+);
 
 SELECT * FROM products_playlist;
