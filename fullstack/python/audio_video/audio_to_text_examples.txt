@@ -1,0 +1,449 @@
+services
+
+https://speechtext.ai/
+https://speech-to-text-demo.ng.bluemix.net/
+https://www.happyscribe.com/convert-mp3-to-text
+https://www.ofoct.com/audio-converter/audio-to-text.html
+
+
+https://hashedin.com/blog/how-to-convert-different-language-audio-to-text-using-python/
+
+sudo pip3 install SpeechRecognition
+
+def startConvertion(path = 'sample.wav',lang = 'en-IN'):
+    with sr.AudioFile(path) as source:
+        print('Fetching File')
+        audio_text = r.listen(source)
+        # recoginize_() method will throw a request error if the API is unreachable, hence using exception handling
+        try:
+
+            # using google speech recognition
+            print('Converting audio transcripts into text ...')
+            text = r.recognize_google(audio_text)
+            print(text)
+
+        except:
+            print('Sorry.. run again...')
+
+# https://www.thepythoncode.com/article/using-speech-recognition-to-convert-speech-to-text-python
+# https://pypi.org/project/SpeechRecognition/
+
+pip3 install SpeechRecognition pydub
+import speech_recognition as sr
+filename = "16-122828-0002.wav"
+# initialize the recognizer
+r = sr.Recognizer()
+# open the file
+with sr.AudioFile(filename) as source:
+    # listen for the data (load audio to memory)
+    audio_data = r.record(source)
+    # recognize (convert from speech to text)
+    text = r.recognize_google(audio_data)
+    print(text)
+
+
+# Reading Large Audio Files
+
+# importing libraries
+import speech_recognition as sr
+import os
+from pydub import AudioSegment
+from pydub.silence import split_on_silence
+
+# create a speech recognition object
+r = sr.Recognizer()
+
+# a function that splits the audio file into chunks
+# and applies speech recognition
+def get_large_audio_transcription(path):
+    """
+    Splitting the large audio file into chunks
+    and apply speech recognition on each of these chunks
+    """
+    # open the audio file using pydub
+    sound = AudioSegment.from_wav(path)
+    # split audio sound where silence is 700 miliseconds or more and get chunks
+    chunks = split_on_silence(sound,
+        # experiment with this value for your target audio file
+        min_silence_len = 500,
+        # adjust this per requirement
+        silence_thresh = sound.dBFS-14,
+        # keep the silence for 1 second, adjustable as well
+        keep_silence=500,
+    )
+    folder_name = "audio-chunks"
+    # create a directory to store the audio chunks
+    if not os.path.isdir(folder_name):
+        os.mkdir(folder_name)
+    whole_text = ""
+    # process each chunk
+    for i, audio_chunk in enumerate(chunks, start=1):
+        # export audio chunk and save it in
+        # the `folder_name` directory.
+        chunk_filename = os.path.join(folder_name, f"chunk{i}.wav")
+        audio_chunk.export(chunk_filename, format="wav")
+        # recognize the chunk
+        with sr.AudioFile(chunk_filename) as source:
+            audio_listened = r.record(source)
+            # try converting it to text
+            try:
+                text = r.recognize_google(audio_listened)
+            except sr.UnknownValueError as e:
+                print("Error:", str(e))
+            else:
+                text = f"{text.capitalize()}. "
+                print(chunk_filename, ":", text)
+                whole_text += text
+    # return the text for all chunks detected
+    return whole_text
+
+path = "7601-291468-0006.wav"
+print("\nFull text:", get_large_audio_transcription(path))
+
+
+
+
+
+
+# Reading from the Microphone
+
+pip3 install pyaudio
+sudo apt-get install python-pyaudio python3-pyaudio
+pip3 install pyaudio
+
+with sr.Microphone() as source:
+    # read the audio data from the default microphone
+    audio_data = r.record(source, duration=5)
+    print("Recognizing...")
+    # convert speech to text
+    text = r.recognize_google(audio_data)
+    # text = r.recognize_google(audio_data, language="es-ES")
+    print(text)
+
+
+########################################################################
+
+How to convert Speech to text in Python
+
+https://dev.to/kalebu/how-to-convert-speech-to-text-in-python-5h1p
+https://hackernoon.com/how-to-convert-speech-to-text-in-python-q0263tzp
+https://codeloop.org/python-how-to-convert-recorded-audio-to-text/
+https://pythonbasics.org/transcribe-audio/
+
+ ########################################################################
+
+# Speech Recognition from Microphone
+
+
+import speech_recognition as sr
+
+recognizer = sr.Recognizer()
+
+''' recording the sound '''
+
+with sr.Microphone() as source:
+    print("Adjusting noise ")
+    recognizer.adjust_for_ambient_noise(source, duration=1)
+    print("Recording for 4 seconds")
+    recorded_audio = recognizer.listen(source, timeout=4)
+    print("Done recording")
+
+''' Recorgnizing the Audio '''
+try:
+    print("Recognizing the text")
+    text = recognizer.recognize_google(
+            recorded_audio,
+            language="en-US"
+        )
+    print("Decoded Text : {}".format(text))
+
+except Exception as ex:
+    print(ex)
+
+
+
+# Speech Recognition from Audio File
+
+import speech_recognition as sr
+
+recognizer = sr.Recognizer()
+
+''' recording the sound '''
+
+with sr.AudioFile("./sample_audio/speech.wav") as source:
+    recorded_audio = recognizer.listen(source)
+    print("Done recording")
+
+''' Recorgnizing the Audio '''
+try:
+    print("Recognizing the text")
+    text = recognizer.recognize_google(
+            recorded_audio,
+            language="en-US"
+        )
+    print("Decoded Text : {}".format(text))
+
+except Exception as ex:
+    print(ex)
+
+
+
+ #   Speech Recognition from Long Audio Source
+pip install pydub
+
+import os
+from pydub import AudioSegment
+import speech_recognition as sr
+from pydub.silence import split_on_silence
+
+recognizer = sr.Recognizer()
+
+def load_chunks(filename):
+    long_audio = AudioSegment.from_mp3(filename)
+    audio_chunks = split_on_silence(
+        long_audio, min_silence_len=1800,
+        silence_thresh=-17
+    )
+    return audio_chunks
+
+for audio_chunk in load_chunks('./sample_audio/long_audio.mp3'):
+    audio_chunk.export("temp", format="wav")
+    with sr.AudioFile("temp") as source:
+        audio = recognizer.listen(source)
+        try:
+            text = recognizer.recognize_google(audio)
+            print("Chunk : {}".format(text))
+        except Exception as ex:
+            print("Error occured")
+            print(ex)
+
+print("++++++")
+
+-----------------------
+
+
+import speech_recognition as sr
+from os import path
+from pydub import AudioSegment
+
+# convert mp3 file to wav
+sound = AudioSegment.from_mp3("transcript.mp3")
+sound.export("transcript.wav", format="wav")
+
+
+# transcribe audio file
+AUDIO_FILE = "transcript.wav"
+
+# use the audio file as the audio source
+r = sr.Recognizer()
+with sr.AudioFile(AUDIO_FILE) as source:
+        audio = r.record(source)  # read the entire audio file
+
+        print("Transcription: " + r.recognize_google(audio))
+
+
+# https://www.codegrepper.com/code-examples/python/audio+to+text+in+python
+# https://realpython.com/python-speech-recognition/
+# https://www.geeksforgeeks.org/python-speech-recognition-on-large-audio-files/
+# https://codelabs.developers.google.com/codelabs/cloud-speech-text-python3#0
+# https://medium.com/@rahulvaish/speech-from-file-to-text-python-953b64306654
+# https://www.kdnuggets.com/2020/06/easy-speech-text-python.html
+# https://pdf.co/blog/transcribe-speech-recordings-to-text-python
+# https://github.com/SingAvi/SpeechToText
+# https://www.analyticsvidhya.com/blog/2021/07/speech-to-text-conversion-an-application-of-nlp/
+# https://singerlinks.com/2021/07/how-to-convert-speech-to-text-using-python-and-vosk/
+# https://newbedev.com/python-convert-audio-to-text-python-code-example
+# https://sonsuzdesign.blog/2020/05/22/convert-your-speech-to-text-using-python/
+# https://cloud.google.com/speech-to-text/docs/async-recognize
+# https://www.javatpoint.com/how-to-convert-text-to-speech-in-python
+
+Pydub: sudo pip3 install pydub
+Speech recognition: sudo pip3 install SpeechRecognition
+
+# importing libraries
+import speech_recognition as sr
+
+import os
+
+from pydub import AudioSegment
+from pydub.silence import split_on_silence
+
+# a function that splits the audio file into chunks
+# and applies speech recognition
+def silence_based_conversion(path = "alice-medium.wav"):
+
+    # open the audio file stored in
+    # the local system as a wav file.
+    song = AudioSegment.from_wav(path)
+
+    # open a file where we will concatenate
+    # and store the recognized text
+    fh = open("recognized.txt", "w+")
+
+    # split track where silence is 0.5 seconds
+    # or more and get chunks
+    chunks = split_on_silence(song,
+        # must be silent for at least 0.5 seconds
+        # or 500 ms. adjust this value based on user
+        # requirement. if the speaker stays silent for
+        # longer, increase this value. else, decrease it.
+        min_silence_len = 500,
+
+        # consider it silent if quieter than -16 dBFS
+        # adjust this per requirement
+        silence_thresh = -16
+    )
+
+    # create a directory to store the audio chunks.
+    try:
+        os.mkdir('audio_chunks')
+    except(FileExistsError):
+        pass
+
+    # move into the directory to
+    # store the audio files.
+    os.chdir('audio_chunks')
+
+    i = 0
+    # process each chunk
+    for chunk in chunks:
+
+        # Create 0.5 seconds silence chunk
+        chunk_silent = AudioSegment.silent(duration = 10)
+
+        # add 0.5 sec silence to beginning and
+        # end of audio chunk. This is done so that
+        # it doesn't seem abruptly sliced.
+        audio_chunk = chunk_silent + chunk + chunk_silent
+
+        # export audio chunk and save it in
+        # the current directory.
+        print("saving chunk{0}.wav".format(i))
+        # specify the bitrate to be 192 k
+        audio_chunk.export("./chunk{0}.wav".format(i), bitrate ='192k', format ="wav")
+
+        # the name of the newly created chunk
+        filename = 'chunk'+str(i)+'.wav'
+
+        print("Processing chunk "+str(i))
+
+        # get the name of the newly created chunk
+        # in the AUDIO_FILE variable for later use.
+        file = filename
+
+        # create a speech recognition object
+        r = sr.Recognizer()
+
+        # recognize the chunk
+        with sr.AudioFile(file) as source:
+            # remove this if it is not working
+            # correctly.
+            r.adjust_for_ambient_noise(source)
+            audio_listened = r.listen(source)
+
+        try:
+            # try converting it to text
+            rec = r.recognize_google(audio_listened)
+            # write the output to the file.
+            fh.write(rec+". ")
+
+        # catch any errors.
+        except sr.UnknownValueError:
+            print("Could not understand audio")
+
+        except sr.RequestError as e:
+            print("Could not request results. check your internet connection")
+
+        i += 1
+
+    os.chdir('..')
+
+
+if __name__ == '__main__':
+
+    print('Enter the audio file path')
+
+    path = input()
+
+    silence_based_conversion(path)
+
+
+
+
+----------------
+
+
+pip install gTTS
+pip install playsound
+pip install pyttsx3
+
+
+import gtts
+from playsound import playsound
+# make a request to google to get synthesis
+t1 = gtts.gTTS("Welcome to javaTpoint")
+# save the audio file
+t1.save("welcome.mp3")
+# play the audio file
+playsound("welcome.mp3")
+
+
+..
+
+# Import the gTTS module for text
+# to speech conversion
+from gtts import gTTS
+
+# This module is imported so that we can
+# play the converted audio
+
+from playsound import playsound
+
+# It is a text value that we want to convert to audio
+text_val = 'All the best for your exam.'
+
+# Here are converting in English Language
+language = 'en'
+
+# Passing the text and language to the engine,
+# here we have assign slow=False. Which denotes
+# the module that the transformed audio should
+# have a high speed
+obj = gTTS(text=text_val, lang=language, slow=False)
+
+#Here we are saving the transformed audio in a mp3 file named
+# exam.mp3
+obj.save("exam.mp3")
+
+# Play the exam.mp3 file
+playsound("exam.mp3")
+
+
+...
+
+import pyttsx3
+# initialize Text-to-speech engine
+engine = pyttsx3.init()
+# convert this text to speech
+text = "Python is a great programming language"
+engine.say(text)
+# play the speech
+engine.runAndWait()
+# get details of speaking rate
+rate = engine.getProperty("rate")
+print(rate)
+
+
+# setting new voice rate (faster)
+engine.setProperty("rate", 300)
+engine.say(text)
+engine.runAndWait()
+
+
+engine.setProperty("rate", 100)
+engine.say(text)
+engine.runAndWait()
+
+# get details of all voices available
+voices = engine.getProperty("voices")
+print(voices)
