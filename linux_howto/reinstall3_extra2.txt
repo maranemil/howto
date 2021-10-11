@@ -334,14 +334,104 @@ BACKSPACE  Reset playback speed to normal.
 
 
 
-
+#######################################################
 Valgrind
+#######################################################
 
 https://valgrind.org/docs/manual/quick-start.html
 https://valgrind.org/docs/manual/quick-start.html
 https://www.youtube.com/watch?v=ULvLmUqJoi0
 
 valgrind  php -n index.php 2>&1 |  less
+
+
+#########################
+Install PHP 8.0
+#########################
+
+https://www.cloudbooklet.com/how-to-upgrade-php-version-to-php-8-0-on-ubuntu/
+https://devanswers.co/how-to-upgrade-from-php-7-x-to-php-8-on-ubuntu-apache/
+
+php -v
+sudo apt-get purge php7.*
+sudo apt-get autoclean
+sudo apt-get autoremove
+
+
+sudo apt install software-properties-common
+sudo add-apt-repository ppa:ondrej/php
+sudo apt update
+
+sudo apt install php8.0
+
+sudo apt install php8.0-common php8.0-mysql php8.0-xml php8.0-xmlrpc php8.0-curl php8.0-gd php8.0-imagick php8.0-cli php8.0-dev php8.0-imap php8.0-mbstring php8.0-opcache php8.0-soap php8.0-zip php8.0-intl php8.0-bcmath php8.0-ldap php8.0-mcrypt -y
+
+php -v
+
+
+#########################
+Debug session was finished without being paused
+It may be caused by path mappings misconfiguration or not synchronized local and remote projects.
+#########################
+
+https://github.com/drud/ddev/issues/2643
+https://stackoverflow.com/questions/50166118/annoying-warnings-debug-session-was-finished-without-being-paused-in-phpstorm
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/360000019119-Help-Please-Debug-session-was-finished-without-being-paused-Acquia-Dev-Desktop-2
+
+The "break at first line" probably prevents PhpStorm from issuing you the warning, but otherwise it does exactly the same.
+
+
+#########################
+xdebug 504 Gateway Time-out
+#########################
+
+https://stackoverflow.com/questions/18229757/nginx-php-fpm-xdebug-netbeans-can-start-only-one-debug-session
+https://community.localwp.com/t/timeouts-during-nginx-xdebug-session/716/5
+https://github.com/geerlingguy/drupal-vm/issues/903
+https://github.com/humanmade/altis-local-server/issues/223
+
+# composer server start --xdebug
+
+sudo nano /etc/nginx/nginx.conf
+set nginx option "fastcgi_read_timeout" > fastcgi_read_timeout 600;
+set > xdebug.remote_autostart=0;
+
+vi /etc/php.d/xdebug.ini
+xdebug.remote_cookie_expire_time = 3600
+
+############################################
+set docker rights
+############################################
+
+echo $USER
+sudo adduser $USER docker
+id
+
+docker --version
+docker-compose --version
+docker-compose version
+
+echo -e "UID=$(id -u)\nGID=$(id -g)"
+
+.env
+UID=1000
+GID=1000
+
+https://github.com/mazgi/dockerfiles
+https://github.com/mazgi/ansible-galaxy.gentoo-systemd-remote
+https://discuss.linuxcontainers.org/t/container-fails-to-restart-after-setting-raw-idmap/4333/5
+https://superuser.com/questions/1174344/syntax-for-setting-lxd-container-raw-idmap
+
+rm -f .env
+test $(uname -s) = 'Linux' && echo "UID=$(id -u)\nGID=$(id -g)" >> .env
+cat<<EOE >> .env
+DOCKER_GID=$(getent group docker | cut -d : -f 3)
+EOE
+
+
+
+
+
 
 
 

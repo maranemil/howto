@@ -103,3 +103,37 @@ Array
 )
 */
 
+
+############################################
+# Extract Numbers From a String in PHP
+# https://www.delftstack.com/howto/php/how-to-extract-numbers-from-a-string-in-php/
+############################################
+
+$string = 'Sarah has 4 dolls and 6 bunnies.';
+preg_match_all('!\d+!', $string, $matches);
+print_r($matches);
+
+$string = 'Sarah has 4 dolls and 6 bunnies.';
+$int = (int) filter_var($string, FILTER_SANITIZE_NUMBER_INT);
+echo("The extracted numbers are: $int \n");
+
+$string = 'Sarah has 4 dolls and 6 bunnies.';
+$outputString = preg_replace('/[^0-9]/', '', $string);
+echo("The extracted numbers are: $outputString \n");
+
+############################################
+# Get the Last Character of a String in PHP
+# https://www.delftstack.com/howto/php/how-to-get-the-last-char-of-a-string-in-php/
+############################################
+
+$string = 'This is a string';
+$lastChar = substr($string, -1);
+echo "The last char of the string is $lastChar.";
+
+$string = "This is a string";
+$lastChar = $string[strlen($string)-1];
+echo "The last char of the string is $lastChar.";
+
+$string = "This is a string";
+$lastChar = $string[-1];
+echo "The last char of the string is $lastChar.";
