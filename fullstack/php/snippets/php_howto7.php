@@ -137,3 +137,23 @@ echo "The last char of the string is $lastChar.";
 $string = "This is a string";
 $lastChar = $string[-1];
 echo "The last char of the string is $lastChar.";
+
+#######################################
+# AND vs && as operator in PHP
+#######################################
+
+# https://stackoverflow.com/questions/2803321/and-vs-as-operator
+# https://www.php.net/manual/en/language.operators.logical.php
+
+// "||" has a greater precedence than "or"
+
+// The result of the expression (false || true) is assigned to $e
+// Acts like: ($e = (false || true))
+$e = false || true;
+
+// The constant false is assigned to $f and then true is ignored
+// Acts like: (($f = false) or true)
+$f = false or true;
+
+if ($var = true && false) // Compare true with false and assign to $var
+if ($var = true and false) // Assign true to $var and compare $var to false
