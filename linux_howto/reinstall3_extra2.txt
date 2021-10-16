@@ -743,5 +743,139 @@ https://docs.docker.com/compose/release-notes/
 https://docs.docker.com/compose/compose-file/
 https://docs.docker.com/compose/compose-file/compose-versioning/
 
+#################################################
+#	All Roads Lead to Philosophy (on Wikipedia)
+#################################################
+
+https://github.com/controversial/wikipedia-map
+https://xefer.com/wikipedia
+https://medium.com/@jacoblee628/all-roads-lead-to-philosophy-on-wikipedia-35d647b232b2
+
+#################################################
+# 	docker stats
+#################################################
 
 
+https://docs.docker.com/engine/reference/commandline/stats/
+
+docker stats
+docker stats --all
+docker ps -a
+docker stats CONTAINER ID
+docker stats CONTAINER NAME
+
+
+################################################
+Runtime options with Memory, CPUs, and GPUs
+################################################
+
+https://docs.docker.com/config/containers/resource_constraints/
+https://phoenixnap.com/kb/docker-memory-and-cpu-limit
+https://stackoverflow.com/questions/55168075/composer-memory-limit-docker
+https://serverfault.com/questions/917506/why-is-my-docker-symfony-project-with-composer-consuming-so-much-memory
+https://github.com/nextcloud/docker/issues/1413
+https://www.baeldung.com/ops/docker-memory-limit
+https://linuxhint.com/docker_compose_memory_limits/
+
+
+--memory=2g
+--memory="1g"
+--memory-swappiness=50
+--cpus="1.5"
+--cpuset-cpus=1,3
+--cpuset-cpus=0-3
+
+sudo docker run -it --memory="1g" ubuntu
+sudo docker run -it --memory="1g" --memory-swap="2g" ubuntu
+sudo docker run -it --memory="1g" --memory-reservation="750m" ubuntu
+sudo docker run -it --cpus="1.0" ubuntu
+sudo docker run -m 512m nginx
+sudo docker run --cpus=2 nginx
+
+docker run -it --cpus=".5" ubuntu /bin/bash
+docker run -it --cpu-period=100000 --cpu-quota=50000 ubuntu /bin/bash
+
+docker run -it \
+    --cpu-rt-runtime=950000 \
+    --ulimit rtprio=99 \
+    --cap-add=sys_nice \
+    debian:jessie
+
+
+services:
+  php-fmp: //the name of your container (as per your question)
+    environment:
+      - COMPOSER_MEMORY_LIMIT=-1 //-1 means unlimited
+
+
+
+docker exec nextcloud su - www-data -s /bin/bash -c 'PHP_MEMORY_LIMIT=512M php -f /var/www/html/cron.php'
+
+docker exec nextcloud su --whitelist-environment=PHP_MEMORY_LIMIT - www-data -s /bin/bash -c 'PHP_MEMORY_LIMIT=512M php -f /var/www/html/cron.php'
+
+sudo docker exec nextcloud /bin/bash -c 'env' | grep PHP_MEMORY_LIMIT
+PHP_MEMORY_LIMIT=512M
+
+
+Versions 3
+services:
+  service:
+    image: nginx
+    deploy:
+        resources:
+            limits:
+              cpus: 0.50
+              memory: 512M
+            reservations:
+              cpus: 0.25
+              memory: 128M
+
+
+
+Version 2
+services:
+    service:
+      image: nginx
+      mem_limit: 512m
+      mem_reservation: 128M
+      cpus: 0.5
+      ports:
+        - "80:80"
+
+
+
+##############################################################
+#   error handling mysqli_sql_exception
+##############################################################
+
+https://www.php.net/manual/en/class.mysqli-sql-exception.php
+https://www.php.net/manual/en/function.mysqli-report.php
+https://codereview.stackexchange.com/questions/234405/php-mysqli-connection-file
+https://github.com/WebsiteBeaver/Simple-MySQLi/blob/master/simple-mysqli.php
+https://hotexamples.com/examples/-/-/mysqli_report/php-mysqli_report-function-examples.html
+https://stackoverflow.com/questions/18457821/how-to-make-mysqli-throw-exceptions-using-mysqli-report-strict
+https://phpdelusions.net/mysqli/error_reporting
+
+mysqli_report(MYSQLI_REPORT_STRICT);
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+mysqli_report(MYSQLI_REPORT_ALL ^ MYSQLI_REPORT_INDEX);
+
+$result      = mysql_query($sql);
+
+if ( $result === false ){
+	print_r(mysql_error());
+}
+
+if (mysql_errno()) {
+	print_r(mysql_error());
+}
+
+reproduce
+---------------------------------------
+ini_set('display_errors',1);
+error_reporting(E_ALL);
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+$db = $mysqli = new mysqli($host, $user, $pass, $database);
+$res = $db->query("apparently not a valid SQL statement");
+$res->fetch_assoc();
+---------------------------------------
