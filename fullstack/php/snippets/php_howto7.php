@@ -157,3 +157,35 @@ $f = false or true;
 
 if ($var = true && false) // Compare true with false and assign to $var
 if ($var = true and false) // Assign true to $var and compare $var to false
+
+
+
+
+#######################################
+# remove spaces
+#######################################
+
+preg_replace('/\s/','',$str);
+
+#######################################
+#   PSR-12: Extended Coding Style - PHP-FIG
+#######################################
+
+/*
+PHPStorm -> Editor -> Code Style -> PHP -> PSR-12
+https://www.phptools.online/php-checker
+
+
+https://www.php-fig.org/psr/psr-12/
+https://www.php-fig.org/psr/psr-1/
+https://www.php-fig.org/psr/psr-12/
+https://www.php-fig.org/psr/psr-12/meta/
+https://www.php-fig.org/psr/psr-12/
+https://www.php-fig.org/psr/psr-2/
+https://en.wikipedia.org/wiki/PHP_Standard_Recommendation
+https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-12-extended-coding-style-guide-meta.md
+https://blog.quickadminpanel.com/psr-2-and-psr-12-why-we-need-standards-and-how-to-apply-them/
+https://thoeny.dev/php-differences-between-psr-12-and-psr-2
+https://siderlabs.com/blog/5-php-coding-standards-you-will-love-and-how-to-use-them-adf6a4855696/
+*/
+
