@@ -189,3 +189,142 @@ https://thoeny.dev/php-differences-between-psr-12-and-psr-2
 https://siderlabs.com/blog/5-php-coding-standards-you-will-love-and-how-to-use-them-adf6a4855696/
 */
 
+#######################################
+# autoloader
+#######################################
+/*
+https://www.php.net/manual/de/function.spl-autoload-register.php
+https://github.com/symfony/class-loader/blob/3.4/ClassLoader.php
+https://stackoverflow.com/questions/17806301/best-way-to-autoload-classes-in-php
+https://www.php.net/manual/en/language.oop5.autoload.php
+https://www.php.net/manual/en/function.spl-autoload-register.php
+https://www.php.net/manual/en/function.spl-autoload.php
+https://www.php.net/manual/en/function.autoload.php
+https://stackoverflow.com/questions/3642282/php-autoloading-in-namespaces
+https://tutorials.supunkavinda.blog/php/oop-autoloading
+https://code.tutsplus.com/tutorials/how-to-autoload-classes-with-composer-in-php--cms-35649
+https://www.patrick-saar.de/artikel/autoloading-mit-php
+https://www.phptutorial.net/php-oop/php-autoloading-class-files/
+https://stackoverflow.com/questions/3656799/using-php-scandir-to-scan-files-and-then-require-once-them
+https://www.webtipblog.com/using-spl_autoload_register-load-classes-php-project/
+https://hotexamples.com/examples/-/Tools/scandir/php-tools-scandir-method-examples.html
+*/
+
+$member_files = scandir(MEMBERS.DS);
+foreach($member_files as $member_file) {
+    // Ignore non php files and thus ".." & "."
+    if (!preg_match('/\.php$/', $member_file) {
+      continue;
+    }
+    require_once(MEMBERS.DS.$member_file);
+}
+
+#...
+
+
+spl_autoload_register(function($className) {
+    include "/path/to/lib/and/$className.php";
+});
+$foo = new Foo;
+
+#...
+
+function my_autoloader($class) {
+    include 'classes/' . $class . '.class.php';
+}
+
+spl_autoload_register('my_autoloader');
+
+// Or, using an anonymous function
+spl_autoload_register(function ($class) {
+    include 'classes/' . $class . '.class.php';
+});
+
+#...
+
+spl_autoload_register(function ($class) {
+    @require_once('lib/type/' . $class . '.php');
+    @require_once('lib/size/' . $class . '.php');
+});
+
+#...
+
+spl_autoload_register(function ($class_name) {
+    include $class_name . '.php';
+});
+
+$obj  = new MyClass1();
+$obj2 = new MyClass2();
+
+#...
+
+spl_autoload_register(__NAMESPACE__ . "\\className::functionName"));
+
+
+
+spl_autoload_register(function($className) {
+	$file = $className . '.php';
+	if (file_exists($file)) {
+		include $file;
+	}
+});
+
+spl_autoload_register(function($className) {
+	$file = __DIR__ . '\\' . $className . '.php';
+	$file = str_replace('\\', DIRECTORY_SEPARATOR, $file);
+	if (file_exists($file)) {
+		include $file;
+	}
+});
+
+
+#...
+
+foreach (Tools::scandir($this->getLocalPath() . 'override', 'php', '', true) as $file) {
+     $class = basename($file, '.php');
+     if (Autoload::getInstance()->getClassPath($class . 'Core')) {
+         $result &= $this->removeOverride($class);
+     }
+ }
+
+
+#----------------
+# Example Autoloading
+# Structure
+
+/*
+
+src/
+	Fruits/
+		Apple.php
+		Orange.php
+		Banana.php
+	App.php
+includes/
+	autoload.php
+app.php
+
+*/
+
+# includes/autoload.php
+#---------------
+
+spl_autoload_register(function($className) {
+	$file = dirname(__DIR__) . '\\src\\' . $className . '.php';
+	$file = str_replace('\\', DIRECTORY_SEPARATOR, $file);
+	echo $file;
+	if (file_exists($file)) {
+		include $file;
+	}
+});
+
+# app.php
+#---------------
+// app.php
+include_once 'includes/autoload.php';
+
+// freely use the classes
+$app = new App();
+$apple = new Fruits\Apple();
+$orange = new Fruits\Orange();
+$banana = new Fruits\Banana();
