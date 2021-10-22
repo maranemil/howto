@@ -328,3 +328,24 @@ $app = new App();
 $apple = new Fruits\Apple();
 $orange = new Fruits\Orange();
 $banana = new Fruits\Banana();
+
+/*
+utf8_encode
+*/
+$utfEncodedArray = array_map("utf8_encode", $inputArray );
+
+
+/*
+error_log
+
+https://stackoverflow.com/questions/15530039/how-to-write-to-error-log-file-in-php/33035277
+https://stackify.com/display-php-errors/
+*/
+error_log(
+	print_r($var, true)."\n",
+	3,
+	APP . '/errors.log'
+);
+
+
+
