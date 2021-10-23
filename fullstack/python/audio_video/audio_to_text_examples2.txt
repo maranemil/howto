@@ -1,0 +1,494 @@
+
+###########################################
+#	Voice Recognition examples
+###########################################
+
+https://hackaday.com/2010/07/11/adding-speach-recognition-to-your-embedded-platform/
+http://www.anshumanc.ml/ml/2017/12/30/speech/
+https://superuser.com/questions/1076269/where-is-the-decoded-text-located-in-pocketsphinx-output
+https://www.mankier.com/1/pocketsphinx_continuous
+https://programtalk.com/vs2/python/8128/pocketsphinx-python/main.py/
+http://voice2json.org/
+https://github.com/synesthesiam/voice2json
+https://pypi.org/project/pocketsphinx/
+https://rhasspy.readthedocs.io/en/latest/speech-to-text/
+https://github.com/ming024/FastSpeech2
+http://www.speech.cs.cmu.edu/sphinx/tutorial.html
+https://github.com/buriburisuri/speech-to-text-wavenet
+
+
+
+pocketsphinx_continuous -infile /usr/share/sounds/alsa/Front_Right.wav
+
+To disable debug output of pocketsphinx, add an option -logfn /dev/null, then pocketsphinx will print only the decoded text, in your case it will print
+
+-------------
+
+sudo apt-get install pocketsphinx
+
+import os
+import re
+from subprocess import Popen
+from time import sleep
+
+DIR_PATH = os.path.dirname(os.path.realpath(__file__))
+DIC_PATH = DIR_PATH + "/dic/2698.dic"
+LM_PATH = DIR_PATH + "/lm/2698.lm"
+MODEL_PATH = DIR_PATH + "/model/en-us"
+TEMP_PATH = DIR_PATH + "/temp/output.log"
+
+launchSphinx = "pocketsphinx_continuous " + "-inmic yes " + "-dict " + DIC_PATH + " -lm " + LM_PATH + " -hmm " + MODEL_PATH + " -logfn " + TEMP_PATH + " -backtrace yes"
+
+def check(input):
+    output = ''
+    a='((?:[a-z][a-z]+))'
+    b='.*?'
+    c='((?:[a-z][a-z]+))'
+    d='.*?'
+    e='((?:[a-z][a-z]+))'
+
+    regex = re.compile(a+b+c+d+e,re.IGNORECASE|re.DOTALL)
+    match = regex.search(input)
+    if match:
+        if match.group(1) == 'INFO' and match.group(2) == 'pocketsphinx':
+            output=match.group(3)
+        else:
+            output="n/a"
+    else:
+        output="n/a"
+    return str(output)
+
+proc = Popen("gnome-terminal -e '" + launchSphinx + "'", shell = True)
+
+sleep(5)
+
+idx = 0
+flag = 0
+
+while True:
+    with open(TEMP_PATH) as f:
+        for i, line in enumerate(f):
+            if line.startswith("INFO: pocketsphinx.c") and (i>idx):
+                cmd = check(line)
+                print cmd
+                if cmd == 'GOODBYE':
+                    os.system('rm -rf ' + TEMP_PATH)
+                    flag = 1
+                    break
+        idx = i
+        if flag == 1:
+            break
+    if flag == 1:
+        break
+
+
+proc.terminate()
+proc.kill()
+
+----------
+
+
+https://www.codesofinterest.com/2017/03/python-speech-recognition-pocketsphinx.html
+
+pip install pocketsphinx
+pip install SpeechRecognition
+
+import speech_recognition as sr
+
+ # obtain audio from the microphone
+ r = sr.Recognizer()
+ with sr.Microphone() as source:
+   print("Say something!")
+   audio = r.listen(source)
+
+ # recognize speech using Sphinx
+ try:
+   print("Sphinx thinks you said '" + r.recognize_sphinx(audio) + "'")
+ except sr.UnknownValueError:
+   print("Sphinx could not understand audio")
+ except sr.RequestError as e:
+   print("Sphinx error; {0}".format(e))
+
+
+# noise
+import speech_recognition as sr
+
+ # obtain audio from the microphone
+ r = sr.Recognizer()
+ with sr.Microphone() as source:
+   print("Please wait. Calibrating microphone...")
+   # listen for 5 seconds and create the ambient noise energy level
+   r.adjust_for_ambient_noise(source, duration=5)
+   print("Say something!")
+   audio = r.listen(source)
+
+ # recognize speech using Sphinx
+ try:
+   print("Sphinx thinks you said '" + r.recognize_sphinx(audio) + "'")
+ except sr.UnknownValueError:
+   print("Sphinx could not understand audio")
+ except sr.RequestError as e:
+   print("Sphinx error; {0}".format(e))
+
+-------------
+https://github.com/cmusphinx/pocketsphinx-python/issues/43
+
+cfg = pocketsphinx.Decoder.get_default_config()
+cfg.set_boolean('-remove_silence', False)
+cfg.set_boolean('-remove_noise', False)
+decoder = pocketsphinx.Decoder(cfg)
+
+
+
+
+-------------
+https://stackoverflow.com/questions/49297291/how-to-improve-the-accuracy-for-speech-to-text-conversion-using-recognize-sphinx
+
+import speech_recognition as sr
+
+# obtain path to "chinese.flac" in the same folder as this script
+from os import path
+
+# AUDIO_FILE = path.join(path.dirname(path.realpath(__file__)), "english.wav")
+# AUDIO_FILE = path.join(path.dirname(path.realpath(__file__)), "french.aiff")
+AUDIO_FILE = path.join(path.dirname(path.realpath(__file__)), "chinese.flac")
+
+# use the audio file as the audio source
+r = sr.Recognizer()
+with sr.AudioFile(AUDIO_FILE) as source:
+    audio = r.record(source)  # read the entire audio file
+
+# recognize speech using Sphinx
+try:
+    # Just pass a language parameter
+    print("Sphinx thinks you said " + r.recognize_sphinx(audio, language="zh-CN"))
+except sr.UnknownValueError:
+    print("Sphinx could not understand audio")
+except sr.RequestError as e:
+    print("Sphinx error; {0}".format(e))
+
+-------------------------------
+
+https://khalsalabs.com/pocketsphinx-tutorial-with-python-cmu-sphinx-python/
+
+pip install pocketsphinx
+python -m pip install --upgrade pip setuptools wheel
+pip install --upgrade pocketsphinx
+
+# Code retested by KhalsaLabs
+# You can use your own audio file in code
+# Raw or wav files would work perfectly
+# For mp3 files, you need to modify code (add codex)
+
+from __future__ import print_function
+import os
+from pocketsphinx import Pocketsphinx, get_model_path, get_data_path
+
+model_path = get_model_path()
+data_path = get_data_path()
+
+config = {
+'hmm': os.path.join(model_path, 'en-us'),
+'lm': os.path.join(model_path, 'en-us.lm.bin'),
+'dict': os.path.join(model_path, 'cmudict-en-us.dict')
+}
+
+ps = Pocketsphinx(**config)
+ps.decode(
+audio_file=os.path.join(data_path, 'goforward.raw'), # add your audio file here
+buffer_size=2048,
+no_search=False,
+full_utt=False
+)
+
+print(ps.hypothesis())
+
+----------------
+
+http://blog.justsophie.com/python-speech-to-text-with-pocketsphinx/
+https://gist.github.com/srli/72c7938230537b4f8a4c#file-stt-py
+
+
+#!/usr/bin/env python
+
+from pocketsphinx.pocketsphinx import *
+from sphinxbase.sphinxbase import *
+
+import os
+import pyaudio
+import wave
+import audioop
+from collections import deque
+import time
+import math
+
+"""
+Written by Sophie Li, 2016
+http://blog.justsophie.com/python-speech-to-text-with-pocketsphinx/
+"""
+
+class SpeechDetector:
+    def __init__(self):
+        # Microphone stream config.
+        self.CHUNK = 1024  # CHUNKS of bytes to read each time from mic
+        self.FORMAT = pyaudio.paInt16
+        self.CHANNELS = 1
+        self.RATE = 16000
+
+        self.SILENCE_LIMIT = 1  # Silence limit in seconds. The max ammount of seconds where
+                           # only silence is recorded. When this time passes the
+                           # recording finishes and the file is decoded
+
+        self.PREV_AUDIO = 0.5  # Previous audio (in seconds) to prepend. When noise
+                          # is detected, how much of previously recorded audio is
+                          # prepended. This helps to prevent chopping the beginning
+                          # of the phrase.
+
+        self.THRESHOLD = 4500
+        self.num_phrases = -1
+
+        # These will need to be modified according to where the pocketsphinx folder is
+        MODELDIR = "../../tools/pocketsphinx/model"
+        DATADIR = "../../tools/pocketsphinx/test/data"
+
+        # Create a decoder with certain model
+        config = Decoder.default_config()
+        config.set_string('-hmm', os.path.join(MODELDIR, 'en-us/en-us'))
+        config.set_string('-lm', os.path.join(MODELDIR, 'en-us/en-us.lm.bin'))
+        config.set_string('-dict', os.path.join(MODELDIR, 'en-us/cmudict-en-us.dict'))
+
+        # Creaders decoder object for streaming data.
+        self.decoder = Decoder(config)
+
+    def setup_mic(self, num_samples=50):
+        """ Gets average audio intensity of your mic sound. You can use it to get
+            average intensities while you're talking and/or silent. The average
+            is the avg of the .2 of the largest intensities recorded.
+        """
+        print "Getting intensity values from mic."
+        p = pyaudio.PyAudio()
+        stream = p.open(format=self.FORMAT,
+                        channels=self.CHANNELS,
+                        rate=self.RATE,
+                        input=True,
+                        frames_per_buffer=self.CHUNK)
+
+        values = [math.sqrt(abs(audioop.avg(stream.read(self.CHUNK), 4)))
+                  for x in range(num_samples)]
+        values = sorted(values, reverse=True)
+        r = sum(values[:int(num_samples * 0.2)]) / int(num_samples * 0.2)
+        print " Finished "
+        print " Average audio intensity is ", r
+        stream.close()
+        p.terminate()
+
+        if r < 3000:
+            self.THRESHOLD = 3500
+        else:
+            self.THRESHOLD = r + 100
+
+    def save_speech(self, data, p):
+        """
+        Saves mic data to temporary WAV file. Returns filename of saved
+        file
+        """
+        filename = 'output_'+str(int(time.time()))
+        # writes data to WAV file
+        data = ''.join(data)
+        wf = wave.open(filename + '.wav', 'wb')
+        wf.setnchannels(1)
+        wf.setsampwidth(p.get_sample_size(pyaudio.paInt16))
+        wf.setframerate(16000)  # TODO make this value a function parameter?
+        wf.writeframes(data)
+        wf.close()
+        return filename + '.wav'
+
+    def decode_phrase(self, wav_file):
+        self.decoder.start_utt()
+        stream = open(wav_file, "rb")
+        while True:
+          buf = stream.read(1024)
+          if buf:
+            self.decoder.process_raw(buf, False, False)
+          else:
+            break
+        self.decoder.end_utt()
+        words = []
+        [words.append(seg.word) for seg in self.decoder.seg()]
+        return words
+
+    def run(self):
+        """
+        Listens to Microphone, extracts phrases from it and calls pocketsphinx
+        to decode the sound
+        """
+        self.setup_mic()
+
+        #Open stream
+        p = pyaudio.PyAudio()
+        stream = p.open(format=self.FORMAT,
+                        channels=self.CHANNELS,
+                        rate=self.RATE,
+                        input=True,
+                        frames_per_buffer=self.CHUNK)
+        print "* Mic set up and listening. "
+
+        audio2send = []
+        cur_data = ''  # current chunk of audio data
+        rel = self.RATE/self.CHUNK
+        slid_win = deque(maxlen=self.SILENCE_LIMIT * rel)
+        #Prepend audio from 0.5 seconds before noise was detected
+        prev_audio = deque(maxlen=self.PREV_AUDIO * rel)
+        started = False
+
+        while True:
+            cur_data = stream.read(self.CHUNK)
+            slid_win.append(math.sqrt(abs(audioop.avg(cur_data, 4))))
+
+            if sum([x > self.THRESHOLD for x in slid_win]) > 0:
+                if started == False:
+                    print "Starting recording of phrase"
+                    started = True
+                audio2send.append(cur_data)
+
+            elif started:
+                print "Finished recording, decoding phrase"
+                filename = self.save_speech(list(prev_audio) + audio2send, p)
+                r = self.decode_phrase(filename)
+                print "DETECTED: ", r
+
+                # Removes temp audio file
+                os.remove(filename)
+                # Reset all
+                started = False
+                slid_win = deque(maxlen=self.SILENCE_LIMIT * rel)
+                prev_audio = deque(maxlen=0.5 * rel)
+                audio2send = []
+                print "Listening ..."
+
+            else:
+                prev_audio.append(cur_data)
+
+        print "* Done listening"
+        stream.close()
+        p.terminate()
+
+if __name__ == "__main__":
+    sd = SpeechDetector()
+    sd.run()
+
+
+
+
+https://gist.github.com/srli/d6f2908f032c333f1e4fe022663b25cc#file-stt_py3-py
+
+
+from pocketsphinx.pocketsphinx import *
+from sphinxbase.sphinxbase import *
+
+import os
+import pyaudio
+import wave
+import audioop
+from collections import deque
+import time
+import math
+
+“””
+Written by Sophie Li, 2016
+http://blog.justsophie.com/python-speech-to-text-with-pocketsphinx/
+“””
+
+class SpeechDetector:
+def __init__(self):
+# Microphone stream config.
+self.CHUNK = 1024 # CHUNKS of bytes to read each time from mic
+self.FORMAT = pyaudio.paInt16
+self.CHANNELS = 1
+self.RATE = 16000
+
+self.SILENCE_LIMIT = 1 # Silence limit in seconds. The max ammount of seconds where
+# only silence is recorded. When this time passes the
+# recording finishes and the file is decoded
+
+self.PREV_AUDIO = 0.5 # Previous audio (in seconds) to prepend. When noise
+# is detected, how much of previously recorded audio is
+# prepended. This helps to prevent chopping the beginning
+# of the phrase.
+
+self.THRESHOLD = 4500
+self.num_phrases = -1
+
+# These will need to be modified according to where the pocketsphinx folder is
+MODELDIR = “pocketsphinx/model”
+DATADIR = “pocketsphinx/test/data”
+
+# Create a decoder with certain model
+config = Decoder.default_config()
+config.set_string(‘-hmm’, os.path.join(MODELDIR, ‘en-us/en-us’))
+config.set_string(‘-lm’, os.path.join(MODELDIR, ‘en-us/en-us.lm.bin’))
+config.set_string(‘-dict’, os.path.join(MODELDIR, ‘en-us/cmudict-en-us.dict’))
+
+# Creaders decoder object for streaming data.
+self.decoder = Decoder(config)
+
+def setup_mic(self, num_samples=50):
+“”” Gets average audio intensity of your mic sound. You can use it to get
+average intensities while you’re talking and/or silent. The average
+is the avg of the .2 of the largest intensities recorded.
+“””
+print (“Getting intensity values from mic.”)
+p = pyaudio.PyAudio()
+stream = p.open(format=self.FORMAT,
+channels=self.CHANNELS,
+rate=self.RATE,
+input=True,
+frames_per_buffer=self.CHUNK)
+
+values = [math.sqrt(abs(audioop.avg(stream.read(self.CHUNK), 4)))
+for x in range(num_samples)]
+values = sorted(values, reverse=True)
+r = sum(values[:int(num_samples * 0.2)]) / int(num_samples * 0.2)
+print (” Finished “)
+print (” Average audio intensity is %s ” % r)
+stream.close()
+p.terminate()
+
+if r self.THRESHOLD for x in slid_win]) > 0:
+if started == False:
+print (“Starting recording of phrase”)
+started = True
+audio2send.append(cur_data)
+
+elif started:
+print (“Finished recording, decoding phrase”)
+filename = self.save_speech(list(prev_audio) + audio2send, p)
+r = self.decode_phrase(filename)
+print (“DETECTED: %s” % r)
+
+# Removes temp audio file
+os.remove(filename)
+# Reset all
+started = False
+slid_win = deque(maxlen=int(self.SILENCE_LIMIT * rel))
+prev_audio = deque(maxlen=int(0.5 * rel))
+audio2send = []
+print (“Listening …”)
+
+else:
+prev_audio.append(cur_data)
+
+print (“* Done listening”)
+stream.close()
+p.terminate()
+
+if __name__ == “__main__”:
+sd = SpeechDetector()
+sd.run()
+
+
+
+
+
+
+
