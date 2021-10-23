@@ -43,7 +43,6 @@ git fetch origin
 git branch -v -a
 git fetch origin feature/blabla-70
 
-
 #### [undo merge]
 ------------------------------------------
 git reset --hard HEAD~1
@@ -51,3 +50,6 @@ git reset --hard HEAD~1
 
 # undo a merge that was already pushed:
 git revert -m 1 commit_hash
+
+##### github push
+git push --progress --porcelain origin refs/heads/master:master
