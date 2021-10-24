@@ -103,6 +103,7 @@ git push -u origin --all
 git push -u origin --tags
 
 git push --set-upstream origin master
+git push origin HEAD
 
 # push changes to branch
 git push --set-upstream origin branch
