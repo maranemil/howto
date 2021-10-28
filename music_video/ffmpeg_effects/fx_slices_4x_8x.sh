@@ -2,11 +2,11 @@
 # FFMPEG Slice FX - Random Videos from pexels.com
 ######################################
 
-# prepare vids
+# rename vids
 num=0; for i in *.mp4; do mv "$i" "video$(printf '%01d' $num).mp4"; ((num++)); done
-######################################
+
+
 # Slicebox 4x
-######################################
 ffmpeg -i video1.mp4 -i video2.mp4  -i video3.mp4  -i video4.mp4  -filter_complex "[0]scale=1920:1080,format=rgba[v1];  [1]scale=-1:1080,crop=480:1080[v2]; [2]scale=-1:1080, crop=480:1080[v3]; [3]scale=-1:1080,crop=480:1080[v4];   [v1][v2]overlay=0:0[out1]; [out1][v3]overlay=480:0 [out2]; [out2][v4]overlay=960:0[out3];[out3][v]overlay=1440:0[out]" -shortest -map [out] -t 5 -y output.mp4
 
 

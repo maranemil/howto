@@ -37,6 +37,14 @@ ffplay -i in.mp4 -vf "perspective=660:690:118:147:150:615:982:868,rgbashift=rh=5
 # perspective fx
 ffplay -i in.mp4 -vf "perspective=860:1160:881:817:915:1315:782:868,hue=s=10:h=10,eq=gamma=0.5:brightness=0.4:contrast=0.6,vflip"
 
+#-----------------------------------------------------------
+# apply lens to screen video
+#-----------------------------------------------------------
+
+ffmpeg -v warning -video_size 1920x1080 -framerate 30 -f x11grab -i :0.0 myvid_$(date +%s).mp4
+ffmpeg -i in.mp4 -vf "lenscorrection=cx=0.5:cy=0.5:k1=-0.727:k2=-0.822" -crf 24 out.mp4
+ffmpeg -i in.mp4 -vf "lenscorrection=cx=0.5:cy=0.4:k1=-0.427:k2=-0.822" -crf 24 out.mp4
+
 
 
 
