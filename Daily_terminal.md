@@ -273,6 +273,13 @@ change date |touch -d "2 hours ago" filename
 #### Fast VM install 
 * sudo apt install vagrant
 * vagrant init ubuntu/trusty64; vagrant up --provider virtualbox
+* vagrant init ubuntu/bionic64; vagrant up --provider virtualbox
+* vagrant init ubuntu/focal64; vagrant up --provider virtualbox
+
+
+* user pass: vagrant vagrant
+* https://app.vagrantup.com/ubuntu/boxes/focal64
+* https://app.vagrantup.com/debian/boxes/buster64
 * sudo apt install xfce4
 
 #### Sync folders from drives
