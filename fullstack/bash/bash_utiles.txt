@@ -497,3 +497,237 @@ https://stackoverflow.com/questions/592620/how-can-i-check-if-a-program-exists-f
 https://stackoverflow.com/questions/918886/how-do-i-split-a-string-on-a-delimiter-in-bash?rq=1
 https://stackoverflow.com/questions/965053/extract-filename-and-extension-in-bash?rq=1
 https://stackoverflow.com/questions/1371261/get-current-directory-name-without-full-path-in-a-bash-script?rq=1
+
+
+
+#####################################################################
+getopts
+#####################################################################
+
+https://www.ibm.com/docs/de/aix/7.2?topic=g-getopts-command
+https://hope-this-helps.de/serendipity/archives/Bash-Parameter-sauber-an-Skript-uebergeben-509.html
+https://forum.ubuntuusers.de/topic/sinn-von-getopts/
+https://qastack.com.de/unix/75219/bash-getopts-short-options-only-all-require-values-own-validation
+https://www.it-swarm.com.de/de/bash/bash-getops-lesen-von-optarg-fuer-optionale-flags/1040492806/
+------------------------------------------------
+#!/bin/bash
+
+while getopts xyz:A: option
+do
+        case $option in
+                x) echo "Option -x übergeben";;
+                y) echo "Option -y übergeben";;
+                z) echo "Option -z und Argument : ($OPTARG)";;
+                A) echo "Option -A und Argument : ($OPTARG)";;
+        esac
+done
+
+
+# definiere mögliche Parameter
+# ------------------------------------------------
+
+while getopts s:f:h opts; do
+        case ${opts} in
+                s) var1=${OPTARG} ;;
+                f) var2=${OPTARG} ;;
+                h) show_help ;;
+        esac
+done
+------------------------------------------------
+errs=0
+declare -A option=(
+    [MYSQL_HOST]="-h"
+    [MYSQL_USER]="-u"
+    [MYSQL_PASS]="-p"
+    [BACKUP_DIR]="-d"
+)
+for var in "${!option[@]}"; do
+    if [[ -z "${!var}" ]]; then
+        echo "error: specify a value for $var with ${option[var]}"
+        ((errs++))
+    fi
+done
+((errs > 0)) && exit 1
+
+------------------------------------------------
+
+while getopts ":a:b:c:d:e:f:" opt; do
+    case $opt in
+        a) Apple="$OPTARG";;
+        b) BANANA="$OPTARG";;
+        c|d|e|f)
+            if test "$OPTARG" = "$(eval echo '$'$((OPTIND - 1)))"; then
+                OPTIND=$((OPTIND - 1))
+            else
+                 case $opt in
+                     c) CHERRY="$OPTARG";;
+                     d) DFRUIT="$OPTARG";;
+                     ...
+                esac
+            fi ;;
+        \?) ... ;;
+        :)
+             case "$OPTARG" in
+                 c|d|e|f) ;; # Ignore missing arguments
+                 *) echo "option requires an argument -- $OPTARG" >&2 ;;
+            esac ;;
+        esac
+    done
+
+
+########################################################
+check for non-null/non-zero string variable
+########################################################
+https://stackoverflow.com/questions/3601515/how-to-check-if-a-variable-is-set-in-bash/13864829#13864829
+https://stackoverflow.com/questions/3601515/how-to-check-if-a-variable-is-set-in-bash/16753536
+https://stackoverflow.com/questions/3601515/how-to-check-if-a-variable-is-set-in-bash/13864829
+http://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Shell-Parameter-Expansion
+https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18_06_02
+https://www.gnu.org/software/bash/manual/html_node/Bash-Conditional-Expressions.html
+https://www.gnu.org/software/bash/manual/html_node/Shell-Arithmetic.html
+https://stackoverflow.com/revisions/16753536/1
+
+
+
+if [ -n "$1" ]; then
+  echo "You supplied the first parameter!"
+else
+  echo "First parameter not supplied."
+fi
+
+if [ -z "$1" ]; then
+    echo "ok";
+fi
+
+if [ "$1" != "" ]; then
+  echo \$1 is set
+else
+  echo \$1 is not set
+fi
+
+if [ $# -gt 0 ]; then
+  echo \$1 is set
+else
+  echo \$1 is not set
+fi
+
+if test -n "${name-}"; then
+  echo "name is set to $name"
+else
+  echo "name is not set or empty"
+fi
+
+if test ! -z "${var+}"; then
+  echo "name is set to $name"
+else
+  echo "name is not set"
+fi
+
+#! /bin/bash -u
+
+if [[ ! -v SOMEVAR ]]; then
+    SOMEVAR='hello'
+fi
+echo $SOMEVAR
+
+
++-----------------------+-------------+---------+------------+
+| Expression in script  | name='fish' | name='' | unset name |
++-----------------------+-------------+---------+------------+
+| test "$name"          | TRUE        | f       | f          |
+| test -n "$name"       | TRUE        | f       | f          |
+| test ! -z "$name"     | TRUE        | f       | f          |
+| test ! "${name-x}"    | f           | TRUE    | f          |
+| test ! "${name+x}"    | f           | f       | TRUE       |
++-----------------------+-------------+---------+------------+
+
++----------------------+-------------+---------+------------+
+| Expression in script | name='fish' | name='' | unset name |
++----------------------+-------------+---------+------------+
+| test "${name+x}"     | TRUE        | TRUE    | f          |
+| test "${name-x}"     | TRUE        | f       | TRUE       |
+| test -z "$name"      | f           | TRUE    | TRUE       |
+| test ! "$name"       | f           | TRUE    | TRUE       |
+| test ! -n "$name"    | f           | TRUE    | TRUE       |
+| test "$name" = ''    | f           | TRUE    | TRUE       |
++----------------------+-------------+---------+------------+
+
+if [ ! -z "$1" ]; then
+        echo '$1 is set'
+fi
+
+
+
+-a file
+True if file exists.
+
+-b file
+True if file exists and is a block special file.
+
+-c file
+True if file exists and is a character special file.
+
+-d file
+True if file exists and is a directory.
+
+-e file
+True if file exists.
+
+-f file
+True if file exists and is a regular file.
+
+-g file
+True if file exists and its set-group-id bit is set.
+
+-h file
+True if file exists and is a symbolic link.
+
+-k file
+True if file exists and its "sticky" bit is set.
+
+-p file
+True if file exists and is a named pipe (FIFO).
+
+-r file
+True if file exists and is readable.
+
+-s file
+True if file exists and has a size greater than zero.
+
+-t fd
+True if file descriptor fd is open and refers to a terminal.
+
+-u file
+True if file exists and its set-user-id bit is set.
+
+-w file
+True if file exists and is writable.
+
+-x file
+True if file exists and is executable.
+
+-G file
+True if file exists and is owned by the effective group id.
+
+-L file
+True if file exists and is a symbolic link.
+
+-N file
+True if file exists and has been modified since it was last read.
+
+-O file
+True if file exists and is owned by the effective user id.
+
+-S file
+True if file exists and is a socket.
+
+
+-v varname
+True if the shell variable varname is set (has been assigned a value).
+
+-z string
+True if the length of string is zero.
+
+-n string
+string
+True if the length of string is non-zero.
