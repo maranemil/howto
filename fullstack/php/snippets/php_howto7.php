@@ -1,4 +1,4 @@
-<?php
+
 
 #######################################################
 #
@@ -348,4 +348,12 @@ error_log(
 );
 
 
+#######################################
+#   Refresh
+#######################################
+https://stackoverflow.com/questions/12383371/refresh-a-page-using-php
+
+#header("Refresh:0");
+#header("Refresh:0; url=page2.php");
+header('Refresh: 1; url=index.php');
 
