@@ -357,3 +357,24 @@ https://stackoverflow.com/questions/12383371/refresh-a-page-using-php
 #header("Refresh:0; url=page2.php");
 header('Refresh: 1; url=index.php');
 
+#######################################
+#   enum php 8.1
+#######################################
+
+https://wiki.php.net/rfc/annotations_v2
+https://wiki.php.net/rfc/enumerations
+https://php-annotations.readthedocs.io/en/latest/UsingAnnotations.html
+https://wiki.php.net/rfc/enumerations
+https://stackoverflow.com/questions/254514/enumerations-on-php
+https://stitcher.io/blog/php-enums
+https://www.typescriptlang.org/docs/handbook/enums.html
+http://tutorials.jenkov.com/java/enums.html
+https://www.w3schools.com/java/java_enums.asp
+https://kotlinlang.org/docs/enum-classes.html
+https://www.baeldung.com/a-guide-to-java-enums
+https://php.watch/articles/php-attributes#intro-naming
+https://php.watch/articles/php-attributes
+https://php.watch/versions/8.0/attributes
+https://stitcher.io/blog/attributes-in-php-8
+https://www.php.net/releases/8.0/en.php
+
