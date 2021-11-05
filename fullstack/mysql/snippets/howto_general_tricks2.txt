@@ -139,3 +139,42 @@ REGEXP "^(1002|1010|2015|3156)"
 VoucherNbr REGEXP "^(1002|1010|2015|3156)"
 VoucherNbr REGEXP "^(10(02|10)|2015|3156)"
 LEFT(VoucherNbr, 4) IN (1002, 1010, 2015, 3156)
+
+
+####################################################
+MYSQL 8 group by
+####################################################
+
+https://www.db-fiddle.com/
+http://sqlfiddle.com/
+https://dev.mysql.com/doc/refman/8.0/en/group-by-modifiers.html
+
+CREATE TABLE sales
+(
+    year    INT,
+    country VARCHAR(20),
+    product VARCHAR(32),
+    profit  INT
+);
+
+INSERT INTO sales VALUES (2021,'DE','Prod1',10);
+INSERT INTO sales VALUES (2020,'UK','Prod2',170);
+INSERT INTO sales VALUES (2021,'HU','Prod1',160);
+INSERT INTO sales VALUES (2021,'DE','Prod2',10);
+INSERT INTO sales VALUES (2021,'DE','Prod2',130);
+
+SELECT year,
+ANY_VALUE(country),
+ANY_VALUE(product),
+ANY_VALUE(profit),
+MAX(year),
+SUM(profit)
+FROM sales
+
+GROUP BY year,country
+#HAVING COUNT(year) > 0
+
+# Query Error: Error: ER_WRONG_FIELD_WITH_GROUP: Expression
+# SELECT list is not in GROUP BY clause and contains nonaggregated column
+# GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+
