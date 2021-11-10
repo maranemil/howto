@@ -143,6 +143,8 @@ change date |touch -d "2 hours ago" filename
 * xargs chromium-browser --new-tab < urls.txt
 * Firefox:
 * xargs -L1 firefox -new-tab < urls.txt
+* create online clickable list https://www.linkrr.com/
+* create online bookmark https://atkinsio.com/bookmarks-html-generator/
 
 > boost cpu
 * for i in {0..7}; do echo performance | sudo tee /sys/devices/system/cpu/cpu"$i"/cpufreq/scaling_governor ; done
