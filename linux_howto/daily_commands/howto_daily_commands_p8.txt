@@ -419,3 +419,33 @@ lsmod | grep -i vbox
 
 Install log:
 cat /var/log/vboxadd-install.log
+
+
+###########################################################################
+
+Got black screen when recording screen from xvfb by ffmpeg x11grab device
+
+###########################################################################
+
+https://superuser.com/questions/727352/got-black-screen-when-recording-screen-from-xvfb-by-ffmpeg-x11grab-device
+https://stackoverflow.com/questions/21446881/got-black-screen-when-recording-screen-by-x11grab-device
+https://askubuntu.com/questions/1126258/ffmpeg-black-screen-recording
+https://serverfault.com/questions/777394/ffmpeg-with-x11grab-results-in-black-screen-in-vlc-playback
+
+Your need to configure Xorg as the default GNOME session. On your terminal open your custom.conf by typing this command:
+
+$ sudo nano /etc/gdm/custom.conf
+and uncomment
+WaylandEnable=false
+
+if it's commented but must be set to false
+Then, on the [daemon] section just under WaylandEnable=false add this line:
+DefaultSession=gnome-xorg.desktop
+
+ffmpeg -v warning  -framerate 25 -f x11grab -i :0.0 -f alsa -ac 2 -ar 22050 -i default -probesize 42M -preset ultrafast -pix_fmt yuv420p -vcodec libx264 myvid_$(date +%s).mp4
+
+ffmpeg -f x11grab -i :0.0 out.mpg
+ffmpeg -y -r 30 -f x11grab -i :0.0 -vcodec qtrle out.mov
+ffmpeg -f x11grab -i :0.0 out.webm
+ffmpeg -f x11grab -i :0.0+0,0 -r 10 -vf format=pix_fmts=yuv420p output.mp4
+ffmpeg -video_size 640x480 -framerate 30 -f x11grab -i :0.0+0,0 -c:v libx264 -crf 16 -t 10 test.mp4
