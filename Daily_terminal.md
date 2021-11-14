@@ -293,6 +293,11 @@ change date |touch -d "2 hours ago" filename
 * https://app.vagrantup.com/ubuntu/boxes/focal64
 * https://app.vagrantup.com/debian/boxes/buster64
 * sudo apt install xfce4
+* apt get install xinit
+* apt get update --fix-missing
+* systemctl poweroff
+* rm Vagrantfile
+* rm -r .vagrant
 
 #### Sync folders from drives
 * rsync --ignore-existing --recursive --progress /home/user/folder_sync/ /media/user/external_drive/folder_sync/
