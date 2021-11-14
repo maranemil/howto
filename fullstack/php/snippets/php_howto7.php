@@ -419,3 +419,51 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, array(
     'X-Apple-Tz: 0',
     'X-Apple-Store-Front: 143444,12'
 ));
+
+#######################################
+# curl debug
+#######################################
+
+https://curl.se/libcurl/c/curl_easy_setopt.html
+https://stackoverflow.com/questions/3757071/php-debugging-curl/14436877
+https://stackoverflow.com/questions/49658719/curlopt-verbose-not-working
+
+#$fp = fopen(__DIR__ .'/errorlog.txt', 'wb');
+$ch = curl_init();
+#curl_setopt($ch, CURLOPT_STDERR, $fp);
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_VERBOSE, true);
+
+curl_setopt($ch, CURLOPT_HEADER, true);
+curl_setopt($ch, CURLOPT_MAXREDIRS, 5);
+
+curl_setopt($ch, CURLOPT_VERBOSE, true);
+curl_setopt($ch, CURLOPT_STDERR, fopen('php://stderr', 'w'));
+curl_setopt($ch, CURLOPT_STDERR, fopen('/curl.txt', 'w+'));
+
+curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    'Authorization: Bearer ' . $token,
+    'Cache-control: no-cache',
+    'Accept: application/json'
+));
+
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$server_output = curl_exec($ch);
+if (curl_errno($ch)) {
+    print "Error: " . curl_error($ch);
+    exit();
+}
+
+$info = curl_getinfo($ch);
+print "<pre>";
+var_dump($info);
+print "</pre>";
+
+
+curl_close($ch);
+print_r($server_output);
+exit;
+
+
+curl -vv --fail --silent --show-error --header 'Authorization: bearer xxx' https://example.com/api/status/
+curl -v -fsSL http://example.com/

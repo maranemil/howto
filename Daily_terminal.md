@@ -274,10 +274,13 @@ change date |touch -d "2 hours ago" filename
 
 #### Fast VM install 
 * sudo apt install vagrant
-* vagrant init ubuntu/trusty64; vagrant up --provider virtualbox
-* vagrant init ubuntu/bionic64; vagrant up --provider virtualbox
-* vagrant init ubuntu/focal64; vagrant up --provider virtualbox
 
+* vagrant init ubuntu/trusty64 -f -m --output Ubuntu1404LTS; vagrant up --provider virtualbox
+* vagrant init ubuntu/xenial64 -f -m --output Ubuntu1604LTS; vagrant up --provider virtualbox
+* vagrant init ubuntu/bionic64 -f -m --output Ubuntu1804LTS; vagrant up --provider virtualbox
+* vagrant init ubuntu/focal64 -f -m --output Ubuntu2004LTS; vagrant up --provider virtualbox
+* vagrant init ubuntu/hirsute64 -f -m --output Ubuntu2104LTS; vagrant up --provider virtualbox
+* vagrant init debian/stretch64 -f -m --output Debian9stretch64; vagrant up --provider virtualbox
 
 * user pass: vagrant vagrant
 * https://app.vagrantup.com/ubuntu/boxes/focal64

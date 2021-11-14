@@ -76,18 +76,28 @@
 ffplay -i in.mp4 -vf "setpts=1/4*PTS"
 
 ##### resize
-ffmpeg -i in.mp4 -vf scale=-1:1080 -an out.mp4 
+* ffmpeg -i in.mp4 -vf scale=-1:1080 -an out.mp4 
+* ffplay -i in -vf scale=-2:540 -c:a copy
+
+##### Ubuntu crop screen 
+* ffplay -i in.mp4 -vf "crop=1870:1040:1920:1080" -crf 20
+
+##### Cut everything after 3 minutes
+ffmpeg -i in.mp4 -t 180 -c copy output.mp4
+
+##### Cut last 3 minutes
+* echo dur=$(ffprobe -i in.mp4 -show_entries format=duration -v quiet -of csv="p=0")
+* echo $((2356 - 180))
+* ffmpeg -t 2176 -i input.mp4 output.mp4
 
 ##### merge 4 videos in one - 2 by row with overlay
-
 * repeat 2x to merge horizontally 800x600 * 2 = 1600x600
-* ffmpeg -i in.mp4  -i in2.mp4  -filter_complex "[0:v:0]pad=iw*2:ih[bg]; [bg][1:v:0]overlay=w" -t 53 -y out.mp4
-
+* ffmpeg -i in.mp4  -i in2.mp4  -filter_complex "[0:v:0]pad=iw*2:ih[bf]; [bf][1:v:0]overlay=w" -t 53 -y out.mp4
 * merge vertically - 1600x1200
-* ffmpeg -i in.mp4  -i in2.mp4  -filter_complex "[0]pad=iw:ih*2[bg]; [bg][1] overlay=40:600"  -t 53 -y out.mp4
+* ffmpeg -i in.mp4  -i in2.mp4  -filter_complex "[0]pad=iw:ih*2[bf]; [bf][1] overlay=40:600"  -t 53 -y out.mp4
 
 ##### add logo top left padding 10
-* ffmpeg -y -i VIDEO.mp4 -i subscribe.png -filter_complex "overlay=10:10" OUT_1.mp4
+* ffmpeg -y -i VIDEO.mp4 -i subscribe.png -filter_complex "overlay=10:10" out.mp4
 
 #### Prepare video for instagram 
 
