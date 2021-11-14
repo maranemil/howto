@@ -282,6 +282,13 @@ change date |touch -d "2 hours ago" filename
 * vagrant init ubuntu/hirsute64 -f -m --output Ubuntu2104LTS; vagrant up --provider virtualbox
 * vagrant init debian/stretch64 -f -m --output Debian9stretch64; vagrant up --provider virtualbox
 
+* vagrant init opensuse/Leap-15.2.x86_64 -f -m; vagrant up --provider virtualbox
+* vagrant init opensuse/Tumbleweed.x86_64 -f -m; vagrant up --provider virtualbox
+* vagrant init generic/opensuse42 # opensuse42 -f -m; vagrant up --provider virtualbox
+* vagrant init Sabayon/spinbase-amd64  # gento -f -m; vagrant up --provider virtualbox
+* vagrant init generic/devuan3 -f -m; vagrant up --provider virtualbox
+* vagrant init generic/devuan2 -f -m; vagrant up --provider virtualbox
+
 * user pass: vagrant vagrant
 * https://app.vagrantup.com/ubuntu/boxes/focal64
 * https://app.vagrantup.com/debian/boxes/buster64
