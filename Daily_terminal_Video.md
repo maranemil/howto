@@ -4,6 +4,7 @@
 
 ##### ALSA diagbose
 * sudo apt install pavucontrol -y
+* sudo apt install pulseeffects -y
 * pavucontrol
 * alsamixer
 * arecord -L
