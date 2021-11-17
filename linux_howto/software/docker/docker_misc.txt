@@ -1,0 +1,97 @@
+
+#################################################################
+Docker logs and debug
+#################################################################
+
+https://medium.com/@betz.mark/ten-tips-for-debugging-docker-containers-cde4da841a1d
+
+# logs
+docker run -d --name=logtest alpine /bin/sh -c “while true; do sleep 2; df -h; done”
+docker logs logtest
+
+# see what is written to stdout in real time
+docker run -d --name=logtest alpine /bin/sh -c “while true; do sleep 2; df -h; done”
+docker attach logtest
+
+# Execute arbitrary commands with exec
+docker run -d --name=exectest alpine watch “echo ‘This is a test.’ >> /var/log/test.log”
+docker exec exectest cat /var/log/test.log
+
+# use exec to get an interactive shell in the container.
+docker run -d --name=exectest alpine watch “echo ‘This is a test.’ >> /var/log/test.log”
+docker exec -it exectest /bin/sh
+
+# Add options with the CMD.
+docker run -d -p 80:8000 /myrepo/mydjangoapp 0.0.0.0:8000
+
+ENTRYPOINT [“python”, “manage.py”, “runserver”]
+CMD ["0.0.0.0:8000"]
+
+# Pause and unpause a container.
+docker run -d --name=pausetest alpine /bin/sh -c “while true; do sleep 2; date; done”
+docker attach pausetest
+docker pause pausetest
+docker unpause pausetest
+
+# Get process stats with the top command.
+docker run -d — name=toptest alpine:3.1 watch “echo ‘Testing top’”
+docker top toptest
+
+# View container details with the inspect command
+docker inspect toptest
+
+# View image layers with the history command.
+docker history toptest
+
+
+
+
+
+#################################################################
+WARNING: environment variable "WORDPRESS_CONFIG_EXTRA" is set, but "wp-config.php" already exists
+#################################################################
+
+2021-11-17T16:07:15.343556908Z   The contents of this variable will _not_ be inserted into the existing "wp-config.php" file.
+2021-11-17T16:07:15.343560076Z   (see https://github.com/docker-library/wordpress/issues/333 for more details)
+
+
+https://github.com/docker-library/wordpress/issues/333
+https://github.com/dainst/wordpress-components/blob/master/docker-entrypoint.sh
+https://devtidbits.com/2019/11/02/customise-wordpress-on-docker/
+https://wordpress.stackexchange.com/questions/384642/how-to-update-wp-config-file-in-docker
+https://stackoverflow.com/questions/45560659/wordpress-wp-config-php-doesnt-update-in-dockers
+https://devtidbits.com/2019/11/02/customise-wordpress-on-docker/
+https://stackoverflow.com/questions/53197806/how-to-get-proper-docker-compose-multiline-environment-variables-formatting
+https://www.mrjamiebowman.com/software-development/wordpress/docker-compose-wordpress_config_extra/
+https://newbedev.com/wordpress-wp-config-php-doesn-t-update-in-dockers##
+https://www.cloudytuts.com/tutorials/docker/how-to-solve-wordpress-redirects-to-localhost-8080/
+https://coderevolve.com/wordpress-in-docker/
+
+#################################################################
+wordpress  docker entrypoint
+#################################################################
+
+https://github.com/dainst/wordpress-components/blob/master/docker-entrypoint.sh
+https://github.com/docker-library/wordpress/blob/master/docker-entrypoint.sh
+https://gitlab.umich.edu/benfa/its-bioint-test/blob/master/docker-entrypoint.sh
+https://developpaper.com/question/docker-environmental-variable-problem/
+https://gitalpine.de/docker/wordpress/-/blob/v5.3-1/apache/docker-entrypoint.sh
+https://gitlab.uni-bayreuth.de/bt406309/FS-Homepage/-/blob/1317e027754f3908d25859b3b9830d4d2501b058/Dockerfiles/Homepage/docker-entrypoint.sh
+https://git.mau.ro/mauro/docker-image-wordpress/src/branch/master/docker-entrypoint.sh?lang=pt-BR
+https://git.mau.ro/mauro/docker-image-wordpress/src/branch/master/docker-entrypoint.sh?lang=uk-UA
+https://bunkham.com/bashing-wordpress-docker-container-shape/
+https://notabug.org/candlewaster/docker-codepress/src/master/docker-entrypoint.sh
+https://www.xmatters.com/blog/how-we-included-wordpress-in-our-google-cloud-migration/
+
+
+https://hub.docker.com/r/parana/jessie-wordpress/
+https://cadu.dev/creating-a-docker-image-with-database-preloaded/
+https://blog.stigok.com/2019/09/13/postgres-docker-configuration-and-initialisation.html
+https://apache-superset.readthedocs.io/en/latest/installation.html
+https://superset.apache.org/docs/installation/installing-superset-using-docker-compose
+https://www.cloudbees.com/blog/understanding-dockers-cmd-and-entrypoint-instructions
+https://docs.docker.com/develop/develop-images/dockerfile_best-practices/
+https://docs.docker.com/engine/reference/builder/
+https://www.ctl.io/developers/blog/post/dockerfile-entrypoint-vs-cmd/
+https://vsupalov.com/docker-arg-env-variable-guide/
+https://newbedev.com/how-do-i-use-docker-environment-variable-in-entrypoint-array
