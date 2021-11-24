@@ -1,0 +1,88 @@
+
+#####################################################################
+
+Linux disable Dolby Advanced Audio
+[AMD] Family 17h (Models 00h-0fh) HD Audio Controller
+
+#####################################################################
+
+https://wiki.debian.org/PulseAudio
+https://wiki.archlinux.org/title/Advanced_Linux_Sound_Architecture
+https://linux-hardware.org/index.php?id=pci:1022-15e3-17aa-3802
+https://bbs.archlinux.org/viewtopic.php?id=262946
+https://forum.maboxlinux.org/t/sound-problem-headphones-work-speakers-do-not/546/3
+https://help.ubuntu.com/community/SoundTroubleshootingProcedure
+
+/etc/pulse/daemon.conf
+
+uncomment default-sample-channels
+
+# Default
+default-sample-channels = 2
+# To 5.1
+default-sample-channels = 6
+# To 7.1
+default-sample-channels = 8
+
+# restart
+systemctl --user restart pulseaudio.service
+
+# old debian
+pulseaudio --kill && $ pulseaudio --start
+
+
+Sound level is low or suddenly becomes too loud
+Add a line to /etc/pulse/daemon.conf:
+
+flat-volumes = no
+
+Stuttering and audio interruptions
+If a low-power machine stutters (audio breaks up), you can try adding the following to
+
+/etc/pulse/daemon.conf:
+
+high-priority = no
+nice-level = -1
+realtime-scheduling = yes
+realtime-priority = 5
+flat-volumes = no
+resample-method = speex-float-1
+default-sample-rate = 48000
+
+sudo alsa force-reload
+
+
+
+lspci
+
+05:00.1 Audio device: Advanced Micro Devices, Inc. [AMD/ATI] Renoir Radeon High Definition Audio Controller
+
+05:00.5 Multimedia controller: Advanced Micro Devices, Inc. [AMD] Raven/Raven2/FireFlight/Renoir Audio Processor (rev 01)
+05:00.6 Audio device: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 10h-1fh) HD Audio Controller
+
+lsmod
+
+lshw -C multimedia
+
+Produkt: Renoir Radeon High Definition Audio Controller
+Produkt: Raven/Raven2/FireFlight/Renoir Audio Processor
+Produkt: Family 17h (Models 10h-1fh) HD Audio Controller
+
+inxi -Ax
+sudo apt install inxi
+
+
+Device-1: Advanced Micro Devices [AMD/ATI] Renoir Radeon High Definition Audio vendor: Lenovo driver: snd_hda_intel
+Sound Server-1: ALSA v: k5.13.0-19-generic running: yes
+Sound Server-2: PulseAudio v: 15.0 running: yes
+Sound Server-3: PipeWire v: 0.3.32 running: yes
+
+ lspci -nnk | grep -A2 Audio
+
+Audio device [0403]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 10h-1fh) HD Audio Controller
+Audio device [0403]: Advanced Micro Devices, Inc. [AMD/ATI] Renoir Radeon High Definition Audio Controller
+
+
+
+
+
