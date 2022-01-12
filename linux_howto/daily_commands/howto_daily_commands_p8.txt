@@ -473,3 +473,49 @@ cat /home/user/.cache/ubuntu-report/ubuntu.21.10
 ubuntu-report -f send no
 sudo service apport stop
 sudo service apport start force_start=1
+
+
+###########################################################################
+ubuntu sound
+###########################################################################
+
+cat /etc/pulse/daemon.conf
+cat ~/.pulse/daemon.conf
+
+avoid-resampling = true
+
+
+apt install alsa-utils
+arecord --list-devices
+arecord -f dat -r 60000 -D hw:0,0 -d 5 test.wav
+arecord -f S16_LE -r 60000 -D hw:1,0 -d 5 testS16_LE.wav
+
+ls -alh
+
+pulseaudio --dump-resample-methods
+
+/etc/pulse/daemon.conf
+
+resample-method = soxr-vhq
+default-sample-format = float32le
+default-sample-rate = 44100
+alternate-sample-rate = 48000
+
+systemctl --user restart pulseaudio
+pulseaudio -k && sleep 3 && pulseaudio --start
+grep sample-rate /etc/pulse/daemon.conf
+pactl list short sinks
+
+default-sample-format = s24-32be
+alsamixer
+https://wiki.ubuntuusers.de/Alsamixer/
+
+###########################################################################
+Linux sound is pitched down and slow
+###########################################################################
+
+nano /etc/pulse/deamon.conf
+
+uncomment > default-sample-rate = 48000
+killall pulseaudio
+pulseaudio --kill
