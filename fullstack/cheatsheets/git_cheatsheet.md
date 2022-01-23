@@ -38,18 +38,20 @@ optimize git |  git gc
 * git push -u origin main
 
 #### [checkout a Remote Branch]
-------------------------------------------
+
 git fetch origin
 git branch -v -a
 git fetch origin feature/blabla-70
 
-#### [undo merge]
-------------------------------------------
+##### [undo merge]
 git reset --hard HEAD~1
-#  git reset --hard commit_sha # alternativ
+git reset --hard commit_sha # alternativ
 
-# undo a merge that was already pushed:
+##### undo a merge that was already pushed:
 git revert -m 1 commit_hash
 
 ##### github push
 git push --progress --porcelain origin refs/heads/master:master
+
+#### push request
+git push --set-upstream origin branch-name
