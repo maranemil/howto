@@ -887,3 +887,93 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
      // The request is using the POST method
 }
 
+################################################
+Reset PHP Array Index and filter
+################################################
+
+https://stackoverflow.com/questions/7536961/reset-php-array-index/7536963
+https://www.php.net/manual/en/function.array-filter.php
+
+$arr = array(
+
+	5 => array(
+	'id' => '05e4d906a',
+            'name' => 'foo',
+            'container' => 'Foo',
+		),
+	2 => array(
+			'id' => '05e47906a',
+            'name' => 'bar',
+            'container' => 'Bar',
+		)
+
+);
+
+print "<pre>";
+print_r($arr);
+
+print_r(array_values(array_filter($arr, function($var)
+{
+	return $var["name"]== 'bar'?true:false;
+})));
+
+################################################
+## format array as json for log
+################################################
+
+json_encode($item, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
+
+if (!file_put_contents($logFile, $text,  FILE_APPEND | LOCK_EX)) {
+    echo "cannot write file";
+}
+
+################################################
+## custom curl settings
+################################################
+
+/*
+get speed info
+https://stackoverflow.com/questions/30368503/increase-curl-speed-php
+https://stackoverflow.com/questions/25645634/force-ipv4-in-curl-in-php-application
+https://stefangabos.github.io/Zebra_cURL/Zebra_cURL/Zebra_cURL.html
+https://stackoverflow.com/questions/16872082/how-can-i-send-cookies-using-php-curl-in-addition-to-curlopt-cookiefile
+https://stackoverflow.com/questions/19467449/how-to-speed-up-curl-in-php/34451397
+https://reqbin.com/req/php/c-70cqyayb/curl-timeout
+https://www.geeksforgeeks.org/difference-between-file_get_contents-and-curl-in-php/
+
+CURLINFO_TOTAL_TIME - Total transaction time in seconds for last transfer
+CURLINFO_NAMELOOKUP_TIME - Time in seconds until name resolving was complete
+CURLINFO_CONNECT_TIME - Time in seconds it took to establish the connection
+CURLINFO_PRETRANSFER_TIME - Time in seconds from start until just before file transfer begins
+CURLINFO_STARTTRANSFER_TIME - Time in seconds until the first byte is about to be transferred
+CURLINFO_SPEED_DOWNLOAD - Average download speed
+CURLINFO_SPEED_UPLOAD - Average upload speed
+*/
+
+$info = curl_getinfo($curl);
+echo $info['connect_time']; // Same as above, but lower letters without CURLINFO
+
+curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
+curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+curl_setopt($ch, CURLOPT_ENCODING,  '');
+curl_setopt($ch, CURLOPT_TCP_FASTOPEN,  1);
+curl_setopt($ch, CURLOPT_SSL_VERIFYHOST,  0);
+curl_setopt($ch, CURLOPT_TIMEOUT, 30 );
+
+// ------------------------------------------------
+
+curl_setopt($ch, CURLOPT_TCP_FASTOPEN,  1);
+if (defined('CURLOPT_IPRESOLVE') && defined('CURL_IPRESOLVE_V4')){
+	curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+}
+curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1 );
+curl_setopt($ch, CURLOPT_ENCODING,  'deflate');
+curl_setopt($ch, CURLOPT_USERAGENT,'php');
+curl_setopt($ch, CURLOPT_AUTOREFERER,1);
+curl_setopt($ch, CURLOPT_CONNECTTIMEOUT,10);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER,1);
+
+
+
+
+

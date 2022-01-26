@@ -1,5 +1,13 @@
 
 #################################################################
+Cannot connect to the Docker daemon
+#################################################################
+
+sudo groupadd docker
+sudo usermod -aG docker $(whoami)
+sudo service docker start
+
+#################################################################
 Docker logs and debug
 #################################################################
 
@@ -95,3 +103,68 @@ https://docs.docker.com/engine/reference/builder/
 https://www.ctl.io/developers/blog/post/dockerfile-entrypoint-vs-cmd/
 https://vsupalov.com/docker-arg-env-variable-guide/
 https://newbedev.com/how-do-i-use-docker-environment-variable-in-entrypoint-array
+
+
+
+#################################################################
+# RBAC: access denied
+#################################################################
+
+https://en.wikipedia.org/wiki/Role-based_access_control
+https://support.mozilla.org/en-US/questions/1165357
+
+https://search.brave.com/
+
+127.0.0.1	jameshost.dev
+
+freshchat / intercom
+
+curl -X GET localhost:8888
+curl -X GET jameshost.dev:8888
+
+set in host and docker
+172.19.0.1 jameshost.dev
+
+#################################################################
+set user group docker
+#################################################################
+
+https://blog.giovannidemizio.eu/2021/05/24/how-to-set-user-and-group-in-docker-compose/
+https://dev.to/acro5piano/specifying-user-and-group-in-docker-i2e
+https://medium.com/redbubble/running-a-docker-container-as-a-non-root-user-7d2e00f8ee15
+https://stackoverflow.com/questions/44683119/dockerfile-replicate-the-host-user-uid-and-gid-to-the-image
+https://medium.com/@mccode/understanding-how-uid-and-gid-work-in-docker-containers-c37a01d01cf
+https://kb.iu.edu/d/adwf
+
+# docker-compose.yml
+version: '3'
+services:
+    app:
+        image: alpine
+        user: "${UID}:${GID}"
+
+# Dockerfile
+USER 1000:1000
+
+# docker-compose.yml
+web:
+  image: ruby:2.4
+  user: "${UID}:${GID}"
+
+.bashrc:
+
+export UID=${UID}
+export GID=${GID}
+
+version: '3.7'
+services:
+  dashboard: &dashboard
+    image: netsage/dashboard:1.7.0
+    user: "${UID}:${GID}"
+
+
+Find a user's UID or GID in Unix
+id -u username
+id -g username
+id -G username
+id username
