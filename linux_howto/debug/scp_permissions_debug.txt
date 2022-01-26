@@ -1,0 +1,169 @@
+#######################################################################
+
+Permission denied
+Permission denied (publickey).
+
+#######################################################################
+
+use sudo everywhere?
+
+-------------------------------------------------------------------------------------------------------------
+
+https://stackoverflow.com/questions/14127255/remove-git-index-lock-permission-denied
+https://stackoverflow.com/questions/7860751/git-fatal-unable-to-create-path-my-project-git-index-lock-file-exists/22304383
+https://stackoverflow.com/questions/19777357/getting-permission-denied-for-scp-over-ssh-server-to-local/46209793
+https://unix.stackexchange.com/questions/47909/transfer-files-using-scp-permission-denied
+https://askubuntu.com/questions/66492/scp-copy-over-ssh-doesnt-work-permission-denied-error-please
+https://www.troubleshootingcentral.com/scp-permission-denied-solve-this-linux-file-transfer-error-easily/
+https://cloudlinuxtech.com/scp-permission-denied/
+https://askubuntu.com/questions/311558/ssh-permission-denied-publickey
+http://webdesignforidiots.net/2016/02/digital-ocean-public-key-access-denied-on-existing-droplet/
+https://itectec.com/unixlinux/ssh-transfer-files-using-scp-permission-denied/
+https://superuser.com/questions/944235/cant-scp-file-from-local-to-remote-host-permission-denied
+
+
+fatal: Unable to create .git/index.lock Permission denied
+
+If no other git process is currently running, this probably means a git process crashed in this repository earlier.
+Make sure no other git process is running and remove the file manually to continue.
+
+rm -f ./.git/index.lock
+rm --force ./.git/index.lock
+cd .git
+del index.lock
+
+
+-------------------------------------------------------------------------------------------------------------
+
+
+copy file to remote server from local permission denied
+
+https://linuxize.com/post/how-to-use-scp-command-to-securely-transfer-files/
+
+scp params
+
+-P - Specifies the remote host ssh port.
+-p - Preserves files modification and access times.
+-q - Use this option if you want to suppress the progress meter and non-error messages.
+-C - This option forces scp to compress the data as it is sent to the destination machine.
+-r - This option tells scp to copy directories recursively.
+
+L2R
+scp file.txt remote_username@10.10.0.2:/remote/directory
+scp file.txt remote_username@10.10.0.2:/remote/directory/new_filename.txt
+scp -P 2322 file.txt remote_username@10.10.0.2:/remote/directory
+scp -r /local/directory remote_username@10.10.0.2:/remote/directory
+
+R2L
+scp remote_username@10.10.0.2:/remote/file.txt /local/directory
+
+R2R
+scp user1@host1.com:/files/file.txt user2@host2.com:/files
+scp -3 user1@host1.com:/files/file.txt user2@host2.com:/files
+
+-------------------------------------------------------------------------------------------------------------
+
+
+On the remote machine?
+sudo chown (your username) (remote folder)
+sudo chmod 777 (remote folder)
+
+
+-------------------------------------------------------------------------------------------------------------
+
+
+check Read/Write access using the following command:
+ls -ld “your remote directory”
+
+
+
+Change the ownership of the target remote directory to your user. It is very possible that another user, including the root user, has ownership over your target directory. Solve this by using the following command:
+
+$ sudo chown -R username:username path/to/your/remote/directory
+
+
+You may be getting the “SCP permission denied” error due to an old or incorrect host file. You can resolve this by removing your host entry, using the following command:
+$ ssh-keygen -R hostname
+
+Or you can also use:
+$ vim ~/.ssh/known_hosts
+
+Basic Option Commands You Would Use
+
+-P – this will specify the SSH server port.
+-p – this will create a timestamp for modification and access.
+-q – this ensures that progress or messages are not displayed.
+-C – with this, you compress the data during the transmission.
+-c – this is the cipher option.
+-r – this is for “recursive” which includes subdirectories & their content.
+-F – this is to configure SSH.
+-i – this is for an identity_file.
+-l – this is to limit.
+-o – this is to bring up SSH options.
+
+
+
+home directory:
+chown -R your_user:your_user .ssh
+
+
+As for rights, go with 700 for .ssh and 600 for authorized_keys
+chmod 700 .ssh
+chmod 600 .ssh/authorized_keys
+
+check value of PasswordAuthentication in /etc/ssh/sshd_config and if it's no change it to yes. Don't forget to restart ssh service after that.
+
+PubkeyAuthentication yes
+PasswordAuthentication yes
+
+
+sudo systemctl restart ssh.service
+
+-------------------------------------------------------------------------------------------------------------
+
+https://cloudlinuxtech.com/scp-permission-denied/
+
+Solution 9 :- Try removing your host entry from "known_hosts" file
+
+
+Sometime, there may be issue due to old or incorrect host key. Delete that particular host from know_hosts file using editor or command as follows.
+
+$ ssh-keygen -R hostname
+
+or
+
+$ vim ~/.ssh/known_hosts
+
+-------------------------------------------------------------------------------------------------------------
+
+The authenticity of host can't be established.
+https://stackoverflow.com/questions/3663895/ssh-the-authenticity-of-host-hostname-cant-be-established
+
+
+SSH – Anzeigen der Key-Informationen eines Hosts
+ssh-keyscan IP
+
+SSH – entfernen eines Hosts aus den known_hosts
+ssh-keygen -R <hostname> && ssh-keygen -R <IP-Adresse>
+
+
+Depending on your ssh client, you can set the StrictHostKeyChecking option to no on the command line,
+and/or send the key to a null known_hosts file. You can also set these options in your config file,
+ either for all hosts or for a given set of IP addresses or host names.
+
+ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no
+ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=ask
+
+ssh -o BatchMode=yes -o StrictHostKeyChecking=no user@server.example.com "uptime"
+ssh -o StrictHostKeyChecking=no user@ip_of_remote_machine "exit"
+
+sudo nano /etc/ssh/ssh_config
+
+Host *
+UserKnownHostsFile=/dev/null
+StrictHostKeyChecking=no
+
+chmod -R 700 ~/.ssh
+
+
+sudo nano ~/.ssh/known_hosts

@@ -225,7 +225,7 @@ SELECT job FROM mytable WHERE id > 10 AND id < 15;
 
 ############################################
 #
-# install mysql-workbench in Ubuntu 19.04
+#   install mysql-workbench in Ubuntu 19.04
 #
 ############################################
 
@@ -243,3 +243,15 @@ mysql-workbench
 mysql-workbench-community
 
 */
+
+############################################
+#
+#   find hostname and port
+#
+############################################
+
+https://stackoverflow.com/questions/6483268/how-to-find-out-mysql-server-ip-address-from-phpmyadmin
+https://serverfault.com/questions/129635/how-do-i-find-out-what-my-ip-address-of-my-mysql-host-is
+
+SHOW VARIABLES WHERE Variable_name = 'port'
+SHOW VARIABLES WHERE Variable_name = 'hostname';
