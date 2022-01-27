@@ -1,3 +1,7 @@
+
+## csv reader
+
+```
 #!/bin/bash
 INPUT=batchclean.csv
 OLDIFS=$IFS
@@ -13,6 +17,10 @@ do
 done < $INPUT
 IFS=$OLDIFS
 
+```
+
+```
 # https://www.cyberciti.biz/faq/unix-linux-bash-read-comma-separated-cvsfile/
 # https://www.cyberciti.biz/faq/linux-unix-sleep-bash-scripting/
 # https://www.cyberciti.biz/faq/howto-linux-unix-delete-remove-file/
+```

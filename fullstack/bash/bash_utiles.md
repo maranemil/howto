@@ -1,19 +1,19 @@
-#####################################################
-#Shell check if folder exists -----------------------
-#####################################################
 
+### Shell check if folder exists 
+
+```
 if [ ! -d /directory/to/check ]; then
     mkdir -p /directory/toc/check
 fi
-
+```
 Check for directory exists
-
+```
 if [ -d "$DIRPATH" ]; then
     # Add code logic here
 fi
-
+```
 Check for directory does not exist
-
+```
 if [ ! -d "$DIRPATH" ]; then
     # Add code logic here
 fi
@@ -21,24 +21,23 @@ fi
 if [[ -d "${DIRECTORY}" && ! -L "${DIRECTORY}" ]] ; then
     echo "It's a bona-fide directory"
 fi
+```
 
 
 
-#####################################################
-# create environment variables
-#####################################################
-# https://scotch.io/tutorials/how-to-use-environment-variables
+### create environment variables
 
+https://scotch.io/tutorials/how-to-use-environment-variables
+
+```
 export DB_PASSWORD="abc"
 echo $DB_PASSWORD
+```
 
 
-######################################
-#
-# BASH PERL VARS IN STRING
-#
-######################################
+### BASH PERL VARS IN STRING
 
+```
 #!/bin/bash
 cd "$(dirname "$0")"
 echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -57,20 +56,18 @@ if [ ! -f /tmp/fl_$LOCKFILE.lock ]; then
 else
         echo "Cannot create Lock file for $LOCKFILE"
 fi
-
----------
-
+```
 
 
-################################################
 
-https://stackoverflow.com/questions/638975/how-do-i-tell-if-a-regular-file-does-not-exist-in-bash
-https://wiki.ubuntuusers.de/sleep/
-https://www.cyberciti.biz/faq/linux-unix-sleep-bash-scripting/
-http://tldp.org/HOWTO/Bash-Prog-Intro-HOWTO-5.html
 
-################################################
+* https://stackoverflow.com/questions/638975/how-do-i-tell-if-a-regular-file-does-not-exist-in-bash
+* https://wiki.ubuntuusers.de/sleep/
+* https://www.cyberciti.biz/faq/linux-unix-sleep-bash-scripting/
+* http://tldp.org/HOWTO/Bash-Prog-Intro-HOWTO-5.html
 
+
+```
 #!/bin/bash
 
 sleep 5
@@ -86,9 +83,9 @@ if [ ! -f /tmp/foo.txt ]; then
 else
 	echo "File found!"
 fi
+```
 
-
-
+```
 #!/bin/bash
 FILE=$1
 
@@ -105,9 +102,9 @@ if [[ ! -f $FILE ]]; then
         printf '%s does not exist!\n' "$FILE"
     fi
 fi
+```
 
-
-
+```
 Bash File Testing
 
 -b filename - Block special file
@@ -136,14 +133,13 @@ Bash File Testing
 -w: Returns true if file exists and is writable
 -x: Returns true if file exists and is executable
 -s: Returns true if file exists and has a size > 0
+```
 
 
-################################################
 
-bash read input yes no
+## bash read input yes no
 
-################################################
-
+```
 https://stackoverflow.com/questions/226703/how-do-i-prompt-for-yes-no-cancel-input-in-a-linux-shell-script
 https://www.computerhope.com/unix/bash/read.htm
 https://www.shellhacks.com/yes-no-bash-script-prompt-confirmation/
@@ -152,8 +148,8 @@ https://unix.stackexchange.com/questions/285362/how-to-execute-yes-no-operation-
 https://gist.github.com/davejamesmiller/1965569
 https://danielgibbs.co.uk/2013/06/bash-yesno/
 https://askubuntu.com/questions/338857/automatically-enter-input-in-command-line
-
-
+```
+```
 while true; do
     read -p "Do you wish to install this program?" yn
     case $yn in
@@ -177,10 +173,10 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]
 then
     exit 1
 fi
+```
 
 
-
-
+```
 http://tldp.org/LDP/Bash-Beginners-Guide/html/sect_08_02.html
 https://unix.stackexchange.com/questions/152372/how-to-make-bash-script-ask-you-if-you-want-to-execute-the-next-segmentpart
 https://unix.stackexchange.com/questions/232761/get-script-to-run-again-if-input-is-yes
@@ -189,23 +185,26 @@ https://tecadmin.net/prompt-user-input-in-linux-shell-script/
 https://en.wikibooks.org/wiki/Bash_Shell_Scripting
 https://itnext.io/bash-scripting-everything-you-need-to-know-about-bash-shell-programming-cd08595f2fba
 https://stackoverflow.com/questions/2953646/how-can-i-declare-and-use-boolean-variables-in-a-shell-script
+```
 
+```
 echo -n "Enter your name and press [ENTER]: "
 read name
 echo -n "Enter your gender and press [ENTER]: "
 read -n 1 gender
 echo
+```
 
-
+```
 echo "Do you want to continue?(yes/no)"
 read -s input
 if [ "$input" == "yes" ]
 then
 echo "continue"
 fi
+```
 
-
-
+```
 #!/bin/bash
 read -p "Enter Your Name: "  username
 echo "Welcome $username!"
@@ -216,15 +215,14 @@ if [[ "$1" == --verbose ]] ; then
 else
   verbose_mode=FALSE
 fi
+```
 
 
 
-################################################
-#
-#   How to Pass Arguments to a Bash Script
-#
-################################################
 
+###   How to Pass Arguments to a Bash Script
+
+```
 https://www.lifewire.com/pass-arguments-to-bash-script-2200571
 http://linuxcommand.org/lc3_wss0120.php
 http://mywiki.wooledge.org/BashFAQ/035#getopts
@@ -234,9 +232,11 @@ https://serverfault.com/questions/219306/control-a-bash-script-with-variables-fr
 https://www.tcl.tk/man/tcl8.5/tutorial/Tcl26.html
 http://man7.org/linux/man-pages/man1/bash.1.html
 https://www.computerhope.com/unix/bash/shift.htm
+```
 
 sh stats.sh songlist
 
+```
 #!/bin/bash
 FILE1=$1
 wc $FILE1
@@ -245,16 +245,19 @@ for FILE1 in "$@"
 do
 wc $FILE1
 done
+```
 
------
 
+```
 sh stats.sh songlist1 songlist2 songlist3
 sh stats.sh 'songlist 1' 'songlist 2' 'songlist 3'
+```
 
-# Flags Method
+### Flags Method
 
 makereport -u jsmith -p notebooks -d 10-20-2011 -f pdf
 
+```
 #!/bin/bash
 while getopts u:d:p:f: option
 do
@@ -266,11 +269,14 @@ p) PRODUCT=${OPTARG};;
 f) FORMAT=${OPTARG};;
 esac
 done
+```
 
------
+```
 myscript.sh 1 3
 myscript.sh 10 "Hello Poftut"
+```
 
+```
 #!/bin/bash
 echo $1 $2
 
@@ -278,15 +284,17 @@ echo $1 $2
 salute=$1
 name=$2
 echo $salute $name
+```
 
-
+```
 #!/bin/bash
 for var in "$@"
 do
   echo $var
 done
+```
 
-
+```
 #!/bin/bash
 while getopts u:p: option
 do
@@ -298,9 +306,9 @@ do
 done
 echo "User:"$USER
 echo "Password:"$PASSWORD
+```
 
-
-
+```
 ################################################
 #
 #   find exit in php extensions
@@ -308,7 +316,8 @@ echo "Password:"$PASSWORD
 #   exclude index.php
 #
 ################################################
-
+```
+```
 RESULT=$(find . -type f  -name "*.php"  ! -iname "index.php" !  -name "vendors" -prune   -exec grep -Hn "exit[ ]*([ ]*)" {} \; | grep -v "/[ ]*exit" | grep -v "#[ ]*exit" | grep -v "//[ ]*exit" | tr -s '.' )
 if [ "$RESULT" != "" ]; then
 	echo "found exit"
@@ -316,17 +325,17 @@ if [ "$RESULT" != "" ]; then
 else
 	echo "no exit found"
 fi
+```
 
 
 
-
-
+```
 ################################################
 # split list in lines
 # https://stackoverflow.com/questions/918886/how-do-i-split-a-string-on-a-delimiter-in-bash
 ################################################
-
-
+```
+```
 #!/usr/bin/env bash
 IN="bla@some.com;john@home.com"
 mails=$(echo $IN | tr ";" "\n")
@@ -334,32 +343,37 @@ for addr in $mails
 do
     echo "> [$addr]"
 done
+```
 
+```
 ################################################
 find -wholename pattern
 https://www.gnu.org/software/findutils/manual/html_node/find_html/Full-Name-Patterns.html
 ################################################
+```
 
-
+```
 ################################################
 How to check the extension of a filename in a bash script?
 https://stackoverflow.com/questions/407184/how-to-check-the-extension-of-a-filename-in-a-bash-script
 ################################################
+```
 
-
+```
 if [ ${file: -4} == ".txt" ]
 if [ "$file" == "*.txt" ]
 if [[ $file == *.txt ]]
+```
 
-################################################
-#
-# read git diff and search for die() in php files
-#
-################################################
+### read git diff and search for die() in php files
 
+
+```
 https://repl.it/languages/bash
 https://www.tutorialspoint.com/execute_bash_online.php
+```
 
+```
 GITDIFF=$(git diff develop..master --numstat | awk '{ print $3 }')
 if [ "$GITDIFF" != "" ]; then
 	#echo "  found git diff"
@@ -379,14 +393,11 @@ if [ "$GITDIFF" != "" ]; then
 else
 	echo "ok"
 fi
+```
 
+### days date from to range bash shell
 
-################################################
-#
-#   days date from to range bash shell
-#
-################################################
-
+```
 https://unix.stackexchange.com/questions/92880/how-to-print-dates-between-two-different-dates/92882
 https://www.cyberciti.biz/faq/linux-unix-sleep-bash-scripting/
 https://unix.stackexchange.com/questions/223543/get-the-date-of-last-months-last-day-in-a-shell-script
@@ -404,8 +415,9 @@ https://unix.stackexchange.com/questions/223543/get-the-date-of-last-months-last
 
 https://www.tutorialspoint.com/execute_bash_online.php
 https://repl.it/
+```
 
-
+```
 # v1
 start=$(date --date='-1 month' +%Y-%m-01)
 end=$(date -d "$(date +%Y-%m-01) -1 day" +%Y-%m-%d)
@@ -416,7 +428,9 @@ while [[ $start < $end ]]; do
     printf "$start\n"; start=$(date -d "$start + 1 day" +"%Y-%m-%d")
     sleep 1
 done
+```
 
+```
 # v2
 startdate='2019-12-01'
 enddate='2019-12-31'
@@ -427,7 +441,9 @@ while [ "$thedate" != "$enddate" ]; do
     printf 'The date is "%s"\n' "$thedate"
     i=$(( i + 1 ))
 done
+```
 
+```
 # v3
 startdate='2019-12-01'
 enddate='2019-12-31'
@@ -437,43 +453,49 @@ while [ "$thedate" != "$enddate" ]; do
     printf 'The date is "%s"\n' "$thedate"
     thedate=$( date -d "$thedate + 1 days" +%Y%m%d ) # increment by one day
 done
+```
 
-
-################################################
-#
-#   check if env
-#
-################################################
+### check if env
+```
 https://unix.stackexchange.com/questions/190513/shell-scripting-proper-way-to-check-for-internet-connectivity
 https://stackoverflow.com/questions/21097900/checking-if-pwd-contains-directory-name
 https://stackoverflow.com/questions/19306771/how-can-i-get-the-current-users-username-in-bash/19306837#19306837
+```
 
+```
 if [[ "$PWD" = */$(whoami)/* ]]
   then
     # do something
 fi
+```
 
 
+```
 #####################################################################
 #
 # 	run command stored in string inside bash script
 #	https://stackoverflow.com/questions/2005192/how-to-execute-a-bash-command-stored-as-a-string-with-quotes-and-asterisk
 #
 #####################################################################
+```
+```
 cmd='mysql AMORE -u root --password="password" -h localhost -e "select host from amoreconfig"'
 $ eval $cmd
 
 cmd="ls"
 $cmd
+```
 
-
+```
 #####################################################################
 #
 # 	Concat sring in bash script
 #	https://linuxhint.com/string_concatenation_bash/
 #
 #####################################################################
+```
 
+```
 #!/bin/bash
 echo "Printing the list of foods"
 #Initialize the variable before combine
@@ -485,9 +507,9 @@ foods+="$value "
 done
 #Print the combined values
 echo "$foods"
+```
 
-
-
+```
 https://stackoverflow.com/questions/3362920/get-just-the-filename-from-a-path-in-a-bash-script
 https://stackoverflow.com/questions/965053/extract-filename-and-extension-in-bash?noredirect=1&lq=1
 https://stackoverflow.com/questions/29761201/delete-everything-before-last-in-bash?noredirect=1&lq=1
@@ -497,19 +519,18 @@ https://stackoverflow.com/questions/592620/how-can-i-check-if-a-program-exists-f
 https://stackoverflow.com/questions/918886/how-do-i-split-a-string-on-a-delimiter-in-bash?rq=1
 https://stackoverflow.com/questions/965053/extract-filename-and-extension-in-bash?rq=1
 https://stackoverflow.com/questions/1371261/get-current-directory-name-without-full-path-in-a-bash-script?rq=1
+```
 
-
-
-#####################################################################
-getopts
-#####################################################################
-
+### getopts
+```
 https://www.ibm.com/docs/de/aix/7.2?topic=g-getopts-command
 https://hope-this-helps.de/serendipity/archives/Bash-Parameter-sauber-an-Skript-uebergeben-509.html
 https://forum.ubuntuusers.de/topic/sinn-von-getopts/
 https://qastack.com.de/unix/75219/bash-getopts-short-options-only-all-require-values-own-validation
 https://www.it-swarm.com.de/de/bash/bash-getops-lesen-von-optarg-fuer-optionale-flags/1040492806/
 ------------------------------------------------
+```
+```
 #!/bin/bash
 
 while getopts xyz:A: option
@@ -521,8 +542,8 @@ do
                 A) echo "Option -A und Argument : ($OPTARG)";;
         esac
 done
-
-
+```
+```
 # definiere mögliche Parameter
 # ------------------------------------------------
 
@@ -533,7 +554,9 @@ while getopts s:f:h opts; do
                 h) show_help ;;
         esac
 done
+```
 ------------------------------------------------
+```
 errs=0
 declare -A option=(
     [MYSQL_HOST]="-h"
@@ -548,9 +571,9 @@ for var in "${!option[@]}"; do
     fi
 done
 ((errs > 0)) && exit 1
-
+```
 ------------------------------------------------
-
+```
 while getopts ":a:b:c:d:e:f:" opt; do
     case $opt in
         a) Apple="$OPTARG";;
@@ -573,11 +596,11 @@ while getopts ":a:b:c:d:e:f:" opt; do
             esac ;;
         esac
     done
+```
 
+### check for non-null/non-zero string variable
 
-########################################################
-check for non-null/non-zero string variable
-########################################################
+```
 https://stackoverflow.com/questions/3601515/how-to-check-if-a-variable-is-set-in-bash/13864829#13864829
 https://stackoverflow.com/questions/3601515/how-to-check-if-a-variable-is-set-in-bash/16753536
 https://stackoverflow.com/questions/3601515/how-to-check-if-a-variable-is-set-in-bash/13864829
@@ -586,9 +609,9 @@ https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18
 https://www.gnu.org/software/bash/manual/html_node/Bash-Conditional-Expressions.html
 https://www.gnu.org/software/bash/manual/html_node/Shell-Arithmetic.html
 https://stackoverflow.com/revisions/16753536/1
+```
 
-
-
+```
 if [ -n "$1" ]; then
   echo "You supplied the first parameter!"
 else
@@ -629,8 +652,8 @@ if [[ ! -v SOMEVAR ]]; then
     SOMEVAR='hello'
 fi
 echo $SOMEVAR
-
-
+```
+```
 +-----------------------+-------------+---------+------------+
 | Expression in script  | name='fish' | name='' | unset name |
 +-----------------------+-------------+---------+------------+
@@ -651,13 +674,15 @@ echo $SOMEVAR
 | test ! -n "$name"    | f           | TRUE    | TRUE       |
 | test "$name" = ''    | f           | TRUE    | TRUE       |
 +----------------------+-------------+---------+------------+
+```
 
+```
 if [ ! -z "$1" ]; then
         echo '$1 is set'
 fi
+```
 
-
-
+```
 -a file
 True if file exists.
 
@@ -721,7 +746,6 @@ True if file exists and is owned by the effective user id.
 -S file
 True if file exists and is a socket.
 
-
 -v varname
 True if the shell variable varname is set (has been assigned a value).
 
@@ -731,30 +755,36 @@ True if the length of string is zero.
 -n string
 string
 True if the length of string is non-zero.
+```
 
-########################################################
-create multiple folders
-########################################################
+### create multiple folders
+
 https://stackoverflow.com/questions/793858/how-to-mkdir-only-if-a-directory-does-not-already-exist
 
+
+```
 if [[ ! -e $dir ]]; then
     mkdir $dir
 elif [[ ! -d $dir ]]; then
     echo "$dir already exists but is not a directory" 1>&2
 fi
-
+```
+```
 # create multiple folders
 mkdir -p foo/bar/baz
 mkdir -p foo bar baz
 
 # check if exists
 [ -d foo ] || mkdir foo
+```
 
-########################################################
-How to check if a variable is empty in a bash script?
-########################################################
+
+### ow to check if a variable is empty in a bash script?
+
 https://www.digitalocean.com/community/questions/how-to-check-if-a-variable-is-empty-in-a-bash-script
 
+
+```
 #!/bin/bash
 
 echo "Enter your name: "
@@ -768,14 +798,11 @@ while [[ -z ${name} ]] ; do
 done
 
 echo "Hello ${name}"
+```
 
+### jq - parse error: Invalid numeric literal
 
-
-
-########################################################
-jq - parse error: Invalid numeric literal
-########################################################
-
+```
 parse error: Invalid numeric literal at line 1, column 7
 parse error: Invalid numeric literal at line 2, column 0
 
@@ -785,7 +812,8 @@ https://asciinema.org/a/Z4B06lh4Otdb6mBJmfg3hqraa
 https://asciinema.org/
 https://stackoverflow.com/questions/56136673/parse-error-invalid-numeric-literal-at-line-1-column-6
 https://unix.stackexchange.com/questions/599900/curl-jq-get-value-from-field-name
-
+```
+```
 jq --version
 
 iconv -f UTF-16 -t ASCII config.json -o config.json
@@ -795,8 +823,8 @@ echo "{'foo':'bar'}" | jq .foo
 
 echo "{\"foo\":\"bar\"}" | jq .foo
 echo '{"foo":"bar"}' | jq '.foo'
-
-
+```
+```
 #!/bin/bash
 for i in {1..15}
 do
@@ -809,3 +837,4 @@ curl -X POST \
     --header 'Content-Type:application/json' \
     --data "$json_document" 'https://myurl/resource' |
 jq .id
+```

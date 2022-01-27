@@ -1,10 +1,9 @@
 
-------------------------------------------------------------------------------
+### bash if else
+
 https://ryanstutorials.net/bash-scripting-tutorial/bash-if-statements.php
-------------------------------------------------------------------------------
 
-bash
-
+```
 #!/bin/bash
 # else example
 if [ $# -eq 1 ]
@@ -13,10 +12,10 @@ if [ $# -eq 1 ]
 else
 	nl /dev/stdin
 fi
+```
 
 
-
-
+```
 #!/bin/bash
 # elif statements
 if [ $1 -ge 18 ]
@@ -28,11 +27,11 @@ elif [ $2 == 'yes' ]
 else
 	echo You may not go to the party.
 fi
+```
 
 
 
-
-
+```
 #!/bin/bash
 # case example
 case $1 in
@@ -49,7 +48,7 @@ case $1 in
 		echo don\'t know
 	;;
 esac
-
+```
 
 
 

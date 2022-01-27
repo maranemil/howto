@@ -1,12 +1,12 @@
 # ffmpeg bash 
 
 
-## extracting frames from video
+### extracting frames from video
 ```
 ffmpeg -ss 00:00:26.000 -i vid.mp4 -t 00:00:03.000 -r 6 jpg2/vid_%04d.jpg
 ```
 
-## make thumb img
+### make thumb img
 ```
 ffmpeg  -itsoffset (time) -i video.avi -vcodec mjpeg -vframes 1 -an -f rawvideo -s (WIDTHxHEIGHT) thumb.jpg
 for f in *.flv; do ffmpeg -y -i "$f" -f image2 -ss 10 -vframes 1 -an "${f%.flv}.jpg"; done
@@ -21,17 +21,17 @@ ffmpeg  -itsoffset -20 -i vid.mp4 -vcodec mjpeg -vframes 1 -an -f rawvideo -s 64
 ```
 ------------------------------------------------------------------------------------------------------------------------
 
-## Generate Thumbs 1x
+### Generate Thumbs 1x
 ```
 for f in *.mp4; do ffmpeg -y -itsoffset -20 -i "$f" -vcodec mjpeg -vframes 1 -an -f rawvideo -loglevel warning -s 800x600 "${f%.mp4}.jpg"; done
 ```
 
-## Timeline gen 9 thumbs
+### Timeline gen 9 thumbs
 ```
 for f in *.mp4; do ffmpeg -y -ss 3 -i "$f" -vf "select=gt(scene\,0.4)" -frames:v 9 -vsync vfr -vf fps=fps=1/30 "${f%}out%02d.jpg"; done
 ```
 
-## merge 9 thumbs
+### merge 9 thumbs
 ```
 for f in *.mp4; do ffmpeg -y -pattern_type glob -i "$f*.jpg"  -filter_complex scale=360:-1,tile=3x3 "${f%}output.png" ; done
 for f in *.png; do rm "$f"; done
@@ -40,7 +40,7 @@ for f in *.png; do rm "$f"; done
 ------------------------------------------------------------------------------------------------------------------------
 
 
-## Wiki:Create a thumbnail image every X seconds of the video
+### Wiki:Create a thumbnail image every X seconds of the video
 ```
 -vframes option
 Output a single frame from the video into an image file:
@@ -66,7 +66,7 @@ ffmpeg -i input.flv -vf "select='eq(pict_type,PICT_TYPE_I)'" -vsync vfr thumb%04
 
 ---------------------------------------------------------------------------
 
-## How to extract time-accurate video segments with ffmpeg
+### How to extract time-accurate video segments with ffmpeg
 ```
 ffmpeg -i a.mp4 -force_key_frames 00:00:09,00:00:12 out.mp4
 ffmpeg -ss 00:00:09 -i out.mp4 -t 00:00:03 -vcodec copy -acodec copy -y final.mp4
@@ -75,7 +75,7 @@ ffmpeg -ss 3 -i input.mp4 -vf "select=gt(scene\,0.4)" -frames:v 5 -vsync vfr -vf
 ffmpeg -ss 120.2 -t 0.75 -i slow.mkv -c:a libopus -shortest -aspect 16:9 -preset veryslow -x264-params nr=250:ref=6 -crf 22  -movflags +faststart clip2.mkv
 ```
 
-## Extract  sound
+### Extract  sound
 ```
 ffmpeg -i input-video.avi -vn -acodec copy output-audio.aac
 ffmpeg -i sample.avi -q:a 0 -map a sample.mp3
@@ -163,10 +163,9 @@ done
 
 
 ---------------------------------------------------------------------------
-
-```
 https://www.lifewire.com/pass-arguments-to-bash-script-2200571
 
+```
 while getopts u:d:p:f: option
 do
  case "${option}"
@@ -280,10 +279,6 @@ On_IPurple='\033[0;105m'  # Purple
 On_ICyan='\033[0;106m'    # Cyan
 On_IWhite='\033[0;107m'   # White
 ```
-
-
-
-
 
 ### ultra compression ffmpeg
 
