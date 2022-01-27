@@ -1,37 +1,47 @@
-# extracting frames from video
-ffmpeg -ss 00:00:26.000 -i vid.mp4 -t 00:00:03.000 -r 6 jpg2/vid_%04d.jpg
+# ffmpeg bash 
 
-make thumb img
+
+## extracting frames from video
+```
+ffmpeg -ss 00:00:26.000 -i vid.mp4 -t 00:00:03.000 -r 6 jpg2/vid_%04d.jpg
+```
+
+## make thumb img
+```
 ffmpeg  -itsoffset (time) -i video.avi -vcodec mjpeg -vframes 1 -an -f rawvideo -s (WIDTHxHEIGHT) thumb.jpg
 for f in *.flv; do ffmpeg -y -i "$f" -f image2 -ss 10 -vframes 1 -an "${f%.flv}.jpg"; done
-
 thumbnail() { ffmpeg -itsoffset -20 -i $i -vcodec mjpeg -vframes 1 -an -f rawvideo -s 640x272 ${i%.*}.jpg }
-
+```
 ------------------------------------------------------------------------------------------------------------------------
-
+```
 for f in *.mp4; do ffmpeg -i "$f" -vcodec mjpeg -vframes 1 -an -f rawvideo -s 1280x760 "${f%.mp4}.jpg"; done
 for f in *.mp4; do ffmpeg -y -i "$f" -f image2 -ss 10 -vframes 1 -an "${f%.mp4}.jpg"; done
 
 ffmpeg  -itsoffset -20 -i vid.mp4 -vcodec mjpeg -vframes 1 -an -f rawvideo -s 640x272 thumb.jpg
-
+```
 ------------------------------------------------------------------------------------------------------------------------
 
-# Generate Thumbs 1x
+## Generate Thumbs 1x
+```
 for f in *.mp4; do ffmpeg -y -itsoffset -20 -i "$f" -vcodec mjpeg -vframes 1 -an -f rawvideo -loglevel warning -s 800x600 "${f%.mp4}.jpg"; done
+```
 
-# Timeline gen 9 thumbs
+## Timeline gen 9 thumbs
+```
 for f in *.mp4; do ffmpeg -y -ss 3 -i "$f" -vf "select=gt(scene\,0.4)" -frames:v 9 -vsync vfr -vf fps=fps=1/30 "${f%}out%02d.jpg"; done
+```
 
-# merge 9 thumbs
+## merge 9 thumbs
+```
 for f in *.mp4; do ffmpeg -y -pattern_type glob -i "$f*.jpg"  -filter_complex scale=360:-1,tile=3x3 "${f%}output.png" ; done
-
 for f in *.png; do rm "$f"; done
+```
 
 ------------------------------------------------------------------------------------------------------------------------
 
 
-Wiki:Create a thumbnail image every X seconds of the video
-
+## Wiki:Create a thumbnail image every X seconds of the video
+```
 -vframes option
 Output a single frame from the video into an image file:
 
@@ -52,26 +62,29 @@ select video filter
 Output one image for every I-frame:
 
 ffmpeg -i input.flv -vf "select='eq(pict_type,PICT_TYPE_I)'" -vsync vfr thumb%04d.png
+```
 
 ---------------------------------------------------------------------------
 
-How to extract time-accurate video segments with ffmpeg
-
+## How to extract time-accurate video segments with ffmpeg
+```
 ffmpeg -i a.mp4 -force_key_frames 00:00:09,00:00:12 out.mp4
 ffmpeg -ss 00:00:09 -i out.mp4 -t 00:00:03 -vcodec copy -acodec copy -y final.mp4
 
 ffmpeg -ss 3 -i input.mp4 -vf "select=gt(scene\,0.4)" -frames:v 5 -vsync vfr -vf fps=fps=1/600 out%02d.jpg
 ffmpeg -ss 120.2 -t 0.75 -i slow.mkv -c:a libopus -shortest -aspect 16:9 -preset veryslow -x264-params nr=250:ref=6 -crf 22  -movflags +faststart clip2.mkv
+```
 
-Extract  sound
-
+## Extract  sound
+```
 ffmpeg -i input-video.avi -vn -acodec copy output-audio.aac
 ffmpeg -i sample.avi -q:a 0 -map a sample.mp3
 ffmpeg -i sample.avi -ss 00:03:05 -t 00:00:45.0 -q:a 0 -map a sample.mp3
 ffmpeg -i input.wav -codec:a libmp3lame -qscale:a 2 output.mp3
+```
 
 ---------------------------------------------------------------------------
-
+```
 #!/usr/bin/env bash
 
 ## this is slow but gives better thumbnails (takes about 1+ minutes for 20 files)
@@ -85,9 +98,10 @@ find . -type f \
   -name "*.m3u8" \
   -execdir sh -c 'ffmpeg -y -i "$0" -vf scale=640:360 -frames:v 1 "poster.png"' \
   {} \;
+```
 
 ---------------------------------------------------------------------------
-
+```
 timeline
 ffmpeg -ss 3 -i input.mp4 -vf "select=gt(scene\,0.4)" -frames:v 5 -vsync vfr -vf fps=fps=1/60 out%02d.jpg
 
@@ -98,9 +112,11 @@ ffmpeg -y -pattern_type glob -i "*.jpg"  -filter_complex scale=360:-1,tile=3x2 o
 
 https://trac.ffmpeg.org/wiki/Creating%20multiple%20outputs
 http://www.cplusplus.com/reference/cstdio/printf/
+```
 
 ---------------------------------------------------------------------------
 
+```
 #!/bin/sh
 
 echo $@
@@ -112,11 +128,13 @@ for f in *.mp4; do ffmpeg -y -ss 3 -i "$f" -vf "select=gt(scene\,0.4)" -frames:v
 for f in *.mp4; do ffmpeg -y -pattern_type glob -i "$f*.jpg"  -filter_complex scale=360:-1,tile=3x3 "${f%}output.png" ; done
 
 for f in *.jpg; do rm "$f"; done
-
+```
 
 ---------------------------------------------------------------------------
 
-Some useful strings:
+### Some useful strings:
+
+```
 $$ = The PID number of the process executing the shell.
 $? = Exit status variable.
 $0 = The name of the command you used to call a program.
@@ -125,9 +143,11 @@ $2 = The second argument on the command line.
 $n = The nth argument on the command line.
 $* = All the arguments on the command line.
 $# The number of command line arguments.
+```
 
 https://linuxconfig.org/how-do-i-print-all-arguments-submitted-on-a-command-line-from-a-bash-script
 
+```
 #/bin/bash
  for i in $*; do
    echo $i
@@ -139,9 +159,12 @@ while (( "$#" )); do
   echo $1
   shift
 done
+```
+
 
 ---------------------------------------------------------------------------
 
+```
 https://www.lifewire.com/pass-arguments-to-bash-script-2200571
 
 while getopts u:d:p:f: option
@@ -154,9 +177,11 @@ do
  f) FORMAT=$OPTARG;;
  esac
 done
+```
 
 ---------------------------------------------------------------------------
 
+```
 https://ryanstutorials.net/bash-scripting-tutorial/bash-if-statements.php
 https://wiki.ubuntuusers.de/Shell/Bash-Skripting-Guide_für_Anfänger/
 https://ss64.com/bash/echo.html
@@ -177,10 +202,11 @@ INTEGER1 -lt INTEGER2	INTEGER1 is numerically less than INTEGER2
 -s FILE	FILE exists and it's size is greater than zero (ie. it is not empty).
 -w FILE	FILE exists and the write permission is granted.
 -x FILE	FILE exists and the execute permission is granted.
+```
 
 ---------------------------------------------------------------------------
 
-
+```
 # Reset
 Color_Off='\033[0m'       # Text Reset
 
@@ -253,13 +279,15 @@ On_IBlue='\033[0;104m'    # Blue
 On_IPurple='\033[0;105m'  # Purple
 On_ICyan='\033[0;106m'    # Cyan
 On_IWhite='\033[0;107m'   # White
+```
 
-------
 
 
-##################################
-# ultra compression ffmpeg
-##################################
+
+
+### ultra compression ffmpeg
+
+```
 
 ffmpeg -i u.mkv -s hd480 -crf 24 -strict -2 -b 100000 -preset ultrafast -y u_480.mp4
 
@@ -298,3 +326,5 @@ for i in *.mp4;
 do
     ffmpeg -y -i "$i" << TODO >> "${i%.mp4}_shrink.mp4";
 done
+
+```
