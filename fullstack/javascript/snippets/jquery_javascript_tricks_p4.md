@@ -1,11 +1,9 @@
 
 
-###################################################
-#
-#	sidebar ? re-init
-#
-###################################################
-
+######
+###	sidebar ? re-init
+######
+```
 http://ace.jeka.by/
 http://acquacleanpiscinas.com.br/public/docs/#basics/sidebar
 http://acquacleanpiscinas.com.br/public/docs/#basics/sidebar
@@ -51,14 +49,12 @@ $('#sidebar').ace_sidebar({ /**/sidebar_collapsed:true});
 $('#sidebar').ace_sidebar();
 $('#sidebar').ace_sidebar_hover({ /* */ sub_hover_delay: 750});
 $('#sidebar').ace_scroll({ /* */ size: 850});
+```
 
-
-###################################################
-#
-#	Clone Dom jQuery 2.2.4 / 3.2.1 - Test https://jsfiddle.net/
-#
-###################################################
-
+######
+###	Clone Dom jQuery 2.2.4 / 3.2.1 - Test https://jsfiddle.net/
+######
+```
 <div class="js-source">   aaaa </div>
 <div class="js-destination">   ? </div>
 <div class="js2-source">   bbb </div>
@@ -108,15 +104,13 @@ https://github.com/jquery/jquery/issues/1973
 	  //destination.prepend(sourceElement)
 	});
 </script>
+```
 
 
-
-###################################################
-#
+######
 #	Clone Dom Element into the same Element
-#
-###################################################
-
+######
+```
 https://codepen.io/susanwinters/pen/gadgGY
 https://api.jquery.com/clone/
 https://developer.mozilla.org/de/docs/Web/API/ChildNode/remove
@@ -137,13 +131,12 @@ function clone (src) {
     return JSON.parse(JSON.stringify(src));
 }
 */
+```
 
-#############################################################
-#
-# 	Using debugger in Chrome Devtools
-#
-#############################################################
-
+######
+### 	Using debugger in Chrome Devtools
+######
+```
 https://stackoverflow.com/questions/28388530/why-does-chrome-debugger-think-closed-local-variable-is-undefined
 https://jsfiddle.net/
 
@@ -159,16 +152,14 @@ function baz() {
   bar();
 }
 baz();
+```
 
 
-
-#############################################################
-#
-#   TypeError: Cannot read property 'msie' of undefined
-#   The $.browser method has been removed as of jQuery 1.9.
-#
-#############################################################
-
+######
+###   TypeError: Cannot read property 'msie' of undefined
+####   The $.browser method has been removed as of jQuery 1.9.
+######
+```
 https://plugins.jquery.com/jqModal/
 http://jquery.iceburg.net/jqModal/
 http://jquery.iceburg.net/jqModal/jqModal.js
@@ -177,13 +168,12 @@ https://github.com/jquery/jquery-migrate/
 
 https://github.com/briceburg/jqModal/blob/master/jqModal.js
 https://github.com/gocept/jquery.jqmodal
+```
 
-#############################################################
-#
-#   Read Element Index
-#
-#############################################################
-
+######
+###   Read Element Index
+######
+```
 https://api.jquery.com/jquery.inarray/
 https://api.jquery.com/index/
 https://api.jquery.com/eq/
@@ -193,13 +183,12 @@ $('#list li').click(function() {
     console.log($(this).text());
     console.log($(this).index());
 });
+```
 
-
-#############################################################
-#
-#
-#
-#############################################################
+######
+###	DevTools errors
+######
+```
 -----------------------------------------------------------------
 DevTools failed to parse SourceMap: jquery.min.map ?
 -----------------------------------------------------------------
@@ -214,14 +203,12 @@ jquery-X.X.X.min.js:3 Unable to preventDefault inside passive event listener inv
 jquery-X.X.X.min.js:3 [Violation] Added non-passive event listener to a scroll-blocking 'touchstart' event.
 Consider marking event handler as 'passive' to make the page more responsive. See https://www.chromestatus.com/feature/5745543795965952
 -----------------------------------------------------------------
------------------------------------------------------------------
+```
 
-#############################################################
-#
-#   JavaScript DOM Crash Course Traversy Media
-#
-#############################################################
-
+######
+###   JavaScript DOM Crash Course Traversy Media
+######
+```
 https://www.youtube.com/watch?v=0ik6X4DJKCc
 https://www.youtube.com/watch?v=mPd2aJXCZ2g
 https://www.youtube.com/watch?v=wK2cBMcDTss
@@ -281,14 +268,12 @@ function btnClick(e){
 	e.shiftKey
 	e.offsetX
 }
+```
 
-
-##############################################################
-#
-#	jQuery Hash selector compatibility syntax
-#
-##############################################################
-
+######
+###	jQuery Hash selector compatibility syntax
+######
+```
 https://code.jquery.com/jquery/
 https://jquery.com/download/
 https://jsfiddle.net/
@@ -305,14 +290,12 @@ $(function(){
   $('[href=#group-tab]').click(); 	// valid jQuery 2.1.4
   $('[href="#group-tab"]').click();	// valid jQuery 2.2.3
 });
+```
 
-
-#############################################################
-#
-# 	Select input data for ajax call
-#
-#############################################################
-
+######
+### 	Select input data for ajax call
+######
+```
 https://stackoverflow.com/questions/2295496/convert-array-to-json
 https://www.w3schools.com/js/js_json_parse.asp
 https://www.w3schools.com/js/js_json_stringify.asp
@@ -428,14 +411,14 @@ let myObj = {
 console.log(newArray)
 console.log(myObj)
 console.log(JSON.stringify({  myObj }))
+```
 
-#############################################################
-#
-#   Netflix JavaScript Talks - RxJS + Redux + React = Amazing! 25:30 / 31:16
-#   https://www.youtube.com/watch?v=AslncyG8whg
-#
-#############################################################
 
+######
+###   Netflix JavaScript Talks - RxJS + Redux + React = Amazing! 25:30 / 31:16
+####  https://www.youtube.com/watch?v=AslncyG8whg
+######
+```
 // ping pong
 const pingPongEpi = (action$,store) =>
 	action.ofType('PING')
@@ -459,15 +442,14 @@ const autocompleteEpic = (action$,store) =>
 			}])
 
 	);
+```
 
 
-#############################################################
-#
-#	React Component Patterns by Michael Chan
-#	https://www.youtube.com/watch?v=YaZg8wg39QQ
-#
-#############################################################
-
+######
+###	React Component Patterns by Michael Chan
+####	https://www.youtube.com/watch?v=YaZg8wg39QQ
+######
+```
 // container component
 class SmallCircleInCircle{
 	constructor(){
@@ -524,17 +506,15 @@ const SmallCircleInCircle =
 			<SmallCircle {...state} />
 		)}
 	/>
+```
 
 
 
 
-
-###################################################
-#
-#   ( map + concat ) values from multiple checkboxes
-#
-###################################################
-
+######
+###   ( map + concat ) values from multiple checkboxes
+######
+```
 <!-- DOM for test -->
  <ul>
    <li>
@@ -600,13 +580,13 @@ console.table(zz);
 ["salami","schinken"]
 0 salami schinken
 ...
+```
 
-###################################################
-#
-#  each
-#
-###################################################
 
+######
+###  each
+######
+```
 const arr = [10000000];
 console.time('str');
 for(const v of arr){}
@@ -625,16 +605,16 @@ const arr = arr.map( v => 'str')
 const arr = arr.some(v => v === 'str')
 const arr = arr.every(v => v === 'str')
 const arr = arr.reduce((acc,cur) => {  return acc + cur },0)
+```
 
 
 
 
-
-###################################################
-# JavaScript Classes
-# https://www.youtube.com/watch?v=fQ1oNTRdByA
-###################################################
-
+######
+### JavaScript Classes
+#### https://www.youtube.com/watch?v=fQ1oNTRdByA
+######
+```
 class Person{
 	constructor (_name, _age){
   	this.name = _name
@@ -670,14 +650,15 @@ const progs = [
 for (let prog of progs){
 		console.log(prog.code())
 }
+```
 
 
-#############################################
-// JavaScript Classes vs Prototypes
-// https://www.youtube.com/watch?v=XoQKXDWbL1M
-// https://www.youtube.com/watch?v=xizFJHKHdHw
-#############################################
-
+######
+### JavaScript Classes vs Prototypes
+#### https://www.youtube.com/watch?v=XoQKXDWbL1M
+#### https://www.youtube.com/watch?v=xizFJHKHdHw
+######
+```
 let Person = function(_name, _age){
 	this.name = _name;
   this.age = _age;
@@ -698,12 +679,14 @@ let pers2 = new Employe('Jess',66,899);
 console.log(pers1.getDetails())
 console.log(pers2.getDetails())
 
+```
 
-#############################################
-#   Imperative vs. Declarative Programming (in 60 seconds)
-#   https://www.youtube.com/watch?v=JqvMTwnbhnA
-#############################################
 
+######
+###   Imperative vs. Declarative Programming (in 60 seconds)
+####   https://www.youtube.com/watch?v=JqvMTwnbhnA
+######
+```
 // Imperative
 function double1(arr) {
   let results = [];
@@ -719,15 +702,17 @@ function double2(arr) {
 const arrs = [2,3,4];
 console.log(double1(arrs))
 console.log(double2(arrs))
+```
 
-#############################################
+### arrays
+```
 // https://medium.com/front-end-weekly/es6-set-vs-array-what-and-when-efc055655e1a
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set
 // https://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value?rq=1
 // https://stackoverflow.com/questions/9229645/remove-duplicate-values-from-js-array
 // https://stackoverflow.com/questions/111102/how-do-javascript-closures-work?rq=1
-#############################################
-
+```
+```
 //const arr = [4,4,5,6,7,8,9];
 //var arr2 = Array.from("123"); //["1","2","3"]
 //
@@ -736,8 +721,6 @@ var set = new Set([1,2,3]); // {1,2,3}
 var arr = Array.from(set);//[1,2,3]
 console.log(set);
 console.log(arr);
-
-
 
 // sort
 console.log(  Array.from(new Set(["b","a","c"])).sort() );
@@ -767,6 +750,6 @@ function foo() {
 }
 const f = foo() // `secret` is not directly accessible from outside `foo`
 f() // The only way to retrieve `secret`, is to invoke `f`
-
+```
 
 

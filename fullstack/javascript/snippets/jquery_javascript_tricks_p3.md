@@ -1,13 +1,11 @@
-///////////////////////////////////////////////
-//
-//  POPUP JS
-//
+
+### POPUP JS
+```
 //  http://www.javascriptkit.com/dhtmltutors/ajaxgetpost.shtml
 //  https://www.oodlestechnologies.com/blogs/Open-popup-window-with-http-POST-data-Javascript/
 //  https://api.jquery.com/jquery.ajax/
-//
-///////////////////////////////////////////////
-
+```
+```
 [script]
 
 let url = 'https://example.com/some/url'
@@ -52,18 +50,18 @@ $.ajax({
   .done(function( msg ) {
  	console.debug( msg );
 });*/
+```
 
 
 
 
-///////////////////////////////////////////////
-//
-//  Warning: Added non-passive event listener to a scroll-blocking 'touchstart' event [duplicate]
-//
+
+### Warning: Added non-passive event listener to a scroll-blocking 'touchstart' event [duplicate]
+```
 // https://developers.google.com/speed/docs/insights/browser-reflow
 // https://www.chromestatus.com/feature/5745543795965952
-//
-///////////////////////////////////////////////
+```
+```
 
 [script]
 
@@ -96,18 +94,18 @@ $(function() {
         }
     };
 });
+```
 
 
-///////////////////////////////////////////////
-//
-// Introducing $(document).ready()
-//
-///////////////////////////////////////////////
 
+
+### Introducing $(document).ready()
+```
 https://jquery.com/
 https://api.jquery.com/ready/#ready-handler
 https://www.learningjquery.com/2006/09/introducing-document-ready
-
+```
+```
 [script]
 
 (function () { ... })();
@@ -175,13 +173,13 @@ var map = new Map([[1,2],[3,4]]);
 console.log(map instanceof Object); //true
 var obj = new Object();
 console.log(obj instanceof Map); //false
+```
 
 
 
 
-///////////////////////////////////////////////
-# JavaScript variable start with a dollar sign
-///////////////////////////////////////////////
+### JavaScript variable start with a dollar sign
+```
 
 https://stackoverflow.com/questions/205853/why-would-a-javascript-variable-start-with-a-dollar-sign
 https://stackoverflow.com/questions/846585/can-someone-explain-the-dollar-sign-in-javascript
@@ -200,13 +198,13 @@ var email_field = $("#email").get(0); // refers to the dom object itself
 var user = 'Bob'
 console.log(`We love ${user}.`); //Note backticks
 // We love Bob.
+```
 
 
 
 
-///////////////////////////////////////////////
-// generate link list from array
-///////////////////////////////////////////////
+### generate link list from array
+```
 
 [html]
 <div id="placer">
@@ -230,16 +228,15 @@ console.log(`We love ${user}.`); //Note backticks
   });
 
 })();
+```
 
 
 
 
-///////////////////////////////////////////////
-//
-//  Const, let and var, which and when?
-//  JavaScript ES6+: var, let, or const?
-//
-///////////////////////////////////////////////
+###  Const, let and var, which and when?
+#### JavaScript ES6+: var, let, or const?
+
+```
 
 https://medium.com/javascript-scene/javascript-es6-var-let-or-const-ba58b8dcde75
 https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Statements/let
@@ -286,15 +283,15 @@ letTest(); // let can be updated but not re-declared.
 
 const declarations are block scoped
 const cannot be updated or re-declared
+```
 
 
 
 
-///////////////////////////////////////////////
-//
-//  jQuery Select list attributes propreties
-//
-///////////////////////////////////////////////
+
+### jQuery Select list attributes properties
+
+```
 
 [html]
 <input type=checkbox value=11 name="mylist[]" />
@@ -318,16 +315,16 @@ button.each(function(){
     console.log($(this).attr('value')); // show attr
     console.log(this,$(this).attr('value')); // show html code + attr
 })
+```
 
 
 
-///////////////////////////////////////////////
-//
-//  chartjs example
-//  https://www.chartjs.org/docs/latest/charts/line.html
-//  https://www.chartjs.org/docs/latest/getting-started/usage.html
-//
-///////////////////////////////////////////////
+
+### chartjs example
+#### https://www.chartjs.org/docs/latest/charts/line.html
+#### https://www.chartjs.org/docs/latest/getting-started/usage.html
+
+```
 <canvas id="myChart" width="800" height="150"></canvas>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
 <script type="text/javascript">
@@ -349,14 +346,14 @@ var stackedLine = new Chart(ctx, {
     }
 });
 </script>
+```
 
-///////////////////////////////////////////////
-//
-//  flotcharts example
-//  https://www.flotcharts.org/flot/examples/
-//
-///////////////////////////////////////////////
 
+
+###  flotcharts example
+####  https://www.flotcharts.org/flot/examples/
+
+```
 <div id="plot-hours"></div>
 <script type="text/javascript">
     $(function ($) {
@@ -396,18 +393,15 @@ var stackedLine = new Chart(ctx, {
         });
     });
 </script>
+```
 
 
 
 
 
+### JS OBJECTS
 
-///////////////////////////////////////////////
-//
-//  JS OBJECTS
-//
-///////////////////////////////////////////////
-
+```
 https://jsfiddle.net/
 
 let obj1  = Object.create(null);
@@ -422,13 +416,14 @@ obj3.name = "c"
 console.log(obj1);
 console.log(obj2);
 console.log(obj3);
+```
 
-///////////////////////////////////////////////
-//
-// DETECT HASH CLICK
-//
-///////////////////////////////////////////////
 
+
+
+### DETECT HASH CLICK
+
+```
 $(function () {
 	$('[href*=PREFIX]').click(function() {
 		console.log($(this).css(""))
@@ -453,13 +448,14 @@ $(function () {
         e.preventDefault();
 	});
 });
+```
 
-///////////////////////////////////////////////
-//
-//  Get element that was clicked wehn more than one
-//
-///////////////////////////////////////////////
 
+
+
+###  Get element that was clicked wehn more than one
+
+```
 $body.on('click', '.classOne, .classTwo', function (event) {
 	event.stopPropagation();
 	if (this == evt.target)
@@ -472,13 +468,14 @@ $body.on('click', '.classOne, .classTwo', function (event) {
 		// do something
 	}
 });
+```
 
-///////////////////////////////////////////////
-//
-//  test
-//
-///////////////////////////////////////////////
 
+
+
+###  test
+
+```
 <div id="banner-message">
   <p>Hello World</p>
   <button msg="test">Change color</button>
@@ -495,14 +492,15 @@ button.on("click", function(){
   console.log($this.attr("msg"))
 })
 </script>
+```
 
 
-///////////////////////////////////////////////
-JS Warning: Possible iteration over unexpected (custom / inherited) members, probably missing hasOwnProperty check
+
+#### JS Warning: Possible iteration over unexpected (custom / inherited) members, probably missing hasOwnProperty check
 https://stackoverflow.com/questions/25723674/javascript-possible-iteration-over-unexpected
 https://stackoverflow.com/questions/37732931/how-can-i-disable-possible-iteration-over-unexpected-inspection-in-intellij-i/37735060
 https://www.reddit.com/r/learnjavascript/comments/1sv76u/the_for_in_loop_can_anyone_answer_a_few_questions/
-///////////////////////////////////////////////
+```
 
 // Code
 for (i in awards) {
@@ -516,14 +514,12 @@ for (i in awards) {
 if (!isNaN(parseFloat(i)) && awards.hasOwnProperty(i)) {
     ...
 }
+```
 
 
-///////////////////////////////////////////////
-//
-// match list
-//
-///////////////////////////////////////////////
+### match list
 
+```
 
 $(function($){
 	let method = "drive_2";
@@ -536,13 +532,14 @@ $(function($){
     $('body').append("<br>","done match")
   }
 })
+```
 
 
-///////////////////////////////////////////////
-//
-//	JavaScript's Lambda and Arrow Functions
-//
-///////////////////////////////////////////////
+
+
+###	JavaScript's Lambda and Arrow Functions
+
+```
 
 https://www.vinta.com.br/blog/2015/javascript-lambda-and-arrow-functions/
 https://medium.com/@chineketobenna/lambda-expressions-vs-anonymous-functions-in-javascript-3aa760c958ae
@@ -588,13 +585,13 @@ var doubles = numbers.map(function(num) {
 
 // doubles ist jetzt [2, 8, 18]
 // numbers ist immer noch [1, 4, 9]
+```
 
-###############################################
-#
-#	JavaScript's Lambda InArray  or use includes()
-#
-###############################################
 
+######
+###	JavaScript's Lambda InArray  or use includes()
+######
+```
 https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty
 https://repl.it/languages/nodejs
 https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Array/map
@@ -677,19 +674,17 @@ else{
   console.log(false)
 }
 
+```
 
 
 
 
-
-###############################################
-#
-#   HTML5 required attribute one of two fields
-#   https://codepen.io/anon/pen/LCpue?editors=100
-#   https://stackoverflow.com/questions/24403817/html5-required-attribute-one-of-two-fields
-#
-###############################################
-
+######
+###   HTML5 required attribute one of two fields
+####  https://codepen.io/anon/pen/LCpue?editors=100
+####   https://stackoverflow.com/questions/24403817/html5-required-attribute-one-of-two-fields
+######
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -715,15 +710,13 @@ function validateAndSend() {
 </script>
 </body>
 </html>
+```
 
-
-###############################################
-#
-#   Scroll to the top of the page using JavaScript? - Stack Overflow
-#   https://stackoverflow.com/questions/1144805/scroll-to-the-top-of-the-page-using-javascript
-#
-###############################################
-
+######
+###   Scroll to the top of the page using JavaScript? - Stack Overflow
+####   https://stackoverflow.com/questions/1144805/scroll-to-the-top-of-the-page-using-javascript
+######
+```
 <script>
     $(function($){
 		$('.dd-menu').delegate('a',"click",function () {
@@ -731,27 +724,25 @@ function validateAndSend() {
 		});
 	});
 </script>
+```
 
-
-#########################################################
-#
-#   UCFirst
-#
-#########################################################
-
+######
+###   UCFirst
+######
+```
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
+```
 
 
-#########################################################
-#
-#   Bootstrap grid examples
+###   Bootstrap grid examples
+
+```
 #   https://getbootstrap.com/examples/grid/
 #   http://getbootstrap.com/
 #   http://fontawesome.io/icon/sticky-note-o/
-#
-#########################################################
+
 
 jQuery’s .each() Syntax
 https://www.sitepoint.com/jquery-each-function-examples/
@@ -774,9 +765,11 @@ $.each(json, function () {
       console.log(name + '=' + value);
    });
 });
+```
 
-#########################################################
 
+### delegate
+```
 http://api.jquery.com/delegate/
 
 // jQuery 1.4.3+
@@ -800,11 +793,11 @@ $( "table" ).on( "click", "td", function() {
 $( "table" ).delegate( "td", "click", function() {
   $( this ).toggleClass( "chosen" );
 });
+```
 
 
-#########################################################
-
-Add row
+### #Add row
+```
 http://jsfiddle.net/ambiguous/LAECx/
 
 $("input.tr_clone_add").live('click', function() {
@@ -824,13 +817,13 @@ var $tableBody = $('#tbl').find("tbody"),
 
     $trLast.after($trNew);
 });
+```
 
-#########################################################
-#
-#   Math Random
-#
-#########################################################
 
+######
+###   Math Random
+######
+```
 /*
 http://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
 Math.random().toString(36).replace(/[^a-z]+/g, '')
@@ -864,13 +857,13 @@ Array(N+1).join((Math.random().toString(36)+'00000000000000000').slice(2, 18)).s
         $('.loader').css("display", "none");
     });
 </script>
+```
 
-#########################################################
-#
-#   copy To Clipboard javascript
-#
-#########################################################
 
+######
+###   copy To Clipboard javascript
+######
+```
 <button id="demo" onclick="copyToClipboard(document.getElementById('demo').innerHTML)">This is what I want to copy</button>
 
 <script>
@@ -882,14 +875,13 @@ Array(N+1).join((Math.random().toString(36)+'00000000000000000').slice(2, 18)).s
 https://davidwalsh.name/clipboard
 https://www.sitepoint.com/javascript-copy-to-clipboard/
 http://ourcodeworld.com/articles/read/143/how-to-copy-text-to-clipboard-with-javascript-easily
+```
 
 
-#########################################################
-#
-#   Analyze reflow Repaint Issues with Browser Tools
-#
-#########################################################
-
+######
+###   Analyze reflow Repaint Issues with Browser Tools
+######
+```
 https://benchmarkjs.com/
 https://github.com/bestiejs/benchmark.js
 
@@ -936,13 +928,13 @@ https://developers.google.com/speed/articles/reflow
 https://developers.google.com/web/tools/chrome-devtools/rendering-tools/
 http://blog.carbonfive.com/2013/10/27/the-javascript-event-loop-explained/
 https://www.sitepoint.com/10-ways-minimize-reflows-improve-performance/
+```
 
-#########################################################
-#
-#   Do action on resize
-#
-#########################################################
 
+######
+###   Do action on resize
+######
+```
 <script type="text/javascript">
 
     {*$('.somediv-content').resize(function () {*}
@@ -1001,31 +993,27 @@ $(document).ready(function () {
         $('body').find('.alert-danger').parent().slideUp("slow");
     },3500);
 </script>
+```
 
 
 
-
-#########################################################
-#
-#   Bootstrap Admin Widget collaps all
-#
-#########################################################
-
+######
+###   Bootstrap Admin Widget collaps all
+######
+```
 https://getbootstrap.com/docs/4.0/components/collapse/
 https://adminlte.io/docs/2.4/js-box-widget
 http://sitroom-bromotenggersemeru.org/master/template/Admin-ace-master/widgets.html
 http://acquacleanpiscinas.com.br/public/docs/#plugins/jquery
 
 $('.widget-box').addClass('collapsed');
+```
 
 
-
-######################################################
-#
-#	ACE Scrollbars Skins
-#
-######################################################
-
+######
+###	ACE Scrollbars Skins
+######
+```
 https://rpo.wrotapodlasia.pl/docs/sections/custom/scrollbar.html
 https://github.com/junlintianxiazhifulinzhongguo/new/blob/master/public/backups/plug/ace/docs/sections/custom/scrollbar.html
 https://github.com/unidal/cat2/blob/master/cat-home/src/main/webapp/assets/css/less/skins/skin-1.less
@@ -1113,13 +1101,13 @@ jQuery(function($) {
 		maxWidth: 600
 	});
 })
+```
 
-######################################################
-#
-#	Browser detection using the user agent
-#
-######################################################
 
+######
+###	Browser detection using the user agent
+######
+```
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
 https://stackoverflow.com/questions/4565112/javascript-how-to-find-out-if-the-user-browser-is-chrome
 
@@ -1129,13 +1117,13 @@ https://www.quirksmode.org/js/detect.html
 
 if (navigator.userAgent.indexOf("Chrome") !== -1){ }
 var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+```
 
-######################################################
-#
-#	Browser detection using css
-#
-######################################################
 
+######
+###	Browser detection using css
+######
+```
 https://www.shift8web.ca/2014/11/detect-browser-device-assign-custom-css-wordpress/
 https://stackoverflow.com/questions/5621749/how-do-i-detect-the-user-s-browser-and-apply-a-specific-css-file
 
@@ -1154,18 +1142,16 @@ https://stackoverflow.com/questions/5621749/how-do-i-detect-the-user-s-browser-a
 @support(transform: ...){
     ...
 }
+```
 
 
 
 
 
-
-######################################################
-#
-#	jQuery.each - Getting li elements inside an ul
-#
-######################################################
-
+######
+###	jQuery.each - Getting li elements inside an ul
+######
+```
 https://stackoverflow.com/questions/6017309/jquery-each-getting-li-elements-inside-an-ul
 https://stackoverflow.com/questions/24319899/jquery-search-box-to-search-link-from-side-verticle-menu
 https://api.jquery.com/each/
@@ -1240,16 +1226,14 @@ $(function($) {
 
 
 </script>
+```
 
 
 
-
-######################################################
-#
-#	How to disable and then enable onclick event on <div> with javascript [closed]
-#
-######################################################
-
+######
+###	How to disable and then enable onclick event on <div> with javascript [closed]
+######
+```
 https://stackoverflow.com/questions/18982642/how-to-disable-and-then-enable-onclick-event-on-div-with-javascript/18983026
 https://css-tricks.com/forums/topic/add-a-click-event-and-disable-the-click-event-after-the-click/
 https://www.codexworld.com/how-to/disable-click-event-jquery/
@@ -1307,15 +1291,13 @@ setTimeout(function(){
 
 
 },1600);
+```
 
 
-
-######################################################
-#
-#	Basic Plugin Authoring
-#
-######################################################
-
+######
+###	Basic Plugin Authoring
+######
+```
 https://api.jquery.com/jQuery/
 https://api.jquery.com/
 https://learn.jquery.com/plugins/basic-plugin-creation/
@@ -1333,12 +1315,14 @@ $( "a" ).greenify(); // Makes all the links green.
         return this;
     };
 }( jQuery ));
+```
 
-######################################################
-#
-#   Unable to preventDefault inside passive event listener invocation.
-#
-######################################################
 
+######
+###   Unable to preventDefault inside passive event listener invocation.
+######
+```
 https://github.com/Tolc/jquery.nicescroll
 https://stackoverflow.com/questions/60031642/how-to-add-parameters-to-a-window-event-mouse-wheel-in-svelte
+```
+
