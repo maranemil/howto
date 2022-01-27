@@ -1,10 +1,8 @@
 
-#######################################################################################
-#
-#   Add JS Event Listener
-#
-#######################################################################################
-
+######
+###   Add JS Event Listener
+######
+```
 https://stackoverflow.com/questions/9899372/pure-javascript-equivalent-of-jquerys-ready-how-to-call-a-function-when-t
 https://stackoverflow.com/questions/2937227/what-does-function-jquery-mean
 https://stackoverflow.com/questions/10611170/how-to-set-value-of-input-text-using-jquery
@@ -49,7 +47,7 @@ r(function(){
 (function ($) { console.log($) })(jQuery);
 
 
-document.onreadystatechange = function () {}​;
+document.onreadystatechange = function () {}
 
 document.addEventListener("DOMContentLoaded", function(event) {
     // Your code to run since DOM is loaded and ready
@@ -72,6 +70,7 @@ jQuery.fn.extend({
   }
 });
 
+```
 
 
 
@@ -81,14 +80,11 @@ jQuery.fn.extend({
 
 
 
-
-#######################################################################################
-#
-#   Wildcards in jQuery find selectors
-#   https://api.jquery.com/find/
-#
-#######################################################################################
-
+######
+###   Wildcards in jQuery find selectors
+####   https://api.jquery.com/find/
+######
+```
 $('body').find("[class^=message]").text()
 $('body').find("[class^=message]").text().match(/<a(.+)<\/a>/g);
 
@@ -102,15 +98,14 @@ $("[id$=jander]")
 
 Jquery extract text with regular expression on complete visible text of web page
 var text = $('body').text().match(/\d{3}/g);
+```
 
 
-#######################################################################################
-#
-#   iFrame inside Bootstrap 3 modal A PEN BY Filippo Quacquarelli
-#   https://codepen.io/filippoq/pen/QwogWz
-#
-#######################################################################################
-
+######
+###   iFrame inside Bootstrap 3 modal A PEN BY Filippo Quacquarelli
+####   https://codepen.io/filippoq/pen/QwogWz
+######
+```
 <!-- html modal iframe -->
 <button type="button" class="bmd-modalButton" data-toggle="modal" data-bmdSrc="https://www.youtube.com/embed/cMNPPgB0_mU" data-bmdWidth="640" data-bmdHeight="480" data-target="#myModal"  data-bmdVideoFullscreen="true">Youtube</button>
 <footer>
@@ -179,14 +174,14 @@ jQuery(document).ready(function(){
 });
 
 </script>
+```
 
 
-#######################################################################################
-#
-#   Detect if browser page was zoomed
-#
-#######################################################################################
 
+######
+###   Detect if browser page was zoomed
+######
+```
 window.devicePixelRatio
 Math.round(window.devicePixelRatio * 100) # results 100, 110, etc
 
@@ -200,17 +195,16 @@ screen.availHeight
 window.innerWidth
 window.outerWidth
 $(window).width()
+```
 
 
-#######################################################################################
-#
-#	How do I store an array in localStorage? [duplicate]
-#	https://stackoverflow.com/questions/3357553/how-do-i-store-an-array-in-localstorage
-#	https://developer.mozilla.org/en-US/docs/Web/API/Storage/LocalStorage
-#	https://developer.mozilla.org/de/docs/Web/API/Window/localStorage
-#
-#######################################################################################
-
+######
+###	How do I store an array in localStorage? [duplicate]
+####	https://stackoverflow.com/questions/3357553/how-do-i-store-an-array-in-localstorage
+####	https://developer.mozilla.org/en-US/docs/Web/API/Storage/LocalStorage
+####	https://developer.mozilla.org/de/docs/Web/API/Window/localStorage
+######
+```
 localStorage only supports strings. Use JSON.stringify() and JSON.parse().
 
 var names = [];
@@ -219,14 +213,14 @@ localStorage.setItem("names", JSON.stringify(names));
 
 //...
 var storedNames = JSON.parse(localStorage.getItem("names"));
+```
 
-#######################################################################################
-#
-#	Looping through localStorage in HTML5 and JavaScript
-#	https://stackoverflow.com/questions/3138564/looping-through-localstorage-in-html5-and-javascript
-#
-#######################################################################################
 
+######
+###	Looping through localStorage in HTML5 and JavaScript
+####	https://stackoverflow.com/questions/3138564/looping-through-localstorage-in-html5-and-javascript
+######
+```
 for (var i = 0; i < localStorage.length; i++){
 	if(  localStorage.key(i).indexOf("somestring") > -1   ){
     	$('body').append(localStorage.getItem(localStorage.key(i)));
@@ -253,51 +247,59 @@ Object.keys(localStorage).forEach(function(key){
 
 
 localStorage.setItem('items_'+new Date().getTime(),JSON.stringify({ name : file.name, name_upload : file.uploadName }));
+```
 
 
-##############################################################
-Merge to array
-##############################################################
+
+######
+### Merge to array
+######
+```
 var arrayA = [1, 2];
 var arrayB = [3, 4];
 var newArray = arrayA.concat(arrayB);
+```
 
 
-##############################################################
-join vals into string
-##############################################################
+######
+### join vals into string
+######
+```
 $("#user_id").val(terms.join(','));
+```
 
 
-##############################################################
-Remove element
-##############################################################
+######
+### Remove element
+######
+```
 $( ".hello" ).remove();
+```
 
-##############################################################
-selectors
-##############################################################
+
+######
+### selectors
+######
+```
 $( selector ).live( events, data, handler );                // jQuery 1.3+
 $( document ).delegate( selector, events, data, handler );  // jQuery 1.4.3+
 $( document ).on( events, selector, data, handler );        // jQuery 1.7+
+```
 
-
-#######################################################################################
-add attribute
-#######################################################################################
+######
+### add attribute
+######
+```
 $(element).attr('id', 'newID');
+```
 
 
 
+######
+###   jQuery-File-Upload check file size
+######
 
-
-
-
-#######################################################################################
-#
-#   jQuery-File-Upload check file size
-#
-#######################################################################################
+```
 https://github.com/blueimp/jQuery-File-Upload
 https://github.com/blueimp/jQuery-File-Upload/wiki/Setup
 https://github.com/blueimp/jQuery-File-Upload/wiki/Basic-plugin
@@ -344,19 +346,17 @@ $(document).ready(function () {
         }
     });
 });
+```
 
 
 
 
 
-
-#######################################################################################
-#
-#   Keep overflow div scrolled to bottom unless user scrolls up
-#   https://stackoverflow.com/questions/18614301/keep-overflow-div-scrolled-to-bottom-unless-user-scrolls-up
-#
-#######################################################################################
-
+######
+###   Keep overflow div scrolled to bottom unless user scrolls up
+####   https://stackoverflow.com/questions/18614301/keep-overflow-div-scrolled-to-bottom-unless-user-scrolls-up
+######
+```
 setTimeout(function() {
     var element = document.getElementById("admin_ticket_layer_panel_edit_history");
     element.scrollTop = element.clientHeight + 50; // scroll to bottom
@@ -407,17 +407,15 @@ var containerHeight = container.clientHeight;
 var contentHeight = container.scrollHeight;
 
 container.scrollTop = contentHeight - containerHeight;
+```
 
 
 
 
-
-#######################################################################################
-#
-# Init datepicker calendar
-#
-#######################################################################################
-
+######
+### Init date-picker calendar
+######
+```
 $(function () {
 
     $('.someclass').datepicker({
@@ -458,19 +456,14 @@ http://jsfiddle.net/nEGTv/3/
         });
     });
 </script>
+```
 
 
-
-
-
-
-##############################################
-#
-#   javascript base64 decode image (php rules)
-#   https://jsfiddle.net/
-#
-##############################################
-
+######
+###   javascript base64 decode image (php rules)
+####   https://jsfiddle.net/
+######
+```
 <script>
 	var image = new Image();
 	var base64code = 'iVBORw0KGgoAAAANSUhEUgAAABwAAAASCAMAAAB/2U7WAAAABlBMVEUAAAD///+l2Z/dAAAASUlEQVR4XqWQUQoAIAxC2/0vXZDrEX4IJTRkb7lobNUStXsB0jIXIAMSsQnWlsV+wULF4Avk9fLq2r8a5HSE35Q3eO2XP1A1wQkZSgETvDtKdQAAAABJRU5ErkJggg==';
@@ -518,13 +511,13 @@ http://jsfiddle.net/nEGTv/3/
 	*/
 
 </script>
+```
 
-##############################################
-#
-# 	image placer
-#
-##############################################
 
+######
+### 	image placer
+######
+```
 https://css-tricks.com/snippets/html/base64-encode-of-1x1px-transparent-gif/
 https://onlinepngtools.com/convert-png-to-base64
 https://onlinepngtools.com/convert-data-uri-to-png
@@ -573,25 +566,24 @@ Source image:<br/>
 
     ctx.putImageData(imgd, x, y);
 }
+```
 
-################################################
-#
-#  PNG SVG Conversion
-#
-################################################
 
+######
+###  PNG SVG Conversion
+######
+```
 convert 'Desktop/convert/06.jpg' -resize 50x50 'Desktop/convert/06a.jpg'"
 convert source.svg -density 1200 -resize 200x200  target.png
 
 # echo ''<img src="data:image/png;base64,' . base64_encode(file_get_contents($tmpFile)) . '" width="150" />'
+```
 
 
-#######################################################################################
-#
-#   Countdown with refresh
-#
-#######################################################################################
-
+######
+###   Countdown with refresh
+######
+```
 
 <script>
 function timedRefresh(timeoutPeriod) {
@@ -618,20 +610,13 @@ timedRefresh(7);
 </script>
 
 <div id="countdown">0</div>
+```
 
 
 
 
-
-
-
-
-
-
-
-#########################################################################################
-
-jQuery Event : Detect changes to the html/text of a div
+### jQuery Event : Detect changes to the html/text of a div
+```
 Added synchronous DOM mutation listener to a 'DOMSubtreeModified' event. Consider using MutationObserver to make the page more responsive.
 http://jsfiddle.net/nnbqye55/7/
 http://help.dottoro.com/ljrmcldi.php
@@ -645,8 +630,8 @@ https://gabrieleromanato.name/jquery-detecting-new-elements-with-the-mutationobs
 https://github.com/eskat0n/mutabor
 https://github.com/joelpurra/jquery-mutation-summary
 https://davidwalsh.name/mutationobserver-api
-
-#########################################################################################
+```
+```
 
 
 var observer = new MutationObserver(function(mutations) {
@@ -720,10 +705,16 @@ $('.content').each(function() {
     var sel = this;
 	new MutationObserver(adjustHeight.bind(null, sel)).observe( sel, { childList: true, subtree: true } );
 });
+```
 
 
-#########################################################################################
-[Violation] Added non-passive event listener to a scroll-blocking 'mousewheel' event. Consider marking event handler as 'passive' to make the page more responsive. See https://www.chromestatus.com/feature/5745543795965952
+
+
+######
+### [Violation] Added non-passive event listener to a scroll-blocking 'mousewheel' event. 
+#### Consider marking event handler as 'passive' to make the page more responsive. 
+#### See https://www.chromestatus.com/feature/5745543795965952
+```
 Added non-passive event listener to a scroll-blocking 'touchstart' event. Consider marking event handler as 'passive' to make the page more responsive.
 https://github.com/angular/material2/issues/4221
 https://github.com/zzarcon/default-passive-events
@@ -731,8 +722,8 @@ https://github.com/zzarcon/default-passive-events
 https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
 https://medium.com/@devlucky/about-passive-event-listeners-224ff620e68c
 
-#########################################################################################
-
+```
+```
 jQuery.event.special.touchstart = {
     setup: function (_, ns, handle) {
         if (ns.includes("noPreventDefault")) {
@@ -789,16 +780,15 @@ if (!special.setup || special.setup.call(elem, data, namespaces, eventHandle) ==
         elem.addEventListener(type, eventHandle, supportsPassive ? {passive: true} : false);
     }
 }
+```
 
 
 
-#########################################################################################
-#
-#   switch button off on
-#
-#########################################################################################
+######
+###   switch button off on
+######
 
-
+```
 <div class="col-xs-3">
 	<label>
 		<input name="switch-field-1" class="ace ace-switch" type="checkbox">
@@ -859,7 +849,7 @@ if (!special.setup || special.setup.call(elem, data, namespaces, eventHandle) ==
         }
     });
 </script>
-
+```
 
 
 

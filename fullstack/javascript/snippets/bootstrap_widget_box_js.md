@@ -1,7 +1,7 @@
-#########################################################################################
+######
 
-Widget Box bootstrap - how to
-
+### Widget Box bootstrap - how to
+```
 https://rpo.wrotapodlasia.pl/docs/sections/custom/widget-box.html
 http://git.test.topschool.net.cn:8080/summary/OpenSource%2Face.git
 https://gitlab.tpu.ru/oic/yii2-tpuapptemplate/tree/66af8d3b65584a5a1157057342d674dc24dfadc3/backend/themes/ace
@@ -14,12 +14,12 @@ http://www.alguaciles.cl/bootstrap/ace-theme/docs/#examples
 http://www.alguaciles.cl/bootstrap/ace-theme/docs/#examples
 https://rpo.wrotapodlasia.pl/docs/sections/custom/widget-box.html
 https://gitlab.noblet.ca/nobletsolutions/ace-bundle
-
-#########################################################################################
+```
+######
 
 ---------------------------
-Functions & Events
----------------------------
+### Functions & Events
+```
 The following functions are available for widgets:
 
   close
@@ -38,20 +38,22 @@ The following functions are available for widgets:
 
 
 The following events are triggered when using widgets:
+```
 
 ---------------------------
-Before Events:
----------------------------
+### Before Events:
+```
 show.ace.widget triggered before a widget box is shown
 hide.ace.widget triggered before a widget box is hidden
 close.ace.widget triggered before a widget box is closed
 reload.ace.widget triggered before a widget box is reloaded
 fullscreen.ace.widget triggered before a widget box is fullscreen
 setting.ace.widget triggered before a widget box is fullscreen
+```
 
 ---------------------------
-After Events:
----------------------------
+### After Events:
+```
 shown.ace.widget triggered after a widget box is shown
 hidden.ace.widget triggered after a widget box is hidden
 closed.ace.widget triggered after a widget box is closed
@@ -91,14 +93,14 @@ You can use it to be notified when "settings" button is clicked and show a dialo
    //launch a modal (settings box) or other appropriate action
  });
 
-
+```
 
 
 
 
 ---------------------------
-Cookies & localStorage
- ---------------------------
+### Cookies & localStorage
+ ```
 
 Cookie and localStorage functionality has been added to save/load variables and settings.
 
@@ -134,9 +136,9 @@ ace.data.get('username');
 //remove
 ace.data.remove('settings', 'sidebar-collapsed');
 ace.data.remove('username');
+```
 
-
-
+```
 
 
 <script>
@@ -196,8 +198,8 @@ ace.data.remove('username');
     });
 
 </script>
-
-
+```
+```
 <script>
 
     jQuery(function($) {
@@ -252,5 +254,5 @@ ace.data.remove('username');
     });
 
 </script>
-
+```
 

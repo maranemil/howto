@@ -1,13 +1,10 @@
-#####################################################
-#
-#	Javascript Promises Angular / React
-#
-#####################################################
+######
+##	Javascript Promises Angular / React
+######
 
+### Javascript Classic Try Get specific number https://jsfiddle.net/
+```
 
-----------------------------------------------------
-# Javascript Classic Try Get specific number https://jsfiddle.net/
-----------------------------------------------------
 console.clear();
 /*
 async function evenNumber() {
@@ -40,9 +37,12 @@ async function checkNumber() {
 	});
 }
 checkNumber();
+```
+
 ----------------------------------------------------
-// Angular js
-----------------------------------------------------
+### Angular js
+
+```
 let wrappingPromise = new Promise((resolve, reject) => {
   var error = false;
   setTimeout(function(){
@@ -54,10 +54,13 @@ let wrappingPromise = new Promise((resolve, reject) => {
     }
   });
 });
+```
 
-----------------------------------------------------
-# Javascript Classic
-----------------------------------------------------
+
+
+### Javascript Classic
+
+```
 const durations = [1000, 2000, 3000]
 promises = durations.map((duration) => {
   return timeOut(duration).catch(e => e) // Handling the error for each promise.
@@ -65,10 +68,12 @@ promises = durations.map((duration) => {
 Promise.all(promises)
   .then(response => console.log(response)) // ["Completed in 1000", "Rejected in 2000", "Completed in 3000"]
   .catch(error => console.log(`Error in executing ${error}`))
+```
 
-----------------------------------------------------
-js react
-----------------------------------------------------
+
+
+### js react
+```
 function getCurrentTime() {
   // Get the current 'global' time from an API using Promise
   return new Promise((resolve, reject) => {
@@ -85,10 +90,12 @@ getCurrentTime()
     return true;
   })
   .catch(err => console.log('There was an error:' + err))
+```
 
-----------------------------------------------------
-// Async function to send mail to a list of users.
-----------------------------------------------------
+
+
+### Async function to send mail to a list of users.
+```
 const sendMailForUsers = async (users) => {
   const usersLength = users.length;
   for (let i = 0; i < usersLength; i += 100) {
@@ -104,13 +111,12 @@ const sendMailForUsers = async (users) => {
   }
 }
 sendMailForUsers(userLists)
+```
 
 
-######################################################
-#
-#   setTimeout alternatives - await promises
-#
-######################################################
+######
+###   setTimeout alternatives - await promises
+```
 
 /*
 https://www.sitepoint.com/jquery-settimeout-function-examples/
@@ -276,14 +282,14 @@ const checkIfDone = () => {
       console.error(error)
     })
 }
+```
 
 
 
-
-######################################################
-Interval Promise NodeJS
-######################################################
-
+######
+### Interval Promise NodeJS
+######
+```
 /*
 https://medium.com/@kornatzky/how-to-integrate-intervals-into-a-promises-chain-in-node-js-9cfe9b19ace7
 https://blog.atomist.com/javascript-timer-settimeout/
@@ -370,10 +376,10 @@ taskResolution(args, period)
     .then((data) => {})
     .catch((error) => {});
 
+```
 
 
-
-----------------------------------------------------
+```
 https://github.com/sindresorhus/p-limit
 https://blog.bitsrc.io/understanding-javascript-async-and-await-with-examples-a010b03926ea
 https://medium.com/hackernoon/async-await-essentials-for-production-loops-control-flows-limits-23eb40f171bd
@@ -396,12 +402,12 @@ var e = document.querySelector('#a')
     a.innerHTML = 'waiting..'
     waitForHello(2000)
   })()
+```
 
-
-Promise.race
+### Promise.race
 https://italonascimento.github.io/applying-a-timeout-to-your-promises/
 
-
+```
 // Will resolve after 200ms
 let promiseA = new Promise((resolve, reject) => {
   let wait = setTimeout(() => {
@@ -425,9 +431,10 @@ let race = Promise.race([
 ])
 
 race.then((res) => console.log(res)) // -> Promise A win!
+```
 
-
-----------------------------------------------------
+### async
+```
 https://blog.pusher.com/promises-async-await/
 ----------------------------------------------------
 function getAPIData(url) {
@@ -443,7 +450,8 @@ function getAPIData(url) {
         });
         //   the chain continues with more .then() handlers
     }
-
+```
+```
 ----------------------------------------------------
 https://getstream.io/blog/javascript-promises-and-why-async-await-wins-the-battle/
 https://gist.github.com/nparsons08/8698238fe689329cab7d67841681cbf5#file-validate-password-js
@@ -487,3 +495,4 @@ validatePassword(password)
 		// an error occurred, call the done function and pass the err message
 		done(err);
 	});
+```

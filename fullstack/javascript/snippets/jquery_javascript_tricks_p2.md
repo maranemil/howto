@@ -1,10 +1,7 @@
 
-///////////////////////////////////////////////
-//
-// refresh page on modal window close
-//
-///////////////////////////////////////////////
 
+### refresh page on modal window close
+```
 $( document ).delegate('.modal-dialog button.close',"click",function(){
 	location.replace(location.href)
 	// https://datatables.net/reference/api/draw()
@@ -13,14 +10,11 @@ $( document ).delegate('.modal-dialog button.close',"click",function(){
 	// var table = $('#dataTableAdminTickets_').DataTable();
 	// table.clear();
 });
+```
 
 
-///////////////////////////////////////////////
-//
-// display confirmation on submit
-//
-///////////////////////////////////////////////
-
+### display confirmation on submit
+```
 <form onsubmit="return confirm('Do you really want to submit the form?');">
 <script>
 function validate(form) {
@@ -34,26 +28,22 @@ function validate(form) {
     }}
 </script>
 <form onsubmit="return validate(this);">
+```
 
 
-///////////////////////////////////////////////
-//
-//  For checkbox status Use jQuery's is() function:
-//
-///////////////////////////////////////////////
-
+###  For checkbox status Use jQuery's is() function:
+```
 if($("#isAgeSelected").is(':checked'))
     $("#txtAge").show();  // checked
 else
     $("#txtAge").hide();  // unchecked
+```
 
 
-///////////////////////////////////////////////
-//
-//  The attributes property contains them all:
-//
-///////////////////////////////////////////////
+### The attributes property contains them all:
 
+
+```
 $(this).each(function() {
   $.each(this.attributes, function() {
     // this.attributes is not a plain object, but an array
@@ -63,26 +53,22 @@ $(this).each(function() {
     }
   });
 });
+```
 
 
-///////////////////////////////////////////////
-//
-// isInteger
-//
-///////////////////////////////////////////////
 
+### isInteger
+```
 Number.isInteger()
 if (Number.isInteger(y / x)) {
     return true
 }
+```
 
 
-///////////////////////////////////////////////
-//
-// outerHTML
-//
-///////////////////////////////////////////////
 
+### outerHTML
+```
 https://developer.mozilla.org/en-US/docs/Web/API/Element/outerHTML
 https://developer.mozilla.org/en-US/docs/Web/API/Element/outerHTML
 
@@ -93,30 +79,24 @@ $("#selectorid").prop("outerHTML")
 
 d = document.getElementById("d");
 console.log(d.outerHTML);
+```
 
 
-///////////////////////////////////////////////
-//
-// Console colors
-//
-///////////////////////////////////////////////
 
+### Console colors
+```
 https://developer.mozilla.org/de/docs/Web/API/Console
 console.log("This is %cMy stylish message", "font-style: italic; background-color: blue;padding: 2px");
 console.time("answer time");
 console.log("This is %cMy stylish message", "color: white;  background-color: red; padding: 3px");
+```
 
 
 
 
-
-///////////////////////////////////////////////
-//
-// Using keyboard shortcuts in Javascript
-// Overriding Browser's Keyboard Shortcuts
-//
-///////////////////////////////////////////////
-
+### Using keyboard shortcuts in Javascript
+#### Overriding Browser's Keyboard Shortcuts
+```
 https://www.catswhocode.com/blog/using-keyboard-shortcuts-in-javascript
 https://stackoverflow.com/questions/3680919/overriding-browsers-keyboard-shortcuts
 https://unixpapa.com/js/key.html
@@ -341,22 +321,11 @@ document.addEventListener('keyup', (event) => {
 <body>
 </body>
 </html>
+```
 
 
-
-
-
-
-
-
-
-///////////////////////////////////////////////
-//
-//  Two submit buttons in one form
-//
-///////////////////////////////////////////////
-
-
+###  Two submit buttons in one form
+```
 https://stackoverflow.com/questions/547821/two-submit-buttons-in-one-form
 https://stackoverflow.com/questions/1960240/jquery-ajax-submit-form
 https://css-tricks.com/separate-form-submit-buttons-go-different-urls/
@@ -452,14 +421,12 @@ $("#idForm").submit(function(e) {
 
 
 });
+```
 
 
-///////////////////////////////////////////////
-//
-//  currently running function in JavaScript?
-//
-///////////////////////////////////////////////
 
+### currently running function in JavaScript?
+```
 function foo()
 {
     alert(arguments.callee.name)
@@ -473,28 +440,30 @@ function DisplayMyName()
 
    alert(myName);
 }
-
+```
 
 ///////////////////////////////////////////////
 //
 // console lowercase
 //
 ///////////////////////////////////////////////
-
+```
 javascript:String('STRING TO LOWERCASE').toLowerCase()
+```
 
 ///////////////////////////////////////////////
 //
 // change css in iframe
 //
 ///////////////////////////////////////////////
-
+```
 <iframe src="somepage.html" onload="call_func"></iframe>
 <script>
 setTimeout(function(){
 	$('iframe').contents().find("head") .append($("<style type='text/css'>  body{ font-size:11px;} </style>"));
 },2000);
 </script>
+```
 
 
 
@@ -502,10 +471,9 @@ setTimeout(function(){
 
 
 
+###  click event problem with nestable jquery plugin
+```
 
-#############################################################
-/*
-click event problem with nestable jquery plugin
 Stop Drag-Ereignis beim Klicken auf einen Link
 
 FIX: add dd-nodrag in a href
@@ -542,9 +510,9 @@ https://stackoverflow.com/questions/29063244/consistent-styling-for-nested-lists
 	animation-fill-mode: none;
 }
 
-*/
-############################################################
-
+```
+######
+```
 <script>
 
 jQuery(function ($) {
@@ -602,30 +570,27 @@ jQuery(function ($) {
         </li>
     </ol>
 </div>
+```
 
 
 
 
-//------------------
-// How to collapse the jquery nestable tree by default
-// -----------------
+### How to collapse the jquery nestable tree by default
+```
 $(selector).nestable('collapseAll');
 $('#nestable').nestable({});
 $('#nestable').nestable('collapseAll');
+```
 
 
 
 
 
-/*
-##################################################################
-#
-#	Nestable
-#	Drag & drop hierarchical list with mouse and touch compatibility (jQuery plugin)
-#
-##################################################################
-*/
-/*
+######
+###	Nestable
+####	Drag & drop hierarchical list with mouse and touch compatibility (jQuery plugin)
+######
+```
 https://github.com/dbushell/Nestable
 https://dbushell.com/Nestable/
 
@@ -715,26 +680,15 @@ https://johnny.github.io/jquery-sortable/
 
 
 </script>
+```
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-############################################################
-
-Search in page with javascript
-
+######
+### Search in page with javascript
+```
 https://developer.mozilla.org/en-US/docs/Web/API/Window/find
 https://osvaldas.info/real-time-search-in-javascript
 https://osvaldas.info/examples/real-time-search-in-javascript/
@@ -742,10 +696,10 @@ https://github.com/riklomas/quicksearch
 http://jsfiddle.net/ZLhAd/369/
 https://blog.codecentric.de/en/2013/11/javascript-search-text-html-page/
 https://developer.mozilla.org/de/docs/Web/API/Element/innerHTML
+```
 
-
-############################################################
-
+######
+```
 <input type="search" id="quicksearch" value="" placeholder="Type some keywords" />
 
 <script>
@@ -766,30 +720,26 @@ https://developer.mozilla.org/de/docs/Web/API/Element/innerHTML
         });
     });
 </script>
+```
 
 
-
-########################################################################
-
-Jquery add / remove multiple attribute on select
-https://stackoverflow.com/questions/5881626/jquery-add-remove-multiple-attribute-on-select
-https://www.w3schools.com/jquery/html_attr.asp
-
-########################################################################
-
+######
+### Jquery add / remove multiple attribute on select
+#### https://stackoverflow.com/questions/5881626/jquery-add-remove-multiple-attribute-on-select
+#### https://www.w3schools.com/jquery/html_attr.asp
+######
+```
 $("#theCheckbox").change(function() {
     $("#theSelect").attr("multiple", (this.checked) ? "multiple" : "");
 }).change();
+```
 
 
 
-
-##################################################################
-#
-#	How to change date format (MM/DD/YY) to (YYYY-MM-DD) in date picker
-#
-##################################################################
-
+######
+###	How to change date format (MM/DD/YY) to (YYYY-MM-DD) in date picker
+######
+```
 <input type=text  data-date-format="dd-mm-yyyy" />
 
 http://api.jqueryui.com/datepicker/#utility-formatDate
@@ -843,17 +793,15 @@ $('#dob').datepicker().on('changeDate', function (ev) {
 $('yourpickerid').on('changeDate', function(ev){
     $(this).datepicker('hide');
 });
+```
 
 
 
 
-
-#################################################################
-#
-#	how to disable drag and drop in Jquery Nestable List
-#
-#################################################################
-
+######
+###	how to disable drag and drop in Jquery Nestable List
+######
+```
 <style>
 	.drag_disabled{
 	    pointer-events: none;
@@ -888,14 +836,12 @@ $('yourpickerid').on('changeDate', function(ev){
 	    $('#list').toggleClass('drag_disabled drag_enabled');
 	});
 </script>
+```
 
-
-#################################################################
-#
-#	How to open a modal in javascript instead of manual click? [duplicate]
-#
-#################################################################
-
+######
+###	How to open a modal in javascript instead of manual click? [duplicate]
+######
+```
 <script>
 	$('#nestable2 li').nestable({ }).on('change', function(e) {
 	    var strURL = $(this).find("a").eq(1).attr("href");
@@ -904,18 +850,15 @@ $('yourpickerid').on('changeDate', function(ev){
 	    }
 	});
 </script>
+```
 
 
-
-##################################################
-#
-#	FIX replacement for href="javascript:void(0);"
-#
-#	jquery.min.js:4 XMLHttpRequest cannot load javascript:void(0);.
-#	Cross origin requests are only supported for protocol schemes: http, data, chrome, chrome-extension, https, chrome-extension-resource.
-#
-##################################################
-
+######
+###	FIX replacement for href="javascript:void(0);"
+####	jquery.min.js:4 XMLHttpRequest cannot load javascript:void(0);.
+####	Cross-origin requests are only supported for protocol schemes: http, data, chrome, chrome-extension, https, chrome-extension-resource.
+######
+```
 <button id="btnModal" type="reset" href="javascript:function(){ return false; }" class="btn btn-primary btn-xs">Open </button>
 
 <script type="text/javascript">
@@ -928,23 +871,20 @@ $('yourpickerid').on('changeDate', function(ev){
         });
     });
 </script>
+```
 
 
 
 
 
-/*
-##############################################
-
-datepicker start monday
-jQuery 1.7.2 + UI
+### datepicker start monday jQuery 1.7.2 + UI
 
 https://jsfiddle.net/boilerplate/jquery
+
 http://fiddlesalad.com/javascript/
 
-##############################################
-*/
 
+```
 Shown Field : <input id="thedate" type="text" /><br />
 Hidden Field : <input id="thealtdate" type="text" /><br />
 <input id="thesubmit" type="button" value="Submit" />
@@ -965,14 +905,12 @@ $(function(){
 
 });
 </script>
+```
 
-
-#################################################
-
-set minDate/maxDate to now
-
-#################################################
-
+######
+### set minDate/maxDate to now
+######
+```
 https://github.com/Eonasdan/bootstrap-datetimepicker
 https://eonasdan.github.io/bootstrap-datetimepicker/Functions/#show
 https://bootstrap-datepicker.readthedocs.io/en/latest/options.html#startdate
@@ -988,28 +926,32 @@ jQuery('#start_date').datetimepicker({ language: 'fr', minDate: new Date(), form
 jQuery('#end_date').datetimepicker({ language: 'fr', minDate: new Date(), format: "YYYY-MM-DD", pickTime: false });
 jQuery("#start_date").on("dp.change", function (e) { jQuery('#end_date').data("DateTimePicker").setMinDate(e.date); });
 jQuery("#end_date").on("dp.change", function (e) { jQuery('#start_date').data("DateTimePicker").setMaxDate(e.date); });
+```
 
 
 
-
-#################################################
-Get selected text from a drop-down list (select box) using jQuery
-#################################################
+######
+### Get selected text from a drop-down list (select box) using jQuery
+######
+```
 $("#yourdropdownid option:selected").text();
+```
 
-
-#################################################
-preg_match in JavaScript
-#################################################
+######
+### preg_match in JavaScript
+######
+```
 var matches = text.match(/price\[(\d+)\]\[(\d+)\]/);
+```
 
-
-#################################################
-remove select option
-#################################################
+######
+### remove select option
+######
+```
 $(".ct option[value='X']").each(function() {
     $(this).remove();
 });
 Or to be more terse, this will work just as well:
 
 $(".ct option[value='X']").remove();
+```
