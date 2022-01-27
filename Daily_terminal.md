@@ -259,10 +259,7 @@ change date |touch -d "2 hours ago" filename
 * sudo find / -type f -name '*.log' -size +20M
 * sudo truncate -s0 error_log
 
-### markup reference
 
-* https://guides.github.com/features/mastering-markdown/
-* https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#youtube-videos
 
 ### DNS Settings Google and Cloudflare
 

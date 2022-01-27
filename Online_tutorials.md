@@ -41,7 +41,6 @@
 * https://www.coursera.org/lecture/machine-learning-sas/early-stopping-6D2RK#Maschinelles Lernen mittels Sas Viya
 * https://codelabs.developers.google.com/codelabs/tensorflow-lab3-convolutions/#3
 * https://help.github.com/en/github/writing-on-github/organizing-information-with-tables
-* https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
 * https://addyosmani.com/resources/essentialjsdesignpatterns/book/ - Learning JavaScript Design Patterns
 * http://sd.blackball.lv/library/Learning_JavaScript_Design_Patterns_(2012).pdf - Learning JavaScript Design Patterns
 
