@@ -1,16 +1,19 @@
-### [Daily CMDs] 
+## [Daily CMDs] 
 
-#### [Misc]
+### [Misc]
 
-##### Config Git on new location
+#### Config Git on new location
 - [x] git config --global user.name "Administrator"
 - [x] git config --global user.email "admin@example.com"
 - [ ] ...
 
-##### Check repo file Sizes
+#### Check repo file Sizes
+```
 * find . -name '*' -size +1M -exec ls -lh {} \; | awk '{ print $9 ": " $5 }'
+```
 
-##### rename
+#### rename
+```
 * // rename incremental 000 - 999
 * num=0; for i in *; do mv "$i" "$(printf '%04d' $num).${i#*.}"; ((num++)); done
 
@@ -19,38 +22,52 @@
 
 * // rename random 000 - 999
 * for i in *; do mv "$i" $(($RANDOM % 1000000000)).${i#*.}; done
+```
 
-##### Umount force
+#### Umount force
+```
 sudo service nfs-kernel-server stop
 sudo umount -f ~/path
 sudo umount -l -f ~/path
+```
 
-##### Check pack
+#### Check pack
+```
 * git verify-pack -v ./.git/objects/pack/pack-......ea.pack
+```
 
-##### Surf web
+#### Surf web
+```
 * lynx t3n.de -accept_all_cookies  -justify
+```
 
-##### List 
+#### List 
+```
 > list first 30 folders
 * ll -t | head -30 
 > list all folders from last 24 hours
 * find folder/ -maxdepth 2 -type f -name "*.json" -mtime -1 -exec grep -i 'string' {} \; 
-  
+  ```
+
 ##### Generate Random Pass Ubuntu
+```
 * date +%s | sha256sum | base64 | head -c 24 ; echo "@%&";
 * date +%s | sha1sum | base64 | head -c 12; echo "@%&";
+```
 
 ##### Ziping Unziping multiple Folders
-cmd     | example
---------|---------
-unzip   | for z in *.zip; do unzip $z; done
-zip     | for i in */; do zip -r "${i%/}.zip" "$i"; done
+
+cmd | example
+---|---
+unzip  | for z in *.zip; do unzip $z; done
+zip    | for i in */; do zip -r "${i%/}.zip" "$i"; done
 
 
 ##### Change date modified created file
+```
  * -a = accessed / -m = modified / -t = timestamp
- 
+ ```
+
 desc|cmd
 -----|-----
 generate file| touch {1..19}.jpg
@@ -58,51 +75,69 @@ change date |touch -d "October 31"  filename.txt
 change date |touch -d '14:24' file.txt
 change date |touch -d "2 hours ago" filename
 
-##### Convert Imagick
+#### Convert Imagick
+```
 * for i in *.png; do convert "$i" "${i%.png}.jpg" && rm "$i" && echo "$i is converted."; done
 * for i in *.png; do convert "$i" "${i%.*}.jpg" ; done
+```
 
-##### Timestamp
+#### Timestamp
+```
 * date +%s > 1552925792
+```
 
 ##### Add git ignore
+```
 * echo ".idea/*" >> .gitignore
 * git commit -am "remove .idea"
+```
 
 ##### Users management
+```
 + sudo adduser newuser
 + sudo deluser newuser
 + sudo deluser --remove-home newuser
 + sudo passwd username
+```
 
 ##### Hostname management
+```
 + sudo nano /etc/hosts
 + sudo nano /etc/hostname
+```
 
-####  [Manage SWAP]
+###  [Manage SWAP]
 
 ##### Add temporary Swap file on Ubuntu 18.04
+```
 * sudo fallocate -l 6G /swapfile2 && sudo chmod 600 /swapfile2 && sudo mkswap /swapfile2 && sudo swapon /swapfile2 && sudo sysctl vm.swappiness=20
 * sudo swapoff -a && sudo fallocate -l 4G /swapfile3 && sudo chmod 600 /swapfile3 && sudo mkswap /swapfile3 && sudo swapon /swapfile3 -a && swapon -s && swapon --show
 * sudo sudo rm /swapfile3 
+```
 
 ##### Expand Swap file in Ubuntu to 4GB or more
+```
 * sudo swapoff -a && sudo dd if=/dev/zero of=/swapfile bs=500M count=8 && sudo mkswap /swapfile && sudo swapon /swapfile -a && swapon -s && swapon --show 
 * echo "vm.swappiness=10" | sudo tee -a /etc/sysctl.conf
 * echo 3 | sudo tee /proc/sys/vm/drop_caches
+```
 
 ####  [Manage RamDisk]
-
+```
 * sudo mkdir /tmp/ramdisk
 * sudo chmod 777 /tmp/ramdisk
+```
 
 ##### allocate 1G for the RAM disk
+```
 * sudo mount -t tmpfs -o size=1024m myramdisk /tmp/ramdisk	
+```
 
 
-#### [Clean and Boost OS]
+### [Clean and Boost OS]
 
 ##### Utiles Daily
+```
 > chrome chromium light loading
 * /usr/lib/chromium-browser/chromium-browser --disable-new-tab-first-run --enable-user-scripts --flag-switches-begin  --disable-accelerated-2d-canvas --disable-gpu-vsync --disable-threaded-animation --disable-webgl --js-flags=--harmony  --flag-switches-end --disable-gpu-process-prelaunch --no-sandbox
 
@@ -123,12 +158,13 @@ change date |touch -d "2 hours ago" filename
 * google-chrome --process-per-site --enable-low-res-tiling --no-referrers --new-window 
 * chromium --process-per-site --no-sandbox --args --js-flags="--max_old_space_size=2192" --purge-memory-button
 * google-chrome --process-per-site --no-sandbox --args --js-flags="--max_old_space_size=2192" --max-old-space-size=2048
-
-
+```
+```
 * chromium --process-per-site
 * google-chrome 
 * brave 
-
+```
+```
 > chrome://flags
 * --no-sandbox --site-per-process --process-per-site --enable-low-end-device-mode --disk-cache-size=104857600
 * --process-per-site-instance --process-per-site --process-per-tab --single-process --args  –disk-cache-size=10 
@@ -136,7 +172,8 @@ change date |touch -d "2 hours ago" filename
 * firefox -no-remote -new-tab -console -purgecaches
 * firefox -no-remote -new-window -p sidekick  -new-instance -P 
 * firefox -no-remote -allow-downgrade -private -purgecaches -safe-mode -p sidekick -P
-
+```
+```
 > open multiple tabs 
 * Chromium:
 * xargs google-chrome --new-tab < urls.txt
@@ -145,34 +182,45 @@ change date |touch -d "2 hours ago" filename
 * xargs -L1 firefox -new-tab < urls.txt
 * create online clickable list https://www.linkrr.com/
 * create online bookmark https://atkinsio.com/bookmarks-html-generator/
-
+```
+```
 > boost cpu
 * for i in {0..7}; do echo performance | sudo tee /sys/devices/system/cpu/cpu"$i"/cpufreq/scaling_governor ; done
 > manage cpu performance
 > http://manpages.ubuntu.com/manpages/bionic/man8/x86_energy_perf_policy.8.html
 * sudo apt install linux-tools-5.4.0-31-generic linux-tools-generic linux-cloud-tools-generic linux-tools-common -y
 * sudo x86_energy_perf_policy -v balance-performance
+```
 
 ##### vm settings
+```
 * sudo sysctl -w vm.swappiness=20
 * sudo sysctl -w vm.swappiness=20 && sudo sysctl vm.vfs_cache_pressure=50 && sudo sysctl -w net.ipv4.ip_forward=1
 * sudo sysctl -w vm.swappiness=10 && sudo sysctl -w vm.vfs_cache_pressure=50 && sudo sysctl -w vm.dirty_ratio=10 && sudo sysctl -w vm.dirty_background_ratio=5 && sudo sync && sudo sysctl -w vm.drop_caches=3
+```
 
 ##### wlan mtu
+```
 * ip link show | grep mtu
 * sudo ip link set wlp3s0 mtu 1400 up
 * ping -c 3 -M do -s 400 google.com
+```
 
 ##### Drop cache
+```
 * cat /proc/sys/vm/swappiness
 * sync && echo 3 | sudo tee /proc/sys/vm/drop_caches
 * echo 3 | sudo tee /proc/sys/vm/drop_caches && sudo /etc/init.d/networking restart 
 * sudo swapoff -a && sudo swapon -a && printf '\n%s\n' 'Swap Cleared'
+```
 
 ##### DNS Flush networking
+```
 * sudo /etc/init.d/dns-clean restart && sudo /etc/init.d/networking force-reload && sudo /etc/init.d/nscd restart && sudo service network-manager restart
-  
+```
+
 ##### Disable services
+```
 * sudo service apache2 status
 * sudo update-rc.d -f apache2 disable
 * sudo update-rc.d apache2 enable
@@ -180,11 +228,16 @@ change date |touch -d "2 hours ago" filename
 * service --status-all
 * sudo systemctl disable apache2
 * sudo systemctl disable mysql
+```
+
 
 ##### clean DNS 
+```
 * sudo /etc/init.d/dns-clean reload && echo 2 | sudo tee /proc/sys/vm/drop_caches && sudo service network-manager reload 
+```
 
 ##### clear Browsers Cache Data 
+```
 * chrome://settings/clearBrowserData
 * ll ~/.cache/chromium/Default/
 * rm -rf ~/.cache/chromium
@@ -194,22 +247,28 @@ change date |touch -d "2 hours ago" filename
 * rm ~/.mozilla/firefox/*.default/cookies.sqlite
 * rm -r ~/.cache/mozilla/firefox/*.default/*
 * rm -r ~/.cache/chromium/Default/Cache/*
+```
 
 ##### stop Services
+```
 * service --status-all
 * sudo service network-manager reload 
 * sudo service bluetooth stop && sudo service virtualbox stop
 * sudo service whoopsie stop && sudo service cups stop && sudo service cups-browsed stop
 * sudo service mysql stop &&  sudo service apache2 stop &&  sudo service openvpn stop && sudo service virtualbox stop 
 * service --status-all
+```
 
 ##### Accessing local data on VM using python SimpleHTTPServer
+```
 * python -m SimpleHTTPServer (deprecated python2)
 * python3 -m http.server 8888
 * http://localhost:8000
 * php -S localhost:4000
+```
 
 ##### list packages
+```
 * dpkg --get-selections | grep -v deinstall
 * dpkg -l
 * dpkg-query -l | less
@@ -220,31 +279,41 @@ change date |touch -d "2 hours ago" filename
 * pip list
 * pip3 list
 * aptitude search '~i!~M'
+```
 
 ##### remove packages
+```
 * dpkg -r <package> 
 * apt remove --purge <package> 
 * snap remove <package>
 * pip uninstall <package>
+```
 
 ##### clean install update
+```
 * https://wiki.ubuntuusers.de/apt/apt-get/
 * pip install --upgrade pip
 * sudo apt-get autoremove
 * sudo apt-get autoclean
+```
 
 ##### clean cache folder
+```
 * sudo rm -rf .cache/pip/http/*
 * find ~/.cache/ -type f -atime +365 -delete
 * find ~/.cache/pip/http/ -depth -type f -atime +365 
 * find ~/.cache/pip/ -depth -type f -atime +3
 * ? ~/.local/lib/pythonX.X/site-packages
+```
 
 #####  system  monitoring
+```
 * gnome-system-monitor
 * baobab [GNOME Disk Usage Analyzer]
+```
 
 ##### ubuntu optimisation - disable tracking and clear journalctl file
+```
 * gsettings set org.freedesktop.Tracker.Miner.Files low-disk-space-limit 1
 * gsettings set org.freedesktop.Tracker.Miner.Files enable-monitors false
 * gsettings set org.freedesktop.Tracker.Miner.Files crawling-interval -2
@@ -258,18 +327,41 @@ change date |touch -d "2 hours ago" filename
 * sudo find / -name '*' -size +1G
 * sudo find / -type f -name '*.log' -size +20M
 * sudo truncate -s0 error_log
+```
 
 
+## DNS Settings Google and Cloudflare
 
-### DNS Settings Google and Cloudflare
-
-#### For IPv4:
+### For IPv4:
+```
 * nameserver 8.8.8.8,8.8.4.4,1.1.1.1,1.0.0.1
 
+sudo apt update
+sudo apt install resolvconf
+sudo nano /etc/resolvconf/resolv.conf.d/head
+
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+nameserver 1.1.1.1
+nameserver 1.1.1.2
+nameserver 1.1.1.3
+nameserver 1.0.0.1
+nameserver 1.0.0.2
+nameserver 1.0.0.3
+
+
+sudo resolvconf --enable-updates
+sudo resolvconf -u
+sudo nano /etc/resolv.conf
+```
+
 #### For IPv6:
+```
 * nameserver 2001:4860:4860::8888,2001:4860:4860::8844, 2606:4700:4700::1111,2606:4700:4700::1001
+```
 
 #### Fast VM install 
+```
 * sudo apt install vagrant
 
 * vagrant init ubuntu/trusty64 -f -m --output Ubuntu1404LTS; vagrant up --provider virtualbox
@@ -295,7 +387,12 @@ change date |touch -d "2 hours ago" filename
 * systemctl poweroff
 * rm Vagrantfile
 * rm -r .vagrant
+```
+
 
 #### Sync folders from drives
+```
 * rsync --ignore-existing --recursive --progress /home/user/folder_sync/ /media/user/external_drive/folder_sync/
+```
+
 

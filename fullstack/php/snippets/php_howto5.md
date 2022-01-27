@@ -1,9 +1,7 @@
-################################################################
-#
-#   GuzzleHttp Promises
-#
-################################################################
-
+######
+###   GuzzleHttp Promises
+######
+```
 // http://docs.guzzlephp.org/en/latest/quickstart.html
 // http://docs.guzzlephp.org/en/stable/faq.html
 // https://www.youtube.com/watch?v=4J7p0CZ0aQ4
@@ -15,6 +13,7 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+
 
 // ------------------------------------------------------------------------------------
 //  Send an asynchronous request.
@@ -126,8 +125,8 @@ while ($p->getState() === 'pending') {
 }
 $p->wait();
 
-
-
+```
+```
 
 /* GuzzleHttp installation
 ---------------------------------------------
@@ -203,9 +202,11 @@ $obj = Container::get(MyClass::class);
 echo $obj->prop;
 */
 
+```
 
+#### static classes
 
-##############################################################
+```
 /*
 static::class vs get_called_class()
 self::class vs get_class() vs __CLASS__
@@ -247,9 +248,11 @@ get_class($this): Bar
 get_called_class(): Bar
 */
 
+```
 
+### func_array_filter
 
-
+```
 /*
 https://www.w3schools.com/php/func_array_filter.asp
 https://www.php.net/manual/de/function.array-filter.php
@@ -257,22 +260,24 @@ https://www.php.net/manual/de/function.array-filter.php
 
 array_filter ( $array2, 'trim' );
 array_map ( $array2, 'trim' );
+```
 
-
-
+### Extract EMAIL
+```
 /* Extract EMAIL */
 $email = "youremail@somedomain.com";
 $domain_name = substr(strrchr($email, "@"), 1);
 $domain_name1 = explode("@",$email)[1];
 echo "<br>Domain name is :" . $domain_name;
 echo "<br>Domain name is :" . $domain_name1;
+```
 
 
 
 
 
-
-
+### php worker
+```
 /*
 PHP Worker Performance Benchmarking and Test Results
 https://pagely.com/blog/php-worker-performance-benchmarking/
@@ -311,11 +316,12 @@ while ( $times_run < 50000 ) {
 //         fi
 //     done
 // done
+```
 
-##############################################################
-# singleton
-##############################################################
-/*
+######
+### singleton
+######
+```
 https://www.thewebhatesme.com/allgemein/php-entwurfsmuster-singleton/
 https://phpenthusiast.com/blog/the-singleton-design-pattern-in-php
 https://refactoring.guru/design-patterns/singleton/php/example#
@@ -331,12 +337,12 @@ https://designpatternsphp.readthedocs.io/de/latest/Creational/Singleton/README.h
 https://www.geeksforgeeks.org/singleton-class-java/
 https://javabeginners.de/Design_Patterns/Singleton_-Pattern.php
 https://www.journaldev.com/1377/java-singleton-design-pattern-best-practices-examples
-*/
+```
 
-##############################################################
+######
 # PDF Output Settings
-##############################################################
-/*
+######
+```
 
 http://www.fpdf.org/en/doc/output.htm
 
@@ -358,13 +364,13 @@ isUTF8
 	Indicates if name is encoded in ISO-8859-1 (false) or UTF-8 (true).
 	Only used for destinations I and D. The default value is false.
 
-*/
+```
 
 
-##############################################################
-# Laracast Decorator
-##############################################################
-
+######
+### Laracast Decorator
+######
+```
 # https://github.com/laracasts/Getting-Jiggy-With-Adapters
 # https://github.com/laracasts/the-specification-pattern-in-php
 
@@ -394,11 +400,13 @@ echo $basic->getCost();
 
 $oil = new OilChange(new BasicInsp);
 echo $oil->getCost();
+```
 
-##############################################################
-# get check nummeric
-##############################################################
 
+######
+### get check numeric
+######
+```
 $data = array_map(
 	"trim",
 	array(1, 1., NULL, 'foo',true,"8ddd",'1350055',"fff"));
@@ -431,8 +439,11 @@ foreach ($data as $value) {
 	}
 }
 
+```
 
-# PHP: equivalent of MySQL's function SUBSTRING_INDEX
+
+### PHP: equivalent of MySQL's function SUBSTRING_INDEX
+```
 # https://stackoverflow.com/questions/6885793/php-equivalent-of-mysqls-function-substring-index
 
 $str = "www.mysql.com";
@@ -441,10 +452,11 @@ echo implode('.', array_slice(explode('.', $str), -2));   // prints "mysql.com"
 
 # Removes special chars.
 return preg_replace('/[^A-Za-z0-9\-]/', '', $string); //
+```
 
 
-
-# PHP: object equivalent
+### PHP: object equivalent
+```
 # http://phptester.net/
 
 $objphp56 = new stdClass();
@@ -455,14 +467,14 @@ echo "<br>";
 
 $objphp74 = (object)['name' => "php7.4"];
 var_dump($objphp74);
+```
 
 
+######
+### openweathermap api
+######
 
-##############################################################
-# openweathermap api
-##############################################################
-
-/*
+```
 
 https://christianflach.de/OpenWeatherMap-PHP-API/docs/usage/ ######
 https://github.com/born05/OpenWeatherMap-PHP-Api *******
@@ -500,8 +512,8 @@ composer require "cmfcmf/openweathermap-php-api"
 
 USAGE
 
-*/
-
+```
+```
 
 use Cmfcmf\OpenWeatherMap;
 use Cmfcmf\OpenWeatherMap\Exception as OWMException;
@@ -529,39 +541,41 @@ try {
 
 echo $weather->temperature;
 
+```
 
 
-/*
 
-##############################################################
-PHP migration 7x-8x
-##############################################################
 
+
+######
+### PHP migration 7x-8x
+######
+```
 https://www.php.net/manual/en/migration74.php
 https://www.php.net/manual/en/migration73.php
 https://www.php.net/manual/en/migration72.php
 https://www.php.net/manual/en/migration71.php
 https://www.php.net/manual/en/migration80.php
 https://www.php.net/releases/8.0/de.php?lang=de
+```
 
-*/
 
-##############################################################
-#	PHP Only variable references should be returned by reference FIX
-##############################################################
-
+######
+###	PHP Only variable references should be returned by reference FIX
+######
+```
 //Before
 return $_config[0] =& $config;
 
 // After
 $_config[0] =& $config;
 return $_config[0];
+```
 
-
-##############################################################
-#   pass by ref is not effectively used inside body
-##############################################################
-/*
+######
+###   pass by ref is not effectively used inside body
+######
+```
 http://schlueters.de/blog/archives/125-Do-not-use-PHP-references.html
 https://www.php.net/manual/en/language.references.pass.php
 https://www.php.net/manual/en/language.references.return.php
@@ -569,40 +583,42 @@ https://jonskeet.uk/java/passing.html
 https://www.journaldev.com/3884/java-is-pass-by-value-and-not-pass-by-reference
 
 since PHP 5 objects are automatically passed by reference.
-*/
+```
 
 
-##############################################################
-#   PHP: missing parent constructor call
-##############################################################
-
+######
+###   PHP: missing parent constructor call
+######
+```
 class Trout extends Fish {
     function __construct($name, $flavor, $record) {
     parent::__construct($name, $flavor, $record);
 }
+```
 
-##############################################################
-# ajax save sql - how to remove %20 and '\xE4' in the url in php
-##############################################################
-
+######
+### ajax save sql - how to remove %20 and '\xE4' in the url in php
+######
+```
 utf8_decode(urldecode($SQL));
+```
 
-
-##############################################################
-# count chars
-##############################################################
-
+######
+### count chars
+######
+```
 echo substr_count($text, 'es'); // 2
 
-/*
+
 https://www.php.net/manual/de/function.substr-count.php
 https://www.php.net/manual/de/function.count-chars.php
-*/
 
-##############################################################
-# array-diff-bug
-##############################################################
-/*
+```
+
+######
+### array-diff-bug
+######
+```
 Returns an array containing all the entries from array1 that are not present in any of the other arrays
 
 Workaround: use array_sum() to check diff: array_sum($arr1) == array_sum($arr2)
@@ -610,42 +626,46 @@ Workaround: use array_sum() to check diff: array_sum($arr1) == array_sum($arr2)
 https://stackoverflow.com/questions/39222827/php-array-diff-bug
 https://www.php.net/manual/en/function.array-diff.php
 https://stackoverflow.com/questions/2479963/how-does-array-diff-work
-*/
+```
 
-##############################################################
-# rand gen
-##############################################################
+######
+### rand gen
+######
+```
+
 $a = str_split("1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM");
 shuffle ($a);
 $r = implode($a);
 $f = substr($r,0,16);
 print $f;
+```
 
 
+######
+### array read column
+######
 
-##############################################################
-# array read column
-##############################################################
-
-/*
+```
 https://www.php.net/manual/en/function.array-search.php
 https://www.php.net/manual/en/function.extract.php
 https://www.php.net/manual/en/function.array-column.php
-*/
+```
 
 
-##############################################################
-# decode all chars except  + char - for ajax calls
-##############################################################
-
+######
+### decode all chars except  + char - for ajax calls
+######
+```
 $str = "my=apples&are=green+and+red";
 print_r(rawurldecode($str));
+```
 
 
-##############################################################
-#   https://www.php.net/manual/de/function.setlocale.php
-##############################################################
 
+######
+###   https://www.php.net/manual/de/function.setlocale.php
+######
+```
 # unix cmd check
 locale -a
 
@@ -657,27 +677,29 @@ setlocale (LC_ALL, 'de_DE.utf8');
 
 # install new language pack
 # sudo apt-get install language-pack-es
+```
 
-################################################
-#  sort öäü
-################################################
-/*
+
+######
+###  sort öäü
+######
+```
 https://sandbox.onlinephpfunctions.com/
 https://www.php.net/manual/de/function.utf8-decode.php
 https://www.php.net/manual/en/function.strtr.php
-*/
+
 
 $str = strtr(utf8_decode("änderung"), utf8_decode("äåö"), "aao");
 echo $str;
+```
 
 
 
 
-
-################################################
-# print iframes with urls
-################################################
-
+######
+### print iframes with urls
+######
+```
 #header("X-Frame-Options: GOFORIT");
 
 $str = "
@@ -704,33 +726,36 @@ if(count($fp) > 0) {
 		}
 	}
 }
+```
 
-
-################################################
-# sort array column
-################################################
+######
+### sort array column
+######
+```
 # https://stackoverflow.com/questions/16138395/sum-values-of-multidimensional-array-by-key-without-loop
 $sumColumn = array_sum(array_column($arr,'fieldname'));
+```
 
-################################################
-# autoload + namespaces + guzzle
-################################################
-/*
+
+######
+### autoload + namespaces + guzzle
+######
+```
 composer init
 # autoload psr-4 app\\ ./app
 # namespace app;
 composer update
 require_once vendor/autoloader.php
 https://packagist.org/packages/guzzlehttp/guzzle
-*/
+```
 
-################################################
-# pdo
-################################################
-/*
+######
+### pdo
+######
+```
 https://www.php.net/manual/en/pdostatement.fetchall.php
 https://www.php.net/manual/en/pdostatement.fetch.php
-*/
+
 
 $pdo = new PDO('mysql:host=$host; dbname=$database;', $user, $pass);
 $pdo->setAttribute(PDO::ATTR_ERRMODE,PDP::ERRMODE_EXCEPTION);
@@ -745,26 +770,28 @@ $stmt = $pdo->exec('INSERT INTO sometable (somefield) VALUES (NOW)');
 $stmt = $pdo->prepare('INSERT INTO sometable (somefield) VALUE (:somefield)');
 $stmt = bindValue(':somefield', $somefieldValue)
 $stmt->execute();
-
-################################################
-# SERVER POST GET
-################################################
-
+```
+######
+### SERVER POST GET
+######
+```
 $SERVER["REQUEST_METHOD"] === 'POST'
+```
 
-################################################
-#  composer require
-################################################
-/*
+######
+###  composer require
+######
+```
 https://getcomposer.org/doc/03-cli.md#require
 php composer.phar require "symfony/symfony:5.2.*" --ignore-platform-reqs
-*/
+```
 
 
 
-################################################
-#  get quarter
-################################################
+######
+###  get quarter
+######
+```
 #https://thisinterestsme.com/php-get-quarter-date/
 #https://stackoverflow.com/questions/21185924/get-startdate-and-enddate-for-current-quarter-php
 
@@ -793,13 +820,13 @@ echo "The date $dateStr fell in Q$yearQuarter of " . date("Y", strtotime($dateSt
 
 # https://www.w3resource.com/mysql/date-and-time-functions/mysql-quarter-function.php
 # SELECT QUARTER('2009-05-18');
+```
 
 
-
-################################################
-# regex test
-################################################
-
+######
+### regex test
+######
+```
 $str = "035-hot6_line554";
 preg_match('~hot(\d{1,})_line([a-zA-Z0-9]{1,})~', $str, $matches);
 print_r($matches);
@@ -807,13 +834,13 @@ print_r($matches);
 echo "<br>";
 preg_match('~hot(\d+)_line([a-zA-Z0-9]+)~', $str, $matches);
 print_r($matches);
+```
 
+######
+### short negation test phpstorm
+######
 
-################################################
-# short negation test phpstorm
-################################################
-
-/*
+```
 https://paiza.io/en/projects/new
 https://wtools.io/php-sandbox
 https://www.w3schools.com/php/php_compiler.asp
@@ -827,12 +854,13 @@ $str = 1;
 echo (empty($str)?false:true);
 echo "<br>";
 echo !empty($str);
+```
 
 
-################################################
-# Deprecated: iconv_set_encoding(): Use of iconv.output_encoding is deprecated in
-################################################
-
+######
+### Deprecated: iconv_set_encoding(): Use of iconv.output_encoding is deprecated in
+######
+```
 if (function_exists('iconv') && PHP_VERSION_ID < 50600)
 {
     // These are settings that can be set inside code
@@ -844,35 +872,37 @@ elseif (PHP_VERSION_ID >= 50600)
 {
     ini_set("default_charset", "UTF-8");
 }
+```
 
 
 
-
-################################################
-# Transform into nummeric
-# https://stackoverflow.com/questions/9593765/convert-array-values-from-string-to-int
-################################################
+######
+### Transform into nummeric
+#### https://stackoverflow.com/questions/9593765/convert-array-values-from-string-to-int
+######
+```
 $string = "1,2,3"
 $integerIDs = array_map('intval', explode(',', $string));
+```
 
 
-/*
-################################################
-Read  $_SERVER['HTTP_REFERER'] params
-################################################
+######
+### Read  $_SERVER['HTTP_REFERER'] params
+######
+```
 https://stackoverflow.com/questions/4310008/php-how-do-i-get-a-parameter-value-from-serverhttp-referer
 https://www.php.net/manual/en/function.parse-url.php
 https://www.php.net/manual/en/function.parse-str.php
 http://phptester.net/
-*/
+
 
 parse_str(parse_url($_SERVER['HTTP_REFERER'], PHP_URL_QUERY), $queries);
 echo $queries['q'];
+```
 
-
-
+### Detecting request type in PHP (GET, POST, PUT or DELETE)
+```
 /*
-Detecting request type in PHP (GET, POST, PUT or DELETE)
 https://stackoverflow.com/questions/359047/detecting-request-type-in-php-get-post-put-or-delete
 https://www.php.net/manual/de/reserved.variables.request.php
 */
@@ -886,11 +916,13 @@ switch($_SERVER['REQUEST_METHOD'])
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
      // The request is using the POST method
 }
+```
 
-################################################
-Reset PHP Array Index and filter
-################################################
 
+######
+### Reset PHP Array Index and filter
+######
+```
 https://stackoverflow.com/questions/7536961/reset-php-array-index/7536963
 https://www.php.net/manual/en/function.array-filter.php
 
@@ -916,22 +948,25 @@ print_r(array_values(array_filter($arr, function($var)
 {
 	return $var["name"]== 'bar'?true:false;
 })));
+```
 
-################################################
-## format array as json for log
-################################################
-
+######
+### format array as json for log
+######
+```
 json_encode($item, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
 
 if (!file_put_contents($logFile, $text,  FILE_APPEND | LOCK_EX)) {
     echo "cannot write file";
 }
+```
 
-################################################
-## custom curl settings
-################################################
 
-/*
+######
+### custom curl settings
+######
+
+```
 get speed info
 https://stackoverflow.com/questions/30368503/increase-curl-speed-php
 https://stackoverflow.com/questions/25645634/force-ipv4-in-curl-in-php-application
@@ -948,8 +983,8 @@ CURLINFO_PRETRANSFER_TIME - Time in seconds from start until just before file tr
 CURLINFO_STARTTRANSFER_TIME - Time in seconds until the first byte is about to be transferred
 CURLINFO_SPEED_DOWNLOAD - Average download speed
 CURLINFO_SPEED_UPLOAD - Average upload speed
-*/
-
+```
+```
 $info = curl_getinfo($curl);
 echo $info['connect_time']; // Same as above, but lower letters without CURLINFO
 
@@ -972,8 +1007,48 @@ curl_setopt($ch, CURLOPT_USERAGENT,'php');
 curl_setopt($ch, CURLOPT_AUTOREFERER,1);
 curl_setopt($ch, CURLOPT_CONNECTTIMEOUT,10);
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER,1);
+```
+
+### load classes
+
+```
+https://stackoverflow.com/questions/8532569/exclude-hidden-files-from-scandir
+$files = preg_grep('/^([^.])/', scandir($imagepath));
 
 
+$arrClasses = preg_grep('/^([^.])/',scandir(__DIR__.'/../src/classes'));
+foreach ($arrClasses as $sClass) {
+    include_once(__DIR__.'/../src/'.$sClass);
+}
+
+```
+### ext-json-is-missing-in-composer-json
+```
+https://stackoverflow.com/questions/56388531/ext-json-is-missing-in-composer-json
+https://luis-barros-nobrega.medium.com/ext-json-is-missing-in-composer-json-what-is-this-700a1fcad966
+
+{
+  "require": {    
+    "ext-json": "*"
+  }
+}
+```
+
+
+### getHeaderLine Psr7
+```
+https://www.youtube.com/watch?v=FXo85zItAzg
+
+https://packagist.org/packages/psr/http-message
+https://github.com/php-fig/http-message
+https://www.php.net/manual/en/function.get-headers.php
+https://packagist.org/packages/guzzlehttp/psr7
+https://www.php-fig.org/psr/psr-7/
+https://www.php-fig.org/psr/psr-17/
+
+GuzzleHttp\Psr7\Header::parse
+$header = $message->getHeaderLine('foo');
+```
 
 
 

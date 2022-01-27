@@ -1,31 +1,58 @@
 
-#######################################################
-#
-#  Online tools - Testing
-#
-#######################################################
 
+## Online tools - Testing
+
+
+### text uppercase
+```
+https://convertcase.net/
+https://smallseotools.com/uppercase-to-lowercase/
+https://string-functions.com/case.aspx
+https://capitalizemytitle.com/style/APA/
+https://www.textfixer.com/tools/uppercase-lowercase-text.php
+https://onlinetexttools.com/convert-text-to-uppercase
+```
+
+### online html editor
+```
 https://www.onlinehtmleditor.net
 https://htmledit.squarefree.com
 https://html-online.com/editor/
+```
 
+### word counter
+```
 https://wordcounter.net/
 https://wordcounteronline.net/
 https://wordcounter.io/
 https://www.charactercountonline.com/
+```
 
-http://phptester.net #
+### 
+```
+https://jsonformatter.org/
+https://jsonlint.com/
+```
+
+### php tester
+```
+http://phptester.net/
 http://sandbox.onlinephpfunctions.com
 http://phpfiddle.org
-http://rextester.com/l/php_online_compiler
-https://www.tutorialspoint.com/execute_php_online.php #
 https://phpcodechecker.com
+https://www.tutorialspoint.com/execute_php_online.php
+http://rextester.com/l/php_online_compiler
 https://3v4l.org/l5XKJ
 http://www.writephponline.com
+```
 
+### regex
+```
 https://regex101.com
 https://www.regextester.com
 http://www.phpliveregex.com
+```
+
 
 https://phpunit.de
 https://github.com/PietsHost/Online-PHP-tester
@@ -40,12 +67,10 @@ https://addons.mozilla.org/en-US/firefox/addon/tab-catalog/
 
 
 
-###################################
-#
-#  Transfer files to VM
-#
-###################################
-
+######
+###  Transfer files to VM
+######
+```
 https://www.sendspace.com/
 http://uploaded.net
 https://www.mediafire.com
@@ -57,27 +82,25 @@ https://workupload.com
 https://www.trueshare.com
 http://fast-files.com
 http://www.directupload.net
+```
 
-###################################
-#
-#  jsonlint
-#
-###################################
 
+######
+###  jsonlint
+######
+```
 https://jsonlint.com/#
 https://jsonformatter.org/
 https://jsonformatter.curiousconcept.com/
 https://json.org/example.html#
 https://www.unixtimestamp.com/
 https://www.epochconverter.com/
+```
 
-
-###################################
-#
-#  REST API Tester
-#
-###################################
-
+######
+###  REST API Tester
+######
+```
 https://www.soapui.org/tools/soapui/
 https://s3.amazonaws.com/downloads.eviware/soapuios/5.7.0/SoapUI-x64-5.7.0.sh
 https://www.postman.com/
@@ -96,17 +119,24 @@ https://github.com/brooklynDev/airborne
 https://jmeter.apache.org/
 https://jmeter.apache.org/download_jmeter.cgi
 https://reqbin.com/
+```
 
 
 
-
-[youtube downloaders]
+### Youtube downloaders
+```
 https://loader.to/en15/1080p-video-downloader.html
+```
 
-[text encrypt encode converters]
+
+### text encrypt encode converters
+```
 https://www.browserling.com/tools/text-to-binary
+```
 
-[plugins]
+### plugins gittoolbox
+```
 https://plugins.jetbrains.com/plugin/7499-gittoolbox
 https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens
 https://plugins.jetbrains.com/plugin/7499-gittoolbox
+```

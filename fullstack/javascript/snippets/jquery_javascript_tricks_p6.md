@@ -1,7 +1,8 @@
 
-//---------------------------------------------------
-inArray
-//---------------------------------------------------
+
+### inArray
+
+```
 https://stackoverflow.com/questions/18867599/jquery-inarray-how-to-use-it-right
 https://api.jquery.com/jquery.inarray/
 
@@ -10,23 +11,23 @@ var myarray = [ 4, "Pete", 8, "John" ];
 if(jQuery.inArray("test", myarray) !== -1){
     // do something
 }
+```
 
-//---------------------------------------------------
-removeAttr
-//---------------------------------------------------
+
+### removeAttr
+```
 https://stackoverflow.com/questions/13951336/removing-html5-required-attribute-with-jquery
-
 
 $('#edit-submitted-first-name').removeAttr('required'); // remove
 $('#edit-submitted-first-name').prop('required',true); // enable
 $('#edit-submitted-first-name').prop('required',false); // disable
+```
 
 
 
-//---------------------------------------------------
-events
-//---------------------------------------------------
+### events
 
+```
 https://stackoverflow.com/questions/6998534/javascript-event-missing-after-html-reset
 https://stackoverflow.com/questions/2398099/jquery-equivalent-of-javascripts-addeventlistener-method
 https://api.jquery.com/on/
@@ -42,7 +43,8 @@ https://github.com/Xajax/Xajax
 http://hackergarage.github.io/ThaFrame/xajax/xajax.html
 https://github.com/jaxon-php/jaxon-core
 https://hotexamples.com/de/examples/-/xajax/registerFunction/php-xajax-registerfunction-method-examples.html
-
+```
+```
 # works better
 $(function(){
     $('#container').delegate('#testbutton', 'click',
@@ -62,11 +64,13 @@ $(document).on('change', '#element', function(){
 });
 
 document.getElementById("myBtn").addEventListener("click", displayDate);
+```
 
-//---------------------------------------------------
-xajax-execution
-//---------------------------------------------------
 
+
+### xajax-execution
+
+```
 https://stackoverflow.com/questions/12588359/modify-javascript-function-while-xajax-execution
 https://stackoverflow.com/questions/666750/xajax-and-select?rq=1
 https://stackoverflow.com/questions/1457293/validating-forms-using-xajax?rq=1
@@ -100,12 +104,15 @@ function callbackFoo(response) {
     console.log(response.param2);
 }
 </script>
+```
 
-####################################################
-Learn JavaScript - Full Course for Beginners
-https://www.youtube.com/watch?v=PkZNo7MFNFg&t=14s
-####################################################
 
+
+######
+### Learn JavaScript - Full Course for Beginners
+#### https://www.youtube.com/watch?v=PkZNo7MFNFg&t=14s
+######
+```
 [beautify js]
 https://beautifytools.com/javascript-beautifier.php
 https://prettier.io/playground/
@@ -202,17 +209,18 @@ const bicycle = {
 };
 bicycle.setGear(3);
 console.log(bicycle.gear);
+```
 
 
-####################################################
-// Learn JavaScript Generators In 12 Minutes - Web Dev Simplified
+#### Learn JavaScript Generators In 12 Minutes - Web Dev Simplified
+```
 // https://www.youtube.com/watch?v=IJ6EgdiI_wU&t=478s
 
 // https://onecompiler.com/
 // https://jseditor.io/
 // https://paiza.io/en/projects/new?language=bash
-####################################################
-
+```
+```
 function* simpleGenerator(){
 	yield 1
 	yield 2
@@ -227,13 +235,14 @@ console.log(value)
 // output:
 // Object [Generator] {}
 // { value: 1, done: false }
+```
 
-
-####################################################
-15 Magical JavaScript Tips for Every Web Developer
+### 15 Magical JavaScript Tips for Every Web Developer
+```
 https://dev.to/dawgswqe/15-magical-javascript-tips-for-every-web-developer-1kp4
 https://www.codelivly.com/magical-javascript-tips-for-every-web-developer/
-####################################################
+```
+```
 
 [ Flatten the array of the array ]
 var array = [123, 500, [1, 2, [34, 56, 67, [234, 1245], 900]], 845, [30257]]//flatten array of array
@@ -301,35 +310,35 @@ console.log("function takes "+totaltime +" milisecond");
 [ Eliminate duplicates ]
 const ReDuplicates = array => [...new Set(array)];
 console.log(ReDuplicates([200,200,300,300,400,500,600,600])) // [200,300,400,600]
+```
 
 
 
-
-####################################################
-Debugging JavaScript in popup windows on Chrome
+### Debugging JavaScript in popup windows on Chrome
+```
 https://stackoverflow.com/questions/20198821/debugging-javascript-in-popup-windows-on-chrome+
 https://stackoverflow.com/questions/4908729/debug-a-modal-dialog-showmodaldialog-in-ie/11097501
 https://javascript.info/debugging-chrome
 https://developer.chrome.com/docs/devtools/javascript/
-####################################################
-
+```
+```
 1) add "debugger" in js script
 2) enable "DevTools" setting "Auto.open DevTools for popups"
 
 # for source code use "Ctrl + click" instead of just clicking on the link to the popup window.
+```
 
-
-####################################################
-mewe dark mode
-####################################################
-
+######
+### mewe dark mode
+######
+```
 setInterval( () => { document.querySelector('*').style.filter = 'invert(21)'; let list = document.querySelectorAll("img");for (var i = 0; i < list.length; i++) {  list[i].style.filter = 'invert(100)'; } },5000);
+```
 
-
-####################################################
- jquery ui dialog width
-####################################################
-
+######
+### jquery ui dialog width
+######
+```
 https://www.py4u.net/discuss/918364
 https://forum.jquery.com/topic/cannot-call-methods-on-dialog-prior-to-initialization
 https://stackoverflow.com/questions/13520139/jquery-ui-dialog-cannot-call-methods-on-dialog-prior-to-initialization
@@ -347,5 +356,40 @@ jQuery(function() {
 	width: 450,
 });
 </script>
+```
+
+
+### Array von Objekten erzeugen
+
+```
+https://stackoverflow.com/questions/2799283/use-a-json-array-with-objects-with-javascript/24875753
+https://www.mediaevent.de/javascript/array-of-objects.html
+https://www.w3schools.com/js/js_json_arrays.asp
+
+var arrayOfObjects = [{
+  "id": 28,
+  "Title": "Sweden"
+}, {
+  "id": 56,
+  "Title": "USA"
+}, {
+  "id": 89,
+  "Title": "England"
+}];
+
+for (var i = 0; i < arrayOfObjects.length; i++) {
+  var object = arrayOfObjects[i];
+  for (var property in object) {
+    alert('item ' + i + ': ' + property + '=' + object[property]);
+  }
+  // If property names are known beforehand, you can also just do e.g.
+  // alert(object.id + ',' + object.Title);
+}
+
+$(jQuery.parseJSON(JSON.stringify(dataArray))).each(function() {
+    var ID = this.id;
+    var TITLE = this.Title;
+});
+```
 
 

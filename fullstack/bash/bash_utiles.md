@@ -838,3 +838,25 @@ curl -X POST \
     --data "$json_document" 'https://myurl/resource' |
 jq .id
 ```
+
+### pretty-print JSON in a shell script
+
+```
+https://stackoverflow.com/questions/352098/how-can-i-pretty-print-json-in-a-shell-script
+https://unix.stackexchange.com/questions/244946/how-to-prettyprint-json-using-jq-standalone/244947
+
+#jq pretty
+jq . contact.json > contact_pretty.json
+
+# python
+python -m json.tool my_json.json
+echo '{"test":1,"test2":2}' | python -mjson.tool
+curl -X GET -H "Authorization: Token 5555" http://testsite/api/ | python -mjson.tool
+
+# bash
+jq --color-output . file1.json file1.json | less -R
+
+# js
+JSON.stringify({"foo":"lorem","bar":"ipsum"}, null, 4);
+
+```

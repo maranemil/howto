@@ -17,13 +17,19 @@ https://www.markdownguide.org/extended-syntax/
 
 http://markdownpad.com/
 
-### vscode plunins
-
+### vscode plugins
+```
 https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid
 https://marketplace.visualstudio.com/items?itemName=dstang2000.py2flowchart
 https://marketplace.visualstudio.com/items?itemName=hrhr49.vscode-markdown-tefcha
 
-### ref
+https://code.visualstudio.com/api/extension-guides/markdown-extension
+https://code.visualstudio.com/docs/languages/markdown
+https://marketplace.visualstudio.com/items?itemName=shd101wyy.markdown-preview-enhanced
+https://marketplace.visualstudio.com/items?itemName=bierner.github-markdown-preview
+```
+
+### references
 ```
 https://python-markdown.github.io/reference/
 https://guides.github.com/pdfs/markdown-cheatsheet-online.pdf

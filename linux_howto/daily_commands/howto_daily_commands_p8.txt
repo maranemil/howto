@@ -519,3 +519,58 @@ nano /etc/pulse/deamon.conf
 uncomment > default-sample-rate = 48000
 killall pulseaudio
 pulseaudio --kill
+
+
+### dns google ubuntu
+
+```
+https://1.1.1.1/dns/
+https://1.1.1.1/de-DE/dns/
+https://en.wikipedia.org/wiki/1.1.1.1
+https://wiki.ubuntuusers.de/DNS-Konfiguration/
+https://www.tecmint.com/set-permanent-dns-nameservers-in-ubuntu-debian/
+https://www.ricmedia.com/set-custom-dns-servers-on-ubuntu-18-or-20/
+https://www.techrepublic.com/article/how-to-set-dns-nameservers-in-ubuntu-server-18-04/
+https://linuxhint.com/set-dns-name-servers-ubuntu-linux/
+https://www.ricmedia.com/set-permanent-dns-nameservers-ubuntu-debian-resolv-conf/
+...
+
+...
+
+sudo apt update
+sudo apt install resolvconf
+sudo nano /etc/resolvconf/resolv.conf.d/head
+
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+nameserver 1.1.1.1
+nameserver 1.1.1.2
+nameserver 1.1.1.3
+nameserver 1.0.0.1
+nameserver 1.0.0.2
+nameserver 1.0.0.3
+
+
+sudo resolvconf --enable-updates
+sudo resolvconf -u
+sudo nano /etc/resolv.conf
+
+sudo systemctl start resolvconf.service
+cat /etc/resolv.conf
+
+cat /etc/netplan/01-network-manager-all.yaml
+sudo nano /etc/netplan/01-netcfg.yaml
+
+sudo systemctl restart resolvconf.service
+sudo systemctl restart systemd-resolved.service
+
+grep '^nameserver' /run/systemd/resolve/resolv.conf
+systemd-resolve --status
+
+sudo netplan --debug apply
+sudo nano /etc/netplan/01-network-manager-all.yaml
+systemd-resolve --status | grep 'DNS Servers' -A2
+systemd-resolve --status
+sudo systemctl status resolvconf.service
+```
+
