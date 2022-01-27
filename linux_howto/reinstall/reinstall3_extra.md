@@ -1,33 +1,36 @@
 
-#########################################################################
-#   phpstorm license register
-#########################################################################
-
+######
+###   phpstorm license register
+######
+```
 https://account.jetbrains.com/change-password
 
 If you use non-latest JetBrains products and it isn't prompting you to enter a one-time password,
 use App Password instead of your regular password for sign in.
+```
 
-#########################################################################
-#   ubuntu nvidia install
-#########################################################################
-
+######
+###   ubuntu nvidia install
+######
+```
 sudo ubuntu-drivers autoinstall
 xrandr --output DP-3 --brightness 0.7
+```
 
-#########################################################################
-# test webcam outout
-#########################################################################
-
+######
+### test webcam outout
+######
+```
 https://webcamtests.com/
 
 sudo apt install v4l-utils
 v4l2-ctl -d /dev/video0 --set-ctrl=brightness=40,gamma=10,sharpness=3,hue=1,saturation=60
+```
 
-#########################################################################
-#   resolvconf - install  before WireGuard
-#########################################################################
-
+######
+###   resolvconf - install  before WireGuard
+######
+```
 apt install openresolv  # version 3.12.0-1, or
 apt install resolvconf  # version 1.84ubuntu1
 
@@ -36,13 +39,12 @@ http://manpages.ubuntu.com/manpages/trusty/man8/resolvconf.8.html
 https://wiki.ubuntuusers.de/resolvconf/
 https://wiki.ubuntuusers.de/systemd/networkd/#systemd-resolved
 https://wiki.ubuntuusers.de/DNS-Konfiguration/
+```
 
-#########################################################################
-#
-#   WireGuard Key Generation
-#
-#########################################################################
-
+######
+###   WireGuard Key Generation
+######
+```
 https://www.wireguard.com/quickstart/
 https://www.wireguard.com/install/
 https://www.wireguard.com/quickstart/
@@ -63,13 +65,13 @@ ip link set up dev wg0
 
 wg genkey | tee privatekey | wg pubkey > publickey
 
-#########################################################################
-#
-#   How to get started with WireGuard VPN
-#   https://upcloud.com/community/tutorials/get-started-wireguard-vpn/
-#
-#########################################################################
 
+```
+######
+###   How to get started with WireGuard VPN
+https://upcloud.com/community/tutorials/get-started-wireguard-vpn/
+######
+```
 sudo apt-get update && sudo apt-get upgrade -y
 sudo apt-get install wireguard
 
@@ -183,11 +185,11 @@ curl ifconfig.io
 systemctl start wg-quick@wg0
 systemctl stop wg-quick@wg0
 systemctl status wg-quick@wg0
-
-#########################################################################
-#   GUI openvpn
-#########################################################################
-
+```
+######
+###   GUI openvpn
+######
+```
 https://askubuntu.com/questions/508250/openvpn-gui-client-for-udp-tcp
 
 sudo apt-get install openvpn
@@ -197,30 +199,30 @@ sudo apt install openvpn network-manager-openvpn -y
 
 sudo openvpn --config
 sudo openvpn --config '/home/someuser/Desktop/vpnbook-us1-tcp443.ovpn'
+```
 
-
-#########################################################################
-#   ftp ubuntu isos
-#########################################################################
-
+######
+###   ftp ubuntu isos
+######
+```
 http://ftp-stud.hs-esslingen.de/Mirrors/ftp.debian.org/debian-cd/11.0.0-live/amd64/iso-hybrid/
 http://ftp-stud.fht-esslingen.de/Mirrors/releases.ubuntu.com/21.04/
+```
 
-
-#########################################################################
-#   tips phpstorm
-#########################################################################
-
+######
+###   tips phpstorm
+######
+```
 Ctrl + Alt + Shift + U 	= diagram
 Ctrl + Shift + Space 	= type-matching completion
 Ctrl + Alt + Shift + N 	= Open any class
 Ctrl + Q = Dokumentation
+```
 
-
-#########################################################################
-#   ssh-keygen
-#########################################################################
-
+######
+###   ssh-keygen
+######
+```
 https://docs.github.com/en/authentication/connecting-to-github-with-ssh
 https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
 https://docs.github.com/en/authentication/connecting-to-github-with-ssh/testing-your-ssh-connection
@@ -239,11 +241,12 @@ ssh-keygen -t ecdsa-sk -C "your_email@example.com"
 Testing your SSH connection
 ssh -T git@github.com
 
+```
 
-#########################################################################
-#   docker
-#########################################################################
-
+######
+###   docker
+######
+```
 https://docs.docker.com/compose/gettingstarted/
 https://docs.docker.com/compose/
 https://docs.docker.com/compose/reference/
@@ -271,18 +274,21 @@ sudo docker exec -it 0a0a92fef642 bash
 https://nickjanetakis.com/blog/docker-tip-35-connect-to-a-database-running-on-your-docker-host
 https://stackoverflow.com/questions/33001750/connect-to-mysql-in-a-docker-container-from-the-host
 https://gist.github.com/geraldvillorente/4c60e7fdb5562f443f16ad2bbe4235ce
+```
 
-#########################################################################
-#   tar gz compress
-#########################################################################
+######
+###   tar gz compress
+######
+```
 tar -czvf x.sql.gz x.sql
 tar -czvf x-of-archive.tar.gz  x-of-archive
+```
 
 
-#########################################################################
-#    xdebug
-#########################################################################
-
+######
+###    xdebug
+######
+```
 https://xdebug.org/docs/install
 https://xdebug.org/docs/upgrade_guide
 
@@ -305,38 +311,43 @@ https://matthewsetter.com/setup-step-debugging-php-xdebug3-docker/
 RUN docker-php-ext-enable xdebug
 RUN pecl install xdebug && docker-php-ext-enable xdebug
 
+```
 
-########################################################
-Dell PDFs
-########################################################
 
+######
+### Dell PDFs
+######
+```
 https://topics-cdn.dell.com/pdf/xps-13-9370-laptop_setup-guide_en-us.pdf
 https://dl.dell.com/topicspdf/xps-13-9360-laptop_setup-guide_en-us.pdf
+```
 
-########################################################
+######
 https://ubuntu.com/server/docs/security-firewall
-########################################################
-
+######
+```
 sudo ufw enable
 sudo ufw disable
 sudo ufw status
+```
 
-########################################################
-Copy Directories on Linux Recursive
-########################################################
-
+######
+### Copy Directories on Linux Recursive
+######
+```
 https://devconnected.com/how-to-copy-directory-on-linux/
 https://devconnected.com/how-to-copy-directory-on-linux/
 
 cp -R <source_folder> <destination_folder>
 cp -R /etc/* .
+```
 
-########################################################
-set Permanent DNS Nameservers in Ubuntu and Debian
+######
+### set Permanent DNS Nameservers in Ubuntu and Debian
 https://www.tecmint.com/set-permanent-dns-nameservers-in-ubuntu-debian/
 https://www.digitalocean.com/community/questions/how-do-i-switch-my-dns-resolvers-away-from-google
-########################################################
-
+######
+```
 sudo nano /etc/resolvconf/resolv.conf.d/head
 
 nameserver 8.8.8.8
@@ -344,12 +355,13 @@ nameserver 8.8.4.4
 
 sudo systemctl start resolvconf.service
 cat /etc/resolv.conf
+```
 
 
-########################################################
-How To Get Intel Graphics Control Panel In Ubuntu
-########################################################
-
+######
+### How To Get Intel Graphics Control Panel In Ubuntu
+######
+```
 https://askubuntu.com/questions/1205892/how-to-get-intel-graphics-control-panel-in-ubuntu
 https://www.intel.com/content/www/us/en/support/articles/000005520/graphics.html
 
@@ -424,29 +436,32 @@ GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 nvidia-drm.modeset=1 usbcore.autosuspend=
 #MODULES=(crc32c-intel vmd)
 MODULES=(crc32c-intel vmd nvidia nvidia_modeset nvidia_uvm nvidia_drm)
 [...]
+```
 
 
-#########################################
-Correct file permissions for WordPress [closed]
+######
+### Correct file permissions for WordPress [closed]
 https://stackoverflow.com/questions/18352682/correct-file-permissions-for-wordpress
-#########################################
-
+######
+```
 chown www-data:www-data  -R * # Let Apache be owner
 find . -type d -exec chmod 755 {} \;  # Change directory permissions rwxr-xr-x
 find . -type f -exec chmod 644 {} \;  # Change file permissions rw-r--r--
+```
 
-#########################################
-webcam for ubuntu
-#########################################
-
+######
+### webcam for ubuntu
+######
+```
 sudo apt-get install cheese
 cheese
+```
 
-#########################################
-#   Get Hardware Info
-#   https://askubuntu.com/questions/258922/how-to-display-notebook-model-number
-#########################################
-
+######
+###   Get Hardware Info
+https://askubuntu.com/questions/258922/how-to-display-notebook-model-number
+######
+```
 # get config
 sudo dmidecode |grep Version
 
@@ -454,17 +469,18 @@ sudo dmidecode |grep Version
 sudo dmidecode | grep -A 9 "System Information"
 sudo dmidecode | less
 sudo dmidecode -t 1
+```
 
-#########################################
-#   docker wordpress
+######
+###   docker wordpress
 #########################################
 
 https://www.wpdiaries.com/wordpress-with-xdebug-for-docker/
 
+######
+###  wordpress error logs
 #########################################
-#   wordpress error logs
-#########################################
-
+```
 https://www.wpbeginner.com/wp-tutorials/how-to-set-up-wordpress-error-logs-in-wp-config/
 https://kinsta.com/blog/wordpress-debug/
 https://codex.wordpress.org/WP_DEBUG
@@ -486,38 +502,46 @@ define( 'SAVEQUERIES', true );
 error_reporting(E_ALL);
 
 check /wp-content/debug.log
+```
 
-#########################################
-git diff
-#########################################
 
+######
+### git diff
+#########################################
+```
 https://stackoverflow.com/questions/4099742/how-to-compare-files-from-two-different-branches
 
 git log --oneline
 git diff mybranch master -- myfile.cs
 git diff mybranch..master -- myfile.cs
+```
 
-#########################################
-ERROR: ASCII ‘\0’
-#########################################
 
+######
+### ERROR: ASCII ‘\0’
+#########################################
+```
 ERROR: ASCII ‘\0’ appeared in the statement, but this is not allowed unless option –binary-mode
 is enabled and mysql is run in non-interactive mode. Set –binary-mode to 1 if ASCII ‘\0’ is expected.
 Query:
 
 gunzip myfile.sql.gz
+```
 
-#########################################
-pull request
+
+
+### pull request
 https://www.gitkraken.com/
-#########################################
 
+```
 git push --set-upstream origin your-feature
+```
 
-#########################################
-git strategy - merge / rebase
-#########################################
 
+
+### git strategy - merge / rebase
+
+```
 # merge
 git checkout master
 git pull
@@ -535,8 +559,7 @@ git rebase master
 git checkout master
 git rebase branch
 git status
-
-
+```
 
 
 
