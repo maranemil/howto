@@ -14,7 +14,7 @@ for ($i = 0; $i < 30; $i++) {
 
     $samples = array();
     for ($n = 0; $n < $samplesCount; $n++) {
-        $samples[] = (int) ($amplitude * sin($n * $w));
+        $samples[] = (int)($amplitude * sin($n * $w));
     }
 
     $srate = 44100; //sample rate

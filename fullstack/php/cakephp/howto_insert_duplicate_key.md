@@ -1,7 +1,7 @@
+
+### CakePHP 3.0: How to do an insert on duplicate key update?
+```
 /*
-
-CakePHP 3.0: How to do an insert on duplicate key update?
-
 https://book.cakephp.org/2.0/en/models/associations-linking-models-together.html#hasone
 https://api.cakephp.org/3.5/class-Cake.ORM.Behavior.CounterCacheBehavior.html
 https://book.cakephp.org/2.0/en/core-utility-libraries/hash.html
@@ -13,10 +13,10 @@ https://dev.mysql.com/doc/refman/5.5/en/insert-on-duplicate.html
 https://book.cakephp.org/2.0/en/models/saving-your-data.html
 https://book.cakephp.org/2.0/en/models/associations-linking-models-together.html#hasone
 https://www.dreamincode.net/forums/topic/314299-cakephp-on-duplicate-key-update/
-
 */
-
-# example 1
+```
+### example 1
+```
 foreach ($articles AS $article) {
   $query = $this->Articles->query();
   $query
@@ -25,8 +25,9 @@ foreach ($articles AS $article) {
     ->epilog('ON DUPLICATE KEY UPDATE field=field+1')
     ->execute();
 }
-
-# example 2
+```
+### example 2
+```
 $newUsers = [
     [
         'username' => 'Felicia',
@@ -45,7 +46,9 @@ $upsertQuery->clause('values')->values($newUsers);
 $upsertQuery->epilog('ON DUPLICATE KEY UPDATE `username`=VALUES(`username`), `age`=VALUES(`age`)')
                 ->execute();
 
-
+```
+```
 # mysql refman 5.5/en
 # INSERT INTO t1 (a,b,c) VALUES (1,2,3),(4,5,6)  ON DUPLICATE KEY UPDATE c=VALUES(a)+VALUES(b);
 # INSERT INTO t1 (a, b) SELECT c, d FROM t2  UNION SELECT e, f FROM t3 ON DUPLICATE KEY UPDATE b = b + c;
+```

@@ -1,18 +1,21 @@
-
+```
 #####################################
 #	5 Laravel Projects
 #####################################
-
+```
+```
 https://github.com/flarum/core					# http://flarum.org/
 https://github.com/vuedo/vuedo					# https://vuejsfeed.com/
 https://github.com/LavaLite/cms
 https://github.com/ladybirdweb/faveo-helpdesk	# http://www.faveohelpdesk.com/
 https://github.com/timegridio/timegrid 			# https://timegrid.io/
-
-
+```
+```
 ############################################################################################################
 Laravel Angular
 ############################################################################################################
+```
+```
 # Laravel Angular Admin Starter Kit
 https://laravel-news.com/laravel-angular-admin-starter-kit
 https://silverbux.github.io/laravel-angular-admin/
@@ -47,10 +50,11 @@ $ karma start
 
 PHP Unit
 $ phpunit
+```
 
 
 
-############################################################################################################
+```
 OAuth with Angular, Lumen, Socialite, and Satellizer  - Token-based AngularJS Authentication
 https://medium.com/@barryvdh/oauth-in-javascript-apps-with-angular-and-lumen-using-satellizer-and-laravel-socialite-bb05661c0d5c
 https://github.com/sahat/satellizer
@@ -73,12 +77,16 @@ https://laravel-news.com/build-a-time-tracker-with-laravel-and-angularjs
 https://laravel-news.com/build-a-time-tracker-with-laravel-and-angularjs-part-2
 https://scotch.io/tutorials/build-a-time-tracker-with-laravel-5-and-angularjs-part-1
 https://github.com/scotch-io/laravel-angular-time-tracker/tree/part1-angular
+```
 
-############################################################################################################
+```
+######
 AngularJS and Laravel: Begin Building a CRM
 https://code.tutsplus.com/tutorials/angularjs-and-laravel-begin-building-a-crm--net-36444
-############################################################################################################
+######
+```
 
+```
 php artisan serve  # locahost:8000
 php artisan migrate:make create_customers_table
 
@@ -125,8 +133,8 @@ Database Configuration
 ),
 
 php artisan migrate
-
-
+```
+```
 model
 
 class Transaction extends Eloquent {
@@ -134,8 +142,8 @@ class Transaction extends Eloquent {
         return $this->belongsTo('Customer');
     }
 }
-
-
+```
+```
 Controller
 class CustomerController extends BaseController {
 
@@ -176,15 +184,15 @@ class CustomerController extends BaseController {
 
 
 }
-
-
+```
+```
 Route::controller('/customers', 'CustomerController');
 
 php artisan serve
 curl -X POST -d "first_name=Jane&last_name=Doe&email=jdoe@g
 curl http://localhost:8000/customers/all
-
-
+```
+```
 class TransactionController extends BaseController {
 
     public function getIndex() {
@@ -222,13 +230,15 @@ class TransactionController extends BaseController {
 }
 
 Route::controller('/transactions', 'TransactionController');
+```
 
 
+```
 ############################################################################################################
 The basics of building a Laravel and Angular application - Working with a Laravel 4 + AngularJS application
 ############################################################################################################
-
-
+```
+```
 https://laravel-news.com/basics-building-laravel-angular-application
 http://angular-tips.com/blog/2014/10/working-with-a-laravel-4-plus-angular-application/
 https://github.com/Foxandxss/angular-laravel4-workflow
@@ -292,4 +302,4 @@ App::missing(function($exception)
     return File::get(public_path() . '/angular.html');
 });
 
-....
+```

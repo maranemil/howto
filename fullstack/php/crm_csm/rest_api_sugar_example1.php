@@ -11,14 +11,16 @@ ini_set('display_errors', true);
 ini_set('display_startup_errors', true);
 ini_set('log_errors', 1);
 //ini_set("error_log", "/path/to/php-error.log");
-ini_set('html_errors',FALSE);
+ini_set('html_errors', FALSE);
 
-if (!defined('sugarEntry')) {  define('sugarEntry', true); }
+if (!defined('sugarEntry')) {
+    define('sugarEntry', true);
+}
 
 $site_url = "localhost/web/SugarPro-7.5.2.0";
-$base_url = "http://{$site_url}/rest/v10";
-$username = "admin";
-$password = "demo";
+$base_url = "https://{$site_url}/rest/v10";
+$username = "admins";
+$password = "demoo";
 
 /**
  * Generic function to make cURL request.
@@ -32,32 +34,26 @@ $password = "demo";
  */
 function call(
     $url,
-    $oauthtoken='',
-    $type='GET',
-    $arguments=array(),
-    $encodeData=true,
-    $returnHeaders=false
+    $oauthtoken = '',
+    $type = 'GET',
+    $arguments = array(),
+    $encodeData = true,
+    $returnHeaders = false
 )
 {
     $type = strtoupper($type);
 
-    if ($type == 'GET')
-    {
+    if ($type == 'GET') {
         $url .= "?" . http_build_query($arguments);
     }
 
     $curl_request = curl_init($url);
 
-    if ($type == 'POST')
-    {
+    if ($type == 'POST') {
         curl_setopt($curl_request, CURLOPT_POST, 1);
-    }
-    elseif ($type == 'PUT')
-    {
+    } elseif ($type == 'PUT') {
         curl_setopt($curl_request, CURLOPT_CUSTOMREQUEST, "PUT");
-    }
-    elseif ($type == 'DELETE')
-    {
+    } elseif ($type == 'DELETE') {
         curl_setopt($curl_request, CURLOPT_CUSTOMREQUEST, "DELETE");
     }
 
@@ -67,16 +63,13 @@ function call(
     curl_setopt($curl_request, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl_request, CURLOPT_FOLLOWLOCATION, 0);
 
-    if (!empty($oauthtoken))
-    {
+    if (!empty($oauthtoken)) {
         $token = array("oauth-token: {$oauthtoken}");
         curl_setopt($curl_request, CURLOPT_HTTPHEADER, $token);
     }
 
-    if (!empty($arguments) && $type !== 'GET')
-    {
-        if ($encodeData)
-        {
+    if (!empty($arguments) && $type !== 'GET') {
+        if ($encodeData) {
             //encode the arguments as JSON
             $arguments = json_encode($arguments);
             //var_dump($arguments);
@@ -86,12 +79,10 @@ function call(
 
     $result = curl_exec($curl_request);
 
-    if ($returnHeaders)
-    {
+    if ($returnHeaders) {
         //set headers from response
-        list($headers, $content) = explode("\r\n\r\n", $result ,2);
-        foreach (explode("\r\n",$headers) as $header)
-        {
+        list($headers, $content) = explode("\r\n\r\n", $result, 2);
+        foreach (explode("\r\n", $headers) as $header) {
             header($header);
         }
 
@@ -176,7 +167,7 @@ echo "<pre>"; print_r($filter_response); echo "</pre>";*/
 
 
 //echo $filter_arguments = 'max_num=2'; // &filter[0][$or][0][name][$contains]=Bay   fields=id,name
-$getStrFilter   = (string) 'filter[0][$or][0][name][$contains]=Bay&filter[0][$or][1][name][$starts]=Bay';
+$getStrFilter = (string)'filter[0][$or][0][name][$contains]=Bay&filter[0][$or][1][name][$starts]=Bay';
 
 
 /*
@@ -204,9 +195,8 @@ parse_str($getStrFilter, $getStrAr); // transform string into array
 $filter_arguments["filter"] = $getStrAr["filter"]; // merge array
 //echo "<pre>"; print_r($filter_arguments); echo "</pre>";
 
-$url = $base_url ."/Accounts/filter"; // (string)
-$filter_response = call($url, $oauth2_token_response->access_token, 'GET', $filter_arguments );
-echo "<pre>"; print_r($filter_response); echo "</pre>";
-
-
-?>
+$url = $base_url . "/Accounts/filter"; // (string)
+$filter_response = call($url, $oauth2_token_response->access_token, 'GET', $filter_arguments);
+echo "<pre>";
+print_r($filter_response);
+echo "</pre>";

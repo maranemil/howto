@@ -1,9 +1,7 @@
-###############################################
-#
-# Install ORO CRM
-#
-###############################################
-
+######
+### Install ORO CRM
+######
+```
 cd /var/www/html/OroCrm					                # go to your install OroCrm folder
 
 git clone https://github.com/orocrm/crm.git		        # clone packages to be installer
@@ -24,43 +22,51 @@ curl -sS https://getcomposer.org/installer | php 	    # get composer
 php composer.phar update				                # update composer
 php composer.phar require besimple/soap-client "~0.2" --prefer-dist  # intall dependencies
 # Set on composer installation driver "mysqli".
+```
 
-
-# In case case of providing wrong Doctrine driver by intall, repeat install operation:
-
+### In case case of providing wrong Doctrine driver by install, repeat install operation:
+```
 rm -rf crm-application/					                # delete folder
 git clone http://github.com/orocrm/crm-application.git	# clone again
 cd crm-application					                    # go to install folder
 curl -s https://getcomposer.org/installer | php		    # get composer
 php composer.phar require besimple/soap-client "~0.2" --prefer-dist # intall again
 # Set on composer installation driver "mysqli".
+```
 
-# Install mcrypt
+### Install mcrypt
+```
 sudo apt-get install php5-mcrypt			            # get php5-mcrypt
 sudo php5enmod mcrypt					                # enable module mcrypt
 sudo service apache2 restart				            # restart apache
 
 
 php --ini						                        # check php extensions config files
-env							                            # check envoirement
+env		
+					                            ```# check envoirement
+```
 
-# Add your timezone in php.ini (both) and memory limit to 512Mb :
+### Add your timezone in php.ini (both) and memory limit to 512Mb :
+```
 find / -type f -iname 'php.ini' -exec grep -i 'timezone' {} +	# check data.timezone in php.ini(s)
 sudo nano /etc/php5/apache2/php.ini 				    # to modify data.timezone
 sudo nano /etc/php5/cli/php.ini    				        # to modify data.timezone
+```
 
-#Add ORO_PHP_PATH in env:
+### Add ORO_PHP_PATH in env:
+```
 export ORO_PHP_PATH=$PATH:/usr/bin/php			        # set path
 echo $ORO_PHP_PATH					                    # check path
 
 php app/console cache:clear 				            # clear symfony cache
+```
 
-###############################################
-#
-# Extra Checks if Installation does not work well
-#
-###############################################
 
+
+######
+### Extra Checks if Installation does not work well
+######
+```
 sudo a2enmod env					                    # check if env is enabled
 locate php5 						                    # locate php on machine
 ------------------------------------------------
@@ -139,3 +145,4 @@ dpkg --get-selections | grep php5-curl
 
 # Install the php5-mysql package if you do not have it.
 sudo apt-get install php5-curl
+```

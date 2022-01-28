@@ -1,4 +1,4 @@
-
+```
 ####################################################################
 #
 #	codeception
@@ -9,7 +9,8 @@
 #	http://codeception.com/docs/03-AcceptanceTests
 #
 ####################################################################
-
+```
+```
 php codecept.phar run -v acceptance --xml --steps --debug 
 php codecept.phar run acceptance finalCept.php --debug --html
 
@@ -19,13 +20,15 @@ https://github.com/Codeception/Codeception
 http://codeception.com/docs/modules/PhpBrowser
 http://codeception.com/docs/modules/Asserts#expectException
 http://codeception.com/docs/modules/WebDriver#grabMultiple
-
+```
+```
 Usage:
 
 codecept run acceptance: run all acceptance tests
 codecept run tests/acceptance/MyCept.php: run only MyCept
 codecept run acceptance MyCest:myTestInIt: run one test from a Cest
-
+```
+```
 Verbosity modes:
 
 codecept run -v:
@@ -33,7 +36,8 @@ codecept run --steps: print step-by-step execution
 codecept run -vv:
 codecept run --debug: print steps and debug information
 codecept run -vvv: print internal debug information
-
+```
+```
 -
 Codeception PHP 			http://codeception.com
 Behat PHP					http://behat.org/en/latest/
@@ -59,9 +63,9 @@ $I->click($selector);
 public function clickJQuerySelectedElement($element) {
     $this->executeJS('return $("' . $element . '").get(0).click()');
 }
+```
 
-
-
+```
 https://gist.github.com/pastuhov/43674b195dc293ffd847 # tests\codeception\common\_support\AcceptanceHelper  # AcceptanceHelper.php
 
 
@@ -72,9 +76,9 @@ https://github.com/Codeception/Codeception/issues/758
 https://github.com/Codeception/Codeception/issues/3102
 http://phptest.club/t/getting-values-from-executejs/1173/3
 http://phptest.club/t/how-to-run-java-script-with-codeception/411
-
+```
 ------------------------------------------------------------------------------------
-
+```
 https://www.drupal-blog-berlin.de/blog/automatisierte-tests-mit-codeception
 https://www.theaveragedev.com/two-codeception-acceptance-tests-gotchas/
 
@@ -99,9 +103,9 @@ $I->waitForJs('return jQuery.active == 0', 10);
 $fullUrl = $I->executeJS('return location.href');
 $I->assertContains('/index.php'); // passing
 $I->assertContains('foo=bar'); // passing
-
+```
 ------------------------------------------------------------------------------------
-
+```
 https://www.proudsourcing.de/talks/files/akzeptanztests-fuer-shops-codeception-shopware-scd17_proudsourcing.pdf
 
 
@@ -172,10 +176,10 @@ $I->see('Standard');
 $I->executeJS('return $(".cartbutton").get(0).click()');
 $I->amOnPage('/en/checkout/show_cart');
 $I->see('Remove'); 
+```
 
 
-
-
+```
 dektop:
  modules:
  enabled:
@@ -206,10 +210,10 @@ dektop:
  capabilities:
  os: Windows
  os_version: 10
-
+```
 
 ------------------------------------------------------------------------------------
-
+```
 http://testing340.blogspot.de/2015/11/
 http://testing340.blogspot.de/2015/11/how-selenium-webdriver-locate-element.html
 http://testing340.blogspot.de/2015/11/undefined-index-localhost-phpunit.html
@@ -225,9 +229,9 @@ http://testing340.blogspot.de/2015/11/undefined-index-localhost-phpunit.html
     we.sendKeys("login_password");
     we = m_driver.findElement(By.xpath(".//*[@id='btnLogin']"));
     we.click();
-
+```
 ------------------------------------------------------------------------------------
-
+```
 http://codeception.com/11-20-2013/webdriver-tests-with-codeception.html
 sudo apt install default-jre
 java -jar selenium-server-standalone-2.37.0.jar
@@ -254,16 +258,17 @@ env:
             - Codeception\Extension\RunProcess:
                 - php -S 127.0.0.1:8000
                 - java -jar selenium-server.jar       
-
+```
 ------------------------------------------------------------------------------------
-
+```
 https://searchcode.com/?q=throw+lang%3APHP+lookForwardTo
 https://searchcode.com/file/72194785/features/Context/WebUser.php # use Behat\Mink\Exception\ExpectationException;
 https://searchcode.com/file/16092032/src/Codeception/AbstractGuy.php  # 
 https://searchcode.com/file/72102230/src/Codeception/AbstractGuy.php  #
 https://searchcode.com/file/59119167/tests/codecept/src/Codeception/AbstractGuy.php # 
 ------------------------------------------------------------------------------------
-
+```
+```
 https://phpunit.de
 https://phpunit.de/getting-started-with-phpunit.html
 
@@ -309,9 +314,10 @@ modules:
         #- \Helper\Acceptance
 
  [ConnectionException] Can't connect to Webdriver at http://127.0.0.1:4444/wd/hub. Please make sure that Selenium Server or PhantomJS is running.
+```
 
 ------------------------------------------------------------------------------------
-
+```
 http://codeception.com/extensions#RunProcess
 
 class_name: AcceptanceTester
@@ -330,9 +336,9 @@ extensions:
             0: java -jar /home/tajgeer/.executables/bin/selenium-server.jar
             1: php /home/tajgeer/Repozytoria/Yii2/yii serve
             sleep: 5
-
+```
 ------------------------------------------------------------------------------------
-
+```
 http://codeception.com/11-14-2014/dockerizing-acceptance-testing.html
 docker run -i -t -p 4444:4444 davert/selenium-env
 docker run -i -t -p 4444:4444 -e APP_HOST=myhost davert/selenium-env
@@ -349,8 +355,9 @@ https://github.com/Codeception/SeleniumEnv
 https://github.com/Codeception/PhantomJsEnv
 https://github.com/travis-ci/travis-cookbooks
 https://github.com/Codegyre/RoboCI
-
+```
 ------------------------------------------------------------------------------------
+```
 https://code.tutsplus.com/tutorials/headless-functional-testing-with-selenium-and-phantomjs--net-30545
 
 Setup Here's the final stack that we'll be using:
@@ -369,12 +376,12 @@ sudo npm install -g phantomjs
 
 RUN
 node_modules/mocha/bin/mocha test.js -t 10000
-
+```
 
 ------------------------------------------------------------------------------------
 
 
-
+```
 Codeception: Unreachable field "description"
 $I->fillField("//input[@id='description']", 'Another type');
 $I->fillField('Description', 'Another type');
@@ -433,8 +440,8 @@ $I->click('View archived');
 // $I->see('Bar LLC');
 
 $I->logout();
-
-
+```
+```
 // Resources
 
 
@@ -462,7 +469,9 @@ modules:
 #            url: http://''
 #       - \Helper\Acceptance
 
+```
 
+```
 php codecept run acceptance --env phantom --env chrome --env firefox
 php codecept run acceptance --env dev,phantom --env dev,chrome --env dev,firefox
 https://github.com/Codeception/Codeception/blob/2.0/tests/README.md
@@ -478,9 +487,9 @@ http://codeception.com/docs/05-UnitTests
 http://codeception.com/docs-1.8/06-UnitTests
 http://codeception.com/docs-2.0/06-UnitTests
 http://codeception.com/docs/05-UnitTests#Interacting-with-the-Framework
-
-###############################################################################
-
+```
+######
+```
 https://stackoverflow.com/questions/21873723/printing-debug-output-to-console-in-codeception
 https://dzone.com/articles/practical-php-testing/practical-php-testing-patterns-26
 https://phpunit.de/manual/current/en/test-doubles.html
@@ -524,9 +533,9 @@ public function _after(AcceptanceTester $I)
 }
 
 https://leanpub.com/practicalsymfony3/read
-
+```
 -------------
-
+```
 FIX for [Error] Class 'xajaxPluginManager' not found
 
 # include in phpunit method following
@@ -539,9 +548,9 @@ require_once __DIR__.'/../../../vendor/xajax/xajax/xajax_core/xajaxPluginManager
 
 
 php code...phar --steps --debug
-
+```
 ----------------------------------
-
+```
 class_name: FunctionalTester
 modules:
     enabled:
@@ -559,15 +568,13 @@ modules:
             url: 'http://localhost'
         - Asserts
         - \Helper\Functional
-
+```
 ----------------------------------
-
+```
 https://phpunit.de/manual/current/en/fixtures.html
 http://www.ryanwright.me/cookbook/phpunit/global
-
-
 http://blog.jmoz.co.uk/phpunit-mocking-and-method-chaining/
-
+```
 
 
 

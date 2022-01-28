@@ -1,10 +1,8 @@
-#####################################################
-#
-#	Website Speed Test - Waiting TTFB DevTools
-#	Waiting (TTFB). The browser is waiting for the first byte of a response. TTFB stands for Time To First Byte. This timing includes 1 round trip of latency and the time the server took to prepare the response.
-#
-#####################################################
-
+######
+###	Website Speed Test - Waiting TTFB DevTools
+####	Waiting (TTFB). The browser is waiting for the first byte of a response. TTFB stands for Time To First Byte. This timing includes 1 round trip of latency and the time the server took to prepare the response.
+######
+```
 https://kinsta.com/de/blog/ttfb/
 https://www.webpagetest.org/
 https://tools.pingdom.com/
@@ -32,7 +30,9 @@ https://www.ise.io/casestudies/industry-wide-misunderstandings-of-https/
 https://www.hongkiat.com/blog/meta-tag-hidden-features/
 https://developers.google.com/web/tools/chrome-devtools/network/reference#timing-explanation
 http://www.websiteoptimization.com/speed/tweak/time-to-first-byte/
+```
 
+```
 FIX: When response is to long > 1 min - check SQL Queries!
 
 
@@ -69,9 +69,10 @@ request_slowlog_timeout = 5s
 
 innodb_buffer_pool_size=1024M
 query_cache_size=64M
+```
 
 
-
+```
 <meta http-equiv="Cache-control" content="public">
 <meta http-equiv="Cache-control" content="private">
 <meta http-equiv="Cache-control" content="no-cache">
@@ -84,21 +85,24 @@ query_cache_size=64M
 <meta http-equiv="page-enter" content="revealtrans(duration=seconds,transition=num)" />
 <meta http-equiv="page-exit" content="revealtrans(duration=seconds,transition=num)" />
 <meta http-equiv="page-enter" content="blendTrans(duration=sec)" />
+```
 
-
-
+```
 # start stop XDEBUG_SESSION
 javascript:(/** @version 0.5.2 */function() {document.cookie='XDEBUG_SESSION='+'PHPSTORM'+';path=/;';})()
 javascript:(/** @version 0.5.2 */function() {document.cookie='XDEBUG_SESSION='+''+';expires=Mon, 05 Jul 2000 00:00:00 GMT;path=/;';})()
 # start stop XDEBUG_PROFILE
 javascript:(/** @version 0.5.2 */function() {document.cookie='XDEBUG_PROFILE='+'1'+';path=/;';})()
 javascript:(/** @version 0.5.2 */function() {document.cookie='XDEBUG_PROFILE='+''+';expires=Mon, 05 Jul 2000 00:00:00 GMT;path=/;';})()
+```
 
 
-#####################################################
-PHP LIVE Testers
-#####################################################
 
+
+######
+### PHP LIVE Testers
+######
+```
 https://repl.it/languages/php_cli
 https://sandbox.onlinephpfunctions.com/
 https://extendsclass.com/php.html
@@ -118,54 +122,58 @@ http://phpfiddle.org/
 https://repl.it/languages/php_cli
 https://www.jdoodle.com/php-online-editor/
 https://www.codegrepper.com/code-examples/php/phptester
+```
 
-
-#####################################################
-PHP CLI DEBUG
-#####################################################
-
+######
+### PHP CLI DEBUG
+######
+```
 # cli mode
 php -r echo 'helloworld';
 
 # interactive mode
 php -a
 echo 'helloworld';
+```
 
-#####################################################
-PHP system, exec, passthru return code 127
-PHP system, exec, passthru and return code 127
-#####################################################
 
+######
+### PHP system, exec, passthru return code 127
+### PHP system, exec, passthru and return code 127
+######
+```
 Value 127 is returned by /bin/sh when the given command is not found within your PATH
  system variable and it is not a built-in shell command. In other words, the system doesn't
  understand your command, because it doesn't know where to find the binary you're trying to call.
+```
 
-#####################################################
-#   php pest
-#####################################################
+
+######
+###   php pest
+######
+```
 https://pestphp.com/
 https://blog.jetbrains.com/phpstorm/2020/10/how-the-pest-phpstorm-plugin-will-improve-your-testing-workflow/
+```
 
 
 
-
-
-
-
-#####################################################
-Trunk-Based Development
-#####################################################
+######
+### Trunk-Based Development
+######
+```
 https://trunkbaseddevelopment.com/
 https://devblogs.microsoft.com/devops/release-flow-how-we-do-branching-on-the-vsts-team/
 
 feature flags
 config file
+```
 
 
-
-#####################################################
-tdd
-#####################################################
+######
+### tdd
+######
+```
 https://www.guru99.com/test-driven-development.html
 https://testsigma.com/regression-testing/functional-regression-testing
 https://www.qmetry.com/functional-regression-testing/
@@ -185,11 +193,15 @@ production
 unit tests
 integration tests
 e2e tests
+```
 
-#####################################################
-GOTO 2019 • "Good Enough" Architecture • Stefan Tilkov
-https://www.youtube.com/watch?v=PzEox3szeRc
-#####################################################
+
+
+######
+### GOTO 2019 • "Good Enough" Architecture • Stefan Tilkov
+#### https://www.youtube.com/watch?v=PzEox3szeRc
+######
+```
 vision
 business concept
 tehnical concept
@@ -198,11 +210,12 @@ implementation
 module testing
 integration testing
 rollout
+```
 
-
-#####################################################
-OWASP Top 10 Security Risks & Vulnerabilities
-#####################################################
+######
+### OWASP Top 10 Security Risks & Vulnerabilities
+######
+```
 https://sucuri.net/guides/owasp-top-10-security-vulnerabilities-2021/
 https://www.synopsys.com/glossary/what-is-owasp-top-10.html
 https://www.veracode.com/security/owasp-top-10
@@ -219,3 +232,4 @@ Cross site scripting (XSS)
 Insecure deserialization
 Using components with known vulnerabilities
 Insufficient logging and monitoring
+```

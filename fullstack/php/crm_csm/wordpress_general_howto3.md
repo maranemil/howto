@@ -1,7 +1,7 @@
 
 --------------------------------------------
-Add WordPress Admin User with phpMyAdmin
---------------------------------------------
+### Add WordPress Admin User with phpMyAdmin
+```
 
 https://themeisle.com/blog/new-wordpress-admin-user/
 https://wpengine.com/support/add-admin-user-phpmyadmin/
@@ -46,18 +46,18 @@ VALUES (NULL, '4', 'wp_user_level', '10');
 
 INSERT INTO `databasename`.`wp_usermeta` (`umeta_id`, `user_id`, `meta_key`, `meta_value`)
 VALUES (NULL, ‘your_user_id’, ‘wp_user_level’, ’10’);
+```
 
-
-#######################################################
+```
 
 
 
 https://www.smashingmagazine.com/2015/05/how-to-use-autoloading-and-a-plugin-container-in-wordpress-plugins/
 https://wp-helpers.com/2021/03/30/create-a-simple-psr-4-compliant-autoloader-for-any-plugin/
 https://code.tutsplus.com/tutorials/using-namespaces-and-autoloading-in-wordpress-plugins-4--cms-27342
-
+```
 -------------------------------------------------------
-
+```
 // include classes
 spl_autoload_register('myplugin_autoloader');
 function myplugin_autoloader($class_name)
@@ -71,16 +71,16 @@ function myplugin_autoloader($class_name)
         }
     }
 }
-
+```
 -------------------------------------------------------
-
+```
 https://www.php.net/manual/en/function.sprintf.php
 https://www.php.net/manual/en/function.curl-getinfo.php
 
 CURLINFO_HTTP_CODE 200="OK"
-
+```
 -------------------------------------------------------
-
+```
 Flushing cache from third-party applications
 
 https://cachify.pluginkollektiv.org/documentation/#flushing-cache-from-third-party-applications
@@ -99,10 +99,10 @@ https://developer.wordpress.org/reference/functions/get_user_meta/
 https://www.php.net/manual/en/function.rand.php
 https://www.php.net/manual/en/function.random-int.php
 
-
+```
 -------------------------------------------------------
-How to Update WordPress Automatically Without Using FTP
--------------------------------------------------------
+### How to Update WordPress Automatically Without Using FTP
+```
 
 https://stackoverflow.com/questions/18352682/correct-file-permissions-for-wordpress
 https://stackoverflow.com/questions/640409/can-i-install-update-wordpress-plugins-without-providing-ftp-access
@@ -121,10 +121,11 @@ sudo chmod -R 777 wp-content/
 sudo chown www-data:www-data  -R * # Let Apache be owner
 sudo find . -type d -exec chmod 755 {} \;  # Change directory permissions rwxr-xr-x
 sudo find . -type f -exec chmod 644 {} \;  # Change file permissions rw-r--r--
+```
 
 -------------------------------------------------------
-wordpress version docker
--------------------------------------------------------
+### wordpress version docker
+```
 https://github.com/docker-library/wordpress/blob/master/versions.json
 https://github.com/docker-library/wordpress/blob/master/latest/php7.4/apache/Dockerfile
 https://raw.githubusercontent.com/docker-library/wordpress/master/latest/php8.0/fpm-alpine/Dockerfile
@@ -133,11 +134,11 @@ https://raw.githubusercontent.com/docker-library/wordpress/master/latest/php8.0/
     "sha1": "3be7ed4dc6f46fe98271b974c88153640e95ad49",
     "upstream": "5.8.3",
 
+```
 
 -------------------------------------------------------
-docker compose examples
--------------------------------------------------------
-
+### docker compose examples
+```
 https://stackoverflow.com/questions/65812258/docker-composer-error-cannot-start-service-db-oci-runtime-create-failed-conta
 https://forums.docker.com/t/cant-install-2nd-instance-of-wordpress-as-it-says-cannot-start-service-db-oci-runtime-create-failed-container-with-id/66034
 https://forums.docker.com/t/dockerfile-cannot-start-service-and-2-same-service/98745
@@ -146,11 +147,13 @@ https://github.com/rwynn/monstache-showcase/issues/1
 https://github.com/docker/compose/issues/4039
 
 
--------------------------------------------------------
-docker db import
--------------------------------------------------------
+```
+
+### docker db import
+```
 /docker-entrypoint-initdb.d
 /docker-entrypoint-initdb.d/dump.sql
+```
 
 
 

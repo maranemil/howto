@@ -1,11 +1,8 @@
-##################################################
-#
-#
-# 	Angular 2 Tutorial for Beginners: Learn Angular 2 from Scratch
-# 	https://www.youtube.com/watch?v=_-CD_5YhJTA
-#
-##################################################
-
+######
+### 	Angular 2 Tutorial for Beginners: Learn Angular 2 from Scratch
+### 	https://www.youtube.com/watch?v=_-CD_5YhJTA
+######
+```
 sudo npm install -g typescript
 sudo npm install -g angular-cli
 
@@ -22,9 +19,11 @@ npm start
 *
 *
 *
+```
+
 
 Angular 2 Videos
------------------------------------------------------
+```
 
 https://www.youtube.com/watch?v=WAPQF_GA7Qg
 https://www.youtube.com/watch?v=ejBkOjEG6F0
@@ -41,3 +40,4 @@ https://www.youtube.com/watch?v=L7xPwhwbcHE
 https://www.youtube.com/watch?v=W14_ZArh6eo
 https://www.youtube.com/watch?v=TRrL5j3MIvo
 https://www.youtube.com/watch?v=1lBxgACVcrQ
+```

@@ -17,7 +17,7 @@ shuffle($arrFiles);
 foreach ($arrFiles as $filename) {
     #echo "$filename size " . filesize($filename) . "\n";
     if (rand(1, 10) == 2) {
-        $cmdMix .= " -i '{$filename}' ";
+        $cmdMix .= " -i '$filename' ";
     }
 }
 

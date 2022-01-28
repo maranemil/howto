@@ -11,7 +11,7 @@ $w = 2 * pi() * $freqOfTone / $sampleRate;
 
 $samples = array();
 for ($n = 0; $n < $samplesCount; $n++) {
-    $samples[] = (int) ($amplitude * sin($n * $w));
+    $samples[] = (int)($amplitude * sin($n * $w));
 }
 
 $srate = 44100; //sample rate
@@ -94,20 +94,20 @@ $wav->outMp3();
  * @param float $seconds
  * @throws OutOfRangeException Volume out of range
  */
-function synthesizeSine($frequency, $volume, $seconds)
-{
-    $b = pow(2, $this->bits_per_sample) / 2;
-    for ($i = 0; $i < $seconds * $this->sample_rate; $i++) {
-        // Add a sample for each channel
-        $this->output .= str_repeat(
-            $this->encodeSample(
-                $volume * $b * // <- amplitude
-                sin(2 * M_PI * $i * $frequency / $this->sample_rate)
-            ),
-            $this->channels);
-        $this->sample_count++;
-    }
-}
+//function synthesizeSine($frequency, $volume, $seconds)
+//{
+//    $b = pow(2, $this->bits_per_sample) / 2;
+//    for ($i = 0; $i < $seconds * $this->sample_rate; $i++) {
+//        // Add a sample for each channel
+//        $this->output .= str_repeat(
+//            $this->encodeSample(
+//                $volume * $b * // <- amplitude
+//                sin(2 * M_PI * $i * $frequency / $this->sample_rate)
+//            ),
+//            $this->channels);
+//        $this->sample_count++;
+//    }
+//}
 
 # https://github.com/sk89q/wavforge/blob/f50953d0accf11cc26207086d50136f93634a830/src/WavForge.php#L266
 # https://github.com/sk89q/wavforge/blob/f50953d0accf11cc26207086d50136f93634a830/src/WavForge.php#L266
@@ -131,7 +131,7 @@ $w = 2 * pi() * $freqOfTone / $sampleRate;
 
 $samples = array();
 for ($n = 0; $n < $samplesCount; $n++) {
-    $samples[] = (int) ($amplitude * sin($n * $w));
+    $samples[] = (int)($amplitude * sin($n * $w));
 }
 
 $srate = 44100; //sample rate

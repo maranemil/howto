@@ -1,10 +1,8 @@
 
-##################################################################
-#
-#   bouml
-#
-##################################################################
-
+######
+###   bouml
+######
+```
 http://bouml.free.fr/
 https://www.bouml.fr/
 https://www.bouml.fr/download.html
@@ -37,13 +35,11 @@ deb http://bouml.free.fr/apt/stretch stretch free
 sudo apt-get update
 
 sudo apt-get install bouml
-
-##################################################################
-#
-#	phpuml
-#
-##################################################################
-
+```
+######
+###	phpuml
+######
+```
 https://pear.php.net/package/PHP_UML/
 pear install pear/php_uml
 phpuml -o project.xmi
@@ -97,16 +93,14 @@ phpuml /var/www/foo -n MyProject
 phpuml /var/www/foo -f html -o /var/tmp/
 phpuml /var/www/foo -m *.php *.txt
 phpuml /var/www/foo --no-dollar -o foo.xmi
+```
 
-
-##################################################################
-#
-#	phuml
-#	https://github.com/jakobwesthoff/phuml
-#	http://stackz.ru/en/393603/php-uml-generator
-#
-##################################################################
-
+######
+###	phuml
+####	https://github.com/jakobwesthoff/phuml
+####	http://stackz.ru/en/393603/php-uml-generator
+######
+```
 https://dasunhegoda.com/class-diagram-from-php-code-using-phuml/867/
 
 sudo apt install graphviz gimp
@@ -122,13 +116,12 @@ cd ~/git/phuml/src/app
 [|] Parsing class structure
 [|] Running 'Graphviz' processor
 [|] Running 'Neato' processor
+```
 
-##################################################################
-#
-#    uml hierarchies diagram
-#
-##################################################################
-
+######
+###    uml hierarchies diagram
+######
+```
 PHPCity
 https://github.com/adrianhuna/PHPCity
 https://adrianhuna.github.io/PHPCity/
@@ -138,3 +131,6 @@ https://github.com/exakat/php-static-analysis-tools
 
 GraphML Generator: Generate UML diagrams from PHP code using GraphML
 https://www.phpclasses.org/package/6025-PHP-Generate-UML-diagrams-from-PHP-code-using-GraphML.html
+```
+
+

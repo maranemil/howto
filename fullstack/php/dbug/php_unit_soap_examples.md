@@ -1,10 +1,9 @@
 
-////////////////////////////////////////////
-//
-// Test Soap Services with PHPUnit
-//
-////////////////////////////////////////////
 
+
+###  Test Soap Services with PHPUnit
+
+```
 <?php
 
 class TranslationServiceTestCase extends UnitTestCase
@@ -30,11 +29,11 @@ class TranslationServiceTestCase extends UnitTestCase
         // ...code omitted for brevity...
     }
 }
+```
 
+#### http://pointbeing.net/weblog/2009/04/unit-testing-code-which-consumes-soap-services.html
 
-// http://pointbeing.net/weblog/2009/04/unit-testing-code-which-consumes-soap-services.html
-
-
+```
 class MyTest extends PHPUnit_Framework_TestCase
     protected static $_soapMock = null;
 
@@ -56,10 +55,10 @@ class MyTest extends PHPUnit_Framework_TestCase
         return self::$_soapMock;
     }
 }
-
+```
 ---
 
-
+```
 <?php
 /**
 * Pass an object from test to test
@@ -114,10 +113,10 @@ class WebSericeTest extends PHPUnit_Framework_TestCase
     }
 }
 ?>
+```
 
 
-
-
+```
 <?php
 
 require_once 'PHPUnit/Autoload.php';
@@ -250,3 +249,4 @@ EOT;
         $this->assertEquals(34.00, $widget->price);
     }
 }
+```

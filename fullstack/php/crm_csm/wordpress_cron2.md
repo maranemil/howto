@@ -1,3 +1,4 @@
+```
 http://scripthere.com/how-to-setup-cron-job-in-wordpress-without-plugin/
 https://blazzdev.com/scheduled-tasks-cron-wordpress-plugin-boilerplate/
 https://codeopolis.com/posts/creating-a-basic-wordpress-cron-job-in-3-steps/
@@ -29,10 +30,10 @@ https://www.paidmembershipspro.com/troubleshooting-issues-with-wp-cron-and-other
 https://www.php.net/manual/en/function.file-put-contents.php
 https://www.siteground.com/tutorials/wordpress/real-cron-job/
 https://www.webtimiser.de/custom-functions-dein-wp-plugin-snippets/
-
+```
 --------------------------------------------------------------------------------------
 
-
+```
 https://wordpress.stackexchange.com/questions/199725/triggering-cron-by-calling-wp-cron-php-on-the-command-line-rather-than-with-wget/332594
 https://apple.stackexchange.com/questions/121817/how-to-fix-curl-60-ssl-certificate-invalid-certificate-chain-when-using-sudo
 
@@ -46,19 +47,19 @@ curl --insecure --url http://example.com/wp-cron.php --verbose
 define('DISABLE_WP_CRON', true);
 
 wp cron event run --due-now > /dev/null 2>&1
+```
 
 
-
-
+```
 https://developer.wordpress.org/reference/functions/get_user_by/
 https://developer.wordpress.org/reference/functions/remove_role/
 https://developer.wordpress.org/reference/functions/wp_roles/
 https://developer.wordpress.org/reference/classes/wp_user/remove_role/
 https://developer.wordpress.org/reference/classes/wp_user/
-
+```
 
 --------------------------------------------------------------------------------------
-
+```
 wget -q -O - https://yoursite.com/wp-cron.php?doing_wp_cron >/dev/null 2>&1
 
 
@@ -106,10 +107,10 @@ wp --info
 
 
 curl -vs -o -S https://mysite.com/wp-cron.php?setcronjob
-
+```
 
 ---------------------------------------------------------------------------------
-
+```
 
 function isa_add_cron_recurrence_interval( $schedules ) {
 
@@ -121,9 +122,9 @@ function isa_add_cron_recurrence_interval( $schedules ) {
     return $schedules;
 }
 add_filter( 'cron_schedules', 'isa_add_cron_recurrence_interval' );
-
+```
 ---------------------------------------------------------------------------------
-
+```
 
 Plugin
 
@@ -171,9 +172,9 @@ function isa_every_three_minutes_event_func() {
 
 add_action( 'isa_add_every_three_minutes_event', 'isa_every_three_minutes_event_func' );
 
-
+```
 ---------------------------------------------------------------------------------
-
+```
 
 function my_cron_schedules($schedules){
     if(!isset($schedules["5min"])){
@@ -197,7 +198,9 @@ function schedule_my_cron(){
 if(!wp_next_scheduled('my_schedule_hook',$args)){
     add_action('init', 'schedule_my_cron');
 }
+```
 ---------------------------------------------------------------------------------
+```
 function run_every_five_minutes() {
     // Could probably do with some logic here to stop it running if just after running.
     // codes go here
@@ -210,8 +213,9 @@ if ( ! get_transient( 'every_5_minutes' ) ) {
     // It's better use a hook to call a function in the plugin/theme
     //add_action( 'init', 'run_every_five_minutes' );
 }
-
+```
 ---------------------------------------------------------------------------------
+```
 // Add a new interval of 180 seconds
 // See http://codex.wordpress.org/Plugin_API/Filter_Reference/cron_schedules
 add_filter( 'cron_schedules', 'isa_add_every_three_minutes' );
@@ -233,8 +237,9 @@ add_action( 'isa_add_every_three_minutes', 'every_three_minutes_event_func' );
 function every_three_minutes_event_func() {
     // do something
 }
+```
 ---------------------------------------------------------------------------------
-
+```
 Scheduled Event
 
 // create a scheduled event (if it does not exist already)
@@ -266,9 +271,9 @@ function my_repeat_function() {
 
 // hook that function onto our scheduled event:
 add_action ('mycronjob', 'my_repeat_function');
+```
 
-
-
+```
 Custom Intervals
 
 // add custom interval
@@ -290,15 +295,16 @@ function cronstarter_activation() {
 }
 // and make sure it's called whenever WordPress loads
 add_action('wp', 'cronstarter_activation');
+```
 ---------------------------------------------------------------------------------
-
+```
 add_action( 'my_hookname', 'my_function' );
 function my_function() {
 	wp_mail( 'hello@example.com', 'WP Crontrol', 'WP Crontrol rocks!' );
 }
-
+```
 ---------------------------------------------------------------------------------
-
+```
 https://www.codegrepper.com/code-examples/php/frameworks/laravel/cron+job+in+wordpress+without+plugin
 
 
@@ -315,10 +321,10 @@ add_action('my_hourly_event', 'do_this_hourly');
 function do_this_hourly() {
 // do something every hour
 }
-
+```
 
 ---------------------------------------------------------------------------------
-
+```
 https://newbedev.com/php-cron-job-in-wordpress-without-plugin-code-example
 
 register_activation_hook(__FILE__, 'my_activation');
@@ -335,8 +341,9 @@ function do_this_hourly() {
     // do something every hour
 }
 
-
+```
 ---------------------------------------------------------------------------------
+```
 add_action( 'init', function () {
 	if ( ! wp_next_scheduled( 'do_single_action' ) ) {
 		wp_schedule_single_event( time(), 'do_single_action' );
@@ -348,10 +355,10 @@ add_action( 'init', function () {
 		error_log( 'DO THIS ONCE' );
 	}
 } );
-
+```
 
 ---------------------------------------------------------------------------------
-
+```
 functions.php:
 
 
@@ -390,11 +397,11 @@ class Product_Importer {
 function do_import( $file, $attachment_id ) {
 	Product_Importer::import( $file, $attachment_id );
 }
-
+```
 
 
 ---------------------------------------------------------------------------------
-
+```
 https://stackoverflow.com/questions/67491876/wordpress-cron-job-custom-hook-not-working
 
 
@@ -413,9 +420,9 @@ function do_this_hourly() {
     $log = __DIR__ . '/error_log.txt';
     file_put_contents($log, "Response: \n", FILE_APPEND); // Works with making action 'wp_loaded'
 }
-
+```
 ---------------------------------------------------------------------------------
-
+```
 https://pretagteam.com/question/wordpress-cron-wpschedulesingleevent-action-not-always-working
 
 
@@ -435,32 +442,32 @@ register_deactivation_hook(__FILE__, 'my_deactivation');
 function my_deactivation() {
    wp_clear_scheduled_hook('my_hourly_event');
 }
-
+```
 ---------------------------------------------------------------------------------
-
+```
 https://www.cloudways.com/blog/wordpress-cron-job/
 
 add_action( 'cloudways_new_cron', 'cw_function' );
 function cw_function() {
 wp_mail( 'farhan.ayub@cloudways.com', 'Cloudways Cron', 'Cloudways - a Managed Cloud Hosting!' );
 }
-
+```
 ---------------------------------------------------------------------------------
-
+```
 https://pressable.com/knowledgebase/how-to-manage-cron-jobs-at-pressable/#steps-to-create-a-new-cron-job-in-wordpress
 
 functions.php
 
 add_action( ‘wp_test_email’,  'email_cron_function' );
 function email_cron_function() {
-// This is the task that the cron job will perform when triggered
-wp_mail( 'youremail@example.com', 'Automatic email', Scheduled email from cron');
+    // This is the task that the cron job will perform when triggered
+    wp_mail( 'youremail@example.com', 'Automatic email', Scheduled email from cron');
 }
-
+```
 
 
 ---------------------------------------------------------------------------------
-
+```
 https://wordpress.stackexchange.com/questions/29697/wp-cron-wont-trigger-my-action
 
 add_action('update_properties_daily', array(&$this, 'do_updates'));
@@ -469,9 +476,9 @@ if(!wp_next_scheduled('update_properties_daily') )
 {
    wp_schedule_event( time(), 'daily', 'update_properties_daily');
 }
-
+```
 ---------------------------------------------------------------------------------
-
+```
 
 function my_activation() {
     if ( !wp_next_scheduled( 'my_hourly_event' ) ) {
@@ -485,7 +492,7 @@ function do_this_hourly() {
 }
 add_action('my_hourly_event', 'do_this_hourly');
 add_action('init', 'my_activation');
-
+```
 
 
 

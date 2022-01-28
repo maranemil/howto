@@ -7,7 +7,7 @@
 $input = "the quick brown fox jumps over thirteen lazy dogs";
 $output = "gsv jfrxp yildm ulc qfnkh levi gsrigvvm ozab wlth";
 
-echo $output.PHP_EOL;
+echo $output . PHP_EOL;
 
 class Chiper
 {
@@ -27,13 +27,12 @@ class Chiper
 
         foreach (str_split($str) as $letter) {
             $key = array_search($letter, $arrRefer);
-            if(!empty($key)){
+            if (!empty($key)) {
                 echo str_replace($letter, $arrShift[$key], $letter);
-            }
-            else{
+            } else {
                 echo ' ';
             }
-            
+
         }
     }
 
@@ -44,13 +43,12 @@ class Chiper
 
         foreach (str_split($str) as $letter) {
             $key = array_search($letter, $arrShift);
-            if($key){
+            if ($key) {
                 echo str_replace($letter, $arrRefer[$key], $letter);
-            }
-            else{
+            } else {
                 echo ' ';
             }
-            
+
         }
     }
 }

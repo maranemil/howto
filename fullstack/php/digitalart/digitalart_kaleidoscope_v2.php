@@ -32,28 +32,28 @@ imagedestroy($im);
 $degrees = 180; // 180
 $source = imagecreatefrompng($filename_bl);
 $rotate = imagerotate($source, $degrees, 0);
-imagepng($rotate,$filename_tr);
+imagepng($rotate, $filename_tr);
 imagedestroy($source);
 imagedestroy($rotate);
 
 // top left
 $im = imagecreatefrompng($filename_bl);
 imageflip($im, IMG_FLIP_VERTICAL);
-imagepng($im,$filename_tl);
+imagepng($im, $filename_tl);
 imagedestroy($im);
 
 // bottom right
 $im = imagecreatefrompng($filename_tr);
 imageflip($im, IMG_FLIP_VERTICAL);
-imagepng($im,$filename_br);
+imagepng($im, $filename_br);
 imagedestroy($im);
 
 //
-$im = @imagecreatetruecolor($width*2, $height*2)
-      or die('Cannot Initialize new GD image stream');
+$im = @imagecreatetruecolor($width * 2, $height * 2)
+or die('Cannot Initialize new GD image stream');
 #$text_color = imagecolorallocate($im, 233, 14, 91);
 #imagestring($im, 1, 5, 5,  'A Simple Text String', $text_color);
-imagepng($im,'example_wrap.png');
+imagepng($im, 'example_wrap.png');
 imagedestroy($im);
 
 
@@ -84,7 +84,7 @@ $sy = imagesy($stamp);
 imagecopy($im, $stamp, imagesx($im) - $sx - 0, imagesy($im) - $sy - 0, 0, 0, imagesx($stamp), imagesy($stamp));
 
 #header('Content-type: image/png');
-imagepng($im,'example_wrap_out.png');
+imagepng($im, 'example_wrap_out.png');
 imagedestroy($im);
 
 // Kaleidoscope 4 parts
@@ -114,28 +114,28 @@ imagedestroy($im);
 $degrees = 180; // 180
 $source = imagecreatefrompng($filename_bl);
 $rotate = imagerotate($source, $degrees, 0);
-imagepng($rotate,$filename_tr);
+imagepng($rotate, $filename_tr);
 imagedestroy($source);
 imagedestroy($rotate);
 
 // top left
 $im = imagecreatefrompng($filename_bl);
 imageflip($im, IMG_FLIP_VERTICAL);
-imagepng($im,$filename_tl);
+imagepng($im, $filename_tl);
 imagedestroy($im);
 
 // bottom right
 $im = imagecreatefrompng($filename_tr);
 imageflip($im, IMG_FLIP_VERTICAL);
-imagepng($im,$filename_br);
+imagepng($im, $filename_br);
 imagedestroy($im);
 
 //
-$im = @imagecreatetruecolor($width*2, $height*2)
-      or die('Cannot Initialize new GD image stream');
+$im = @imagecreatetruecolor($width * 2, $height * 2)
+or die('Cannot Initialize new GD image stream');
 #$text_color = imagecolorallocate($im, 233, 14, 91);
 #imagestring($im, 1, 5, 5,  'A Simple Text String', $text_color);
-imagepng($im,'example_wrap.png');
+imagepng($im, 'example_wrap.png');
 imagedestroy($im);
 
 
@@ -166,7 +166,7 @@ $sy = imagesy($stamp);
 imagecopy($im, $stamp, imagesx($im) - $sx - 0, imagesy($im) - $sy - 0, 0, 0, imagesx($stamp), imagesy($stamp));
 
 #header('Content-type: image/png');
-imagepng($im,'example_wrap_out2.png');
+imagepng($im, 'example_wrap_out2.png');
 imagedestroy($im);
 
 
@@ -177,4 +177,4 @@ imagedestroy($im);
 // convert example_wrap_out2.png  -gravity center   example_wrap_out.png  -compose difference -composite  Destination.png
 // composite -blend 100x100 -alpha on  -gravity center -compose Lighten  example_wrap_out.png  example_wrap_out2.png    Destination.png
 
-system("composite -blend 100x100 -alpha on  -gravity center -compose Lighten  example_wrap_out.png  example_wrap_out2.png    example_wrap_out3".time().".png");
+system("composite -blend 100x100 -alpha on  -gravity center -compose Lighten  example_wrap_out.png  example_wrap_out2.png    example_wrap_out3" . time() . ".png");

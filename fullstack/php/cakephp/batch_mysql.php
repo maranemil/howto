@@ -46,8 +46,8 @@ if (!$link) {
 }
 // run some query
 $query = "SELECT * FROM table";
-$result = mysql_query($query);
-while ($line = mysql_fetch_array($result)) {
+$result = mysqli_query($query);
+while ($line = mysqli_fetch_array($result)) {
     foreach ($line as $value) {
         print "$value\n";
     }

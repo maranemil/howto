@@ -1,11 +1,13 @@
 
-
+```
 ################################################################
 #
 # Install Laravel 
 #
 ################################################################
+```
 
+```
 sudo apt install composer -y
 
 # Via Composer Create-Project Install Laravel 5.5
@@ -37,13 +39,17 @@ php artisan migrate --env=local
 
 # gen app key
 # php artisan key:generate
+```
 
+```
 ################################################################
 #
 # Install Laravel ToDo App 
 #
 ################################################################
+```
 
+```
 #fork https://github.com/milon521/laravel-todo.git
 git clone https://github.com/maranemil/laravel-todo
 
@@ -59,13 +65,17 @@ php artisan key:generate
 
 php artisan serve
 go to http://localhost:8000
+```
 
+```
 ################################################################
 #
 # Install CakePHP ToDo App  
 #
 ################################################################
+```
 
+```
 #fork https://github.com/MitjaSt/ToDoApp # + angular - cake 2.7.8
 git clone https://github.com/maranemil/ToDoApp
 
@@ -94,13 +104,17 @@ grep -r  "AllowOverride" /etc/
 /etc/apache2/apache2.conf:      AllowOverride None
 
 sudo nano /etc/apache2/apache2.conf # AllowOverride all
+```
 
+```
 ################################################################
 #
 #
 #
 ################################################################
+```
 
+```
 https://book.cakephp.org/2.0/en/development/exceptions.html
 https://book.cakephp.org/3.0/en/orm/database-basics.html
 https://book.cakephp.org/2.0/en/development/configuration.html
@@ -110,6 +124,7 @@ https://book.cakephp.org/3.0/en/installation.html
 https://book.cakephp.org/2.0/en/getting-started.html
 https://book.cakephp.org/1.1/en/configuration.html
 https://book.cakephp.org/2.0/en/console-and-shells/schema-management-and-migrations.html
+```
 
 
 
@@ -118,8 +133,7 @@ https://book.cakephp.org/2.0/en/console-and-shells/schema-management-and-migrati
 
 
 
-
-
+```
 http://kohanaframework.org
 https://silex.symfony.com/doc/2.0/
 https://www.slimframework.com/docs/
@@ -132,29 +146,31 @@ https://laravel.com/docs/5.5/releases
 https://themescorners.com/2017/12/07/20-best-php-frameworks-developers-themescorners-themes/
 https://coderseye.com/best-php-frameworks-for-web-developers/
 https://www.mindtwo.de/die-besten-php-frameworks/
+```
 
 
 
 
-
-
+```
 #####################################################################
 #
 # Clone Repo Slim Silex Laravel Cakephp
 #
 #####################################################################
-
+```
+```
 # https://www.slimframework.com/docs/
 composer create-project slim/slim-skeleton  my_slimapp
 php -S localhost:8888 -t public public/index.php
+```
 
 ------------------------------------------------------------
-
+```
 # https://silex.symfony.com/doc/2.0/usage.html#bootstrap
 composer create-project fabpot/silex-skeleton my_silexapp " ^2.0"
-
+```
 ------------------------------------------------------------
-
+```
 # https://laravel.com/docs/5.6
 composer create-project --prefer-dist laravel/laravel my_laravelapp
 php artisan key:generate
@@ -182,14 +198,14 @@ https://github.com/Blogify/Blogify
 https://github.com/websanova/larablog
 https://github.com/InWave/laravel-blog
 https://github.com/laravel/socialite
-
+```
 ------------------------------------------------------------
-
+```
 composer create-project --prefer-dist laravel/lumen my_lumenapp
 php -S localhost:8000 -t public
-
+```
 ------------------------------------------------------------
-
+```
 git clone -b 2.x git://github.com/cakephp/cakephp.git
 chown -R www-data app/tmp
 
@@ -211,27 +227,27 @@ INSERT INTO posts (title, body, created)
     VALUES ('Title strikes back', 'This is really exciting! Not.', NOW());
 
     ---
-
-
+```
+```
 sudo apt install composer
 composer create-project --prefer-dist cakephp/app cakephpblog3x
 composer self-update && composer create-project --prefer-dist cakephp/app cakephpblog3x
 chmod +x bin/cake
-
-
+```
+```
 composer create-project --prefer-dist cakephp/app bookmarker
 create-project --prefer-dist cakephp/app blog
 sudo chown -R www-data tmp && sudo chown -R www-data logs
 sudo chmod 777 -R tmp && sudo chmod 777 -R logs
-
-
+```
+```
 sudo apt install php7.2-intl
 sudo service apache2 restart
-
-
+```
+```
 bin/cake bake model Articles
 bin/cake bake controller Articles
 
 https://github.com/MitjaSt/ToDoApp
-
+```
 ------------------------------------------------------------

@@ -1,3 +1,4 @@
+```
 ###############################################
 #
 #
@@ -22,7 +23,9 @@
 #	https://www.youtube.com/watch?v=R8B4og-BeCk&list=PLwAKR305CRO-Q90J---jXVzbOd4CDRbVx
 #
 ###############################################
+```
 
+```
 sudo apt-get update
 sudo apt-get install curl php5-cli git
 #curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
@@ -37,11 +40,11 @@ laravel new blog
 php artisan # shows all available commands
 php artisan make:controller CustomerController
 php artisan serve
-
+```
 *
 *
 *
-
+```
 Laravel 5 Videos
 -------------------------------------------------
 laravel 5.2 tutorial for beginners step by step PLAYLIST
@@ -55,16 +58,17 @@ https://www.youtube.com/watch?v=_dd4-HEPejU
 https://www.youtube.com/watch?v=--9I5wqXgUM
 
 https://www.youtube.com/watch?v=bFKConAvXVM
+```
 
-
-
+```
 ##################################################################
 #
 # laravel Resources
 #
 ##################################################################
+```
 
-
+```
 https://laravel.com
 https://laravel.com/docs/5.5/horizon
 https://laravel.com/docs/5.5/dusk
@@ -83,3 +87,4 @@ https://github.com/laravel/laravel.com
 http://laravelcoding.com/blog/laravel-5-beauty-the-10-minute-blog
 https://vuejsdevelopers.com/2017/11/20/vuebnb-full-stack-laravel/
 https://github.com/jacurtis/laravel-blog-tutorial
+```

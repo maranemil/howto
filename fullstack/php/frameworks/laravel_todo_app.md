@@ -1,12 +1,16 @@
+```
 ################################################################
 #	create-todo-app-laravel
 #	https://www.cloudways.com/blog/create-todo-app-laravel-5-4/
 ################################################################
+```
 
+```
 # create App
 ---------------------------------
 composer create-project laravel/laravel todoapp
-
+```
+```
 # create DB
 ---------------------------------
 public function up()
@@ -22,12 +26,14 @@ public function up()
         $table->timestamps();
     });
 }
-
+```
+```
 php artisan make:migration create_todo_table
 php artisan migrate
 php artisan make:controller TodoController --resource --model=Todo # Create Models and Controllers
+```
 
-
+```
 Create Models and Controllers
 ---------------------------------
 protected $table = 'todo';
@@ -41,14 +47,15 @@ class Todo extends Model
     protected $table = 'todo';
     protected $fillable = ['todo','category','user_id','description'];
 }
+```
 
 
-
+```
 User Model
 ---------------------------------
 public function todo()
 {
-     return $this->hasMany('App\Todo');
+    return $this->hasMany('App\Todo');
 }
 
 <?php
@@ -83,3 +90,4 @@ class User extends Authenticatable
         return $this->hasMany('App\Todo');
     }
 }
+```

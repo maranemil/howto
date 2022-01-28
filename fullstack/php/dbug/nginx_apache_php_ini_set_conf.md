@@ -1,16 +1,19 @@
+```
 https://tkacz.pro/nginx-and-php-configure-php-ini-file/
 https://www.php.net/manual/de/install.unix.nginx.php
 https://www.trigital.de/php_upload_limit_nginx/
 https://wiki.alpinelinux.org/wiki/Nginx_with_PHP
 https://www.linode.com/docs/guides/serve-php-php-fpm-and-nginx/
+```
 
-
+```
 systemctl status php7.0-fpm.service
 systemctl restart php-fpm
 systemctl restart httpd.service
 systemctl restart php7.0-fpm
+```
 
-
+```
 #----------------------------------------------
 # Nginx_with_PHP
 #----------------------------------------------
@@ -23,7 +26,9 @@ ini_set('cgi.fix_pathinfo', 1);
 ini_set('error_log', '/home/user/error.log');
 ini_set( 'zlib.output_compression', 'On' );
 ini_set( 'zlib.output_compression_level', '3' );
+```
 
+```
 #----------------------------------------------
 # Apache2_with_PHP
 #----------------------------------------------
@@ -47,4 +52,4 @@ ini_set('log_errors', true);
 #ini_set('output_handler', false);
 #ini_set('output_buffering', true);
 #ini_set('implicit_flush', true);
-
+```

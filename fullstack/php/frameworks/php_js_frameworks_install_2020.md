@@ -1,3 +1,4 @@
+```
 ########################################
 #
 #   Restful PHP micro Frameworks
@@ -16,7 +17,9 @@ The One Framework
 Wave Framework
 Zaphpa
 Lumen
+```
 
+```
 http://www.phpgang.com/top-12-best-php-restful-micro-frameworks_2690.html
 ------------------------------------------------------------------------------
 Reddit - PHP projects which help to implement a REST API with authentication
@@ -31,7 +34,9 @@ Lumen
 API-Management
 Apigility
 Fusio
+```
 
+```
 ####################################################
 #
 #   PHP Frameworks Install 2020
@@ -61,8 +66,9 @@ sudo a2dismod mpm_event
 mkdir Git
 sudo ln -s ~/Git/ /var/www/html/Git
 http://localhost/Git/
+```
 
-
+```
 ####################################################
 #
 #   PHP Frameworks Install 2021
@@ -91,8 +97,9 @@ composer create-project symfony/symfony-demo
 composer create-project codeigniter4/appstarter ci-project-root
 composer create-project codeigniter4/appstarter ci-news
 composer create-project --prefer-dist laravel/laravel laravel-blog
+```
 
-
+```
 ---------------------------------------------------
 cakephp 3.x
 ---------------------------------------------------
@@ -103,8 +110,8 @@ https://book.cakephp.org/3.0/en/tutorials-and-examples/bookmarks/intro.html
 https://book.cakephp.org/3.0/en/tutorials-and-examples.html#
 https://book.cakephp.org/3.0/en/tutorials-and-examples/bookmarks/part-two.html
 https://book.cakephp.org/3.0/en/installation.html
-
-
+```
+```
 #composer create-project --prefer-dist cakephp/app my_app_name
 
 composer create-project --prefer-dist cakephp/app bookmarker
@@ -134,11 +141,11 @@ vendor/bin/phpunit -c phpunit.xml.dist --migrate-configuration
 vendor/bin/phpunit tests/TestCase/Controller/PagesControllerTest.php
 vendor/bin/phpunit tests/TestCase/ApplicationTest.php
 vendor/bin/phpunit tests/TestCase/ApplicationTest.php --debug --verbose --repeat 2
+```
 
 
 
-
-
+```
 sudo apt install mlocate
 locate php.ini
 
@@ -186,9 +193,9 @@ bin/cake bake model UserRecords -c records --table tbl_records_user --no-associa
 bin/cake bake model
 bin/cake bake controller
 bin/cake bake template
+```
 
-
-
+```
 ---------------------------------------------------
 symfony 3.8
 ---------------------------------------------------
@@ -249,7 +256,9 @@ php bin/console server:start
 php bin/console server:stop
 
 https://flex.symfony.com/
+```
 
+```
 ---------------------------------------------------
 codeigniter 3.X
 ---------------------------------------------------
@@ -270,7 +279,9 @@ composer require codeigniter4/translations
 
 composer create-project codeigniter4/appstarter ci-news
 http://localhost:8080
+```
 
+```
 ---------------------------------------------------
 laravel 5.6
 ---------------------------------------------------
@@ -307,10 +318,10 @@ make
   make:model           Create a new Eloquent model class
   make:provider        Create a new service provider class
   make:request         Create a new form request class
+```
 
 
-
-
+```
 ---------------------------------------------------
 lumen
 ---------------------------------------------------
@@ -318,23 +329,26 @@ https://lumen.laravel.com/docs/5.6
 composer global require "laravel/lumen-installer"
 composer create-project --prefer-dist laravel/lumen blog
 php -S localhost:8000 -t public
+```
 
-
+```
 ---------------------------------------------------
 slim
 ---------------------------------------------------
 https://www.slimframework.com/docs/
 composer require slim/slim "^3.0"
+```
 
-
+```
 ---------------------------------------------------
 silex
 ---------------------------------------------------
 https://silex.symfony.com/doc/2.0/
 composer require silex/silex "^2.0"
 composer create-project fabpot/silex-skeleton path/to/install " ^2.0"
+```
 
-
+```
 ---------------------------------------------------
 phalconphp
 ---------------------------------------------------
@@ -373,9 +387,10 @@ sudo ./install --arch safe
 
 php -r 'print_r(get_loaded_extensions());'  # check extensions
 php -m  # check modules
+```
 
 
-
+```
 ####################################################################################
 #
 #   Install Frameworks 2020
@@ -423,8 +438,9 @@ cd app-slim; php -S localhost:8080 -t public public/index.php
 
 http://www.slimframework.com/
 ------------------------------------------------------------
+```
 
-
+```
 ------------------------------------------------------------
 laravel
 ------------------------------------------------------------
@@ -448,7 +464,9 @@ php artisan migrate
 php artisan make:migration create_tasks_table --create=tasks
 php artisan migrate
 php artisan make:model Task
+```
 
+```
 ------------------------------------------------------------
 symfony
 ------------------------------------------------------------
@@ -490,15 +508,16 @@ composer install
 composer require logger
 
 php bin/console about
+```
 
 
 
 ------------------------------------------------------------------------------
-
+```
 https://docs.djangoproject.com/en/3.0/
-
+```
 ------------------------------------------------------------------------------
-
+```
 #############################################################
 Ubuntu 18
 #############################################################
@@ -511,21 +530,27 @@ sudo apt install curl
 sudo apt install composer
 sudo apt install php7.2-zip php7.2-cli php7.2-common php7.2-curl php7.2-dev php7.2-gd php7.2-intl php7.2-json php7.2-mbstring php7.2-mysql php7.2-soap php7.2-xml php7.2-xmlrpc php7.2-xsl
 
+```
 
+```
 Laravel
 -------------------------------------------
 composer global require laravel/installer
 composer create-project --prefer-dist laravel/laravel blog
 php artisan serve
+```
 
 
+```
 Symfony
 -------------------------------------------
 composer create-project symfony/website-skeleton my_project_web
 composer create-project symfony/skeleton my_project_microservice
 symfony server:start
+```
 
 
+```
 CodeIgniter4
 -------------------------------------------
 composer create-project codeigniter4/appstarter project-root
@@ -537,7 +562,9 @@ php spark serve
 php spark serve --host=example.dev
 php spark serve --port=8081
 php spark serve --php=/usr/bin/php7.6.5.4
+```
 
+```
 
 CakePHP4
 -------------------------------------------
@@ -545,33 +572,42 @@ composer create-project --prefer-dist cakephp/app:~4.0 my_cakeapp_name
 bin/cake server
 bin/cake server -H 192.168.13.37 -p 5673
 bin/cake server -H 0.0.0.0
+```
 
 
+```
 Yii
 -------------------------------------------
 composer create-project --prefer-dist yiisoft/yii2-app-basic basic
 composer create-project --prefer-dist --stability=dev yiisoft/yii2-app-basic basic
 php yii serve
 php yii serve --port=8888
+```
 
 
+```
 Laminas
 -------------------------------------------
 composer require laminas/laminas-mvc
 composer create-project mezzio/mezzio-skeleton mezzio
+```
 
-
+```
 Slim
 -------------------------------------------
 composer create-project slim/slim-skeleton:dev-master [my-app-name]
 php -S localhost:8080 -t public public/index.php
+```
 
+```
 PhpMyAdmin
 -------------------------------------------
 https://docs.phpmyadmin.net/en/latest/setup.html
 composer create-project phpmyadmin/phpmyadmin
+```
 
 
+```
 zend framework
 -------------------------------------------
 https://docs.zendframework.com/zend-mvc/quick-start/
@@ -591,9 +627,9 @@ https://book.cakephp.org/4/en/installation.html
 https://www.yiiframework.com/doc/guide/2.0/en/start-installation
 https://docs.mezzio.dev/mezzio/
 https://docs.laminas.dev/laminas-mvc/
+```
 
-
-
+```
 https://getlaminas.org/
 https://www.slimframework.com/
 https://framework.zend.com/
@@ -602,11 +638,11 @@ https://laravel.com/
 https://symfony.com/
 https://codeigniter.com/
 https://book.cakephp.org/4/en/index.html
-
+```
 ----------------------------------
 
 
-
+```
 -------------------------------------------
 Django Python
 -------------------------------------------
@@ -645,8 +681,9 @@ cat /proc/sys/fs/inotify/max_user_watches
 sudo nano /etc/sysctl.conf
 fs.inotify.max_user_watches=524288
 sudo sysctl -p
+```
 
-
+```
 #################################################
 FIX for composer error:  "Package 'php-mcrypt' has no installation candidate"
 #################################################
@@ -679,7 +716,7 @@ extension=mcrypt.so
 php -m | grep mcrypt
 sudo systemctl restart apache2
 sudo systemctl restart nginx
-
+```
 
 
 

@@ -1,8 +1,8 @@
 
 #############################################################
-WordPress  codex
+### WordPress  codex
 #############################################################
-
+```
 http://hookr.io/4.1.1/hooks/#index=a
 http://hookr.io/4.1.1/classes/#index=a
 http://hookr.io/4.1.1/functions/#index=a
@@ -65,13 +65,15 @@ $user->roles; // ["subscriber", "power_member"]
 $user->set_role('editor');
 $user->roles; // ["editor"]
 
-
+```
+```
 https://languagetool.org/
 
 https://packagist.org/packages/datatables/datatables
 https://editor.datatables.net/manual/php/installing
 https://editor.datatables.net/manual/php/installing#Composer
-
+```
+```
 [openid]
 https://quarkus.io/guides/security-openid-connect-client
 https://openid.net/specs/openid-connect-basic-1_0.html
@@ -89,14 +91,16 @@ https://www.keycloak.org/docs/11.0/server_admin/
 https://www.keycloak.org/docs/latest/securing_apps/index.html#direct-naked-impersonation
 https://wjw465150.gitbooks.io/keycloak-documentation/content/server_admin/topics/clients/oidc/confidential.html
 https://www.keycloak.org/docs/latest/server_admin/index.html#_service_accounts
-
-
+```
+```
 /.well-known/openid-configuration	Return OpenID Connect metadata related to the specified authorization server.
 
 
 https://developers.redhat.com/blog/2020/11/24/authentication-and-authorization-using-the-keycloak-rest-api#keycloak_connection_using_a_java_application
 https://developers.redhat.com/blog/2020/01/29/api-login-and-jwt-token-generation-using-keycloak#set_up_a_client
+```
 
+```
 POST /auth/realms/demo/protocol/openid-connect/token
 Authorization: Basic cHJvZHVjdC1zYS1jbGllbnQ6cGFzc3dvcmQ=
 Content-Type: application/x-www-form-urlencoded
@@ -125,8 +129,8 @@ curl -L -X POST 'http://localhost:8080/auth/realms/whatever-realm/protocol/openi
 --data-urlencode 'password=1'
 
 https://manual.phpdoc.org/HTMLSmartyConverter/HandS/phpDocumentor/tutorial_tags.since.pkg.html
-
-
+```
+```
 #register_activation_hook(__FILE__, array('WP_Plugname', 'plugin_activation'));
 #register_deactivation_hook(__FILE__, array('WP_Plugname', 'plugin_deactivation'));
 
@@ -136,11 +140,11 @@ https://manual.phpdoc.org/HTMLSmartyConverter/HandS/phpDocumentor/tutorial_tags.
 https://stackoverflow.com/questions/27222755/purely-custom-html-form-popup-in-wordpress-site
 https://www.w3schools.com/howto/howto_css_modals.asp
 https://getbootstrap.com/docs/4.0/components/modal/
-
+```
 
 -----------------------------------------------------
-jquery WordPress
------------------------------------------------------
+### jquery WordPress
+```
 https://digwp.com/2011/09/using-instead-of-jquery-in-wordpress/
 https://stackoverflow.com/questions/11159860/how-do-i-add-a-simple-jquery-script-to-wordpress
 https://de.wordpress.org/support/topic/jquery-aktivieren-auf-wordpress-seiten/
@@ -155,5 +159,5 @@ function add_my_script() {
         array('jquery') // this array lists the scripts upon which your script depends
     );
 }
-
+```
 

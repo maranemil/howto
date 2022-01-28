@@ -1,3 +1,5 @@
+
+```
 https://knpuniversity.com/screencast/rest/testing-phpunit
 https://ole.michelsen.dk/blog/testing-your-api-with-phpunit.html
 http://codeception.com/12-15-2013/testing-emails-in-php.html
@@ -18,7 +20,9 @@ https://github.com/Codeception/Codeception/issues/885
 http://php.net/manual/en/function.curl-setopt.php#107621
 http://php.net/manual/en/function.curl-setopt-array.php
 http://php.net/manual/en/function.http-build-query.php
+```
 
+```
 {
     "require-dev": {
     	"phpunit/phpunit": "*",
@@ -26,7 +30,9 @@ http://php.net/manual/en/function.http-build-query.php
     	"codeception/codeception": "~2.1",
     }
 }
+```
 
+```
 <?php
 class EmailTestCase extends PHPUnit_Framework_TestCase {
 
@@ -65,8 +71,10 @@ class EmailTestCase extends PHPUnit_Framework_TestCase {
         return json_decode($jsonResponse->getBody());
     }
 ?>
+```
 
 -----------------------------------
+```
 https://github.com/Codeception/Codeception/issues/533
 http://docs.guzzlephp.org/en/stable/testing.html
 
@@ -79,9 +87,10 @@ $I->wantTo('Test put with codeception');
 $I->sendPUT('/api_test', array("1" => "2"));
 $I->seeResponseCodeIs(200);
 $I->seeResponseIsJson();
+```
 
 -----------------
-
+```
 <?php
 use \ApiGuy;
 
@@ -106,10 +115,10 @@ class PostListingCest
         $I->seeResponseContains("success");
     }
 }
-
+```
 
 -----------------
-
+```
 // Code to set variables here ...
 $I->amHttpAuthenticated($username, $secretKey);
 $I->haveHttpHeader('Accept','application/xml');
@@ -123,10 +132,10 @@ $I->seeHttpHeader('x-v-call-id');
 $I->seeResponseCodeIs(202);
 $location = $I->grabHttpHeader('location');
 $I->seeHttpHeader('location', $location);
-
+```
 
 -----------------------------------------------------------------------
-
+```
 https://github.com/Codeception/Codeception/issues/2123
 
 
@@ -205,9 +214,9 @@ modules:
             cleanup: true
 
 
-
+```
 ---------------------------------------------------------------------------
-
+```
 acceptance.yml
 
 class_name: AcceptanceTester
@@ -244,7 +253,8 @@ modules:
         enabled: true
         remote: false
 
-
+```
+```
 api.suite.yml
 
 class_name: ApiTester
@@ -270,7 +280,8 @@ modules:
         remote: true
 
 
-
+```
+```
 functional.suite.yml
 
 class_name: FunctionalTester
@@ -299,10 +310,10 @@ unit.suite.yml
 class_name: UnitTester
 modules:
     enabled: [Asserts, UnitHelper, Laravel4, Db]
-
+```
 
 ---------------------------------------------------------------------
-
+```
 https://github.com/Codeception/Codeception/issues/2749
 
 actor: Tester
@@ -334,9 +345,9 @@ $I = new AcceptanceTester($scenario);
 $I->wantTo('Booking One Ticket');
 $I->click('Beli Tiket');
 $I->seeInDatabase('invoice', ['invoice_code' => 'ABCDEF']);
-
+```
 ---------------------------------------------------------------------
-
+```
 https://github.com/Codeception/Codeception/issues/841
 
     protected function _before()
@@ -367,9 +378,9 @@ modules:
           url: http://rdaregistry.dev/
       REST:
           url: http://rdaregistry.dev/
-
+```
 ---------------------------------------------------------------------
-
+```
 http://codeception.com/docs-2.0/07-AdvancedUsage
 http://codeception.com/docs/06-ReusingTestCode
 http://codeception.com/docs/05-UnitTests
@@ -408,9 +419,9 @@ TestCommons::logMeIn($I);
 
 
 http://codeception.com/docs-2.0/03-ModulesAndHelpers
-
+```
 -----------------------------------------------------
-
+```
 $curl = curl_init();
 $curlOptions = array(
   CURLOPT_HEADER => array("Content-type: multipart/form-data"),
@@ -444,9 +455,9 @@ curl_close($curl);
 
 https://stackoverflow.com/questions/3772096/posting-multidimensional-array-with-php-and-curl
 http://xmodulo.com/wget-curl-alternative-linux.html
-
+```
 -------------------------------------
-
+```
 https://stackoverflow.com/questions/9691367/how-do-i-request-a-file-but-not-save-it-with-wget
 http://www.editcorp.com/personal/lars_appel/wget/v1/wget_7.html
 https://stackoverflow.com/questions/17699666/post-request-with-wget
@@ -460,20 +471,20 @@ wget -qO- $url &> /dev/null
 ./app >   file # redirect standard output to fileas
 ./app 2>  file # redirect error output to file
 
-
+```
 -------------------------------------
-
+```
 $Guzzle = new \Codeception\Lib\Connector\Guzzle6;
 
 https://fossies.org/diffs/yii-advanced-app/2.0.10_vs_2.0.11/vendor/codeception/base/src/Codeception/Module/PhpBrowser.php-diff.html
 https://fossies.org/diffs/yii-advanced-app/2.0.10_vs_2.0.11/vendor/codeception/base/src/Codeception/Module/PhpBrowser.php-diff.html
 http://docs.guzzlephp.org/en/stable/testing.html
-
+```
 
 --------------------------------------------
 
 
-----------------------------
+```
 use Codeception\Util\Debug;
 Debug::debug("This is working");
 
@@ -505,11 +516,11 @@ https://hotexamples.com/examples/codeception.event/SuiteEvent/-/php-suiteevent-c
 https://hotexamples.com/examples/-/-/verify/php-verify-function-examples.html
 https://hotexamples.com/examples/codeception.util/Debug/setOutput/php-debug-setoutput-method-examples.html
 https://hotexamples.com/examples/codeception.util/Debug/-/php-debug-class-examples.html
+```
 
 
 
-
-
+```
 public function _failed(AcceptanceTester $I)
 {
      $I->pauseExecution();
@@ -522,7 +533,9 @@ public function _failed(AcceptanceTester $I)
 
 if ($codecept->getResult()->failureCount() or $codecept->getResult()->errorCount()) exit(1);
 http://codecept.io/basics/#how-it-works
+```
 
+```
 <?php
 /**
  * Codeception PHP script runner
@@ -536,7 +549,10 @@ $app->add(new Codeception\Command\Run('run'));
 $app->run();
 
 ?>
+```
 
+
+```
 https://www.toptal.com/qa/how-to-write-testable-code-and-why-it-matters
 https://confluence.jetbrains.com/display/PhpStorm/Debugging+and+Profiling+PHPUnit+and+Behat+Tests+with+PhpStorm
 http://codeception.com/docs/05-UnitTests
@@ -556,3 +572,4 @@ http://behat.org/en/latest/guides.html
 https://dannorth.net/whats-in-a-story/
 https://dannorth.net/introducing-bdd/
 http://phptest.club
+```

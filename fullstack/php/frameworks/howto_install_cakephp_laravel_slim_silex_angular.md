@@ -1,5 +1,5 @@
 
-
+```
 https://angular.io/docs/ts/latest/quickstart.html
 https://angularjs.de/artikel/angular2-tutorial-deutsch
 http://www.beyondjava.net/blog/getting-started-with-angularjs-2-0-your-first-application/
@@ -12,9 +12,9 @@ https://github.com/IstvanOri/ng2-examples/blob/master/examples/file-upload/src/a
 http://blog.thoughtram.io/angular/2016/06/22/model-driven-forms-in-angular-2.html
 https://scotch.io/tutorials/how-to-build-nested-model-driven-forms-in-angular-2
 https://www.barbarianmeetscoding.com/blog/2016/07/15/updating-your-angular-2-app-to-use-the-new-forms-api-a-practical-guide/
-
-........................................................................
-
+```
+-------------------------------------------------------------
+```
 sudo apt install npm
 npm install -g angular-cli
 sudo apt install ng-common
@@ -43,8 +43,9 @@ $ ng generate interface my-new-interface
 
 # Generate a new enum
 $ ng generate enum my-new-enum
-........................................................................
-
+```
+-------------------------------------------------------------
+```
 ## https://github.com/cakephp/cakephp
 ## http://book.cakephp.org/3.0/en/installation.html
 curl -sS https://getcomposer.org/installer | php
@@ -54,9 +55,9 @@ php composer.phar create-project --prefer-dist cakephp/app todoapp
 ## logs and tmp directories and subdirectories must be writable
 bin/cake server # built-in server is running in http://localhost:8765/
 #bin/cake server -H 192.168.13.37 -p 5673 # custom ip and port
-
-........................................................................
-
+```
+-------------------------------------------------------------
+```
 
 ## https://laravel.com/docs/5.3/session#configuration
 ## https://laravel.com/docs/5.3/database#configuration
@@ -80,23 +81,23 @@ php artisan session:table
 php artisan migrate
 
 ## Redis need to install the predis/predis package
-
-........................................................................
-
+```
+-------------------------------------------------------------
+```
 ## https://github.com/slimphp/Slim-Skeleton
 ## http://www.slimframework.com/
 curl -sS https://getcomposer.org/installer | php
 php composer.phar create-project slim/slim-skeleton myapp
 cd myapp; php -S 0.0.0.0:8080 -t public public/index.php
-
-........................................................................
-
+```
+-------------------------------------------------------------
+```
 ## http://silex.sensiolabs.org/doc/master/usage.html
 sudo apt install composer
 composer require silex/silex:~2.0
-
-........................................................................
-
+```
+-------------------------------------------------------------
+```
 https://github.com/bcit-ci/CodeIgniter
 https://www.codeigniter.com/
 http://www.codeigniter.com/userguide2/
@@ -109,18 +110,18 @@ https://dev.mysql.com/doc/refman/8.0/en/miscellaneous-functions.html
 https://dev.mysql.com/doc/refman/8.0/en/miscellaneous-functions.html#function_uuid
 https://codeigniter.com/userguide2/database/active_record.html
 https://codeigniter.com/user_guide/database/queries.html
-
-........................................................................
-
+```
+-------------------------------------------------------------
+```
 https://symfony.com/doc/current/setup.html
 
 composer create-project symfony/framework-standard-edition myapp
 composer create-project symfony/framework-standard-edition myapp "2.8.*"
 cd myapp/
 $ php bin/console server:run
-
-........................................................................
-
+```
+-------------------------------------------------------------
+```
 https://codeigniter.com
 https://laravel.com
 https://cakephp.org
@@ -128,8 +129,10 @@ https://symfony.com
 https://framework.zend.com
 http://www.yiiframework.com
 https://www.djangoproject.com
-........................................................................
+```
 
+-------------------------------------------------------------
+```
 :: angular2 projects
 
 https://github.com/mattlewis92/angular2-calendar
@@ -148,8 +151,9 @@ https://github.com/valor-software/ng2-handsontable
 
 https://github.com/ziyasal/rdash-angular2
 https://github.com/akveo/ng2-admin
-
-.......................................................................
+```
+-------------------------------------------------------------
+```
 :: laravel projects
 
 https://github.com/28harishkumar/blog
@@ -312,12 +316,14 @@ https://github.com/vinkla/laravel-vimeo
 https://github.com/yccphp/laravel-5-blog
 https://github.com/zalazdi/laravel-imap
 https://github.com/zgldh/laravel-upload-manager
-
-............................................................
+```
+-------------------------------------------------------------
+```
 https://klyp.co/blog/default/five-awesome-code-snippets-enhance-your-next-laravel-project
 https://selftaughtcoders.com/from-idea-to-launch/lesson-17/laravel-5-mvc-application-in-10-minutes/
-............................................................
-
+```
+-------------------------------------------------------------
+```
 ::cakephp projects
 
 https://github.com/Beskhue/CookieTokenAuth
@@ -567,12 +573,12 @@ https://github.com/webtechnick/CakePHP-FileUpload-Plugin
 https://github.com/webtechnick/CakePHP-Paypal-IPN-Plugin
 https://github.com/yohei-yoshihara/cakephp_backbonejs
 https://github.com/zeroasterisk/CakePHP-ElasticSearchIndex
+```
+
+-------------------------------------------------------------
 
 
-................................................................
-
-
-
+```
 :: Silex
 
 https://github.com/AdamBoxall/Paste
@@ -653,9 +659,10 @@ https://github.com/tyaga/AuthenticatorService
 https://github.com/umpirsky/DoctrineExtensionsServiceProvider
 https://github.com/unlight/Mvc
 https://github.com/xadet/ngTorrent
+```
+-------------------------------------------------------------
 
-..............................................
-
+```
 :: code igniter
 
 https://github.com/Ajmal/todo
@@ -671,7 +678,7 @@ https://github.com/souzadavi/CMS
 https://github.com/stblog/Stblog >
 https://github.com/valfreixo/Social-Network-Framework
 https://github.com/viaduk/BookSharing
-
+```
 
 
 

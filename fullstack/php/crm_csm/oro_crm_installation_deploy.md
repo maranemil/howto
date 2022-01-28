@@ -1,28 +1,31 @@
-Problem 1
+### Problem 1
+
+```
     - oro/platform 1.4.4 requires doctrine/doctrine-fixtures-bundle 2.2.0 -> no matching package found.
     - oro/platform 1.4.4 requires doctrine/doctrine-fixtures-bundle 2.2.0 -> no matching package found.
     - oro/platform 1.4.4 requires doctrine/doctrine-fixtures-bundle 2.2.0 -> no matching package found.
     - Installation request for oro/platform == 1.4.4.0 -> satisfiable by oro/platform[1.4.4].
+```
 
-Potential causes:
+### Potential causes:
+
+```
  - A typo in the package name
  - The package is not available in a stable-enough version according to your minimum-stability setting
    see <https://groups.google.com/d/topic/composer-dev/_g3ASeIFlrc/discussion> for more details.
+```
 
------------------------------------------------------
-#####################################################
-#
-# Oro Installation & Deploy Symfony Composer
-#
-#####################################################
------------------------------------------------------
+######
+### Oro Installation & Deploy Symfony Composer
 
+```
 git clone -b 1.4.1 https://github.com/orocrm/crm-application.git 	# clone specific version from github
 git clone -b 1.3.2 https://github.com/orocrm/crm-application.git 	# clone specific version from github
 git clone -b 1.3.1 https://github.com/orocrm/crm-application.git 	# clone specific version from github
 git clone -b 1.3.0 https://github.com/orocrm/crm-application.git 	# clone specific version from github ####
 git clone -b 1.2.0 https://github.com/orocrm/crm-application.git 	# clone specific version from github ####
-
+```
+```
 # mysqlnd  in xampp  - API Extensions 	mysqli,mysql,pdo_mysql  - PDO drivers 	mysql, pgsql, sqlite
 
 # What kind of drivers Doctrine suports:
@@ -58,16 +61,15 @@ php app/console oro:install --force --drop-database	# reinstall
 
 php composer.phar remove
 php composer.phar show --platform
-
+```
 
 -----------------------------------------------------
-#####################################################
-#
+######
 # Oro Installation Hooks Symfony Composer
 #
-#####################################################
------------------------------------------------------
 
+-----------------------------------------------------
+```
 sudo apt-get update
 
 php -i | grep -i soap 							# check soap status
@@ -169,10 +171,10 @@ php app/console doctrine:schema:drop --force --full-database
 php app/console doctrine:schema:validate
 [Mapping]  OK - The mapping files are correct.
 [Database] OK - The database schema is in sync with the mapping files.
-
+```
 
 -----------------------------------------------------
-
+```
 php app/console doctrine:database:create --dump-sql --env=test --connection=seconddb
 php app/console doctrine:schema:drop --force --dump-sql --no-interaction --env=test --em=seconddb
 php app/console doctrine:schema:update --force --no-interaction --env=test --em=seconddb
@@ -181,15 +183,15 @@ php app/console doctrine:generate:entity
 php app/console doctrine:generate:entities AppBundle/Entity/Product
 php app/console doctrine:generate:entities AppBundle # generates all entities in the AppBundle
 php app/console doctrine:generate:entities Acme # generates all entities of bundles in the Acme namespace
-
+```
 -----------------------------------------------------
-
+```
 php composer.phar search stof
 php composer.phar show stof/doctrine-extensions-bundle
 php app/console cache:clear
-
+```
 -----------------------------------------------------
-
+```
 php app/console oro:install
 php app/console oro:entity-config:init
 php app/console oro:entity-config:update
@@ -201,9 +203,9 @@ php app/console oro:entity-extend:update-config
 php app/console oro:entity-extend:cache:warmup
 php app/console oro:entity-extend:update-schema
 php app/console oro:entity-extend:cache:clear
-
+```
 -----------------------------------------------------
-
+```
 php app/console doctrine:database:drop --force --env=test --connection=default
 php app/console doctrine:database:create --env=test --connection=default
 php app/console doctrine:schema:drop --force --no-interaction --env=test --em=default
@@ -216,25 +218,25 @@ php app/console doctrine:schema:update --force --no-interaction --env=test --em=
 
 php app/console doctrine:migrations:migrate --em="default"
 php app/console doctrine:migrations:migrate --em="orm"
-
+```
 -----------------------------------------------------
-
+```
 The Schema-Tool would execute "29" queries to update the database.
 Please run the operation by passing one - or both - of the following options:
 php app/console doctrine:schema:update --force to execute the command
 php app/console doctrine:schema:update --dump-sql to dump the SQL statements to the screen
-
+```
 -----------------------------------------------------
-
+```
 php composer.phar update
 rm -rf app/cache/*
 rm -rf web/js/*
 rm -rf web/css/*
 #database_driver: mysqli
 php app/console oro:platform:update --env=prod --force
-
+```
 -----------------------------------------------------
-
+```
 php app/console cache:clear --env=prod
 rm -rf app/cache/*
 chmod 777 -R app/cache/
@@ -244,9 +246,9 @@ chmod -R 777 app/logs/
 
 php app/console cache:clear --env=prod
 rm -rf app/cache/*
-
+```
 -----------------------------------------------------
-
+```
 php app/console oro:search:create-index
 php app/console doctrine:fixture:load --no-debug --no-interaction
 php app/console oro:acl:load
@@ -265,9 +267,9 @@ php composer.phar update --prefer-dist --no-dev
 php composer.phar dump-autoload
 
 php app/console doctrine:database:create
-
+```
 -----------------------------------------------------
-
+```
 sudo setfacl -R -m u:www-data:rwX -m u:whoami:rwX app/cache app/logs
 sudo setfacl -dR -m u:www-data:rwx -m u:whoami:rwx app/cache app/log
 
@@ -283,9 +285,9 @@ php app/console assetic:dump
 php composer.phar install --prefer-dist
 php composer.phar update --prefer-dist
 php app/console cache:clear --env prod
-
+```
 -----------------------------------------------------
-
+```
 php app/check.php
 php app/console cache:clear --env=prod --no-debug
 php app/console assetic:dump --env=prod --no-debug
@@ -295,9 +297,9 @@ php app/console cache:clear -e prod
 php app/console list --no-debug
 
 php  app/console oro:platform:check-requirements
-
+```
 -----------------------------------------------------
-
+```
 #File: install.sh
 #!/bin/sh
 php app/console doctrine:database:create
@@ -317,8 +319,9 @@ chmod -R 777 app/logs/
 rm app/cache/dev
 rm app/cache/prod
 etc...
+```
 -----------------------------------------------------
-
+```
 php > umask(0);
 // Should get created as 666
 php > touch('file1.txt');
@@ -334,9 +337,9 @@ php > touch('file3.txt');
 -rw-rw-rw-   1 me  group     0 Aug 24 15:34 file1.txt
 -rw-r--r--   1 me  group     0 Aug 24 15:35 file2.txt
 -rw-------   1 me  group     0 Aug 24 15:37 file3.txt
-
+```
 -----------------------------------------------------
-
+```
 
 
 Add php into your path environment variable and then cd to the project
@@ -346,32 +349,36 @@ php -m | grep intl
 
 and then run the command
 php app/console generate:bundle --nampespace=IDP/IDP_Bundle --format=yml
+```
 -----------------------------------------------------
-
+```
 //umask(0000);
+```
 -----------------------------------------------------
-
+```
 su www-data -c "php app/console cache:clear --env=prod"
-
+```
 -----------------------------------------------------
-
+```
 exec("php /my/project/app/console cache:clear --env=prod");
 touch app/console && chmod +x app/console
-
+```
 -----------------------------------------------------
-
+```
 ini_set('error_reporting', E_ALL);
 ini_set('display_errors', false);
 ini_set('display_startup_errors', false);
-
+```
 -----------------------------------------------------
+```
 xampp settings
 find /home/~/ -type f -iname '*.txt' -exec grep -i '/opt/lampp/' {} +
 php /opt/lampp/bin/php -f app/console cache:clear --env=prod --no-debug
-
+```
 
 
 -----------------------------------------------------
+```
 oro install steps
 https://github.com/orocrm/crm-application/blob/master/web/install.php
 
@@ -380,9 +387,9 @@ https://github.com/orocrm/crm-application/blob/master/web/install.php
 <span><?php echo $translator->trans('process.step.schema'); ?></span>
 <span><?php echo $translator->trans('process.step.setup'); ?></span>
 <span><?php echo $translator->trans('process.step.final'); ?></span>
-
+```
 ---------------------------------------------------------------------------
-
+```
 Composer Help:
 
 Options:
@@ -426,9 +433,9 @@ Available commands:
  status           Show a list of locally modified packages
  update           Updates your dependencies to the latest version according to composer.json, and updates the composer.lock file.
  validate         Validates a composer.json
-
+```
 ----------------------------------------
-
+```
 Symfony version 2.3.6 - app/dev
 
 Usage:
@@ -572,11 +579,11 @@ translation
   translation:update                          Updates the translation file
 twig
   twig:lint                                   Lints a template and outputs encountered errors
-
+```
 ----------------------------
 
-Doctrine
-
+### Doctrine
+```
 doctrine:query:sql
 doctrine:query:dql
 
@@ -604,9 +611,9 @@ doctrine:cache:clear-result
 doctrine:cache:clear-metadata
 
 doctrine:ensure-production-settings
-
+```
 -----------------
-
+```
 vendor/bin/doctrine-module orm:validate-schema
 vendor/bin/doctrine-module orm:schema-tool:update --force
 
@@ -630,9 +637,11 @@ mysql --version
 help orm:generate-entities
 
 https://travis-ci.org/Ecodev/gims/jobs/40285179
+```
+
 ---------------
 
-
+```
 ./app/console doctrine:database:drop --connection=default --force
 ./app/console doctrine:database:create --connection=default
 ./app/console doctrine:schema:create --em=prod
@@ -642,9 +651,9 @@ https://travis-ci.org/Ecodev/gims/jobs/40285179
 
 app/console oro:platform:update --force --env=prod
 app/console oro:platform:update --force
-
+```
 -----------------------------------------------------
-
+```
 oro:platform:check-requirements
 oro:platform:update
 oro:platform:run-script
@@ -670,3 +679,4 @@ if (function_exists('xdebug_disable')) {
 
 http://www.develodesign.co.uk/blog/item/149-how-to-install-orocrm
 http://ka.lpe.sh/2013/06/20/how-to-install-orocrm/
+```

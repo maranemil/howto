@@ -1,11 +1,13 @@
+```
 #################################################################
 #
 #   Laravel 5.5 Angular 4 Tutorial Example From Scratch
 #   https://appdividend.com/2017/09/22/laravel-5-5-angular-4-tutorial-example-scratch/#
 #
 #################################################################
+```
 
-
+```
 Setup an Angular 4 Environment.
 First, we need to install Angular CLI globally. So type the following command.
 
@@ -43,8 +45,9 @@ Our index.html file looks like this.
   <app-root></app-root>
 </body>
 </html>
+```
 
-
+```
 All the public static files are served from the assets folder.
 
 For creating the form, we need to modify the app.component.html file. This file resides in src  >>  app directory.
@@ -67,8 +70,9 @@ For creating the form, we need to modify the app.component.html file. This file 
       <button type="submit" class="btn btn-primary">Add</button>
     </form>
 </div>
+```
 
-
+```
 Our app.component.ts file looks like this.
 
 // app.component.ts
@@ -83,6 +87,7 @@ import { Component } from '@angular/core';
 export class AppComponent {
   title = 'Laravel Angular 4 App';
 }
+```
 
 
 
@@ -90,8 +95,7 @@ export class AppComponent {
 
 
 
-
-
+```
 Step 3: Handle the input data.
 First of all, we need to import two modules in the app.module.ts file.
 
@@ -121,9 +125,9 @@ import { AppComponent } from './app.component';
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+```
 
-
-
+```
 Now, we need to include Angular Form Object into our HTML. Our final code of app.component.ts looks like this.
 
 // app.component.ts
@@ -145,10 +149,10 @@ Now, we need to include Angular Form Object into our HTML. Our final code of app
       <button type="submit" class="btn btn-primary">Add</button>
     </form>
 </div>
+```
 
 
-
-
+```
 <form (ngSubmit)="onSubmit(fm)" #fm="ngForm">
 It is the way to tell AngularJS that it needs to create an object that describes the whole form element and its values.
 
@@ -171,10 +175,10 @@ export class AppComponent {
   	console.log(form.value);
   }
 }
+```
 
 
-
-
+```
 Here onSubmit() function, we get all the form values. Now, we can send the POST request to the Laravel Server.
 
 Step 4: Send the data to the Laravel server.
@@ -222,9 +226,9 @@ Create one Laravel project by typing the following command.
 
 composer create-project laravel/laravel --prefer-dist ng4Laravel55
 Edit the .env file to set the MySQL database credentials.
+```
 
-
-
+```
 Next, switch to your command line interface and type the following command.
 
 php artisan make:model Item -m
@@ -341,3 +345,4 @@ Now, try again, it will save the data into the database. I have not set the redi
 
 For now, this is enough, we can build CRUD functionality in the next article. So stay tuned.
 This is the basic example of Laravel 5.5 Angular 4 Tutorial.
+```

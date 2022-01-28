@@ -1,10 +1,10 @@
 <?php
 /**
-* Created by PhpStorm.
-* User: emil
-* Date: 20.05.15
-* Time: 15:31
-*/
+ * Created by PhpStorm.
+ * User: emil
+ * Date: 20.05.15
+ * Time: 15:31
+ */
 
 
 // http://www.weblicating.com/c5/site-php/
@@ -17,7 +17,7 @@ define('CACHE_LIBRARY', 'apc');
 
 # Disable Zend Cache Cleaning (may improve performance)
 define('CACHE_FRONTEND_OPTIONS',
-serialize(array('automatic_cleaning_factor' => 0)));
+    serialize(array('automatic_cleaning_factor' => 0)));
 
 # Set time to 24 hour format
 define('DATE_FORM_HELPER_FORMAT_HOUR', '24');
@@ -120,7 +120,7 @@ define('ENABLE_AREA_LAYOUTS', false);
 define('ENABLE_CUSTOM_DESIGN', false);
 
 #VERSION-SPECIFIC SETTINGS...
- define('ENABLE_APPLICATION_EVENTS', true); //required in 5.5.1+ when using a config/site_events.php file (despite what the documentation says!)
+define('ENABLE_APPLICATION_EVENTS', true); //required in 5.5.1+ when using a config/site_events.php file (despite what the documentation says!)
 define('CACHE_FRONTEND_OPTIONS', serialize(array('automatic_cleaning_factor' => 0)));
 
 define('ENABLE_NEWSFLOW_OVERLAY', false);
@@ -138,7 +138,7 @@ define('ENABLE_INTELLIGENT_SEARCH_MARKETPLACE', FALSE);
 define('ENABLE_APP_NEWS', FALSE);
 define('WHITE_LABEL_LOGO_SRC', 'path to logo file');
 define('WHITE_LABEL_APP_NAME', 'My Application');
-define('WHITE_LABEL_DASHBOARD_BACKGROUND_SRC','path to background image');
+define('WHITE_LABEL_DASHBOARD_BACKGROUND_SRC', 'path to background image');
 
 
 define('PERMISSIONS_MODEL', 'advanced');
@@ -167,11 +167,11 @@ define('FORM_BLOCK_SENDER_EMAIL', EMAIL_DEFAULT_FROM_ADDRESS);
 if (strpos($_SERVER['SERVER_NAME'], 'localhost') !== false) {
     define('DB_USERNAME', 'root');
     define('DB_PASSWORD', 'root');
-/*** STAGE ***/
+    /*** STAGE ***/
 } else if (strpos($_SERVER['SERVER_NAME'], '.myagency.com') !== false) {
     define('DB_USERNAME', 'concrete5tricks');
     define('DB_PASSWORD', 'alsonotourrealpassword');
-/*** PRODUCTION ***/
+    /*** PRODUCTION ***/
 } else {
     define('DB_USERNAME', 'concrete5tricks');
     define('DB_PASSWORD', 'thisisnotourrealpasswordsmileyface');
@@ -218,7 +218,9 @@ define('EMAIL_DEFAULT_FROM_ADDRESS', 'website@example.com');
 define('FORM_BLOCK_SENDER_EMAIL', 'website@example.com');
 define('EMAIL_ADDRESS_REGISTER_NOTIFICATION_FROM', 'website@example.com');
 
-if ( extension_loaded('apc') && ini_get('apc.enabled') == "1"){ define('CACHE_LIBRARY', 'apc'); }
+if (extension_loaded('apc') && ini_get('apc.enabled') == "1") {
+    define('CACHE_LIBRARY', 'apc');
+}
 
 ################################################
 ############# wiki cheatsheet ##################

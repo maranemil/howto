@@ -1,10 +1,14 @@
+
+```
 ########################################################
 
 Fabien Potencier / Symfony 4 in action
 https://www.youtube.com/watch?v=yfTLx-fcJio
 
 ########################################################
+```
 
+```
 # traditional install
 symfony new --full my_project
 
@@ -17,8 +21,10 @@ symfony new demo --version=dev-master --debug
 #tree _i vendor
 #find . type -f | wc -l
 # composer show | wc -l
+```
 
 
+```
 symfony server:start -d
 symfony server:log
 
@@ -43,7 +49,7 @@ composer req symfony/console
 ./bin/console doctrine:schema:update --force
 
 ./bin/console messenger:consume
-
+```
 
 
 

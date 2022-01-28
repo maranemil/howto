@@ -25,10 +25,10 @@ if ($sGeometry[0] > $sGeometry[1]) {
 } else {
     print "--------$argv[1]------$argv[3]-----------" . PHP_EOL;
     $picType = "P"; // portrait
-    $cmd = "convert {$sOrgImg} -resize 200x -quality 95  {$sOrgImgRs}";
+    $cmd = "convert $sOrgImg -resize 200x -quality 95  $sOrgImgRs";
     print $cmd . PHP_EOL;
     exec($cmd);
-    $cmd = "mv {$sOrgImgRs} {$sOrgImg}";
+    $cmd = "mv $sOrgImgRs $sOrgImg";
     exec($cmd);
 }
 usleep(rand(130000, 180000));

@@ -45,11 +45,11 @@ foreach ($data as $row) {
     $dt = new \DateTime('2015-04-01 00:00:00');
     if ($dt->format('Y-m-d') . '00:00:00' < $row->contact_modified) {
         echo sprintf(
-            '%s (%s)| modified %s',
-            $row->contact_name,
-            $row->contact_email,
-            $row->contact_modified
-        ) . PHP_EOL;
+                '%s (%s)| modified %s',
+                $row->contact_name,
+                $row->contact_email,
+                $row->contact_modified
+            ) . PHP_EOL;
     }
 }
 
@@ -67,7 +67,7 @@ $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $stmt = $dbh->prepare('SELECT * FROM tableName limit 10000');
 $stmt->execute();
 
-$i=0;
+$i = 0;
 while ($row = $stmt->fetch()) {
     $i++;
 }
@@ -88,7 +88,7 @@ $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $stmt = $dbh->prepare('SELECT * FROM tableName limit 10000');
 $stmt->execute();
 
-$i=0;
+$i = 0;
 $data = $stmt->fetchAll();
 foreach ($data as $row) {
     $i++;

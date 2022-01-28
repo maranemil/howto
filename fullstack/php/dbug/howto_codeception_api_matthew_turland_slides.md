@@ -1,19 +1,19 @@
 
-
+```
 Testing APIs with CodeceptionMatthew Turland
 http://matthewturland.com/slides/codeception/#resources
+```
 
-
-
+```
 http://codeception.com/docs/07-AdvancedUsage
 http://codeception.com/docs/modules/Filesystem
 http://allframeworks.ru/codeception/08-CestFormat.html
+```
 
 
 
 
-
-
+```
 Requirements:
 PHP 5.4+ (EOL - upgrade!)
 json extension
@@ -25,14 +25,16 @@ PHAR
 wget http://codeception.com/codecept.phar
 curl http://codeception.com/codecept.phar -o codecept.phar
 alias codecept="php /path/to/codecept.phar"
+```
 
-
+```
 Getting Help
 codecept help - general help
 codecept list - list commands
 codecept help [command] - help for a specific command, e.g. list
+```
 
-
+```
 Bootstrap Command
 codecept bootstrap -e
 -e, --empty - don't create standard suites
@@ -44,10 +46,10 @@ _data/dump.sql - SQL dump loaded between tests
 _envs/ - global environment-specific settings
 _output/ - test suite output, e.g. log files, coverage reports
 _support/ - test suite-specific helper class files
+```
 
 
-
-
+```
 Composer Autoloader
 {
     "autoload": {
@@ -61,26 +63,26 @@ Composer Autoloader
         }
     }
 }
+```
 
-
-
+```
 Bootstrap File
 // tests/_bootstrap.php
 
 // Add the line below this one
 require __DIR__ . '/../vendor/autoload.php';
+```
 
 
-
-
+```
 Supported Test Formats
 Cept - one stand-alone test per file
 Cest - one class per file, multiple tests per class
 PHPUnit - limited to unit tests
+```
 
 
-
-
+```
 Cept Example
 $I = new ApiTester($scenario);
 $I->wantTo('retrieve a single question');
@@ -92,10 +94,10 @@ $I->seeResponseContainsJson([
     'id' => 2,
     'text'=>'Are you feeling well?'
 ]);
+```
 
 
-
-
+```
 Cest Example
 class QuestionCest {
     public function _before(ApiTester $I) {
@@ -109,21 +111,21 @@ class QuestionCest {
     }
     // More test methods go here
 }
+```
 
 
-
-
+```
 Creating a Test Suite
 codecept generate:suite api
 Output
 tests/api.suite.yml
 tests/api/_bootstrap.php
 tests/_support/Helper/Api.php
+```
 
 
 
-
-
+```
 Test Suite Configuration
 # tests/api.suite.yml
 class_name: ApiTester
@@ -139,11 +141,11 @@ modules:
         # Limits PhpBrowser to JSON or XML
         part: Json
 
+```
 
 
 
-
-
+```
 Helper Class
 // tests/_support/Helper/Api.php
 namespace Helper;
@@ -155,13 +157,13 @@ class Api extends \Codeception\Module
 {
 
 }
+```
 
 
 
 
 
-
-
+```
 Adding Helper Methods
 // tests/_support/Helper/Api.php
 namespace Helper;
@@ -175,24 +177,24 @@ class Api extends \Codeception\Module {
             ->amBearerAuthenticated($token);
     }
 }
+```
 
 
 
 
 
-
-
+```
 Building Tester Files
 codecept build
 Output
 tests/_support/ApiTester.php
 tests/_support/_generated/ApiTesterActions.php
+```
 
 
 
 
-
-
+```
 reating a Cest Class
 codecept generate:cest api Thing
 // tests/api/ThingCest.php
@@ -206,11 +208,11 @@ class ThingCest {
     public function tryToTest(ApiTester $I) {
     }
 }
+```
 
 
 
-
-
+```
 Using Tester Methods
 // tests/api/ThingCest.php
 use ApiTester;
@@ -220,11 +222,11 @@ class ThingCest {
         // ...
     }
 }
+```
 
 
 
-
-
+```
 REST Module: Requests
 // Authentication
 $I->amHttpAuthenticated('username', 'password');
@@ -233,13 +235,13 @@ $I->amBearerAuthenticated('token');
 
 // Headers
 $I->haveHttpHeader('name', 'value');
+```
 
 
 
 
 
-
-
+```
 REST Module: Requests
 // Method / Parameters
 $I->sendGET('path/relative/to/url' /* , array $params */);
@@ -258,11 +260,11 @@ $I->sendLINK(
     [ 'linkEntry1', 'linkEntry2', /* ... */ ]
 );
 $I->sendUNLINK(...);
+```
 
 
 
-
-
+```
 REST Module: Responses
 $I->dontSeeResponseCodeIs(200);
 $I->seeResponseCodeIs(200);
@@ -277,13 +279,13 @@ $I->seeResponseEquals('text');
 $I->dontSeeResponseContains('text');
 $I->seeResponseContains('text');
 $response = $I->grabResponse();
+```
 
 
 
 
 
-
-
+```
 REST Module: JSON
 $I->seeResponseIsJson();
 
@@ -298,11 +300,11 @@ $data = $I->grabDataFromResponseByJsonPath('$.property');
 
 $I->dontSeeResponseMatchesJsonType(['property' => 'type']); // [2]
 $I->seeResponseMatchesJsonType(['property' => 'type']);
+```
 
 
 
-
-
+```
 REST Module: XML
 $->seeResponseIsXml();
 
@@ -317,12 +319,12 @@ $I->seeXmlResponseMatchesXpath('//element');
 
 $attribute = $I->grabAttributeFrom('//element', 'attribute');
 $value = $I->grabTextContentFromXmlElement('//element');
+```
 
 
 
 
-
-
+```
 Asserts Module
 Adds a lot of assert*() methods from PHPUnit to $I
 Useful in conjunction with grab*() methods
@@ -337,11 +339,11 @@ modules:
 // tests/api/ThingCest.php
 $response = $I->grabResponse();
 $I->assertRegExp('/^foo/', $response);
+```
 
 
 
-
-
+```
 Putting It All Together
 // tests/api/ThingCest.php
 use ApiTester;
@@ -359,11 +361,11 @@ class ThingCest {
         ]);
     }
 }
+```
 
 
 
-
-
+```
 Data Integration
 AMPQ - uses videlalvaro/php-amqplib 1
 Db - uses PDO 2
@@ -378,12 +380,12 @@ Redis 1
 1 Userland library
 2 Core extension
 3 PECL extension
+```
 
 
 
 
-
-
+```
 Db Module
 Executes _data/dump.sql before each test
 Drops all database tables after each test
@@ -398,11 +400,11 @@ modules:
       user: ''
       password: ''
       dump: tests/_data/dump.sql
+```
 
 
 
-
-
+```
 Creating a Helper
 codecept generate:helper Db
 // tests/_support/Helper/Db.php
@@ -415,11 +417,11 @@ class Db extends \Codeception\Module
 {
 
 }
+```
 
 
 
-
-
+```
 Custom Db Helper
 class Db extends \Codeception\Module\Db {
     protected function cleanup() {
@@ -435,9 +437,9 @@ class Db extends \Codeception\Module\Db {
         // ...
     }
 }
+```
 
-
-
+```
 Custom Helper Configuration
 # tests/api.suite.yml
 class_name: ApiTester
@@ -445,9 +447,9 @@ modules:
   enabled:
     - \Helper\Db
     # ...
+```
 
-
-
+```
 Database Seeding Strategies
 Automatic seeding with Db module or custom subclass
 Manual seeding with Db module haveInDatabase() method
@@ -463,11 +465,11 @@ FactoryMuffin::define('Model_Login', [
         return Model_Login::hash_password('password');
     },
 ]);
+```
 
 
 
-
-
+```
 PHP Web Server
 composer require --dev "codeception/phpbuiltinserver:^1"
 # codeception.yml
@@ -485,13 +487,13 @@ extensions:
       directoryIndex: app.php
       startDelay: 1
       phpIni: /path/to/php.ini
+```
 
 
 
 
 
-
-
+```
 Running Tests
 # All suites
 codecept run
@@ -507,14 +509,14 @@ codecept run tests/api/ThingCest.php
 # Only the createThing test in the ThingCest class
 # in the api suite
 codecept run tests/api/ThingCest.php:createThing
+```
 
 
 
 
 
 
-
-
+```
 Environments
 codecept generate:env travis
 
@@ -525,13 +527,13 @@ codecept run --env travis
 
 # Merge environments
 codecept run --env db,travis
+```
 
 
 
 
 
-
-
+```
 Debugging
 Normal methods of output are suppressed by the test runner
 Pass any variable or message to the codecept_debug() function
@@ -545,6 +547,7 @@ $object->foo = 'bar';
 codecept_debug($object);
 
 codecept run --debug api ThingCest.php
+```
 
 
 
@@ -552,8 +555,7 @@ codecept run --debug api ThingCest.php
 
 
 
-
-
+```
 Code Coverage Integration
 {
     "require-dev": {
@@ -572,14 +574,14 @@ Code Coverage Integration
 // web/index.php
 include __DIR__ . '/../c3.php';
 // ...
+```
 
 
 
 
 
 
-
-
+```
 Code Coverage Configuration
 # codeception.xml
 coverage:
@@ -599,6 +601,7 @@ coverage:
 
 whitelist - list of files to include even if they are not run
 blacklist - list of files to exclude even if they are run
+```
 
 
 
@@ -607,8 +610,7 @@ blacklist - list of files to exclude even if they are run
 
 
 
-
-
+```
 Code Coverage Invocation
 # HTML reports for humans
 codecept run --coverage --coverage-html
@@ -619,11 +621,11 @@ codecept run --coverage --coverage-xml
 
 Reports are written to tests/_output/coverage
 Raw data is written to tests/_output/c3tmp
+```
 
 
 
-
-
+```
 Remote Code Coverage Configuration
 Requires xdebug.remote_enable to be set to true
 
@@ -637,12 +639,12 @@ coverage:
       timeout: 60
     ssl:
       verify_peer: false
+```
 
 
 
 
-
-
+```
 Groups
 // tests/api/ThingCest.php
 class ThingCest {
@@ -656,14 +658,14 @@ class ThingCest {
 }
 
 codecept run -g thing
+```
 
 
 
 
 
 
-
-
+```
 Resources
 codeception.com
 github.com/codeception
@@ -673,3 +675,5 @@ phptest.club/category/codeception
 @davert on Twitter
 Acceptance & Functional Testing with Codeception by Joe Ferguson
 "Codeception: Testing for Human Beings" by Michael "Davert" Bodnarchuk in php[architect] May 2015 issue
+```
+

@@ -47,7 +47,7 @@ if ($direction == 'decode') {
             // input: 74 65 78 74
             $arr = explode(' ', $strText);
             foreach ($arr as $letter) {
-                echo (hex2bin($letter));
+                echo(hex2bin($letter));
             }
 
             break;
