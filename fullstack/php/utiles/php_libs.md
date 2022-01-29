@@ -1,9 +1,11 @@
+```
 ################################################
 #
 #   Xajax
 #
 ################################################
-
+```
+```
 -- Xajax
 https://github.com/Xajax/Xajax
 https://www.a-coding-project.de/ratgeber/ajax/xajax
@@ -19,27 +21,31 @@ https://github.com/Xajax/Xajax
 https://exakat.readthedocs.io/en/latest/Introduction.html
 https://github.com/JProof/Xajax-PHP-7
 https://gist.github.com/CatoTH/bafaea6426424151d8cc
-
-
+```
+```
 ################################################
 #
 #  wsdl2php
 #
 ################################################
-
+```
+```
 https://github.com/rquadling/wsdl2php
 https://github.com/jbarciauskas/wsdl2php
 https://github.com/rquadling/wsdl2php/blob/master/wsdl2php.php
 https://packagist.org/packages/besimple/wsdl2php
 https://packagist.org/packages/hostnet/wsdl2php
 https://www.dimuthu.org/blog/2008/09/21/wsdl2php-2-minutes-introduction/7
-
+```
+```
 
 ################################################
 #
 #   OP-Cache
 #
 ################################################
+```
+```
 https://catswhocode.com/phpcache/
 https://dzone.com/articles/how-to-create-a-simple-and-efficient-php-cache
 http://www.php-cache.com/en/latest/
@@ -48,25 +54,28 @@ https://www.php.net/manual/en/function.apc-load-constants.php
 https://catswhocode.com/phpcache/
 https://symfony.com/doc/4.1/components/cache.html
 https://www.w3schools.com/php/func_filesystem_clearstatcache.asp
-
-
+```
+```
 ################################################
 #
 #   php promise
 #
 ################################################
+```
+```
 https://github.com/reactphp/promise
 http://docs.php-http.org/en/latest/components/promise.html
 https://github.com/guzzle/promises
+```
 
-
-
+```
 ################################################
 #
 #	Xajax
 #
 ################################################
-
+```
+```
 https://github.com/Xajax/Xajax
 https://acapf.dharmiweb.net/docs/class-xajaxCometResponse.html
 https://phpro.org/tutorials/Asynchronous-Form-Submission-With-Xajax.html
@@ -163,30 +172,32 @@ function someName($someJson) {
 	$objResponse->call('callbackSomeFunction', $strHTML);
    	return $objResponse;
 }
+```
 
 
 
 
-
-
+```
 ################################################
 #
 #   sajax
 #
 ################################################
-
+```
+```
 http://absinth.modernmethod.com/sajax/
 https://www.a-coding-project.de/ratgeber/ajax/sajax
 https://github.com/Fusion/s2ajax/tree/master
 https://github.com/AJenbo/Sajax
-
-
+```
+```
 ################################################
 #
 #   oauth
 #
 ################################################
-
+```
+```
 https://oauth.net/code/php/
 https://github.com/thephpleague/oauth2-server
 https://github.com/bshaffer/oauth2-demo-php
@@ -203,5 +214,17 @@ https://laravel.com/docs/5.8/api-authentication
 https://symfony.com/doc/4.0/security/api_key_authentication.html
 https://auth0.com/docs/libraries/auth0-php/using-the-authentication-api-with-auth0-php
 https://developers.docusign.com/docs/esign-rest-api/sdk-tools/php/auth/
+```
+```
+################################################
+#
+#   php sdk
+#
+################################################
+```
+```
+https://packagist.org/packages/juststeveking/php-sdk#v2.0.0
+https://github.com/JustSteveKing/php-sdk
+```
 
 
