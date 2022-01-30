@@ -12,11 +12,10 @@
 // https://github.com/sunra/php-simple-html-dom-parser
 // https://github.com/jjanyan/Simple-HTML-DOM
 
-if( ini_get('allow_url_fopen') ) {
-	//echo "allo url fopen is OK";
-}
-else {
-	//echo "allo url fopen is NOT OK";
+if (ini_get('allow_url_fopen')) {
+    //echo "allo url fopen is OK";
+} else {
+    //echo "allo url fopen is NOT OK";
 }
 
 include 'simplehtmldom/simple_html_dom.php';
@@ -51,17 +50,22 @@ if($source = file_get_contents($link))
 
 $html = file_get_html($link);
 
-foreach($html->find('div.span4') as $content){
-	//echo $content->outertext . '<br>';
-	if (!empty($content)) {
-		echo @$content->find('h2.title',0)->plaintext; echo "<br>";
-		echo @$content->find('div.location',0)->plaintext; echo "<br>";
-		echo @$content->find('div.phone',0)->plaintext; echo "<br>";
-		echo @$content->find('div.email > a',0)->href; echo "<br>";
-		echo @$content->find('a.website',0)->href; echo "<br>";
-		echo "<hr>";
-	}
-	//die();
+foreach ($html->find('div.span4') as $content) {
+    //echo $content->outertext . '<br>';
+    if (!empty($content)) {
+        echo @$content->find('h2.title', 0)->plaintext;
+        echo "<br>";
+        echo @$content->find('div.location', 0)->plaintext;
+        echo "<br>";
+        echo @$content->find('div.phone', 0)->plaintext;
+        echo "<br>";
+        echo @$content->find('div.email > a', 0)->href;
+        echo "<br>";
+        echo @$content->find('a.website', 0)->href;
+        echo "<br>";
+        echo "<hr>";
+    }
+    //die();
 }
 
 $html->clear();

@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection SpellCheckingInspection */
+/** @noinspection PhpUnused */
 
 /**
  * Created by PhpStorm.
@@ -7,10 +8,10 @@
  * Time: 14:05
  */
 
-function getISORegionSAP()
+function getISORegionSAP(): array
 {
 
-    $arRegions = array(
+    return array(
 
         array("500", "AR", "00", "", "", "Capital Federal", "Argentinien", "Argentina"),
         array("500", "AR", "01", "", "", "Buenos Aires", "Argentinien", "Argentina"),
@@ -1131,6 +1132,4 @@ function getISORegionSAP()
         array("500", "ZA", "NW", "", "", " ", "Südafrika", "South Africa"),
         array("500", "ZA", "WC", "", "", " ", "Südafrika", "South Africa"),
     );
-
-    return $arRegions;
 }

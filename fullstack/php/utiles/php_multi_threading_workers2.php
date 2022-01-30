@@ -25,7 +25,6 @@ brew install php56-pthreads
 */
 
 
-
 // php multiple.php
 
 class SearchGoogle extends Thread
@@ -35,13 +34,12 @@ class SearchGoogle extends Thread
         $this->query = $query;
     }
 
-   public function run()
-	{
-	    echo microtime(true).PHP_EOL;
-	    $this->html = file_get_contents('http://google.fr?q='.$this->query);
-	}
+    public function run()
+    {
+        echo microtime(true) . PHP_EOL;
+        $this->html = file_get_contents('http://google.fr?q=' . $this->query);
+    }
 }
-
 
 
 $searches = ['cats', 'dogs', 'birds'];
@@ -62,12 +60,12 @@ class Searcher extends Worker
 {
     public function run()
     {
-        echo 'Running '.$this->getStacked().' jobs'.PHP_EOL;
+        echo 'Running ' . $this->getStacked() . ' jobs' . PHP_EOL;
     }
 }
 
 // Stack our jobs on our worker
-$worker   = new Searcher();
+$worker = new Searcher();
 $searches = ['dogs', 'cats', 'birds'];
 foreach ($searches as &$search) {
     $search = new SearchGoogle($search);
@@ -86,7 +84,6 @@ $worker->shutdown();
  * Author: Abu Ashraf Masnun
  * URL: http://masnun.me
  */
-
 class WorkerThreads extends Thread
 {
     private $workerId;
@@ -118,13 +115,6 @@ foreach (range(0, 5) as $i) {
 }
 
 ?>
-
-
-
-
-
-
-
 
 
 sudo apt-get install php-pear
@@ -163,39 +153,46 @@ https://www.php.net/manual/de/class.worker.php
 https://www.php.net/manual/de/class.thread.php
 
 <?php
-class AsyncOperation extends Thread {
-  public function __construct($arg){
-    $this->arg = $arg;
-  }
 
-  public function run(){
-    if($this->arg){
-      printf("Hello %s\n", $this->arg);
+class AsyncOperation extends Thread
+{
+    public function __construct($arg)
+    {
+        $this->arg = $arg;
     }
-  }
+
+    public function run()
+    {
+        if ($this->arg) {
+            printf("Hello %s\n", $this->arg);
+        }
+    }
 }
+
 $thread = new AsyncOperation("World");
-if($thread->start())
-  $thread->join();
+if ($thread->start())
+    $thread->join();
 
 
+class workerThread extends Thread
+{
+    public function __construct($i)
+    {
+        $this->i = $i;
+    }
 
-class workerThread extends Thread {
-public function __construct($i){
-  $this->i=$i;
+    public function run()
+    {
+        while (true) {
+            echo $this->i;
+            sleep(1);
+        }
+    }
 }
 
-public function run(){
-  while(true){
-   echo $this->i;
-   sleep(1);
-  }
-}
-}
-
-for($i=0;$i<50;$i++){
-$workers[$i]=new workerThread($i);
-$workers[$i]->start();
+for ($i = 0; $i < 50; $i++) {
+    $workers[$i] = new workerThread($i);
+    $workers[$i]->start();
 }
 
 

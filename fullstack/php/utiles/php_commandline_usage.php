@@ -54,8 +54,10 @@ ini_set('mysql.long_query_time', 0);
 
 echo "Done \n";
 
-usleep(rand(100000,300000));
-
+try {
+    usleep(random_int(100000, 300000));
+} catch (Exception $e) {
+}
 
 
 ###################################################################
@@ -74,7 +76,6 @@ https://www.php.net/manual/de/features.commandline.usage.php
 #!/usr/bin/php
 
 // var_dump($argv);
-
 
 
 #1:  #!/usr/bin/php   							# standard way to start a script
@@ -101,7 +102,7 @@ ini_set('ignore_repeated_source', true);
 
 ini_set('zlib.output_handler', false);
 ini_set('zlib.output_compression', 0);
-ini_set("zlib.output_compression_level",0);
+ini_set("zlib.output_compression_level", 0);
 
 ini_set('output_handler', false);
 ini_set('output_buffering', false);

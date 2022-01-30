@@ -38,32 +38,32 @@ $counter = 0;
 
 if (!is_null($elements)) {
 
-	foreach ($elements as $element) {
+    foreach ($elements as $element) {
 
-		echo '"';
+        echo '"';
 
-		foreach ($element->childNodes as $ic) {
+        foreach ($element->childNodes as $ic) {
 
-			if (trim($ic->textContent) != "") {
-				if (trim($ic->textContent) == "Email" || trim($ic->textContent) == "Website") { //
-					$subdiv = $ic->childNodes->item(1);
-					$ssubdiv = $subdiv->childNodes->item(0);
-					if ($ssubdiv) {
-						$email = $ssubdiv->getAttribute('href');
-						echo $email;
-						echo '"' . $separ . '"';
-					}
-				} else {
-					echo $ic->textContent;
-					echo '"' . $separ . '"';
-				}
-			}
-		}
+            if (trim($ic->textContent) != "") {
+                if (trim($ic->textContent) == "Email" || trim($ic->textContent) == "Website") { //
+                    $subdiv = $ic->childNodes->item(1);
+                    $ssubdiv = $subdiv->childNodes->item(0);
+                    if ($ssubdiv) {
+                        $email = $ssubdiv->getAttribute('href');
+                        echo $email;
+                        echo '"' . $separ . '"';
+                    }
+                } else {
+                    echo $ic->textContent;
+                    echo '"' . $separ . '"';
+                }
+            }
+        }
 
-		echo '"';
-		echo "<br>";
-		//die();
+        echo '"';
+        echo "<br>";
+        //die();
 
-	}
+    }
 
 }

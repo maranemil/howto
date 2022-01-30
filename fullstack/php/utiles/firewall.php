@@ -1,4 +1,5 @@
-<?php /** @noinspection DeprecatedIniOptionsInspection */
+<?php /** @noinspection SpellCheckingInspection */
+/** @noinspection DeprecatedIniOptionsInspection */
 /************************************************************************/
 /* PHP Firewall: Universal Firewall for WebSite                         */
 /* ============================================                         */
@@ -23,7 +24,7 @@
 // https://gist.github.com/jcherqui/65a85205bb401393bda9
 
 /** IP Protected */
-$IP_ALLOW = array();
+$IP_ALLOW = array('127.0.0.1');
 
 /** configuration define */
 const PHP_FIREWALL_ACTIVATION = true;
@@ -192,7 +193,9 @@ if (PHP_FIREWALL_ACTIVATION === true) {
 
     function PHP_FIREWALL_gethostbyaddr()
     {
-        if (PHP_FIREWALL_PROTECTION_SERVER_OVH === true or PHP_FIREWALL_PROTECTION_SERVER_KIMSUFI === true or PHP_FIREWALL_PROTECTION_SERVER_DEDIBOX === true or PHP_FIREWALL_PROTECTION_SERVER_DIGICUBE === true) {
+        if (PHP_FIREWALL_PROTECTION_SERVER_OVH === true || PHP_FIREWALL_PROTECTION_SERVER_KIMSUFI === true
+            || PHP_FIREWALL_PROTECTION_SERVER_DEDIBOX === true
+            || PHP_FIREWALL_PROTECTION_SERVER_DIGICUBE === true) {
             if (@ empty($_SESSION['PHP_FIREWALL_gethostbyaddr'])) {
                 return $_SESSION['PHP_FIREWALL_gethostbyaddr'] = @gethostbyaddr(PHP_FIREWALL_get_ip());
             } else {
@@ -249,7 +252,11 @@ if (PHP_FIREWALL_ACTIVATION === true) {
 
     if (PHP_FIREWALL_PROTECTION_SERVER_OVH_BY_IP === true) {
         $ip = explode('.', PHP_FIREWALL_GET_IP);
-        if ($ip[0] . '.' . $ip[1] === '87.98' or $ip[0] . '.' . $ip[1] === '91.121' or $ip[0] . '.' . $ip[1] === '94.23' or $ip[0] . '.' . $ip[1] === '213.186' or $ip[0] . '.' . $ip[1] === '213.251') {
+        if ($ip[0] . '.' . $ip[1] === '87.98'
+            || $ip[0] . '.' . $ip[1] === '91.121'
+            || $ip[0] . '.' . $ip[1] === '94.23'
+            || $ip[0] . '.' . $ip[1] === '213.186'
+            || $ip[0] . '.' . $ip[1] === '213.251') {
             PHP_FIREWALL_LOGS('OVH Server IP');
             die(_PHPF_PROTECTION_OVH);
         }
@@ -346,11 +353,9 @@ if (PHP_FIREWALL_ACTIVATION === true) {
     }
 
     /** Posting from other servers in not allowed */
-    if ((PHP_FIREWALL_PROTECTION_REQUEST_SERVER === true) && PHP_FIREWALL_GET_REQUEST_METHOD === 'POST' && isset($_SERVER['HTTP_REFERER'])) {
-        if (!stripos($_SERVER['HTTP_REFERER'], $_SERVER['HTTP_HOST'], 0)) {
-            PHP_FIREWALL_LOGS('Posting another server');
-            die(_PHPF_PROTECTION_OTHER_SERVER);
-        }
+    if ((PHP_FIREWALL_PROTECTION_REQUEST_SERVER === true) && PHP_FIREWALL_GET_REQUEST_METHOD === 'POST' && isset($_SERVER['HTTP_REFERER']) && !stripos($_SERVER['HTTP_REFERER'], $_SERVER['HTTP_HOST'], 0)) {
+        PHP_FIREWALL_LOGS('Posting another server');
+        die(_PHPF_PROTECTION_OTHER_SERVER);
     }
 
     /** protection contre le vers santy */
@@ -374,11 +379,10 @@ if (PHP_FIREWALL_ACTIVATION === true) {
     }
 
     /** Invalid request method check */
-    if (PHP_FIREWALL_PROTECTION_REQUEST_METHOD === true) {
-        if (strtolower(PHP_FIREWALL_GET_REQUEST_METHOD) !== 'get' && strtolower(PHP_FIREWALL_GET_REQUEST_METHOD) !== 'head' && strtolower(PHP_FIREWALL_GET_REQUEST_METHOD) !== 'post' and strtolower(PHP_FIREWALL_GET_REQUEST_METHOD) !== 'put') {
-            PHP_FIREWALL_LOGS('Invalid request');
-            die(_PHPF_PROTECTION_REQUEST);
-        }
+    if ((PHP_FIREWALL_PROTECTION_REQUEST_METHOD === true) && strtolower(PHP_FIREWALL_GET_REQUEST_METHOD) !== 'get' && strtolower(PHP_FIREWALL_GET_REQUEST_METHOD) !== 'head'
+        && strtolower(PHP_FIREWALL_GET_REQUEST_METHOD) !== 'post' && strtolower(PHP_FIREWALL_GET_REQUEST_METHOD) !== 'put') {
+        PHP_FIREWALL_LOGS('Invalid request');
+        die(_PHPF_PROTECTION_REQUEST);
     }
 
     /** protection dos attaque */

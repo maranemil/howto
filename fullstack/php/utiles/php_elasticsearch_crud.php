@@ -1,4 +1,6 @@
-<?php
+<?php /** @noinspection PhpUndefinedFunctionInspection */
+/** @noinspection PhpUndefinedClassInspection */
+/** @noinspection PhpUndefinedNamespaceInspection */
 
 ###################################################
 #
@@ -49,6 +51,7 @@ php composer.phar install
 # ----------------------------
 
 use Elasticsearch\ClientBuilder;
+
 require 'vendor/autoload.php';
 $client = ClientBuilder::create()->build();
 
@@ -63,7 +66,7 @@ $params = [
 ];
 
 $response = $client->index($params);
-print_r($response);
+#print_r($response);
 
 # ----------------------------
 # Get
@@ -76,7 +79,7 @@ $params = [
 ];
 
 $response = $client->get($params);
-print_r($response);
+#print_r($response);
 
 $params = [
     'index' => 'my_index',
@@ -103,7 +106,7 @@ $params = [
 ];
 
 $response = $client->search($params);
-print_r($response);
+#print_r($response);
 
 
 # ----------------------------
@@ -117,7 +120,7 @@ $params = [
 ];
 
 $response = $client->delete($params);
-print_r($response);
+#print_r($response);
 
 # ----------------------------
 # Delete an index
@@ -127,7 +130,7 @@ $deleteParams = [
     'index' => 'my_index'
 ];
 $response = $client->indices()->delete($deleteParams);
-print_r($response);
+#print_r($response);
 
 # ----------------------------
 # Create an index
@@ -144,7 +147,7 @@ $params = [
 ];
 
 $response = $client->indices()->create($params);
-print_r($response);
+#print_r($response);
 
 # ----------------------------
 # Unit Testing using Mock a Elastic Client
@@ -156,18 +159,17 @@ use Elasticsearch\ClientBuilder;
 // The connection class requires 'body' to be a file stream handle
 // Depending on what kind of request you do, you may need to set more values here
 $handler = new MockHandler([
-  'status' => 200,
-  'transfer_stats' => [
-     'total_time' => 100
-  ],
-  'body' => fopen('somefile.json')
+    'status' => 200,
+    'transfer_stats' => [
+        'total_time' => 100
+    ],
+    'body' => fopen('somefile.json')
 ]);
 $builder = ClientBuilder::create();
 $builder->setHosts(['somehost']);
 $builder->setHandler($handler);
 $client = $builder->build();
 // Do a request and you'll get back the 'body' response above
-
 
 
 ############# version 2 #############################################
@@ -184,7 +186,7 @@ require 'vendor/autoload.php';
 $client = Elasticsearch\ClientBuilder::create()->build();
 
 if ($client) {
- echo 'connected';
+    echo 'connected';
 }
 
 # Indexing data in Elasticsearch
@@ -192,12 +194,12 @@ require 'vendor/autoload.php';
 $client = Elasticsearch\ClientBuilder::create()->build();
 
 $params = [
- 'index' => 'my_index',
- 'type' => 'my_type',
- 'id' => 'my_id2',
- 'body' => [
- 'first field' => 'Adding My First Field In Elasticsearch'
- ],
+    'index' => 'my_index',
+    'type' => 'my_type',
+    'id' => 'my_id2',
+    'body' => [
+        'first field' => 'Adding My First Field In Elasticsearch'
+    ],
 ];
 $response = $client->index($params);
 echo $response['created'];
@@ -207,9 +209,9 @@ require 'vendor/autoload.php';
 $client = Elasticsearch\ClientBuilder::create()->build();
 
 $params = [
- 'index' => 'my_index',
- 'type' => 'my_type',
- 'id' => 'my_id',
+    'index' => 'my_index',
+    'type' => 'my_type',
+    'id' => 'my_id',
 ];
 
 $response = $client->get($params);
@@ -220,15 +222,15 @@ require 'vendor/autoload.php';
 $client = Elasticsearch\ClientBuilder::create()->build();
 
 $params = [
- 'index' => 'my_index',
- 'type' => 'my_type',
- 'body' => [
- 'query' => [
- 'match' => [
- 'first field' => 'first fiel'
- ],
- ],
- ],
+    'index' => 'my_index',
+    'type' => 'my_type',
+    'body' => [
+        'query' => [
+            'match' => [
+                'first field' => 'first fiel'
+            ],
+        ],
+    ],
 ];
 
 $response = $client->search($params);
@@ -237,11 +239,11 @@ $result = null;
 $i = 0;
 
 while ($i < $hits) {
- $result[$i] = $response['hits']['hits'][$i]['_source'];
- $i++;
+    $result[$i] = $response['hits']['hits'][$i]['_source'];
+    $i++;
 }
 foreach ($result as $key => $value) {
- echo $value['first field'] . "<br>";
+    echo $value['first field'] . "<br>";
 }
 
 
