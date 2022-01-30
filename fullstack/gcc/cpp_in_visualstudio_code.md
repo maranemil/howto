@@ -1,18 +1,19 @@
+```
 ############################################################
 Using C++ on Linux in VS Code
 https://code.visualstudio.com/docs/cpp/config-linux
 ############################################################
-
-
+```
+```
 http://www.lcs-chemie.de/c_comp.htm
 https://code.visualstudio.com/docs/cpp/config-linux
 http://www.cpp-entwicklung.de/cpplinux/cpp_main/cpp_main.html
 https://man7.org/linux/man-pages/man1/cpp.1.html
 https://www.cyberciti.biz/faq/howto-compile-and-run-c-cplusplus-code-in-linux/
 https://www.geeksforgeeks.org/cpp-command-in-linux-with-examples/
+```
 
-
-
+```
 gcc -v
 sudo apt-get update
 sudo apt-get install build-essential gdb
@@ -21,7 +22,9 @@ mkdir projects
 cd projects
 mkdir helloworld
 cd helloworld
+```
 
+```
 ----------------------------
 code helloworld.cpp
 ----------------------------
@@ -40,14 +43,17 @@ int main()
     }
     cout << endl;
 }
+```
 
 
+```
 ############################################################
 #
 #  Compile C and Cpp
 #
 ############################################################
-
+```
+```
 https://code.visualstudio.com/docs/cpp/config-linux
 http://www.lcs-chemie.de/c_comp.htm
 
@@ -60,11 +66,8 @@ cd projects
 mkdir helloworld
 cd helloworld
 code
-
-
-
-
-
+```
+```
 touch helloworld.c
 vi helloworld.c
 
@@ -79,8 +82,8 @@ int main(void)
 cc program-source-code.c -o exhelloworld
 ./exhelloworld
 
-
-
+```
+```
 touch helloworld.cpp
 vi helloworld.cpp
 
@@ -97,10 +100,8 @@ g++ helloworld.cpp -o helloworld
 make helloworld
 ./helloworld
 
-
-
-
-
+```
+```
 #include <iostream>
 #include <vector>
 #include <string>
@@ -116,8 +117,8 @@ int main()
     }
     cout << endl;
 }
-
-
+```
+```
 #include <iostream>
 using namespace std;
 
@@ -132,3 +133,4 @@ void main( void )
 g++   versuch.cpp
 g++   versuch.cpp -o versuch
 g++   -g versuch.cpp -o versuch
+```

@@ -1,10 +1,11 @@
+```
 #####################################################
 #
 #   CSS Style for required
 #
 #####################################################
-
-
+```
+```
 https://css-tricks.com/almanac/selectors/r/required/
 https://getbootstrap.com/docs/4.0/components/forms/
 
@@ -41,14 +42,15 @@ https://www.w3schools.com/tags/att_input_required.asp
   Username: <input type="text" name="usrname" required>
   <input type="submit">
 </form>
-
-
+```
+```
 #####################################################
 #
 # Select Element with Images
 #
 #####################################################
-
+```
+```
 http://silviomoreto.github.io/bootstrap-select/
 https://thdoan.github.io/bootstrap-select/
 https://thdoan.github.io/bootstrap-select/examples.html
@@ -69,13 +71,15 @@ https://thdoan.github.io/bootstrap-select/examples.html
 if ( $( "#myDiv" ).length ) {
      $( "#myDiv" ).show();
 }
-
+```
+```
 #####################################################
 #
 # CSS Pure Loader
 #
 #####################################################
-
+```
+```
 <style>
 .loaderlarge {
         border: 16px solid #f3f3f3; /* Light grey */
@@ -117,7 +121,8 @@ if ( $( "#myDiv" ).length ) {
 </style>
 
 
-
+```
+```
 --------------------------------------------------------------------------
 css word-break: break-all;
 --------------------------------------------------------------------------
@@ -126,9 +131,9 @@ https://css-tricks.com/snippets/css/prevent-long-urls-from-breaking-out-of-conta
 https://www.w3schools.com/cssref/css3_pr_word-break.asp
 https://www.w3schools.com/cssref/pr_text_word-spacing.asp
 https://www.w3schools.com/cssref/css3_pr_word-wrap.asp
+```
 
-
-
+```
 -------------------------------------------------------------------------------
 Getting a div to scroll when the body uses overflow hidden
 -------------------------------------------------------------------------------
@@ -142,10 +147,10 @@ Getting a div to scroll when the body uses overflow hidden
 	float:left;
 	overflow-y:scroll;
 }
+```
 
 
-
--------------------------------------------------------------------------------
+```
 -------------------------------------------------------------------------------
 https://css-tricks.com/how-to-create-a-component-library-from-svg-illustrations/
 https://github.com/miukimiu/react-kawaii
@@ -176,13 +181,13 @@ https://css-tricks.com/animate-a-container-on-mouse-over-using-perspective-and-t
   /* This will come into play later */
   perspective: 40px;
 }
+```
 
 
 
 
 
-
-
+```
 -------------------------------------------------------------------------------
 css streifen - stripes
 -------------------------------------------------------------------------------
@@ -197,8 +202,9 @@ body {
     color: white;
     background: repeating-linear-gradient(45deg, #dce5f2, #dce5f2 10px, #eff1f4 10px, #eff1f4 20px);
 }
+```
 
-
+```
 -------------------------------------------------------------------------------
 How to Force a Button or Link to be 100% Width CSS Tutoria
 https://pagecrafter.com/how-to-force-a-button-or-link-to-be-100-width-css-tutorial/
@@ -214,8 +220,9 @@ http://html5doctor.com/html5-custom-data-attributes/
 	display:block;
 	text-align:center; /*This will result in centering the link text, which is probably what you want -brianjohnsondesign.com*/
 }
+```
 
-
+```
 -------------------------------------------------------------------------------
 BG GRADIENT PATTERNS
 -------------------------------------------------------------------------------
@@ -267,18 +274,18 @@ background-clip: border-box;
 -webkit-background-size: 50px 50px;
 background-size: 50px 50px;
 */
+```
 
 
 
-
-
+```
 ##################################################################
 #
 #   padding bootstrap3
 #
 ##################################################################
-
-
+```
+```
 https://bootsnipp.com/tags/card/3
 https://bootsnipp.com/snippets/featured/bootstrap-material-wizard
 https://codepen.io/jstneg/pen/EVKYZj
@@ -296,9 +303,9 @@ https://getbootstrap.com/docs/4.1/utilities/spacing/
 .no-padding-bottom
 .no-padding-top
 .no-padding - to remove padding from all sides
+```
 
-
-
+```
 #################################################################
 #
 #   Putting -moz-available and -webkit-fill-available in one width/height
@@ -326,7 +333,8 @@ elem {
     border-collapse: collapse;
   }
 </style>
-
+```
+```
 #####################################################
 #
 #   Responsive textarea
@@ -337,7 +345,9 @@ elem {
 	<textarea name="mytextarea" cols="100" rows="5" class="form-control"
 		style="-webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; width: 100%;"></textarea>
 </div>
+```
 
+```
 #####################################################
 #
 #   How to remove the CSS3 Transitions ?
@@ -383,8 +393,9 @@ To disable CSS transformations use following instead:
 }
 
 /* transition-property: top; */
+```
 
-
+```
 #####################################################
 #
 #   wrap
@@ -392,7 +403,9 @@ To disable CSS transformations use following instead:
 #####################################################
 
 word-break: break-all; word-wrap: break-word;
+```
 
+```
 #####################################################
 #
 #   Media Query for different Device or Screen
@@ -489,9 +502,9 @@ word-break: break-all; word-wrap: break-word;
     /* insert styles here */
 }
 
--------
+```
 
-
+```
 @media screen and (min-width: 900px) {
    body{
    background-color:#bbb;
@@ -523,7 +536,9 @@ word-break: break-all; word-wrap: break-word;
    }
    span.iphone {display: inline-block;}
 }
+```
 
+```
 ###########################################################
 #
 #   filter css
@@ -555,7 +570,8 @@ filter: invert(75%);
 filter: opacity(25%);
 filter: saturate(30%);
 filter: sepia(60%);
-
+```
+```
 
 ###########################################################
 #   misc
@@ -567,7 +583,9 @@ overflow-scroll tree-container dd-handle
 
 # add padding
 EditTable
+```
 
+```
 #################################################################
 #
 #   CSS Sort List
@@ -627,15 +645,19 @@ http://www.storiesinflight.com/js_divsort/index.html
 https://www.w3schools.com/cssref/css_colors.asp
 http://flexboxgrid.com/
 -->
+```
 
 
+```
 #####################################################
 Canvas Border
 #####################################################
 https://www.w3schools.com/html/html5_canvas.asp
 <canvas id="myCanvas" width="200" height="100" style="border:1px solid #000000;"></canvas>
+```
 
 
+```
 #####################################################
 Ugly Firefox styling for buttons, input fields and dropdown selection
 https://support.mozilla.org/de/questions/1266036
@@ -645,8 +667,10 @@ https://www.jeffersonscher.com/googletime/index.php
 https://www.jeffersonscher.com/res/select.html
 
 border-width: 1px; # remove
+```
 
 
+```
 #####################################################
 tbody acroll
 #####################################################
@@ -699,15 +723,19 @@ div.scrollable-table-wrapper {
     top: 0;
   }
 }
+```
 
 
+```
 #####################################################
 force wrap inhalt table
 #####################################################
 [id^='some-table-'] {
     overflow-wrap: anywhere !important;
 }
+```
 
+```
 #####################################################
 The new responsive: Web design in a component-driven world | Session CSS container queries
 https://www.youtube.com/watch?v=jUQ2-C5ZNRc
@@ -721,11 +749,11 @@ https://www.youtube.com/watch?v=jUQ2-C5ZNRc
 
 preference-media-queries
 @container
+```
 
 
 
-
-
+```
 #####################################################
 5 CSS tricks every Web Developer should know in 2021
 https://www.youtube.com/watch?v=wfaDzSL6ll0
@@ -735,9 +763,10 @@ https://www.youtube.com/watch?v=wfaDzSL6ll0
 3) -webkit-animation: blink 10s infinite;
 4) google fonts
 5) bg gradients
+```
 
 
-
+```
 #####################################################
 // Learn Flexbox in 15 Minutes - Web Dev Simplified
 // https://www.youtube.com/watch?v=fYq5PXgSsbE
@@ -758,3 +787,4 @@ https://www.youtube.com/watch?v=wfaDzSL6ll0
 	flex-basis: 0;
 	/* flex-grow: 2; */
 }
+```

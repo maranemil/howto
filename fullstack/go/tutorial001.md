@@ -1,4 +1,4 @@
-
+```
 ############################################################
 
 Go for PHP Developers - Terrence Ryan | IPC 2017
@@ -6,7 +6,8 @@ https://www.youtube.com/watch?v=KWWo0vJaogI
 Test on: https://ideone.com
 
 ############################################################
-
+```
+```
 go run main.go
 // ----------------------------------------------------
 package main
@@ -24,7 +25,8 @@ func main(){
 	// s:= "Hello"
 	fmt.Printf("%s\n",s)
 }
-
+```
+```
 ----------------------------------------------------
 //array -------------
 gre :=[5] string{
@@ -37,7 +39,8 @@ gre :=[] string{
 	"tewo",
 }
 gre = gre.append("new string")
-
+```
+```
 // ----------------------------------------------------
 package main
 import (
@@ -53,4 +56,4 @@ func main(){
 	i:=rand.Int(l-1)
 	fmt.Printf("%s\n", g[i])
 }
-
+```

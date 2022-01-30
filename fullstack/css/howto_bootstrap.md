@@ -1,17 +1,23 @@
+
+```
 ##################################################################
 #	Font-Awesome css fa-spin
 ##################################################################
-
+```
+```
 https://www.w3schools.com/icons/fontawesome_icons_spinner.asp
 http://gkoberger.github.io/Font-Awesome/examples/
 https://fontawesome.com/how-to-use/svg-with-js
 https://gist.github.com/pbatey/19731d6ec323679b3ae1
+```
 
+```
 ##################################################################
 #	bootstrap css float left or right ( pull-right ) ( pull-left )
 #	https://stackoverflow.com/questions/14809313/twitter-bootstrap-float-div-right
 ##################################################################
-
+```
+```
 @import url('http://twitter.github.com/bootstrap/assets/css/bootstrap.css');
  .container {
     margin-top: 10px;
@@ -27,13 +33,16 @@ https://gist.github.com/pbatey/19731d6ec323679b3ae1
         </div>
     </div>
 </div>
+```
 
+```
 ##################################################################
 #
 # Bootstrap v3 colors
 #
 ##################################################################
-
+```
+```
 .dark {
     color: #333 !important
 }
@@ -105,14 +114,15 @@ https://gist.github.com/pbatey/19731d6ec323679b3ae1
 .light-grey {
     color: #BBB !important
 }
-
-
+```
+```
 ##################################################################
 #
 # css colors Generator
 #
 ##################################################################
-
+```
+```
 .gradient {
     background-color: #dbdbdb;
     /* IE9, iOS 3.2+ */
@@ -131,12 +141,13 @@ https://gist.github.com/pbatey/19731d6ec323679b3ae1
         filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffe2e2e2",endColorstr="#fffefefe",GradientType=0);
     }
 }
-
-
+```
+```
 ##################################################################
 #   text with ... if size to big
 ##################################################################
-
+```
+```
 .text {
     text-overflow: ellipsis;
     overflow: hidden;
@@ -150,7 +161,9 @@ https://gist.github.com/pbatey/19731d6ec323679b3ae1
     color: #52545c;
 	-webkit-tap-highlight-color: rgba(0,0,0,0);
 }
+```
 
+```
 ----------------------------------------------------------------------------
 https://fontawesome.com/icons/euro-sign
 https://fontawesome.com/icons/cc-stripe
@@ -158,6 +171,8 @@ https://fontawesome.com/v4.7.0/icons/
 https://fontawesome.com/icons/tags
 https://fontawesome.com/icons?d=gallery
 ----------------------------------------------------------------------------
+```
+
 
 http://www.colorzilla.com/gradient-editor/
 
@@ -176,21 +191,21 @@ https://v4-alpha.getbootstrap.com/utilities/colors/
 https://www.tutorialrepublic.com/css-reference/css-color-names.php
 http://basscss.com/v7/docs/background-colors/
 http://getbootstrap.com/docs/3.3/getting-started/#examples
+```
 
 
 
 
-
-
+```
 ##################################################################
 #
 #   Set bootstrap modal body height by percentage
 #   https://stackoverflow.com/questions/24166568/set-bootstrap-modal-body-height-by-percentage
 #
 ##################################################################
+```
 
-
-
+```
 .modal-dialog,
 .modal-content {
     /* 80% of window height */
@@ -223,14 +238,14 @@ http://getbootstrap.com/docs/3.3/getting-started/#examples
 .modal-body img {
   max-height: 69vh;
 }
+```
 
 
 
 
 
 
-
-
+```
 /*
 
 --blue: #007bff;
@@ -256,7 +271,10 @@ http://getbootstrap.com/docs/3.3/getting-started/#examples
 --dark: #343a40;
 
 */
+```
 
+
+```
 /*
 
 https://v4-alpha.getbootstrap.com/examples/
@@ -271,7 +289,9 @@ https://getbootstrap.com/docs/3.3/getting-started/#examples
 https://getbootstrap.com/docs/3.3/examples/jumbotron-narrow/
 
 */
+```
 
+```
 /*  CSS Padding Bootstrap 3 */
 /* MARGINS & PADDINGS */
 
@@ -364,13 +384,13 @@ https://stackoverflow.com/questions/34864824/twitter-bootstrap-margin-bottom-bui
 .space-20 {     margin: 20px 0; }
 .space-25 {     margin: 25px 0; }
 .space-30 {     margin: 30px 0; }
+```
 
 
 
 
 
-
-
+```
 -----------------------------------------------
 Set Group fieldset with border
 Example: http://jsfiddle.net/NUMcr/1/
@@ -392,14 +412,14 @@ legend {
     padding: 2px;
 }
 
+```
 
 
 
 
 
 
-
-
+```
 -----------------------------------------------
 Mixed: Mobile And Desktop Example
 https://www.w3schools.com/bootstrap/bootstrap_grid_examples.asp
@@ -433,13 +453,13 @@ Example
   <div class="col-xs-6 col-sm-4 col-lg-2">.col-xs-6 .col-sm-4 .col-lg-2</div>
 </div>
 
+```
 
 
 
 
 
-
-
+```
 -----------------------------------------------
 Set textarea 100% in bootstrap
 Set textarea width to 100% in bootstrap modal
@@ -454,9 +474,10 @@ Setting the width of a Textarea in Bootstrap 3
 	    max-width: 100%;
 	}
 </style>
+```
 
 
-
+```
 -----------------------------------------------
 https://www.bootstrap-live-customizer.com
 https://getbootstrap.com/docs/4.1/content/typography/
@@ -466,10 +487,10 @@ https://getbootstrap.com/docs/4.1/content/typography/
   <li>Consectetur adipiscing elit</li>
   <li>Eget porttitor lorem</li>
 </ul>
+```
 
 
-
-
+```
 ##################################################################################################
 #
 #	The Bootstrap 3 grid Updated 2019 columns
@@ -498,7 +519,9 @@ Large (for laptops/desktops .col-lg-*).
 
 Mixed: mobile, tablet, and desktop
 .col-xs-12 .col-sm-6 .col-lg-8
+```
 
+```
 ##################################################################################################
 #
 #	bootstrap docs
@@ -549,7 +572,9 @@ http://stackoverflow.com/questions/22920589/bootstrap-3-input-xs-smaller-than-sm
     font-size: 12px;
     line-height: 1.5;
 }
+```
 
+```
 ###############################################
 #
 #	tooltips with js
@@ -561,7 +586,9 @@ http://www.jquery-az.com/how-to-add-bootstrap-tooltips-on-glyphicons-and-font-aw
 http://www.jquery-az.com/wwh/demo.php?ex=29.0_1
 http://jsfiddle.net/Krwsp/2/
 https://codepen.io/jonmilner/pen/bfkKF
+```
 
+```
 ###############################################
 #
 #	tooltips without js
@@ -592,13 +619,15 @@ section { padding: 5%; position: relative; }
     text-align: center;
 }
 a:hover + div { display: block; }
-
+```
 -----------------------------------------------------------------------
-
+```
 http://ace.jeka.by/			# Bootstrap Ace Admin
 https://github.com/bopoda/ace		# Bootstrap Ace Admin
 http://www.bootply.com/7LufdXFab3 	# Bootstrap 3 Grid Examples
+```
 
+```
 ###############################################
 #
 #   modal ace bootstrap - 3example
@@ -693,9 +722,9 @@ $(".modal-wide").on("show.bs.modal", function() {
   var height = $(window).height() - 200;
   $(this).find(".modal-body").css("max-height", height);
 });
+```
 
-
-
+```
 #######################################
 #
 #	footer bootstrap
@@ -713,8 +742,9 @@ Use the navbar component and add .navbar-fixed-bottom class:
 
 Bootstrap 4.x
 <div class="navbar fixed-bottom"></div>
+```
 
-
+```
 #######################################
 #
 #   Bootstrap v4+ pointer cursor
@@ -731,7 +761,7 @@ https://stackoverflow.com/questions/47269189/bootstrap-v4-css-class-for-pointer-
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
 <a class="btn btn-success" href="#" role="button">Sample Button</a>
-
+```
 
 
 

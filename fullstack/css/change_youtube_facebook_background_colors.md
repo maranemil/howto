@@ -1,7 +1,9 @@
+```
 #############################################
 # 	Darkmode made simple with Chrome DevTools
 #############################################
-
+```
+```
 Chrome DevTools  > Sources -> Overrides > Enable Local Overrides > Select folder > Save CSS File
 
 Add:
@@ -25,11 +27,13 @@ https://addons.mozilla.org/en-US/firefox/addon/stylish/
 https://addons.mozilla.org/de/firefox/addon/styl-us/
 https://developer.mozilla.org/de/docs/Tools/Style_Editor
 https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/user_interface/Browser_styles
-
+```
+```
 #############################################
 # 	Darkmode made simple facebook
 #############################################
-
+```
+```
 body { filter: invert(1); background: black; }
 img { filter: invert(1); }
 
@@ -41,12 +45,14 @@ let nd = document.createElement("style");  let nc = document.createTextNode(" bo
 
 # darkmode dark mode
 let nd = document.createElement("style");  let nc = document.createTextNode(" body, _li, div { background-color: #000000 !important; color: lightgray;  }");  nd.appendChild(nc);  document.body.appendChild(nd)
-
+```
+```
 #############################################
 # 	change youtube background colors
 # 	div#content.style-scope.ytd-app
 #############################################
-
+```
+```
 http://www.colorhexa.com/999999
 https://www.beautycolorcode.com/999999
 
@@ -106,12 +112,13 @@ window.addEventListener("unload", function() { document.getElementsByTagName("di
 var newDiv = document.createElement("style");  var newContent = document.createTextNode("* { filter: invert(1); }");  newDiv.appendChild(newContent);  document.body.appendChild(newDiv)
 
 
-
-
+```
+```
 #############################################
 #	youtube_now_has_a_dark_mode_builtin
 #############################################
-
+```
+```
 https://www.reddit.com/r/google/comments/652obk/youtube_now_has_a_dark_mode_builtin/
 
 document.cookie="VISITOR_INFO1_LIVE=fPQ4jCL6EiE; path=/"
@@ -134,3 +141,5 @@ ytd-app { background: #663; }
 console.log('%c Oh my heavens! ', 'background: #222; color: #bada55');
 javascript:(function(){ window.document.getElementById('content').style.backgroundColor = "#666"   });
 #document.body[0].style.backgroundColor = "#666";
+
+```

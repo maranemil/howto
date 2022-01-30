@@ -1,3 +1,4 @@
+```
 ##########################################################
 Fizz? Buzz? FizzBuzzz! Javascript PHP
 ##########################################################
@@ -18,7 +19,8 @@ for (let i = 0; i < 100; i++) {
     console.log(i);
   }
 }
-
+```
+```
 // -------------------------------------------------------
 // JS v2
 // https://jsfiddle.net/
@@ -26,7 +28,8 @@ for (let i = 0; i < 100; i++) {
 for (let i = 0; i < 100; i++) {
   console.log((++i % 3 ? '' : 'Fizz') + (i % 5 ? '' : 'Buzz') || i)
 }
-
+```
+```
 // -------------------------------------------------------
 // PHP v1
 // https://sandbox.onlinephpfunctions.com/
@@ -46,10 +49,12 @@ foreach(range(1, 30) as $number) {
 		echo $number.PHP_EOL;
 	}
 }
-
+```
+```
 // -------------------------------------------------------
 // PHP v2
 // https://davidwalsh.name/php-shorthand-if-else-ternary-operators
 foreach(range(10, 15) as $number) {
     echo ($number%3==0 && ($number%5==0))?'FizzBuzz'.PHP_EOL:(($number%3==0) ? 'Fizz'.PHP_EOL : (($number%5==0) ? 'Buzz'.PHP_EOL: $number.PHP_EOL));
 }
+```

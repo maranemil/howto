@@ -1,7 +1,9 @@
+```
 ##################################
 background animation
 ##################################
-
+```
+```
 https://codepen.io/asfarmed/pen/cfslr?page=1&  # animated background body tag
 https://codepen.io/jscottsmith/pen/rappeK?page=3 # Focus
 https://codepen.io/aglosson/pen/vEweYM?page=3 # Animal Crossing - Detail Background
@@ -36,12 +38,13 @@ https://codepen.io/Bidji/pen/dPEzwq # Loader SVG/CSS
 https://codepen.io/pmk/pen/ByXOOq # Dozing Bird
 https://codepen.io/Rplus/pen/lEDBj # border animation without svg loader
 https://codepen.io/wontem/pen/PqYXop # Dodecahedron
-
-
+```
+```
 ##################################
 # rotate circles
 ##################################
-
+```
+```
 https://codepen.io/cjgammon/pen/wGrLNR?q=rotate+circle&limit=all&type=type-pens # Rotating Circles
 https://codepen.io/vijaylathiya/pen/ozmkH?q=rotate+circle&limit=all&type=type-pens # Rotate Circle using CSS ##########
 https://codepen.io/timaronan/pen/GjQYEd?q=rotate+circle&limit=all&type=type-pens # Radar ####
@@ -70,5 +73,4 @@ https://codepen.io/theRANDOM/pen/bwbjWd?limit=all&page=14&q=rotate+circle # bwbj
 https://codepen.io/AjtihRahu/pen/vgEyZE?limit=all&page=14&q=rotate+circle # vgEyZE circles ###############################
 https://codepen.io/Rubentj/pen/BREeOy?limit=all&page=14&q=rotate+circle #  circles ###############################
 https://codepen.io/Mongui/pen/evxYyj?limit=all&page=16&q=rotate+circle # Another loader 2 ###############################
-
----
+```
