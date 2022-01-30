@@ -7,21 +7,24 @@ ini_set('display_startup_errors', true);
 class Article
 {
 
-    public $name;
-    public $id;
-    public $sort;
+    public string $name;
+    public int $id;
+    public int $sort;
     public $category;
-    protected static $_instances = array();
+    protected static array $_instances = array();
 
+    /**
+     * @throws Exception
+     */
     public function __construct()
     {
         self::$_instances[] = $this;
-        $this->id = rand(1, 8);
-        $this->name = "" . str_shuffle("abcde");
-        $this->sort = rand(1, 8);
+        $this->id = random_int(1, 8);
+        $this->name = str_shuffle("abcde");
+        $this->sort = random_int(1, 8);
     }
 
-    public static function getInstances()
+    public static function getInstances(): array
     {
         $return = array();
         foreach (self::$_instances as $instance) {
@@ -40,7 +43,7 @@ class Category
 
     public $id;
     public $name;
-    protected static $_instances = array();
+    protected static array $_instances = array();
 
     public function __construct()
     {
@@ -122,7 +125,7 @@ print_r($arrResultRes);
 foreach ($arrResult as $key => $object) {
     $objTestCategory = Category::getInstance($object->category);
     $arrResultSort[$key] = array
-        (
+    (
         "category" => $objTestCategory->name,
         "article" => $object,
     );

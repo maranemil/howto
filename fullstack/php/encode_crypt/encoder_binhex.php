@@ -7,7 +7,7 @@ $argv = $_SERVER['argv'];
 
 //print_r($_SERVER['argv']);
 
-if (count($argv) != 4) {
+if (count($argv) !== 4) {
     throw new Exception("missing arguments");
     // argv expected: php test.php encode bin text
 }
@@ -17,7 +17,7 @@ $encodeType = $argv[2];
 $strText = $argv[3];
 
 
-if ($direction == 'encode') {
+if ($direction === 'encode') {
     switch ($encodeType) {
 
         case 'bin':
@@ -32,7 +32,7 @@ if ($direction == 'encode') {
             break;
     }
 }
-if ($direction == 'decode') {
+if ($direction === 'decode') {
     switch ($encodeType) {
 
         case 'bin':

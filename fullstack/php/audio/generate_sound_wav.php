@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection SpellCheckingInspection */
+/** @noinspection DuplicatedCode */
 
 // https://stackoverflow.com/questions/28053226/generate-wav-tone-in-php
 
@@ -51,7 +52,7 @@ $song = array(1000, 1500, 1200);
 $duration = .3;
 
 $wav = new Wave(44100);
-for ($i = 0; $i < count($song); $i++) {
+for ($i = 0, $iMax = count($song); $i < $iMax; $i++) {
     $wav->addTone($song[$i], $duration);
 }
 

@@ -4,9 +4,13 @@ for ($ias = 0; $ias < 12; $ias++) {
     imagefilter($image, IMG_FILTER_BRIGHTNESS, -$ias); # -100/+100
     imagefilter($image, IMG_FILTER_CONTRAST, -$ias); # -50/+50
     #imagefilter($image, IMG_FILTER_GRAYSCALE);
-    imagejpeg($image, "output/img_filter_{$ias}.jpg");
+    imagejpeg($image, "output/img_filter_$ias.jpg");
 }
 imagedestroy($image);
+
+
+
+
 
 $strHTMLIMG = '';
 for ($ias = 0; $ias < 12; $ias++) {

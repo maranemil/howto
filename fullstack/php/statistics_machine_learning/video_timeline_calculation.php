@@ -26,7 +26,7 @@ foreach ($arrTimeline as $users => $userstalk) {
 
         #$arrRes1[$users]["ended"] =  $strEnded;
         #$arrRes1[$users]["start"] =  $strStart;
-        $arrRes[$users][] = strtotime("2019-10-05 18:" . $strEnded . "") - strtotime("2019-10-05 18:" . $strStart . "");
+        $arrRes[$users][] = strtotime("2019-10-05 18:" . $strEnded) - strtotime("2019-10-05 18:" . $strStart);
     }
 }
 
@@ -42,22 +42,22 @@ foreach ($arrRes as $user => $time) {
 #echo array_sum($arrTotal)/60;
 
 /**
-
-https://www.youtube.com/watch?v=U6qYrm61Pw8
-http://www.cc.com/shows/the-daily-show-with-trevor-noah/news-team
-
-1. Jake Tapper
-2. Trevor Noah
-3. Desi Lydic
-4. Ronny Chieng
-5. Dulcé Sloan
-6. Roy Wood Jr.
-7. Jaboukie Young-White
-8. Michael Kosta
-
--------------------- --------------------
-
-Chart Top Talk length by user
+ *
+ * https://www.youtube.com/watch?v=U6qYrm61Pw8
+ * http://www.cc.com/shows/the-daily-show-with-trevor-noah/news-team
+ *
+ * 1. Jake Tapper
+ * 2. Trevor Noah
+ * 3. Desi Lydic
+ * 4. Ronny Chieng
+ * 5. Dulcé Sloan
+ * 6. Roy Wood Jr.
+ * 7. Jaboukie Young-White
+ * 8. Michael Kosta
+ *
+ * -------------------- --------------------
+ *
+ * Chart Top Talk length by user
  *          Trevor Noah - 1
  *          Jake Tapper - 2
  *         Dulcé Sloan  - 3
@@ -66,9 +66,9 @@ Chart Top Talk length by user
  *         Ronny Chieng - 6
  *           Desi Lydic - 7
  * Jaboukie Young-White - 8
-
-
-Total time in seconds for each Participant in Talk
+ *
+ *
+ * Total time in seconds for each Participant in Talk
  *          Jake Tapper - total seconds 443 - Minutes: 7.38
  *          Trevor Noah - total seconds 932 - Minutes: 15.53
  *           Desi Lydic - total seconds 181 - Minutes: 3.02
@@ -77,7 +77,6 @@ Total time in seconds for each Participant in Talk
  *         Roy Wood Jr. - total seconds 226 - Minutes: 3.77
  * Jaboukie Young-White - total seconds 144 - Minutes: 2.4
  *        Michael Kosta - total seconds 213 - Minutes: 3.55
-
--------------------- --------------------
-
+ *
+ * -------------------- --------------------
  */

@@ -1,11 +1,11 @@
+setTimeout(function () {
 
-setTimeout( function() {
+    const dataPoints3 = [];
 
-    var dataPoints3 = [];
     function getDataPointsFromCSV3(csv) {
-        var dataPoints3 = csvLines3 = points = [];
+        const dataPoints3 = csvLines3 = points = [];
         csvLines3 = csv.split(/[\r?\n|\r|\n]+/);
-        for (var i = 0; i < csvLines3.length; i++)
+        for (let i = 0; i < csvLines3.length; i++)
             if (csvLines3[i].length > 0) {
                 points = csvLines3[i].split(",");
                 dataPoints3.push({
@@ -16,14 +16,14 @@ setTimeout( function() {
         return dataPoints3;
     }
 
-    $.get("devices_phone_marke.csv", function(data) {
-        var chart3 = new CanvasJS.Chart("devices_phone_marke", {
-            title:{
-                text:"Device phone  Exif  ",
+    $.get("devices_phone_marke.csv", function (data) {
+        const chart3 = new CanvasJS.Chart("devices_phone_marke", {
+            title: {
+                text: "Device phone  Exif  ",
                 fontSize: 16,
                 //fontWeight: "bold"
             },
-            axisX:{
+            axisX: {
                 interval: 1,
                 margin: 40,
                 fontSize: 12
@@ -31,7 +31,7 @@ setTimeout( function() {
             /*axisY:{
                 margin: 40,
             },*/
-            axisY:{
+            axisY: {
                 interlacedColor: "rgba(1,77,101,.2)",
                 gridColor: "rgba(1,77,101,.1)",
                 title: "Number",
@@ -65,11 +65,11 @@ setTimeout( function() {
                 ]
             }]*/
             data: [{
-                 type: "line",
-                 dataPoints: getDataPointsFromCSV3(data)
-              }]
+                type: "line",
+                dataPoints: getDataPointsFromCSV3(data)
+            }]
         });
         chart3.render();
     });
 
-},200);
+}, 200);

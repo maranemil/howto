@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!--suppress JSUnresolvedLibraryURL, HtmlUnknownTarget, CssUnusedSymbol, SpellCheckingInspection, CssNoGenericFontName, JSUnusedLocalSymbols, JSUnresolvedVariable -->
 <html lang="en">
 
 <head>
@@ -6,91 +7,16 @@
     <title>My map</title>
     <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
     <link rel="stylesheet" type="text/css" href="map.css">
-    <style></style>
-</head>
-
-<body>
-    <div id="container" class="svg-container"></div>
-    <script type="text/javascript">
-        var w = 1400;
-        var h = 700;
-        var svg = d3.select("div#container").append("svg").attr("preserveAspectRatio", "xMinYMin meet").style("background-color", "#4365bd")
-            .attr("viewBox", "0 0 " + w + " " + h)
-            .classed("svg-content", true);
-        var projection = d3.geoMercator().translate([w / 2, h / 2]).scale(2600).center([22, 52]);
-        var path = d3.geoPath().projection(projection);
-
-        // load data
-        var europe_data = d3.json("merging-historical-maps-europe.json");
-        var region_data = d3.json("merging-historical-maps-innerlines.json");
-        var area_data = d3.json("merging-historical-maps-palatinates.json");
-        var layer1 = svg.selectAll('path');
-        var layer2 = svg.selectAll('path');
-
-        Promise.all([europe_data, region_data, area_data]).then(function (values) {
-
-            // draw the map of Europe
-            var europe = layer2.append("g")
-                .data(values[0].features)
-                .enter()
-                .append("path")
-                .attr("class", "europe")
-                .attr("d", path);
-
-            // draw the map of Poland
-            var poland = layer1.append("g")
-                .data(values[0].features.filter(function (d) { return d.properties.Name == "Poland" }))
-                .enter()
-                .append("path")
-                .attr("class", "poland")
-                .attr("d", path);
-
-            // draw the Polish regions
-            var regions = layer1.append("g")
-                .data([values[1]])
-                .enter()
-                .append("path")
-                .attr("class", "regions")
-                .attr("d", path);
-
-            // print the country names
-            var countrynames = svg.selectAll("text")
-                .data(values[0].features)
-                .enter()
-                .append("text")
-                .text(function (d) { return d.properties.Name; })
-                .attr("transform", function (d) { return "translate(" + path.centroid(d) + ")"; })
-                .attr("dx", "-3em")
-                .attr("dy", "0.5em")
-                .attr("class", "countrynames");
-
-            // print the region names
-            var regionnames = regions.append("text")
-                .data(values[2].features)
-                .enter()
-                .append("text")
-                .text(function (d) { return d.properties.PALATINATE_NAME; })
-                .attr("transform", function (d) { return "translate(" + path.centroid(d) + ")"; })
-                .attr("dx", "-2em")
-                .attr("dy", "0em")
-                .attr("class", "regionnames");
-        });
-
-
-    </script>
 
     <style>
         /*
-
-https://bl.ocks.org/EveTheAnalyst/9eb1f498c2639b5911015a1de1cd7f4b
-view-source:https://bl.ocks.org/EveTheAnalyst/raw/9eb1f498c2639b5911015a1de1cd7f4b/
-https://bl.ocks.org/EveTheAnalyst/raw/9eb1f498c2639b5911015a1de1cd7f4b/
-
-https://bl.ocks.org/EveTheAnalyst/raw/9eb1f498c2639b5911015a1de1cd7f4b/europe.json
-https://bl.ocks.org/EveTheAnalyst/raw/9eb1f498c2639b5911015a1de1cd7f4b/innerlines.json
-https://bl.ocks.org/EveTheAnalyst/raw/9eb1f498c2639b5911015a1de1cd7f4b/palatinates.json
-
-*/
+        https://bl.ocks.org/EveTheAnalyst/9eb1f498c2639b5911015a1de1cd7f4b
+        view-source:https://bl.ocks.org/EveTheAnalyst/raw/9eb1f498c2639b5911015a1de1cd7f4b/
+        https://bl.ocks.org/EveTheAnalyst/raw/9eb1f498c2639b5911015a1de1cd7f4b/
+        https://bl.ocks.org/EveTheAnalyst/raw/9eb1f498c2639b5911015a1de1cd7f4b/europe.json
+        https://bl.ocks.org/EveTheAnalyst/raw/9eb1f498c2639b5911015a1de1cd7f4b/innerlines.json
+        https://bl.ocks.org/EveTheAnalyst/raw/9eb1f498c2639b5911015a1de1cd7f4b/palatinates.json
+        */
         .europe {
             fill: #e2d2ab;
             stroke: #bc9a42;
@@ -125,8 +51,85 @@ https://bl.ocks.org/EveTheAnalyst/raw/9eb1f498c2639b5911015a1de1cd7f4b/palatinat
             fill: #967b35;
         }
     </style>
+</head>
 
+<body>
+<div id="container" class="svg-container"></div>
+<script type="text/javascript">
+    const w = 1400;
+    const h = 700;
+    const svg = d3.select("div#container").append("svg").attr("preserveAspectRatio", "xMinYMin meet").style("background-color", "#4365bd")
+        .attr("viewBox", "0 0 " + w + " " + h)
+        .classed("svg-content", true);
+    const projection = d3.geoMercator().translate([w / 2, h / 2]).scale(2600).center([22, 52]);
+    const path = d3.geoPath().projection(projection);
 
+    // load data
+    const europe_data = d3.json("merging-historical-maps-europe.json");
+    const region_data = d3.json("merging-historical-maps-innerlines.json");
+    const area_data = d3.json("merging-historical-maps-palatinates.json");
+    const layer1 = svg.selectAll('path');
+    const layer2 = svg.selectAll('path');
+
+    Promise.all([europe_data, region_data, area_data]).then(function (values) {
+
+        // draw the map of Europe
+        const europe = layer2.append("g")
+            .data(values[0].features)
+            .enter()
+            .append("path")
+            .attr("class", "europe")
+            .attr("d", path);
+
+        // draw the map of Poland
+        const poland = layer1.append("g")
+            .data(values[0].features.filter(function (d) {
+                return d.properties.Name === "Poland"
+            }))
+            .enter()
+            .append("path")
+            .attr("class", "poland")
+            .attr("d", path);
+
+        // draw the Polish regions
+        const regions = layer1.append("g")
+            .data([values[1]])
+            .enter()
+            .append("path")
+            .attr("class", "regions")
+            .attr("d", path);
+
+        // print the country names
+        const countrynames = svg.selectAll("text")
+            .data(values[0].features)
+            .enter()
+            .append("text")
+            .text(function (d) {
+                return d.properties.Name;
+            })
+            .attr("transform", function (d) {
+                return "translate(" + path.centroid(d) + ")";
+            })
+            .attr("dx", "-3em")
+            .attr("dy", "0.5em")
+            .attr("class", "countrynames");
+
+        // print the region names
+        const regionnames = regions.append("text")
+            .data(values[2].features)
+            .enter()
+            .append("text")
+            .text(function (d) {
+                return d.properties.PALATINATE_NAME;
+            })
+            .attr("transform", function (d) {
+                return "translate(" + path.centroid(d) + ")";
+            })
+            .attr("dx", "-2em")
+            .attr("dy", "0em")
+            .attr("class", "regionnames");
+    });
+
+</script>
 </body>
-
 </html>

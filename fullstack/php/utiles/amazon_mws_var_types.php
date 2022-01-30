@@ -1,12 +1,14 @@
-<?php
+<?php /** @noinspection PhpUnusedPrivateFieldInspection */
+
+/** @noinspection PhpUnused */
 
 class Settings
 {
 
-/**
- * @var array
- */
-    private $FEED_TYPES = array(
+    /**
+     * @var array
+     */
+    private array $FEED_TYPES = array(
 
         # XML Feeds
         'offer' => '_POST_OFFER_ONLY_DATA_', # Offer
@@ -37,10 +39,10 @@ class Settings
         'flat_order_payment_adjustment' => '_POST_FLAT_FILE_PAYMENT_ADJUSTMENT_DATA_',
     );
 
-/**
- * @var array
- */
-    private $FEED_METHODS = array(
+    /**
+     * @var array
+     */
+    private array $FEED_METHODS = array(
         'offer' => 'xml',
         'order_acknowledgement' => 'xml',
         'order_cancellation' => 'xml',
@@ -62,10 +64,10 @@ class Settings
         'flat_product_price_inv' => 'flat-file',
     );
 
-/**
- * @var array
- */
-    private $PROCESSING_STATUSES = array(
+    /**
+     * @var array
+     */
+    private array $PROCESSING_STATUSES = array(
         'cancelled' => '_CANCELLED_',
         'done' => '_DONE_',
         'in_progress' => '_IN_PROGRESS_',
@@ -79,7 +81,7 @@ class Settings
     /**
      * @var array
      */
-    private $AmazonShippingLevel = array(
+    private array $AmazonShippingLevel = array(
         "Standard" => "GD",
         "Expedited" => "2D",
         "SecondDay" => "2D",
@@ -87,10 +89,10 @@ class Settings
         "Express" => "1D",
     );
 
-/**
- * @var array
- */
-    private $CancelReason = array(
+    /**
+     * @var array
+     */
+    private array $CancelReason = array(
         "NoInventory" => "NoInventory",
         "ShippingAddressUndeliverable" => "ShippingAddressUndeliverable",
         "CustomerExchange" => "CustomerExchange",
@@ -103,7 +105,7 @@ class Settings
         "MerchandiseNotReceive" => "MerchandiseNotReceive",
     );
 
-    private $arrCarrierCodes = array(
+    private array $arrCarrierCodes = array(
         "USPS", "UPS", "UPSMI", "FedEx", "DHL", "Fastway", "GLS", "GO!", "Hermes Logistik Gruppe",
         "Royal Mail", "Parcelforce", "City Link", "TNT", "Target", "SagawaExpress", "NipponExpress",
         "YamatoTransport", "DHL Global Mail", "UPS Mail Innovations", "FedEx SmartPost", "OSM", "OnTrac",

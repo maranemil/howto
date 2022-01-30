@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection SpellCheckingInspection */
+/** @noinspection GrazieInspection */
 
 # https://www.phpied.com/ffmpeg-to-mix-audio-files/
 # ffmpeg -i audio.mp3 -i video.avi video_audio_mix.mpg
@@ -16,8 +17,11 @@ $arrFiles = glob("gen4/*.wav");
 shuffle($arrFiles);
 foreach ($arrFiles as $filename) {
     #echo "$filename size " . filesize($filename) . "\n";
-    if (rand(1, 10) == 2) {
-        $cmdMix .= " -i '$filename' ";
+    try {
+        if (random_int(1, 10) === 2) {
+            $cmdMix .= " -i '$filename' ";
+        }
+    } catch (Exception $e) {
     }
 }
 
@@ -71,7 +75,7 @@ echo $cmdMix;
 
 #shell_exec($cmdMix);
 exec($cmdMix, $out);
-print_r($out);
+#print_r($out);
 
 # https://music.tutsplus.com/articles/12-places-you-can-download-quality-edm-samples-for-free--audio-20765
 

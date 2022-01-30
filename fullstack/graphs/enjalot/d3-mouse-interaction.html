@@ -1,97 +1,102 @@
 <!DOCTYPE html>
+<!--suppress CssUnusedSymbol, JSUnresolvedLibraryURL, JSUnresolvedVariable, JSUnresolvedFunction -->
 <meta charset="utf-8">
 <style>
-  path {
-    fill: #ccc;
-    stroke: #fff;
-    stroke-width: .5px;
-  }
+    path {
+        fill: #ccc;
+        stroke: #fff;
+        stroke-width: 1px;
+    }
 
-  circle {
-    fill: #fff;
-    fill-opacity: 0.4;
-    stroke: #111;
-  }
+    circle {
+        fill: #fff;
+        fill-opacity: 0.4;
+        stroke: #111;
+    }
 
-  path.active {
-    fill: #ff7f7f;
-  }
+    path.active {
+        fill: #ff7f7f;
+    }
 
-  circle.active {
-    fill: #f00;
-  }
+    circle.active {
+        fill: #f00;
+    }
 </style>
 
 <body>
-  <script src="http://d3js.org/d3.v3.min.js"></script>
-  <script src="http://d3js.org/topojson.v1.min.js"></script>
-  <script>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="https://d3js.org/topojson.v1.min.js"></script>
+<script>
 
     /*http://bl.ocks.org/enjalot/b37e8dac613d0a39c5b4c2f0e13e1277*/
 
-    var width = 960,
-      height = 500;
+    const width = 960,
+        height = 500;
 
-    var projection = d3.geo.mercator();
+    const projection = d3.geo.mercator();
 
-    var path = d3.geo.path()
-      .projection(projection)
+    const path = d3.geo.path()
+        .projection(projection);
 
-    var svg = d3.select("body").append("svg")
-      .attr("width", width)
-      .attr("height", height);
+    const svg = d3.select("body").append("svg")
+        .attr("width", width)
+        .attr("height", height);
 
     //var url = "http://enjalot.github.io/wwsd/data/world/ne_50m_admin_0_countries.topojson"
     //var url2 = "http://enjalot.github.io/wwsd/data/world/ne_50m_populated_places_simple.topojson"
 
-    var url = "ne_50m_admin_0_countries.topojson"
-    var url2 = "ne_50m_populated_places_simple.topojson"
+    const url = "ne_50m_admin_0_countries.topojson";
+    const url2 = "ne_50m_populated_places_simple.topojson";
 
     d3.json(url, function (error, countries) {
-      d3.json(url2, function (error, places) {
-        if (error) throw error;
+        d3.json(url2, function (error, places) {
+            if (error) throw error;
 
-        console.log("topojson", countries, places);
-        var geocountries = topojson.feature(countries, countries.objects.ne_50m_admin_0_countries);
-        console.log("geojson", geocountries)
+            console.log("topojson", countries, places);
+            const geocountries = topojson.feature(countries, countries.objects.ne_50m_admin_0_countries);
+            console.log("geojson", geocountries)
 
-        var geoplaces = topojson.feature(places, places.objects.ne_50m_populated_places_simple);
+            const geoplaces = topojson.feature(places, places.objects.ne_50m_populated_places_simple);
 
-        svg.selectAll("path")
-          .data(geocountries.features)
-          .enter().append("path")
-          .attr("d", path)
-          .on("mouseover", function (d) {
-            console.log("country", d)
-            d3.select(this).classed("active", true)
-          })
-          .on("mouseout", function (d) {
-            d3.select(this).classed("active", false)
-          })
+            svg.selectAll("path")
+                .data(geocountries.features)
+                .enter().append("path")
+                .attr("d", path)
+                .on("mouseover", function (d) {
+                    console.log("country", d)
+                    d3.select(this).classed("active", true)
+                })
+                .on("mouseout", function () {
+                    d3.select(this).classed("active", false)
+                })
 
-        svg.selectAll("circle")
-          .data(geoplaces.features)
-          .enter().append("circle")
-          .attr({
-            r: 5,
-            cx: function (d) { return projection(d.geometry.coordinates)[0] },
-            cy: function (d) { return projection(d.geometry.coordinates)[1] }
-          })
-          .on("mouseover", function (d) {
-            console.log("place", d)
-            d3.select(this).classed("active", true)
-            svg.selectAll("path").filter(function (p) {
-              return p.properties.name === d.properties.adm0name
-            })
-              .classed("active", true)
-          })
-          .on("mouseout", function (d) {
-            d3.select(this).classed("active", false)
-            svg.selectAll("path").classed("active", false)
-          })
+            svg.selectAll("circle")
+                .data(geoplaces.features)
+                .enter().append("circle")
+                .attr({
+                    r: 5,
+                    cx: function (d) {
+                        return projection(d.geometry.coordinates)[0]
+                    },
+                    cy: function (d) {
+                        return projection(d.geometry.coordinates)[1]
+                    }
+                })
+                .on("mouseover", function (d) {
+                    console.log("place", d)
+                    d3.select(this).classed("active", true)
+                    svg.selectAll("path").filter(function (p) {
+                        return p.properties.name === d.properties.adm0name
+                    })
+                        .classed("active", true)
+                })
+                .on("mouseout", function () {
+                    d3.select(this).classed("active", false)
+                    svg.selectAll("path").classed("active", false)
+                })
 
 
-      });
+        });
     });
 
-  </script>
+</script>

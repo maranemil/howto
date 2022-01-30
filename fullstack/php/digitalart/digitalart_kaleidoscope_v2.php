@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpConditionAlreadyCheckedInspection */
+/** @noinspection DuplicatedCode */
 
 // Kaleidoscope 4 parts
 

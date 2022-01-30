@@ -64,22 +64,27 @@ composer require php-ai/php-ml
 
 
 use Phpml\Dataset\MnistDataset;
+
 $trainDataset = new MnistDataset('train-images-idx3-ubyte', 'train-labels-idx1-ubyte');
 $dataset->getSamples();
 $dataset->getTargets();
 
 use Phpml\Dataset\Demo\IrisDataset;
+
 $dataset = new IrisDataset();
 
 use Phpml\Dataset\Demo\WineDataset;
+
 $dataset = new WineDataset();
 
 use Phpml\Dataset\Demo\GlassDataset;
+
 $dataset = new GlassDataset();
 
 $dataset = new CsvDataset('dataset.csv', 2, true);
 
 use Phpml\Dataset\FilesDataset;
+
 $dataset = new FilesDataset('path/to/data');
 $dataset->getSamples()[0][0];  // content from file path/to/data/business/001.txt
 $dataset->getTargets()[0];     // business
@@ -104,6 +109,7 @@ $classifier->predict([[3, 1, 1], [1, 4, 1]]);
 // -----------------------------------------------------
 use Phpml\Classification\KNearestNeighbors;
 use Phpml\ModelManager;
+
 $samples = [[1, 3], [1, 4], [2, 4], [3, 1], [4, 1], [4, 2]];
 $labels = ['a', 'a', 'a', 'b', 'b', 'b'];
 $classifier = new KNearestNeighbors();
@@ -120,13 +126,18 @@ $restoredClassifier->predict([3, 2]);
 // NeuralNetwork Classifier
 // -----------------------------------------------------
 use Phpml\Classification\MLPClassifier;
+
 $mlp = new MLPClassifier(4, [2], ['a', 'b', 'c']);
+
 // 4 nodes in input layer, 2 nodes in first hidden layer and 3 possible labels.
 use Phpml\NeuralNetwork\ActivationFunction\PReLU;
 use Phpml\NeuralNetwork\ActivationFunction\Sigmoid;
+
 $mlp = new MLPClassifier(4, [[2, new PReLU], [2, new Sigmoid]], ['a', 'b', 'c']);
+
 use Phpml\NeuralNetwork\Layer;
 use Phpml\NeuralNetwork\Node\Neuron;
+
 $layer1 = new Layer(2, Neuron::class, new PReLU);
 $layer2 = new Layer(2, Neuron::class, new Sigmoid);
 $mlp = new MLPClassifier(4, [$layer1, $layer2], ['a', 'b', 'c']);
@@ -167,6 +178,7 @@ $dataset->getTestLabels();
 namespace \PhpmlExamples;
 
 include 'vendor/autoload.php';
+
 use Phpml\Dataset\CsvDataset;
 use Phpml\Dataset\ArrayDataset;
 use Phpml\FeatureExtraction\TokenCountVectorizer;
@@ -194,4 +206,4 @@ $randomSplit = new StratifiedRandomSplit($dataset, 0.1);
 $classifier = new SVC(Kernel::RBF, 10000);
 $classifier->train($randomSplit->getTrainSamples(), $randomSplit->getTrainLabels());
 $predictedLabels = $classifier->predict($randomSplit->getTestSamples());
-echo 'Accuracy: '.Accuracy::score($randomSplit->getTestLabels(), $predictedLabels);
+echo 'Accuracy: ' . Accuracy::score($randomSplit->getTestLabels(), $predictedLabels);

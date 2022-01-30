@@ -1,105 +1,103 @@
 <!DOCTYPE html>
-<html>
-
+<!--suppress JSUnresolvedLibraryURL, JSUnresolvedVariable, JSUnresolvedFunction -->
+<html lang="en">
 <head>
-  <meta charset='utf-8' />
-  <title></title>
-  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-  <script src="https://d3js.org/d3.v3.min.js"></script>
-  <script src="https://d3js.org/topojson.v1.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Turf.js/2.0.2/turf.min.js"></script>
-  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.js'></script>
-  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.css' rel='stylesheet' />
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-    }
+    <meta charset='utf-8'/>
+    <title></title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="https://d3js.org/topojson.v1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Turf.js/2.0.2/turf.min.js"></script>
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.css' rel='stylesheet'/>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
 
-    #map {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 100%;
-    }
-  </style>
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
 </head>
-
 <body>
-
-  <div id='map'></div>
-  <script>
+<div id='map'></div>
+<script>
     /*http://bl.ocks.org/enjalot/c68abcda1a3e4b655541e8cf206a33ab*/
     /*http://bl.ocks.org/enjalot/eaf648eb5fd33a59b3865d8fc4f5eade*/
     /*http://bl.ocks.org/enjalot/21c55ff101229ee46f122eb9bd1e4b77*/
     /*http://bl.ocks.org/enjalot/b81e02d752855d106f88a9c0e42e65a0*/
 
     mapboxgl.accessToken = 'pk.eyJ1IjoiZW5qYWxvdCIsImEiOiIzOTJmMjBiZmI2NGQ2ZjAzODhiMzhiOGI2MTI1YTk4YSJ9.sIOXXU3TPp5dLg_L3cUxhQ';
-    var map = new mapboxgl.Map({
-      container: 'map',
-      style: 'mapbox://styles/mapbox/streets-v9',
-      center: [-0.1, 53],
-      zoom: 5
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v9',
+        center: [-0.1, 53],
+        zoom: 5
     });
 
     map.on('load', function () {
-      var url = "counties.topojson" // http://enjalot.github.io/wwsd/data/UK/counties.topojson
-      d3.json(url, function (err, topo) {
-        console.log("topojson", topo)
-        var counties = topojson.feature(topo, topo.objects.lad)
-        console.log("counties", counties)
-        map.addSource('counties', {
-          'type': 'geojson',
-          'data': counties
-        });
+        const url = "counties.topojson"; // http://enjalot.github.io/wwsd/data/UK/counties.topojson
+        d3.json(url, function (err, topo) {
+            console.log("topojson", topo)
+            const counties = topojson.feature(topo, topo.objects.lad);
+            console.log("counties", counties)
+            map.addSource('counties', {
+                'type': 'geojson',
+                'data': counties
+            });
 
-        map.addLayer({
-          'id': 'counties',
-          'type': 'fill',
-          'source': 'counties',
-          'layout': {},
-          'paint': {
-            'fill-outline-color': '#111',
-            'fill-color': '#088',
-            'fill-opacity': 0.8
-          }
-        });
+            map.addLayer({
+                'id': 'counties',
+                'type': 'fill',
+                'source': 'counties',
+                'layout': {},
+                'paint': {
+                    'fill-outline-color': '#111',
+                    'fill-color': '#088',
+                    'fill-opacity': 0.8
+                }
+            });
 
-        map.addLayer({
-          'id': 'counties-hover',
-          'type': 'fill',
-          'source': 'counties',
-          'layout': {},
-          'paint': {
-            'fill-outline-color': '#111',
-            'fill-color': '#19feff',
-            'fill-opacity': 0.8
-          },
-          "filter": ["==", "LAD13NM", ""]
+            map.addLayer({
+                'id': 'counties-hover',
+                'type': 'fill',
+                'source': 'counties',
+                'layout': {},
+                'paint': {
+                    'fill-outline-color': '#111',
+                    'fill-color': '#19feff',
+                    'fill-opacity': 0.8
+                },
+                "filter": ["==", "LAD13NM", ""]
 
-        });
+            });
 
-        /*
-        */
-        map.on("click", function (e) {
-          var features = map.queryRenderedFeatures(e.point, { layers: ["counties"] });
-          if (features.length) {
-            var envelope = turf.envelope(features[0]).geometry.coordinates[0]
-            var bounds = [envelope[0], envelope[2]]
-            map.fitBounds(bounds)
-          }
+            /*
+            */
+            map.on("click", function (e) {
+                const features = map.queryRenderedFeatures(e.point, {layers: ["counties"]});
+                if (features.length) {
+                    const envelope = turf.envelope(features[0]).geometry.coordinates[0];
+                    const bounds = [envelope[0], envelope[2]];
+                    map.fitBounds(bounds)
+                }
+            })
+            map.on("mousemove", function (e) {
+                const features = map.queryRenderedFeatures(e.point, {layers: ["counties"]});
+                if (features.length) {
+                    map.setFilter("counties-hover", ["==", "LAD13NM", features[0].properties.LAD13NM]);
+                } else {
+                    map.setFilter("counties-hover", ["==", "LAD13NM", ""]);
+                }
+            });
         })
-        map.on("mousemove", function (e) {
-          var features = map.queryRenderedFeatures(e.point, { layers: ["counties"] });
-          if (features.length) {
-            map.setFilter("counties-hover", ["==", "LAD13NM", features[0].properties.LAD13NM]);
-          } else {
-            map.setFilter("counties-hover", ["==", "LAD13NM", ""]);
-          }
-        });
-      })
     });
-  </script>
+</script>
 
 </body>
 

@@ -1,28 +1,30 @@
-<?php
+<?php /** @noinspection DuplicatedCode */
 
 # Generate wav tone in PHP - Stack Overflow
 # https://stackoverflow.com/questions/28053226/generate-wav-tone-in-php
 
-for ($i = 0; $i < 30; $i++) {
+try {
 
-    $freqOfTone = rand(60, 600); // tone
-    $sampleRate = 44100; // rate
-    $samplesCount = rand(40000, 80000); // length
+    for ($i = 0; $i < 30; $i++) {
 
-    $amplitude = 0.25 * 32768;
-    $w = 2 * pi() * $freqOfTone / $sampleRate;
+        $freqOfTone = random_int(60, 600); // tone
+        $sampleRate = 44100; // rate
+        $samplesCount = random_int(40000, 80000); // length
 
-    $samples = array();
-    for ($n = 0; $n < $samplesCount; $n++) {
-        $samples[] = (int)($amplitude * sin($n * $w));
-    }
+        $amplitude = 0.25 * 32768;
+        $w = 2 * M_PI * $freqOfTone / $sampleRate;
+        #$w = 2 * pi() * $freqOfTone / $sampleRate;
 
-    $srate = 44100; //sample rate
-    $bps = 16; //bits per sample
-    $Bps = $bps / 8; //bytes per sample /// I EDITED
+        $samples = array();
+        for ($n = 0; $n < $samplesCount; $n++) {
+            $samples[] = (int)($amplitude * sin($n * $w));
+        }
 
-    $str = call_user_func_array("pack",
-        array_merge(array("VVVVVvvVVvvVVv*"),
+        $srate = 44100; //sample rate
+        $bps = 16; //bits per sample
+        $Bps = $bps / 8; //bytes per sample /// I EDITED
+
+        $str = pack(...array_merge(array("VVVVVvvVVvvVVv*"),
             array( //header
                 0x46464952, //RIFF
                 160038, //File size
@@ -39,10 +41,12 @@ for ($i = 0; $i < 30; $i++) {
                 160000, //chunk size
             ),
             $samples //data
-        )
-    );
-    $myfile = fopen("gen/sine" . $i . ".wav", "wb") or die("Unable to open file!");
-    fwrite($myfile, $str);
-    fclose($myfile);
+        ));
+        $myfile = fopen("gen/sine" . $i . ".wav", "wb") or die("Unable to open file!");
+        fwrite($myfile, $str);
+        fclose($myfile);
+
+    }
+} catch (Exception $exception) {
 
 }

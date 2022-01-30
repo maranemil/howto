@@ -1,14 +1,13 @@
-
 anychart.onDocumentReady(function () {
     // create a data set
-    var data = anychart.data.set([
-        [ 1111, 1331 ],
-        [ 1222, 1535 ]
+    const data = anychart.data.set([
+        [1111, 1331],
+        [1222, 1535]
     ]);
     // create a chart
-    var chart = anychart.bar();
+    const chart = anychart.bar();
     // create a bar series and set the data
-    var series = chart.bar(data);
+    const series = chart.bar(data);
     // set the chart title
     chart.title("TensorFlow Samples");
     // set the titles of the axes

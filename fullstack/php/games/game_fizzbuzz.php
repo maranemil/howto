@@ -3,7 +3,7 @@
 function testNumber($number)
 {
     if (is_numeric($number) && $number > 0) {
-        if ($number % 3 === 0 && $number % 5 == 0) {
+        if ($number % 3 === 0 && $number % 5 === 0) {
             echo "FizzBuzz GameOver" . PHP_EOL;
         } else if ($number % 3 === 0) {
             echo "Fizz" . PHP_EOL;

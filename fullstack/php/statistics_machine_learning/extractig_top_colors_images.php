@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection DuplicatedCode */
 // File and new size
 #$filename = 'artichokes-1246858_960_720.jpg';
 $filename = 'lake-at-the-cottage-1372381.jpg';
@@ -36,9 +36,9 @@ for ($i = 0; $i < $imgw; $i++) {
         // get the Value from the RGB value
         $V = round(($r + $g + $b) / 3);
         $arrV[] = array(
-            "r" => intval($r),
-            "g" => intval($g),
-            "b" => intval($b),
+            "r" => (int)$r,
+            "g" => (int)$g,
+            "b" => (int)$b,
         );
         $arrHex[] = sprintf("#%02x%02x%02x", $r, $g, $b);
         // add the point to the histogram
@@ -70,9 +70,9 @@ print PHP_EOL;
 // xlogo -bg '#ff0000'
 // https://misc.flogisoft.com/bash/tip_colors_and_formatting
 
-$strHTML = '<img src="stat.jpg"  width="300px"/>';
-$jsonColors = json_encode($top5);
-$arrColors = json_decode($jsonColors, true);
+$strHTML = '<img src="stat.jpg"  width="300px" alt=""/>';
+$jsonColors = json_encode($top5, JSON_THROW_ON_ERROR);
+$arrColors = json_decode($jsonColors, true, 512, JSON_THROW_ON_ERROR);
 foreach ($arrColors as $hexColor => $count) {
     $strHTML .= '<div style="background: ' . $hexColor . ';width:300px"><span style="color:white">' . $hexColor . "( " . $count . ')</span></div>';
 }

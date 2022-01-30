@@ -1,4 +1,8 @@
-<?php
+<?php /** @noinspection DuplicatedCode */
+/** @noinspection SqlDialectInspection */
+/** @noinspection SqlNoDataSourceInspection */
+/** @noinspection ForgottenDebugOutputInspection */
+/** @noinspection PhpUndefinedVariableInspection */
 /*
 ---------------------------------------------------------------------------------------
 PDO benchmark
@@ -28,7 +32,7 @@ Use PDOStatement::fetchAll() to retrieve all data in a single go
 Use PDOSTatement::fetch() to retrieve a single row per iteration
 */
 
-$pdo = new \PDO(
+$pdo = new PDO(
     $config['db']['dsn'],
     $config['db']['username'],
     $config['db']['password']
@@ -36,13 +40,12 @@ $pdo = new \PDO(
 
 $sql = 'SELECT * FROM `gen_contact` ORDER BY `contact_modified` DESC';
 
-$stmt = $pdo->prepare($sql);
-$stmt->execute();
-$data = $stmt->fetchAll(\PDO::FETCH_OBJ);
+$stmt = $pdo->query($sql);
+$data = $stmt->fetchAll(PDO::FETCH_OBJ);
 
 echo 'Getting the contacts that changed the last 3 months' . PHP_EOL;
 foreach ($data as $row) {
-    $dt = new \DateTime('2015-04-01 00:00:00');
+    $dt = new DateTime('2015-04-01 00:00:00');
     if ($dt->format('Y-m-d') . '00:00:00' < $row->contact_modified) {
         echo sprintf(
                 '%s (%s)| modified %s',

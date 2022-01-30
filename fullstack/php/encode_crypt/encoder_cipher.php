@@ -14,19 +14,19 @@ class Chiper
     // desire output
     // gsv jfrxp yildm ulc qfnkh levi gsrigvvm ozab wlth
 
-    private static $mapping = array(
+    private static array $mapping = array(
         "refer" => "1abcdefghijklmnopqrstuvwxyz",
         "shift" => "1zyxwvutsrqponmlkjihgfedcba"
 
     );
 
-    public static function encode($str)
+    public static function encode($str): void
     {
         $arrRefer = str_split(self::$mapping["refer"]);
         $arrShift = str_split(self::$mapping["shift"]);
 
         foreach (str_split($str) as $letter) {
-            $key = array_search($letter, $arrRefer);
+            $key = array_search($letter, $arrRefer, true);
             if (!empty($key)) {
                 echo str_replace($letter, $arrShift[$key], $letter);
             } else {
@@ -36,13 +36,13 @@ class Chiper
         }
     }
 
-    public static function decode($str)
+    public static function decode($str): void
     {
         $arrRefer = str_split(self::$mapping["refer"]);
         $arrShift = str_split(self::$mapping["shift"]);
 
         foreach (str_split($str) as $letter) {
-            $key = array_search($letter, $arrShift);
+            $key = array_search($letter, $arrShift, true);
             if ($key) {
                 echo str_replace($letter, $arrRefer[$key], $letter);
             } else {
