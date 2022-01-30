@@ -130,7 +130,7 @@ if (PHP_FIREWALL_ACTIVATION === true) {
     }
 
     /** fonctions de base */
-    function PHP_FIREWALL_get_env($st_var)
+    function PHP_FIREWALL_get_env($st_var): string
     {
         global $HTTP_SERVER_VARS;
         if (isset($_SERVER[$st_var])) {
@@ -147,7 +147,7 @@ if (PHP_FIREWALL_ACTIVATION === true) {
         return '';
     }
 
-    function PHP_FIREWALL_get_referer()
+    function PHP_FIREWALL_get_referer(): string
     {
         if (PHP_FIREWALL_get_env('HTTP_REFERER')) {
             return PHP_FIREWALL_get_env('HTTP_REFERER');
@@ -155,7 +155,7 @@ if (PHP_FIREWALL_ACTIVATION === true) {
         return 'no referer';
     }
 
-    function PHP_FIREWALL_get_ip()
+    function PHP_FIREWALL_get_ip(): string
     {
         if (PHP_FIREWALL_get_env('HTTP_X_FORWARDED_FOR')) {
             return PHP_FIREWALL_get_env('HTTP_X_FORWARDED_FOR');
@@ -166,7 +166,7 @@ if (PHP_FIREWALL_ACTIVATION === true) {
         }
     }
 
-    function PHP_FIREWALL_get_user_agent()
+    function PHP_FIREWALL_get_user_agent(): string
     {
         if (PHP_FIREWALL_get_env('HTTP_USER_AGENT')) {
             return PHP_FIREWALL_get_env('HTTP_USER_AGENT');
@@ -182,7 +182,7 @@ if (PHP_FIREWALL_ACTIVATION === true) {
         return '';
     }
 
-    function PHP_FIREWALL_get_request_method()
+    function PHP_FIREWALL_get_request_method(): string
     {
         if (PHP_FIREWALL_get_env('REQUEST_METHOD')) {
             return PHP_FIREWALL_get_env('REQUEST_METHOD');
@@ -235,14 +235,14 @@ if (PHP_FIREWALL_ACTIVATION === true) {
     {
         $f = fopen(__DIR__ . '/' . PHP_FIREWALL_LOG_FILE . '.txt', 'ab');
         $msg = date('j-m-Y H:i:s') . " | $type | IP: " . PHP_FIREWALL_GET_IP . " ] | DNS: " . gethostbyaddr(PHP_FIREWALL_GET_IP) . " | Agent: " . PHP_FIREWALL_USER_AGENT . " | URL: " . PHP_FIREWALL_REQUEST_URI . " | Referer: " . PHP_FIREWALL_GET_REFERER . "\n\n";
-        fputs($f, $msg);
+        fwrite($f, $msg);
         fclose($f);
         if (PHP_FIREWALL_PUSH_MAIL === true) {
             PHP_FIREWALL_push_email('Alert PHP Firewall ' . strip_tags($_SERVER['SERVER_NAME']), "PHP Firewall logs of " . strip_tags($_SERVER['SERVER_NAME']) . "\n" . str_replace('|', "\n", $msg));
         }
     }
 
-    if ((PHP_FIREWALL_PROTECTION_SERVER_OVH === true) && stristr(PHP_FIREWALL_GET_HOST, 'ovh')) {
+    if ((PHP_FIREWALL_PROTECTION_SERVER_OVH === true) && stripos(PHP_FIREWALL_GET_HOST, 'ovh') !== false) {
         PHP_FIREWALL_LOGS('OVH Server list');
         die(_PHPF_PROTECTION_OVH);
     }
@@ -255,12 +255,12 @@ if (PHP_FIREWALL_ACTIVATION === true) {
         }
     }
 
-    if ((PHP_FIREWALL_PROTECTION_SERVER_KIMSUFI === true) && stristr(PHP_FIREWALL_GET_HOST, 'kimsufi')) {
+    if ((PHP_FIREWALL_PROTECTION_SERVER_KIMSUFI === true) && stripos(PHP_FIREWALL_GET_HOST, 'kimsufi') !== false) {
         PHP_FIREWALL_LOGS('KIMSUFI Server list');
         die(_PHPF_PROTECTION_KIMSUFI);
     }
 
-    if ((PHP_FIREWALL_PROTECTION_SERVER_DEDIBOX === true) && stristr(PHP_FIREWALL_GET_HOST, 'dedibox')) {
+    if ((PHP_FIREWALL_PROTECTION_SERVER_DEDIBOX === true) && stripos(PHP_FIREWALL_GET_HOST, 'dedibox') !== false) {
         PHP_FIREWALL_LOGS('DEDIBOX Server list');
         die(_PHPF_PROTECTION_DEDIBOX);
     }
@@ -273,7 +273,7 @@ if (PHP_FIREWALL_ACTIVATION === true) {
         }
     }
 
-    if ((PHP_FIREWALL_PROTECTION_SERVER_DIGICUBE === true) && stristr(PHP_FIREWALL_GET_HOST, 'digicube')) {
+    if ((PHP_FIREWALL_PROTECTION_SERVER_DIGICUBE === true) && stripos(PHP_FIREWALL_GET_HOST, 'digicube') !== false) {
         PHP_FIREWALL_LOGS('DIGICUBE Server list');
         die(_PHPF_PROTECTION_DIGICUBE);
     }
@@ -375,7 +375,7 @@ if (PHP_FIREWALL_ACTIVATION === true) {
 
     /** Invalid request method check */
     if (PHP_FIREWALL_PROTECTION_REQUEST_METHOD === true) {
-        if (strtolower(PHP_FIREWALL_GET_REQUEST_METHOD) !== 'get' && strtolower(PHP_FIREWALL_GET_REQUEST_METHOD) !== 'head' and strtolower(PHP_FIREWALL_GET_REQUEST_METHOD) !== 'post' and strtolower(PHP_FIREWALL_GET_REQUEST_METHOD) !== 'put') {
+        if (strtolower(PHP_FIREWALL_GET_REQUEST_METHOD) !== 'get' && strtolower(PHP_FIREWALL_GET_REQUEST_METHOD) !== 'head' && strtolower(PHP_FIREWALL_GET_REQUEST_METHOD) !== 'post' and strtolower(PHP_FIREWALL_GET_REQUEST_METHOD) !== 'put') {
             PHP_FIREWALL_LOGS('Invalid request');
             die(_PHPF_PROTECTION_REQUEST);
         }
@@ -403,7 +403,7 @@ if (PHP_FIREWALL_ACTIVATION === true) {
         if (preg_match('/([OdWo5NIbpuU4V2iJT0n]{5}) /', rawurldecode(PHP_FIREWALL_GET_QUERY_STRING))) {
             $stop++;
         }
-        if (strstr(rawurldecode(PHP_FIREWALL_GET_QUERY_STRING), '*')) {
+        if (strpos(rawurldecode(PHP_FIREWALL_GET_QUERY_STRING), '*') !== false) {
             $stop++;
         }
         if (!empty($stop)) {
