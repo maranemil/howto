@@ -1051,4 +1051,27 @@ $header = $message->getHeaderLine('foo');
 ```
 
 
+ ### The PHP constant PHP_SAPI has the same value as php_sapi_name().
+ https://www.php.net/manual/en/function.php-sapi-name.php
+ ```
+ $sapi_type = php_sapi_name();
+if (substr($sapi_type, 0, 3) == 'cgi') {
+    echo "You are using CGI PHP\n";
+} else {
+    echo "You are not using CGI PHP\n";
+}
+```
 
+
+
+### admirer Uncaught SyntaxError: Invalid or unexpected token
+ ```
+https://flutterq.com/uncaught-syntaxerror-invalid-or-unexpected-token/
+https://www.adminer.org/
+https://github.com/swooletw/laravel-swoole/issues/99
+
+php -v 
+php --ri swoole
+
+FIX: change browser - Chrome has problems 
+ ```
