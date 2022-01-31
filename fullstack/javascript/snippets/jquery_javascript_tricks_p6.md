@@ -392,4 +392,22 @@ $(jQuery.parseJSON(JSON.stringify(dataArray))).each(function() {
 });
 ```
 
+###  npm shortcuts
+```
+https://blog.bitsrc.io/the-most-pertinent-npm-commands-and-shortcuts-you-should-know-as-javascript-developer-d84e34f6fe32
+
+npm install <package-name>@tag
+npm install <package-name>@version
+npm install <package-name>@version-range
+npm install ioredis
+npm uninstall <package-name>
+npm update
+npm audit
+npm audit fix
+npm audit –json
+npm audit –readable
+npm prune
+```
+
+
 
