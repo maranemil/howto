@@ -1,13 +1,13 @@
 ------------------------------------------------------------------------------
-Automated Intent Classification Using Deep Learning in Google Sheets
-------------------------------------------------------------------------------
+### Automated Intent Classification Using Deep Learning in Google Sheets
+```
 https://www.searchenginejournal.com/automated-intent-classification-using-deep-learning-google-sheets/353910/
 https://developers.google.com/apps-script
 https://github.com/uber/ludwig
 https://developers.google.com/apps-script/guides/sheets
 https://www.searchenginejournal.com/automated-intent-classification-using-deep-learning-google-sheets/353910/
-
-
+```
+```
 Tools > Script Editor
 
 function logKeywords() {
@@ -149,4 +149,4 @@ function fetchPrediction(question = "who is the boss?"){
   return prediction["Category0_predictions"];
 
 }
-
+```

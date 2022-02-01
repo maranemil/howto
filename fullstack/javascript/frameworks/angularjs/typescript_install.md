@@ -1,16 +1,16 @@
-#############################################################
+######
 #
-#	TypeScript
-#
-#############################################################
-
+###	TypeScript
+######
+```
 https://www.npmjs.com/package/typescript/v/3.6.4
 https://www.digitalocean.com/community/tutorials/setting-up-a-node-project-with-typescript
 https://github.com/microsoft/TypeScript-Node-Starter/blob/master/README.md
 https://dev.to/monisnap/5-min-typescript-npm-package-4ce4
 https://khalilstemmler.com/blogs/typescript/node-starter-project/
 https://egghead.io/lessons/typescript-create-high-quality-npm-packages-using-typescript
-
+```
+```
 node -v
 npm -v
 npm init -y
@@ -35,13 +35,13 @@ gulp runtests         # Run tests using the built compiler and test infrastructu
 gulp baseline-accept  # This replaces the baseline test results with the results obtained from gulp runtests.
 gulp lint             # Runs tslint on the TypeScript source.
 gulp help             # List the above commands.
+```
 
-#############################################################
+######
 #
-#   TypeScript
-#
-#############################################################
-
+###   TypeScript
+######
+```
 TypeScript - The Basics
 https://www.typescriptlang.org/
 https://rawgit.com/
@@ -59,17 +59,17 @@ tsc compiler options: tsconfig.json
 target es3
 watch true
 lib dom
+```
 
-#############################################################
+######
 #
-#   React
-#
-#############################################################
---------------------------------------------------------
+###   React
+######
+```
 React State Management Tutorial | Context Api | React Tutorial For Beginners
 https://www.youtube.com/watch?v=35lXWvCuM8o&t=40s
---------------------------------------------------------
-
+```
+```
 npx create-react-app appnamehere
 
 # App.js
@@ -102,34 +102,39 @@ cont MovieList = () => {
 }
 
 export default MovieList;
-
+```
 --------------------------------------------------------
+```
 React Tutorial For Beginners
 https://www.youtube.com/watch?v=dGcsHMXbSOA
+```
 --------------------------------------------------------
-
+```
 git clone https://github.com/facebook/create-react-app
 npx create-react-app appnamehere
-
+```
 --------------------------------------------------------
+```
 Build A Node.js API Authentication With JWT Tutorial
 https://www.youtube.com/watch?v=2jqok-WgelI
+```
 --------------------------------------------------------
-
+```
 npm install express
 npm install --save-dev nodemon
 
 auth
 https://api.mongodb.com/ruby/current/Mongo/URI.html
+```
 
-
-
+```
 https://code.visualstudio.com/Docs/languages/typescript
 https://code.visualstudio.com/docs/typescript/typescript-tutorial
 https://www.tutorialspoint.com/typescript/typescript_basic_syntax.htm
 https://www.typescriptlang.org/
+```
 
-
+```
 apt install node
 node -v
 npm install -g typescript
@@ -153,7 +158,7 @@ tsconfig.json
     "module": "commonjs"
   }
 }
-
+```
 
 
 

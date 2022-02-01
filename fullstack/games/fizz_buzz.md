@@ -3,7 +3,8 @@
 Fizz? Buzz? FizzBuzzz! Javascript PHP
 ##########################################################
 https://dev.to/niharikapujari/fizz-buzz-fizzbuzzz-2bp2
-
+```
+```
 // -------------------------------------------------------
 // JS v1
 // https://jsfiddle.net/

@@ -1,26 +1,28 @@
-#################################################
-# install spring
-#################################################
-
+######
+### install spring
+######
+```
 # https://www.youtube.com/watch?v=gn6KJHqPVn8
 # https://www.youtube.com/watch?v=VzZV25YsSpk
 # https://www.youtube.com/watch?v=pkVrAmGblXQ
-
-
+```
+```
 jdk, idea, maven, mysql
 
 https://maven.apache.org/what-is-maven.html
 https://maven.apache.org/download.cgi
+```
 
-# java kotlin groovy
-
+### java kotlin groovy
+```
 https://gradle.org/maven-vs-gradle/
 https://docs.gradle.org/current/userguide/migrating_from_maven.html
 https://maven.apache.org/
 https://start.spring.io/
+```
 
-javac
-
+### javac
+```
 sudo apt install default-jdk              # version 2:1.11-72, or
 sudo apt install openjdk-11-jdk-headless  # version 11.0.11+9-0ubuntu2~20.04
 sudo apt install openjdk-13-jdk-headless  # version 13.0.7+5-0ubuntu1~20.04
@@ -62,14 +64,14 @@ spring.jpa.properties.hibernate.jdbc.lob.non_contextal_creation=true
 # mvn clean package
 
 # eclipse
+```
 
 
 
 
+### JAVA, Idea, Eclipse, Spring initialiser MAVEN
 
-JAVA, Idea, Eclipse, Spring initialiser MAVEN
-
-
+```
 https://spring.io/
 https://spring.io/projects/spring-framework
 https://spring.io/blog/2021/01/17/what-s-new-in-spring-boot-2-4
@@ -84,13 +86,13 @@ https://vimeo.com/288731319
 https://vimeo.com/191645780
 https://blog.jetbrains.com/idea/2019/12/tutorial-reactive-spring-boot-java-rsocket-client/
 https://spring.io/blog/2021/07/06/hello-spring-graphql
+```
 
 
-
-#################################################
-#   scala
-#################################################
-
+######
+###   scala
+######
+```
 # intellij idea
 
 http://scala-ide.org/
@@ -120,3 +122,4 @@ play
 https://www.youtube.com/watch?v=zQUZOiQPz_I&list=PLYPFxrXyK0Bx9SBkNhJr1e2-NlIq4E7ED
 https://www.youtube.com/watch?v=FqMDHsFNlxQ&list=PLLMXbkbDbVt8tBiGc1y69BZdG8at1D7ZF
 https://www.youtube.com/watch?v=bi-pLDZq0_E
+```

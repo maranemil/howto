@@ -1,3 +1,7 @@
+
+### url
+
+```
 https://cli.vuejs.org/guide/installation.html
 https://mochajs.org/
 https://www.npmjs.com/package/@vue/cli-plugin-unit-mocha
@@ -8,19 +12,21 @@ https://github.com/vuejs/vue-cli
 https://www.npmjs.com/package/jsdom-global
 https://github.com/rstacruz/jsdom-global
 https://github.com/modosc/global-jsdom
+```
 
-
+```
 npm install vue
 npm uninstall vue-cli -g
 npm install webpack mocha mocha-webpack --save-dev
 npm install --save-dev --save-exact jsdom jsdom-global
-
+```
 
 --------------------------------------------------------
-An intuitive CLI for processing video, powered by FFmpeg.
+#
+### An intuitive CLI for processing video, powered by FFmpeg
 https://www.npmjs.com/package/vdx/v/0.0.2?activeTab=readme
---------------------------------------------------------
 
+```
 npm install --global vdx
 
 $ vdx '*.mov' --crop 360,640    # Crop to width 360, height 640 
@@ -34,12 +40,13 @@ $ vdx '*.mov' --speed 2         # Double the speed
 $ vdx '*.mov' --trim 0:05,0:10  # Trim from time 0:05 to 0:10 
 $ vdx '*.mov' --volume 0.5      # Halve the volume 
 $ vdx '*.mov' --crop 10,20,360,640
-
+```
 
 
 -------------------------------------
-[npm Tutorial for Beginners ]
--------------------------------------
+#
+### npm Tutorial for Beginners 
+```
 https://www.youtube.com/watch?v=r0CJwuCP2ck&list=PLC3y8-rFHvwhgWwm5J3KqzX47n7dwWNrq&index=5
 https://docs.npmjs.com/cli/v7/using-npm/config
 
@@ -91,12 +98,14 @@ npm update -g
 
 npm prune
 npm start
+```
 
-------------------------------------------------------------------------------
+
 ---------------------------------------------
-MEAN Stack
+#
+### MEAN Stack
 https://www.youtube.com/watch?v=QUULp3sH1vQ&list=PLC3y8-rFHvwj200LLotCYum_9wmGeTJx9&index=2
----------------------------------------------
+```
 
 MongoDB Express Angular Node
 
@@ -120,9 +129,9 @@ const app
 add folder server/routes/api.js
 
 npm install --save mongoose
-
+```
 ------------------------------------------------------------------------------
-
+```
 https://stackoverflow.com/questions/60200991/unable-to-get-angular-cli-version-though-all-the-requirements-are-installed
 https://github.com/nvm-sh/nvm
 
@@ -145,10 +154,12 @@ nvm install 12
 nvm use 12
 npm install @angular/cli -g
 ng --version
+```
 
-------------------------------------------------------------------------------
-Packages
-------------------------------------------------------------------------------
+-----------------------------------------------
+#
+### Packages
+```
 https://github.com/reduxjs/redux
 https://github.com/react-boilerplate/react-boilerplate
 https://github.com/reduxjs/redux
@@ -216,33 +227,41 @@ npm run setup
 npm start
 http://localhost:3000
 npm run clean
+```
 
 ---------------------------------------------
-Delete node_modules like a Pro - Fireship
----------------------------------------------
+#
+### Delete node_modules like a Pro - Fireship
+```
 https://www.youtube.com/watch?v=qOSH2pYg6m8
 
 npx npkill
+```
 
 ---------------------------------------------
-Learn React In 30 Minutes
+#
+### Learn React In 30 Minutes
 https://www.youtube.com/watch?v=hQAHSlTtcmY
----------------------------------------------
+```
 node -v
 npx create-react-app .
 npm start
 npm run bild
+```
 
 ---------------------------------------------
-Next.js in 100 Seconds
----------------------------------------------
+#
+### Next.js in 100 Seconds
+```
 https://www.youtube.com/watch?v=Sklc_fQBmcs
 https://github.com/fireship-io/nextjs-basics
+```
 
-------------------------------------------------------------------------------
-How can I completely uninstall nodejs, npm and node in Ubuntu [closed]
+---------------------------------------------
+#
+### How can I completely uninstall nodejs, npm and node in Ubuntu [closed]
 https://stackoverflow.com/questions/32426601/how-can-i-completely-uninstall-nodejs-npm-and-node-in-ubuntu
-------------------------------------------------------------------------------
+```
 
 sudo apt-get remove nodejs
 sudo apt-get remove npm
@@ -262,4 +281,4 @@ which npm
 rm -rf /usr/local/bin/node
 rm -rf /usr/local/bin/npm
 rm -rf /usr/local/bin/npx
-
+```

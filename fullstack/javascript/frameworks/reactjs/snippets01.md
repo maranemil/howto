@@ -1,16 +1,16 @@
-##################################################################################
+######
 #
-#   Building the useInfiniteQuery() project
-#   https://blog.logrocket.com/build-instagram-infinite-scrolling-feed-react-query/
-#
-##################################################################################
-
+###   Building the useInfiniteQuery() project
+###   https://blog.logrocket.com/build-instagram-infinite-scrolling-feed-react-query/
+######
+```
 npx create-react-app infinite-scroll
 npm install react-query react-infinite-scroller
+```
 
+### Configuring React Query
 
-# Configuring React Query
-
+```
 #index.js
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
@@ -26,4 +26,4 @@ ReactDOM.render(
   </QueryClientProvider>,
  document.getElementById("root")
 );
-
+```

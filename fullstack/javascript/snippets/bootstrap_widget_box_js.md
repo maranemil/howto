@@ -1,5 +1,5 @@
 ######
-
+#
 ### Widget Box bootstrap - how to
 ```
 https://rpo.wrotapodlasia.pl/docs/sections/custom/widget-box.html
@@ -18,6 +18,7 @@ https://gitlab.noblet.ca/nobletsolutions/ace-bundle
 ######
 
 ---------------------------
+#
 ### Functions & Events
 ```
 The following functions are available for widgets:
@@ -94,10 +95,6 @@ You can use it to be notified when "settings" button is clicked and show a dialo
  });
 
 ```
-
-
-
-
 ---------------------------
 ### Cookies & localStorage
  ```
@@ -139,8 +136,6 @@ ace.data.remove('username');
 ```
 
 ```
-
-
 <script>
 
     jQuery(function($) {

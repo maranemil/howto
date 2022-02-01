@@ -1,9 +1,9 @@
-#########################################
+######
 #
-# React Laravel References
-#
-#########################################
+### React Laravel References
+######
 
+```
 http://t3n.de/news/einstieg-react-wichtigsten-tools-848652/
 https://www.codecademy.com/articles/react-setup-i
 http://blog.tamizhvendan.in/blog/2015/11/23/a-beginner-guide-to-setup-react-dot-js-environment-using-babel-6-and-webpack/
@@ -146,14 +146,13 @@ class App extends React.Component {
   }
 }
 // ...
+```
 
-
-####################################################
+######
 #
-# Laravel React Laravel 5.5 ReactJS Tutorial
-#
-####################################################
-
+### Laravel React Laravel 5.5 ReactJS Tutorial
+######
+```
 https://github.com/connor11528/laravel-5-rest-api
 https://github.com/talyssonoc/react-laravel
 https://medium.com/@adelekandavid2013/reactjs-app-with-laravel-restful-api-endpoint-part-1-b3991dbf99f2
@@ -923,10 +922,13 @@ export default TableRow;
 So, finally our Laravel 5.5 ReactJS Tutorial CRUD Operations From Scratch is over.
 
 https://github.com/KrunalLathiya/ReactJSLaravel5.5
+```
 
-#########################################
-React JS crash course 2021
-#########################################
+######
+#
+### React JS crash course 2021
+######
+```
 https://www.youtube.com/watch?v=w7ejDZ8SWv8&t=155s
 https://www.youtube.com/watch?v=Hf4MJH0jDb4&t=304s
 https://github.com/bradtraversy/react-crash-2021
@@ -1007,7 +1009,7 @@ code .
 create src/components/Header.js
 type "rafce" to create boiler template of component
 The development server has disconnected. Refresh the page if necessary.  [HMR] Waiting for update signal from WDS.
-
+```
 
 
 

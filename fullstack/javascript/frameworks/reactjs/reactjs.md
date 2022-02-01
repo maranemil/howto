@@ -12,12 +12,11 @@ npx create-react-app .
 
 
 
-#############################################################
+######
 #
-#  React
-#
-#############################################################
-
+###  React
+######
+```
 https://reactjs.org/
 https://reactjs.org/docs/getting-started.html#try-react
 https://reactjs.org/docs/add-react-to-a-website.html
@@ -65,10 +64,12 @@ nano public/index.html
 vim .gitignore
 node_modules
 dist
+```
 
-----------------------------------------------------------------------------------------------------
-todo-react
-----------------------------------------------------------------------------------------------------
+#
+### todo-react
+
+```
 sudo apt install npm
 npm install -g npx
 npx cowsay wow
@@ -117,13 +118,13 @@ https://www.freecodecamp.org/news/crud-using-react-41d047224e26/
 https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/React_todo_list_beginning
 https://reactjsexample.com/tag/todo/
 https://opensource.com/article/21/3/react-app-hooks
+```
+######
+#
+### Create React App from Scratch like a Pro - Tapajyoti Bose
+####https://dev.to/ruppysuppy/create-react-app-from-scratch-like-a-pro-de0
 
-#############################################################
-
-Create React App from Scratch like a Pro - Tapajyoti Bose
-https://dev.to/ruppysuppy/create-react-app-from-scratch-like-a-pro-de0
-
-#############################################################
+```
 
 node -v
 npm -v
@@ -135,6 +136,6 @@ npm install react react-dom
 npm install -save-dev webpack webpack-cli
 npm install --save-dev babel-loader
 npm install --save-dev @babel/core @babel/preset-react
-
+```
 
 

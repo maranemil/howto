@@ -1,9 +1,10 @@
 
-###############################################
-JAX-WS : wsimport tool example
-###############################################
-
+######
+### JAX-WS : wsimport tool example
+######
+```
 Command 'wsimport' not found, but can be installed with:
+
 sudo apt install jaxws                   # version 2.3.0.2-1, or
 sudo apt install openjdk-8-jdk-headless  # version 8u222-b10-1ubuntu1~19.04.1
 
@@ -26,3 +27,4 @@ com\mkyong\ws\ServerInfoImplService.java
 /bin/wsimport.sh -help
 
 wsimport -Xnocompile -keep -b binding.xml wsdlFile.wsdl
+```

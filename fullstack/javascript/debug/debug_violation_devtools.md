@@ -1,11 +1,9 @@
 
-#################################################
-
-[Violation] Forced reflow while executing JavaScript took 320ms
-[Violation] 'DOMContentLoaded' handler took 179ms
-
-#################################################
-
+######
+### [Violation] Forced reflow while executing JavaScript took 320ms
+### [Violation] 'DOMContentLoaded' handler took 179ms
+######
+```
 https://github.com/scrollreveal/scrollreveal/issues/335
 https://gist.github.com/paulirish/5d52fb081b3570c81e3a
 https://rbyers.github.io/scroll-latency.html
@@ -18,8 +16,9 @@ https://www.chromestatus.com/feature/5745543795965952
 https://developers.google.com/web/tools/chrome-devtools/evaluate-performance/
 https://developers.google.com/web/tools/chrome-devtools/rendering-tools/
 https://developers.google.com/speed/docs/insights/browser-reflow
+```
 
-
+```
 // test
 ;(function ($) {
   var options = {};
@@ -27,8 +26,9 @@ https://developers.google.com/speed/docs/insights/browser-reflow
   sr.reveal('.sr-item', { viewFactor: 0.6, duration: 500 });
   sr.reveal('.sr-item--seq', { viewFactor: 0.6, duration: 500 }, 50);
 })(jQuery);
+```
 
-
+```
 // test
 function someMethodIThinkMightBeSlow() {
     const startTime = performance.now();
@@ -36,9 +36,9 @@ function someMethodIThinkMightBeSlow() {
     const duration = performance.now() - startTime;
     console.log(`someMethodIThinkMightBeSlow took ${duration}ms`);
 }
+```
 
-
-
+```
 search.addEventListener('keyup', function() {
     for (const node of nodes)
         if (node.innerText.toLowerCase().includes(this.value.toLowerCase()))
@@ -46,7 +46,8 @@ search.addEventListener('keyup', function() {
         else
             node.classList.add('hidden');
 });
-
+```
+```
 search.addEventListener('keyup', function() {
     const nodesToHide = [];
     const nodesToShow = [];
@@ -59,8 +60,9 @@ search.addEventListener('keyup', function() {
     nodesToHide.forEach(node => node.classList.add('hidden'));
     nodesToShow.forEach(node => node.classList.remove('hidden'));
 });
+```
 
-
+```
 var resolvedPromise = typeof Promise == 'undefined' ? null : Promise.resolve();
 var nextTick = resolvedPromise ? function(fn) { resolvedPromise.then(fn); } : function(fn) { setTimeout(fn); };
 
@@ -79,11 +81,12 @@ jQuery.noConflict( true );
 jQuery(document).ready(function($){
 	// All your code using $
 });
+```
 
-
-############################################################
-debug tools packages
-############################################################
+######
+### debug tools packages
+######
+```
 const start = Date.now()
 while (Date.now() - start < 5000) {}
 
@@ -102,4 +105,4 @@ https://developer.mozilla.org/en-US/docs/Web/API/CacheStorage
 https://web.dev/storage-for-the-web/
 https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
 https://developer.mozilla.org/en-US/docs/Web/API/StorageManager/estimate
-
+```

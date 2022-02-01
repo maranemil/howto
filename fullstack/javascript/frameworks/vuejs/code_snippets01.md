@@ -3,9 +3,9 @@
 ----------------------------------------------------------------------------------------
 
 
-To-dos mit Vue.js
+### To-dos mit Vue.js
 https://entwickler.de/angular/to-dos-mit-vuejs/
-
+```
 <script>
   export default {
     name: 'TodoList',
@@ -146,6 +146,7 @@ https://entwickler.de/angular/to-dos-mit-vuejs/
     background-color: lightsalmon;
   }
 </style>
+```
 
 
 
@@ -154,8 +155,7 @@ https://entwickler.de/angular/to-dos-mit-vuejs/
 
 
 
-
-
+```
 <template>
   <ul>
     <TodoListItem v-for="todo in todos" v-bind:todo="todo"
@@ -228,8 +228,11 @@ https://entwickler.de/angular/to-dos-mit-vuejs/
 </script>
 
 <style scoped></style>
-Listing 14: TodoForm-Komponente
+```
 
+### Listing 14: Todo Form-Component
+
+```
 <template>
   <TodoForm v-if="create" v-on:save="save($event)"></TodoForm>
   <ul v-else>
@@ -270,4 +273,5 @@ Listing 14: TodoForm-Komponente
 <style scoped>
 …
 </style>
+```
 

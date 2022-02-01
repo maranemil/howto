@@ -1,7 +1,8 @@
-Full Stack Shopping Cart With MEVN Stack
+
+### Full Stack Shopping Cart With MEVN Stack
 https://medium.com/@jaouad_45834/full-stack-shopping-cart-with-mevn-stack-part-1-89dae1f35378
 
-
+```
 mkdir Vueexpress
 npm install -g express-generator
 express server
@@ -9,9 +10,9 @@ npm install
 npm start
 
 http://localhost:3000
-
+```
 ------
-
+```
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -24,9 +25,9 @@ const ProductSchema = new Schema({
 });
 
 exports.module = mongoose.model('Product', ProductSchema);
-
+```
 -----
-
+```
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -35,9 +36,9 @@ const CategorySchema = new Schema({
 });
 
 exports.module = mongoose.model('Category', CategorySchema);
-
+```
 -----
-
+```
 //Import the mongoose module
 const mongoose = require('mongoose');
 
@@ -53,10 +54,10 @@ const db = mongoose.connection;
 
 //Bind connection to error event (to get notification of connection errors)
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-
+```
 
 ----
-
+```
 const express = require('express');
 const router = express.Router();
 const faker = require('faker');
@@ -87,21 +88,21 @@ router.get('/', function (req, res, next) {
 
 
 module.exports = router;
-
+```
 -----
-
+```
 const seeder = require('./routes/seeder/products');
 app.use(‘/seeder’, seeder);
-
+```
 
 -----
-
+```
 http://localhost:3000/seeder
-
+```
 
 -----
 
-
+```
 const express = require('express');
 const router = express.Router();
 
@@ -163,11 +164,11 @@ router.get('/:id', function (req, res, next) {
 });
 
 module.exports = router;
-
+```
 
 -----
 
-
+```
 const express = require('express');
 const router = express.Router();
 
@@ -193,11 +194,11 @@ router.get('/:category', function (req, res, next) {
 });
 
 module.exports = router;
-
+```
 
 -----
 
-
+```
 app.use('/products', products);
-
 app.use('/categories', categories);
+```
