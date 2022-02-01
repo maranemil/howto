@@ -1,18 +1,19 @@
-## [Daily CMDs] 
+## Daily CMDs
 
-### [Misc]
+### Misc
 
 #### Config Git on new location
+
 - [x] git config --global user.name "Administrator"
 - [x] git config --global user.email "admin@example.com"
 - [ ] ...
 
-#### Check repo file Sizes
-```
+### Check repo file Sizes
+~~~~
 * find . -name '*' -size +1M -exec ls -lh {} \; | awk '{ print $9 ": " $5 }'
-```
+~~~~
 
-#### rename
+### rename
 ```
 * // rename incremental 000 - 999
 * num=0; for i in *; do mv "$i" "$(printf '%04d' $num).${i#*.}"; ((num++)); done
@@ -24,24 +25,24 @@
 * for i in *; do mv "$i" $(($RANDOM % 1000000000)).${i#*.}; done
 ```
 
-#### Umount force
+### Umount force
 ```
 sudo service nfs-kernel-server stop
 sudo umount -f ~/path
 sudo umount -l -f ~/path
 ```
 
-#### Check pack
+### Check pack
 ```
 * git verify-pack -v ./.git/objects/pack/pack-......ea.pack
 ```
 
-#### Surf web
-```
-* lynx t3n.de -accept_all_cookies  -justify
+### Surf web
+```bash
+lynx t3n.de -accept_all_cookies  -justify
 ```
 
-#### List 
+### List 
 ```
 > list first 30 folders
 * ll -t | head -30 
@@ -55,25 +56,27 @@ sudo umount -l -f ~/path
 * date +%s | sha1sum | base64 | head -c 12; echo "@%&";
 ```
 
-##### Ziping Unziping multiple Folders
+##### Zipping Unzipping multiple Folders
 
-cmd | example
----|---
-unzip  | for z in *.zip; do unzip $z; done
-zip    | for i in */; do zip -r "${i%/}.zip" "$i"; done
-
+~~~~
+|  cmd  | example                                        | 
+|:------|:-----------------------------------------------| 
+| unzip | for z in *.zip; do unzip $z; done              |
+| zip   | for i in */; do zip -r "${i%/}.zip" "$i"; done |
+~~~~
 
 ##### Change date modified created file
 ```
  * -a = accessed / -m = modified / -t = timestamp
  ```
-
-desc|cmd
------|-----
-generate file| touch {1..19}.jpg
-change date |touch -d "October 31"  filename.txt
-change date |touch -d '14:24' file.txt
-change date |touch -d "2 hours ago" filename
+~~~~
+| desc          | cmd                                             | 
+|:--------------|:------------------------------------------------| 
+| generate file | touch {1..19}.jpg                               | 
+| change date   | touch -d "October 31"  filename.txt             | 
+| change date   | touch -d '14:24' file.txt                       | 
+| change date   | touch -d "2 hours ago" filename                 | 
+~~~~
 
 #### Convert Imagick
 ```
@@ -357,7 +360,7 @@ sudo nano /etc/resolv.conf
 
 #### For IPv6:
 ```
-* nameserver 2001:4860:4860::8888,2001:4860:4860::8844, 2606:4700:4700::1111,2606:4700:4700::1001
+* nameserver 2001:4860:4860::8888,2001:4860:4860::8844,2606:4700:4700::1111,2606:4700:4700::1001
 ```
 
 #### Fast VM install 
@@ -390,9 +393,11 @@ sudo nano /etc/resolv.conf
 ```
 
 
-#### Sync folders from drives
+### Sync folders from drives
 ```
 * rsync --ignore-existing --recursive --progress /home/user/folder_sync/ /media/user/external_drive/folder_sync/
 ```
-
-
+### Generate Current Dir Structure 
+```
+tree -Ld 3 > FolderStructure.md
+```

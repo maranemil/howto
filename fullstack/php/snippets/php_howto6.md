@@ -90,6 +90,34 @@ curl -X POST
 	}’
 ```
 
+######
+#### Uncaught ValueError: mb_http_input(): Argument #1 ($type) must be one of "G", "P", "C", "S", "I", or "L" 
+######
+```
+https://www.tutorialspoint.com/php-detect-http-input-character-encoding-with-mb-http-input
+https://hotexamples.com/examples/-/-/mb_http_input/php-mb_http_input-function-examples.html
+
+   // It will return the input character encoding
+   //UTF-8
+   $string =mb_http_input("I");
+   var_dump($string);
+```
+
+######
+### PHP Illegal String Offset Warning IDE Warning
+#### Illegal string offset 'event_type'
+######
+```
+change method params to match the input
+
+/**
+* @param string $data <- this is false, must be array!!!
+*/
+function test($input){ echo $input['field']; }
+```
+
+
+
 
 
 
