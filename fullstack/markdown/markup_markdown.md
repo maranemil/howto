@@ -93,3 +93,11 @@ Misc
 https://github.com/Mottie/Octopatcher/blob/master/docs/collapse-markdown.md
 https://github.com/Mottie/GitHub-userscripts/blob/master/github-collapse-markdown.user.js
 ```
+
+https://docs.gitlab.com/ee/user/markdown.html
+https://www.markdownguide.org/basic-syntax/
+https://daringfireball.net/projects/markdown/syntax
+https://google.github.io/styleguide/docguide/style.html
+https://www.jetbrains.com/help/hub/Markdown-Syntax.html
+
+
