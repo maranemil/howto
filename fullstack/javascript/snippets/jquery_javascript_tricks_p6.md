@@ -411,3 +411,48 @@ npm prune
 
 
 
+### Feature detection Sensor APIs concepts and usage
+
+```
+device.sensors.enabled
+device.sensors.orientation.enabled
+device.sensors.motion.enabled
+
+https://developer.mozilla.org/en-US/docs/Web/API/Sensor_APIs#
+https://developer.mozilla.org/en-US/docs/Web/API/DeviceMotionEvent
+https://www.bleepingcomputer.com/news/software/firefox-gets-privacy-boost-by-disabling-proximity-and-ambient-light-sensor-apis/
+https://chromestatus.com/feature/5698781827825664
+https://web.dev/generic-sensor/
+https://www.w3.org/TR/generic-sensor/#
+https://intel.github.io/generic-sensor-demos/
+https://www.chromium.org/developers/design-documents/generic-sensor/#
+https://developers.google.com/web/fundamentals/native-hardware/device-orientation
+
+if (typeof Gyroscope === "function") {
+// run in circles...
+}
+
+if ("ProximitySensor" in window) {
+// watch out!
+}
+
+if (window.AmbientLightSensor) {
+// go dark...
+}
+
+navigator.permissions.query({ name: 'accelerometer' })
+.then(result => {
+if (result.state === 'denied') {
+console.log('Permission to use accelerometer sensor is denied.');
+return;
+}
+// Use the sensor.
+});
+
+const sensor = new AbsoluteOrientationSensor();
+sensor.start();
+sensor.addEventListener('error', error => {
+if (event.error.name === 'SecurityError')
+console.log("No permissions to use AbsoluteOrientationSensor.");
+});
+```

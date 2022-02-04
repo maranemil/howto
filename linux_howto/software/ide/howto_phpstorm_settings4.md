@@ -716,4 +716,10 @@ add string at the begin of lines - Shift Alt G + Pos Up
 
 https://www.jetbrains.com/webstorm/guide/tips/multi-cursor/
 ~~~
+~~~
+############################################
+line endings
+############################################
+https://www.jetbrains.com/help/idea/configuring-line-endings-and-line-separators.html
+~~~
 
