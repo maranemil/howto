@@ -723,3 +723,12 @@ line endings
 https://www.jetbrains.com/help/idea/configuring-line-endings-and-line-separators.html
 ~~~
 
+### plugin themes
+
+- https://plugins.jetbrains.com/plugin/14965-visual-studio-2019-dark-theme
+- https://plugins.jetbrains.com/plugin/15418-github-theme
+- https://plugins.jetbrains.com/plugin/15727-xcode-theme
+- https://plugins.jetbrains.com/plugin/12226-vuesion-theme
+- https://plugins.jetbrains.com/plugin/8006-material-theme-ui
+- https://plugins.jetbrains.com/plugin/12124-material-theme-ui-lite
+- https://plugins.jetbrains.com/plugin/10321-nord
