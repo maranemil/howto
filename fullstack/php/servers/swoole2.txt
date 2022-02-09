@@ -1,0 +1,250 @@
+Uncaught Error: Call to undefined function Swoole\Coroutine\run()
+
+https://github.com/swoole/swoole-src/issues/3252
+https://openswoole.com/docs/modules/swoole-coroutine-run
+https://github.com/swoole/swoole-src/issues/2139
+https://openswoole.com/docs/modules/swoole-coroutine-run
+https://openswoole.com/docs/modules/swoole-websocket-compression
+https://www.zend.com/blog/swoole
+https://www.php.net/manual/en/ref.swoole-funcs.php
+https://www.php.net/manual/en/class.swoole-coroutine.php
+https://www.php.net/manual/en/book.swoole.php
+https://openswoole.com/docs/
+https://openswoole.com/
+https://openswoole.com/docs/modules/swoole-coroutine
+https://openswoole.com/docs/
+https://openswoole.com/docs/modules/swoole-coroutine-sleep
+https://openswoole.com/docs/modules/swoole-server-set
+https://www.php.net/manual/en/swoole-coroutine.getuid.php
+https://github.com/swoole/swoole-src
+https://openswoole.com/docs/modules/swoole-server/configuration
+https://openswoole.com/docs/modules/swoole-coroutine-enableCoroutine
+https://github.com/swoole/swoole-src/issues/4382
+
+
+------------------------------------------------------------------------------------
+
+// get swoole config
+
+php --ri swoole
+
+docker run --rm phpswoole/swoole "php --ri swoole"
+
+
+------------------------------------------------------------------------------------
+
+MySQL
+https://bestofcpp.com/repo/swoole-swoole-src
+
+$s = microtime(true);
+Co\run(function() {
+    for ($c = 100; $c--;) {
+        go(function () {
+            $mysql = new Swoole\Coroutine\MySQL;
+            $mysql->connect([
+                'host' => '127.0.0.1',
+                'user' => 'root',
+                'password' => 'root',
+                'database' => 'test'
+            ]);
+            $statement = $mysql->prepare('SELECT * FROM `user`');
+            for ($n = 100; $n--;) {
+                $result = $statement->execute();
+                assert(count($result) > 0);
+            }
+        });
+    }
+});
+echo 'use ' . (microtime(true) - $s) . ' s';
+
+------------------------------------------------------------------------------------
+
+Timer
+$id = Swoole\Timer::tick(100, function () {
+    echo "⚙️ Do something...\n";
+});
+Swoole\Timer::after(500, function () use ($id) {
+    Swoole\Timer::clear($id);
+    echo "⏰ Done\n";
+});
+Swoole\Timer::after(1000, function () use ($id) {
+    if (!Swoole\Timer::exists($id)) {
+        echo "✅ All right!\n";
+    }
+});
+
+
+
+The way of coroutine
+go(function () {
+    $i = 0;
+    while (true) {
+        Co::sleep(0.1);
+        echo "📝 Do something...\n";
+        if (++$i === 5) {
+            echo "🛎 Done\n";
+            break;
+        }
+    }
+    echo "🎉 All right!\n";
+});
+
+
+
+
+------------------------------------------------------------------------------------
+
+Amazing runtime hooks
+
+Swoole\Runtime::enableCoroutine();
+$s = microtime(true);
+Co\run(function() {
+    for ($c = 100; $c--;) {
+        go(function () {
+            ($redis = new Redis)->connect('127.0.0.1', 6379);
+            for ($n = 100; $n--;) {
+                assert($redis->get('awesome') === 'swoole');
+            }
+        });
+    }
+});
+echo 'use ' . (microtime(true) - $s) . ' s';
+
+
+------------------------------------------------------------------------------------
+$s = microtime(true);
+$host = "127.0.0.1";
+$port = '9999';
+$timeout = 0.5;
+
+
+Swoole\Coroutine::create(function()use ($s,$host,$port,$timeout){
+    $client = new Swoole\Coroutine\Client(SWOOLE_SOCK_TCP);
+
+    if(!$client->connect($host,$port,$timeout)){
+        echo "connect failed . Error : ".$client->errCode.PHP_EOL;
+    }else{
+        $client->send(date("Y-m-d H:i:s ",$s). " msg :hello world " .PHP_EOL);
+        echo date("Y-m-d H:i:s")." Recive ms : ".$client->recv().PHP_EOL;
+        $client->close();
+    }
+});
+------------------------------------------------------------------------------------
+
+https://openswoole.com/docs/modules/swoole-coroutine-run
+
+use Swoole\Coroutine as Co;
+Co\run(function()
+{
+    go(function()
+    {
+        Co::sleep(1);
+        echo "Coroutine 1 is done.\n";
+    });
+
+    go(function()
+    {
+        Co::sleep(1);
+        echo "Coroutine 2 is done.\n";
+    });
+});
+echo "Outside any Coroutine Context.\n";
+
+
+...
+
+use Swoole\Coroutine;
+$scheduler = new Coroutine\Scheduler;
+// Context 1
+$scheduler->add(function($a, $b)
+{
+    Coroutine::sleep(1);
+    echo assert($a == 'Hello ') . PHP_EOL;
+    echo assert($b == 'World!') . PHP_EOL;
+    echo "Context with assert has completed.\n";
+}, 'Hello ', 'World!');
+
+// Context 2
+$scheduler->add(function()
+{
+    echo "I will finish first.\n";
+});
+
+// Blocks until all tasks complete
+$scheduler->start();
+
+------------------------------------------------------------------------------------
+
+$server = new Swoole\Http\Server("/home/user/swoole.sock", 0, SWOOLE_BASE, SWOOLE_UNIX_STREAM);
+$server->on('request', function (Swoole\Http\Request $request, Swoole\Http\Response $response) {
+    // onRequest has already in the coroutine, need not use go func
+    // without connection pool, can not benchmark anyway
+    $mysqli = new Mysqli('127.0.0.1', 'user', 'pwd', 'test');
+    $statement = $mysqli->prepare('SELECT `ID` FROM `table` WHERE `ID`=1');
+    $statement->execute();
+    $statement->fetch();
+    $response->end("test");
+});
+$server->start();
+
+------------------------------------------------------------------------------------
+
+$pool = new \SplQueue;
+
+# possible to fill pool already here
+
+$server = new swoole_http_server("/home/isrvr-dsktp01/LocalWebServer/subdomains/swoole.sock", 0, SWOOLE_BASE, SWOOLE_UNIX_STREAM);
+
+$server->on('request', function (swoole_http_request $request, swoole_http_response $response) use ($pool) {
+
+    if ($pool->isEmpty()) {
+        $mysql = new Swoole\Coroutine\MySQL;
+        $mysql->connect([
+          'host' => '127.0.0.1',
+          'user' => 'user',
+          'password' => 'pwd',
+          'database' => 'test'
+        ]);
+        # errorhandling
+    } else {
+        $mysql = $pool->pop();
+    }
+
+    # here you have $mysql coroutine
+    $statement = $mysql->prepare('SELECT `ID` FROM `table` WHERE `ID`=1');
+    $statement->execute();
+    $statement->fetch();
+    # ...
+
+    $response->end('whatever');
+
+    # give back
+    $pool->push($mysql);
+
+});
+
+$server->start();
+
+------------------------------------------------------------------------------------
+
+$server->on('request', function (Swoole\Http\Request $request, Swoole\Http\Response $response) {
+    $response->header('Last-Modified', 'Thu, 18 Jun 2015 10:24:27 GMT');
+    $response->header('E-Tag', '55829c5b-17');
+    $response->header('Accept-Ranges', 'bytes');
+    $s = microtime(true);
+    $sss = null;
+    go(function () { # ---------------- why?
+        $pool = new mypool();
+        $mysql = $pool->get();
+        $stmt = $mysql->prepare('SELECT * FROM `s_orders`');
+        $result = $stmt->execute();
+        assert(count($result) > 0);
+        $pool->put($mysql);
+
+    });
+    $response->end("<h1>\nHello Swoole".rand(1000, 9999)."\n use ".(microtime(true) - $s)."s</h1>\n".$sss);
+});
+
+------------------------------------------------------------------------------------
+
+

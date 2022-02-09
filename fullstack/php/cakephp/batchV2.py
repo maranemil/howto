@@ -68,15 +68,16 @@ def ReadItemsFolder(dataDirPath):
                 # print idselected
             except:
                 # handle this
-                #dataFiles.append(dataDirPath + str(idselected))
-                print str("err" + str(idselected))
+                # dataFiles.append(dataDirPath + str(idselected))
+                print
+                str("err" + str(idselected))
 
                 fd = open('batch.csv', 'a')
                 fd.write(str(idselected) + "\n")
                 fd.close()
 
-    except Exception, e:
-        print str(e)
+    except Exception:
+        print (str(e))
         # pass
 
 
@@ -84,19 +85,21 @@ def CollectAbsolutePath():
     with open('batch.csv', 'rb') as csvfile:
         spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
         for rowcsv in spamreader:
-
             # print row[0]
             idFile = rowcsv[0]
 
             os.system('find /var/www/html/pathto/ -name file_' +
-                      str(idFile)+'.txt | grep -i "www" >> batchclean.csv')
+                      str(idFile) + '.txt | grep -i "www" >> batchclean.csv')
 
 
-print 'Number of arguments:', len(sys.argv), 'arguments.'
-print 'Argument List:', str(sys.argv)
+print
+'Number of arguments:', len(sys.argv), 'arguments.'
+print
+'Argument List:', str(sys.argv)
 
-if(sys.argv[1] == "check"):
-    print "Case "+sys.argv[1]
+if (sys.argv[1] == "check"):
+    print
+    "Case " + sys.argv[1]
 
     fd = open('batch.csv', 'w')
     fd.write("")
@@ -111,7 +114,7 @@ if(sys.argv[1] == "check"):
     # This would print all the files and directories
     for file in dirs:
         # print file
-        if(file):
+        if (file):
             # print file
             data.append(file)
 
@@ -119,10 +122,12 @@ if(sys.argv[1] == "check"):
         # print(item)
         ReadItemsFolder(item)
 
-    print "Check Done"
+    print
+    "Check Done"
 
-if(sys.argv[1] == "batch"):
-    print "Case "+sys.argv[1]
+if (sys.argv[1] == "batch"):
+    print
+    "Case " + sys.argv[1]
 
     fd = open('batchclean.csv', 'w')
     fd.write("")
@@ -131,9 +136,9 @@ if(sys.argv[1] == "batch"):
     os.system('truncate -s 0  batchclean.csv')
     CollectAbsolutePath()
 
-    print "Check Done"
+    print
+    "Check Done"
     os.system('sh batchclean.sh')
-
 
 # print(dataFiles)
 

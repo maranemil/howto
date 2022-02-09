@@ -286,3 +286,14 @@ add_header X-Frame-Options SAMEORIGIN; # nginx
 - http://www.python-kurs.eu/funktionen.php
 - https://docs.python.org/2.0/ref/function.html
 - https://www.learnpython.org/en/Functions
+
+### unixtimestamp
+
+https://www.unixtimestamp.com/
+
+### cron guru
+
+https://crontab.guru/
+
+#
+

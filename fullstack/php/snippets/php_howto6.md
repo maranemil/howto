@@ -149,8 +149,23 @@ substr(substr($json,1),0,-1);
 ```
 
 
+### substr
+```
+https://www.php.net/manual/en/function.substr.php
 
+$rest = substr("abcdef", -1);    // returns "f"
+$rest = substr("abcdef", -2);    // returns "ef"
+$rest = substr("abcdef", -3, 1); // returns "d"
+```
 
+### gen random
+```
+https://www.php.net/manual/en/function.openssl-random-pseudo-bytes.php
+https://stackoverflow.com/questions/38716613/generate-a-single-use-token-in-php-random-bytes-or-openssl-random-pseudo-bytes
+
+var_dump(bin2hex(random_bytes(12)));
+var_dump(bin2hex(openssl_random_pseudo_bytes(12)));
+```
 
 
 
