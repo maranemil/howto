@@ -401,3 +401,17 @@ sudo nano /etc/resolv.conf
 ```
 tree -Ld 3 > FolderStructure.md
 ```
+
+######
+### Format json
+######
+```
+compact json data
+jq . -c data.json > data_zip.json
+
+prettify json data
+jq . data_zip.json > data.json
+```
+
+
+

@@ -1,0 +1,469 @@
+https://github.com/swooletw/laravel-swoole/wiki/6.-Commands
+https://developpaper.com/swoole-restart-problem/
+https://github.com/swoole/swoole-src/issues/2335
+https://openswoole.com/docs/modules/swoole-server-on-shutdown
+
+php artisan swoole:http start
+php artisan swoole:http infos
+
+----------------
+
+
+#####################################################
+Call to undefined function Swoole\Coroutine\run()
+Fatal error: Uncaught Error: Call to undefined function Co\run()
+#####################################################
+
+https://openswoole.com/docs/common-questions-index
+https://wenda.swoole.com/detail/107844
+https://bestofphp.com/repo/swoole-swoole-src-php-event
+https://developpaper.com/swoole-v4-6-0-release-support-native-curl-coroutine-client/
+
+
+
+Call to undefined function Co\run()
+All coroutines in Swoole need to be wrapped inside a coroutine context, this context is automatically created for you when you use the HTTP Server for example.
+
+However, if you receive errors saying Uncaught Error:
+
+Call to undefined function Co\run() or Uncaught Error: Call to undefined function go(), you must make sure
+you are on version v4.4.0 or above or include the namespace Swoole\Coroutine.
+
+You can also use Swoole\Coroutine::create(callable $function, ...$args): int|false which is an alternative to go().
+
+
+use Swoole\Runtime;
+use Swoole\Coroutine;
+use function Swoole\Coroutine\run;
+error_reporting(E_ALL);
+ini_set('display_errors', 'on');
+
+$s = microtime(true);
+// Swoole\Coroutine\run()
+run(function () {
+    for ($c = 500; $c--;) {
+        Coroutine::create(function () {
+            $pdo = new PDO('mysql:host=127.0.0.1;dbname=test;charset=utf8',
+                'test', 'test');
+            $statement = $pdo->prepare('SELECT MAX(id) FROM `users`');
+            for ($n = 1; $n--;) {
+                $statement->execute();
+                var_dump($statement->fetchAll());
+            }
+        });
+    }
+});
+echo 'use '.(microtime(true) - $s).' s';
+
+
+------------
+
+
+$s = microtime(true);
+Co\run(function() {
+    for ($c = 100; $c--;) {
+        go(function () {
+            $mysql = new Swoole\Coroutine\MySQL;
+            $mysql->connect([
+                'host' => '127.0.0.1',
+                'user' => 'root',
+                'password' => 'root',
+                'database' => 'test'
+            ]);
+            $statement = $mysql->prepare('SELECT * FROM `user`');
+            for ($n = 100; $n--;) {
+                $result = $statement->execute();
+                assert(count($result) > 0);
+            }
+        });
+    }
+});
+echo 'use ' . (microtime(true) - $s) . ' s';
+
+--------------
+
+ // Swoole\Runtime::enableCoroutine(); //sleep，Mysqli，PDO，streams
+
+$s = microtime(true);
+$host = "127.0.0.1";
+$port = '9999';
+$timeout = 0.5;
+
+
+Swoole\Coroutine::create(function()use ($s,$host,$port,$timeout){
+    $client = new Swoole\Coroutine\Client(SWOOLE_SOCK_TCP);
+
+    if(!$client->connect($host,$port,$timeout)){
+        echo "connect failed . Error : ".$client->errCode.PHP_EOL;
+    }else{
+        $client->send(date("Y-m-d H:i:s ",$s). " msg :hello world " .PHP_EOL);
+        echo date("Y-m-d H:i:s")." Recive ms : ".$client->recv().PHP_EOL;
+        $client->close();
+    }
+});
+
+
+--------------
+
+Swoole\Coroutine\run(function () {
+    var_dump(Co\System::gethostbyname('www.baidu.com'));
+});
+
+Swoole\Coroutine\run(function () {
+    go(function () {
+        var_dump(Co\System::gethostbyname('www.baidu.com'));
+    });
+    go(function () {
+        var_dump(Co\System::gethostbyname('www.zhihu.com'));
+    });
+});
+
+
+se Swoole\Runtime;
+
+Swoole\Coroutine\run(function () {
+    $flags = Runtime::getHookFlags();
+    assert($flags === SWOOLE_HOOK_ALL);
+    var_dump($flags);
+});
+
+use Swoole\Runtime;
+
+Runtime::setHookFlags(SWOOLE_HOOK_TCP);
+Swoole\Coroutine\run(function () {
+    $flags = Runtime::getHookFlags();
+    assert($flags === SWOOLE_HOOK_TCP);
+    var_dump($flags);
+});
+
+
+Swoole\Coroutine\run(function () {
+    $pid = pcntl_fork();
+    var_dump($pid);
+});
+
+
+php --ri swoole | grep curl
+
+
+Swoole\Runtime::setHookFlags(SWOOLE_HOOK_CURL);
+Swoole\Coroutine\run(function () {
+    $curl = curl_init();
+    var_dump(get_class($curl), (int) $curl);
+    //PHP Notice:  Object of class Swoole\Curl\Handler could not be converted to int
+    //string(19) "Swoole\Curl\Handler"
+    //int(1)
+});
+
+Swoole\Coroutine\run(function () {
+    $curl = curl_init();
+    var_dump($curl, (int) $curl);
+    //resource(4) of type (Swoole-Coroutine-cURL Handle)
+    //int(4)
+});
+
+
+const N = 8;
+$GLOBALS['time'] = [];
+$s = microtime(true);
+Swoole\Runtime::setHookFlags(SWOOLE_HOOK_SOCKETS);
+Swoole\Coroutine\run(function () {
+    $n = N;
+    while($n--) {
+        go(function() {
+            $s = microtime(true);
+            $domain = 'www.baidu.com';
+            $sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+            socket_connect($sock, $domain, 80);
+            socket_write($sock, "GET / HTTP/1.0\r\nHost: $domain\r\nConnection: close\r\nKeep-Alive: off\r\n\r\n");
+
+            $html = '';
+            while(true) {
+                $data = socket_read($sock, 8192);
+                if ($data == '') {
+                    break;
+                }
+                $html .= $data;
+            }
+
+            socket_close($sock);
+
+            $GLOBALS['time'][] = microtime(true) - $s;
+        });
+    }
+});
+echo "Done\n";
+var_dump(microtime(true) - $s, array_sum($GLOBALS['time']) / 3);
+
+---
+
+$server->on('Connect', function (Swoole\Server $server, int $fd, int $reactorId) {
+    var_dump($fd);
+});
+
+$server->set([
+    'event_object' => true,
+]);
+$server->on('Connect', function (Swoole\Server $serv, Swoole\Server\Event $object) {
+    var_dump($object);
+});
+
+
+
+---
+
+
+$http = new Swoole\Http\Server('0.0.0.0', 9501);
+
+$http->on('request', function ($request, $response) {
+    $response->header('Test-Value', [
+        "a\r\n",
+        'd5678',
+        "e  \n ",
+        null,
+        5678,
+        3.1415926,
+    ]);
+    $response->header('Foo', new SplFileInfo('bar'));
+});
+
+$http->start();
+
+--
+
+$ curl -I http://127.0.0.1:9501
+
+----------------------------------------------------------------------
+https://githubhelp.com/swoole/swoole-src
+
+$s = microtime(true);
+Co\run(function() {
+    for ($c = 100; $c--;) {
+        go(function () {
+            $mysql = new Swoole\Coroutine\MySQL;
+            $mysql->connect([
+                'host' => '127.0.0.1',
+                'user' => 'root',
+                'password' => 'root',
+                'database' => 'test'
+            ]);
+            $statement = $mysql->prepare('SELECT * FROM `user`');
+            for ($n = 100; $n--;) {
+                $result = $statement->execute();
+                assert(count($result) > 0);
+            }
+        });
+    }
+});
+echo 'use ' . (microtime(true) - $s) . ' s';
+
+
+---
+
+$server = new Swoole\WebSocket\Server('127.0.0.1', 9501, SWOOLE_BASE);
+$server->set(['open_http2_protocol' => true]);
+// http && http2
+$server->on('request', function (Swoole\Http\Request $request, Swoole\Http\Response $response) {
+    $response->end('Hello ' . $request->rawcontent());
+});
+// websocket
+$server->on('message', function (Swoole\WebSocket\Server $server, Swoole\WebSocket\Frame $frame) {
+    $server->push($frame->fd, 'Hello ' . $frame->data);
+});
+// tcp
+$tcp_server = $server->listen('127.0.0.1', 9502, SWOOLE_TCP);
+$tcp_server->set($tcp_options);
+$tcp_server->on('receive', function (Swoole\Server $server, int $fd, int $reactor_id, string $data) {
+    $server->send($fd, tcp_pack('Hello ' . tcp_unpack($data)));
+});
+$server->start();
+
+
+
+
+
+
+----------------------------------------------------------------------
+
+http://vesko.blogs.azonmedia.com/2019/09/19/coroutines-in-swoole/
+
+Swoole\Coroutine::create(function(){
+    print 'im in coroutine'.PHP_EOL;
+});
+print 'im outside coroutine'.PHP_EOL;
+
+//alternative syntax
+//go() is alias of Swoole\Coroutine::create()
+go(function(){
+});
+
+//and with provided arguments
+go(function($arg1, $arg2){
+    print $arg1.PHP_EOL;
+    print $arg2.PHP_EOL;
+}, 55, 66);
+
+//the signature of the method being:
+/**
+ * Creates a new coroutine and returns a unique ID (cid).
+ * The coroutine execution starts immediately
+ * @param callable $func
+ * @param array ...$params Optional arguments that will be passed to the callable.
+ * @return int A positive int containing the coroutine ID
+ */
+public static function create( callable $func, $params) { }
+
+
+---
+
+$Server = new Swoole\Http\Server('0.0.0.0', 8081, SWOOLE_PROCESS);
+$Server->on('request', function (\Swoole\Http\Request $SwooleRequest, \Swoole\Http\Response $SwooleResponse) {
+    //this code is in coroutine context
+    print Swoole\Coroutine::getCid();// 1 and incrementing with every request
+    print Swoole\Coroutine::getPcid();// -1 there is no parent coroutine
+    $SwooleResponse->end('ok');
+});
+$Server->start();
+
+---
+
+go(function() {
+    print 'co 1 started'.PHP_EOL;
+    Swoole\Coroutine\System::sleep(1);//this yields
+    //alternative syntax
+    //co::sleep(1);// \co is alias of \Swoole\Coroutine
+    print 'co 1 ended'.PHP_EOL;
+} );
+go(function() {
+    print 'co 2 started'.PHP_EOL;
+    co\System::sleep(1);//yields
+    print 'co 2 ended'.PHP_EOL;
+} );
+//output being
+//co 1 started
+//co 2 started
+//co 1 ended
+//co 2 ended
+
+---
+
+go(function(){
+    print 'co 1 start'.PHP_EOL;
+
+    //this will block the worker until the writing is finished
+    //and will not yield to another coroutine
+    file_put_contents('file.txt','some content');
+
+    print 'co 1 after first file'.PHP_EOL;
+
+    //this will yield and main scope will continue to execute
+    //as the main scope starts another coroutine this coroutine will be immediately started
+    Swoole\Coroutine\System::writeFile('file2.txt','another content');
+
+    print 'co 1 after second file'.PHP_EOL;
+});
+
+go(function(){
+    print 'co 2 start'.PHP_EOL;
+});
+
+----------------------------------------------------------------------
+
+https://www.wenjiangs.com/doc/question-use
+
+
+ab -c 100 -n 1000000 -k http://127.0.0.1:8080/
+
+
+$http = new Swoole\Http\Server("127.0.0.1", 9501, SWOOLE_BASE);
+
+$http->set([
+    'worker_num' => 4,
+]);
+
+$http->on('request', function ($request, Swoole\Http\Server $response) {
+    $response->header('Last-Modified', 'Thu, 18 Jun 2015 10:24:27 GMT');
+    $response->header('E-Tag', '55829c5b-17');
+    $response->header('Accept-Ranges', 'bytes');
+    $response->end("<h1>\nHello Swoole.\n</h1>");
+});
+
+$http->start();
+
+
+---
+
+$serv = new Swoole\Server("0.0.0.0", 9501, SWOOLE_PROCESS);
+$serv->set(array(
+    'worker_num' => 1,
+    'max_wait_time' => 60,
+    'reload_async' => true,
+));
+$serv->on('receive', function (Swoole\Server $serv, $fd, $reactor_id, $data) {
+
+    echo "[#" . $serv->worker_id . "]\tClient[$fd] receive data: $data\n";
+
+    Swoole\Timer::tick(5000, function () {
+        echo 'tick';
+    });
+});
+
+$serv->start();
+
+--
+
+$serv->on('WorkerExit', function (Swoole\Server $serv, $worker_id) {
+    $redisState = $serv->redis->getState();
+    if ($redisState == Swoole\Redis::STATE_READY or $redisState == Swoole\Redis::STATE_SUBSCRIBE)
+    {
+        $serv->redis->close();
+    }
+});
+
+---
+
+Co\run(function() {
+    $cli = new Swoole\Coroutine\Http\Client('www.xinhuanet.com', 80);
+    go(function () use ($cli) {
+        $cli->get("/");
+    });
+    go(function () use ($cli) {
+        $cli->get('/');
+    });
+});
+
+----------------------------------------------------------------------
+
+https://www.onlycsg.com/archives/414.html
+
+//Swoole\Runtime::enableCoroutine();
+
+$s = microtime(true);
+$host = "127.0.0.1";
+$port = '9999';
+$timeout = 0.5;
+
+
+Swoole\Coroutine::create(function()use ($s,$host,$port,$timeout){
+    $client = new Swoole\Coroutine\Client(SWOOLE_SOCK_TCP);
+
+    if(!$client->connect($host,$port,$timeout)){
+        echo "connect failed . Error : ".$client->errCode.PHP_EOL;
+    }else{
+        $client->send(date("Y-m-d H:i:s ",$s). " msg :hello world " .PHP_EOL);
+        echo date("Y-m-d H:i:s")." Recive ms : ".$client->recv().PHP_EOL;
+        $client->close();
+    }
+});
+
+----------------------------------------------------------------------
+
+use \Swoole\Coroutine as Co;
+use \Swoole\Runtime;
+
+use function Swoole\Coroutine\run;
+use function Swoole\Coroutine\go;
+
+
+
+

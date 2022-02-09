@@ -215,21 +215,29 @@ https://symfony.com/doc/4.0/security/api_key_authentication.html
 https://auth0.com/docs/libraries/auth0-php/using-the-authentication-api-with-auth0-php
 https://developers.docusign.com/docs/esign-rest-api/sdk-tools/php/auth/
 ```
-```
-################################################
-#
-#   php sdk
-#
-################################################
-```
-```
-https://packagist.org/packages/juststeveking/php-sdk#v2.0.0
-https://github.com/JustSteveKing/php-sdk
-```
 
+######
+#
+###   php sdk
+######
+
+- https://packagist.org/packages/juststeveking/php-sdk#v2.0.0
+- https://github.com/JustSteveKing/php-sdk
  
 ### guzzle psr7
-https://github.com/guzzle/psr7
-https://docs.guzzlephp.org/en/stable/psr7.html
+- https://github.com/guzzle/psr7
+- https://docs.guzzlephp.org/en/stable/psr7.html
+
+### adodb
+- https://adodb.org/dokuwiki/doku.php?id=v5:reference:connection:getassoc
+- https://hotexamples.com/examples/-/DB/getAssoc/php-db-getassoc-method-examples.html
+- https://hotexamples.com/examples/-/DB/get_row/php-db-get_row-method-examples.html
+- https://adodb.org/dokuwiki/doku.php?id=v5:reference:connection:getall
+- https://adodb.org/dokuwiki/doku.php?id=v5:reference:connection:getrow
+- https://hotexamples.com/examples/-/DB/adodb/php-db-adodb-method-examples.html
+- https://adodb.org/dokuwiki/doku.php?id=v5:userguide:active_record&s[]=get&s[]=all
+
+
+
 
 

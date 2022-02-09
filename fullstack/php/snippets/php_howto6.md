@@ -117,6 +117,37 @@ function test($input){ echo $input['field']; }
 ```
 
 
+######
+### How to remove backslash on json_encode() function?
+######
+```
+
+https://stackoverflow.com/questions/7282755/how-to-remove-backslash-on-json-encode-function
+https://www.codegrepper.com/code-examples/php/php+remove+slashes+from+json
+https://stackoverflow.com/questions/30253267/how-to-remove-back-slashes-from-json-output-in-php/30253333
+https://stackoverflow.com/questions/30253267/how-to-remove-back-slashes-from-json-output-in-php
+
+json_encode($response, JSON_UNESCAPED_SLASHES);
+json_decode($response, true, JSON_UNESCAPED_SLASHES);
+stripslashes(json_encode(response,JSON_UNESCAPED_SLASHES)));
+
+$val = json_encode(array(
+  "test"=>'test1',
+  "test2" =>'test',
+  "description" => 'description'
+));
+
+$data = json_decode($val, true, JSON_UNESCAPED_SLASHES);
+return $data;
+
+
+https://sandbox.onlinephpfunctions.com/
+https://jsonlint.com/
+
+# remove first and last char 
+substr(substr($json,1),0,-1);
+```
+
 
 
 
