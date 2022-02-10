@@ -62,8 +62,12 @@
 
 ### Record Screen Ubuntu with Sound Lenovo
 ```
+ideapad3
 * ffmpeg -v warning -video_size 1920x1080 -framerate 30 -f x11grab -i :1.0 -f alsa -ac 2 -i default myvid_$(date +%s).mp4
 * ffmpeg -v warning -video_size 1920x1080 -framerate 25 -f x11grab -i :1.0 -f alsa -ac 2 -i default myvid_$(date +%s).mp4
+
+ideapad5
+* ffmpeg -v warning -video_size 2560x1600 -framerate 25 -f x11grab -i :0.0 -f alsa -ac 2 -i default myvid_$(date +%s).mp4
 ```
 
 ### Record Screen Ubuntu with Sound ASUS
