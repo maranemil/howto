@@ -105,6 +105,12 @@ ideapad5
 * ffmpeg -i input.mp4 -vf lutrgb="r=negval:g=negval:b=negval" output3.avi
 ```
 
+
+### rotate 90
+```
+ffmpeg -i in.mp4 -vf "transpose=2" -t 10 out.mp4
+```
+
 ### crop square
 ```
 * ffplay -i in.mp4 -vf "crop=in_h/1:in_h/1"
