@@ -1,0 +1,166 @@
+
+
+### admin
+
+- https://github.com/esttemanb/ControlLlamadasWeb?ref=vuejsexamples.com
+- https://vuejsexamples.com/admin-one-free-vue-bulma-dashboard/
+- https://vuejsexamples.com/admin-dashboard-template-built-with-tailwind-css-vuejs-3/
+- https://github.com/kamona-ui/kui-dashboard-vue?ref=vuejsexamples.com
+
+
+-------------------------------------------------
+kanban
+
+- https://vuejsexamples.com/a-more-simplified-rendition-of-kanban-board-written-in-vue/
+- https://vuejsexamples.com/a-dashboard-template-with-vuejs-and-fastify/
+- https://github.com/StudioDEVIOO/vuejs-dashboard?ref=vuejsexamples.com
+- https://github.com/ZTF666/My-Kanban-Board?ref=vuejsexamples.com
+
+apps
+
+- https://vuejsexamples.com/inventory-tracker-built-with-vue-js/
+https://github.com/shaqeebmomen/InventoryTracker?ref=vuejsexamples.com
+-------------------------------------------------
+
+- https://vuejsexamples.com/a-machine-learning-repository-which-mainly-focuses-on-predecting-the-human-face/
+- https://vuejsexamples.com/a-counter-app-built-using-vue-js/
+- https://vuejsexamples.com/a-calculator-create-in-vue-3-0/
+- https://vuejsexamples.com/a-simple-portfolio-starter-theme-built-with-nuxt-js-and-tailwindcss/
+- https://vuejsexamples.com/laravel-weather-app-built-with-vue-js/
+- https://vuejsexamples.com/todos-app-v2-built-using-vue-js/
+- https://vuejsexamples.com/a-tool-for-producing-generative-procedurally-generated-midi-files/
+- https://vuejsexamples.com/a-fun-pricing-page-with-gifs-made-with-vue-tailwindcss/
+- https://vuejsexamples.com/nutri-score-calculator-built-with-vue-js/
+- https://vuejsexamples.com/a-web-app-for-showing-add-and-delete-products/
+- https://vuejsexamples.com/tmoviedb-a-movie-search-listing-site-using-vue-js/
+- https://vuejsexamples.com/small-project-created-for-nexus-point-using-vue-2-and-scss/
+- https://vuejsexamples.com/free-landing-page-template-built-using-nuxt-and-tailwindcss/
+- https://vuejsexamples.com/a-netflix-clone-built-with-vue-js-and-appwrite/
+- https://vuejsexamples.com/form-validation-in-vue3-with-vuelidate-library/
+- https://vuejsexamples.com/a-ticket-system-app-using-vue-js/
+- https://vuejsexamples.com/a-front-end-developer-portfolio-page-with-vue-js/
+- https://vuejsexamples.com/invoice-app-built-using-vue-js/
+- https://vuejsexamples.com/quickie-movie-search-app-using-vue-js/
+- https://vuejsexamples.com/ip-tracking-app-with-vuejs-3/
+- https://vuejsexamples.com/github-leonidgainar-vue-weather-pwa/
+- https://vuejsexamples.com/todos-app-built-using-vue-js/
+- https://vuejsexamples.com/accept-payments-using-vue-3-express-js-and-stripe-checkout/
+- https://vuejsexamples.com/a-freelance-academic-writing-platform-that-gives-professionals-writers-access-to-jobs-from-clients-based-in-kenya/
+- https://vuejsexamples.com/laravel-datatable-laravel-and-vue-packages-to-create-data-table/
+- https://vuejsexamples.com/prepare-admin-panels-for-your-projects-rapidly-using-appwritecms-a-headless-cms-for-your-appwrite-project/
+- https://vuejsexamples.com/e-commerce-product-page-solution-with-vue-js/
+- https://vuejsexamples.com/a-budgeting-web-app-using-vue-quasar-and-pinia/
+- https://vuejsexamples.com/instagram-clone-built-with-vue-js-quasar-firebase-and-heroku/
+- https://vuejsexamples.com/a-simple-minimal-web-application-to-chat-in-private-with-friends/
+- https://vuejsexamples.com/a-simple-todo-list-bulit-with-vue-js/
+- https://vuejsexamples.com/furniture-design-page-using-tailwindcss-and-vue/
+- https://vuejsexamples.com/vue-3-todo-app-with-rest-api/
+- https://vuejsexamples.com/a-crud-todolist-application-developed-using-vuejs/
+- https://vuejsexamples.com/simple-vue-js-3-0-app-with-a-litlle-typescript-help/
+- https://vuejsexamples.com/this-project-deals-primarily-with-train-stations-in-france-giving-details-and-insights-about-each-one-of-them/
+- https://vuejsexamples.com/infinity-loading-component-written-on-typescript-for-vue-3/
+- https://vuejsexamples.com/open-source-mevn-stack-blog-template/
+- https://vuejsexamples.com/vuejs-project-for-the-eu-gui-data-visualization/
+- https://vuejsexamples.com/real-estate-pubsub-model-with-vue/
+- https://vuejsexamples.com/todoapp-a-task-management-application-consume-the-jsonplaceholder-api/
+- https://vuejsexamples.com/calculator-app-solution-built-with-vue/
+- https://vuejsexamples.com/simple-crud-app-for-tickets-with-authentification-login/
+- https://vuejsexamples.com/a-basic-application-to-understand-vue-js/
+- https://vuejsexamples.com/movie-app-built-with-vue-and-themoviedb-api/
+- https://vuejsexamples.com/list-of-movies-from-studio-ghibli-made-with-vue/
+- https://vuejsexamples.com/a-simple-todo-list-made-with-vue-3-composition-api-and-vuex-4/
+- https://vuejsexamples.com/todo-app-with-vue/
+- https://vuejsexamples.com/vue-3-component-for-multiple-images-upload-with-preview/
+- https://vuejsexamples.com/inventory-management-vue2-project-with-django-as-backend/
+- https://vuejsexamples.com/a-simple-calculate-app-built-with-vue-3-and-vite/
+- https://vuejsexamples.com/an-e-commerce-project-built-with-vue-js/
+- https://vuejsexamples.com/application-that-provides-weather-information-of-provinces-with-vue-js/
+- https://vuejsexamples.com/chat-service-implemented-with-socket-io-and-vue-js/
+- https://vuejsexamples.com/a-favorite-recipes-app-built-using-vue-js/
+- https://vuejsexamples.com/dashboard-based-on-paper-dashboard-ui-template-vue-router/
+- https://vuejsexamples.com/marvel-characters-built-with-vuejs-3/
+- https://vuejsexamples.com/dialogs-meet-promises-in-vue-3/
+- https://vuejsexamples.com/date-range-picker-component-for-vue-made-without-jquery-dependency/
+- https://vuejsexamples.com/headless-cms-that-runs-off-and-saves-to-a-single-json-file/
+- https://vuejsexamples.com/a-web-music-player-built-with-vue-js/
+- https://vuejsexamples.com/a-machine-learning-repository-which-predicts-the-answer-questions-based-on-the-content-of-a-given-passage/
+- https://vuejsexamples.com/vueform-vite-tailwindcss-3-boilerplate/
+- https://vuejsexamples.com/vue-todo-a-todo-app-made-with-vue-js/
+- https://vuejsexamples.com/travel-agency-web-ui-using-vuejs-and-vuetifyjs/
+- https://vuejsexamples.com/select-a-value-from-a-svg-map-box-built-using-vue-js/
+- https://vuejsexamples.com/wookie-movie-a-movie-catalogue-app-using-vue-js/
+- https://vuejsexamples.com/file-upload-component-is-created-to-help-you-upload-files-using-vuejs-and-ajax/
+- https://vuejsexamples.com/datepicker-component-for-vue-3/
+- https://vuejsexamples.com/headless-search-component-for-vue-and-static-sites-based-on-fuse-js/
+- https://vuejsexamples.com/bitburner-apps-built-with-vue-js/
+- https://vuejsexamples.com/spotify-recently-played-application-using-vue-js/
+- https://vuejsexamples.com/a-simple-todolist-app-built-with-vue2/
+- https://vuejsexamples.com/bee-music-app-developing-with-vue-3-in-vite/
+- https://vuejsexamples.com/vue-movie-search-with-omdb-api/
+- https://vuejsexamples.com/to-do-list-made-with-vue-js/
+
+
+-----------------------------------------------------------+
+- https://github.com/andikaPs/vue-movie?ref=vuejsexamples.com
+- https://github.com/jovimoura/toDo-vue?ref=vuejsexamples.com
+- https://github.com/thuongtruong1009/bee-music?ref=vuejsexamples.com
+- https://github.com/imp2002/TodoList-Vue
+- https://github.com/shorthillstech-com/QNA-TensorFlow-Vue?ref=vuejsexamples.com
+- https://github.com/jiazengp/music?ref=vuejsexamples.com
+- https://github.com/NaoufalElmeskini/vue-js-movie-catalogue?ref=vuejsexamples.com
+- https://github.com/backendpapa/SP01-Treloo-UX?ref=vuejsexamples.com
+- https://github.com/dashpilot/vue-headless-cms?ref=vuejsexamples.com
+- https://github.com/rlemaigre/vue3-promise-dialog?ref=vuejsexamples.com
+- https://github.com/shorthillstech-com/Goggle-placement?ref=vuejsexamples.com
+- https://github.com/abdulsamadayoade/vue-todo?ref=vuejsexamples.com
+- https://github.com/roylans/marvel
+- https://github.com/YunfanXu/Reporters_platform?ref=vuejsexamples.com
+- https://github.com/ricko-v/masak-apa?ref=vuejsexamples.com
+- https://github.com/Inamul2/todo-vue?ref=vuejsexamples.com
+- https://github.com/s1modev/media-upload?ref=vuejsexamples.com
+- https://github.com/mariafrc/vue3-todo-list
+- https://github.com/jefferson-liew/Inventory-Management?ref=vuejsexamples.com
+- https://github.com/hoseinsedaqat/EchShopy
+- https://github.com/roderickSa/crud_ghibli?ref=vuejsexamples.com
+- https://github.com/theejkb/Nuxt-Crud-Auth?ref=vuejsexamples.com
+- https://github.com/tuncAksuna/vue-add-product-application?ref=vuejsexamples.com
+- https://github.com/yusufborucu/appcent-case?ref=vuejsexamples.com
+- https://github.com/LucasR71/Lucastagram
+- https://github.com/Vamsiii6/Real_Estate_Pub-Sub?ref=vuejsexamples.com
+- https://github.com/JuaniSilva/Calc-FEM?ref=vuejsexamples.com
+- https://github.com/dmpb/todo-app-vue?ref=vuejsexamples.com
+- https://github.com/Benlemt/sncf-project?ref=vuejsexamples.com
+- https://github.com/gazi-dis/vue3-todo-withapi?ref=vuejsexamples.com
+- https://github.com/ts-pro/vue-eternal-loading
+- https://github.com/ClaytonMarriel/todolist-vue-js?ref=vuejsexamples.com
+- https://github.com/litys/vuejs-job-sorting?ref=vuejsexamples.com
+- https://github.com/djamelsf/easySNCF?ref=vuejsexamples.com
+- https://github.com/barnoma-soz/tailwind-furniture-design-page?ref=vuejsexamples.com
+- https://github.com/orhanemree/MEVN-Stack-Blog?ref=vuejsexamples.com
+- https://github.com/ZineddineBk09/Private-Chat-with-SocketIO.JS?ref=vuejsexamples.com
+- https://github.com/asynched/vue-todo-list?ref=vuejsexamples.com
+- https://github.com/propanto/laravel-weather-app?ref=vuejsexamples.com
+- https://github.com/mostafa7904/Fun-pricing-page?ref=vuejsexamples.com
+- https://github.com/matdombrock/generative1?ref=vuejsexamples.com
+- https://github.com/Lawndlwd/portfolio?ref=vuejsexamples.com
+- https://github.com/leovoon/vue-budget-app?ref=vuejsexamples.com
+- https://github.com/igdev116/todos-app-v2?ref=vuejsexamples.com
+- https://github.com/priyank-hub/e-commerce-product-page?ref=vuejsexamples.com
+- https://github.com/paulinko/nutri-calc?ref=vuejsexamples.com
+- https://github.com/appwrite/demo-almost-netflix-for-web?ref=vuejsexamples.com
+- https://github.com/snnack123/Scandiweb-Junior-Developer-Test?ref=vuejsexamples.com
+- https://github.com/Darknet17/ticket-system-app?ref=vuejsexamples.com
+- https://github.com/TomSWD/portfolio?ref=vuejsexamples.com
+- https://github.com/charlesw-stripe/vuejs-nation?ref=vuejsexamples.com
+- https://github.com/sonerggv2/vue-invoice-app?ref=vuejsexamples.com
+- https://github.com/berkinduz/quickie-search-movie-vue3?ref=vuejsexamples.com
+- https://github.com/berkinduz/ip-tracking-app-vue3?ref=vuejsexamples.com
+- https://github.com/leonidgainar/vue-weather-pwa?ref=vuejsexamples.com
+- https://github.com/NiccoCorsini/todo-app?ref=vuejsexamples.com
+- https://github.com/shadrqen/writeray?ref=vuejsexamples.com
+- https://github.com/yazan-alnugnugh/laravel-datatable
+- https://github.com/jaykchen/vueForm?ref=vuejsexamples.com
+- https://github.com/Meldiron/appwrite-cms?ref=vuejsexamples.com
+- https://github.com/erasebegin/nexus-point-cards?ref=vuejsexamples.com
+- https://github.com/RSurya99/nefa?ref=vuejsexamples.com
+- https://github.com/JpedroSnts/TMovieDB?ref=vuejsexamples.com
