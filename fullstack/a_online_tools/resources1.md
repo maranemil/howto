@@ -295,5 +295,17 @@ https://www.unixtimestamp.com/
 
 https://crontab.guru/
 
-#
+### online search
 
+- https://startpage.com/
+- https://duckduckgo.com/
+- https://metager.de/
+- https://searx.me/
+- https://www.qwant.com/
+- https://www.mojeek.com/
+- https://yacy.net/
+- https://search.brave.com/
+
+### learn
+
+https://brilliant.org/
