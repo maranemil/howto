@@ -1,7 +1,7 @@
 
 
-##########################################################
-
+######
+```
 Building electron app on ubuntu fails with 'Permission denied'
 
 sh: 1: electron-builder: Permission denied
@@ -10,26 +10,26 @@ npm ERR! code 126
 npm ERR! code E404
 npm ERR! 404 Not Found - GET https://registry.npmjs.org/install-app-deps - Not found
 npm ERR! 404  'install-app-deps@*' is not in the npm registry.
+```
+######
 
-##########################################################
+- https://www.stefanjudis.com/today-i-learned/prevent-npm-install-for-not-supported-node-js-versions/
+- https://github.com/npm/cli/issues/2728
+- https://stackoverflow.com/questions/53592389/building-electron-app-on-ubuntu-fails-with-permission-denied
+- https://github.com/electron/electron-quick-start/issues/81
+- https://github.com/electron/electron/issues/11755
+- https://www.npmjs.com/package/electron-builder
+- https://unix.stackexchange.com/questions/530574/eacces-permission-denied-when-using-sudo
+- https://docs.npmjs.com/common-errors
+- https://stackoverflow.com/questions/47247443/electron-js-install-error-error-eacces-permission-denied
 
-https://www.stefanjudis.com/today-i-learned/prevent-npm-install-for-not-supported-node-js-versions/
-https://github.com/npm/cli/issues/2728
-https://stackoverflow.com/questions/53592389/building-electron-app-on-ubuntu-fails-with-permission-denied
-https://github.com/electron/electron-quick-start/issues/81
-https://github.com/electron/electron/issues/11755
-https://www.npmjs.com/package/electron-builder
-https://unix.stackexchange.com/questions/530574/eacces-permission-denied-when-using-sudo
-https://docs.npmjs.com/common-errors
-https://stackoverflow.com/questions/47247443/electron-js-install-error-error-eacces-permission-denied
-
+```
 rm package-lock.json
 npm i
 npm install
 
 How to prevent npm install with an unsupported Node.js version
 engine-strict=true
-
 
 node -v
 npm -v
@@ -51,27 +51,26 @@ chmod +x "$(npm bin)/build"
 
 # sudo npm i -g -D
 sudo npm install npm@latest -g
+```
 
-##########################################################
-
+######
+```
 sh: 1: vue-cli-service: Permission denied · Issue #5210 - GitHub
 > vue-cli-service serve
 sh: 1: vue-cli-service: Permission denied
 npm ERR! 404 Not Found - GET https://registry.npmjs.org/vue-cli-service - Not found
 npm ERR! command sh -c electron-builder install-app-deps
+```
+######
 
-##########################################################
+- https://www.npmjs.com/package/@vue/cli-service
+- https://github.com/vuejs/vue-cli/issues/5210
+- https://github.com/vuejs/vue-cli/issues/4004
+- https://github.com/electron/electron/issues/11755
+- https://www.npmjs.com/package/@vue/cli-service
+- https://www.npmjs.com/package/@vue/cli-service-global
 
-https://www.npmjs.com/package/@vue/cli-service
-https://www.npmjs.com/package/@vue/cli-service
-
-https://github.com/vuejs/vue-cli/issues/5210
-https://github.com/vuejs/vue-cli/issues/4004
-https://github.com/electron/electron/issues/11755
-https://www.npmjs.com/package/@vue/cli-service
-https://www.npmjs.com/package/@vue/cli-service-global
-
-
+```
 rm -rf node_modules/
 npm install
 
@@ -90,47 +89,43 @@ npm install
 
 [ OK ]
 chmod -R a+x node_modules
+```
 
-
-#############################################################
-
+######
+```
 npm ERR! code 1
 npm ERR! path /home/user/PhpstormProjects/proj/source/node_modules/electron
 npm ERR! command failed
 npm ERR! command sh -c node install.js
-npm ERR! Error: EACCES: permission denied, stat '/root/.cache/electron/8c5c987a73913c5646db497de9f6f9676033aa1586938d0d2c9cac8ac37f7e20/electron-v15.3.2-linux-x64.zip'
+npm ERR! Error: EACCES: permission denied, stat '/root/.cache/electron/8cc9cac8ac37f7e20/electron-v15.3.2-linux-x64.zip'
 Error: EACCES: permission denied, stat electron-v15.3.6-linux-x64.zip
-
-#############################################################
-
+```
+######
+```
 node -v
 npm -v
 
 [ OK ]
 sudo npm install -g electron --unsafe-perm=true
 sudo npm update
+```
 
+######
+### Error: Cannot find module 'vue-cli-plugin-electron-builder'
+######
 
-#############################################################
-
-Error: Cannot find module 'vue-cli-plugin-electron-builder'
-
-#############################################################
-
-https://github.com/nklayman/vue-cli-plugin-electron-builder/issues/1056
-https://www.npmjs.com/package/vue-cli-plugin-electron-builder
-https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/guide.html#web-workers
+- https://github.com/nklayman/vue-cli-plugin-electron-builder/issues/1056
+- https://www.npmjs.com/package/vue-cli-plugin-electron-builder
+- https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/guide.html#web-workers
 
 [OK ]
 vue add electron-builder
 
 
-#############################################################
-
-npm run serve
-
-#############################################################
-
+######
+### npm run serve
+######
+```
 > vue-cli-service serve
 
 INFO  Starting development server...
@@ -155,30 +150,32 @@ sudo npm run dev
 sudo npm install webpack@4.39.3 --save
 
 sudo npm install @vue/cli-plugin-router
+```
 
-#############################################################
 
-Error: Cannot find module '@vue/cli-plugin-router'
-Error: Cannot find module '@vue/cli-plugin-router'
+######
+#
+### Error: Cannot find module '@vue/cli-plugin-router'
+### Error: Cannot find module '@vue/cli-plugin-router'
+#
+### npm ERR! notarget No matching version found for @vue/cli-plugin-router@3.12.1.
+######
 
-npm ERR! notarget No matching version found for @vue/cli-plugin-router@3.12.1.
+- https://www.codegrepper.com/code-examples/shell/npm+install+vue+router
+- https://router.vuejs.org/installation.html
+- https://www.reddit.com/r/vuejs/comments/7g8qnj/vuecli_cannot_find_modules/
+- https://www.npmjs.com/package/@vue/cli-plugin-router
+- https://stackoverflow.com/questions/65342453/can-not-install-vue-cli-no-matching-version-found
+- https://bestofvue.com/repo/nklayman-vue-cli-plugin-electron-builder-vuejs-vue-cli-3-plugins
+- https://vuetifyjs.com/en/getting-started/installation/#vue-ui-install
+- https://vueschool.io/articles/vuejs-tutorials/how-to-migrate-from-vue-cli-to-vite/
+- https://docs.npmjs.com/common-errors
+- https://gemfury.com/help/npm-registry/
+- https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally
+- https://spack.readthedocs.io/en/latest/package_list.html
+- https://cli.vuejs.org/config/
 
-#############################################################
-
-https://www.codegrepper.com/code-examples/shell/npm+install+vue+router
-https://router.vuejs.org/installation.html
-https://www.reddit.com/r/vuejs/comments/7g8qnj/vuecli_cannot_find_modules/
-https://www.npmjs.com/package/@vue/cli-plugin-router
-https://stackoverflow.com/questions/65342453/can-not-install-vue-cli-no-matching-version-found
-https://bestofvue.com/repo/nklayman-vue-cli-plugin-electron-builder-vuejs-vue-cli-3-plugins
-https://vuetifyjs.com/en/getting-started/installation/#vue-ui-install
-https://vueschool.io/articles/vuejs-tutorials/how-to-migrate-from-vue-cli-to-vite/
-https://docs.npmjs.com/common-errors
-https://gemfury.com/help/npm-registry/
-https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally
-https://spack.readthedocs.io/en/latest/package_list.html
-https://cli.vuejs.org/config/
-
+```
 sudo npm i @vue/cli-plugin-babel
 sudo npm install vue-router
 sudo npm install --save vue-router@next
@@ -204,13 +201,16 @@ which npm
 npm update -g @vue/cli [ok]
 
 vue --version # @vue/cli 4.5.15
+```
+
+```
 # vue create project-name
-# vue create my-project --preset vuetifyjs/vue-cli-preset-vuetify
 # vue create my-project --preset vuetifyjs/vue-cli-preset-vuetify
 # npm init react-app my-app
 # sudo npm install -g @angular/cli
 # npm install -g jshint
-
+```
+```
 sudo npm i -S vue-router@3
 sudo npm i -S vue-router@4
 npm i gulp-resource@1.0.39
@@ -236,21 +236,22 @@ npm install -g @vue/cli
 
 # npm login
 # npm config ls -l
+```
 
 
 
-#############################################################
+######
+#
+### Installation vue
+######
 
-Installation vue
+- https://cli.vuejs.org/guide/installation.html
+- https://cli.vuejs.org/guide/plugins-and-presets.html#plugins
+- https://router.vuejs.org/
+- https://github.com/electron/electron/issues/11755
+- https://github.com/electron/electron/blob/8a4c76d6558cffa53400e54317f0f9b1da22f7ef/docs/tutorial/installation.md#troubleshooting
 
-#############################################################
-
-https://cli.vuejs.org/guide/installation.html
-https://cli.vuejs.org/guide/plugins-and-presets.html#plugins
-https://router.vuejs.org/
-https://github.com/electron/electron/issues/11755
-https://github.com/electron/electron/blob/8a4c76d6558cffa53400e54317f0f9b1da22f7ef/docs/tutorial/installation.md#troubleshooting
-
+```
 sudo npm install -g @vue/cli
 vue --version
 sudo npm update -g @vue/cli
@@ -273,9 +274,9 @@ npm install --verbose electron
 
 
 sudo npm install --loglevel error @vue/cli-plugin-router@~4.5.0 -D --legacy-peer-deps
+```
 
-https://www.linguee.com/german-english/translation/eigene.html
-https://www.linguee.de/deutsch-englisch/uebersetzung/zum+laufen+zu+bringen.html
+
 
 
 
