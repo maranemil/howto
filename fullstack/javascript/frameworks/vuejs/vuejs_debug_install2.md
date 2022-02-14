@@ -1,10 +1,10 @@
 - 
 - 
-- https://github.com/facebook/create-react-app/issues/11174
-- https://stackoverflow.com/questions/32426601/how-can-i-completely-uninstall-nodejs-npm-and-node-in-ubuntu
 - https://askubuntu.com/questions/786015/how-to-remove-nodejs-from-ubuntu-16-04
-- https://stackoverflow.com/questions/11177954/how-do-i-completely-uninstall-node-js-and-reinstall-from-beginning-mac-os-x?rq=1
 - https://docs.npmjs.com/cli/v8/commands/npm-update
+- https://github.com/facebook/create-react-app/issues/11174
+- https://stackoverflow.com/questions/11177954/how-do-i-completely-uninstall-node-js-and-reinstall-from-beginning-mac-os-x?rq=1
+- https://stackoverflow.com/questions/32426601/how-can-i-completely-uninstall-nodejs-npm-and-node-in-ubuntu
 
 ```
 node v12.22.5
@@ -258,15 +258,14 @@ npm uninstall --save-dev angular-cli
 ```
 -------------------
 
-- https://www.tabnine.com/code/javascript/modules/fs%2Fpromises
+- https://docs.npmjs.com/cli/v8/commands/npm-install
+- https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
+- https://gemfury.com/help/npm-registry/
 - https://security.snyk.io/vuln/npm:diff:20180305
 - https://www.npmjs.com/package/@vue/cli-plugin-router
 - https://www.npmjs.com/package/@vue/cli-plugin-router/v/4.5.14
-- https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
-- https://docs.npmjs.com/cli/v8/commands/npm-install
 - https://www.npmjs.com/package/ts-node
-- https://gemfury.com/help/npm-registry/
-- 
+- https://www.tabnine.com/code/javascript/modules/fs%2Fpromises
 -------------------
 
 - https://github.com/npm/npm/issues/16807
@@ -324,20 +323,20 @@ composer require owasp/csrf-protector-php
 ### npm install vuejs-validators
 ###
 
-- https://www.npmjs.com/package/vuejs-validators
-- https://vuetifyjs.com/en/components/forms/#vuelidate
 - https://bootstrap-vue.org/docs/reference/validation
-- https://vueschool.io/lessons/vuejs-form-validation-diy
+- https://dev.to/aaronksaunders/using-vue3-and-vuelidate-for-forms-and-form-validation-4aa1
 - https://v2.vuejs.org/v2/cookbook/form-validation.html?redirect=true
-- https://vuejsdevelopers.com/2018/08/27/vue-js-form-handling-vuelidate/
 - https://vee-validate.logaretm.com/v2/guide/rules.html
 - https://vee-validate.logaretm.com/v2/guide/rules.html#numeric
+- https://vuejsdevelopers.com/2018/08/27/vue-js-form-handling-vuelidate/
 - https://vuejsexamples.com/a-form-validation-component-for-vue-3/
-- https://dev.to/aaronksaunders/using-vue3-and-vuelidate-for-forms-and-form-validation-4aa1
-- https://www.positronx.io/vue-js-forms-tutorial-form-validation-in-vue-with-vuelidate/
-- https://vuelidate.js.org/
 - https://vuelidate-next.netlify.app/custom_validators.html
+- https://vuelidate.js.org/
+- https://vueschool.io/lessons/vuejs-form-validation-diy
+- https://vuetifyjs.com/en/components/forms/#vuelidate
 - https://www.npmjs.com/package/vue-echo-laravel
+- https://www.npmjs.com/package/vuejs-validators
+- https://www.positronx.io/vue-js-forms-tutorial-form-validation-in-vue-with-vuelidate/
 ----
 
 https://jsfiddle.net/gregpeden/hmcLdc5a/
@@ -355,46 +354,46 @@ import {email, required, numeric} from "vuelidate/lib/validators";
 ```
 -------------------------------------
 
+- https://blog.logrocket.com/form-validation-in-vue-with-vuelidate/
+- https://dzone.com/articles/validation-forms-in-vuejs-apps-using-vuelidate-lib
+- https://github.com/happyDemon/vue-echo
+- https://github.com/vuelidate/vuelidate/issues/136
+- https://learnvue.co/2020/01/getting-smart-with-vue-form-validation-vuelidate-tutorial/
+- https://medium.com/mh-mohon/create-real-time-component-using-laravel-echo-pusher-vue-js-b6ac35a0f13b
+- https://prismic.io/docs/technologies/vue-template-content
+- https://router.vuejs.org/guide/advanced/data-fetching.html#fetching-after-navigation
+- https://stackoverflow.com/questions/40714319/how-to-call-a-vue-js-function-on-page-load
+- https://stackoverflow.com/questions/52917019/vue-js-vuelidate-custom-validation
+- https://stackoverflow.com/questions/67567141/how-to-validate-an-input-field-in-vue3-using-regex
+- https://v2.vuejs.org/v2/cookbook/form-validation.html?redirect=true
+- https://vuejs.org/guide/components/slots.html#scoped-slots
 - https://vuejs.org/guide/extras/reactivity-in-depth.html#how-reactivity-works-in-vue
 - https://vuejs.org/guide/introduction.html
-- https://vuejs.org/guide/quick-start.html
 - https://vuejs.org/guide/introduction.html#what-is-vue
-- https://router.vuejs.org/guide/advanced/data-fetching.html#fetching-after-navigation
-- https://vuejs.org/guide/components/slots.html#scoped-slots
-- https://www.tutorialsplane.com/vue-js-get-current-timestamp/
-- https://prismic.io/docs/technologies/vue-template-content
-- https://www.cloudhadoop.com/vuejs-current-date-time/
-- https://github.com/happyDemon/vue-echo
-- https://medium.com/mh-mohon/create-real-time-component-using-laravel-echo-pusher-vue-js-b6ac35a0f13b
-- https://stackoverflow.com/questions/40714319/how-to-call-a-vue-js-function-on-page-load
-- https://v2.vuejs.org/v2/cookbook/form-validation.html?redirect=true
-- https://vuelidate.js.org/
-- https://blog.logrocket.com/form-validation-in-vue-with-vuelidate/
-- https://vueschool.io/lessons/vuejs-form-validation-diy
-- https://stackoverflow.com/questions/67567141/how-to-validate-an-input-field-in-vue3-using-regex
-- https://learnvue.co/2020/01/getting-smart-with-vue-form-validation-vuelidate-tutorial/
-- https://www.positronx.io/vue-js-forms-tutorial-form-validation-in-vue-with-vuelidate/
-- https://github.com/vuelidate/vuelidate/issues/136
-- https://www.youtube.com/watch?v=2BR6Vvjw3wQ
+- https://vuejs.org/guide/quick-start.html
 - https://vuelidate-next.netlify.app/
-- https://www.digitalocean.com/community/tutorials/vuejs-model-form-validation-vuelidate
-- https://dzone.com/articles/validation-forms-in-vuejs-apps-using-vuelidate-lib
-- https://stackoverflow.com/questions/52917019/vue-js-vuelidate-custom-validation
 - https://vuelidate-next.netlify.app/validators.html#numeric
+- https://vuelidate.js.org/
+- https://vueschool.io/lessons/vuejs-form-validation-diy
+- https://www.cloudhadoop.com/vuejs-current-date-time/
+- https://www.digitalocean.com/community/tutorials/vuejs-model-form-validation-vuelidate
+- https://www.positronx.io/vue-js-forms-tutorial-form-validation-in-vue-with-vuelidate/
+- https://www.tutorialsplane.com/vue-js-get-current-timestamp/
+- https://www.youtube.com/watch?v=2BR6Vvjw3wQ
 
 ---
 
-- https://v2.vuejs.org/v2/guide/events.html?redirect=true
-- https://github.com/vuejs/devtools
+- https://bootstrap-vue.org/docs/components/alert
 - https://devtools.vuejs.org/plugin/plugins-guide.html
+- https://github.com/vuejs/devtools
 - https://router.vuejs.org/guide/advanced/navigation-failures.html#detecting-navigation-failures
+- https://v2.vuejs.org/v2/guide/events.html?redirect=true
 - https://v2.vuejs.org/v2/guide/events.html?redirect=true#Key-Modifiers
+- https://v2.vuejs.org/v2/guide/forms.html
+- https://vuejs.org/guide/essentials/forms.html
+- https://vuejs.org/guide/essentials/forms.html#checkbox
 - https://vuejsexamples.com/simple-alert-for-vue-js/
 - https://vuejsexamples.com/tag/alert/
-- https://bootstrap-vue.org/docs/components/alert
-- https://vuejs.org/guide/essentials/forms.html
-- https://v2.vuejs.org/v2/guide/forms.html
-- https://vuejs.org/guide/essentials/forms.html#checkbox
 
 
 
@@ -416,8 +415,8 @@ npx vue-cli-service serve
 ### timestamp
 ######
 
-- https://www.positronx.io/vue-js-get-current-date-time-and-timestamp-tutorial/
 - https://stackoverflow.com/questions/57249466/getting-current-time-and-date-in-vue-js
+- https://www.positronx.io/vue-js-get-current-date-time-and-timestamp-tutorial/
 - https://www.tutorialsplane.com/vue-js-get-current-timestamp/
 
 ```

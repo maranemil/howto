@@ -13,15 +13,15 @@ npm ERR! 404  'install-app-deps@*' is not in the npm registry.
 ```
 ######
 
-- https://www.stefanjudis.com/today-i-learned/prevent-npm-install-for-not-supported-node-js-versions/
-- https://github.com/npm/cli/issues/2728
-- https://stackoverflow.com/questions/53592389/building-electron-app-on-ubuntu-fails-with-permission-denied
+- https://docs.npmjs.com/common-errors
 - https://github.com/electron/electron-quick-start/issues/81
 - https://github.com/electron/electron/issues/11755
-- https://www.npmjs.com/package/electron-builder
-- https://unix.stackexchange.com/questions/530574/eacces-permission-denied-when-using-sudo
-- https://docs.npmjs.com/common-errors
+- https://github.com/npm/cli/issues/2728
 - https://stackoverflow.com/questions/47247443/electron-js-install-error-error-eacces-permission-denied
+- https://stackoverflow.com/questions/53592389/building-electron-app-on-ubuntu-fails-with-permission-denied
+- https://unix.stackexchange.com/questions/530574/eacces-permission-denied-when-using-sudo
+- https://www.npmjs.com/package/electron-builder
+- https://www.stefanjudis.com/today-i-learned/prevent-npm-install-for-not-supported-node-js-versions/
 
 ```
 rm package-lock.json
@@ -63,10 +63,9 @@ npm ERR! command sh -c electron-builder install-app-deps
 ```
 ######
 
-- https://www.npmjs.com/package/@vue/cli-service
-- https://github.com/vuejs/vue-cli/issues/5210
-- https://github.com/vuejs/vue-cli/issues/4004
 - https://github.com/electron/electron/issues/11755
+- https://github.com/vuejs/vue-cli/issues/4004
+- https://github.com/vuejs/vue-cli/issues/5210
 - https://www.npmjs.com/package/@vue/cli-service
 - https://www.npmjs.com/package/@vue/cli-service-global
 
@@ -161,19 +160,19 @@ sudo npm install @vue/cli-plugin-router
 ### npm ERR! notarget No matching version found for @vue/cli-plugin-router@3.12.1.
 ######
 
-- https://www.codegrepper.com/code-examples/shell/npm+install+vue+router
-- https://router.vuejs.org/installation.html
-- https://www.reddit.com/r/vuejs/comments/7g8qnj/vuecli_cannot_find_modules/
-- https://www.npmjs.com/package/@vue/cli-plugin-router
-- https://stackoverflow.com/questions/65342453/can-not-install-vue-cli-no-matching-version-found
 - https://bestofvue.com/repo/nklayman-vue-cli-plugin-electron-builder-vuejs-vue-cli-3-plugins
-- https://vuetifyjs.com/en/getting-started/installation/#vue-ui-install
-- https://vueschool.io/articles/vuejs-tutorials/how-to-migrate-from-vue-cli-to-vite/
-- https://docs.npmjs.com/common-errors
-- https://gemfury.com/help/npm-registry/
-- https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally
-- https://spack.readthedocs.io/en/latest/package_list.html
 - https://cli.vuejs.org/config/
+- https://docs.npmjs.com/common-errors
+- https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally
+- https://gemfury.com/help/npm-registry/
+- https://router.vuejs.org/installation.html
+- https://spack.readthedocs.io/en/latest/package_list.html
+- https://stackoverflow.com/questions/65342453/can-not-install-vue-cli-no-matching-version-found
+- https://vueschool.io/articles/vuejs-tutorials/how-to-migrate-from-vue-cli-to-vite/
+- https://vuetifyjs.com/en/getting-started/installation/#vue-ui-install
+- https://www.codegrepper.com/code-examples/shell/npm+install+vue+router
+- https://www.npmjs.com/package/@vue/cli-plugin-router
+- https://www.reddit.com/r/vuejs/comments/7g8qnj/vuecli_cannot_find_modules/
 
 ```
 sudo npm i @vue/cli-plugin-babel
@@ -281,9 +280,32 @@ sudo npm install --loglevel error @vue/cli-plugin-router@~4.5.0 -D --legacy-peer
 
 
 
+### play-code playground vue-js
+
+- https://bootstrap-vue.org/play
+- https://codepen.io/dinsmore/pen/pyGJMd
+- https://codepen.io/jgunnison/pen/pgXomz
+- https://embed.plnkr.co/
+- https://embed.plnkr.co/
+- https://jsfiddle.net/boilerplate/vue
+- https://jsfiddle.net/chrisvfritz/50wL7mdz/
+- https://jsfiddle.net/gregpeden/hmcLdc5a/
+- https://playcode.io/vue/
+- https://sfc.vuejs.org/
 
 
 
+
+
+------------------------
+- https://app.netlify.com/sites/vue-sfc-playground/deploys
+- https://github.com/vuesomedev/vue-3-playground
+- https://gitlab.com/gitlab-de/playground/5-min-prod-app-vuejs
+- https://madewithvuejs.com/code-playground
+- https://nativescript-vue.org/en/docs/getting-started/playground-tutorial/
+- https://vue-view.com/nativescript-vue-js-tutorial-make-a-native-vue-js-app/
+- https://vuejsexamples.com/interactive-sandox-playground-for-vue-components/
+- https://vuejsfeed.com/blog/playcode-fast-javascript-playground-created-using-vue-js-vuex-vue-router
 
 
 
