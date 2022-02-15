@@ -12,6 +12,7 @@ https://github.com/vuejs/vue-cli
 https://www.npmjs.com/package/jsdom-global
 https://github.com/rstacruz/jsdom-global
 https://github.com/modosc/global-jsdom
+https://v2.vuejs.org/v2/guide/forms.html
 ```
 
 ```
