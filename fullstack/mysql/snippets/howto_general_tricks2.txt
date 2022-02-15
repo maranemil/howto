@@ -178,3 +178,50 @@ GROUP BY year,country
 # SELECT list is not in GROUP BY clause and contains nonaggregated column
 # GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
 
+####################################################
+MYSQL select cases
+####################################################
+
+https://stackoverflow.com/questions/9648481/multiple-if-statements-on-mysql/9648598
+https://www.w3resource.com/mysql/control-flow-functions/if-function.php
+http://komlenic.com/254/mysql-nested-if-in-select-queries/
+https://www.mysqltutorial.org/mysql-if-statement/
+https://mariadb.com/kb/en/if-function/
+https://mariadb.com/kb/en/if/
+
+--------------------------------------------------------------
+https://www.db-fiddle.com/
+http://sqlfiddle.com/#!9/1bb5a9
+
+CREATE TABLE parent (  id INT,  name VARCHAR(30) );
+INSERT INTO parent (id,name) VALUES (1,'one');
+INSERT INTO parent (id,name) VALUES (2,'two');
+INSERT INTO parent (id,name) VALUES (3,'three');
+
+CREATE TABLE child1 (  id INT, parent INT, name VARCHAR(30));
+INSERT INTO child1 (id,parent,name) VALUES (1,1,'set');
+-- INSERT INTO child1 (id,parent,name) VALUES (2,1,'unset');
+
+CREATE TABLE child2 (  id INT, parent INT, name VARCHAR(30));
+INSERT INTO child2 (id,parent,name) VALUES (1,2,'set');
+INSERT INTO child2 (id,parent,name) VALUES (2,3,'unset');
+INSERT INTO child2 (id,parent,name) VALUES (2,3,'unset');
+
+
+
+SELECT
+parent.id,
+parent.name,
+(SELECT
+ 	CASE
+ 		WHEN child1.name='set' THEN child1.name
+ 		WHEN child2.name='set' THEN child2.name
+ 		ELSE 'NO'
+	END
+) AS childname
+
+FROM parent
+LEFT JOIN child1 ON child1.parent = parent.id
+LEFT JOIN child2 ON child2.parent = parent.id
+WHERE 1
+GROUP BY parent.id, parent.name, childname
