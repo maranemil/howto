@@ -275,3 +275,24 @@ https://entwickler.de/angular/to-dos-mit-vuejs/
 </style>
 ```
 
+
+------------------------
+### vuejs links
+
+```
+https://forum.vuejs.org/t/how-create-a-working-link-in-a-method/67132
+https://router.vuejs.org/guide/advanced/extending-router-link.html
+https://vuejs.org/guide/essentials/component-basics.html#using-a-component
+https://reactgo.com/vue-open-link-new-tab/
+https://stackoverflow.com/questions/50633001/vuejs-vue-router-linking-an-external-website
+
+intern link
+-------------------
+<router-link :to="'club/' + team.id">{{ team.team }}</router-link>
+
+extern link
+-------------------
+<a :href="'//' + websiteUrl" target="_blank">
+  {{ url }}
+</a>
+```
