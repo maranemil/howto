@@ -313,3 +313,10 @@ https://brilliant.org/
 ### online writing analysing tool
 
 https://hemingwayapp.com/
+
+
+### Calculate String Length
+
+https://onlinestringtools.com/find-string-length
+https://string-functions.com/length.aspx
+https://www.browserling.com/tools/text-length

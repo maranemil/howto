@@ -168,8 +168,21 @@ var_dump(bin2hex(openssl_random_pseudo_bytes(12)));
 ```
 
 
+### Simulate exception
+```
+https://www.w3schools.com/php/php_exception.asp
 
+//create function with an exception
+function checkNum($number) {
+  if($number>1) {
+    throw new Exception("Value must be 1 or below");
+  }
+  return true;
+}
 
+//trigger exception
+checkNum(2);
+```
 
 
 

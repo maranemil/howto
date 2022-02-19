@@ -237,7 +237,48 @@ https://developers.docusign.com/docs/esign-rest-api/sdk-tools/php/auth/
 - https://hotexamples.com/examples/-/DB/adodb/php-db-adodb-method-examples.html
 - https://adodb.org/dokuwiki/doku.php?id=v5:userguide:active_record&s[]=get&s[]=all
 
+https://adodb.org/dokuwiki/doku.php?id=v5:userguide:error_handling
+https://github.com/ADOdb/ADOdb
+https://adodb.org/dokuwiki/doku.php
+https://github.com/ADOdb/ADOdb/releases/tag/v5.22.0
+
+### monolog
+
+https://github.com/Seldaek/monolog
+https://stackify.com/php-monolog-tutorial/
+http://seldaek.github.io/monolog/doc/01-usage.html
+https://symfony.com/doc/current/logging.html
+https://zetcode.com/php/monolog/
+https://hotexamples.com/examples/-/Monolog%255CLogger/pushHandler/php-monolog%255clogger-pushhandler-method-examples.html
+https://hotexamples.com/examples/-/Monolog%255CLogger/-/php-monolog%255clogger-class-examples.html
+https://betterstack.com/community/guides/logging/php/how-to-start-logging-with-monolog
+https://www.loggly.com/ultimate-guide/php-logging-libraries/
+https://documentation.solarwinds.com/en/success_center/loggly/content/admin/php-monolog.htm
 
 
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+
+// create a log channel
+$log = new Logger('name');
+$log->pushHandler(new StreamHandler('path/to/your.log', Logger::WARNING));
+
+// add records to the log
+$log->warning('Foo');
+$log->error('Bar');
+
+
+$logger = new MonologLogger('channel-name');
+$app->container->logger = $logger;
+
+require_once(DIR.'/vendor/autoload.php');
+use MonologLogger;
+use MonologHandlerStreamHandler;
+
+$logger = new Logger('channel-name');
+$logger->pushHandler(new StreamHandler(DIR.'/app.log', Logger::DEBUG));
+$logger->info('This is a log! ^_^ ');
+$logger->warning('This is a log warning! ^_^ ');
+$logger->error('This is a log error! ^_^ ');
 
 

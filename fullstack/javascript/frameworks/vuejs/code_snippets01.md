@@ -500,6 +500,13 @@ https://www.w3docs.com/snippets/vue-js/how-to-properly-watch-for-nested-data.htm
 ```
 
 
+### await
+```
+https://router.vuejs.org/guide/advanced/navigation-failures.html
+
+await router.push('/my-profile')
+this.isMenuOpen = false
+```
 
 
 
