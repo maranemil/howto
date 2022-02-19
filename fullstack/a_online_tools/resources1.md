@@ -309,3 +309,7 @@ https://crontab.guru/
 ### learn
 
 https://brilliant.org/
+
+### online writing analysing tool
+
+https://hemingwayapp.com/
