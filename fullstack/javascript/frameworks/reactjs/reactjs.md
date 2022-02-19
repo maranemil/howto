@@ -138,4 +138,7 @@ npm install --save-dev babel-loader
 npm install --save-dev @babel/core @babel/preset-react
 ```
 
+### react
 
+- https://www.freecodecamp.org/news/vscode-react-setup/
+https://css-tricks.com/node-javascript-compared-to-javascript/
