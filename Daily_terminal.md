@@ -413,5 +413,14 @@ prettify json data
 jq . data_zip.json > data.json
 ```
 
-
+######
+### Browser Plugins
+######
+```
+Ghostery
+Privacy Badger
+uBlock Origin
+DuckDuckGo
+NoScript
+```
 
