@@ -186,6 +186,18 @@ checkNum(2);
 
 
 
+### mysql_real_escape_string FIX
+```
+Warning
+This extension was deprecated in PHP 5.5.0, and it was removed in PHP 7.0.0
+
+To set this mode for the current connection, enter the following SQL statement:
+
+SET sql_mode='NO_BACKSLASH_ESCAPES';
+You can also set the mode globally for all clients:
+
+SET GLOBAL sql_mode='NO_BACKSLASH_ESCAPES';
+```
 
 
 

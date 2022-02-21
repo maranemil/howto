@@ -504,3 +504,69 @@ Is there a command to undo git init?
 https://stackoverflow.com/questions/3212459/is-there-a-command-to-undo-git-init
 
 rm -rf .git
+
+
+
+
+###########################################################################
+How to stack a second pull request on top of an existing one before either are accepted? Stacked pull
+###########################################################################
+
+
+https://stackoverflow.com/questions/39662798/how-to-stack-a-second-pull-request-on-top-of-an-existing-one-before-either-are-a
+https://blog.logrocket.com/using-stacked-pull-requests-in-github/
+https://docs.github.com/en/codespaces/overview
+
+If your second change absolutely depend on the first one, then... yes.
+
+That being said, you should resolve PR A first, meaning the maintainer of the original
+repo should evaluate, accept and merge your first PR.
+
+In the meantime, you can make a new branch for B, based on A, and push that
+branch to your fork, but you should not make a new PR before the first is resolved.
+Especially if the first PR is rejected.
+
+In the OP's case:
+
+I ended up treating all my stacked changes as one pull request and if they want to review
+sensibly they could click into each commit one by one
+
+That makes sense when all those changes can be reviewed as one big new evolution.
+The best practice recommends small incremental changes but in this instance, adding commit
+to an existing PR (since, indeed, there is no way to "stack PR") is the way
+to move forward with the development process.
+
+stacked pull requests
+-----------------------------------
+When and why should you use stacked PRs?
+TL;DR:
+
+To split large PRs
+To share a piece of code between multiple feature branches
+To make it easy for two people to work on the same feature
+
+How to stack pull requests
+----------------------------
+git status # we are on master
+On branch master
+
+$ git checkout -b ts-setup # checkout from master
+$ npm i -D typescript && npx tsc --init
+$ git add . && git commit -m 'Setup TypeScript'
+$ git push -u origin ts-setup
+
+
+git status
+On branch ts-setup
+----------------------------
+$ git checkout -b migrate-components # checkout from ts-setup
+$ mv components/Button.jsx components/Button.tsx
+$ git add . && git commit -m 'Migrate button to TS'
+$ git push -u origin migrate-components
+
+
+Splitting an existing large PR into a stack of PRs
+----------------------------
+git checkout migrate-to-firebase
+$ git reset --soft develop
+$ git restore --staged .
