@@ -309,3 +309,56 @@ sudo npm install --loglevel error @vue/cli-plugin-router@~4.5.0 -D --legacy-peer
 
 
 
+
+### slots
+```
+vue.runtime.esm.js?2b0e:619 [Vue warn]: 
+Error in render: "TypeError: Cannot read property 'find' of undefined"
+```
+
+- https://vuejs.org/guide/components/slots.html
+- https://v2.vuejs.org/v2/guide/components-slots.html#Scoped-Slots
+- https://vuejs.org/guide/essentials/component-basics.html
+- https://www.smashingmagazine.com/2019/07/using-slots-vue-js/
+- https://medium.com/binarcode/understanding-scoped-slots-in-vue-js-db5315a42391
+- https://www.bezkoder.com/vue-v-slot/
+- https://dev.to/suniljoshi19/understanding-slot-in-vue-js-1j7p
+- https://stackoverflow.com/questions/57806610/how-to-use-slot-scope-correctly-within-vuejs-2-5-x
+- https://stackoverflow.com/questions/67926696/vue-runtime-esm-js2b0e619-vue-warn-error-in-render-typeerror-cannot-read
+- https://stackoverflow.com/questions/46106037/vuex-computed-property-name-was-assigned-to-but-it-has-no-setter
+
+-----------------------------------
+
+### Fix – Vuex computed property was assigned to, but it has no setter
+
+- https://codesource.io/fix-vuex-computed-property-was-assigned-to-but-it-has-no-setter/###
+- https://developpaper.com/question/computed-property-route-was-assigned-to-but-it-has-no-setter/
+- https://laracasts.com/discuss/channels/vue/computed-property-profit-was-assigned-to-but-it-has-no-setter
+- https://github.com/vuejs/vue/issues/6078
+- https://segmentfault.com/q/1010000022067653/a-1020000022073936
+--------------------------------------------
+
+### i18n gender npm install i18n-js
+
+- https://github.com/atapas/i18n-js-npm
+- https://github.com/meedan/i18n-translate-json
+- https://github.com/ruby-i18n/i18n/blob/master/lib/i18n.rb
+- https://github.com/aimeos/ai-client-html/issues/105
+- https://stackoverflow.com/questions/25826578/i18n-internationalization-for-regex-honorific-checking
+- https://localizely.com/blog/angular-i18n-tutorial/
+- https://www.npmjs.com/package/jus-i18n
+- https://www.npmjs.com/package/i18n
+- https://github.com/ruby-i18n/i18n
+- https://dev.to/adrai/how-does-server-side-internationalization-i18n-look-like-5f4c
+- https://medium.com/geekculture/how-does-server-side-internationalization-i18n-look-like-6ddbd15147b7
+- https://npm.io/search/keyword:i18n/33
+- https://www.npmjs.com/package/i18n-js
+- https://locize.com/blog/how-does-server-side-internationalization-look-like/
+- https://localazy.com/blog/javascript-app-localization-i18next-localazy
+- https://dev.to/adrai/internationalization-i18n-for-deno-with-i18next-3e0l
+```
+salutations (mr mrs company)
+```
+
+
+
