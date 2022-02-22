@@ -83,3 +83,15 @@ git log --graph --simplify-by-decoration --all --pretty=format:'%d'
 git log --graph --pretty=oneline --abbrev-commit
 git log --graph --oneline --decorate --all
 ```
+
+### misc intellij git
+```
+# log
+git -c credential.helper= -c core.quotepath=false -c log.showSignature=false  log
+
+# merge
+git merge origin/develop --no-stat -v
+
+# fetch
+git fetch origin --recurse-submodules=no --progress --prune
+```
