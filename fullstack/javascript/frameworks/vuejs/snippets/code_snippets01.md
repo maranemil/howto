@@ -508,7 +508,22 @@ await router.push('/my-profile')
 this.isMenuOpen = false
 ```
 
+### Argument of type i18n is not assignable to parameter of type 'Plugin_2'.
+#### Argument of type 'any' is not assignable to parameter of type 'never' - Vue
+```
+https://github.com/kazupon/vue-i18n/issues/410
+https://github.com/intlify/vue-i18n-next/issues/225
+https://vue-i18n.intlify.dev/guide/advanced/typescript.html#type-safe-resources-in-createi18n
+https://stackoverflow.com/questions/68882998/argument-of-type-any-is-not-assignable-to-parameter-of-type-never-vue
+https://laracasts.com/discuss/channels/vue/not-assignable-errors-with-vue-3-typescript-composition-api
 
+this.$notify.error({
+  title: this.$t('auth.invalidSignupTitle') as string,
+  message: this.$t('general.error') as string,
+});
+
+FIX Quick note, using .toString() also works, and is probably more correct than type-casting.
+```
 
 
 
