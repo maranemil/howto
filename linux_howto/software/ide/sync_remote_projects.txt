@@ -1,0 +1,304 @@
+####################################################
+
+Rsync File ownership  IntelliJ Platform
+
+####################################################
+
+https://www.jetbrains.com/help/idea/settings-tools-rsync.html
+https://www.jetbrains.com/help/idea/creating-a-remote-server-configuration.html
+https://www.codegrepper.com/search.php?answer_removed=1&q=rsync%20syntax%20ssh
+https://youtrack.jetbrains.com/issue/WI-473
+https://youtrack.jetbrains.com/issue/IDEA-270807
+https://youtrack.jetbrains.com/issue/IDEA-248266
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/203460304-File-ownership
+https://youtrack.jetbrains.com/issue/GO-10609
+
+Settings | Appearance & Behavior | System Settings --> Use "safe write"
+
+Press Ctrl+Alt+S to open the IDE settings and select Build, Execution, Deployment | Deployment.
+
+Alternatively, from the main menu, select Tools | Deployment | Configuration....
+
+rsync -Pav -e "ssh -i $HOME/.ssh/somekey" username@hostname:/from/dir/ /to/dir/
+
+####################################################
+
+ssh remote copy
+
+####################################################
+
+https://askubuntu.com/questions/208378/how-do-i-copy-files-that-need-root-access-with-scp
+https://www.codegrepper.com/code-examples/shell/ssh+copy+file+to+remote
+https://linuxize.com/post/how-to-use-scp-command-to-securely-transfer-files/
+https://www.digitalocean.com/community/tutorials/how-to-use-sftp-to-securely-transfer-files-with-a-remote-server
+https://www.ibm.com/docs/en/spectrum-lsf-rtm/10.1.0?topic=administration-access-remote-file-via-ssh
+https://www.tecmint.com/copy-file-permissions-and-ownership-to-another-file-in-linux/
+https://superuser.com/questions/291423/how-to-copy-a-file-without-using-scp-inside-an-ssh-session
+
+scp -r folder/ user@server.tld:/some/folder/you/dont/need/sudo
+ssh user@server.tld
+sudo mv /some/folder /some/folder/requiring/perms
+# YOU MAY NEED TO CHANGE THE OWNER like:
+# sudo chown -R user:user folder
+
+
+rsync -a --rsync-path="sudo -u www-data rsync" path_to_local_data/ login@srv01.example.com:/var/www
+
+rsync -a --rsync-path="sudo rsync" path_to_local_data/ login@srv01.example.com:/var/www
+
+ssh -t user@server.tld "sudo chown -R www-data:www-data ~/wwwtemp  && sudo mv -R ~/wwwtemp/* /var/www/ && sudo rmdir ~/wwwtemp"
+
+...
+
+scp <source> <destination>
+
+#To copy a file from B to A while logged into B:
+scp /path/to/file username@a:/path/to/destination
+
+#To copy a file from B to A while logged into A:
+scp username@b:/path/to/file /path/to/destination
+
+...
+
+To send a file:
+
+cat file | ssh ajw@dogmatix "cat > remote"
+
+Or:
+
+ssh ajw@dogmatix "cat > remote" < file
+To receive a file:
+
+ssh ajw@dogmatix "cat remote" > copy
+
+
+################################################################
+
+How to keep rsync from chown'ing transferred files?
+
+################################################################
+
+https://serverfault.com/questions/364709/how-to-keep-rsync-from-chowning-transferred-files
+https://stackoverflow.com/questions/11131477/how-to-change-the-owner-for-a-rsync
+https://phoenixnap.com/kb/how-to-rsync-over-ssh
+https://www.comentum.com/rsync.html
+https://unix.stackexchange.com/questions/92123/rsync-all-files-of-remote-machine-over-ssh-without-root-user
+https://documentation.suse.com/sles/12-SP4/html/SLES-all/cha-net-sync.html
+https://www.geeksforgeeks.org/rsync-command-in-linux-with-examples/
+https://www.digitalocean.com/community/tutorials/how-to-copy-files-with-rsync-over-ssh
+https://superuser.com/questions/270911/run-rsync-with-root-permission-on-remote-machine
+
+
+rsync -a dir/ remote:/dir/
+rsync -rlptD dir/ remote:/dir/
+rsync -a --no-o --no-g dir/ remote:/dir/
+
+-a, --archive
+-o, --owner   	preserve owner (super-user only)
+-g, --group 	preserve group
+
+-r, --recursive             recurse into directories
+-l, --links                 copy symlinks as symlinks
+-p, --perms                 preserve permissions
+-t, --times                 preserve modification times
+-D                          same as --devices --specials
+  --devices               preserve device files (super-user only)
+  --specials              preserve special files
+
+rsync -og --chown=apache:apache [src] [dst]
+
+
+Last version (at least 3.1.1) of rsync allows you to specify the "remote ownership":
+--usermap=tom:www-data
+
+rsync --rsync-path 'sudo -u jenkins rsync' -avP --delete /var/lib/jenkins destuser@destmachine:/tmp
+
+
+rsync -chavzP --rsync-path="sudo rsync" --stats user@192.168.1.2:/ .
+rsync -chavzP --stats --rsync-path="echo <SUDOPASS> | sudo -Sv && sudo rsync"  user@192.168.1.2:/ .
+
+rsync --ignore-existing -avhe /foo user@remote-host:/tmp/
+rsync -avhe ssh --progress /foo user@remote-host:/tmp/
+rsync -avhe ssh --progress --update /foo root@remote-host:/tmp/
+rsync -avhe ssh  /foo --delete user@remote-host:/tmp/
+rsync -avhe ssh --dry-run --chown=USER:GROUP /foo user@remote-host:/
+
+
+rsync -R -avz -e ssh --rsync-path="echo mypassword \
+    sudo -S  mkdir -p /remote/lovely/folder && sudo rsync" /home/ubuntu/my/lovely/folder ubuntu@x.x.x.x:/remote/lovely/folder --delete
+
+
+####################################################
+
+add user to group
+
+####################################################
+
+https://www.cyberciti.biz/faq/ubuntu-add-user-to-group-www-data/
+https://askubuntu.com/questions/365087/grant-a-user-permissions-on-www-data-owned-var-www
+https://gist.github.com/aldibier/6120197
+https://tweenpath.net/add-user-group-www-data-apache-group/
+
+Add a new user named foo to www-data group
+useradd -g www-data foo
+
+Add an existing user bar to Apacheâ€™s www-data group on Ubuntu
+usermod -a -G www-data bar
+
+Create a new group,
+sudo addgroup site1
+
+Add user1 to the newly created group,
+sudo adduser user1 site1
+
+Check that user1 is really in that group,
+groups user1
+
+
+---------------------------
+
+
+####################################################################
+
+rsync error: some files/attrs were not transferred (see previous errors) (code 23) at main.c(1330)
+rsync: mkstemp failed: Permission denied (13)
+
+####################################################################
+
+https://unix.stackexchange.com/questions/72259/rsync-error-some-files-attrs-were-not-transferred
+https://askubuntu.com/questions/30673/backup-files-with-rsync-error-23
+https://stackoverflow.com/questions/18014508/freenas-rsync-error-some-files-attrs-were-not-transferred-see-previous-errors
+https://programmerah.com/sync-error-some-files-attrs-were-not-transferred-see-previous-errors-code-23-at-main-9335/
+https://github.com/WayneD/rsync/blob/master/INSTALL.md
+https://serverfault.com/questions/1059618/rsync-generator-failed-to-set-permissions-operation-not-supported-95
+https://docs.rockylinux.org/books/learning_rsync/02_rsync_demo01/
+https://stackoverflow.com/questions/11039559/rsync-mkstemp-failed-permission-denied-13
+https://linux.overshoot.tv/wiki/rsync_mkstemp_failed_permission_denied_13
+https://unix.stackexchange.com/questions/541200/rsync-permission-denied-13-what-am-i-doing-wrong
+https://www.truenas.com/community/threads/rsync-mkstemp-failed-operation-not-permitted.43269/
+https://rsync.samba.org/issues.html
+https://bbs.archlinux.org/viewtopic.php?id=33615
+https://www.ustrem.org/en/articles/rsync-over-ssh-as-root-en
+https://serverfault.com/questions/796330/how-do-i-set-destination-permissions-with-rsync-chown-chmod
+https://stackoverflow.com/questions/26172056/can-you-pass-a-chown-command-during-an-rsync-call
+https://unix.stackexchange.com/questions/148264/force-new-permissions-on-files-after-rsync-from-seedbox
+https://www.manpagez.com/man/1/rsync/
+https://github.com/nextcloud/docker/issues/1344
+https://stackoverflow.com/questions/18817744/change-all-files-and-folders-permissions-of-a-directory-to-644-755
+https://serverfault.com/questions/363425/change-all-file-permissions-to-644-and-all-folder-permissions-to-755-recursively
+
+sudo rsync -avz --exclude='/*/.local' /home/me/Maildir ssh root@ipaddress:/var/vmail/me/Maildir
+sudo rsync -av /home/arrange/.gvfs /tmp
+sudo rsync -avzP --exclude 'folderXX' /folder/ /backup-folder/ | grep failed
+sudo rsync -avn /quelle /Ziel
+sudo rsync -aqv -HAX
+sudo rsync -zvh -e ssh â€”progress
+sudo rsync -r -t -v --progress --protect-args
+sudo rsync -rtuvP home/pi/DROBO
+sudo rsync -A --no-perms
+
+---
+set owner, but include this owner read-write list also
+
+644 for files
+755 for directories
+
+chmod 644 /var/www/web/files/*
+chmod 755 /var/www/web/files/folder
+chmod a+rwx <folder/file name>.
+
+
+for directories
+find /desired_location -type d -print0 | xargs -0 chmod 0755
+
+for files
+find /desired_location -type f -print0 | xargs -0 chmod 0644
+
+chmod -R u+rwX,go+rX,go-w /path/to/dir
+chmod -R a=r,u+w,a+X /foo
+chmod -R a=r,a+X,u+w /your/path
+
+cd /home/user/domains/domain.com/public_html
+sudo find . -type d -exec chmod 0755 {} \;
+sudo find . -type f -exec chmod 0644 {} \;
+
+chmod -R 644 dirName
+chmod -R +X dirName
+
+find /A -type d -exec chmod 0755 {} \;
+find /A -type f -exec chmod 0644 {} \;
+
+find . -type d -perm 777 -exec chmod 755 {} \; (for changing the directory permission)
+find . -type f -perm 777 -exec chmod 644 {} \; (for changing the file permission)
+
+---
+
+sudo chown linlf /home/linlf/project/nohup.out
+sudo chgrp linlf /home/linlf/project/nohup.out
+
+sudo chown -R linlf /home/linlf/project
+sudo chgrp -R linlf /home/linlf/project
+
+rsync -avz /home/linlf/project jingwei@xxx.xx.x.xxx:/home/linlf
+rsync -av --chmod=Du+rwx SRC DST
+rsync -av --chown=user:user SRC DST
+rsync --chown=foo:bar Quelle... Ziel
+rsync -aRve "ssh -i /home/repl/.ssh/id_rsa"
+
+sudo chown -R user:user /usr/portage
+sudo chown user:user /home/www
+
+
+/etc/ssh/sshd_config
+
+rsyncd.conf
+
+[files]
+path = /files
+comment = FILE SERVER
+read only = yes
+uid = root
+gid = root
+hosts allow = 127.0.0.1
+
+...
+
+on the remote server add the rsync user to the sudoers file, so that he can execute rsync with no password.
+Add this to /etc/sudoers:
+rsyncuser ALL= NOPASSWD:/usr/bin/rsync
+
+Then use --rsync-path option to make rsync run with sudo:
+[user@localserver]$ rsync -a -e "ssh" --rsync-path="sudo rsync" rsyncuser@remoteserver:/data/to/sync /archive/
+
+############################################################
+
+File-ownership intellij remote sync
+
+############################################################
+
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/203460304-File-ownership
+https://www.jetbrains.com/help/idea/database-users-and-roles.html
+https://www.jetbrains.com/help/idea/creating-and-registering-file-types.html
+https://www.jetbrains.com/help/idea/default-permissions.html
+https://www.jetbrains.com/help/idea/settings-deployment-options.html#####
+https://www.jetbrains.com/help/idea/add-items-to-project.html#create-new-items
+https://www.jetbrains.com/help/idea/working-with-source-code.html#code_folding
+https://unix.stackexchange.com/questions/85973/how-to-edit-var-www-files-using-phpstorm
+https://stackoverflow.com/questions/68731050/how-to-automatically-chmod-a-file-in-pycharm-intellij-with-a-particular-extens
+https://stackoverflow.com/questions/44265670/how-to-change-read-only-status-of-files-in-intellij
+https://gerrit-review.googlesource.com/Documentation/dev-intellij.html
+https://doc.nuxeo.com/corg/intellij-idea-setup/
+
+"Build, Execution, Deployment | Deployment | Options > Override default permissions..." options?
+File | Settings | Build, Execution, Deployment | Deployment | Options for Windows and Linux
+File | File Properties | Make File Read-Only, or Make File Writable.
+
+
+chmod -R g+s /var/www
+chmod -R o+r /var/www
+chmod -R g+w /var/www
+find /var/www -type d -exec chmod g+s {} \;
+
+ls -hal
+sudo chown username /path/to/File
+chmod 0777 /path-to-file

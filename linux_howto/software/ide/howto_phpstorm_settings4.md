@@ -732,3 +732,80 @@ https://www.jetbrains.com/help/idea/configuring-line-endings-and-line-separators
 - https://plugins.jetbrains.com/plugin/8006-material-theme-ui
 - https://plugins.jetbrains.com/plugin/12124-material-theme-ui-lite
 - https://plugins.jetbrains.com/plugin/10321-nord
+
+### PhpStorm does not sync with the server
+
+~~~
+https://www.jetbrains.com/help/phpstorm/deploying-applications.html
+https://www.jetbrains.com/help/phpstorm/creating-a-remote-server-configuration.html
+https://www.jetbrains.com/help/phpstorm/configuring-synchronization-with-a-remote-host.html
+https://www.jetbrains.com/help/phpstorm/creating-a-remote-server-configuration.html
+https://blog.jetbrains.com/phpstorm/2021/12/phpstorm-2021-3-release/#remote_development
+https://www.webfoobar.com/node/92
+https://developers.shopware.com/developers-guide/vagrant-phpstorm/
+
+https://www.youtube.com/watch?v=v222Dtz7jm0
+https://www.youtube.com/watch?v=nzkNHkZD6pY
+https://www.youtube.com/watch?v=6r9NJDHiJwA
+https://www.youtube.com/watch?v=AHK20LWEWXQ
+https://www.youtube.com/watch?v=v222Dtz7jm0
+https://www.youtube.com/watch?v=8qG_BK11nLg
+
+https://stackoverflow.com/questions/26231260/phpstorm-does-not-sync-with-the-server
+
+FIX
+Build-> Deploymennt > Options -> Upload changed files automatically on default server
+
+
+To manually sync with remote files (any direction) you have these main options:
+
+Use Remote Host side panel (can be accessed via Tools | Deployment | Browse Remote Host 
+if its closed/hidden) and download any files or folders manually 
+(drag and drop can also be used, just make sure that you are copying 
+files because by default IDE tries to "move" (copy+delete) instead of just "copy").
+ It has a "Refresh" button to refresh the remote location.
+
+Use two-way synchronisation (with preview) accessible via right click on desired 
+folder(s)/files and choosing Deployment | Synch with Deployed... where you can sync 
+those files/folders both ways (by default newer stuff will override older
+ regardless of the direction).
+
+The IDE can automatically sync one way (from local to remote): just ensure that 
+automatic deployment is enabled and you have one server (or a group) marked as 
+Default for this project.
+
+Settings (Preferences on macOS) | Build, Execution, Deployment | Deployment | Options
+ | Upload changed files automatically to the default server is the option. 
+ Check other options there to better suit your needs.
+
+~~~
+
+### multiple definitions exist for class phpstorm
+~~~
+https://stackoverflow.com/questions/23066665/multiple-definitions-exist-for-class
+https://youtrack.jetbrains.com/issue/WI-17646
+https://stackoverflow.com/questions/8882839/generate-documentation-for-multiple-classes-with-the-same-name
+https://github.com/barryvdh/laravel-ide-helper/issues/592
+
+
+TM you either just ignore the under-waving .. or you can configure that inspection to not to report such cases (Settings/Preferences | Editor | Inspections | PHP | Undefined | Undefined class, it has Don't report multiple class declaration potential problems checkbox).
+
+The only other way is to ensure that there is only one class with the same name in the project. For that you may use:
+
+Mark whole folder as excluded [FIX OK]
+Mark individual file as Plain Text
+
+/** @noinspection PhpMultipleClassDeclarationsInspection */
+
+/**
+ * MyClass #1
+ * @package PackageOne
+ */
+class MyClass {}
+
+/**
+ * MyClass #2
+ * @package PackageTwo
+ */
+class MyClass {}
+~~~
