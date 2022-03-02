@@ -268,6 +268,7 @@ lynx t3n.de -accept_all_cookies  -justify
 * python3 -m http.server 8888
 * http://localhost:8000
 * php -S localhost:4000
+* PHP_CLI_SERVER_WORKERS=8 php -S localhost:8000 -t htdocs
 ```
 
 ##### list packages
