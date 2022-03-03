@@ -20,6 +20,16 @@
 - https://www.fakexy.com/fake-address-generator-de
 - https://www.fakepersongenerator.com/random-address
 - https://www.fakepersongenerator.com/random-address
+- 
+### random data
+
+- https://www.fakeaddresscopy.com/Germany/Germany_city/Hamburg/
+- https://www.fakeaddresscopy.com/Germany/Germany_city/Berlin/
+- https://www.coolgenerator.com/de-address-generator
+- https://www.fakeaddresscopy.com/Germany/
+- https://www.bestrandoms.com/random-address-in-de
+- https://www.fakexy.com/de-fake-address-generator-he
+- https://www.fakexy.com/fake-address-generator-de
 ```
 Bahnhofstraße 20, 92224 Amberg
 ```

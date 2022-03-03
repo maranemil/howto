@@ -229,3 +229,73 @@ https://jsonformatter.curiousconcept.com/#
 
 [[["id"],[157],"Sheet1"]]
 ```
+---------------------------------------------------
+```
+vuejs check in array
+https://laracasts.com/discuss/channels/vue/how-to-check-does-value-exists-in-array-with-vue
+
+methods: {       
+    inArray: function(needle, haystack) {
+        var length = haystack.length;
+        for(var i = 0; i < length; i++) {
+            if(haystack[i] == needle) return true;
+        }
+        return false;
+    }
+}
+ ```
+    
+    
+```
+Using forEach method in Vue
+https://codesource.io/using-foreach-method-in-vue/
+https://www.digitalocean.com/community/tutorials/vuejs-iterating-v-for
+https://v2.vuejs.org/v2/guide/list.html
+https://stackoverflow.com/questions/42535987/how-to-use-foreach-in-vuejs
+
+
+let newData = [];
+	this.data.forEach((value,index ) => {
+	newData.push(value);
+	console.log("newData", newData);
+});
+
+let arr = [];
+this.myArray.forEach((value, index) => {
+    arr.push(value);
+    console.log(value);
+    console.log(index);
+});
+
+const newArray = this.myArray.filter((value, index) => {
+    console.log(value);
+    console.log(index);
+    if (value > 5) return true;
+});
+
+ Array.from(files).forEach((file) => {
+       if(this.mediaTypes.image.includes(file.type)) {
+            this.media.images.push(file)
+             console.log(this.media.images)
+       }
+   }
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
