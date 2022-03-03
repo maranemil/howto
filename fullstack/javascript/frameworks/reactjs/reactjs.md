@@ -141,4 +141,11 @@ npm install --save-dev @babel/core @babel/preset-react
 ### react
 
 - https://www.freecodecamp.org/news/vscode-react-setup/
-https://css-tricks.com/node-javascript-compared-to-javascript/
+- https://css-tricks.com/node-javascript-compared-to-javascript/
+- https://levelup.gitconnected.com/building-%EF%B8%8F-react-micro-frontends-monorepo-with-nx-10bf564f03fe
+
+npx create-nx-workspace --preset=empty mf-react
+cd mf-react
+npm install -D @nrwl/react
+nx g @nrwl/react:app shell
+nx g @nrwl/react:app remote
