@@ -282,8 +282,375 @@ const newArray = this.myArray.filter((value, index) => {
 ```
 
 
+```
+"Uncaught SyntaxError: Unexpected token"
+Unexpected token < in first line of HTML
+
+https://bobbyhadz.com/blog/javascript-uncaught-syntaxerror-unexpected-token
+https://www.codecademy.com/forum_questions/523ca828548c35497900518e
+https://stackoverflow.com/questions/31529446/unexpected-token-in-first-line-of-html
+
+<!DOCTYPE html>
+<!doctype html>
+
+fix
+
+<script src="correct path"> </script>
+```
+
+----------------------------
+```
+##########################################################
+#
+#   How To Pass Data Between Components In Vue.js
+#   https://www.smashingmagazine.com/2020/01/data-components-vue-js/
+#
+##########################################################
+
+1. Using Props To Share Data From Parent To Child #
+------------------------
+
+AccountInfo.vue
+
+<template>
+ <div id='account-info'>
+   {{username}}
+ </div>
+</template>
+ 
+<script>
+export default {
+ props: ['username']
+}
+/*
+export default {
+ props: {
+   username: String
+ }
+}
+*/
+</script>
 
 
+
+ProfilePage.vue
+
+<account-info username='matt' />
+
+...
+
+<template>
+ <div>
+   <account-info :username="user.username" />
+ </div>
+</template>
+ 
+<script>
+import AccountInfo from "@/components/AccountInfo.vue";
+ 
+export default {
+ components: {
+   AccountInfo
+ },
+ data() {
+   return {
+     user: {
+       username: 'matt'
+     }
+   }
+ }
+}
+</script>
+
+...
+
+# FOLLOW PROP NAMING CONVENTIONS 
+// GOOD
+<account-info :my-username="user.username" />
+props: {
+   myUsername: String
+}
+ 
+// BAD
+<account-info :myUsername="user.username" />
+props: {
+   "my-username": String
+}
+
+2. Emitting Events To Share Data From Child To Parent 
+---------------------------------------------------
+
+<template>
+ <div id='account-info'>
+   <button @click='changeUsername()'>Change Username</button>
+   {{username}}
+ </div>
+</template>
+ 
+<script>
+export default {
+ props: {
+   username: String
+ },
+ methods: {
+   changeUsername() {
+     this.$emit('changeUsername')
+   }
+ }
+}
+</script>
+
+
+<template>
+ <div>
+   <account-info :username="user.username" @changeUsername="user.username = 'new name'"/>
+ </div>
+</template>
+
+# CUSTOM EVENTS CAN ACCEPT ARGUMENTS
+
+this.$emit('changeUsername', 'mattmaribojoc')
+
+
+...in parent component,
+
+<account-info :username="user.username" @changeUsername="user.username = $event"/>
+ 
+OR 
+ 
+<account-info :username="user.username" @changeUsername="changeUsername($event)"/>
+ 
+export default {
+    ...
+    methods: {
+       changeUsername (username) {
+         this.user.username = username;
+       }
+    }
+}
+
+
+
+3. Using Vuex To Create An Application-Level Shared State
+---------------------------------------------------
+
+// store/index.js
+ 
+import Vue from "vue";
+import Vuex from "vuex";
+ 
+Vue.use(Vuex);
+ 
+export default new Vuex.Store({
+ state: {},
+ getters: {},
+ mutations: {},
+ actions: {}
+});
+
+
+
+// main.js
+ 
+import store from "./store";
+ 
+new Vue({
+  store,
+  ...
+
+
+# ACCESSING VUE STORE INSIDE COMPONENTS
+
+export default new Vuex.Store({
+ state: {
+   user: {
+     username: 'matt',
+     fullName: 'Matt Maribojoc'
+   }
+ },
+ getters: {},
+ mutations: {},
+ actions: {}
+});
+
+
+mounted () {
+   console.log(this.$store.state.user.username);
+},
+
+# GETTERS
+
+getters: {
+   firstName: state => {
+     return state.user.fullName.split(' ')[0]
+   }
+ }
+ 
+ 
+ mounted () {
+   console.log(this.$store.getters.firstName);
+}
+
+lastName (state, getters) {
+     return state.user.fullName.replace(getters.firstName, '');
+}
+
+# Pass Custom Arguments to Vuex Getters 
+ 
+prefixedName: (state, getters) => (prefix) => {
+     return prefix + getters.lastName;
+}
+ 
+// in our component
+console.log(this.$store.getters.prefixedName("Mr."));
+
+
+# MUTATIONS
+
+mutations: {
+   changeName (state, payload) {
+     state.user.fullName = payload
+   }
+},
+
+this.$store.commit("changeName", "New Name");
+
+changeName (state, payload) {
+     state.user.fullName = payload.newName
+}
+
+this.$store.commit("changeName", {
+       newName: "New Name 1",
+});
+ 
+// or
+ 
+ this.$store.commit({
+       type: "changeName",
+       newName: "New Name 2"
+});
+
+# ACTIONS
+
+actions: {
+   changeName (context, payload) {
+     setTimeout(() => {
+       context.commit("changeName", payload);
+     }, 2000);
+   }
+}
+
+this.$store.dispatch("changeName", {
+      newName: "New Name from Action"
+});
+
+
+####################################################
+#
+#   Passing Data Between Components in Vue.js
+#   https://dev.to/maxwellboecker/passing-data-between-components-in-vue-js-296p
+#
+####################################################
+
+
+GardenMain.vue
+
+<editmodal
+        :id="gardenId"
+        :name="name"
+        :lat="location.lat"
+        :lng="location.lng"
+        :width="gardenSize.width"
+        :height="gardenSize.height"
+        :updateMain="updateMain"
+      ></editmodal>
+
+
+updateMain: function (garden) {
+      const { id, lat, lng, width, length, name } = garden.data;
+      this.gardenSize = { width, height: length };
+      this.name = name;
+      this.location = { lat, lng };
+    },
+
+
+
+EditModal.vue
+
+export default {
+  name: "EditModal",
+  props: {
+    id: {
+      type: Number,
+    },
+    name: {
+      type: String,
+    },
+    lat: {
+      type: Number,
+    },
+    lng: {
+      type: Number,
+    },
+    width: {
+      type: Number,
+    },
+    height: {
+      type: Number,
+    },
+    updateMain: {
+      type: Function,
+    },
+  },
+
+
+Editor.vue
+
+<template>
+  <div>
+    <EditGarden
+      v-on:edit:garden="submitEdit"
+      :id="this.id"
+      :name="this.name"
+      :lat="this.lat"
+      :lng="this.lng"
+      :width="this.width"
+      :height="this.height"
+    />
+  </div>
+</template>
+
+methods: {
+    submitEdit(info) {
+      axios.put("/garden/gardenupdate", {
+          id: this.id,
+          info: info,
+        })
+        .then((garden) => {
+          this.$emit("close");
+          this.updateMain(garden);
+        });
+    },
+  },
+  
+EditGarden.vue
+  
+  methods: {
+    handleSubmit() {
+      this.$emit("edit:garden", {
+        name: this.gardenName,
+        lat: this.latt,
+        lng: this.long,
+        width: this.wid,
+        length: this.hei,
+      });
+    },
+  },
+  
+```
+
+
+  
 
 
 
