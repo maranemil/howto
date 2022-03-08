@@ -139,3 +139,61 @@ sudo add-apt-repository --remove ppa:umang/indicator-stickynotes
 https://snapcraft.io/eversticky
 https://gitlab.com/jaysaurus/Gnut
 ```
+
+
+######
+#
+### What's a must-have app for Linux users
+#### https://twitter.com/itsfoss2/status/1500788865749028865
+### It's FOSS - Linux Portal
+######
+```
+Peek - to record gifs and video
+Kazam - for longer videos and screen recording
+Beekeeper Studio - for database management
+Flameshot - take screenshots
+GravitDesigner - for editing graphics and designing
+
+terminator: terminal emulator
+firefox/brave/librewolf:browser
+ufw:firewall
+bleachbit/stacer: storage cleaning
+veracrypt: system backup
+syncthing: cross device file syncing and file backup
+
+
+My day to day tools are: Brave, Joplin, KeePassXC, 
+neovim, neomutt, LibreOffice, evince, Okular, pcmanfm, Ferdi
+
+chrome, vscode, telegram, anaconda ,retroarch.
+
+Synaptic, libre office, Timeshift, gimp, chromium, Evince and VNC .
+
+copyq : copy-paste manager
+autokey : for keyboard macros
+
+I can only speak for me.
+Kdenlive, Inkscape, Krita, GIMP, Calibre, FS-UAE, Libre Office, Handbrake, AVIdemux, VLC, Rhythmbox, Transmission
+
+Timeshift
+
+Terminator Terminal, nmon, glances, chrony, syslog-ng, rng-tools, firewalld
+Terminal - Kitty
+Editor - Neovim / VSCodium
+Shell - Fish Shell / zsh
+
+Syncthing + KeepassXC
+
+ksnip
+flameshot
+https://flameshot.org/#download
+
+
+Openssh
+https://vscodium.com/
+Darktable
+WireShark/TCPdump
+
+
+
+```
