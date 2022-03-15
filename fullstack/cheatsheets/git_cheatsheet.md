@@ -94,4 +94,9 @@ git merge origin/develop --no-stat -v
 
 # fetch
 git fetch origin --recurse-submodules=no --progress --prune
+
+# all in one
+git checkout mybranch --
+git fetch origin --recurse-submodules=no --progress --prune
+git merge origin/mybranch --no-stat -v
 ```
