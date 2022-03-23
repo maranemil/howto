@@ -317,6 +317,18 @@ https://hemingwayapp.com/
 
 ### Calculate String Length
 
-https://onlinestringtools.com/find-string-length
-https://string-functions.com/length.aspx
-https://www.browserling.com/tools/text-length
+- https://onlinestringtools.com/find-string-length
+- https://string-functions.com/length.aspx
+- https://www.browserling.com/tools/text-length
+
+### api editor
+
+https://editor.swagger.io/
+
+### send encoded msg
+
+https://www.read2burn.com/
+
+
+
+

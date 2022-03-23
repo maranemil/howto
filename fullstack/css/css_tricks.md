@@ -788,3 +788,28 @@ https://www.youtube.com/watch?v=wfaDzSL6ll0
 	/* flex-grow: 2; */
 }
 ```
+
+```
+#####################################################
+//  
+//  flex margin
+//
+#####################################################
+https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout/Aligning_Items_in_a_Flex_Container
+https://getbootstrap.com/docs/4.0/utilities/flex/
+https://vuetifyjs.com/en/styles/flex/
+https://tailwindcss.com/docs/justify-content
+https://tailwindcss.com/docs/padding
+
+flex justify-content
+flex justify-start
+flex justify-center
+
+mb-4 ml-4 pb.4
+```
+
+
+
+
+
+
