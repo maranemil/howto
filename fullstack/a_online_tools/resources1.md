@@ -91,6 +91,7 @@ add_header X-Frame-Options SAMEORIGIN; # nginx
 - https://addons.mozilla.org/en-US/firefox/addon/showcase/
 - https://addons.mozilla.org/en-US/firefox/addon/tab-catalog/
 ------------------------------------------------------------------
+
 ######
 ###  Transfer files to VM
 ######
@@ -107,6 +108,7 @@ add_header X-Frame-Options SAMEORIGIN; # nginx
 - http://fast-files.com
 - http://www.directupload.net
 ------------------------------------------------------------------
+
 ######
 ###  jsonlint
 ######
@@ -119,6 +121,7 @@ add_header X-Frame-Options SAMEORIGIN; # nginx
 - https://www.epochconverter.com/
 
 ------------------------------------------------------------------
+
 ######
 ###  REST API Tester
 ######
@@ -142,13 +145,16 @@ add_header X-Frame-Options SAMEORIGIN; # nginx
 - https://jmeter.apache.org/download_jmeter.cgi
 - https://reqbin.com/
 ------------------------------------------------------------------
+
 ### YouTube downloads
 - https://loader.to/en15/1080p-video-downloader.html
 ------------------------------------------------------------------
-### text encrypt encode converters
+
+### Text encrypt encode converters
 - https://www.browserling.com/tools/text-to-binary
 ------------------------------------------------------------------
-### plugins gittoolbox
+
+### Plugins gittoolbox
 - https://plugins.jetbrains.com/plugin/7499-gittoolbox
 - https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens
 - https://plugins.jetbrains.com/plugin/7499-gittoolbox
@@ -201,6 +207,7 @@ add_header X-Frame-Options SAMEORIGIN; # nginx
 - http://www.unixtimestamp.com/index.php								- Unix Timestamp Calculator
 
 ------------------------------------------------------------------
+
 ######
 ### Online run code JS HTML CSS Editors
 ######
@@ -217,31 +224,33 @@ add_header X-Frame-Options SAMEORIGIN; # nginx
 - https://jsfiddle.net/
 
 ------------------------------------------------------------------
+
 ### CSS Editors
 - http://scratchpad.io/soft-shoe-1670
 - http://www.cssdesk.com/
 
 
 ------------------------------------------------------------------
-### multiple editors
+### Multiple editors
 - http://codepad.org/   			        # all *****
-- https://www.jdoodle.com/ 		        # all ***** py php c++ go scala
+- https://www.jdoodle.com/ 		            # all ***** py php c++ go scala
 - http://rextester.com/l/client_side 	    # all **** py php c++ go scala
-- https://fiddles.io/  			        # index of fiddles
+- https://fiddles.io/  			            # index of fiddles
 - https://repl.it/languages 		        # all ***** py php c++ go scala
 
 ------------------------------------------------------------------
-### misc
+
+### Misc
 - http://live.sympy.org/ 			        # sympy symbolic mathematics
 - http://www.writephponline.com/ 		    # php
 - https://www.python.org/shell/ 		    # py
 - http://www.skulpt.org/ 			        # py
 - https://trinket.io/python 		        # py
-- https://play.golang.org/ 		        # go lang
+- https://play.golang.org/ 		            # go lang
 - https://ideone.com/			            #
 - https://www.jdoodle.com/execute-perl-online
 - https://www.codechef.com/ide  		    # perl
-- http://cpp.sh/  			            # c++ shell
+- http://cpp.sh/  			                # c++ shell
 - http://jshint.com/ 			            # js
 - https://codepen.io/pen 			        # js css
 - https://run.cs50.net/ 			        # cs50
@@ -250,7 +259,8 @@ add_header X-Frame-Options SAMEORIGIN; # nginx
 - http://sandbox.onlinephpfunctions.com/ 	# php
 
 ------------------------------------------------------------------
-### photo editor 
+
+### Photo editor 
 - https://photomania.net/                 # photo editor
 - https://unsplash.com/                   # free photos
 
@@ -269,6 +279,7 @@ add_header X-Frame-Options SAMEORIGIN; # nginx
 - http://flexbox.help/
 
 ------------------------------------------------------------------
+
 ######
 ### Python Online Tools
 ######
@@ -287,15 +298,15 @@ add_header X-Frame-Options SAMEORIGIN; # nginx
 - https://docs.python.org/2.0/ref/function.html
 - https://www.learnpython.org/en/Functions
 
-### unixtimestamp
+### timestamp unix
 
 https://www.unixtimestamp.com/
 
-### cron guru
+### Cron guru
 
 https://crontab.guru/
 
-### online search
+### Online search alternatives to google.com
 
 - https://startpage.com/
 - https://duckduckgo.com/
@@ -306,14 +317,13 @@ https://crontab.guru/
 - https://yacy.net/
 - https://search.brave.com/
 
-### learn
+### Learn
 
 https://brilliant.org/
 
-### online writing analysing tool
+### Online writing analysing tool
 
 https://hemingwayapp.com/
-
 
 ### Calculate String Length
 
@@ -321,13 +331,18 @@ https://hemingwayapp.com/
 - https://string-functions.com/length.aspx
 - https://www.browserling.com/tools/text-length
 
-### api editor
+### Api viewer editor
 
 https://editor.swagger.io/
 
 ### send encoded msg
 
 https://www.read2burn.com/
+
+### promote online music
+
+- https://distrokid.com/
+- https://groover.co/en/
 
 
 
