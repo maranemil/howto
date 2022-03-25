@@ -456,3 +456,10 @@ if (event.error.name === 'SecurityError')
 console.log("No permissions to use AbsoluteOrientationSensor.");
 });
 ```
+
+### Boolean
+```
+https://heyjavascript.com/javascript-string-to-boolean/
+
+if(Boolean(myString)) {}
+```

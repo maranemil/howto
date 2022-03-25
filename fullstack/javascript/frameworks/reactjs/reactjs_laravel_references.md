@@ -939,8 +939,7 @@ sudo apt install firefox
 https://code.visualstudio.com/docs/?dv=linux64_deb
 sudo dpkg -i code_1.55.1-1617808414_amd64.deb
 
-ES7 React/Redux/GraphQL/React-Native snippets
-https://marketplace.visualstudio.com/items?itemName=dsznajder.es7-react-js-snippets
+
 
 
 

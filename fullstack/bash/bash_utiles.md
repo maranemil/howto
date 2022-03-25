@@ -860,3 +860,56 @@ jq --color-output . file1.json file1.json | less -R
 JSON.stringify({"foo":"lorem","bar":"ipsum"}, null, 4);
 
 ```
+
+
+### Block Comments in a Shell Script
+#### https://stackoverflow.com/questions/947897/block-comments-in-a-shell-script
+
+```
+: '
+This is a
+very neat comment
+in bash
+'
+
+....
+
+__='
+blah blah comment.
+'
+....
+
+if [ ]; then ##
+    ...
+    ...
+fi; ##
+
+....
+
+#!/bin/bash
+echo before comment
+: <<'END'
+bla bla
+blurfl
+END
+echo after comment
+
+....
+
+[ -z $BASH ] || shopt -s expand_aliases
+alias BEGINCOMMENT="if [ ]; then"
+alias ENDCOMMENT="fi"
+
+BEGINCOMMENT
+  echo "This line appears in a commented block"
+  echo "And this one too!"
+ENDCOMMENT
+
+echo "This is outside the commented block"
+
+
+In order to uncomment the code blocks thus commented, say
+alias BEGINCOMMENT="if : ; then"
+instead of
+alias BEGINCOMMENT="if [ ]; then"
+```

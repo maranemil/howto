@@ -39,9 +39,6 @@ DEBUG CONSOLE
 VS Code ####
 
 https://v2.vuejs.org/v2/cookbook/debugging-in-vscode.html?redirect=true
-
-https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome
-https://marketplace.visualstudio.com/items?itemName=firefox-devtools.vscode-firefox-debug
 https://chrome.google.com/webstore/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd?hl=en
 https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/
 https://github.com/vuejs/devtools
