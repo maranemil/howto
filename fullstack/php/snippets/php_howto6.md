@@ -199,8 +199,24 @@ You can also set the mode globally for all clients:
 SET GLOBAL sql_mode='NO_BACKSLASH_ESCAPES';
 ```
 
+###  control structures break
+```
+break accepts an optional numeric argument which tells it how many nested enclosing structures
+ are to be broken out of.
 
+https://stackoverflow.com/questions/12552721/what-is-the-meaning-of-break-2
+https://www.php.net/manual/en/control-structures.break.php
 
+foreach (...) {
+  foreach (..) {
+    foreach (...) {
+      if ($condition) {
+        break 3;
+      }
+    }
+  }
+}
+```
 
 
 
