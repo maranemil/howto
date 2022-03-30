@@ -463,3 +463,30 @@ https://heyjavascript.com/javascript-string-to-boolean/
 
 if(Boolean(myString)) {}
 ```
+
+### Arrow functions
+
+```
+Array.prototype.forEach()
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach
+
+// Arrow functions
+forEach((element) => { /* ... */ })
+forEach((element, index) => { /* ... */ })
+forEach((element, index, array) => { /* ... */ })
+
+// Callback function
+forEach(callbackFn)
+forEach(callbackFn, thisArg)
+
+// Inline callback function
+forEach(function(element) { /* ... */ })
+forEach(function(element, index) { /* ... */ })
+forEach(function(element, index, array){ /* ... */ })
+forEach(function(element, index, array) { /* ... */ }, thisArg)
+
+
+const array1 = ['a', 'b', 'c'];
+array1.forEach(element => console.log(element));
+```
+

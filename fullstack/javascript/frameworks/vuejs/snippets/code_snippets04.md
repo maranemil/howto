@@ -347,6 +347,20 @@ https://codesandbox.io/embed/vue-template-0vm7k
 </router-link>
 ```
 
+### vue disable field
 
+https://stackoverflow.com/questions/38085180/disable-input-conditionally-vue-js
+```
+<input type="text" :disabled="someFunctionHere">
+
+<input
+  type="text"
+  id="name"
+  class="form-control"
+  name="name"  
+  v-model="form.name"
+  :disabled="validated ? '' : disabled"
+/>
+```
 
 
