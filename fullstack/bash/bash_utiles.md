@@ -913,3 +913,14 @@ alias BEGINCOMMENT="if : ; then"
 instead of
 alias BEGINCOMMENT="if [ ]; then"
 ```
+
+
+### Bash - run the output of a command as the actual command-line to run
+#### https://unix.stackexchange.com/questions/697132/is-it-possible-in-bash-to-run-the-output-of-a-command-as-the-actual-command-line
+```
+
+eval "$(grep lsdir ~/.bashrc)"
+type lsdir
+lsdir is aliased to `ls -d */'
+
+```
