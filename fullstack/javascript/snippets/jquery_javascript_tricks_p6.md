@@ -490,3 +490,19 @@ const array1 = ['a', 'b', 'c'];
 array1.forEach(element => console.log(element));
 ```
 
+### includes string
+```
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes
+
+// ECMAScript 6
+const string = "foo";
+const substring = "oo";
+console.log(string.includes(substring)); // true
+
+// ECMAScript 5
+var string = "foo";
+var substring = "oo";
+console.log(string.indexOf(substring) !== -1); // true
+```
