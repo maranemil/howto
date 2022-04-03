@@ -218,7 +218,23 @@ foreach (...) {
 }
 ```
 
+### PHP 7.4+ Error: Typed property must not be accessed before initialization 
+#### IssueIn PHP 7.4.6, newly introduced property type hints
 
+```
+
+https://blog.cpming.top/p/typed-property-must-not-be-accessed-before-in
+https://stackoverflow.com/questions/59265625/why-i-am-suddenly-getting-a-typed-property-must-not-be-accessed-before-initiali
+https://stackoverflow.com/questions/59265625/why-i-am-suddenly-getting-a-typed-property-must-not-be-accessed-before-initiali
+https://madewithlove.com/blog/software-engineering/typed-property-must-not-be-accessed-before-initialization/
+
+
+bad 
+public bool $showInvitationManagementModal;
+
+good
+public bool $showInvitationManagementModal = false;
+```
 
 
 

@@ -1,0 +1,140 @@
+### Vue JS - Open link in new tab Example
+
+```
+
+https://www.tutorialstuff.com/tutorials/vue-js-open-link-in-new-tab-exampleexample
+https://forsmile.jp/en/vue-en/1356/
+https://www.pakainfo.com/how-to-open-url-in-new-tab-using-vue-js/
+https://www.itsolutionstuff.com/post/vue-js-open-link-in-new-tab-exampleexample.html
+https://reactgo.com/vue-open-link-new-tab/
+https://stackoverflow.com/questions/40015037/can-vue-router-open-a-link-in-a-new-tab
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vue JS - Open link in new tab Example - ItSolutionStuff.com</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.5/vue.min.js"></script>
+</head>
+<body>
+ 
+<div id="app">
+  <button @click="myFunction()">Click Me</button>
+</div>
+ 
+<script type="text/javascript">
+  new Vue({
+    el: '#app',
+    data: {
+      myModel:false
+    },  
+    methods:{
+      myFunction: function () {  
+          window.open("https://itsolutionstuff.com", "_blank");    
+      }
+    }
+  });
+</script>
+ 
+</body>
+</html>
+```
+
+
+--------
+```
+
+Basic usage (Vue.js only OK, no Router)
+// html
+<button type="button" @click="linkToOtherWindow('LINK URL')">Link to new Tab</button>
+// script
+export default {
+  methods: {
+    linkToOtherWindow (url) {
+      window.open(url, '_blank')
+    }
+  }
+}
+
+How to open in a new window using Vue Router
+
+// For profile page routing settings
+const Profile= {
+    template: '<div>Profile No.{{ $route.params.id }}</div>'
+}
+const router = new VueRouter({
+  routes: [
+    { path: '/profile/:id',name='profilePage', component: Profile}
+  ]
+})
+// script Pass the resolved url to window.open
+export default {
+  methods: {
+    linkToOtherWindow() {
+      let resolvedRoute = this.$router.resolve({
+        name: profilePage,
+        params: {id: "someData"}
+      });
+      window.open(resolvedRoute.href, '_blank');
+    }
+  }
+}
+
+
+Maybe it can be used from Vue 3
+
+<router-link :to="{ name: 'profilePage'}" target="_blank">
+   LINK TO OTHER WINDOW
+</router-link>
+
+
+
+
+<router-link to="/contact" target="_blank">Contact</router-link>
+
+App.vue
+<template>
+  <div id="app">
+    <button @click="gotoContact()">Contact</button>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "app",
+  methods: {
+    gotoContact() {
+      let route = this.$router.resolve({ path: "/contact" });
+      window.open(route.href);
+    },
+  },
+};
+</script>
+
+
+
+Opening the external links in a new tab
+<a href="https://www.google.com" target="_blank" rel="noreferrer noopener">
+   Google
+</a>
+
+
+
+App.vue
+<template>
+  <div id="app">
+    <button @click="gotoGoogle()">Google</button>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "app",
+  methods: {
+    gotoGoogle() {
+      window.open("https://www.google.com");
+    },
+  },
+};
+</script>
+```
+
