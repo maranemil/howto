@@ -17,6 +17,10 @@ http://pythonfiddle.com/
 - https://fiddles.io/
 - https://sqliteonline.com/
 ------------------------------------------------------------------
+### sql validator
+- https://en.rakko.tools/tools/36/
+- https://extendsclass.com/sql-validator.html
+------------------------------------------------------------------
 ### js
 - http://jsfiddle.net/
 - http://fiddlesalad.com/javascript/
