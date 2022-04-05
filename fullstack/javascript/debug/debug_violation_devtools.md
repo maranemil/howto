@@ -106,3 +106,8 @@ https://web.dev/storage-for-the-web/
 https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
 https://developer.mozilla.org/en-US/docs/Web/API/StorageManager/estimate
 ```
+
+### cypress
+```
+https://docs.cypress.io/guides/getting-started/installing-cypress#Switching-browsers
+```
