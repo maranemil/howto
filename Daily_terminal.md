@@ -425,3 +425,11 @@ DuckDuckGo
 NoScript
 ```
 
+### Access localhost on remote server
+
+```
+start locally [ python3 -m http.server.8080 with page index.html]
+go on [ localhost.run website ]
+copy [ ssh -R 80:localhost:8080 nokey@localhost.run ] on local machine
+get link from temrinal and run it on browser
+```
