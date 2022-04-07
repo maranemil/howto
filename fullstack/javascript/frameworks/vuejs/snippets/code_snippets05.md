@@ -138,3 +138,59 @@ export default {
 </script>
 ```
 
+
+-----------------------
+### Making HTTP requests
+```
+
+https://test-utils.vuejs.org/guide/advanced/http-requests.html
+
+import axios from 'axios'
+
+export default {
+  data() {
+    return {
+      posts: null
+    }
+  },
+  methods: {
+    async getPosts() {
+      this.posts = await axios.get('/api/posts')
+    }
+  }
+}
+
+
+----------
+```
+
+### how to trigger a method when page load on vuejs
+
+```
+
+https://www.codegrepper.com/code-examples/javascript/how+to+trigger+a+method+when+page+load+on+vuejs
+https://vuejs.org/api/options-lifecycle.html
+https://vuejs.org/guide/essentials/application.html
+https://vue-loader.vuejs.org/guide/hot-reload.html
+https://stackoverflow.com/questions/35064845/how-to-trigger-a-method-at-page-load-in-vuejs
+https://vuejs.org/api/options-lifecycle.html
+https://vuejs.org/guide/essentials/lifecycle.html
+https://www.freecodecamp.org/news/common-mistakes-to-avoid-while-working-with-vue-js-10e0b130925b/
+
+
+vm=new Vue({
+  el:"#app",
+  beforeMount () {
+    // prepare data for later , eventually with setTimeout
+  },
+  mounted:function(){
+        this.method1() //method1 will execute at pageload
+  },
+  methods:{
+        method1:function(){
+              /* your logic */
+        }
+     },
+})
+
+```
