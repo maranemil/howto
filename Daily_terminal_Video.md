@@ -38,6 +38,8 @@
 * ffmpeg -v warning -an -video_size 1366x768 -framerate 5 -f x11grab -i :0.0 myvid_$(date +%s).mp4*
 * ffmpeg -v warning -video_size 1920x1080 -framerate 5 -f x11grab -i :0.0  myvid_$(date +%s).mov
 * ffmpeg -f x11grab  -follow_mouse centered -show_region 1 -framerate 5 -video_size 4cif -i :0.0 xmvid_$(date +%s).mov
+
+
 ```
 
 ### Record Screen Ubuntu every X minutes
@@ -73,6 +75,11 @@ ideapad5
 ### Record Screen Ubuntu with Sound ASUS
 ```
 * ffmpeg -v warning -video_size 1366x768 -framerate 30 -f x11grab -i :0.0 -f alsa -ac 2 -ar 44100 -i default -probesize 42M -preset ultrafast -pix_fmt yuv420p -vcodec libx264 myvid_$(date +%s).mp4
+```
+
+### Record Screen Ubuntu Dell capture
+```
+ffmpeg -v warning -video_size 1920x1080 -framerate 5 -f x11grab -i :1.0  myvid_$(date +%s).mp4
 ```
 
 ### Copy Audio and compress video

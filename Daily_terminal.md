@@ -433,3 +433,16 @@ go on [ localhost.run website ]
 copy [ ssh -R 80:localhost:8080 nokey@localhost.run ] on local machine
 get link from temrinal and run it on browser
 ```
+
+### Find string in files
+
+```
+sudo find . -type f -iname "*.txt" -exec grep -H 'String' {} + 
+sudo find . -type f -iname "*.txt" -exec grep -i "String" {} +
+sudo find . -name "*.php" -exec grep -Hni "String" --color {} \;
+
+cd /usr/src/linux && egrep -ir "String" # search in files
+cd /usr/ && egrep -ir "String"
+cd /usr && egrep -ir -w "String" # print first line
+cd /usr && egrep -iIrnH -w "String"
+```
