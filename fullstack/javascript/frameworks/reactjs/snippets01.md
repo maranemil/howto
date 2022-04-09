@@ -27,3 +27,34 @@ ReactDOM.render(
  document.getElementById("root")
 );
 ```
+
+
+### Hilla application
+```
+https://www.infoworld.com/article/3655139/intro-to-hilla-the-full-stack-java-framework.html
+npx @vaadin/cli init --hilla foundry-hilla
+
+localhost:8080
+```
+
+
+
+
+### Building a realtime chat app with React, Laravel, and WebSockets
+#### https://ably.com/blog/building-a-realtime-chat-app-with-react-laravel-and-websockets
+
+```
+
+mkdir chat-app-react-laravel-ably
+composer create-project laravel/laravel backend
+cd backend
+php artisan serve
+composer require ably/ably-php
+php artisan make:event MessageEvent
+
+npx create-react-app frontend
+cd frontend
+npm start
+npm install axios laravel-echo pusher-js
+npm start
+```
