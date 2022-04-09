@@ -37,14 +37,10 @@ npx @vaadin/cli init --hilla foundry-hilla
 localhost:8080
 ```
 
-
-
-
 ### Building a realtime chat app with React, Laravel, and WebSockets
 #### https://ably.com/blog/building-a-realtime-chat-app-with-react-laravel-and-websockets
 
 ```
-
 mkdir chat-app-react-laravel-ably
 composer create-project laravel/laravel backend
 cd backend
