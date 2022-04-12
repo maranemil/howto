@@ -4,6 +4,7 @@
 
 #### Config Git on new location
 
+- [x] git config -l
 - [x] git config --global user.name "Administrator"
 - [x] git config --global user.email "admin@example.com"
 - [ ] ...
