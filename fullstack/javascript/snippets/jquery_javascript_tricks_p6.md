@@ -541,3 +541,60 @@ keys.forEach(function(key) { //loop through keys array
   console.log(key, key == myString)
 });
 ```
+
+
+### MD5 hash js
+
+```
+
+https://stackoverflow.com/questions/1655769/fastest-md5-implementation-in-javascript
+http://www.myersdaily.org/joseph/javascript/md5-text.html
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/core.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/md5.js"></script>
+<script>
+    var passhash = CryptoJS.MD5(password).toString();
+
+    $.post(
+      'includes/login.php',
+      { user: username, pass: passhash },
+      onLogin,
+      'json' );
+</script>
+
+...
+
+//just include md5.js from the CryptoJS rollups folder
+var hash = CryptoJS.MD5("Message");
+console.log(hash.toString());
+
+...
+
+const crypto = require('crypto')
+crypto.createHash('md5').update('hello world').digest('hex')
+
+...
+
+npm i hash-wasm
+<script src="https://cdn.jsdelivr.net/npm/hash-wasm"></script>
+async function run() {
+  console.log('MD5:', await hashwasm.md5('The quick brown fox jumps over the lazy dog'));
+}
+
+run();
+```
+
+----
+
+### CMS
+```
+
+https://www.storyblok.com/tp/add-a-headless-CMS-to-vuejs-in-5-minutes
+https://github.com/egoist/vue-cm
+https://madewithvuejs.com/c/content-management-systems
+https://v2.vuejs.org/v2/cookbook/serverless-blog.html
+https://vuejs.org/guide/introduction.html#what-is-vue
+https://www.npmjs.com/package/vue-quick-edit
+https://www.youtube.com/watch?v=cjRst4qduzM
+```
