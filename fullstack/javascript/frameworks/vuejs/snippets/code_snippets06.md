@@ -15,9 +15,7 @@ https://fjolt.com/article/vue-how-to-use-v-for
 ```
 
 
-########################################################################
-
-Vuejs disable inputs
+### Vuejs disable inputs
 
 ```
 
