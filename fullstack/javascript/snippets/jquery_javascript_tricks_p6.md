@@ -506,3 +506,38 @@ var string = "foo";
 var substring = "oo";
 console.log(string.indexOf(substring) !== -1); // true
 ```
+
+### how+to+compare+key+in+json+object
+```
+
+https://www.codegrepper.com/code-examples/javascript/how+to+compare+key+in+json+object
+https://stackoverflow.com/questions/26049303/how-to-compare-two-json-have-the-same-properties-without-order
+
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
+
+var
+remoteJSON = {"allowExternalMembers": "false", "whoCanJoin": "CAN_REQUEST_TO_JOIN"},
+    localJSON = {"whoCanJoin": "CAN_REQUEST_TO_JOIN"};
+   
+console.log( _.isEqual(remoteJSON, localJSON) );
+
+var myString = "Item1";
+var jsObject =
+{
+    Item1:
+    {
+        "apples": "red",
+        "oranges": "orange",
+    },
+    Item2:
+    {
+        "bananas": "yellow",
+        "pears": "green"
+    }
+};
+
+var keys = Object.keys(jsObject); //get keys from object as an array
+keys.forEach(function(key) { //loop through keys array
+  console.log(key, key == myString)
+});
+```

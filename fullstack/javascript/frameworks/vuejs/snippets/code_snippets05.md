@@ -194,3 +194,43 @@ vm=new Vue({
 })
 
 ```
+
+
+### [ tab select activeTab ]
+```
+
+https://vuetifyjs.com/en/components/tabs/
+https://lusaxweb.github.io/vuesax/components/tabs.html
+https://vuejsexamples.com/tabbed-content-with-vue-js/
+https://reactgo.com/vue-tabs-tutorial/
+https://stackoverflow.com/questions/46464170/vuejs-show-tab-content-on-click
+https://bootstrap-vue.org/docs/components/tabs
+https://bestofvue.com/repo/spatie-vue-tabs-component-vuejs-tabs
+https://laracasts.com/discuss/channels/vue/vue-tabs-open-the-correct-tab-on-page-load
+https://www.syncfusion.com/forums/160709/get-current-selected-tab
+https://learnvue.co/2019/12/building-reusable-components-in-vuejs-tabs/#setting-up-a-reusable-tab-component
+```
+
+
+
+### [ click ]
+```
+
+https://renatello.com/vue-js-manually-trigger-events/
+https://thewebdev.info/2021/05/22/how-to-trigger-events-on-an-element-using-vue-js/
+https://www.demo2s.com/javascript/javascript-vue-js-trigger-click-on-ref-in-vue-js.html
+https://github.com/vuejs/test-utils/issues/456
+https://stackoverflow.com/questions/31917889/is-it-possible-to-trigger-events-using-vue-js
+
+<button type="button" @click="myClickEvent" v-el:my-btn>Click Me!</button>
+
+
+function anotherRandomFunction() {
+    var elem = this.$els.myBtn
+    elem.click()
+}
+
+
+```
+
+
