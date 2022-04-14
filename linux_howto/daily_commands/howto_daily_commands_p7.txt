@@ -469,10 +469,60 @@ telnet example.com 80
 Change screen size in virtualbox instance
 ##########################################################################
 
-xrandr -d :0  # video modes list
+xrandr -d :0 # video modes list
 xrandr -s 1440x900 # reset display settings
 xrandr -s 1360x768
 
 
+##########################################################################
+#
+#   launch multiple screen sessions from a single bash script
+#
+##########################################################################
 
+https://superuser.com/questions/308940/how-can-i-launch-multiple-screen-sessions-from-a-single-bash-script
+https://stackoverflow.com/questions/51740251/how-to-start-multiple-screen-sessions-from-bash-script
+https://www.tecmint.com/keep-remote-ssh-sessions-running-after-disconnection/
+https://serverfault.com/questions/728399/start-multiple-rsync-sessions
+https://www.tecmint.com/keep-remote-ssh-sessions-running-after-disconnection/
+https://linux.die.net/man/1/screen
 
+screen --version
+sudo apt install screen
+screen -S session_name
+screen -r
+
+"screen -m" creation of a new session is enforced
+-d -r  Reattach a session and if necessary detach it files
+
+screen -t command1 0 bash
+screen -t command2 1 python
+
+......
+///////////////////////////////////////////
+
+#!/bin/sh
+
+screen -dmS "somename" somecommand
+for i in {0..5}; do
+    screen -dmS "name$i" anothercommand $i
+done
+
+......
+///////////////////////////////////////////
+
+#!/bin/sh
+echo Killing all existing screens...
+screen -X -S launcher quit
+sleep 2
+screen -X -S server quit
+
+echo Loading launcher screen...
+screen -S launcher -d -m bash -c  "/home/test/Launcher.sh"
+sleep 2
+echo Loading server screen...
+screen -S server -d -m bash -c  "/home/test/Server.sh"
+echo All done.
+
+///////////////////////////////////////////
+...
