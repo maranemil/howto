@@ -105,6 +105,7 @@ https://www.freecodecamp.org/news/npm-vs-npx-whats-the-difference/
 https://docs.npmjs.com/cli/v7/commands/npx
 https://www.npmjs.com/package/npx
 
+https://blog.logrocket.com/pagination-infinite-scroll-react-query-v3/
 https://www.freecodecamp.org/news/react-crud-app-how-to-create-a-book-management-app-from-scratch/
 https://www.freecodecamp.org/news/how-to-perform-crud-operations-using-react/
 https://strapi.io/blog/how-to-build-a-crud-app-with-react-and-a-headless-cms
