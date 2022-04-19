@@ -234,3 +234,30 @@ function anotherRandomFunction() {
 ```
 
 
+### images vue
+```
+
+https://www.codegrepper.com/code-examples/html/vuejs+image+source
+https://dev.to/zahidjabbar/image-binding-error-handling-in-vue-js-1pdp
+https://blog.lichter.io/posts/dynamic-images-vue-nuxt/
+```
+
+----
+### slots vue
+```
+
+https://github.com/linkurzweg/vue3-webstorm-example
+https://vuejs.org/guide/components/slots.html
+https://eslint.vuejs.org/rules/valid-v-slot.html
+https://www.codegrepper.com/code-examples/typescript/slots+in+vue
+https://michaelnthiessen.com/supercharge-your-slots/
+https://vuejs.org/guide/components/slots.html
+https://www.trysmudford.com/blog/dynamic-scoped-slots-in-vue-js/
+https://vuetifyjs.com/en/components/menus/#slots
+https://vuetifyjs.com/en/components/data-tables/#slots
+https://www.codetd.com/en/article/12096443
+https://vuejs.org/guide/components/slots.html#named-slots
+https://www.bezkoder.com/vue-v-slot/
+https://ramblings.mcpher.com/snipgraphql/vuejs/vuejs-and-vuetify-what-does-v-on-mean/
+https://youtrack.jetbrains.com/issue/WEB-52117
+```

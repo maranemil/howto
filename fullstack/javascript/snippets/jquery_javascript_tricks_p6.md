@@ -589,7 +589,6 @@ run();
 
 ### CMS
 ```
-
 https://www.storyblok.com/tp/add-a-headless-CMS-to-vuejs-in-5-minutes
 https://github.com/egoist/vue-cm
 https://madewithvuejs.com/c/content-management-systems
@@ -597,4 +596,52 @@ https://v2.vuejs.org/v2/cookbook/serverless-blog.html
 https://vuejs.org/guide/introduction.html#what-is-vue
 https://www.npmjs.com/package/vue-quick-edit
 https://www.youtube.com/watch?v=cjRst4qduzM
+```
+
+
+
+--------
+### KeyboardEvent.keyCode deprecated
+```
+
+https://css-tricks.com/snippets/javascript/javascript-keycodes/
+https://keycode.info/for/escape
+https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode
+https://stackoverflow.com/questions/1160008/which-keycode-for-escape-key-with-jquery
+https://stackoverflow.com/questions/35394937/keyboardevent-keycode-deprecated-what-does-this-mean-in-practice
+
+$(document).on('keyup', function(e) {
+  if (e.key == "Enter") $('.save').click();
+  if (e.key == "Escape") $('.cancel').click();
+});
+
+document.addEventListener("keydown", function(event) {    
+  console.log(event);
+  document.body.innerHTML = `
+    &nbsp;&nbsp;&nbsp;
+    <b>which: ${event.which}</b>
+    <br>&nbsp;
+    <b>keyCode:</b> ${event.keyCode}
+    <br>&nbsp;&nbsp;&nbsp;
+    <b>shiftKey:</b> ${event.shiftKey}
+    </br>&nbsp;&nbsp;&nbsp;&nbsp;
+    <b>altKey:</b> ${event.altKey}
+    <br>&nbsp;&nbsp;&nbsp;
+    <b>ctrlKey:</b> ${event.ctrlKey}
+    <br>&nbsp;&nbsp;
+    <b>metaKey:</b> ${event.metaKey}
+    <br>&nbsp;&nbsp;
+    <b>key:</b> ${event.key}`;  
+});
+```
+
+-----------------
+### boolean
+
+```
+
+https://bobbyhadz.com/blog/javascript-convert-integer-to-boolean
+https://www.samanthaming.com/tidbits/19-2-ways-to-convert-to-boolean/
+
+Boolean(string); // true
 ```
