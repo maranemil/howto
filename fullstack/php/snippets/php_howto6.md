@@ -237,9 +237,12 @@ public bool $showInvitationManagementModal = false;
 ```
 
 
+### format number as price
+```
 
-
-
+print number_format(4.99, 2, ',','.'); # 4,99
+print number_format(4999.99, 2, ',','.'); # 4.999,99
+```
 
 
 
