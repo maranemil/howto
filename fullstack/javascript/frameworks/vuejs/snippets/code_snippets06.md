@@ -611,3 +611,60 @@ const app = new Vue({
 })
 
 ```
+
+### Vue Render Function
+```
+
+https://vuedose.tips/when-to-use-a-vue-render-function
+https://vuedose.tips/introduction-to-render-functions
+https://github.com/vuejs/core/tree/main/packages/sfc-playground
+https://vuejs.org/guide/quick-start.html
+https://vuejs.org/api/
+
+
+App.vue
+
+<script setup>
+import { ref, defineComponent, h, useAttrs, useSlots } from 'vue'
+
+const MyComponent = defineComponent({
+  render() {
+    return h('div', {}, this.$slots.default())
+  }
+})
+const MyCssClassInterceptorComponent = defineComponent(function MyCssClassInterceptorComponent() {
+ const attrs =  useAttrs()
+ const slots = useSlots()
+ 
+ return () => h(
+   'span',
+   {
+     ...attrs,
+     class: attrs.class.includes('red') ? 'blue' : ''
+   },
+   slots.default()
+ )
+
+})
+</script>
+
+<template>
+  <my-component class="red">hello</my-component>
+  <MyCssClassInterceptorComponent class="green">hello</MyCssClassInterceptorComponent>
+  <br />
+  <MyCssClassInterceptorComponent class="red">hello</MyCssClassInterceptorComponent> &lt;-- passing class red? Nah, ah, better make it blue (thanks to the cascade)!
+  <br />
+</template>
+
+<style>
+  .red {
+    color: red;
+  }
+  .green {
+    color: green;
+  }
+  .blue {
+    color: blue;
+  }
+</style>
+```

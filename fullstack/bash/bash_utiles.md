@@ -924,3 +924,26 @@ type lsdir
 lsdir is aliased to `ls -d */'
 
 ```
+
+
+
+### Bash String Replace
+https://earthly.dev/blog/bash-string/
+```
+
+#!/bin/bash
+
+phrase="When you don't create things, you become defined by your tastes 
+rather than ability. Your tastes only narrow & exclude people. So create."
+echo "${phrase/create/make}"
+
+
+Bash String Regex Match
+
+#!/bin/bash
+name="aardvark"
+if [[ "$name" =~ ^aa ]]; then
+    echo "Starts with aa: $name"
+fi
+```
+
