@@ -261,3 +261,98 @@ https://www.bezkoder.com/vue-v-slot/
 https://ramblings.mcpher.com/snipgraphql/vuejs/vuejs-and-vuetify-what-does-v-on-mean/
 https://youtrack.jetbrains.com/issue/WEB-52117
 ```
+
+
+### Vue Select — Loading Options and Loops
+https://hohanga.medium.com/vue-select-loading-options-and-loops-61bbfc394450
+
+```
+
+<template>
+  <v-select @search="fetchOptions" :options="options" :filterable="false"/>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      allOptions: ["apple", "orange", "grape"],
+      options: []
+    };
+  },
+  methods: {
+    fetchOptions(search, loading) {
+      setTimeout(() => {
+        this.options = this.allOptions.filter(a =>
+          a.toLowerCase().includes(search.toLowerCase())
+        );
+      }, 1000);
+    }
+  }
+};
+</script>
+
+
+<template>
+  <v-select @search="fetchOptions" :options="options" :filterable="false">
+    <template v-slot:spinner="{ loading }">
+      <div v-show="loading">Loading...</div>
+    </template>
+  </v-select>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      allOptions: ["apple", "orange", "grape"],
+      options: []
+    };
+  },
+  methods: {
+    fetchOptions(search, loading) {
+      loading(true);
+      setTimeout(() => {
+        this.options = this.allOptions.filter(a =>
+          a.toLowerCase().includes(search.toLowerCase())
+        );
+        loading(false);
+      }, 2000);
+    }
+  }
+};
+</script>
+
+
+<template>
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Country</th>
+    </tr>
+    <tr v-for="p in people" :key="p.name">
+      <td>{{ p.name }}</td>
+      <td>
+        <v-select
+          :options="options"
+          :value="p.country"
+          @input="country => updateCountry(p, country)"
+        />
+      </td>
+    </tr>
+  </table>
+</template>
+<script>
+export default {
+  data: () => ({
+    people: [{ name: "John", country: "" }, { name: "Jane", country: "" }],
+    options: ["Canada", "United States"]
+  }),
+  methods: {
+    updateCountry(person, country) {
+      person.country = country;
+    }
+  }
+};
+</script>
+```
+
+

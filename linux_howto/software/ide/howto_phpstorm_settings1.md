@@ -430,3 +430,11 @@ https://plugins.jetbrains.com/plugin/7796-perl
 
 File > Settings > Languages & Frameworks > SQL Dialects
 ~~~
+~~~
+############################################################################
+How to jump to matching braces?
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/207071115-How-to-jump-to-matching-braces-
+############################################################################
+
+CTRL + SHIFT + M
+~~~

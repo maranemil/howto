@@ -659,3 +659,36 @@ git merge --ff-only origin/master
 ------------------
 
 
+###################################################################
+fatal: unsafe repository ('/home/repon' is owned by someone else)
+###################################################################
+https://stackoverflow.com/questions/71901632/fatal-unsafe-repository-home-repon-is-owned-by-someone-else
+https://community.atlassian.com/t5/Jira-questions/Exited-with-code-128-saying-fatal-unsafe-repository/qaq-p/2005499
+https://github.com/actions/checkout/issues/766
+https://github.com/actions/checkout/issues/760
+https://community.mailcow.email/d/1547-error-updating-from-2022-03a-fatal-unsafe-repository
+
+git config --global --add safe.directory *
+git config --global --add safe.directory your-directory
+git config --global --add safe.directory <repo-path>
+
+Here are 4 possible solutions:
+
+trust git directory (do it if you know the directory contents are safe)
+git config --global --add safe.directory /home/repon
+
+This adds to ~/.gitconfig the safe group as shown in this example
+
+[safe]
+    directory = /home/repon
+run the command as the correct user, for example:
+sudo -u ubuntu -- git status
+
+you will need to add a new file inside /etc/sudoers.d/ with the following contents:
+
+www-data ALL=(ubuntu) NOPASSWD: /usr/bin/git
+
+This may have security implications so refer to your security guy first.
+
+change git repository owner to www-data
+sudo chown -R www-data:www-data /home/repon
