@@ -645,3 +645,15 @@ https://www.samanthaming.com/tidbits/19-2-ways-to-convert-to-boolean/
 
 Boolean(string); // true
 ```
+
+### String.prototype.includes()
+```
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes
+https://www.freecodecamp.org/news/javascript-string-contains-how-to-use-js-includes/
+https://stackoverflow.com/questions/1789945/how-to-check-whether-a-string-contains-a-substring-in-javascript
+https://www.w3schools.com/jsref/jsref_includes.asp
+
+let text = "Hello world, welcome to the universe.";
+let result = text.includes("world");
+```
