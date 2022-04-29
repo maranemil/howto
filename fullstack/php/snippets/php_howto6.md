@@ -244,10 +244,85 @@ print number_format(4.99, 2, ',','.'); # 4,99
 print number_format(4999.99, 2, ',','.'); # 4.999,99
 ```
 
+### How to Sort a Multi-dimensional Array by Value
+
+```
+
+https://stackoverflow.com/questions/2699086/how-to-sort-a-multi-dimensional-array-by-value
+https://stackoverflow.com/questions/3281841/how-do-i-sort-a-multi-dimensional-array-by-value
+https://stackoverflow.com/questions/1496682/how-to-sum-all-column-values-in-multi-dimensional-array
+https://www.php.net/manual/en/function.uasort.php
+https://www.php.net/manual/en/function.array-multisort.php
+http://phptester.net/
+
+$values_arr = array(
+["size"=>300,"value"=>0],
+["size"=>2000,"value"=>130],
+["size"=>200,"value"=>40],
+["size"=>300,"value"=>40],
+["size"=>300,"value"=>0],
+);
+
+usort($values_arr, function ($a, $b) {
+    return $a['value'] - $b['value'];
+});
+
+print_r(json_encode($values_arr,JSON_PRETTY_PRINT) );
+
+```
 
 
+### PHP Fatal error: Access level to class::$method must be protected or weaker
+#### PHP Fatal error: Access level must be protected
+```
+
+https://stackoverflow.com/questions/45290131/why-do-i-get-an-access-level-must-be-protected-or-weaker-after-extending-a-pro
+https://stackoverflow.com/questions/11183190/access-level-to-certain-class-must-be-public-error-in-php
+https://github.com/rokka-io/rokka-wordpress-plugin/issues/29
+http://phptester.net/
 
 
+abstract class AbstractController
+{
+    protected $repository;
+}
+
+class GraphController extends AbstractController
+{
+    private $repository;
+}
 
 
+FATAL ERROR Access level to GraphController::$repository must be protected (as in class AbstractController) or weaker on line number 11
 
+
+Controlling Access to Members of a Class
+https://docs.oracle.com/javase/tutorial/java/javaOO/accesscontrol.html
+https://stackoverflow.com/questions/215497/what-is-the-difference-between-public-protected-package-private-and-private-in
+
+Class Package Subclass
+(same pkg) Subclass
+(diff pkg) World
+public + + + + +
+protected + + + +
+no modifier + + +
+private +
+
+Access Levels
+Modifier Class Package Subclass
+public Y Y Y Y
+protected Y Y Y N
+no modifier Y Y N N
+private Y N N N
+```
+
+### max value Multi-dimensional Array by Value
+
+```
+
+https://www.php.net/manual/en/function.max.php
+https://stackoverflow.com/questions/5093171/hightest-value-of-an-associative-array
+
+echo max(array_column($array, 'key1'));
+
+```

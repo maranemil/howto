@@ -668,3 +668,20 @@ const MyCssClassInterceptorComponent = defineComponent(function MyCssClassInterc
   }
 </style>
 ```
+
+
+### Vue I18n HTML formatting
+https://kazupon.github.io/vue-i18n/guide/formatting.html#list-formatting
+```
+
+const messages = {
+  en: {
+    message: {
+      hello: 'hello <br> world'
+    }
+  }
+}
+
+<p v-html="$t('message.hello')"></p>
+
+```
