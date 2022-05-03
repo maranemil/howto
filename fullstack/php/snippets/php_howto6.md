@@ -326,3 +326,14 @@ https://stackoverflow.com/questions/5093171/hightest-value-of-an-associative-arr
 echo max(array_column($array, 'key1'));
 
 ```
+
+
+
+### Uncaught Error: Call to undefined function mysqli_report()
+```
+
+https://stackoverflow.com/questions/17024036/what-causes-a-fatal-error-call-to-undefined-function-mysqli-report
+https://hotexamples.com/examples/-/-/mysqli_report/php-mysqli_report-function-examples.html
+
+sudo apt install php-mysql
+```
