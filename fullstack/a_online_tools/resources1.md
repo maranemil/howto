@@ -365,7 +365,33 @@ https://www.loom.com/pricingtools
 
 
 
+### IBAN-Beispiel
 
+https://ibanvalidieren.de/beispiele.html
+https://www.iban.com/testibans
+https://ssl.ibanrechner.de/sample_accounts.html
+https://www.ckonto.de/download/IBAN_Fallen_Tabelle_V4.pdf
+https://wise.com/gb/iban/germany
+https://www.xe.com/ibancalculator/sample/?ibancountry=germany
+https://de.iban.com/struktur
+https://www.xe.com/ibancalculator/sample/?ibancountry=france
+https://www.iban-bic.com/sample_accounts.html
+
+
+### IBAN-Prüfer
+
+https://www.smart-rechner.de/iban_pruefen/rechner.php
+
+### IBAN regeln
+https://www.buchhaltung-einfach-sicher.de/finanzen/iban
+https://www.bundesbank.de/de/aufgaben/unbarer-zahlungsverkehr/serviceangebot/iban-regeln/iban-regeln-603042
+
+### Germany address generator + Matched person profile + Finance & Credit Card infomation
+https://www.fakexy.com/de-fake-address-generator-bw
+
+### unixtimestamp
+https://www.epochconverter.com/
+https://www.unixtimestamp.com/index.php
 
 
 
