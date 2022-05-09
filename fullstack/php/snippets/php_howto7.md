@@ -1,4 +1,5 @@
 
+```
 
 #######################################################
 #
@@ -102,7 +103,9 @@ Array
     [2] => 3
 )
 */
+```
 
+```
 
 ############################################
 # Extract Numbers From a String in PHP
@@ -120,6 +123,9 @@ echo("The extracted numbers are: $int \n");
 $string = 'Sarah has 4 dolls and 6 bunnies.';
 $outputString = preg_replace('/[^0-9]/', '', $string);
 echo("The extracted numbers are: $outputString \n");
+```
+
+```
 
 ############################################
 # Get the Last Character of a String in PHP
@@ -137,6 +143,9 @@ echo "The last char of the string is $lastChar.";
 $string = "This is a string";
 $lastChar = $string[-1];
 echo "The last char of the string is $lastChar.";
+```
+
+```
 
 #######################################
 # AND vs && as operator in PHP
@@ -158,14 +167,19 @@ $f = false or true;
 if ($var = true && false) // Compare true with false and assign to $var
 if ($var = true and false) // Assign true to $var and compare $var to false
 
+```
 
 
+```
 
 #######################################
 # remove spaces
 #######################################
 
 preg_replace('/\s/','',$str);
+```
+
+```
 
 #######################################
 #   PSR-12: Extended Coding Style - PHP-FIG
@@ -188,6 +202,9 @@ https://blog.quickadminpanel.com/psr-2-and-psr-12-why-we-need-standards-and-how-
 https://thoeny.dev/php-differences-between-psr-12-and-psr-2
 https://siderlabs.com/blog/5-php-coding-standards-you-will-love-and-how-to-use-them-adf6a4855696/
 */
+```
+
+```
 
 #######################################
 # autoloader
@@ -347,6 +364,9 @@ error_log(
 	APP . '/errors.log'
 );
 
+```
+
+```
 
 #######################################
 #   Refresh
@@ -356,6 +376,9 @@ https://stackoverflow.com/questions/12383371/refresh-a-page-using-php
 #header("Refresh:0");
 #header("Refresh:0; url=page2.php");
 header('Refresh: 1; url=index.php');
+```
+
+```
 
 #######################################
 #   enum php 8.1
@@ -377,6 +400,8 @@ https://php.watch/articles/php-attributes
 https://php.watch/versions/8.0/attributes
 https://stitcher.io/blog/attributes-in-php-8
 https://www.php.net/releases/8.0/en.php
+```
+```
 
 #######################################
 #   curl php
@@ -419,6 +444,9 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, array(
     'X-Apple-Tz: 0',
     'X-Apple-Store-Front: 143444,12'
 ));
+```
+
+```
 
 #######################################
 # curl debug
@@ -468,11 +496,9 @@ exit;
 curl -vv --fail --silent --show-error --header 'Authorization: bearer xxx' https://example.com/api/status/
 curl -v -fsSL http://example.com/
 
+```
 
-
-
-
-
+```
 
 #######################################
 JSON_THROW_ON_ERROR (PHP 7 >= 7.3.0, PHP 8)
@@ -480,7 +506,9 @@ JSON_THROW_ON_ERROR (PHP 7 >= 7.3.0, PHP 8)
 https://www.php.net/manual/en/class.jsonexception.php
 
 json_decode($test, true, 512, JSON_THROW_ON_ERROR);
+```
 
+```
 
 #######################################
 Composer datatables
@@ -519,7 +547,9 @@ $(document).ready(function() {
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css">
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>
 
+```
 
+```
 
 #######################################
 stdClass2array array2stdClass
@@ -539,6 +569,9 @@ function convertArrayToObject($array): stdClass
 
 
 $array = json_decode(json_encode($object), true);
+```
+
+```
 
 #######################################
 Fastest way to check if a string is JSON in PHP
@@ -548,3 +581,4 @@ json_decode JSON_ERROR_NONE
 
 https://stackoverflow.com/questions/6041741/fastest-way-to-check-if-a-string-is-json-in-php
 
+```
