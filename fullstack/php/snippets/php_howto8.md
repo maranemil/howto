@@ -129,6 +129,50 @@ while (!$result->EOF) {
     $result->moveNext();
     print "<br>\n";
 }
+
+...
+
+http://cdc.gy/sahana/3rd/adodb/docs/docs-adodb.htm#ex2
+https://www.uoyep.org.ar/utiles/phpgrid/lib/inc/adodb/docs/docs-adodb.htm#ex1
+https://adodb.org/dokuwiki/doku.php?id=v5:reference:connection:getall
+https://adodb.org/dokuwiki/doku.php?id=v5:reference:connection:getarray
+https://adodb.org/dokuwiki/doku.php?id=v5:reference:connection:setfetchmode
+https://adodb.org/dokuwiki/doku.php?id=v5:reference:connection:getrow
+https://adodb.org/dokuwiki/doku.php?id=v5:reference:recordset:fetchobj
+https://adodb.org/dokuwiki/doku.php?id=v5:reference:recordset:fetchrow
+https://adodb.org/dokuwiki/doku.php?id=v5:reference:reference_index
+
+$recordSet = $conn->Execute('select CustomerID,OrderDate from Orders');
+if (!$recordSet)
+    print $conn->ErrorMsg();
+else
+    while (!$recordSet->EOF) {
+        $fld = $recordSet->FetchField(1);
+        $type = $recordSet->MetaType($fld->type);
+
+        if ( $type == 'D' || $type == 'T')
+            print $recordSet->fields[0].' '.
+            $recordSet->UserDate($recordSet->fields[1],'m/d/Y').'<BR>';
+        else
+            print $recordSet->fields[0].' '.$recordSet->fields[1].'<BR>';
+
+        $recordSet->MoveNext();
+    }
+$recordSet->Close(); # optional
+$conn->Close(); # optional
+
+.......
+
+$db->SetFetchMode(ADODB_FETCH_NUM);
+$rs1 = $db->Execute('select * from table');
+
+$db->SetFetchMode(ADODB_FETCH_ASSOC);
+$rs2 = $db->Execute('select * from table');
+
+print_r($rs1->fields); # shows array([0]=>'v0',[1] =>'v1')
+print_r($rs2->fields); # shows array(['col1']=>'v0',['col2'] =>'v1')
+
+
 ```
 ```
 
