@@ -356,3 +356,194 @@ export default {
 ```
 
 
+-----------------------------------
+### How can i set my v-text-field to not show negative numbers?
+
+```
+https://stackoverflow.com/questions/62932508/how-can-i-set-my-v-text-field-to-not-show-negative-numbers
+https://stackoverflow.com/questions/62932508/how-can-i-set-my-v-text-field-to-not-show-negative-numbers
+onchange="if(this.value < 0) this.value = 0;"
+
+
+@change="changeQuantity"
+changeQuantity (qty) {
+  const val = Math.round(Number(qty))
+  let quantity = val
+  if (val <= 0) {
+    quantity = 0
+  }
+  this.portata.quantita_portata = quantity
+}
+```
+
+-------------------------------------
+
+### using this in vue
+
+```
+https://v2.vuejs.org/v2/guide/events?redirect=true
+https://forum.vuejs.org/t/passing-arguments-to-a-custom-event-that-also-accepts-an-object-within-a-v-for/42425/5
+https://v1.vuejs.org/guide/events.html
+https://vuejs.org/guide/extras/render-function.html#creating-vnodes
+https://vuejs.org/guide/extras/render-function.html#creating-vnodes
+https://vuejs.org/guide/essentials/reactivity-fundamentals.html#declaring-methods
+https://lusaxweb.github.io/vuesax-blog/tips/scope_this.html#create-var
+https://sodocumentation.net/vue-js/topic/9350/using--this--in-vue
+
+<li v-for="item in items" @click="emit(item)">
+methods: {
+  emit(item) {
+    this.$emit('customEvent', item)
+  }
+}
+
+..
+
+methods: {
+  emitEvent() {
+    const someData = {x:123, y:456};
+    this.$emit('customEvent', someData);
+  }
+You can do something like this in your parent component:
+
+<div v-for="thing in things"
+    <my-component @customEvent="doThis(thing, $event)" />
+</div>
+
+// methods
+doThing(thing, otherArguments) {
+// otherArguments == someData from MyComponent.vue
+}
+```
+
+
+### Unable to fix a warning Duplicate keys detected: '0'. This may cause an update error
+
+```
+
+Duplicate keys detected: '0'. This may cause an update error.	
+https://stackoverflow.com/questions/58653901/unable-to-fix-a-warning-duplicate-keys-detected-0-this-may-cause-an-update-e		
+https://russianblogs.com/article/9692212249/
+https://codeantenna.com/a/yR01ZbpoDw	
+
+Before			
+v-for="(compo,index) in compoDataAz" :key="index" 
+v-for="(compo, index) in analyteData" :key="index" 
+		
+After				
+v-for="(compo,index) in compoDataAz" :key="'compo'+index"
+v-for="(compo, index) in analyteData" :key="'analyte'+index"
+		
+		
+This fixed the issue. The reason for the warning was that I used "index" as key for both list rendering.		
+
+<div class="info" v-for="(item, index) in currentFriend.content" :key="index">
+    <div class="d1">
+            <p v-text="item.time" class="timeBox"></p>
+    </div>
+</div>
+<div class="info2" v-for="(item, index) in currentFriend.content" :key="'index">
+    <div class="d2">
+          <p v-text="item.time" class="timeBox"></p>
+      </div>
+</div>
+
+<div class="info2" v-for="(item, index) in currentFriend.content" :key="'info2-'+index">
+    <div class="d2">
+          <p v-text="item.time" class="timeBox"></p>
+      </div>
+</div>	
+
+Before
+<ImgRa :data="item" v-for="(item,index) in qualificationContent" :key="index" />
+After
+<ImgRa :data="item" v-for="(item,index) in qualificationContent" :key="'i'+index" />
+```
+	
+-------------------------------------	
+
+### Error in render: "TypeError: Cannot read properties of undefined (reading
+
+```
+
+The "Cannot read properties of undefined (reading 'render')" error 
+
+https://vuejs.org/guide/extras/reactivity-in-depth.html
+https://laracasts.com/discuss/channels/vue/vue-warn-error-in-render-typeerror-cannot-read-property-name-of-undefined-when-use-deep-object-3-levels
+https://codesource.io/how-to-fix-cannot-read-property-of-undefined-in-vue/
+https://github.com/kazupon/vue-i18n/issues/1421	
+https://rollbar.com/blog/javascript-typeerror-cannot-read-property-of-undefined/
+https://stackoverflow.com/questions/43737528/error-in-render-function-typeerror-cannot-read-property-of-undefined-in-vue
+https://github.com/arkokoley/pdfvuer/issues/109	
+
+https://forum.vuejs.org/t/whats-the-difference-between-vue-esm-js-and-other-vue-dist-files/7259
+https://vuejs.org/guide/quick-start.html
+https://vuejs.org/guide/quick-start.html#with-build-tools
+https://vuejs.org/guide/quick-start.html#without-build-tools
+https://stackoverflow.com/questions/70341856/vue-runtime-esm-jstypeerror-cannot-read-properties-of-undefined
+https://vuejs.org/guide/components/props.html
+https://github.com/symfony/webpack-encore/issues/674
+
+
+
+function myFunc(a) {
+	console.log(a.b);
+}
+
+var myVar;
+myFunc(myVar);
+
+TypeError: Cannot read properties of undefined (reading 'b')
+
+...
+
+const board = [];
+const category = board.category; // undefined
+const title = category.title; // TypeError, because category is undefined
+
+
+data() {
+  return {
+    board: {
+      category: {
+        title: ''
+      }
+    }
+  }
+}	
+
+
+..
+
+
+var vm = new Vue({
+  data: {
+    // declare message with an empty value
+    message: ''
+  },
+  template: '<div>{{ message }}</div>'
+})
+// set `message` later
+vm.message = 'Hello!'		
+
+```
+
+
+### Type string is not assignable to type
+```
+
+https://bobbyhadz.com/blog/typescript-type-string-is-not-assignable-to-type
+https://exerror.com/type-string-is-not-assignable-to-type/
+https://stackoverflow.com/questions/37978528/typescript-type-string-is-not-assignable-to-type
+https://blog.softwaremill.com/typescript-mistakes-to-avoid-d3ab240c90eb
+https://www.explainprogramming.com/typescript/never-type/
+
+let fruit = "Banana" as const;
+
+export type Fruit = "Orange" | "Apple" | "Banana";
+let myString: string = "Banana";
+
+let myFruit: Fruit = myString as Fruit;
+```
+
+
