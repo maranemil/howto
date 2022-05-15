@@ -657,3 +657,26 @@ https://www.w3schools.com/jsref/jsref_includes.asp
 let text = "Hello world, welcome to the universe.";
 let result = text.includes("world");
 ```
+
+
+### Tips For Using Async/Await in JavaScript
+```
+https://www.youtube.com/watch?v=_9vgd9XKlDQ
+https://jsfiddle.net/
+
+const loader = async () => {
+  const url = 'https://jsonplaceholder.typicode.com/todos/1'
+  // https://jsonplaceholder.typicode.com/todos/
+  try {
+    const res = await fetch(url);
+    // res.ok
+    // res.status === 200
+    const data = await res.json();
+    console.log(data)
+    return data;
+  } catch (err) {
+    console.log(err)
+  }
+};
+loader().then((data) => console.log(data))
+```
