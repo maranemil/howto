@@ -680,3 +680,23 @@ const loader = async () => {
 };
 loader().then((data) => console.log(data))
 ```
+
+
+### Email Address Regex
+
+```
+https://regexr.com/3e48o
+https://www.regextester.com/1922
+https://www.regextester.com/96927
+https://emailregex.com/
+https://emailregex.com/email-validation-summary/
+https://www.regular-expressions.info/email.html
+https://www.ietf.org/rfc/rfc5322.txt
+https://www.regular-expressions.info/email.html
+
+
+^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$
+[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}
+
+john.abc-mo@example.com
+```

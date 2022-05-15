@@ -820,4 +820,7 @@ align-content: space-around
 ```
 
 
-
+https://www.w3schools.com/css/css3_variables_overriding.asp
+https://vue-loader.vuejs.org/guide/scoped-css.html#deep-selectors
+https://vuejs.org/guide/essentials/class-and-style.html#binding-html-classes
+https://v2.vuejs.org/v2/guide/class-and-style.html

@@ -367,5 +367,13 @@ https://www.loom.com/pricingtools
 - https://www.epochconverter.com/
 - https://www.unixtimestamp.com/index.php
 
+------------------------------------------------------------------
+### Email format Address Online Validator
+- http://sqa.fyicenter.com/1000206_Email_Address_Validator.html#Result
+- https://mailscrap.com/
 
-
+------------------------------------------------------------------
+### Email Address Online Check if exists
+- https://validateemailaddress.org/
+- https://iplocation.io/verify-email-address
+- https://hunter.io/email-verifier
