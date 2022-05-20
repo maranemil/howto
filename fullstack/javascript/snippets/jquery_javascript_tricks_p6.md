@@ -700,3 +700,23 @@ https://www.regular-expressions.info/email.html
 
 john.abc-mo@example.com
 ```
+
+
+### atob deprecated javascript
+```
+
+https://developer.mozilla.org/en-US/docs/Web/API/atob
+https://developer.mozilla.org/en-US/docs/Web/API/btoa
+https://stackoverflow.com/questions/68849233/convert-a-string-to-base64-in-javascript-btoa-and-atob-are-deprecated
+https://nodejs.org/en/knowledge/advanced/buffers/how-to-use-buffers/
+```
+
+
+### 'Element is not exported' warning on member in es6 exporting default class.
+```
+
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/360007603619--Element-is-not-exported-warning-on-member-in-es6-exporting-default-class-
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000006904--Element-is-not-exported-error-on-ES6-class-member
+
+// noinspection JSUnresolvedVariable
+```

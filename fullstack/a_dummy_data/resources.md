@@ -91,11 +91,64 @@ https://www.fakepersongenerator.com/credit-card-generator
 
 
 ---------------------------------------------------------------------------
+### random profiles
+
+- https://namefake.com/
+- https://de.fakenamegenerator.com/
+- https://www.coolgenerator.com/fake-name-generator
+- https://namefake.com/
+- https://www.randomaddressgenerator.com/
+- https://www.coolgenerator.com/au-address-generator
+- https://www.fakexy.com/fake-creditcard-generator
+- https://www.fakexy.com/
+- https://www.fakenamegenerator.com/gen-male-us-ca.php
+- https://www.behindthename.com/random/
+- https://randommer.io/random-address##
+- https://generate-name.net/address
+- https://www.name-generator.org.uk/
+- https://www.namegenerator.biz/email-name-generator.php
+- https://www.namegenerator.biz/random-name-generator.php
+- https://www.fakenamegenerator.com/
+- https://github.com/joke2k/faker
+- https://github.com/joke2k/faker
+- https://namegenerators.org/fake-name-generator-gr/
+- https://www.randomfake.com/de-de/germany-fake-name-generator/##
+- https://usaddressgenerator.com/
+- https://nimtools.com/fake-address-generator
+- https://www.bestrandoms.com/random-address-in-de
+- https://randomwordgenerator.com/name.php
 
 
+---------------------------------------------------------------------------
+### random data
 
-
-
+- https://generatedata.com/generator
+- https://www.mockaroo.com/
+- https://generatedata.com/generator
+- https://www.mockaroo.com/
+- https://www.onlinedatagenerator.com/
+- https://cobbl.io/
+- https://smalldev.tools/test-data-generator-online
+- https://www.softwaretestinghelp.com/test-data-generation-tools/
+- https://github.com/brianvoe/gofakeit
+- https://dev.to/iainfreestone/20-resources-for-generating-fake-and-mock-data-55g1
+- https://github.com/captainsafia/fony
+- https://github.com/boo1ean/casual
+- https://fakestoreapi.com/
+- https://github.com/keikaavousi/fake-store-api
+- https://github.com/chancejs/chancejs
+- https://github.com/nuysoft/Mock
+- https://github.com/Cambalab/fake-data-generator
+- https://github.com/danibram/mocker-data-generator/
+- https://randomuser.me/
+- https://github.com/json-schema-faker/json-schema-faker
+- https://github.com/pigment/fake-logos
+- https://github.com/typicode/jsonplaceholder
+- https://fakeimg.pl/
+- https://picsum.photos/
+- https://fakeclients.com/
+- http://acmelogos.com/
+- https://www.lipsum.com/
 
 
 

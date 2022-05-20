@@ -685,3 +685,33 @@ const messages = {
 <p v-html="$t('message.hello')"></p>
 
 ```
+
+### vue store
+```
+
+https://vuex.vuejs.org/guide/#the-simplest-store
+https://vuex.vuejs.org/guide/structure.html
+https://markus.oberlehner.net/blog/decouple-vue-components-from-the-vuex-store/
+https://www.telerik.com/blogs/you-might-not-need-vuex-shareable-stateful-services-in-vue
+https://itnext.io/building-vue-enterprise-application-part-3-the-store-dbda0e4bb117
+https://www.digitalocean.com/community/tutorials/how-to-manage-state-in-a-vue-js-application-with-vuex
+https://blog.logrocket.com/best-practices-mapping-vuex/
+https://thecodest.co/blog/vuex-features-you-should-know-if-you-really-care-about-your-store/
+https://stackoverflow.com/questions/60971317/access-vue-store-inside-service
+https://javascript.plainenglish.io/stop-using-actions-in-vuex-a14e23a7b0e6
+```
+
+
+```
+
+################################################################################
+[Vue Router warn]: Path "/" was passed with params but they will be ignored. Use a named route alongside params instead
+################################################################################
+https://stackoverflow.com/questions/68435072/vue-router-warning-message-passed-with-params-but-they-will-be-ignored
+https://github.com/vuejs/router/issues/951
+https://forum.vuejs.org/t/passing-optional-or-additional-params-in-router-link-with-path/30406/3
+https://www.codegrepper.com/code-examples/javascript/vue+router+route+params
+
+this.$router.push({name:'Home', params: { param: someValue } });
+```
+
