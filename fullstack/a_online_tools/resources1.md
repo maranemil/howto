@@ -377,3 +377,20 @@ https://www.loom.com/pricingtools
 - https://validateemailaddress.org/
 - https://iplocation.io/verify-email-address
 - https://hunter.io/email-verifier
+
+------------------------------------------------------------------
+### diff checker
+
+- https://www.diffchecker.com/diff
+- https://text-compare.com/de/
+- https://www.diffchecker.in/
+- https://www.textreverse.com/diff-checker.php
+- https://www.textcompare.org/
+- https://quickdiff.net/
+- https://countwordsfree.com/comparetexts
+- https://www.check-plagiarism.com/de/diff-checker
+- https://www.prepostseo.com/diff-checker
+- https://editor.mergely.com/
+- https://www.cleancss.com/diff-compare-merge/
+- https://wtools.io/check-difference-compare-merge
+- https://de.w3docs.com/tools/code-diff/
