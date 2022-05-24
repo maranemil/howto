@@ -1,0 +1,1610 @@
+{
+    "openapi": "3.0.0",
+    "servers": [
+        {
+            "url": "https://api.datev.de/"
+        }
+    ],
+    "info": {
+        "version": "1.0",
+        "title": "Accounting – Documents",
+        "description": "context: accounting/v1\n\nThe individual API services are described both functionally and technically. Wherever possible, examples are used to illustrate the calls and responses. All services only support the JSON format. The order of the return values is not set and may deviate from the order specified in this document. Return values with a value of “null” will not be returned.",
+        "x-ibm-name": "datevconnect-onlineaccounting-documents",
+        "x-datev-shortdescription": "Digital documents are transferred to the in-box of Belege online in DATEV Unternehmen online using the API accounting-documents"
+    },
+    "tags": [
+        {
+            "name": "Get clients and basic data about a client",
+            "description": "Get a list of clients and basic data about a client"
+        },
+        {
+            "name": "Transfer a document",
+            "description": "Transfer a document with meta information"
+        }
+    ],
+    "paths": {
+        "/accounting/v1/clients": {
+            "get": {
+                "tags": [
+                    "Get clients and basic data about a client"
+                ],
+                "summary": "Returns a list of clients that are accessible for the user.",
+                "description": "Returns a list of all clients to which the user has access. The user is only familiar with the client name, the client number, and the consultant number. For all subsequent requests concerning data transfer to DATEV, the ID of the client is necessary. The ID is a technical object for the communication between the third-party solution and the DATEV data center. The ID is not to be displayed to the end user. \n\n**Please note:** Data transfer to the DATEV data center is only possible if the user has access to the client. The third-party solution must ensure this by checking that the client number and consultant number exists in the list of clients.\n\n**Example: The user has access to one client**\n\n    [{\n        \"client_number\": 100,\n        \"consultant_number\": 29098, \n        \"id\": \"29098-100\",\n        \"name\": \"Muster GmbH 1\"\n    }]\n    \n    \n**Example: The user has access to two clients** \n    \n    \n    [{\n        \"client_number\":100,\n        \"consultant_number\":29098, \n        \"id\":\"29098-100\",\n        \"name\":\"Muster GmbH 1\"}, \n      {\n        \"client_number\":101,\n        \"consultant_number\":29098, \n        \"id\":\"29098-101\",\n        \"name\":\"Muster GmbH 2\"\n          \n      }]",
+                "responses": {
+                    "200": {
+                        "description": "Request OK; list of accessible clients is returned.",
+                        "content": {
+                            "application/json;charset=utf-8": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "client_number": {
+                                                "type": "integer",
+                                                "description": "client number",
+                                                "format": "int32",
+                                                "example": 100
+                                            },
+                                            "consultant_number": {
+                                                "type": "integer",
+                                                "format": "int32",
+                                                "description": "consultant number",
+                                                "example": 29098
+                                            },
+                                            "id": {
+                                                "type": "string",
+                                                "description": "client id (technical)",
+                                                "example": "29098-100"
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "description": "client name",
+                                                "example": "Muster GmbH 1"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "examples": {
+                                    "response": {
+                                        "value": [
+                                            {
+                                                "client_number": 100,
+                                                "consultant_number": 29098,
+                                                "id": "29098-100",
+                                                "name": "Muster GmbH 1"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "| Error, Error_description  | Description  | Example  | \n|-----------|---------------------------|-----------------------------------|\n| | The user has no access to clients. It is recommended that the user contact the tax consultant. | `` {\"request_id\":\"0a13eff2-44a9-4de6-90f0-1198241e7c22\"} `` |\n| #DCO01005 restapi.ScopeFault | The third-party solution has transmitted an incorrect request. The required scope is missing. It is up to the software provider to ensure that the request is correct. | `` {\"error_uri\":\"http://www.datev.de/dnlexos/mobile/webApp.aspx?sq=DCO01005\", \"request_id\":\"0a13eff2-44a9-4de6-90f0-1198241e7c22\",\"error\":\"#DCO01005\",\"error_description\":\"restapi.ScopeFault\"} `` | \n",
+                        "content": {
+                            "application/json;charset=utf-8": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "error": {
+                                                "type": "string",
+                                                "description": "contains a DATEV-specific error code – optional"
+                                            },
+                                            "request_id": {
+                                                "type": "string",
+                                                "description": "contains a unique request ID; this might be used to find a protocol entry by DATEV – optional"
+                                            },
+                                            "error_description": {
+                                                "type": "string",
+                                                "description": "the technical name of the error (please note that the meaning may vary depending on the request!) – optional"
+                                            },
+                                            "error_uri": {
+                                                "type": "string",
+                                                "description": "URI for further information about the error – optional"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "examples": {
+                                    "response": {
+                                        "value": [
+                                            {
+                                                "error_uri": "http://www.datev.de/dnlexos/mobile/webApp.aspx?sq=DCO01005",
+                                                "request_id": "0a13eff2-44a9-4de6-90f0-1198241e7c22",
+                                                "error": "#DCO01005",
+                                                "error_description": "restapi.ScopeFault"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The user does not have any clients. It is recommended that the user contact the tax consultant. It is up to the software provider to ensure that the request is correct.",
+                        "content": {
+                            "application/json;charset=utf-8": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "error": {
+                                                "type": "string",
+                                                "description": "contains a DATEV-specific error code – optional"
+                                            },
+                                            "request_id": {
+                                                "type": "string",
+                                                "description": "contains a unique request ID; this might be used to find a protocol entry by DATEV – optional"
+                                            },
+                                            "error_description": {
+                                                "type": "string",
+                                                "description": "the technical name of the error (please note that the meaning may vary depending on the request!) – optional"
+                                            },
+                                            "error_uri": {
+                                                "type": "string",
+                                                "description": "URI for further information about the error – optional"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "examples": {
+                                    "response": {
+                                        "value": [
+                                            {
+                                                "request_id": "0a13eff2-44a9-4de6-90f0-1198241e7c22"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "The services of DATEVconnect online are not available at the current time due to maintenance reasons. Please try again later.",
+                        "content": {
+                            "application/json;charset=utf-8": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "error": {
+                                                "type": "string",
+                                                "description": "contains a DATEV-specific error code – optional"
+                                            },
+                                            "request_id": {
+                                                "type": "string",
+                                                "description": "contains a unique request ID; this might be used to find a protocol entry by DATEV – optional"
+                                            },
+                                            "error_description": {
+                                                "type": "string",
+                                                "description": "the technical name of the error (please note that the meaning may vary depending on the request!) – optional"
+                                            },
+                                            "error_uri": {
+                                                "type": "string",
+                                                "description": "URI for further information about the error – optional"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "examples": {
+                                    "response": {
+                                        "value": {
+                                            "\\\"request_id\\\":\\\"0a13eff2-44a9-4de6-90f0-1198241e7c22\\\"": null
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "datev_openid": [
+                            "accounting:clients:read"
+                        ]
+                    },
+                    {
+                        "datev_openid": [
+                            "accounting:clients:read"
+                        ],
+                        "client_id": []
+                    },
+                    {
+                        "datev_openid_sandbox": [
+                            "accounting:clients:read"
+                        ]
+                    },
+                    {
+                        "client_id": [],
+                        "datev_openid_sandbox": [
+                            "accounting:clients:read"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/accounting/v1/clients/{client-id}/document-types": {
+            "get": {
+                "tags": [
+                    "Get clients and basic data about a client"
+                ],
+                "summary": "Returns a list of document types for a given client.",
+                "description": "Returns a list of document types for a given client. The user is normally only familiar with the name of the document type. The document type is determined by the properties category and debit_credit_identifier. Further processing in DATEV Unternehmen online depends on these properties. For example, a document type with the category “invoice_received” is processed as an incoming invoice. \n\nThe document type in DATEV applications is called “Belegtyp”. A client can have a lot of different document types. There are document types with special restrictions – document types with the category “personnel_documents” and “travel_expense_documents”. This means that the user’s DATEV authentication method needs to be configured with special rights.\n\n**Please note:** If the returned list is empty then the client has no document types. Normally, a client has at least four document types.\n \n\n **Get list of document types**\n \n\n```json\nHTTP/1.1 200 OK\nContent-Encoding: gzip\nTransfer-Encoding: chunked\n\n[\n{\n\"name\":\"Rechnungseingang\",\n\"category\":\"invoices_received\",\"debit_credit_identifier\":\"debit\"\n},\n{\n\"name\":\"Rechnungsausgang\",\n\"category\":\"outgoing_invoices\",\n\"debit_credit_identifier\":\"credit\"\n},\n{\n\"name\":\"Kasse\",\n\"category\":\"other_documents\"\n},\n{\n\"name\":\"Sonstige\",\n\"category\":\"other_documents\"\n}\n]\n\n```\n",
+                "parameters": [
+                    {
+                        "name": "client-id",
+                        "description": "ID that identifies the client.",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Request OK; a list of document types for a given client is returned.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": {
+                                                "type": "string",
+                                                "description": "name of the document type",
+                                                "example": "Rechnungseingang"
+                                            },
+                                            "category": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "invoices_received",
+                                                    "outgoing_invoices",
+                                                    "personnel_documents",
+                                                    "travel_expense_documents",
+                                                    "other_documents"
+                                                ],
+                                                "description": "category of the document type",
+                                                "example": "invoices_received"
+                                            },
+                                            "debit_credit_identifier": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "debit",
+                                                    "credit"
+                                                ],
+                                                "description": "debit/credit identifier of the document type",
+                                                "example": "debit"
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "response": {
+                                        "value": [
+                                            {
+                                                "name": "Rechnungseingang",
+                                                "category": "invoices_received",
+                                                "debit_credit_identifier": "debit"
+                                            },
+                                            {
+                                                "name": "Rechnungsausgang",
+                                                "category": "outgoing_invoices",
+                                                "debit_credit_identifier": "credit"
+                                            },
+                                            {
+                                                "name": "Kasse",
+                                                "category": "other_documents"
+                                            },
+                                            {
+                                                "name": "Sonstige",
+                                                "category": "other_documents"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "| Error, Error_description  | Description  | Example  | \n|-----------|---------------------------|-----------------------------------|\n| | The user has no access to clients. It is recommended that the user contact the tax consultant. | `` {\"request_id\":\"0a13eff2-44a9-4de6-90f0-1198241e7c22\"} `` | \n| #DCO01005 restapi.ScopeFault | The third-party solution has transmitted an incorrect request. The required scope is missing. It is up to the software provider to ensure that the request is correct. | `` {\"error_uri\":\"http://www.datev.de/dnlexos/mobile/webApp.aspx?sq=DCO01005\", \"request_id\":\"0a13eff2-44a9-4de6-90f0-1198241e7c22\",\"error\":\"#DCO01005\",\"error_description\":\"restapi.ScopeFault\"} `` | ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "error": {
+                                                "type": "string",
+                                                "description": "contains a DATEV-specific error code – optional"
+                                            },
+                                            "request_id": {
+                                                "type": "string",
+                                                "description": "contains a unique request ID; this might be used to find a protocol entry by DATEV – optional"
+                                            },
+                                            "error_description": {
+                                                "type": "string",
+                                                "description": "the technical name of the error (please note that the meaning may vary depending on the request!) – optional"
+                                            },
+                                            "error_uri": {
+                                                "type": "string",
+                                                "description": "URI for further information about the error – optional"
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "response": {
+                                        "value": [
+                                            {
+                                                "error_uri": "http://www.datev.de/dnlexos/mobile/webApp.aspx?sq=DCO01005",
+                                                "request_id": "0a13eff2-44a9-4de6-90f0-1198241e7c22",
+                                                "error": "#DCO01005",
+                                                "error_description": "restapi.ScopeFault"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The requested client does not exist. It is recommended that the user contact the tax consultant. The software provider has to ensure that the client ID used exists in the list of accessible clients.It is up to the software provider to ensure that the request is correct.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "error": {
+                                                "type": "string",
+                                                "description": "contains a DATEV-specific error code – optional"
+                                            },
+                                            "request_id": {
+                                                "type": "string",
+                                                "description": "contains a unique request ID; this might be used to find a protocol entry by DATEV – optional"
+                                            },
+                                            "error_description": {
+                                                "type": "string",
+                                                "description": "the technical name of the error (please note that the meaning may vary depending on the request!) – optional"
+                                            },
+                                            "error_uri": {
+                                                "type": "string",
+                                                "description": "URI for further information about the error – optional"
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "response": {
+                                        "value": [
+                                            {
+                                                "request_id": "0a13eff2-44a9-4de6-90f0-1198241e7c22"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "The services of DATEVconnect online are not available at the current time due to maintenance reasons. Please try again later.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "error": {
+                                                "type": "string",
+                                                "description": "contains a DATEV-specific error code – optional"
+                                            },
+                                            "request_id": {
+                                                "type": "string",
+                                                "description": "contains a unique request ID; this might be used to find a protocol entry by DATEV – optional"
+                                            },
+                                            "error_description": {
+                                                "type": "string",
+                                                "description": "the technical name of the error (please note that the meaning may vary depending on the request!) – optional"
+                                            },
+                                            "error_uri": {
+                                                "type": "string",
+                                                "description": "URI for further information about the error – optional"
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "response": {
+                                        "value": {
+                                            "\\\"request_id\\\":\\\"0a13eff2-44a9-4de6-90f0-1198241e7c22\\\"": null
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "datev_openid": [
+                            "accounting:documents"
+                        ]
+                    },
+                    {
+                        "datev_openid": [
+                            "accounting:documents"
+                        ],
+                        "client_id": []
+                    },
+                    {
+                        "datev_openid_sandbox": [
+                            "accounting:documents"
+                        ]
+                    },
+                    {
+                        "client_id": [],
+                        "datev_openid_sandbox": [
+                            "accounting:documents"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/accounting/v1/clients/{client-id}/documents": {
+            "post": {
+                "tags": [
+                    "Transfer a document"
+                ],
+                "summary": "Transfers a document",
+                "description": "A new accounting document will be transferred to Belege online in DATEV Unternehmen online. Each accounting document is transferred in a multipart object as a single file with optional metadata (document type and note). The content-type indicated in the multipart object has to correspond to the file. The accepted content-types and the accepted file size are determined by Belege online. Exception: ZIP files are not supported.\n\nIt is recommended that the user chooses the document type for each accounting document, as the document type affects further processing by DATEV. The chosen document type has to be existent at the given client. Please check the list of document types for a given client. The user should also have the possibility to choose “no document type”. \n\nIf the value of the document_type is empty, then the parameter will be ignored and will not be returned in the response. In this case, and if the parameter document_type is not used, the term “ohne Belegtyp” (without document type) is displayed in the DATEV applications.\n\n**Please note:** \nIt is recommended that file names are encoded in UTF8. Unicode characters have to be precomposed characters; in other words, each special character, such as an umlaut (ä, ü, ö), has to be a single code point. Decomposed characters are not supported. This applies to both the file name and the metadata.\n\nLarge files require more storage space and can slow down load times within DATEV Unternehmen online and the DATEV Rechnungswesen-Programm. We recommend that the user is informed whenever the file size exceeds 500 kB.\n \n**Example:Document has been imported successfully:**\n \n\n```json\nHTTP/1.1 201 Processed\nContent-Encoding: gzip\nTransfer-Encoding: chunked\n\n{\n\"files\":[{\n\"name\":\"Test-File.pdf\",\n\"size\":\"125742\"\n}],\n\"document_type\":\"Rechnungseingang\",\n\"note\":\"Beleg von Beispiel GmbH\"\n}\n\n```\n",
+                "parameters": [
+                    {
+                        "name": "client-id",
+                        "description": "ID that identifies the client.",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Request OK; the document has been imported successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "description": "ID of document",
+                                            "example": "BF00CD5C-0FE9-D106-5EC7-BA4FCF4A3951"
+                                        },
+                                        "files": {
+                                            "type": "array",
+                                            "description": "file information on the document (read-only)",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "description": "ID of the file of the document",
+                                                        "example": "BF00CD5C-0FE9-D106-5EC7-BA4FCF4A3951"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "description": "name of the file of the document",
+                                                        "example": "Testrechnung-Eingang.pdf"
+                                                    },
+                                                    "size": {
+                                                        "type": "integer",
+                                                        "description": "file size in bytes",
+                                                        "example": 300
+                                                    },
+                                                    "upload_date": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "description": "import time  in accordance with ISO8601 „YYYY-MM-DDThh:mm:ss±hh:mm“",
+                                                        "example": "2016-03-02T16:26:30.000+0000"
+                                                    },
+                                                    "media_type": {
+                                                        "type": "string",
+                                                        "description": "Internet media type of the file",
+                                                        "example": "application/pdf"
+                                                    }
+                                                }
+                                            },
+                                            "readOnly": true
+                                        },
+                                        "document_type": {
+                                            "type": "string",
+                                            "description": "document type of a document",
+                                            "example": "Rechnungseingang"
+                                        },
+                                        "note": {
+                                            "type": "string",
+                                            "description": "note pertaining to the document for the tax consultant",
+                                            "example": "This is a sample note."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "| Error, Error_description  | Description  | Example  | \n|-----------|---------------------------|-----------------------------------|\n| \t#DCO01004 restapi.MultipartUploadFault | The third-party solution has transmitted an incorrect request. There is an error with the multipart object (e.g. the file is missing). It is up to the software provider to ensure that the request is correct. | `` {\"error_uri\":\"http://www.datev.de/dnlexos/mobile/webApp.aspx?sq=DCO01004\", \"request_id\":\"0a13eff2-44a9-4de6-90f0-1198241e7c22\", \"error\":\"#DCO01004, \"error_description\":\"restapi.MultipartUploadFault\"} `` | \n| \t#DCO01010 restapi.InvalidDocumentTypeFault | The document type does not exist. It is up to the software provider to ensure that the document type used exists in the list of document types. | `` {\"error_uri\":\"http://www.datev.de/dnlexos/mobile/webApp.aspx?sq=DCO01010\", \"request_id\":\"0a13eff2-44a9-4de6-90f0-1198241e7c22\", \"error\":\"#DCO01010\", \"error_description\":\"restapi.InvalidDocumentTypeFault\"} `` | \n| #DCO01015 restapi.UnsupportedFileTypeFault | The transferred file has not been processed because the file type is not accepted by DATEV. It is up to the software provider to ensure that the user is informed that the file type is not supported by DATEV. | `` {\"error_uri\":\"http://www.datev.de/dnlexos/mobile/webApp.aspx?sq=DCO01015\", \"request_id\":\"0a13eff2-44a9-4de6-90f0-1198241e7c22\", \"error\":\"#DCO01015\", \"error_description\":\"restapi.UnsupportedFileTypeFault\"} `` | \n| #DCO01016 restapi.FileSizeFault | The transferred file has not been processed because the file is too large to be stored by DATEV. It is up to the software provider to ensure that the user is informed that the file is too large to be stored by DATEV. | `` {\"error_uri\":\"http://www.datev.de/dnlexos/mobile/webApp.aspx?sq=DCO01016\", \"request_id\":\"0a13eff2-44a9-4de6-90f0-1198241e7c22\", \"error\":\"#DCO01016\", \"error_description\":\"restapi.FileSizeFault\"} `` |",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "error": {
+                                                "type": "string",
+                                                "description": "contains a DATEV-specific error code – optional"
+                                            },
+                                            "request_id": {
+                                                "type": "string",
+                                                "description": "contains a unique request ID; this might be used to find a protocol entry by DATEV – optional"
+                                            },
+                                            "error_description": {
+                                                "type": "string",
+                                                "description": "the technical name of the error (please note that the meaning may vary depending on the request!) – optional"
+                                            },
+                                            "error_uri": {
+                                                "type": "string",
+                                                "description": "URI for further information about the error – optional"
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "response": {
+                                        "value": [
+                                            {
+                                                "error_uri": "http://www.datev.de/dnlexos/mobile/webApp.aspx?sq=DCO01016",
+                                                "request_id": "0a13eff2-44a9-4de6-90f0-1198241e7c22",
+                                                "error": "#DCO01016",
+                                                "error_description\":\"restapi.FileSizeFault\"": null
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "| Error, Error_description  | Description  | Example  | \n|-----------|---------------------------|-----------------------------------|\n| | The user has no access to clients. It is recommended that the user contact the tax consultant. | `` {\"request_id\":\"0a13eff2-44a9-4de6-90f0-1198241e7c22\"} `` | \n| #DCO01005 restapi.ScopeFault | The third-party solution has transmitted an incorrect request. The required scope is missing. It is up to the software provider to ensure that the request is correct. | `` {\"error_uri\":\"http://www.datev.de/dnlexos/mobile/webApp.aspx?sq=DCO01005\", \"request_id\":\"0a13eff2-44a9-4de6-90f0-1198241e7c22\",\"error\":\"#DCO01005\",\"error_description\":\"restapi.ScopeFault\"} `` | ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "error": {
+                                                "type": "string",
+                                                "description": "contains a DATEV-specific error code – optional"
+                                            },
+                                            "request_id": {
+                                                "type": "string",
+                                                "description": "contains a unique request ID; this might be used to find a protocol entry by DATEV – optional"
+                                            },
+                                            "error_description": {
+                                                "type": "string",
+                                                "description": "the technical name of the error (please note that the meaning may vary depending on the request!) – optional"
+                                            },
+                                            "error_uri": {
+                                                "type": "string",
+                                                "description": "URI for further information about the error – optional"
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "response": {
+                                        "value": [
+                                            {
+                                                "error_uri": "http://www.datev.de/dnlexos/mobile/webApp.aspx?sq=DCO01005",
+                                                "request_id": "0a13eff2-44a9-4de6-90f0-1198241e7c22",
+                                                "error": "#DCO01005",
+                                                "error_description": "restapi.ScopeFault"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The requested client does not exist. It is recommended that the user contact the tax consultant. The software provider has to ensure that the client ID used exists in the list of accessible clients.It is up to the software provider to ensure that the request is correct.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "error": {
+                                                "type": "string",
+                                                "description": "contains a DATEV-specific error code – optional"
+                                            },
+                                            "request_id": {
+                                                "type": "string",
+                                                "description": "contains a unique request ID; this might be used to find a protocol entry by DATEV – optional"
+                                            },
+                                            "error_description": {
+                                                "type": "string",
+                                                "description": "the technical name of the error (please note that the meaning may vary depending on the request!) – optional"
+                                            },
+                                            "error_uri": {
+                                                "type": "string",
+                                                "description": "URI for further information about the error – optional"
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "response": {
+                                        "value": [
+                                            {
+                                                "request_id": "0a13eff2-44a9-4de6-90f0-1198241e7c22"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "The services of DATEVconnect online are not available at the current time due to maintenance reasons. Please try again later.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "error": {
+                                                "type": "string",
+                                                "description": "contains a DATEV-specific error code – optional"
+                                            },
+                                            "request_id": {
+                                                "type": "string",
+                                                "description": "contains a unique request ID; this might be used to find a protocol entry by DATEV – optional"
+                                            },
+                                            "error_description": {
+                                                "type": "string",
+                                                "description": "the technical name of the error (please note that the meaning may vary depending on the request!) – optional"
+                                            },
+                                            "error_uri": {
+                                                "type": "string",
+                                                "description": "URI for further information about the error – optional"
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "response": {
+                                        "value": {
+                                            "\\\"request_id\\\":\\\"0a13eff2-44a9-4de6-90f0-1198241e7c22\\\"": null
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "datev_openid": [
+                            "accounting:documents"
+                        ]
+                    },
+                    {
+                        "datev_openid": [
+                            "accounting:documents"
+                        ],
+                        "client_id": []
+                    },
+                    {
+                        "datev_openid_sandbox": [
+                            "accounting:documents"
+                        ]
+                    },
+                    {
+                        "client_id": [],
+                        "datev_openid_sandbox": [
+                            "accounting:documents"
+                        ]
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "metadata": {
+                                        "description": "Meta information pertaining to a document as a JSON object with the content-type “application/json”\n\nmetadata {\n    document_type (string, optional): Name of the document type,\n    note (string, optional): Note pertaining to the document for the tax consultant. The note can consist of up to 255 characters. If the note is longer than 255 characters, the note will be adapted to the maximum length. \n}\n\nExample:\n```json\n{\n    \"document_type\": \"Rechnungseingang\",\n    \"note\": \"This is an example note\"\n}\n```\n",
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            }
+        },
+        "/accounting/v1/clients/{client-id}/documents/{document-id}": {
+            "put": {
+                "tags": [
+                    "Transfer a document"
+                ],
+                "summary": "Transfers a document with an ID",
+                "description": "A new accounting document with the ID of the document in the format of a GUID will be transferred to Belege online in DATEV Unternehmen online.\n\n**Please note:** If the ID of the document already exists in Belege online, then the import will be aborted with an error.\n\nEach accounting document is transferred in a multipart object as a single file with optional metadata (document type and note). The content-type indicated in the multipart object has to correspond to the file. The accepted content-types and the accepted file size are determined by Belege online. Exception: ZIP files are not supported.\n\nIt is recommended that the user chooses the document type for each accounting document, as the document type affects further processing by DATEV. The chosen document type has to be existent at the given client. Please check the list of document types for a given client. The user should also have the possibility to choose “no document type”.\n\nIf the value of document_type is empty, then the parameter will be ignored and will not be returned in the response. In this case, and if the parameter document_type is not used, the term “ohne Belegtyp” (without document type) is displayed in the DATEV applications.\n\n**Please note:** \nIt is recommended that file names are encoded in UTF8. Unicode characters have to be precomposed characters; in other words, each special character, such as an umlaut (ä, ü, ö), has to be a single code point. Decomposed characters are not supported. This applies to both the file name and the metadata.\n\nLarge files require more storage space and can slow down load times within DATEV Unternehmen online and the DATEV Rechnungswesen-Programm. We recommend that the user is informed whenever the file size exceeds 500 kB.\n\n\n**Example: Document has been imported succesfully:**\n\n\n```json\nHTTP/1.1 201 Processed\nContent-Encoding: gzip\nTransfer-Encoding: chunked\n\n{\n\"files\":[{\n\"name\":\"Test-File.pdf\",\n\"size\":\"125742\"\n}],\n\"document_type\":\"Rechnungseingang\",\n\"note\":\"Beleg von Beispiel GmbH\"\n}\n\n```\n",
+                "parameters": [
+                    {
+                        "name": "client-id",
+                        "description": "ID that identifies the client.",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "document-id",
+                        "description": "ID that identifies the document.",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "guid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Request OK; the document has been imported successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "description": "ID of document",
+                                            "example": "BF00CD5C-0FE9-D106-5EC7-BA4FCF4A3951"
+                                        },
+                                        "files": {
+                                            "type": "array",
+                                            "description": "file information on the document (read-only)",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "description": "ID of the file of the document",
+                                                        "example": "BF00CD5C-0FE9-D106-5EC7-BA4FCF4A3951"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "description": "name of the file of the document",
+                                                        "example": "Testrechnung-Eingang.pdf"
+                                                    },
+                                                    "size": {
+                                                        "type": "integer",
+                                                        "description": "file size in bytes",
+                                                        "example": 300
+                                                    },
+                                                    "upload_date": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "description": "import time  in accordance with ISO8601 „YYYY-MM-DDThh:mm:ss±hh:mm“",
+                                                        "example": "2016-03-02T16:26:30.000+0000"
+                                                    },
+                                                    "media_type": {
+                                                        "type": "string",
+                                                        "description": "Internet media type of the file",
+                                                        "example": "application/pdf"
+                                                    }
+                                                }
+                                            },
+                                            "readOnly": true
+                                        },
+                                        "document_type": {
+                                            "type": "string",
+                                            "description": "document type of a document",
+                                            "example": "Rechnungseingang"
+                                        },
+                                        "note": {
+                                            "type": "string",
+                                            "description": "note pertaining to the document for the tax consultant",
+                                            "example": "This is a sample note."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "| Error, Error_description  | Description  | Example  | \n|-----------|---------------------------|-----------------------------------| \n| #DCO01004 restapi.MultipartUploadFault | The third-party solution has transmitted an incorrect request. There is an error with the multipart object (e.g. the file is missing). It is up to the software provider to ensure that the request is correct. | `` {\"error_uri\":\"http://www.datev.de/dnlexos/mobile/webApp.aspx?sq=DCO01004\", \"request_id\":\"0a13eff2-44a9-4de6-90f0-1198241e7c22\", \"error\":\"#DCO01004, \"error_description\":\"restapi.MultipartUploadFault\"} `` | \n| #DCO01010 restapi.InvalidDocumentTypeFault | The document type does not exist. It is up to the software provider to ensure that the document type used exists in the list of document types. | `` {\"error_uri\":\"http://www.datev.de/dnlexos/mobile/webApp.aspx?sq=DCO01010\", \"request_id\":\"0a13eff2-44a9-4de6-90f0-1198241e7c22\", \"error\":\"#DCO01010\", \"error_description\":\"restapi.InvalidDocumentTypeFault\"} `` | \n| #DCO01015 restapi.UnsupportedFileTypeFault | The transferred file has not been processed because the file type is not accepted by DATEV. It is up to the software provider to ensure that the user is informed that the file type is not supported by DATEV. | `` {\"error_uri\":\"http://www.datev.de/dnlexos/mobile/webApp.aspx?sq=DCO01015\", \"request_id\":\"0a13eff2-44a9-4de6-90f0-1198241e7c22\", \"error\":\"#DCO01015\", \"error_description\":\"restapi.UnsupportedFileTypeFault\"} `` | \n| #DCO01016 restapi.FileSizeFault | The transferred file has not been processed because the file is too large to be stored by DATEV. It is up to the software provider to ensure that the user is informed that the file is too large to be stored by DATEV. | `` {\"error_uri\":\"http://www.datev.de/dnlexos/mobile/webApp.aspx?sq=DCO01016\", \"request_id\":\"0a13eff2-44a9-4de6-90f0-1198241e7c22\", \"error\":\"#DCO01016\", \"error_description\":\"restapi.FileSizeFault\"} `` |",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "error": {
+                                                "type": "string",
+                                                "description": "contains a DATEV-specific error code – optional"
+                                            },
+                                            "request_id": {
+                                                "type": "string",
+                                                "description": "contains a unique request ID; this might be used to find a protocol entry by DATEV – optional"
+                                            },
+                                            "error_description": {
+                                                "type": "string",
+                                                "description": "the technical name of the error (please note that the meaning may vary depending on the request!) – optional"
+                                            },
+                                            "error_uri": {
+                                                "type": "string",
+                                                "description": "URI for further information about the error – optional"
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "response": {
+                                        "value": [
+                                            {
+                                                "error_uri": "http://www.datev.de/dnlexos/mobile/webApp.aspx?sq=DCO01016",
+                                                "request_id": "0a13eff2-44a9-4de6-90f0-1198241e7c22",
+                                                "error": "#DCO01016",
+                                                "error_description": "restapi.FileSizeFault"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "| Error, Error_description  | Description  | Example  | \n|-----------|---------------------------|-----------------------------------|\n| | The user has no access to clients. It is recommended that the user contact the tax consultant. The third-party solution has to ensure that the client ID used exists in the list of accessible clients.| `` {\"request_id\":\"0a13eff2-44a9-4de6-90f0-1198241e7c22\"} `` | \n| #DCO01005 restapi.MultipartUploadFault | The third-party solution has transmitted an incorrect request. The required scope is missing. It is up to the software provider to ensure that the request is correct. | `` {\"error_uri\":\"http://www.datev.de/dnlexos/mobile/webApp.aspx?sq=DCO01005\", \"request_id\":\"0a13eff2-44a9-4de6-90f0-1198241e7c22\",\"error\":\"#DCO01005\",\"error_description\":\"restapi.ScopeFault\"} `` | ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "error": {
+                                                "type": "string",
+                                                "description": "contains a DATEV-specific error code – optional"
+                                            },
+                                            "request_id": {
+                                                "type": "string",
+                                                "description": "contains a unique request ID; this might be used to find a protocol entry by DATEV – optional"
+                                            },
+                                            "error_description": {
+                                                "type": "string",
+                                                "description": "the technical name of the error (please note that the meaning may vary depending on the request!) – optional"
+                                            },
+                                            "error_uri": {
+                                                "type": "string",
+                                                "description": "URI for further information about the error – optional"
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "response": {
+                                        "value": [
+                                            {
+                                                "error_uri": "http://www.datev.de/dnlexos/mobile/webApp.aspx?sq=DCO01005",
+                                                "request_id": "0a13eff2-44a9-4de6-90f0-1198241e7c22",
+                                                "error": "#DCO01005",
+                                                "error_description": "restapi.ScopeFault"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The requested client does not exist. It is recommended that the user contact the tax consultant. The software provider has to ensure that the client ID used exists in the list of accessible clients.It is up to the software provider to ensure that the request is correct.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "error": {
+                                                "type": "string",
+                                                "description": "contains a DATEV-specific error code – optional"
+                                            },
+                                            "request_id": {
+                                                "type": "string",
+                                                "description": "contains a unique request ID; this might be used to find a protocol entry by DATEV – optional"
+                                            },
+                                            "error_description": {
+                                                "type": "string",
+                                                "description": "the technical name of the error (please note that the meaning may vary depending on the request!) – optional"
+                                            },
+                                            "error_uri": {
+                                                "type": "string",
+                                                "description": "URI for further information about the error – optional"
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "response": {
+                                        "value": [
+                                            {
+                                                "request_id": "0a13eff2-44a9-4de6-90f0-1198241e7c22"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "| Error, Error_description  | Description  | \n|-----------|---------------------------| \n| #DCO01012 restapi.KeyConflictFault | The ID of the document has already been used. The user has to check whether the document has already been transferred. In certain circumstances the user has to consult the tax consultant. It is up to the software provider to ensure that the request is correct. | ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "error": {
+                                                "type": "string",
+                                                "description": "contains a DATEV-specific error code – optional"
+                                            },
+                                            "request_id": {
+                                                "type": "string",
+                                                "description": "contains a unique request ID; this might be used to find a protocol entry by DATEV – optional"
+                                            },
+                                            "error_description": {
+                                                "type": "string",
+                                                "description": "the technical name of the error (please note that the meaning may vary depending on the request!) – optional"
+                                            },
+                                            "error_uri": {
+                                                "type": "string",
+                                                "description": "URI for further information about the error – optional"
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "response": {
+                                        "value": [
+                                            {
+                                                "error_uri": "http://www.datev.de/dnlexos/mobile/webApp.aspx?sq=DCO01012",
+                                                "request_id": "0a13eff2-44a9-4de6-90f0-1198241e7c22",
+                                                "error": "#DCO01012",
+                                                "error_description": "restapi.KeyConflictFault"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "The services of DATEVconnect online are not available at the current time due to maintenance reasons. Please try again later.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "error": {
+                                                "type": "string",
+                                                "description": "contains a DATEV-specific error code – optional"
+                                            },
+                                            "request_id": {
+                                                "type": "string",
+                                                "description": "contains a unique request ID; this might be used to find a protocol entry by DATEV – optional"
+                                            },
+                                            "error_description": {
+                                                "type": "string",
+                                                "description": "the technical name of the error (please note that the meaning may vary depending on the request!) – optional"
+                                            },
+                                            "error_uri": {
+                                                "type": "string",
+                                                "description": "URI for further information about the error – optional"
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "response": {
+                                        "value": {
+                                            "\\\"request_id\\\":\\\"0a13eff2-44a9-4de6-90f0-1198241e7c22\\\"": null
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "datev_openid": [
+                            "accounting:documents"
+                        ]
+                    },
+                    {
+                        "datev_openid": [
+                            "accounting:documents"
+                        ],
+                        "client_id": []
+                    },
+                    {
+                        "datev_openid_sandbox": [
+                            "accounting:documents"
+                        ]
+                    },
+                    {
+                        "client_id": [],
+                        "datev_openid_sandbox": [
+                            "accounting:documents"
+                        ]
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "metadata": {
+                                        "description": "Meta information pertaining to a document as a JSON object with the content-type “application/json”\n\nmetadata {\n    document_type (string, optional): Name of the document type,\n    note (string, optional): Note pertaining to the document for the tax consultant. The note can consist of up to 255 characters. If the note is longer than 255 characters, the note will be adapted to the maximum length. \n}\n\nExample:\n```json\n{\n    \"document_type\": \"Rechnungseingang\",\n    \"note\": \"This is an example note\"\n}\n```\n",
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            }
+        }
+    },
+    "x-ibm-configuration": {
+        "enforced": true,
+        "testable": true,
+        "phase": "realized",
+        "categories": [
+            "Online API",
+            "Accounting"
+        ]
+    },
+    "security": [
+        {
+            "datev_openid": [
+                "accounting:documents"
+            ]
+        },
+        {
+            "datev_openid": [
+                "accounting:documents"
+            ],
+            "client_id": []
+        },
+        {
+            "datev_openid_sandbox": [
+                "accounting:documents"
+            ]
+        },
+        {
+            "client_id": [],
+            "datev_openid_sandbox": [
+                "accounting:documents"
+            ]
+        }
+    ],
+    "x-ibm-endpoints": [
+        {
+            "endpointUrl": "https://api.datev.de",
+            "type": [
+                "production"
+            ]
+        },
+        {
+            "endpointUrl": "https://sandbox-api.datev.de",
+            "type": [
+                "production",
+                "development"
+            ]
+        }
+    ],
+    "components": {
+        "schemas": {
+            "Client": {
+                "type": "object",
+                "properties": {
+                    "client_number": {
+                        "type": "integer",
+                        "description": "client number",
+                        "format": "int32",
+                        "example": 100
+                    },
+                    "consultant_number": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "consultant number",
+                        "example": 29098
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "client id (technical)",
+                        "example": "29098-100"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "client name",
+                        "example": "Muster GmbH 1"
+                    }
+                }
+            },
+            "DocumentType": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "name of the document type",
+                        "example": "Rechnungseingang"
+                    },
+                    "category": {
+                        "type": "string",
+                        "enum": [
+                            "invoices_received",
+                            "outgoing_invoices",
+                            "personnel_documents",
+                            "travel_expense_documents",
+                            "other_documents"
+                        ],
+                        "description": "category of the document type",
+                        "example": "invoices_received"
+                    },
+                    "debit_credit_identifier": {
+                        "type": "string",
+                        "enum": [
+                            "debit",
+                            "credit"
+                        ],
+                        "description": "debit/credit identifier of the document type",
+                        "example": "debit"
+                    }
+                }
+            },
+            "Document": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "ID of document",
+                        "example": "BF00CD5C-0FE9-D106-5EC7-BA4FCF4A3951"
+                    },
+                    "files": {
+                        "type": "array",
+                        "description": "file information on the document (read-only)",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "ID of the file of the document",
+                                    "example": "BF00CD5C-0FE9-D106-5EC7-BA4FCF4A3951"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "description": "name of the file of the document",
+                                    "example": "Testrechnung-Eingang.pdf"
+                                },
+                                "size": {
+                                    "type": "integer",
+                                    "description": "file size in bytes",
+                                    "example": 300
+                                },
+                                "upload_date": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "description": "import time  in accordance with ISO8601 „YYYY-MM-DDThh:mm:ss±hh:mm“",
+                                    "example": "2016-03-02T16:26:30.000+0000"
+                                },
+                                "media_type": {
+                                    "type": "string",
+                                    "description": "Internet media type of the file",
+                                    "example": "application/pdf"
+                                }
+                            }
+                        },
+                        "readOnly": true
+                    },
+                    "document_type": {
+                        "type": "string",
+                        "description": "document type of a document",
+                        "example": "Rechnungseingang"
+                    },
+                    "note": {
+                        "type": "string",
+                        "description": "note pertaining to the document for the tax consultant",
+                        "example": "This is a sample note."
+                    }
+                }
+            },
+            "FileInfo": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "ID of the file of the document",
+                        "example": "BF00CD5C-0FE9-D106-5EC7-BA4FCF4A3951"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "name of the file of the document",
+                        "example": "Testrechnung-Eingang.pdf"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "description": "file size in bytes",
+                        "example": 300
+                    },
+                    "upload_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "import time  in accordance with ISO8601 „YYYY-MM-DDThh:mm:ss±hh:mm“",
+                        "example": "2016-03-02T16:26:30.000+0000"
+                    },
+                    "media_type": {
+                        "type": "string",
+                        "description": "Internet media type of the file",
+                        "example": "application/pdf"
+                    }
+                }
+            },
+            "ErrorMessage": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "string",
+                        "description": "contains a DATEV-specific error code – optional"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "contains a unique request ID; this might be used to find a protocol entry by DATEV – optional"
+                    },
+                    "error_description": {
+                        "type": "string",
+                        "description": "the technical name of the error (please note that the meaning may vary depending on the request!) – optional"
+                    },
+                    "error_uri": {
+                        "type": "string",
+                        "description": "URI for further information about the error – optional"
+                    }
+                }
+            }
+        },
+        "responses": {
+            "Response403_1": {
+                "description": "| Error  | Description  | Reason and solution  | \n|-----------|---------------------------|-----------------------------------|\n|  |   | The user has no access to clients. It is recommended that the user contact the tax consultant. | \n| #DCO01005 | restapi.ScopeFault | The third-party solution has transmitted an incorrect request. The required scope is missing. It is up to the software provider to ensure that the request is correct.  | \n",
+                "content": {
+                    "*/*": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string",
+                                    "description": "contains a DATEV-specific error code – optional"
+                                },
+                                "request_id": {
+                                    "type": "string",
+                                    "description": "contains a unique request ID; this might be used to find a protocol entry by DATEV – optional"
+                                },
+                                "error_description": {
+                                    "type": "string",
+                                    "description": "the technical name of the error (please note that the meaning may vary depending on the request!) – optional"
+                                },
+                                "error_uri": {
+                                    "type": "string",
+                                    "description": "URI for further information about the error – optional"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "Response403_2": {
+                "description": "| Error  | Description  | Reason and solution  | \n|-----------|---------------------------|-----------------------------------|\n|  |   | The user has no access to the requested client. It is recommended that the user contact the tax consultant. The third-party solution has to ensure that the client ID used exists in the list of accessible clients. | \n| #DCO01005 | restapi.ScopeFault | The third party solution has transmitted an incorrect request. The required scope is missing. It is up to the software provider to ensure that the request is correct. | \n",
+                "content": {
+                    "*/*": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string",
+                                    "description": "contains a DATEV-specific error code – optional"
+                                },
+                                "request_id": {
+                                    "type": "string",
+                                    "description": "contains a unique request ID; this might be used to find a protocol entry by DATEV – optional"
+                                },
+                                "error_description": {
+                                    "type": "string",
+                                    "description": "the technical name of the error (please note that the meaning may vary depending on the request!) – optional"
+                                },
+                                "error_uri": {
+                                    "type": "string",
+                                    "description": "URI for further information about the error – optional"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "Response404_1": {
+                "description": "The user does not have any clients. It is recommended that the user contact the tax consultant.\nIt is up to the software provider to ensure that the request is correct.\n",
+                "content": {
+                    "*/*": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string",
+                                    "description": "contains a DATEV-specific error code – optional"
+                                },
+                                "request_id": {
+                                    "type": "string",
+                                    "description": "contains a unique request ID; this might be used to find a protocol entry by DATEV – optional"
+                                },
+                                "error_description": {
+                                    "type": "string",
+                                    "description": "the technical name of the error (please note that the meaning may vary depending on the request!) – optional"
+                                },
+                                "error_uri": {
+                                    "type": "string",
+                                    "description": "URI for further information about the error – optional"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "Response404_2": {
+                "description": "The requested client does not exist. It is recommended that the user contact the tax consultant. \nThe software provider has to ensure that the used client ID exists in the list of accessible clients.\nIt is up to the software provider to ensure that the request is correct.          \n",
+                "content": {
+                    "*/*": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string",
+                                    "description": "contains a DATEV-specific error code – optional"
+                                },
+                                "request_id": {
+                                    "type": "string",
+                                    "description": "contains a unique request ID; this might be used to find a protocol entry by DATEV – optional"
+                                },
+                                "error_description": {
+                                    "type": "string",
+                                    "description": "the technical name of the error (please note that the meaning may vary depending on the request!) – optional"
+                                },
+                                "error_uri": {
+                                    "type": "string",
+                                    "description": "URI for further information about the error – optional"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "Response409": {
+                "description": "| Error  | Description  | Reason and solution  | \n|-----------|---------------------------|-----------------------------------|\n| #DCO01012 | restapi.KeyConflictFault | The ID of the document has already been used. The user has to check whether the document has already been transferred. In certain circumstances the user has to consult the tax consultant. It is up to the software provider to ensure that the request is correct.| \n",
+                "content": {
+                    "*/*": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string",
+                                    "description": "contains a DATEV-specific error code – optional"
+                                },
+                                "request_id": {
+                                    "type": "string",
+                                    "description": "contains a unique request ID; this might be used to find a protocol entry by DATEV – optional"
+                                },
+                                "error_description": {
+                                    "type": "string",
+                                    "description": "the technical name of the error (please note that the meaning may vary depending on the request!) – optional"
+                                },
+                                "error_uri": {
+                                    "type": "string",
+                                    "description": "URI for further information about the error – optional"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "Response400_DCO01004_DCO01010_DCO01015_DCO01016": {
+                "description": "| Error  | Description  | Reason and solution  | \n|-----------|---------------------------|-----------------------------------|\n| #DCO01004 | restapi.MultipartUploadFault | The third-party solution has transmitted an incorrect request. There is an error with the multipart object (e.g. the file is missing). It is up to the software provider to ensure that the request is correct. | \n| #DCO01010 | restapi.InvalidDocumentTypeFault | The document type does not exist. It is up to the software provider to ensure that the document type used exists in the list of document types. |\\n| #DCO01015 | restapi.UnsupportedFileTypeFault | The transferred file has not been processed because the file type is not accepted by DATEV. It is up to the software provider to ensure that the user is informed that the file type is not supported by DATEV. |             \n| #DCO01016 | restapi.FileSizeFault | The transferred file has not been processed because the file is too large to be stored by DATEV. It is up to the software provider to ensure that the user is informed that the file is too large to be stored by DATEV. |      ",
+                "content": {
+                    "*/*": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string",
+                                    "description": "contains a DATEV-specific error code – optional"
+                                },
+                                "request_id": {
+                                    "type": "string",
+                                    "description": "contains a unique request ID; this might be used to find a protocol entry by DATEV – optional"
+                                },
+                                "error_description": {
+                                    "type": "string",
+                                    "description": "the technical name of the error (please note that the meaning may vary depending on the request!) – optional"
+                                },
+                                "error_uri": {
+                                    "type": "string",
+                                    "description": "URI for further information about the error – optional"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "Response503": {
+                "description": "The services of DATEVconnect online are not available at the current time due to maintenance reasons. Please try again later.\n",
+                "content": {
+                    "*/*": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string",
+                                    "description": "contains a DATEV-specific error code – optional"
+                                },
+                                "request_id": {
+                                    "type": "string",
+                                    "description": "contains a unique request ID; this might be used to find a protocol entry by DATEV – optional"
+                                },
+                                "error_description": {
+                                    "type": "string",
+                                    "description": "the technical name of the error (please note that the meaning may vary depending on the request!) – optional"
+                                },
+                                "error_uri": {
+                                    "type": "string",
+                                    "description": "URI for further information about the error – optional"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "parameters": {
+            "client-id": {
+                "name": "client-id",
+                "description": "ID that identifies the client.",
+                "in": "path",
+                "required": true,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "document-id": {
+                "name": "document-id",
+                "description": "ID that identifies the document.",
+                "in": "path",
+                "required": true,
+                "schema": {
+                    "type": "string",
+                    "format": "guid"
+                }
+            },
+            "file-id": {
+                "name": "file-id",
+                "description": "ID that identifies a file of a document.",
+                "in": "path",
+                "required": true,
+                "schema": {
+                    "type": "string",
+                    "format": "guid"
+                }
+            }
+        },
+        "requestBodies": {
+            "postAccountingV1Clients_clientId_documents": {
+                "content": {
+                    "multipart/form-data": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "metadata": {
+                                    "description": "Meta information pertaining to a document as a JSON object with the content-type “application/json”\n\nmetadata {\n    document_type (string, optional): Name of the document type,\n    note (string, optional): Note pertaining to the document for the tax consultant. The note can consist of up to 255 characters. If the note is longer than 255 characters, the note will be adapted to the maximum length. \n}\n\nExample:\n```json\n{\n    \"document_type\": \"Rechnungseingang\",\n    \"note\": \"This is an example note\"\n}\n```\n",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "required": true
+            }
+        },
+        "securitySchemes": {
+            "datev_openid": {
+                "type": "oauth2",
+                "description": "",
+                "x-tokenIntrospect": {
+                    "url": "https://openid/introspect"
+                },
+                "flows": {
+                    "authorizationCode": {
+                        "authorizationUrl": "https://login.datev.de/openid/authorize",
+                        "tokenUrl": "https://api.datev.de/token",
+                        "scopes": {
+                            "accounting:clients:read": "get client data",
+                            "accounting:documents": "transfer accounting documents for financial accounting"
+                        }
+                    }
+                }
+            },
+            "client_id": {
+                "type": "apiKey",
+                "description": "",
+                "in": "header",
+                "name": "X-IBM-Client-Id"
+            },
+            "datev_openid_sandbox": {
+                "type": "oauth2",
+                "description": "",
+                "x-tokenIntrospect": {
+                    "url": "https://openidsandbox/introspect"
+                },
+                "flows": {
+                    "authorizationCode": {
+                        "authorizationUrl": "https://login.datev.de/openidsandbox/authorize",
+                        "tokenUrl": "https://sandbox-api.datev.de/token",
+                        "scopes": {
+                            "accounting:clients:read": "get client data",
+                            "accounting:documents": "transfer accounting documents for financial accounting"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
