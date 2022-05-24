@@ -1,0 +1,163 @@
+##############################################################
+Git force commit and push , when getting "nothing to commit"
+##############################################################
+https://stackoverflow.com/questions/56396762/git-force-commit-and-push-when-getting-nothing-to-commit
+https://stackoverflow.com/questions/7929369/how-to-rebase-local-branch-onto-remote-master
+
+git commit --allow-empty -m "testing"
+
+##############################################################
+rebase vs merge
+##############################################################
+https://www.youtube.com/watch?v=k74B8sc3pRo
+
+https://www.theserverside.com/blog/Coffee-Talk-Java-News-Stories-and-Opinions/How-to-git-rebase-master-to-any-branch-example
+https://git-scm.com/book/de/v2/Git-Branching-Rebasing
+https://git-scm.com/book/en/v2/Git-Branching-Rebasing
+https://stackoverflow.com/questions/7929369/how-to-rebase-local-branch-onto-remote-master
+https://www.algolia.com/blog/engineering/master-git-rebase/
+https://www.algolia.com/developers-tech-blog/code-and-deep-dives/master-the-rebase-and-the-other-way-around/
+
+git rebase develop master
+git fetch origin            # Updates origin/master
+git rebase origin/master    # Rebases current branch onto origin/master
+
+##############################################################
+This commit is unreachable from any branch or tag in this repository. It may be from a fork outside of this repository.
+##############################################################
+
+https://stackoverflow.com/questions/3765234/listing-and-deleting-git-commits-that-are-under-no-branch-dangling
+https://www.atlassian.com/git/tutorials/git-prune
+https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository
+https://github.com/grafana/grafana/issues/45642
+https://stackoverflow.com/questions/3765234/listing-and-deleting-git-commits-that-are-under-no-branch-dangling
+https://sethrobertson.github.io/GitFixUm/fixup.html
+
+git fsck --no-reflogs
+Checking object directories: 100% (256/256), done.
+Checking objects: 100% (7077/7077), done.
+dangling commit ac925c04c874765b96d2afcf479c86f91971bc56
+dangling blob 201cd37043554b923e14d3c549421bc85c9d6433
+
+git fsck | grep "dangling blob" | while read x x s; do
+  git show $s | less;
+done
+
+git fsck --unreachable
+
+
+git stash clear
+git reflog expire --expire-unreachable=now --all
+git fsck --unreachable
+#git fsck --full
+git gc --prune=now
+
+
+git fsck --no-reflogs
+git reflog expire --expire-unreachable=now --all
+git gc --prune=now
+
+
+git branch --contains <commit>
+git reflog expire --expire-unreachable=now --all
+git gc --prune=now
+git show <commit>
+
+
+git prune --dry-run --verbose
+git reflog expire --expire=now --expire-unreachable=now --all
+git prune --dry-run --verbose --expire=now
+# git fetch --all && git remote prune
+
+
+git reflog expire --expire-unreachable=now --all
+git gc --prune=now
+git fsck --unreachable --no-reflogs   # no output
+git branch -a --contains <commit>     # no output
+git show <commit>                     # still shows up
+git tag -d <tagname>
+
+
+##############################################################
+How do I remove/decline a commit that's been appended to an open pull request ?
+##############################################################
+
+https://community.atlassian.com/t5/Bitbucket-questions/How-do-I-remove-decline-a-commit-that-s-been-appended-to-an-open/qaq-p/978093
+https://community.atlassian.com/t5/Jira-Software-questions/How-to-reset-the-number-of-commits-associate-with-a-Jira-issue/qaq-p/1821250
+https://www.atlassian.com/git/tutorials/merging-vs-rebasing
+https://support.atlassian.com/jira-software-cloud/docs/reference-issues-in-your-development-work/
+https://community.atlassian.com/t5/Jira-questions/How-to-clean-up-the-commits-in-Jira-if-we-commit-and-push/qaq-p/1403003
+https://community.atlassian.com/t5/Jira-questions/Disable-hide-the-commits-tab-in-the-activity-section-of-the/qaq-p/285946
+https://stevebennett.me/2012/02/24/10-things-i-hate-about-git/
+
+git checkout PR-SOURCE-BRANCH
+git checkout -b PR-SOURCE-BRANCH-backup
+git push
+git push --force origin <COMMIT-ID-TO-GO-BACK-TO>:refs/heads/PR-SOURCE-BRANCH
+
+
+Decline the open pull request.
+Checkout the branch locally in your repository.
+Remove the branch in Bitbucket (we will recreate it later).
+Do a fetch in your local repository to remove the reference to the removed branch.
+Create a new branch for the new commits.
+Reset the original branch to the last commit that was approved in the Pull Request.
+Push the original branch back to Bitbucket.
+Reopen the declined Pull Request
+
+
+
+
+
+git checkout YourBranch
+git pull --rebase
+git push --force-with-lease
+
+
+git fetch origin
+git rebase origin/master
+git add .
+git rebase --continue
+git push --force
+
+
+git checkout [master branch]
+git pull [master branch]
+git checkout [source branch]
+git rebase [master branch]
+git pull [source branch] (remote/source branch)
+git push [source branch]
+git push -u origin [source branch]
+
+
+
+
+##############################################################
+misc
+##############################################################
+
+https://stackoverflow.com/questions/7929369/how-to-rebase-local-branch-onto-remote-master
+https://www.jetbrains.com/help/phpstorm/commit-and-push-changes.html#force-push
+https://docs.gitlab.com/ee/topics/git/git_rebase.html
+https://www.codegrepper.com/code-examples/shell/force+commit+in+git
+https://www.git-tower.com/learn/git/commands/git-revert
+https://www.git-tower.com/learn/git/faq/git-force-push
+https://stackoverflow.com/questions/5509543/how-do-i-properly-force-a-git-push
+https://ncona.com/2011/07/how-to-delete-a-commit-in-git-local-and-remote/
+https://stackoverflow.com/questions/37770467/why-do-i-have-to-git-push-set-upstream-origin-branch
+https://devconnected.com/how-to-set-upstream-branch-on-git/
+https://stackoverflow.com/questions/66153340/how-to-recover-code-after-git-push-set-upstream-origin-master
+https://www.codegrepper.com/code-examples/shell/git+push+--set-upstream
+https://www.atlassian.com/git/tutorials/merging-vs-rebasing
+https://stackoverflow.com/questions/14836696/delete-last-commit-in-bitbucket
+https://wiki.eclipse.org/EGit/User_Guide
+https://www.atlassian.com/git/tutorials/big-repositories
+https://www.clock.co.uk/insight/deleting-a-git-commit
+https://stackoverflow.com/questions/1338728/delete-commits-from-a-branch-in-git
+
+https://stevebennett.me/2012/02/24/10-things-i-hate-about-git/
+git revert
+git revert a72ef02
+git revert a72ef02 --no-commit
+
+git push --set-upstream

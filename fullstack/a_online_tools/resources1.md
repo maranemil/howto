@@ -394,3 +394,19 @@ https://www.loom.com/pricingtools
 - https://www.cleancss.com/diff-compare-merge/
 - https://wtools.io/check-difference-compare-merge
 - https://de.w3docs.com/tools/code-diff/
+
+### sketch and diagrams
+
+- https://app.diagrams.net/
+- https://cloud.smartdraw.com/
+- https://sketch.io/sketchpad/
+  
+  
+### php sandbox 
+https://onlinephp.io/
+https://www.writephponline.com/
+http://phptester.net/
+https://wtools.io/php-sandbox
+https://ideone.com/
+https://www.jdoodle.com/php-online-editor/
+https://3v4l.org/
