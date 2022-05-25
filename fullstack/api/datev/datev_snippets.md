@@ -286,3 +286,111 @@ https://developer.datev.de/portal/de/dtvf/formate/buchungsstapel
 
  ```
 
+ ```
+https://github.com/metasfresh/metasfresh
+https://hilfe.brainformatik.com/content/manual/de/latest/add_ons/datev.html
+https://portal.test.datev.pdicloud-test.azure-k8s.haufe.io/help/oauth2_authorization_code
+https://hilfe.brainformatik.com/content/manual/de/latest/add_ons/datev.html#datev-export
+https://www.rexx-systems.com/dokumente/rexx_systems-datev-online-api.pdf
+https://testcenter.datev.de/vpn/index.html
+
+https://api.datev.de/userinfo
+https://login.datev.de/openid/authorize
+https://api.datev.de/token
+http://sandbox-api.datev.de/
+https://api.datev.de/openid
+
+
+https://secure4.datev.de/api
+https://secure6.datev.de/api
+https://secure8.datev.de/api
+https://secure10.datev.de/api
+ ```
+
+
+------------------------------------------------------------
+
+ ```
+https://login.datev.de/openidsandbox/.well-known/openid-configuration
+
+{
+  "issuer": "https://login.datev.de/openidsandbox",
+  "jwks_uri": "https://sandbox-api.datev.de/certs",
+  "authorization_endpoint": "https://login.datev.de/openidsandbox/authorize",
+  "token_endpoint": "https://sandbox-api.datev.de/token",
+  "userinfo_endpoint": "https://sandbox-api.datev.de/userinfo",
+  "revocation_endpoint": "https://sandbox-api.datev.de/revoke",
+  "check_session_iframe": "https://sandbox-api.datev.de/checksession",
+  "end_session_endpoint": "https://sandbox-api.datev.de/endsession",
+  "response_types_supported": [
+    "code",
+    "id_token",
+    "id_token token",
+    "code id_token"
+  ],
+  "subject_types_supported": [
+    "pairwise"
+  ],
+  "id_token_signing_alg_values_supported": [
+    "RS256"
+  ]
+}
+ ```
+------------------------------------------------------------
+ ```
+https://login.datev.de/openid/.well-known/openid-configuration
+
+{
+  "issuer": "https://login.datev.de/openid",
+  "jwks_uri": "https://api.datev.de/certs",
+  "authorization_endpoint": "https://login.datev.de/openid/authorize",
+  "token_endpoint": "https://api.datev.de/token",
+  "userinfo_endpoint": "https://api.datev.de/userinfo",
+  "revocation_endpoint": "https://api.datev.de/revoke",
+  "check_session_iframe": "https://api.datev.de/checksession",
+  "end_session_endpoint": "https://api.datev.de/endsession",
+  "response_types_supported": [
+    "code",
+    "id_token",
+    "id_token token",
+    "code id_token"
+  ],
+  "subject_types_supported": [
+    "pairwise"
+  ],
+  "id_token_signing_alg_values_supported": [
+    "RS256"
+  ]
+}
+
+ ```
+
+ ```
+------------------------------------------------------------
+
+https://www.datev-community.de/t5/Unternehmen-online/Rest-API-Zahlungen/m-p/170902
+https://www.datev-community.de/t5/Technisches-zu-Software/Schnittstelle-API-Belege-Exportieren/m-p/246319
+https://www.datev-community.de/t5/Technisches-zu-Software/Datev-API-accounts-receivable-filter-arbeitet-mit-Datum-nicht/m-p/136366
+
+http://localhost:58454/datev/api/accounting/v1/clients/{client-id}/fiscal-years/{fiscal-year-id}/accounting-sequences
+http://localhost:58454/datev/api/accounting/v1/clients/{client-id}/fiscal-years/{fiscal-year-id}/accounts-receivable
+http://localhost:58452/datev/api/accounting/v1/Clients/{client-id}/fiscal-years/20200101/accounts-receivable/condense?select=id, account_number, date&filter=account_number eq 100610000
+http://localhost:58454/datev/api/accounting/v1/clients
+http://localhost:58454/datev/api/accounting/v1/clients
+
+------------------------------------------------------------
+
+https://www.datev-community.de/t5/Unternehmen-online/Rest-Api-Abfrage-der-Klienten-%C3%BCber-accounting-clients/m-p/256033
+
+
+curl --request GET \
+  --url https://sandbox-api.datev.de/accounting/v1/clients \
+  --header "Authorization: Bearer $TOKEN" \
+  --header 'accept: application/json;charset=utf-8'
+
+curl --request GET \
+  --url https://secure8.datev.de/accounting/v1/clients \
+  --header "Authorization: Bearer $TOKEN" \
+  --header 'accept: application/json;charset=utf-8'
+
+ ```

@@ -809,3 +809,37 @@ class MyClass {}
  */
 class MyClass {}
 ~~~
+
+
+
+### IntelliJ Idea Ctrl+Shift+U shortcut doesn't work in Ubuntu
+How to disable Ctrl+Shift+U?
+~~~
+
+https://superuser.com/questions/358749/how-to-disable-ctrlshiftu/1392682#1392682
+https://superuser.com/questions/358749/how-to-disable-ctrlshiftu
+https://stackoverflow.com/questions/47808160/intellij-idea-ctrlaltleft-shortcut-doesnt-work-in-ubuntu
+https://www.cloudflight.io/en/blog/intellij-idea-and-eclipse-shortcuts/
+https://www.jetbrains.com/help/rider/Keyboard_Shortcuts_Troubleshooting.html
+https://youtrack.jetbrains.com/issue/IDEA-112533
+https://keycombiner.com/collections/phpstorm/
+
+Go to Language Support on System Settings and change the Keyboard input method system to none
+
+#### FIX #####
+Solution
+This shortcut can be changed or disabled using the ibus-setup utility:
+Run ibus-setup from the terminal (or open IBus Preferences).
+Go to “Emoji”. -> Next to “Unicode code point:”, click on the three dots (i.e. ...). -> In the dialog, click “Delete”, then “OK”.
+Close the IBus Preferences window.
+#### // FIX #####
+
+Ubuntu 18.04 Solution
+@ShmulikA's answer was close, but unfortunately, selecting "None" did not work for me. I can confirm the process below works in 18.04 as of April 2019.
+
+Open Search using Super key (aka WIN for folks like me)
+Type "language support" and hit ENTER
+
+~~~
+
+
