@@ -309,34 +309,39 @@ https://hemingwayapp.com/
 https://editor.swagger.io/
 
 ------------------------------------------------------------------
-### send encoded msg
+### Send encoded msg
 
 https://www.read2burn.com/
 
 ------------------------------------------------------------------
+
 ### promote online music
 
 - https://distrokid.com/
 - https://groover.co/en/
 ------------------------------------------------------------------
-### ui
+
+### UI
 
 - https://retool.com/
 - https://www.axure.com/
 
 ------------------------------------------------------------------
-### test 
+
+### Test 
 
 https://k6.io/
 https://github.com/grafana/k6
 
 ------------------------------------------------------------------
+
 ### video screen recorder
 
 https://www.loom.com/
 https://www.loom.com/pricingtools
 
 ------------------------------------------------------------------
+
 ### IBAN-Beispiel
 
 - https://ibanvalidieren.de/beispiele.html
@@ -350,35 +355,44 @@ https://www.loom.com/pricingtools
 - https://www.iban-bic.com/sample_accounts.html
 
 ------------------------------------------------------------------
+
 ### IBAN-checker
 - https://www.smart-rechner.de/iban_pruefen/rechner.php
 
 ------------------------------------------------------------------
+
 ### IBAN rules
 - https://www.buchhaltung-einfach-sicher.de/finanzen/iban
 - https://www.bundesbank.de/de/aufgaben/unbarer-zahlungsverkehr/serviceangebot/iban-regeln/iban-regeln-603042
 
 ------------------------------------------------------------------
+
 ### Germany address generator + Matched person profile + Finance & Credit Card information
+
 - https://www.fakexy.com/de-fake-address-generator-bw
 - 
 ------------------------------------------------------------------
 ### Unix timestamp
+
 - https://www.epochconverter.com/
 - https://www.unixtimestamp.com/index.php
 
 ------------------------------------------------------------------
 ### Email format Address Online Validator
+
 - http://sqa.fyicenter.com/1000206_Email_Address_Validator.html#Result
 - https://mailscrap.com/
 
 ------------------------------------------------------------------
+
 ### Email Address Online Check if exists
+
 - https://validateemailaddress.org/
 - https://iplocation.io/verify-email-address
 - https://hunter.io/email-verifier
 
 ------------------------------------------------------------------
+
 ### diff checker
 
 - https://www.diffchecker.com/diff
@@ -395,18 +409,30 @@ https://www.loom.com/pricingtools
 - https://wtools.io/check-difference-compare-merge
 - https://de.w3docs.com/tools/code-diff/
 
-### sketch and diagrams
+------------------------------------------------------------------
+
+### Sketch and Diagrams
 
 - https://app.diagrams.net/
 - https://cloud.smartdraw.com/
 - https://sketch.io/sketchpad/
-  
-  
-### php sandbox 
-https://onlinephp.io/
-https://www.writephponline.com/
-http://phptester.net/
-https://wtools.io/php-sandbox
-https://ideone.com/
-https://www.jdoodle.com/php-online-editor/
-https://3v4l.org/
+
+------------------------------------------------------------------
+
+### PHP Sandbox 
+
+- https://onlinephp.io/
+- https://www.writephponline.com/
+- http://phptester.net/
+- https://wtools.io/php-sandbox
+- https://ideone.com/
+- https://www.jdoodle.com/php-online-editor/
+- https://3v4l.org/
+------------------------------------------------------------------
+
+### “Too Long; Didn't Read.”
+
+- https://tldrthis.com/
+- https://tldr.sh/
+- https://tldrthis.com/
+- https://tldr.tech/
