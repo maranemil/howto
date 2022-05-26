@@ -48,7 +48,7 @@ https://jsonlint.com/
 
 - https://jsonformatter.org/
 - https://jsonlint.com/
-- 
+
 ------------------------------------------------------------------
 ### Text Uppercase
 
@@ -58,6 +58,13 @@ https://jsonlint.com/
 - https://capitalizemytitle.com/style/APA/
 - https://www.textfixer.com/tools/uppercase-lowercase-text.php
 - https://onlinetexttools.com/convert-text-to-uppercase
+
+
+------------------------------------------------------------------
+### Text sort remove duplicate lines
+
+- https://codebeautify.org/sort-text-lines
+- https://codebeautify.org/remove-duplicate-lines
 
 ------------------------------------------------------------------
 ### Online HTML editor
