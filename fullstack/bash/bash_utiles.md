@@ -947,3 +947,7 @@ if [[ "$name" =~ ^aa ]]; then
 fi
 ```
 
+### Read txt file
+```
+for f in $(cat proj.txt); do  echo "$f" ;done
+```
