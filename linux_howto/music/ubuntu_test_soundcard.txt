@@ -1,0 +1,119 @@
+
+
+#############################################################################
+
+Advanced Micro Devices [AMD] Family 17h (Models 10h-1fh) HD Audio Controller (1022:15e3)
+Advanced Micro Devices [AMD] Family 17h (Models 10h-1fh) HD Audio Controller
+
+#############################################################################
+
+https://ubuntu.com/certified/202009-28250/20.04%20LTS
+https://www.dedoimedo.com/computers/lenovo-ideapad-kubuntu-sound.html
+https://bugzilla.kernel.org/show_bug.cgi?id=207553
+https://forum.ubuntuusers.de/topic/sound-nach-update-auf-ubuntu-20-10-weg/3/
+https://forum.ubuntuusers.de/topic/sound-nach-update-auf-ubuntu-20-10-weg/8/
+https://www.tinkerboy.xyz/raspberry-pi-test-sound-output/
+https://learn.adafruit.com/usb-audio-cards-with-a-raspberry-pi/testing-audio
+https://linux.die.net/man/1/speaker-test
+https://linux.die.net/man/1/speaker-test
+https://www.systutorials.com/docs/linux/man/1-speaker-test/
+https://www.mythtv.org/wiki/Using_ALSA%27s_speaker-test_utility
+https://linux-hardware.org/index.php?id=pci:1022-15e3-17aa-3802
+
+------------------------------------------------------------------
+
+
+sudo lspci -knn | grep Audio -A3
+pacmd list-sinks | grep -e 'name:' -e 'alsa.device ' -e 'alsa.subdevice '
+
+lspci -vk |perl -lne 'print if /Audio/ .. /^[\w]*$/'
+sudo lshw -C multimedia
+
+
+Change the audio configuration
+/etc/pulse/default.pa
+
+### Load analog device
+load-module module-alsa-sink device=hw:0,3
+load-module module-combine-sink sink_name=combined
+set-default-sink combined
+
+
+#load-module module-alsa-sink
+#load-module module-alsa-source device=hw:1,0
+
+
+pactl list sinks
+pactl set-default-sink <sinkname>
+
+
+pactl list sinks |egrep 'Name:|Description:'
+Name: alsa_output.pci-0000_0a_00.3.analog-stereo
+        Description: HD-Audio Generic Analog Stereo
+pactl set-default-sink alsa_output.pci-0000_0a_00.3.analog-stereo
+
+
+pactl list sources |egrep 'Name:|Description:'
+        Name: alsa_output.pci-0000_0a_00.3.analog-stereo.monitor
+        Description: Monitor of HD-Audio Generic Analog Stereo
+        Name: alsa_input.usb-046d_HD_Pro_Webcam_C920_76B4D93F-02.analog-stereo
+        Description: HD Pro Webcam C920 Analog Stereo
+pactl set-default-source  alsa_input.usb-046d_HD_Pro_Webcam_C920_76B4D93F-02.analog-stereo
+
+
+pactl list short sources
+4       alsa_output.pci-0000_0a_00.3.analog-stereo.monitor      module-alsa-card.cs16le 2ch 48000Hz        SUSPENDED
+5       alsa_input.usb-046d_HD_Pro_Webcam_C920_76B4D93F-02.analog-stereo        module-alsa-card.c s16le 2ch 32000Hz       SUSPENDED
+
+
+pactl list sources |egrep 'Name:|Description:'
+sudo modprobe snd-hda-intel
+
+
+pacmd list-cards
+pactl list short sinks
+pactl list short sources
+pactl info
+
+#set-default-sink output alsa_output.pci-0000_04_00.6.analog-stereo.monitor
+#set-default-source input alsa_input.pci-0000_04_00.5-platform-acp_pdm_mach.0.stereo-fallback
+
+
+sudo dmesg | egrep -i "alsa|snd|hdmi"
+systemctl status alsa-restore
+cat /etc/modprobe.d/alsa-base.conf
+
+
+
+#sudo apt remove --purge alsa-base pulseaudio
+#sudo apt install alsa-base pulseaudio
+#sudo apt-get install alsa-utils
+#sudo alsa force-reload
+#sudo apt install --reinstall linux-sound-base libasound2
+
+sudo dmesg | egrep -i "alsa|snd|hdmi|generic"
+sudo alsactl init
+alsamixer
+id
+speaker-test -D plughw:1,0
+speaker-test -D plughw:0,0
+aplay -L
+aplay -l
+lspci -nnk | grep -A3 Audio
+pulseaudio --start
+speaker-test -c2 plughw:0,0  # L ok
+speaker-test -c2 -twav -l7
+speaker-test -c2 --test=wav -w /usr/share/sounds/alsa/Front_Center.wav
+speaker-test -c2 --test=wav -w /usr/share/sounds/alsa/Rear_Center.wav
+aplay /usr/share/sounds/alsa/Front_Center.wav
+
+speaker-test -c2 -twav -l7 # FRONT L + R ok
+speaker-test -c2 -twav -l7 plughw:1,0 # FRONT L + R ok
+speaker-test -t wav -c 6 # FRONT L + R + CENTER + Read R + L
+
+speaker-test -c2 -t sine -f 500 # left
+speaker-test -c1 -t sine -f 500 # center
+speaker-test -c0 -t sine -f 500 # center
+speaker-test -c3 -t sine -f 300 # left + right
+
+speaker-test -Dsurround40:ICH5 -c 6

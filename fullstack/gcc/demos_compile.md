@@ -1,4 +1,4 @@
-
+~~~
 ############################################################
 #
 #   pisplay
@@ -110,7 +110,9 @@ Run "git pull" followed by "./emsdk update-tags" to pull in the latest list.
 
 sudo ln -s /usr/lib/emscripten/emcc /usr/local/bin/
 sudo ln -s /usr/lib/emscripten/emcc.py /usr/local/bin/
+~~~
 
+~~~
 ------------------------------------------------------
 MISC
 ------------------------------------------------------
@@ -168,7 +170,9 @@ https://www.pyinstaller.org/
 https://www.py2exe.org/index.cgi/Tutorial
 https://pypi.org/project/py2exe/
 https://pypi.org/project/auto-py-to-exe/
+~~~
 
+~~~
 ------------------------------------------------------
 cmake
 ------------------------------------------------------
@@ -195,7 +199,9 @@ Installing this package requires CMake. Get it via your system package manager (
 
 sudo apt-get install cmake
 https://www.cyberciti.biz/faq/how-to-check-kvm-qemu-kvm-version-in-linux/
+~~~
 
+~~~
 ############################################################
 #
 #   web players
@@ -208,4 +214,6 @@ https://www.warmplace.ru/soft/sunvox/jsplay/
 
 https://fmod.com/resources/documentation-api?version=2.0&page=platforms-html5.html
 https://github.com/santosoj/pisplay
+~~~
+
 

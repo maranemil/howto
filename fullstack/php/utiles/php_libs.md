@@ -236,14 +236,14 @@ https://developers.docusign.com/docs/esign-rest-api/sdk-tools/php/auth/
 - https://adodb.org/dokuwiki/doku.php?id=v5:reference:connection:getrow
 - https://hotexamples.com/examples/-/DB/adodb/php-db-adodb-method-examples.html
 - https://adodb.org/dokuwiki/doku.php?id=v5:userguide:active_record&s[]=get&s[]=all
-
-https://adodb.org/dokuwiki/doku.php?id=v5:userguide:error_handling
-https://github.com/ADOdb/ADOdb
-https://adodb.org/dokuwiki/doku.php
-https://github.com/ADOdb/ADOdb/releases/tag/v5.22.0
+- https://adodb.org/dokuwiki/doku.php?id=v5:userguide:error_handling
+- https://github.com/ADOdb/ADOdb
+- https://adodb.org/dokuwiki/doku.php
+- https://github.com/ADOdb/ADOdb/releases/tag/v5.22.0
 
 ### monolog
 
+```
 https://github.com/Seldaek/monolog
 https://stackify.com/php-monolog-tutorial/
 http://seldaek.github.io/monolog/doc/01-usage.html
@@ -280,5 +280,5 @@ $logger->pushHandler(new StreamHandler(DIR.'/app.log', Logger::DEBUG));
 $logger->info('This is a log! ^_^ ');
 $logger->warning('This is a log warning! ^_^ ');
 $logger->error('This is a log error! ^_^ ');
-
+```
 
