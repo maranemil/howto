@@ -1,7 +1,13 @@
+## random
+
+------------------------------------------------------------------
+
 ### random json
 
 - https://opensource.adobe.com/Spry/samples/data_region/JSONDataSetSample.html
 - https://www.codegrepper.com/code-examples/javascript/dummy+array+of+objects
+
+------------------------------------------------------------------
 
 ### random php array
 
@@ -9,6 +15,8 @@
 - https://www.php.net/manual/en/language.types.array.php
 - https://www.stephenlewis.me/notes/random-data-array/
 - https://github.com/joshjung/dummy-data
+
+------------------------------------------------------------------
 
 ### random address
 
@@ -20,7 +28,9 @@
 - https://www.fakexy.com/fake-address-generator-de
 - https://www.fakepersongenerator.com/random-address
 - https://www.fakepersongenerator.com/random-address
-- 
+
+------------------------------------------------------------------
+
 ### random data
 
 - https://www.fakeaddresscopy.com/Germany/Germany_city/Hamburg/
@@ -33,7 +43,8 @@
 ```
 Bahnhofstraße 20, 92224 Amberg
 ```
----------------------------------------------------------------------------
+------------------------------------------------------------------
+
 ### random person
 
 - https://www.fakepersongenerator.com/fake-name-generator
@@ -46,17 +57,20 @@ Bahnhofstraße 20, 92224 Amberg
 - https://randomuser.me/api/0.8/?results=10
 - https://randomuser.me/api/0.8/?results=15
 
----------------------------------------------------------------------------
+------------------------------------------------------------------
 
 ### random phone number
+
 https://www.fakepersongenerator.com/fake-phone-number
 
----------------------------------------------------------------------------
+------------------------------------------------------------------
 
 ### random credit-card
+
 https://www.fakepersongenerator.com/credit-card-generator
 
----------------------------------------------------------------------------
+------------------------------------------------------------------
+
 ### random person image
 
 - https://www.marketingtool.online/en/face-generator/
@@ -66,7 +80,8 @@ https://www.fakepersongenerator.com/credit-card-generator
 - https://boredhumans.com/faces.php
 - https://generated.photos/faces
 
----------------------------------------------------------------------------
+------------------------------------------------------------------
+
 ### random logo
 
 - https://searchngo.org/dummy-logo/
@@ -75,7 +90,8 @@ https://www.fakepersongenerator.com/credit-card-generator
 - https://www.freepik.com/free-photos-vectors/dummy-logo
 - https://logoipsum.com/
 
----------------------------------------------------------------------------
+------------------------------------------------------------------
+
 ### random pdf
 
 - https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf
@@ -90,7 +106,8 @@ https://www.fakepersongenerator.com/credit-card-generator
 - https://reifenhauser.com/assets/template/Medien/Dateien/dummy.pdf
 
 
----------------------------------------------------------------------------
+------------------------------------------------------------------
+
 ### random profiles
 
 - https://namefake.com/
@@ -119,7 +136,8 @@ https://www.fakepersongenerator.com/credit-card-generator
 - https://randomwordgenerator.com/name.php
 
 
----------------------------------------------------------------------------
+------------------------------------------------------------------
+
 ### random data
 
 - https://generatedata.com/generator
