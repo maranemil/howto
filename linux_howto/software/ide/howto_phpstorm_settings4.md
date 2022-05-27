@@ -843,3 +843,19 @@ Type "language support" and hit ENTER
 ~~~
 
 
+### PHPStorm undefined variable include
+~~~
+
+https://www.jetbrains.com/help/phpstorm/php-undefined-variable.html
+https://youtrack.jetbrains.com/issue/WI-60611/PHPStorm-says-that-Variable-is-undefined-when-coming-from-requir
+https://stackoverflow.com/questions/22476778/phpstorm-undefined-variables-caused-by-include-require
+https://www.evoweb.de/allgemeine-entwicklung/tools/phpstorm-noinspection.html
+
+inspection in file scope
+
+Fix issue around by enabling:
+Settings | Editor | Inspections | PHP | Undefined | Undefined Variable | Search for variable's definition outside the current file.
+
+/** @noinspection PHPUndefinedSymbol */#
+~~~
+

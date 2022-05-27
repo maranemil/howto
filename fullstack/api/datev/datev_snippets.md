@@ -80,6 +80,8 @@ https://portal.test.datev.pdicloud-test.azure-k8s.haufe.io/help/oauth2_implicit_
 https://portal.test.datev.pdicloud-test.azure-k8s.haufe.io/apis/content-api
 https://portal.test.datev.pdicloud-test.azure-k8s.haufe.io/apis/portal-api
 https://portal.test.datev.pdicloud-test.azure-k8s.haufe.io/apis/echo
+https://portal.datev.pdicloud.azure-k8s.haufe.io/help/api
+https://portal.datev.pdicloud.azure-k8s.haufe.io/help/application
 
 
 # Accessing using an API Key

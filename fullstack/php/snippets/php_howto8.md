@@ -58,10 +58,9 @@ echo '<br>alternatively...:' .date_create('2010-01-19')
 ```
 
 
-
 ```
 #######################################################
-Moving from MySQL to ADOdb
+#   Moving from MySQL to ADOdb
 #######################################################
 
 https://adodb.org/dokuwiki/doku.php?id=v5:reference:recordset:fetchobj
@@ -189,3 +188,242 @@ echo preg_replace($pattern, $replacement, $string);
 
 ```
 
+```
+#######################################################
+#   Random number generator in arbitrary probability distribution fashion
+#   algorithm for a random, uneven distribution of a fixed amount of a resource
+#######################################################
+
+https://www.geeksforgeeks.org/random-number-generator-in-arbitrary-probability-distribution-fashion/
+https://softwareengineering.stackexchange.com/questions/143061/whats-a-good-algorithm-for-a-random-uneven-distribution-of-a-fixed-amount-of-a
+https://stackoverflow.com/questions/2325472/generate-random-numbers-following-a-normal-distribution-in-c-c
+https://en.wikipedia.org/wiki/List_of_probability_distributions
+https://machinelearningmastery.com/random-oversampling-and-undersampling-for-imbalanced-classification/
+https://www.jstor.org/stable/1266466
+https://dl.acm.org/doi/10.1145/3412841.3441884
+https://math.stackexchange.com/questions/2580933/simplest-way-to-produce-an-even-distribution-of-random-values
+https://numpy.org/doc/stable/reference/random/generated/numpy.random.uniform.html
+https://stackoverflow.com/questions/63800423/picking-a-random-item-from-array-with-equal-distribution
+https://linuxhint.com/generating-random-numbers-with-uniform-distribution-in-python/
+https://stat.ethz.ch/R-manual/R-devel/library/stats/html/Uniform.html
+https://www.geo.fu-berlin.de/en/v/soga/Basics-of-statistics/Continous-Random-Variables/Continuous-Uniform-Distribution/index.html
+https://www.geo.fu-berlin.de/en/v/soga/Basics-of-statistics/Continous-Random-Variables/Continuous-Uniform-Distribution/Continuous-Uniform-Distribution-in-R/index.html
+https://stackoverflow.com/questions/48769900/iterate-through-2d-array-of-booleans-and-leave-only-the-largest-contiguous-2d-b
+
+(lowbound+upperbound)/2
+Math.floor(Math.random() * array.length);
+
+Python
+
+import numpy as np
+np.random.uniform()
+np.random.uniform(low=0, high=10)
+np.random.uniform(0, 10, size=4)
+np.random.uniform(0, 10, size=(2, 2))
+
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+a = np.random.uniform(0, 10, 10000)
+sns.histplot(a)
+plt.show()
+
+// 2d array.
+$array = array(
+array(1, 0, 0, 0, 1, 0, 0, 1),
+array(0, 0, 1, 1, 1, 1, 0, 1),
+array(0, 1, 1, 0, 1, 0, 0, 0),
+array(0, 1, 1, 0, 0, 0, 1, 0),
+array(1, 0, 0, 0, 1, 1, 1, 1),
+array(0, 1, 1, 0, 1, 0, 1, 0),
+array(0, 0, 0, 0, 0, 0, 0, 1)
+);
+
+
+
+PHP
+
+// https://ideone.com/6QNV7c
+
+$shape_nr=1;
+$ln_max=count($array);
+$cl_max=count($array[0]);
+$done=[];
+
+//LOOP ALL CELLS, GIVE 1's unique number
+for($ln=0;$ln<$ln_max;++$ln){
+for($cl=0;$cl<$cl_max;++$cl){
+    if($array[$ln][$cl]===0)continue;
+    $array[$ln][$cl] = ++$shape_nr;
+}}
+
+//DETECT SHAPES
+for($ln=0;$ln<$ln_max;++$ln){
+for($cl=0;$cl<$cl_max;++$cl){
+    if($array[$ln][$cl]===0)continue;
+
+    $shape_nr=$array[$ln][$cl];
+    if(in_array($shape_nr,$done))continue;
+
+    look_around($ln,$cl,$ln_max,$cl_max,$shape_nr,$array);
+    //SET SHAPE_NR to DONE, no need to look at that number again
+    $done[]=$shape_nr;
+}}  
+
+// LOOP THE ARRAY and COUNT SHAPENUMBERS
+$res=array();
+for($ln=0;$ln<$ln_max;++$ln){
+for($cl=0;$cl<$cl_max;++$cl){
+    if($array[$ln][$cl]===0)continue;
+    if(!isset($res[$array[$ln][$cl]]))$res[$array[$ln][$cl]]=1;
+    else $res[$array[$ln][$cl]]++;
+}}
+
+//get largest shape
+$max = max($res);
+$shape_value_max = array_search ($max, $res);
+
+//get smallest shape
+$min = min($res);
+$shape_value_min = array_search ($min, $res);
+
+// recursive function: detect connecting cells  
+function look_around($ln,$cl,$ln_max,$cl_max,$nr,&$array){
+    //create mini array
+    $mini=mini($ln,$cl,$ln_max,$cl_max);
+    if($mini===false)return false;
+
+    //loop surrounding cells
+    foreach($mini as $v){
+        if($array[$v[0]][$v[1]]===0){continue;}
+        if($array[$v[0]][$v[1]]!==$nr){
+            // set shape_nr of connecting cell
+            $array[$v[0]][$v[1]]=$nr;
+
+            // follow the shape
+            look_around($v[0],$v[1],$ln_max,$cl_max,$nr,$array);
+            }
+        }
+    return $nr;
+    }
+
+// CREATE ARRAY WITH THE 9 SURROUNDING CELLS
+function mini($ln,$cl,$ln_max,$cl_max){
+    $look=[];  
+    $mini=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+    foreach($mini as $v){
+        if( $ln + $v[0] >= 0 &&
+            $ln + $v[0] < $ln_max &&
+            $cl + $v[1] >= 0 &&
+            $cl + $v[1] < $cl_max
+            ){
+            $look[]=[$ln + $v[0], $cl + $v[1]];
+            }
+        }
+
+    if(count($look)===0){return false;}
+    return $look;
+}
+  
+```
+ 
+```
+#######################################################
+#
+#   PHP mysqli insert_id() Function
+#
+#######################################################
+
+https://www.w3schools.com/php/php_mysql_insert_lastid.asp
+https://www.w3schools.com/php/func_mysqli_insert_id.asp
+https://www.php.net/manual/en/mysqli.insert-id.php
+
+* Object-oriented style
+
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+$mysqli = new mysqli("localhost", "my_user", "my_password", "world");
+$mysqli->query("CREATE TABLE myCity LIKE City");
+$query = "INSERT INTO myCity VALUES (NULL, 'Stuttgart', 'DEU', 'Stuttgart', 617000)";
+$mysqli->query($query);
+printf("New record has ID %d.\n", $mysqli->insert_id);
+/* drop table */
+$mysqli->query("DROP TABLE myCity");
+
+* Procedural style
+
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+$link = mysqli_connect("localhost", "my_user", "my_password", "world");
+mysqli_query($link, "CREATE TABLE myCity LIKE City");
+$query = "INSERT INTO myCity VALUES (NULL, 'Stuttgart', 'DEU', 'Stuttgart', 617000)";
+mysqli_query($link, $query);
+printf("New record has ID %d.\n", mysqli_insert_id($link));
+/* drop table */
+mysqli_query($link, "DROP TABLE myCity");
+   
+```
+
+```
+
+#######################################################
+#
+#   random-string-generator
+#
+#######################################################
+
+// https://stackoverflow.com/questions/4356289/php-random-string-generator
+// https://www.php.net/manual/en/function.str-shuffle.php
+// https://www.php.net/manual/en/function.str-shuffle.php
+// https://www.php.net/manual/en/function.rand.php
+// https://www.php.net/manual/en/function.random-bytes.php
+// https://www.geeksforgeeks.org/generating-random-string-using-php/
+// https://code.tutsplus.com/tutorials/generate-random-alphanumeric-strings-in-php--cms-32132
+// https://www.codegrepper.com/code-examples/php/PHP+random+string+generator
+
+
+function generateRandomString($length = 10) {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[rand(0, $charactersLength - 1)];
+    }
+    return $randomString;
+}
+
+$id = generateRandomString(32);
+echo strtolower($id);
+echo "<br>";
+echo md5(time());
+echo "<br>";
+
+function generateRandomStrings($length = 32) {
+    return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
+}
+
+echo  strtolower(generateRandomStrings());  // OR: generateRandomString(24)
+
+...
+
+https://www.php.net/manual/en/function.str-split.php
+https://www.php.net/manual/en/function.chunk-split.php
+
+$md5 =  md5(time());
+
+echo $chunk_split = substr(chunk_split($md5, 4, '-'), 0, -1);
+$arr_grips = explode("-",$chunk_split);
+echo  "<br>";
+
+// join
+echo $id = $arr_grips[0].$arr_grips[1].
+"-".$arr_grips[3].
+"-".$arr_grips[4].
+"-".$arr_grips[5].
+"-".$arr_grips[6].$arr_grips[7].$arr_grips[6];
+   
+// md5 fdde11b1846ba9bf66c862f0da8162f0
+// chunk fdde-11b1-a1a4-846b-a9bf-66c8-62f0-da81
+// join fdde11b1-846b-a9bf-66c8-62f0da8162f0
+   
+```
+
+   
