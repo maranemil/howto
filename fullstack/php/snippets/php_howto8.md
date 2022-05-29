@@ -337,6 +337,9 @@ function mini($ln,$cl,$ln_max,$cl_max){
 https://www.w3schools.com/php/php_mysql_insert_lastid.asp
 https://www.w3schools.com/php/func_mysqli_insert_id.asp
 https://www.php.net/manual/en/mysqli.insert-id.php
+https://hotexamples.com/examples/-/-/mysqli_query/php-mysqli_query-function-examples.html
+https://hotexamples.com/examples/-/-/MYSQLI_QUERY/php-mysqli_query-function-examples.html
+https://hotexamples.com/examples/-/-/MySQLi_Query/php-mysqli_query-function-examples.html
 
 * Object-oriented style
 
