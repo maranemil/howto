@@ -1,11 +1,18 @@
 ## ONLINE TOOLS - TESTING
 
 
+
+------------------------------------------------------------------
+
+### Animation
+
+- https://blush.design/de
+
 ------------------------------------------------------------------
 
 ### Api viewer editor
 
-https://editor.swagger.io/
+- https://editor.swagger.io/
 
 ------------------------------------------------------------------
 
@@ -61,18 +68,39 @@ https://editor.swagger.io/
 
 ------------------------------------------------------------------
 
-### Email format Address Online Validator
+### Design 
+
+- https://carrd.co/
+
+------------------------------------------------------------------
+
+### Diagrams
+
+- https://app.diagrams.net/
+- https://cloud.smartdraw.com/
+
+------------------------------------------------------------------
+
+### Draw
+
+- https://witeboard.com/
+- https://sketch.io/sketchpad/
+
+------------------------------------------------------------------
+
+### Email Online Validator
 
 - http://sqa.fyicenter.com/1000206_Email_Address_Validator.html#Result
 - https://mailscrap.com/
 
 ------------------------------------------------------------------
 
-### Email Address Online Check if exists
+### Email Address Check exists
 
 - https://validateemailaddress.org/
 - https://iplocation.io/verify-email-address
 - https://hunter.io/email-verifier
+- 
 ------------------------------------------------------------------
 
 ### Germany address generator
@@ -80,6 +108,12 @@ https://editor.swagger.io/
 
 - https://www.fakexy.com/de-fake-address-generator-bw
 
+
+------------------------------------------------------------------
+### Charts and Graphs
+
+- https://untools.co/
+- https://flourish.studio/examples/
 ------------------------------------------------------------------
 
 ### IDE online code editor
@@ -112,7 +146,6 @@ https://editor.swagger.io/
 
 - https://www.buchhaltung-einfach-sicher.de/finanzen/iban
 - https://www.bundesbank.de/de/aufgaben/unbarer-zahlungsverkehr/serviceangebot/iban-regeln/iban-regeln-603042
-
 
 ------------------------------------------------------------------
 
@@ -256,7 +289,7 @@ https://editor.swagger.io/
 
 ------------------------------------------------------------------
 
-### Online run code JS HTML CSS Editors
+### Online IDE JS HTML CSS Editors
 
 - https://jsfiddle.net/			        # js
 - https://scalafiddle.io/sf/gKgxQY0/1	# scala
@@ -271,7 +304,7 @@ https://editor.swagger.io/
 
 ------------------------------------------------------------------
 
-### Online search alternatives to google.com
+### Online search alternatives
 
 - https://startpage.com/
 - https://duckduckgo.com/
@@ -323,7 +356,7 @@ https://hemingwayapp.com/
 
 ------------------------------------------------------------------
 
-### Programming Languages References
+### Programming Languages
 
 - https://www.tutorialspoint.com/python/python_functions.htm
 - http://anh.cs.luc.edu/python/hands-on/3.1/handsonHtml/functions.html
@@ -373,15 +406,6 @@ https://hemingwayapp.com/
 - https://jmeter.apache.org/
 - https://jmeter.apache.org/download_jmeter.cgi
 - https://reqbin.com/ 
-
-------------------------------------------------------------------
-
-### Sketch and Diagrams
-
-- https://app.diagrams.net/
-- https://cloud.smartdraw.com/
-- https://sketch.io/sketchpad/
-
 
 ------------------------------------------------------------------
 
@@ -482,7 +506,51 @@ https://github.com/grafana/k6
 
 - https://www.loom.com/
 - https://www.loom.com/pricingtools
+
+------------------------------------------------------------------
+
+### Video editor
+
+- https://lumen5.com/
+- https://www.veed.io/
+- https://www.kapwing.com/video-editor
+- https://clipchamp.com/en/video-editor/
+- https://www.fastreel.com/video-maker.html
+- https://clideo.com/de/video-maker
+- https://www.canva.com/video-editor/
+- https://www.adobe.com/express/create/video
+- https://invideo.io/make/online-video-editor/
+- https://www.flexclip.com/
+- https://www.movavi.com/online-video-editor.html
+- https://www.wevideo.com/
+- https://biteable.com/tools/
+- https://www.kizoa.com/Video-Editor
+- https://flixier.com/#
+- https://animoto.com/
+- https://videocandy.com/
 - 
+------------------------------------------------------------------
+
+### Video material
+
+- https://coverr.co/
+- https://mazwai.com/
+- https://mixkit.co/
+- https://pixabay.com/
+- https://vimeo.com/
+- https://www.ignitemotion.com/
+- https://www.openfootage.net/
+- https://www.pexels.com/de-de/
+- https://www.storyblocks.com/video
+- https://www.videezy.com/
+- https://www.videvo.net/
+
+------------------------------------------------------------------
+
+### Website checker 
+
+- https://www.whatruns.com/
+
 ------------------------------------------------------------------
 
 ### Word counter
