@@ -362,6 +362,20 @@ mysqli_query($link, $query);
 printf("New record has ID %d.\n", mysqli_insert_id($link));
 /* drop table */
 mysqli_query($link, "DROP TABLE myCity");
+
+
+
+https://www.php.net/manual/en/mysqli-result.fetch-assoc.php
+
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+$mysqli = mysqli_connect("localhost", "my_user", "my_password", "world");
+$query = "SELECT Name, CountryCode FROM City ORDER BY ID DESC";
+$result = mysqli_query($mysqli, $query);
+
+/* fetch associative array */
+while ($row = mysqli_fetch_assoc($result)) {
+    printf("%s (%s)\n", $row["Name"], $row["CountryCode"]);
+}
    
 ```
 
@@ -429,4 +443,19 @@ echo $id = $arr_grips[0].$arr_grips[1].
    
 ```
 
-   
+```
+
+#######################################################
+random  bytes
+#######################################################
+https://www.php.net/manual/en/function.random-bytes.php
+
+echo  bin2hex(random_bytes(5));
+
+// string(10) "385e33f741"
+```
+
+
+
+
+
