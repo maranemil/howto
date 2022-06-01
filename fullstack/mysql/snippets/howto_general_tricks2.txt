@@ -436,3 +436,44 @@ SELECT
 FROM TableA
 
 UPDATE TableA SET column1 = column2 * column3
+
+####################################################################
+#
+#   mariadb multiply entries data test size random
+#
+####################################################################
+
+CREATE DATABASE sometest;
+
+use sometest;
+
+CREATE TABLE `sometable` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `name` varchar(255) DEFAULT NULL,
+    `date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+SELECT VERSION() # get mariadb version
+# JSON_TABLE ? not available in old versions
+
+# geneate few dummy entries
+INSERT IGNORE INTO sometable(name) SELECT * FROM  ( SELECT '1' as nr UNION SELECT '2' AS nr ) as tmp;
+
+# update name
+UPDATE sometable SET name=elt(floor(rand() * 3 + 1),'test1','test2','test3') WHERE 1
+
+# check entries
+SELECT * FROM sometable
+
+# generate 2X dummy entries
+INSERT IGNORE INTO sometable(name) SELECT name FROM sometable;
+
+# check dirs config
+grep dir /etc/mysql/my.cnf
+
+# check db size
+sudo ls -lh  /var/lib/mysql/sometest/ | head
+ls -l --block-size=M /var/lib/mysql/sometest/
+
+TRUCATE TABLE sometable;
