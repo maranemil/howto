@@ -387,6 +387,13 @@ https://hemingwayapp.com/
 
 ------------------------------------------------------------------
 
+### pyscript
+
+- https://pyscript.net/
+- https://github.com/pyscript/pyscript/tree/main/examples
+- 
+------------------------------------------------------------------
+
 ###  REST API Tester
 
 - https://www.soapui.org/tools/soapui/
