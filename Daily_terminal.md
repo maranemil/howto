@@ -449,3 +449,17 @@ cd /usr/ && egrep -ir "String"
 cd /usr && egrep -ir -w "String" # print first line
 cd /usr && egrep -iIrnH -w "String"
 ```
+
+### generate new ssh key
+
+```
+
+ssh-keygen -t rsa -b 4096 -C "somemail@outlook.com"
+eval "$(ssh-agent -s)"
+
+# debug
+ssh -vvv git@bitbucket.org -p 29420
+ssh-keygen -l -f ~/.ssh/id_rsa
+```
+
+

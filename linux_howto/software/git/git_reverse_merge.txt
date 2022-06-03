@@ -1,0 +1,125 @@
+Revert a merged pull request on Bitbucket
+---------------------------------------------
+bitbucket
+
+https://stackoverflow.com/questions/38302119/revert-a-merged-pull-request-on-bitbucket
+https://jira.atlassian.com/browse/BCLOUD-10228
+https://github.blog/2014-06-24-introducing-the-revert-button/
+https://tildedave.com/2012/11/24/reverting-a-github-pull-request.html
+https://bitbucket.org/blog/4-features-in-4-weeks-heres-whats-new-in-bitbucket-cloud
+https://support.atlassian.com/bitbucket-cloud/docs/use-pull-requests-for-code-review/#Workwithpullrequests-Revertapullrequest
+https://jira.atlassian.com/browse/BSERV-3218
+https://bitbucket.org/blog/4-features-in-4-weeks-heres-whats-new-in-bitbucket-cloud
+https://support.atlassian.com/bitbucket-cloud/docs/workflow-for-git-feature-branching/
+https://support.atlassian.com/bitbucket-cloud/docs/use-pull-requests-for-code-review/#Workwithpullrequests-Revertapullrequest
+https://support.atlassian.com/bitbucket-cloud/docs/merge-a-pull-request/#Revert-a-merged-pull-request
+https://support.atlassian.com/bitbucket-cloud/docs/merge-a-pull-request/
+https://bitbucket.org/blog/4-features-in-4-weeks-heres-whats-new-in-bitbucket-cloud
+https://support.atlassian.com/bitbucket-cloud/docs/use-pull-requests-for-code-review/#Workwithpullrequests-Revertapullrequest
+
+------------------------------------------------------------------------------------------
+github
+
+https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/reverting-a-pull-request
+https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/merging-a-pull-request
+https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/reverting-a-pull-request
+https://linearb.io/blog/easily-revert-git-pull-requests/#how-to-revert-a-pull-request
+
+------------------------------------------------------------------------------------------
+
+
+Revert a merged pull request
+
+While you can't undo a pull request, you can revert the merged commit from a pull request if necessary. Bitbucket takes two steps to revert a pull request: 1) Bitbucket creates a new branch with one commit that reverses the merged commit. 2) Bitbucket creates a new pull request for the branch and commit.
+
+To revert a pull request:
+
+From the pull request, click the Revert button in the top right.
+
+(Optional) From the Revert pull request dialog, change the Branch name for the new branch you're about to create.
+
+Click the Revert button. Once you click Revert, Bitbucket creates the new branch. Even if you cancel the pull request, the revert branch remains in the repository.
+
+The Create a pull request page opens with the revert branch as the source. After you add your reviewers and make additional changes, click Create.
+
+------------------------------------------------------------------------------------------
+
+https://www.quora.com/How-do-I-revert-a-merged-pull-request
+
+git revert --no-commit 0766c053..HEAD
+git commit
+
+git reset --hard HEAD
+git merge --abort
+
+------------------------------------------------------------------------------------------
+
+git checkout <branch>
+git pull
+git log
+
+revert the merge commit and push it:
+
+git revert -m 1 <SHA-1>
+git push
+
+git revert -m 1 <SHA-1 (from clipboard)>
+git push
+
+------------------------------------------------------------------------------------------
+
+Bitbucket has a "revert" button on Pull Requests now.
+
+Note it doesn't automatically update the branch the original PR was merged into it. It creates a new branch with a commit that reverts the PR:
+
+You then can create a PR from this branch and merge it.
+
+------------------------------------------------------------------------------------------
+
+With bitbucket, we can't revert a merged pull request. The revert option which is present in the pull request will create a new branch with a new head(before this commit). That branch later you have to merge into your master/release branch. This is all as communicated by the official
+
+------------------------------------------------------------------------------------------
+
+My recommended workflow is to create a new branch and revert this commit in a new branch. The reason for this is that on a team with a lot of developers, you rarely want to directly modify master.
+
+
+Here the hash 6912d584f1 is the merge commit: it records that the branch tildedave/pull_request_demo was merged into master from Pull Request #1. This is the commit hash we’re going to revert.
+
+My recommended workflow is to create a new branch and revert this commit in a new branch. The reason for this is that on a team with a lot of developers, you rarely want to directly modify master.
+
+
+# Always be current on your remote's origin master before doing anything!
+> git checkout master
+> git pull --rebase origin master
+# Create a new branch
+> git checkout -b revert_pull_request_1
+Switched to a new branch 'revert_pull_request_1'
+# Need to specify -m 1 because it is a merge commit
+> git revert -m 1 6912d584f1
+Finished one revert.
+[revert_pull_request_1 cf09b44] Revert "Merge pull request #1 from tildedave/pull_request_demo"
+ 2 files changed, 1 insertions(+), 4 deletions(-)
+ delete mode 100644 this-is-also-a-test-file
+# Push your changes
+> git push origin revert_pull_request_1
+
+The next step is to merge your branch that reverts the pull request. Like every other change to master, this should be done through Github with the green button.
+Once this has been merged, the original pull request has been reverted.
+
+Step 3: Fix the Original Pull Request
+After the original pull request has been reverted, we must fix it. The first thing we do here is to find the revert hash – this is the commit hash created by executing the git revert above.
+
+The revert hash was given in the command results above, but you can also find it through Github by looking at the commit right before your merged revert pull request.
+
+Now that we have the revert hash, we can make a new branch and revert the revert, then add additional commits to fix whatever was wrong with the branch.
+
+
+> git checkout master
+> git pull --rebase origin master
+> git checkout -b fix_reverted_pull_request_1
+> git revert cf09b443d6
+Finished one revert.
+[fix_reverted_pull_request_1 b0b6c58] Revert "Revert "Merge pull request #1 from tildedave/pull_request_demo""
+ 2 files changed, 4 insertions(+), 1 deletions(-)
+ create mode 100644 this-is-also-a-test-file
+
