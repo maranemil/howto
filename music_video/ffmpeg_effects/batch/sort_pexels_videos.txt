@@ -1,0 +1,22 @@
+##############################################
+#
+#   Pexels video sorter
+#
+##############################################
+
+for file in *.mp4; do ffmpeg -v error -i $file -t 3 -f null - 2>&1 | grep -io -m1 'partial file' && echo $file; done
+for file in *.mp4; do ffmpeg -v error -i $file -t 3 -f null - 2>&1 | grep -io -m1 'Invalid' && echo $file; done
+
+
+for file in *.mp4; do  ffprobe -v error -select_streams v:0 -show_entries stream=height,width -of csv=s=x:p=0 -i $file 2>&1; done;
+for file in *.mp4; do  ffprobe -v error -select_streams v:0 -show_entries stream=height,width -of csv=s=x:p=0 -i $file 2>&1 && echo $1; done;
+
+# remove bad files
+for i in *.mp4;do ffprobe  -hide_banner $i 2>&1 | grep -io invalid && rm $i; done
+for i in *.mp4;do ffprobe  -hide_banner $i 2>&1 | grep -io invalid && mv $i $i.bak; done
+
+# create folders by video sizes
+for file in *.mp4; do  ffprobe -v error -select_streams v:0 -show_entries stream=height,width -of csv=s=x:p=0 -i $file 2>&1 | xargs -I {} mkdir -p "{}"; done;
+
+# move files by video sizes
+for file in *.mp4; do  ffprobe -v error -select_streams v:0 -show_entries stream=height,width -of csv=s=x:p=0 -i $file 2>&1 | xargs -I {} mv $file "{}"/; done;
