@@ -859,3 +859,10 @@ Settings | Editor | Inspections | PHP | Undefined | Undefined Variable | Search 
 /** @noinspection PHPUndefinedSymbol */#
 ~~~
 
+
+### Code Style. PHP PSR-12 code style
+
+~~~
+https://www.jetbrains.com/help/phpstorm/configuring-code-style.html#configure-code-style-schemes
+https://www.jetbrains.com/help/phpstorm/settings-code-style-php.html
+~~~

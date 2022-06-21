@@ -455,7 +455,14 @@ echo  bin2hex(random_bytes(5));
 // string(10) "385e33f741"
 ```
 
+```
 
+#######################################################
+php file creation date
+https://stackoverflow.com/questions/4401320/php-how-can-i-get-file-creation-date
+#######################################################
 
+echo date ("F d Y H:i:s.", filemtime($filename));
+```
 
 

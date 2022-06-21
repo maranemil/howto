@@ -156,6 +156,22 @@ https://github.com/docker/compose/issues/4039
 ```
 
 
+### ENV WORDPRESS_VERSION
+
+```
+ENV WORDPRESS_VERSION 6.0
+ENV WORDPRESS_SHA1 7a5a6d0591771e730b05c49d0c3fc134624d0491
+
+https://github.com/docker-library/wordpress/blob/master/versions.json
+https://github.com/docker-library/wordpress/blob/master/latest/php7.4/fpm/Dockerfile
+https://github.com/docker-library/wordpress
+https://github.com/docker-library/wordpress/tree/master/latest/php7.4
+
+https://github.com/TrafeX/docker-wordpress/blob/master/Dockerfile
+https://github.com/etopian/alpine-php-wordpress
+https://hub.docker.com/_/wordpress/
+https://github.com/TrafeX/docker-wordpress
+```
 
 
 

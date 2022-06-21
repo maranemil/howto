@@ -168,3 +168,50 @@ id -u username
 id -g username
 id -G username
 id username
+
+
+
+#################################################################
+Incorrect definition of table mysql.column_stats: expected column 'hist_type' at position 9 to have type enum('SINGLE_PREC_HB','DOUBLE_PREC_HB','JSON_HB'),
+#################################################################
+
+https://github.com/photoprism/photoprism/issues/2382
+https://techoverflow.net/2022/06/07/how-to-fix-docker-mariadb-correct-definition-of-table-mysql-column_stats-expected-column-hist_type-at-position-9/
+https://bytefreaks.net/applications/docker/incorrect-definition-of-table-mysql-column_stats-expected-column
+https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_UpgradeDBInstance.MariaDB.html
+https://jira.mariadb.org/browse/MDEV-27517
+https://hub.docker.com/_/mariadb
+https://mariadb.com/kb/en/mariadb-docker-environment-variables/
+https://stackoverflow.com/questions/71989105/unable-to-run-mariadb-in-a-docker-container
+
+mysql_upgrade --user=root --password=
+
+---
+
+environment:
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_INITDB_SKIP_TZINFO: "1"
+
+environment:
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_INITDB_SKIP_TZINFO: "1"
+
+---
+
+source .env && docker-compose exec mariadb mysql_upgrade -uroot -p${MARIADB_ROOT_PASSWORD}
+
+---
+
+# Gain shell access to the database container
+docker exec -it mariadb_alpha /bin/bash;
+# In the shell of the container, we executed the following to automatically fix a variety of problems/errors
+mysql_upgrade --user=root --password;
+
+---
+
+podman run --rm -v m57:/var/lib/mysql:Z -e MYSQL_ALLOW_EMPTY_PASSWORD=1 --name m57 mysql:5.7
+
+
+
+
+
