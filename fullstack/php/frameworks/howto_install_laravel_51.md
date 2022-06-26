@@ -88,3 +88,68 @@ http://laravelcoding.com/blog/laravel-5-beauty-the-10-minute-blog
 https://vuejsdevelopers.com/2017/11/20/vuebnb-full-stack-laravel/
 https://github.com/jacurtis/laravel-blog-tutorial
 ```
+
+
+
+### laravel 9x
+
+https://laravel.com/docs/9.x/installation
+https://github.com/coderstape/freecodegram
+https://laravel.com/docs/4.2/quick
+
+node -v
+npm -v
+npm install
+npm run dev
+
+composer create-project laravel/laravel helloworld
+laravel new helloworld
+php artisan serve
+
+
+composer global require laravel/installer
+laravel new example-app
+cd example-app
+php artisan serve
+php artisan make:auth
+
+.env
+DB_CONNECTION=sqlite
+
+php artisan migrate
+
+app.blade.php
+app.scss
+
+php artisan tinker
+User::all();
+exit
+
+php artisan help make:controller
+php artisan make:controller ProfilesController
+
+https://laravel.com/docs/5.1/controllers
+https://laravel.com/docs/9.x/controllers
+
+php artisan help make:model
+php artisan make:model Profile -m
+php artisan make:model Post -m
+
+php artisan make:controller PostController
+
+
+
+
+
+### cURL error 6: Could not resolve host: laravel
+```
+
+https://laracasts.com/discuss/channels/laravel/curl-error-6-could-not-resolve-host-1
+
+php artisan route:clear
+php artisan config:clear
+php artisan cache:clear
+
+etc/hosts file
+127.0.0.1 api.zoom.us:80
+```

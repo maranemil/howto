@@ -215,3 +215,165 @@ podman run --rm -v m57:/var/lib/mysql:Z -e MYSQL_ALLOW_EMPTY_PASSWORD=1 --name m
 
 
 
+#################################################################
+Manage sensitive data with Docker secrets
+#################################################################
+
+https://docs.docker.com/engine/swarm/secrets/
+https://docs.docker.com/engine/swarm/configs/
+https://docs.docker.com/engine/swarm/services/
+https://docs.docker.com/storage/volumes/
+https://docs.docker.com/engine/reference/commandline/service_create/
+https://dccn-docker-swarm.readthedocs.io/en/latest/tutorial/basic.html
+https://github.com/Donders-Institute/docker-swarm-setup/blob/master/doc/tutorial/centos-httpd/orchestration/docker-compose.lb.yml
+https://github.com/nextcloud/docker/issues/1413
+https://stackoverflow.com/questions/42248198/how-to-mount-a-single-file-in-a-volume
+https://blog.cubieserver.de/2019/deploying-docker-swarm-stacks-with-puppet/
+https://thenewstack.io/tutorial-create-a-docker-swarm-with-persistent-storage-using-glusterfs/
+http://embaby.com/blog/tag/glusterfs/
+https://blog.ouvrard.it/2016/11/07/deep-dive-swarm-1/
+https://tutorialmore.com/questions-1317688.htm
+https://hub.docker.com/_/wordpress/?tab=reviews
+https://hub.docker.com/r/bitnami/wordpress/
+https://docs.docker.com/samples/wordpress/
+https://docs.docker.com/storage/volumes/
+https://docs.docker.com/storage/volumes/#use-a-read-only-volume
+
+
+docker service create \
+     --name wordpress \
+     --replicas 1 \
+     --network mysql_private \
+     --publish published=30000,target=80 \
+     --mount type=volume,source=wpdata,destination=/var/www/html \
+     --secret source=mysql_password,target=wp_db_password,mode=0400 \
+     -e WORDPRESS_DB_USER="wordpress" \
+     -e WORDPRESS_DB_PASSWORD_FILE="/run/secrets/wp_db_password" \
+     -e WORDPRESS_DB_HOST="mysql:3306" \
+     -e WORDPRESS_DB_NAME="wordpress" \
+     wordpress:latest
+
+
+docker service create
+    --name my-iis
+    --publish published=8000,target=8000
+    --config src=homepage,target="\inetpub\wwwroot\index.html"
+    microsoft/iis:nanoserver
+
+docker service create --name my-apache --publish 8081:80 --replicas 3 apache-php
+
+
+docker stop myphp
+docker run --rm -d -p 8080:80 \
+-v htmldoc:/var/www/html \
+--name myphp php:centos
+
+docker stop myphp
+$ docker run --rm -d -p 8080:80 \
+-v ~/tmp/basic/htmldoc:/var/www/html \
+--name myphp php:centos
+
+
+docker exec nextcloud su - www-data -s /bin/bash -c 'PHP_MEMORY_LIMIT=512M php -f /var/www/html/cron.php'
+docker exec nextcloud su --whitelist-environment=PHP_MEMORY_LIMIT - www-data -s /bin/bash -c 'PHP_MEMORY_LIMIT=512M php -f /var/www/html/cron.php'
+
+docker run -it --mount type=bind,source=/tmp/a.txt,target=/root/a.txt alpine sh
+
+docker run --rm -v /foo -v awesome:/bar busybox top
+
+
+...
+
+docker service create --name wordpress01 \
+--replicas 1 \
+--network wordpress01 \
+--network traefik-net \
+--label traefik.port=80 \
+--label traefik.frontend.rule=Host:example.com \
+-e WORDPRESS_DB_HOST=wordpress-db01 \
+-e WORDPRESS_DB_PASSWORD=pAssw0rd \
+-e WORDPRESS_DB_USER=root \
+--mount type=bind,source=/mnt/swarm/wp1/www,target=/var/www/html \
+wordpress:latest
+
+
+docker service create --name wordpress-db01 \
+--replicas 1 \
+--network wordpress01 \
+-e MYSQL_ROOT_PASSWORD=pAssw0rd \
+-e MYSQL_DATABASE=wordpress \
+--mount type=bind,source=/mnt/swarm/wp1/db,target=/var/lib/mysql \
+mysql:latest
+
+
+docker service scale wp01=5
+
+
+
+#################################################################
+docker-memory-limit
+#################################################################
+
+https://www.baeldung.com/ops/docker-memory-limit
+https://faun.pub/understanding-docker-container-memory-limit-behavior-41add155236c
+https://www.cloudytuts.com/tutorials/docker/how-to-check-memory-and-cpu-utilization-of-docker-container/
+https://github.com/docker/compose/issues/7766
+
+docker run -m 512m nginx
+docker run -m 512m --memory-reservation=256m nginx
+docker run --cpus=2 nginx
+docker run --cpus=2 --cpu-shares=2000 nginx
+
+3.1. Versions 3 and Newer With docker swarm
+
+services:
+  service:
+    image: nginx
+    deploy:
+        resources:
+            limits:
+              cpus: 0.50
+              memory: 512M
+            reservations:
+              cpus: 0.25
+              memory: 128M
+
+3.2. Version 2 With docker-compose
+
+service:
+  image: nginx
+  mem_limit: 512m
+  mem_reservation: 128M
+  cpus: 0.5
+  ports:
+    - "80:80"
+
+
+docker stats
+
+docker run --rm --memory 50mb busybox free -m
+docker run --memory 50m --rm -it progrium/stress --vm 1 --vm-bytes 62914560 --timeout 1s
+docker run --memory 50m --memory-swap 50m --rm -it progrium/stress --vm 1 --vm-bytes 62914560 --timeout 1s
+
+
+
+
+### WordPress PHP intl extension in Docker container
+```
+
+https://stackoverflow.com/questions/48674297/php-intl-extension-in-docker-container
+
+
+RUN apt-get -y update \
+&& apt-get install -y libicu-dev \ ### <-- Added space here
+&& docker-php-ext-configure intl \
+&& docker-php-ext-install intl
+
+
+
+ARG PHP_VERSION=5.6
+FROM php:${PHP_VERSION}-fpm-jessie
+apt-get install -y zlib1g-dev libicu-dev g++ \
+&& docker-php-ext-configure intl \
+&& docker-php-ext-install intl
+```

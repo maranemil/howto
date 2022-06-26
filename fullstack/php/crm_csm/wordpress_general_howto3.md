@@ -174,9 +174,166 @@ https://github.com/TrafeX/docker-wordpress
 ```
 
 
+### update_usermeta
+
+```
+https://developer.wordpress.org/reference/functions/update_usermeta/
+https://developer.wordpress.org/reference/functions/update_user_meta/
+https://stackoverflow.com/questions/30610780/how-to-update-user-meta-for-multiple-meta-key-in-wordpress
+https://wordpress.stackexchange.com/questions/206357/updating-user-meta
+https://stackoverflow.com/questions/39873824/wordpress-which-is-fast-multiple-get-user-meta-or-custom-query-to-fetch-record
+https://wordpress.stackexchange.com/questions/116703/cant-get-the-user-meta-correctly
+```
+
+### How to load a bootstrap modal just click on a wordpress plugin submenu?
+
+```
+https://www.sliderrevolution.com/resources/css-loaders/
+https://developer.wordpress.org/resource/dashicons/#table-col-before
+https://getbootstrap.com/docs/4.0/extend/icons/
+https://icon-sets.iconify.design/dashicons/page-2.html
+https://useiconic.com/open/
+https://primer.style/octicons/
+https://getbootstrap.com/docs/4.0/components/modal/
+https://stackoverflow.com/questions/30313583/how-to-load-a-bootstrap-modal-just-click-on-a-wordpress-plugin-submenu
+https://wordpress.stackexchange.com/questions/333704/jquery-modal-not-loading-video-on-popup-only-displaying-it-after-multiple-reope
+```
 
 
 
+### wordpress 6.0 docker
+```
+https://github.com/docker-library/wordpress
+https://github.com/docker-library/wordpress
+https://hub.docker.com/r/bitnami/wordpress/
+https://hub.docker.com/_/wordpress
+```
+--------------------------------------------------------------------
+
+### Correct file permissions for WordPress [closed]
+```
+https://stackoverflow.com/questions/18352682/correct-file-permissions-for-wordpress
+https://www.malcare.com/blog/wordpress-file-permissions/
+https://www.wpbeginner.com/beginners-guide/how-to-fix-file-and-folder-permissions-error-in-wordpress/
+https://blogvault.net/wordpress-permissions/
+https://secure.wphackedhelp.com/blog/wordpress-file-and-folder-permissions/
+https://secure.wphackedhelp.com/blog/wordpress-file-and-folder-permissions/
+https://wordpress.org/support/article/changing-file-permissions/#permission-scheme-for-wordpress
+https://www.smashingmagazine.com/2014/05/proper-wordpress-filesystem-permissions-ownerships/
+https://themeisle.com/blog/wordpress-file-permissions/
+https://wordpress.org/support/article/changing-file-permissions/
+https://www.malcare.com/blog/wordpress-file-permissions/
+
+chown www-data:www-data  -R * # Let Apache be owner
+find . -type d -exec chmod 755 {} \;  # Change directory permissions rwxr-xr-x
+find . -type f -exec chmod 644 {} \;  # Change file permissions rw-r--r--
+
+---
+
+Equivalent to:
+chmod -R ug+rw foldername
+
+---
+
+# Set all files and directories user and group to wp-user
+chown wp-user:wp-user -R *
+
+# Set uploads folder user and group to www-data
+chown www-data:www-data -R wp-content/uploads/
+
+# Set all directories permissions to 755
+find . -type d -exec chmod 755 {} \;
+
+# Set all files permissions to 644
+find . -type f -exec chmod 644 {} \;
+
+---
+
+sudo find . -type f -exec chmod 664 {} +
+sudo find . -type d -exec chmod 775 {} +
+sudo chmod 660 wp-config.php
+```
+
+
+### Unable to create directory wp-content/uploads/
+
+```
+
+https://wp-me.com/fix-unable-to-create-directory-wp-content-uploads-is-its-parent-directory-writable-by-the-server/
+https://stackoverflow.com/questions/30188630/unable-to-create-directory-in-wp-content-uploads-in-wordpress
+https://www.tipsandtricks-hq.com/how-to-fix-the-unable-to-create-directory-error-in-wordpress-5264
+https://askubuntu.com/questions/819579/unable-to-create-directory-wp-content-uploads-2016-09-is-its-parent-directory-w
+https://www.digitalocean.com/community/tutorials/how-to-use-sftp-to-securely-transfer-files-with-a-remote-server
+
+
+Settings > Media > wp-content/uploads
+
+wp-config.php
+ define( 'UPLOADS', 'wp-content/uploads' );
+ 
+wp-config.php
+require_once(ABSPATH . 'wp-settings.php');
+```
+
+
+
+
+### cURL error 6: Could not resolve host
+```
+
+https://bobcares.com/blog/wordpress-curl-error-6-could-not-resolve-host/
+https://stackoverflow.com/questions/37667665/php-curl-installed-yet-composer-says-its-not
+https://code.tutsplus.com/tutorials/how-to-use-curl-in-php--cms-36732
+https://github.com/Homebrew/homebrew-core/issues/27938
+https://github.com/Homebrew/homebrew-core/issues/27938
+
+curl -V
+php --ri curl
+php -i | grep "SSL Version”
+openssl version -a
+
+# brew install curl --with-openssl
+# brew install curl --with-openssl
+# brew install php --with-homebrew-curl
+
+
+vi /etc/resolv.conf
+
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+
+service apache2 restart
+
+sudo apt-get install resolvconf
+
+vi /etc/resolvconf/resolv.conf.d/base
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+```
+
+
+
+### WordPress permissions
+```
+
+https://www.malcare.com/blog/wordpress-file-permissions/
+https://stackoverflow.com/questions/18352682/correct-file-permissions-for-wordpress
+
+Root directory (usually public_html): 755
+wp-admin: 755
+wp-includes: 755
+wp-content: 755
+wp-content/themes: 755
+wp-content/plugins: 755
+wp-content/uploads: 755
+.htaccess: 644
+index.php: 644
+wp-config.php: 640
+
+chown www-data:www-data  -R * # Let Apache be owner
+find . -type d -exec chmod 755 {} \;  # Change directory permissions rwxr-xr-x
+find . -type f -exec chmod 644 {} \;  # Change file permissions rw-r--r--
+```
 
 
 

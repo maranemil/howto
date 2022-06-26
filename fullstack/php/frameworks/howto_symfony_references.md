@@ -53,3 +53,29 @@ composer req symfony/console
 
 
 
+
+
+### symfony5 create project
+
+```
+
+composer create-project symfony/skeleton helloworld
+cd helloworld
+composer req twig
+composer req make
+composer req doctrine
+composer req doctrine/annotations
+composer req annotations
+#composer req symfony/orm-pack
+
+php bin/console make::controller
+Helloworld
+
+/**
+* @Route("/")
+* @Method({"GET"}) 
+*/
+
+php bin/console doctrine:database:create 
+php bin/console make:entity Article 
+```
