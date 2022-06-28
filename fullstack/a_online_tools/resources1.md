@@ -18,16 +18,16 @@
 
 ### Browser Compatibility Test
 
-- https://kangax.github.io/compat-table/es6/
-- http://caniuse.com/#search=es6
 - http://caniuse.com/#feat=es5
-- http://www.keithcirkel.co.uk/compat-table/es5/
-- http://www.webbrowsercompatibility.com/es6/desktop/
-- http://mobilehtml5.org/
-- https://caniuse.com/
-- https://html5test.com/
+- http://caniuse.com/#search=es6
 - http://css3test.com/
 - http://flexbox.help/
+- http://mobilehtml5.org/
+- http://www.keithcirkel.co.uk/compat-table/es5/
+- http://www.webbrowsercompatibility.com/es6/desktop/
+- https://caniuse.com/
+- https://html5test.com/
+- https://kangax.github.io/compat-table/es6/
 
 ------------------------------------------------------------------
 
@@ -52,19 +52,19 @@
 
 ### DIFF Checker
 
-- https://www.diffchecker.com/diff
-- https://text-compare.com/de/
-- https://www.diffchecker.in/
-- https://www.textreverse.com/diff-checker.php
-- https://www.textcompare.org/
-- https://quickdiff.net/
 - https://countwordsfree.com/comparetexts
-- https://www.check-plagiarism.com/de/diff-checker
-- https://www.prepostseo.com/diff-checker
-- https://editor.mergely.com/
-- https://www.cleancss.com/diff-compare-merge/
-- https://wtools.io/check-difference-compare-merge
 - https://de.w3docs.com/tools/code-diff/
+- https://editor.mergely.com/
+- https://quickdiff.net/
+- https://text-compare.com/de/
+- https://wtools.io/check-difference-compare-merge
+- https://www.check-plagiarism.com/de/diff-checker
+- https://www.cleancss.com/diff-compare-merge/
+- https://www.diffchecker.com/diff
+- https://www.diffchecker.in/
+- https://www.prepostseo.com/diff-checker
+- https://www.textcompare.org/
+- https://www.textreverse.com/diff-checker.php
 
 ------------------------------------------------------------------
 
@@ -124,15 +124,15 @@
 
 ### IBAN-Beispiel
 
-- https://ibanvalidieren.de/beispiele.html
-- https://www.iban.com/testibans
-- https://ssl.ibanrechner.de/sample_accounts.html
-- https://www.ckonto.de/download/IBAN_Fallen_Tabelle_V4.pdf
-- https://wise.com/gb/iban/germany
-- https://www.xe.com/ibancalculator/sample/?ibancountry=germany
 - https://de.iban.com/struktur
-- https://www.xe.com/ibancalculator/sample/?ibancountry=france
+- https://ibanvalidieren.de/beispiele.html
+- https://ssl.ibanrechner.de/sample_accounts.html
+- https://wise.com/gb/iban/germany
+- https://www.ckonto.de/download/IBAN_Fallen_Tabelle_V4.pdf
 - https://www.iban-bic.com/sample_accounts.html
+- https://www.iban.com/testibans
+- https://www.xe.com/ibancalculator/sample/?ibancountry=france
+- https://www.xe.com/ibancalculator/sample/?ibancountry=germany
 
 ------------------------------------------------------------------
 
@@ -306,14 +306,14 @@
 
 ### Online search alternatives
 
-- https://startpage.com/
 - https://duckduckgo.com/
 - https://metager.de/
-- https://searx.me/
-- https://www.qwant.com/
-- https://www.mojeek.com/
-- https://yacy.net/
 - https://search.brave.com/
+- https://searx.me/
+- https://startpage.com/
+- https://www.mojeek.com/
+- https://www.qwant.com/
+- https://yacy.net/
 
 ------------------------------------------------------------------
 
@@ -345,37 +345,38 @@ https://hemingwayapp.com/
 ------------------------------------------------------------------
 
 ### PHP tester online code editor
-- http://phptester.net/
+
 - http://phpfiddle.org
+- http://phptester.net/
+- http://rextester.com/l/php_online_compiler
 - http://sandbox.onlinephpfunctions.com
+- http://www.writephponline.com
+- https://3v4l.org/l5XKJ
 - https://phpcodechecker.com
 - https://www.tutorialspoint.com/execute_php_online.php
-- http://rextester.com/l/php_online_compiler
-- https://3v4l.org/l5XKJ
-- http://www.writephponline.com
 
 ------------------------------------------------------------------
 
 ### Programming Languages
 
-- https://www.tutorialspoint.com/python/python_functions.htm
 - http://anh.cs.luc.edu/python/hands-on/3.1/handsonHtml/functions.html
-- http://www.python-kurs.eu/python3_funktionen.php
 - http://www.python-kurs.eu/funktionen.php
+- http://www.python-kurs.eu/python3_funktionen.php
 - https://docs.python.org/2.0/ref/function.html
 - https://www.learnpython.org/en/Functions
+- https://www.tutorialspoint.com/python/python_functions.htm
 
 ------------------------------------------------------------------
 
 ### PHP Sandbox 
 
-- https://onlinephp.io/
-- https://www.writephponline.com/
 - http://phptester.net/
-- https://wtools.io/php-sandbox
-- https://ideone.com/
-- https://www.jdoodle.com/php-online-editor/
 - https://3v4l.org/
+- https://ideone.com/
+- https://onlinephp.io/
+- https://wtools.io/php-sandbox
+- https://www.jdoodle.com/php-online-editor/
+- https://www.writephponline.com/
 - 
 ------------------------------------------------------------------
 
@@ -396,34 +397,34 @@ https://hemingwayapp.com/
 
 ###  REST API Tester
 
-- https://www.soapui.org/tools/soapui/
-- https://s3.amazonaws.com/downloads.eviware/soapuios/5.7.0/SoapUI-x64-5.7.0.sh
-- https://www.postman.com/
-- https://www.postman.com/downloads/?utm_source=postman-home
 - https://dl.pstmn.io/download/latest/linux64
-- https://vrest.io/download
-- https://rest-assured.io/
-- https://github.com/rest-assured/rest-assured
+- https://github.com/CacheControl/hippie-swagger
+- https://github.com/ahmadnassri/app-restconsole
+- https://github.com/brooklynDev/airborne
 - https://github.com/geetarista/rest-console
 - https://github.com/karatelabs/karate
-- https://github.com/ahmadnassri/app-restconsole
-- https://github.com/CacheControl/hippie-swagger
+- https://github.com/rest-assured/rest-assured
 - https://github.com/svanoort/pyresttest
-- https://github.com/brooklynDev/airborne
 - https://jmeter.apache.org/
 - https://jmeter.apache.org/download_jmeter.cgi
 - https://reqbin.com/ 
+- https://rest-assured.io/
+- https://s3.amazonaws.com/downloads.eviware/soapuios/5.7.0/SoapUI-x64-5.7.0.sh
+- https://vrest.io/download
+- https://www.postman.com/
+- https://www.postman.com/downloads/?utm_source=postman-home
+- https://www.soapui.org/tools/soapui/
 
 ------------------------------------------------------------------
 
 ### SQL online code editor
 
-- http://www.sqlfiddle.com/
-- https://www.db-fiddle.com/
 - http://sqlfiddle.com/
+- http://www.sqlfiddle.com/
 - https://dbfiddle.uk/
 - https://fiddles.io/
 - https://sqliteonline.com/
+- https://www.db-fiddle.com/
 
 ------------------------------------------------------------------
 
@@ -442,12 +443,12 @@ https://hemingwayapp.com/
 
 ### Text Uppercase
 
+- https://capitalizemytitle.com/style/APA/
 - https://convertcase.net/
+- https://onlinetexttools.com/convert-text-to-uppercase
 - https://smallseotools.com/uppercase-to-lowercase/
 - https://string-functions.com/case.aspx
-- https://capitalizemytitle.com/style/APA/
 - https://www.textfixer.com/tools/uppercase-lowercase-text.php
-- https://onlinetexttools.com/convert-text-to-uppercase
 
 ------------------------------------------------------------------
 
@@ -473,25 +474,51 @@ https://hemingwayapp.com/
 
 ------------------------------------------------------------------
 
-###  Transfer files to VM
+###  Transfer files from VM
 
-- https://www.sendspace.com/
-- http://uploaded.net
-- https://www.mediafire.com
-- https://uploadfiles.io
-- http://www.filedropper.com
-- https://www.file-upload.net
-- https://workupload.com
-- https://www.trueshare.com
 - http://fast-files.com
+- http://uploaded.net
 - http://www.directupload.net
+- http://www.filedropper.com
+- https://1fichier.com/
+- https://m.sendspace.com/
+- https://mega.io/
+- https://rapidshare.io/
+- https://uploadfiles.io
+- https://workupload.com
+- https://www.4shared.com/?locale=de
+- https://www.dropbox.com/
+- https://www.file-upload.net
+- https://www.filedropper.com/
+- https://www.filefactory.com/
+- https://www.mediafire.com/
+- https://www.sendspace.com/
+- https://www.trueshare.com
+- https://wetransfer.com/
+
+------------------------------------------------------------------
+
+###  Transfer text from VM
+
+- http://jsbin.com/?html,output
+- https://0bin.net/
+- https://controlc.com/
+- https://gist.github.com/starred
+- https://ideone.com/
+- https://jsfiddle.net/
+- https://pastebin.com/
+- https://pst.klgrth.io/
+- https://rentry.co/
+- https://textbin.net/
+- https://www.toptal.com/developers/hastebin/
+- https://zerobin.net/
 
 ------------------------------------------------------------------
 
 ### Test 
 
-https://k6.io/
-https://github.com/grafana/k6
+- https://k6.io/
+- https://github.com/grafana/k6
 
 ------------------------------------------------------------------
 
@@ -506,7 +533,7 @@ https://github.com/grafana/k6
 
 - https://retool.com/
 - https://www.axure.com/
-- 
+ 
 ------------------------------------------------------------------
 
 ### Video screen recorder
@@ -518,24 +545,24 @@ https://github.com/grafana/k6
 
 ### Video editor
 
-- https://lumen5.com/
-- https://www.veed.io/
-- https://www.kapwing.com/video-editor
-- https://clipchamp.com/en/video-editor/
-- https://www.fastreel.com/video-maker.html
-- https://clideo.com/de/video-maker
-- https://www.canva.com/video-editor/
-- https://www.adobe.com/express/create/video
-- https://invideo.io/make/online-video-editor/
-- https://www.flexclip.com/
-- https://www.movavi.com/online-video-editor.html
-- https://www.wevideo.com/
-- https://biteable.com/tools/
-- https://www.kizoa.com/Video-Editor
-- https://flixier.com/#
 - https://animoto.com/
+- https://biteable.com/tools/
+- https://clideo.com/de/video-maker
+- https://clipchamp.com/en/video-editor/
+- https://flixier.com/#
+- https://invideo.io/make/online-video-editor/
+- https://lumen5.com/
 - https://videocandy.com/
-- 
+- https://www.adobe.com/express/create/video
+- https://www.canva.com/video-editor/
+- https://www.fastreel.com/video-maker.html
+- https://www.flexclip.com/
+- https://www.kapwing.com/video-editor
+- https://www.kizoa.com/Video-Editor
+- https://www.movavi.com/online-video-editor.html
+- https://www.veed.io/
+- https://www.wevideo.com/
+ 
 ------------------------------------------------------------------
 
 ### Video material
@@ -577,11 +604,11 @@ https://github.com/grafana/k6
 
 ### 84600 Seconds to Hours
 
+- http://convertwizard.com/84600-seconds-to-hours
 - https://24hourtime.net/84600-seconds-to-hours
+- https://answers.everydaycalculation.com/percent-of/2350-3600
 - https://calculator.name/time-conversion/second/hour/84600
 - https://percentagecalculator.guru/846-is-what-percent-of-3600/
-- http://convertwizard.com/84600-seconds-to-hours
-- https://answers.everydaycalculation.com/percent-of/2350-3600
 - https://www.flightpedia.org/convert/600-seconds-to-minute.html
 
  
