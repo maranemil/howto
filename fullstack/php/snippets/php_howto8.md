@@ -466,3 +466,34 @@ echo date ("F d Y H:i:s.", filemtime($filename));
 ```
 
 
+
+### permissions 
+
+```
+
+find src/ -type d -exec chmod 0770 {} +
+sudo find src/ -type f -exec chmod 0644 {} +
+
+$folder_permission_chmod = substr(sprintf('%o', fileperms($path)), -4);
+$folder_permission_chown = posix_getpwuid(fileowner($folder_permission_chmod));
+echo '<br> Permission chmod: ' . $folder_permission_chmod ;
+echo '<br> Permission chown: ' . $folder_permission_chown['name'] ;
+
+@rmdir($path);
+@mkdir($path, 0755, true);
+@mkdir($path, 0755, true);
+@chown($path, "www-data");
+@chmod($path, 0755);
+
+find src/ -type d -exec chmod 0770 {} +"); //for sub directory
+find src/ -type f -exec chmod 0644 {} +"); //for files inside directory
+chmod -R 0755 cache/
+chmod -R g+rw cache/
+
+if (touch($file)) {
+       echo $file . ' modification time has been changed to present time';
+} else {
+      echo 'Sorry, could not change modification time of ' . $file;
+}
+```
+

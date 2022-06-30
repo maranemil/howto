@@ -720,3 +720,41 @@ https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000006904--El
 
 // noinspection JSUnresolvedVariable
 ```
+
+
+### dialog
+
+```
+
+https://stackoverflow.com/questions/20741524/jquery-dialog-title-dynamically
+http://jsfiddle.net/arunpjohny/rxV8R/
+http://jsfiddle.net/arunpjohny/rxV8R/2/
+
+$( "#dialog" ).dialog({ title: "New Dialog Title" });
+$("#dlg").dialog("option","title","New Title").dialog('open');
+
+$(function () {
+    $("#dialog").dialog({
+        title: 'new'
+    });
+});
+
+ $( "#dialog-confirm" ).dialog({
+    resizable: false,
+    height: "auto",
+    width: 400,
+    modal: true,
+    title: "Delete Personnel Record",
+      buttons: {
+        "Delete": function() {
+          $( this ).dialog( "close" );
+        },
+        Cancel: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+});
+```
+
+
+
