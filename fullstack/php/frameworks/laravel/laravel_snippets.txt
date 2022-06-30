@@ -1,0 +1,199 @@
+
+-----------------------------------------
+Laravel Crash Course 2020
+https://www.youtube.com/watch?v=MFh0Fd7BsjE
+https://github.com/codecourse/posty-traversy-media
+
+# post factory
+return ['body' => $this->faker->sentence(20) ];
+
+# generate posts
+App\Models\Post::factory()->times(200)->create(['user_id' => 2]);
+
+..
+
+# migration key for likes
+$table->foreignId('user_id')->constrained()->onDelete('cascade');
+$table->foreignId('post_id')->constrained()->onDelete('cascade');
+
+---
+
+{{ $post->created_at->diffForHumans() }}
+
+---
+
+$post = Post::paginate(20);
+$post = Post::with(['user_id','likes'])->paginate(20);
+$post = Post::orderBy('created_at','desc')->with(['user_id','likes'])->paginate(20);
+$post = Post::latest()->with(['user_id','likes'])->paginate(20);
+---
+
+Route::post('/posts/{id}/likes', [PostController::class,'store']); // send id
+Route::post('/posts/{post}/likes', [PostController::class,'store']); // send Post https req
+
+create -> store
+delete -> destroy
+
+
+Route::get('/users/{user:name}/posts', [UserController::class,'index']);
+
+---
+# destroy
+$request->user()->likes->where( 'post_id', $post->id )->delete();
+
+---
+
+https://github.com/barryvdh/laravel-debugbar
+
+composer require barryvdh/laravel-debugbar --dev
+
+APP_DEBUG=true
+
+---
+
+@auth
+
+@endauth
+
+---
+#method destroy with policy
+$this->authorize('delete',$post);
+
+---
+#users posts controller
+$posts = $user->posts()->with(['user','likes'])->paginate(20);
+
+---
+
+store destroy laravel - conventions
+
+https://laravel.com/docs/8.x/controllers
+https://laravel.com/docs/8.x/eloquent
+
+store, destroy, update and show are commonly used as controller methods (and route names).
+create, delete, edit and view for model policies.
+
+store is to save the entry (POST)
+create is to get data/show view (UI)
+
+-----
+
+cd database
+touch database.sqlite
+DB_CONNECTION=sqlite
+
+---
+
+{{ url('/') }}
+{{ route('/', $id) }}
+
+return rediect('/');
+return rediect()->route('/');
+
+---
+Laravel 8 REST API With Sanctum Authentication
+
+https://www.youtube.com/watch?v=MYyJ4PuL4pY
+https://github.com/bradtraversy/laragigs
+https://laravel.com/docs/8.x/sanctum
+
+
+php artisan make:model Product --migration
+php artisan make:migration
+
+# store methode
+$request->validate([
+	"name" => 'required'
+]);
+
+api.php
+
+# public routes api
+Route::resource('posts', PostController::class);
+// Route::get('/posts',[PostController::class, 'index']);
+// Route::post('/posts',[PostController::class, 'store']);
+
+# protected routes api
+Route::group(['middleware'=> ['auth:sanctum']], function(){
+	Route::get('/posts/search/{name}',[PostController::class,'search'])
+});
+
+---
+
+
+php -S localhost:8080 -t some/path
+
+
+---
+
+RateLimiter::for('global', function(Request $request){
+	return Limit::perMinute(1000);
+});
+
+---
+
+Laravel with Filament Admin
+https://www.youtube.com/watch?v=Sx5TQdUUA_4
+https://www.youtube.com/watch?v=ZIcEsKEp89Y
+
+https://filamentphp.com/
+https://filamentphp.com/docs/2.x/admin/installation
+
+composer require filament/filament:"^2.0"
+php artisan make:filament-user
+
+------------------------
+
+
+Quick Admin Panel
+https://quickadminpanel.com/
+
+------------------------
+
+https://tenancyforlaravel.com/
+https://tenancyforlaravel.com/docs/v3/introduction/
+
+composer require stancl/tenancy
+php artisan migrate
+
+------------------------
+
+https://laravel.com/docs/8.x/sanctum
+https://laravel.com/docs/8.x/controllers
+https://laravel.com/docs/8.x/eloquent
+
+------------------------
+
+https://laravel.com/docs/9.x/starter-kits
+https://github.com/laravel/breeze
+
+------------------------
+
+
+https://laravel.com/docs/4.2/controllers
+https://www.tutorialandexample.com/laravel-resource-controllers
+
+Actions Handled By Resource Controller
+
+Verb		Path				Action	Route Name
+GET		/resource			index	resource.index
+GET		/resource/create		create	resource.create
+POST		/resource			store	resource.store
+GET		/resource/{resource}		show	resource.show
+GET		/resource/{resource}/edit	edit	resource.edit
+PUT/PATCH	/resource/{resource}		update	resource.update
+DELETE		/resource/{resource}		destroy	resource.destroy
+
+------------------------
+
+# isAdminMiddleware
+if(!auth()->user()->is_admin){
+	abort(code: 403);
+}
+
+
+------------------------
+# sanitize
+$name = filter_input(FILTER POST,'name',FILTER_SANITIZE_SPECIAL_CHARS);
+$name = filter_var($_POST["name"], FILTER_SANITIZE_SPECIAL_CHARS);
+
