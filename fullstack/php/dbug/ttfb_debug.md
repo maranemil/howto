@@ -233,3 +233,19 @@ Insecure deserialization
 Using components with known vulnerabilities
 Insufficient logging and monitoring
 ```
+
+### Security by Design: 7 Application Security Principles You Need to Know
+```
+
+https://www.cprime.com/resources/blog/security-by-design-7-principles-you-need-to-know/
+https://www.ncsc.gov.uk/collection/cyber-security-design-principles
+
+1. Principle of Least Privilege
+2. Principle of Separation of Duties
+3. Principle of Defense in Depth
+4. Principle of Failing Securely
+5. Principle of Open Design
+6. Principle of Avoiding Security by Obscurity
+7. Principle of Minimizing Attack Surface Area
+8. How to Dive Deeper
+```

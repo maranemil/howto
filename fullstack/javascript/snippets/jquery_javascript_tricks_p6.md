@@ -725,7 +725,6 @@ https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000006904--El
 ### dialog
 
 ```
-
 https://stackoverflow.com/questions/20741524/jquery-dialog-title-dynamically
 http://jsfiddle.net/arunpjohny/rxV8R/
 http://jsfiddle.net/arunpjohny/rxV8R/2/
@@ -756,5 +755,40 @@ $(function () {
 });
 ```
 
+### jQuery.noConflict()
+#### Error: TypeError: $(...).dialog is not a function
+
+```
+https://syntaxfix.com/question/7635/error-typeerror-dialog-is-not-a-function
+https://www.codegrepper.com/code-examples/whatever/.dialog+is+not+a+function
+https://bobbyhadz.com/blog/jquery-dialog-is-not-a-function
+https://stackoverflow.com/questions/26016562/error-typeerror-dialog-is-not-a-function
+https://api.jquery.com/jquery.noconflict/
+
+
+<link href="https://code.jquery.com/ui/1.12.1/themes/ui-lightness/jquery-ui.css" rel="stylesheet" />
+
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"      
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous" ></script>
+   
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" 
+integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+    /*
+    $(document).ready(function () {$('#dialog').dialog({   autoOpen: true, });});
+    */
+      
+    // 👇️ load in noConflict mode
+    const $jq = $.noConflict();
+    $jq(document).ready(function () {
+     $jq('#dialog').dialog({
+       autoOpen: true,
+     });
+    });
+   
+</script>
+```
 
 
