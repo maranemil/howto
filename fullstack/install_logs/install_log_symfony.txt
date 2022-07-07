@@ -1,0 +1,611 @@
+##################################################################
+#
+#   Symfony 5.4 install - Linux Lite / Linux Mint - PHP 7.4 - postgresql
+#
+##################################################################
+
+https://symfony.com/doc/current/index.html
+https://symfony.com/doc/current/setup.html
+https://symfony.com/doc/current/configuration.html
+https://symfony.com/doc/current/page_creation.html
+https://symfony.com/doc/current/http_client.html
+https://symfony.com/doc/4.0/security/api_key_authentication.html
+https://symfony.com/doc/current/security/custom_authenticator.html
+https://symfony.com/doc/current/security/custom_authenticator.html
+https://symfony.com/doc/current/logging.html
+https://symfony.com/doc/current/security.html
+https://symfony.com/doc/current/service_container.html
+https://symfony.com/doc/current/doctrine.html
+https://symfony.com/doc/current/forms.html
+https://symfony.com/doc/current/configuration.html
+https://symfony.com/doc/current/templates.html
+https://symfony.com/doc/current/routing.html
+https://symfony.com/doc/current/controller.html
+https://symfony.com/doc/current/page_creation.html
+https://symfony.com/doc/5.4/configuration/front_controllers_and_kernel.html#debug-mode
+
+https://auth0.com/blog/creating-your-first-symfony-app-and-adding-authentication/
+
+composer create-project symfony/website-skeleton app_symfony
+cd app_symfony
+codium .
+
+
+.env
+DATABASE_URL="postgresql://blabla:blabla@127.0.0.1:5432/app_symfony?serverVersion=12&charset=utf8"
+# DATABASE_URL=mysql://blabla:blabla@127.0.0.1:3306/app_symfony?serverVersion=5.7
+
+# .env
+# set it to 1 to enable the debug mode
+APP_DEBUG=0
+
+
+php -S localhost:8000 -t public/
+
+
+# https://symfony.com/doc/current/security.html
+php bin/console make:user
+php bin/console make:migration
+php bin/console doctrine:migrations:migrate
+
+php bin/console make:controller ListController
+php bin/console make:controller RegistrationController
+php bin/console make:controller SecurityController
+php bin/console make:form 					# UserType, User
+php bin/console make:auth					# LoginFormAuthenticator , SecurityController, yes
+
+
+drop database app_symfony;
+DROP DATABASE
+create database app_symfony;
+CREATE DATABASE
+
+
+php bin/console doctrine:database:create
+
+# Could not create database "app_symfony" for connection named default
+# An exception occurred while executing a query: SQLSTATE[42501]: Insufficient privilege: 7 ERROR:  permission denied to create database
+
+sudo -u postgres psql -c 'alter user blabla with createdb' postgres
+ALTER ROLE
+
+php bin/console doctrine:database:create
+# SQLSTATE[42P04]: Duplicate database: 7 ERROR:  database "app_symfony" already exists
+
+sudo -u postgres psql
+drop database app_symfony;
+
+php bin/console doctrine:database:create
+# Created database "app_symfony" for connection named default
+
+php bin/console doctrine:schema:update --force
+
+.
+.
+.
+.
+
+config/packages/security.yaml
+templates/base.html.twig
+templates/list/index.html.twig
+templates/registration/index.html.twig
+
+.
+.
+.
+.
+
+
+http://127.0.0.1:8000/login
+http://127.0.0.1:8000/registration
+
+Can't get a way to read the property "name" in class "App\Entity\User".
+# add rivate $name in class User - @ORM\Column(type="string")
+# @ORM\Column(type="string", length=255)
+
+php bin/console doctrine:schema:update --force
+
+.
+.
+.
+.
+
+
+# logs
+# https://symfony.com/doc/current/logging.html#logging-a-message
+composer require symfony/monolog-bundle
+# config/packages/prod/monolog.yaml
+# /var/log/dev.log
+
+.
+.
+.
+.
+
+
+# debug
+# https://symfony.com/doc/current/reference/configuration/framework.html#collect
+# https://stackoverflow.com/questions/57448843/what-effects-do-the-app-env-and-app-debug-constants-have-in-a-symfony-applicatio
+app/config/config_dev.yml
+config/packages/dev/web_profiler.yaml
+
+web_profiler:
+    toolbar: true
+    intercept_redirects: false
+
+php bin/console cache:clear
+
+bootstrap.php
+$_SERVER['APP_DEBUG'] = $_SERVER['APP_DEBUG'] ?? $_ENV['APP_DEBUG'] ?? 'prod' !== $_SERVER['APP_ENV'];
+if ( $_SERVER['APP_DEBUG'] ) { umask( 0000 );  Debug::enable(); }
+$kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
+
+.
+.
+.
+.
+
+
+# https://symfony.com/doc/current/security.html
+composer require symfonycasts/verify-email-bundle
+php bin/console make:registration-form
+php bin/console security:hash-password
+composer require --dev symfony/profiler-pack
+php bin/console make:controller Login
+php bin/console make:controller --no-template ApiLogin
+
+public function adminDashboard(): Response {  $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY'); }
+
+.
+.
+.
+.
+
+[ doctrine ]
+
+https://symfony.com/doc/current/doctrine.html
+composer require symfony/orm-pack
+composer require --dev symfony/maker-bundle
+
+# customize this line!
+DATABASE_URL="mysql://db_user:db_password@127.0.0.1:3306/db_name?serverVersion=5.7"
+
+# to use mariadb:
+DATABASE_URL="mysql://db_user:db_password@127.0.0.1:3306/db_name?serverVersion=mariadb-10.5.8"
+
+# to use sqlite:
+# DATABASE_URL="sqlite:///%kernel.project_dir%/var/app.db"
+
+# to use postgresql:
+# DATABASE_URL="postgresql://db_user:db_password@127.0.0.1:5432/db_name?serverVersion=11&charset=utf8"
+
+# to use oracle:
+# DATABASE_URL="oci8://db_user:db_password@127.0.0.1:1521/db_name"
+
+php bin/console doctrine:database:create
+php bin/console make:entity
+php bin/console make:migration
+php bin/console doctrine:migrations:migrate
+php bin/console make:entity --regenerate #  add new properties manually
+php bin/console make:controller ProductController
+php bin/console dbal:run-sql 'SELECT * FROM product'
+php bin/console dbal:run-sql 'SELECT * FROM user'
+
+.
+.
+.
+.
+
+https://symfony.com/doc/current/forms.html
+composer require symfony/form
+composer require symfony/validator
+
+.
+.
+.
+.
+
+https://symfony.com/doc/current/configuration.html
+Overriding Environment Values via .env.local
+# .env.local
+
+.
+.
+.
+.
+
+
+https://symfony.com/doc/current/templates.html
+
+composer require symfony/asset
+
+<img src="{{ asset('images/logo.png') }}" alt="Symfony!"/>
+<link href="{{ asset('css/blog.css') }}" rel="stylesheet"/>
+<script src="{{ asset('bundles/acme/js/loader.js') }}"></script>
+
+{% if app.debug %}
+    <p>Request method: {{ app.request.method }}</p>
+    <p>Application Environment: {{ app.environment }}</p>
+{% endif %}
+
+# check templates - validate templates
+php bin/console lint:twig
+
+composer require twig/inky-extra
+composer require twig/markdown-extra
+composer require twig/cssinliner-extra
+
+php bin/console lint:twig
+[OK] All 119 Twig files contain valid syntax.
+
+# get info
+php bin/console debug:twig
+php bin/console debug:twig --filter=date
+
+composer require --dev symfony/var-dumper
+{% dump articles %}
+
+.
+.
+.
+.
+
+
+
+https://symfony.com/doc/current/routing.html
+
+composer require doctrine/annotations
+php bin/console debug:router
+php bin/console debug:router list
+php bin/console router:match /list
+
+# annotation
+/**
+* @Route("/blog/{page}", name="blog_list", requirements={"page"="\d+"})
+*/
+
+# attributes
+#[Route('/blog/{page}', name: 'blog_list', requirements: ['page' => '\d+'])]
+
+# routes
+// config/routes.php
+$routes->add('blog_list', '/blog/{page}')->controller([BlogController::class, 'list'])->requirements(['page' => '\d+']);
+
+# support for "param converters"
+composer require sensio/framework-extra-bundle
+
+
+.
+.
+.
+.
+
+
+https://symfony.com/doc/current/controller.html
+# https://symfony.com/doc/current/controller.html#request-object-info
+
+return $this->redirectToRoute('homepage');
+return $this->redirectToRoute('homepage', [], 301);
+return $this->redirectToRoute('homepage', [], Response::HTTP_MOVED_PERMANENTLY);
+return $this->redirectToRoute('app_lucky_number', ['max' => 10]);
+return $this->redirectToRoute('blog_show', $request->query->all());
+return $this->redirect('http://symfony.com/doc');
+
+public function number(int $max, LoggerInterface $logger): Response
+{
+    $logger->info('We are logging!');
+}
+
+php bin/console debug:autowiring
+
+#[Autowire(service: 'monolog.logger.request')]
+LoggerInterface $logger,
+
+php bin/console make:controller BrandNewController
+php bin/console make:crud Product  # gen Controller + Form + templates
+
+throw $this->createNotFoundException('The product does not exist');
+
+
+
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+public function index(Request $request, string $firstName, string $lastName): Response
+{
+    $page = $request->query->get('page', 1);
+
+    $request->query->get('page');
+    $request->request->get('page');
+    $request->server->get('HTTP_HOST');
+    $request->files->get('foo');
+    $request->cookies->get('PHPSESSID');
+    $request->headers->get('host');
+    $request->headers->get('content-type');
+}
+
+# Managing the Session
+
+public function index(SessionInterface $session): Response
+{
+    $session->set('foo', 'bar');
+    $foobar = $session->get('foobar');
+    $filters = $session->get('filters', []);
+}
+
+
+# Flash Messages
+if ($form->isSubmitted() && $form->isValid()) {
+   $this->addFlash( 'notice',  'Your changes were saved!' );
+   return $this->redirectToRoute(...);
+}
+
+{% for message in app.flashes('notice') %}
+    <div class="flash-notice"> {{ message }}</div>
+{% endfor %}
+
+
+# Returning JSON Response
+use Symfony\Component\HttpFoundation\JsonResponse;
+public function index(): JsonResponse
+{
+    return $this->json(['username' => 'jane.doe']);
+}
+
+# Streaming File Responses
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+public function download(): BinaryFileResponse
+{
+    return $this->file('/path/to/some_file.pdf');
+}
+
+
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+public function download(): BinaryFileResponse
+{
+
+    $file = new File('/path/to/some_file.pdf');
+    # return $this->file($file);
+    # return $this->file($file, 'custom_name.pdf');
+    return $this->file('invoice_3241.pdf', 'my_invoice.pdf', ResponseHeaderBag::DISPOSITION_INLINE);
+}
+
+
+
+# Search, Order, and Pagination Options
+https://symfony.com/bundles/EasyAdminBundle/current/crud.html#search-order-and-pagination-options
+
+
+
+
+
+
+
+
+
+-------------------------------------------------------
+// install plugins
+-------------------------------------------------------
+
+https://marketplace.visualstudio.com/items?itemName=bmewburn.vscode-intelephense-client
+https://marketplace.visualstudio.com/items?itemName=zobo.php-intellisense
+https://marketplace.visualstudio.com/items?itemName=TheNouillet.symfony-vscode
+https://marketplace.visualstudio.com/items?itemName=whatwedo.twig
+https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode
+https://marketplace.visualstudio.com/items?itemName=SimonSiefke.prettier-vscode
+https://marketplace.visualstudio.com/items?itemName=junstyle.twig-language
+https://marketplace.visualstudio.com/items?itemName=mblode.twig-language-2
+
+-------------------------------------------------------
+// install symfony web server - not compatible with 5.X
+-------------------------------------------------------
+
+composer require symfony/web-server-bundle --dev
+# - Root composer.json requires symfony/web-server-bundle 5.4.*, found symfony/web-server-bundle[v3.3.0-BETA1, ..., 3.4.x-dev, v4.0.0-BETA1, ..., 4.4.x-dev] but it does not match the constr
+# php bin/console server:run
+
+
+
+-------------------------------------------------------
+// config
+-------------------------------------------------------
+
+config/routes.yaml
+config/services.yaml
+config/packages/api_platform.yaml
+
+# .env (or .env.local)
+# APP_ENV=prod
+
+sudo apt install postgresql
+sudo apt-get install php-pgsql
+
+.env
+DATABASE_URL="postgresql://blabla:blabla@127.0.0.1:5432/app_symfony?serverVersion=12&charset=utf8"
+cp .env .env.local
+cp .env.local .env.dev
+php bin/console debug:dotenv
+php bin/console debug:container --env-vars
+php bin/console debug:container --parameters
+
+
+[config postgres user ]
+suite.opengeo.org/4.1/dataadmin/pgGettingStarted/firstconnect.html
+https://www.postgresql.org/docs/9.1/auth-methods.html
+https://gist.github.com/AtulKsol/4470d377b448e56468baef85af7fd614
+
+sudo -u postgres psql
+CREATE ROLE blabla LOGIN PASSWORD 'blabla';
+CREATE DATABASE app_symfony WITH OWNER = blabla;
+\q
+
+sudo service postgresql restart
+psql -U blabla -h 127.0.0.1 app_symfony
+
+-------------------------------------------------------
+
+[configure]
+
+https://stackoverflow.com/questions/1471571/how-to-configure-postgresql-for-the-first-time
+https://stackoverflow.com/questions/18664074/getting-error-peer-authentication-failed-for-user-postgres-when-trying-to-ge
+https://stackoverflow.com/questions/57639443/symfony-could-not-find-driver-in-doctrine
+
+sudo –u postgres psql postgres
+
+# change password.
+\password postgres
+\q
+
+locate pg_hba.conf
+# sudo nano /etc/postgresql/9.3/main/pg_hba.conf
+sudo nano /etc/postgresql/12/main/pg_hba.conf
+local    all        postgres                               md5
+local    all        postgres                               trust
+
+$myPDO = new PDO('pgsql:host=postgres;dbname=app', 'app', 'app123');
+$result = $myPDO->query("SELECT * FROM test");
+
+-------------------------------------------------------
+
+https://auth0.com/blog/creating-your-first-symfony-app-and-adding-authentication/
+
+
+#php bin/console make:entity User
+php bin/console make:user
+php bin/console make:migration
+php bin/console make:controller User
+
+# php bin/console make:auth
+# created: src/Security/AppCustomAuthenticator.php
+# updated: config/packages/security.yaml
+
+
+#php bin/console make:crud User
+
+# https://symfony.com/doc/current/forms.html
+php bin/console make:entity Task
+php bin/console debug:dotenv
+php bin/console make:migration
+php bin/console make:controller Task
+
+-------------------------------------------------------
+
+
+
+
+https://symfony.com/doc/current/page_creation.html
+
+config/routes.yaml
+
+# the "app_lucky_number" route name is not important yet
+app_lucky_number:
+    path: /lucky/number
+    controller: App\Controller\LuckyController::number
+
+# Annotation Routes
+/**
++    * @Route("/lucky/number")
++    */
+
+php bin/console
+php bin/console debug:router
+
+composer require twig
+composer require doctrine/annotations
+composer require symfony/form
+
+
+php bin/console list
+/*
+php bin/console make:controller
+php bin/console make:auth
+php bin/console make:crud
+php bin/console make:entity
+
+
+php bin/console router:match
+
+php bin/console doctrine:schema:create
+php bin/console doctrine:schema:drop
+php bin/console doctrine:schema:update
+
+php bin/console doctrine:database:create
+php bin/console doctrine:migrations:rollup
+php bin/console doctrine:migrations:status
+*/
+
+
+DB
+https://www.a2hosting.com/kb/developer-corner/postgresql/import-and-export-a-postgresql-database
+https://github.com/phppgadmin/phppgadmin
+
+# Export
+pg_dump -U blabla app_symfony > app_symfony.pgsql
+pg_dump -U blabla app_symfony -N topology -T spatial_ref_sys > app_symfony.pgsql
+
+# Import
+psql -U blabla app_symfony < app_symfony.pgsql
+
+--------------------------------------------------------------------------
+
+
+composer create-project symfony/skeleton symfony_app
+
+
+composer create-project symfony/skeleton:"6.1.*" symfony_app
+cd symfony_app
+composer require webapp
+
+
+ERR
+ The "http://repo.packagist.org/p/symfony/skeleton%24f0b4ab5e93c2059479d3ad6
+  ed25e50c45e922f09aea2fa9467400cfd9d7303b9.json"
+
+file could not be downloaded: php_network_getaddresses: getaddrinfo failed: Name or service not known failed to open stream: php_network_getaddresses: getaddrinfo failed: Name or service not known
+
+curl https://repo.packagist.org/packages.json
+
+composer clear-cache
+composer update
+
+cat /etc/resolv.conf
+
+# Google's public DNS servers
+nameserver 8.8.8.8    # Primary DNS server
+nameserver 8.8.4.4    # Secondary DNS server
+
+service network-manager restart
+
+/etc/docker/daemon.json
+
+{
+    "dns": ["10.0.0.2", "8.8.8.8"]
+}
+
+
+DEBUG
+
+https://getcomposer.org/doc/articles/troubleshooting.md
+curl -sS https://getcomposer.org/installer | php -- --check
+# All settings correct for using Composer
+
+
+cd symfony_app
+composer init
+composer why-not symfony/skeleton '6.1.*'
+Could not find package "symfony/skeleton" in your project
+
+composer require symfony/symfony
+
+https://packagist.org/packages/symfony/symfony
+https://packagist.org/packages/symfony/symfony-demo
+https://packagist.org/packages/symfony/console
+https://packagist.org/packages/symfony/framework-bundle
+
+https://symfony.com/doc/current/setup.html
+https://github.com/symfony/symfony
+https://github.com/symfony/skeleton
+https://raw.githubusercontent.com/symfony/skeleton/6.1/composer.json
+composer create-project symfony/symfony-demo
+
