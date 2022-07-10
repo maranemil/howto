@@ -1,0 +1,449 @@
+Layouts with Vue.js - How to Create Dynamic Layout Components
+
+https://markus.oberlehner.net/blog/dynamic-vue-layout-components/
+https://markus.oberlehner.net/blog/building-renderless-components-to-handle-crud-operations-in-vue/
+https://levelup.gitconnected.com/multiple-layouts-for-vue-spa-app-fafda6b2bfc7
+https://pixinvent.com/demo/vuexy-vuejs-admin-dashboard-template/documentation/guide/layout/page-layout-examples.html
+https://pixinvent.com/demo/vuexy-vuejs-admin-dashboard-template/documentation/guide/layout/page-layout-examples.html#layout-without-menu
+https://dev.to/lampewebdev/vuejs-pages-with-dynamic-layouts-problems-and-a-solution-4460
+https://serversideup.net/building-page-layout-vue-router/
+
+
+
+
+
+
+The Vue CLI way
+
+<template>
+  <div class="App">
+    <nav v-if="showNav" class="App__nav">
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link>
+    </nav>
+    <router-view/>
+    <footer v-if="showFooter">
+      &copy; Awesome Company
+    </footer>
+  </div>
+</template>
+
+Static layout wrapper components
+
+
+src/App.vue
+
+<template>
+  <div class="App">
+    <router-view/>
+  </div>
+</template>
+
+src/layouts/LayoutDefault.vue
+
+<template>
+  <div class="LayoutDefault">
+    <nav class="LayoutDefault__nav">
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link>
+    </nav>
+    <main class="LayoutDefault__main">
+      <slot/>
+    </main>
+    <footer class="LayoutDefault__footer">
+      &copy; Awesome Company
+    </footer>
+  </div>
+</template>
+
+src/Home.vue
+
+<template>
+  <layout-default>
+    <div class="Home">
+      <h1>Home</h1>
+      <p>
+        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
+        eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
+        voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet
+        clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit
+        amet.
+      </p>
+
+      <h2>Amet sit</h2>
+      <p>
+        Eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
+        voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet
+        clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit
+        amet.
+      </p>
+    </div>
+  </layout-default>
+</template>
+
+<script>
+import LayoutDefault from '../layouts/LayoutDefault.vue';
+
+export default {
+  name: 'Home',
+  components: {
+    LayoutDefault,
+  },
+};
+</script>
+
+
+
+
+
+------------
+
+
+https://itnext.io/vue-tricks-smart-layouts-for-vuejs-5c61a472b69b
+
+<template>
+  <MyLayout>
+    <h1>Here is my page content</h1>
+  </MyLayout>
+</template>
+
+<script>
+import MyLayout from '@/layouts/MyLayout.vue'
+export default {
+  name: 'MyPage',
+  components: { MyLayout }
+}
+</script>
+
+vue create vue-layouts
+
+Smart Layouts | App.vue hosted with ❤ by GitHub
+
+<template>
+  <div id="app">
+    <div id="nav">
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link> |
+      <router-link to="/contacts">Contacts</router-link>
+    </div>
+    <router-view/>
+  </div>
+</template>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+#nav {
+  padding: 30px;
+}
+#nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+#nav a.router-link-exact-active {
+  color: #42b983;
+}
+</style>
+
+
+
+ Home.vue hosted with ❤ by GitHub
+
+<template>
+  <div>
+    <h1>This is a home page</h1>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Home'
+}
+</script>
+
+About.vue hosted with ❤ by GitHub
+
+<template>
+  <div>
+    <h1>This is an about page</h1>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'About'
+}
+</script>
+
+Contacts.vue hosted with ❤ by GitHub
+
+<template>
+  <div>
+    <h1>This is a contacts page</h1>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "Contacts"
+}
+</script>
+
+
+# router.js hosted with ❤ by GitHub
+
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+
+Vue.use(VueRouter)
+
+const routes = [
+  {
+    path: '/',
+    name: 'Home',
+    component: () => import('@/views/Home.vue')
+  },
+  {
+    path: '/about',
+    name: 'About',
+    component: () => import('@/views/About.vue')
+  },
+  {
+    path: '/contacts',
+    name: 'Contacts',
+    component: () => import('@/views/Contacts.vue')
+  }
+]
+
+const router = new VueRouter({
+  mode: 'history',
+  base: process.env.BASE_URL,
+  routes
+})
+
+export default router
+
+
+# layouts/AppLayout.vue
+-----------------
+
+ <template>
+  <component :is="layout">
+    <slot />
+  </component>
+</template>
+
+<script>
+const defaultLayout = 'AppLayoutDefault'
+export default {
+  name: "AppLayout",
+  computed: {
+    layout() {
+      const layout = this.$route.meta.layout || defaultLayout
+      return () => import(`@/layouts/${layout}.vue`)
+    }
+  }
+}
+</script>
+
+
+
+# Vue3 AppLayout.vue hosted with ❤ by GitHub
+-----------------
+
+<template>
+  <component :is="layout">
+    <slot />
+  </component>
+</template>
+
+<script>
+import AppLayoutDefault from './AppLayoutDefault'
+export default {
+  name: "AppLayout",
+  data: () => ({
+    layout: AppLayoutDefault
+  }),
+  watch: {
+    $route: {
+      immediate: true,
+      async handler(route) {
+        try {
+          const component = await import(`@/layouts/${route.meta.layout}.vue`)
+          this.layout = component?.default || AppLayoutDefault
+        } catch (e) {
+          this.layout = AppLayoutDefault
+        }
+      }
+    }
+  }
+}
+</script>
+
+#  Composition API AppLayout.vue hosted with ❤ by GitHub
+-----------------
+
+
+<template>
+  <component :is="layout">
+    <slot />
+  </component>
+</template>
+
+<script>
+import AppLayoutDefault from './AppLayoutDefault'
+import { markRaw, watch } from 'vue'
+import { useRoute } from 'vue-router'
+export default {
+  name: 'AppLayout',
+  setup() {
+    const layout = markRaw(AppLayoutDefault)
+    const route = useRoute()
+    watch(
+      () => route.meta,
+      async meta => {
+        try {
+          const component = await import(`@/layouts/${meta.layout}.vue`)
+          layout.value = component?.default || AppLayoutDefault
+        } catch (e) {
+          layout.value = AppLayoutDefault
+        }
+      },
+      { immediate: true }
+    )
+    return { layout }
+  }
+}
+</script>
+
+
+layouts/AppLayoutLinks.vue
+-----------------------------
+
+
+<template>
+  <div id="nav">
+    <router-link to="/">Home</router-link> |
+    <router-link to="/about">About</router-link> |
+    <router-link to="/contacts">Contacts</router-link>
+  </div>
+</template>
+
+<script>
+export default {
+name: "AppLayoutLinks"
+}
+</script>
+
+<style scoped>
+#nav {
+  padding: 30px;
+}
+#nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+#nav a.router-link-exact-active {
+  color: #42b983;
+}
+</style>
+
+
+Refactored App.vue hosted with ❤ by GitHub
+----------------------------------
+
+<template>
+  <div id="app">
+    <router-view/>
+  </div>
+</template>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+</style>
+
+AppLayoutDefault.vue
+-----------------------------
+<template>
+  <div>
+    <slot />
+  </div>
+</template>
+
+
+AppLayoutHome.vue hosted with ❤ by GitHub
+---------------------------------
+
+<template>
+  <div>
+    <header class="header" />
+    <AppLayoutLinks />
+    <slot />
+  </div>
+</template>
+
+<script>
+import AppLayoutLinks from '@/layouts/AppLayoutLinks'
+export default {
+  name: "AppLayoutHome",
+  components: {
+    AppLayoutLinks
+  }
+}
+</script>
+
+<style scoped>
+.header {
+  height: 5rem;
+  background-color: green;
+}
+</style>
+
+
+
+layouts/AppLayoutAbout.vue
+---------------------------------
+
+<template>
+  <div>
+    <header class="header" />
+    <AppLayoutLinks />
+    <slot />
+  </div>
+</template>
+
+<script>
+import AppLayoutLinks from '@/layouts/AppLayoutLinks'
+export default {
+  name: "AppLayoutAbout",
+  components: {AppLayoutLinks}
+}
+</script>
+
+<style scoped>
+.header {
+  height: 5rem;
+  background-color: blue;
+}
+</style>
+
+
+
+
+--------------------------------------------------
+https://serversideup.net/building-page-layout-vue-router/
+https://itnext.io/vue-tricks-smart-layouts-for-vuejs-5c61a472b69b
+https://pixinvent.com/demo/vuexy-vuejs-admin-dashboard-template/documentation/guide/layout/page-layout-examples.html#layout-without-menu
+https://vuex.vuejs.org/guide/state.html
+https://vueschool.io/articles/vuejs-tutorials/composing-layouts-with-vue-router/
