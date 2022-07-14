@@ -208,10 +208,27 @@ https://techtldr.com/my-sql-pretty-print-in-command-line/
 https://dev.mysql.com/doc/mysql-shell/8.0/en/mysql-shell-output-formats.html
 https://hp-huang-tw.github.io/posts/mysql-pretty-print/
 https://dba.stackexchange.com/questions/40656/how-to-properly-format-sqlite-shell-output
+https://techtldr.com/my-sql-pretty-print-in-command-line/
+https://wp.huangshiyang.com/mysql-pretty-print-in-command-line
+https://dev.mysql.com/doc/mysql-shell/8.0/en/mysqlsh.html
+https://dev.mysql.com/doc/mysql-shell/8.0/en/mysql-shell-configuring-options.html
+https://mariadb.com/kb/en/mysql-command-line-client/
+http://books.gigatux.nl/mirror/mysqladminguide/0672328704/ch07lev1sec5.html
+https://man7.org/linux/man-pages/man1/mysql.1.html
+https://stackoverflow.com/questions/924729/how-to-best-display-in-terminal-a-mysql-select-returning-too-many-fields
+https://dev.mysql.com/doc/mysql-shell/8.0/en/mysql-shell-commands.html
+
 
 mysql> pager less -SFX
 mysql> SELECT * FROM sometable;
 mysql> SELECT * FROM sometable \G
+
+pager less -SFX
+select * from user\G
+
+# to reset page use
+nopager
+
 ```
 
 
