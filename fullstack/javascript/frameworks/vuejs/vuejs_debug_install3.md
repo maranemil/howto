@@ -445,6 +445,7 @@ vue-cli-service serve
 ```
 
 -----------------------------------------
+
 ```
 “how to disable eslint warning in vue” Code Answer
 https://www.codegrepper.com/code-examples/whatever/how+to+disable+eslint+warning+in+vue
@@ -460,8 +461,8 @@ import  config  from '@vue/test-utils';
 config.showDeprecationWarnings = false
 ```
 
-
 ----------------------------------------------------------------------------------
+
 ```
 https://codepen.io/anon/pen/YVmJPN
 https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Vue_methods_events_models
@@ -484,8 +485,35 @@ https://vuejs.org/guide/components/events.html#event-arguments
 https://vuejs.org/guide/essentials/forms.html#modifiers
 https://www.codegrepper.com/code-examples/html/set+value+of+input+field+vue
 ```
+
 ----------------------------------------------------------------------------------
+
 ```
 npm run serve
 vue-cli-service serve
+```
+
+
+```
+ERROR with no fix
+nmp install - gyp ERR! stack Error: Can't find Python executable "python", you can set the PYTHON env variable.
+
+https://stackoverflow.com/questions/34372618/npm-cant-find-python-executable-python-you-can-set-the-python-env-variabl
+https://exerror.com/cant-find-python-executable-python-you-can-set-the-python-env-variable/
+
+npm i windows-build-tools
+npm install -g windows-build-tools
+npm install --global --production windows-build-tools
+npm --add-python-to-path='true' --debug install --global windows-build-tools
+
+Unsupported platform for windows-build-tools@5.2.2: wanted {"os":"win32"} (current: {"os":"linux","arch":"x64"})
+
+npm install --global --production windows-build-tools
+npm install -g node-gyp
+npm update
+npm update --force
+npm update --legacy-peer-deps
+
+npm install --global --production windows-build-tools
+npm install --global node-gyp
 ```
