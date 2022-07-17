@@ -581,6 +581,27 @@ https://hemingwayapp.com/
 
 ------------------------------------------------------------------
 
+### Video music-visualizer
+
+- https://musicvid.org/
+- https://www.renderforest.com/template/youtube-channel-music-visualizer
+- https://www.veed.io/tools/music-visualizer
+- https://videobolt.net/templates/browse?genre=techno&type=music-visualization
+- https://videobolt.net/templates
+- https://specterr.com/
+- https://www.wofox.com/
+- https://www.headliner.app/#
+- https://vizzy.io/
+
+------------------------------------------------------------------
+
+### Video music-visualizer app
+
+- https://astrofox.io/
+- https://astrofox.io/download
+
+------------------------------------------------------------------
+
 ### Website checker 
 
 - https://www.whatruns.com/
