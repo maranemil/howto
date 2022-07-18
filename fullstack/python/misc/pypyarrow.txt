@@ -1,0 +1,295 @@
+pyarrow
+
+https://anaconda.org/conda-forge/pyarrow
+https://arrow.apache.org/
+https://arrow.apache.org/blog/2017/07/26/spark-arrow/
+https://arrow.apache.org/cookbook/py/#
+https://arrow.apache.org/docs/cpp/compute.html?#string-transforms
+https://arrow.apache.org/docs/format/Columnar.html
+https://arrow.apache.org/docs/js/#
+https://arrow.apache.org/docs/python/#
+https://arrow.apache.org/docs/python/feather.html#
+https://arrow.apache.org/docs/python/index.html#
+https://arrow.apache.org/docs/python/install.html#
+https://arrow.apache.org/docs/python/parquet.html#
+https://arrow.apache.org/overview/
+https://github.com/apache/arrow
+https://github.com/apache/arrow/blob/master/docs/source/developers/python.rst
+https://pandas.pydata.org/docs/reference/api/pandas.read_parquet.html
+https://pandas.pydata.org/pandas-docs/version/0.21/io.html#io-parquet
+https://pypi.org/project/parquet/
+https://pypi.org/project/pyarrow/
+https://spark.apache.org/docs/latest/sql-pyspark-pandas-with-arrow.html
+https://www.practicaldatascience.org/html/parquet.html#
+
+-------------------
+
+https://blog.datasyndrome.com/python-and-parquet-performance-e71da65269ce
+https://towardsdatascience.com/a-gentle-introduction-to-apache-arrow-with-apache-spark-and-pandas-bb19ffe0ddae
+https://blog.clairvoyantsoft.com/optimizing-conversion-between-spark-and-pandas-dataframes-using-apache-pyarrow-9d439cbf2010
+https://mungingdata.com/python/writing-parquet-pandas-pyspark-koalas/
+
+
+https://stackoverflow.com/questions/72991487/how-to-use-pyarrow-parquet-with-multiprocessing
+
+-------------------
+
+# with pip
+pip install pyspark
+pip install pyarrow
+
+# look for custom options
+python -m pytest pyarrow --help
+
+# with conda
+conda install -c conda-forge pyarrow
+
+# with npm
+npm install apache-arrow or yarn add apache-arrow
+
+-------------------
+
+# read write
+import pandas as pd
+pd.read_parquet('example_pa.parquet', engine='pyarrow')
+
+-------------------
+
+df = pd.read_parquet(
+    path='analytics',
+    engine='pyarrow',
+    columns=['event_name', 'other_column'],
+    filters=[('event_name', '=', 'SomeEvent')]
+)
+
+-------------------
+
+import pyarrow.parquet as pq
+import s3fs
+fs = s3fs.S3FileSystem()
+dataset = pq.ParquetDataset(
+    's3://analytics',
+    filesystem=fs,
+    filters=[('event_name', '=', 'SomeEvent')],
+    use_threads=True
+)
+df = dataset.to_table(
+    columns=['event_name', 'other_column'],
+    use_threads=True
+).to_pandas()
+
+-------------------
+
+import pyarrow.parquet as pq
+from pyarrow import csv
+fn = â€˜data/demo.csvâ€™
+table = csv.read_csv(fn)
+df = table.to_pandas()
+pq.write_table(table, 'example.parquet')
+
+table2 = pq.read_table(â€˜example.parquetâ€™)
+table2
+
+-------------------
+
+import pyarrow.parquet as pq
+df = pq.read_table(
+    path='analytics.parquet',
+    columns=['event_name', 'other_column']
+).to_pandas()
+
+
+dataset = pq.ParquetDataset(
+    's3://analytics',
+    filesystem=fs,
+    validate_schema=False,
+    filters=[
+        [('event_name', '=', 'SomeEvent')],
+        [('event_name', '=', 'OtherEvent')]
+    ]
+)
+df = dataset.to_table(
+    columns=['event_name', 'other_column']
+).to_pandas()
+
+-------------------
+
+import pyarrow
+import pyarrow.parquet as pq
+import s3fs
+s3 = s3fs.S3FileSystem()
+table = pyarrow.Table.from_pandas(df)
+pq.write_to_dataset(
+    table,
+    's3://analytics',
+    partition_cols=['event_name', 'other_column'],
+    use_legacy_dataset=False,
+    filesystem=s3
+)
+
+
+-------------------
+
+# generate Pandas Dataframe and create a Spark Dataframe from a Pandas Dataframe first without  Arrow
+
+import numpy as np
+import pandas as pd
+spark = SparkSession\
+        .builder\
+        .appName(â€œPyArrow_Testâ€)\
+        .enableHiveSupport()\
+        .getOrCreate()
+# Creating two different pandas DataFrame with same data
+pdf1 = pd.DataFrame(np.random.rand(100000, 3))
+pdf2 = pd.DataFrame(np.random.rand(100000, 3))
+# Letâ€™s test the conversion of Pandas DataFrames to Spark DataFrames first without modifying anything and then allowing PyArrow.
+%time df1 = spark.createDataFrame(pdf1)
+
+# generate Pandas Dataframe and create a Spark Dataframe from a Pandas Dataframe first with  Arrow
+
+spark.conf.set(â€œspark.sql.execution.arrow.enabledâ€, â€œtrueâ€)
+
+SPARK_HOME/conf/spark-defaults.conf
+spark.sql.execution.arrow.enabled=true
+
+# Now Enable Arrow-based columnar data transfers in Spark
+spark.conf.set(â€œspark.sql.execution.arrow.enabledâ€, â€œtrueâ€)
+%time df2 = spark.createDataFrame(pdf2)
+
+-----------------------------------------------
+spark.conf.set("spark.sql.execution.arrow.enabled", "true")
+import pyarrow as pa
+import pyarrow.parquet as pq
+
+pa.cpu_count()
+
+parquetFile = spark.read_parquet('file')
+pq.Parquestfile('file').metadata
+display(parquetFile)
+parquetFile.count()
+%timeit parquetFile.count()
+print(parquetFile.count(), len(parquetFile.columns))
+
+
+-----------------------------------------------
+https://www.youtube.com/watch?v=_zoPmQ6J1aE
+https://gist.github.com/mrocklin/b4c149d3b43389ddec2c24a048d7671a
+
+-----------------------------------------------
+PyArrow vs. Pandas for managing CSV files - How to Speed Up Data Loading | Better Data Science
+https://www.youtube.com/watch?v=gFd4I1oXG8E
+https://www.youtube.com/watch?v=kYghFTfDXnU
+
+import random
+import string
+import numpy as np
+import pandas as pd
+import pyarrow as pa
+import pyarrow.csv sa csv
+from datetime import datetime
+
+pa.cpu_count()
+
+def gen_random_string(length: int =32) -> str:
+	return ''.join(random.choices(string.ascii_upercase + string.digits, k=length))
+
+gen_random_string()
+
+dt = pd.date_range(start=datetime(2000,1,1), end = datetime(2021,1,1), freq='min'   )
+dt[:10]
+
+np.random_seed = 42
+df_size = len(dt)
+
+%%time
+
+df = pd.DataFrame({
+	'date': dt,
+	'a': np.random.radn(df_size),
+	'b': np.random.radn(df_size),
+	'str1': [gen_random_string() for x in range(df_size)],
+	'str2': [gen_random_string() for x in range(df_size)]
+})
+
+df.head()
+df.shape
+
+# pandas
+
+%%time
+df.to_csv('csv_pandas.csv',index=False)
+%%time
+df.to_csv('csv_pandas.csv.gz',index=False,compression=gzip')
+%%time
+df1 = pd.read_csv('csv_pandas.csv')
+%%time
+df2 = pd.read_csv('csv_pandas.csv.gz')
+
+#---
+
+df_pa = df.copy()
+df_pa['date'] = df_pa['date'.values.astype(np.int64)]
+
+df_pa_table = pa.Table.from_pandas(df_pa)
+%%time
+csv.write_csv(df_pa_table, 'csv_pyarrow.csv')
+%%time
+with pa.CompressedOutPutStream('csv_pyarrow.csv.gz','gzip') as out:
+	csv.write_csv(df_pa_table, out)
+
+%%time
+df_pa_1 = csv.read_csv('csv_pyarrow.csv')
+%%time
+df_pa_2 = csv.read_csv('csv_pyarrow.csv.gz')
+%%time
+df_pa_1 = df_pa_1.to_pandas()
+
+df_pa_1.head()
+
+
+--------------------
+Data Wrangling with PySpark for Data Scientists Who Know Pandas - Andrew Ray
+https://www.youtube.com/watch?v=XrpSRCwISdk
+
+https://spark.apache.org/docs/latest/api/python/
+https://spark.apache.org/docs/latest/api/python/getting_started/index.html
+https://spark.apache.org/docs/latest/api/python/reference/index.html
+https://spark.apache.org/docs/latest/api/python/user_guide/index.html
+https://pypi.org/project/pyspark/
+
+pip install pyspark
+
+#pandas
+df = pd.read_csv("file")
+df
+df.head(10)
+df.columns
+df.dtypes
+df.columns = ['a','b'] # rename columns
+df.rename(columns = {'old':'new'})
+df.drop('mpg',axis=1)
+df[df.mpg < 20] # filter
+df['gpm'] = 1 / df.mpg # add columns
+df.fillna(0)
+df.describe()
+df.hist()
+
+#spark
+df = spark.read.options(header=True,inferSchema=True).csv('file')
+df.show()
+df.show(10)
+df.columns
+df.dtypes
+df.toDF('a','b')
+df.withColumnRenamed('old','new')
+df.drop('mpg')
+df[df.mpg < 20]
+df.withColumn('gpm', 1 / df.mpg) # add columns
+df.fillna(0)
+df.describe().show()
+df.sample(False, 0.1).toPandas().hist()
+
+df.limit(5).toPandas()
+
+
+
