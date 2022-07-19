@@ -951,3 +951,22 @@ fi
 ```
 for f in $(cat proj.txt); do  echo "$f" ;done
 ```
+
+### Linux Sleep Command
+#### https://linuxize.com/post/how-to-use-linux-sleep-command-to-pause-a-bash-script/
+```
+
+sleep 5
+sleep 2m 30s
+
+#!/bin/bash
+# start time
+date +"%H:%M:%S"
+# sleep for 5 seconds
+sleep 5
+# end time
+date +"%H:%M:%S"
+```
+
+
+

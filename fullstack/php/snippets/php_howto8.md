@@ -497,3 +497,40 @@ if (touch($file)) {
 }
 ```
 
+### Accessing various I/O streams
+```
+
+php:// — Accessing various I/O streams
+
+https://www.php.net/manual/de/wrappers.php.php
+https://riptutorial.com/php/example/787/input-and-output-handling
+https://www.php.net/manual/de/function.popen.php
+https://www.php.net/manual/de/features.commandline.io-streams.php
+https://stackoverflow.com/questions/8781906/how-to-use-stdout-in-php
+https://www.php.net/manual/en/wrappers.php
+
+STDIN = fopen("php://stdin", "r");
+STDOUT = fopen("php://stdout", "w");
+STDERR = fopen("php://stderr", "w");
+
+fwrite(STDOUT, 'foo');
+
+$stdin = fopen('php://stdin', 'r');
+$stdout = fopen('php://stdout', 'w');
+$stderr = fopen('php://stderr', 'w');
+
+php -r 'fwrite(STDERR, "stderr\n");'
+
+
+# PHP WAY 
+$input = fgets(STDIN);
+fwrite(STDOUT, $output);
+
+#CMD WAY
+cat "input.txt"  |  php script.php   >  "output.txt"
+php script.php  < input.txt  > output.txt
+echo "input..."  |  php script.php   |  sort  |  tee  output.txt
+```
+
+
+

@@ -214,6 +214,13 @@
 - http://phptester.net/ 			        # php
 - http://sandbox.onlinephpfunctions.com/ 	# php
 
+
+------------------------------------------------------------------
+### Password Generator
+
+- https://www.certbase.de/Tools/PassGen.aspx
+- https://passgen.co/
+
 ------------------------------------------------------------------
 
 ### Photo editor 

@@ -368,6 +368,82 @@ find data custom client/custom -type d -exec chmod 775 {} + && find data custom 
 chmod 775 application/Espo/Modules client/modules;
 chmod 754 bin/command;
 
+----------------------------------------------------------
+
+https://osdn.net/projects/sfnet_espocrm/releases/
+https://sourceforge.net/projects/espocrm/files/
+https://github.com/espocrm/espocrm/releases
+https://hub.docker.com/r/espocrm/espocrm
+https://www.espocrm.com/download/upgrades/
+
+----------------------------------------------------------
+
+https://docs.bitnami.com/aws/apps/espocrm/administration/upgrade/
+https://docs.espocrm.com/administration/server-configuration/
+https://www.espocrm.com/download/upgrades/
+https://docs.espocrm.com/administration/upgrading/
+
+----------------------------------------------------------
+
+Current version is 7.1.9.
+You have the latest version.
+
+php upgrade.php -y
+php command.php upgrade -y
+
+find /var/www/html -type d -exec chmod 775 {} +
+find /var/www/html -type f -exec chmod 644 {} +
+chown -R www-data:www-data /var/www/html
+
+----------------------------------------------------------
+
+mysql -h 172.20.0.2 -u espocrm -p espocrm < espo_backup.sql
+mysqldump -h 172.20.0.2 -u espocrm -p espocrm > espo_backup.sql
+
+----------------------------------------------------------
+
+Espocrm - bad server response
+
+FIX
+php rebuild.php
+php command.php rebuild
+
+----------------------------------------------------------
+
+https://dba.stackexchange.com/questions/271981/access-denied-you-need-at-least-one-of-the-process-privileges-for-this-ope
+https://dan.langille.org/2020/07/21/mysqldump-error-access-denied-you-need-at-least-one-of-the-process-privileges-for-this-operation-when-trying-to-dump-tablespaces/
+https://www.digitalocean.com/community/questions/error-2002-hy000-can-t-connect-to-local-mysql-server-through-socket-var-run-mysqld-mysqld-sock-2
+https://dev.mysql.com/doc/refman/8.0/en/can-not-connect-to-server.html
+
+mysqldump: Got error: 2002: "Can't connect to MySQL server on '172.18.0.2' (115)" when trying to connect
+
+sudo apt install mariadb-client mariadb-server
+
+mysqldump -h 172.18.0.2 -u espocrm -p espocrm > espocrm.sql
+Enter password:
+mysqldump: Error: 'Access denied; you need (at least one of) the PROCESS privilege(s) for this operation' when trying to dump tablespaces
+
+netstat -ln | grep mysql
+
+FIX
+--no-tablespaces
+
+mysqldump --no-tablespaces -h 172.18.0.2 -u espocrm -p espocrm > espocrm.sql
+
+ALTERNATIVE
+
+SHOW GRANTS for rsyncer;
+GRANT PROCESS, SELECT, LOCK TABLES ON *.* TO 'rsyncer'@'%';
+SHOW GRANTS for rsyncer@localhost;
+GRANT PROCESS, SELECT, LOCK TABLES ON *.* TO 'rsyncer'@'localhost';
+
+mysql -uroot -p
+GRANT PROCESS ON *.* TO 'demo'@'localhost';
+flush privileges;
+
+
+
+
 
 
 

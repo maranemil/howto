@@ -34,6 +34,21 @@ sudo apt-get install gnome-mpv -y
 sudo snap install code --classic
 sudo snap install pycharm-community --classic
 
+sudo snap search pycharm
+#pycharm-community     2022.1.3  jetbrains   classic   PyCharm Community Edition
+#pycharm-professional  2022.1.3  jetbrains   classic   PyCharm Professional Edition
+#pycharm-educational   2022.1.2  jetbrains   classic   Teach Programming with Python
+sudo snap install pycharm-community --classic
+
+sudo snap search vscode
+#code 3b889b09  vscode      classic   Code editing. Redefined.
+sudo snap install code --classic
+
+# ----------------------------------------------------------------------
+
+
+
+
 # sublime-text
 wget https://download.sublimetext.com/sublime-text_build-3083_amd64.deb
 sudo dpkg -i sublime-text_build-3083_amd64.deb
