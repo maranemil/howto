@@ -639,4 +639,13 @@ https://hemingwayapp.com/
 - https://percentagecalculator.guru/846-is-what-percent-of-3600/
 - https://www.flightpedia.org/convert/600-seconds-to-minute.html
 
- 
+ ------------------------------------------------------------------
+
+### Misc
+
+- https://blush.design/de
+- https://coverr.co/
+- https://flourish.studio/
+- https://lumen5.com/
+- https://untools.co/
+- https://witeboard.com/
