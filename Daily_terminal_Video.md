@@ -201,6 +201,9 @@ ffmpeg -i in.mp4 -t 180 -c copy output.mp4
 
 ### HDMI brightness
 ```
+ubuntu-drivers devices
+sudo ubuntu-drivers autoinstall
+
 * xrandr -q | grep " connected"
 * xrandr --output HDMI-1 --brightness 0.5
 
