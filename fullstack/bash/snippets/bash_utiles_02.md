@@ -36,6 +36,19 @@ then
 fi
 ```
 
+---
+### set -e, -u, -x, -o pipefail
+
+```
+
+https://explainshell.com/explain?cmd=set+-eux
+https://unix.stackexchange.com/questions/480321/set-eux-instead-set-x-in-bash-profile-for-global-debugging
+https://gist.github.com/mohanpedala/1e2ff5661761d3abd0385e8223e16425
+
+-e  returns an exit status if run fails, shell exit
+-u  write a message to standard error 
+-x  write to standard error a trace
+```
 
 
 

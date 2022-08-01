@@ -1,0 +1,113 @@
+
+###############################
+postgresql show tables
+###############################
+
+https://stackoverflow.com/questions/769683/postgresql-show-tables-in-postgresql
+https://www.postgresqltutorial.com/postgresql-administration/postgresql-show-tables/
+https://wiki.hackzine.org/sysadmin/postgresql-make-root-login-as-postgres.html
+https://www3.ntu.edu.sg/home/ehchua/programming/sql/PostgreSQL_GetStarted.html
+https://alvinalexander.com/blog/post/postgresql/log-in-postgresql-database/
+https://wiki.postgresql.org/wiki/First_steps
+https://stackoverflow.com/questions/1471571/how-to-configure-postgresql-for-the-first-time
+https://www.postgresqltutorial.com/postgresql-administration/postgresql-reset-password/
+https://serverfault.com/questions/1083133/pg-hba-conf-psql-local-login-without-password
+https://stackoverflow.com/questions/46736894/how-to-allow-postgres-login-without-password-prompt-on-local-connection
+https://dba.stackexchange.com/questions/14740/how-to-use-psql-with-no-password-prompt
+
+sudo apt-get update
+sudo apt-get install postgresql postgresql-contrib
+dpkg --status postgresql
+whereis postgresql
+which psql
+
+
+su - postgres
+psql -d mydb -U myuser
+psql -h myhost -d mydb -U myuser
+
+# if not prompted for a password
+psql -d mydb -U myuser -W
+psql -h myhost -d mydb -U myuser -W
+
+psql --help
+psql -U postgres
+
+# services
+ sudo service postgresql stop     // Stop the service
+ sudo service postgresql start    // Start the service
+ sudo service postgresql restart  // Stop and restart the service
+ sudo service postgresql reload   // Reload the configuration without stopping the service
+
+// OR
+ sudo systemctl start postgresql
+ sudo systemctl stop postgresql
+ sudo systemctl restart postgresql
+ sudo systemctl reload postgresql
+ sudo systemctl status postgresql   // Show th status
+ps aux | grep postgres
+
+Login as PostgreSQL Superuser "postgres" via "psql" Client
+sudo -u postgres psql
+SELECT version();
+\h CREATE DATABASE
+CREATE DATABASE mytest;
+\l
+\c mytest
+
+-- Create a new table.
+mytest=# CREATE TABLE IF NOT EXISTS cafe (
+  id SERIAL PRIMARY KEY,        -- AUTO_INCREMENT integer, as primary key
+  category cat_enum NOT NULL,   -- Use the enum type defined earlier
+  name VARCHAR(50) NOT NULL,    -- Variable-length string of up to 50 characters
+  price NUMERIC(5,2) NOT NULL,  -- 5 digits total, with 2 decimal places
+  last_update DATE              -- 'YYYY-MM-DD'
+);
+
+-- Display details of a particular table.
+mytest=# \d+ cafe
+
+-- Insert rows.
+mytest=# INSERT INTO cafe (category, name, price) VALUES
+  ('coffee', 'Espresso', 3.19),
+  ('coffee', 'Cappuccino', 3.29),
+  ('coffee', 'Caffe Latte', 3.39),
+  ('coffee', 'Caffe Mocha', 3.49),
+  ('coffee', 'Brewed Coffee', 3.59),
+  ('tea', 'Green Tea', 2.99),
+  ('tea', 'Wulong Tea', 2.89);
+
+SELECT * FROM cafe;
+
+\q
+
+
+
+Using Utility "createuser" and "createdb"
+------------------
+# Create a new PostgreSQL user called testuser, allow user to login, but NOT creating databases
+$ sudo -u postgres createuser --login --pwprompt testuser
+Enter password for new role: xxxx
+
+# Create a new database called testdb, owned by testuser.
+$ sudo -u postgres createdb --owner=testuser testdb
+
+sudo service postgresql restart
+
+# Login to PostgreSQL: psql -U user database
+$ psql -U testuser testdb
+
+
+
+---------------------------
+psql -U api-platform -d database_name
+SELECT datname FROM pg_database;
+\c database_name
+\dt
+SELECT * FROM pg_catalog.pg_tables;
+SELECT *
+FROM pg_catalog.pg_tables
+WHERE schemaname != 'pg_catalog' AND
+    schemaname != 'information_schema';
+
+

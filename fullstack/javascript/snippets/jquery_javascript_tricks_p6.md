@@ -792,3 +792,9 @@ integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop
 ```
 
 
+### How can I check for "undefined" in JavaScript
+```
+https://stackoverflow.com/questions/3390396/how-can-i-check-for-undefined-in-javascript
+
+if (typeof myVar !== 'undefined')
+```
