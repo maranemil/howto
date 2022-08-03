@@ -1,0 +1,323 @@
+#####################################################
+
+OpenVPN 3 Linux
+
+#####################################################
+
+https://community.openvpn.net/openvpn/wiki/OpenVPN3Linux
+https://openvpn.net/cloud-docs/openvpn-3-client-for-linux/
+https://stackoverflow.com/questions/69694538/problems-installing-openvpn-client
+
+sudo apt install apt-transport-https gpg curl
+
+curl -fsSL https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub | gpg --dearmor > /etc/apt/trusted.gpg.d/openvpn-repo-pkg-keyring.gpg
+
+# Permission denied (23) Failed writing body
+ 
+sudo wget https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub
+sudo apt-key add openvpn-repo-pkg-key.pub
+
+# Warning: apt-key is deprecated. Manage keyring files in trusted.gpg.d instead (see apt-key(8)).
+
+
+curl -fsSL https://swupdate.openvpn.net/community/openvpn3/repos/openvpn3-jammy.list >/etc/apt/sources.list.d/openvpn3.list
+
+# Permission denied (23) Failed writing body
+
+sudo apt update
+sudo apt install openvpn3
+
+Quick start - how to use OpenVPN 3 Linux
+
+openvpn2 --config ${MY_CONFIGURATION_FILE} --verb 6
+openvpn3 session-start --config ${MY_CONFIGURATION_FILE}
+openvpn3 config-import --config ${MY_CONFIGURATION_FILE}
+openvpn3 configs-list
+openvpn3 session-start --config ${CONFIGURATION_PROFILE_NAME}
+openvpn3 sessions-list
+openvpn2 --config CONFIG_FILE --enable-dco
+openvpn3 session-start --config CONFIG_NAME --dco true
+openvpn3 session-start -h
+
+
+
+-----------------------------------------------------
+Skipping acquire of configured file 'main/binary-i386/Packages' as repository 'xxx' doesn't support architecture 'i386'
+-----------------------------------------------------
+
+https://askubuntu.com/questions/741410/skipping-acquire-of-configured-file-main-binary-i386-packages-as-repository-x
+https://github.com/OpenVPN/openvpn3-linux/issues/113
+Add repository support for Ubuntu 22.04 Jammy Jellyfish
+
+sudo apt update
+
+All packages are up to date.
+N: Skipping acquire of configured file 'main/binary-i386/Packages' as repository 'https://swupdate.openvpn.net/community/openvpn3/repos jammy InRelease' doesn't support architecture 'i386'
+
+deb [arch=amd64] https://swupdate.openvpn.net/community/openvpn3/repos jammy main
+
+sudo apt update
+sudo apt install apt-transport-https
+
+sudo wget https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub
+sudo apt-key add openvpn-repo-pkg-key.pub
+
+sudo wget -O /etc/apt/sources.list.d/openvpn3.list https://swupdate.openvpn.net/community/openvpn3/repos/openvpn3-jammy.list
+
+sudo apt update
+sudo apt install openvpn3
+apt list | grep openvpn
+
+
+cd /etc/apt/sources.list.d
+grep chrome * | grep -v amd64
+grep -r google  /etc/apt | grep -v amd64 
+
+cat /etc/apt/sources.list.d/openvpn3.list 
+# OpenVPN 3 Linux client - Ubuntu 22.04 LTS
+deb https://swupdate.openvpn.net/community/openvpn3/repos jammy main
+
+sudo nano /etc/apt/sources.list.d/openvpn3.list
+# replace with 
+deb [arch=amd64] https://swupdate.openvpn.net/community/openvpn3/repos jammy main
+
+dpkg --print-foreign-architectures
+dpkg --print-architecture 
+sudo dpkg --remove-architecture i386
+
+
+
+-----------------------------------------------------
+Key is stored in legacy trusted.gpg keyring after Ubuntu 22.04 update [duplicate]
+-----------------------------------------------------
+https://askubuntu.com/questions/1403556/key-is-stored-in-legacy-trusted-gpg-keyring-after-ubuntu-22-04-update
+https://tecadmin.net/resolved-key-is-stored-in-legacy-trusted-gpg-keyring/
+https://techviewleo.com/apt-key-is-deprecated-manage-keyring-files-in-trusted-gpg-dot-d/
+https://github.com/llvm/llvm-project/issues/55784
+https://github.com/docker/docker.github.io/issues/11625
+https://stackoverflow.com/questions/68992799/warning-apt-key-is-deprecated-manage-keyring-files-in-trusted-gpg-d-instead
+
+which apt-key
+sudo apt-key list
+
+Warning: apt-key is deprecated. Manage keyring files in trusted.gpg.d instead (see apt-key(8)).
+/etc/apt/trusted.gpg
+
+--------------------
+pub   rsa4096 2011-10-13 [SC]
+      B97B 0AFC AA1A 47F0 44F2  44A0 7FCC 7D46 ACCC 4CF8
+uid           [ unknown] PostgreSQL Debian Repository
+
+sudo apt-key export ACCC4CF8 | sudo gpg --dearmour -o /usr/share/keyrings/pgdg.gpg
+
+edit  /etc/apt/sources.list.d/pgdg.list
+deb [arch=amd64 signed-by=/usr/share/keyrings/pgdg.gpg] http://apt.postgresql.org/pub/repos/apt/jammy-pgdg main
+
+sudo apt-key del ACCC4CF8 
+
+
+test key - To verify if a key file is ascii-armored
+file repo-key.gpg
+# repo-key.gpg: PGP public key block Public-Key (old)
+
+# download using wget and add such an OpenPGP key to system
+wget -O- <https://example.com/key/repo-key.gpg> | gpg --dearmor | sudo tee /usr/share/keyrings/<myrepository>-archive-keyring.gpg
+
+# docker
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key --keyring /etc/apt/trusted.gpg.d/docker-apt-key.gpg add
+
+# apt-key is deprecated and will not be available after Debian 11 / Ubuntu 22.04
+
+#--------------------------------------------
+#ADD A KEY
+#--------------------------------------------
+# Adding an ASCII Armored key (.asc key)
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+gpg --dearmor | \
+sudo tee /usr/share/keyrings/docker-ce-archive-keyring.gpg > \
+/dev/null
+
+# Or if you prefer a one-liner
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/docker-ce-archive-keyring.gpg > /dev/null
+
+# Breakdown of each part
+#
+# curl             downloads the key 
+# gpg --dearmor    creates a binary .gpg because /usr/share/keyrings cannot take .asc keys
+# sudo tee         because we get permission denied if we try redirect the output of a sudo command
+# /dev/null        we don't need to see the dearmored keyring on the console
+
+#--------------------------------------------
+# ADD REPOSITORY AS A SOURCE IN /etc/apt/sources.list.d/
+#--------------------------------------------
+echo \
+"deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-ce-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | \ 
+sudo tee /etc/apt/sources.list.d/docker-ce.list > \
+/dev/null
+
+
+# Of if you prefer a one-liner
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-ce-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker-ce.list > /dev/null
+
+
+-----------------------------------------------------
+commands  for installing Docker on Debian
+-----------------------------------------------------
+
+
+INSTALLING DEPENDENCIES
+sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent
+
+ADDING THE KEY
+curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor \
+| sudo tee /usr/share/keyrings/docker-ce-archive-keyring.gpg > /dev/null
+
+ADDING THE REPOSITORY
+echo \
+"deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-ce-archive-keyring.gpg] \
+https://download.docker.com/linux/debian $(lsb_release -cs) stable" \
+| sudo tee /etc/apt/sources.list.d/docker-ce.list > /dev/null
+
+UPDATING APT & INSTALLING DOCKER
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+
+----------------------------------------
+
+Evaluating $(dpkg --print-architecture) and $(lsb_release -cs)
+
+echo \
+"deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-ce-archive-keyring.gpg] \
+https://download.docker.com/linux/debian $(lsb_release -cs) stable" \
+| sudo tee /etc/apt/sources.list.d/docker-ce.list > /dev/null
+
+---------------------------------
+# install Docker for Kali 2020.1 debian amd64 
+
+curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/docker-ce-archive-keyring.gpg > /dev/null
+
+
+echo 'deb [arch=amd64] https://download.docker.com/linux/debian buster stable' | sudo tee /etc/apt/sources.list.d/docker.list
+
+sudo apt-get update
+sudo apt-get install docker-ce
+
+---------------------------------
+sudo touch /etc/apt/trusted.gpg.d/docker.gpg
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --no-default-keyring --keyring /etc/apt/trusted.gpg.d/docker.gpg --import -
+
+
+-----------------------------------------------------
+"Status: Connection, Client connection failed: OpenSSLContext: SSL_CTX_use_certificate failed: error:0A00018E:SSL routines::ca md too weak {SSL_CA_MD_TOO_WEAK"
+-----------------------------------------------------
+https://www.infopackets.com/news/10414/how-fix-openvpn-sslctxusecertificateca-md-too-weak
+https://stackoverflow.com/questions/52218876/how-to-fix-ssl-issue-ssl-ctx-use-certificate-ca-md-too-weak-on-python-zeep
+https://www.openssl.org/docs/manmaster/man3/SSL_CTX_set_security_level.html
+http://ics-openvpn.blinkt.de/FAQ.html
+https://github.com/OpenVPN/easy-rsa/releases
+https://forum.openwrt.org/t/how-can-i-use-an-old-md5-certificate-with-openvpn-2-5-3/108301/9
+https://build.openvpn.net/man/openvpn-2.5/openvpn.8.html
+
+
+The security level corresponds to a minimum of 80 bits of security. Any parameters offering below 80 bits of security are excluded. As a result RSA, DSA and DH keys shorter than 1024 bits and ECC keys shorter than 160 bits are prohibited. All export cipher suites are prohibited since they all offer less than 80 bits of security. SSL version 2 is prohibited. Any cipher suite using MD5 for the MAC is also prohibited.
+
+Weak (MD5) hashes in certificate signature (SSL_CTX_use_certificate md too weak)
+
+tls-cipher "DEFAULT:@SECLEVEL=0" 
+tls-cipher "DEFAULT:@SECLEVEL=0" # No Security
+tls-cipher "DEFAULT:@SECLEVEL=1"
+
+
+Level 0 Everything is permitted
+Level 1 Security level set to a minimum of 80 bits of security.
+Level 2 Security level set to 112 bits of security. 
+Level 3 Security level set to 128 bits of security. 
+Level 4 Security level set to 192 bits of security. 
+Level 5 Security level set to 256 bits of security.
+
+cat /usr/lib/ssl/openssl.cnf
+
+
+
+Regenerate CA file using openssl with stronger hash(such as sha256 ) to sing like this:
+
+    openssl genrsa -out private/cakey.pem  3072
+    openssl req -new -sha256 -key private/cakey.pem -out private/ca.csr -subj "/C=CN/ST=envoy-test/L=envoy-test/O=envoy-test/OU=envoy-test/CN=envoy-test"
+    openssl x509 -req -days 3650 -sha256 -extensions v3_ca -signkey private/cakey.pem -in private/ca.csr -out certs/ca.cer
+
+
+https://askubuntu.com/questions/739357/openvpn-doesnt-connect-after-disconnent
+https://openvpn.net/vpn-server-resources/troubleshooting-client-vpn-tunnel-connectivity/
+https://github.com/OpenVPN/openvpn3-linux/issues/91
+https://github.com/OpenVPN/openvpn3-linux/issues/65
+https://serverfault.com/questions/436333/getting-disconnected-from-openvpn-server-each-hour
+
+sudo service openvpn start
+sudo service openvpn stop
+network-manager-openvpn
+systemctl enable openvpn3-autoload.service
+
+openvpn3 config-manage --enable-legacy-algorithms true --config $CONFIG_NAME
+
+
+https://duo.com/docs/openvpn
+
+openvpn --config client.ovpn --auth-retry interact
+
+
+https://tldrify.com/m80
+https://support.circleci.com/hc/en-us/articles/360049397051-How-To-Set-Up-a-VPN-Connection-During-Builds
+https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/troubleshooting.html
+
+
+Check whether you can ping a public IP address with a payload larger than 1400 bytes. 
+
+ping -s 1480 8.8.8.8 -M do
+
+
+Verify the bandwidth limit for a Client VPN endpoint
+sudo iperf3 -s -V
+
+On the client:
+sudo iperf -c server IP address -p port -w 512k -P 60
+
+sudo openvpn conf.ovpn
+
+
+-----------------------------------------------------
+unrecognized option or missing or extra parameter tls-remote
+-----------------------------------------------------
+https://superuser.com/questions/1405659/openvpn-options-error-unrecognized-option-or-missing-or-extra-parameters-in
+https://askubuntu.com/questions/1407983/how-to-resolve-unrecognized-option-or-missing-or-extra-parameters-openvpn
+https://askubuntu.com/questions/946572/options-error-unrecognized-option-or-missing-parameters-in-push-options1#comment1505116_946572
+
+
+verify-x509-name domain name
+verify-x509-name "C=Country, L=City, O=Company, CN=Name, emailAddress=email-address"
+
+
+https://github.com/OpenVPN/openvpn3-linux
+https://askubuntu.com/questions/298419/how-to-disconnect-from-openvpn
+https://community.openvpn.net/openvpn/wiki/OpenVPN3Linux
+https://openvpn.net/cloud-docs/openvpn-3-client-for-linux/
+
+SIGUSR1 -- Conditional restart, designed to restart without root privileges
+SIGHUP -- Hard restart
+SIGUSR2 -- Output connection statistics to log file or syslog
+SIGTERM, SIGINT -- Exit
+
+sudo ip link delete tun0
+sudo killall openvpn
+killall -SIGINT openvpn
+openvpn3 session-manage --session-path $OPENVPN3_SESSION_PATH --disconnect
+openvpn3 session-manage --config {config_name}  --disconnect
+openvpn3 session-manage --config ${CONFIGURATION_PROFILE_NAME} --restart
+openvpn3 session-start --config /path/to/ovpnfile # start
+openvpn3 sessions-list
+pgrep openvpn | xargs sudo kill -9
+openvpn3 session-manage --disconect --config <config_path>
+
+
+
+
