@@ -556,6 +556,54 @@ libpng-dev \
 --with-png=/usr/include/ --enable-gd-native-ttf \
 && docker-php-ext-install -j$(nproc) gd
 
+-----------------------------------------------------
+
+https://medium.com/@lmakarov/the-backlash-of-chmod-chown-mv-in-your-dockerfile-f12fe08c0b55
+https://www.linuxfixes.com/2022/03/solved-docker-chmod-no-such-file-or.html
+https://asciinema.org/a/206650
+https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#add-or-copy
+https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#run
+https://stackoverflow.com/questions/56045077/dockerfile-run-chmod-not-taking-effect
+https://www.oreilly.com/library/view/unix-shells-by/013066538X/013066538X_app01lev1sec9.html
+https://www.linode.com/docs/guides/modify-file-permissions-with-chmod/
+https://pisica.de/webtools/chmod-rechner.php
+https://chmod-calculator.com/
+
+Dockerfile
+
+FROM httpd:alpine
+COPY 100MB.zip /var/www/html
+RUN chown -R www-data:www-data /var/www/html
+
+
+FROM php:7.4-cli
+copy . index.php
+RUN chmod -R 774 /var/www/html/index.php
+RUN chown -R root /var/www/html
+
+
+FROM joomla:3.9-php7.2-apache
+RUN apt-get update \
+&& apt-get install -y apt-utils vim curl
+COPY --chown=www-data:www-data ./joomla_html /var/www/html
+RUN chmod -R 765 /var/www/html/
+COPY ./docker/php.ini /usr/local/etc/php/conf.d/php-extras.ini
+EXPOSE 80
+
+https://asciinema.org/a/206650
+
+FROM ubuntu
+RUN mkdir /test
+RUN echo "date" > /test/scripz.sh
+RUN useradd -d /home/demo -ms  /bin/bash demo
+USER demo
+WORKDIR /home/demo
+USER root
+RUN /bin/bash -c 'chmod +x /test/scripz.sh'
+CMD /bin/bash /test/scripz.sh
+
+
+
 
 
 

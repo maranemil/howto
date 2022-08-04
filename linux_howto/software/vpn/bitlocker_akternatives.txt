@@ -1,0 +1,211 @@
+
+##################################################################################
+BitLocker Alternatives
+Linux Bitlocker equivalent
+##################################################################################
+
+https://askubuntu.com/questions/560939/bitlocker-like-software-for-ubuntu
+https://wiki.archlinux.org/title/Data-at-rest_encryption
+https://askubuntu.com/questions/366749/enable-disk-encryption-after-installation
+https://www.howtogeek.com/116032/how-to-encrypt-your-home-folder-after-installing-ubuntu/
+https://askubuntu.com/questions/96870/is-there-a-way-to-do-full-disk-encryption-after-the-install
+https://www.johannes-bauer.com/linux/luksipc/
+https://help.ubuntu.com/community/EncryptedHome
+https://ubuntuforums.org/showthread.php?t=1449168
+https://manpages.ubuntu.com/manpages/trusty/man8/cryptsetup-reencrypt.8.html
+https://gitlab.com/cryptsetup/cryptsetup
+https://wiki.archlinux.org/title/Dm-crypt/Device_encryption#Encrypt_an_unencrypted_filesystem
+https://superuser.com/questions/237721/linux-bitlocker-equivalent
+https://askubuntu.com/questions/96870/is-there-a-way-to-do-full-disk-encryption-after-the-install
+https://wiki.archlinux.org/title/Dm-crypt/Device_encryption#Encrypt_an_unencrypted_filesystem
+https://www.johannes-bauer.com/linux/luksipc/
+https://www.aescrypt.com/download/
+
+
+https://www.czip.it/en/downloads-for-linux/
+https://www.czip.it/en/download/41395/
+http://www.gostcrypt.org/download.php
+http://www.gostcrypt.org/download/1.3/Linux/Deb/GostCrypt_1.3_Ubuntu.x86_64.deb
+https://github.com/partoneoftwo/luksus
+https://github.com/partoneoftwo/luksus/tags
+https://moritzmolch.com/apps/gencfsm.html
+https://www.ecryptfs.org/downloads
+https://www.ecryptfs.org/documentation
+https://wiki.gnome.org/Apps/Seahorse
+https://gitlab.gnome.org/GNOME/seahorse.git
+https://eck.cologne/peafactory/en/html/filePEA/file-lock-pea-download.html?
+https://www.aescrypt.com/download/
+https://gitlab.com/cryptsetup/cryptsetup
+https://gitlab.com/cryptsetup/cryptsetup/-/tags
+https://www.veracrypt.fr/en/Downloads.html
+https://launchpad.net/veracrypt/trunk/1.25.9/+download/veracrypt-1.25.9-Debian-11-amd64.deb
+https://launchpad.net/veracrypt/trunk/1.25.9/+download/veracrypt-console-1.25.9-Ubuntu-22.04-amd64.deb
+
+
+install GEncfsM on Ubuntu
+sudo add-apt-repository ppa:gencfsm && sudo apt-get update && sudo apt-get -y install gnome-encfs-manager
+
+install eCryptfs on Debian  and Ubuntu
+apt-get install ecryptfs-utils
+sudo apt-get install ecryptfs-utils
+
+
+VeraCrypt / TrueCrypt
+WARNING: Using TrueCrypt is not secure as it may contain unfixed security issues
+http://truecrypt.sourceforge.net/
+
+modprobe cryptoloop
+modprobe aes
+
+
+sudo apt-get install ecryptfs-utils cryptsetup
+cryptsetup --help
+cryptsetup benchmark
+
+# Encryption options for LUKS mode
+# cryptsetup luksFormat device
+# cryptsetup --type luks2 --cipher aes-xts-plain64 --hash sha256 --iter-time 2000 --key-size 256 --pbkdf argon2id --use-urandom --verify-passphrase luksFormat device
+
+.....
+
+HOW-TO encrypt your home directory
+https://ubuntuforums.org/showthread.php?t=1449168
+
+sudo apt-get install ecryptfs-utils
+
+ecryptfs-migrate-home --help
+#Usage:
+#/usr/bin/ecryptfs-migrate-home -u USER
+# -u,--user       Migrate USER's home directory to an encrypted home directory
+
+#WARNING: Make a complete backup copy of the non-encrypted data to
+#another system or external media. This script is dangerous and, in
+#case of an error, could result in data lost, or lock you out of your
+#system!
+#This program must be executed by root.
+
+...
+
+Rename my user
+Create a new user with an encrypted home dir
+move everything from the old user to the new one
+delete the old one
+
+
+- Logout from the graphic interface
+- Login with Alt+Ctl+F1 to get a terminal with the minimum open files.
+- Create a new admin user:
+sudo adduser --ingroup admin deleteme
+
+- Exit, log back in with 'deleteme'
+- Get the old home out of the way:
+sudo mv /home/user /home/olduser
+
+- Rename the old user
+sudo usermod --home /home/olduser --login olduser user
+
+- Create the new encrypted user
+sudo adduser --home /home/user --ingroup admin --encrypt-home user
+
+- Exit, then login with the new user and copy all the files
+sudo rsync -a /home/olduser /home/user
+
+- Make these files your own
+cd /home
+sudo chown -R user user
+
+- Logout, then login with the user, make sure everything works. After a couple of days without a problems, clean up:
+
+sudo deluser --remove-all-files deleteme
+sudo deluser --remove-all-files olduser
+
+
+
+...
+
+https://blog.dustinkirkland.com/2009/06/migrating-to-encrypted-home-directory.html
+
+If you already have some data in your $HOME/Private directory,
+please move all of these files and directories out of the way,
+and follow the instructions in:
+
+ecryptfs-setup-private --undo
+
+login
+ecryptfs-setup-private
+
+exit
+login
+mount | grep "$USER.*ecryptfs"
+
+rsync -aP --exclude=.Private --exclude=Private \
+--exclude=.ecryptfs $HOME/ $HOME/Private/
+
+# sudo ecryptfs-setup-swap
+# sudo rm -rf /home/user.random
+
+sync && sync && sync
+ecryptfs-umount-private
+exit
+login
+
+ecryptfs-umount-private
+cd /
+sudo mkdir -p /home/.ecryptfs/$USER
+sudo chown $USER:$USER /home/.ecryptfs/$USER
+mv $HOME/.ecryptfs /home/.ecryptfs/$USER/
+mv $HOME/.Private /home/.ecryptfs/$USER/
+sudo chmod 700 /home/.ecryptfs/$USER/.Private
+sudo chmod 700 /home/.ecryptfs/$USER/.ecryptfs
+
+sudo mkdir -p -m 700 /home/$USER.new
+sudo chown $USER:$USER /home/$USER.new
+ln -sf /home/.ecryptfs/$USER/.ecryptfs \
+/home/$USER.new/.ecryptfs
+ln -sf /home/.ecryptfs/$USER/.Private \
+/home/$USER.new/.Private
+
+sudo mv $HOME $HOME.old
+
+sudo mv /home/$USER.new $HOME
+echo $HOME > $HOME/.ecryptfs/Private.mnt
+ln -sf \
+/usr/share/ecryptfs-utils/ecryptfs-mount-private.txt \
+$HOME/README.txt
+sudo chmod 500 $HOME
+
+exit
+login
+mount | grep "$USER.*ecryptfs"
+ln -sf /home/.ecryptfs/$USER/.ecryptfs \
+/home/$USER/.ecryptfs
+ln -sf /home/.ecryptfs/$USER/.Private \
+/home/$USER/.Private
+
+sudo rm -rf $HOME.old
+
+
+##################################################################################
+dislocker -- designed to read BitLocker encrypted partitions under a Linux system
+##################################################################################
+
+https://github.com/Aorimn/dislocker
+https://it-learner.de/auch-unter-linux-laesst-sich-auf-einen-mit-bitlocker-verschluesselten-datentraeger-zugreifen/
+https://askubuntu.com/questions/617950/use-windows-bitlocker-encrypted-drive-on-ubuntu
+
+sudo add-apt-repository universe
+sudo apt update
+sudo apt install dislocker
+
+dislocker-metadata -V /dev/sdb2 | grep Type
+
+mkdir /mnt/bitlocker-hdd
+dislocker-fuse -V /dev/sdb2 -u /mnt/bitlocker-hdd
+
+mkdir /mnt/bitlocker-hdd/windows-hdd
+mount -o ro /mnt/bitlocker-hdd/dislocker-file /mnt/bitlocker-hdd/windows/hdd
+
+
+
+
+
