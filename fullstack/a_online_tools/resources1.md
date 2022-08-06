@@ -350,6 +350,14 @@ https://hemingwayapp.com/
 
 ------------------------------------------------------------------
 
+### Reverse Image Search
+
+- https://pimeyes.com/en
+- https://images.google.com/
+- https://yandex.com/images/
+
+------------------------------------------------------------------
+
 ### Plugins gittoolbox
 
 - https://plugins.jetbrains.com/plugin/7499-gittoolbox
