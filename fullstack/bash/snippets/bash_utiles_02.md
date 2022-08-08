@@ -51,6 +51,48 @@ https://gist.github.com/mohanpedala/1e2ff5661761d3abd0385e8223e16425
 ```
 
 
+------------------------------------------------
+```
+permissions
+
+https://stackoverflow.com/questions/28340263/how-to-make-a-file-executable-using-makefile
+https://stackoverflow.com/questions/20508606/makefile-that-gives-permission-to-my-python-script
+https://askubuntu.com/questions/229589/how-to-make-a-file-e-g-a-sh-script-executable-so-it-can-be-run-from-a-termi
+https://github.com/imapsync/imapsync/blob/master/Makefile
+https://www.gnu.org/software/automake/manual/automake.html
+https://kb.iu.edu/d/abdb
+https://www.grymoire.com/Unix/Permissions.html
+https://www.baeldung.com/linux/chown-chmod-permissions
+
+chmod +x filename.sh
+./filename.sh
+
+Makefile
+all: myprogram
+    chmod 755 myprogram
+    
+python myprogram.py $1 $2
+python myprogram.py $@
+```
+
+------------------------------------------------
+```
+https://www.pascallandau.com/blog/structuring-the-docker-setup-for-php-projects/
+https://github.com/docker-library/php/blob/master/docker-php-entrypoint
+https://stackoverflow.com/questions/53298532/docker-entrypoints-override-involve-cmd-specification
+
+docker build .docker -f .docker/nginx/Dockerfile
+
+docker-php-entrypoint
+
+#!/bin/sh
+set -e
+# first arg is `-f` or `--some-option`
+if [ "${1#-}" != "$1" ]; then
+    set -- php-fpm "$@"
+fi
+exec "$@"
+```
 
 
 

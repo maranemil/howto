@@ -1,0 +1,216 @@
+
+---------------------------------------------------------------
+
+
+
+#############################################################################
+#
+#   How to Install Jenkins on Debian 9
+#   https://www.rosehosting.com/blog/how-to-install-jenkins-on-debian-9/
+#
+#############################################################################
+
+apt-get install jenkins
+
+systemctl start jenkins.service
+systemctl stop jenkins.service
+systemctl restart jenkins.service
+systemctl status jenkins.service
+systemctl restart jenkins.service
+
+systemctl enable jenkins.service
+systemctl disable jenkins.service
+
+#############################################################################
+
+pipelines
+
+#############################################################################
+
+https://code-maven.com/jenkins-pipeline-running-external-programs
+https://www.jenkins.io/doc/book/pipeline/docker/
+https://www.jenkins.io/doc/book/pipeline/docker/
+https://www.jenkins.io/doc/pipeline/tour/agents/
+https://plugins.jenkins.io/git/
+
+pipeline {
+    agent { label 'master' }
+    stages {
+        stage('build') {
+            steps {
+                echo "Hello World!"
+                sh "echo Hello from the shell"
+                sh "hostname"
+                sh "uptime"
+            }
+        }
+    }
+}
+
+sudo usermod -aG docker ${USER}
+sudo usermod -a -G docker jenkins
+sudo usermod -a -G docker $USER
+reboot
+
+Jenkinsfile (Declarative Pipeline)
+pipeline {
+    agent {
+        docker { image 'node:16.13.1-alpine' }
+    }
+    stages {
+        stage('Test') {
+            steps {
+                sh 'node --version'
+            }
+        }
+    }
+}
+
+
+Jenkinsfile (Declarative Pipeline)
+pipeline {
+    agent { dockerfile true }
+    stages {
+        stage('Test') {
+            steps {
+                sh 'node --version'
+                sh 'svn --version'
+            }
+        }
+    }
+}
+
+https://tomgregory.com/building-a-spring-boot-application-in-docker-and-jenkins/
+
+FROM openjdk:11
+ARG JAR_FILE
+COPY ${JAR_FILE} app.jar
+ENTRYPOINT ["java", "-jar", "/app.jar"]
+
+pipeline {
+    agent any
+    triggers {
+        pollSCM '* * * * *'
+    }
+    stages {
+        stage('Build') {
+            steps {
+                sh './gradlew assemble'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh './gradlew test'
+            }
+        }
+        stage('Build Docker image') {
+            steps {
+                sh './gradlew docker'
+            }
+        }
+        stage('Push Docker image') {
+            environment {
+                DOCKER_HUB_LOGIN = credentials('docker-hub')
+            }
+            steps {
+                sh 'docker login --username=$DOCKER_HUB_LOGIN_USR --password=$DOCKER_HUB_LOGIN_PSW'
+                sh './gradlew dockerPush'
+            }
+        }
+    }
+}
+
+----------------------------------------------------------------
+
+
+# https://engineering.riotgames.com/news/putting-jenkins-docker-container
+
+docker ps
+docker info
+docker-machine ip default
+docker pull jenkins
+docker run -p 8080:8080 --name=jenkins-master jenkin
+docker rm jenkins-master
+docker run -p 8080:8080 --name=jenkins-master -d jenkins
+docker stop jenkins-master
+docker rm jenkins-master
+docker run -p 8080:8080 --name=jenkins-master -d --env JAVA_OPTS="-Xmx8192m" jenkins
+docker run -p 8080:8080 --name=jenkins-master -d --env JAVA_OPTS=”-Xmx8192m -XX:PermSize=256m -XX:MaxPermSize=1024m” jenkins
+
+docker stop jenkins-master
+docker rm jenkins-master
+docker run -p 8080:8080 --name=jenkins-master -d --env JAVA_OPTS="-Xmx8192m" --env JENKINS_OPTS="--handlerCountStartup=100 --handlerCountMax=300" jenkins
+
+docker build -t myjenkins .
+docker run -p 8080:8080 --name=jenkins-master -d --env JAVA_OPTS="-Xmx8192m" --env JENKINS_OPTS="--handlerCountStartup=100 --handlerCountMax=300" myjenkins
+
+
+docker stop jenkins-master
+docker rm jenkins-master
+docker run -p 8080:8080 --name=jenkins-master -d myjenkins
+
+docker exec jenkins-master ps -ef | grep java
+chown -R  jenkins:jenkins /var/log/jenkins
+
+
+docker run -p 8080:8080 --name=jenkins-master -d myjenkins
+docker exec jenkins-master tail -f /var/log/jenkins/jenkins.lo
+
+
+
+docker stop jenkins-master
+docker cp jenkins-master:/var/log/jenkins/jenkins.log jenkins.log
+cat jenkins.log
+
+--------------------------------------------
+
+
+# https://issues.jenkins-ci.org/browse/JENKINS-29239?page=com.atlassian.jira.plugin.system.issuetabpanels%3Aall-tabpanel
+
+docker run -v /var/run/docker.sock:/var/run/docker.sock -v /bin/docker:/bin/docker \
+   -v /usr/lib64/libdevmapper.so.1.02:/usr/lib/libdevmapper.so.1.01 \
+   -v /data/jenkins_01/home:/var/jenkins_home -v /tmp:/tmp --env JENKINS_HOME=/data/jenkins_01/home \
+   --name jenkins_01 -d myjenkins
+
+   Last line of my Dockerfile:
+
+ENTRYPOINT /usr/local/bin/prepare_jenkins.sh \
+  && HOME=$JENKINS_HOME gosu jenkins /bin/tini -- /usr/local/bin/jenkins.sh
+
+prepare_jenkins.sh:
+
+if [[ "${JENKINS_HOME}" !=  "/var/jenkins_home" ]]; then
+   mkdir -p $(dirname ${JENKINS_HOME})
+   ln -sf -T /var/jenkins_home ${JENKINS_HOME}
+fi
+grep docker /etc/group || groupadd -g $(stat -c "%g" /var/run/docker.sock) docker
+usermod -a -G docker jenkins
+
+
+-------------------
+
+https://hub.docker.com/r/oreomitch/docker-jenkins-android/builds/bbzobhgnkxz2ntriyb3kvvm/
+
+Build A Jenkins CI Docker Container
+$ docker pull oreomitch/docker-jenkins-android
+
+Usage
+To run the container and map the host port 8080 to the container port 8080
+$ docker run -d -p 8080:8080 oreomitch/docker-jenkins-android
+You can include --name <name> to label the container for example:
+$ docker run -d -p 8080:8080 --name myjenkins oreomitch/docker-jenkins-android
+
+By default the container is run as jenkins user. This can be changed at runtime using -u=<user>, e.g:
+$ docker run -d -p -u=root 8080:8080 --name myjenkins oreomitch/docker-jenkins-android
+
+To install the Android SDK, run the container as root (see above) and the run the following set of commands:
+$ docker exec <container-id> wget --progress=dot:giga http://dl.google.com/android/android-sdk_r23.0.2-linux.tgz
+$ docker exec <container-id> mkdir /opt/android
+$ docker exec <container-id> tar -C /opt/android -xzvf ./android-sdk_r23.0.2-linux.tgz
+
+To update the Android SDK, tools, build-tools, system-images
+$ docker exec <container-id>|<container-name> /bin/sh -c "( sleep 3 && while [ 1 ]; do sleep 1; echo y; done ) | /opt/android/android-sdk-linux/android sdk update --no-ui --all"
+
+The android tools are 32 bit and if you're on 64 bit it will not be able to find them unless you have the 32 bit emulation layers:
+$ docker exec <container-id>|<container-name> /bin/sh -c "apt-get install -y lib32stdc++6 lib32z1 libc6-i386"
+
