@@ -68,6 +68,15 @@ lynx t3n.de -accept_all_cookies  -justify
 | zip   | for i in */; do zip -r "${i%/}.zip" "$i"; done |
 ~~~~
 
+##### Tar Untar 
+
+~~~~
+|  cmd  | example                                        | 
+|:------|:-----------------------------------------------| 
+| tar   | tar -czvf archive.tar.gz folderpath1           |
+| untar | tar -xzvf archive.tar.gz                       |
+~~~~
+
 ##### Change date modified created file
 ```
  * -a = accessed / -m = modified / -t = timestamp
