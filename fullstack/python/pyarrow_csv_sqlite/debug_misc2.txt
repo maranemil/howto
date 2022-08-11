@@ -1,0 +1,738 @@
+
+
+numpy.core._exceptions._ArrayMemoryError: Unable to allocate 19.1 GiB for an array with shape (3060, 838005) and data type float64
+
+https://stackoverflow.com/questions/57507832/unable-to-allocate-array-with-shape-and-data-type
+https://exerror.com/numpy-core-_exceptions-memoryerror-unable-to-allocate-array-with-shape/
+https://www.mssqltips.com/sqlservertip/7282/pandas-dataframes-memory-error-memoryerror-unable-to-allocate/
+
+cat /proc/sys/vm/overcommit_memory
+
+>> import numpy as np
+>>> a = np.zeros((156816, 36, 53806), dtype='uint8')
+>>> a.nbytes
+
+
+# mask = np.zeros(edges.shape)
+# mask = np.zeros(edges.shape,dtype='uint8')
+# mask = np.zeros((789412, 78, 98754), dtype='uint8')
+
+-------------------------------------------------
+
+Get the number of rows for a parquet file
+
+https://donghao.org/2021/12/17/get-the-number-of-rows-for-a-parquet-file/
+https://pandas.pydata.org/docs/reference/api/pandas.read_parquet.html
+https://stackoverflow.com/questions/53982871/pandas-reading-first-n-rows-from-parquet-file
+https://arrow.apache.org/docs/python/parquet.html
+
+import pandas as pd
+df = pd.read_parquet("my.parquet")
+print(df.shape[0])
+
+
+import pyarrow.parquet as pq
+table = pq.read_table("my.parquet", columns=[])
+print(table.num_rows)
+
+from pyarrow.parquet import ParquetFile
+import pyarrow as pa
+
+pf = ParquetFile('file_name.pq')
+first_ten_rows = next(pf.iter_batches(batch_size = 10))
+df = pa.Table.from_batches([first_ten_rows]).to_pandas()
+print(df.info)
+
+
+
+from pyarrow.parquet import ParquetFile
+import pyarrow as pa
+
+pf = ParquetFile('file_name.pq')
+first_ten_rows = next(pf.iter_batches(batch_size = 10))
+df = pa.Table.from_batches([first_ten_rows]).to_pandas()
+
+------------------------------------------------------------
+PySpark Read and Write Parquet File
+https://spark.apache.org/docs/latest/sql-data-sources-parquet.html
+https://sparkbyexamples.com/pyspark/pyspark-read-and-write-parquet-file/
+https://sparkbyexamples.com/spark/spark-read-write-dataframe-parquet-example/
+https://www.projectpro.io/recipes/read-and-write-parquet-files-pyspark
+
+parquetFile = spark.read.parquet("people.parquet")
+
+df.write.parquet("/tmp/out/people.parquet")
+parDF1=spark.read.parquet("/temp/out/people.parquet")
+------------------------------------------------------------
+
+R
+https://arrow.apache.org/docs/r/reference/read_parquet.html
+https://www.mathworks.com/help/matlab/ref/parquetread.html
+https://www.jumpingrivers.com/blog/parquet-file-format-big-data-r/
+
+tf <- tempfile()
+on.exit(unlink(tf))
+write_parquet(mtcars, tf)
+df <- read_parquet(tf, col_select = starts_with("d"))
+head(df)
+
+------------------------------------------------------------
+
+https://pandas.pydata.org/docs/reference/api/pandas.read_parquet.html
+https://arrow.apache.org/docs/python/generated/pyarrow.parquet.ParquetFile.html
+https://stackoverflow.com/questions/33813815/how-to-read-a-parquet-file-into-pandas-dataframe
+https://pypi.org/project/fastparquet/
+https://fastparquet.readthedocs.io/en/latest/
+https://fastparquet.readthedocs.io/en/latest/quickstart.html
+https://fastparquet.readthedocs.io/en/latest/install.html
+
+import pandas as pd
+pd.read_parquet('example_pa.parquet', engine='pyarrow')
+
+
+import pandas as pd
+pd.read_parquet('example_fp.parquet', engine='fastparquet')
+
+from fastparquet import ParquetFile
+pf = ParquetFile('myfile.parq')
+df = pf.to_pandas()
+df2 = pf.to_pandas(['col1', 'col2'], categories=['col1'])
+
+
+from fastparquet import write
+write('outfile.parq', df)
+write('outfile2.parq', df, row_group_offsets=[0, 10000, 20000],
+      compression='GZIP', file_scheme='hive')
+
+
+from fastparquet import ParquetFile
+pf = ParquetFile('myfile.parq')
+df = pf.to_pandas()
+df2 = pf.to_pandas(['col1', 'col2'], categories=['col1'])
+df2 = pf.to_pandas(['col1', 'col2'], categories={'col1': 12})
+
+------------------------------------------------------------
+
+https://github.com/dask/fastparquet/issues/364
+
+
+import numpy as np
+import pandas as pd
+import pyarrow.parquet as pq
+import pyarrow as pa
+from fastparquet import ParquetFile
+
+# create a df
+df = pd.DataFrame({'one': [-1, np.nan, 2.5], 'two': ['foo', 'bar', 'baz'], 'three': [True, False, True]})
+
+# save it using pyarrow
+table = pa.Table.from_pandas(df)
+pq.write_to_dataset(table, 'example_pyarrow', partition_cols=['three'])
+
+# reading it using fastparquet
+ParquetFile('example_pyarrow').to_pandas()
+ParquetFile(glob("example_pyarrow/**/*.parquet", recursive=True)).to_pandas()
+
+numpy.core._exceptions._ArrayMemoryError:
+Unable to allocate 19.1 GiB for an array with shape (3060, 838005) and data type float64
+
+
+https://www.mssqltips.com/sqlservertip/7282/pandas-dataframes-memory-error-memoryerror-unable-to-allocate/
+
+import pandas as pd
+df = pd.read_parquet(file,columns=['some_field']).dropna()
+data = pd.concat(df, ignore_index=True)
+data.info(memory_usage='deep')
+
+-----------------------------------------------------------------------
+
+https://stackoverflow.com/questions/51361356/a-comparison-between-fastparquet-and-pyarrow
+
+
+from fastparquet import write
+
+parquet_file = path.join(filename + '.parq')
+write(parquet_file, df_data)
+
+
+-----------------------------------------------------------------------
+
+
+https://realpython.com/python-zip-function/
+https://www.programiz.com/python-programming/methods/built-in/zip
+https://www.adamsmith.haus/python/answers/how-to-zip-two-lists-in-python
+https://www.youtube.com/watch?v=khCzymLy_QE
+
+numbers = [1, 2, 3]
+letters = ['a', 'b', 'c']
+zipped = zip(numbers, letters)
+
+
+
+>>> integers = [1, 2, 3]
+>>> letters = ['a', 'b', 'c']
+>>> floats = [4.0, 5.0, 6.0]
+>>> zipped = zip(integers, letters, floats)  # Three input iterables
+
+
+>>> letters = ['a', 'b', 'c']
+>>> numbers = [0, 1, 2]
+>>> for l, n in zip(letters, numbers):
+...     print(f'Letter: {l}')
+...     print(f'Number: {n}')
+
+
+languages = ['Java', 'Python', 'JavaScript']
+versions = [14, 3, 6]
+
+result = zip(languages, versions)
+print(list(result))
+
+
+-----------------------------------------------------------------------
+
+PHP
+sudo apt install php php-cli
+
+sudo apt install php8.1-cli php8.1-curl php8.1-gd php8.1-intl php8.1-interbase \
+    php8.1-mbstring php8.1-mongodb php8.1-mysql php8.1-opcache php8.1-pgsql php8.1-redis \
+    php8.1-soap php8.1-sqlite3 php8.1-xml php8.1-xsl php8.1-yaml php8.1-zip
+
+-----------------------------------------------------------------------
+
+php -S localhost:8888
+http://localhost:8888/adminer.php
+
+-----------------------------------------------------------------------
+
+sudo apt install bluesfish
+sudo apt install kate kosole
+
+-----------------------------------------------------------------------
+
+https://speedysense.com/install-jupyter-notebook-on-ubuntu-20-04/
+https://askubuntu.com/questions/737094/jupyter-notebook-installation
+
+sudo apt update && sudo apt -y upgrade
+sudo apt install python3-pip python3-dev
+sudo -H pip3 install --upgrade pip
+sudo -H pip3 install virtualenv
+mkdir notebook
+cd notebook
+virtualenv jupyterenv
+source jupyterenv/bin/activate
+
+...
+
+pip install jupyter
+jupyter notebook
+http://127.0.0.1:8889/tree
+
+...
+
+sudo apt-get update --fix-missing
+
+-----------------------------------------------------------------------
+
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.count.html
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.head.html
+https://sparkbyexamples.com/pandas/pandas-read-sql-query-or-table/
+https://www.delftstack.com/howto/python-pandas/pandas-read_sql_query/
+https://www.programcreek.com/python/example/101334/pandas.read_sql_query
+https://www.tutlane.com/tutorial/sqlite/sqlite-count-function
+https://www.sqlitetutorial.net/sqlite-count-function/
+https://www.sqlitetutorial.net/sqlite-count-function/
+https://www.sqlitetutorial.net/sqlite-group-by/
+
+
+import sqlite3
+
+#Connect to Database
+con = sqlite3.connect('courses_database')
+cur = con.cursor()
+
+
+# Create Table
+cur.execute('''CREATE TABLE IF NOT EXISTS COURSES
+          ([course_id] INTEGER PRIMARY KEY,
+           [course_name] TEXT,
+           [fee] INTEGER,
+           [duration] TEXT,
+           [discount] INTEGER)''')
+
+
+ # Insert Few Records
+ cur.execute('''INSERT INTO COURSES (course_id, course_name, fee, duration, discount)
+                 VALUES (1,'Spark',25000,'50 Days', 2000),
+                 (2,'Pandas',20000,'35 Days', 1000),
+                 (3,'Java',15000,'35 Days', 800),
+                 (4,'Python',15000,'30 Days', 500),
+                 (5,'PHP',28000,'30 Days', 800)''')
+
+ # Commit Inserts
+ con.commit()
+
+
+# Run SQL Using pandas read_sql() query
+sql_query = pd.read_sql('SELECT * FROM COURSES', con)
+
+# Convert SQL to DataFrame
+df = pd.DataFrame(sql_query, columns = ['course_id', 'course_name', 'fee','duration','discount'])
+print(df)
+
+
+# Run SQL
+sql_query = pd.read_sql_query('SELECT * FROM COURSES', con)
+
+
+# Read SQL table Using read_sql_table()
+sql_query = pd.read_sql('COURSES', con)
+
+# Convert SQL to DataFrame
+df = pd.DataFrame(sql_query, columns = ['course_id', 'course_name', 'fee','duration','discount'])
+print(df)
+
+
+# Run SQL Filter Rows from SQL
+sql_query = pd.read_sql_query('''SELECT * FROM COURSES where fee = 1500''', con)
+
+# Convert SQL to DataFrame
+df = pd.DataFrame(sql_query, columns = ['course_id', 'course_name', 'fee','duration','discount'])
+print(df)
+
+
+# Run SQL  Using Cursor fetchall()
+cur = con.cursor()
+cur.execute('''SELECT * FROM COURSES where fee = 1500''')
+
+# Convert SQL to DataFrame
+df = pd.DataFrame(cur.fetchall(), columns = ['course_id', 'course_name', 'fee','duration','discount'])
+print(df)
+
+------
+
+import pandas as pd
+import sqlite3
+connection = sqlite3.connect("delftstack.db")
+crsr = connection.cursor()
+ct_sql = """CREATE TABLE data3 (
+number INTEGER,
+name VARCHAR(20));"""
+crsr.execute(ct_sql)
+crsr.execute("""INSERT INTO data3 VALUES (1, "GEORGE");""")
+crsr.execute("""INSERT INTO data3 VALUES (2, "KEVIN");""")
+df = pd.read_sql_query("""SELECT number,name FROM data3""", con=connection)
+print(df)
+connection.close()
+
+------------------------------------------------
+
+https://www.geeksforgeeks.org/how-to-get-column-names-in-pandas-dataframe/
+
+
+# Import pandas package
+import pandas as pd
+
+# making data frame
+data = pd.read_csv("https://media.geeksforgeeks.org/wp-content/uploads/nba.csv")
+
+# calling head() method
+# storing in new variable
+data_top = data.head()
+
+# display
+data_top
+
+------------------------------------------------
+
+https://bobbyhadz.com/blog/python-dict-items-object-is-not-subscriptable
+https://stackabuse.com/python-get-number-of-elements-in-a-list/
+
+"TypeError: 'dict_items' object is not subscriptable"
+list(my_dict.items())[0]
+
+------------------------------------------------
+
+https://www.geeksforgeeks.org/how-to-count-the-number-of-rows-of-a-given-sqlite-table-using-python/
+
+import sqlite3
+
+# Connecting to sqlite
+# connection object
+connection_obj = sqlite3.connect('geek.db')
+
+# cursor object
+cursor_obj = connection_obj.cursor()
+
+print("Count of Rows")
+cursor_obj.execute("SELECT * FROM GEEK")
+print(len(cursor_obj.fetchall()))
+
+connection_obj.commit()
+
+# Close the connection
+connection_obj.close()
+
+-----------------------------------------------------------------------
+
+https://jupyter-notebook.readthedocs.io/en/stable/examples/Notebook/Working%20With%20Markdown%20Cells.html
+https://www.datacamp.com/tutorial/markdown-in-jupyter-notebook
+
+-----------------------------------------------------------------------
+
+https://stackoverflow.com/questions/40993626/list-memory-usage-in-ipython-and-jupyter
+https://github.com/jupyter-server/jupyter-resource-usage
+https://ipython-books.github.io/44-profiling-the-memory-usage-of-your-code-with-memory_profiler/
+https://waylonwalker.com/reset-ipython/
+
+conda install -c conda-forge jupyter-resource-usage
+pip install jupyter-resource-usage
+
+import sys
+
+# These are the usual ipython objects, including this one you are creating
+ipython_vars = ['In', 'Out', 'exit', 'quit', 'get_ipython', 'ipython_vars']
+
+# Get a sorted list of the objects and their sizes
+sorted([(x, sys.getsizeof(globals().get(x))) for x in dir() if not x.startswith('_') and x not in sys.modules and x not in ipython_vars],
+    key=lambda x: x[1],
+    reverse=True)
+
+-----------------------------------------------------------------------
+
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_csv.html
+
+df = pd.DataFrame({'name': ['Raphael', 'Donatello'],
+                   'mask': ['red', 'purple'],
+                   'weapon': ['sai', 'bo staff']})
+df.to_csv(index=False)
+
+
+compression_opts = dict(method='zip',
+                        archive_name='out.csv')
+df.to_csv('out.zip', index=False,
+          compression=compression_opts)
+
+
+# To write a csv file to a new folde
+
+from pathlib import Path
+filepath = Path('folder/subfolder/out.csv')
+filepath.parent.mkdir(parents=True, exist_ok=True)
+df.to_csv(filepath)
+
+
+import os
+os.makedirs('folder/subfolder', exist_ok=True)
+df.to_csv('folder/subfolder/out.csv')
+
+-----------------------------------------------------------------------
+
+https://pythonguides.com/python-dictionary-to-csv/
+
+
+import csv
+employee_info = ['emp_id', 'emp_name', 'skills']
+
+new_dict = [
+{'emp_id': 456, 'emp_name': 'George', 'skills': 'Python'},
+{'emp_id': 892, 'emp_name': 'Adam', 'skills': 'Java'},
+{'emp_id': 178, 'emp_name': 'Gilchrist', 'skills': 'Mongo db'},
+{'emp_id': 155, 'emp_name': 'Elon', 'skills': 'Sql'},
+{'emp_id': 299, 'emp_name': 'Mask', 'skills': 'Ruby'},
+]
+
+with open('test4.csv', 'w') as csvfile:
+    writer = csv.DictWriter(csvfile, fieldnames = employee_info)
+    writer.writeheader()
+    writer.writerows(new_dict)
+
+
+import csv
+my_dictionary = {'values': 678, 'values2': 167, 'values6': 998}
+
+with open('test6.csv', 'w') as f:
+    for key in my_dictionary.keys():
+        f.write("%s, %s\n" % (key, my_dictionary[key]))
+
+
+
+
+# Python dictionary to CSV pandas
+import pandas as pd
+new_my_dict = [
+{'a': 15, 'n': 81, 'p': 177},
+{'a': 18, 'n': 24, 'p': 190},
+{'a': 19, 'n': 20, 'p': 156},
+]
+df = pd.DataFrame.from_dict(new_my_dict)
+df.to_csv (r'test8.csv', index = False, header=True)
+
+
+import csv
+new_path = open("mytest.csv", "w")
+file_dictionary = {"oliva":199,"james":145,"potter":187}
+z = csv.writer(new_path)
+for new_k, new_v in file_dictionary.items():
+    z.writerow([new_k, new_v])
+
+new_path.close()
+
+
+# Python dictionary to CSV with header
+import csv
+
+new_dictionary = { "Australia" : 456, "Germany" : 2678, "China" : 1890,"Japan":1667}
+with open('maintest.csv', 'w', newline='') as csvfile:
+    header_key = ['Country', 'Value']
+    new_val = csv.DictWriter(csvfile, fieldnames=header_key)
+
+    new_val.writeheader()
+    for new_k in new_dictionary:
+        new_val.writerow({'Country': new_k, 'Value': new_dictionary[new_k]})
+
+
+
+# Python dictionary to CSV string
+import io
+import csv
+
+new_out = io.StringIO()
+new_dictionary = [{"emp_name": "OLava", "emp_id": "4567", "skills": "Python"},{"emp_2": "Suzane", "emp_id2": "1678", "skills": "Java"}]
+new_path = open("test8.csv", "w")
+l = csv.writer(new_path,new_out, quoting=csv.QUOTE_NONNUMERIC)
+for m in new_dictionary:
+        for new_k, new_val in m.items():
+            l.writerow([new_k, new_val])
+con_csv = new_out.getvalue()
+new_path.close()
+
+
+
+# Python dictionary to CSV format
+import csv
+my_dict = [{
+  "student_id": 1456,
+  "stu_nam": "oliva",
+  "stu_nam_las": "pollard",
+  "age": "26"
+}, {
+  "student_id": 6789,
+  "stu_nam": "john",
+  "stu_nam_las": "potter",
+  "age": "34"
+}, {
+  "student_id": 378,
+  "stu_nam": "Micheal",
+  "stu_nam_las": "brenda",
+  "age": "29"
+}]
+
+with open("test8.csv", "w", newline="") as csv_file:
+  new_val = ["student_id","stu_nam","stu_nam_las","age"]
+  j = csv.DictWriter(csv_file, fieldnames=new_val)
+  j.writeheader()
+  j.writerows(my_dict)
+
+
+-----------------------------------------------------------------------
+
+# Python dictionary to CSV write
+import csv
+my_new_dict = {'Country': 'Egypt', 'Value': '6789'}
+with open('test8.csv', 'w') as f:
+    z = csv.writer(f)
+    for new_key, new_val in my_new_dict.items():
+       z.writerow([new_key, new_val])
+
+
+
+# Python dictionary to CSV columns
+import csv
+new_dictionary = {78:'z', 15:'y', 19:'r'}
+with open('maintest.csv', 'w') as f:
+    w = csv.writer(f)
+    for row in new_dictionary.items():
+        w.writerow(row)
+
+
+
+# Python dictionary to CSV append
+import csv
+from csv import writer
+new_row=[9532,'China','Mongodb','26']
+with open('maintest.csv', 'a') as f:
+    w = writer(f)
+    w.writerow(new_row)
+    f.close()
+
+
+# Python write dictionary to CSV row
+import csv
+
+student_info = ['stu_id', 'stu_name', 'age']
+
+new_cs_row = [
+{'stu_id': 1890, 'stu_name': 'Liam', 'age': '45'},
+{'stu_id': 3456, 'stu_name': 'Noah', 'age': '21'},
+{'stu_id': 1678, 'stu_name': 'William', 'age': '27'},
+{'stu_id': 9081, 'stu_name': 'Elijah', 'age': '18'},
+{'stu_id': 9728, 'stu_name': 'Benjamin', 'age': '17'},
+]
+
+with open('mytest.csv', 'w') as csvfile:
+    i = csv.DictWriter(csvfile, fieldnames = student_info)
+    i.writeheader()
+    i.writerows(new_cs_row)
+
+
+-----------------------------------------------------------------------
+
+# Python json dictionary to CSV
+
+import json
+import csv
+with open('newtest.json') as json_file:
+	new_info = json.load(json_file)
+student_info = new_info['country_name']
+new_file_path = open('test9.csv', 'w')
+m = csv.writer(new_file_path)
+new_num = 0
+for stu in student_info:
+	if new_num == 0:
+		header = stu.keys()
+		m.writerow(header)
+		new_num += 1
+	m.writerow(stu.values())
+new_file_path.close()
+
+
+https://stackoverflow.com/questions/10373247/how-do-i-write-a-python-dictionary-to-a-csv-file
+
+import csv
+my_dict = {"test": 1, "testing": 2}
+with open('mycsvfile.csv', 'w') as f:  # You will need 'wb' mode in Python 2.x
+    w = csv.DictWriter(f, my_dict.keys())
+    w.writeheader()
+    w.writerow(my_dict)
+
+
+-----------------------------------------------------------------------
+
+https://www.tutorialspoint.com/How-to-save-a-Python-Dictionary-to-CSV-file
+https://www.geeksforgeeks.org/how-to-save-a-python-dictionary-to-a-csv-file/
+
+import csv
+csv_columns = ['No','Name','Country']
+dict_data = [
+{'No': 1, 'Name': 'Alex', 'Country': 'India'},
+{'No': 2, 'Name': 'Ben', 'Country': 'USA'},
+{'No': 3, 'Name': 'Shri Ram', 'Country': 'India'},
+{'No': 4, 'Name': 'Smith', 'Country': 'USA'},
+{'No': 5, 'Name': 'Yuva Raj', 'Country': 'India'},
+]
+csv_file = "Names.csv"
+try:
+    with open(csv_file, 'w') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
+        writer.writeheader()
+        for data in dict_data:
+            writer.writerow(data)
+except IOError:
+    print("I/O error")
+
+
+import csv
+field_names = ['No', 'Company', 'Car Model']
+cars = [
+{'No': 1, 'Company': 'Ferrari', 'Car Model': '488 GTB'},
+{'No': 2, 'Company': 'Porsche', 'Car Model': '918 Spyder'},
+{'No': 3, 'Company': 'Bugatti', 'Car Model': 'La Voiture Noire'},
+{'No': 4, 'Company': 'Rolls Royce', 'Car Model': 'Phantom'},
+{'No': 5, 'Company': 'BMW', 'Car Model': 'BMW X7'},
+]
+with open('Names.csv', 'w') as csvfile:
+    writer = csv.DictWriter(csvfile, fieldnames = field_names)
+    writer.writeheader()
+    writer.writerows(cars)
+
+https://www.delftstack.com/de/howto/python/python-dictionary-to-csv/
+https://www.programmingfunda.com/how-to-convert-dictionary-to-csv-in-python/
+https://appdividend.com/2019/11/14/how-to-write-python-dictionary-to-csv-example/
+https://www.adamsmith.haus/python/answers/how-to-write-a-dictionary-to-a-.csv-in-python
+
+a_file = open("sample.csv", "w")
+a_dict = {"a": 1, "b": 2}
+
+writer = csv.writer(a_file)
+for key, value in a_dict.items():
+    writer.writerow([key, value])
+
+a_file.close()
+
+
+https://www.tutorialspoint.com/python/python_multithreading.htm#
+https://www.pythontutorial.net/python-concurrency/python-threading/
+https://docs.python.org/3/library/multiprocessing.html
+https://docs.python.org/3/library/threading.html#semaphore-example
+
+-----------------------------------------------------------------------
+https://stackoverflow.com/questions/53982871/pandas-reading-first-n-rows-from-parquet-file
+
+Read ParquetFile using PyArrow as the backend, follow below:
+
+from pyarrow.parquet import ParquetFile
+import pyarrow as pa
+
+pf = ParquetFile('file_name.pq')
+first_ten_rows = next(pf.iter_batches(batch_size = 10))
+df = pa.Table.from_batches([first_ten_rows]).to_pandas()
+
+-----------------------------------------------------------------------
+
+read a Parquet file into Pandas DataFrame?
+
+https://stackoverflow.com/questions/33813815/how-to-read-a-parquet-file-into-pandas-dataframe
+https://arrow.apache.org/docs/python/parquet.html
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.groupby.html
+
+import pandas as pd
+pd.read_parquet('example_pa.parquet', engine='pyarrow')
+
+import pandas as pd
+pd.read_parquet('example_fp.parquet', engine='fastparquet')
+
+import pyarrow.parquet as pq
+df = pq.read_table(source=your_file_path).to_pandas()
+
+..
+
+df = pd.DataFrame({
+    'student': ['personA007', 'personB', 'x', 'personD', 'personE'],
+    'marks': [20,10,22,21,22],
+})
+df.to_parquet('sample.parquet')
+df = pd.read_parquet('sample.parquet')
+
+...
+
+df.to_parquet('df.parquet.brotli',compression='brotli')
+df = pd.read_parquet('df.parquet.brotli')
+
+-----------------------------------------------------------------------
+
+https://docs.python.org/3/library/sqlite3.html
+https://www.digitalocean.com/community/tutorials/how-to-use-the-sqlite3-module-in-python-3
+
+https://datatofish.com/list-to-dataframe/
+
+import pandas as pd
+list_name = ['item_1', 'item_2', 'item_3',...]
+df = pd.DataFrame (list_name, columns = ['column_name'])
+
+import pandas as pd
+products_list = ['laptop', 'printer', 'tablet', 'desk', 'chair']
+df = pd.DataFrame (products_list, columns = ['product_name'])
+print (df)
+
+
