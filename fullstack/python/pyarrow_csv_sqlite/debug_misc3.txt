@@ -1,0 +1,358 @@
+####################################################
+PerformanceWarning: DataFrame is highly fragmented
+####################################################
+
+https://github.com/twopirllc/pandas-ta/issues/340
+https://www.anycodings.com/1questions/1207897/performancewarning-dataframe-is-highly-fragmented-this-is-usually-the-result-of-calling-frameinsert-many-times-which-has-poor-performance
+https://tutorialmeta.com/question/too-many-columns-resulting-in-performancewarning-dataframe-is-highly-fragmente
+
+
+This is usually the result of calling `frame.insert` many times, which has poor performance.
+Consider joining all columns at once using pd.concat(axis=1) instead.
+To get a de-fragmented frame, use `newframe = frame.copy()`
+
+df1 = df1.append(df, ignore_index =True)
+
+FIX
+pd.concat((df1,df),axis=0)
+
+REPRODUCE
+
+import numpy as np
+import pandas as pd
+
+# Sample `df`
+np.random.seed(5)
+df = pd.DataFrame(np.random.randint(1, 100, (4, 5000)))
+df.columns = df.columns + 1
+
+num_sims = len(df.columns)  # Placeholder for `num_sims`
+ranking = pd.DataFrame()  # Placeholder for `ranking`
+
+for x in range(1, num_sims + 1):
+    ranking[x] = df[x].rank(ascending=False, method='min')
+
+FIX
+
+ranking = pd.DataFrame()  # Placeholder for `ranking`
+ranking = pd.concat(
+    [ranking, df[range(1, num_sims + 1)].rank(ascending=False, method='min')],
+    axis=1
+)
+
+
+TEST
+
+import numpy as np
+import pandas as pd
+
+np.random.seed(5)
+df = pd.DataFrame(np.random.randint(1, 100, (4, 5000)))
+df.columns = df.columns + 1
+ranking = pd.DataFrame()
+num_sims = len(df.columns)
+
+for x in range(1, num_sims + 1):
+    ranking[x] = df[x].rank(ascending=False, method='min')
+
+print(ranking.eq(pd.concat(
+    [pd.DataFrame(),
+     df[range(1, num_sims + 1)].rank(ascending=False, method='min')],
+    axis=1
+)).all(axis=None))  # True
+
+
+------------------------------
+####################################################
+Pandas Get Column Index For Column Name
+####################################################
+
+https://sparkbyexamples.com/pandas/pandas-get-column-index-for-column-name/
+https://www.geeksforgeeks.org/get-column-index-from-column-name-of-a-given-pandas-dataframe/
+https://pandas.pydata.org/docs/user_guide/indexing.html
+
+# Get column index from column name i.e column 3.
+idx=df.columns.get_loc("Duration")
+print("Column Index : "+ str(idx))
+
+FIX
+# Dictionary of Column name with associated index.
+idx_dic = {}
+for col in df.columns:
+    idx_dic[col] = df.columns.get_loc(col)
+print(idx_dic)
+
+# Get Index for Multiple Column Labels/Names
+query_cols=['Fee','Courses']
+cols_index = [df.columns.get_loc(col) for col in query_cols]
+print(cols_index)
+
+# Column index from column name using get_indexer().
+
+------------------------------
+
+python_lambda
+
+https://www.w3schools.com/python/python_lambda.asp
+https://www.geeksforgeeks.org/python-lambda-anonymous-functions-filter-map-reduce
+
+------------------------------------------------------------
+####################################################
+Colored text terminal
+####################################################
+
+https://stackoverflow.com/questions/287871/how-do-i-print-colored-text-to-the-terminal
+
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+
+print('\x1b[6;30;42m' + 'Success!' + '\x1b[0m')
+print("\033[94m  test  \033[0m \n")
+
+
+import os
+
+# System call
+os.system("")
+
+# Class of different styles
+class style():
+    BLACK = '\033[30m'
+    RED = '\033[31m'
+    GREEN = '\033[32m'
+    YELLOW = '\033[33m'
+    BLUE = '\033[34m'
+    MAGENTA = '\033[35m'
+    CYAN = '\033[36m'
+    WHITE = '\033[37m'
+    UNDERLINE = '\033[4m'
+    RESET = '\033[0m'
+
+print(style.YELLOW + "Hello, World!")
+
+------------------------------------------------------------
+####################################################
+delete object
+####################################################
+
+https://www.toppr.com/guides/python/methods-and-functions/del/python-del-statement-with-examples/
+
+del obj_name[optional]
+
+
+------------------------------------------------------------
+####################################################
+check file
+####################################################
+
+https://stackoverflow.com/questions/82831/how-do-i-check-whether-a-file-exists-without-exceptions
+
+import os
+
+if os.path.isfile(filepath):
+   print("File exists")
+
+
+####################################################
+How to compare lists in Python
+####################################################
+
+https://java2blog.com/python-compare-lists/
+https://www.tutorialspoint.com/find-mismatch-item-on-same-index-in-two-list-in-python
+https://www.digitalocean.com/community/tutorials/how-to-compare-two-lists-in-python
+https://www.w3resource.com/python-exercises/list/python-data-type-list-exercise-198.php
+
+
+import functools
+l1 = [10, 20, 30, 40, 50]
+l2 = [10, 20, 30, 50, 40, 70]
+l3 = [10, 20, 30, 40, 50]
+if functools.reduce(lambda x, y : x and y, map(lambda p, q: p == q,l1,l2), True):
+    print ("The lists l1 and l2 are the same")
+else:
+    print ("The lists l1 and l2 are not the same")
+if functools.reduce(lambda x, y : x and y, map(lambda p, q: p == q,l1,l3), True):
+    print ("The lists l1 and l3 are the same")
+else:
+    print ("The lists l1 and l3 are not the same")
+
+
+
+import collections
+l1 = [10, 20, 30, 40, 50]
+l2 = [10, 20, 30, 50, 40, 70]
+l3 = [10, 20, 30, 40, 50]
+if collections.Counter(l1) == collections.Counter(l2):
+    print ("The lists l1 and l2 are the same")
+else:
+    print ("The lists l1 and l2 are not the same")
+if collections.Counter(l1) == collections.Counter(l3):
+    print ("The lists l1 and l3 are the same")
+else:
+    print ("The lists l1 and l3 are not the same")
+
+
+
+l1 = [10, 20, 30, 40, 50]
+l3 = [50, 10, 30, 20, 40]
+a = set(l1)
+b = set(l3)
+if a == b:
+    print("Lists l1 and l3 are equal")
+else:
+    print("Lists l1 and l3 are not equal")
+
+
+
+
+l1 = [10, 20, 30, 40, 50]
+l3 = [50, 75, 30, 20, 40, 69]
+res = [x for x in l1 + l3 if x not in l1 or x not in l3]
+print(res)
+if not res:
+    print("Lists l1 and l3 are equal")
+else:
+    print("Lists l1 and l3 are not equal")
+
+
+
+
+
+With zip
+listA= [13, 'Mon',23, 62,'Sun']
+listB = [5, 'Mon',23, 6,'Sun']
+#res = [listB.index(n) for m, n in zip(listA, listB) if n != m]
+res = [listB.index(m) for m, n in zip(listA, listB) if n != m]
+print("The index positions with mismatched values:\n",res)
+
+
+
+With enumerate
+listA= [13, 'Mon',23, 62,'Sun']
+listB = [5, 'Mon',23, 6,'Sun']
+res = [idx for idx, elem in enumerate(listB)
+			if elem != listA[idx]]
+print("The index positions with mismatched values:\n",res)
+
+
+
+
+list1, list2 = ["a", "b", "c", "d", "e"], ["e", "d", "c", "b", "a"]
+print [index for index, (e1, e2) in enumerate(zip(list1, list2)) if e1 == e2]
+print(a==b)
+
+a = [1,5,9]
+b = [5,9,1]
+print(set(a) == set(b))
+
+
+a = [1,5,9]
+b = [5,9,1]
+d = (set(a) - set(b))
+if len(d)==0:
+    print("Equal")
+else:
+    print("Not Equal")
+
+
+
+import functools
+a = [1,5,9]
+b = [5,9,1]
+a.sort()
+b.sort()
+if functools.reduce(lambda h, k: h and k, map(lambda x, y: x == y, a, b), True):
+    print("Equal")
+else:
+    print("Unequal")
+
+
+####################################################
+####################################################
+
+https://fixexception.com/pandas/engine-must-be-one-of-pyarrow-fastparquet/
+
+pip install pyarrow
+pip install fastparquet
+
+if engine == "pyarrow":
+return PyArrowImpl()
+elif engine == "fastparquet":
+return FastParquetImpl()
+raise ValueError("engine must be one of 'pyarrow', 'fastparquet'")
+
+
+import pandas as pd
+df = pd.DataFrame({'a':[1,3,4,5],'b':[5,1,3,6]})
+#Save DataFrame to parquet format
+df.to_parquet('small.csv','pyarrow')
+
+####################################################
+Validate/Check Parquet File Schema From PC/Laptop
+####################################################
+
+https://github.com/target/data-validator
+https://coding-stream-of-consciousness.com/2020/03/04/validate-check-parquet-file-schema-from-pc-laptop/
+
+pip install parquet-cli
+
+parq part.parquet --schema
+parquet-tools meta --debug part.parquet
+
+-----------------------------------------------------------
+
+https://arrow.apache.org/docs/python/parquet.html
+https://docs.dask.org/en/stable/dataframe-create.html
+https://docs.databricks.com/spark/latest/dataframes-datasets/introduction-to-dataframes-python.html
+https://www.geeksforgeeks.org/how-to-create-an-empty-pyspark-dataframe/
+
+-----------------------------------------------------------
+
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+
+####################################################
+python debug
+####################################################
+
+https://stackoverflow.com/questions/4929251/how-to-step-through-python-code-to-help-debug-issues
+https://wiki.python.org/moin/PythonDebuggingTools
+https://docs.python.org/3/library/pdb.html
+https://hub.packtpub.com/debugging-and-profiling-python-scripts-tutorial/
+https://code.visualstudio.com/docs/python/debugging
+https://stackoverflow.com/questions/5980042/how-to-implement-the-verbose-or-v-option-into-a-script
+https://www.programcreek.com/python/?CodeExample=set+verbose
+https://docs.python.org/3/using/cmdline.html
+
+pip install pdbpp
+pip install ipdb
+
+from ipdb import set_trace
+import pdb
+
+set_trace()
+pdb.set_trace()
+foo()
+breakpoint()  # drop into the debugger at this point
+bar()
+
+python -m pdb scriptName.py
+
+ipdb (IPython debugger)
+python3 -m pip install --user ipdb
+__import__('ipdb').set_trace(context=21)
+
+
+
+
+
