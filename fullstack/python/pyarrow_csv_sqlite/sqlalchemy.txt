@@ -1,0 +1,301 @@
+https://docs.sqlalchemy.org/en/14/core/engines.html#sqlite
+https://docs.sqlalchemy.org/en/13/core/connections.html
+https://realpython.com/python-sqlite-sqlalchemy/
+https://appdividend.com/2020/10/15/how-to-use-sqlalchemy-core-with-sqlite-in-python/
+https://www.pythonsheets.com/notes/python-sqlalchemy.html
+https://www.educba.com/sqlalchemy-sqlite/
+https://docs.sqlalchemy.org/en/14/dialects/sqlite.html
+https://docs.sqlalchemy.org/en/14/dialects/sqlite.html#dialect-sqlite
+https://docs.sqlalchemy.org/en/14/dialects/sqlite.html#dialect-sqlite
+https://docs.sqlalchemy.org/en/14/core/engines.html
+https://docs.sqlalchemy.org/en/14/core/engines.html#sqlite
+https://www.fullstackpython.com/sqlalchemy-engine-create-engine-examples.html
+
+
+
+python3 -m pip install sqlalchemy
+
+# app.py
+
+import sqlalchemy as db
+engine = db.create_engine('sqlite:///shows.db')
+connection = engine.connect()
+metadata = db.MetaData()
+shows = db.Table('Shows', metadata, autoload=True, autoload_with=engine)
+query = db.select([shows])
+result_proxy = connection.execute(query)
+result_set = result_proxy.fetchall()
+print(result_set)
+
+
+
+# Unix/Mac - 4 initial slashes in total
+engine = create_engine('sqlite:////absolute/path/to/foo.db')
+with engine.connect() as connection:
+    result = connection.execute("select username from users")
+    for row in result:
+        print("username:", row['username'])
+
+ with engine.connect() as connection:
+    with connection.begin():
+        r1 = connection.execute(table1.select())
+        connection.execute(table1.insert(), {"col1": 7, "col2": "this is some data"})
+
+conn = engine.connect()
+conn.execute("INSERT INTO users VALUES (1, 'john')")  # autocommits
+
+result = engine.execute("select username from users")
+for row in result:
+    print("username:", row['username'])
+
+with engine.begin() as conn:
+    conn.execute("insert into table (x, y, z) values (1, 2, 3)")
+
+
+
+
+
+
+from sqlalchemy import create_engine
+engine = create_engine("postgresql://scott:tiger@localhost/test")
+connection = engine.connect()
+trans = connection.begin()
+connection.execute("insert into x (a, b) values (1, 2)")
+trans.commit()
+
+
+
+
+Sqlalchemy Support DBAPI - PEP249¶
+from sqlalchemy import create_engine
+
+db_uri = "sqlite:///db.sqlite"
+engine = create_engine(db_uri)
+
+# DBAPI - PEP249
+# create table
+engine.execute('CREATE TABLE "EX1" ('
+               'id INTEGER NOT NULL,'
+               'name VARCHAR, '
+               'PRIMARY KEY (id));')
+# insert a raw
+engine.execute('INSERT INTO "EX1" '
+               '(id, name) '
+               'VALUES (1,"raw1")')
+
+# select *
+result = engine.execute('SELECT * FROM '
+                        '"EX1"')
+for _r in result:
+   print(_r)
+
+# delete *
+engine.execute('DELETE from "EX1" where id=1;')
+result = engine.execute('SELECT * FROM "EX1"')
+print(result.fetchall())
+
+
+
+
+
+
+Transaction and Connect Object
+from sqlalchemy import create_engine
+
+db_uri = 'sqlite:///db.sqlite'
+engine = create_engine(db_uri)
+
+# Create connection
+conn = engine.connect()
+# Begin transaction
+trans = conn.begin()
+conn.execute('INSERT INTO "EX1" (name) '
+             'VALUES ("Hello")')
+trans.commit()
+# Close connection
+conn.close()
+
+
+Inspect - Get Database Information
+from sqlalchemy import create_engine
+from sqlalchemy import inspect
+
+db_uri = 'sqlite:///db.sqlite'
+engine = create_engine(db_uri)
+
+inspector = inspect(engine)
+
+# Get table information
+print(inspector.get_table_names())
+
+# Get column information
+print(inspector.get_columns('EX1'))
+
+
+
+
+
+
+
+https://towardsdatascience.com/sqlalchemy-python-tutorial-79a577141a91
+
+
+import sqlalchemy as db
+engine = db.create_engine('sqlite:///census.sqlite')
+connection = engine.connect()
+metadata = db.MetaData()
+census = db.Table('census', metadata, autoload=True, autoload_with=engine)
+#Equivalent to 'SELECT * FROM census'
+query = db.select([census])
+ResultProxy = connection.execute(query)
+ResultSet = ResultProxy.fetchall()
+ResultSet[:3]
+
+df = pd.DataFrame(ResultSet)
+df.columns = ResultSet[0].keys()
+
+where
+
+SQL :
+SELECT * FROM census
+WHERE sex = F
+SQLAlchemy :
+db.select([census]).where(census.columns.sex == 'F')
+in
+
+SQL :
+SELECT state, sex
+FROM census
+WHERE state IN (Texas, New York)
+SQLAlchemy :
+db.select([census.columns.state, census.columns.sex]).where(census.columns.state.in_(['Texas', 'New York']))
+and, or, not
+
+SQL :
+SELECT * FROM census
+WHERE state = 'California' AND NOT sex = 'M'
+SQLAlchemy :
+db.select([census]).where(db.and_(census.columns.state == 'California', census.columns.sex != 'M'))
+
+order by
+
+SQL :
+SELECT * FROM census
+ORDER BY State DESC, pop2000
+SQLAlchemy :
+db.select([census]).order_by(db.desc(census.columns.state), census.columns.pop2000)
+functions
+
+SQL :
+SELECT SUM(pop2008)
+FROM census
+SQLAlchemy :
+db.select([db.func.sum(census.columns.pop2008)])
+
+group by
+
+SQL :
+SELECT SUM(pop2008) as pop2008, sex
+FROM census
+SQLAlchemy :
+db.select([db.func.sum(census.columns.pop2008).label('pop2008'), census.columns.sex]).group_by(census.columns.sex)
+distinct
+
+SQL :
+SELECT DISTINCT state
+FROM census
+SQLAlchemy :
+db.select([census.columns.state.distinct()])
+
+
+
+
+
+
+import sqlalchemy as db
+import pandas as pd
+
+engine = db.create_engine('sqlite:///census.sqlite')
+connection = engine.connect()
+metadata = db.MetaData()
+
+census = db.Table('census', metadata, autoload=True, autoload_with=engine)
+state_fact = db.Table('state_fact', metadata, autoload=True, autoload_with=engine)
+
+Automatic Join
+query = db.select([census.columns.pop2008, state_fact.columns.abbreviation])
+result = connection.execute(query).fetchall()
+df = pd.DataFrame(results)
+df.columns = results[0].keys()
+df.head(5)
+
+Manual Join
+query = db.select([census, state_fact])
+query = query.select_from(census.join(state_fact, census.columns.state == state_fact.columns.name))
+results = connection.execute(query).fetchall()
+df = pd.DataFrame(results)
+df.columns = results[0].keys()
+df.head(5)
+
+
+
+
+import sqlalchemy as db
+import pandas as pd
+Creating Database and Table
+engine = db.create_engine('sqlite:///test.sqlite') #Create test.sqlite automatically
+connection = engine.connect()
+metadata = db.MetaData()
+
+emp = db.Table('emp', metadata,
+              db.Column('Id', db.Integer()),
+              db.Column('name', db.String(255), nullable=False),
+              db.Column('salary', db.Float(), default=100.0),
+              db.Column('active', db.Boolean(), default=True)
+              )
+
+metadata.create_all(engine) #Creates the table
+Inserting Data
+#Inserting record one by one
+query = db.insert(emp).values(Id=1, name='naveen', salary=60000.00, active=True)
+ResultProxy = connection.execute(query)
+#Inserting many records at ones
+query = db.insert(emp)
+values_list = [{'Id':'2', 'name':'ram', 'salary':80000, 'active':False},
+               {'Id':'3', 'name':'ramesh', 'salary':70000, 'active':True}]
+ResultProxy = connection.execute(query,values_list)
+results = connection.execute(db.select([emp])).fetchall()
+df = pd.DataFrame(results)
+df.columns = results[0].keys()
+df.head(4)
+
+
+
+
+
+import sqlalchemy as db
+import pandas as pd
+engine = db.create_engine('sqlite:///test.sqlite')
+metadata = db.MetaData()
+connection = engine.connect()
+emp = db.Table('emp', metadata, autoload=True, autoload_with=engine)
+results = connection.execute(db.select([emp])).fetchall()
+df = pd.DataFrame(results)
+df.columns = results[0].keys()
+df.head(4)
+
+
+
+
+
+import sqlalchemy as db
+import pandas as pd
+engine = db.create_engine('sqlite:///test.sqlite')
+metadata = db.MetaData()
+connection = engine.connect()
+emp = db.Table('emp', metadata, autoload=True, autoload_with=engine)
+results = connection.execute(db.select([emp])).fetchall()
+df = pd.DataFrame(results)
+df.columns = results[0].keys()
+df.head(4)
+
