@@ -347,6 +347,10 @@ https://hemingwayapp.com/
 ### Python online code editor
 
 - http://pythonfiddle.com/
+- https://www.programiz.com/python-programming/online-compiler/
+- https://www.online-python.com/
+- https://www.python.org/
+- https://replit.com/languages/python3
 
 ------------------------------------------------------------------
 
