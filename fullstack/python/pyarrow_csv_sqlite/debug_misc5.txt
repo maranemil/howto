@@ -1,0 +1,694 @@
+https://pythonspeed.com/articles/pandas-sql-chunking/
+https://andrewpwheeler.com/2021/08/12/chunking-it-up-in-pandas/
+
+
+data = pandas.read_sql_table('tablename',db_connection)
+data_chunks = pandas.read_sql_table('tablename',db_connection,chunksize=2000)
+
+###################################################
+read sqlite data in chuncks
+###################################################
+
+import pandas as pd
+from sqlalchemy import create_engine
+
+def process_sql_using_pandas():
+    engine = create_engine(
+        "postgresql://postgres:pass@localhost/example"
+        #"sqlite:///example.db"
+    )
+    conn = engine.connect().execution_options(
+        stream_results=True)
+
+    for chunk_dataframe in pd.read_sql(
+            "SELECT * FROM users", conn, chunksize=1000):
+        print(f"Got dataframe w/{len(chunk_dataframe)} rows")
+        # ... do something with dataframe ...
+        print(chunk_dataframe.head(2))
+        chunk_dataframe.to_parquet('file.pqt')
+
+if __name__ == '__main__':
+    process_sql_using_pandas()
+
+
+--------------------------------------------
+https://stackoverflow.com/questions/7389759/memory-efficient-built-in-sqlalchemy-iterator-generator
+
+
+from sqlalchemy import create_engine, select
+conn = create_engine("DB URL...").connect()
+q = select([huge_table])
+proxy = conn.execution_options(stream_results=True).execute(q)
+while 'batch not empty':  # equivalent of 'while True', but clearer
+batch = proxy.fetchmany(100000)  # 100,000 rows at a time
+if not batch:
+	break
+for row in batch:
+	# Do your stuff here...
+proxy.close()
+
+--------------------------------------------
+could not parse rfc1738 url from string sqlite
+
+https://stackoverflow.com/questions/63709263/python-flask-sqlalchemy-exc-argumenterror-could-not-parse-rfc1738-url-from-str
+https://docs.sqlalchemy.org/en/14/dialects/sqlite.html
+
+from sqlalchemy import create_engine
+
+# relative path on Linux: with three slashes
+e = create_engine('sqlite:///relative/path/to/database.db')
+
+# absolute path on Linux: with four slashes
+e = create_engine('sqlite:////absolute/path/to/database.db')
+
+---------------------------------------------------------------------------------------------
+
+
+https://docs.sqlalchemy.org/en/14/_modules/examples/performance/large_resultsets.html
+
+Source code for examples.performance.large_resultsets
+"""In this series of tests, we are looking at time to load a large number
+of very small and simple rows.
+
+A special test here illustrates the difference between fetching the
+rows from the raw DBAPI and throwing them away, vs. assembling each
+row into a completely basic Python object and appending to a list. The
+time spent typically more than doubles.  The point is that while
+DBAPIs will give you raw rows very fast if they are written in C, the
+moment you do anything with those rows, even something trivial,
+overhead grows extremely fast in cPython. SQLAlchemy's Core and
+lighter-weight ORM options add absolutely minimal overhead, and the
+full blown ORM doesn't do terribly either even though mapped objects
+provide a huge amount of functionality.
+
+"""
+from sqlalchemy import Column
+from sqlalchemy import create_engine
+from sqlalchemy import Integer
+from sqlalchemy import String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import Bundle
+from sqlalchemy.orm import Session
+from . import Profiler
+
+
+Base = declarative_base()
+engine = None
+
+
+class Customer(Base):
+    __tablename__ = "customer"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255))
+    description = Column(String(255))
+
+
+Profiler.init("large_resultsets", num=500000)
+
+
+@Profiler.setup_once
+def setup_database(dburl, echo, num):
+    global engine
+    engine = create_engine(dburl, echo=echo)
+    Base.metadata.drop_all(engine)
+    Base.metadata.create_all(engine)
+
+    s = Session(engine)
+    for chunk in range(0, num, 10000):
+        s.execute(
+            Customer.__table__.insert(),
+            params=[
+                {
+                    "name": "customer name %d" % i,
+                    "description": "customer description %d" % i,
+                }
+                for i in range(chunk, chunk + 10000)
+            ],
+        )
+    s.commit()
+
+
+@Profiler.profile
+def test_orm_full_objects_list(n):
+    """Load fully tracked ORM objects into one big list()."""
+
+    sess = Session(engine)
+    list(sess.query(Customer).limit(n))
+
+
+@Profiler.profile
+def test_orm_full_objects_chunks(n):
+    """Load fully tracked ORM objects a chunk at a time using yield_per()."""
+
+    sess = Session(engine)
+    for obj in sess.query(Customer).yield_per(1000).limit(n):
+        pass
+
+
+@Profiler.profile
+def test_orm_bundles(n):
+    """Load lightweight "bundle" objects using the ORM."""
+
+    sess = Session(engine)
+    bundle = Bundle(
+        "customer", Customer.id, Customer.name, Customer.description
+    )
+    for row in sess.query(bundle).yield_per(10000).limit(n):
+        pass
+
+
+@Profiler.profile
+def test_orm_columns(n):
+    """Load individual columns into named tuples using the ORM."""
+
+    sess = Session(engine)
+    for row in (
+        sess.query(Customer.id, Customer.name, Customer.description)
+        .yield_per(10000)
+        .limit(n)
+    ):
+        pass
+
+
+@Profiler.profile
+def test_core_fetchall(n):
+    """Load Core result rows using fetchall."""
+
+    with engine.connect() as conn:
+        result = conn.execute(Customer.__table__.select().limit(n)).fetchall()
+        for row in result:
+            row["id"], row["name"], row["description"]
+
+
+@Profiler.profile
+def test_core_fetchmany_w_streaming(n):
+    """Load Core result rows using fetchmany/streaming."""
+
+    with engine.connect() as conn:
+        result = conn.execution_options(stream_results=True).execute(
+            Customer.__table__.select().limit(n)
+        )
+        while True:
+            chunk = result.fetchmany(10000)
+            if not chunk:
+                break
+            for row in chunk:
+                row["id"], row["name"], row["description"]
+
+
+@Profiler.profile
+def test_core_fetchmany(n):
+    """Load Core result rows using Core / fetchmany."""
+
+    with engine.connect() as conn:
+        result = conn.execute(Customer.__table__.select().limit(n))
+        while True:
+            chunk = result.fetchmany(10000)
+            if not chunk:
+                break
+            for row in chunk:
+                row["id"], row["name"], row["description"]
+
+
+@Profiler.profile
+def test_dbapi_fetchall_plus_append_objects(n):
+    """Load rows using DBAPI fetchall(), generate an object for each row."""
+
+    _test_dbapi_raw(n, True)
+
+
+@Profiler.profile
+def test_dbapi_fetchall_no_object(n):
+    """Load rows using DBAPI fetchall(), don't make any objects."""
+
+    _test_dbapi_raw(n, False)
+
+
+def _test_dbapi_raw(n, make_objects):
+    compiled = (
+        Customer.__table__.select()
+        .limit(n)
+        .compile(
+            dialect=engine.dialect, compile_kwargs={"literal_binds": True}
+        )
+    )
+
+    if make_objects:
+        # because if you're going to roll your own, you're probably
+        # going to do this, so see how this pushes you right back into
+        # ORM land anyway :)
+        class SimpleCustomer(object):
+            def __init__(self, id_, name, description):
+                self.id_ = id_
+                self.name = name
+                self.description = description
+
+    sql = str(compiled)
+
+    conn = engine.raw_connection()
+    cursor = conn.cursor()
+    cursor.execute(sql)
+
+    if make_objects:
+        for row in cursor.fetchall():
+            # ensure that we fully fetch!
+            SimpleCustomer(id_=row[0], name=row[1], description=row[2])
+    else:
+        for row in cursor.fetchall():
+            # ensure that we fully fetch!
+            row[0], row[1], row[2]
+
+    conn.close()
+
+
+if __name__ == "__main__":
+    Profiler.main()
+
+
+-----------------
+https://janakiev.com/blog/python-shell-commands/
+https://stackabuse.com/executing-shell-commands-with-python/
+https://stackoverflow.com/questions/89228/how-do-i-execute-a-program-or-call-a-system-command
+
+import subprocess
+subprocess.run(["ls", "-l"])
+
+import os
+os.system("echo Hello from the other side!")
+
+
+import os
+stream = os.popen('echo Returned output')
+output = stream.read()
+
+with open('test.txt', 'w') as f:
+    process = subprocess.Popen(['ls', '-l'], stdout=f)
+
+output
+
+---------------------------
+
+https://docs.ray.io/en/latest/index.html
+https://docs.ray.io/en/latest/data/dask-on-ray.html
+https://github.com/modin-project/modin
+https://modin.readthedocs.io/en/latest/
+
+pip install modin
+pip install "modin[ray]" # Install Modin dependencies and Ray to run on Ray
+pip install "modin[dask]" # Install Modin dependencies and Dask to run on Dask
+pip install "modin[all]" # Install all of the above
+
+export MODIN_ENGINE=ray  # Modin will use Ray
+export MODIN_ENGINE=dask  # Modin will use Dask
+
+from modin.config import Engine
+Engine.put("ray")  # Modin will use Ray
+Engine.put("dask")  # Modin will use Dask
+
+import modin.pandas as pd
+df = pd.read_csv("my_dataset.csv")
+
+import modin.pandas as pd
+import numpy as np
+frame_data = np.random.randint(0, 100, size=(2**10, 2**8))
+df = pd.DataFrame(frame_data)
+
+import os
+os.environ["MODIN_ENGINE"] = "ray"  # Modin will use Ray
+os.environ["MODIN_ENGINE"] = "dask"  # Modin will use Dask
+import modin.pandas as pd
+
+------------------------------
+https://docs.python.org/3/library/threading.html
+https://docs.python.org/3/library/_thread.html
+https://www.python-kurs.eu/threads.php
+https://stackoverflow.com/questions/6319268/what-happened-to-thread-start-new-thread-in-python-3
+https://stackoverflow.com/questions/36809788/importerror-no-module-named-thread
+https://researchdatapod.com/how-to-solve-python-modulenotfounderror-no-module-named-thread/
+https://raspberrypi.stackexchange.com/questions/22444/importerror-no-module-named-thread
+https://bobbyhadz.com/blog/python-no-module-named-thread
+
+
+Python 3 ImportError: No module named 'thread'
+import _thread as thread
+
+from _thread import *
+__all__ = ("error", "LockType", "start_new_thread", "interrupt_main", "exit", "allocate_lock", "get_ident", "stack_size", "acquire", "release", "locked")
+
+
+
+import _thread as thread
+a_lock = thread.allocate_lock()
+with a_lock:
+    print("a_lock is locked while this executes")
+
+
+import _thread
+lock = _thread.allocate_lock()
+with lock:
+    print("lock is locked while process runs")
+
+
+from _thread import allocate_lock
+lock = allocate_lock()
+with lock:
+    print("lock is locked while process runs")
+
+
+from thread import start_new_thread
+start_new_thread(callable,(99,))
+
+
+threading.Thread(target=some_callable_function,
+        args=(tuple, of, args),
+        kwargs={'dict': 'of', 'keyword': 'args'},
+    ).start()
+
+
+from thread import start_new_thread, allocate_lock
+num_threads = 0
+thread_started = False
+lock = allocate_lock()
+def heron(a):
+    global num_threads, thread_started
+    lock.acquire()
+    num_threads += 1
+    thread_started = True
+    lock.release()
+    ...
+    lock.acquire()
+    num_threads -= 1
+    lock.release()
+    return new
+
+start_new_thread(heron,(99,))
+start_new_thread(heron,(999,))
+start_new_thread(heron,(1733,))
+
+while not thread_started:
+    pass
+while num_threads > 0:
+    pass
+
+
+
+
+import time
+from threading import Thread
+def sleeper(i):
+    print "thread %d sleeps for 5 seconds" % i
+    time.sleep(5)
+    print "thread %d woke up" % i
+for i in range(10):
+    t = Thread(target=sleeper, args=(i,))
+    t.start()
+
+
+
+------------------------------------------------------
+count files
+https://devconnected.com/how-to-count-files-in-directory-on-linux/
+https://stackoverflow.com/questions/10238363/how-to-get-wc-l-to-print-just-the-number-of-lines-without-file-name
+https://stackoverflow.com/questions/9157138/recursively-counting-files-in-a-linux-directory
+
+ls tmp/ | wc -l
+find tmp/ -type f | wc -l
+
+------------------------------------------------------
+ split parquet files
+https://gist.github.com/mndrake/2adf4a037ceccba87a70f4a24d432017
+https://stackoverflow.com/questions/59887234/split-a-parquet-file-in-smaller-chunks-using-dask
+
+df = df.repartition(partition_size="100MB")
+df.to_parquet(output_path)
+
+
+https://www.computernetworkingnotes.com/linux-tutorials/different-types-of-files-in-linux.html
+
+file p0001
+tmp/part0001: Apache Parquet
+
+
+https://gist.github.com/mndrake/2adf4a037ceccba87a70f4a24d432017
+
+import os
+from io import BytesIO
+import pyarrow as pa
+import pyarrow.parquet as pq
+
+
+kilobytes = 1024
+megabytes = kilobytes * 1000
+chunksize = int(10 * megabytes)
+
+
+def write_split_parquet(df, todir, chunksize=chunksize, compression='GZIP'):
+    # initialize output directory
+    if not os.path.exists(todir):
+        os.mkdir(todir)
+    else:
+        for file in os.listdir(todir):
+            os.remove(os.path.join(todir, file))
+    # create parquet in-memory stream from dataframe
+    table = pa.Table.from_pandas(df)  # pyarrow table
+    stream = BytesIO()
+    pq.write_table(table, stream, compression=compression)
+    stream.seek(0)  # reset stream
+    # write chunks to files
+    i = 0
+    while True:
+        chunk = stream.read(chunksize)
+        if not chunk:
+            break
+        i += 1
+        filename = os.path.join(todir, ('part%04d' % i))
+        with open(filename, 'wb') as f:
+            f.write(chunk)
+    stream.close()
+    assert i <= 9999  # join sort fails if 5 digits
+    return i
+
+
+def read_split_parquet(fromdir):
+    with BytesIO() as s:
+        for file in os.listdir(fromdir):
+            with open(os.path.join(fromdir, file), 'rb') as f:
+                s.write(f.read())
+        table = pq.read_table(s)
+        df = table.to_pandas()
+        return df
+
+df = pd.read_parquet("file.pqt",engine='pyarrow',columns=[])
+write_split_parquet(df, 'tmp', chunksize=100000)
+
+------------------------------------------------------
+https://stackoverflow.com/questions/59098785/is-it-possible-to-read-parquet-files-in-chunks
+
+
+import pandas as pd
+from glob import glob
+files = sorted(glob('dat.parquet/part*'))
+
+data = pd.read_parquet(files[0],engine='fastparquet')
+for f in files[1:]:
+    data = pd.concat([data,pd.read_parquet(f,engine='fastparquet')])
+
+
+
+pd.read_parquet("chunks_*", engine="fastparquet")
+pd.read_parquet("chunks_[1-2]*", engine="fastparquet")
+
+
+import pyarrow.parquet as pq
+parquet_file = pq.ParquetFile('example.parquet')
+for batch in parquet_file.iter_batches():
+    print("RecordBatch")
+    batch_df = batch.to_pandas()
+    print("batch_df:", batch_df)
+
+
+-------------------------------------------------------------
+https://pandas.pydata.org/pandas-docs/version/1.1/user_guide/scale.html
+https://gist.github.com/gritmind/680376e5b821eecab4aeb3429717dd99
+
+-------------------------------------------------------------
+
+https://docs.dask.org/en/stable/install.html
+https://docs.dask.org/en/stable/dataframe-parquet.html
+
+
+python -m pip install "dask[complete]"
+python -m pip install dask
+
+python -m pip install "dask[array]"       # Install requirements for dask array
+python -m pip install "dask[dataframe]"   # Install requirements for dask dataframe
+python -m pip install "dask[diagnostics]" # Install requirements for dask diagnostics
+python -m pip install "dask[distributed]" # Install requirements for distributed dask
+
+
+import dask.dataframe as dd
+
+# Load a single local parquet file
+df = dd.read_parquet("path/to/mydata.parquet")
+
+# Load a directory of local parquet files
+df = dd.read_parquet("path/to/my/parquet/")
+
+# Load a directory of parquet files from S3
+df = dd.read_parquet("s3://bucket-name/my/parquet/")
+
+# engine
+df = dd.read_parquet(
+     "s3://bucket-name/my/parquet/",
+     engine="fastparquet"  # explicitly specify the fastparquet engine
+)
+
+
+------------------------------------------------------------------------------
+
+https://stackoverflow.com/questions/32967805/sqlcontext-object-has-no-attribute-read-while-reading-csv-in-pyspark/32967849
+https://stackoverflow.com/questions/65375537/function-object-has-no-attribute-read-on-jupyter
+https://spark.apache.org/docs/latest/sql-data-sources-parquet.html
+https://sparkbyexamples.com/pyspark/pyspark-read-and-write-parquet-file/
+https://sparkbyexamples.com/spark/spark-read-write-dataframe-parquet-example/
+https://stackoverflow.com/questions/41254011/sparksql-read-parquet-file-directly
+https://spark.apache.org/docs/latest/sql-data-sources-parquet.html
+https://spark.apache.org/docs/1.6.1/sql-programming-guide.html
+
+
+python -m pip install spark
+python -m pip install pyspark
+
+parquetFile = spark.read.parquet("people.parquet")
+
+module 'spark' has no attribute 'read'
+
+from pyspark.sql import SQLContext
+sqlContext = SQLContext(sc)
+df = sqlContext.load(source="com.databricks.spark.csv", header="true", path = "cars.csv")
+df.select("year", "model").save("newcars.csv", "com.databricks.spark.csv")
+
+
+
+import pyspark
+conf = pyspark.SparkConf()
+# conf.set('spark.app.name', app_name) # Optional configurations
+# init & return
+sc = pyspark.SparkContext.getOrCreate(conf=conf)
+sqlcontext = SQLContext(sc)
+df = sqlcontext.read.json('random.json')
+
+
+
+df = sqlContext.read.parquet("src/main/resources/peopleTwo.parquet")
+df.printSchema
+// after registering as a table you will be able to run sql queries
+df.registerTempTable("people")
+sqlContext.sql("select * from people").collect.foreach(println)
+
+
+from pyspark.sql import SQLContext
+sqlContext = SQLContext(sc)
+
+
+
+from pyspark.sql import SQLContext
+sc = SparkContext.getOrCreate()
+sqlContext = SQLContext(sc)
+df = sqlContext.read.json("examples/src/main/resources/people.json")
+# Displays the content of the DataFrame to stdout
+df.show()
+
+
+from pyspark.sql import SQLContext
+sqlContext = SQLContext(sc)
+df = sqlContext.sql("SELECT * FROM table")
+
+JAVA_HOME is not set
+
+sudo apt install openjdk-11-jre-headless  # version 11.0.15+10-0ubuntu0.22.04.1, or
+sudo apt install default-jre              # version 2:1.11-72build2
+sudo apt install openjdk-17-jre-headless  # version 17.0.3+7-0ubuntu0.22.04.1
+sudo apt install openjdk-18-jre-headless  # version 18~36ea-1
+sudo apt install openjdk-8-jre-headless   # version 8u312-b07-0ubuntu1
+
+
+-----------------------------------------------------------------
+
+Parquet magic bytes not found in footer. Either the file is corrupted or this is not a parquet file.
+pyarrow.lib.ArrowInvalid: Parquet magic bytes not found in footer. Either the file is corrupted or this is not a parquet file.
+
+import pandas as pd
+parquet_file = 'tmp/part0001.pq'
+df = pd.read_parquet(parquet_file, engine='auto')
+
+
+-----------------------------------------------------------------
+https://sparkbyexamples.com/spark/spark-read-write-dataframe-parquet-example/
+https://mungingdata.com/python/split-csv-write-chunk-pandas/
+https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/api/pyspark.sql.DataFrameReader.parquet.html?highlight=parquet#pyspark.sql.DataFrameReader.parquet
+https://docs.databricks.com/data/data-sources/read-parquet.html
+https://arrow.apache.org/docs/python/generated/pyarrow.parquet.read_table.html
+https://arrow.apache.org/docs/r/reference/read_parquet.html
+https://spark.apache.org/docs/latest/sql-data-sources-parquet.html
+https://arrow.apache.org/docs/python/parquet.html
+https://pandas.pydata.org/docs/reference/api/pandas.read_parquet.html
+https://docs.snowflake.com/en/user-guide/data-load-considerations-prepare.html
+https://docs.dask.org/en/stable/generated/dask.dataframe.read_parquet.html
+https://sparkbyexamples.com/spark/spark-read-write-parquet-file-from-amazon-s3/
+-----------------------------------------------------------------
+
+Parquet to CSV
+https://coiled.io/blog/write-multiple-parquet-files-to-a-single-csv-using-python/
+
+
+import pandas as pd
+import numpy as np
+# use the recommended method for generating random integers with NumPy
+rng = np.random.default_rng()
+# generate 3 dataframes with similar filenames
+for i in range(3):
+    df = pd.DataFrame(rng.integers(0, 100, size=(3, 4)), columns=list('ABCD'))
+    df.to_parquet(f"df_{i}.parquet")
+
+
+ddf = dd.read_parquet('df_*.parquet')
+
+
+# Convert Parquet to CSV
+ddf.to_csv("df_all.csv",
+           single_file=True,
+           index=False
+)
+
+df_csv = pd.read_csv("df_all.csv")
+df_csv
+
+# Why Use Dask to Convert Parquet to CSV
+import coiled
+cluster = coiled.Cluster(
+    n_workers=25,
+)
+from distributed import Client
+client = Client(cluster)
+ddf = dd.read_parquet(
+    "s3://coiled-datasets/synthetic-data/synth-reg-104GB.parquet/",
+    storage_options={'anon':'True', 'use_ssl':'True'}
+)
+
+
+---------------------------------------------------------------------------------------------
+
+print map
+https://stackoverflow.com/questions/44461551/how-to-print-map-object-with-python-3
+
+def evaluate(x):
+    print(x)
+
+mymap = map(evaluate, [1,2,3]) # nothing gets printed yet
+print(mymap)
+
+print(list(mymap))
+result = list(mymap) # prints 1, 2, 3
+
+
