@@ -691,4 +691,227 @@ print(mymap)
 print(list(mymap))
 result = list(mymap) # prints 1, 2, 3
 
+------------------------------------------------------------------------------
 
+SparseDataFrame.to_parquet fails
+
+https://github.com/pandas-dev/pandas/issues/26378
+https://docs.scipy.org/doc/scipy/reference/sparse.html
+http://jorisvandenbossche.github.io/example-pandas-docs/html-doc-home/user_guide/sparse.html
+https://pandas.pydata.org/pandas-docs/dev/user_guide/sparse.html
+https://pandas.pydata.org/docs/user_guide/sparse.html
+https://yiyibooks.cn/meikunyuan6/pandas/pandas/sparse.html
+
+import pandas as pd # v0.24.2
+import scipy.sparse # v1.1.0
+
+df = pd.SparseDataFrame(scipy.sparse.random(1000, 1000),
+                         columns=list(map(str, range(1000))),
+                         default_fill_value=0.0)
+# df.to_parquet('rpd.pq', engine='pyarrow')
+df.to_dense().to_parquetto_parquet('rpd.pq', engine='pyarrow')
+
+--------------------------------------------------------------------
+
+merge  parquet files
+https://www.faqcode4u.com/faq/389836/load-multiple-parquet-files-into-dataframe-for-analysis
+https://www.appsloveworld.com/pandas/100/336/how-to-append-multiple-parquet-files-to-one-dataframe-in-pandas
+https://www.anycodings.com/1questions/939264/merging-multiple-parquet-files-and-creating-a-larger-parquet-file-in-s3-using-aws-glue
+https://www.codegrepper.com/code-examples/python/frameworks/django/write+dataframe+into+multiple+parquet+files+in+S3+%2B+python
+
+
+import pandas as pd
+ # Loop through files and load into a dataframe
+ df = pd.read_parquet('part0.parquet', engine='pyarrow')
+ files = ['part1.parquet', 'part2.parquet', 'part3.parquet'] # in total there are 6 files
+ for file in files:
+     data = pd.read_parque(file)
+     df = df.append(data, ignore_index=True)
+     del data
+
+
+# with spark
+parquetFile = spark.read.parquet("your_dir_path/")
+
+# with aws
+import awswrangler as wr
+wr.pandas.to_parquet(
+    dataframe=df,
+    path="s3://my-bucket/key/my-file.parquet"
+)
+
+https://gist.github.com/l1x/76dab6445b6d55396c622f915c755a17
+
+import os
+import pyarrow.parquet as pq
+
+def combine_parquet_files(input_folder, target_path):
+    try:
+        files = []
+        for file_name in os.listdir(input_folder):
+            files.append(pq.read_table(os.path.join(input_folder, file_name)))
+        with pq.ParquetWriter(target_path,
+                files[0].schema,
+                version='2.0',
+                compression='gzip',
+                use_dictionary=True,
+                data_page_size=2097152, #2MB
+                write_statistics=True) as writer:
+            for f in files:
+                writer.write_table(f)
+    except Exception as e:
+        print(e)
+
+combine_parquet_files('data', 'combined.parquet')
+
+https://gist.github.com/TonyWuLihu/686b77ea1332fcc6fc6b2fd2f50c06d5
+
+import sys
+from datetime import date,datetime,timedelta
+import datetime
+import string
+from pexpect import *
+from os import remove,listdir
+import os
+import pprint
+
+def chunks(l, n):
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
+
+if __name__ == '__main__':
+    s3path_prefix = '/data/s3fs/warehouse/ott_user_info'
+    merge_command = 'java -jar /usr/local/parquet-tools-1.9.1-SNAPSHOT.jar merge %s %s'
+    year,month,day = (sys.argv[1][0:4],sys.argv[1][4:6],sys.argv[1][6:8])
+    filelist = [os.path.join(s3path_prefix+'/year=%s/month=%s/day=%s' % (year,month,day),filename) for filename in listdir(s3path_prefix+'/year=%s/month=%s/day=%s' % (year,month,day)) if filename.startswith('part-')]
+    subfilelists = list(chunks(filelist,int(sys.argv[2])))
+    #TODO ugly code, flat it later
+    i=0
+    fx = lambda x: os.remove(x)
+    for sublist in subfilelists:
+        src = ' '.join(sublist)
+        dest = os.path.join(s3path_prefix+'/year=%s/month=%s/day=%s' % (year,month,day),'userinfo_%05d.parquet' % i)
+        i+=1
+        childp =  spawn(merge_command % (src,dest))
+        childp.expect(EOF,timeout=1000)
+        childp.close()
+        list(map(fx,sublist))
+    print("Job Done!")
+
+
+##############################################################
+concatenating parquet files
+##############################################################
+
+https://stackoverflow.com/questions/61759297/dask-dataframe-concatenating-parquet-files-throws-out-of-memory
+https://docs.dask.org/en/stable/dataframe-parquet.html
+https://docs.dask.org/en/stable/generated/dask.dataframe.to_parquet.html
+https://docs.dask.org/en/stable/generated/dask.dataframe.read_parquet.html
+https://coiled.io/blog/dask-dataframe-merge-join/
+
+
+import dask.dataframe as dd
+
+# Read all files in `data/`
+df = dd.read_parquet("data/", columns=['name', 'address'], engine='pyarrow')
+
+# Export to single `.parquet` file
+df.repartition(npartitions=1).to_parquet("data/combined", write_metadata_file=False)
+
+
+import dask.dataframe as dd
+
+# Load a single local parquet file
+df = dd.read_parquet("path/to/mydata.parquet")
+
+# Load a directory of local parquet files
+df = dd.read_parquet("path/to/my/parquet/")
+
+# Load a directory of parquet files from S3
+df = dd.read_parquet("s3://bucket-name/my/parquet/")
+
+
+
+
+import dask.dataframe as dd
+import pandas as pd
+# create sample large pandas dataframe
+df_large = pd.DataFrame(
+    {
+        "Name": ["Azza", "Brandon", "Cedric", "Devonte", "Eli", "Fabio"],
+        "Age": [29, 30, 21, 57, 32, 19]
+    }
+)
+# create multi-partition dask dataframe from pandas
+large = dd.from_pandas(df_large, npartitions=2)
+# create sample small pandas dataframe
+small = pd.DataFrame(
+    {
+        "Name": ["Azza", "Cedric", "Fabio"],
+        "City": ["Beirut", "Dublin", "Rosario"]
+    }
+)
+# merge dask dataframe to pandas dataframe
+join = ddf.merge(df2, how="left", on=["Name"])
+# inspect results
+join.compute()
+
+
+
+
+##############################################################
+working with dask
+##############################################################
+
+https://docs.dask.org/en/stable/dataframe-best-practices.html
+https://examples.dask.org/dataframes/01-data-access.html
+https://docs.dask.org/en/latest/dataframe-create.html
+
+# Reduce, and then use pandas
+df = dd.read_parquet('my-giant-file.parquet')
+df = df[df.name == 'Alice']              # Select a subsection
+result = df.groupby('id').value.mean()   # Reduce to a smaller size
+result = result.compute()                # Convert to pandas dataframe
+result...                                # Continue working with pandas
+
+
+df.to_parquet('path/to/my-results/')
+df = dd.read_parquet('path/to/my-results/')
+
+df1 = dd.read_parquet('path/to/my-results/', engine='fastparquet')
+df2 = dd.read_parquet('path/to/my-results/', engine='pyarrow')
+
+
+
+import os
+import datetime
+
+if not os.path.exists('data'):
+    os.mkdir('data')
+
+def name(i):
+    return str(datetime.date(2000, 1, 1) + i * datetime.timedelta(days=1))
+
+df.to_csv('data/*.csv', name_function=name);
+
+# ls data/*.csv | head
+
+import pandas as pd
+df = pd.read_csv('data/2000-01-01.csv')
+df.head()
+
+import dask.dataframe as dd
+df = dd.read_csv('data/2000-*-*.csv')
+df
+df.head()
+
+df = dd.read_csv('data/2000-*-*.csv', parse_dates=['timestamp'])
+df
+df.groupby('name').x.mean().compute()
+df.to_parquet('data/2000-01.parquet', engine='pyarrow')
+df = dd.read_parquet('data/2000-01.parquet', engine='pyarrow')
+df
+df.groupby('name').x.mean().compute()
+
+df = dd.read_parquet('data/2000-01.parquet', columns=['name', 'x'], engine='pyarrow')
+df.groupby('name').x.mean().compute()
