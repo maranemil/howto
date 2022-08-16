@@ -190,6 +190,13 @@
 
 - https://brilliant.org/
 
+
+------------------------------------------------------------------
+
+### Kalenderwochen
+
+- https://www.aktuelle-kalenderwoche.org/kalenderwochen/2022
+
 ------------------------------------------------------------------
 
 ### Multiple editors
