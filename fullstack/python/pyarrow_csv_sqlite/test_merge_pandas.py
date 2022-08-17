@@ -30,5 +30,10 @@ time.sleep(5)
 # parquet-tools inspect file.parquet
 # python3 test_merge_pandas.py
 
-
+"""
+import dask.dataframe as dd
+dfdb = dd.read_parquet('tmp/part*.pqt', columns=['status', 'user', 'active'])
+dfdb.repartition(npartitions=1).to_parquet("items", write_metadata_file=False)
+os.system('cp items/part.0.parquet items.pqt')
+"""
 exit()
