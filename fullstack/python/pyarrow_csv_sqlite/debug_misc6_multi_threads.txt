@@ -1,0 +1,480 @@
+
+https://superfastpython.com/threadpoolexecutor-number-of-threads/
+
+
+# SuperFastPython.com
+# configure and report the default number of worker threads
+from concurrent.futures import ThreadPoolExecutor
+# create a thread pool with a large number of worker threads
+with ThreadPoolExecutor(500) as executor:
+	# report the number of worker threads
+	print(executor._max_workers)
+
+
+import os
+print(os.cpu_count())
+
+------------------------------------------------------------------------------------------------------
+
+https://docs.python.org/3/library/threading.html
+https://docs.python.org/3/library/multiprocessing.html
+
+
+from multiprocessing import Process, Queue
+
+def f(q):
+    q.put('X' * 1000000)
+
+if __name__ == '__main__':
+    queue = Queue()
+    p = Process(target=f, args=(queue,))
+    p.start()
+    p.join()                    # this deadlocks
+    obj = queue.get()
+
+
+
+import multiprocessing as mp
+
+def foo(q):
+    q.put('hello')
+
+if __name__ == '__main__':
+    ctx = mp.get_context('spawn')
+    q = ctx.Queue()
+    p = ctx.Process(target=foo, args=(q,))
+    p.start()
+    print(q.get())
+    p.join()
+
+
+from multiprocessing import Process, Queue
+
+def f(q):
+    q.put([42, None, 'hello'])
+
+if __name__ == '__main__':
+    q = Queue()
+    p = Process(target=f, args=(q,))
+    p.start()
+    print(q.get())    # prints "[42, None, 'hello']"
+    p.join()
+
+------------------------------------------------------------------------------------------------------
+
+ThreadPoolExecutor
+
+https://www.tutorialspoint.com/concurrency_in_python/concurrency_in_python_pool_of_threads.htm#
+
+from concurrent.futures import ThreadPoolExecutor
+from time import sleep
+def task(message):
+   sleep(2)
+   return message
+
+def main():
+   executor = ThreadPoolExecutor(5)
+   future = executor.submit(task, ("Completed"))
+   print(future.done())
+   sleep(2)
+   print(future.done())
+   print(future.result())
+if __name__ == '__main__':
+main()
+
+...
+
+import concurrent.futures
+import urllib.request
+
+URLS = ['http://www.foxnews.com/',
+   'http://www.cnn.com/',
+   'http://europe.wsj.com/',
+   'http://www.bbc.co.uk/',
+   'http://some-made-up-domain.com/']
+
+def load_url(url, timeout):
+   with urllib.request.urlopen(url, timeout = timeout) as conn:
+   return conn.read()
+
+with concurrent.futures.ThreadPoolExecutor(max_workers = 5) as executor:
+
+   future_to_url = {executor.submit(load_url, url, 60): url for url in URLS}
+   for future in concurrent.futures.as_completed(future_to_url):
+   url = future_to_url[future]
+   try:
+      data = future.result()
+   except Exception as exc:
+      print('%r generated an exception: %s' % (url, exc))
+   else:
+      print('%r page is %d bytes' % (url, len(data)))
+
+------------------------------------------------------------------------------------------------------
+
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import as_completed
+values = [2,3,4,5]
+def square(n):
+   return n * n
+def main():
+   with ThreadPoolExecutor(max_workers = 3) as executor:
+      results = executor.map(square, values)
+for result in results:
+      print(result)
+if __name__ == '__main__':
+   main()
+
+------------------------------------------------------------------------------------------------------
+
+https://itecnote.com/tecnote/python-the-right-way-to-limit-maximum-number-of-threads-running-at-once/
+
+import threading
+
+def f(arg):
+    global running
+    running += 1
+    print("Spawned a thread. running=%s, arg=%s" % (running, arg))
+    for i in range(100000):
+        pass
+    running -= 1
+    print("Done")
+
+running = 0
+while True:
+    if running < 8:
+        arg = get_task()
+        threading.Thread(target=f, args=[arg]).start()
+
+
+------------------------------------------------------------------------------------------------------
+
+https://www.reddit.com/r/learnpython/comments/nwnuof/limit_number_of_running_threads_in_multithreading/
+
+import threading
+
+
+def enable_logging(bucket, project,logging_bucket):
+    if check_logging_status(bucket) == None:
+        logging.info(
+            f"Enabling bucket logs for bucket: {bucket} on project: {project}.loges will be saved at {logging_bucket}, ")
+    else:
+        logging.info(f"Bucket {bucket} logs are already enabled. ")
+
+ threads = []
+    for i in final_list:
+        bucket = i[0]
+        project = i[1]
+        logging_bucket = i[2]
+
+        t = threading.Thread(target=enable_logging, args=[
+                             bucket, project,logging_bucket])
+        t.start()
+        threads.append(t)
+
+    for thread in threads:
+        thread.join()
+
+------------------------------------------------------------------------------------------------------
+
+
+https://docs.python.org/3/library/threading.html
+https://docs.python.org/3/library/_thread.html
+https://www.python-kurs.eu/threads.php
+https://stackoverflow.com/questions/6319268/what-happened-to-thread-start-new-thread-in-python-3
+https://stackoverflow.com/questions/36809788/importerror-no-module-named-thread
+https://researchdatapod.com/how-to-solve-python-modulenotfounderror-no-module-named-thread/
+https://raspberrypi.stackexchange.com/questions/22444/importerror-no-module-named-thread
+https://bobbyhadz.com/blog/python-no-module-named-thread
+
+
+Python 3 ImportError: No module named 'thread'
+import _thread as thread
+
+from _thread import *
+__all__ = ("error", "LockType", "start_new_thread", "interrupt_main", "exit", "allocate_lock", "get_ident", "stack_size", "acquire", "release", "locked")
+
+
+
+import _thread as thread
+a_lock = thread.allocate_lock()
+with a_lock:
+    print("a_lock is locked while this executes")
+
+
+import _thread
+lock = _thread.allocate_lock()
+with lock:
+    print("lock is locked while process runs")
+
+
+from _thread import allocate_lock
+lock = allocate_lock()
+with lock:
+    print("lock is locked while process runs")
+
+
+from thread import start_new_thread
+start_new_thread(callable,(99,))
+
+
+threading.Thread(target=some_callable_function,
+        args=(tuple, of, args),
+        kwargs={'dict': 'of', 'keyword': 'args'},
+    ).start()
+
+
+from thread import start_new_thread, allocate_lock
+num_threads = 0
+thread_started = False
+lock = allocate_lock()
+def heron(a):
+    global num_threads, thread_started
+    lock.acquire()
+    num_threads += 1
+    thread_started = True
+    lock.release()
+    ...
+    lock.acquire()
+    num_threads -= 1
+    lock.release()
+    return new
+
+start_new_thread(heron,(99,))
+start_new_thread(heron,(999,))
+start_new_thread(heron,(1733,))
+
+while not thread_started:
+    pass
+while num_threads > 0:
+    pass
+
+
+
+
+import time
+from threading import Thread
+def sleeper(i):
+    print "thread %d sleeps for 5 seconds" % i
+    time.sleep(5)
+    print "thread %d woke up" % i
+for i in range(10):
+    t = Thread(target=sleeper, args=(i,))
+    t.start()
+
+
+------------------------------------------------------------------------------------------------------
+
+Total memory used by Python process
+
+https://stackoverflow.com/questions/938733/total-memory-used-by-python-process
+https://www.pluralsight.com/blog/tutorials/how-to-profile-memory-usage-in-python
+https://www.geeksforgeeks.org/how-to-get-current-cpu-and-ram-usage-in-python/
+
+#terminal
+ps u -p 115186 | awk '{sum=sum+$6}; END {print sum/1024}'
+2685.43
+
+# script
+pip install psutil
+
+import os, psutil
+process = psutil.Process(os.getpid())
+print(process.memory_info().rss)  # in bytes
+
+
+# Importing the library
+import psutil
+# Getting % usage of virtual_memory ( 3rd field)
+print('RAM memory % used:', psutil.virtual_memory()[2])
+
+
+import os
+# Getting all memory using os.popen()
+total_memory, used_memory, free_memory = map(
+    int, os.popen('free -t -m').readlines()[-1].split()[1:])
+# Memory usage
+print("RAM memory % used:", round((used_memory/total_memory) * 100, 2))
+
+
+
+import os
+import psutil
+# Getting loadover15 minutes
+load1, load5, load15 = psutil.getloadavg()
+cpu_usage = (load15/os.cpu_count()) * 100
+print("The CPU usage is : ", cpu_usage)
+
+
+import os
+import psutil
+process = psutil.Process(os.getpid())
+print(process.memory_percent())
+
+
+
+# Importing the library
+import psutil
+# Calling psutil.cpu_precent() for 4 seconds
+print('The CPU usage is: ', psutil.cpu_percent(4))
+
+
+
+import sys
+sys.getsizeof({})
+sys.getsizeof([])
+sys.getsizeof(set())
+
+------------------------------------------------------------------------------------------------------
+
+
+####################################################
+ThreadPoolExecutor multithreading
+####################################################
+
+https://docs.python.org/3/library/concurrent.futures.html
+https://www.tutorialspoint.com/python/python_multithreading.htm
+https://docs.python.org/3/library/threading.html
+https://docs.python.org/3/library/multiprocessing.html#multiprocessing.pool.ThreadPool
+https://docs.python.org/3/library/multiprocessing.html
+https://docs.python.org/3/library/threading.html
+
+
+def wait_on_future():
+    f = executor.submit(pow, 5, 2)
+    # This will never complete because there is only one worker thread and
+    # it is executing this function.
+    print(f.result())
+
+executor = ThreadPoolExecutor(max_workers=1)
+executor.submit(wait_on_future)
+
+
+
+
+from multiprocessing import Pool
+
+def f(x):
+    return x*x
+
+if __name__ == '__main__':
+    with Pool(5) as p:
+        print(p.map(f, [1, 2, 3]))
+
+
+
+
+#!/usr/bin/python
+
+import thread
+import time
+
+# Define a function for the thread
+def print_time( threadName, delay):
+   count = 0
+   while count < 5:
+      time.sleep(delay)
+      count += 1
+      print "%s: %s" % ( threadName, time.ctime(time.time()) )
+
+# Create two threads as follows
+try:
+   thread.start_new_thread( print_time, ("Thread-1", 2, ) )
+   thread.start_new_thread( print_time, ("Thread-2", 4, ) )
+except:
+   print "Error: unable to start thread"
+
+while 1:
+   pass
+
+
+
+
+------------
+
+
+####################################################
+memory
+####################################################
+https://docs.python.org/3/c-api/memory.html
+https://pythonspeed.com/articles/python-out-of-memory/
+https://hackernoon.com/how-to-solve-the-python-memory-error
+https://www.educba.com/python-memory-error/?source=leftnav
+
+## Benchmark
+def sample_generator():
+for i in range(10000000):
+yield i
+gen_integ= sample_generator()
+for i in gen_integ:
+print(i)
+
+
+# manage CPU usage to prevent Memory Error.
+import resource
+def limit_memory(Datasize):
+min_, max_ = resource.getrlimit(resource.RLIMIT_AS)
+resource.setrlimit(resource.RLIMIT_AS, (Datasize, max_))
+
+## Numpy
+import numpy
+numpy.ones((1_000_000_000_000,))
+
+
+## Numpy operation which return random unique values
+import numpy as np
+np.random.uniform(low=1,high=10,size=(10000,100000))
+
+## Functions which return values
+def calc_sum(x,y):
+	op = x + y
+	return(op)
+
+
+
+import ctypes
+libc = ctypes.CDLL("libc.so.6")
+libc.malloc(100)
+libc.malloc(1_000_000_000_000)
+
+import gc
+gc.collect()
+
+# using resource
+import resource
+def limit_memory(maxsize):
+    soft, hard = resource.getrlimit(resource.RLIMIT_AS)
+    resource.setrlimit(resource.RLIMIT_AS, (maxsize, hard))
+
+
+
+from subprocess import call
+call('ulimit -v 1000 && ulimit -v && ls', shell=True)
+
+https://www.geeksforgeeks.org/ulimit-soft-limits-and-hard-limits-in-linux/
+https://itecnote.com/tecnote/python-ulimit-and-nice-for-subprocess-call-subprocess-popen/
+https://de.acervolima.com/ulimit-soft-limits-und-hard-limits-in-linux/
+https://www.scivision.dev/platform-independent-ulimit-number-of-open-files-increase/
+
+print('ulimit -n soft,hard: {},{}'.format(soft,hard))
+
+
+pip install pandas_dtype_efficiency
+
+
+
+####################################################
+python process killed
+####################################################
+
+https://stackoverflow.com/questions/726690/what-killed-my-process-and-why
+
+If the user or sysadmin did not kill the program the kernel may have.
+The kernel would only kill a process under exceptional circumstances such as extreme resource starvation
+
+dmesg -T| grep -E -i -B100 'killed process'
+dmesg -T| grep -E 'Killed process'
+
+Out of memory: Killed process 4002 (python3) total-vm:6229292kB, anon-rss:4494588kB, file-rss:0kB, shmem-rss:0kB, UID:1000 pgtables:11508kB oom_score_adj:0
+
+
+

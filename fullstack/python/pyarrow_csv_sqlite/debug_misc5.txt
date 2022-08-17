@@ -319,91 +319,6 @@ os.environ["MODIN_ENGINE"] = "dask"  # Modin will use Dask
 import modin.pandas as pd
 
 ------------------------------
-https://docs.python.org/3/library/threading.html
-https://docs.python.org/3/library/_thread.html
-https://www.python-kurs.eu/threads.php
-https://stackoverflow.com/questions/6319268/what-happened-to-thread-start-new-thread-in-python-3
-https://stackoverflow.com/questions/36809788/importerror-no-module-named-thread
-https://researchdatapod.com/how-to-solve-python-modulenotfounderror-no-module-named-thread/
-https://raspberrypi.stackexchange.com/questions/22444/importerror-no-module-named-thread
-https://bobbyhadz.com/blog/python-no-module-named-thread
-
-
-Python 3 ImportError: No module named 'thread'
-import _thread as thread
-
-from _thread import *
-__all__ = ("error", "LockType", "start_new_thread", "interrupt_main", "exit", "allocate_lock", "get_ident", "stack_size", "acquire", "release", "locked")
-
-
-
-import _thread as thread
-a_lock = thread.allocate_lock()
-with a_lock:
-    print("a_lock is locked while this executes")
-
-
-import _thread
-lock = _thread.allocate_lock()
-with lock:
-    print("lock is locked while process runs")
-
-
-from _thread import allocate_lock
-lock = allocate_lock()
-with lock:
-    print("lock is locked while process runs")
-
-
-from thread import start_new_thread
-start_new_thread(callable,(99,))
-
-
-threading.Thread(target=some_callable_function,
-        args=(tuple, of, args),
-        kwargs={'dict': 'of', 'keyword': 'args'},
-    ).start()
-
-
-from thread import start_new_thread, allocate_lock
-num_threads = 0
-thread_started = False
-lock = allocate_lock()
-def heron(a):
-    global num_threads, thread_started
-    lock.acquire()
-    num_threads += 1
-    thread_started = True
-    lock.release()
-    ...
-    lock.acquire()
-    num_threads -= 1
-    lock.release()
-    return new
-
-start_new_thread(heron,(99,))
-start_new_thread(heron,(999,))
-start_new_thread(heron,(1733,))
-
-while not thread_started:
-    pass
-while num_threads > 0:
-    pass
-
-
-
-
-import time
-from threading import Thread
-def sleeper(i):
-    print "thread %d sleeps for 5 seconds" % i
-    time.sleep(5)
-    print "thread %d woke up" % i
-for i in range(10):
-    t = Thread(target=sleeper, args=(i,))
-    t.start()
-
-
 
 ------------------------------------------------------
 count files
@@ -415,7 +330,8 @@ ls tmp/ | wc -l
 find tmp/ -type f | wc -l
 
 ------------------------------------------------------
- split parquet files
+split parquet files
+
 https://gist.github.com/mndrake/2adf4a037ceccba87a70f4a24d432017
 https://stackoverflow.com/questions/59887234/split-a-parquet-file-in-smaller-chunks-using-dask
 
@@ -482,6 +398,7 @@ df = pd.read_parquet("file.pqt",engine='pyarrow',columns=[])
 write_split_parquet(df, 'tmp', chunksize=100000)
 
 ------------------------------------------------------
+
 https://stackoverflow.com/questions/59098785/is-it-possible-to-read-parquet-files-in-chunks
 
 
@@ -492,7 +409,6 @@ files = sorted(glob('dat.parquet/part*'))
 data = pd.read_parquet(files[0],engine='fastparquet')
 for f in files[1:]:
     data = pd.concat([data,pd.read_parquet(f,engine='fastparquet')])
-
 
 
 pd.read_parquet("chunks_*", engine="fastparquet")
@@ -1264,70 +1180,6 @@ status = subprocess.call('cp source.txt destination.txt', shell=True)
 status = subprocess.check_output('cp source.txt destination.txt', shell=True)
 
 ------------------------------------------------------------------------------------------------------
-
-Total memory used by Python process
-
-https://stackoverflow.com/questions/938733/total-memory-used-by-python-process
-https://www.pluralsight.com/blog/tutorials/how-to-profile-memory-usage-in-python
-https://www.geeksforgeeks.org/how-to-get-current-cpu-and-ram-usage-in-python/
-
-#terminal
-ps u -p 115186 | awk '{sum=sum+$6}; END {print sum/1024}'
-2685.43
-
-# script
-pip install psutil
-
-import os, psutil
-process = psutil.Process(os.getpid())
-print(process.memory_info().rss)  # in bytes
-
-
-# Importing the library
-import psutil
-# Getting % usage of virtual_memory ( 3rd field)
-print('RAM memory % used:', psutil.virtual_memory()[2])
-
-
-import os
-# Getting all memory using os.popen()
-total_memory, used_memory, free_memory = map(
-    int, os.popen('free -t -m').readlines()[-1].split()[1:])
-# Memory usage
-print("RAM memory % used:", round((used_memory/total_memory) * 100, 2))
-
-
-
-import os
-import psutil
-# Getting loadover15 minutes
-load1, load5, load15 = psutil.getloadavg()
-cpu_usage = (load15/os.cpu_count()) * 100
-print("The CPU usage is : ", cpu_usage)
-
-
-import os
-import psutil
-process = psutil.Process(os.getpid())
-print(process.memory_percent())
-
-
-
-# Importing the library
-import psutil
-# Calling psutil.cpu_precent() for 4 seconds
-print('The CPU usage is: ', psutil.cpu_percent(4))
-
-
-
-import sys
-sys.getsizeof({})
-sys.getsizeof([])
-sys.getsizeof(set())
-
-
- ------------------------------------------------------------------------------------------------------
-
 
  https://www.w3schools.com/python/python_try_except.asp
  https://docs.python.org/3/tutorial/errors.html

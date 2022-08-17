@@ -101,26 +101,26 @@ run threading
 '''
 
 
-def fque(i):
+def banchmark(ii):
     # q.put('X' * 10000)
-    print(i)
+    print(ii)
     dfx = pd.DataFrame(np.random.random((30 ** 5, 10)))
     print("DataFrame contains", len(dfx), "rows by", len(dfx.columns), "columns")
     # dfx.head()
 
 
 # for i in range(18):
-#     p = Process(target=fque, args=(i,))
+#     p = Process(target=banchmark, args=(i,))
 #     p.start()
 #     time.sleep(1.3)
 
 # p = Pool(5)
 # with p:
 #     for i in range(15):
-#         p.apply(func=fque, args=(i,))
+#         p.apply(func=banchmark, args=(i,))
 for i in range(8):
     # threading.Thread(target=fque, args=(i,)).start()
-    threading.Thread(target=fque,
+    threading.Thread(target=banchmark,
                      args=(i,),
                      kwargs={},
                      ).start()
