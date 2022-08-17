@@ -1,0 +1,563 @@
+
+
+ValueError: parquet must have string column names
+https://www.codegrepper.com/code-examples/python/parquet+must+have+string+column+names
+
+
+import pyarrow.parquet as pq
+df = pq.read_table(source=your_file_path).to_pandas()
+pd.read_parquet('example_pa.parquet', engine='pyarrow')
+
+------------------------------------------------------------------------
+
+How do I save multi-indexed pandas dataframes to parquet?
+How to extract data from a column with variable number of values in each row in a CSV file? [closed]
+Read and save data file with variable number of columns in python
+
+https://askubuntu.com/questions/926146/python-3-how-to-extract-data-from-a-column-with-variable-number-of-values-in-e
+
+https://stackoverflow.com/questions/54861430/how-do-i-save-multi-indexed-pandas-dataframes-to-parquet
+https://fixexception.com/pandas/parquet-must-have-string-column-names/
+https://www.stata.com/manuals/dimportdelimited.pdf
+
+
+
+import pandas as pd
+import numpy as np
+import pyarrow.parquet as pq
+import pyarrow as pa
+df_test = pd.DataFrame(np.random.rand(6,4))
+df_test.columns = pd.MultiIndex.from_arrays([('A', 'A', 'B', 'B'),
+      ('c1', 'c2', 'c3', 'c4')], names=['lev_0', 'lev_1'])
+table = pa.Table.from_pandas(df_test)
+pq.write_table(table, 'test.parquet')
+df_test_read = pd.read_parquet('test.parquet')
+
+
+import pandas as pd
+df = pd.DataFrame({"Name": {0: 'John', 1: 'Bob', 2: 'Shiela'},
+                   "Course": {0: 'Masters', 1: 'Graduate', 2: 'Graduate'},
+                   "Age": {0: 27, 1: 23, 2: 21}})
+df_parquet = df.to_parquet('/content/parquet')
+
+
+
+
+txt = open('file.csv');
+contents = txt.read()
+contents = contents.split('\n');
+new = []
+for line in contents:
+        new.append(line.split(','));
+
+def searchGenre(contents, genreName):
+        count = 0;
+
+        for line in contents:
+                if genreName in line[genreColumnIndex]:
+                        count += 1;
+                        print(line);
+
+        print(count, " movies of that genre.")
+
+print("searching for horror");
+searchGenre(contents, "horror");
+
+------------------------------------------------------------------------
+
+
+https://discuss.dizzycoding.com/handling-variable-number-of-columns-with-pandas-python/
+
+
+
+>>> !cat ragged.csv
+1,2,3
+1,2,3,4
+1,2,3,4,5
+1,2
+1,2,3,4
+my_cols = ["A", "B", "C", "D", "E"]
+pd.read_csv("ragged.csv", names=my_cols, engine='python')
+
+
+
+import pandas as pd
+df = pd.DataFrame()
+with open(filepath, 'r') as f:
+    for line in f:
+        df = pd.concat( [df, pd.DataFrame([tuple(line.strip().split(','))])], ignore_index=True )
+
+
+from pandas import DataFrame
+
+list_of_dicts=[]
+labels=['A','B','C','D','E']
+for line in file:
+    line=line.rstrip('n')
+    list_of_dicts.append(dict(zip(labels,line.split(','))))
+frame=DataFrame(list_of_dicts)
+
+------------------------------------------------------------------------
+
+https://www.discoverbits.in/2233/python-how-to-convert-sparse-matrix-to-a-dense-matrix
+https://smorbieu.gitlab.io/dense-matrices-implementation-in-python/
+
+>>> import numpy as np
+>>> from scipy.sparse import csr_matrix
+>>> import pandas as pd
+>>> r = np.array([0, 0, 1, 1, 2, 2, 2, 3, 4, 4, 5, 6, 6])
+>>> c = np.array([0, 3, 4, 1, 3, 5, 6, 3, 1, 6, 0, 1, 3])
+>>> data = np.array([1]*len(r))
+>>> X = csr_matrix((data, (r, c)), shape=(7, 7))
+>>> X
+<7x7 sparse matrix of type '<class 'numpy.int64'>'
+    with 13 stored elements in Compressed Sparse Row format>
+>>> Y=X.todense()
+>>> Y
+matrix([[1, 0, 0, 1, 0, 0, 0],
+        [0, 1, 0, 0, 1, 0, 0],
+        [0, 0, 0, 1, 0, 1, 1],
+        [0, 0, 0, 1, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 1, 0, 0, 0]])
+>>> Z=X.toarray()
+>>> Z
+array([[1, 0, 0, 1, 0, 0, 0],
+       [0, 1, 0, 0, 1, 0, 0],
+       [0, 0, 0, 1, 0, 1, 1],
+       [0, 0, 0, 1, 0, 0, 0],
+       [0, 1, 0, 0, 0, 0, 1],
+       [1, 0, 0, 0, 0, 0, 0],
+       [0, 1, 0, 1, 0, 0, 0]])
+
+
+from scipy.sparse import csr_matrix
+ A = csr_matrix([[1,0,2],[0,3,0]])
+ >>>A
+ <2x3 sparse matrix of type '<type 'numpy.int64'>'
+    with 3 stored elements in Compressed Sparse Row format>
+ >>> A.todense()
+   matrix([[1, 0, 2],
+           [0, 3, 0]])
+ >>> A.toarray()
+      array([[1, 0, 2],
+            [0, 3, 0]])
+
+
+from pandas import DataFrame
+# A sparse matrix in dictionary form (can be a SQLite database). Tuples contains doc_id        and term_id.
+doc_term_dict={('d1','t1'):12, ('d2','t3'):10, ('d3','t2'):5}
+#extract all unique documents and terms ids and intialize a empty dataframe.
+rows = set([d for (d,t) in doc_term_dict.keys()])
+cols = set([t for (d,t) in doc_term_dict.keys()])
+df = DataFrame(index = rows, columns = cols )
+df = df.fillna(0)
+#assign all nonzero values in dataframe
+for key, value in doc_term_dict.items():
+    df[key[1]][key[0]] = value
+
+print df
+
+
+https://pythonguides.com/scipy-sparse/
+https://stackoverflow.com/questions/16505670/generating-a-dense-matrix-from-a-sparse-matrix-in-numpy-python
+https://www.codegrepper.com/code-examples/python/sparse+to+dense+matrix+python
+https://www.codegrepper.com/code-examples/python/how+to+convert+sparse+numpy+array+to+dense%3F
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.todense.html
+
+# dense to sparse
+from numpy import array
+from scipy.sparse import csr_matrix
+# create dense matrix
+A = array([[1, 0, 0, 1, 0, 0], [0, 0, 2, 0, 0, 1], [0, 0, 0, 2, 0, 0]])
+print(A)
+# convert to sparse matrix (CSR method)
+S = csr_matrix(A)
+print(S)
+# reconstruct dense matrix
+B = S.todense()
+print(B)
+
+------------------------------------------------------------------------
+
+https://datacarpentry.org/python-ecology-lesson/04-data-types-and-format/
+
+df.astype(str)
+
+------------------------------------------------------------------------
+
+https://eldoyle.github.io/PythonIntro/08-ReadingandWritingTextFiles/
+https://www.rdocumentation.org/packages/utils/versions/3.6.2/topics/read.table
+https://pandas.pydata.org/docs/reference/api/pandas.Series.tolist.html
+https://discuss.dizzycoding.com/handling-variable-number-of-columns-with-pandas-python/
+https://www.w3schools.com/python/pandas/pandas_series.asp
+https://pandas.pydata.org/docs/reference/api/pandas.Series.html
+https://stackoverflow.com/questions/36967666/transform-scipy-sparse-csr-to-pandas
+https://arrow.apache.org/docs/python/generated/pyarrow.Table.html
+https://arrow.apache.org/docs/2.0/python/pandas.html
+https://arrow.apache.org/docs/python/pandas.html
+https://apache.googlesource.com/spark/+/branch-1.1/docs/mllib-data-types.md
+
+------------------------------------------------------------------------
+
+https://pandas.pydata.org/docs/getting_started/intro_tutorials/02_read_write.html
+https://www.listendata.com/2019/06/pandas-read-csv.html
+
+
+dt = {'ID': [11, 12, 13, 14, 15],
+            'first_name': ['David', 'Jamie', 'Steve', 'Stevart', 'John'],
+            'company': ['Aon', 'TCS', 'Google', 'RBS', '.'],
+            'salary': [74, 76, 96, 71, 78]}
+mydt = pd.DataFrame(dt, columns = ['ID', 'first_name', 'company', 'salary'])
+mydt.to_csv('workingfile.csv', index=False)
+mydata = pd.read_csv("workingfile.csv")
+mydata = pd.read_csv("workingfile.csv", header = 1)
+mydata0 = pd.read_csv("workingfile.csv", skiprows=1, names=['CustID', 'Name', 'Companies', 'Income'])
+mydata = pd.read_csv("workingfile.csv", skiprows=[1,2])
+mydata0 = pd.read_csv("workingfile.csv", header = None, prefix="var")
+mydata00 = pd.read_csv("workingfile.csv", na_values=['.'])
+mydata01 = pd.read_csv("workingfile.csv", index_col ='ID')
+mydata02 = pd.read_csv("http://winterolympicsmedals.com/medals.csv")
+mydata04 = pd.read_csv("http://winterolympicsmedals.com/medals.csv", skip_footer=5)
+mydata05 = pd.read_csv("http://winterolympicsmedals.com/medals.csv", nrows=5)
+mydata06  = pd.read_csv("http://winterolympicsmedals.com/medals.csv", thousands=",")
+mydata07 = pd.read_csv("http://winterolympicsmedals.com/medals.csv", usecols=[1,5,7])
+mydata08 = pd.read_csv("http://winterolympicsmedals.com/medals.csv", usecols=[1,5,7], nrows=5)
+mydata09 = pd.read_csv("file_path", sep = ';')
+mydf = pd.read_csv("workingfile.csv", dtype = {"salary" : "float64"})
+mydf = pd.read_csv("workingfile.csv", verbose=True)
+
+
+
+
+dask keyerror not in index
+https://github.com/dask/dask/issues/8650
+
+
+
+import pandas as pd
+import pyarrow as pa
+import pyarrow.dataset as ds
+import dask.dataframe as dd
+
+df = pd.DataFrame({
+    'col1': [1, 2],
+    'col2': ['a', 'b']
+})
+
+table = pa.Table.from_pandas(df)
+
+ds.write_dataset(data=table,
+                 base_dir='foo',
+                 basename_template="prefix-{i}.parquet",
+                 format="parquet",
+                 partitioning=["col1"],
+                 existing_data_behavior="delete_matching"
+                 )
+
+dd1 = dd.read_parquet(path='foo', engine="pyarrow")
+print(dd1)
+dd1.compute()
+
+dd.read_parquet(path='foo', engine="pyarrow",
+                dataset={
+                    "partitioning": "hive",
+                    "partition_base_dir": "foo"
+                  }
+                ).compute()
+
+from pyarrow.dataset import HivePartitioning
+partitioning = HivePartitioning(pa.schema([("col1", pa.int16()), ("col2", pa.string())]))
+dd.read_parquet(path='foo', engine="pyarrow",
+                dataset={
+                    "partitioning": partitioning,
+                    "partition_base_dir": "foo"
+                  }
+                ).compute()
+
+
+class What:
+    def discover(self, *args, **kwargs):
+        return "hive"
+
+partitioning = {"obj": What()}
+
+assert partitioning["obj"].discover(
+                        *partitioning.get("args", []),
+                        **partitioning.get("kwargs", {}),
+                    ) == "hive"
+
+dd.read_parquet(path='foo', engine="pyarrow",
+                dataset={
+                    "partitioning": partitioning,
+                    "partition_base_dir": "foo",
+                  }
+                ).compute()
+
+-------------------------------------------------
+
+https://stackoverflow.com/questions/3207219/how-do-i-list-all-files-of-a-directory
+
+from os import listdir
+from os.path import isfile, join
+onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+
+
+from os import walk
+f = []
+for (dirpath, dirnames, filenames) in walk(mypath):
+    f.extend(filenames)
+    break
+
+
+from os import walk
+filenames = next(walk(mypath), (None, None, []))[2]  # [] if no file
+
+
+
+import glob
+# All files and directories ending with .txt and that don't begin with a dot:
+print(glob.glob("/home/adam/*.txt"))
+# All files and directories ending with .txt with depth of 2 folders, ignoring names beginning with a dot:
+print(glob.glob("/home/adam/*/*.txt"))
+
+
+import os
+arr = os.listdir()
+arr = os.listdir('tmp/')
+
+import glob
+txtfiles = []
+for file in glob.glob("*.txt"):
+    txtfiles.append(file)
+
+mylist = [f for f in glob.glob("*.txt")]
+
+
+import os
+from os import listdir
+from os.path import isfile, join
+cwd = os.getcwd()
+onlyfiles = [os.path.join(cwd, f) for f in os.listdir(cwd) if
+os.path.isfile(os.path.join(cwd, f))]
+print(onlyfiles)
+
+-----------------------------------------------------------------
+
+https://github.com/dask/dask/issues/6286
+https://docs.xarray.dev/en/v0.6.1/indexing.html
+https://docs.dask.org/en/stable/generated/dask.dataframe.DataFrame.drop.html
+https://docs.dask.org/en/stable/dataframe-indexing.html
+https://stackoverflow.com/questions/65365024/keyerror-not-in-index
+
+-----------------------------------------------------------------
+
+Pandas concat
+
+https://pandas.pydata.org/docs/reference/api/pandas.concat.html
+https://www.delftstack.com/de/api/python-pandas/pandas-concat-function/
+https://sparkbyexamples.com/pandas/pandas-concat-dataframes-explained/
+https://www.digitalocean.com/community/tutorials/pandas-concat-examples
+https://www.geeksforgeeks.org/how-to-concatenate-two-or-more-pandas-dataframes/
+https://www.geeksforgeeks.org/pandas-concat-function-in-python/
+
+pd.concat([s1, s2], ignore_index=True)
+
+
+
+# importing the module
+import pandas as pd
+# creating the DataFrame
+df = pd.DataFrame({'A': ['A0', 'A1', 'A2', 'A3'],
+                    'B': ['B0', 'B1', 'B2', 'B3']})
+display('df:', df1)
+# creating the Series
+series = pd.Series([1, 2, 3, 4])
+display('series:', series)
+# concatenating
+display('After concatenating:')
+display(pd.concat([df, series],
+                  axis = 1))
+
+
+
+
+
+# importing the module
+import pandas as pd
+# creating the DataFrames
+df1 = pd.DataFrame({'A': ['A0', 'A1', 'A2', 'A3'],
+                    'B': ['B0', 'B1', 'B2', 'B3']})
+display('df1:', df1)
+df2 = pd.DataFrame({'A': ['A4', 'A5', 'A6', 'A7'],
+                    'B': ['B4', 'B5', 'B6', 'B7']})
+display('df2:', df2)
+# concatenating
+display('After concatenating:')
+display(pd.concat([df1, df2],
+                  ignore_index = True))
+
+
+
+
+
+# importing the module
+import pandas as pd
+# creating the Series
+series1 = pd.Series([1, 2, 3])
+display('series1:', series1)
+series2 = pd.Series(['A', 'B', 'C'])
+display('series2:', series2)
+# concatenating
+display('After concatenating:')
+display(pd.concat([series1, series2],
+                  axis = 1))
+
+
+
+
+
+# importing the module
+import pandas as pd
+
+# creating the Series
+series1 = pd.Series([1, 2, 3])
+display('series1:', series1)
+series2 = pd.Series(['A', 'B', 'C'])
+display('series2:', series2)
+
+# concatenating
+display('After concatenating:')
+display(pd.concat([series1, series2]))
+
+
+df1 = pd.DataFrame(np.random.randint(25, size=(4, 4)),
+                   index=["1", "2", "3", "4"],
+                   columns=["A", "B", "C", "D"])
+df2 = pd.DataFrame(np.random.randint(25, size=(6, 4)),
+                   index=["5", "6", "7", "8", "9", "10"],
+                   columns=["A", "B", "C", "D"])
+df3 = pd.DataFrame(np.random.randint(25, size=(4, 4)),
+                   columns=["A", "B", "C", "D"])
+df4 = pd.DataFrame(np.random.randint(25, size=(4, 4)),
+                   columns=["E", "F", "G", "H"])
+display(df1, df2, df3, df4)
+
+
+import pandas as pd
+ser_1 = pd.Series([20,45,36,45])
+print("Series-1:")
+print(ser_1,"\n")
+ser_2 = pd.Series([48,46,34,38])
+print("Series-2:")
+print(ser_2,"\n")
+concatenated_ser=pd.concat([ser_1,ser_2],ignore_index=True)
+print("Result after Concatenation of ser_1 and ser_2:")
+print(concatenated_ser)
+
+---------------------------------
+
+clear swap memory linux
+
+https://www.redhat.com/sysadmin/clear-swap-linux
+https://askubuntu.com/questions/1357/how-to-empty-swap-if-there-is-free-ram
+https://linuxhandbook.com/clear-swap/
+https://www.tecmint.com/clear-ram-memory-cache-buffer-and-swap-space-on-linux/
+
+free -m
+sudo swapoff -a
+sudo swapon -a
+
+sudo swapoff -a; sudo swapon -a
+sudo swapoff --all
+sudo swapoff -a && sudo swapon -a
+
+
+sync; echo 1 > /proc/sys/vm/drop_caches
+sync; echo 2 > /proc/sys/vm/drop_caches
+sync; echo 3 > /proc/sys/vm/drop_caches
+
+sudo swapoff -a && sudo fallocate -l 4G /swapfile3 && sudo chmod 600 /swapfile3 && sudo mkswap /swapfile3 && sudo swapon /swapfile3 -a && swapon -s && swapon --show
+
+
+sudo swapon --all
+
+
+---------------------------------
+
+Split List in Python
+split a list into n parts in Python
+https://stackoverflow.com/questions/6696027/how-to-split-elements-of-a-list
+https://appdividend.com/2022/05/30/how-to-split-list-in-python/
+
+list = [11, 18, 19, 21]
+length = len(list)
+middle_index = length // 2
+first_half = list[:middle_index]
+second_half = list[middle_index:]
+print(first_half)
+print(second_half)
+
+
+
+import numpy as np
+listA = [11, 18, 19, 21, 29, 46]
+splits = np.array_split(listA, 3)
+for array in splits:
+    print(list(array))
+
+
+------------------------------------------------------------------
+
+https://arrow.apache.org/docs/r/reference/read_parquet.html
+https://pandas.pydata.org/docs/reference/api/pandas.read_parquet.html
+https://docs.dask.org/en/stable/generated/dask.dataframe.read_parquet.html
+
+Dask
+storage_optionsdict, default None
+indexstr, list or False, default None
+engine{auto, pyarrow, fastparquet}, default auto
+ignore_metadata_filebool, default False
+split_row_groupsbool or int, default False
+chunksizeint or str, default None
+aggregate_filesbool or str, default None
+**kwargs: dict (of dicts)
+
+https://pandas.pydata.org/pandas-docs/version/0.23/generated/pandas.DataFrame.html
+https://pandas.pydata.org/pandas-docs/version/0.23/generated/pandas.DataFrame.html
+https://pandas.pydata.org/docs/user_guide/options.html
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html
+https://pandas.pydata.org/docs/user_guide/basics.html
+https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.info.html
+
+indexIndex or array-like
+dtypedtype, default None
+copybool or None, default None
+
+------------------------------------------------------------------
+
+dtype
+
+https://jupyter-tutorial.readthedocs.io/de/latest/workspace/numpy/dtype.html
+https://numpy.org/doc/stable/reference/generated/numpy.dtype.char.html
+
+int8, uint8
+int16, uint16
+int32, uint32
+int64, uint64
+float16
+float32
+float64
+complex64, complex128, complex256
+bool
+object
+string_
+unicode_
+
+------------------------------------------------------------------
+
+
+
+
+

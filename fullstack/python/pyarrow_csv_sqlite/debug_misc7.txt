@@ -1,0 +1,807 @@
+os.makedirs('tmp', exist_ok=True)
+
+--
+Clear Cache
+
+https://pypi.org/project/clear-cache/
+https://pypi.org/project/cleanpy/
+https://stackoverflow.com/questions/43459673/clear-cache-or-memory-in-python
+https://linuxhint.com/pip-clear-cache/
+https://www.programcreek.com/python/?CodeExample=clear+cache
+https://github.com/streamlit/streamlit/issues/732
+https://sourceexample.com/article/en/2a5f7e8460daa23d12e07b8c6adb8275/
+https://www.codegrepper.com/code-examples/python/clear+all+python+cache
+https://www.geeksforgeeks.org/clear-lru-cache-in-python/
+
+python -m pip install clear_cache
+
+from clear_cache import clear as clear_cache
+clear_cache(dir = ".")
+
+MyVariable = None
+
+from streamlit import caching
+caching.clear_cache()
+
+import streamlit as st
+st.legacy_caching.clear_cache()
+
+-----
+
+
+JAVA_HOME is not set
+
+java --version
+
+sudo apt install default-jre              # version 2:1.11-72build2, or
+sudo apt install openjdk-11-jre-headless  # version 11.0.16+8-0ubuntu1~22.04
+sudo apt install openjdk-17-jre-headless  # version 17.0.3+7-0ubuntu0.22.04.1
+sudo apt install openjdk-18-jre-headless  # version 18~36ea-1
+sudo apt install openjdk-8-jre-headless   # version 8u312-b07-0ubuntu1
+
+java.sql.SQLException: No suitable driver
+
+java -cp mysql-connector-java-5.1.18-bin.jar:. MySQLTest
+java -classpath ".;sqlite-jdbc-3.27.2.1.jar" net.sqlitetutorial.Connect
+java -cp .:sqlitejdbc-v056.jar Test
+
+
+org.sqlite.JDBC
+sqlite-jdbc-3.7.2.jar
+https://github.com/xerial/sqlite-jdbc
+
+WARNING:root:'PYARROW_IGNORE_TIMEZONE' environment variable was not set. It is required to set this environment variable to '1' in both driver and executor sides if you use pyarrow>=2.0.0. pandas-on-Spark will set it for you but it does not work if there is a Spark context already launched.
+
+java.lang.ClassNotFoundException: com.sqlite.jdbc.Driver
+
+https://sparkbyexamples.com/pandas/pandas-read-sql-query-or-table/
+https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html
+https://pandas.pydata.org/docs/reference/api/pandas.read_sql.html
+https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_sql.html
+https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_sql_table.html
+https://arrow.apache.org/docs/python/parquet.html#finer-grained-reading-and-writing
+
+
+https://dbschema.com/download.html
+
+https://dbschema.com/jdbc-drivers/SqliteJdbcDriver.zip
+https://dbschema.com/download/DbSchema_linux_9_0_3.deb
+
+--------------------------------------------------------------
+
+Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Can not merge type <class 'pyspark.sql.types.DoubleType'> and <class 'pyspark.sql.types.StringType'>
+
+22/08/17 12:34:24 WARN Utils: Your hostname,xxx resolves to a loopback address: 127.0.1.1; using 192.168.0.115 instead (on interface wlp0s20f3)
+22/08/17 12:34:24 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+22/08/17 12:34:24 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+
+22/08/17 13:07:43 WARN MemoryManager: Total allocation exceeds 95,00% (1.020.054.720 bytes) of heap memory
+Scaling row group sizes to 95,00% for 8 writers
+22/08/17 13:11:24 WARN TaskSetManager: Stage 2 contains a task of very large size (8975 KiB). The maximum recommended task size is 1000 KiB.
+22/08/17 13:11:25 ERROR Inbox: An error happened while processing message in the inbox for LocalSchedulerBackendEndpoint
+java.lang.OutOfMemoryError: Java heap space
+
+
+
+convert ALL columns to strings, you can simply use:
+df = df.astype(str)
+
+
+
+df[["D", "E"]] = df[["D", "E"]].astype(int)
+total_rows['ColumnID'] = total_rows['ColumnID'].astype(str)
+
+
+
+
+------------------------------------------------------------------------
+
+
+
+TypeError: Sparse pandas data (column anb_em_ch_ken) not supported
+
+https://pandas.pydata.org/docs/user_guide/sparse.html
+https://arrow.apache.org/docs/python/dataset.html
+https://arrow.apache.org/docs/python/generated/pyarrow.parquet.ParquetWriter.html
+
+------------------------------------------------------------------------
+####################################################
+Read data from SQLite
+####################################################
+https://vinta.ws/code/spark-sql-cookbook-pyspark.html
+
+$ pyspark --packages "org.xerial:sqlite-jdbc:3.16.1"
+
+from pyspark.sql.functions import lit
+from pyspark.sql.types import IntegerType, StructField, StructType, TimestampType
+
+props = {'driver': 'org.sqlite.JDBC', 'date_string_format': 'yyyy-MM-dd HH:mm:ss'}
+df = spark.read.jdbc("jdbc:sqlite:db.sqlite3", "app_repostarring", properties=props)
+
+df = df.where(df.stargazers_count >= min_stargazers_count)
+df = df.select('from_user_id', 'repo_id', 'created_at')
+df = df.toDF('user', 'item')
+df = df.withColumn('rating', lit(1))
+
+schema = StructType([
+    StructField('user', IntegerType(), nullable=False),
+    StructField('item', IntegerType(), nullable=False),
+    StructField('rating', IntegerType(), nullable=False),
+    StructField('item_created_at', TimestampType(), nullable=False),
+])
+df = spark.createDataFrame(df.rdd, schema)
+
+
+
+Read data from parquet
+from pyspark.sql.utils import AnalysisException
+
+raw_df_filepath = 'raw_df.parquet'
+
+try:
+    raw_df = spark.read.format('parquet').load(raw_df_filepath)
+except AnalysisException as exc:
+    if 'Path does not exist' in exc.desc:
+        raw_df = load_raw_data()
+        raw_df.write.format('parquet').save(raw_df_filepath)
+    else:
+        raise exc
+
+
+Create a DataFrame
+matrix = [
+    (1, 1, 1),
+    (1, 2, 1),
+    (2, 1, 0),
+    (3, 1, 1),
+    (3, 3, 1),
+    (3, 4, 1),
+    (4, 1, 0),
+    (4, 2, 0),
+    (5, 9, 1),
+    (5, 5, 0),
+]
+df = spark.createDataFrame(matrix, ['user', 'item', 'rating'])
+
+
+Create a DataFrame with explicit schema
+from pyspark.sql.types import *
+
+matrix = [
+    ('Alice', 0.5, 5.0),
+    ('Bob',   0.2, 92.0),
+    ('Tom',   0.0, 122.0),
+    ('Zack',  0.1, 1.0),
+]
+schema = StructType([
+    StructField('name', StringType(), nullable=False),
+    StructField('prediction', DoubleType(), nullable=False),
+    StructField('rating', DoubleType(), nullable=False)
+])
+df = spark.createDataFrame(matrix, schema)
+df.printSchema()
+new_df = spark.createDataFrame(someRDD, df.schema)
+
+
+
+
+# Get numbers of partitions
+-----------------------------------------------
+df.rdd.getNumPartitions()
+
+
+# Split a DataFrame into chunks (partitions)
+-----------------------------------------------
+def write_to_db(partial_rows):
+    values_tuples = [(row.user, row.item, row.score, year, week) for row in chunk_rows]
+    result = your_mysql_insert_func(values_tuples)
+    return [result, ]
+
+save_result = df \
+    .repartition(400) \
+    .rdd \
+    .mapPartitions(write_to_db) \
+    .collect()
+
+
+
+# Show a DataFrame
+-----------------------------------------------
+# print the schema in a tree format
+df.printSchema()
+
+# print top 20 rows
+df.show()
+
+# print top 100 rows
+df.show(100)
+
+# calculate the descriptive statistics
+df.describe().show()
+df.describe(['like_count', ]).show()
+
+
+# Create a column with a literal value
+-----------------------------------------------
+from pyspark.sql.functions import lit
+df = df.withColumn('like', lit(1))
+
+
+Return a fraction of a DataFrame
+-----------------------------------------------
+fraction = {
+    'u1': 0.5,
+    'u2': 0.5,
+    'u3': 0.5,
+    'u4': 0.5,
+    'u5': 0.5,
+}
+df.sampleBy('user', fraction).show()
+
+
+
+Show distinct values of a column
+-----------------------------------------------
+df.select('user').distinct().show()
+
+
+
+Rename columns
+-----------------------------------------------
+df.printSchema()
+df = df.toDF('user', 'item')
+# or
+df = df.withColumnRenamed('from_user_id', 'user').withColumnRenamed('repo_id', 'item')
+
+
+Convert a column to double type
+-----------------------------------------------
+df = df.withColumn('prediction', df['prediction'].cast('double'))
+
+
+Update a colume based on conditions
+-----------------------------------------------
+from pyspark.sql.functions import when
+df = df.withColumn('label', when(df['prediction'] > 0.5, 1).otherwise(0))
+
+
+
+Drop columns from a DataFrame
+-----------------------------------------------
+predictions = predictions.dropna(subset=['prediction', S])
+
+
+
+DataFrame subtract another DataFrame
+-----------------------------------------------
+matrix1 = [
+    (1, 2, 123),
+    (3, 4, 1),
+    (5, 6, 45),
+    (7, 8, 3424),
+]
+df1 = spark.createDataFrame(matrix1, ['user','item', 'play_count'])
+
+matrix2 = [
+    (3, 4),
+    (5, 6),
+    (9, 1),
+    (7, 8),
+    (1, 6),
+    (1, 1),
+]
+df2 = spark.createDataFrame(matrix2, ['user','item'])
+df2.subtract(df1.select('user', 'item')).show()
+# or
+testing_rdd = df.rdd.subtract(training.rdd)
+testing = spark.createDataFrame(testing_rdd, df.schema)
+
+
+
+
+Convert a DataFrame column into a Python list
+-----------------------------------------------
+# list
+popluar_items = [row['item'] for row in popular_df.select('item').collect()]
+
+# set
+all_items = {row.id for row in als_model.itemFactors.select('id').collect()}
+
+
+Concatenate (merge) two DataFrames
+-----------------------------------------------
+full_df = df1.union(df2)
+
+
+Convert a DataFrame to a Python dict
+-----------------------------------------------
+d = df.rdd.collectAsMap()
+d['some_key']
+
+
+Compute (approximate or exact) median of a numerical column
+-----------------------------------------------
+approximate_median = df.approxQuantile('count', [0.5, ], 0.25)
+exact_median = df.approxQuantile('count', [0.5, ], 0.0)
+maximum = df.approxQuantile('count', [1.0, ], 0.1)
+minimum = df.approxQuantile('count', [0.0, ], 0.1)
+
+
+Find frequent items for columns
+-----------------------------------------------
+df = rating_df.freqItems(['item', ], support=0.01)
+popular_items = df.collect()[0].item_freqItems
+
+
+Broadcast a value
+-----------------------------------------------
+bc_candidates = sc.broadcast(set([1, 2, 4, 5, 8]))
+print(bc_candidates.value)
+bc_df = sc.broadcast(df.collect())
+df = spark.createDataFrame(bc_df.value)
+
+
+
+Broadcast a DataFrame in join
+-----------------------------------------------
+import pyspark.sql.functions as F
+large_df.join(F.broadcast(small_df), 'some_key')
+
+
+Cache a DataFrame
+-----------------------------------------------
+df.cache()
+
+
+Show query execution plan
+-----------------------------------------------
+df.explain(extended=True)
+
+
+
+
+Use SQL to query a DataFrame
+-----------------------------------------------
+props = {'driver': 'org.sqlite.JDBC', 'date_string_format': 'yyyy-MM-dd HH:mm:ss'}
+df = spark.read.jdbc("jdbc:sqlite:db.sqlite3", "app_repostarring", properties=props)
+df.createOrReplaceTempView('repo_stars')
+
+query = 'SELECT DISTINCT repo_id AS item FROM repo_stars WHERE stargazers_count > 1000'
+df2 = spark.sql(query)
+df2.show()
+
+query = """
+SELECT
+    from_user_id AS user,
+    count(repo_id) AS count
+FROM repo_stars
+GROUP BY from_user_id
+ORDER BY count DESC
+"""
+df = spark.sql(query)
+
+params = {'top_n': top_n}
+query = """
+SELECT
+    repo_id AS item,
+    MAX(stargazers_count) AS stars
+FROM repo_stars
+GROUP BY repo_id
+ORDER BY stars DESC
+LIMIT {top_n}
+""".format(**params)
+popular_df = spark.sql(query)
+
+
+
+
+WHERE ... IN ...
+-----------------------------------------------
+from pyspark.sql.functions import col
+
+item_ids = [1, 2, 5, 8]
+raw_df \
+    .where(col('repo_id').isin(item_ids)) \
+    .select('repo_url') \
+    .collectAsMap()
+
+
+
+
+ORDER BY multiple columns
+-----------------------------------------------
+import pyspark.sql.functions as F
+
+rating_df = raw_df \
+    .selectExpr('from_user_id AS user', 'repo_id AS item', '1 AS rating', 'starred_at') \
+    .orderBy('user', F.col('starred_at').desc())
+
+
+Aggregate
+-----------------------------------------------
+df.agg(min('user'), max('user'), min('item'), max('item')).show()
+max_value = user_star_count_df.agg(F.max('stars')).collect()[0]["max('stars')"]
+
+
+
+SELECT COUNT(DISTINCT ) ...
+-----------------------------------------------
+import pyspark.sql.functions as F
+matrix = [
+    (1, 1, 1),
+    (1, 2, 1),
+    (2, 1, 0),
+    (3, 1, 1),
+    (3, 3, 1),
+    (3, 4, 1),
+    (4, 1, 0),
+    (4, 2, 0),
+    (5, 9, 1),
+    (5, 5, 0),
+]
+df = spark.createDataFrame(matrix, ['user', 'item', 'rating'])
+df.agg(F.countDistinct('user')).show()
+
+
+
+SELECT MAX(xxx) ... GROUP BY
+-----------------------------------------------
+df.groupBy('user').count().filter('count >= 4').show()
+popular_df = raw_df \
+    .groupBy('repo_id') \
+    .agg(F.max('stargazers_count').alias('stars')) \
+    .orderBy('stars', ascending=False) \
+    .limit(top_n)
+
+
+
+SELECT COUNT() ... GROUP BY
+-----------------------------------------------
+prediction_df.groupBy('user').count().show()
+
+stargazers_count_df = rating_df \
+    .groupBy('item') \
+    .agg(F.count('user').alias('stargazers_count')) \
+    .orderBy('stargazers_count', ascending=False)
+
+
+starred_count_df = rating_df \
+    .groupBy('user') \
+    .agg(F.count('item').alias('starred_count')) \
+    .orderBy('starred_count', ascending=False)
+
+
+GROUP_CONCAT a column
+-----------------------------------------------
+from pyspark.sql.functions import expr
+per_user_predictions_df = output_df \
+  .orderBy(['user', 'prediction'], ascending=False) \
+  .groupBy('user') \
+  .agg(expr('collect_list(item) as items'))
+
+
+
+GROUP_CONCAT multiple columns
+-----------------------------------------------
+from pyspark.sql.functions import col, collect_list, struct
+
+matrix = [
+    (1, 1, 0.1),
+    (1, 2, 5.1),
+    (1, 6, 0.0),
+    (2, 6, 9.3),
+    (3, 1, 0.54),
+    (3, 5, 0.83),
+    (4, 1, 0.65),
+    (4, 4, 1.023),
+]
+df = spark.createDataFrame(matrix, ['user', 'item', 'prediction'])
+
+df \
+    .groupBy("user") \
+    .agg(collect_list(struct(col('item'), col('prediction'))).alias("recommendations")) \
+    .show(truncate=False)
+
+
+SELECT ... RANK() OVER (PARTITION BY ... ORDER BY)
+-----------------------------------------------
+from pyspark.sql import Window
+from pyspark.sql.functions import col
+from pyspark.sql.functions import expr
+import pyspark.sql.functions as F
+
+window_spec = Window.partitionBy('from_user_id').orderBy(col('starred_at').desc())
+per_user_actual_items_df = raw_df \
+    .select('from_user_id', 'repo_id', 'starred_at', F.rank().over(window_spec).alias('rank')) \
+    .where('rank <= 10') \
+    .groupBy('from_user_id') \
+    .agg(expr('collect_list(repo_id) as items')) \
+    .withColumnRenamed('from_user_id', 'user')
+
+window_spec = Window.partitionBy('user').orderBy(col('prediction').desc())
+per_user_predicted_items_df = output_df \
+    .select('user', 'item', 'prediction', F.rank().over(window_spec).alias('rank')) \
+    .where('rank <= 10') \
+    .groupBy('user') \
+    .agg(expr('collect_list(item) as items'))
+
+
+Left anti join / Left excluding join
+-----------------------------------------------
+clean_df = rating_df.join(to_remove_items, 'item', 'left_anti')
+
+
+
+Cross join
+-----------------------------------------------
+df = m1df.select('user').distinct().crossJoin(m2df.select('item'))
+df.show()
+
+query = """
+SELECT f1.user, f2.item, 0 AS rating
+FROM f1
+CROSS JOIN f2
+"""
+df = spark.sql(query)
+df.show()
+
+all_user_item_pair_df = als_model.userFactors.selectExpr('id AS user') \
+    .crossJoin(alsModel.itemFactors.selectExpr('id AS item'))
+
+
+
+Outer join
+-----------------------------------------------
+m1 = [
+    (1, 1, 1),
+    (1, 2, 1),
+    (1, 4, 1),
+    (2, 2, 1),
+    (2, 3, 1),
+    (3, 5, 1),
+]
+m1df = spark.createDataFrame(m1, ['user', 'item', 'rating'])
+m1df = m1df.where('user = 1').alias('m1df')
+
+m2 = [
+    (1, 100),
+    (2, 200),
+    (3, 300),
+    (4, 400),
+    (5, 500),
+    (6, 600),
+]
+m2df = spark.createDataFrame(m2, ['item', 'count'])
+m2df = m2df.alias('m2df')
+
+m1df.join(m2df, m1df.item == m2df.item, 'rightouter') \
+.where('m1df.user IS NULL') \
+.orderBy('m2df.count', ascending=False) \
+.selectExpr('1 AS user', 'm2df.item', '0 AS rating') \
+.show()
+
+
+
+
+
+
+
+
+------------------------------------------------------------------------
+
+
+https://gist.github.com/beauzeaux/a68d6f32f4985ed547ce
+
+import sqlite3
+import os
+import argparse
+
+try:
+    import pyspark
+    import pyspark.sql
+except ImportError:
+    import sys
+    import os
+    # TODO: unhardcode these
+    os.environ["SPARK_HOME"] = '/opt/spark'
+    sys.path.append('/opt/spark/python')
+    sys.path.append('/opt/spark/python/lib/py4j-0.8.2.1-src.zip')
+    import pyspark
+    import pyspark.sql
+    from pyspark.sql.types import *
+
+
+# load spark stuff
+conf = pyspark.SparkConf()
+conf.set('spark.executor.memory', '4g')
+conf.set('spark.sql.parquet.compression.codec', 'gzip')
+#conf.set('spark.sql.parquet.compression.codec', 'snappy')
+sc = pyspark.SparkContext("local", conf=conf)
+sqlContext = pyspark.SQLContext(sc)
+
+
+def get_table_list(sqldb_loc):
+    """Gets the list of tables in the sqlite database given a file path
+        to the sqlite database
+    """
+    conn = sqlite3.connect(sqldb_loc)
+    cur = conn.cursor()
+    res = cur.execute("""SELECT name
+                           FROM sqlite_master
+                           WHERE type='table'""")
+    names = [x[0] for x in res]
+    cur.close()
+    return names
+
+
+def get_generator_from_table(sqldb_loc, table_name):
+    conn = sqlite3.connect(sqldb_loc)
+    cur = conn.cursor()
+    res = cur.execute("""
+    SELECT * FROM {0}
+    """.format(table_name))
+    for row in  res:
+        yield row
+    cur.close()
+    conn.close()
+
+def get_column_names_from_table(sqldb_loc, table_name):
+    conn = sqlite3.connect(sqldb_loc)
+    cur = conn.cursor()
+    res = cur.execute("""
+    SELECT *
+    FROM {0}
+    """.format(table_name))
+    names = [x[0] for x in cur.description]
+    cur.close()
+    conn.close()
+    return names
+
+def create_df_from_generator(gen, names):
+    a = sc.parallelize(gen, 20)
+    a.persist(pyspark.StorageLevel(True, True, False, True, 1))
+    df = sqlContext.createDataFrame(a, schema=names, samplingRatio=None).repartition(20)
+    #df.persist(pyspark.StorageLevel(True, True, False, True, 1))
+    return df
+
+
+def sqlite2parquet(db_path, output_dir, skip_tables=['sqlite_sequence']):
+    tables = get_table_list(db_path)
+    for table in tables:
+        if table in skip_tables:
+            print "Skipping: {0}".format(table)
+            continue
+        print "Converting: {0}".format(table)
+        gen = get_generator_from_table(db_path, table)
+        if table in schemas:
+            print "\t known schema"
+            schema = schemas[table]
+        else:
+            schema = get_column_names_from_table(db_path, table)
+        print "\t converting to data-frame"
+        df = create_df_from_generator(gen, schema)
+        p = os.path.join(output_dir, table + '.parquet')
+        print "\t saving..."
+        df.saveAsParquetFile(p)
+
+def main():
+    parser = argparse.ArgumentParser(description='Convert sqlite database into parquet files')
+    parser.add_argument('sqlite_db_path')
+    args = parser.parse_args()
+    try:
+        os.makedirs(args.sqlite_db_path + '.parquets')
+    except OSError:
+        #mmm quiet failure... brilliant!
+        pass
+    sqlite2parquet(args.sqlite_db_path, args.sqlite_db_path + '.parquets', skip_tables=['task', 'sqlite_sequence', 'sqlite_stat1', 'crawl'])
+
+if __name__ == "__main__":
+    main()
+
+------------------------------------------------------------------------
+
+
+http://mitzen.blogspot.com/2017/06/pyspark-working-with-jdbc-sqlite.html
+https://sparkdatabox.com/tutorials/python-flask/flask-sqlite
+
+
+from pyspark import SparkContext
+sc = SparkContext.getOrCreate()
+from pyspark.sql import SQLContext
+sqlCtx = SQLContext(sc)
+
+sqlContext.read.format("jdbc").options(url ="jdbc:sqlite:c:test.db", driver="org.sqlite.JDBC", dbtable="employee").load().take(10)
+
+
+
+------------------------------------------------------------------------
+
+
+https://stackoverflow.com/questions/22005911/convert-columns-to-string-in-pandas
+https://arrow.apache.org/docs/python/dataset.html
+
+#importing libraries
+import numpy as np
+import pandas as pd
+import time
+
+#creating four sample dataframes using dummy data
+df1 = pd.DataFrame(np.random.randint(1, 1000, size =(10000000, 1)), columns =['A'])
+df2 = pd.DataFrame(np.random.randint(1, 1000, size =(10000000, 1)), columns =['A'])
+df3 = pd.DataFrame(np.random.randint(1, 1000, size =(10000000, 1)), columns =['A'])
+df4 = pd.DataFrame(np.random.randint(1, 1000, size =(10000000, 1)), columns =['A'])
+
+#applying astype(str)
+time1 = time.time()
+df1['A'] = df1['A'].astype(str)
+print('time taken for astype(str) : ' + str(time.time()-time1) + ' seconds')
+
+pd['Column'].map(str)
+------------------------------------------------------------------------
+
+
+https://intellipaat.com/community/11477/converting-pandas-dataframe-into-spark-dataframe-error
+
+import pyspark
+from pyspark.sql import SparkSession
+import pandas as pd
+spark = SparkSession.builder.appName('pandasToSparkDF').getOrCreate()
+pdDF = pd.read_csv("samp.csv")
+df = spark.createDataFrame(pdDF,schema=mySchema)
+
+
+------------------------------------------------------------------------
+https://cumsum.wordpress.com/2020/02/02/typeerror-field-xxx-can-not-merge-type-class-pyspark-sql-types-longtype-and-class-pyspark-sql-types-stringtype/
+https://sqlwithmanoj.com/2021/04/08/python-error-while-converting-pandas-dataframe-or-python-list-to-spark-dataframe-can-not-merge-type/
+https://python.hotexamples.com/examples/odo/-/odo/python-odo-function-examples.html
+https://sparkbyexamples.com/hadoop/hadoop-unable-to-load-native-hadoop-library-for-your-platform-warning/
+https://sparkbyexamples.com/pyspark-tutorial/
+https://sleeplessbeastie.eu/2021/08/06/how-to-load-native-hadoop-libraries/
+https://gist.github.com/beauzeaux/a68d6f32f4985ed547ce
+https://stackoverflow.com/questions/38985350/how-to-load-table-from-sqllite-db-file-from-pyspark
+https://people.duke.edu/~ccc14/sta-663-2016/21C_Spark_SQL.html
+https://www.edureka.co/community/110/hadoop-unable-native-hadoop-library-your-platform-warning
+------------------------------------------------------------------------
+https://stackoverflow.com/questions/51874225/how-to-combine-small-parquet-files-to-one-large-parquet-file
+https://spark.apache.org/docs/latest/sql-data-sources-parquet.html
+https://gist.github.com/jomoespe/cd0dcfcb7b910e1a5df779e0e7687181
+https://sparkbyexamples.com/pyspark/pyspark-read-and-write-parquet-file/
+https://spark.apache.org/docs/2.3.1/sql-programming-guide.html#sql
+
+spark\
+    .read\
+    .parquet('...'))\
+    .repartition('key1', 'key2',...)\
+    .write\
+    .partitionBy('key1', 'key2',...)\
+    .option('path', target_part)\
+    .saveAsTable('partitioned')
+
+
+
+val partitions = 5;   // this value depends on data and volumes. Will be different in every case.
+val df = sqlContext.read.json(“URI://path/to/parquet/files/")
+df.createOrReplaceTempView("df")
+val df_output = spark
+  .sql("SELECT DISTINCT * FROM df") // this removes duplicates. If it's not needed, simply remove this line
+  .coalesce(partitions)
+df_output.write.parquet("URI://path/to/destination")
+
+------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
