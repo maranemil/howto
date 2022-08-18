@@ -1,0 +1,298 @@
+how to remove blank rows in pandas dataframe
+Pandas - Cleaning Empty Cells
+
+https://www.codegrepper.com/code-examples/python/remove+empty+cells+from+dataframe+pandas
+https://www.w3schools.com/python/pandas/pandas_cleaning_empty_cells.asp
+https://www.w3schools.com/python/pandas/pandas_cleaning_duplicates.asp
+https://www.w3schools.com/python/pandas/pandas_cleaning_wrong_data.asp
+https://stackoverflow.com/questions/29314033/drop-rows-containing-empty-cells-from-a-pandas-dataframe
+https://www.adamsmith.haus/python/answers/how-to-drop-empty-rows-from-a-pandas-dataframe-in-python
+https://statisticsglobe.com/drop-rows-blank-values-from-pandas-dataframe-python
+https://www.geeksforgeeks.org/drop-empty-columns-in-pandas/
+https://hackersandslackers.com/pandas-dataframe-drop/
+
+
+
+
+Drop Empty Rows or Columns
+
+import pandas as pd
+# Create a Dataframe from a CSV
+df = pd.read_csv('example.csv')
+# Drop rows with any empty cells
+df.dropna(
+    axis=0,
+    how='any',
+    thresh=None,
+    subset=None,
+    inplace=True
+)
+
+
+Pandas' .drop() Method
+df.drop(
+    labels=None,
+    axis=0,
+    index=None,
+    columns=None,
+    level=None,
+    inplace=True,
+    errors='raise'
+)
+
+
+# drop preferred_icecream_flavor
+df.drop(
+    labels=["preferred_icecream_flavor"],
+    axis=1,
+)
+df.drop(
+    columns=["preferred_icecream_flavor"]
+)
+
+# drop first to columns
+df.drop(
+    labels=[0, 1],
+    axis=1,
+)
+
+drop rows
+df.drop(
+    labels=["todd", "kyle"],
+    axis=0,
+)
+df.drop(
+    index=["todd", "kyle"],
+)
+
+
+Drop Duplicates
+import pandas as pd
+# Drop rows where all data is the same
+df = df.drop_duplicates()
+
+
+Drop by Criteria
+import pandas as pd
+# Create a Dataframe from CSV
+df = pd.read_csv('example.csv')
+# Drop via logic (similar to a SQL 'WHERE' clause)
+df = df[df.employee_name != 'chad']
+
+
+
+DataFrameName.dropna(axis=1, how='all', inplace=True)
+df = df[df['my_var'].notna()]
+
+
+import pandas as pd
+df = pd.read_csv('data.csv')
+new_df = df.dropna()
+print(new_df.to_string())
+
+
+Replace Empty Values
+
+import pandas as pd
+df = pd.read_csv('data.csv')
+df.fillna(130, inplace = True)
+
+Replace Only For Specified Columns
+
+import pandas as pd
+df = pd.read_csv('data.csv')
+df["Calories"].fillna(130, inplace = True)
+
+Replace Using Mean, Median, or Mode
+
+import pandas as pd
+df = pd.read_csv('data.csv')
+x = df["Calories"].mean()
+df["Calories"].fillna(x, inplace = True)
+
+import pandas as pd
+df = pd.read_csv('data.csv')
+x = df["Calories"].median()
+df["Calories"].fillna(x, inplace = True)
+
+import pandas as pd
+df = pd.read_csv('data.csv')
+x = df["Calories"].mode()[0]
+df["Calories"].fillna(x, inplace = True)
+
+Removing Rows
+
+import pandas as pd
+df = pd.read_csv('data.csv')
+df['Date'] = pd.to_datetime(df['Date'])
+print(df.to_string())
+
+Remove rows with a NULL value in the "Date" column:
+df.dropna(subset=['Date'], inplace = True)
+
+Pandas - Removing Duplicates
+
+print(df.duplicated())
+df.drop_duplicates(inplace = True)
+
+
+Replacing Values
+df.loc[7, 'Duration'] = 45
+
+for x in df.index:
+  if df.loc[x, "Duration"] > 120:
+    df.loc[x, "Duration"] = 120
+
+-----
+
+
+>>> import pandas as pd
+>>> import numpy as np
+>>>
+>>> df = pd.DataFrame(np.random.randn(10, 2), columns=list('AB'))
+>>> df['Tenant'] = np.random.choice(['Babar', 'Rataxes', ''], 10)
+>>> print df
+>>> df['Tenant'].replace('', np.nan, inplace=True)
+>>> print df
+>>> df.dropna(subset=['Tenant'], inplace=True)
+>>> print df
+
+
+
+
+df = pd.DataFrame({
+    'A': range(5),
+    'B': ['foo', '', 'bar', '', 'xyz']
+})
+df
+df['B'].astype(bool)
+df[df['B'].astype(bool)]
+df[df['B'].str.strip().astype(bool)]
+
+
+
+
+import pandas as pd
+vals = {
+    'name' : ['n1', 'n2', 'n3', 'n4', 'n5', 'n6', 'n7'],
+    'gender' : ['m', 'f', 'f', 'f',  'f', 'c', 'c'],
+    'age' : [39, 12, 27, 13, 36, 29, 10],
+    'education' : ['ma', None, 'school', None, 'ba', None, None]
+}
+df_vals = pd.DataFrame(vals)
+df_vals = df_vals[~df_vals['education'].isnull()]
+
+..
+
+df.dropna(subset = ["column2"], inplace=True)
+nan_value = float("NaN")
+df.replace("", nan_value, inplace=True)
+df.dropna(subset = ["column2"], inplace=True)
+
+
+
+
+
+import pandas as pd
+data = pd.DataFrame({'x1':[1, '', '   ', 2, 3, 4],    # Create example DataFrame
+                     'x2':['', '', 'a', 'b', 'c', 'd'],
+                     'x3':['    ', 'a', 'b', 'c', 'd', '']})
+print(data)
+data_new1 = data.copy()                               # Create duplicate of data
+data_new1 = data_new1.replace(r'^s*$', float('NaN'), regex = True)  # Replace blanks by NaN
+print(data_new1)
+data_new2 = data_new1.copy()                          # Create duplicate of data
+data_new2.dropna(inplace = True)                      # Remove rows with NaN
+print(data_new2)
+data_new3 = data_new1.copy()                          # Create duplicate of data
+data_new3.dropna(subset = ['x1'], inplace = True)     # Remove rows with NaN
+print(data_new3)
+
+
+
+
+
+Drop Empty Columns in Pandas
+
+# import required libraries
+import numpy as np
+import pandas as pd
+# create a Dataframe
+Mydataframe = pd.DataFrame({'FirstName': ['Vipul', 'Ashish', 'Milan'],
+                            "Gender": ["", "", ""],
+                            "Age": [0, 0, 0]})
+Mydataframe['Department'] = np.nan
+# show the dataframe
+print(Mydataframe)
+
+
+
+
+# import required libraries
+import numpy as np
+import pandas as pd
+# create a Dataframe
+Mydataframe = pd.DataFrame({'FirstName': ['Vipul', 'Ashish', 'Milan'],
+                            "Gender": ["", "", ""],
+                            "Age": [0, 0, 0]})
+
+Mydataframe['Department'] = np.nan
+display(Mydataframe)
+Mydataframe.dropna(how='all', axis=1, inplace=True)
+# show the dataframe
+display(Mydataframe)
+
+
+
+# import required libraries
+import numpy as np
+import pandas as pd
+# create a Dataframe
+Mydataframe = pd.DataFrame({'FirstName': ['Vipul', 'Ashish', 'Milan'],
+                            "Gender": ["", "", ""],
+                            "Age": [0, 0, 0]})
+
+Mydataframe['Department'] = np.nan
+display(Mydataframe)
+nan_value = float("NaN")
+Mydataframe.replace("", nan_value, inplace=True)
+Mydataframe.dropna(how='all', axis=1, inplace=True)
+# show the dataframe
+display(Mydataframe)
+
+
+
+# import required libraries
+import numpy as np
+import pandas as pd
+# create a Dataframe
+Mydataframe = pd.DataFrame({'FirstName': ['Vipul', 'Ashish', 'Milan'],
+                            "Gender": ["", "", ""],
+                            "Age": [0, 0, 0]})
+
+Mydataframe['Department'] = np.nan
+display(Mydataframe)
+nan_value = float("NaN")
+Mydataframe.replace(0, nan_value, inplace=True)
+Mydataframe.dropna(how='all', axis=1, inplace=True
+# show the dataframe
+display(Mydataframe)
+
+
+
+# import required libraries
+import numpy as np
+import pandas as pd
+# create a Dataframe
+Mydataframe = pd.DataFrame({'FirstName': ['Vipul', 'Ashish', 'Milan'],
+                            "Gender": ["", "", ""],
+                            "Age": [0, 0, 0]})
+
+Mydataframe['Department'] = np.nan
+display(Mydataframe)
+nan_value = float("NaN")
+Mydataframe.replace(0, nan_value, inplace=True)
+Mydataframe.replace("", nan_value, inplace=True)
+Mydataframe.dropna(how='all', axis=1, inplace=True)
+# show the dataframe
+display(Mydataframe)
