@@ -37,3 +37,34 @@ dfdb.repartition(npartitions=1).to_parquet("items", write_metadata_file=False)
 os.system('cp items/part.0.parquet items.pqt')
 """
 exit()
+
+
+"""
+
+############################################################
+simple merge parquet
+############################################################
+
+import dask.dataframe as dd
+import os
+import pandas as pd
+import glob
+import time
+
+os.system('rm stock.pqt')
+stocks = pd.DataFrame()
+# filenames = glob.glob("batch_merge/*.parquet")
+filenames = ['stock_1.pqt', 'stock_2.pqt', 'stock_3.pqt', 'stock_4.pqt',
+             'stock_5.pqt', 'stock_6.pqt', 'stock_7.pqt', 'stock_8.pqt',
+             'stock_9.pqt']
+k = 0
+for file in filenames:
+    df = pd.read_parquet(file)
+    # stocks = pd.concat([stocks, df], ignore_index=True, axis=0)
+    stocks = pd.concat([stocks, df])
+    time.sleep(1)
+
+
+pd.DataFrame(stocks).to_parquet('stock.pqt')
+
+"""

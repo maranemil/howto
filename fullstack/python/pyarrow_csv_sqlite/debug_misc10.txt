@@ -1,0 +1,171 @@
+###################################################
+Chunksize Table arrow
+###################################################
+
+https://arrow.apache.org/docs/python/parquet.html
+
+import pandas as pd
+import pyarrow as pa
+import pyarrow.parquet as pq
+
+chunksize=10000 # this is the number of lines
+
+pqwriter = None
+for i, df in enumerate(pd.read_csv('sample.csv', chunksize=chunksize)):
+    table = pa.Table.from_pandas(df)
+    # for the first chunk of records
+    if i == 0:
+        # create a parquet write object giving it an output file
+        pqwriter = pq.ParquetWriter('sample.parquet', table.schema)
+    pqwriter.write_table(table)
+
+# close the parquet writer
+if pqwriter:
+    pqwriter.close()
+
+https://arrow.apache.org/docs/python/api/files.html
+https://arrow.apache.org/docs/python/api/formats.html
+https://arrow.apache.org/docs/python/api/memory.html
+https://arrow.apache.org/docs/python/generated/pyarrow.Table.html
+https://arrow.apache.org/docs/python/getstarted.html
+https://arrow.apache.org/docs/python/parquet.html
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html
+https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.info.html
+
+------------------------------------------------------------------------------------------
+
+https://pypi.org/project/memory-profiler/
+
+------------------------------------------------------------------------------------------
+
+get count padnad rows
+
+https://stackoverflow.com/questions/15943769/how-do-i-get-the-row-count-of-a-pandas-dataframe
+https://www.tutorialspoint.com/how-to-get-nth-row-in-a-pandas-dataframe
+
+len(df.index)
+df.shape[0]
+df[df.columns[0]].count()
+
+------------------------------------------------------------------------------------------
+
+read-multiple-parquet-files-in-a-folder
+https://stackoverflow.com/questions/51696655/read-multiple-parquet-files-in-a-folder-and-write-to-single-csv-file-using-pytho
+
+import pandas as pd
+df = pd.read_parquet('path/to/the/parquet/files/directory')
+
+------------------------------------------------------------------------------------------
+https://www.geeksforgeeks.org/pyspark-groupby-and-sort-dataframe-in-descending-order/
+https://stackoverflow.com/questions/34514545/sort-in-descending-order-in-pyspark
+https://stackoverflow.com/questions/54002006/dask-dataframe-view-entire-row
+https://sparkbyexamples.com/pyspark/pyspark-dataframe-groupby-and-sort-by-descending-order/
+https://sparkbyexamples.com/pyspark/pyspark-count-distinct-from-dataframe/
+https://www.geeksforgeeks.org/get-number-of-rows-and-columns-of-pyspark-dataframe/
+------------------------------------------------------------------------------------------
+
+size-or-shape rows columns
+https://stackoverflow.com/questions/39652767/how-to-find-the-size-or-shape-of-a-dataframe-in-pyspark
+
+print((df.count(), len(df.columns)))
+
+------------------------------------------------------------------------------------------
+
+https://docs.python.org/3/library/unittest.html
+https://docs.python.org/3/library/test.html
+https://docs.python-guide.org/writing/tests/
+https://www.fullstackpython.com/deployment.html
+https://cloud.google.com/appengine/docs/standard/python/migrate-to-python3/testing
+https://cloud.google.com/appengine/docs/flexible/python/testing-and-deploying-your-app
+https://docs.python-guide.org/scenarios/ci/
+https://www.obeythetestinggoat.com/book/chapter_manual_deployment.html
+https://docs.microsoft.com/en-us/azure/devops/pipelines/ecosystems/python?view=azure-devops
+https://semaphoreci.com/blog/python-continuous-integration-continuous-delivery
+https://realpython.com/python-continuous-integration/
+https://code.visualstudio.com/docs/python/testing
+https://www.jetbrains.com/help/pycharm/testing-your-first-python-application.html
+https://docs.microsoft.com/en-us/azure/devops/pipelines/ecosystems/python-webapp?view=azure-devops
+https://packaging.python.org/en/latest/tutorials/packaging-projects/
+https://www.fullstackpython.com/continuous-integration.html
+https://www.nylas.com/blog/packaging-deploying-python/
+https://medium.com/@anirbanroydas/testing-microservice-written-in-python-flask-with-continuous-integration-delivery-and-deployment-1999fef560a8
+https://python-packaging.readthedocs.io/en/latest/testing.html
+------------------------------------------------------------------------------------------
+
+https://www.computerbase.de/downloads/betriebssysteme/manjaro-linux/
+
+------------------------------------------------------------------------------------------
+
+https://pandas.pydata.org/docs/reference/api/pandas.concat.html
+https://www.geeksforgeeks.org/python-pandas-series-to_dense/
+https://pitrou.net/arrowdevdoc/python/parquet.html
+https://stackoverflow.com/questions/59988219/how-can-i-read-each-parquet-row-group-into-a-separate-partition
+https://wesm.github.io/arrow-site-test/python/generated/pyarrow.parquet.ParquetFile.html
+https://www.programcreek.com/python/example/124547/pyarrow.parquet.ParquetFile
+
+# batches with pyarrow.
+
+import pyarrow as pq
+batch_size = 1
+_file = pq.parquet.ParquetFile("file.parquet")
+batches = _file.iter_batches(batch_size) #batches will be a generator
+for batch in batches:
+  process(batch)
+
+# get parquet schema
+
+csv2parquet.main_with_args(csv2parquet.convert,
+                       ['csvs/simple.csv', '--rename', '0=alpha', 'b=bee'])
+pqf = pq.ParquetFile('csvs/simple.parquet')
+schema = pqf.schema
+
+# set parquet row-group-size
+
+csv2parquet.main_with_args(csv2parquet.convert, ['csvs/simple.csv', '--row-group-size', '1'])
+pqf = pq.ParquetFile('csvs/simple.parquet')
+
+
+##############################################################
+Converting a CSV to Parquet with PyArrow
+##############################################################
+
+https://mungingdata.com/pyarrow/parquet-metadata-min-max-statistics/
+
+CSV data.
+first_name,last_name
+jose,cardona
+jon,smith
+
+import pyarrow.csv as pv
+import pyarrow.parquet as pq
+table = pv.read_csv('./data/people/people1.csv')
+pq.write_table(table, './tmp/pyarrow_out/people1.parquet')
+
+
+# Fetching metadata of Parquet file
+
+import pyarrow.parquet as pq
+parquet_file = pq.ParquetFile('./tmp/pyarrow_out/people1.parquet')
+parquet_file.metadata
+parquet_file.metadata.row_group(0)
+parquet_file.metadata.row_group(0).column(0)
+parquet_file.metadata.row_group(0).column(0).compression # => 'SNAPPY'
+
+
+# Fetching Parquet column statistics
+
+CSV data.
+nickname,age
+fofo,3
+tio,1
+lulu,9
+
+# Convert the CSV file to a Parquet file.
+
+table = pv.read_csv('./data/pets/pets1.csv')
+pq.write_table(table, './tmp/pyarrow_out/pets1.parquet')
+
+Inspect the Parquet metadata statistics
+
+parquet_file = pq.ParquetFile('./tmp/pyarrow_out/pets1.parquet')
+print(parquet_file.metadata.row_group(0).column(1).statistics)
