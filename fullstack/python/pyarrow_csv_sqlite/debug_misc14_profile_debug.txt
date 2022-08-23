@@ -1,0 +1,146 @@
+##########################################################
+python profiler PyCharm Vscode
+##########################################################
+
+https://stackoverflow.com/questions/32926847/profiling-a-python-program-with-pycharm-or-any-other-ide
+https://jiffyclub.github.io/snakeviz/
+https://marketplace.visualstudio.com/items?itemName=ms-python.python
+https://dev.to/yamakanto/how-i-set-up-vscode-for-python-tests-coverage-profiling-2jf4
+https://docs.python.org/3/library/profile.html
+https://stackoverflow.com/questions/33906456/use-pycharm-to-view-profiling-data
+https://plugins.jetbrains.com/plugin/16536-line-profiler
+https://stackoverflow.com/questions/32926847/profiling-a-python-program-with-pycharm-or-any-other-ide
+https://www.jetbrains.com/help/pycharm/profiler.html#work-with-profiling-results
+https://machinelearningmastery.com/profiling-python-code/
+https://towardsdatascience.com/how-to-profile-your-code-in-python-e70c834fad89
+https://docs.python.org/3/library/profile.html
+https://stackoverflow.com/questions/582336/how-do-i-profile-a-python-script
+
+
+Since PyCharm 2017, the profiler plugin is available only in the Professional (non-free)
+edition of PyCharm, and not in the Community (free & open-source) edition.
+
+
+import cProfile as profile
+
+# In outer section of code
+pr = profile.Profile()
+pr.disable()
+
+# In section you want to profile
+pr.enable()
+# code of interest
+pr.disable()
+
+# Back in outer section of code
+pr.dump_stats('profile.pstat')
+Open file in PyCharm's CProfile viewer.
+
+...
+
+import cProfile
+
+pr = cProfile.Profile()
+pr.enable()
+your_function_call()
+pr.disable()
+# after your program ends
+pr.print_stats(sort="calls")
+
+# python -m cProfile -s 'calls' <your_program>.py
+
+...
+
+import cProfile
+import io
+import pstats
+def profile(func):
+    def wrapper(*args, **kwargs):
+        pr = cProfile.Profile()
+        pr.enable()
+        retval = func(*args, **kwargs)
+        pr.disable()
+        s = io.StringIO()
+        sortby = SortKey.CUMULATIVE  # 'cumulative'
+        ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+        ps.print_stats()
+        print(s.getvalue())
+        return retval
+
+    return wrapper
+# Profile foo
+@profile
+def foo():
+    print('Profile me!')
+
+
+...
+
+import cProfile
+cProfile.run('foo()')
+
+...
+
+class ProfiledThread(threading.Thread):
+    # Overrides threading.Thread.run()
+    def run(self):
+        profiler = cProfile.Profile()
+        try:
+            return profiler.runcall(threading.Thread.run, self)
+        finally:
+            profiler.dump_stats('myprofile-%d.profile' % (self.ident,))
+
+
+-------------------------------------------------------
+snakeviz
+-------------------------------------------------------
+pip install snakeviz
+python -m cProfile -o program.prof my_program.py
+snakeviz program.prof
+snakeviz profile.pstat
+
+-------------------------------------------------------
+pycallgraph
+-------------------------------------------------------
+pip install pycallgraph
+pycallgraph graphviz -- ./mypythonscript.py
+
+from pycallgraph import PyCallGraph
+from pycallgraph.output import GraphvizOutput
+
+with PyCallGraph(output=GraphvizOutput()):
+    code_to_profile()
+
+-------------------------------------------------------
+kcachegrind
+-------------------------------------------------------
+apt-get install kcachegrind
+pip install pyprof2calltree
+
+
+
+-------------------------------------------------------
+Python profiling with PyCharm Community Edition
+-------------------------------------------------------
+
+# cProfile is part of standard python library
+
+# install snakeviz
+$ pip install snakeviz
+
+# install cprofildev
+$ pip install cprofilev
+
+
+snakeviz output.prof
+
+
+# install line_profiler
+$ pip install line_profiler
+
+# install memory_profiler and psutil
+$ pip install memory_profiler
+$ pip install psutil
+
+
+
