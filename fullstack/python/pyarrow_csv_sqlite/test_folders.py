@@ -8,11 +8,11 @@ def set_test_dirs(path_dir):
         os.mkdir(path_dir)
 
 
-def getDbDir():
+def get_db_dir():
     return db_path
 
 
-def getTestDir():
+def get_test_dir():
     return path
 
 

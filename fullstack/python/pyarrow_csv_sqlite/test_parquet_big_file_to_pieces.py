@@ -22,6 +22,7 @@ print(df.shape)
 print(df.head())
 
 import dask.dataframe as da
+
 ddf = da.from_pandas(df, chunksize=100000)
 save_dir = 'tmp/'
 ddf.to_parquet(save_dir)

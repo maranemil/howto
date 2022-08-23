@@ -30,6 +30,7 @@ for rg in range(pq_file.metadata.num_row_groups):
 print('---------------------------------------------')
 print(datacolumn)
 
+
 # https://stackoverflow.com/questions/1094841/get-human-readable-version-of-file-size
 def sizeof_fmt(num, suffix="B"):
     for unit in ["", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"]:
@@ -46,7 +47,6 @@ for rg in range(pq_file.metadata.num_row_groups):
     datametadata.append([rg, rg_meta.num_rows, sizeof_fmt(rg_meta.total_byte_size)])
 print('---------------------------------------------')
 print(datametadata)
-
 
 # dfdb = dd.read_parquet('file.pqt', engine='pyarrow')
 # dfdb = dd.read_parquet('tmp/part*.parquet', engine='pyarrow')

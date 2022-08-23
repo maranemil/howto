@@ -60,15 +60,15 @@ data = [["columns:", pq_file.metadata.num_columns],
 # look at the schema of the parquet file
 
 s = pq_file.metadata.schema
-data = [[s.column(i).name, s.column(i).physical_type, s.column(i).logical_type] for i in range(len(s))]
+data2 = [[s.column(i).name, s.column(i).physical_type, s.column(i).logical_type] for i in range(len(s))]
 
 #  get row groups
 
 s = pq_file.metadata.schema
-data = []
+data3 = []
 for rg in range(pq_file.metadata.num_row_groups):
     rg_meta = pq_file.metadata.row_group(rg)
-    data.append([rg, rg_meta.num_rows, sizeof_fmt(rg_meta.total_byte_size)])
+    data3.append([rg, rg_meta.num_rows, sizeof_fmt(rg_meta.total_byte_size)])
 
 # write them in one batch
 

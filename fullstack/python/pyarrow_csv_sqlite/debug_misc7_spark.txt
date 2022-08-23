@@ -1,71 +1,89 @@
-os.makedirs('tmp', exist_ok=True)
 
---
-Clear Cache
+##########################################################
+install spark
+##########################################################
 
-https://pypi.org/project/clear-cache/
-https://pypi.org/project/cleanpy/
-https://stackoverflow.com/questions/43459673/clear-cache-or-memory-in-python
-https://linuxhint.com/pip-clear-cache/
-https://www.programcreek.com/python/?CodeExample=clear+cache
-https://github.com/streamlit/streamlit/issues/732
-https://sourceexample.com/article/en/2a5f7e8460daa23d12e07b8c6adb8275/
-https://www.codegrepper.com/code-examples/python/clear+all+python+cache
-https://www.geeksforgeeks.org/clear-lru-cache-in-python/
+https://stackoverflow.com/questions/32967805/sqlcontext-object-has-no-attribute-read-while-reading-csv-in-pyspark/32967849
+https://stackoverflow.com/questions/65375537/function-object-has-no-attribute-read-on-jupyter
+https://spark.apache.org/docs/latest/sql-data-sources-parquet.html
+https://sparkbyexamples.com/pyspark/pyspark-read-and-write-parquet-file/
+https://sparkbyexamples.com/spark/spark-read-write-dataframe-parquet-example/
+https://stackoverflow.com/questions/41254011/sparksql-read-parquet-file-directly
+https://spark.apache.org/docs/latest/sql-data-sources-parquet.html
+https://spark.apache.org/docs/1.6.1/sql-programming-guide.html
 
-python -m pip install clear_cache
 
-from clear_cache import clear as clear_cache
-clear_cache(dir = ".")
+python -m pip install spark
+python -m pip install pyspark
 
-MyVariable = None
+parquetFile = spark.read.parquet("people.parquet")
 
-from streamlit import caching
-caching.clear_cache()
+module 'spark' has no attribute 'read'
 
-import streamlit as st
-st.legacy_caching.clear_cache()
+from pyspark.sql import SQLContext
+sqlContext = SQLContext(sc)
+df = sqlContext.load(source="com.databricks.spark.csv", header="true", path = "cars.csv")
+df.select("year", "model").save("newcars.csv", "com.databricks.spark.csv")
 
------
 
+
+import pyspark
+conf = pyspark.SparkConf()
+# conf.set('spark.app.name', app_name) # Optional configurations
+# init & return
+sc = pyspark.SparkContext.getOrCreate(conf=conf)
+sqlcontext = SQLContext(sc)
+df = sqlcontext.read.json('random.json')
+
+
+
+df = sqlContext.read.parquet("src/main/resources/peopleTwo.parquet")
+df.printSchema
+// after registering as a table you will be able to run sql queries
+df.registerTempTable("people")
+sqlContext.sql("select * from people").collect.foreach(println)
+
+
+from pyspark.sql import SQLContext
+sqlContext = SQLContext(sc)
+
+
+
+from pyspark.sql import SQLContext
+sc = SparkContext.getOrCreate()
+sqlContext = SQLContext(sc)
+df = sqlContext.read.json("examples/src/main/resources/people.json")
+# Displays the content of the DataFrame to stdout
+df.show()
+
+
+from pyspark.sql import SQLContext
+sqlContext = SQLContext(sc)
+df = sqlContext.sql("SELECT * FROM table")
 
 JAVA_HOME is not set
 
-java --version
-
-sudo apt install default-jre              # version 2:1.11-72build2, or
-sudo apt install openjdk-11-jre-headless  # version 11.0.16+8-0ubuntu1~22.04
+sudo apt install openjdk-11-jre-headless  # version 11.0.15+10-0ubuntu0.22.04.1, or
+sudo apt install default-jre              # version 2:1.11-72build2
 sudo apt install openjdk-17-jre-headless  # version 17.0.3+7-0ubuntu0.22.04.1
 sudo apt install openjdk-18-jre-headless  # version 18~36ea-1
 sudo apt install openjdk-8-jre-headless   # version 8u312-b07-0ubuntu1
 
-java.sql.SQLException: No suitable driver
 
-java -cp mysql-connector-java-5.1.18-bin.jar:. MySQLTest
-java -classpath ".;sqlite-jdbc-3.27.2.1.jar" net.sqlitetutorial.Connect
-java -cp .:sqlitejdbc-v056.jar Test
+--------------------------------------------------------------
+####################################################
+PySpark Read and Write Parquet File
+####################################################
 
+https://spark.apache.org/docs/latest/sql-data-sources-parquet.html
+https://sparkbyexamples.com/pyspark/pyspark-read-and-write-parquet-file/
+https://sparkbyexamples.com/spark/spark-read-write-dataframe-parquet-example/
+https://www.projectpro.io/recipes/read-and-write-parquet-files-pyspark
 
-org.sqlite.JDBC
-sqlite-jdbc-3.7.2.jar
-https://github.com/xerial/sqlite-jdbc
+parquetFile = spark.read.parquet("people.parquet")
 
-WARNING:root:'PYARROW_IGNORE_TIMEZONE' environment variable was not set. It is required to set this environment variable to '1' in both driver and executor sides if you use pyarrow>=2.0.0. pandas-on-Spark will set it for you but it does not work if there is a Spark context already launched.
-
-java.lang.ClassNotFoundException: com.sqlite.jdbc.Driver
-
-https://sparkbyexamples.com/pandas/pandas-read-sql-query-or-table/
-https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html
-https://pandas.pydata.org/docs/reference/api/pandas.read_sql.html
-https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_sql.html
-https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_sql_table.html
-https://arrow.apache.org/docs/python/parquet.html#finer-grained-reading-and-writing
-
-
-https://dbschema.com/download.html
-
-https://dbschema.com/jdbc-drivers/SqliteJdbcDriver.zip
-https://dbschema.com/download/DbSchema_linux_9_0_3.deb
+df.write.parquet("/tmp/out/people.parquet")
+parDF1=spark.read.parquet("/temp/out/people.parquet")
 
 --------------------------------------------------------------
 
@@ -85,21 +103,13 @@ Scaling row group sizes to 95,00% for 8 writers
 java.lang.OutOfMemoryError: Java heap space
 
 
-
 convert ALL columns to strings, you can simply use:
 df = df.astype(str)
-
-
 
 df[["D", "E"]] = df[["D", "E"]].astype(int)
 total_rows['ColumnID'] = total_rows['ColumnID'].astype(str)
 
-
-
-
 ------------------------------------------------------------------------
-
-
 
 TypeError: Sparse pandas data (column anb_em_ch_ken) not supported
 
@@ -108,9 +118,11 @@ https://arrow.apache.org/docs/python/dataset.html
 https://arrow.apache.org/docs/python/generated/pyarrow.parquet.ParquetWriter.html
 
 ------------------------------------------------------------------------
+
 ####################################################
 Read data from SQLite
 ####################################################
+
 https://vinta.ws/code/spark-sql-cookbook-pyspark.html
 
 $ pyspark --packages "org.xerial:sqlite-jdbc:3.16.1"
@@ -135,8 +147,7 @@ schema = StructType([
 df = spark.createDataFrame(df.rdd, schema)
 
 
-
-Read data from parquet
+# Read data from parquet
 from pyspark.sql.utils import AnalysisException
 
 raw_df_filepath = 'raw_df.parquet'
@@ -720,28 +731,7 @@ sqlContext.read.format("jdbc").options(url ="jdbc:sqlite:c:test.db", driver="org
 ------------------------------------------------------------------------
 
 
-https://stackoverflow.com/questions/22005911/convert-columns-to-string-in-pandas
-https://arrow.apache.org/docs/python/dataset.html
-
-#importing libraries
-import numpy as np
-import pandas as pd
-import time
-
-#creating four sample dataframes using dummy data
-df1 = pd.DataFrame(np.random.randint(1, 1000, size =(10000000, 1)), columns =['A'])
-df2 = pd.DataFrame(np.random.randint(1, 1000, size =(10000000, 1)), columns =['A'])
-df3 = pd.DataFrame(np.random.randint(1, 1000, size =(10000000, 1)), columns =['A'])
-df4 = pd.DataFrame(np.random.randint(1, 1000, size =(10000000, 1)), columns =['A'])
-
-#applying astype(str)
-time1 = time.time()
-df1['A'] = df1['A'].astype(str)
-print('time taken for astype(str) : ' + str(time.time()-time1) + ' seconds')
-
-pd['Column'].map(str)
 ------------------------------------------------------------------------
-
 
 https://intellipaat.com/community/11477/converting-pandas-dataframe-into-spark-dataframe-error
 

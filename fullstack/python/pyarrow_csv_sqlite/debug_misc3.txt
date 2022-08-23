@@ -1,66 +1,3 @@
-####################################################
-PerformanceWarning: DataFrame is highly fragmented
-####################################################
-
-https://github.com/twopirllc/pandas-ta/issues/340
-https://www.anycodings.com/1questions/1207897/performancewarning-dataframe-is-highly-fragmented-this-is-usually-the-result-of-calling-frameinsert-many-times-which-has-poor-performance
-https://tutorialmeta.com/question/too-many-columns-resulting-in-performancewarning-dataframe-is-highly-fragmente
-
-
-This is usually the result of calling `frame.insert` many times, which has poor performance.
-Consider joining all columns at once using pd.concat(axis=1) instead.
-To get a de-fragmented frame, use `newframe = frame.copy()`
-
-df1 = df1.append(df, ignore_index =True)
-
-FIX
-pd.concat((df1,df),axis=0)
-
-REPRODUCE
-
-import numpy as np
-import pandas as pd
-
-# Sample `df`
-np.random.seed(5)
-df = pd.DataFrame(np.random.randint(1, 100, (4, 5000)))
-df.columns = df.columns + 1
-
-num_sims = len(df.columns)  # Placeholder for `num_sims`
-ranking = pd.DataFrame()  # Placeholder for `ranking`
-
-for x in range(1, num_sims + 1):
-    ranking[x] = df[x].rank(ascending=False, method='min')
-
-FIX
-
-ranking = pd.DataFrame()  # Placeholder for `ranking`
-ranking = pd.concat(
-    [ranking, df[range(1, num_sims + 1)].rank(ascending=False, method='min')],
-    axis=1
-)
-
-
-TEST
-
-import numpy as np
-import pandas as pd
-
-np.random.seed(5)
-df = pd.DataFrame(np.random.randint(1, 100, (4, 5000)))
-df.columns = df.columns + 1
-ranking = pd.DataFrame()
-num_sims = len(df.columns)
-
-for x in range(1, num_sims + 1):
-    ranking[x] = df[x].rank(ascending=False, method='min')
-
-print(ranking.eq(pd.concat(
-    [pd.DataFrame(),
-     df[range(1, num_sims + 1)].rank(ascending=False, method='min')],
-    axis=1
-)).all(axis=None))  # True
-
 
 ------------------------------
 ####################################################
@@ -97,50 +34,7 @@ https://www.w3schools.com/python/python_lambda.asp
 https://www.geeksforgeeks.org/python-lambda-anonymous-functions-filter-map-reduce
 
 ------------------------------------------------------------
-####################################################
-Colored text terminal
-####################################################
 
-https://stackoverflow.com/questions/287871/how-do-i-print-colored-text-to-the-terminal
-
-
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKCYAN = '\033[96m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-
-
-print('\x1b[6;30;42m' + 'Success!' + '\x1b[0m')
-print("\033[94m  test  \033[0m \n")
-
-
-import os
-
-# System call
-os.system("")
-
-# Class of different styles
-class style():
-    BLACK = '\033[30m'
-    RED = '\033[31m'
-    GREEN = '\033[32m'
-    YELLOW = '\033[33m'
-    BLUE = '\033[34m'
-    MAGENTA = '\033[35m'
-    CYAN = '\033[36m'
-    WHITE = '\033[37m'
-    UNDERLINE = '\033[4m'
-    RESET = '\033[0m'
-
-print(style.YELLOW + "Hello, World!")
-
-------------------------------------------------------------
 ####################################################
 delete object
 ####################################################
@@ -148,7 +42,6 @@ delete object
 https://www.toppr.com/guides/python/methods-and-functions/del/python-del-statement-with-examples/
 
 del obj_name[optional]
-
 
 ------------------------------------------------------------
 ####################################################
@@ -172,7 +65,6 @@ https://www.tutorialspoint.com/find-mismatch-item-on-same-index-in-two-list-in-p
 https://www.digitalocean.com/community/tutorials/how-to-compare-two-lists-in-python
 https://www.w3resource.com/python-exercises/list/python-data-type-list-exercise-198.php
 
-
 import functools
 l1 = [10, 20, 30, 40, 50]
 l2 = [10, 20, 30, 50, 40, 70]
@@ -185,7 +77,6 @@ if functools.reduce(lambda x, y : x and y, map(lambda p, q: p == q,l1,l3), True)
     print ("The lists l1 and l3 are the same")
 else:
     print ("The lists l1 and l3 are not the same")
-
 
 
 import collections
@@ -225,10 +116,7 @@ else:
     print("Lists l1 and l3 are not equal")
 
 
-
-
-
-With zip
+# With zip
 listA= [13, 'Mon',23, 62,'Sun']
 listB = [5, 'Mon',23, 6,'Sun']
 #res = [listB.index(n) for m, n in zip(listA, listB) if n != m]
@@ -236,14 +124,12 @@ res = [listB.index(m) for m, n in zip(listA, listB) if n != m]
 print("The index positions with mismatched values:\n",res)
 
 
-
-With enumerate
+# With enumerate
 listA= [13, 'Mon',23, 62,'Sun']
 listB = [5, 'Mon',23, 6,'Sun']
 res = [idx for idx, elem in enumerate(listB)
 			if elem != listA[idx]]
 print("The index positions with mismatched values:\n",res)
-
 
 
 
@@ -297,17 +183,7 @@ df = pd.DataFrame({'a':[1,3,4,5],'b':[5,1,3,6]})
 #Save DataFrame to parquet format
 df.to_parquet('small.csv','pyarrow')
 
-####################################################
-Validate/Check Parquet File Schema From PC/Laptop
-####################################################
 
-https://github.com/target/data-validator
-https://coding-stream-of-consciousness.com/2020/03/04/validate-check-parquet-file-schema-from-pc-laptop/
-
-pip install parquet-cli
-
-parq part.parquet --schema
-parquet-tools meta --debug part.parquet
 
 -----------------------------------------------------------
 
@@ -317,9 +193,6 @@ https://docs.databricks.com/spark/latest/dataframes-datasets/introduction-to-dat
 https://www.geeksforgeeks.org/how-to-create-an-empty-pyspark-dataframe/
 
 -----------------------------------------------------------
-
-python -m pip install --upgrade pip
-pip install -r requirements.txt
 
 ####################################################
 python debug
@@ -353,52 +226,3 @@ python3 -m pip install --user ipdb
 __import__('ipdb').set_trace(context=21)
 
 
-
-####################################################
-jupyter
-####################################################
-
-
-sudo apt install python3-pip
-pip install jupyter
-jupyter notebook
-
-sudo snap install jupyter       # version 1.0.0, or
-sudo apt  install jupyter-core  # version 4.9.1-1
-
-
-python -m pip install <package>
-
-pip install wheel
-pip install pandas
-
-which python
-python --version
-which pip
-
-sudo python3 -m pip install wheel
-sudo python3 -m pip install pandas
-sudo apt install python3-pandas
-
-python3 -m pip install pandas
-python3 -m pip --version
-pip3 install --upgrade pip
-
-python3 -V
-pipenv --version
-sudo apt install pipenv
-pip --version
-pip install --upgrade pip setuptools wheel
-sudo apt install -y python3-dev
-
-pip install -r requirements.txt
-
-https://bobbyhadz.com/blog/python-no-module-named-pandas
-http://net-informations.com/ds/err/pderr.htm
-
-Cannot set up a python SDK at Python 3.9 (/usr/bin/python3.9). The SDK seems invalid.
-
-rm -r .idea
-
-python3 --version && which python3
-python -m pip install --upgrade pip

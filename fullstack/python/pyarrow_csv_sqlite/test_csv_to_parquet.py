@@ -17,16 +17,16 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import os
 
-
 from test_folders import getDbDir, getTestDir
+
 path = getTestDir()
 db_path = getDbDir()
 
 csv_file = path + 'Sales_Data_Sept21.csv'
 parquet_file = path + 'Sales_Data_Sept21.parquet'
 chunk_size = 100_000
-parquet_schema=''
-parquet_writer=''
+parquet_schema = ''
+parquet_writer = ''
 csv_stream = pd.read_csv(csv_file, sep=';', chunksize=chunk_size, low_memory=False)
 
 for i, chunk in enumerate(csv_stream):

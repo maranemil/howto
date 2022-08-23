@@ -7,9 +7,9 @@ import csv
 from sqlite3 import Error
 import os
 from test_folders import getDbDir, getTestDir
+
 path = getTestDir()
 db_path = getDbDir()
-
 
 # Connect to database
 conn = sql.connect(db_path + 'mydb.db')
