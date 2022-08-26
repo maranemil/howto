@@ -439,3 +439,174 @@ if __name__ == '__main__':
     while True:
         pass
 
+
+#########################################################
+Using a lock
+#########################################################
+
+https://www.educative.io/answers/what-are-locks-in-python
+https://docs.python.org/3/library/threading.html
+https://stackoverflow.com/questions/10525185/python-threading-how-do-i-lock-a-thread
+https://www.delftstack.com/de/howto/python/python-thread-lock/
+https://www.pythontutorial.net/python-concurrency/python-threading-lock/
+https://www.bogotobogo.com/python/Multithread/python_multithreading_Synchronization_Lock_Objects_Acquire_Release.php
+https://www.bogotobogo.com/python/Multithread/python_multithreading_Using_Locks_with_statement_Context_Manager.php
+https://www.python-kurs.eu/threads.php
+https://www.pythonpool.com/python-threading-lock/
+
+# Importing the threading module
+import threading
+# Declraing a lock
+lock = threading.Lock()
+deposit = 100
+# Function to add profit to the deposit
+def add_profit():
+    global deposit
+    for i in range(100000):
+        lock.acquire()
+        deposit = deposit + 10
+        lock.release()
+# Function to deduct money from the deposit
+def pay_bill():
+    global deposit
+    for i in range(100000):
+        lock.acquire()
+        deposit = deposit - 10
+        lock.release()
+# Creating threads
+thread1 = threading.Thread(target = add_profit, args = ())
+thread2 = threading.Thread(target = pay_bill, args = ())
+# Starting the threads
+thread1.start()
+thread2.start()
+# Waiting for both the threads to finish executing
+thread1.join()
+thread2.join()
+# Displaying the final value of the deposit
+print(deposit)
+
+
+
+import threading
+import time
+import inspect
+
+class Thread(threading.Thread):
+    def __init__(self, t, *args):
+        threading.Thread.__init__(self, target=t, args=args)
+        self.start()
+
+count = 0
+lock = threading.Lock()
+
+def incre():
+    global count
+    caller = inspect.getouterframes(inspect.currentframe())[1][3]
+    print "Inside %s()" % caller
+    print "Acquiring lock"
+    with lock:
+        print "Lock Acquired"
+        count += 1
+        time.sleep(2)
+
+def bye():
+    while count < 5:
+        incre()
+
+def hello_there():
+    while count < 5:
+        incre()
+
+def main():
+    hello = Thread(hello_there)
+    goodbye = Thread(bye)
+
+...
+
+
+from threading import Thread
+
+counter = 0
+
+def increase(by):
+    global counter
+    local_counter = counter
+    local_counter += by
+    counter = local_counter
+    print(f'counter={counter}')
+
+t1 = Thread(target=increase, args=(10,))
+t2 = Thread(target=increase, args=(20,))
+
+t1.start()
+t2.start()
+
+t1.join()
+t2.join()
+
+print(f'The final counter is {counter}')
+
+...
+
+import threading
+import logging
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='(%(threadName)-10s) %(message)s',)
+
+def worker_with(lock):
+    with lock:
+        logging.debug('Lock acquired via with')
+
+def worker_not_with(lock):
+    lock.acquire()
+    try:
+        logging.debug('Lock acquired directly')
+    finally:
+        lock.release()
+
+if __name__ == '__main__':
+    lock = threading.Lock()
+    w = threading.Thread(target=worker_with, args=(lock,))
+    nw = threading.Thread(target=worker_not_with, args=(lock,))
+
+    w.start()
+    nw.start()
+
+
+--------------------------------------------------------------------
+
+https://docs.python.org/dev/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor
+https://docs.python.org/dev/library/concurrent.futures.html#threadpoolexecutor
+https://docs.python.org/3/library/concurrent.futures.html
+https://www.tutorialspoint.com/concurrency_in_python/concurrency_in_python_pool_of_threads.htm
+https://www.pythontutorial.net/python-concurrency/python-threadpoolexecutor/
+
+import concurrent.futures
+import urllib.request
+
+URLS = ['http://www.foxnews.com/',
+        'http://www.cnn.com/',
+        'http://europe.wsj.com/',
+        'http://www.bbc.co.uk/',
+        'http://some-made-up-domain.com/']
+
+# Retrieve a single page and report the URL and contents
+def load_url(url, timeout):
+    with urllib.request.urlopen(url, timeout=timeout) as conn:
+        return conn.read()
+
+# We can use a with statement to ensure threads are cleaned up promptly
+with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+    # Start the load operations and mark each future with its URL
+    future_to_url = {executor.submit(load_url, url, 60): url for url in URLS}
+    for future in concurrent.futures.as_completed(future_to_url):
+        url = future_to_url[future]
+        try:
+            data = future.result()
+        except Exception as exc:
+            print('%r generated an exception: %s' % (url, exc))
+        else:
+            print('%r page is %d bytes' % (url, len(data)))
+
+--------------------------------------------------------------------

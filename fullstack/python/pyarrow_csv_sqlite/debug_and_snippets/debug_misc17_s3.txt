@@ -1,0 +1,564 @@
+------------------------------------------------------------
+AWS S3 local server for integration testing
+------------------------------------------------------------
+
+https://stackoverflow.com/questions/23991694/aws-s3-local-server-for-integration-testing
+https://github.com/jubos/fake-s3
+https://github.com/localstack/localstack
+https://github.com/minio/minio
+https://min.io/
+https://github.com/iby/docker-riak-cs
+https://github.com/basho/riak_cs
+https://github.com/mindmill/ladon-s3-server
+https://www.npmjs.com/package/serverless-s3-local
+https://github.com/jamhall/s3rver
+https://github.com/adobe/S3Mock
+https://s3ninja.net/
+https://github.com/scireum/s3ninja
+https://dev.to/goodidea/how-to-fake-aws-locally-with-localstack-27me
+https://geekflare.com/de/self-hosted-s3/
+
+https://min.io/
+https://ceph.io/en/discover/technology/
+https://www.zenko.io/cloudserver/
+https://riak.com/products/riak-s2/index.html
+https://www.tritondatacenter.com/triton/compute
+http://leo-project.net/leofs/
+https://cloudian.com/products/hyperstore/
+
+https://www.chrisjmendez.com/2016/04/15/how-to-run-s3-locally-for-development-purposes/
+https://curatedgo.com/r/aws-s3-fake-johannesboynegofakes3/index.html
+https://hub.docker.com/r/zenko/cloudserver
+https://docs.aws.amazon.com/code-samples/latest/catalog/javav2-s3-src-test-java-AmazonS3Test.java.html
+https://www.stevejgordon.co.uk/running-aws-s3-simple-storage-service-using-docker-for-net-core-developers
+https://blog.jdriven.com/2021/03/running-aws-locally-with-localstack/
+https://github.com/railsware/fakes3server
+https://localstack.cloud/
+https://docs.amplify.aws/cli/usage/mock/#connecting-to-a-mock-model-table
+https://morioh.com/p/80159d706bcc
+https://blog.waterworld.com.hk/post/developing-amazon-s3-locally-using-fakes3
+https://engineering.zalando.com/posts/2021/02/integration-tests-with-testcontainers.html
+
+
+
+
+
+https://hub.docker.com/r/bitnami/minio-client
+https://hub.docker.com/r/bitnami/minio
+
+# minio
+wget https://dl.minio.io/server/minio/release/linux-amd64/minio
+$ chmod 755 minio
+$ ./minio --help
+
+
+
+
+
+############
+Localstack
+############
+
+
+version: "2.1"
+  services:
+   localstack:
+     image: localstack/localstack
+     container_name: localstack
+     ports:
+       - "4566:4566" # port of to where localstack can be addressed to
+       - "9000:9000"
+     environment:
+       - SERVICES=sqs,dynamodb # a list of desired services you want to use.
+       - DEFAULT_REGION=eu-west-1 # This is the region where your localstack mocks to be running
+       - DATA_DIR=/tmp/localstack/data
+       - PORT_WEB_UI=9000
+       - LAMBDA_EXECUTOR=local
+       - DOCKER_HOST=unix:///var/run/docker.sock
+       - START_WEB=1
+
+
+
+docker-compose up localstack
+
+
+
+
+version: '3.7'
+
+services:
+
+  localstack-s3:
+    image: localstack/localstack:latest
+    container_name: localstack-s3
+    environment:
+     - SERVICES=s3:5002
+     - DEFAULT_REGION=eu-west-2
+     - DATA_DIR=/tmp/localstack/data
+    ports:
+     - "5002:5002"
+     - "9999:8080"
+    volumes:
+      - localstack-data:/tmp/localstack
+
+volumes:
+
+  localstack-data:
+    name: localstack-data
+
+
+
+Atlassian Localstack
+
+version: '3.2'
+services:
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack_demo
+    ports:
+      - '4563-4599:4563-4599'
+      - '8055:8080'
+    environment:
+      - SERVICES=s3
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+    volumes:
+      - './.localstack:/tmp/localstack'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+
+
+docker-compose up -d.
+
+visit http://localhost:8055
+S3 endpoint http://localhost:4572
+
+Create a bucket: aws --endpoint-url=http://localhost:4572 s3 mb s3://demo-bucket
+
+Attach an ACL to the bucket so it is readable:
+aws --endpoint-url=http://localhost:4572 s3api put-bucket-acl --bucket demo-bucket --acl public-read
+
+
+
+--------------------------
+Atlassian Localstack
+--------------------------
+
+https://github.com/localstack/localstack
+
+version: '3.7'
+services:
+  localstack:
+    image: localstack/localstack
+    container_name: localstack_service
+    ports:
+      - "4567-4584:4567-4584"
+      - "8055:8080"
+    environment:
+      - SERVICES=s3
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+    volumes:
+      - ./tmp/localstack:/tmp/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+networks:
+  default:
+    name: mock_demo
+
+docker-compose up -d
+pip install aws-cli
+
+
+Configure AWS key and secret in localstack
+aws configure
+AWS Access Key ID [None]: ACCESSKEYAWSUSER
+AWS Secret Access Key [None]: sEcreTKey
+Default region name [None]: us-west-2
+Default output format [None]: json
+
+Create a S3 bucket in localstack
+aws --endpoint-url=http://localhost:4572 s3api put-bucket-acl --bucket demo-bucket --acl public-read
+
+
+Verify S3 bucket
+Open http://localhost:8055/#!/infra in the browser and youâ€™ll see a bucket in AWS localstack
+
+
+##########################################################
+3 ways to test S3 in Python
+##########################################################
+
+https://www.sanjaysiddhanti.com/2020/04/08/s3testing/
+
+
+Setup
+Letâ€™s consider a simple CRUD app for recipes, backed by S3.
+
+from dataclasses import dataclass
+import json
+
+import boto3
+
+S3_BUCKET = "recipes"
+
+
+def get_s3():
+    return boto3.client("s3")
+
+
+@dataclass
+class Recipe:
+    name: str
+    instructions: str
+
+    @classmethod
+    def get_by_name(cls, name: str):
+        """Looks up a Recipe by name
+
+        Args:
+            name (str): Recipe name
+
+        Returns a Recipe object
+        """
+        response = get_s3().get_object(Bucket=S3_BUCKET, Key=name)
+        response = json.loads(response["Body"].read())
+        return cls(response["name"], response["instructions"])
+
+    @classmethod
+    def update_instructions(cls, name: str, new_instructions: str):
+        """Updates the instructions for a recipe
+
+        Args:
+            name (str): Name of the recipe to update
+            new_instructions (str): New instructions
+        """
+        recipe = cls.get_by_name(name)
+        recipe.instructions = new_instructions
+        return recipe
+
+    @classmethod
+    def delete(cls, name: str):
+        """Deletes a recipe
+
+        Args:
+            name (str): Name of the recipe to delete
+        """
+        get_s3().delete_object(Bucket=S3_BUCKET, Key=name)
+
+    def to_json(self):
+        """Serialize the recipe to json
+
+        Returns:
+            str: JSON representation of the Recipe
+        """
+        return json.dumps({"name": self.name, "instructions": self.instructions})
+
+    def save(self):
+        """Persists a recipe to S3
+        """
+        serialized_recipe = self.to_json().encode("utf-8")
+        get_s3().put_object(Bucket=S3_BUCKET, Key=self.name, Body=serialized_recipe)
+
+--------------------------
+Option 1: moto
+--------------------------
+
+Moto is a Python library that makes it easy to mock out AWS services in tests.
+import boto3
+from moto import mock_s3
+import pytest
+
+
+from recipe import Recipe, S3_BUCKET
+
+
+@pytest.fixture
+def s3():
+    """Pytest fixture that creates the recipes bucket in
+    the fake moto AWS account
+
+    Yields a fake boto3 s3 client
+    """
+    with mock_s3():
+        s3 = boto3.client("s3")
+        s3.create_bucket(Bucket=S3_BUCKET)
+        yield s3
+
+Next, we can test creating a new Recipe and fetching it.
+
+def test_create_and_get(s3):
+    Recipe(name="nachos", instructions="Melt cheese on chips").save()
+
+    recipe = Recipe.get_by_name("nachos")
+    assert recipe.name == "nachos"
+    assert recipe.instructions == "Melt cheese on chips"
+
+If we try to fetch a Recipe that doesnâ€™t exist, an exception should be raised. This test covers that scenario.
+
+def test_get_does_not_exist(s3):
+    with pytest.raises(s3.exceptions.NoSuchKey):
+        recipe = Recipe.get_by_name("sandwich")
+
+
+We can also update a Recipe. This test confirms that the data is updated after save() is called.
+
+def test_update(s3):
+    old_instructions = "Melt cheese on chips"
+    new_instructions = "Microwave a plate full of tortilla chips and cheese"
+
+    Recipe(name="nachos", instructions=old_instructions).save()
+
+    new_recipe = Recipe.update_instructions(
+        name="nachos", new_instructions=new_instructions
+    )
+
+    # Nothing changes until you call save()
+    recipe = Recipe.get_by_name("nachos")
+    assert recipe.instructions == old_instructions
+
+    new_recipe.save()
+
+    # Recipe updates after saving
+    recipe = Recipe.get_by_name("nachos")
+    assert recipe.instructions == new_instructions
+
+
+Finally, we can delete a recipe and confirm that the data in S3 disappears.
+
+def test_delete(s3):
+    Recipe(name="nachos", instructions="Melt cheese on chips").save()
+
+    response = s3.list_objects_v2(Bucket=S3_BUCKET)
+    assert len(response["Contents"]) == 1
+    assert response["Contents"][0]["Key"] == "nachos"
+
+    Recipe.delete("nachos")
+
+    # Data in S3 is gone after deleting the recipe
+    response = s3.list_objects_v2(Bucket=S3_BUCKET)
+    assert "Contents" not in response.keys()
+
+
+
+--------------------------
+Option 2: Botocore stubs
+--------------------------
+
+import datetime
+import json
+from dateutil.tz import tzutc
+from io import BytesIO
+from unittest.mock import patch
+
+import boto3
+from botocore.stub import Stubber, ANY
+from botocore.response import StreamingBody
+import pytest
+
+from recipe import Recipe, S3_BUCKET
+
+
+@pytest.fixture
+def s3_stub():
+    """Pytest fixture that mocks the get_s3 function with a S3 client stub
+
+    Yields a Stubber for the S3 client
+    """
+    s3 = boto3.client("s3")
+    stubber = Stubber(s3)
+
+    with patch("recipe.get_s3", return_value=s3):
+        yield stubber
+
+
+
+Then, we can stub out responses for the put_object and get_object S3 APIs. With those stubs in place, we can run the test that creates and subsequently fetches a Recipe.
+
+def test_create_and_get(s3_stub):
+    # Stub out the put_object response
+    # Note: These stubs are incomplete - I omitted things such as
+    # HTTP headers for brevity
+    put_object_response = {
+        "ResponseMetadata": {
+            "RequestId": "5994D680BF127CE3",
+            "HTTPStatusCode": 200,
+            "RetryAttempts": 1,
+        },
+        "ETag": '"6299528715bad0e3510d1e4c4952ee7e"',
+    }
+    put_object_expected_params = {"Bucket": ANY, "Key": ANY, "Body": ANY}
+    s3_stub.add_response("put_object", put_object_response, put_object_expected_params)
+
+    # Create the StreamingBody that will be returned by get_object
+    encoded_message = json.dumps(
+        {"name": "nachos", "instructions": "Melt cheese on chips"}
+    ).encode("utf-8")
+    raw_stream = StreamingBody(BytesIO(encoded_message), len(encoded_message))
+
+    # Stub out the get_object response
+    get_object_response = {
+        "ResponseMetadata": {
+            "RequestId": "6BFC00970E62BC8F",
+            "HTTPStatusCode": 200,
+            "RetryAttempts": 1,
+        },
+        "LastModified": datetime.datetime(2020, 4, 6, 5, 39, 29, tzinfo=tzutc()),
+        "ContentLength": 58,
+        "ETag": '"6299528715bad0e3510d1e4c4952ee7e"',
+        "ContentType": "binary/octet-stream",
+        "Metadata": {},
+        "Body": raw_stream,
+    }
+    get_object_expected_params = {"Bucket": ANY, "Key": ANY}
+    s3_stub.add_response("get_object", get_object_response, get_object_expected_params)
+
+    # Activate the stubber
+    with s3_stub:
+        recipe = Recipe(name="nachos", instructions="Melt cheese on chips")
+        recipe.save()
+
+        recipe = Recipe.get_by_name("nachos")
+        assert recipe.name == "nachos"
+        assert recipe.instructions == "Melt cheese on chips"
+
+
+--------------------------
+Option 3: Localstack
+--------------------------
+
+First, we need to bring up localstack. I choose to do this with docker-compose.
+
+version: "3.7"
+services:
+  tests:
+    image: s3_testing:latest
+    networks:
+      - app
+    entrypoint:
+      - /app/wait-for-it.sh
+      - -t
+      - "30"
+      - localstack:4572
+      - --
+      - pytest
+      - test/
+    environment:
+      - AWS_ACCESS_KEY_ID=fake
+      - AWS_DEFAULT_REGION=fake
+      - AWS_SECRET_ACCESS_KEY=fake
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "4566-4599:4566-4599"
+    networks:
+      - app
+    environment:
+      - SERVICES=s3
+networks:
+  app:
+    driver: bridge
+
+Next, we mock get_s3 again and this time replace it with an S3 client that is connected to localstack.
+
+from unittest.mock import patch
+
+import boto3
+import pytest
+from recipe import Recipe, S3_BUCKET
+
+@pytest.fixture
+def s3_localstack():
+    s3 = boto3.client("s3", endpoint_url="http://localstack:4572")
+    s3.create_bucket(Bucket=S3_BUCKET)
+    with patch("recipe.get_s3", return_value=s3):
+        yield s3
+With this mock in place, we can run the same tests that we ran with moto.
+
+def test_create_and_get(s3_localstack):
+    Recipe(name="nachos", instructions="Melt cheese on chips").save()
+
+    recipe = Recipe.get_by_name("nachos")
+    assert recipe.name == "nachos"
+    assert recipe.instructions == "Melt cheese on chips"
+
+
+def test_get_does_not_exist(s3_localstack):
+    with pytest.raises(s3_localstack.exceptions.NoSuchKey):
+        recipe = Recipe.get_by_name("sandwich")
+
+-----------------------------------------------------------------------
+
+https://hub.docker.com/r/minio/minio/
+https://min.io/
+
+-----------------------------------------------------------------------
+aws lambda s3
+-----------------------------------------------------------------------
+https://stackoverflow.com/questions/48945389/how-could-i-use-aws-lambda-to-write-file-to-s3-python
+
+import boto3
+
+def lambda_handler(event, context):
+    string = "dfghj"
+    encoded_string = string.encode("utf-8")
+    bucket_name = "s3bucket"
+    file_name = "hello.txt"
+    s3_path = "100001/20180223/" + file_name
+    s3 = boto3.resource("s3")
+    s3.Bucket(bucket_name).put_object(Key=s3_path, Body=encoded_string)
+If the data is in a file, you can read this file and send it up:
+
+with open(filename) as f:
+    string = f.read()
+
+encoded_string = string.encode("utf-8")
+
+
+
+Copy and past this into your Lambda python function
+
+import json, boto3,os, sys, uuid
+from urllib.parse import unquote_plus
+s3_client = boto3.client('s3')
+
+def lambda_handler(event, context):
+    some_text = "test"
+    #put the bucket name you create in step 1
+    bucket_name = "my_buck_name"
+    file_name = "my_test_file.csv"
+    lambda_path = "/tmp/" + file_name
+    s3_path = "output/" + file_name
+    os.system('echo testing... >'+lambda_path)
+    s3 = boto3.resource("s3")
+    s3.meta.client.upload_file(lambda_path, bucket_name, file_name)
+    return {
+        'statusCode': 200,
+        'body': json.dumps('file is created in:'+s3_path)
+    }
+
+
+
+
+from os import path
+import json, boto3, sys, uuid
+import requests
+s3_client = boto3.client('s3')
+
+def lambda_handler(event, context):
+    bucket_name = "mybucket"
+    url = "https://i.imgur.com/ExdKOOz.png"
+    reqponse = requests.get(url)
+    filenname = get_filename(url)
+    img = reqponse.content
+    s3 = boto3.resource("s3")
+    s3.Bucket(bucket_name).put_object(Key=filenname, Body=img)
+    return {'statusCode': 200,'body': json.dumps('file is created in:')}
+
+def get_filename(url):
+    fragment_removed = url.split("#")[0]
+    query_string_removed = fragment_removed.split("?")[0]
+    scheme_removed = query_string_removed.split("://")[-1].split(":")[-1]
+    if scheme_removed.find("/") == -1:
+       return ""
+    return path.basename(scheme_removed)
+
+

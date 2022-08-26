@@ -1,0 +1,220 @@
+
+------------------------------------------------------------------------------
+####################################################
+cursor fetchall
+####################################################
+
+https://stackoverflow.com/questions/21334767/is-sqlite3-fetchall-necessary
+
+cursor = db.execute("SELECT customer FROM table")
+    for row in cursor:
+              print row[0]
+
+cursor = db.execute("SELECT customer FROM table")
+    for row in cursor.fetchall():
+              print row[0]
+
+------------------------------------------------------------------------------
+####################################################
+Convert SQLite Database into CVS file in Python
+####################################################
+
+https://www.alixaprodev.com/2022/04/sqlite-database-to-csv-file-in-python.html
+
+import csv
+import sqlite3
+
+conn = sqlite3.connect('sqlite.db')
+cursor = conn.cursor()
+cursor.execute("select * from Student;")
+with open("out.csv", 'w',newline='') as csv_file:
+    csv_writer = csv.writer(csv_file)
+    csv_writer.writerow([i[0] for i in cursor.description])
+    csv_writer.writerows(cursor)
+conn.close()
+
+
+import csv
+import sqlite3
+engine = sqlite3.connect('sqlite.db')
+cursor = engine.execute(f"select * from Student;")
+with open("values.csv", 'w', newline='') as csv_file:
+csv_writer = csv.writer(csv_file)
+for row in cursor:
+    csv_writer.writerow(row)
+csv_writer.writerows(cursor)
+
+
+####################################################
+sqlite3 dump export
+####################################################
+
+https://deeplearning.lipingyang.org/export-sqlite-database-to-a-csv-file-using-sqlite3-command-line-tool-ubuntu-16-04/
+https://docs.python.org/3/library/sqlite3.html
+
+sqlite3 -header -csv your_database_name "select * from books;" > books.csv
+sqlite3 -header -csv your_database_name "select * from books where year = 2017;" > books_2017.csv
+sqlite3 -header -csv your_database_name < your_query.sql > selected_data.csv
+
+####################################################
+multiprocess db
+####################################################
+
+https://stackoverflow.com/questions/10117073/how-to-use-initializer-to-set-up-my-multiprocess-pool
+https://superfastpython.com/multiprocessing-pool-initializer/
+https://rotadev.com/how-to-use-initializer-to-set-up-my-multiprocess-pool-dev/
+https://gist.github.com/dnozay/b2462798ca89fbbf0bf4
+
+def use_db(i):
+    print(use_db.cursor) #process local
+pool = Pool(initializer=init_worker, initargs=(use_db,))
+pool.map(use_db, range(10))
+
+
+https://docs.python.org/3/library/sqlite3.html
+
+https://sqlalchemy-imageattach.readthedocs.io/en/1.1.0/stores/s3.html
+https://aws.amazon.com/de/blogs/database/use-python-sqlalchemy-orm-to-interact-with-an-amazon-aurora-database-from-a-serverless-application/
+
+
+
+####################################################
+sqlalchemy.exc.ProgrammingError:
+(sqlite3.ProgrammingError) SQLite objects created in a thread can only be used in that same thread.
+The object was created in thread id 140611395248640 and this is thread id 140605016475200.
+
+ProgrammingError: SQLite objects created in a thread can only be used in that same thread
+####################################################
+
+https://stackoverflow.com/questions/48218065/programmingerror-sqlite-objects-created-in-a-thread-can-only-be-used-in-that-sa
+https://stackoverflow.com/questions/9561832/what-if-i-dont-close-the-database-connection-in-python-sqlite
+https://github.com/lemon24/reader/issues/206
+https://pynative.com/python-sqlite/
+https://stackoverflow.com/questions/25371636/how-to-get-sqlite-result-error-codes-in-python
+
+
+conn = sqlite3.connect('your.db', check_same_thread=False)
+conn = sqlite3.connect(":memory:", check_same_thread = False)
+
+.......
+
+import sqlite3
+
+try:
+    sqliteConnection = sqlite3.connect('SQLite_Python.db')
+    cursor = sqliteConnection.cursor()
+    print("Successfully Connected to SQLite")
+
+    with open('sqlite_create_tables.sql', 'r') as sqlite_file:
+        sql_script = sqlite_file.read()
+
+    cursor.executescript(sql_script)
+    print("SQLite script executed successfully")
+    cursor.close()
+
+except sqlite3.Error as error:
+    print("Error while executing sqlite script", error)
+finally:
+    if sqliteConnection:
+        sqliteConnection.close()
+        print("sqlite connection is closed")
+
+......
+
+  import sqlite3
+    import traceback
+    import sys
+
+    con = sqlite3.connect("mydb.sqlite")
+    cur = con.cursor()
+    sql_query = "INSERT INTO user VALUES(?, ?)"
+    sql_data = ("John", "MacDonald")
+
+    try:
+        cur.execute(sql_query, sql_data)
+        con.commit()
+    except sqlite3.Error as er:
+        print('SQLite error: %s' % (' '.join(er.args)))
+        print("Exception class is: ", er.__class__)
+        print('SQLite traceback: ')
+        exc_type, exc_value, exc_tb = sys.exc_info()
+        print(traceback.format_exception(exc_type, exc_value, exc_tb))
+    con.close()
+
+.....
+
+
+
+old version
+
+    conn = sqlite3.connect(db_filename) #DECLARE CONNECTION OUT OF WITH BLOCK
+
+    with conn:                          #USE CONNECTION IN WITH BLOCK
+        cur = conn.cursor()
+        cur.execute( ... )
+
+   #conn variable is still in scope, so you can use it again
+
+new version
+
+    with sqlite3.connect(db_filename) as conn:  #DECLARE CONNECTION AT START OF WITH BLOCK
+        cur = conn.cursor()
+        cur.execute( ... )
+
+   #conn variable is out of scope, so connection is closed
+   # MIGHT BE IT IS NOT CLOSED BUT WHAT  Avaris SAID!
+   #(I believe auto close goes for with block)
+
+  con = sqlite3.connect(self.dbName)
+    with con:
+        cur = con.cursor()
+        cur.execute(sql)
+        res = cur.fetchall()
+    if con:
+        con.close()
+
+
+####################################################
+Close sqlalchemy connection in MySQL
+####################################################
+
+https://stackoverflow.com/questions/8645250/how-to-close-sqlalchemy-connection-in-mysql
+
+db = create_engine('mysql://root@localhost/test_database')
+for i in range(1,2000):
+    conn = db.connect()
+    #some simple data operations
+    conn.close()
+db.dispose()
+
+for i in range(1,2000):
+    db = create_engine('mysql://root@localhost/test_database')
+    conn = db.connect()
+    # some simple data operations
+    # session.close() if needed
+    conn.invalidate()
+    db.dispose()
+
+
+conn = engine.raw_connection()
+conn.get_warnings  = True
+curSql = xx_tmpsql
+myresults = cur.execute(curSql, multi=True)
+print("Warnings: #####")
+print(cur.fetchwarnings())
+for curresult in myresults:
+    print(curresult)
+    if curresult.with_rows:
+        print(curresult.column_names)
+        print(curresult.fetchall())
+    else:
+        print("no rows returned")
+cur.close()
+conn.invalidate()
+conn.close()
+engine.dispose()
+
+
+
+
+
