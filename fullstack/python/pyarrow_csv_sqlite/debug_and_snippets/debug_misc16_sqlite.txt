@@ -215,6 +215,798 @@ conn.close()
 engine.dispose()
 
 
+####################################################
+Import SQL dump into PostgreSQL database
+####################################################
+https://hevodata.com/learn/postgresql-dump-import/
+https://stackoverflow.com/questions/6842393/import-sql-dump-into-postgresql-database
+https://www.postgresql.org/docs/current/backup-dump.html
+
+
+
+sudo apt install postgresql-client-common
+sudo apt install postgresql-client
+
+psql -U username -f backupfile.sql
+psql -U postgres -h 172.19.0.2 -f psgres.sql
+
+psql databasename < data_base_dump
+pg_dump dbname > dumpfile
+psql dbname < dumpfile
+psql -U postgres -h 172.19.0.2 dbname < dumpfile
+
+
+####################################################
+# MySQL to postgresql migration
+####################################################
+mysqldump  -p -u root -h 172.19.0.4 --compatible=postgresql dbname > psgres.sql
+sed "s/\\\'/\'\'/g" psgres.sql > psgres.sql
+psql -U postgres -h 172.19.0.2 dbanem < psgres.sql
+
+--------
+####################################################
+mysql show table schema
+####################################################
+
+https://stackoverflow.com/questions/1498777/how-do-i-show-the-schema-of-a-table-in-a-mysql-database
+https://dev.mysql.com/doc/refman/8.0/en/show-create-table.html
+https://dev.mysql.com/doc/refman/5.7/en/show-create-table.html
+https://mariadb.com/kb/en/show-create-table/
+
+SHOW CREATE TABLE yourTable;
+SHOW COLUMNS FROM yourTable;
+
+------------------
+
+https://www.postgresql.org/docs/current/datatype-numeric.html
+https://www.postgresql.org/docs/current/tutorial-table.html
+https://www.postgresql.org/docs/current/sql-createtable.html
+https://www.postgresqltutorial.com/postgresql-tutorial/postgresql-create-table/
+
+
+---------------
+
+####################################################
+Perform PostgreSQL Import CSV Job using the COPY Command
+####################################################
+
+https://hevodata.com/learn/postgresql-import-csv/
+https://www.postgresqltutorial.com/postgresql-tutorial/import-csv-file-into-posgresql-table/
+https://stackoverflow.com/questions/2987433/how-to-import-csv-file-data-into-a-postgresql-table
+
+psql -U postgres -h 172.19.0.2 dbname
+
+\copy zip_codes FROM '/path/to/csv/ZIP_CODES.txt' DELIMITER ',' CSV
+\copy zip_codes(ZIP,CITY,STATE) FROM '/path/to/csv/ZIP_CODES.txt' DELIMITER ',' CSV
+
+COPY employees(emp_id,first_name,last_name,dob,city)
+FROM ‘C:newdbemployees.csv’
+DELIMITER ‘,’
+CSV HEADER;
+
+COPY sample_table_name
+FROM 'C:\sampledb\sample_data.csv'
+DELIMITER ','
+CSV HEADER;
+
+COPY persons(first_name, last_name, dob, email)
+FROM 'C:\sampledb\persons.csv'
+DELIMITER ','
+CSV HEADER;
+
+https://www.postgresql.org/docs/8.1/backup.html
+https://www.postgresql.org/docs/current/app-pgdump.html
+https://www.postgresql.org/docs/current/backup-dump.html
+https://axiomq.com/blog/backup-and-restore-a-postgresql-database/
+
+Restore a database with psql
+
+psql -U db_user db_name < dump_name.sql
+pg_dump dbname > dumpfile
+psql dbname < dumpfile
+
+####################################################
+####################################################
+
+
+Convert SQLite to Oracle. Data Migration
+
+https://docs.oracle.com/cd/E17076_05/html/bdb-sql/datamigration.html
+https://stackoverflow.com/questions/18671/quick-easy-way-to-migrate-sqlite3-to-mysql
+https://github.com/techouse/sqlite3-to-mysql
+https://gist.github.com/techouse/4deb94eee58a02d104c6
+https://stackoverflow.com/questions/489277/script-to-convert-mysql-dump-sql-file-into-format-that-can-be-imported-into-sqlit
+https://www2.sqlite.org/cvstrac/wiki?p=ConverterTools
+https://dev.mysql.com/doc/refman/8.0/en/docker-mysql-getting-started.html
+https://dev.mysql.com/doc/refman/8.0/en/linux-installation-native.html
+
+Dump the database using the SQLite .dump command.
+Load the dumped data into new db
+
+sudo apt install sqlite3 -y
+sqlite3 sample.db .dump > dump.sql
+mysql -p -u root -h 127.0.0.1 test < dump.sql
+
+pip install sqlite3-to-mysql
+sqlite3mysql --help
+
+
+https://hub.docker.com/_/mysql
+https://hub.docker.com/r/mysql/mysql-server/
+
+# Use root/example as user/password credentials
+version: '3.1'
+
+services:
+
+  db:
+    image: mysql:5.7.37-debian
+    # NOTE: use of "mysql_native_password" is not recommended: https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password
+    # (this is just an example, not intended to be a production configuration)
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+
+
+http://localhost:8080/?server=db&username=root
+
+
+
+you have an error in your sql syntax PRAGMA foreign_keys=OFF
+
+https://stackoverflow.com/questions/29012586/migrating-sqlite3-from-django-to-mysql-in-aws-rds-always-reporting-syntax-error
+https://www.techtrek.io/migrate-from-sqlite3-to-mysql/
+https://www.sqlite.org/pragma.html
+
+
+#!/usr/bin/env python
+
+import re
+import fileinput
+
+
+def this_line_is_useless(line):
+    useless_es = [
+        'BEGIN TRANSACTION',
+        'COMMIT',
+        'sqlite_sequence',
+        'CREATE UNIQUE INDEX',
+        'PRAGMA foreign_keys=OFF'
+    ]
+    for useless in useless_es:
+        if re.search(useless, line):
+            return True
+
+
+def has_primary_key(line):
+    return bool(re.search(r'PRIMARY KEY', line))
+
+
+searching_for_end = False
+for line in fileinput.input():
+    if this_line_is_useless(line):
+        continue
+
+    # converted (inappropriately) to \');
+    if re.match(r".*, ''\);", line):
+        line = re.sub(r"''\);", r'``);', line)
+
+    if re.match(r'^CREATE TABLE.*', line):
+        searching_for_end = True
+
+    m = re.search('CREATE TABLE "?([A-Za-z_]*)"?(.*)', line)
+    if m:
+        name, sub = m.groups()
+        line = "DROP TABLE IF EXISTS %(name)s;\nCREATE TABLE IF NOT EXISTS `%(name)s`%(sub)s\n"
+        line = line % dict(name=name, sub=sub)
+
+    else:
+        m = re.search('INSERT INTO "([A-Za-z_]*)"(.*)', line)
+        if m:
+            line = 'INSERT INTO %s%s\n' % m.groups()
+            line = line.replace('"', r'\"')
+            line = line.replace('"', "'")
+    line = line.replace('AUTOINCREMENT', 'AUTO_INCREMENT')
+    # line = line.replace('UNIQUE ','')
+    line = line.replace('"', '')
+    line = re.sub(r"(?<!')'t'(?=.)", r"1", line)
+    line = re.sub(r"(?<!')'f'(?=.)", r"0", line)
+
+    # Add auto_increment if it's not there since sqlite auto_increments ALL
+    # primary keys
+    if searching_for_end:
+        if re.search(r"integer(?:\s+\w+)*\s*PRIMARY KEY(?:\s+\w+)*\s*,", line):
+            line = line.replace("PRIMARY KEY", "PRIMARY KEY AUTO_INCREMENT")
+        # replace " and ' with ` because mysql doesn't like quotes in CREATE com                                                                             mands
+
+    # And now we convert it back (see above)
+    if re.match(r".*, ``\);", line):
+        line = re.sub(r'``\);', r"'');", line)
+
+    if searching_for_end and re.match(r'.*\);', line):
+        searching_for_end = False
+
+    if re.match(r"CREATE INDEX", line):
+        line = re.sub('"', '`', line)
+
+    print(line)
+
+
+
+    sqlite3 sample.db .dump | python3.7 dump_for_mysql.py > dump.sql
+
+
+
+---------------------------
+
+https://github.com/oracle/docker-images
+https://github.com/mysql/mysql-server
+https://hub.docker.com/_/mysql
+https://github.com/oracle/docker-images/tree/main/OracleDatabase
+https://hub.docker.com/_/postgres
+https://hub.docker.com/_/mariadb
+https://hub.docker.com/_/mongo
+https://hub.docker.com/_/oraclelinux
+
+
+
+https://apex.oracle.com/pls/apex/germancommunities/dbacommunity/tipp/6241/index.html
+https://hub.docker.com/_/oracle-database-enterprise-edition
+
+
+docker pull store/oracle/database-enterprise:12.2.0.1
+
+
+docker run -d -p <Listener_Port>:1521 -p <Http_Port>:5500 \
+         -it --name <Container_Name> \
+         store/oracle/database-enterprise:12.2.0.1
+
+
+
+docker-compose.yml:
+version: '2'
+
+services:
+  dbservice:
+    image: store/oracle/database-enterprise:12.2.0.1
+    ports:
+      - 1521:1521
+
+
+db.env:
+DB_SID=MYORCL
+DB_PDB=MYPDB
+DB_MEMORY=3GB
+DB_PASSWD=welcome1
+DB_DOMAIN=my.domain.com
+y.domain.com
+DB_BUNDLE=basic
+
+
+docker run -d --env-file <pfad_zur_obigen_Datei> \
+       -p <istener_Port>:1521 -p <Http_Port>:5500 \
+       -it --name <Container_Name> \
+       store/oracle/database-enterprise:12.2.0.1
+
+docker run -d -it --name <Oracle-DB>\
+ -v /oradata:/ORCL \
+ store/oracle/database-enterprise:12.2.0.1
+
+
+Docker-compose.xml:
+version: '2'
+services:
+  proddbservice:
+    image: store/oracle/database-enterprise:12.2.0.1
+    environment:
+      - DB_SID=MYORCL
+      - DB_PDB=MYPDB
+      - DB_MEMORY=3GB
+      - DB_PASSWD=welcome1
+      - DB_DOMAIN=my.domain.com
+    volumes:
+      - /oradata:/ORCL
+    ports:
+      - 1531:1521
+
+
+
+https://stackoverflow.com/questions/63805113/is-there-a-better-way-to-run-oracle-database-with-docker-in-a-development-enviro
+https://github.com/oracle/docker-images/tree/master/OracleDatabase
+https://stackoverflow.com/questions/47697474/persisting-data-in-dockers-volume-for-oracle-database
+https://stackoverflow.com/questions/71939079/after-mounting-a-volume-to-the-oracle-11g-xe-container-from-dockerhub-it-is-not
+
+docker run -d \
+  --name oracleXE \
+  -e ORACLE_ALLOW_REMOTE=true \
+  -e ORACLE_ENABLE_XDB=true \
+  -p 49161:1521 \
+  -p 49162:8080 \
+  oracleinanutshell/oracle-xe-11g
+
+
+docker run --name=OracleXE --shm-size=1g -p 1521:1521 -p 8080:8080 -e ORACLE_PWD=weblogic1 -v dbvolume:/opt/oracle/oradata oracle/database:11.2.0.2-xe
+
+
+-v /opt/oracle/oradata
+              The data volume to use for the database.
+              Has to be writable by the Unix "oracle" (uid: 54321) user inside the container!
+              If omitted the database will not be persisted over container recreation.
+
+
+
+
+sudo docker run -d --name oracle \
+ -p 49161:1521 -p 8080:8080 \
+ -v /media/db/oracle/admin:/u01/app/oracle/admin \
+ -v /media/db/oracle/diag:/u01/app/oracle/diag \
+ -v /media/db/oracle/fast_recovery_area:/u01/app/oracle/fast_recovery_area \
+ -v /media/db/oracle/oradata:/u01/app/oracle/oradata \
+ oracleinanutshell/oracle-xe-11g \
+/
+
+
+https://www.techtrek.io/migrate-from-sqlite3-to-mysql/
+https://stackoverflow.com/questions/29012586/migrating-sqlite3-from-django-to-mysql-in-aws-rds-always-reporting-syntax-error
+https://stackoverflow.com/questions/18671/quick-easy-way-to-migrate-sqlite3-to-mysql
+
+
+
+------------------------------------------------------------------------
+https://dev.mysql.com/doc/connector-python/en/connector-python-installation-binary.html
+https://stackoverflow.com/questions/25865270/how-to-install-python-mysqldb-module-using-pip
+https://pynative.com/install-mysql-connector-python/
+https://www.a2hosting.com/kb/developer-corner/mysql/connecting-to-mysql-using-python
+https://github.com/PyMySQL/mysqlclient
+https://mysqlclient.readthedocs.io/
+
+https://pypi.org/project/mysql-connector/
+https://pypi.org/project/mysql/
+https://pypi.org/project/mysqlclient/
+https://pypi.org/project/MySQL-python/
+
+pip install mysql-connector
+pip install mysql
+pip install mysqlclient
+pip install MySQL-python
+
+pip install mysql-connector-python
+
+import pymysql as MySQLdb
+
+# Open database connection
+db = MySQLdb.connect("localhost","root","root","test" )
+# prepare a cursor object using cursor() method
+cursor = db.cursor()
+# execute SQL query using execute() method.
+cursor.execute("show tables")
+# Fetch a single row using fetchone() method.
+data = cursor.fetchall()
+print (data)
+# disconnect from server
+db.close()
+
+
+
+https://www.w3schools.com/python/python_mysql_getstarted.asp
+
+# pip install mysql-connector
+import mysql.connector
+mydb = mysql.connector.connect(
+  host="localhost",
+  user="yourusername",
+  password="yourpassword"
+)
+print(mydb)
+
+
+https://mysqlclient.readthedocs.io/user_guide.html#installation
+https://dev.mysql.com/doc/connector-python/en/connector-python-example-cursor-select.html
+
+from MySQLdb import _mysql
+db=_mysql.connect()
+db=_mysql.connect("localhost","joebob","moonpie","thangs")
+db=_mysql.connect(host="localhost",user="joebob", passwd="moonpie",db="thangs")
+db=_mysql.connect(passwd="moonpie",db="thangs")
+db=_mysql.connect(host="outhouse",port=3307,passwd="moonpie",db="thangs")
+
+db.query("""SELECT spam, eggs, sausage FROM breakfast WHERE price < 5""")
+r=db.store_result()
+r=db.use_result()
+r.fetch_row()
+
+
+import MySQLdb
+db=MySQLdb.connect(passwd="moonpie",db="thangs")
+c=db.cursor()
+max_price=5
+c.execute("""SELECT spam, eggs, sausage FROM breakfast WHERE price < %s""", (max_price,))
+c.fetchone()
+c.executemany(
+      """INSERT INTO breakfast (name, spam, eggs, sausage, price)
+      VALUES (%s, %s, %s, %s, %s)""",
+      [
+      ("Spam and Sausage Lover's Plate", 5, 1, 8, 7.95 ),
+      ("Not So Much Spam Plate", 3, 2, 0, 3.95 ),
+      ("Don't Wany ANY SPAM! Plate", 0, 4, 3, 5.95 )
+      ] )
+
+
+Connecting to MySQL Using Connector/Python
+https://dev.mysql.com/doc/connector-python/en/connector-python-example-connecting.html
+
+import mysql.connector
+cnx = mysql.connector.connect(user='scott', password='password',
+                              host='127.0.0.1',
+                              database='employees')
+cnx.close()
+
+
+from mysql.connector import (connection)
+cnx = connection.MySQLConnection(user='scott', password='password',
+                                 host='127.0.0.1',
+                                 database='employees')
+cnx.close()
+
+
+import mysql.connector
+from mysql.connector import errorcode
+try:
+  cnx = mysql.connector.connect(user='scott',
+                                database='employ')
+except mysql.connector.Error as err:
+  if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+    print("Something is wrong with your user name or password")
+  elif err.errno == errorcode.ER_BAD_DB_ERROR:
+    print("Database does not exist")
+  else:
+    print(err)
+else:
+  cnx.close()
+
+
+import mysql.connector
+config = {
+  'user': 'scott',
+  'password': 'password',
+  'host': '127.0.0.1',
+  'database': 'employees',
+  'raise_on_warnings': True
+}
+
+cnx = mysql.connector.connect(**config)
+cnx.close()
+
+
+
+import mysql.connector
+cnx = mysql.connector.connect(user='scott', password='password',
+                              host='127.0.0.1',
+                              database='employees',
+                              use_pure=False)
+cnx.close()
+
+https://dev.mysql.com/doc/connector-python/en/connector-python-example-ddl.html
+https://dev.mysql.com/doc/connector-python/en/connector-python-example-cursor-transaction.html
+https://dev.mysql.com/doc/connector-python/en/connector-python-example-cursor-select.html
+
+---------------------------------
+
+
+sqlite3 dump data
+
+https://www.sqlite.org/optoverview.html
+https://stackoverflow.com/questions/26225210/sqlite-3-is-there-a-way-to-export-a-database-file-to-a-tab-delimited-text-file
+
+sudo apt install sqlite3
+sqlite3 -header -separator " " ./data.db "select * from datafile;" > out.csv
+
+
+https://www.tutlane.com/tutorial/sqlite/sqlite-dump-command
+https://www.sqlitetutorial.net/sqlite-dump/
+https://stackoverflow.com/questions/75675/how-do-i-dump-the-data-of-some-sqlite3-tables
+https://www.sqlite.org/cli.html
+https://renenyffenegger.ch/notes/development/databases/SQLite/shell/dump/export-import
+https://www.prisma.io/dataguide/sqlite/importing-and-exporting-data-in-sqlite
+https://database.guide/export-entire-sqlite-database-to-sql-file/
+https://pypi.org/project/sqlite-dump/
+
+
+sqlite3 some.db .schema > schema.sql
+sqlite3 some.db .dump > dump.sql
+
+sqlite> .outputschema.sql
+sqlite> .schema products
+sqlite> .quit
+
+
+sqlite3 db .dump > db.sql
+sqlite3 db < db.sql
+
+sqlite3 Store .dump | gzip -c >Store.dump.gz
+
+
+####################################################
+sqlite3 dump export
+####################################################
+
+https://deeplearning.lipingyang.org/export-sqlite-database-to-a-csv-file-using-sqlite3-command-line-tool-ubuntu-16-04/
+https://docs.python.org/3/library/sqlite3.html
+
+sqlite3 -header -csv your_database_name "select * from books;" > books.csv
+sqlite3 -header -csv your_database_name "select * from books where year = 2017;" > books_2017.csv
+sqlite3 -header -csv your_database_name < your_query.sql > selected_data.csv
+
+
+####################################################
+mysqlimport
+####################################################
+
+https://www.thegeekstuff.com/2008/10/import-and-upload-data-to-mysql-tables-using-mysqlimport/
+https://dev.mysql.com/doc/refman/5.6/en/mysqlimport.html
+https://stackoverflow.com/questions/3635166/how-do-i-import-csv-file-into-a-mysql-table
+https://www.mysqltutorial.org/import-csv-file-mysql-table/
+https://dev.mysql.com/doc/refman/8.0/en/problems-with-float.html
+
+mysqlimport --ignore-lines=1 \
+            --fields-terminated-by=, \
+            --local -u root \
+            -p Database \
+             TableName.csv
+
+mysqlimport --ignore-lines=1 --fields-terminated-by=, --local -u root  -p Database  TableName.csv
+
+
+-------------------
+####################################################
+covert to utf8
+####################################################
+
+https://nicj.net/mysql-converting-an-incorrect-latin1-column-to-utf8/
+https://stackoverflow.com/questions/1168036/how-to-fix-incorrect-string-value-errors
+https://stackoverflow.com/questions/1168036/how-to-fix-incorrect-string-value-errors
+
+SELECT city, CONVERT(CAST(city as BINARY) USING utf8) FROM MyTable WHERE city = 'São Paulo';
+
+
+convert fields to UTF-8.
+
+ALTER TABLE logtest CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE logtest DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE logtest CHANGE title title VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE tabale_name MODIFY COLUMN column_name VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+
+check if default_character_set_name is utf8.
+SELECT default_character_set_name FROM information_schema.SCHEMATA S WHERE schema_name = "DBNAME";
+
+# default_character_set_name utf8
+
+####################################################
+MySQL ERROR 1265: Data truncated for column
+####################################################
+
+SET sql_mode = 'STRICT_TRANS_TABLES';
+SET sql_mode = 'STRICT_ALL_TABLES';
+
+FIX
+SET sql_mode = '';
+
+show variables like '%char%'
+show variables like '%character_set_%';
+
+####################################################
+Without rebooting the servers.#
+####################################################
+https://www.thegeekdiary.com/how-to-set-the-default-character-set-in-mysql-and-how-to-propagate-it-in-a-master-master-replication-scenario/
+https://www.modified-shop.org/wiki/Datenbank_von_latin1_(iso-8859-1)_auf_utf8_umstellen
+https://dbfiddle.uk/?rdbms=mysql_8.0&fiddle=eadef49cc0ccaef726ba2268cbb1a531
+
+set global character_set_server = utf8;
+set global character_set_database = utf8;
+set global collation_server = utf8_general_ci;
+set global character_set_client =utf8;
+set global character_set_connection=utf8;
+set global character_set_results=utf8;
+
+---------------------------------------------------------
+####################################################
+####################################################
+https://docs.sqlalchemy.org/en/14/core/engines.html
+
+
+# default
+engine = create_engine('postgresql://scott:tiger@localhost/mydatabase')
+
+# psycopg2
+engine = create_engine('postgresql+psycopg2://scott:tiger@localhost/mydatabase')
+
+# default
+engine = create_engine('mysql://scott:tiger@localhost/foo')
+
+# mysqlclient (a maintained fork of MySQL-Python)
+engine = create_engine('mysql+mysqldb://scott:tiger@localhost/foo')
+
+engine = create_engine('oracle://scott:tiger@127.0.0.1:1521/sidname')
+engine = create_engine('oracle+cx_oracle://scott:tiger@tnsname')
+
+# where <path> is relative:
+engine = create_engine('sqlite:///foo.db')
+
+https://exerror.com/importerror-no-module-named-configparser/
+
+No module named 'MySQLdb'
+No module named 'ConfigParser'
+
+
+pip install ConfigParser
+pip3 install ConfigParser
+
+pip3 install PyMySQL
+pip3 install mysqlclient
+
+
+pip uninstall mysqlclient
+
+
+OSError: mysql_config not found
+
+sudo apt-get install libmysqlclient-dev
+
+
+FIOX
+pip install mysql-connector-python
+
+import mysql.connector
+
+mydb = mysql.connector.connect(
+          host="",
+          user="",
+          passwd="",
+          database=""
+          )
+cursor = mydb.cursor( buffered=True)
+cursor.execute('show tables;')
+cursor.execute('insert into test values (null, "a",10)')
+mydb.commit()
+mydb.disconnect()
+
+
+
+
+sqlalchemy.exc.NoSuchModuleError: Can't load plugin: sqlalchemy.dialects:mysqldb
+
+pip install SQLAlchemy==1.2.13
+pip install SQLAlchemy==1.4.40
+
+
+pip install PyMySQL
+pip install pymysql
+https://pypi.org/project/PyMySQL/
+
+
+https://linuxhint.com/modulenotfounderror-module-named-mysqldb/
+https://www.codegrepper.com/code-examples/python/ModuleNotFoundError%3A+No+module+named+%27MySQLdb%27
+
+pip3 install mysql-connector-python
+pip3 install mysql-python
+pip3 install mysqlclient
+
+
+sudo apt-get install libmysqlclient-dev
+sudo apt-get install libssl-dev
+pip install mysqlclient
+sudo apt-get install -y python3-mysqldb
+
+
+sudo apt-get install python-mysqldb
+
+sudo apt-get install python3-dev
+sudo apt-get install python3-dev
+sudo apt-get install libpython3-dev
+
+
+-------------------------------------------------------------
+####################################################
+Migrate a MySQL Database to PostgreSQL
+####################################################
+
+https://www.digitalocean.com/community/tutorials/how-to-migrate-mysql-database-to-postgres-using-pgloader
+https://docs.gitlab.com/ee/update/mysql_to_postgresql.html
+
+https://hub.docker.com/_/postgres
+
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+
+https://hub.docker.com/_/memcached
+https://hub.docker.com/_/redis
+
+
+
+apt-cache madison pgloader
+sudo apt-get install pgloader -y
+
+
+mysqldump has a compatibility argument, --compatible=name, where "name" can be "oracle" or "postgresql",
+but that doesn't guarantee compatibility. I think server settings like ANSI_QUOTES have some effect, too.
+
+pgloader mysql://user@host/db_name postgresql://user@host/db_name
+pgloader mysql://user:pass@host/database postgresql://user:pass@host/database
+
+https://pgloader.readthedocs.io/en/latest/ref/mysql.html
+https://gist.github.com/barseghyanartur/56876ab3acbd3d5d6ab7dcc477c29238
+https://dba.stackexchange.com/questions/15769/how-to-convert-a-mysql-database-to-postgresql
+
+
+mysqldump --compatible=postgresql dbname > export.sql
+escape quotes
+sed "s/\\\'/\'\'/g" export.sql > export1.sql
+
+
+Import dump into postgres:
+psql -U dbname -f database.pgsql
+-----------------------------------
+
+
+# Use root/example as user/password credentials
+version: '3.1'
+
+services:
+
+  db-mysql:
+    image: mysql:5.7.37-debian
+    # NOTE: use of "mysql_native_password" is not recommended: https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password
+    # (this is just an example, not intended to be a production configuration)
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: demo
+
+  db-postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: demo
+
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+
+
+# mysql - user root / pass: demo
+# postgres - user postgres / pass: demo
+
+# https://hub.docker.com/_/postgres/
+# https://hub.docker.com/_/mysql
+# https://pgloader.readthedocs.io/en/latest/ref/mysql.html
+# pgloader mysql://root:demo@172.19.0.4/mydb postgresql://postgres:demo@172.19.0.2/mydb
+
+
 
 
 
