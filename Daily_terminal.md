@@ -376,6 +376,44 @@ sudo nano /etc/resolv.conf
 * nameserver 2001:4860:4860::8888,2001:4860:4860::8844,2606:4700:4700::1111,2606:4700:4700::1001
 ```
 
+#### Cloudflare + Google
+
+```
+
+Cloudflare
+https://en.wikipedia.org/wiki/1.1.1.1
+https://1.1.1.1/dns/
+
+For IPv4: 1.1.1.1 and 1.0.0.1
+For IPv6: 2606:4700:4700::1111,2606:4700:4700::1001
+
+Via IPv4	
+1.1.1.1
+1.0.0.1
+1.1.1.2
+1.0.0.2
+1.1.1.3
+1.0.0.3
+
+Via IPv6	
+2606:4700:4700::1111
+2606:4700:4700::1001	
+2606:4700:4700::1112
+2606:4700:4700::1002	
+2606:4700:4700::1113
+2606:4700:4700::1003
+
+Google Public DNS IP addresses
+https://developers.google.com/speed/public-dns/docs/using
+
+8.8.8.8
+8.8.4.4
+
+2001:4860:4860:0:0:0:0:8888
+2001:4860:4860:0:0:0:0:8844
+```
+
+
 #### Fast VM install 
 ```
 * sudo apt install vagrant
