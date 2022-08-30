@@ -1,0 +1,2007 @@
+--------------------------------------------------------
+####################################################
+aws cli
+####################################################
+
+sudo apt  install awscli
+aws --endpoint-url http://192.168.192.2:9000 s3 ls
+
+aws --endpointurl http://localhost:4956 kinesis list-streams
+aws configure --profile localstack
+aws s3 --endpoint-url http://localhost:4566 create-bucket io.pratik.mybucket
+
+aws cloudformation create-stack \
+  --endpoint-url http://localhost:4566 \
+  --stack-name samplestack \
+  --template-body file://sample.yaml \
+  --profile localstack
+
+
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/quickstart.html
+https://bobbyhadz.com/blog/aws-cli-list-all-files-in-bucket
+
+
+aws s3 ls s3://YOUR_BUCKET --recursive --human-readable --summarize
+aws s3 ls s3://YOUR_BUCKET/YOUR_FOLDER/ --recursive --human-readable --summarize
+aws s3api list-objects --bucket YOUR_BUCKET --output text --query "Contents[].{Key: Key}"
+aws s3api list-objects --bucket YOUR_BUCKET --prefix "my-folder/" --output text --query "Contents[].{Key: Key}"
+aws s3api list-objects --bucket YOUR_BUCKET --prefix "my-folder-1/" --output text --query "Contents[].{Key: Key}" > file-names.txt
+
+
+aws configure set default.s3.multipart_threshold 64MB
+aws s3api put-object --bucket bucket --key objectKey --body /path/to/file --server-side-encryption aws:kms
+---------------------------------------------------------------------------------------------
+
+
+awslocal s3api create-bucket --bucket sample-bucket
+awslocal s3api list-buckets
+awslocal s3api put-object --bucket sample-bucket --key index.html --body index.html
+awslocal s3api list-buckets
+awslocal s3api list-objects --bucket sample-bucket --output text
+awslocal s3api list-objects --bucket sample-bucket --output text --query "Contents[].{Key: Key}"
+
+
+
+
+
+
+
+
+--------------------------------------------------------
+####################################################
+Docker SDK for Python
+####################################################
+https://docker-py.readthedocs.io/en/stable/containers.html
+
+import docker
+client = docker.from_env()
+client.containers.run('alpine', 'echo hello world')
+b'hello world\n'
+
+container = client.containers.run('bfirsh/reticulate-splines',
+                                      detach=True)
+container.logs()
+
+
+--------------------------------------------------------
+####################################################
+image with Python 3.7
+####################################################
+
+https://gist.github.com/daniilyar/006a99b02adc6b73096e18dede2b1eaf
+https://github.com/docker-library/repo-info/blob/master/repos/python/remote/3.7-slim.md
+https://stackoverflow.com/questions/61371949/how-to-install-python-3-7-and-pip-from-dockerfile
+https://hub.docker.com/_/python
+https://stackoverflow.com/questions/53835198/integrating-python-poetry-with-docker
+https://blog.realkinetic.com/building-minimal-docker-containers-for-python-applications-37d0272c52f3
+https://stackoverflow.com/questions/45543229/docker-compose-volume-not-mounting-correctly
+
+FROM python:3.7
+COPY . /app
+WORKDIR /app
+RUN pip install -r requirements.txt
+CMD ["gunicorn", "-w 4", "main:app"]
+
+Multistage builds
+
+FROM python:3.7-alpine as base
+FROM base as builder
+RUN mkdir /install
+WORKDIR /install
+COPY requirements.txt /requirements.txt
+RUN pip install --install-option="--prefix=/install" -r /requirements.txt
+FROM base
+COPY --from=builder /install /usr/local
+COPY src /app
+WORKDIR /app
+CMD ["gunicorn", "-w 4", "main:app"]
+
+
+version: '2.1'
+services:
+  users-service:
+    container_name: users-service
+    build: .
+    volumes:
+      - '.:/usr/src/app'
+    ports:
+      - 5001:5000 # expose ports - HOST:CONTAINER
+
+
+docker-compose build
+docker-compose up -d
+docker-compose run users-service bash
+
+
+--------------------------------------------------------
+####################################################
+docker-compose: no declaration was found in the volumes section
+####################################################
+https://github.com/ClusterHQ/dvol/issues/67
+https://github.com/minio/minio/blob/master/docs/orchestration/docker-compose/docker-compose.yaml
+
+version: "3"
+services:
+ test_db:
+    image: postgres:11.5-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: testdb
+    volumes:
+      - dbdata:/var/lib/postgresql/data/
+
+volumes:
+  dbdata:
+
+
+version: "3"
+services:
+  node-app-data:
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=usr
+      - MONGO_INITDB_ROOT_PASSWORD=psswd
+    volumes:
+      - mongo-db:/data/db
+
+volumes:
+  mongo-db:
+
+
+
+--------------------------------------------------------
+####################################################
+local AWS cloud
+####################################################
+
+https://github.com/localstack/localstack
+https://docs.localstack.cloud/get-started/
+https://hub.docker.com/r/localstack/localstack
+https://docs.localstack.cloud/get-started/#docker
+https://docs.localstack.cloud/get-started/#docker-compose
+https://hub.docker.com/r/localstack/localstack/tags
+https://www.testcontainers.org/modules/localstack/
+https://github.com/localstack/localstack-python-client
+https://hands-on.cloud/testing-python-aws-applications-using-localstack/
+
+pip install localstack
+python3 -m pip install localstack
+pip install localstack-client
+
+
+localstack start -d
+localstack status services
+localstack --help
+
+Starting LocalStack with Docker
+docker run --rm -it -p 4566:4566 -p 4510-4559:4510-4559 localstack/localstack
+
+
+https://github.com/localstack/localstack/blob/master/README.md
+https://docs.localstack.cloud/localstack/configuration/
+https://docs.localstack.cloud/localstack/
+
+DEBUG=1 localstack start
+localstack status services
+
+
+sudo apt  install tree
+tree ~/.localstack
+/home/username/.localstack
+├── default.env
+├── dev.env
+└── pro.env
+
+cat ~/.localstack/pro-debug.env
+% cat ~/.localstack/pro-debug.env
+LOCALSTACK_API_KEY=XXXXX
+DEBUG=1
+DEVELOP=1
+
+python -m localstack.cli.main --profile=dev start
+python -m localstack.cli.main --profile=dev config show
+
+
+pip install awscli-local
+pip3 install awscli --upgrade --user
+
+https://docs.localstack.cloud/aws/s3/
+awslocal s3api create-bucket --bucket sample-bucket
+awslocal s3api list-buckets
+awslocal s3api put-object --bucket sample-bucket --key index.html --body index.html
+awslocal s3api list-objects --bucket sample-bucket --output text --query "Contents[].{Key: Key}" # read bucket files
+
+
+OK
+https://github.com/localstack/localstack/blob/master/docker-compose.yml
+
+version: "3.8"
+
+services:
+  localstack:
+    container_name: localstack_main # "${LOCALSTACK_DOCKER_NAME-localstack_main}"
+    image: localstack/localstack
+    ports:
+      #  - "4566-4599:4566-4599"
+      #  - "8080:8081" # ${PORT_WEB_UI-8080}:${PORT_WEB_UI-8080}
+      - "127.0.0.1:4566:4566"            # LocalStack Gateway
+      - "127.0.0.1:4510-4559:4510-4559"  # external services port range
+    environment:
+      - DEBUG=1 # ${DEBUG-}
+      #      - PERSISTENCE=${PERSISTENCE-}
+      #      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR-}
+      #      - LOCALSTACK_API_KEY=${LOCALSTACK_API_KEY-}  # only required for Pro
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - SERVICES=s3,dynamodb
+    volumes:
+      - "./volume:/var/lib/localstack" # ${LOCALSTACK_VOLUME_DIR:-./volume}
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+
+docker-compose up
+docker-compose -f localstack.yml up
+
+
+####################################################
+list all s3 buckets in localstack:
+####################################################
+
+import localstack_client.session as boto3
+client = boto3.client('s3')
+response = client.list_buckets()
+
+
+import localstack_client.session
+session = localstack_client.session.Session()
+sqs = session.client('sqs')
+assert sqs.list_queues() is not None
+
+
+use boto3.client directly in your code, you can mock it.
+
+import localstack_client.session
+import pytest
+
+@pytest.fixture(autouse=True)
+def boto3_localstack_patch(monkeypatch):
+    session_ls = localstack_client.session.Session()
+    monkeypatch.setattr(boto3, "client", session_ls.client)
+    monkeypatch.setattr(boto3, "resource", session_ls.resource)
+sqs = boto3.client('sqs')
+assert sqs.list_queues() is not None  # list SQS in localstack
+
+####################################################
+Python Boto3
+####################################################
+https://docs.localstack.cloud/integrations/sdks/python/
+
+import boto3
+
+endpoint_url = "http://localhost.localstack.cloud:4566"
+# alternatively, to use HTTPS endpoint on port 443:
+# endpoint_url = "https://localhost.localstack.cloud"
+
+def main():
+    client = boto3.client("lambda", endpoint_url=endpoint_url)
+    result = client.list_functions()
+    print(result)
+
+if __name__ == "__main__":
+    main()
+
+
+------------
+https://reflectoring.io/aws-localstack/
+
+version: '2.1'
+
+services:
+  localstack:
+    container_name: "${LOCALSTACK_DOCKER_NAME-localstack_main}"
+    image: localstack/localstack
+    ports:
+      - "4566-4599:4566-4599"
+      - "${PORT_WEB_UI-8080}:${PORT_WEB_UI-8080}"
+    environment:
+      - SERVICES=s3,dynamodb
+
+
+
+---------------------------------------------------------------------------------------------
+
+#############################################################################################
+LocalStack for AWS Services
+#############################################################################################
+
+https://hands-on.cloud/testing-python-aws-applicaions-using-localstack/
+
+
+python3 -m pip install localstack
+localstack --help
+localstack start
+localstack status
+localstack stop
+localstack --debug
+
+localstack config args
+localstack show args
+localstack validate args
+
+
+
+aws configure --profile localstack
+
+AWS Access Key ID [None]: key123456
+AWS Secret Access Key [None]: secret123456
+Default region name [None]:
+Default output format [None]:
+
+
+
+AWS Access Key ID [None]: test
+AWS Secret Access Key [None]: test
+Default region name [None]: us-east-1
+Default output format [None]:
+
+echo 'LOCALSTACK_ENDPOINT_URL="http://localhost:4566"' >> $HOME/.bash_profile
+
+aws --endpoint-url=$LOCALSTACK_ENDPOINT_URL s3 ls
+alias awsls="aws --endpoint-url=$LOCALSTACK_ENDPOINT_URL"
+awsls s3 ls
+
+
+
+
+
+####################################################
+# install Boto3
+####################################################
+
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/quickstart.html
+https://pypi.org/project/boto3/
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html
+https://aws.amazon.com/de/sdk-for-python/
+
+
+pip install boto3
+python -m pip install boto3
+
+
+
+~/.aws/credentials)
+[default]
+aws_access_key_id = <s>YOUR_KEY</s>
+aws_secret_access_key = <s>YOUR_SECRET</s>
+
+
+~/.aws/config)
+[default]
+region=<s>us-east-1</s>
+
+
+
+import boto3
+
+client = boto3.client(
+    's3',
+    aws_access_key_id=ACCESS_KEY,
+    aws_secret_access_key=SECRET_KEY,
+    aws_session_token=SESSION_TOKEN
+)
+
+import boto3
+
+session = boto3.Session(
+    aws_access_key_id=ACCESS_KEY,
+    aws_secret_access_key=SECRET_KEY,
+    aws_session_token=SESSION_TOKEN
+)
+
+
+####################################################
+# Instantiating the Boto3 client
+####################################################
+
+import boto3
+from botocore.exceptions import ClientError
+import os
+
+AWS_REGION = 'us-east-1'
+AWS_PROFILE = 'localstack'
+ENDPOINT_URL = os.environ.get('LOCALSTACK_ENDPOINT_URL')
+boto3.setup_default_session(profile_name=AWS_PROFILE)
+loaclstack_client = boto3.client("s3", region_name=AWS_REGION,
+                         endpoint_url=ENDPOINT_URL)
+
+
+
+
+# instantiate the Boto3 resource to interact with LocalStack APIs:
+# Instantiating the Boto3 LocalStack resource
+
+import boto3
+from botocore.exceptions import ClientError
+import os
+
+AWS_REGION = 'us-east-1'
+AWS_PROFILE = 'localstack'
+ENDPOINT_URL = os.environ.get('LOCALSTACK_ENDPOINT_URL')
+boto3.setup_default_session(profile_name=AWS_PROFILE)
+loaclstack_resource = boto3.resource("s3", region_name=AWS_REGION,
+                         endpoint_url=ENDPOINT_URL)
+
+
+####################################################
+# Create S3 bucket locally
+####################################################
+
+import logging
+import boto3
+from botocore.exceptions import ClientError
+import json
+import os
+
+AWS_REGION = 'us-east-1'
+AWS_PROFILE = 'localstack'
+ENDPOINT_URL = os.environ.get('LOCALSTACK_ENDPOINT_URL')
+
+# logger config
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s: %(levelname)s: %(message)s')
+
+boto3.setup_default_session(profile_name=AWS_PROFILE)
+
+s3_client = boto3.client("s3", region_name=AWS_REGION,
+                         endpoint_url=ENDPOINT_URL)
+
+
+def create_bucket(bucket_name):
+    """
+    Creates a S3 bucket.
+    """
+    try:
+        response = s3_client.create_bucket(
+            Bucket=bucket_name)
+    except ClientError:
+        logger.exception('Could not create S3 bucket locally.')
+        raise
+    else:
+        return response
+
+
+def main():
+    """
+    Main invocation function.
+    """
+    bucket_name = "hands-on-cloud-localstack-bucket"
+    logger.info('Creating S3 bucket locally using LocalStack...')
+    s3 = create_bucket(bucket_name)
+    logger.info('S3 bucket created.')
+    logger.info(json.dumps(s3, indent=4) + '\n')
+
+
+if __name__ == '__main__':
+    main()
+
+
+
+# Verify S3 bucket creation
+awsls s3 ls
+
+
+................
+####################################################
+# List S3 Buckets
+####################################################
+
+import logging
+import boto3
+from botocore.exceptions import ClientError
+import json
+import os
+
+AWS_REGION = 'us-east-1'
+AWS_PROFILE = 'localstack'
+ENDPOINT_URL = os.environ.get('LOCALSTACK_ENDPOINT_URL')
+
+# logger config
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s: %(levelname)s: %(message)s')
+
+boto3.setup_default_session(profile_name=AWS_PROFILE)
+
+s3_resource = boto3.resource("s3", region_name=AWS_REGION,
+                         endpoint_url=ENDPOINT_URL)
+
+
+def list_buckets():
+    """
+    List S3 buckets.
+    """
+    try:
+        response = s3_resource.buckets.all()
+    except ClientError:
+        logger.exception('Could not list S3 bucket from LocalStack.')
+        raise
+    else:
+        return response
+
+
+def main():
+    """
+    Main invocation function.
+    """
+    logger.info('Listing S3 buckets from LocalStack...')
+    s3 = list_buckets()
+    logger.info('S3 bucket names: ')
+    for bucket in s3:
+        logger.info(bucket.name)
+
+
+if __name__ == '__main__':
+    main()
+
+
+####################################################
+# Upload file to S3 Bucket
+####################################################
+
+import logging
+import boto3
+from botocore.exceptions import ClientError
+import os
+import json
+
+AWS_REGION = 'us-east-1'
+AWS_PROFILE = 'localstack'
+ENDPOINT_URL = os.environ.get('LOCALSTACK_ENDPOINT_URL')
+
+# logger config
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s: %(levelname)s: %(message)s')
+
+boto3.setup_default_session(profile_name=AWS_PROFILE)
+
+s3_client = boto3.client("s3", region_name=AWS_REGION,
+                         endpoint_url=ENDPOINT_URL)
+
+
+def upload_file(file_name, bucket, object_name=None):
+    """
+    Upload a file to a S3 bucket.
+    """
+    try:
+        if object_name is None:
+            object_name = os.path.basename(file_name)
+        response = s3_client.upload_file(
+            file_name, bucket, object_name)
+    except ClientError:
+        logger.exception('Could not upload file to S3 bucket.')
+        raise
+    else:
+        return response
+
+
+def main():
+    """
+    Main invocation function.
+    """
+    file_name = '/Users/abhinav.dumbre/hands-on-cloud/localstack-boto3/s3/files/hands-on-cloud.txt'
+    object_name = 'hands-on-cloud.txt'
+    bucket = 'hands-on-cloud-localstack-bucket'
+    logger.info('Uploading file to S3 bucket in LocalStack...')
+    s3 = upload_file(file_name, bucket, object_name)
+    logger.info('File uploaded to S3 bucket successfully.')
+
+
+if __name__ == '__main__':
+    main()
+
+
+
+.............
+####################################################
+Verify the upload operation
+####################################################
+
+awsls s3api list-objects --bucket hands-on-cloud-localstack-bucket
+
+.............
+
+####################################################
+Download file from S3 Bucket
+####################################################
+
+import logging
+import boto3
+from botocore.exceptions import ClientError
+import os
+import json
+
+AWS_REGION = 'us-east-1'
+AWS_PROFILE = 'localstack'
+ENDPOINT_URL = os.environ.get('LOCALSTACK_ENDPOINT_URL')
+
+# logger config
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s: %(levelname)s: %(message)s')
+
+boto3.setup_default_session(profile_name=AWS_PROFILE)
+
+s3_resource = boto3.resource("s3", region_name=AWS_REGION,
+                         endpoint_url=ENDPOINT_URL)
+
+def download_file(file_name, bucket, object_name):
+    """
+    Download a file from a S3 bucket.
+    """
+    try:
+        response = s3_resource.Bucket(bucket).download_file(object_name, file_name)
+    except ClientError:
+        logger.exception('Could not download file to S3 bucket.')
+        raise
+    else:
+        return response
+
+
+def main():
+    """
+    Main invocation function.
+    """
+    file_name = '/Users/abhinav.dumbre/hands-on-cloud/localstack-boto3/s3/files/hands-on-cloud-download.txt'
+    object_name = 'hands-on-cloud.txt'
+    bucket = 'hands-on-cloud-localstack-bucket'
+
+    logger.info('Downloading file to S3 bucket in LocalStack...')
+    s3 = download_file(file_name, bucket, object_name)
+    logger.info('File downloaded from S3 bucket successfully.')
+
+
+if __name__ == '__main__':
+    main()
+
+ ...............
+####################################################
+Delete S3 Bucket
+####################################################
+
+import logging
+import boto3
+from botocore.exceptions import ClientError
+import json
+import os
+
+AWS_REGION = 'us-east-1'
+AWS_PROFILE = 'localstack'
+ENDPOINT_URL = os.environ.get('LOCALSTACK_ENDPOINT_URL')
+
+# logger config
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s: %(levelname)s: %(message)s')
+
+boto3.setup_default_session(profile_name=AWS_PROFILE)
+
+s3_client = boto3.client("s3", region_name=AWS_REGION,
+                         endpoint_url=ENDPOINT_URL)
+s3_resource = boto3.resource("s3", region_name=AWS_REGION,
+                         endpoint_url=ENDPOINT_URL)
+
+def empty_bucket(bucket_name):
+    """
+    Deletes all objects in the bucket.
+    """
+    try:
+        logger.info('Deleting all objects in the bucket...')
+        bucket = s3_resource.Bucket(bucket_name)
+        response = bucket.objects.all().delete()
+    except:
+        logger.exception('Could not delete all S3 bucket objects.')
+        raise
+    else:
+        return response
+
+
+def delete_bucket(bucket_name):
+    """
+    Deletes a S3 bucket.
+    """
+    try:
+        # remove all objects from the bucket before deleting the bucket
+        empty_bucket(bucket_name)
+        # delete bucket
+        response = s3_client.delete_bucket(
+            Bucket=bucket_name)
+    except ClientError:
+        logger.exception('Could not delete S3 bucket locally.')
+        raise
+    else:
+        return response
+
+
+def main():
+    """
+    Main invocation function.
+    """
+    bucket_name = "hands-on-cloud-localstack-bucket"
+    logger.info('Deleting S3 bucket...')
+    s3 = delete_bucket(bucket_name)
+    logger.info('S3 bucket deleted.')
+    logger.info(json.dumps(s3, indent=4) + '\n')
+
+
+if __name__ == '__main__':
+    main()
+
+
+...............
+
+####################################################
+lambda.py
+####################################################
+import logging
+
+LOGGER = logging.getLogger()
+LOGGER.setLevel(logging.INFO)
+
+
+def handler(event, context):
+    logging.info('Hands-on-cloud')
+    return {
+        "message": "Hello User!"
+    }
+
+
+............................
+
+The main functions for creating the .zip file to upload to LocalStack, creating Lambda,
+invoking Lambda, and deleting the Lambda function are defined in main_utils.py
+
+main_utils.py
+import os
+import logging
+import json
+from zipfile import ZipFile
+
+import boto3
+
+AWS_REGION = 'us-east-1'
+AWS_PROFILE = 'localstack'
+ENDPOINT_URL = os.environ.get('LOCALSTACK_ENDPOINT_URL')
+LAMBDA_ZIP = './function.zip'
+
+boto3.setup_default_session(profile_name=AWS_PROFILE)
+
+# logger config
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s: %(levelname)s: %(message)s')
+
+
+def get_boto3_client(service):
+    """
+    Initialize Boto3 Lambda client.
+    """
+    try:
+        lambda_client = boto3.client(
+            service,
+            region_name=AWS_REGION,
+            endpoint_url=ENDPOINT_URL
+        )
+    except Exception as e:
+        logger.exception('Error while connecting to LocalStack.')
+        raise e
+    else:
+        return lambda_client
+
+
+def create_lambda_zip(function_name):
+    """
+    Generate ZIP file for lambda function.
+    """
+    try:
+        with ZipFile(LAMBDA_ZIP, 'w') as zip:
+            zip.write(function_name + '.py')
+    except Exception as e:
+        logger.exception('Error while creating ZIP file.')
+        raise e
+
+
+def create_lambda(function_name):
+    """
+    Creates a Lambda function in LocalStack.
+    """
+    try:
+        lambda_client = get_boto3_client('lambda')
+        _ = create_lambda_zip(function_name)
+
+        # create zip file for lambda function.
+        with open(LAMBDA_ZIP, 'rb') as f:
+            zipped_code = f.read()
+
+        lambda_client.create_function(
+            FunctionName=function_name,
+            Runtime='python3.8',
+            Role='role',
+            Handler=function_name + '.handler',
+            Code=dict(ZipFile=zipped_code)
+        )
+    except Exception as e:
+        logger.exception('Error while creating function.')
+        raise e
+
+
+def delete_lambda(function_name):
+    """
+    Deletes the specified lambda function.
+    """
+    try:
+        lambda_client = get_boto3_client('lambda')
+        lambda_client.delete_function(
+            FunctionName=function_name
+        )
+        # remove the lambda function zip file
+        os.remove(LAMBDA_ZIP)
+    except Exception as e:
+        logger.exception('Error while deleting lambda function')
+        raise e
+
+
+def invoke_function(function_name):
+    """
+    Invokes the specified function and returns the result.
+    """
+    try:
+        lambda_client = get_boto3_client('lambda')
+        response = lambda_client.invoke(
+            FunctionName=function_name)
+        return json.loads(
+            response['Payload']
+            .read()
+            .decode('utf-8')
+        )
+    except Exception as e:
+        logger.exception('Error while invoking function')
+        raise e
+
+
+.................................................
+
+####################################################
+test_lambda.py
+####################################################
+
+import main_utils
+import unittest
+unittest.TestLoader.sortTestMethodsUsing = None
+
+
+class Test(unittest.TestCase):
+    def test_a_setup_class(self):
+        print('\r\nCreating the lambda function...')
+        main_utils.create_lambda('lambda')
+
+    def test_b_invoke_function_and_response(self):
+        print('\r\nInvoking the lambda function...')
+        payload = main_utils.invoke_function('lambda')
+        self.assertEqual(payload['message'], 'Hello User!')
+
+    def test_c_teardown_class(self):
+        print('\r\nDeleting the lambda function...')
+        main_utils.delete_lambda('lambda')
+
+
+.................................................
+
+Run pytest
+pytest -s .
+
+.................................................
+
+####################################################
+lambda.py
+####################################################
+import logging
+
+import boto3
+
+AWS_REGION = 'us-east-1'
+LOCALSTACK_INTERNAL_ENDPOINT_URL = 'http://host.docker.internal:4566'
+
+# logger config
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s: %(levelname)s: %(message)s')
+
+
+def get_boto3_client(service):
+    """
+    Initialize Boto3 client.
+    """
+    try:
+        boto3_client = boto3.client(
+            service,
+            region_name=AWS_REGION,
+            endpoint_url=LOCALSTACK_INTERNAL_ENDPOINT_URL
+        )
+    except Exception as e:
+        logger.exception('Error while connecting to LocalStack.')
+        raise e
+    else:
+        return boto3_client
+
+def handler(event, context):
+    s3_client = get_boto3_client('s3')
+    logging.info('Uploading an object to the localstack s3 bucket...')
+    object_key = 'hands-on-cloud'
+    s3_client.put_object(
+        Bucket='hands-on-cloud-bucket',
+        Key=object_key,
+        Body='localstack-boto3-python'
+    )
+    return {
+        "message": "Object uploaded to S3."
+    }
+
+
+One noticeable change in the above code is, instead of using ENDPOINT_URL (‘http://localhost:4566‘),
+we’ve used LOCALSTACK_INTERNAL_ENDPOINT_URL (‘http://host.docker.internal:4566‘).
+
+####################################################
+main_utils.py
+####################################################
+import os
+import logging
+import json
+from zipfile import ZipFile
+
+import boto3
+
+AWS_REGION = 'us-east-1'
+AWS_PROFILE = 'localstack'
+ENDPOINT_URL = os.environ.get('LOCALSTACK_ENDPOINT_URL')
+LAMBDA_ZIP = './function.zip'
+AWS_CONFIG_FILE = '~/.aws/config'
+
+boto3.setup_default_session(profile_name=AWS_PROFILE)
+
+# logger config
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s: %(levelname)s: %(message)s')
+
+
+def get_boto3_client(service):
+    """
+    Initialize Boto3 client.
+    """
+    try:
+        lambda_client = boto3.client(
+            service,
+            region_name=AWS_REGION,
+            endpoint_url=ENDPOINT_URL
+        )
+    except Exception as e:
+        logger.exception('Error while connecting to LocalStack.')
+        raise e
+    else:
+        return lambda_client
+
+
+
+def create_lambda_zip(function_name):
+    """
+    Generate ZIP file for lambda function.
+    """
+    try:
+        with ZipFile(LAMBDA_ZIP, 'w') as zip:
+            zip.write(function_name + '.py')
+    except Exception as e:
+        logger.exception('Error while creating ZIP file.')
+        raise e
+
+
+def create_lambda(function_name):
+    """
+    Creates a Lambda function in LocalStack.
+    """
+    try:
+        lambda_client = get_boto3_client('lambda')
+        _ = create_lambda_zip(function_name)
+
+        # create zip file for lambda function.
+        with open(LAMBDA_ZIP, 'rb') as f:
+            zipped_code = f.read()
+
+        lambda_client.create_function(
+            FunctionName=function_name,
+            Runtime='python3.8',
+            Role='role',
+            Handler=function_name + '.handler',
+            Code=dict(ZipFile=zipped_code)
+        )
+    except Exception as e:
+        logger.exception('Error while creating function.')
+        raise e
+
+def delete_lambda(function_name):
+    """
+    Deletes the specified lambda function.
+    """
+    try:
+        lambda_client = get_boto3_client('lambda')
+        lambda_client.delete_function(
+            FunctionName=function_name
+        )
+        # remove the lambda function zip file
+        os.remove(LAMBDA_ZIP)
+    except Exception as e:
+        logger.exception('Error while deleting lambda function')
+        raise e
+
+
+def invoke_function(function_name):
+    """
+    Invokes the specified function and returns the result.
+    """
+    try:
+        lambda_client = get_boto3_client('lambda')
+        response = lambda_client.invoke(
+            FunctionName=function_name)
+        return (response['Payload']
+                .read()
+                .decode('utf-8')
+                )
+    except Exception as e:
+        logger.exception('Error while invoking function')
+        raise e
+
+
+def create_bucket(bucket_name):
+    """
+    Create a S3 bucket.
+    """
+    try:
+        s3_client = get_boto3_client('s3')
+        s3_client.create_bucket(
+            Bucket=bucket_name
+        )
+    except Exception as e:
+        logger.exception('Error while creating s3 bucket')
+        raise e
+
+
+def list_s3_bucket_objects(bucket_name):
+    """
+    List S3 buckets.
+    """
+    try:
+        s3_client = get_boto3_client('s3')
+        return s3_client.list_objects_v2(
+            Bucket=bucket_name
+        )['Contents']
+    except Exception as e:
+        logger.exception('Error while listing s3 bucket objects')
+        raise e
+
+
+def delete_bucket(bucket_name):
+    """
+    Delete a S3 bucket.
+    """
+    try:
+        s3_client = get_boto3_client('s3')
+        objects = list_s3_bucket_objects(bucket_name)
+        # empty the bucket before deleting
+        [s3_client.delete_object(Bucket=bucket_name, Key=obj['Key'])
+         for obj in objects]
+        s3_client.delete_bucket(
+            Bucket=bucket_name
+        )
+    except Exception as e:
+        logger.exception('Error while deleting s3 bucket')
+        raise e
+
+
+..............................
+####################################################
+test_lambda.py
+####################################################
+import main_utils
+import unittest
+unittest.TestLoader.sortTestMethodsUsing = None
+
+
+class Test(unittest.TestCase):
+    def test_a_setup_class(self):
+        print('\r\nCreate test case...')
+        main_utils.create_lambda('lambda')
+        main_utils.create_bucket('hands-on-cloud-bucket')
+
+    def test_b_invoke_function_and_response(self):
+        print('\r\nInvoke test case...')
+        payload = main_utils.invoke_function('lambda')
+        bucket_objects = main_utils.list_s3_bucket_objects('hands-on-cloud-bucket')
+
+    def test_c_teardown_class(self):
+        print('\r\nDelete test case...')
+        main_utils.delete_lambda('lambda')
+        main_utils.delete_bucket('hands-on-cloud-bucket')
+
+
+
+Execute pytest
+pytest -s .
+
+...................................
+####################################################
+Create a DynamoDB Table
+####################################################
+
+Create a DynamoDB Table
+import json
+import logging
+from datetime import date, datetime
+import os
+
+import boto3
+from botocore.exceptions import ClientError
+
+AWS_REGION = 'us-east-1'
+AWS_PROFILE = 'localstack'
+ENDPOINT_URL = os.environ.get('LOCALSTACK_ENDPOINT_URL')
+
+# logger config
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s: %(levelname)s: %(message)s')
+
+boto3.setup_default_session(profile_name=AWS_PROFILE)
+
+dynamodb_client = boto3.client(
+    "dynamodb", region_name=AWS_REGION, endpoint_url=ENDPOINT_URL)
+
+
+def json_datetime_serializer(obj):
+    """
+    Helper method to serialize datetime fields
+    """
+    if isinstance(obj, (datetime, date)):
+        return obj.isoformat()
+    raise TypeError("Type %s not serializable" % type(obj))
+
+
+
+def create_dynamodb_table(table_name):
+    """
+    Creates a DynamoDB table.
+    """
+    try:
+        response = dynamodb_client.create_table(
+            TableName=table_name,
+            KeySchema=[
+                {
+                    'AttributeName': 'Name',
+                    'KeyType': 'HASH'
+                },
+                {
+                    'AttributeName': 'Email',
+                    'KeyType': 'RANGE'
+                }
+            ],
+            AttributeDefinitions=[
+                {
+                    'AttributeName': 'Name',
+                    'AttributeType': 'S'
+                },
+                {
+                    'AttributeName': 'Email',
+                    'AttributeType': 'S'
+                }
+            ],
+            ProvisionedThroughput={
+                'ReadCapacityUnits': 1,
+                'WriteCapacityUnits': 1
+            },
+            Tags=[
+                {
+                    'Key': 'Name',
+                    'Value': 'hands-on-cloud-dynamodb-table'
+                }
+            ])
+
+    except ClientError:
+        logger.exception('Could not create the table.')
+        raise
+    else:
+        return response
+
+
+def main():
+    """
+    Main invocation function.
+    """
+    table_name = 'hands-on-cloud-dynamodb-table'
+    logger.info('Creating a DynamoDB table...')
+    dynamodb = create_dynamodb_table(table_name)
+    logger.info(
+        f'DynamoDB table created: {json.dumps(dynamodb, indent=4, default=json_datetime_serializer)}')
+
+
+if __name__ == '__main__':
+    main()
+
+..........
+
+####################################################
+Verify DynamoDB table status
+####################################################
+awsls dynamodb describe-table --table-name hands-on-cloud-dynamodb-table
+
+..........
+####################################################
+Performing CRUD Operations on DynamoDB Table
+####################################################
+
+Create Items
+
+
+import json
+import logging
+import os
+
+import boto3
+from botocore.exceptions import ClientError
+
+AWS_REGION = 'us-east-1'
+AWS_PROFILE = 'localstack'
+ENDPOINT_URL = os.environ.get('LOCALSTACK_ENDPOINT_URL')
+
+# logger config
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s: %(levelname)s: %(message)s')
+
+boto3.setup_default_session(profile_name=AWS_PROFILE)
+
+dynamodb_resource = boto3.resource(
+    "dynamodb", region_name=AWS_REGION, endpoint_url=ENDPOINT_URL)
+
+
+def add_dynamodb_table_item(table_name, name, email):
+    """
+    adds a DynamoDB table.
+    """
+    try:
+        table = dynamodb_resource.Table(table_name)
+        response = table.put_item(
+            Item={
+                'Name': name,
+                'Email': email
+            }
+        )
+
+    except ClientError:
+        logger.exception('Could not add the item to table.')
+        raise
+    else:
+        return response
+
+
+def main():
+    """
+    Main invocation function.
+    """
+    table_name = 'hands-on-cloud-dynamodb-table'
+    name = 'hands-on-cloud'
+    email = 'example@cloud.com'
+    logger.info('Adding item...')
+    dynamodb = add_dynamodb_table_item(table_name, name, email)
+    logger.info(
+        f'DynamoDB table item created: {json.dumps(dynamodb, indent=4)}')
+
+
+if __name__ == '__main__':
+    main()
+
+.............................
+####################################################
+Read Items
+####################################################
+
+import json
+import logging
+import os
+
+import boto3
+from botocore.exceptions import ClientError
+
+AWS_REGION = 'us-east-1'
+AWS_PROFILE = 'localstack'
+ENDPOINT_URL = os.environ.get('LOCALSTACK_ENDPOINT_URL')
+
+# logger config
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s: %(levelname)s: %(message)s')
+
+boto3.setup_default_session(profile_name=AWS_PROFILE)
+
+dynamodb_resource = boto3.resource(
+    "dynamodb", region_name=AWS_REGION, endpoint_url=ENDPOINT_URL)
+
+
+def read_dynamodb_table_item(table_name, name, email):
+    """
+    Reads from a DynamoDB table.
+    """
+    try:
+        table = dynamodb_resource.Table(table_name)
+        response = table.get_item(
+            Key={
+                'Name': name,
+                'Email': email
+            }
+        )
+
+    except ClientError:
+        logger.exception('Could not read the item from table.')
+        raise
+    else:
+        return response
+
+
+def main():
+    """
+    Main invocation function.
+    """
+    table_name = 'hands-on-cloud-dynamodb-table'
+    name = 'hands-on-cloud'
+    email = 'example@cloud.com'
+    logger.info('Reading item...')
+    dynamodb = read_dynamodb_table_item(table_name, name, email)
+    logger.info(
+        f'Item details: {json.dumps(dynamodb, indent=4)}')
+
+
+if __name__ == '__main__':
+    main()
+
+.............................
+
+
+####################################################
+Update Items
+####################################################
+
+import json
+import logging
+import os
+
+import boto3
+from botocore.exceptions import ClientError
+
+AWS_REGION = 'us-east-1'
+AWS_PROFILE = 'localstack'
+ENDPOINT_URL = os.environ.get('LOCALSTACK_ENDPOINT_URL')
+
+# logger config
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s: %(levelname)s: %(message)s')
+
+boto3.setup_default_session(profile_name=AWS_PROFILE)
+
+dynamodb_resource = boto3.resource(
+    "dynamodb", region_name=AWS_REGION, endpoint_url=ENDPOINT_URL)
+
+
+def update_dynamodb_table_item(table_name, name, email, phone_number):
+    """
+    update the DynamoDB table item.
+    """
+    try:
+        table = dynamodb_resource.Table(table_name)
+        response = table.update_item(
+            Key={
+                'Name': name,
+                'Email': email
+            },
+            UpdateExpression="set phone_number=:ph",
+            ExpressionAttributeValues={
+                ':ph': phone_number
+            }
+        )
+
+    except ClientError:
+        logger.exception('Could not update the item.')
+        raise
+    else:
+        return response
+
+
+def main():
+    """
+    Main invocation function.
+    """
+    table_name = 'hands-on-cloud-dynamodb-table'
+    name = 'hands-on-cloud'
+    email = 'example@cloud.com'
+    phone_number = '123-456-1234'
+    logger.info('updateing item...')
+    dynamodb = update_dynamodb_table_item(
+        table_name, name, email, phone_number)
+    logger.info(
+        f'Item details: {json.dumps(dynamodb, indent=4)}')
+
+
+if __name__ == '__main__':
+    main()
+
+
+.......................
+####################################################
+Delete Items
+####################################################
+import json
+import logging
+import os
+
+import boto3
+from botocore.exceptions import ClientError
+
+AWS_REGION = 'us-east-1'
+AWS_PROFILE = 'localstack'
+ENDPOINT_URL = os.environ.get('LOCALSTACK_ENDPOINT_URL')
+
+# logger config
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s: %(levelname)s: %(message)s')
+
+boto3.setup_default_session(profile_name=AWS_PROFILE)
+
+dynamodb_resource = boto3.resource(
+    "dynamodb", region_name=AWS_REGION, endpoint_url=ENDPOINT_URL)
+
+
+def delete_dynamodb_table_item(table_name, name, email):
+    """
+    Deletes the DynamoDB table item.
+    """
+    try:
+        table = dynamodb_resource.Table(table_name)
+        response = table.delete_item(
+            Key={
+                'Name': name,
+                'Email': email
+            }
+        )
+
+    except ClientError:
+        logger.exception('Could not delete the item.')
+        raise
+    else:
+        return response
+
+
+def main():
+    """
+    Main invocation function.
+    """
+    table_name = 'hands-on-cloud-dynamodb-table'
+    name = 'hands-on-cloud'
+    email = 'example@cloud.com'
+    logger.info('Deleteing item...')
+    dynamodb = delete_dynamodb_table_item(
+        table_name, name, email)
+    logger.info(
+        f'Details: {json.dumps(dynamodb, indent=4)}')
+
+
+if __name__ == '__main__':
+    main()
+
+
+.......................
+
+####################################################
+Delete a DynamoDB Table
+####################################################
+
+import json
+import logging
+from datetime import date, datetime
+import os
+
+import boto3
+from botocore.exceptions import ClientError
+
+AWS_REGION = 'us-east-1'
+AWS_PROFILE = 'localstack'
+ENDPOINT_URL = os.environ.get('LOCALSTACK_ENDPOINT_URL')
+
+# logger config
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s: %(levelname)s: %(message)s')
+
+boto3.setup_default_session(profile_name=AWS_PROFILE)
+
+dynamodb_client = boto3.client(
+    "dynamodb", region_name=AWS_REGION, endpoint_url=ENDPOINT_URL)
+
+
+def json_datetime_serializer(obj):
+    """
+    Helper method to serialize datetime fields
+    """
+    if isinstance(obj, (datetime, date)):
+        return obj.isoformat()
+    raise TypeError("Type %s not serializable" % type(obj))
+
+
+def delete_dynamodb_table(table_name):
+    """
+    Deletes the DynamoDB table.
+    """
+    try:
+        response = dynamodb_client.delete_table(
+            TableName=table_name
+        )
+
+    except ClientError:
+        logger.exception('Could not delete the table.')
+        raise
+    else:
+        return response
+
+
+def main():
+    """
+    Main invocation function.
+    """
+    table_name = 'hands-on-cloud-dynamodb-table'
+    logger.info('Deleteing DynamoDB table...')
+    dynamodb = delete_dynamodb_table(table_name)
+    logger.info(
+        f'Details: {json.dumps(dynamodb, indent=4, default=json_datetime_serializer)}')
+
+
+if __name__ == '__main__':
+    main()
+
+.........................................
+####################################################
+Working with KMS in Python using LocalStack & Boto3
+####################################################
+
+Creating KMS Key
+import json
+import logging
+from datetime import date, datetime
+import os
+
+import boto3
+from botocore.exceptions import ClientError
+
+AWS_REGION = 'us-east-1'
+AWS_PROFILE = 'localstack'
+ENDPOINT_URL = os.environ.get('LOCALSTACK_ENDPOINT_URL')
+
+# logger config
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s: %(levelname)s: %(message)s')
+
+boto3.setup_default_session(profile_name=AWS_PROFILE)
+
+kms_client = boto3.client(
+    "kms", region_name=AWS_REGION, endpoint_url=ENDPOINT_URL)
+
+
+def json_datetime_serializer(obj):
+    """
+    Helper method to serialize datetime fields
+    """
+    if isinstance(obj, (datetime, date)):
+        return obj.isoformat()
+    raise TypeError("Type %s not serializable" % type(obj))
+
+
+def create_kms_key():
+    """
+    Creates a unique customer managed KMS key.
+    """
+    try:
+        response = kms_client.create_key(
+            Description='hands-on-cloud-cmk',
+            Tags=[
+                {
+                    'TagKey': 'Name',
+                    'TagValue': 'hands-on-cloud-cmk'
+                }
+            ])
+
+    except ClientError:
+        logger.exception('Could not create a CMK key.')
+        raise
+    else:
+        return response
+
+
+def main():
+    """
+    Main invocation function.
+    """
+    logger.info('Creating a symetric CMK...')
+    kms = create_kms_key()
+    logger.info(
+        f'Symetric CMK is created with details: {json.dumps(kms, indent=4, default=json_datetime_serializer)}')
+
+
+if __name__ == '__main__':
+    main()
+
+
+........................
+
+####################################################
+Verify KMS key creation
+####################################################
+awsls kms list-keys
+
+........................
+
+####################################################
+Enabling KMS Key
+####################################################
+import json
+import logging
+import os
+
+import boto3
+from botocore.exceptions import ClientError
+
+AWS_REGION = 'us-east-1'
+AWS_PROFILE = 'localstack'
+ENDPOINT_URL = os.environ.get('LOCALSTACK_ENDPOINT_URL')
+
+# logger config
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s: %(levelname)s: %(message)s')
+
+boto3.setup_default_session(profile_name=AWS_PROFILE)
+
+kms_client = boto3.client(
+    "kms", region_name=AWS_REGION, endpoint_url=ENDPOINT_URL)
+
+
+def enable_kms_key(key_id):
+    """
+    Sets the key state of a KMS key to enabled..
+    """
+    try:
+        response = kms_client.enable_key(
+            KeyId=key_id
+        )
+
+    except ClientError:
+        logger.exception('Could not enable a KMS key.')
+        raise
+    else:
+        return response
+
+
+def main():
+    """
+    Main invocation function.
+    """
+    KEY_ID = 'd9a916ea-a7de-4d6f-a9bd-2bb9eee10227'
+    logger.info('Enabling a KMS key...')
+    kms = enable_kms_key(KEY_ID)
+    logger.info(f'KMS key ID {KEY_ID} enabled for use.')
+
+
+if __name__ == '__main__':
+    main()
+
+
+
+####################################################
+Disabling KMS Key
+####################################################
+import json
+import logging
+import os
+
+import boto3
+from botocore.exceptions import ClientError
+
+AWS_REGION = 'us-east-1'
+AWS_PROFILE = 'localstack'
+ENDPOINT_URL = os.environ.get('LOCALSTACK_ENDPOINT_URL')
+
+# logger config
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s: %(levelname)s: %(message)s')
+
+boto3.setup_default_session(profile_name=AWS_PROFILE)
+
+kms_client = boto3.client(
+    "kms", region_name=AWS_REGION, endpoint_url=ENDPOINT_URL)
+
+
+def disable_kms_key(key_id):
+    """
+    Sets the key state of a KMS key to disabled..
+    """
+    try:
+        response = kms_client.disable_key(
+            KeyId=key_id
+        )
+
+    except ClientError:
+        logger.exception('Could not disable a KMS key.')
+        raise
+    else:
+        return response
+
+
+def main():
+    """
+    Main invocation function.
+    """
+    KEY_ID = 'd9a916ea-a7de-4d6f-a9bd-2bb9eee10227'
+    logger.info('Disabling a KMS key...')
+    kms = disable_kms_key(KEY_ID)
+    logger.info(f'KMS key ID {KEY_ID} disabled for use.')
+
+
+if __name__ == '__main__':
+    main()
+
+
+
+####################################################
+Deleting KMS Key
+####################################################
+import json
+import logging
+from datetime import date, datetime
+import os
+
+import boto3
+from botocore.exceptions import ClientError
+
+AWS_REGION = 'us-east-1'
+AWS_PROFILE = 'localstack'
+ENDPOINT_URL = os.environ.get('LOCALSTACK_ENDPOINT_URL')
+
+# logger config
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s: %(levelname)s: %(message)s')
+
+boto3.setup_default_session(profile_name=AWS_PROFILE)
+
+kms_client = boto3.client(
+    "kms", region_name=AWS_REGION, endpoint_url=ENDPOINT_URL)
+
+
+def json_datetime_serializer(obj):
+    """
+    Helper method to serialize datetime fields
+    """
+    if isinstance(obj, (datetime, date)):
+        return obj.isoformat()
+    raise TypeError("Type %s not serializable" % type(obj))
+
+
+def delete_kms_key(key_id, pending_window_in_days):
+    """
+    Schedules the deletion of a KMS key.
+    """
+    try:
+        response = kms_client.schedule_key_deletion(
+            KeyId=key_id,
+            PendingWindowInDays=pending_window_in_days
+        )
+
+    except ClientError:
+        logger.exception('Could not delete a KMS key.')
+        raise
+    else:
+        return response
+
+
+def main():
+    """
+    Main invocation function.
+    """
+    KEY_ID = 'b5988e5d-3c19-488b-a40b-817594cbe6b0'
+    PENDING_WINDOW_IN_DAYS = 7
+    logger.info('Scheduling deletion of KMS key...')
+    kms = delete_kms_key(KEY_ID, PENDING_WINDOW_IN_DAYS)
+    logger.info(
+        f'Deletion Details: {json.dumps(kms, indent=4, default=json_datetime_serializer)}')
+
+
+if __name__ == '__main__':
+    main()
+
+
+
+---------------------------------------------------------------------------------------------
+
+
+https://docs.aws.amazon.com/cli/latest/reference/s3api/list-buckets.html
+https://docs.localstack.cloud/integrations/aws-cli/
+https://github.com/localstack/localstack/blob/master/README.md
+https://stackoverflow.com/questions/3337912/quick-way-to-list-all-files-in-amazon-s3-bucket
+https://docs.localstack.cloud/integrations/sdks/python/
+https://docs.localstack.cloud/integrations/sdks/php/
+http://boto.cloudhackers.com/en/latest/s3_tut.html
+
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+####################################################
+Amazon S3
+####################################################
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/migrations3.html
+
+Creating the connection
+
+# Boto3
+import boto3
+s3 = boto3.resource('s3')
+
+
+Creating a bucket
+
+# Boto3
+s3.create_bucket(Bucket='mybucket')
+s3.create_bucket(Bucket='mybucket', CreateBucketConfiguration={'LocationConstraint': 'us-west-1'})
+
+Storing data
+# Boto3
+s3.Object('mybucket', 'hello.txt').put(Body=open('/tmp/hello.txt', 'rb'))
+
+
+Accessing a bucket
+# Boto3
+import botocore
+bucket = s3.Bucket('mybucket')
+exists = True
+try:
+    s3.meta.client.head_bucket(Bucket='mybucket')
+except botocore.exceptions.ClientError as e:
+    # If a client error is thrown, then check that it was a 404 error.
+    # If it was a 404 error, then the bucket does not exist.
+    error_code = e.response['Error']['Code']
+    if error_code == '404':
+        exists = False
+
+
+Deleting a bucket
+
+# Boto3
+for key in bucket.objects.all():
+    key.delete()
+bucket.delete()
+
+
+Iteration of buckets and keys
+# Boto3
+for bucket in s3.buckets.all():
+    for key in bucket.objects.all():
+        print(key.key)
+
+
+
+https://stackoverflow.com/questions/33297172/boto3-error-botocore-exceptions-nocredentialserror-unable-to-locate-credential
+https://ittutoria.net/question/how-to-fix-boto3-error-botocore-exceptions-nocredentialserror-unable-to-locate-credentials/
+https://stackoverflow.com/questions/43907689/boto3-error-the-aws-access-key-id-you-provided-does-not-exist-in-our-records
+https://github.com/boto/boto3/issues/2026
+
+1) ~/.aws/credentials file
+
+[MyProfile1]
+aws_access_key_id = yourAccessId
+aws_secret_access_key = yourSecretKey
+[MyProfile2]
+aws_access_key_id = yourAccessId
+aws_secret_access_key = yourSecretKey
+
+
+
+2) Python script
+
+
+from __future__ import print_function
+import boto3
+import os
+os.environ['AWS_PROFILE'] = "MyProfile1"
+os.environ['AWS_DEFAULT_REGION'] = "us-east-1"
+ec2 = boto3.client('ec2')
+# Retrieves all regions/endpoints that work with EC2
+response = ec2.describe_regions()
+print('Regions:', response['Regions'])
+
+
+-------------------------------------------------------------------------------------------------------------------
+####################################################
+aws-profile
+####################################################
+https://stackoverflow.com/questions/33378422/how-to-choose-an-aws-profile-when-using-boto3-to-connect-to-cloudfront
+https://www.faqcode4u.com/faq/313478/boto3-error-the-aws-access-key-id-you-provided-does-not-exist-in-our-records
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html
+
+s3 = boto3.resource('s3',
+          aws_access_key_id="xxxxxxxxxxx",
+          aws_secret_access_key="xxxxxxxxxxxxxxxxx")
+ s3client = boto3.client('s3')
+ bucket = s3.Bucket('bucketone')
+ for obj in bucket.objects.all():
+     s3client.download_file(bucket_name, obj.key, filename)
+
+
+-------------------------------------------------------------------------------------------------------------------
+
+# Instantiating the Boto3 client
+import uuid
+import boto3
+
+import botocore
+import os
+from botocore.config import Config
+
+# os.environ['AWS_PROFILE'] = "localstack"
+# os.environ['AWS_DEFAULT_REGION'] = "us-east-1"
+
+my_config = Config(
+    region_name='us-west-2',
+    signature_version='v4',
+    retries={
+        'max_attempts': 10,
+        'mode': 'standard'
+    }
+)
+
+# Boto3
+# dev = boto3.session.Session(profile_name='localstack')
+# session = boto3.Session(profile_name='localstack')
+s3 = boto3.resource('s3', aws_access_key_id='key123456', aws_secret_access_key='secret123456')
+
+# create bucket
+bucket_name = "python-sdk-sample-%s" % uuid.uuid4()
+print("Creating new bucket with name:", bucket_name)
+newb = s3.create_bucket(Bucket=bucket_name)
+
+# read bucket
+# bucketa = s3.Bucket('sample-bucket')
+# print(bucketa)
+
+# Storing data
+# s3.Object('mybucket', 'hello.txt').put(Body=open('/tmp/hello.txt', 'rb'))
+
+# Boto3 Iteration of buckets and keys
+# for bucket in s3.buckets.all():
+#    print(bucket)
+#    for key in bucket.objects.all():
+#        print(key.key)
+
+# Boto3
+# for key in bucket.objects.all():
+#     key.delete()
+# bucket.delete()
+

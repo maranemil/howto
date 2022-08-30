@@ -1,0 +1,823 @@
+
+####################################################
+boto3
+####################################################
+
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/quickstart.html#using-boto3
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/sqs.html
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html
+https://analyticshut.com/configure-credentials-with-boto3/
+https://github.com/spulec/moto
+https://stackoverflow.com/questions/37143597/mocking-boto3-s3-client-method-python
+https://stackoverflow.com/questions/59114947/what-should-i-do-to-fix-the-aws-access-key-id-you-provided-does-not-exist-in-ou
+https://github.com/localstack/localstack/issues/6069
+https://github.com/aws-samples/aws-python-sample/issues/7
+https://github.com/boto/boto3/issues/2026
+
+aws configure
+
+import boto3
+
+# Let's use Amazon S3
+s3 = boto3.resource('s3')
+
+# Print out bucket names
+for bucket in s3.buckets.all():
+    print(bucket.name)
+
+
+import boto3
+
+client = boto3.client(
+    's3',
+    aws_access_key_id=ACCESS_KEY,
+    aws_secret_access_key=SECRET_KEY,
+    aws_session_token=SESSION_TOKEN
+)
+
+
+import boto3
+
+session = boto3.Session(
+    aws_access_key_id=ACCESS_KEY,
+    aws_secret_access_key=SECRET_KEY,
+    aws_session_token=SESSION_TOKEN
+)
+
+
+os.environ['AWS_ACCESS_KEY_ID'] = 'foo'
+os.environ['AWS_SECRET_ACCESS_KEY'] = 'bar'
+os.environ.pop('AWS_PROFILE', None)
+
+export AWS_ACCESS_KEY_ID='foo'
+export AWS_SECRET_ACCESS_KEY='bar'
+export AWS_DEFAULT_REGION='us-east-1'
+
+
+from unittest.mock import patch
+import aws_mock
+import my_module
+# Some prep work for the mock mode
+boto3.client = aws_mock.client
+conn = boto3.client('s3')
+conn.create_bucket(Bucket='my-bucket')
+# Actual testing
+resp = my_module.foo()
+assert(resp == 'Valid')
+resp = my_module.bar()
+assert(resp != 'Not Valid')
+
+------------------------------------------------------------------------------
+####################################################
+# check bucket exists
+####################################################
+
+https://pypi.org/project/boto3/
+https://hands-on.cloud/testing-python-aws-applications-using-localstack/
+https://github.com/localstack/localstack-python-client#
+https://stackoverflow.com/questions/26871884/how-can-i-easily-determine-if-a-boto-3-s3-bucket-resource-exists
+https://www.edureka.co/community/32308/how-to-check-wether-a-bucket-exists-using-boto3
+https://www.tutorialspoint.com/how-to-use-boto3-and-aws-resource-to-determine-whether-a-root-bucket-exists-in-s3
+https://gist.github.com/rizerzero/e3804c6466f05afe5230abc2cc31bf9d
+
+from botocore.client import ClientError
+
+try:
+    s3.meta.client.head_bucket(Bucket=bucket.name)
+except ClientError:
+    # The bucket does not exist or you have no access.
+    bucket = s3.create_bucket(Bucket='my-bucket-name')
+
+
+import boto3
+s3 = boto3.resource('s3')
+s3.Bucket('Hello') in s3.buckets.all()
+False
+s3.Bucket('some-docs') in s3.buckets.all()
+True
+
+
+
+import boto3
+s3 = boto3.resource('s3')
+bucket = s3.Bucket('my-bucket-name')
+if bucket.creation_date:
+   print("The bucket exists")
+else:
+   print("The bucket does not exist")
+
+------------------------------------------------------------------------------
+####################################################
+# Write A File Or Data To An S3 Object Using Boto3
+####################################################
+
+https://www.stackvidhya.com/write-a-file-to-s3-using-boto3/
+https://www.developerfiles.com/upload-files-to-s3-with-python-keeping-the-original-folder-structure/
+https://binaryguy.tech/aws/s3/how-to-upload-a-file-to-s3-using-python/
+https://www.codegrepper.com/code-examples/python/uploading+file+to+specific+folder+in+S3+using+boto3
+https://www.tutorialsbuddy.com/python-upload-file-to-s3
+https://stackoverflow.com/questions/39272397/uploading-file-to-specific-folder-in-s3-using-boto3
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/s3-uploading-files.html
+https://www.stackvidhya.com/write-a-file-to-s3-using-boto3/
+https://gist.github.com/rizerzero/e3804c6466f05afe5230abc2cc31bf9d
+
+
+import boto3
+s3 = boto3.resource('s3')
+s3.meta.client.upload_file('/tmp/hello.txt', 'mybucket', 'hello.txt')
+#s3.meta.client.upload_file('/tmp/' + filename, '<bucket-name>', 'folder/{}'.format(filename))
+
+
+import boto3
+from botocore.exceptions import ClientError
+import io
+s3_client = boto3.client('s3', region_name='us-east-1', aws_access_key_id=ACCESS_KEY,
+                               aws_secret_access_key=ACCESS_SECRET)
+
+def upload_my_file(bucket, folder, file_as_binary, file_name):
+        file_as_binary = io.BytesIO(file_as_binary)
+        key = folder+"/"+file_name
+        try:
+            s3_client.upload_fileobj(file_as_binary, bucket, key)
+        except ClientError as e:
+            print(e)
+            return False
+        return True
+#get file as binary
+file_binary = open("/home/user/Documents/test.html", "rb").read()
+#uploading file
+upload_my_file("bucket-name", "folder-name", file_binary, "test.html")
+
+
+
+
+import boto3
+#Creating Session With Boto3.
+session = boto3.Session(
+aws_access_key_id='<your_access_key_id>',
+aws_secret_access_key='<your_secret_access_key>'
+)
+#Creating S3 Resource From the Session.
+s3 = session.resource('s3')
+object = s3.Object('<bucket_name>', 'file_name.txt')
+txt_data = b'This is the content of the file uploaded from python boto3'
+result = object.put(Body=txt_data)
+res = result.get('ResponseMetadata')
+if res.get('HTTPStatusCode') == 200:
+    print('File Uploaded Successfully')
+else:
+    print('File Not Uploaded')
+
+
+
+import boto3
+#Creating Session With Boto3.
+session = boto3.Session(
+aws_access_key_id='<your_access_key_id>',
+aws_secret_access_key='<your_secret_access_key>'
+)
+#Creating S3 Resource From the Session.
+s3 = session.resource('s3')
+result = s3.Bucket('<bucket_name>').upload_file('E:/temp/testfile.txt','file_name.txt')
+print(result)
+
+
+
+import boto3
+import os
+def upload_files(path):
+    session = boto3.Session(
+        aws_access_key_id='YOUR_AWS_ACCESS_KEY_ID',
+        aws_secret_access_key='YOUR_AWS_SECRET_ACCESS_KEY_ID',
+        region_name='YOUR_AWS_ACCOUNT_REGION'
+    )
+    s3 = session.resource('s3')
+    bucket = s3.Bucket('YOUR_BUCKET_NAME')
+
+    for subdir, dirs, files in os.walk(path):
+        for file in files:
+            full_path = os.path.join(subdir, file)
+            with open(full_path, 'rb') as data:
+                bucket.put_object(Key=full_path[len(path)+1:], Body=data)
+
+if __name__ == "__main__":
+    upload_files('/path/to/my/folder')
+
+
+
+import boto3
+from pprint import pprint
+import pathlib
+import os
+def upload_file_using_client():
+    """
+    Uploads file to S3 bucket using S3 client object
+    :return: None
+    """
+    s3 = boto3.client("s3")
+    bucket_name = "binary-guy-frompython-1"
+    object_name = "sample1.txt"
+    file_name = os.path.join(pathlib.Path(__file__).parent.resolve(), "sample_file.txt")
+    response = s3.upload_file(file_name, bucket_name, object_name)
+    pprint(response)  # prints None
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+####################################################
+fastest way to empty s3 bucket using boto3
+####################################################
+
+https://stackoverflow.com/questions/43326493/what-is-the-fastest-way-to-empty-s3-bucket-using-boto3
+https://www.tutorialspoint.com/how-to-use-boto3-library-in-python-to-delete-an-object-from-s3-using-aws-resource
+https://hands-on.cloud/working-with-s3-in-python-using-boto3/#
+https://hands-on.cloud/working-with-s3-in-python-using-boto3/#h-how-to-delete-s3-objects-using-boto3
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/s3-examples.html
+
+#!/usr/bin/env python3
+
+import boto3
+AWS_REGION = "us-east-2"
+S3_BUCKET_NAME = "hands-on-cloud-demo-bucket"
+s3_resource = boto3.resource("s3", region_name=AWS_REGION)
+s3_object = s3_resource.Object(bucket_name, 'new_demo.txt')
+s3_object.delete()
+print('S3 object deleted')
+
+
+
+import boto3
+s3 = boto3.resource('s3')
+bucket = s3.Bucket('my-bucket')
+# suggested by Jordon Philips
+bucket.objects.all().delete()
+
+
+# If versioning is enabled
+import boto3
+s3 = boto3.resource('s3')
+bucket = s3.Bucket('bucket-name')
+bucket.object_versions.delete()
+
+import boto3
+s3 = boto3.resource('s3')
+s3_bucket = s3.Bucket(bucket_name)
+bucket_versioning = s3.BucketVersioning(bucket_name)
+if bucket_versioning.status == 'Enabled':
+    s3_bucket.object_versions.delete()
+else:
+    s3_bucket.objects.all().delete()
+
+------------------------------------------------------------------------------
+####################################################
+List objects in an Amazon S3 bucket
+####################################################
+https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3.html#examples
+
+
+
+
+The following example shows how to use an Amazon S3 bucket resource to list the objects in the bucket.
+
+import boto3
+
+s3 = boto3.resource('s3')
+bucket = s3.Bucket('my-bucket')
+for obj in bucket.objects.all():
+    print(obj.key)
+
+
+Downloading a specific version of an S3 object
+This example shows how to download a specific version of an S3 object.
+
+import boto3
+s3 = boto3.client('s3')
+
+s3.download_file(
+    "bucket-name", "key-name", "tmp.txt",
+    ExtraArgs={"VersionId": "my-version-id"}
+)
+
+
+
+Filter objects by last modified time using JMESPath
+This example shows how to filter objects by last modified time using JMESPath.
+
+import boto3
+s3 = boto3.client("s3")
+
+s3_paginator = s3.get_paginator('list_objects_v2')
+s3_iterator = s3_paginator.paginate(Bucket='your-bucket-name')
+
+filtered_iterator = s3_iterator.search(
+    "Contents[?to_string(LastModified)>='\"2022-01-05 08:05:37+00:00\"'].Key"
+)
+
+for key_data in filtered_iterator:
+    print(key_data)
+
+
+
+
+------------------------------------------------------------------------------
+####################################################
+how to copy s3 object from one bucket to another using python boto3
+####################################################
+https://stackoverflow.com/questions/47468148/how-to-copy-s3-object-from-one-bucket-to-another-using-python-boto3
+
+
+#!/usr/bin/env python
+import boto3
+s3 = boto3.resource('s3')
+source= { 'Bucket' : 'bucketname1', 'Key': 'objectname'}
+dest = s3.Bucket('Bucketname2')
+dest.copy(source, 'backupfile')
+
+
+
+import boto3
+s3 = boto3.resource('s3')
+copy_source = {
+      'Bucket': 'mybucket',
+      'Key': 'filename'
+    }
+bucket = s3.Bucket('otherbucket')
+bucket.copy(copy_source, 'backupfile')
+
+
+
+import boto3
+s3 = boto3.resource('s3')
+copy_source = {
+    'Bucket': 'mybucket',
+    'Key': 'mykey'
+ }
+s3.meta.client.copy(copy_source, 'otherbucket', 'otherkey')
+
+
+------------------------------------------------------------------------------
+
+#############################################################################
+aws-localstack-examples
+#############################################################################
+
+https://gist.github.com/sats17/493d05d8d4dfd16b7dad399163075156
+https://github.com/localstack/localstack
+https://docs.localstack.cloud/integrations/aws-cli/
+https://reflectoring.io/aws-localstack/
+https://docs.localstack.cloud/get-started/
+
+
+docker-compose.yml
+version: '3.8'
+services:
+    redis:
+      container_name: "redis"
+      image: redis:alpine
+      ports:
+        - "6379:6379" # To Connect redis from local cmd use : docker exec -it cores-redis redis-cli
+    localstack:
+        container_name: "localstack" # Container name in your docker
+        image: localstack/localstack:latest # Will download latest version of localstack
+        #image: localstack/localstack-full:latest # Full image support WebUI
+        ports:
+          - "4566:4566" # Default port forward
+          - "9200:4571" # Elasticsearch port forward
+          #- "8080:8080: # WebUI port forward
+        environment:
+          - SERVICES=es, s3, ec2, dynamodb, elasticcache, sqs #AWS Services that you want in your localstack
+          - DEBUG=1 # Debug level 1 if you want to logs, 0 if you want to disable
+          - START_WEB=0 # Flag to control whether the Web UI should be started in Docker
+          - LAMBDA_REMOTE_DOCKER=0
+          - DATA_DIR=/tmp/localstack/data #  Local directory for saving persistent data(Example: es storage)
+          - DEFAULT_REGION=us-east-1
+        volumes:
+          - './.localstack:/tmp/localstack'
+          - '/var/run/docker.sock:/var/run/docker.sock'
+
+
+
+localstack-s3-examples
+
+
+1) Create s3 bucket -
+# aws --endpoint-url=http://localhost:4566 s3 mb s3://my-test-bucket
+
+2) List s3 buckets -
+# aws --endpoint-url="http://localhost:4566" s3 ls
+
+3) Upload file on s3 bucket -
+# aws --endpoint-url="http://localhost:4566" s3 sync "myfiles" s3://my-test-bucket
+
+4) List files from AWS CLI -
+# aws --endpoint-url="http://localhost:4566" s3 ls s3://my-test-bucket
+
+6) Access file via URL(File name was download.jpg) -
+# http://localhost:4566/my-test-bucket/download.jpg
+
+7) Delete object from bucket -
+# aws --endpoint-url=http://localhost:4566 s3api delete-object --bucket <bucket-name> --key <file-name.format>
+
+8) Create bucket notification configuration -
+# aws --endpoint-url=http://localhost:4566 s3api put-bucket-notification-configuration --bucket <bucket-name> --notification-configuration file://<configuration-file-name>.json
+
+9) Get bucket notification configuration -
+# aws --endpoint-url=http://localhost:4566 s3api get-bucket-notification-configuration --bucket <bucket-name>
+
+10) Set bucket policy -
+# aws --endpoint-url=http://localhost:4566 s3api put-bucket-policy --bucket <bucket-name> --policy file://<policy-file>.json
+
+10) Get bukcet policy -
+# aws --endpoint-url=http://localhost:4566 s3api get-bucket-policy --bucket <bucket-name>
+
+
+
+localstack-sqs-example
+
+
+1) Create queue -
+# aws --endpoint-url=http://localhost:4566 sqs create-queue --queue-name my-test-queue
+
+2) Get queue url -
+# aws --endpoint-url=http://localhost:4566 sqs get-queue-url --queue-name <queue-name>
+
+3) list queue -
+# aws --endpoint-url=http://localhost:4566 sqs list-queues
+
+4) send message -
+# aws --endpoint-url=http://localhost:4566 sqs send-message --queue-url <queue-url> --message-body <message>
+
+5) receive message -
+# aws --endpoint-url=http://localhost:4566 sqs receive-message --queue-url <queue-url>
+
+6) purge queue -
+# aws --endpoint-url=http://localhost:4566 sqs purge-queue --queue-url <queue-url>
+
+7) delete queue -
+# aws --endpoint-url=http://localhost:4566 sqs delete-queue --queue-url <queue-url>
+
+8) set attributes -
+# aws --endpoint-url=http://localhost:4566 sqs set-queue-attributes --queue-url=<queue-url> --attributes file://<file-name>.json
+
+9) get attributes -
+# aws --endpoint-url=http://localhost:4566 sqs  get-queue-attributes --queue-url=<queue-url>
+
+
+
+
+localstack-sns-examples
+
+
+1) Create sns topic -
+# aws --endpoint-url=http://localhost:4566 sns create-topic --name my-test-topic
+
+2) list all sns topics -
+# aws --endpoint-url=http://localhost:4566 sns list-topics
+
+3) list subscriptions -
+# aws --endpoint-url=http://localhost:4566 sns list-subscriptions
+
+4) publish message -
+# aws --endpoint-url=http://localhost:4566 sns publish --topic-arn "arn:aws:sns:us-east-1:000000000000:ingest-topic" --message file://message.txt --message-attributes file://attributes.json
+
+-- message.txt
+my message to publish
+
+-- attributes.json
+{
+    "key": {
+        "DataType": "String",
+        "StringValue": "value"
+    }
+}
+
+
+
+------------------------------------------------------------------------------------------------------
+####################################################
+Downloading files boto3 s3
+####################################################
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/s3-example-download-file.html
+https://stackoverflow.com/questions/29378763/how-to-save-s3-object-to-a-file-using-boto3
+https://github.com/boto/boto3/issues/1235
+
+AttributeError: 's3.ServiceResource' object has no attribute 'download_file'
+s3 = boto3.client('s3') does not have Bucket and s3 = boto3.resource('s3') does have bucket.
+
+boto3.client('s3').Bucket('mybucket')
+boto3.resource('s3').Bucket('mybucket')
+
+
+import boto3
+s3 = boto3.client('s3')
+s3.download_file('BUCKET_NAME', 'OBJECT_NAME', 'FILE_NAME')
+
+s3 = boto3.client('s3')
+with open('FILE_NAME', 'wb') as f:
+    s3.download_fileobj('BUCKET_NAME', 'OBJECT_NAME', f)
+
+resource = boto3.resource('s3')
+my_bucket = resource.Bucket('MyBucket')
+my_bucket.download_file(key, local_filename)
+
+
+s3_client = boto3.client('s3')
+open('hello.txt').write('Hello, world!')
+# Upload the file to S3
+s3_client.upload_file('hello.txt', 'MyBucket', 'hello-remote.txt')
+# Download the file from S3
+s3_client.download_file('MyBucket', 'hello-remote.txt', 'hello2.txt')
+print(open('hello2.txt').read())
+
+------------------------------------------------------------------------------------------------------
+####################################################
+Uploading files boto3 s3
+####################################################
+
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/s3-uploading-files.html
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-folders.html
+
+import logging
+import boto3
+from botocore.exceptions import ClientError
+import os
+
+s3_client = boto3.client('s3')
+    try:
+        response = s3_client.upload_file(file_name, bucket, object_name)
+    except ClientError as e:
+        logging.error(e)
+
+
+
+s3 = boto3.client('s3')
+with open("FILE_NAME", "rb") as f:
+    s3.upload_fileobj(f, "BUCKET_NAME", "OBJECT_NAME")
+
+------------------------------------------------------------------------------------------------------
+
+####################################################
+Copy most recent file from the s3 to the local using Python Boto3
+####################################################
+https://www.mytechmint.com/forum/python/how-to-download-or-copy-most-recent-file-from-the-s3-to-the-local-using-python-boto3/
+
+s3 = boto3.resource('s3')
+bucket = s3.Bucket('mybucket')
+filename = list(bucket.objects.all())[-1].key
+
+
+def download_file(BUCKET_NAME, PREFIX, FILE_NAME):
+    try:
+        s3 = boto3.client(
+            's3',
+            aws_access_key_id=ACCESS_KEY,
+            aws_secret_access_key=SECRET_KEY,
+            region_name=REGION_NAME
+        )
+        s3_list_response = s3.list_objects_v2(
+            Bucket=BUCKET_NAME,
+            Prefix=PREFIX
+        )
+        formatted_response = sorted(
+            s3_list_response['Contents'], key=lambda item: item['LastModified'])[-1]
+        s3_file_key = formatted_response["Key"]
+        s3_file_path = "s3://" + BUCKET_NAME + "/" + s3_file_key
+        print(f"""DOWNLOADING FILE FROM {s3_file_path} TO {LOCAL_BASE_PATH}/{FILE_NAME}""")
+        with open(f"{LOCAL_BASE_PATH}/{FILE_NAME}", 'wb') as data:
+            s3.download_fileobj(BUCKET_NAME, s3_file_key, data)
+        data.close()
+        print(f"SUCCESS !!! {FILE_NAME} Successfully Downloaded By myTechMint")
+
+    except Exception as error_1:
+        print(f"ERROR !!! Not able to download {FILE_NAME} from AWS S3", error_1)
+
+
+
+AWS CLI
+
+key=$(aws s3api list-objects --bucket MY-BUCKET --prefix foo/ --query 'sort_by(Contents, &LastModified)[-1].Key' --output text)
+aws s3 cp s3://MY-BUCKET/$key .
+
+
+--------------------------------------------------------
+####################################################
+Healthcheck API
+####################################################
+https://docs.min.io/minio/baremetal/monitoring/healthcheck-probe.html
+
+curl -I http://192.168.192.2:9000/minio/health/live
+
+MinIO Python SDK for Amazon S3 Compatible Cloud Storage
+https://docs.min.io/docs/python-client-quickstart-guide.html
+
+pip3 install minio
+
+--------------------------------------------------------
+####################################################
+Install mc
+####################################################
+https://docs.min.io/minio/baremetal/reference/minio-mc.html
+
+ curl https://dl.min.io/client/mc/release/linux-amd64/mc \
+  --create-dirs \
+  -o $HOME/minio-binaries/mc
+
+chmod +x $HOME/minio-binaries/mc
+export PATH=$PATH:$HOME/minio-binaries/
+
+
+bash +o history
+mc alias set ALIAS HOSTNAME ACCESS_KEY SECRET_KEY
+bash -o history
+
+
+mc alias set myminio https://minioserver.example.net ACCESS_KEY SECRET KEY
+mc alias set myS3 https://s3.amazon.com/endpoint ACCESS_KEY SECRET KEY
+mc alias set myGCS https://storage.googleapis.com/endpoint ACCESS_KEY SECRET KEY
+
+Test the Connection
+mc admin info myminio
+mc --help
+
+
+--------------------------------------------------------
+####################################################
+minio admin
+####################################################
+set Keys
+https://docs.min.io/docs/minio-admin-complete-guide.html
+
+Keys by argument
+
+mc alias set minio http://192.168.1.51:9000 BKIKJAA5BMMU2RHO6IBB V7f1CwQqAcwo80UEIJEjc5gVQUSSx5ohQ9GSrr12
+
+
+Keys by prompt
+
+Copymc alias set minio http://192.168.1.51:9000
+Enter Access Key: BKIKJAA5BMMU2RHO6IBB
+Enter Secret Key: V7f1CwQqAcwo80UEIJEjc5gVQUSSx5ohQ9GSrr12
+
+Keys by pipe
+
+Copyecho -e "BKIKJAA5BMMU2RHO6IBB\nV7f1CwQqAcwo80UEIJEjc5gVQUSSx5ohQ9GSrr12" | \
+   mc alias set minio http://192.168.1.51:9000
+
+Test Setup
+mc admin info minio
+
+--------------------------------------------------------
+####################################################
+minio
+####################################################
+
+https://nm-muzi.com/docs/minio-docker-quickstart-guide.html
+
+docker ps -a
+docker start minio
+docker stop minio
+docker logs minio
+docker stats minio
+
+
+--------------------------------------------------------
+####################################################
+MinIO Python SDK for Amazon S3 Compatible Cloud Storage
+####################################################
+https://docs.min.io/docs/python-client-quickstart-guide.html
+
+pip3 install minio
+
+
+from minio import Minio
+from minio.error import S3Error
+
+
+def main():
+    # Create a client with the MinIO server playground, its access key
+    # and secret key.
+    client = Minio(
+        "play.min.io",
+        access_key="Q3AM3UQ867SPQQA43P2F",
+        secret_key="zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG",
+    )
+
+    # Make 'asiatrip' bucket if not exist.
+    found = client.bucket_exists("asiatrip")
+    if not found:
+        client.make_bucket("asiatrip")
+    else:
+        print("Bucket 'asiatrip' already exists")
+
+    # Upload '/home/user/Photos/asiaphotos.zip' as object name
+    # 'asiaphotos-2015.zip' to bucket 'asiatrip'.
+    client.fput_object(
+        "asiatrip", "asiaphotos-2015.zip", "/home/user/Photos/asiaphotos.zip",
+    )
+    print(
+        "'/home/user/Photos/asiaphotos.zip' is successfully uploaded as "
+        "object 'asiaphotos-2015.zip' to bucket 'asiatrip'."
+    )
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except S3Error as exc:
+        print("error occurred.", exc)
+
+python file_uploader.py
+mc ls play/asiatrip/
+
+
+--------------------------------------------------------
+####################################################
+minio
+####################################################
+
+https://docs.min.io/docs/how-to-secure-access-to-minio-server-with-tls.html
+https://docs.min.io/docs/minio-server-configuration-guide.html
+https://docs.min.io/docs/minio-admin-complete-guide.html
+
+Use certgen to Generate a Certificate
+
+./certgen -host "10.10.0.3,10.10.0.4,10.10.0.5"
+
+
+2018/11/21 10:16:18 wrote public.crt
+2018/11/21 10:16:18 wrote private.key
+
+Use OpenSSL to Generate a Certificate
+
+openssl ecparam -genkey -name prime256v1 | openssl ec -out private.key
+openssl ecparam -genkey -name prime256v1 | openssl ec -aes256 -out private.key -passout pass:PASSWORD
+
+Generate a private key with RSA
+
+openssl genrsa -out private.key 2048
+openssl genrsa -aes256 -passout pass:PASSWORD -out private.key 2048
+
+export MINIO_CERT_PASSWD=<PASSWORD>
+
+openssl rsa -in private-pkcs8-key.key -aes256 -passout pass:PASSWORD -out private.key
+
+--------------------------------------------------------
+####################################################
+####################################################
+https://docs.docker.com/engine/reference/commandline/build/
+https://docs.docker.com/engine/reference/builder/
+https://docs.docker.com/get-started/02_our_app/
+https://docs.min.io/docs/s3cmd-with-minio.html
+
+--------------------------------------------------------
+https://nm-muzi.com/docs/minio-docker-quickstart-guide.html
+https://github.com/minio/minio/tree/master/docs/config
+https://hub.docker.com/r/bitnami/minio/
+https://stackoverflow.com/questions/66161424/minio-does-not-seem-to-recognize-tls-https-certificates
+https://issuehint.com/issue/minio/minio/14441
+https://github.com/flavienbwk/Pandemic-Knowledge/blob/main/.env.example
+
+WARNING: MINIO_ACCESS_KEY and MINIO_SECRET_KEY are deprecated.
+         Please use MINIO_ROOT_USER and MINIO_ROOT_PASSWORD
+
+
+--------------------------------------------------------
+####################################################
+minio
+####################################################
+https://quay.io/repository/minio/minio
+https://thedatabaseme.de/2022/03/20/i-do-it-on-my-own-then-self-hosted-s3-object-storage-with-minio-and-docker/
+https://hub.docker.com/r/bitnami/minio/
+https://docs.min.io/docs/deploy-minio-on-docker-compose.html
+
+version: '2'
+
+services:
+  minio:
+    container_name: Minio
+    command: server /data --console-address ":9001"
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=supersecret
+    image: quay.io/minio/minio:latest
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - /docker/minio:/data
+    restart: unless-stopped
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

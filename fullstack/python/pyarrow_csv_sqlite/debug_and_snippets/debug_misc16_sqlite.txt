@@ -1010,3 +1010,141 @@ services:
 
 
 
+--------------------------------------------------------
+#####################################################
+count-rows-sqlalchemy
+#####################################################
+https://docs.sqlalchemy.org/en/14/orm/tutorial.html
+https://stackoverflow.com/questions/12941416/how-to-count-rows-with-select-count-with-sqlalchemy
+https://nitratine.net/blog/post/python-sqlite3-basics/
+
+import sqlalchemy
+
+database_engine = sqlalchemy.create_engine("connection string")
+# Populate existing database via reflection into sqlalchemy objects
+database_metadata = sqlalchemy.MetaData()
+database_metadata.reflect(bind=database_engine)
+table_object = database_metadata.tables.get("table_name") # This is just for illustration how to get the table_object
+
+
+query = table_object.count()
+# This will produce something like, where id is a primary key column in "table_name" automatically selected by sqlalchemy
+# 'SELECT count(table_name.id) AS tbl_row_count FROM table_name'
+count_result = database_engine.scalar(query)
+
+Usage from the SQL Expression layer
+
+from sqlalchemy import select, func, Integer, Table, Column, MetaData
+metadata = MetaData()
+table = Table("table", metadata,
+              Column('primary_key', Integer),
+              Column('other_column', Integer)  # just to illustrate
+             )
+
+print select([func.count()]).select_from(table)
+
+
+Usage from the ORM layer
+
+
+from sqlalchemy.sql.expression import func
+
+class BaseQuery(Query):
+    def count_star(self):
+        count_query = (self.statement.with_only_columns([func.count()])
+                       .order_by(None))
+        return self.session.execute(count_query).scalar()
+
+
+...
+
+#####################################################
+sqlite3
+#####################################################
+https://docs.python.org/3/library/sqlite3.html
+
+import sqlite3
+connection = sqlite3.connect('example.db')
+cursor = connection.cursor()
+cursor.execute('CREATE TABLE url (id INTEGER PRIMARY KEY, url TEXT, count INTEGER);')
+cursor.execute('INSERT INTO url(url, count) VALUES(?, ?)', (url, 0))
+connection.commit()
+connection.rollback()
+cursor.execute('SELECT id FROM url WHERE url=?', (url, ))
+url_id = cursor.fetchone()
+
+cursor.execute('SELECT id, url FROM url')
+ids_and_urls = cursor.fetchall()
+for row in ids_and_urls:
+    print ("ID: {}".format( row[0] ))
+    print ("URL: {}".format( row[1] ))
+
+# Using Keys in Fetched Data
+connection.row_factory = sqlite3.Row
+cursor.execute('SELECT id, url FROM url WHERE url=?', (url, ))
+particualr_id_and_url = cursor.fetchone()
+print (particualr_id_and_url.keys())
+print ("ID: {}".format( particualr_id_and_url['id'] ))
+
+---------------------
+
+fetchone() is setting int variable to tuple
+https://stackoverflow.com/questions/6603796/fetchone-is-setting-int-variable-to-tuple
+
+row = c.execute("SELECT fish_score FROM roster WHERE agentnumber = ?;", (AN,) ).fetchone()
+if row is not None:  # or just "if row"
+    Trailcrest.fish_score = row[0]
+else:
+    pass # didn't get back a row
+
+
+
+
+----------------------------------------------------------------------------
+####################################################
+check SQLite table exists
+####################################################
+https://stackoverflow.com/questions/1601151/how-do-i-check-in-sqlite-whether-a-table-exists
+
+SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}';
+SELECT count(*) FROM sqlite_master WHERE type='table' AND name='table_name';
+
+
+----------------------------------------------------------------------------
+####################################################
+Check if a column exists in SQLite
+####################################################
+
+https://stackoverflow.com/questions/18920136/check-if-a-column-exists-in-sqlite
+https://sqlite.org/lang_corefunc.html
+https://codehunter.cc/a/sqlite/check-if-a-column-exists-in-sqlite
+
+SELECT COUNT(*) AS CNTREC FROM pragma_table_info('tablename') WHERE name='column_name'
+SELECT EXISTS (SELECT * FROM sqlite_master WHERE tbl_name = 'TableName' AND sql LIKE '%ColumnName%');
+SELECT INSTR(sql, '<column_name>') FROM sqlite_master WHERE type='table' AND name='<table_name>';
+PRAGMA table_info(table-name);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

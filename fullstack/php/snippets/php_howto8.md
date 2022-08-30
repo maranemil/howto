@@ -533,4 +533,37 @@ echo "input..."  |  php script.php   |  sort  |  tee  output.txt
 ```
 
 
+```
+####################################################
+assert php
+####################################################
+https://www.php.net/manual/de/function.assert.php
+
+// Assertions aktivieren und stummschalten
+assert_options(ASSERT_ACTIVE, 1);
+assert_options(ASSERT_WARNING, 0);
+assert_options(ASSERT_QUIET_EVAL, 1);
+
+// Eine Handlerfunktion erzeugen
+function my_assert_handler($file, $line, $code, $desc = null)
+{
+    echo "Assertion fehlgeschlagen in $file:$line: $code";
+    if ($desc) {
+        echo ": $desc";
+    }
+    echo "\n";
+}
+
+// Den Callback definieren
+assert_options(ASSERT_CALLBACK, 'my_assert_handler');
+
+// Assertions, die fehlschlagen sollten
+assert('2 < 1');
+assert('2 < 1', 'Zwei ist kleiner als Eins');
+
+class CustomError extends AssertionError {}
+assert(true == false, new CustomError('True ist nicht false!'));
+echo 'Hi!';
+```
+
 
