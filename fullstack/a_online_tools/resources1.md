@@ -604,13 +604,17 @@ https://hemingwayapp.com/
 - https://mazwai.com/
 - https://mixkit.co/
 - https://pixabay.com/
+- https://pixabay.com/videos/search/
 - https://vimeo.com/
 - https://www.ignitemotion.com/
 - https://www.openfootage.net/
 - https://www.pexels.com/de-de/
+- https://www.pexels.com/de-de/
 - https://www.storyblocks.com/video
+- https://www.vecteezy.com/
 - https://www.videezy.com/
 - https://www.videvo.net/
+
 
 ------------------------------------------------------------------
 
