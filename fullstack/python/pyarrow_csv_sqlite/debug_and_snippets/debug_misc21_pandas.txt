@@ -1,0 +1,1045 @@
+#######################################################################
+How do I select rows from a DataFrame based on column values?
+https://stackoverflow.com/questions/17071871/how-do-i-select-rows-from-a-dataframe-based-on-column-values
+#######################################################################
+
+
+https://pandas.pydata.org/docs/reference/api/pandas.Index.size.html
+https://pandas.pydata.org/docs/reference/api/pandas.Index.shape.html
+https://pandas.pydata.org/docs/reference/api/pandas.Index.values.html
+
+
+import pandas as pd
+parquet_file = "../file.pqt"
+df = pd.read_parquet(parquet_file)
+df.head(3)
+df.dtypes
+df.size
+df.values
+def.index.values
+df.shape
+df.columns[:4]
+df.groupby(['status']).head(3)
+df.loc[df['status'].isin(['None',None])]
+df.loc[df['status'].isin(['None',None])][:3]
+df['de'].values
+
+for indx in df.index.values:
+    if len(str(indx)) is not 12:
+        print(indx)
+        break
+
+import numpy as np
+g = df.groupby('status').agg(['unique'])
+g.head()
+
+
+
+
+
+
+import pandas as pd
+import numpy as np
+df = pd.DataFrame({'A': 'foo bar foo bar foo bar foo foo'.split(),
+                   'B': 'one one two three two two one three'.split(),
+                   'C': np.arange(8), 'D': np.arange(8) * 2})
+print(df)
+
+# find foo
+print(df.loc[df['A'] == 'foo'])
+
+# find one and three
+print(df.loc[df['B'].isin(['one','three'])])
+
+# find one in index
+df = df.set_index(['B'])
+print(df.loc['one'])
+
+# find one two in index
+df.loc[df.index.isin(['one','two'])]
+
+...
+
+Boolean indexing
+mask = df['A'] == 'foo'
+df[mask]
+
+Positional indexing
+mask = df['A'] == 'foo'
+pos = np.flatnonzero(mask)
+df.iloc[pos]
+
+Label indexing
+df.set_index('A', append=True, drop=False).xs('foo', level=1)
+
+df.query() API
+df.query('A == "foo"')
+
+
+
+import pandas as pd
+# Create data set
+d = {'foo':[100, 111, 222],
+     'bar':[333, 444, 555]}
+df = pd.DataFrame(d)
+df
+df[df.foo == 222]
+df.query('foo == 222 | bar == 444')
+
+
+
+
+import pandas as pd
+df = pd.DataFrame({'Sender email':['ex@example.com', "reply@shop.com", "buy@shop.com"]})
+df.query('`Sender email`.str.endswith("@shop.com")')
+domain = 'shop.com'
+df.query('`Sender email`.str.endswith(@domain)')
+
+
+df.apply(lambda row: row[df['B'].isin(['one','three'])])
+df[[df['B'].isin(['one','three'])]]
+
+
+df[df["colume_name"] == some_value] #Scalar, True/False..
+df[df["colume_name"] == "some_value"] #String
+df.loc[df['column_name'] == some_value, [col_name1, col_name2]]
+df.query('column_name == some_value')[[col_name1, col_name2]]
+
+
+
+from pandas import DataFrame
+# Create data set
+d = {'Revenue':[100,111,222],
+     'Cost':[333,444,555]}
+df = DataFrame(d)
+mask = df['Revenue'] == 111
+print mask
+df[mask]
+
+
+# group by
+import pandas as pd
+df = pd.DataFrame({'A': 'foo bar foo bar foo bar foo foo'.split(),
+                   'B': 'one one two three two two one three'.split()})
+print("Original dataframe:")
+print(df)
+b_is_two_dataframe = pd.DataFrame(df.groupby('B').get_group('two').reset_index()).drop('index', axis = 1)
+#NOTE: the final drop is to remove the extra index column returned by groupby object
+print('Sub dataframe where B is two:')
+print(b_is_two_dataframe)
+
+
+
+#######################################################################
+execute SQL on a Pandas DataFrame
+#######################################################################
+
+https://duckdb.org/docs/guides/python/sql_on_pandas
+
+import duckdb
+import pandas
+# connect to an in-memory database
+con = duckdb.connect()
+my_df = pandas.DataFrame.from_dict({'a': [42]})
+# query the Pandas DataFrame "my_df"
+results = con.execute("SELECT * FROM my_df").df()
+
+
+import duckdb
+
+import pandas as pd
+con = duckdb.connect()
+df = pd.DataFrame({"A": range(11), "B": range(11, 22)})
+results = con.execute("SELECT * FROM df where A > 2").df()
+results
+
+
+#######################################################################
+Getting rows where column values are of specific length in Pandas DataFrame
+#######################################################################
+
+https://stackoverflow.com/questions/37335598/how-to-get-the-length-of-a-cell-value-in-pandas-dataframe
+https://www.codegrepper.com/code-examples/python/pandas+length+of+column+value
+https://www.datasciencemadesimple.com/get-string-length-column-dataframe-python-pandas/
+
+df = pd.DataFrame({"A":["a","aaa"]})
+df
+df.query("A.str.len() == 3", engine="python")
+df["A"].str.len()
+df['EventItem'].apply(len)
+
+
+
+df['name_length'] = df.Name.str.len()
+df['name_length'] = df.Name.apply(len)
+
+
+
+import pandas as pd
+d = {'Quarters' : ['q1','quar2','quarter3','quarter-4'],
+     'Revenue':[23400344.567,54363744.678,56789117.456,4132454.987]}
+df=pd.DataFrame(d)
+print df
+df['Quarters_length'] = df['Quarters'].apply(len)
+print df
+df[' Revenue_length'] = df['Revenue'].map(str).apply(len)
+print df
+
+
+#######################################################################
+Length of values does not match length of index
+#######################################################################
+
+https://www.statology.org/length-of-values-does-not-match-length-of-index/
+
+ValueError: Length of values does not match length of index
+
+Reproduce the Error
+
+
+import pandas as pd
+#define DataFrame
+df = pd.DataFrame({'points': [25, 12, 15, 14],
+                   'assists': [5, 7, 13, 12]})
+print(df)
+
+
+import numpy as np
+#attempt to add 'rebounds' column
+df['rebounds'] = np.array([3, 3, 7])
+# ValueError: Length of values (3) does not match length of index (4)
+
+How to Fix the Error
+#create 'rebounds' column
+df['rebounds'] = pd.Series([3, 3, 7])
+#view updated DataFrame
+df
+#fill in NaN values with zero
+df = df.fillna(0)
+#view updated DataFrame
+df
+
+
+#######################################################################
+How to get unique values from multiple columns in a pandas groupby
+#######################################################################
+
+https://pandas.pydata.org/docs/reference/api/pandas.core.groupby.SeriesGroupBy.unique.html
+https://stackoverflow.com/questions/36106490/how-to-get-unique-values-from-multiple-columns-in-a-pandas-groupby
+https://datagy.io/pandas-count-unique-values-groupby/
+https://www.tutorialspoint.com/count-unique-values-per-groups-in-python-pandas
+https://www.geeksforgeeks.org/how-to-count-unique-values-in-a-pandas-groupby-object/
+https://www.datasciencemadesimple.com/get-unique-values-rows-dataframe-python-pandas/
+https://www.codegrepper.com/code-examples/python/group+by+unique+values+pandas
+https://www.codegrepper.com/code-examples/python/pandas+dataframe+list+unique+values+in+column
+https://sparkbyexamples.com/pandas/pandas-find-unique-values-from-columns/
+https://www.projectpro.io/recipes/list-unique-values-in-pandas-dataframe
+
+
+import numpy as np
+g = df.groupby('c')['l1','l2'].apply(lambda x: list(np.unique(x)))
+g.head()
+
+g = df.groupby('c')['l1','l2'].agg(['unique'])
+g.head()
+
+
+g = df.groupby('c').agg(set)
+g.head()
+
+
+pd.Series([2, 1, 3, 3], name='A').unique()
+pd.Series([pd.Timestamp('2016-01-01') for _ in range(3)]).unique()
+pd.Series([pd.Timestamp('2016-01-01', tz='US/Eastern')
+           for _ in range(3)]).unique()
+pd.Series(pd.Categorical(list('baabc'))).unique()
+pd.Series(pd.Categorical(list('baabc'), categories=list('abc'),
+                         ordered=True)).unique()
+
+
+
+
+import pandas as pd
+df = pd.read_csv('https://raw.githubusercontent.com/fivethirtyeight/data/master/college-majors/women-stem.csv')
+group_by = df.groupby('Major_category')['ShareWomen'].max()
+print(group_by.head())
+
+
+import pandas as pd
+df = pd.read_csv('https://raw.githubusercontent.com/fivethirtyeight/data/master/college-majors/women-stem.csv')
+group_by = df.groupby('Major_category')['ShareWomen'].nunique()
+print(group_by.head())
+
+
+import pandas as pd
+df = pd.DataFrame(
+    {
+       "id": [1, 2, 1, 3, 5, 1, 4, 3, 6, 7],
+       'rank': [1, 4, 1, 2, 1, 4, 6, 1, 5, 3]
+    }
+)
+print"Input DataFrame 1 is:\n", df
+count = df.groupby('rank')['id'].count()
+print"Frequency of ranks:\n", count
+
+
+
+
+
+
+import pandas as pd
+import numpy as np
+#Create a DataFrame
+d = {
+    'Name':['Alisa','Bobby','jodha','jack','raghu','Cathrine',
+            'Alisa','Bobby','kumar','Alisa','Alex','Cathrine'],
+    'Age':[26,24,23,22,23,24,26,24,22,23,24,24]
+}
+df = pd.DataFrame(d,columns=['Name','Age'])
+df
+df.drop_duplicates()
+# get the unique values (rows) by retaining last row
+df.drop_duplicates(keep='last')
+df = df.drop_duplicates(subset = ["Age"])
+df
+
+....
+
+# Pandas group by a column looking at the count unique/count distinct values of another column
+df.groupby('param')['group'].nunique()
+
+
+df = df.groupby(by='domain', as_index=False).agg({'ID': pd.Series.nunique})
+print(df)
+
+for col in df:
+    print(df[col].unique())
+
+a = df['column name'].unique() #returns a list of unique values
+
+df.column.unique()
+
+for col in df:
+    print(df[col].unique())
+
+df.groupby('param')['column'].nunique().sort_values(ascending=False).unique().tolist()
+
+....
+#######################################################################
+Pandas Get Unique Values in Column
+#######################################################################
+
+# Find unique values of a column
+print(df['Courses'].unique())
+print(df.Courses.unique())
+
+# Convert to List
+print(df.Courses.unique().tolist())
+
+# unique values with drop_duplicates
+df.Courses.drop_duplicates()
+
+# Using pandas.unique() to unique values in multiple columns
+df2 = pd.unique(df[['Courses', 'Fee']].values.ravel('K'))
+
+# Using pandas.unique() to unique values
+df2 = pd.unique(df[['Courses']].values.ravel())
+
+# Find the unique values in multiple columns using numpy.unique()
+df2 = np.unique(df[['Courses', 'Duration']].values)
+
+# Use numpy.unique() to unique values in multiple columns
+column_values = df[['Courses', 'Duration']].values
+df2 = np.unique(column_values)
+
+# Using Set() in pandas DataFrame
+df2 = set(df.Courses.append(df.Fee).values)
+
+# Using set() method
+df2 = set(df.Courses) | set(df.Fee)
+
+# To get unique values in one series/column
+df2 = df['Courses'].unique()
+
+# Using pandas.concat to extend one column to multiple columns
+df2 = pd.concat([df['Courses'],df['Duration'],df['Fee']]).unique()
+
+# Use Series.drop_duplicates() to get unique values
+print(df.Courses.drop_duplicates())
+
+
+
+import pandas as pd
+import numpy as np
+technologies = {
+    'Courses':["Spark","PySpark","Python","pandas","Python","Spark","pandas"],
+    'Fee' :[20000,25000,22000,30000,22000,20000,30000],
+    'Duration':['30days','40days','35days','50days','40days','30days','50days'],
+    'Discount':[1000,2300,1200,2000,2300,1000,2000]
+              }
+df = pd.DataFrame(technologies)
+print(df)
+
+# Find unique values of a column
+print(df['Courses'].unique())
+
+# Using pandas.unique() to unique values in multiple columns
+df2 = pd.unique(df[['Courses', 'Fee']].values.ravel())
+print(df2)
+
+# Using pandas.unique() to unique values in multiple columns
+df2 = pd.unique(df[['Courses', 'Fee']].values.ravel('k'))
+print(df2)
+
+# Using pandas.unique() to unique values
+df2 = pd.unique(df[['Courses']].values.ravel())
+
+
+# Using Numpy.unique()
+
+import numpy as np
+# Find the unique values in multiple columns using numpy.unique()
+df2 = np.unique(df[['Courses', 'Duration']].values)
+print(df2)
+
+# Use numpy.unique() to unique values in multiple columns
+column_values = df[['Courses', 'Duration']].values
+df2 = np.unique(column_values)
+print(df2)
+
+
+Using set() to Eliminate Duplicates
+
+# Using Set() in pandas DataFrame
+df2 = set(df.Courses.append(df.Fee).values)
+print(df2)
+
+# Using set() method
+df2 = set(df.Courses) | set(df.Fee)
+print(df2)
+
+
+Using pandas.concat() and Unique() Methods
+
+# Using pandas.concat to extend one column to multiple columns
+df2 = pd.concat([df['Courses'],df['Duration'],df['Fee']]).unique()
+print(f"Unique Values from three Columns: {df2}")
+
+
+Use Series.drop_duplicates()
+
+# Use Series.drop_duplicates() to get unique values
+print(df.Courses.drop_duplicates())
+
+####################################################
+pandas.Series.empty
+####################################################
+
+https://pandas.pydata.org/pandas-docs/version/0.18/generated/pandas.Series.empty.html
+https://pandas.pydata.org/docs/reference/api/pandas.Series.empty.html
+https://www.geeksforgeeks.org/creating-a-pandas-series/
+https://www.educba.com/pandas-series/
+
+pandas.Series(data=None, index=None, dtype=None, name=None, copy=False, fastpath=False)
+
+pd.DataFrame({'A' : []})
+pd.DataFrame({'A' : [np.nan]})
+
+
+# import pandas as pd
+import pandas as pd
+# import numpy as np
+import numpy as np
+# simple array
+data = np.array(['g', 'e', 'e', 'k', 's'])
+# providing an index
+ser = pd.Series(data, index=[10, 11, 12, 13, 14])
+print(ser)
+
+
+import pandas as pd
+# a simple list
+list = ['g', 'e', 'e', 'k', 's']
+# create series form a list
+ser = pd.Series(list)
+print(ser)
+
+
+import pandas as pd
+# a simple dictionary
+dict = {'Geeks': 10,'for': 20,'geeks': 30}
+# create series from dictionary
+ser = pd.Series(dict)
+print(ser)
+
+
+
+mport pandas as pd
+import numpy as np
+# giving a scalar value with index
+ser = pd.Series(10, index=[0, 1, 2, 3, 4, 5])
+print(ser)
+
+
+
+# import pandas and numpy
+import pandas as pd
+import numpy as np
+# series with numpy linspace()
+ser1 = pd.Series(np.linspace(3, 33, 3))
+print(ser1)
+# series with numpy linspace()
+ser2 = pd.Series(np.linspace(1, 100, 10))
+print(ser2)
+
+
+
+# code
+import pandas as pd
+ser=pd.Series(range(10))
+print(ser)
+
+
+import pandas as pd
+ser=pd.Series(range(1,20,3), index=[x for x in 'abcdefg')]
+print(ser)
+
+
+import pandas as pd
+import numpy as np
+ser=np.arange(10,15)
+serobj=pd.Series(data=ser*5,index=ser)
+print(serobj)
+
+
+####################################################
+pandas index series
+####################################################
+
+https://www.geeksforgeeks.org/python-pandas-index-to_series/
+
+# importing pandas as pd
+import pandas as pd
+
+# Creating the index
+idx = pd.Index(['Harry', 'Mike', 'Arther', 'Nick'],
+                                   name ='Student')
+
+# Print the Index
+print(idx)
+# convert the index into a series
+print(idx.to_series())
+..
+# importing pandas as pd
+import pandas as pd
+
+# Creating the index
+idx = pd.Index(['Alice', 'Bob', 'Rachel', 'Tyler', 'Louis'],
+                                            name ='Winners')
+
+# Print the Index
+print(idx)
+# convert the index into a series
+idx.to_series(index =['Student 1', 'Student 2', 'Student 3','Student 4', 'Student 5'])
+
+
+
+####################################################
+panda to json
+####################################################
+
+https://appdividend.com/2022/03/15/pandas-to_json
+https://www.delftstack.com/de/howto/python-pandas/pandas-dataframe-to-json/
+https://datascienceparichay.com/article/write-pandas-dataframe-to-json-file/
+https://thispointer.com/export-pandas-dataframe-to-json/
+https://www.geeksforgeeks.org/exporting-pandas-dataframe-to-json-file/
+
+import pandas as pd
+
+# Creating Dataframe
+df = pd.DataFrame(
+    [['Stranger Things', 'Money Heist'], ['Most Dangerous Game', 'The Stranger']],
+    columns=['Netflix', 'Quibi'])
+
+print(df)
+data = df.to_json(orient='index')
+data = df.to_json('./export.json', orient='index')
+data = df.to_json('./export.json', orient='index')
+print(data)
+
+# data = df.to_json(orient='columns')
+# data = df.to_json(orient='table')
+# data = df.to_json(orient='values')
+# data = df.to_json(orient='index')
+# data = df.to_json(orient='records')
+
+
+# Convert Python Dictionary To JSON
+https://www.geeksforgeeks.org/how-to-convert-python-dictionary-to-json/
+https://favtutor.com/blogs/dict-to-json-python
+https://appdividend.com/2022/06/07/python-dict-to-json/
+
+import json
+
+# Data to be written
+dictionary ={
+    "name" : "sathiyajith",
+    "rollno" : 56,
+    "cgpa" : 8.6,
+    "phonenumber" : "9976770500"
+}
+
+with open("sample.json", "w") as outfile:
+    json.dump(dictionary, outfile)
+
+
+# Serializing json
+json_object = json.dumps(dictionary, indent = 4)
+print(json_object)
+
+####################################################
+list to dataframe
+####################################################
+
+https://docs.python.org/3/library/sqlite3.html
+https://www.digitalocean.com/community/tutorials/how-to-use-the-sqlite3-module-in-python-3
+
+https://datatofish.com/list-to-dataframe/
+
+import pandas as pd
+list_name = ['item_1', 'item_2', 'item_3',...]
+df = pd.DataFrame (list_name, columns = ['column_name'])
+
+import pandas as pd
+products_list = ['laptop', 'printer', 'tablet', 'desk', 'chair']
+df = pd.DataFrame (products_list, columns = ['product_name'])
+print (df)
+
+####################################################
+Pandas Get Column Index For Column Name
+####################################################
+
+https://sparkbyexamples.com/pandas/pandas-get-column-index-for-column-name/
+https://www.geeksforgeeks.org/get-column-index-from-column-name-of-a-given-pandas-dataframe/
+https://pandas.pydata.org/docs/user_guide/indexing.html
+
+# Get column index from column name i.e column 3.
+idx=df.columns.get_loc("Duration")
+print("Column Index : "+ str(idx))
+
+FIX
+# Dictionary of Column name with associated index.
+idx_dic = {}
+for col in df.columns:
+    idx_dic[col] = df.columns.get_loc(col)
+print(idx_dic)
+
+# Get Index for Multiple Column Labels/Names
+query_cols=['Fee','Courses']
+cols_index = [df.columns.get_loc(col) for col in query_cols]
+print(cols_index)
+
+# Column index from column name using get_indexer().
+
+
+
+####################################################
+pandas convert dictionary into list
+####################################################
+
+https://pythonguides.com/python-convert-dictionary-to-list/
+https://www.tutorialspoint.com/How-to-convert-Python-Dictionary-to-a-list
+https://www.pythonpool.com/dictionary-to-list-python/
+https://stackoverflow.com/questions/1679384/converting-dictionary-to-list
+https://python-forum.io/thread-28266.html
+
+import pandas as pd
+import numpy as np
+index = [('California', 2000), ('California', 2010),
+         ('New York', 2000), ('New York', 2010),
+         ('Texas', 2000), ('Texas', 2010)]
+populations = [33871648, 37253956,
+               18976457, 19378102,
+               20851820, 25145561]
+index = pd.MultiIndex.from_tuples(index)
+print(index)
+pop = populations.reindex(index)
+population = pd.DataFrame(populations, index=index)
+
+
+my_dict ={"b":20,"c":10}
+con_lis = list(my_dict.items())
+print("Converted dict to list:",con_lis)
+
+
+to_dict ={"d":50,"f":10,"g":40}
+new_val = list(to_dict.values())
+print("Converted dict to list:",new_val)
+
+
+to_dict ={"i":160,"w":110,"s":340}
+m = list(zip(to_dict.keys(), to_dict.values()))
+print("Convert dictionary to list:",m)
+
+
+new_dict ={"z":320,"p":430,"o":245}
+n_val = list(new_dict.keys())
+print("Convert dictionary to list",n_val)
+
+n_dictionary ={"James":240,"William":180,"Chris":140}
+n_lis = [(key, value) for key, value in n_dictionary.items()]
+print(n_lis)
+
+
+my_dict ={"Newzealand":860,"Swizerland":780,"Moscow":340}
+con_val= list(map(list,my_dict.items()))
+print(con_val)
+
+
+dictionary = {"u":67, "m":18,"f":92}
+my_lis = []
+for new_k, new_v in dictionary.items():
+    my_lis.append([new_k, new_v])
+print("Dictionary to list",my_lis)
+
+
+to_dictionary = {"h":[51], "g":[198],"l":[912]}
+output = [[new_key] + new_val for new_key, new_val in to_dictionary.items()]
+print(output)
+
+
+
+import collections
+my_dictionary = { "U.S.A": 74, "Algeria":82, "Cambodia": 51 }
+new_tup_lis = collections.namedtuple('my_lis', 'Country val')
+convert_lis = list(new_tup_lis(*item) for item in my_dictionary.items())
+print(convert_lis)
+
+
+
+new_dictiy = { "p" : [4, 9], "d" : [5, 8], "l" : [19, 18] }
+con_li_dic = [{new_k : new_val[x] for new_k, new_val in new_dictiy.items()}
+         for x in range(2)]
+print ("Convert list into dictionaries:",con_li_dic)
+
+
+
+d = {"name":"python", "version":3.9}
+new_list = list(d.items())
+print(new_list)
+
+
+d = {"name":"python", "version":3.9}
+new_list = list(d.values())
+print(new_list)
+
+
+d = {"name":"python", "version":3.9}
+new_list = []
+for key, val in d.items():
+    new_list.append([key, val])
+print(new_list)
+
+
+d = {"name":"python", "version":3.9}
+new_list = [(k, v) for k, v in d.items()]
+print(new_list)
+
+
+d = {"name":"python", "version":3.9}
+new_list = zip(d.keys(), d.values())
+new_list = list(new_list)
+print(new_list)
+
+
+d = {"name":"python", "version":3.9}
+new_list = list(map(list, d.items()))
+print(new_list)
+
+
+####################################################
+Python - panda read csv without index
+####################################################
+
+https://stackoverflow.com/questions/12960574/pandas-read-csv-index-col-none-not-working-with-delimiters-at-the-end-of-each-li
+https://sparkbyexamples.com/pandas/pandas-to-csv-no-index/
+
+
+df = pd.read_csv('file.csv', index_col=0)
+pd.read_csv("file.csv", sep=';', usecols=['key', 'value'], skipinitialspace=True, low_memory=True, nrows=10, index_col=0)
+
+# get values
+df.to_dict().values()
+print(list(df.to_dict().values())) # iterable
+print(dict(df.to_dict()).values())
+
+# iterable
+pr1 = (x for x in dict(df.to_dict()).values())
+print(pr1)
+print(pr1.__next__())
+
+
+# to dict
+df2 = list(df.to_dict().values())
+    mydict = {}
+    for item in df2:
+        mydict.update(item)
+
+# make series
+pd.Series(mydict) ..
+
+####################################################
+Convert Pandas DataFrame into a List
+####################################################
+
+https://datatofish.com/convert-pandas-dataframe-to-list/
+
+df.values.tolist()
+
+import pandas as pd
+
+data = {'product': ['Tablet','Printer','Laptop','Monitor'],
+        'price': [250,100,1200,300]
+        }
+
+df = pd.DataFrame(data)
+
+products_list = df.values.tolist()
+print(products_list)
+print(type(products_list))
+
+####################################################
+Convert Pandas DataFrame into a List of dict
+####################################################
+
+https://datatofish.com/convert-pandas-dataframe-to-list/
+https://stackoverflow.com/questions/29815129/pandas-dataframe-to-list-of-dictionaries
+https://datascientyst.com/convert-dataframe-list-dictionaries-pandas/
+https://www.geeksforgeeks.org/create-a-pandas-dataframe-from-list-of-dicts/
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_dict.html
+https://www.codegrepper.com/code-examples/whatever/dataframe+to+list+of+dicts
+
+rows = [
+    {
+        'customer': 1,
+        'item1': 'apple',
+        'item2': 'milk',
+        'item3': 'tomato'
+    }
+]
+
+df = pd.DataFrame(rows)
+df.to_dict('records') # FIX
+df.T.to_dict().values()
+
+# list of dict
+import pandas as pd
+your_list = [{'points': 50, 'time': '5:00', 'year': 2010},
+ {'points': 25, 'time': '6:00', 'month': "february"},
+ {'points':90, 'time': '9:00', 'month': 'january'},
+ {'points_h1':20, 'month': 'june'}]
+df = pd.DataFrame(your_list)
+
+# list of dict
+df = pd.DataFrame({'Name': ['John', 'Sara','Peter','Cecilia'],
+                   'Age': [38, 47,63,28],
+                  'City':['Boston', 'Charlotte','London','Memphis']})
+datadict = df.to_dict('records')
+
+
+
+####################################################
+convert index of a pandas dataframe into a column
+####################################################
+
+https://stackoverflow.com/questions/20461165/how-to-convert-index-of-a-pandas-dataframe-into-a-column
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.set_index.html
+https://sparkbyexamples.com/pandas/pandas-set-index-to-column-in-dataframe/
+https://datatofish.com/index-to-column-pandas-dataframe/
+
+df['index1'] = df.index
+
+df.reset_index(inplace=True)
+df.reset_index(inplace=True)
+df = df.rename(columns = {'index':'new column name'})
+
+
+import pandas as pd
+data = {'Product': ['Computer','Printer','Monitor','Desk','Phone'],
+          'Price': [1200,250,400,700,350]
+        }
+df = pd.DataFrame(data, columns = ['Product','Price'], index = ['Item_1','Item_2','Item_3','Item_4','Item_5'])
+print(df)
+
+df.reset_index(inplace=True)
+import pandas as pd
+data = {'Product': ['Computer','Printer','Monitor','Desk','Phone'],
+          'Price': [1200,250,400,700,350]
+        }
+df = pd.DataFrame(data, columns = ['Product','Price'], index = ['Item_1','Item_2','Item_3','Item_4','Item_5'])
+df.reset_index(inplace=True)
+print(df)
+
+
+
+
+#df = df.reset_index(level=0)
+#df.reset_index(level=['tick', 'obs'])
+#df = df.rename_axis('index1').reset_index()
+#df = df.rename_axis(['index1', 'index2', 'index3']).reset_index()
+
+index = pd.MultiIndex.from_product([['TX', 'FL', 'CA'],
+                                    ['North', 'South']],
+                                   names=['State', 'Direction'])
+
+df = pd.DataFrame(index=index,
+                  data=np.random.randint(0, 10, (6,4)),
+                  columns=list('abcd'))
+df.reset_index()
+df.reset_index(level='State')
+
+
+##############################################################
+Pandas: change data type of Series to String
+##############################################################
+
+https://stackoverflow.com/questions/22231592/pandas-change-data-type-of-series-to-string
+https://pandas.pydata.org/docs/reference/api/pandas.Series.html
+https://www.w3schools.com/python/pandas/pandas_series.asp
+https://www.tutorialspoint.com/python_pandas/python_pandas_series.htm
+https://www.machinelearningplus.com/pandas/pandas-series-in-python/
+
+df['id']= df['id'].astype(str)
+
+
+d = {'a': 1, 'b': 2, 'c': 3}
+ser = pd.Series(data=d, index=['a', 'b', 'c'])
+ser
+a   1
+b   2
+c   3
+
+
+import pandas as pd
+a = [1, 7, 2]
+myvar = pd.Series(a)
+print(myvar)
+
+##############################################################
+SparseDataFrame.to_parquet fails with new error
+##############################################################
+
+https://github.com/pandas-dev/pandas/issues/26378
+https://pandas.pydata.org/pandas-docs/dev/user_guide/sparse.html
+https://pandas.pydata.org/docs/user_guide/sparse.html
+
+df.to_dense().to_parquet()
+
+##############################################################
+convert string to float
+##############################################################
+https://discuss.streamlit.io/t/after-upgrade-to-the-latest-version-now-this-error-id-showing-up-arrowinvalid/15794/4
+https://github.com/apache/arrow/issues/3280
+https://stackoverflow.com/questions/64501217/error-could-not-convert-string-to-float
+https://github.com/awslabs/aws-data-wrangler/issues/647
+
+import streamlit as st
+import pandas as pd
+
+def explore(df):
+
+    # DATA
+    st.write('Data:')
+    st.write(df)
+    # SUMMARY
+    df_types = pd.DataFrame(df.dtypes, columns=['Data Type'])
+    numerical_cols = df_types[~df_types['Data Type'].isin(['object', 'bool'])].index.values
+
+    df_types['Count'] = df.count()
+    df_types['Null Values'] = df.isnull().sum()
+    df_types['Unique Values'] = df.nunique()
+    df_types['Min'] = df[numerical_cols].min()
+    df_types['Max'] = df[numerical_cols].max()
+    df_types['Average'] = df[numerical_cols].mean()
+    df_types['Median'] = df[numerical_cols].median()
+    df_types['St. Dev.'] = df[numerical_cols].std()
+    st.write('Summary:')
+    st.write(df_types)
+
+#show Summary
+if st.checkbox("Show Summary"):
+     explore(df)
+st.markdown("### Books In Print")
+df = pd.read_excel("BIP4streamlit.xlsx")
+df['title'].astype(str)
+df['Contributor 1'].astype(str)
+df
+
+
+import time
+import pandas as pd
+import pyarrow as  pa
+df = pd.DataFrame({"c0": [int(time.time()), str(time.time())]})
+df["c0"] = df["c0"].astype(float)
+schema = pa.Schema.from_pandas(df=df[["c0"]])
+
+
+
+
+mixed_df = pd.DataFrame({'mixed': [1, 'b']})
+pa.Table.from_pandas(mixed_df)
+
+
+for col in df.columns:
+    if "ts" in col:
+        df[col] = df[col].astype(float)
+
+
+##############################################################
+Pandas - KeyError: columns not in index [closed]
+KeyError: 'column_name'
+##############################################################
+
+https://stackoverflow.com/questions/41406394/pandas-keyerror-columns-not-in-index
+https://dataindependent.com/pandas/keyerror-pandas-how-to-fix/
+https://www.statology.org/pandas-keyerror/
+https://www.faqcode4u.com/faq/171222/pandas-keyerror-value-not-in-index
+
+print (df.columns.tolist())
+
+df = pd.DataFrame([('Foreign Cinema', 'Restaurant'),
+                   ('Liho Liho', 'Restaurant'),
+                   ('500 Club', 'bar'),
+                   ('The Square', 'bar')],
+                    columns=('name', 'type')
+                 )
+
+df
+
+value = 9
+if value in df.index:
+print(df.loc[value])
+else:
+print("Not in index")
+
+
+import pandas as pd
+#create DataFrame
+df = pd.DataFrame({'points': [25, 12, 15, 14, 19, 23, 25, 29],
+                   'assists': [5, 7, 7, 9, 12, 9, 9, 4],
+                   'rebounds': [11, 8, 10, 6, 6, 5, 9, 12]})
+
+#view DataFrame
+df
+#attempt to print values in 'point' column
+print(df['point'])
+
+#display all column names of DataFrame
+print(df.columns.tolist())
+['points', 'assists', 'rebounds']
+#print values in 'points' column
+print(df['points'])
+
+
+
+
