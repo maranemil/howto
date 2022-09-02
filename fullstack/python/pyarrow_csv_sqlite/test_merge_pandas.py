@@ -8,7 +8,7 @@ import pandas as pd
 import glob
 import time
 
-databases = pd.DataFrame()
+df = pd.DataFrame()
 filenames = glob.glob("tmp/*.parquet")
 k = 0
 for file in filenames:
@@ -16,14 +16,14 @@ for file in filenames:
     dfpanda = pd.DataFrame(df, dtype='unicode')
     print(dfpanda.head(2))
     df.info()
-    databases = pd.concat([databases, dfpanda], ignore_index=True, axis=0)
+    df = pd.concat([df, dfpanda], ignore_index=True, axis=0)
     del dfpanda, df
     k += 1
 
     if k > 3:
         break
 
-pd.DataFrame(databases).to_parquet('file.parquet')
+pd.DataFrame(df).to_parquet('file.parquet')
 time.sleep(5)
 
 # parquet-tools show -n2 file.parquet
