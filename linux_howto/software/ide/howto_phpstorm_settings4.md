@@ -4,7 +4,7 @@
 #
 #	Auto-Completing Code and Paths - Ctrl+Alt+J
 #
-#	Surround a block of code with a live template﻿ / Select a piece of code to be surrounded.
+#	Surround a block of code with a live template / Select a piece of code to be surrounded.
 #	https://www.jetbrains.com/help/phpstorm/generate-custom-code-constructs-using-live-templates.html
 #	https://www.jetbrains.com/help/phpstorm/using-zen-coding-support.html
 #
@@ -866,3 +866,12 @@ Settings | Editor | Inspections | PHP | Undefined | Undefined Variable | Search 
 https://www.jetbrains.com/help/phpstorm/configuring-code-style.html#configure-code-style-schemes
 https://www.jetbrains.com/help/phpstorm/settings-code-style-php.html
 ~~~
+
+### PhpStorm 2022.2 Is Now Available: Mockery Support, Rector Support, Improved Generics
+~~~
+https://blog.jetbrains.com/phpstorm/2022/08/phpstorm-2022-2-is-now-available/
+~~~
+
+
+
+
