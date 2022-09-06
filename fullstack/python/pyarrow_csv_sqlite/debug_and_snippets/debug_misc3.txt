@@ -165,3 +165,217 @@ https://www.geeksforgeeks.org/how-to-create-an-empty-pyspark-dataframe/
 
 -----------------------------------------------------------
 
+#############################################################
+object of type <class 'str'> cannot be converted to int
+#############################################################
+
+https://arrow.apache.org/docs/cpp/parquet.html#encodings
+https://arrow.apache.org/docs/python/generated/pyarrow.parquet.ParquetWriter.html
+https://arrow.apache.org/docs/python/generated/pyarrow.parquet.ParquetWriter.html
+https://www.appsloveworld.com/pandas/100/6/error-converting-object-string-to-int32-typeerror-object-cannot-be-converted
+https://pandas.pydata.org/pandas-docs/version/0.24/reference/api/pandas.Series.replace.html
+https://www.programcreek.com/java-api-examples/?api=org.apache.parquet.column.Encoding
+
+
+pyarrow.lib.ArrowTypeError: object of type <class 'str'> cannot be converted to int
+
+schema = pa.schema([
+  ('id', pa.int32()),
+  ('message_id', pa.string()),
+  ('transaction_id', pa.string()),
+])
+
+
+df.column = df.column.str.strip()
+df.column = df.column.astype('float')  # first convert to float before int
+df.column = df.column.astype('Int32')
+df.column = df.column.astype('float').astype('Int32') # or Int64
+
+
+Physical type	Mapped Arrow type
+
+BOOLEAN		Boolean
+INT32		Int32 / other
+INT64		Int64 / other
+INT96		Timestamp (nanoseconds)
+FLOAT		Float32
+DOUBLE		float64
+BYTE_ARRAY	Binary / other
+
+
+
+
+import pandas as pd
+import json
+from google.cloud import bigquery
+cols_name_list = [....]. # column name in order
+uri = "<csv_file>"
+df = pd.read_csv(uri, dtype="string")
+# df = pd.read_csv(uri, dtype={"B" : "string"})
+df = df.reindex(columns=cols_name_list)
+client = bigquery.Client()
+job_config = bigquery.LoadJobConfig(
+    schema = [
+        bigquery.SchemaField("A", "INTEGER"),
+        bigquery.SchemaField("B", "STRING"),
+        bigquery.SchemaField("C", "INTEGER"),
+        bigquery.SchemaField("D", "INTEGER"),
+        bigquery.SchemaField("E", "DATETIME"),
+        bigquery.SchemaField("F", "INTEGER"),
+        bigquery.SchemaField("G", "DATETIME")
+    ]
+)
+job = client.load_table_from_dataframe(
+    df, "<bq_table_id>", job_config=job_config
+)
+job.result()
+
+
+https://stackoverflow.com/questions/73346141/python-not-recognizing-list-of-dictionaries
+https://stackoverflow.com/questions/47113813/using-pyarrow-how-do-you-append-to-parquet-file
+https://github.com/googleapis/python-bigquery/issues/22
+https://arrow.apache.org/docs/python/generated/pyarrow.parquet.ParquetWriter.html
+
+import pandas as pd
+import pyarrow as pa
+import pyarrow.parquet as pq
+
+
+chunksize=10000 # this is the number of lines
+pqwriter = None
+for i, df in enumerate(pd.read_csv('sample.csv', chunksize=chunksize)):
+    table = pa.Table.from_pandas(df)
+    # for the first chunk of records
+    if i == 0:
+        # create a parquet write object giving it an output file
+        pqwriter = pq.ParquetWriter('sample.parquet', table.schema)
+    pqwriter.write_table(table)
+# close the parquet writer
+if pqwriter:
+    pqwriter.close()
+
+
+https://github.com/googleapis/python-bigquery/issues/22
+
+import pandas as pd
+from google.cloud import bigquery
+
+print(pd.__version__)
+print(bigquery.__version__)
+
+df = pd.DataFrame({'x': [1, 2, None, 4]})
+
+df['x'] = df['x'].astype('Int64')
+print(df.dtypes)
+
+client = bigquery.Client()
+dataset_ref = client.dataset('test_dataset')
+table_ref = dataset_ref.table('test')
+
+# ArrowTypeError: ('Did not pass numpy.dtype object', 'Conversion failed for column x with type Int64')
+
+https://stackoverflow.com/questions/70449936/writing-pandas-dataframe-to-parquet-file
+https://pandas.pydata.org/pandas-docs/version/1.0.1/reference/api/pandas.arrays.StringArray.html
+
+query = f'select * from `{table["table_name"]}`'
+for i,chunk in enumerate(pd.read_sql_query(query , conn, chunksize=10000)):
+
+    all_columns = list(chunk) # Creates list of all column headers
+    chunk[all_columns] = chunk[all_columns].astype(str)
+    #convert data to string
+
+    table_schema =chunk.dtypes.astype(str).to_dict()
+    for k,v in table_schema.items():
+        if v == 'object':
+            table_schema[k]=pa.string()
+    #create pyarrow schema for string format
+    fields = [pa.field(x, y) for x, y in table_schema.items()]
+    new_schema = pa.schema(fields)
+
+    if i == 0:
+        pqwriter = pq.ParquetWriter(where=updated_path,schema=new_schema, compression='snappy')
+
+    table = pa.Table.from_pandas(df=chunk, schema=new_schema,preserve_index=False,safe=False)
+    pqwriter.write_table(table)
+
+client.load_table_from_dataframe(df, table_ref).result()
+
+-------------------------------------------------------------------------------
+
+
+###############################################################
+python Enum
+###############################################################
+
+https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-data-structure-exercise-2.php
+https://stackoverflow.com/questions/25982212/iterate-enum-in-definition-order-in-python-2
+https://docs.python.org/3/library/enum.html
+https://ispycode.com/Python/Files-and-directories/Modules/Enumerations-(enum)/Iterating-Over-Enums
+https://ispycode.com/Python/Files-and-directories/Modules/Enumerations-(enum)/Comparing-Enums
+
+>>> from enum import Enum
+>>> class Color(Enum):
+...     RED = 1
+...     GREEN = 2
+...     BLUE = 3
+
+
+from enum import Enum
+class Country(Enum):
+    Afghanistan = 93
+    Albania = 355
+    Algeria = 213
+    Andorra = 376
+    Angola = 244
+    Antarctica = 672
+for data in Country:
+    print('{:15} = {}'.format(data.name, data.value))
+
+
+
+
+
+from enum import Enum
+>>> class Shake(Enum):
+...     __order__ = 'vanilla chocolate cookies mint'
+...     vanilla = 7
+...     chocolate = 4
+...     cookies = 9
+...     mint = 3
+...
+>>> for s in Shake:
+...     print(s)
+
+
+
+import enum
+class EXCHANGE(enum.Enum):
+    __order__ = " EXCHANGE_NSE EXCHANGE_BSE EXCHANGE_NFO EXCHANGE_CDS EXCHANGE_BFO EXCHANGE_MCX EXCHANGE_BCD "
+    EXCHANGE_NSE = "NSE"
+    EXCHANGE_BSE = "BSE"
+    EXCHANGE_NFO = "NFO"
+    EXCHANGE_CDS = "CDS"
+    EXCHANGE_BFO = "BFO"
+    EXCHANGE_MCX = "MCX"
+    EXCHANGE_BCD = "BCD"
+if __name__ == "__main__":
+    for ex in EXCHANGE:
+        print(f"{ex.name} : {ex.value}")
+
+
+https://www.programiz.com/python-programming/online-compiler/
+
+from enum import Enum
+class Day(Enum):
+  sunday = 1
+  monday = 2
+  tuesday = 3
+  wednesday = 4
+  thursday =5
+  friday = 6
+  saturday = 7
+
+for day in Day:
+  print('{:9}: {}'.format(day.name, day.value))
+
+print(([x.value for x in Day ]))

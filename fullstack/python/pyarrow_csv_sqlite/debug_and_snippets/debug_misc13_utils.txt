@@ -1560,7 +1560,377 @@ python_try_except
 
 
 
+#####################################################
+Pylint and Flake8
+#####################################################
 
+https://www.freecodecamp.org/news/auto-format-your-python-code-with-black
+https://flake8.pycqa.org/en/latest/internal/formatters.html
+https://pypi.org/project/autopep8/
+https://py-vscode.readthedocs.io/en/latest/files/linting.html
+http://www.sefidian.com/2021/08/03/how-to-use-black-flake8-and-isort-to-format-python-codes/
+https://pypi.org/project/flake8-black/
+https://pypi.org/project/flake8-string-format/
+https://pypi.org/project/flake8/
+
+pip install flake8
+pip install black
+
+black --check file.py
+black -l 60 file.py
+black --line-length 79 --target-version py27 .
+
+pip install autopep8
+for f in `find . -name "*.py"`; do autopep8 --in-place --select=E701 $f; done
+
+isort --multi-line 3 --profile black --python-version 27 .
+
+
+flake8 some_file.py
+flake8 --ignore P101 file.py
+flake8 --max-doc-length=72 --ignore=E211,E999,F401,F821,W503
+
+files that contain this line are skipped:
+# flake8: noqa
+
+
+
+
+#######################################################
+Python setup.py
+#######################################################
+
+https://setuptools.pypa.io/en/latest/userguide/package_discovery.html
+https://stackoverflow.com/questions/54430694/python-setup-py-how-to-get-find-packages-to-identify-packages-in-subdirectori
+https://godatadriven.com/blog/a-practical-guide-to-using-setup-py/
+http://code.nabla.net/doc/setuptools/api/setuptools/setuptools.find_packages.html
+https://www.programcreek.com/python/example/10688/setuptools.find_packages
+https://pythonhosted.org/an_example_pypi_project/setuptools.html
+https://docs.python.org/3/distutils/setupscript.html
+https://github.com/PeterRochford/SkillMetrics/blob/master/setup.py
+https://cheat.readthedocs.io/en/latest/python/packaging.html
+https://click.palletsprojects.com/en/7.x/setuptools/
+
+
+# Always prefer setuptools over distutils
+from setuptools import setup, find_packages
+# To use a consistent encoding
+from codecs import open
+from os import path
+here = path.abspath(path.dirname(__file__))
+
+setup(
+    name='ursonos',
+    version='0.0.1',
+    packages=find_packages(),
+    url='',
+    license='',
+    author='poirier',
+    author_email='dan@poirier.us',
+    description='Urwid application to control Sonos',
+    install_requires=[
+        'soco',
+        'urwid'
+    ]
+)
+
+python setup.py sdist
+python setup.py bdist_wheel --universal
+
+
+from setuptools import setup, find_packages
+
+setup(
+    name="pkgname",
+    version="1.9.13",
+    packages=find_packages(where="src"),
+    package_dir={"": "src", "pkgname": "src/pkgname"},
+    url="",
+    license="",
+    author="poirier",
+    author_email="",
+    description="",
+    python_requires=">=3.6",
+    install_requires=["Django<=3.0", "dj-database-url", "gunicorn", "whitenoise"],
+    entry_points={"console_scripts": ["manage=manage:main"]},
+
+    package_data={
+        "pkgname": ["templates/*.html", "templates/include/*.html", "static/*"],
+    }
+)
+
+...
+
+from setuptools import setup, find_packages
+setup(
+    name="mypackage",
+    version="0.1",
+    packages=["baz", "bar", "foo"],
+    package_dir={
+        "": ".",
+        "bar": "./bar-pack/bar",
+        "foo": "./foo-pack/foo",
+    },
+)#
+
+from setuptools import setup, find_packages
+setup(
+    name='example',
+    version='0.1.0',
+    packages=find_packages(include=['exampleproject', 'exampleproject.*'])
+)
+
+setup(
+    name='example',
+    version='0.1.0',
+    packages=find_packages(include=['exampleproject', 'exampleproject.*']),
+    install_requires=[
+        'PyYAML',
+        'pandas==0.23.3',
+        'numpy>=1.14.5',
+        'matplotlib>=2.2.0,,
+        'jupyter'
+    ]
+)
+
+setup(
+    name='example',
+    version='0.1.0',
+    packages=find_packages(include=['exampleproject', 'exampleproject.*']),
+    install_requires=[
+        'PyYAML',
+        'pandas==0.23.3',
+        'numpy>=1.14.5'
+    ],
+    extras_require={
+        'interactive': ['matplotlib>=2.2.0', 'jupyter'],
+    }
+)
+
+
+from setuptools import setup, find_packages
+
+setup(
+    name='example',
+    version='0.1.0',
+    description='Setting up a python package',
+    author='Rogier van der Geer',
+    author_email='rogiervandergeer@godatadriven.com',
+    url='https://blog.godatadriven.com/setup-py',
+    packages=find_packages(include=['exampleproject', 'exampleproject.*']),
+    install_requires=[
+        'PyYAML',
+        'pandas==0.23.3',
+        'numpy>=1.14.5'
+    ],
+    extras_require={'plotting': ['matplotlib>=2.2.0', 'jupyter']},
+    setup_requires=['pytest-runner', 'flake8'],
+    tests_require=['pytest'],
+    entry_points={
+        'console_scripts': ['my-command=exampleproject.example:main']
+    },
+    package_data={'exampleproject': ['data/schema.json']}
+)
+
+setup.cfg:
+
+[aliases]
+test=pytest
+
+[flake8]
+max-line-length=120
+
+[bdist_wheel]
+universal=1
+
+
+#!/usr/bin/env python
+from distutils.core import setup
+setup(name='Distutils',
+	version='1.0',
+	description='Python Distribution Utilities',
+	author='Greg Ward',
+	author_email='gward@python.net',
+	url='https://www.python.org/sigs/distutils-sig/',
+	packages=['distutils', 'distutils.command'],
+)
+
+
+##############################################
+Comments and Docstrings Google Python Style Guide
+https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings
+##############################################
+
+https://sphinx-rtd-tutorial.readthedocs.io/en/latest/docstrings.html
+https://sphinx-rtd-tutorial.readthedocs.io/en/latest/folders.html
+https://www.sphinx-doc.org/en/master/usage/extensions/example_google.html
+https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html
+https://pythonhosted.org/an_example_pypi_project/sphinx.html
+
+
+pip install sphinx
+pip install sphinx-rtd-theme
+#pip install bluepy
+
+sphinx-quickstart
+sphinx-apidoc -f -o ./source ./project
+
+Autodoc configuratio
+
+import os
+import sys
+sys.path.insert(0, os.path.abspath('../../simpleble/'))
+
+make clean
+make html
+
+
+Files should start with a docstring describing the contents and usage of the module.
+
+"""A one line summary of the module or program, terminated by a period.
+
+Leave one blank line.  The rest of this docstring should contain an
+overall description of the module or program.  Optionally, it may also
+contain a brief description of exported classes and functions and/or usage
+examples.
+
+  Typical usage example:
+
+  foo = ClassFoo()
+  bar = foo.FunctionBar()
+"""
+
+
+##############################################
+ Python code formatter
+ https://github.com/psf/black
+##############################################
+
+ pip install git+https://github.com/psf/black
+
+ black {source_file_or_directory}
+ python -m black {source_file_or_directory}
+
+ ##############################################
+ flake8
+ https://github.com/pycqa/flake8
+ ##############################################
+
+ flake8 is a python tool that glues together pycodestyle, pyflakes, mccabe, and third-party plugins to check the style and quality of some python code.
+
+
+##############################################
+ class has no __init__ method
+##############################################
+
+https://www.pythonmorsels.com/what-is-init/
+https://micropyramid.com/blog/understand-self-and-__init__-method-in-python-class/
+https://stackoverflow.com/questions/448271/what-is-init-py-for
+https://docs.python.org/3/reference/import.html#regular-packages
+https://docs.python.org/3/tutorial/modules.html
+
+Regular packages
+
+parent/
+    __init__.py
+    one/
+        __init__.py
+    two/
+        __init__.py
+    three/
+        __init__.py
+
+
+
+ class MyClass:
+
+    def print(self):
+        print(self)
+
+
+ class Point:
+    """2-dimensional point."""
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+
+
+ Python defines two types of packages, regular packages and namespace packages.
+ Regular packages are traditional packages as they existed in Python 3.2 and earlier.
+ A regular package is typically implemented as a directory containing an __init__.py file.
+ When a regular package is imported, this __init__.py file is implicitly executed, and the
+ objects it defines are bound to names in the packages namespace. The __init__.py file can
+ contain the same Python code that any other module can contain, and Python will
+ add some additional attributes to the module when it is imported.
+
+mydir/spam/__init__.py
+mydir/spam/module.py
+
+import spam.module
+from spam import module
+import spam
+
+
+
+database/
+    __init__.py
+    schema.py
+    insertions.py
+    queries.py
+
+
+
+__init__.py
+import os
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
+engine = create_engine(os.environ['DATABASE_URL'])
+Session = sessionmaker(bind=engine)
+
+queries.py
+from database import Session
+session = Session()
+
+
+create_session.py
+from database.create_session import Session
+session = Session()
+
+
+-------------------------------------------------------------------------------------
+https://docs.sonarqube.org/latest/setup/install-cluster/
+https://docs.sonarqube.org/latest/setup/install-server/
+https://hub.docker.com/_/sonarqube/
+https://docs.sonarqube.org/latest/setup/get-started-2-minutes/
+https://docs.sonarqube.org/latest/analysis/languages/python/
+https://docs.sonarqube.org/latest/analysis/external-issues/
+https://github.com/PyCQA/bandit/blob/main/README.rst
+https://flake8.pycqa.org/en/latest/
+https://docs.sonarqube.org/latest/analysis/coverage/
+https://coverage.readthedocs.io/en/stable/
+https://nedbatchelder.com/
+https://nose.readthedocs.io/en/latest/
+https://docs.pytest.org/en/latest/
+
+docker run -d --name sonarqube -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p 9000:9000 sonarqube:latest
+
+
+sonar.python.pylint.reportPaths
+sonar.python.bandit.reportPaths
+sonar.python.flake8.reportPaths
+
+python<version> -m pip install flake8
+python -m pip install flake8
+
+pytest arg1 arg2 arg3
+coverage run -m pytest arg1 arg2 arg3
+python -m unittest discover
+coverage run -m unittest discover
+
+pip install nose
+python setup.py install
+nosetests -h
 
 
 
