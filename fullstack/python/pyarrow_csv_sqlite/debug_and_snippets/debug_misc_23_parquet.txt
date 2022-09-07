@@ -1,0 +1,64 @@
+######################################################
+Error Message: TypeError: cannot concatenate object of type "<class 'pyspark.sql.dataframe.DataFrame'>";
+only pd.Series, pd.DataFrame, and pd.Panel (deprecated) objs are valid
+
+Error Message:  TypeError: Can only merge Series or DataFrame objects,
+a <class 'pyspark.sql.dataframe.DataFrame'> was passed
+######################################################
+
+https://stackoverflow.com/questions/60102262/trying-to-merge-or-concat-two-pyspark-sql-dataframe-dataframe-in-databricks-envi
+https://stackoverflow.com/questions/66140972/how-to-merge-dataframes-in-databricks-notebook-using-python-pyspark
+https://sparkbyexamples.com/pyspark/pyspark-union-and-unionall/
+https://sparkbyexamples.com/pyspark/pyspark-read-and-write-parquet-file/
+
+df1= df1.select("*").toPandas()
+df2= df2.select("*").toPandas()
+Step #2:
+result = pd.concat([df1, df2], axis=1)
+...
+df.join(resultant_df)
+df = df.union(resultant_df)
+df.show()
+...
+from functools import reduce
+from pyspark.sql import DataFrame
+dfs = [df1,df2]
+merged = reduce(DataFrame.union, dfs)
+merged.show(truncate=False) # or display(merged)
+
+######################################################
+parquet taking a lot of memory
+######################################################
+
+https://stackoverflow.com/questions/57344559/python-dask-to-parquet-taking-a-lot-of-memory
+https://github.com/dask/dask/issues/5159
+https://github.com/aws/aws-sdk-pandas/issues/1213
+https://www.anycodings.com/1questions/271131/python-dask-toparquet-taking-a-lot-of-memory
+https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.to_parquet.html
+https://towardsdatascience.com/how-to-avoid-memory-errors-with-pandas-22366e1371b1
+https://arrow.apache.org/docs/python/pandas.html
+https://arrow.apache.org/docs/python/pandas.html#reducing-memory-use-in-table-to-pandas
+
+
+df = table.to_pandas(split_blocks=True, self_destruct=True)
+del table  # not necessary, but a good practice
+
+
+ERR
+import dask.dataframe as dd
+with ProgressBar():
+    dfs = [dd.read_parquet(pfile) for pfile in parquet_files]
+    for i, path in enumerate(parquet_files):
+        dfs[i]["file"] = path
+    df = dd.concat(dfs)
+    df.to_parquet(output_parquet_file)
+
+
+FIX
+import dask.dataframe as dd
+ddf = dd.read_parquet("parquets/*.parquet")
+ddf = ddf.map_partitions(lambda df: df*2)
+ddf.to_parquet("result.parquet")
+
+
+

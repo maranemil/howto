@@ -1,0 +1,528 @@
+
+######################################################
+pd.concat
+######################################################
+
+https://towardsdatascience.com/pandas-concat-tricks-you-should-know-to-speed-up-your-data-analysis-cd3d4fdfe6dd
+https://github.com/BindiChen/machine-learning/blob/main/data-analysis/016-pandas-concat/pandas-concat.ipynb
+https://pandas.pydata.org/docs/reference/api/pandas.concat.html
+https://pandas.pydata.org/docs/user_guide/merging.html
+https://datagy.io/pandas-merge-concat/
+
+df1 = pd.DataFrame({
+    'name': ['A', 'B', 'C', 'D'],
+    'math': [60,89,82,70],
+    'physics': [66,95,83,66],
+    'chemistry': [61,91,77,70]
+})
+df2 = pd.DataFrame({
+    'name': ['E', 'F', 'G', 'H'],
+    'math': [66,95,83,66],
+    'physics': [60,89,82,70],
+    'chemistry': [90,81,78,90]
+})
+
+
+pd.concat([df1, df2])
+pd.concat([df1, df2], ignore_index=True)
+pd.concat([df1, df2], axis=1)
+pd.concat([df1, df2], keys=['Year 1','Year 2'])
+
+pd.concat(
+    [df1, df2],
+    keys=['Year 1', 'Year 2'],
+    names=['Class', None],
+)
+
+pd.concat(
+    [df1, df2],
+    keys=['Year 1', 'Year 2'],
+    names=['Class', None],
+).reset_index(level=0)
+# reset_index(level='Class')
+
+pd.concat([df1, df2], sort=True)
+
+custom_sort = ['math', 'chemistry', 'physics', 'name']
+res = pd.concat([df1, df2])
+res[custom_sort]
+
+
+
+import pathlib2 as pl2
+ps = pl2.Path('data/sp3')
+dfs = (
+    pd.read_csv(p, encoding='utf8') for p in ps.glob('*.csv')
+)
+res = pd.concat(dfs)
+res
+
+#########################################################################
+pd.arrays.SparseArray
+#########################################################################
+
+https://pandas.pydata.org/docs/reference/api/pandas.arrays.SparseArray.html
+https://programtalk.com/python-more-examples/pandas.arrays.SparseArray/
+https://pandas.pydata.org/docs/user_guide/sparse.html
+https://www.programcreek.com/python/example/125183/pandas.SparseArray
+
+
+rom pandas.arrays import SparseArray
+arr = SparseArray([0, 0, 1, 2])
+arr
+[0, 0, 1, 2]
+Fill: 0
+IntIndex
+Indices: array([2, 3], dtype=int32)
+
+
+
+
+arr = np.random.randn(10)
+arr[2:-2] = np.nan
+ts = pd.Series(pd.arrays.SparseArray(arr))
+
+
+
+df = pd.DataFrame(np.random.randn(10000, 4))
+df.iloc[:9998] = np.nan
+sdf = df.astype(pd.SparseDtype("float", np.nan))
+sdf.head()
+sdf.sparse.density
+'dense : {:0.2f} bytes'.format(df.memory_usage().sum() / 1e3)
+'sparse: {:0.2f} bytes'.format(sdf.memory_usage().sum() / 1e3)
+
+
+arr = np.random.randn(10)
+arr[2:5] = np.nan
+arr[7:8] = np.nan
+sparr = pd.arrays.SparseArray(arr)
+sparr
+np.asarray(sparr)
+sparr.dtype
+pd.SparseDtype(np.dtype('datetime64[ns]'))
+pd.SparseDtype(np.dtype('datetime64[ns]'),
+               fill_value=pd.Timestamp('2017-01-01'))
+pd.array([1, 0, 0, 2], dtype='Sparse[int]')
+
+
+s = pd.Series([0, 0, 1, 2], dtype="Sparse[int]")
+s.sparse.density
+s.sparse.fill_value
+
+
+
+
+def test_where_sparse():
+    # GH#17198 make sure we dont get an AttributeError for sp_index
+    ser = pd.Series(pd.arrays.SparseArray([1, 2]))
+    result = ser.where(ser >= 2, 0)
+    expected = pd.Series(pd.arrays.SparseArray([0, 2]))
+    tm.assert_series_equal(result, expected)
+
+def test_where_empty_series_and_empty_cond_having_non_bool_dtypes():
+ pass
+
+
+
+
+def test_unary_ufunc(ufunc, sparse):
+    # Test that ufunc(Series) == Series(ufunc)
+    array = np.random.randint(0, 10, 10, dtype="int64")
+    array[::2] = 0
+    if sparse:
+        array = SparseArray(array, dtype=pd.SparseDtype("int64", 0))
+
+    index = list(string.ascii_letters[:10])
+    name = "name"
+    series = pd.Series(array, index=index, name=name)
+
+    result = ufunc(series)
+    expected = pd.Series(ufunc(array), index=index, name=name)
+    tm.assert_series_equal(result, expected)
+
+@pytest.mark.parametrize("ufunc", BINARY_UFUNCS)
+
+...
+
+
+def test_constructor_from_sparse_array(self):
+        # https://github.com/pandas-dev/pandas/issues/35843
+        values = [
+            Timestamp("2012-05-01T01:00:00.000000"),
+            Timestamp("2016-05-01T01:00:00.000000"),
+        ]
+        arr = pd.arrays.SparseArray(values)
+        result = Index(arr)
+        expected = DatetimeIndex(values)
+        tm.assert_index_equal(result, expected)
+
+def test_construction_caching(self):
+	pass
+
+...
+
+
+def _create_sp_series():
+    nan = np.nan
+    # nan-based
+    arr = np.arange(15, dtype=np.float64)
+    arr[7:12] = nan
+    arr[-1:] = nan
+    bseries = Series(SparseArray(arr, kind="block"))
+    bseries.name = "bseries"
+    return bseries
+
+def _create_sp_tsseries():
+
+...
+
+
+def test_unary_ufunc(ufunc, sparse):
+    # Test that ufunc(pd.Series) == pd.Series(ufunc)
+    arr = np.random.randint(0, 10, 10, dtype="int64")
+    arr[::2] = 0
+    if sparse:
+        arr = SparseArray(arr, dtype=pd.SparseDtype("int64", 0))
+    index = list(string.ascii_letters[:10])
+    name = "name"
+    series = pd.Series(arr, index=index, name=name)
+    result = ufunc(series)
+    expected = pd.Series(ufunc(arr), index=index, name=name)
+    tm.assert_series_equal(result, expected)
+
+
+@pytest.mark.parametrize("ufunc", BINARY_UFUNCS)
+
+...
+
+
+def test_concat_dense_sparse():
+    # GH 30668
+    a = Series(pd.arrays.SparseArray([1, None]), dtype=float)
+    b = Series([1], dtype=float)
+    expected = Series(data=[1, None, 1], index=[0, 1, 0]).astype(
+        pd.SparseDtype(np.float64, None)
+    )
+    result = pd.concat([a, b], axis=0)
+    tm.assert_series_equal(result, expected)
+
+@pytest.mark.parametrize("keys", [["e", "f", "f"], ["f", "e", "f"]])
+
+
+
+#########################################################################
+Concatenation (Combining Data Tables) with Pandas and Python
+#########################################################################
+
+https://www.dataquest.io/blog/pandas-concatenation-tutorial/
+https://www.tutorialspoint.com/python_pandas/python_pandas_concatenation.htm
+https://linuxhint.com/pandas-concatenate-two-dataframes/
+https://www.skytowner.com/explore/pandas_concat_method
+https://www.terality.com/post/pandas-concat-vs-append
+https://www.anycodings.com/questions/dataframe-add-multiple-columns-from-list-with-each-column-name-created
+https://neuralprophet.com/html/lagged_covariates_energy_ercot.html
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+north_america = pd.read_csv('./north_america_2000_2010.csv', index_col=0)
+south_america = pd.read_csv('./south_america_2000_2010.csv', index_col=0)
+north_america
+north_america.plot()
+
+north_america.transpose().plot(title='Average Labor Hours Per Year')
+plt.show()
+
+south_america.transpose().plot(title='Average Labor Hours Per Year')
+plt.show()
+
+# result = pd.concat([list of DataFrames], axis=0, join='outer', ignore_index=False)
+americas = pd.concat([north_america, south_america])
+americas
+
+americas_dfs = [americas]
+for year in range(2011, 2016):
+    filename = "./americas_{}.csv".format(year)
+    df = pd.read_csv(filename, index_col=0)
+americas_dfs.append(df)
+americas_dfs[1]
+
+
+americas = pd.concat(americas_dfs, axis=1)
+americas.index.names = ['Country']
+americas
+
+americas.transpose().plot(title='Average Labor Hours Per Year')
+plt.show()
+
+asia = pd.read_csv('./asia_2000_2015.csv', index_col=0)
+asia
+europe = pd.read_csv('./europe_2000_2015.csv', index_col=0)
+europe.head()
+south_pacific = pd.read_csv('./south_pacific_2000_2015.csv', index_col=0)
+south_pacific
+
+world = americas.append([asia, europe, south_pacific])
+world.index
+
+world.transpose().plot(title='Average Labor Hours Per Year')
+plt.show()
+
+
+world.transpose().plot(figsize=(10,10), colormap='rainbow', linewidth=2, title='Average Labor Hours Per Year')
+plt.legend(loc='right', bbox_to_anchor=(1.3, 0.5))
+plt.show()
+
+world_historical = pd.merge(historical, world, left_index=True, right_index=True, how='right')
+print(world_historical.shape)
+world_historical.head()
+world_historical = historical.join(world, how='right')world_historical.head()
+world_historical.sort_index(inplace=True)
+world_historical.transpose().plot(figsize=(15,10), colormap='rainbow', linewidth=2, title='Average Labor Hours Per Year')
+plt.legend(loc='right', bbox_to_anchor=(1.15, 0.5))
+plt.show()
+
+
+https://www.terality.com/post/pandas-concat-vs-append
+
+
+
+-- CODE language-python --
+df = pd.DataFrame(range(1_000_000))
+dfs = [df] * 100
+
+%%time
+df_result = dfs[0]
+for df in dfs[1:]:
+   df_result = df_result.append(df)
+CPU times: user 7.92 s, sys: 6.28 s, total: 14.2 s
+Wall time: 14.2 s
+
+%%time
+df_result = pd.concat(dfs)
+CPU times: user 157 ms, sys: 134 ms, total: 291 ms
+Wall time: 289 ms
+
+
+https://pythonfordatascienceorg.wordpress.com/join-and-merge-data-frames-python/
+
+
+dataframe1 = pd.DataFrame({'ID': ['0011','0013','0014','0016','0017'],
+                           'First Name': ['Joseph', 'Mike', 'Jordan', 'Steven', 'Susan']})
+dataframe2 = pd.DataFrame({'ID': ['0010','0011','0013','0014','0017'],
+                           'Last Name': ['Gordan', 'Johnson', 'Might' , 'Jackson', 'Shack']})
+dataframe3 = pd.DataFrame({'ID': ['0020','0022','0025'],
+                           'First Name': ['Adam', 'Jackie', 'Sue']})
+dataframe4 = pd.DataFrame({'Key': ['0020','0022','0025'],
+                           'Scores': [95, 90, 80]})
+
+new_concat_ROWS_dataframe = pd.concat([dataframe1, dataframe3])
+new_concat_ROWS_dataframe
+new_concat_ROWS_dataframe = pd.concat([dataframe1, dataframe3], ignore_index= "true")
+new_concat_ROWS_dataframe
+new_concat_COL_dataframe = pd.concat([dataframe1, dataframe3], axis=1)
+new_concat_COL_dataframe
+new_merged_dataframe = pd.merge(dataframe1, dataframe2, on= "ID", how= "inner")
+new_merged_dataframe
+new_OUTER_merged_dataframe = pd.merge(dataframe1, dataframe2, on= "ID", how= "outer")
+new_OUTER_merged_dataframe
+new_LEFT_merged_dataframe = pd.merge(dataframe1, dataframe2, on= "ID", how= "left")
+new_LEFT_merged_dataframe
+new_RIGHT_merged_dataframe = pd.merge(dataframe1, dataframe2, on= "ID", how= "right")
+new_RIGHT_merged_dataframe
+merged_dataframe = pd.merge(dataframe3, dataframe4, left_on= "ID", right_on= "Key", how= "inner")
+merged_dataframe
+
+
+
+https://neuralprophet.com/html/lagged_covariates_energy_ercot.html
+https://pymodulon.readthedocs.io/en/latest/tutorials/plotting_functions.html
+https://stackoverflow.com/questions/68292862/performancewarning-dataframe-is-highly-fragmented-this-is-usually-the-result-o
+
+
+import pandas as pd
+from neuralprophet import NeuralProphet, set_log_level
+
+data_location = "https://raw.githubusercontent.com/ourownstory/neuralprophet-data/main/datasets/"
+df_ercot = pd.read_csv(data_location + "multivariate/load_ercot_regions.csv")
+df_ercot_y = pd.read_csv(data_location + "energy/load_ercot.csv")
+df_ercot['y'] = df_ercot_y['y']
+df_ercot.head()
+
+regions = list(df_ercot)[1:-1]
+df_ercot['y'].isnull().sum()
+
+# Baseline Model
+
+df = pd.DataFrame({"ds": df_ercot["ds"], "y": df_ercot["y"]})
+m = NeuralProphet(
+    learning_rate=0.1,
+)
+metrics = m.fit(df, freq="H")
+
+forecast = m.predict(df)
+# fig = m.plot(forecast)
+fig1 = m.plot(forecast[-365*24:])
+fig2 = m.plot(forecast[-7*24:])
+# comp = m.plot_components(forecast)
+param = m.plot_parameters()
+
+# 3-steps ahead AR Model
+
+df = pd.DataFrame({"ds": df_ercot["ds"], "y": df_ercot["y"]})
+m = NeuralProphet(
+    n_forecasts=3,
+    n_lags=3,
+    learning_rate=0.1,
+)
+m = m.highlight_nth_step_ahead_of_each_forecast(3)
+metrics = m.fit(df, freq="H")
+
+forecast = m.predict(df)
+# fig = m.plot(forecast)
+fig1 = m.plot(forecast[-365*24:])
+fig2 = m.plot(forecast[-7*24:])
+# comp = m.plot_components(forecast[-7*24:])
+param = m.plot_parameters()
+
+# 3-steps ahead AR and Lagged Regressors Model
+
+df = df_ercot
+m = NeuralProphet(
+    n_forecasts=3,
+    n_lags=3,
+    learning_rate= 0.1,
+)
+m = m.add_lagged_regressor(names=regions) #, only_last_value=True)
+m.highlight_nth_step_ahead_of_each_forecast(3)
+metrics = m.fit(df, freq="H")
+
+forecast = m.predict(df)
+# fig = m.plot(forecast)
+fig1 = m.plot(forecast[-365*24:])
+fig2 = m.plot(forecast[-7*24:])
+# comp = m.plot_components(forecast[-7*24:])
+param = m.plot_parameters()
+
+
+# 3-steps ahead AR and Lagged Regressors Model
+
+df = df_ercot
+m = NeuralProphet(
+    n_forecasts=3,
+    n_lags=3,
+    learning_rate= 0.1,
+)
+m = m.add_lagged_regressor(names=regions) #, only_last_value=True)
+m.highlight_nth_step_ahead_of_each_forecast(3)
+metrics = m.fit(df, freq="H")
+
+
+forecast = m.predict(df)
+# fig = m.plot(forecast)
+fig1 = m.plot(forecast[-365*24:])
+fig2 = m.plot(forecast[-7*24:])
+# comp = m.plot_components(forecast[-7*24:])
+param = m.plot_parameters()
+
+
+# 24-steps ahead Long AR Model
+
+df = pd.DataFrame({"ds": df_ercot["ds"], "y": df_ercot["y"]})
+m = NeuralProphet(
+    n_forecasts=24,
+    n_lags=7*24,
+    learning_rate=0.1,
+)
+m.highlight_nth_step_ahead_of_each_forecast(24)
+metrics = m.fit(df, freq="H")
+
+forecast = m.predict(df)
+# fig = m.plot(forecast)
+fig1 = m.plot(forecast[-365*24:])
+fig2 = m.plot(forecast[-7*24:])
+# comp = m.plot_components(forecast[-7*24:])
+param = m.plot_parameters()
+
+
+# 24-steps ahead Long AR Model with last observation of Lagged Regressors
+
+df = df_ercot
+m = NeuralProphet(
+    n_forecasts=24,
+    n_lags=7*24,
+    learning_rate=0.1,
+)
+m = m.add_lagged_regressor(names=regions, only_last_value=True)
+m.highlight_nth_step_ahead_of_each_forecast(24)
+metrics = m.fit(df, freq="H")
+
+forecast = m.predict(df)
+# fig = m.plot(forecast)
+fig1 = m.plot(forecast[-365*24:])
+fig2 = m.plot(forecast[-7*24:])
+# comp = m.plot_components(forecast[-7*24:])
+param = m.plot_parameters()
+
+# 24-steps ahead AR Model with full Lagged Regressors
+
+df = df_ercot
+m = NeuralProphet(
+    n_forecasts=24,
+    n_lags=24,
+    learning_rate=0.01,
+)
+m = m.add_lagged_regressor(names=regions)
+m.highlight_nth_step_ahead_of_each_forecast(24)
+metrics = m.fit(df, freq="H")
+
+forecast = m.predict(df)
+# fig = m.plot(forecast)
+fig1 = m.plot(forecast[-365*24:])
+fig2 = m.plot(forecast[-7*24:])
+# comp = m.plot_components(forecast[-7*24:])
+param = m.plot_parameters()
+
+24-steps ahead Neural Model with Long AR
+
+df = pd.DataFrame({"ds": df_ercot["ds"], "y": df_ercot["y"]})
+m = NeuralProphet(
+    n_forecasts=24,
+    n_lags=7*24,
+    learning_rate=0.01,
+    num_hidden_layers=1,
+    d_hidden=16,
+)
+m = m.highlight_nth_step_ahead_of_each_forecast(24)
+metrics = m.fit(df, freq="H")
+
+forecast = m.predict(df)
+# fig = m.plot(forecast)
+fig1 = m.plot(forecast[-365*24:])
+fig2 = m.plot(forecast[-7*24:])
+comp = m.plot_components(forecast[-7*24:])
+# param = m.plot_parameters()
+
+
+# 24-steps ahead Neural Model with Long AR and Lagged Regressors
+
+df = df_ercot
+m = NeuralProphet(
+    n_forecasts=24,
+    n_lags=7*24,
+    learning_rate=0.01,
+    num_hidden_layers=1,
+    d_hidden=16,
+)
+m = m.add_lagged_regressor(names=regions)#, only_last_value=True)
+m = m.highlight_nth_step_ahead_of_each_forecast(24)
+metrics = m.fit(df, freq="H")
+
+forecast = m.predict(df)
+# fig = m.plot(forecast)
+fig1 = m.plot(forecast[-365*24:])
+fig2 = m.plot(forecast[-7*24:])
+comp = m.plot_components(forecast[-7*24:])
+
+
