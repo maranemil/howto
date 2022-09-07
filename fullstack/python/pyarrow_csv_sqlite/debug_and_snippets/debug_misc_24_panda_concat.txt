@@ -283,9 +283,9 @@ world_historical.transpose().plot(figsize=(15,10), colormap='rainbow', linewidth
 plt.legend(loc='right', bbox_to_anchor=(1.15, 0.5))
 plt.show()
 
-
+#########################################################################
 https://www.terality.com/post/pandas-concat-vs-append
-
+#########################################################################
 
 
 -- CODE language-python --
@@ -304,9 +304,9 @@ df_result = pd.concat(dfs)
 CPU times: user 157 ms, sys: 134 ms, total: 291 ms
 Wall time: 289 ms
 
-
+#########################################################################
 https://pythonfordatascienceorg.wordpress.com/join-and-merge-data-frames-python/
-
+#########################################################################
 
 dataframe1 = pd.DataFrame({'ID': ['0011','0013','0014','0016','0017'],
                            'First Name': ['Joseph', 'Mike', 'Jordan', 'Steven', 'Susan']})
@@ -335,11 +335,11 @@ merged_dataframe = pd.merge(dataframe3, dataframe4, left_on= "ID", right_on= "Ke
 merged_dataframe
 
 
-
+#########################################################################
 https://neuralprophet.com/html/lagged_covariates_energy_ercot.html
 https://pymodulon.readthedocs.io/en/latest/tutorials/plotting_functions.html
 https://stackoverflow.com/questions/68292862/performancewarning-dataframe-is-highly-fragmented-this-is-usually-the-result-o
-
+#########################################################################
 
 import pandas as pd
 from neuralprophet import NeuralProphet, set_log_level
@@ -524,5 +524,283 @@ forecast = m.predict(df)
 fig1 = m.plot(forecast[-365*24:])
 fig2 = m.plot(forecast[-7*24:])
 comp = m.plot_components(forecast[-7*24:])
+
+
+----------------------------------------------------
+#########################################################################
+PerformanceWarning: DataFrame is highly fragmented.
+This is usually the result of calling `frame.insert` many times, which has poor performance.
+Consider joining all columns at once using pd.concat(axis=1) instead.  To get a de-fragmented frame, use `newframe = frame.copy()`
+#########################################################################
+
+https://stackoverflow.com/questions/42786804/concatenate-all-columns-in-a-pandas-dataframe
+https://pandas.pydata.org/pandas-docs/version/0.20/merging.html
+
+
+df1 = pd.DataFrame({'A': ['A0', 'A1', 'A2', 'A3'],
+   ...:                     'B': ['B0', 'B1', 'B2', 'B3'],
+   ...:                     'C': ['C0', 'C1', 'C2', 'C3'],
+   ...:                     'D': ['D0', 'D1', 'D2', 'D3']},
+   ...:                     index=[0, 1, 2, 3])
+   ...:
+
+In [2]: df2 = pd.DataFrame({'A': ['A4', 'A5', 'A6', 'A7'],
+   ...:                     'B': ['B4', 'B5', 'B6', 'B7'],
+   ...:                     'C': ['C4', 'C5', 'C6', 'C7'],
+   ...:                     'D': ['D4', 'D5', 'D6', 'D7']},
+   ...:                      index=[4, 5, 6, 7])
+   ...:
+
+In [3]: df3 = pd.DataFrame({'A': ['A8', 'A9', 'A10', 'A11'],
+   ...:                     'B': ['B8', 'B9', 'B10', 'B11'],
+   ...:                     'C': ['C8', 'C9', 'C10', 'C11'],
+   ...:                     'D': ['D8', 'D9', 'D10', 'D11']},
+   ...:                     index=[8, 9, 10, 11])
+   ...:
+
+In [4]: frames = [df1, df2, df3]
+In [5]: result = pd.concat(frames)
+
+frames = [ process_your_file(f) for f in files ]
+result = pd.concat(frames)
+
+
+In [8]: df4 = pd.DataFrame({'B': ['B2', 'B3', 'B6', 'B7'],
+   ...:                  'D': ['D2', 'D3', 'D6', 'D7'],
+   ...:                  'F': ['F2', 'F3', 'F6', 'F7']},
+   ...:                 index=[2, 3, 6, 7])
+   ...:
+
+In [9]: result = pd.concat([df1, df4], axis=1)
+In [10]: result = pd.concat([df1, df4], axis=1, join='inner')
+In [11]: result = pd.concat([df1, df4], axis=1, join_axes=[df1.index])
+In [12]: result = df1.append(df2)
+In [13]: result = df1.append(df4)
+In [14]: result = df1.append([df2, df3])
+In [15]: result = pd.concat([df1, df4], ignore_index=True)
+In [16]: result = df1.append(df4, ignore_index=True)
+
+In [17]: s1 = pd.Series(['X0', 'X1', 'X2', 'X3'], name='X')
+In [18]: result = pd.concat([df1, s1], axis=1)
+
+In [19]: s2 = pd.Series(['_0', '_1', '_2', '_3'])
+In [20]: result = pd.concat([df1, s2, s2, s2], axis=1)
+In [21]: result = pd.concat([df1, s1], axis=1, ignore_index=True)
+
+
+In [36]: dicts = [{'A': 1, 'B': 2, 'C': 3, 'X': 4},
+   ....:          {'A': 5, 'B': 6, 'C': 7, 'Y': 8}]
+   ....:
+
+In [37]: result = df1.append(dicts, ignore_index=True)
+
+
+
+
+
+In [38]: left = pd.DataFrame({'key': ['K0', 'K1', 'K2', 'K3'],
+   ....:                      'A': ['A0', 'A1', 'A2', 'A3'],
+   ....:                      'B': ['B0', 'B1', 'B2', 'B3']})
+   ....:
+
+In [39]: right = pd.DataFrame({'key': ['K0', 'K1', 'K2', 'K3'],
+   ....:                       'C': ['C0', 'C1', 'C2', 'C3'],
+   ....:                       'D': ['D0', 'D1', 'D2', 'D3']})
+   ....:
+
+In [40]: result = pd.merge(left, right, on='key')
+
+
+
+
+In [41]: left = pd.DataFrame({'key1': ['K0', 'K0', 'K1', 'K2'],
+   ....:                      'key2': ['K0', 'K1', 'K0', 'K1'],
+   ....:                      'A': ['A0', 'A1', 'A2', 'A3'],
+   ....:                      'B': ['B0', 'B1', 'B2', 'B3']})
+   ....:
+
+In [42]: right = pd.DataFrame({'key1': ['K0', 'K1', 'K1', 'K2'],
+   ....:                       'key2': ['K0', 'K0', 'K0', 'K0'],
+   ....:                       'C': ['C0', 'C1', 'C2', 'C3'],
+   ....:                       'D': ['D0', 'D1', 'D2', 'D3']})
+   ....:
+
+In [43]: result = pd.merge(left, right, on=['key1', 'key2'])
+
+
+
+
+Merge method	SQL Join Name	Description
+
+left	LEFT OUTER JOIN	Use keys from left frame only
+right	RIGHT OUTER JOIN	Use keys from right frame only
+outer	FULL OUTER JOIN	Use union of keys from both frames
+inner	INNER JOIN	Use intersection of keys from both frames
+
+
+In [44]: result = pd.merge(left, right, how='left', on=['key1', 'key2'])
+In [45]: result = pd.merge(left, right, how='right', on=['key1', 'key2'])
+In [46]: result = pd.merge(left, right, how='outer', on=['key1', 'key2'])
+In [47]: result = pd.merge(left, right, how='inner', on=['key1', 'key2'])
+
+
+
+In [48]: left = pd.DataFrame({'A' : [1,2], 'B' : [2, 2]})
+In [49]: right = pd.DataFrame({'A' : [4,5,6], 'B': [2,2,2]})
+In [50]: result = pd.merge(left, right, on='B', how='outer')
+
+
+
+In [74]: left = pd.DataFrame({'A': ['A0', 'A1', 'A2'],
+   ....:                      'B': ['B0', 'B1', 'B2']},
+   ....:                      index=['K0', 'K1', 'K2'])
+   ....:
+
+In [75]: right = pd.DataFrame({'C': ['C0', 'C2', 'C3'],
+   ....:                       'D': ['D0', 'D2', 'D3']},
+   ....:                       index=['K0', 'K2', 'K3'])
+   ....:
+In [76]: result = left.join(right)
+
+
+
+#########################################################################
+https://sparkbyexamples.com/pandas/pandas-concatenate-two-columns/
+#########################################################################
+import pandas as pd
+technologies = ({
+     'Courses':["Spark","PySpark","Hadoop","Python","pandas"],
+     'Fee' :[20000,25000,26000,22000,24000],
+     'Duration':['30days','40days','35days','40days','60days'],
+     'Discount':[1000,1500,2500,2100,2000]
+               })
+df = pd.DataFrame(technologies)
+print(df)
+
+# Using + operator to combine two columns
+df["Period"] = df['Courses'].astype(str) +"-"+ df["Duration"]
+print(df)
+
+# Using apply() method to combine two columns of text
+df["Period"] = df[["Courses", "Duration"]].apply("-".join, axis=1)
+print(df)
+
+
+# Using DataFrame.apply() and lambda function
+df["Period"] = df[["Courses", "Duration"]].apply(lambda x: " ".join(x), axis =1)
+print(df)
+
+#########################################################################
+https://github.com/twopirllc/pandas-ta/issues/340
+PerformanceWarning: DataFrame is highly fragmented #340
+#########################################################################
+
+To Reproduce
+
+I start with a DataFrame populated with just the right columns for pandas-ta. Then add technical indicators like so:
+
+for n in self.__SMA_INTERVALS:
+
+	key = "SMA_{}".format(n)
+
+	df[key] = ta.sma(df["Close"], length=n)
+	df[key] = df[key].fillna(0)
+
+	df = df.copy()
+
+#########################################################################
+https://jakevdp.github.io/PythonDataScienceHandbook/03.06-concat-and-append.html
+#########################################################################
+import pandas as pd
+import numpy as np
+
+def make_df(cols, ind):
+    """Quickly make a DataFrame"""
+    data = {c: [str(c) + str(i) for i in ind]
+            for c in cols}
+    return pd.DataFrame(data, ind)
+
+# example DataFrame
+make_df('ABC', range(3))
+
+
+# Signature in Pandas v0.18
+pd.concat(objs, axis=0, join='outer', join_axes=None, ignore_index=False,
+          keys=None, levels=None, names=None, verify_integrity=False,
+          copy=True)
+
+
+ser1 = pd.Series(['A', 'B', 'C'], index=[1, 2, 3])
+ser2 = pd.Series(['D', 'E', 'F'], index=[4, 5, 6])
+pd.concat([ser1, ser2])
+
+
+df1 = make_df('AB', [1, 2])
+df2 = make_df('AB', [3, 4])
+display('df1', 'df2', 'pd.concat([df1, df2])')
+
+
+df3 = make_df('AB', [0, 1])
+df4 = make_df('CD', [0, 1])
+display('df3', 'df4', "pd.concat([df3, df4], axis='col')")
+
+
+x = make_df('AB', [0, 1])
+y = make_df('AB', [2, 3])
+y.index = x.index  # make duplicate indices!
+display('x', 'y', 'pd.concat([x, y])')
+
+
+
+try:
+    pd.concat([x, y], verify_integrity=True)
+except ValueError as e:
+    print("ValueError:", e)
+
+
+
+df5 = make_df('ABC', [1, 2])
+df6 = make_df('BCD', [3, 4])
+display('df5', 'df6', 'pd.concat([df5, df6])')
+display('df1', 'df2', 'df1.append(df2)')
+
+#########################################################################
+Two data sets containing the same columns but different rows of data
+https://datacarpentry.org/python-socialsci/11-joins/index.html
+#########################################################################
+
+import pandas as pd
+
+df_SN7577i_a = pd.read_csv("SN7577i_a.csv")
+df_SN7577i_b = pd.read_csv("SN7577i_b.csv")
+
+print(df_SN7577i_a)
+print(df_SN7577i_b)
+
+df_all_rows = pd.concat([df_SN7577i_a, df_SN7577i_b])
+df_all_rows
+
+df_all_rows=df_all_rows.reset_index(drop=True)
+# or, alternatively, there's the `ignore_index` option in the `pd.concat()` function:
+df_all_rows = pd.concat([df_SN7577i_a, df_SN7577i_b], ignore_index=True)
+df_all_rows
+
+df_SN7577i_aa = pd.read_csv("SN7577i_aa.csv")
+df_SN7577i_bb = pd.read_csv("SN7577i_bb.csv")
+df_all_rows = pd.concat([df_SN7577i_aa, df_SN7577i_bb])
+df_all_rows
+
+# Adding the columns from one Dataframe to those of another Dataframe
+df_SN7577i_c = pd.read_csv("SN7577i_c.csv")
+df_SN7577i_d = pd.read_csv("SN7577i_d.csv")
+df_all_cols = pd.concat([df_SN7577i_c, df_SN7577i_d], axis = 1)
+df_all_cols
+
+
+# Using merge to join columns
+df_cd = pd.merge(df_SN7577i_c, df_SN7577i_d, how='inner')
+df_cd
+df_cd = pd.merge(df_SN7577i_c, df_SN7577i_d, how='inner', on = 'Id')
+df_cd = pd.merge(df_SN7577i_c, df_SN7577i_d, how='inner', left_on = 'Id', right_on = 'Id')
 
 
