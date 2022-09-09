@@ -1,0 +1,808 @@
+##################################################
+python openpyxl get count rows
+##################################################
+
+https://stackoverflow.com/questions/56322053/python-openpyxl-max-row-counts-all-the-rows-instead-of-counting-non-empty-rows
+https://ranjanmp.medium.com/openpyxl-get-maximum-rows-containing-the-data-in-an-excel-sheet-using-python-419ff98384b0
+https://www.tutorialspoint.com/how-to-get-the-maximum-number-of-occupied-rows-and-columns-in-a-worksheet-in-selenium-with-python
+https://stackoverflow.com/questions/13377793/is-it-possible-to-get-an-excel-documents-row-count-without-loading-the-entire-d
+...
+
+wb = openpyxl.load_workbook(path)
+ws = wb.active
+count = 0
+for row in ws:
+    if not all([cell.value is None for cell in row]):
+        count += 1
+print(count)
+
+
+
+wb = openpyxl.load_workbook(path)
+ws = wb.active
+print(len([row for row in ws if not all([cell.value is None for cell in row])]))
+
+...
+
+# get the maximum rows containing the data in openpyxl
+def get_maximum_rows(*, sheet_object):
+    rows = 0
+    for max_row, row in enumerate(sheet_object, 1):
+        if not all(col.value is None for col in row):
+            rows += 1
+    return rows
+
+import openpyxl
+workbook = openpyxl.load_workbook(<filepath>)
+# <filepath> is the  path of the excel file
+sheet_object = workbook.active
+max_rows = get_maximum_rows(sheet_object=sheet_object)
+
+...
+
+import openpyxl
+# load excel with its path
+wrkbk = load_workbook("C:\work\SeleniumPython.xlsx")
+# to get the active work sheet
+sh = wrkbk.active
+# get the value of row 2 and column 3
+c=sh.cell(row=2,column=3)
+# to set the value in row 2 and column 3
+sh.cell(row=2,column=3).value = "Tutorialspoint"
+# to print the value in console
+print(sh.cell(row=2,column=3).value)
+# to print the maximum number of occupied rows in console
+print(sh.max_row)
+# to print the maximum number of occupied columns in console
+print(sh.max_column)
+
+
+
+##################################################
+Openpyxl get columns
+##################################################
+
+https://stackoverflow.com/questions/51975912/get-column-names-of-excel-worksheet-with-openpyxl-in-readonly-mode
+https://stackoverflow.com/questions/51478413/select-a-column-by-its-name-openpyxl
+
+# columns names
+list_with_values=[]
+for cell in ws[1]:
+    list_with_values.append(cell.value)
+
+# columns numbers
+column_list = [cell.column for cell in ws[1]]
+
+
+from openpyxl import Workbook
+wb = Workbook()
+ws = wb['Sheet']
+#Sheet is the default sheet name, you can rename it or create additional ones with wb.create_sheet()
+ws.append(list_with_values)
+wb.save('OutPut.xlsx')
+
+# columns names
+rows = ws.iter_rows(min_row=1, max_row=1) # returns a generator of rows
+first_row = next(rows) # get the first row
+headings = [c.value for c in first_row] # extract the values from the cells
+
+# columns names
+for COL in ws.iter_cols(1, ws.max_column):
+    print(COL[0].value)
+
+# columns numbers
+for COL in ws.iter_cols(1, ws.max_column):
+    print(COL[0].column)
+
+
+
+How to get OpenPyXL column letter by index
+https://techoverflow.net/2021/09/24/how-to-get-openpyxl-column-letter-by-index/
+
+import openpyxl.utils.cell
+openpyxl.utils.cell.get_column_letter(idx)
+openpyxl.utils.cell.get_column_letter(3) # returns "C"
+
+##################################################
+Openpyxl create new file
+##################################################
+
+https://zetcode.com/python/openpyxl/
+
+write_xlsx.py
+#!/usr/bin/python
+
+from openpyxl import Workbook
+import time
+
+book = Workbook()
+sheet = book.active
+
+sheet['A1'] = 56
+sheet['A2'] = 43
+
+now = time.strftime("%x")
+sheet['A3'] = now
+
+book.save("sample.xlsx")
+
+------------------------------------
+Openpyxl write to a cell
+------------------------------------
+
+write2cell.py
+#!/usr/bin/python
+
+from openpyxl import Workbook
+
+book = Workbook()
+sheet = book.active
+
+sheet['A1'] = 1
+sheet.cell(row=2, column=2).value = 2
+
+book.save('write2cell.xlsx')
+
+------------------------------------
+Openpyxl append values
+------------------------------------
+
+appending_values.py
+#!/usr/bin/python
+
+from openpyxl import Workbook
+
+book = Workbook()
+sheet = book.active
+
+rows = (
+    (88, 46, 57),
+    (89, 38, 12),
+    (23, 59, 78),
+    (56, 21, 98),
+    (24, 18, 43),
+    (34, 15, 67)
+)
+
+for row in rows:
+    sheet.append(row)
+
+book.save('appending.xlsx')
+
+------------------------------------
+Openpyxl read cell
+------------------------------------
+
+
+read_cells.py
+#!/usr/bin/python
+
+import openpyxl
+
+book = openpyxl.load_workbook('sample.xlsx')
+
+sheet = book.active
+
+a1 = sheet['A1']
+a2 = sheet['A2']
+a3 = sheet.cell(row=3, column=1)
+
+print(a1.value)
+print(a2.value)
+print(a3.value)
+
+------------------------------------
+Openpyxl read multiple cells
+------------------------------------
+
+
+read_cells2.py
+#!/usr/bin/python
+
+import openpyxl
+book = openpyxl.load_workbook('items.xlsx')
+sheet = book.active
+cells = sheet['A1': 'B6']
+for c1, c2 in cells:
+    print("{0:8} {1:8}".format(c1.value, c2.value))
+
+------------------------------------
+Openpyxl iterate by rows
+------------------------------------
+
+
+iterating_by_rows.py
+#!/usr/bin/python
+
+from openpyxl import Workbook
+
+book = Workbook()
+sheet = book.active
+
+rows = (
+    (88, 46, 57),
+    (89, 38, 12),
+    (23, 59, 78),
+    (56, 21, 98),
+    (24, 18, 43),
+    (34, 15, 67)
+)
+
+for row in rows:
+    sheet.append(row)
+
+for row in sheet.iter_rows(min_row=1, min_col=1, max_row=6, max_col=3):
+    for cell in row:
+        print(cell.value, end=" ")
+    print()
+
+book.save('iterbyrows.xlsx')
+
+------------------------------------
+Openpyxl iterate by columns
+------------------------------------
+
+iterating_by_columns.py
+#!/usr/bin/python
+
+from openpyxl import Workbook
+
+book = Workbook()
+sheet = book.active
+
+rows = (
+    (88, 46, 57),
+    (89, 38, 12),
+    (23, 59, 78),
+    (56, 21, 98),
+    (24, 18, 43),
+    (34, 15, 67)
+)
+
+for row in rows:
+    sheet.append(row)
+
+for row in sheet.iter_cols(min_row=1, min_col=1, max_row=6, max_col=3):
+    for cell in row:
+        print(cell.value, end=" ")
+    print()
+
+book.save('iterbycols.xlsx')
+
+------------------------------------
+Statistics
+------------------------------------
+
+
+mystats.py
+#!/usr/bin/python
+
+import openpyxl
+import statistics as stats
+book = openpyxl.load_workbook('numbers.xlsx', data_only=True)
+
+sheet = book.active
+rows = sheet.rows
+
+values = []
+
+for row in rows:
+    for cell in row:
+        values.append(cell.value)
+
+print("Number of values: {0}".format(len(values)))
+print("Sum of values: {0}".format(sum(values)))
+print("Minimum value: {0}".format(min(values)))
+print("Maximum value: {0}".format(max(values)))
+print("Mean: {0}".format(stats.mean(values)))
+print("Median: {0}".format(stats.median(values)))
+print("Standard deviation: {0}".format(stats.stdev(values)))
+print("Variance: {0}".format(stats.variance(values)))
+
+------------------------------------
+Openpyxl filter & sort data
+------------------------------------
+
+filter_sort.py
+#!/usr/bin/python
+
+from openpyxl import Workbook
+
+wb = Workbook()
+sheet = wb.active
+
+data = [
+    ['Item', 'Colour'],
+    ['pen', 'brown'],
+    ['book', 'black'],
+    ['plate', 'white'],
+    ['chair', 'brown'],
+    ['coin', 'gold'],
+    ['bed', 'brown'],
+    ['notebook', 'white'],
+]
+
+for r in data:
+    sheet.append(r)
+
+sheet.auto_filter.ref = 'A1:B8'
+sheet.auto_filter.add_filter_column(1, ['brown', 'white'])
+sheet.auto_filter.add_sort_condition('B2:B8')
+wb.save('filtered.xlsx')
+
+------------------------------------
+Openpyxl dimensions
+------------------------------------
+
+
+dimensions.py
+#!/usr/bin/python
+
+from openpyxl import Workbook
+
+book = Workbook()
+sheet = book.active
+
+sheet['A3'] = 39
+sheet['B3'] = 19
+
+rows = [
+    (88, 46),
+    (89, 38),
+    (23, 59),
+    (56, 21),
+    (24, 18),
+    (34, 15)
+]
+
+for row in rows:
+    sheet.append(row)
+
+print(sheet.dimensions)
+print("Minimum row: {0}".format(sheet.min_row))
+print("Maximum row: {0}".format(sheet.max_row))
+print("Minimum column: {0}".format(sheet.min_column))
+print("Maximum column: {0}".format(sheet.max_column))
+
+for c1, c2 in sheet[sheet.dimensions]:
+    print(c1.value, c2.value)
+
+book.save('dimensions.xlsx')
+
+
+------------------------------------
+Sheets
+------------------------------------
+
+sheets.py
+#!/usr/bin/python
+import openpyxl
+book = openpyxl.load_workbook('sheets.xlsx')
+print(book.get_sheet_names())
+active_sheet = book.active
+print(type(active_sheet))
+sheet = book.get_sheet_by_name("March")
+print(sheet.title)
+
+
+sheets2.py
+#!/usr/bin/python
+import openpyxl
+book = openpyxl.load_workbook('sheets.xlsx')
+book.create_sheet("April")
+print(book.sheetnames)
+sheet1 = book.get_sheet_by_name("January")
+book.remove_sheet(sheet1)
+print(book.sheetnames)
+book.create_sheet("January", 0)
+print(book.sheetnames)
+book.save('sheets2.xlsx')
+
+
+
+sheets3.py
+#!/usr/bin/python
+import openpyxl
+book = openpyxl.load_workbook('sheets.xlsx')
+sheet = book.get_sheet_by_name("March")
+sheet.sheet_properties.tabColor = "0072BA"
+book.save('sheets3.xlsx')
+
+------------------------------------
+Merging cells
+------------------------------------
+
+merging_cells.py
+#!/usr/bin/python
+from openpyxl import Workbook
+from openpyxl.styles import Alignment
+book = Workbook()
+sheet = book.active
+sheet.merge_cells('A1:B2')
+cell = sheet.cell(row=1, column=1)
+cell.value = 'Sunny day'
+cell.alignment = Alignment(horizontal='center', vertical='center')
+book.save('merging.xlsx')
+
+
+
+freezing.py
+#!/usr/bin/python
+from openpyxl import Workbook
+from openpyxl.styles import Alignment
+book = Workbook()
+sheet = book.active
+sheet.freeze_panes = 'B2'
+book.save('freezing.xlsx')
+
+------------------------------------
+Openpyxl formulas
+------------------------------------
+
+formulas.py
+#!/usr/bin/python
+
+from openpyxl import Workbook
+
+book = Workbook()
+sheet = book.active
+
+rows = (
+    (34, 26),
+    (88, 36),
+    (24, 29),
+    (15, 22),
+    (56, 13),
+    (76, 18)
+)
+
+for row in rows:
+    sheet.append(row)
+
+cell = sheet.cell(row=7, column=2)
+cell.value = "=SUM(A1:B6)"
+cell.font = cell.font.copy(bold=True)
+
+book.save('formulas.xlsx')
+
+------------------------------------
+Openpyxl images
+------------------------------------
+
+write_image.py
+#!/usr/bin/python
+from openpyxl import Workbook
+from openpyxl.drawing.image import Image
+book = Workbook()
+sheet = book.active
+img = Image("icesid.png")
+sheet['A1'] = 'This is Sid'
+sheet.add_image(img, 'B2')
+book.save("sheet_image.xlsx")
+
+------------------------------------
+Openpyxl Charts
+------------------------------------
+
+create_bar_chart.py
+#!/usr/bin/python
+
+from openpyxl import Workbook
+from openpyxl.chart import (
+    Reference,
+    Series,
+    BarChart
+)
+
+book = Workbook()
+sheet = book.active
+
+rows = [
+    ("USA", 46),
+    ("China", 38),
+    ("UK", 29),
+    ("Russia", 22),
+    ("South Korea", 13),
+    ("Germany", 11)
+]
+
+for row in rows:
+    sheet.append(row)
+
+data = Reference(sheet, min_col=2, min_row=1, max_col=2, max_row=6)
+categs = Reference(sheet, min_col=1, min_row=1, max_row=6)
+
+chart = BarChart()
+chart.add_data(data=data)
+chart.set_categories(categs)
+
+chart.legend = None
+chart.y_axis.majorGridlines = None
+chart.varyColors = True
+chart.title = "Olympic Gold medals in London"
+
+sheet.add_chart(chart, "A8")
+
+book.save("bar_chart.xlsx")
+
+
+##########################################################
+openpyxl
+##########################################################
+https://openpyxl.readthedocs.io/en/stable/api/openpyxl.reader.excel.html
+https://openpyxl.readthedocs.io/en/latest/api/openpyxl.worksheet.worksheet.html
+https://openpyxl.readthedocs.io/en/stable/usage.html
+https://openpyxl.readthedocs.io/en/stable/api/openpyxl.cell.cell.html
+https://openpyxl.readthedocs.io/en/stable/styles.html
+https://openpyxl.readthedocs.io/en/stable/styles.html
+
+##########################################################
+misc
+##########################################################
+https://forum.uipath.com/t/error-load-python-script/288731
+https://stackoverflow.com/questions/68888404/create-excel-range-with-list
+https://itecnote.com/tecnote/python-openpyxl-attributeerror-workbook-object-has-no-attribute-cell/
+https://dailydevsblog.com/troubleshoot/resolved-attributeerror-workbook-object-has-no-attribute-max_row-68934/
+https://ranjanmp.medium.com/openpyxl-get-maximum-rows-containing-the-data-in-an-excel-sheet-using-python-419ff98384b0
+
+##########################################################
+openpyxl.styles.Font
+##########################################################
+
+https://www.shibutan-bloomers.com/python_libraly_openpyxl-4_en/5238/
+https://snyk.io/advisor/python/openpyxl/functions/openpyxl.styles.Font
+https://www.programcreek.com/python/example/98825/openpyxl.load_workbook
+https://www.programcreek.com/python/example/89129/openpyxl.styles.Font
+https://foss.heptapod.net/openpyxl/openpyxl/-/issues/920
+https://openpyxl.readthedocs.io/en/stable/styles.html
+https://stackoverflow.com/questions/23830938/alter-the-style-of-all-cells-with-openpyxl
+https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html#excel-files
+https://www.anycodings.com/1questions/4155976/how-to-change-the-font-size-of-text-in-dataframe-using-pandas
+https://www.ojdo.de/wp/2019/10/pandas-to-excel-with-openpyxl/
+https://www.blog.pythonlibrary.org/2021/08/11/styling-excel-cells-with-openpyxl-and-python/
+https://github.com/pandas-dev/pandas/issues/1663
+https://toricode.com/python-openpyxl-set-font-size-of-excel-cells/
+https://pythoninoffice.com/adjust-excel-fonts-using-python-openpyxl/
+https://stackoverflow.com/questions/49156578/how-to-change-font-size-in-python-openpyxl
+
+
+pip install openpyxl
+
+
+
+import openpyxl
+from openpyxl.styles import Font
+path = 'filename.xlsx'
+book = openpyxl.load_workbook(path)
+ws, *ows = book
+ws['A1'].font = Font(size=20)
+book.save(path)
+
+...
+
+from openpyxl import load_workbook, worksheet, cell
+from openpyxl.styles import Font
+def change_fontsize(cell: cell, fontsize: float):
+    orig_size = cell.font.size
+    cell.font += Font(size=fontsize - orig_size)
+input_filename = "to_modify.xlsx"
+wb = load_workbook(input_filename)
+# Get first sheet
+sh: worksheet = wb[wb.sheetnames[0]]
+change_fontsize(sh.cell(1,1), 5)
+wb.save('modified.xlsx')
+
+...
+
+font = {
+    'font': {
+        'name': 'Calibri',
+        'size': 11,
+        'bold': False,
+        'italic': False,
+        'vertAlign': None,
+        'underline': 'none',
+        'strike': False,
+        'color': 'FF000000',
+    }
+}
+
+...
+
+from openpyxl.styles import Font
+ws['B2'].font = Font(name= 'Calibri',
+                     size=40,
+                     bold=True,
+                     italic=False,
+                     strike=False,
+                     underline='none',
+                     color='4472C4'
+                     )
+ws['B2'].font.color = 'FF0000'
+for c in 'BCDEF':
+    ws.column_dimensions[c].width = 15
+
+from copy import copy
+ws['B7'].font = Font(bold=True, size = 14)
+ws['B14'].font = copy(ws['B7'].font)
+ws['B11'].font = copy(ws['B7'].font)
+ws['B19'].font = copy(ws['B7'].font)
+for r in range(7,14,2):
+    ws[f'E{r}'].font = copy(ws['B7'].font)
+
+...
+
+from openpyxl import Workbook
+from openpyxl.styles import Font
+wb = Workbook()
+ws = wb.active
+ws['A1'] = 'Tori Code'
+font = Font(size=100)
+ws['A1'].font = font
+wb.save('font_size.xlsx')
+
+...
+
+import openpyxl as pyxl
+from openpyxl.styles import Font
+
+DEFAULT_FONT = {'name':'Arial', 'size':10}
+wb = pyxl.Workbook()
+# Remove default ws
+wb.remove(wb.active)
+# Set format for all cells
+wb._named_styles['Normal'].font = Font(**DEFAULT_FONT)
+wb.create_sheet('Test')
+ws = wb['Test']
+ws['A1'] = str('Calibri?')
+print(ws['A1'].font)
+ws.cell(row=2, column=1, value=str("Calibri?"))
+print(ws['B1'].font)
+wb.save('test.xlsx')
+print(ws['A1'].font)
+print(ws['B1'].font)
+
+...
+
+Cell Styles
+
+
+from openpyxl.styles import colors
+from openpyxl.styles import Font, Color
+from openpyxl import Workbook
+
+wb = Workbook()
+ws = wb.active
+a1 = ws['A1']
+d4 = ws['D4']
+ft = Font(color="FF0000")
+a1.font = ft
+d4.font = ft
+
+Copying styles
+
+from openpyxl.styles import Font
+from copy import copy
+
+ft1 = Font(name='Arial', size=14)
+ft2 = copy(ft1)
+ft2.name = "Tahoma"
+ft1.name
+ft2.name
+ft2.size # copied from the
+
+
+from openpyxl.workbook import Workbook
+from openpyxl.styles import DEFAULT_FONT
+DEFAULT_FONT = Font(name="Calibri", sz=10, family=2, b=False, i=False,
+                    color=Color(theme=1), scheme="minor")
+wb = Workbook()
+wb.active['B3'] = "Hello"
+DEFAULT_FONT.name = "Arial"
+wb.save("DemoDefaultFont.xlsx")
+
+...
+
+# border.py
+from openpyxl import Workbook
+from openpyxl.styles import Border, Side
+def border(path):
+    pink = "00FF00FF"
+    green = "00008000"
+    thin = Side(border_style="thin", color=pink)
+    double = Side(border_style="double", color=green)
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet["A1"] = "Hello"
+    sheet["A1"].border = Border(top=double, left=thin, right=thin, bottom=double)
+    sheet["A2"] = "from"
+    sheet["A3"] = "OpenPyXL"
+    sheet["A3"].border = Border(top=thin, left=double, right=double, bottom=thin)
+    workbook.save(path)
+if __name__ == "__main__":
+    border("border.xlsx")
+
+...
+
+# Styling Merged Cells
+
+from openpyxl import Workbook
+from openpyxl.styles import Font, Border, Side, GradientFill, Alignment
+def merge_style(path):
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.merge_cells("A2:G4")
+    top_left_cell = sheet["A2"]
+    light_purple = "00CC99FF"
+    green = "00008000"
+    thin = Side(border_style="thin", color=light_purple)
+    double = Side(border_style="double", color=green)
+    top_left_cell.value = "Hello from PyOpenXL"
+    top_left_cell.border = Border(top=double, left=thin, right=thin,
+                                  bottom=double)
+    top_left_cell.fill = GradientFill(stop=("000000", "FFFFFF"))
+    top_left_cell.font = Font(b=True, color="FF0000", size=16)
+    top_left_cell.alignment = Alignment(horizontal="center",
+                                        vertical="center")
+    workbook.save(path)
+if __name__ == "__main__":
+    merge_style("merged_style.xlsx")
+
+...
+
+# builtin_styles.py
+from openpyxl import Workbook
+def builtin_styles(path):
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet["A1"].value = "Hello"
+    sheet["A1"].style = "Title"
+
+    sheet["A2"].value = "from"
+    sheet["A2"].style = "Headline 1"
+
+    sheet["A3"].value = "OpenPyXL"
+    sheet["A3"].style = "Headline 2"
+
+    workbook.save(path)
+if __name__ == "__main__":
+    builtin_styles("builtin_styles.xlsx")
+
+...
+
+# named_style.py
+from openpyxl import Workbook
+from openpyxl.styles import Font, Border, Side, NamedStyle
+def named_style(path):
+    workbook = Workbook()
+    sheet = workbook.active
+    red = "00FF0000"
+    font = Font(bold=True, size=22)
+    thick = Side(style="thick", color=red)
+    border = Border(left=thick, right=thick, top=thick, bottom=thick)
+    named_style = NamedStyle(name="highlight", font=font, border=border)
+    sheet["A1"].value = "Hello"
+    sheet["A1"].style = named_style
+    sheet["A2"].value = "from"
+    sheet["A3"].value = "OpenPyXL"
+    workbook.save(path)
+if __name__ == "__main__":
+    named_style("named_style.xlsx")
+
+...
+
+###################################################
+Google Python Style Guide for Drake docstrings
+###################################################
+
+https://iw3.math.rutgers.edu/solutions/example_google.html
+https://drake.mit.edu/styleguide/pyguide.html
+https://gist.github.com/redlotus/3bc387c2591e3e908c9b63b97b11d24e
+https://google.github.io/styleguide/pyguide.html
+https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
+https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
+https://www.datacamp.com/tutorial/docstrings-python
+https://docs.python-guide.org/writing/documentation/
+https://www.programiz.com/python-programming/docstrings
+https://docs.python.org/3/tutorial/classes.html
+
