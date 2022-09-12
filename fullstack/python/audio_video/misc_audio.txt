@@ -1,0 +1,158 @@
+##############################################
+Grand Piano Chords Instrument
+##############################################
+https://www.soundsnap.com/tags/grand_piano
+https://free-loops.com/6232-grand-piano-chords.html
+
+https://www.tensorflow.org/io/tutorials/audio
+https://www.tensorflow.org/tutorials/audio/simple_audio
+https://paperswithcode.com/task/audio-generation
+https://huggingface.co/docs/datasets/v1.16.0/audio_process.html
+https://pytorch.org/audio/main/io.html
+https://pytorch.org/tutorials/beginner/audio_preprocessing_tutorial.html
+https://pytorch.org/audio/stable/tutorials/audio_data_augmentation_tutorial.html
+https://pytorch.org/audio/stable/tutorials/streaming_api_tutorial.html
+
+##############################################
+split wav file into parts of equal duration
+##############################################
+https://unix.stackexchange.com/questions/631293/split-wav-file-into-parts-of-equal-duration-padding-with-silence-if-needed
+https://superuser.com/questions/579008/add-1-second-of-silence-to-audio-through-ffmpeg
+https://stackoverflow.com/questions/37999150/how-to-split-a-wav-file-into-multiple-wav-files
+
+ffmpeg -i file.wav -f segment -segment_time 10 -c copy out%03d.wav
+sox file.wav output-.wav trim 0 10 : newfile : restart
+
+get the wave file length:
+sox --info -D file.wav
+
+...
+
+from pydub import AudioSegment
+t1 = t1 * 1000 #Works in milliseconds
+t2 = t2 * 1000
+newAudio = AudioSegment.from_wav("oldSong.wav")
+newAudio = newAudio[t1:t2]
+newAudio.export('newSong.wav', format="wav") #Exports to a wav file in the current path.
+
+...
+
+from pydub import AudioSegment
+import math
+
+class SplitWavAudioMubin():
+    def __init__(self, folder, filename):
+        self.folder = folder
+        self.filename = filename
+        self.filepath = folder + '\\' + filename
+
+        self.audio = AudioSegment.from_wav(self.filepath)
+
+    def get_duration(self):
+        return self.audio.duration_seconds
+
+    def single_split(self, from_min, to_min, split_filename):
+        t1 = from_min * 60 * 1000
+        t2 = to_min * 60 * 1000
+        split_audio = self.audio[t1:t2]
+        split_audio.export(self.folder + '\\' + split_filename, format="wav")
+
+    def multiple_split(self, min_per_split):
+        total_mins = math.ceil(self.get_duration() / 60)
+        for i in range(0, total_mins, min_per_split):
+            split_fn = str(i) + '_' + self.filename
+            self.single_split(i, i+min_per_split, split_fn)
+            print(str(i) + ' Done')
+            if i == total_mins - min_per_split:
+                print('All splited successfully')
+
+
+folder = 'F:\\My Audios\\Khaled'
+file = 'Khaled Speech.wav'
+split_wav = SplitWavAudioMubin(folder, file)
+split_wav.multiple_split(min_per_split=1)
+
+...
+
+import wave
+
+# times between which to extract the wave from
+start = 5.2 # seconds
+end = 78.3 # seconds
+
+# file to extract the snippet from
+with wave.open('my_in_file.wav', "rb") as infile:
+    # get file data
+    nchannels = infile.getnchannels()
+    sampwidth = infile.getsampwidth()
+    framerate = infile.getframerate()
+    # set position in wave to start of segment
+    infile.setpos(int(start * framerate))
+    # extract data
+    data = infile.readframes(int((end - start) * framerate))
+
+# write the extracted data to a new file
+with wave.open('my_out_file.wav', 'w') as outfile:
+    outfile.setnchannels(nchannels)
+    outfile.setsampwidth(sampwidth)
+    outfile.setframerate(framerate)
+    outfile.setnframes(int(len(data) / sampwidth))
+    outfile.writeframes(data)
+
+
+
+##############################################
+audio_data_augmentation
+##############################################
+https://pytorch.org/audio/stable/tutorials/audio_data_augmentation_tutorial.html
+
+
+
+import math
+from IPython.display import Audio
+import matplotlib.pyplot as plt
+from torchaudio.utils import download_asset
+
+SAMPLE_WAV = download_asset("tutorial-assets/steam-train-whistle-daniel_simon.wav")
+SAMPLE_RIR = download_asset("tutorial-assets/Lab41-SRI-VOiCES-rm1-impulse-mc01-stu-clo-8000hz.wav")
+SAMPLE_SPEECH = download_asset("tutorial-assets/Lab41-SRI-VOiCES-src-sp0307-ch127535-sg0042-8000hz.wav")
+SAMPLE_NOISE = download_asset("tutorial-assets/Lab41-SRI-VOiCES-rm1-babb-mc01-stu-clo-8000hz.wav")
+
+sample_rate = 16000
+original_speech, sample_rate = torchaudio.load(SAMPLE_SPEECH)
+
+# Apply RIR
+speech_ = torch.nn.functional.pad(original_speech, (RIR.shape[1] - 1, 0))
+rir_applied = torch.nn.functional.conv1d(speech_[None, ...], RIR[None, ...])[0]
+
+# Add background noise
+# Because the noise is recorded in the actual environment, we consider that
+# the noise contains the acoustic feature of the environment. Therefore, we add
+# the noise after RIR application.
+noise, _ = torchaudio.load(SAMPLE_NOISE)
+noise = noise[:, : rir_applied.shape[1]]
+
+snr_db = 8
+scale = (10 ** (snr_db / 20)) * noise.norm(p=2) / rir_applied.norm(p=2)
+bg_added = (scale * rir_applied + noise) / 2
+
+# Apply filtering and change sample rate
+filtered, sample_rate2 = torchaudio.sox_effects.apply_effects_tensor(
+    bg_added,
+    sample_rate,
+    effects=[
+        ["lowpass", "4000"],
+        [
+            "compand",
+            "0.02,0.05",
+            "-60,-60,-30,-10,-20,-8,-5,-8,-2,-8",
+            "-8",
+            "-7",
+            "0.05",
+        ],
+        ["rate", "8000"],
+    ],
+)
+
+
+Audio(bg_added, rate=sample_rate)
