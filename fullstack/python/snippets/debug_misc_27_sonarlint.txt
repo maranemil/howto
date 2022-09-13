@@ -316,7 +316,151 @@ https://community.sonarsource.com/t/false-positives-in-python-s125/67122
 
 # pylint: disable=S125
 
+---------------------------------------------------------------------------
+disable Pylint warnings
+---------------------------------------------------------------------------
 
+https://stackoverflow.com/questions/4341746/how-do-i-disable-a-pylint-warning
+https://discuss.dizzycoding.com/how-do-i-disable-a-pylint-warning/
+
+
+# pylint: disable=locally-disabled, multiple-statements, fixme, line-too-long
+
+or
+
+lint.py --generate-rcfile > standard.rc
+
+add to standard.rc
+disable=W0511, C0321
+
+pylint --rcfile=standard.rc
+
+or add a comment at the top of code
+
+# pylint: disable=C0321
+
+---------------------------------------------------------------------------
+C0103: Constant name "xvar" doesn't conform to UPPER_CASE naming style (invalid-name)
+---------------------------------------------------------------------------
+https://github.com/PyCQA/pylint/issues/2166
+https://stackoverflow.com/questions/10815549/pylint-showing-invalid-variable-name-in-output
+https://peps.python.org/pep-0008/#global-variable-names
+https://stackoverflow.com/questions/10815549/pylint-showing-invalid-variable-name-in-output
+https://pylint.pycqa.org/en/latest/user_guide/messages/convention/invalid-name.html
+https://pycodequ.al/docs/pylint-messages/c0103-invalid-name.html
+
+xvar = 0 # line 5
+
+def main():
+    """
+    Not empty
+    """
+    global xvar # line 11
+
+From the developers of Pylint.
+
+In this case Pylint is telling me that those variables appear to be constants and should be all UPPERCASE. This rule is in fact a naming convention that is specific to the folks at Logilab who created Pylint. That is the way they have chosen to name those variables. You too can create your own in-house naming conventions but for the purpose of this tutorial, we want to stick to the PEP-8 standard. In this case, the variables I declared should follow the convention of all lowercase. The appropriate rule would be something like: "should match [a-z_][a-z0-9_]{2,30}$". Notice the lowercase letters in the regular expression (a-z versus A-Z)
+
+You can test it by running: pylint --const-rgx='[a-z_][a-z0-9_]{2,30}$' x.py
+
+
+---------------------------------------------------------------------------
+C2801: Unnecessarily calls dunder method __next__.
+---------------------------------------------------------------------------
+
+https://github.com/PyCQA/pylint/issues/6074
+https://fossies.org/linux/pylint/pylint/checkers/dunder_methods.py
+https://pylint.pycqa.org/en/latest/user_guide/messages/convention/unnecessary-dunder-call.html
+https://github.com/PyCQA/pylint/issues/6795
+https://stackoverflow.blog/2022/04/27/underscoring-or-dunder-scoring-the-importance-of-native-type-methods-in-python/
+https://docs.python.org/3/library/functions.html
+https://github.com/PyCQA/pylint/issues/6074
+https://pylint.pycqa.org/en/latest/user_guide/messages/convention/unnecessary-dunder-call.html
+
+Problematic code:
+three = 3.0.__str__()  # [unnecessary-dunder-call]
+twelve = "1".__add__("2")  # [unnecessary-dunder-call]
+
+def is_bigger_than_two(x):
+    return x.__gt__(2)  # [unnecessary-dunder-call]
+
+
+Correct code:
+
+three = str(3.0)
+twelve = "1" + "2"
+def is_bigger_than_two(x):
+    return x > 2
+
+
+
+
+---------------------------------------------------------------------------
+W0621 redefined-outer-name
+---------------------------------------------------------------------------
+https://pycodequ.al/docs/pylint-messages/w0621-redefined-outer-name.html
+https://pylint.pycqa.org/en/latest/user_guide/messages/warning/redefined-outer-name.html
+https://stackoverflow.com/questions/24999937/i-am-getting-the-error-redefined-outer-name
+
+pylint --help-msg=redefined-outer-name
+
+
+---------------------------------------------------------------------------
+SonarLint Rule S1172 "Unused method parameters should be removed" and EventHandlers
+W0613 (unused-argument)
+---------------------------------------------------------------------------
+https://stackoverflow.com/questions/32078974/sonarlint-rule-s1172-unused-method-parameters-should-be-removed-and-eventhandl
+https://vald-phoenix.github.io/pylint-errors/plerr/errors/variables/W0613.html
+https://stackoverflow.com/questions/59136064/python-unused-argument-needed-for-compatibility-how-to-avoid-pylint-complainin
+https://pycodequ.al/docs/pylint-messages/w0613-unused-argument.html
+https://pylint.pycqa.org/en/latest/user_guide/messages/warning/unused-argument.html
+https://www.codegrepper.com/code-examples/python/pylint%3A+disable%3Dunused-argument
+https://stackoverflow.com/questions/35469253/silence-pylint-warning-about-unused-variables-for-string-interpolation
+
+
+# pylint: disable=unused-argument ? disable-possibly-unused-variable
+
+---------------------------------------------------------------------------
+W0640 (cell-var-from-loop)
+---------------------------------------------------------------------------
+https://vald-phoenix.github.io/pylint-errors/plerr/errors/variables/W0640.html
+https://pylint.pycqa.org/en/latest/user_guide/messages/warning/cell-var-from-loop.html
+https://pycodequ.al/docs/pylint-messages/w0640-cell-var-from-loop.html
+https://github.com/PyCQA/pylint/issues/5508
+https://stackoverflow.com/questions/25314547/cell-var-from-loop-warning-from-pylint
+
+# Problematic code:
+def foo(numbers):
+    for i in numbers:
+        def bar():
+            print(i)
+        bar()
+
+
+# Correct code:
+def bar(x):
+    print(x)
+
+def foo(numbers):
+    for i in numbers:
+        bar(i)
+
+
+
+ERR
+for sort_key, order in query_data['sort']:
+    results.sort(key=lambda k: get_from_dot_path(k, sort_key),
+                 reverse=(order == -1))
+
+
+FIX
+
+results.sort(key=lambda k, sk=sort_key: get_from_dot_path(k, sk),
+             reverse=(order == -1)
+
+import functools
+results.sort(key=functools.partial(get_from_dot_path, foo=sort_key),
+             reverse=(order == -1))
 
 
 
