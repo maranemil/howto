@@ -235,6 +235,12 @@
 - https://passgen.co/
 
 ------------------------------------------------------------------
+### Pitch shifter Audio
+
+- https://onlinetonegenerator.com/pitch-shifter.html
+- https://audioalter.com/pitch-shifter
+
+------------------------------------------------------------------
 
 ### Photo editor 
 
