@@ -1,0 +1,1186 @@
+
+------------------------------------------------------------------------------------------------
+
+###############################################################
+Generate Random Music Tones
+###############################################################
+
+# https://www.programiz.com/python-programming/online-compiler/
+# https://jakevdp.github.io/PythonDataScienceHandbook/02.02-the-basics-of-numpy-arrays.html
+# https://numpy.org/doc/1.16/reference/routines.random.html
+# https://numpy.org/doc/1.16/reference/generated/numpy.random.randn.html#numpy.random.randn
+# https://docs.python.org/3/library/random.html
+# https://www.w3schools.com/python/module_random.asp
+
+#import random
+#print(random.random()) # 0.024760797968381265
+#print(random.randrange(1,6)) # 4
+#print(random.sample(["apple", "banana", "cherry"],2)) # ['apple', 'cherry']
+
+import numpy as np
+#print(np.arange(10)) # [0 1 2 3 4 5 6 7 8 9]
+#print(np.random.randint(1, 10)) # 8
+#tensor = np.random.randint(1, 10, (3, 3))
+"""
+[[2 4 7]
+ [6 1 2]
+ [1 7 3]]
+"""
+tensor = 2.5 * np.random.randn(3, 3) + 3
+"""
+[[-0.95455392  2.19007242  4.24334298  6.07899223  5.75154876  0.41705535
+   1.95775434  3.22017437  0.61349133]]
+"""
+tensor_reshape = tensor.reshape((1,9))
+print(tensor_reshape) # [[2 7 9 7 7 7 4 2 1]]
+
+------------------------------------------------------------------------------------------------
+
+# https://github.com/pytorch/audio
+# https://medium.com/py-bits/sound-generation-python-904e54f5398d
+# https://pytorch.org/audio/stable/transforms.html
+
+import math        #import needed modules
+import pyaudio     #sudo apt-get install python-pyaudio
+PyAudio = pyaudio.PyAudio     #initialize pyaudio
+BITRATE = 5000     #number of frames per second/frameset.
+FREQUENCY = 10000     #Hz, waves per second, 261.63=C4-note.
+LENGTH = 5    #seconds to play sound
+if FREQUENCY > BITRATE:
+   BITRATE = FREQUENCY+100
+NUMBEROFFRAMES = int(BITRATE * LENGTH)
+RESTFRAMES = NUMBEROFFRAMES % BITRATE
+WAVEDATA = ''
+#generating waves
+for x in range(NUMBEROFFRAMES):
+     WAVEDATA =
+WAVEDATA+chr(int(math.sin(x/((BITRATE/FREQUENCY)/math.pi))*127+128))
+for x in range(RESTFRAMES):
+    WAVEDATA = WAVEDATA+chr(128)
+print(WAVEDATA)
+p = PyAudio()
+stream = p.open(format = p.get_format_from_width(1),channels =     2,rate = BITRATE,output = True)
+stream.write(WAVEDATA)
+stream.stop_stream()
+stream.close()
+p.terminate()
+
+
+# https://stackoverflow.com/questions/974071/python-library-for-playing-fixed-frequency-sound
+
+import audiere
+d = audiere.open_device()
+t = d.create_tone(17000) # 17 KHz
+t.play() # non-blocking call
+import time
+time.sleep(5)
+t.stop()
+
+.....
+
+# https://stackoverflow.com/questions/56592522/python-simple-audio-tone-generator
+
+import numpy
+import pygame
+
+sampleRate = 44100
+freq = 440
+pygame.mixer.init(44100,-16,2,512)
+# sampling frequency, size, channels, buffer
+arr = numpy.array([4096 * numpy.sin(2.0 * numpy.pi * freq * x / sampleRate) for x in range(0, sampleRate)]).astype(numpy.int16)
+arr2 = numpy.c_[arr,arr]
+sound = pygame.sndarray.make_sound(arr2)
+sound.play(-1)
+pygame.time.delay(1000)
+sound.stop()
+
+.....
+
+
+import pysine
+pysine.sine(frequency=440.0, duration=1.0)
+
+.....
+
+from pysinewave import SineWave
+from time import sleep
+sinewave = SineWave(pitch = 12)
+sinewave.play()
+time.sleep(1)
+sinewave.stop()
+
+.....
+
+import pygame, pygame.sndarray
+import numpy
+import scipy.signal
+from time import sleep
+
+sample_rate = 48000
+pygame.mixer.pre_init(sample_rate, -16, 1, 1024)
+pygame.init()
+
+def square_wave(hz, peak, duty_cycle=.5, n_samples=sample_rate):
+    t = numpy.linspace(0, 1, 500 * 440/hz, endpoint=False)
+    wave = scipy.signal.square(2 * numpy.pi * 5 * t, duty=duty_cycle)
+    wave = numpy.resize(wave, (n_samples,))
+    return (peak / 2 * wave.astype(numpy.int16))
+
+def audio_freq(freq = 800):
+    global sound
+    sample_wave = square_wave(freq, 4096)
+    sound = pygame.sndarray.make_sound(sample_wave)
+# TEST
+audio_freq()
+sound.play(-1)
+sleep(0.5)
+sound.stop()
+audio_freq(1000)
+#sleep(1)
+sound.play(-1)
+sleep(2)
+sound.stop()
+sleep(1)
+sound.play(-1)
+sleep(0.5)
+
+.....
+
+https://shallowsky.com/blog/programming/python-play-chords.html
+
+import numpy
+import scipy.signal
+
+sample_rate = 44100
+
+def sine_wave(hz, peak, n_samples=sample_rate):
+    """Compute N samples of a sine wave with given frequency and peak amplitude.
+       Defaults to one second.
+    """
+    length = sample_rate / float(hz)
+    omega = numpy.pi * 2 / length
+    xvalues = numpy.arange(int(length)) * omega
+    onecycle = peak * numpy.sin(xvalues)
+    return numpy.resize(onecycle, (n_samples,)).astype(numpy.int16)
+
+def square_wave(hz, peak, duty_cycle=.5, n_samples=sample_rate):
+    """Compute N samples of a sine wave with given frequency and peak amplitude.
+       Defaults to one second.
+    """
+    t = numpy.linspace(0, 1, 500 * 440/hz, endpoint=False)
+    wave = scipy.signal.square(2 * numpy.pi * 5 * t, duty=duty_cycle)
+    wave = numpy.resize(wave, (n_samples,))
+    return (peak / 2 * wave.astype(numpy.int16))
+
+# Play A (440Hz) for 1 second as a sine wave:
+play_for(sine_wave(440, 4096), 1000)
+
+# Play A-440 for 1 second as a square wave:
+play_for(square_wave(440, 4096), 1000)
+
+# Playing chords
+play_for(sum([sine_wave(440, 4096), sine_wave(880, 4096)]), 1000)
+
+def make_chord(hz, ratios):
+    """Make a chord based on a list of frequency ratios."""
+    sampling = 4096
+    chord = waveform(hz, sampling)
+    for r in ratios[1:]:
+        chord = sum([chord, sine_wave(hz * r / ratios[0], sampling)])
+    return chord
+
+def major_triad(hz):
+    return make_chord(hz, [4, 5, 6])
+
+play_for(major_triad(440), length)
+
+
+def make_chord(hz, ratios, waveform=None):
+    """Make a chord based on a list of frequency ratios
+       using a given waveform (defaults to a sine wave).
+    """
+    sampling = 4096
+    if not waveform:
+        waveform = sine_wave
+    chord = waveform(hz, sampling)
+    for r in ratios[1:]:
+        chord = sum([chord, waveform(hz * r / ratios[0], sampling)])
+    return chord
+
+def major_triad(hz, waveform=None):
+    return make_chord(hz, [4, 5, 6], waveform)
+
+play_for(major_triad(440, square_wave), length)
+
+
+------------------------------------------------------------------------------------------------
+
+https://stackoverflow.com/questions/8299303/generating-sine-wave-sound-in-python
+https://stackoverflow.com/questions/40317818/generate-a-sliding-tone-using-python
+
+
+import numpy
+from IPython.display import Audio
+
+fs = 44100 # sampling frequency, Hz
+fc = 440  # carrier frequency, Hz
+fm = 220  # modulation frequency, Hz
+T = 0.5 # seconds
+twopi = 2*numpy.pi
+t = numpy.linspace(0, T, int(T*fs), endpoint=False) # time variable
+# Produce ramp from 0 to 1
+beta = numpy.linspace(0, 1, int(T*fs))
+output = numpy.sin(twopi*fc*t + beta*numpy.sin(twopi*fm*t))
+Audio(output, rate=fs)
+
+------------------------------------------------------------------------------------------------
+
+https://markhedleyjones.com/projects/python-tone-generator
+https://gist.github.com/giginet/3d5ab903b789de0d46b0
+https://stackoverflow.com/questions/9770073/sound-generation-synthesis-with-python
+
+------------------------------------------------------------------------------------------------
+
+
+https://github.com/JeremyCCHsu/Python-Wrapper-for-World-Vocoder
+
+pip install pyworld
+
+import pyworld as pw
+_f0, t = pw.dio(x, fs)    # raw pitch extractor
+f0 = pw.stonemask(x, _f0, t, fs)  # pitch refinement
+sp = pw.cheaptrick(x, f0, t, fs)  # extract smoothed spectrogram
+ap = pw.d4c(x, f0, t, fs)         # extract aperiodicity
+
+y = pw.synthesize(f0, sp, ap, fs) # synthesize an utterance using the parameters
+Utility
+# Convert speech into features (using default arguments)
+f0, sp, ap = pw.wav2world(x, fs)
+
+------------------------------------------------------------------------------------------------
+
+# https://pytorch.org/tutorials/beginner/audio_preprocessing_tutorial.html
+# https://clay-atlas.com/us/blog/2021/05/12/pytorch-en-tutorial-audio-torchaudio/
+# https://pytorch.org/audio/stable/sox_effects.html
+# https://medium.com/analytics-vidhya/speech-analytics-part-2-sound-analytics-in-torchaudio-7645a3dd192d
+# https://pytorch.org/tutorials/beginner/audio_preprocessing_tutorial.html?highlight=torchaudio#
+# https://pytorch.org/tutorials/intermediate/text_to_speech_with_torchaudio.html
+
+import torchaudio
+torchaudio.set_audio_backend("soundfile")  # switch backend
+
+waveform, sample_rate = torchaudio.load('foo.wav')  # load tensor from file, as usual
+torchaudio.save('foo_save.wav', waveform, sample_rate)  # save tensor to file, as usual
+
+------------------------------------------------------------------------------------------------
+
+https://zach.se/generate-audio-with-python/
+https://github.com/zacharydenton/wavebender
+
+#!/usr/bin/env python
+import sys
+import wave
+import math
+import struct
+import random
+import argparse
+from itertools import *
+
+def grouper(n, iterable, fillvalue=None):
+    "grouper(3, 'ABCDEFG', 'x') --> ABC DEF Gxx"
+    args = [iter(iterable)] * n
+    return izip_longest(fillvalue=fillvalue, *args)
+
+def sine_wave(frequency=440.0, framerate=44100, amplitude=0.5):
+    '''
+    Generate a sine wave at a given frequency of infinite length.
+    '''
+    period = int(framerate / frequency)
+    if amplitude > 1.0: amplitude = 1.0
+    if amplitude < 0.0: amplitude = 0.0
+    lookup_table = [float(amplitude) * math.sin(2.0*math.pi*float(frequency)*(float(i%period)/float(framerate))) for i in xrange(period)]
+    return (lookup_table[i%period] for i in count(0))
+
+def square_wave(frequency=440.0, framerate=44100, amplitude=0.5):
+    for s in sine_wave(frequency, framerate, amplitude):
+        if s > 0:
+            yield amplitude
+        elif s < 0:
+            yield -amplitude
+        else:
+            yield 0.0
+
+def damped_wave(frequency=440.0, framerate=44100, amplitude=0.5, length=44100):
+    if amplitude > 1.0: amplitude = 1.0
+    if amplitude < 0.0: amplitude = 0.0
+    return (math.exp(-(float(i%length)/float(framerate))) * s for i, s in enumerate(sine_wave(frequency, framerate, amplitude)))
+
+def white_noise(amplitude=0.5):
+    '''
+    Generate random samples.
+    '''
+    return (float(amplitude) * random.uniform(-1, 1) for i in count(0))
+
+def compute_samples(channels, nsamples=None):
+    '''
+    create a generator which computes the samples.
+
+    essentially it creates a sequence of the sum of each function in the channel
+    at each sample in the file for each channel.
+    '''
+    return islice(izip(*(imap(sum, izip(*channel)) for channel in channels)), nsamples)
+
+def write_wavefile(filename, samples, nframes=None, nchannels=2, sampwidth=2, framerate=44100, bufsize=2048):
+    "Write samples to a wavefile."
+    if nframes is None:
+        nframes = -1
+
+    w = wave.open(filename, 'w')
+    w.setparams((nchannels, sampwidth, framerate, nframes, 'NONE', 'not compressed'))
+
+    max_amplitude = float(int((2 ** (sampwidth * 8)) / 2) - 1)
+
+    # split the samples into chunks (to reduce memory consumption and improve performance)
+    for chunk in grouper(bufsize, samples):
+        frames = ''.join(''.join(struct.pack('h', int(max_amplitude * sample)) for sample in channels) for channels in chunk if channels is not None)
+        w.writeframesraw(frames)
+
+    w.close()
+
+    return filename
+
+def write_pcm(f, samples, sampwidth=2, framerate=44100, bufsize=2048):
+    "Write samples as raw PCM data."
+    max_amplitude = float(int((2 ** (sampwidth * 8)) / 2) - 1)
+
+    # split the samples into chunks (to reduce memory consumption and improve performance)
+    for chunk in grouper(bufsize, samples):
+        frames = ''.join(''.join(struct.pack('h', int(max_amplitude * sample)) for sample in channels) for channels in chunk if channels is not None)
+        f.write(frames)
+
+    f.close()
+
+    return filename
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--channels', help="Number of channels to produce", default=2, type=int)
+    parser.add_argument('-b', '--bits', help="Number of bits in each sample", choices=(16,), default=16, type=int)
+    parser.add_argument('-r', '--rate', help="Sample rate in Hz", default=44100, type=int)
+    parser.add_argument('-t', '--time', help="Duration of the wave in seconds.", default=60, type=int)
+    parser.add_argument('-a', '--amplitude', help="Amplitude of the wave on a scale of 0.0-1.0.", default=0.5, type=float)
+    parser.add_argument('-f', '--frequency', help="Frequency of the wave in Hz", default=440.0, type=float)
+    parser.add_argument('filename', help="The file to generate.")
+    args = parser.parse_args()
+
+    # each channel is defined by infinite functions which are added to produce a sample.
+    channels = ((sine_wave(args.frequency, args.rate, args.amplitude),) for i in range(args.channels))
+
+    # convert the channel functions into waveforms
+    samples = compute_samples(channels, args.rate * args.time)
+
+    # write the samples to a file
+    if args.filename == '-':
+        filename = sys.stdout
+    else:
+        filename = args.filename
+    write_wavefile(filename, samples, args.rate * args.time, args.channels, args.bits / 8, args.rate)
+
+if __name__ == "__main__":
+    main()
+
+------------------------------------------------------------------------------------------------
+
+# https://pypi.org/project/tones/
+# https://tones.readthedocs.io/en/latest/
+
+pip install tones
+
+from tones import SINE_WAVE, SAWTOOTH_WAVE
+from tones.mixer import Mixer
+
+# Create mixer, set sample rate and amplitude
+mixer = Mixer(44100, 0.5)
+
+# Create two monophonic tracks that will play simultaneously, and set
+# initial values for note attack, decay and vibrato frequency (these can
+# be changed again at any time, see documentation for tones.Mixer
+mixer.create_track(0, SAWTOOTH_WAVE, vibrato_frequency=7.0, vibrato_variance=30.0, attack=0.01, decay=0.1)
+mixer.create_track(1, SINE_WAVE, attack=0.01, decay=0.1)
+
+# Add a 1-second tone on track 0, slide pitch from c# to f#)
+mixer.add_note(0, note='c#', octave=5, duration=1.0, endnote='f#')
+
+# Add a 1-second tone on track 1, slide pitch from f# to g#)
+mixer.add_note(1, note='f#', octave=5, duration=1.0, endnote='g#')
+
+# Mix all tracks into a single list of samples and write to .wav file
+mixer.write_wav('tones.wav')
+
+# Mix all tracks into a single list of samples scaled from 0.0 to 1.0, and
+# return the sample list
+samples = mixer.mix()
+
+------------------------------------------------------------------------------------------------
+
+
+https://github.com/kronengold/tone-generator
+
+python tonegen.py -f 440 -r 44100 -t 5 -g
+
+------------------------------------------------------------------------------------------------
+
+https://thehackerdiary.wordpress.com/2017/06/09/it-is-ridiculously-easy-to-generate-any-audio-signal-using-python/
+https://github.com/makermovement/3.5-Sensor2Phone/blob/master/generate_any_audio.py
+
+Python packages needed: Numpy, Scipy
+
+import struct
+import numpy as np
+from scipy import signal as sg
+
+sampling_rate = 44100                    ## Sampling Rate
+freq = 440                               ## Frequency (in Hz)
+samples = 44100                          ## Number of samples
+x = np.arange(samples)
+
+####### sine wave ###########
+y = 100*np.sin(2 * np.pi * freq * x / sampling_rate)
+
+####### square wave ##########
+# y = 100* sg.square(2 *np.pi * f *x / Fs )
+
+####### square wave with Duty Cycle ##########
+# y = 100* sg.square(2 *np.pi * f *x / Fs , duty = 0.8)
+
+####### Sawtooth wave ########
+# y = 100* sg.sawtooth(2 *np.pi * f *x / Fs )
+
+
+f = open('test.wav','wb')
+## Instructions to play test.wav on computer
+## 1. Open as Signed 8-bit on Audacity - Watch Video at https://bit.ly/2YwmN9q for instructions
+## 2. Or using SoX: play -t raw -r 44.1k -e signed -b 8 -c 1 test.wav
+
+for i in y:
+	f.write(struct.pack('b',int(i)))
+f.close()
+
+------------------------------------------------------------------------------------------------
+
+https://librosa.org/doc/main/generated/librosa.tone.html
+
+librosa.tone(frequency, *, sr=22050, length=None, duration=None, phi=None)
+
+
+tone = librosa.tone(440, duration=1)
+tone = librosa.tone(440, sr=22050, length=22050)
+
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots()
+S = librosa.feature.melspectrogram(y=tone)
+librosa.display.specshow(librosa.power_to_db(S, ref=np.max),
+                         x_axis='time', y_axis='mel', ax=ax)
+
+
+------------------------------------------------------------------------------------------------
+
+https://pypi.org/project/audiogen/
+
+pip install audiogen
+
+# mix 440 Hz and 445 Hz tones to get 5 Hz beating
+beats = audiogen.mixer(
+        (audiogen.tone(440), audiogen.tone(445)),
+        [(constant(1), constant(1)),]
+)
+
+
+
+with open("output.wav", "wb") as f:
+    audiogen.sampler.write_wav(f, beats)
+
+audiogen.sampler.write_wav(sys.stdout, audiogen.tone(440))
+audiogen.sampler.play(audiogen.tone(440))
+
+beep_silence = itertools.chain(audiogen.beep(), audiogen.silence(0.5))
+infinite_beeps = itertools.cycle(beep_silence)
+
+audiogen.sampler.write_wav(sys.stdout, infinite_beeps)
+
+------------------------------------------------------------------------------------------------
+
+Using Python to Generate Art and Sound
+
+https://pydanny-event-notes.readthedocs.io/en/latest/PyConPL2012/using_python_to_generate_art_and_sound.html
+
+
+import array
+from math import sin, pi
+import wave
+SAMPLE_RATE = 44100
+DURATION = 3
+# TODO finish tons more code
+
+
+import array
+from math import sin, pi
+import wave
+SAMPLE_RATE = 44100
+def note() # TODO finish coding this out
+
+
+
+# numpy.linspace(start, stop, num):
+>>> linspace(0, 1, 10)
+array() # TODO get this value
+#sumpy.sin(x)
+
+
+from numpy import linspace, int16, sin
+from scipy.io.wavfile import write  # Using this because it's less code to use than the Wave module
+def note(freq, duration, amp=10000, rate=41100):
+    # TODO add code stuff here
+    pass
+
+
+# chord function
+def chord():
+    # TODO get a sample of this code
+    pass
+
+
+------------------------------------------------------------------------------------------------
+
+https://wiki.python.org/moin/PythonInMusic
+
+------------------------------------------------------------------------------------------------
+
+https://github.com/jiaaro/pydub
+
+from pydub import AudioSegment
+song = AudioSegment.from_wav("never_gonna_give_you_up.wav")
+song = AudioSegment.from_mp3("never_gonna_give_you_up.mp3")
+
+Slice audio:
+# pydub does things in milliseconds
+ten_seconds = 10 * 1000
+first_10_seconds = song[:ten_seconds]
+last_5_seconds = song[-5000:]
+
+
+Make the beginning louder and the end quieter
+# boost volume by 6dB
+beginning = first_10_seconds + 6
+# reduce volume by 3dB
+end = last_5_seconds - 3
+
+Concatenate audio (add one file to the end of another)
+without_the_middle = beginning + end
+
+# song is not modified
+backwards = song.reverse()
+
+Crossfade (again, beginning and end are not modified)
+# 1.5 second crossfade
+with_style = beginning.append(end, crossfade=1500)
+
+Repeat
+# repeat the clip twice
+do_it_over = with_style * 2
+
+Fade
+# 2 sec fade in, 3 sec fade out
+awesome = do_it_over.fade_in(2000).fade_out(3000)
+
+Save the results (again whatever ffmpeg supports)
+awesome.export("mashup.mp3", format="mp3")
+
+Save the results with tags (metadata)
+awesome.export("mashup.mp3", format="mp3", tags={'artist': 'Various artists', 'album': 'Best of 2011', 'comments': 'This album is awesome!'})
+
+awesome.export("mashup.mp3", format="mp3", bitrate="192k")
+
+# Use preset mp3 quality 0 (equivalent to lame V0)
+awesome.export("mashup.mp3", format="mp3", parameters=["-q:a", "0"])
+
+# Mix down to two channels and set hard output volume
+awesome.export("mashup.mp3", format="mp3", parameters=["-ac", "2", "-vol", "150"])
+
+------------------------------------------------------------------------------------------------
+
+https://people.csail.mit.edu/hubert/pyaudio/
+
+python -m pip install pyaudio
+pip install pyaudio
+
+
+"""PyAudio Example: Play a WAVE file."""
+
+import pyaudio
+import wave
+import sys
+
+CHUNK = 1024
+
+if len(sys.argv) < 2:
+    print("Plays a wave file.\n\nUsage: %s filename.wav" % sys.argv[0])
+    sys.exit(-1)
+
+wf = wave.open(sys.argv[1], 'rb')
+
+p = pyaudio.PyAudio()
+
+stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
+                channels=wf.getnchannels(),
+                rate=wf.getframerate(),
+                output=True)
+
+data = wf.readframes(CHUNK)
+
+while len(data):
+    stream.write(data)
+    data = wf.readframes(CHUNK)
+
+stream.stop_stream()
+stream.close()
+
+p.terminate()
+
+
+------------------------------------------------------------------------------------------------
+
+https://github.com/belangeo/pyo
+https://www.psychopy.org/
+https://www.psychopy.org/download.html#pip-install
+https://github.com/belangeo/zyne
+https://github.com/alexandrepoirier/PyoSynth
+
+
+http://ajaxsoundstudio.com/software/pyo/
+http://ajaxsoundstudio.com/software/
+
+
+
+Play
+
+from pyo import *
+>>> s = Server().boot()
+>>> s.start()
+>>> sf = SfPlayer("path/to/your/sound.aif", speed=1, loop=True).out()
+
+
+Granulate an audio buffer:
+
+>>> s = Server().boot()
+>>> s.start()
+>>> snd = SndTable("path/to/your/sound.aif")
+>>> env = HannTable()
+>>> pos = Phasor(freq=snd.getRate()*.25, mul=snd.getSize())
+>>> dur = Noise(mul=.001, add=.1)
+>>> g = Granulator(snd, env, [1, 1.001], pos, dur, 24, mul=.1).out()
+
+
+
+Generate melodies:
+
+>>> s = Server().boot()
+>>> s.start()
+>>> wav = SquareTable()
+>>> env = CosTable([(0,0), (100,1), (500,.3), (8191,0)])
+>>> met = Metro(.125, 12).play()
+>>> amp = TrigEnv(met, table=env, mul=.1)
+>>> pit = TrigXnoiseMidi(met, dist='loopseg', x1=20, scale=1, mrange=(48,84))
+>>> out = Osc(table=wav, freq=pit, mul=amp).out()
+
+
+------------------------------------------------------------------------------------------------
+
+Play and Record Sound with Python
+https://python-sounddevice.readthedocs.io/en/0.3.7/
+
+python3 -m pip install cffi --user
+python3 -m pip install sounddevice --user
+# python3 -m pip uninstall sounddevice
+
+
+import sounddevice as sd
+sd.play(myarray, fs)
+sd.stop()
+
+sd.default.samplerate = fs
+sd.play(myarray)
+
+Recording
+
+duration = 10.5  # seconds
+myrecording = sd.rec(int(duration * fs), samplerate=fs, channels=2)
+sd.default.samplerate = fs
+sd.default.channels = 2
+myrecording = sd.rec(duration * fs)
+sd.wait()
+myrecording = sd.rec(duration * fs, blocking=True)
+myrecording = sd.rec(duration * fs, dtype='float64')
+
+Simultaneous Playback and Recording
+
+
+myrecording = sd.playrec(myarray, fs, channels=2)
+sd.default.samplerate = fs
+sd.default.channels = 2
+myrecording = sd.playrec(myarray)
+
+
+import sounddevice as sd
+sd.default.samplerate = 44100
+sd.default.device = 'digital output'
+sd.play(myarray)
+
+------------------------------------------------------------------------------------------------
+
+How to Play Music Using Mathematics in Python
+https://towardsdatascience.com/mathematics-of-music-in-python-b7d838c84f72
+https://gist.github.com/weeping-angel/4b728f079c6ff1c77090258a1f775b41#file-piano_notes_freq-py
+
+import numpy as np
+
+samplerate = 44100 #Frequecy in Hz
+def get_wave(freq, duration=0.5):
+    '''
+    Function takes the "frequecy" and "time_duration" for a wave
+    as the input and returns a "numpy array" of values at all points
+    in time
+    '''
+
+    amplitude = 4096
+    t = np.linspace(0, duration, int(samplerate * duration))
+    wave = amplitude * np.sin(2 * np.pi * freq * t)
+
+    return wave
+
+# To get a 1 second long wave of frequency 440Hz
+a_wave = get_wave(440, 1)
+#wave features
+print(len(a_wave)) # 44100
+print(np.max(a_wave)) # 4096
+print(np.min(a_wave)) # -4096
+
+
+import matplotlib.pyplot as plt
+plt.plot(a_wave[0:int(44100/440)])
+plt.xlabel('time')
+plt.ylabel('Amplitude')
+plt.show()
+
+
+
+
+from pprint import pprint
+
+def get_piano_notes():
+    '''
+    Returns a dict object for all the piano
+    note's frequencies
+    '''
+    # White keys are in Uppercase and black keys (sharps) are in lowercase
+    octave = ['C', 'c', 'D', 'd', 'E', 'F', 'f', 'G', 'g', 'A', 'a', 'B']
+    base_freq = 261.63 #Frequency of Note C4
+
+    note_freqs = {octave[i]: base_freq * pow(2,(i/12)) for i in range(len(octave))}
+    note_freqs[''] = 0.0 # silent note
+
+    return note_freqs
+
+  # To get the piano note's frequencies
+  note_freqs = get_piano_notes()
+  pprint(note_freqs)
+  '''
+           {'': 0.0,
+           'A': 440.00745824565865,
+           'B': 493.8916728538229,
+           'C': 261.63,
+           'D': 293.66974569918125,
+           'E': 329.63314428399565,
+           'F': 349.2341510465061,
+           'G': 392.0020805232462,
+           'a': 466.1716632541139,
+           'c': 277.18732937722245,
+           'd': 311.1322574981619,
+           'f': 370.00069432367286,
+           'g': 415.31173722644}
+ '''
+
+
+import numpy as np
+
+def get_song_data(music_notes):
+    '''
+    Function to concatenate all the waves (notes)
+    '''
+    note_freqs = get_piano_notes() # Function that we made earlier
+    song = [get_wave(note_freqs[note]) for note in music_notes.split('-')]
+    song = np.concatenate(song)
+    return song
+
+music_notes = 'C-C-G-G-A-A-G--F-F-E-E-D-D-C--G-G-F-F-E-E-D--G-G-F-F-E-E-D--C-C-G-G-A-A-G--F-F-E-E-D-D-C'
+data = get_song_data(music_notes)
+data = data * (16300/np.max(data)) # Adjusting the Amplitude (Optional)
+
+
+from scipy.io.wavfile import write
+write('twinkle-twinkle.wav', samplerate, data.astype(np.int16))
+
+
+
+------------------------------------------------------------------------------------------------
+
+Playing and Recording Sound in Python
+https://realpython.com/playing-and-recording-sound-python/
+
+from playsound import playsound
+playsound('myfile.wav')
+
+
+import simpleaudio as sa
+filename = 'myfile.wav'
+wave_obj = sa.WaveObject.from_wave_file(filename)
+play_obj = wave_obj.play()
+play_obj.wait_done()  # Wait until sound has finished playing
+
+
+import simpleaudio as sa
+frequency = 440  # Our played note will be 440 Hz
+fs = 44100  # 44100 samples per second
+seconds = 3  # Note duration of 3 seconds
+# Generate array with seconds*sample_rate steps, ranging between 0 and seconds
+t = np.linspace(0, seconds, seconds * fs, False)
+# Generate a 440 Hz sine wave
+note = np.sin(frequency * t * 2 * np.pi)
+# Ensure that highest value is in 16-bit range
+audio = note * (2**15 - 1) / np.max(np.abs(note))
+# Convert to 16-bit data
+audio = audio.astype(np.int16)
+# Start playback
+play_obj = sa.play_buffer(audio, 1, 2, fs)
+# Wait for playback to finish before exiting
+play_obj.wait_done()
+
+
+
+
+import winsound
+filename = 'myfile.wav'
+winsound.PlaySound(filename, winsound.SND_FILENAME)
+
+import winsound
+winsound.Beep(1000, 100)  # Beep at 1000 Hz for 100 ms
+
+
+
+import sounddevice as sd
+import soundfile as sf
+filename = 'myfile.wav'
+# Extract data and sampling rate from file
+data, fs = sf.read(filename, dtype='float32')
+sd.play(data, fs)
+status = sd.wait()  # Wait until file is done playing
+
+
+
+from pydub import AudioSegment
+from pydub.playback import play
+sound = AudioSegment.from_wav('myfile.wav')
+play(sound)
+
+
+pip install ffmpeg-python
+from pydub import AudioSegment
+from pydub.playback import play
+sound = AudioSegment.from_mp3('myfile.mp3')
+play(sound)
+sound = AudioSegment.from_file('myfile.wma', 'wma')
+
+
+
+
+import pyaudio
+import wave
+filename = 'myfile.wav'
+# Set chunk size of 1024 samples per data frame
+chunk = 1024
+# Open the sound file
+wf = wave.open(filename, 'rb')
+# Create an interface to PortAudio
+p = pyaudio.PyAudio()
+# Open a .Stream object to write the WAV file to
+# 'output = True' indicates that the sound will be played rather than recorded
+stream = p.open(format = p.get_format_from_width(wf.getsampwidth()),
+                channels = wf.getnchannels(),
+                rate = wf.getframerate(),
+                output = True)
+# Read data in chunks
+data = wf.readframes(chunk)
+# Play the sound by writing the audio data to the stream
+while data != '':
+    stream.write(data)
+    data = wf.readframes(chunk)
+# Close and terminate the stream
+stream.close()
+p.terminate()
+
+
+Recording Audio
+
+
+import sounddevice as sd
+from scipy.io.wavfile import write
+fs = 44100  # Sample rate
+seconds = 3  # Duration of recording
+myrecording = sd.rec(int(seconds * fs), samplerate=fs, channels=2)
+sd.wait()  # Wait until recording is finished
+write('output.wav', fs, myrecording)  # Save as WAV file
+
+
+
+
+
+import pyaudio
+import wave
+chunk = 1024  # Record in chunks of 1024 samples
+sample_format = pyaudio.paInt16  # 16 bits per sample
+channels = 2
+fs = 44100  # Record at 44100 samples per second
+seconds = 3
+filename = "output.wav"
+p = pyaudio.PyAudio()  # Create an interface to PortAudio
+print('Recording')
+stream = p.open(format=sample_format,
+                channels=channels,
+                rate=fs,
+                frames_per_buffer=chunk,
+                input=True)
+
+frames = []  # Initialize array to store frames
+# Store data in chunks for 3 seconds
+for i in range(0, int(fs / chunk * seconds)):
+    data = stream.read(chunk)
+    frames.append(data)
+
+# Stop and close the stream
+stream.stop_stream()
+stream.close()
+# Terminate the PortAudio interface
+p.terminate()
+print('Finished recording')
+# Save the recorded data as a WAV file
+wf = wave.open(filename, 'wb')
+wf.setnchannels(channels)
+wf.setsampwidth(p.get_sample_size(sample_format))
+wf.setframerate(fs)
+wf.writeframes(b''.join(frames))
+wf.close()
+
+
+
+
+Saving and Converting Audio
+
+import wavio
+wavio.write("myfile.wav", my_np_array, fs, sampwidth=2)
+
+
+import soundfile as sf
+# Extract audio data and sampling rate from file
+data, fs = sf.read('myfile.wav')
+# Save as FLAC file at correct sampling rate
+sf.write('myfile.flac', data, fs)
+
+
+from pydub import AudioSegment
+sound = AudioSegment.from_wav('myfile.wav')
+sound.export('myfile.mp3', format='mp3')
+
+
+from pydub import AudioSegment
+sound = AudioSegment.from_file('myfile.mp3', format='mp3')
+sound.export('myfile.wav', format='wav')
+
+
+------------------------------------------------------------------------------------------------
+
+Programming with sound
+
+https://hplgit.github.io/primer.html/doc/pub/diffeq/._diffeq-solarized002.html
+https://hplgit.github.io/primer.html/doc/pub/diffeq/._diffeq-solarized001.html
+https://hplgit.github.io/primer.html/doc/pub/diffeq/._diffeq-solarized003.html
+
+import numpy as np
+
+def note(frequency, length, amplitude=1, sample_rate=44100):
+    time_points = np.linspace(0, length, length*sample_rate)
+    data = np.sin(2*np.pi*frequency*time_points)
+    data = amplitude*data
+    return data
+
+data = data.astype(numpy.int16)
+max_amplitude = 2**15 - 1
+data = max_amplitude*data
+
+import scitools.sound
+scitools.sound.write(data, 'Atone.wav')
+scitools.sound.play('Atone.wav')
+
+data = scitools.sound.read(filename)
+data = data.astype(float)
+
+
+def add_echo(data, beta=0.8, delay=0.002, sample_rate=44100):
+    newdata = data.copy()
+    shift = int(delay*sample_rate)  # b (math symbol)
+    for i in range(shift, len(data)):
+        newdata[i] = beta*data[i] + (1-beta)*data[i-shift]
+    return newdata
+
+
+newdata[shift:] = beta*data[shift:] + \
+                  (1-beta)*data[:len(data)-shift]
+
+
+Playing many notes
+
+data = numpy.concatenate((data1, data2, data3, ...))
+
+base_freq = 440.0
+notes = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E',
+         'F', 'F#', 'G', 'G#']
+notes2freq = {notes[i]: base_freq*2**(i/12.0)
+              for i in range(len(notes))}
+
+l = .2  # basic duration unit
+tones = [('E', 3*l), ('D', l), ('C#', 2*l), ('B', 2*l), ('A', 2*l),
+         ('B', 2*l), ('C#', 2*l), ('D', 2*l), ('E', 3*l),
+         ('F#', l), ('E', 2*l), ('D', 2*l), ('C#', 4*l)]
+
+samples = []
+for tone, duration in tones :
+    s = note(notes2freq[tone], duration)
+    samples.append(s)
+
+data = np.concatenate(samples)
+data *= 2**15-1
+scitools.sound.write(data, "melody.wav")
+
+
+Music of a sequence
+
+
+from scitools.sound import *
+freqs = 440 + x*200
+tones = []
+duration = 30.0/N     # 30 sec sound in total
+for n in range(N+1):
+    tones.append(max_amplitude*note(freqs[n], duration, 1))
+data = concatenate(tones)
+write(data, filename)
+data = read(filename)
+play(filename)
+
+plot(range(N+1), freqs, 'ro')
+
+
+
+The complete module file looks as follows:
+
+from scitools.sound import *
+from scitools.std import *
+
+def oscillations(N):
+    x = zeros(N+1)
+    for n in range(N+1):
+        x[n] = exp(-4*n/float(N))*sin(8*pi*n/float(N))
+    return x
+
+def logistic(N):
+    x = zeros(N+1)
+    x[0] = 0.01
+    q = 2
+    for n in range(1, N+1):
+        x[n] = x[n-1] + q*x[n-1]*(1 - x[n-1])
+    return x
+
+def make_sound(N, seqtype):
+    filename = 'tmp.wav'
+    x = eval(seqtype)(N)
+    # Convert x values to frequences around 440
+    freqs = 440 + x*200
+    plot(range(N+1), freqs, 'ro')
+    # Generate tones
+    tones = []
+    duration = 30.0/N     # 30 sec sound in total
+    for n in range(N+1):
+        tones.append(max_amplitude*note(freqs[n], duration, 1))
+    data = concatenate(tones)
+    write(data, filename)
+    data = read(filename)
+    play(filename)
+
+
+
+
+x = eval(seqtype)(N)
+if seqtype == 'logistic':
+    x = logistic(N)
+elif seqtype == 'oscillations':
+    x = oscillations(N)
+
+
+
+------------------------------------------------------------------------------------------------
+
+https://timsainb.github.io/spectrograms-mfccs-and-inversion-in-python.html
+
+------------------------------------------------------------------------------------------------
+
+SOUND GENERATOR USING WAV FILE (PYTHON RECIPE)
+https://code.activestate.com/recipes/578168-sound-generator-using-wav-file/
+
+
+# generate wav file containing sine waves
+# FB36 - 20120617
+import math, wave, array
+duration = 3 # seconds
+freq = 440 # of cycles per second (Hz) (frequency of the sine waves)
+volume = 100 # percent
+data = array.array('h') # signed short integer (-32768 to 32767) data
+sampleRate = 44100 # of samples per second (standard)
+numChan = 1 # of channels (1: mono, 2: stereo)
+dataSize = 2 # 2 bytes because of using signed short integers => bit depth = 16
+numSamplesPerCyc = int(sampleRate / freq)
+numSamples = sampleRate * duration
+for i in range(numSamples):
+    sample = 32767 * float(volume) / 100
+    sample *= math.sin(math.pi * 2 * (i % numSamplesPerCyc) / numSamplesPerCyc)
+    data.append(int(sample))
+f = wave.open('SineWave_' + str(freq) + 'Hz.wav', 'w')
+f.setparams((numChan, dataSize, sampleRate, numSamples, "NONE", "Uncompressed"))
+f.writeframes(data.tostring())
+f.close()
+
+------------------------------------------------------------------------------------------------
+
+https://github.com/casebeer/audiogen
+
+pip install audiogen
+pip install --allow-external PyAudio --allow-unverified PyAudio PyAudio
+
+
+# mix 440 Hz and 445 Hz tones to get 5 Hz beating
+beats = audiogen.mixer(
+        (audiogen.tone(440), audiogen.tone(445)),
+        [(constant(1), constant(1)),]
+)
+with open("output.wav", "wb") as f:
+    audiogen.sampler.write_wav(f, beats)
+
+audiogen.sampler.play(audiogen.tone(440))
+
