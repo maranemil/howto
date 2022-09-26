@@ -54,3 +54,48 @@ npm start
 npm install axios laravel-echo pusher-js
 npm start
 ```
+
+
+
+
+
+```
+###############################################
+console.log not working in Typescript
+###############################################
+
+https://developer.mozilla.org/en-US/docs/Web/API/Console/log?retiredLocale=de
+https://stackoverflow.com/questions/37869496/console-log-not-working-in-angular2-component-typescript
+https://angular.io/guide/browser-support
+
+console.log('It works here')
+
+@Component({..)
+export class App {
+ s: string = "Hello2";
+            
+  constructor() {
+    console.log(this.s)            
+  }            
+}
+
+class:  {
+  s: string,
+  console.log(s)
+}
+ 
+ 
+import { Component } from '@angular/core';
+console.log("Hello1");
+
+ @Component({
+  selector: 'hello-console',
+})
+    export class App {
+     s: string = "Hello2";
+    constructor(){
+     console.log(s); 
+    }
+
+}
+```

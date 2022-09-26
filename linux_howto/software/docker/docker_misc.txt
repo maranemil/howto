@@ -607,3 +607,133 @@ CMD /bin/bash /test/scripz.sh
 
 
 
+###############################################
+httpd.conf
+###############################################
+
+https://web.mit.edu/rhel-doc/4/RH-DOCS/rhel-rg-de-4/s1-apache-config.html
+https://httpd.apache.org/docs/2.4/configuring.html
+https://httpd.apache.org/docs/current/de/configuring.html
+https://linuxhint.com/apache-httpd-configuration/
+https://man.openbsd.org/httpd.conf
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/5/html/deployment_guide/s1-apache-config
+https://stackoverflow.com/questions/63131535/local-web-server-html-page-not-beig-processed-by-php
+
+https://gist.github.com/karsinkk/ba2853d770c54f5d066d
+https://hub.docker.com/_/httpd
+https://gist.github.com/renatodarrigo/cc3365ed8f2203c2c4d1cd52b020ef64
+https://hub.docker.com/r/eeacms/sdi-apache/dockerfile
+
+sudo apt-get update
+sudo apt-get install apache2
+
+
+
+docker-compose.yml
+==================
+web:
+  build: .
+  ports:
+    - "80:80"
+  volumes:
+    - ./public-html:/usr/local/apache2/htdocs
+
+
+
+Without Dockerfile
+
+docker run -dit --name my-apache-app -p 8080:80 -v "$PWD":/usr/local/apache2/htdocs/ httpd:2.4
+docker run --rm httpd:2.4 cat /usr/local/apache2/conf/httpd.conf > my-httpd.conf
+
+Dockerfile
+
+FROM httpd:2.4
+# COPY ./my-httpd.conf /usr/local/apache2/conf/httpd.conf
+# ADD ./httpd.conf /usr/local/apache2/conf/httpd.conf
+ADD httpd.conf /usr/local/apache2/conf/
+ADD .htpasswd /etc/pass/
+ADD test-wall-web /usr/local/apache2/htdocs/
+ADD GoldenGateTool/main /usr/local/apache2/htdocs/Protected
+RUN apt-get update -y && apt-get upgrade -y
+RUN apt-get install libapache2-mod-php7.3 -y
+
+
+
+FROM httpd:2.4.51-alpine
+MAINTAINER michimau <mauro.michielon@eea.europa.eu>
+#RUN apk add \
+#               #vim \
+#               libapache2-mod-evasive
+#               #inotify-tools \
+#               #vim
+ADD httpd.conf /usr/local/apache2/conf/
+RUN echo "Include conf/extra/ssl.conf" >> /usr/local/apache2/conf/httpd.conf
+#RUN rm /etc/ldap/ldap.conf
+COPY script_apache_restart.sh /
+COPY httpd-foreground /usr/local/bin/httpd-foreground
+#RUN chmod a+x /usr/local/bin/httpd-foreground
+
+
+---
+
+ServerName www.example.com:80
+
+
+Default httpd.conf file
+
+DefaultRuntimeDir ${APACHE_RUN_DIR}
+PidFile ${APACHE_PID_FILE}
+Timeout 300
+KeepAlive On
+MaxKeepAliveRequests 100
+KeepAliveTimeout 5
+User ${APACHE_RUN_USER}
+Group ${APACHE_RUN_GROUP}
+HostnameLookups Off
+ErrorLog ${APACHE_LOG_DIR}/error.log
+LogLevel warn
+IncludeOptional mods-enabled/*.load
+IncludeOptional mods-enabled/*.conf
+Include ports.conf
+<Directory />
+        Options FollowSymLinks
+        AllowOverride None
+        Require all denied
+</Directory>
+
+<Directory /usr/share>
+        AllowOverride None
+        Require all granted
+</Directory>
+
+<Directory /var/www/>
+        Options Indexes FollowSymLinks
+        AllowOverride None
+        Require all granted
+</Directory>
+AccessFileName .htaccess
+<FilesMatch "^\.ht">
+        Require all denied
+</FilesMatch>
+
+LogFormat "%v:%p %h %l %u %t "%r" %>s %O "%{Referer}i" "%{User-Agent}i"" vhost_combined
+LogFormat "%h %l %u %t "%r" %>s %O "%{Referer}i" "%{User-Agent}i"" combined
+LogFormat "%h %l %u %t "%r" %>s %O" common
+LogFormat "%{Referer}i -> %U" referer
+LogFormat "%{User-agent}i" agent
+
+IncludeOptional conf-enabled/*.conf
+IncludeOptional sites-enabled/*.conf
+
+....................
+
+<Location /server-status>
+    SetHandler server-status
+    Order deny,allow
+    Deny from all
+    Allow from <.example.com>
+</Location>
+
+
+
+

@@ -99,3 +99,12 @@ pycharm-educational   2021.3.2  jetbrains✓   classic   Easy and Professional T
 dataspell             2021.3.2  jetbrains✓   classic   DataSpell
 ~~~
 --------------------------------------------------
+
+
+###################################
+JSHint - Required plugin: Javascript and TypeScript
+###################################
+
+https://www.jetbrains.com/help/webstorm/jshint.html
+https://github.com/jshint/jshint
+https://www.jetbrains.com/help/idea/jshint.html

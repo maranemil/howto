@@ -150,3 +150,47 @@ cd mf-react
 npm install -D @nrwl/react
 nx g @nrwl/react:app shell
 nx g @nrwl/react:app remote
+
+
+
+```
+###################################
+React npm
+###################################
+
+
+
+https://reactjs.org/
+https://reactjs.org/docs/components-and-props.html
+https://create-react-app.dev/docs/getting-started/
+https://create-react-app.dev/docs/deployment/
+https://create-react-app.dev/docs/running-tests/
+https://github.com/facebook/create-react-app
+https://www.w3schools.com/react/react_class.asp
+https://www.geeksforgeeks.org/reactjs-functional-components/
+https://www.robinwieruch.de/react-function-component/
+
+https://github.com/facebook/create-react-app
+https://create-react-app.dev/docs/running-tests/
+https://api-platform.com/docs/admin/
+https://nextjs.org/docs/api-reference/create-next-app
+https://www.nextapp.co/
+https://symfony.com/
+
+https://www.w3schools.com/react/react_components.asp
+https://reactjs.org/docs/components-and-props.html
+https://www.geeksforgeeks.org/reactjs-functional-components/
+https://www.robinwieruch.de/react-function-component/
+```
+
+
+
+
+
+
+
+
+
+
+
+
