@@ -335,6 +335,17 @@ find . -type d -exec chmod 755 {} \;  # Change directory permissions rwxr-xr-x
 find . -type f -exec chmod 644 {} \;  # Change file permissions rw-r--r--
 ```
 
+```
+
+##########################################
+WordPress repair
+##########################################
+https://redrice.biz/wordpress-reparieren/
+
+https://ihre_webseite/wp-admin/maint/repair.php
+define('WP_ALLOW_REPAIR', true);
+```
+
 
 
 

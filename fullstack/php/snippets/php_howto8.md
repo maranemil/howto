@@ -566,4 +566,63 @@ assert(true == false, new CustomError('True ist nicht false!'));
 echo 'Hi!';
 ```
 
+```
+
+##########################################
+PHP 7.4 deprecated get_magic_quotes_gpc function alternative
+##########################################
+https://stackoverflow.com/questions/61054418/php-7-4-deprecated-get-magic-quotes-gpc-function-alternative
+
+
+Since PHP no longer adds slashes to request parameters (removed in PHP 5.4),
+ get_magic_quotes_gpc() always returns false. With that in mind, you don't
+  have to do anything to your strings, they should always be clean. 
+
+
+get_magic_quotes_gpc() has been useless ever since PHP 5.4.0. It would
+ tell you whether you have magic quotes switched on in the configuration
+  or not. Magic quotes were a terrible idea and this feature was removed 
+  for security reasons (PHP developers believed in magic & superstitions
+   and wrote unsecure code).
+```
+
+```
+##########################################
+ob_get_contents + ob_end_clean vs ob_get_clean
+##########################################
+https://stackoverflow.com/questions/17792817/ob-get-contents-ob-end-clean-vs-ob-get-clean
+https://www.php.net/manual/en/function.ob-get-contents.php
+https://www.php.net/manual/en/function.ob-get-clean.php
+
+ob_get_clean() essentially executes both ob_get_contents() and ob_end_clean().
+```
+
+
+```
+##########################################
+$_SERVER['QUERY_STRING'];parse_str
+##########################################
+https://www.php.net/manual/en/function.parse-str.php
+
+parse_str($str, $output);
+echo $output['first'];  // value
+echo $output['arr'][0]; // foo bar
+echo $output['arr'][1]; // ba
+```
+
+```
+##########################################
+EXTR_IF_EXISTS (integer)
+##########################################
+https://www.cs.auckland.ac.nz/references/php/2003/ref.array.html
+https://php-legacy-docs.zend.com/manual/php4/en/function.extract
+https://www.php.net/manual/de/function.extract.php
+https://stackoverflow.com/questions/15558509/is-it-safe-to-use-extract-request-extr-if-exists
+
+Only overwrite the variable if it already exists in the current symbol table, otherwise do nothing. 
+This is useful for defining a list of valid variables and then extracting only 
+those variables you have defined out of $_REQUEST, for example.
+```
+
+
 
