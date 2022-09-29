@@ -3,7 +3,111 @@ https://pythonot.github.io/auto_examples/plot_otda_classes.html
 
 https://realpython.com/python-typer-cli/
 
--------------
+
+###############################################################
+secrets kubernetes
+###############################################################
+
+https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret
+https://kubernetes.io/docs/concepts/configuration/secret/
+https://phoenixnap.com/kb/kubernetes-secrets
+https://howchoo.com/kubernetes/copy-secrets-kubernetes-cluster
+https://cloud.google.com/kubernetes-engine/docs/concepts/secret
+https://stackoverflow.com/questions/60224079/terraform-import-kubernetes-secret
+https://www.padok.fr/en/blog/kubernetes-secrets
+https://github.com/external-secrets/kubernetes-external-secrets
+https://kubernetes.io/docs/tasks/inject-data-application/distribute-credentials-secure/
+https://kubernetes.io/docs/concepts/containers/images/
+https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+https://github.com/bitnami-labs/sealed-secrets
+https://linoxide.com/create-use-kubernetes-secrets/
+https://howchoo.com/kubernetes/secure-your-sensitive-data-with-kubernetes-secrets
+
+
+kubectl create secret generic [secret-name] \
+--from-file=[file1] \
+--from-file=[file2]
+
+kubectl get secrets
+
+
+kubectl config current-context
+kubectl get secret my-secret-name --export -o yaml > my-secret-name.yaml
+kubectl apply -f my-secret-name.yaml
+kubectl get secret
+
+https://blog.knoldus.com/how-to-create-secrets-using-kubernetes-python-client/
+https://stackoverflow.com/questions/55159582/k8s-python-how-do-i-read-a-secret-using-the-kubernetes-python-client
+https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/V1Secret.md
+https://www.programcreek.com/python/example/123286/kubernetes.client.V1Secret
+https://medium.com/@ahmedmahmoud.prv/manage-kubernetes-secrets-with-python-3d8732d97267
+https://notebook.community/mbohlool/client-python/examples/notebooks/create_secret
+https://codehunter.cc/a/kubernetes/k8s-python-how-do-i-read-a-secret-using-the-kubernetes-python-client
+
+
+
+pip install kubernetes
+from kubernetes import client, config
+
+
+from kubernetes import client, config
+config.load_kube_config()
+v1 = client.CoreV1Api()
+secret = v1.read_namespaced_secret("mysql-pass", "default")
+print(secret)
+
+
+from kubernetes import client, config
+import base64
+import sys
+config.load_kube_config()
+v1 = client.CoreV1Api()
+sec = str(v1.read_namespaced_secret("mysql-pass", "default").data)
+pas = base64.b64decode(sec.strip().split()[1].translate(None, '}\''))
+print(pas)
+
+
+
+from kubernetes import client, config
+import base64
+config.load_kube_config()
+v1 = client.CoreV1Api()
+sec = v1.read_namespaced_secret("default-token-rsbq7", "default").data
+cert = base64.b64decode(sec["ca.crt"])
+print(cert)
+
+.............
+
+python3 create.py
+
+def create_secret(data , string_data , client_api):
+    secret = client.V1Secret(
+        api_version="v1",
+        kind="Secret",
+        metadata=client.V1ObjectMeta(name="my-secret"),
+        data=data ,
+         string_data=string_data
+    )
+
+    api = client_api.create_namespaced_secret(namespace="default",
+body=secret)
+    return api
+
+
+api_server_endpoint = "Your_API"
+bearer_token = "Your_Token"
+configuration = client.Configuration()
+configuration.host = api_server_endpoint
+configuration.verify_ssl = False
+configuration.api_key = {"authorization": "Bearer " + bearer_token}
+client.Configuration.set_default(configuration)
+client_api = client.CoreV1Api()
+cm={
+    "name": "deekasha"
+}
+create_secret({} , cm , client_api)
+
+
 
 
 
