@@ -1,0 +1,55 @@
+
+---------------------------------------------
+split vid every X seconds
+---------------------------------------------
+https://unix.stackexchange.com/questions/1670/how-can-i-use-ffmpeg-to-split-mpeg-video-into-10-minute-chunks
+https://stackoverflow.com/questions/30305953/is-there-an-elegant-way-to-split-a-file-by-chapter-using-ffmpeg
+https://askubuntu.com/questions/948304/how-to-automatically-segment-video-using-ffmpeg-without-re-encoding
+
+ffmpeg -i file.mp4 -c copy -map 0 -segment_time 00:00:02 -f segment -reset_timestamps 1 split/out%03d.mp4
+
+
+---------------------------------------------
+concat
+---------------------------------------------
+https://shotstack.io/learn/use-ffmpeg-to-concatenate-video/
+https://ottverse.com/3-easy-ways-to-concatenate-mp4-files-using-ffmpeg/
+https://trac.ffmpeg.org/wiki/Concatenate
+https://stackoverflow.com/questions/7333232/how-to-concatenate-two-mp4-files-using-ffmpeg
+
+
+ffmpeg -f concat -safe 0 -i <(for f in split/*[02468].mp4; do echo "file '$PWD/$f'"; done) -c copy xoutput.mp4
+
+
+
+for f in *.mp4; do echo "file '$f'" >> videos.txt; done && ffmpeg -f concat -i videos.txt -c copy output9.mp4
+ffmpeg -f concat -safe 0 -i <(for f in ./*.mp4; do echo "file '$PWD/$f'"; done) -c copy output.mp4
+
+#!/bin/bash
+[ -e list.txt ] && rm list.txt
+for f in *.mp4
+do
+   echo "file $f" >> list.txt
+done
+ffmpeg -f concat -i list.txt -c copy joined-out.mp4 && rm list.txt
+
+
+ffmpeg -i "concat:input1.mp4|input2.mp4|input3.mp4|input4.mp4" -c copy output10.mp4
+ffmpeg -i "concat:fileIntermediate1.ts|fileIntermediate2.ts" -c copy -bsf:a aac_adtstoasc mergedVideo.mp4
+ffmpeg -i input1.mp3 -i input2.mp3 -i input3.mp3 -filter_complex "concat=n=3:v=0:a=1" -vn -y input.m4a
+---------------------------------------------
+print odd numbers in files
+---------------------------------------------
+https://www.unix.com/shell-programming-and-scripting/132065-odd-even-file-names.html
+https://askubuntu.com/questions/1309484/how-to-copy-odd-files-in-a-folder-where-all-the-files-are-named-using-numbers
+https://codefather-tech.medium.com/an-easy-way-to-print-odd-numbers-from-1-to-n-using-a-bash-while-loop-codefather-cb357c406251
+https://unix.stackexchange.com/questions/26723/print-odd-numbered-lines-print-even-numbered-lines
+https://www.codegrepper.com/code-examples/shell/how+to+print+odd+numbers+in+shell+script
+https://askubuntu.com/questions/891493/separating-even-and-odd-numbers
+
+for i in split/*[02468].mp4; do echo $i; done
+for i in split/*[13579].mp4; do echo $i; done
+
+
+
+
