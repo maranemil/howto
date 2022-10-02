@@ -1,0 +1,41 @@
+# rename
+num=0; for i in *.mp4; do mv "$i" "$(printf '%04d' $num).mp4"; ((num++)); done
+
+# remove bad files
+for i in *.mp4;do ffprobe  -hide_banner $i 2>&1 | grep -io invalid && rm $i; done
+
+# create folders by video sizes
+for file in *.mp4; do  ffprobe -v error -select_streams v:0 -show_entries stream=height,width -of csv=s=x:p=0 -i $file 2>&1 | xargs -I {} mkdir -p "{}"; done;
+
+# move files by video sizes
+for file in *.mp4; do  ffprobe -v error -select_streams v:0 -show_entries stream=height,width -of csv=s=x:p=0 -i $file 2>&1 | xargs -I {} mv $file "{}"/; done;
+
+#resize
+for i in *.mp4; do ffmpeg -i $i -vf scale=1080:-1 y"$i"; done
+
+# trim
+for i in *.mp4; do ffmpeg -i $i -t 7 -an y"$i".mkv; done
+
+#merge
+ffmpeg -f concat -safe 0 -i <(for f in *.mkv; do echo "file '$PWD/$f'"; done) -c copy -y xoutput1.mp4
+
+#loop 4x
+ffmpeg -stream_loop 5 -i video1.mp4 -c copy video1loop.mp4
+ffmpeg -stream_loop 5 -i video2.mp4 -c copy video2loop.mp4
+ffmpeg -stream_loop 5 -i video3.mp4 -c copy video3loop.mp4
+ffmpeg -stream_loop 5 -i video4.mp4 -c copy video4loop.mp4
+
+#matrix 4 slices
+
+# mix 2 left
+# ffmpeg -i video1loop.mp4  -i video2loop.mp4  -filter_complex "[0:v:0]pad=iw*2:ih[bg]; [bg][1:v:0]overlay=w" -y  -t 180 out.mp4
+
+
+ffmpeg -i video1.mp4 -i video4.mp4  -i video3.mp4  -i video2.mp4  -filter_complex "[0]scale=1920:1080,format=rgba[v1];  [1]scale=-1:1080,crop=480:1080[v2]; [2]scale=-1:1080, crop=480:1080[v3]; [3]scale=-1:1080,crop=480:1080[v4];   [v1][v2]overlay=0:0[out1]; [out1][v3]overlay=480:0 [out2]; [out2][v4]overlay=960:0[out3];[out3][v]overlay=1440:0[out]" -shortest -map [out] -t 180 -y output.mp4
+
+
+# add saturation
+ffmpeg -i output.mp4 -vf eq=saturation=1.5 -y -threads 2 xoutputBFS.mp4
+
+# replace audio in mp4
+ffmpeg -i xfinalmix.mp4 -i xfinalmixwav.wav -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 xfinalmixyoutube.mp4
