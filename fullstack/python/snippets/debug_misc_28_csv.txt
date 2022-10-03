@@ -1,0 +1,362 @@
+https://stackoverflow.com/questions/2887878/importing-a-csv-file-into-a-sqlite3-database-table-using-python
+https://stackoverflow.com/questions/2887878/importing-a-csv-file-into-a-sqlite3-database-table-using-python
+https://mungingdata.com/sqlite/create-database-load-csv-python/
+https://www.geeksforgeeks.org/how-to-import-a-csv-file-into-a-sqlite-database-table-using-python/
+https://www.python-lernen.de/sqlite3-datenbank-import-aus-csv-datei.htm
+
+
+
+
+import csv, sqlite3
+
+con = sqlite3.connect(":memory:") # change to 'sqlite:///your_filename.db'
+cur = con.cursor()
+cur.execute("CREATE TABLE t (col1, col2);") # use your column names here
+
+with open('data.csv','r') as fin: # `with` statement available in 2.5+
+    # csv.DictReader uses first line in file for column headings by default
+    dr = csv.DictReader(fin) # comma is default delimiter
+    to_db = [(i['col1'], i['col2']) for i in dr]
+
+cur.executemany("INSERT INTO t (col1, col2) VALUES (?, ?);", to_db)
+con.commit()
+con.close()
+
+
+
+
+
+
+
+df = pandas.read_csv(csvfile)
+df.to_sql(table_name, conn, if_exists='append', index=False)
+
+
+
+
+
+from pathlib import Path
+db_name = Path('my.db').resolve()
+csv_file = Path('file.csv').resolve()
+result = subprocess.run(['sqlite3',
+                         str(db_name),
+                         '-cmd',
+                         '.mode csv',
+                         '.import --skip 1 ' + str(csv_file).replace('\\','\\\\')
+                                 +' <table_name>'],
+                        capture_output=True)
+
+
+
+
+import csv, sqlite3
+conn = sqlite3.connect("pcfc.sl3")
+curs = conn.cursor()
+curs.execute("CREATE TABLE PCFC (id INTEGER PRIMARY KEY, type INTEGER, term TEXT, definition TEXT);")
+reader = csv.reader(open('PC.txt', 'r'), delimiter='|')
+for row in reader:
+    to_db = [unicode(row[0], "utf8"), unicode(row[1], "utf8"), unicode(row[2], "utf8")]
+    curs.execute("INSERT INTO PCFC (type, term, definition) VALUES (?, ?, ?);", to_db)
+conn.commit()
+
+
+
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import sys, csv, sqlite3
+
+def main():
+    con = sqlite3.connect(sys.argv[1]) # database file input
+    cur = con.cursor()
+    cur.executescript("""
+        DROP TABLE IF EXISTS t;
+        CREATE TABLE t (COL1 TEXT, COL2 TEXT);
+        """) # checks to see if table exists and makes a fresh table.
+
+    with open(sys.argv[2], "rb") as f: # CSV file input
+        reader = csv.reader(f, delimiter=',') # no header information with delimiter
+        for row in reader:
+            to_db = [unicode(row[0], "utf8"), unicode(row[1], "utf8")] # Appends data from CSV file representing and handling of text
+            cur.execute("INSERT INTO neto (COL1, COL2) VALUES(?, ?);", to_db)
+            con.commit()
+    con.close() # closes connection to database
+
+if __name__=='__main__':
+    main()
+
+------------------------
+
+# Import required modules
+import csv
+import sqlite3
+
+# Connecting to the geeks database
+connection = sqlite3.connect('g4g.db')
+
+# Creating a cursor object to execute
+# SQL queries on a database table
+cursor = connection.cursor()
+
+# Table Definition
+create_table = '''CREATE TABLE person(
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                age INTEGER NOT NULL);
+                '''
+
+# Creating the table into our
+# database
+cursor.execute(create_table)
+
+# Opening the person-records.csv file
+file = open('person-records.csv')
+
+# Reading the contents of the
+# person-records.csv file
+contents = csv.reader(file)
+
+# SQL query to insert data into the
+# person table
+insert_records = "INSERT INTO person (name, age) VALUES(?, ?)"
+
+# Importing the contents of the file
+# into our person table
+cursor.executemany(insert_records, contents)
+
+# SQL query to retrieve all data from
+# the person table To verify that the
+# data of the csv file has been successfully
+# inserted into the table
+select_all = "SELECT * FROM person"
+rows = cursor.execute(select_all).fetchall()
+
+# Output to the console screen
+for r in rows:
+    print(r)
+
+# Committing the changes
+connection.commit()
+
+# closing the database connection
+connection.close()
+
+
+------------------------
+
+user_id,username
+1,pokerkid
+2,crazyken
+
+
+
+from pathlib import Path
+Path('my_data.db').touch()
+
+import sqlite3
+conn = sqlite3.connect('my_data.db')
+c = conn.cursor()
+
+c.execute('''CREATE TABLE users (user_id int, username text)''')
+
+
+import pandas as pd
+# load the data into a Pandas DataFrame
+users = pd.read_csv('users.csv')
+# write the data to a sqlite table
+users.to_sql('users', conn, if_exists='append', index = False)
+
+c.execute('''SELECT * FROM users''').fetchall() # [(1, 'pokerkid'), (2, 'crazyken')]
+
+
+
+order_id,user_id,item_name
+1,1,speaker
+2,1,phone
+
+
+c.execute('''CREATE TABLE orders (order_id int, user_id int, item_name text)''')
+orders = pd.read_csv('orders.csv') # load to DataFrame
+orders.to_sql('orders', conn, if_exists='append', index = False) # write to sqlite table
+
+
+c.execute('''SELECT * FROM users u LEFT JOIN orders o ON u.user_id = o.user_id''')
+c.fetchall()
+
+pd.read_sql('''SELECT * FROM users u LEFT JOIN orders o ON u.user_id = o.user_id''', conn)
+
+
+--------------------------------------------------------------------
+
+
+#!/usr/bin/python3
+import sys
+import time
+import csv
+import pandas as pd
+
+print(time.time())
+
+
+df = pd.read_csv( "data/typ.csv",
+                  encoding='windows-1251',
+                  sep=';', skiprows=0,
+                  na_values='\\N',
+                  engine='c' )
+print(df.head(8))
+df.to_parquet("data/typ.parquet")
+sys.exit()
+
+
+"""
+
+
+
+
+
+
+
+"""
+
+
+--------------------------------------------------------------------
+https://pandas.pydata.org/docs/dev/reference/api/pandas.DataFrame.to_string.html
+https://pandas.pydata.org/docs/reference/frame.html
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.dtypes.html
+https://datatable.readthedocs.io/en/latest/api/dt/fread.html
+
+#################################################
+utf-8' codec can't decode byte 0xe1 in position 4650: invalid continuation byte
+https://github.com/modin-project/modin/issues/976
+#################################################
+
+FIX
+df = pd.read_csv( filepath, encoding='windows-1251', names=['field', 'names', 'here'], sep=';', skiprows=0, na_values='\\N', engine='c' )
+
+
+#################################################
+Importing Data with DataFrame.read_csv()
+#################################################
+http://net-informations.com/ds/pda/csv.htm
+
+import pandas as pd
+df = pd.read_csv ('data.csv')
+print(df)
+pd.read_csv ('data.csv',sep='\t')
+pd.read_csv ('data.csv',usecols=['Name','Age'])
+pd.read_csv ('data.csv',header=None)
+df = pd.read_csv ('data.csv', skiprows = 3)
+pd.read_csv('data.csv', encoding='utf-8')
+pd.read_csv('data.csv', parse_dates=['date'])
+df = pd.read_csv ('data.csv', usecols=['Height'],dtype=np.float32)
+pd.read_csv ('data.csv', sep=r'\s*\\s*', engine='python')
+pd.read_csv('data.csv', engine='python')
+pd.read_csv('data.csv', index_col=[0])
+df.to_csv('data.csv', index=False)
+pandas.read_csv('data.csv', sep='you_delimiter', header=None)
+pd.read_csv('data.csv', error_bad_lines=False)
+pd.read_csv('data.csv', error_bad_lines=False,warn_bad_lines=True)
+pd.read_csv(r'D:\Users\Desktop\data.csv')
+pd.read_csv('C:\\Users\\mylab\\Desktop\\data.csv')
+pd.read_csv('data.csv',dtype={'age':int})
+pd.read_csv('data.csv',sep='\t',low_memory=False)
+
+
+
+-----------------------------------------------------------
+
+https://exerror.com/unicodedecodeerror-utf-8-codec-cant-decode-byte-0xff-in-position-0-invalid-start-byte/
+
+
+with open(path, 'rb') as f:
+  contents = f.read()
+
+with open(path, encoding="utf8", errors='ignore') as f:
+
+with open(your_file_path,'rb') as f:
+    contents = f.read()
+    contents = contents.decode("utf-16")
+-----------------------------------------------------------
+
+
+https://www.roelpeters.be/unicodedecodeerror-utf-8-codec-cant-decode-byte-in-position/
+
+df = pd.read_csv('your_file.csv', encoding = 'ISO-8859-1')
+df = pd.read_csv('your_file.csv', encoding = 'latin1')
+
+import chardet
+import pandas as pd
+
+with open('your_file.csv', 'rb') as f:
+    enc = chardet.detect(f.read())  # or readline if the file is large
+
+pd.read_csv('your_file.csv', encoding = enc['encoding'])
+
+-----------------------------------------------------------
+https://bobbyhadz.com/blog/python-unicodedecodeerror-utf-8-codec-cant-decode-byte
+
+import pandas as pd
+
+# 👇️ set encoding to latin-1
+df = pd.read_csv('employees.csv', sep='|', encoding='latin-1')
+print(df)
+
+import csv
+with open('employees.csv', newline='', encoding='latin-1') as csvfile:
+    csv_reader = list(csv.reader(csvfile, delimiter='|'))
+    print(csv_reader)
+
+import csv
+
+# 👇️ set errors to ignore
+with open('employees.csv', newline='', encoding='utf-8', errors='ignore') as csvfile:
+    csv_reader = list(csv.reader(csvfile, delimiter='|'))
+    print(csv_reader)
+
+
+with open('example.pdf', 'rb') as file1:
+    my_bytes = file1.read()
+    # 👇️ specify correct encoding
+    print(my_bytes.decode('latin-1'))
+
+
+my_text = 'one æåäãé two'
+my_binary_data = my_text.encode('latin-1')
+# ⛔️ UnicodeDecodeError: 'utf-8' codec can't decode byte 0xe6 in position 4: invalid continuation byte
+my_text_again = my_binary_data.decode('utf-8')
+
+my_text = 'one æåäãé two'
+my_binary_data = my_text.encode('latin-1')
+my_text_again = my_binary_data.decode('latin-1')
+print(my_text_again)  # "one æåäãé two"
+
+---------------------------------------------------------------------------
+
+https://stackoverflow.com/questions/42339876/error-unicodedecodeerror-utf-8-codec-cant-decode-byte-0xff-in-position-0-in
+
+with open(path, encoding="utf8", errors='ignore') as f:
+    contents = f.read()
+
+with open(path, 'rb') as f:
+  contents = f.read()
+
+with open(path_to_file,'rb') as f:
+    contents = f.read()
+contents = contents.rstrip("\n").decode("utf-16")
+contents = contents.split("\r\n")
+
+df = pd.read_csv("File path", encoding='cp1252')
+df = pd.read_csv(open(filename, 'r'), delimiter=';')
+
+---------------------------------------------------------------------------
+
+https://www.folkstalk.com/2022/09/unicodedecodeerror-utf-8-codec-cant-decode-byte-0xf1-in-position-923-invalid-continuation-byte-with-code-examples.html
+
+
+pd.read_csv('ml-100k/u.item', sep='|', names=m_cols , encoding='latin-1')
+
+# Use the correct enconding of your file, for me it was ISO-8859-1
+with open("file.txt", "r", encoding="ISO-8859-1") as txt_file:
+	# Your Code
+
+
