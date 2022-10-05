@@ -20,6 +20,10 @@
 
 - https://editor.swagger.io/
 
+### Bookmarks generator for Chrome
+
+https://atkinsio.com/bookmarks-html-generator/
+
 ------------------------------------------------------------------
 
 ### Browser Compatibility Test
