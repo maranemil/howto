@@ -1,0 +1,236 @@
+
+############################################
+CREATE INDEX Sqlite
+############################################
+
+Single-Column Indexes
+Unique Indexes
+Composite Indexes
+
+https://www.sqlitetutorial.net/sqlite-index/
+https://www.sqlite.org/lang_createindex.html
+https://www.w3resource.com/sqlite/sqlite-create-drop-index.php
+https://www.tutorialspoint.com/sqlite/sqlite_indexes.htm
+
+CREATE [UNIQUE] INDEX index_name ON table_name ( column_name [, ...] );
+CREATE INDEX index_name ON table_name (column_name);
+CREATE UNIQUE INDEX index_name on table_name (column_name);
+CREATE INDEX index_name on table_name (column1, column2);
+
+CREATE TABLE contacts (
+	first_name text NOT NULL,
+	last_name text NOT NULL,
+	email text NOT NULL
+);
+CREATE [UNIQUE] INDEX idx_contacts_email ON contacts (email);
+
+...
+
+CREATE TABLE company(
+com_id text(4),
+com_name text(15));
+
+CREATE INDEX com_id_index ON company (com_id);
+CREATE INDEX com_id_name ON company (com_id,com_name);
+CREATE UNIQUE INDEX unique_com_id ON company (com_id,com_name);
+
+DROP INDEX index_name;
+DROP INDEX com_name_collate;
+
+
+############################################
+SQLite add Primary Key - Stack Overflow
+############################################
+
+https://stackoverflow.com/questions/946011/sqlite-add-primary-key
+https://sqlite.org/faq.html#q11
+https://www.sqlitetutorial.net/sqlite-primary-key/
+https://www.techonthenet.com/sqlite/primary_keys.php
+https://linuxhint.com/sqlite-primary-key/
+
+CREATE TABLE mytable (
+field1 TEXT,
+field2 INTEGER,
+field3 BLOB,
+PRIMARY KEY (field2, field1)
+);
+
+
+To assign the “id” a primary key, we will run the following commands:
+
+SELECT * FROM students_data;
+
+PRAGMA foreign_keys=off;
+BEGIN TRANSACTION;
+ALTER TABLE students_data RENAME TO new_students_data;
+CREATE TABLE students_data (id INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL, attendance INTEGER NOT NULL);
+INSERT INTO students_data  SELECT * FROM new_students_data;
+DROP TABLE new_students_data;
+COMMIT;
+PRAGMA foreign_keys=ON;
+
+delete the primary key constraint in SQLite
+
+PRAGMA foreign_keys=off;
+BEGIN TRANSACTION;
+ALTER TABLE students_data RENAME TO new_students_data;
+CREATE TABLE students_data (id INTEGER NOT NULL, name TEXT NOT NULL, attendance INTEGER NOT NULL);
+INSERT INTO students_data  SELECT * FROM new_students_data;
+DROP TABLE new_students_data;
+COMMIT;
+PRAGMA foreign_keys=ON;
+
+
+############################################
+SQLite is null
+############################################
+
+IS NOTNULL
+ISNULL
+
+
+############################################
+SQLite concat
+############################################
+https://www.sqlitetutorial.net/sqlite-string-functions/sqlite-concat/
+https://stackoverflow.com/questions/6134415/how-to-concatenate-strings-with-padding-in-sqlite
+
+SELECT
+    FirstName || ' ' || LastName AS FullName
+FROM
+    Employees
+ORDER BY
+    FullName;
+
+
+SELECT 'SQLite' || ' ' || 'CONCAT';
+
+Column1    Column2    Column3
+A          1          1
+
+Column1-Column2-Column3
+A-01-0001
+
+SELECT col1 || '-' || substr('00'||col2, -2, 2) || '-' || substr('0000'||col3, -4, 4)
+
+
+############################################
+A pure Python Database Abstraction Layer
+############################################
+
+https://github.com/web2py/pydal
+https://github.com/web2py/pydal/issues/314
+
+db = DAL('sqlite://db.sqlite')
+db.define_table('Schema',
+  Field('name', unique=True, notnull=True),
+  Field('type'),
+  Field('custom', 'boolean', default=False),
+  Field('description', notnull=True),
+  primarykey=['name']
+)
+
+db.define_table('Entity',
+  Field('name', unique=True, notnull=True),
+  Field("parent", "reference Schema", notnull=True),
+  Field("parent_name", notnull=True),
+  Field("parent_entity", notnull=True),
+  Field("idx", "integer", notnull=True, default=1)
+  primarykey=['name']
+)
+
+
+############################################
+SQLite case if else
+############################################
+
+https://stackoverflow.com/questions/14580294/sqlite-syntax-for-if-else-condition
+https://www.sqlitetutorial.net/sqlite-functions/sqlite-iif/
+https://www.sqlitetutorial.net/sqlite-case/
+https://www.sqlitetutorial.net/sqlite-exists
+
+
+SELECT (CASE WHEN ABC_FIELD ISNULL THEN 'NA' ELSE ABC_FIELD END) AS 'ABC_FIELD' FROM my_table
+
+SELECT  Password,  IIF(Password IS NOT NULL, 'Yes', 'No') [HasPassword]
+
+SELECT Field1,
+    Field2,
+    (CASE WHEN Password != NULL THEN
+        'Yes'
+     ELSE
+        'No'
+     END) as 'Password'
+FROM myTable;
+
+SELECT
+    name,
+    milliseconds,
+    IIF(milliseconds <= 300000, 'Short',
+        IIF(milliseconds > 300000 AND milliseconds <= 600000, 'Medium',
+            IIF(milliseconds > 600000, 'Long','N/A')
+        )
+    )
+FROM
+    tracks;
+
+
+SELECT IIF(1 < 2, 'Yes', 'No' ) result;
+
+SELECT customerid,
+       firstname,
+       lastname,
+       CASE country
+           WHEN 'USA'
+               THEN 'Domestic'
+           ELSE 'Foreign'
+       END CustomerGroup
+FROM
+    customers
+ORDER BY
+    LastName,
+    FirstName;
+
+
+SELECT
+	trackid,
+	name,
+	CASE
+		WHEN milliseconds < 60000 THEN
+			'short'
+		WHEN milliseconds > 60000 AND milliseconds < 300000 THEN 'medium'
+		ELSE
+			'long'
+		END category
+FROM
+	tracks;
+
+
+
+SELECT
+    CustomerId,
+    FirstName,
+    LastName,
+    Company
+FROM
+    Customers c
+WHERE
+    EXISTS (
+        SELECT
+            1
+        FROM
+            Invoices
+        WHERE
+            CustomerId = c.CustomerId
+    )
+ORDER BY
+    FirstName,
+    LastName;
+
+
+
+
+
+
+
+
