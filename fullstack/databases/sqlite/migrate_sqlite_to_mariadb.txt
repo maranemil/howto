@@ -1,3 +1,45 @@
+################################################################################################
+migration docker sqlite csv mariadb
+################################################################################################
+
+sudo apt install csvkit sqlite3
+
+# Use root/example as user/password credentials
+version: '3.1'
+services:
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: example
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+
+# sales csv import
+sqlite3 -header -csv sales.db "select * from sales;" > sales.csv
+csvsql --dialect mysql --snifflimit 100000 sales.csv > sales.sql
+mysql --user='root' --password='example' --host 172.21.0.2 sales < sales.sql
+mysql -h 172.21.0.2 -uroot -p
+LOAD DATA LOCAL INFILE "sales.csv" INTO TABLE sales.sales FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n';
+
+# backup
+mysqldump  -u root -h 172.21.0.2 -p sales sales >  dump_sales.sql
+
+ALTER TABLE `sales` ADD COLUMN `id` INT AUTO_INCREMENT UNIQUE FIRST;
+
+mysqldump  -u root -h 172.21.0.2 -p sales sales >  dump_sales_with_index.sql
+
+
+*
+*
+*
+*
+*
+
 ################################################
 https://hub.docker.com/_/microsoft-mssql-server
 ################################################
@@ -217,42 +259,6 @@ DROP COLUMN column_name_2,
 ALTER TABLE tbl_Country
   DROP COLUMN IsDeleted,
   DROP COLUMN CountryName;
-
-################################################
-migration docker sqlite csv mariadb
-################################################
-sudo apt install csvkit sqlite3
-
-
-# Use root/example as user/password credentials
-version: '3.1'
-services:
-  db:
-    image: mariadb
-    restart: always
-    environment:
-      MARIADB_ROOT_PASSWORD: example
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
-
-
-# sales csv import
-sqlite3 -header -csv sales.db "select * from sales;" > sales.csv
-csvsql --dialect mysql --snifflimit 100000 sales.csv > sales.sql
-mysql --user='root' --password='example' --host 172.21.0.2 sales < sales.sql
-mysql -h 172.21.0.2 -uroot -p
-LOAD DATA LOCAL INFILE "sales.csv" INTO TABLE sales.sales FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n';
-
-# backup
-mysqldump  -u root -h 172.21.0.2 -p sales sales >  dump_sales.sql
-
-ALTER TABLE `sales` ADD COLUMN `id` INT AUTO_INCREMENT UNIQUE FIRST;
-
-mysqldump  -u root -h 172.21.0.2 -p sales sales >  dump_sales_with_index.sql
-
 
 
 
