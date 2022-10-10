@@ -491,6 +491,7 @@ https://hemingwayapp.com/
 - https://www.videvo.net/royalty-free-sound-effects/chatter/
 - https://soundbible.com/tags-chatter.html
 - https://www.soundsnap.com/tags/chattering
+- https://www.pianobook.co.uk/packs/
 
 ------------------------------------------------------------------
 
