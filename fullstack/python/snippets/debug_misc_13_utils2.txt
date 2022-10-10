@@ -1,0 +1,631 @@
+#############################################
+python next
+#############################################
+
+https://www.programiz.com/python-programming/methods/built-in/next
+https://www.w3schools.com/python/ref_func_next.asp
+https://www.javatpoint.com/python-next-function
+https://www.tutorialspoint.com/python/file_next.htm
+https://www.tutorialsteacher.com/python/next-method
+https://www.tutorialspoint.com/How-do-we-use-re-finditer-method-in-Python-regular-expression
+https://blogs.gentoo.org/zmedico/2016/09/17/adapting-regular-iterators-to-asynchronous-iterators-in-python/
+https://javascript.info/async-iterators-generators
+
+https://docs.python.org/3/library/functions.html#next
+https://docs.python.org/3/library/functions.html#anext
+https://docs.python.org/3/library/functions.html
+https://docs.python.org/3/tutorial/controlflow.html
+https://docs.python.org/3/library/re.html
+https://peps.python.org/pep-0525/
+
+marks = [65, 71, 68, 74, 61]
+iterator_marks = iter(marks)
+marks_1 = next(iterator_marks)
+print(marks_1)
+marks_2 = next(iterator_marks)
+print(marks_2)
+
+mylist = iter(["apple", "banana", "cherry"])
+x = next(mylist)
+print(x)
+
+number = iter([256, 32, 82]) # Creating iterator
+item = next(number)
+print(item)
+
+...
+
+class AsyncIteratorExecutor:
+    """
+    Converts a regular iterator into an asynchronous
+    iterator, by executing the iterator in a thread.
+    """
+    def __init__(self, iterator, loop=None, executor=None):
+        self.__iterator = iterator
+        self.__loop = loop or asyncio.get_event_loop()
+        self.__executor = executor
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        value = await self.__loop.run_in_executor(
+            self.__executor, next, self.__iterator, self)
+        if value is self:
+            raise StopAsyncIteration
+        return value
+
+async def cat_file_async(filename):
+    with open(filename, 'rt') as f:
+        async for line in AsyncIteratorExecutor(f):
+            print(line.rstrip())
+
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    try:
+        loop.run_until_complete(
+            cat_file_async('/path/of/file.txt'))
+    finally:
+        loop.close()
+
+.........
+
+
+class Ticker:
+    """Yield numbers from 0 to `to` every `delay` seconds."""
+
+    def __init__(self, delay, to):
+        self.delay = delay
+        self.i = 0
+        self.to = to
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        i = self.i
+        if i >= self.to:
+            raise StopAsyncIteration
+        self.i += 1
+        if i:
+            await asyncio.sleep(self.delay)
+        return i
+# The same can be implemented as a much simpler asynchronous generator:
+
+async def ticker(delay, to):
+    """Yield numbers from 0 to `to` every `delay` seconds."""
+    for i in range(to):
+        yield i
+        await asyncio.sleep(delay)
+
+
+
+############################################################################
+conversion of lists to dictionary
+python map two lists to dict
+############################################################################
+
+https://www.geeksforgeeks.org/python-convert-two-lists-into-a-dictionary/
+https://www.w3resource.com/python-exercises/dictionary/python-data-type-dictionary-exercise-13.php
+https://stackoverflow.com/questions/209840/how-can-i-make-a-dictionary-dict-from-separate-lists-of-keys-and-values
+https://pythonguides.com/python-creates-a-dictionary-from-two-lists/
+
+keys = ['red', 'green', 'blue']
+values = ['#FF0000','#008000', '#0000FF']
+color_dictionary = dict(zip(keys, values))
+print(color_dictionary)
+
+
+
+V1 - using naive method
+
+# initializing lists
+test_keys = ["Rash", "Kil", "Varsha"]
+test_values = [1, 4, 5]
+
+# Printing original keys-value lists
+print("Original key list is : " + str(test_keys))
+print("Original value list is : " + str(test_values))
+
+# using naive method
+# to convert lists to dictionary
+res = {}
+for key in test_keys:
+    for value in test_values:
+        res[key] = value
+        test_values.remove(value)
+        break
+
+# Printing resultant dictionary
+print("Resultant dictionary is : " + str(res))
+
+
+V2 - using dictionary comprehension
+
+# initializing lists
+test_keys = ["Rash", "Kil", "Varsha"]
+test_values = [1, 4, 5]
+
+# Printing original keys-value lists
+print("Original key list is : " + str(test_keys))
+print("Original value list is : " + str(test_values))
+
+# using dictionary comprehension
+# to convert lists to dictionary
+res = {test_keys[i]: test_values[i] for i in range(len(test_keys))}
+
+# Printing resultant dictionary
+print("Resultant dictionary is : " + str(res))
+
+
+V3 - using zip()
+
+# initializing lists
+test_keys = ["Rash", "Kil", "Varsha"]
+test_values = [1, 4, 5]
+
+# Printing original keys-value lists
+print("Original key list is : " + str(test_keys))
+print("Original value list is : " + str(test_values))
+
+# using zip()
+# to convert lists to dictionary
+res = dict(zip(test_keys, test_values))
+
+# Printing resultant dictionary
+print("Resultant dictionary is : " + str(res))
+
+
+V4 - using dict() + map()
+
+# initializing lists
+keys = ["Rash", "Kil", "Varsha"]
+values = [1, 4, 5]
+
+# Printing original keys-value lists
+print ("Original key list is : " + str(keys))
+print ("Original value list is : " + str(values))
+
+# using map and dict type casting
+# to convert lists to dictionary
+res = dict(map(lambda i,j : (i,j) , keys,values))
+
+# Printing resultant dictionary
+print ("Resultant dictionary is : " + str(res))
+
+############################################################################
+Print all values in the dictionary,
+############################################################################
+https://www.w3schools.com/python/python_dictionaries_loop.asp
+https://stackoverflow.com/questions/3294889/iterating-over-dictionaries-using-for-loops
+https://treyhunner.com/2016/04/how-to-loop-with-indexes-in-python/
+
+
+for x in thisdict:
+  print(thisdict[x])
+
+for x in thisdict.values():
+  print(x)
+
+for x in thisdict.keys():
+  print(x)
+
+for x, y in thisdict.items():
+  print(x, y)
+
+
+for key, value in d.items():
+   print(key, value)
+
+
+############################################################################
+5 Ways to Convert a Tuple to a List in Python
+############################################################################
+
+https://blog.finxter.com/convert-tuple-to-list/
+https://appdividend.com/2022/06/04/how-to-convert-python-tuple-to-list/
+
+
+Method 1: list()
+
+tuple_1 = (1, 2, 3, 4, 5)
+print(list(tuple_1))
+# [1, 2, 3, 4, 5]
+tuple_2 = ('Alice', 'Bob', 'Ann')
+print(list(tuple_2))
+# ['Alice', 'Bob', 'Ann']
+tuple_3 = (1,)
+print(list(tuple_3))
+# [1]
+
+
+Method 2: Loop Iteration + append()
+
+def tuple_to_list(t):
+    new_list = []
+    for element in t:
+        new_list.append(element)
+    return new_list
+tuple_1 = (1, 2, 3, 4, 5)
+print(tuple_to_list(tuple_1))
+# [1, 2, 3, 4, 5]
+tuple_2 = ('Alice', 'Bob', 'Ann')
+print(tuple_to_list(tuple_2))
+# ['Alice', 'Bob', 'Ann']
+tuple_3 = (1,)
+print(tuple_to_list(tuple_3))
+# [1]
+
+
+
+Method 3: Unpacking Asterisk Operator
+
+
+def tuple_to_list(t):
+    return [*t]
+tuple_1 = (1, 2, 3, 4, 5)
+print(tuple_to_list(tuple_1))
+# [1, 2, 3, 4, 5]
+tuple_2 = ('Alice', 'Bob', 'Ann')
+print(tuple_to_list(tuple_2))
+# ['Alice', 'Bob', 'Ann']
+tuple_3 = (1,)
+print(tuple_to_list(tuple_3))
+# [1]
+
+
+Method 4: List Comprehension
+
+def tuple_to_list(t):
+    return [x for x in t]
+
+tuple_1 = (1, 2, 3, 4, 5)
+print(tuple_to_list(tuple_1))
+# [1, 2, 3, 4, 5]
+
+tuple_2 = ('Alice', 'Bob', 'Ann')
+print(tuple_to_list(tuple_2))
+# ['Alice', 'Bob', 'Ann']
+
+tuple_3 = (1,)
+print(tuple_to_list(tuple_3))
+# [1]
+
+
+Method 5: Convert Tuple of Tuples to List of Lists
+
+def tuple_to_list(t):
+    return [list(x) for x in t]
+tuple_1 = ((1, 2, 3),
+           (4, 5, 6, 7, 8, 9),
+           ('Alice', 'Bob', 'Carl'))
+print(tuple_to_list(tuple_1))
+# [[1, 2, 3], [4, 5, 6, 7, 8, 9], ['Alice', 'Bob', 'Carl']]
+
+
+############################################################################
+pqt map index data , map col data
+############################################################################
+
+# get index and data into dict
+index_keys = df.index.names
+index_values = df.index[0]
+list_index = [x for x in index_values]
+
+res_dict = {index_keys[i]: index_values[i] for i in range(len(index_keys))}
+print(res_dict, type(res_dict))
+
+# get col data into dict
+col_keys = df.iloc[5].index  # column names
+col_values = df.iloc[5].values  # column values
+res_dict = {col_keys[i]: col_values[i] for i in range(len(col_keys))}
+print(res_dict, type(res_dict))
+
+for index, value in res_dict.items():
+   print(index, value)
+   break
+
+
+df2 = pd.DataFrame.from_dict(res_dict, orient='index')
+print(df2)
+print(df2.dtypes)
+
+
+############################################################################
+pandas-map-column-dictionary
+############################################################################
+
+https://datascientyst.com/pandas-map-column-dictionary/
+https://kanoki.org/2019/04/06/pandas-map-dictionary-values-with-dataframe-columns/
+https://www.projectpro.io/recipes/map-values-in-pandas-dataframe
+https://pandas.pydata.org/docs/reference/api/pandas.Series.map.html
+https://stackoverflow.com/questions/20250771/remap-values-in-pandas-column-with-a-dict-preserve-nans
+
+
+import pandas as pd
+import numpy as np
+
+data = {'Member': {0: 'John', 1: 'Bill', 2: 'Jim', 3: 'Steve'},
+        'Disqualified': {0: 0, 1: 1, 2: 0, 3: 1},
+        'Paid': {0: 1, 1: 0, 2: 0, 3: np.nan}}
+
+df = pd.DataFrame(data)
+dict_map = {1: 'True', 0: 'False'}
+df['Disqualified'].map(dict_map)
+df['Disqualified'] = df['Disqualified'].map(dict_map)
+df['Disqualified Boolean'] = df['Disqualified'].map(dict_map)
+df['Paid'].map(dict_map )
+df['Paid'].map(dict_map).fillna(df['Paid'])
+df['Disqualified'].map(dict_map, na_action='ignore')
+df["Paid"].replace(dict_map)
+df['Paid'].update(pd.Series(dict_map))
+
+
+...
+
+import pandas as pd
+df= pd.DataFrame({'Country':['China','India','USA','Indonesia','Brazil'],'Population':[1403500365,1324171354,
+country_capital=
+{
+'Germany':'Berlin',
+'Brazil':'Brasília',
+'Budapest':'Hungary',
+'China':'Beijing',
+'India':'New Delhi',
+'Norway':'Oslo',
+'France':'Paris',
+'Indonesia': 'Jakarta',
+'USA':'Washington'
+}
+df['Capital'] = df['Country'].map(country_capital)
+df['inc_Population']=df.Population.map(lambda x: x*100)
+df= pd.DataFrame({'Name':['Allan','John','Peter','Brenda','Sandra'],'birth_Month':[5,3,8,12,2]}
+Month_Values=
+{
+1:'January',
+2:'February',
+3:'March',
+4:'April',
+5:'May',
+6:'June',
+7:'July',
+8:'August',
+9:'September',
+10:'October',
+11:'November',
+12:'December'
+}
+
+df['birth_Month'] = df.birth_Month.replace(country_capital)
+df.birth_Month.update(pd.Series(country_capital))
+
+----
+
+import pandas as pd
+raw_data = {"first_name": ["Sheldon", "Raj", "Leonard", "Howard", "Amy"],
+        "last_name": ["Copper", "Koothrappali", "Hofstadter", "Wolowitz", "Fowler"],
+        "age": [42, 38, 36, 41, 35],
+        "Comedy_Score": [9, 7, 8, 8, 5],
+        "Rating_Score": [25, 25, 49, 62, 70]}
+
+df = pd.DataFrame(raw_data, columns = ["first_name", "last_name", "age",
+                                   "Comedy_Score", "Rating_Score"])
+print(df)
+
+Subjects = {"Sheldon" : "Science",
+                     "Raj" : "Chemistry",
+                     "Leonard" : "Maths",
+                     "Howard" : "Astronaut",
+                     "Amy" : "Science"}
+print(Subjects)
+df["Subjects"] = df["first_name"].map(Subjects)
+print(df)
+
+
+
+############################################################################
+replace NAN - pandas list dict
+############################################################################
+
+https://appdividend.com/2022/09/06/replace-nan-with-0-in-pandas/
+https://stackoverflow.com/questions/21011777/how-can-i-remove-nan-from-list-python-numpy
+https://www.pythonpool.com/python-remove-nan-from-list/
+https://theprogrammingexpert.com/python-remove-nan-from-list/
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_dict.html
+https://statologie.de/nan-zeilen-loeschen-pandas/
+https://stackoverflow.com/questions/42165705/assign-dtype-with-from-dict
+https://stackoverflow.com/questions/52761325/how-to-replace-nan-from-dictionary-in-python
+https://stackoverflow.com/questions/42549357/dataframe-to-string-issue
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.from_dict.html
+https://levelup.gitconnected.com/dictionary-data-types-in-python-more-than-just-dict-a9ff84d38738
+
+import numpy as np
+import pandas as pd
+
+dict = {'price': ['100', 'KDL100', 400, 'ADL100'],
+        'discount': ['50', '50%', '30%', '20']}
+
+df = pd.DataFrame(dict)
+df = df.apply(pd.to_numeric, errors='coerce')
+
+df['price'] = df['price'].replace(np.nan, 0)
+df['price'] = df['price'].fillna(0)
+df = df.fillna(0)
+df = df.replace(np.nan, 0)
+df = df.dropna()
+
+data_df = data_df.astype(dtype= {"wheel_number":"int64", "car_name":"object","minutes_spent":"float64"})
+
+pandas.DataFrame.from_dict(data, orient='index').astype({0: float, 1:str})
+
+
+my_dataset_clean = {k: {k2: 0 if v2 == 'NaN' else v2 for k2, v2 in v.items()} \
+                    for k, v in my_dataset.items()}
+
+
+----
+
+df = pd.DataFrame({'A':['  s  ','s','d'],
+                   'B':[4,5,6],
+                   'C':[7,8,9],
+                   'D':[1,3,5],
+                   'E':[5,3,6],
+                   'F':[7,4,3]})
+
+print (df)
+       A  B  C  D  E  F
+0    s    4  7  1  5  7
+1      s  5  8  3  3  4
+2      d  6  9  5  6  3
+
+print (df.astype(str).get_value(0,'A').strip())
+print (df.astype(str).loc[0,'A'].strip())
+
+
+column_names = ["a", "b", "c"]
+df = pd.DataFrame(columns = column_names, dtype=object)
+data = np.array(data, dtype=np.float32)
+
+
+############################################################################
+Remove NAN from lists
+############################################################################
+
+https://theprogrammingexpert.com/python-remove-nan-from-list/
+https://www.delftstack.com/howto/python/remove-nan-from-list-python/
+
+list_values = [x for x in list_values if x != 'nan']
+
+from math import nan, isnan
+list_with_nan= [0, 1, 3, nan, nan, 4, 9, nan]
+list_without_nan = [x for x in list_with_nan if isnan(x) == False]
+print(list_without_nan)
+#Output:
+[0, 1, 3, 4, 9]
+
+
+from math import nan, isnan
+list_with_nan= [0, 1, 3, nan, nan, 4, 9, nan]
+list_without_nan = list(filter(lambda x: isnan(x) == False, list_with_nan))
+print(list_without_nan)
+#Output:
+[0, 1, 3, 4, 9]
+
+
+import numpy as np
+from numpy import nan
+list_with_nan = [0, 1, 3, nan, nan, 4, 9, nan]
+list_without_nan = [x for x in list_with_nan if np.isnan(x) == False]
+print(list_without_nan)
+#Output:
+[0, 1, 3, 4, 9]
+
+from math import nan, isnan
+list_with_nan= [0, 1, 3, nan, nan, 4, 9, nan]
+list_without_nan = [x for x in list_with_nan if isnan(x) == False]
+print(list_without_nan)
+#Output:
+[0, 1, 3, 4, 9]
+
+
+from math import nan, isnan
+list_with_nan= [0, 1, 3, nan, nan, 4, 9, nan]
+list_without_nan = list(filter(lambda x: isnan(x) == False, list_with_nan))
+print(list_without_nan)
+#Output:
+[0, 1, 3, 4, 9]
+
+
+import numpy as np
+from numpy import nan
+list_with_nan= [0, 1, 3, nan, nan, 4, 9, nan]
+list_without_nan = [x for x in list_with_nan if np.isnan(x) == False]
+print(list_without_nan)
+#Output:
+[0, 1, 3, 4, 9]
+
+
+df = df.dropna() #drops rows with missing values
+df["Column 1"] = df["Column 1"].dropna() #drops rows with missing values in column "Column 1"
+df = df.dropna(axis=1) #drop columns with missing values
+
+
+list_of_numbers = [1,0,4,2,-4,0,0,3,0,-1,0]
+list_without_zeros = [x for x in list_of_numbers if x != 0]
+print(list_without_zeros)
+#Output:
+[1,4,2,-4,3,-1]
+
+
+
+import math
+mylist = [1,2,float('nan'),8,6,4,float('nan')]
+print(mylist)
+newlist = [x for x in mylist if math.isnan(x) == False]
+print(newlist)
+
+
+import numpy as np
+mylist = [1,2,float('nan'),8,6,4,float('nan')]
+print(mylist)
+newlist = [x for x in mylist if np.isnan(x) == False]
+print(newlist)
+
+
+mylist = [1,2,'nan',8,6,4,'nan']
+mylist = [str(x) for x in mylist]
+print(mylist)
+newlist = [x for x in mylist if x != 'nan']
+print(newlist)
+
+
+import pandas as pd
+mylist = [1,2,float('nan'),8,float('nan'),4,float('nan')]
+print(mylist)
+newlist = [x for x in mylist if pd.isnull(x) == False]
+print(newlist)
+
+
+import pandas as pd
+mylist = ['John',23,'nan','New York',float('nan')]
+print(mylist)
+newlist = [x for x in mylist if pd.isnull(x) == False and x != 'nan']
+print(newlist)
+
+
+############################################################################
+Remove nan values from a dict in python
+############################################################################
+
+https://splunktool.com/remove-nan-values-from-a-dict-in-python
+https://stackoverflow.com/questions/24068306/is-there-a-way-to-remove-nan-from-a-dictionary-filled-with-data
+
+from math
+import isnan
+
+if nans are being stored as keys:
+................
+# functional
+clean_dict = filter(lambda k: not isnan(k), my_dict)
+# dict comprehension
+clean_dict = {k: my_dict[k] for k in my_dict if not isnan(k)}
+
+if nans are being stored as values:
+................
+# functional
+clean_dict = filter(lambda k: not isnan(my_dict[k]), my_dict)
+# dict comprehension
+clean_dict = {k: my_dict[k] for k in my_dict if not isnan(my_dict[k])}
+
+
+With simplejson
+................
+import simplejson
+clean_dict  = simplejson.loads(simplejson.dumps(my_dict, ignore_nan=True))
+## or depending on your needs
+clean_dict  = simplejson.loads(simplejson.dumps(my_dict, allow_nan=False))
+
+
+
+
+

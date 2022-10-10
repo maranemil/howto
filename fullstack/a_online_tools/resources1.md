@@ -485,6 +485,15 @@ https://hemingwayapp.com/
 
 ------------------------------------------------------------------
 
+### Sounds
+
+- https://www.storyblocks.com/audio/search/background+noise+and+chatter
+- https://www.videvo.net/royalty-free-sound-effects/chatter/
+- https://soundbible.com/tags-chatter.html
+- https://www.soundsnap.com/tags/chattering
+
+------------------------------------------------------------------
+
 ### Text Uppercase
 
 - https://capitalizemytitle.com/style/APA/
