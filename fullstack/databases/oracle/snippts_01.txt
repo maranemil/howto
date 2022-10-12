@@ -1,0 +1,528 @@
+
+########################################
+Oracle How to Fix ORA-28002 The Password Will Expire in 7 Days Errors
+########################################
+
+https://blogs.oracle.com/sql/post/how-to-fix-ora-28002-the-password-will-expire-in-7-days-errors
+https://logic.edchen.org/how-to-resolve-ora-28002-the-password-will-expire-within-days/
+https://www.orait.de/db_fehler/ora-28002_the-password-will-expire.html
+https://dba.stackexchange.com/questions/659/how-to-get-rid-of-ora-28002-message-the-password-will-expire-within-6-days
+http://www.dba-oracle.com/t_ora_28002_password_will_expire_in_days.htm
+https://techgoeasy.com/ora-28002-the-password-will-expire/
+http://nimishgarg.blogspot.com/2012/07/ora-28002-password-will-expire-within-7.html
+https://deveshdba.wordpress.com/2013/07/24/ora-28002-the-password-will-expire-within-3-days/
+https://www.yawintutor.com/ora-28002-the-password-will-expire-within-7-days/
+
+# to stop this and allow users to keep their password forever, alter the profile like so:
+alter profile "DEFAULT" limit password_life_time unlimited;
+
+# Or create a new policy and assign that to your users:
+create profile unlimited_pwd_prof limit  password_life_time unlimited;
+alter user <username> profile unlimited_pwd_prof;
+
+# increase this time
+alter profile unlimited_pwd_prof limit  password_grace_time 14;
+
+
+# The only way out of either situation is to reset the password!
+alter user <username> identified by <password>;
+
+------
+
+# Change the password
+SQL> password
+Changing password for HR
+Old password:
+New password:
+Retype new password:
+Password changed
+
+
+# ALTER USER
+SQL> alter user hr identified by welcome1;
+
+SQL> select profile from dba_users where username='SYSTEM';
+SQL> ALTER PROFILE DEFAULT LIMIT PASSWORD_LIFE_TIME UNLIMITED;
+
+------
+
+1 - Change the user password, per the instructions,
+alter user fred identified by newpass;
+
+2 - Alter the specific user password to never expire:
+alter profile my_profile limit password_life_time unlimited;
+
+2 - Alter the default SQL*Plus profile for all users as follows:
+alter profile default limit password_life_time unlimited;
+
+------
+
+SQL> conn ABC
+Enter password:
+ERROR:
+ORA-28002: the password will expire within 2 days
+Connected.
+
+
+SQL> PASSWORD
+Changing password for ABC
+Old password:
+New password:
+Retype new password:
+Password changed
+
+SQL> ALTER PROFILE default LIMIT PASSWORD_LIFE_TIME UNLIMITED;
+SQL> select resource_name,resource_type, limit from dba_profiles where profile='DEFAULT';
+------
+
+change password in SQL Developer
+
+alter user <username> identified by <password>;
+alter user scott identified by tiger;
+
+
+change password using SQL Plus
+
+sqlplus scott/tiger
+
+SQL> password
+Changing password for SCOTT
+Old password:
+New password:
+Retype new password:
+
+Password changed successfully
+SQL>
+
+# remove the password expiry
+
+alter profile "DEFAULT" limit password_life_time unlimited;
+
+###################################################################
+CREATE DATABASE
+###################################################################
+
+https://docs.oracle.com/cd/F49540_01/DOC/server.815/a67772/create.htm
+https://community.oracle.com/tech/developers/discussion/844317/database-already-mounted
+http://www.dba-oracle.com/t_ora_01081_cannot_shut_down_already_running_oracle.htm
+https://answers.sap.com/questions/5056964/error---ora-01081-cannot-start-already-running-ora.html
+https://ittutorial.org/ora-01081-cannot-start-already-running-oracle-shut-it-down-first/
+https://alphaoragroup.com/2021/07/30/ora-01081-cannot-start-already-running-oracle-shut-it-down-first/
+http://www.acehints.com/2016/10/fix-ora-01504-database-name-restrict.html?m=1
+https://oracledbwr.com/ora-01504-database-name-restricted-does-not-match-parameter-db_name-erpdev/
+
+
+sqlplus / as sysdba
+
+Connect to the database as SYSDBA.
+
+$ SQLPLUS /nolog
+connect username/password as sysdba
+
+
+CREATE DATABASE TEST DATAFILE 'test_system';
+CREATE DATABASE TEST DATAFILE 'test_system' SIZE 10M LOGFILE GROUP 1 ('test_log1a', 'test_log1b') SIZE 500K, GROUP 2 ('test_log2a', 'test_log2b') SIZE 500K;
+
+
+ORA-01100: Datenbank wurde bereits mit MOUNT angeschlossen
+
+SQL> CREATE DATABASE TEST;
+CREATE DATABASE TEST
+*
+ERROR at line 1:
+ORA-01501: CREATE DATABASE failed
+ORA-01100: database already mounted
+
+In order to manually create a database with the CREATE DATABASE statement, you must STARTUP NOMOUNT the instance.
+
+SQL> STARTUP NOMOUNT
+ORA-01081: cannot start already-running ORACLE - shut it down first
+
+ps -ef|grep $ORACLE_SID|  grep -v grep|awk '{print $2}'|xargs -i kill -9 {}
+ipcs -pmb
+
+FIX
+
+su oracle
+sqlplus "/as sysdba"
+sqlplus>startup
+sqlplus>shutdown;
+
+sqlplus>startup mount;
+
+...
+
+echo $ORACLE_SID
+echo $ORACLE_HOME
+
+ORACLE_SID=INSTANCE_NAME
+export ORACLE_SID
+export ORACLE_HOME=/u01/app/product/12.2.0/dbhome_1
+sqlplus / as sysdba
+
+
+SQL> startup
+SQL> startup nomount;
+
+
+
+ORA-01504: database name  does not match parameter db_name 'orcl'
+
+CREATE DATABASE TEST DATAFILE 'test_system'
+*
+ERROR at line 1:
+ORA-30045: No undo tablespace name specified
+
+FIX
+
+SQL> shutdown
+SQL> STARTUP NOMOUNT RESTRICT;
+SQL> alter database mount;
+SQL> drop database;
+
+
+------------------------------------------------
+
+
+undo_management = AUTO
+undo_management = MANUAL
+
+
+------------------------------------------------
+
+https://blog.devart.com/how-to-create-database-in-oracle.html
+
+If there is no default init.ora template in ORACLE_HOME/dbs, use the following sample:
+
+db_name='ORCL'
+memory_target=1G
+processes = 150
+db_block_size=8192
+db_domain=''
+db_recovery_file_dest='<ORACLE_BASE>/flash_recovery_area'
+db_recovery_file_dest_size=2G
+diagnostic_dest='<ORACLE_BASE>'
+dispatchers='(PROTOCOL=TCP) (SERVICE=ORCLXDB)'
+open_cursors=300
+remote_login_passwordfile='EXCLUSIVE'
+undo_tablespace='UNDOTBS1'
+# You may want to ensure that control files are created on separate physical
+# devices
+control_files = (ora_control1, ora_control2)
+compatible ='12.0.0'
+
+
+
+# Create an instance
+
+oradim -NEW -SID sid -STARTMODE MANUAL -PFILE file
+
+# Connect to an instance
+
+$ sqlplus /nolog
+SQL> CONNECT / AS SYSDBA
+CREATE SPFILE FROM PFILE;
+SQL> STARTUP NOMOUNT;
+
+
+------------------------
+create a database in Oracle, using CREATE DATABASE command
+------------------------
+
+CREATE DATABASE testdb
+   USER SYS IDENTIFIED BY sys_password
+   USER SYSTEM IDENTIFIED BY system_password
+   LOGFILE GROUP 1 ('/u01/logs/my/redo01a.log','/u02/logs/my/redo01b.log') SIZE 100M,
+           GROUP 2 ('/u01/logs/my/redo02a.log','/u02/logs/my/redo02b.log') SIZE 100M,
+           GROUP 3 ('/u01/logs/my/redo03a.log','/u02/logs/my/redo03b.log') SIZE 100M
+   MAXLOGHISTORY 1
+   MAXLOGFILES 16
+   MAXLOGMEMBERS 3
+   MAXDATAFILES 1024
+   CHARACTER SET AL32UTF8
+   NATIONAL CHARACTER SET AL16UTF16
+   EXTENT MANAGEMENT LOCAL
+   DATAFILE '/u01/app/oracle/oradata/mynewdb/system01.dbf'
+     SIZE 700M REUSE AUTOEXTEND ON NEXT 10240K MAXSIZE UNLIMITED
+   SYSAUX DATAFILE '/u01/app/oracle/oradata/mynewdb/sysaux01.dbf'
+     SIZE 550M REUSE AUTOEXTEND ON NEXT 10240K MAXSIZE UNLIMITED
+   DEFAULT TABLESPACE users
+      DATAFILE '/u01/app/oracle/oradata/mynewdb/users01.dbf'
+      SIZE 500M REUSE AUTOEXTEND ON MAXSIZE UNLIMITED
+   DEFAULT TEMPORARY TABLESPACE tempts1
+      TEMPFILE '/u01/app/oracle/oradata/mynewdb/temp01.dbf'
+      SIZE 20M REUSE AUTOEXTEND ON NEXT 640K MAXSIZE UNLIMITED
+   UNDO TABLESPACE undotbs1
+      DATAFILE '/u01/app/oracle/oradata/mynewdb/undotbs01.dbf'
+      SIZE 200M REUSE AUTOEXTEND ON NEXT 5120K MAXSIZE UNLIMITED
+   USER_DATA TABLESPACE usertbs
+      DATAFILE '/u01/app/oracle/oradata/mynewdb/usertbs01.dbf'
+      SIZE 200M REUSE AUTOEXTEND ON MAXSIZE UNLIMITED;
+
+
+
+-----------------------
+Create Oracle Database Syntax
+-----------------------
+
+http://www.dba-oracle.com/oracle_create_database.htm
+
+
+1.  Set ORACLE_SID
+
+
+export ORACLE_SID=test
+export ORACLE_HOME=/path/to/oracle/home
+
+
+2. Create a minimal init.ora
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# $ORACLE_HOME/dbs/init<sid>.ora
+
+control_files = (/path/to/control1.ctl,/path/to/control2.ctl,/path/to/control3.ctl)
+undo_management = AUTO
+undo_tablespace = UNDOTBS1
+db_name = test
+db_block_size = 8192
+sga_max_size = 1073741824 #one gig
+sga_target = 1073741824 #one gig
+
+
+3. Create a password file
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+$ORACLE_HOME/bin/orapwd file=$ORACLE_HOME/dbs/pwd<sid>.ora password=oracle entries=5
+
+
+4. Start the instance
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+sqlplus / as sysdba
+startup nomount
+
+5.  Create the database
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+create database test
+logfile group 1 ('/path/to/redo1.log') size 100M,
+            group 2 ('/path/to/redo2.log') size 100M,
+            group 3 ('/path/to/redo3.log') size 100M
+character set WE8ISO8859P1
+national character set utf8
+datafile '/path/to/system.dbf' size 500M autoextend on next 10M maxsize unlimited extent management local
+sysaux datafile '/path/to/sysaux.dbf' size 100M autoextend on next 10M maxsize unlimited
+undo tablespace undotbs1 datafile '/path/to/undotbs1.dbf' size 100M
+default temporary tablespace temp tempfile '/path/to/temp01.dbf' size 100M;
+
+6.  Run catalog and catproc
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@?/rdbms/admin/catalog.sql
+@?/rdbms/admin/catproc.sql
+
+7.  Change passwords
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+alter user sys identified by whatever;
+alter user system identified by whatever;
+
+
+OMF: minimal manual Oracle create database syntax
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+1.  Set your ORACLE_SID
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+export ORACLE_SID=test
+export ORACLE_HOME=/path/to/oracle/home
+
+
+2.  Create a minimal init.ora
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# $ORACLE_HOME/dbs/init<sid>.ora
+
+control_files = (/path/to/control1.ctl,/path/to/control2.ctl,/path/to/control3.ctl)
+undo_management = AUTO
+db_name = test
+db_block_size = 8192
+sga_max_size = 1073741824 #one gig
+sga_target = 1073741824 #one gig
+db_create_file_dest = /path/to/datafile/location #OMF
+db_create_online_log_dest_1 = /path/to/first/redo_and_control_file/location #OMF
+db_create_online_log_dest_2 = /path/to/second/redo_and_control_file/location #OMF
+db_recovery_file_dest = /path/to/flash/recovery/area #OMF
+#note it’s a good idea to also have background_dump_dest, user_dump_dest, and core_dump_dest here as well
+
+3. Create a password file
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+$ORACLE_HOME/bin/orapwd file=$ORACLE_HOME/dbs/pwd<sid>.ora password=oracle entries=5
+
+4. Start the instance
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+sqlplus / as sysdba
+startup nomount
+
+
+5.  Create the database
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+create database test
+character set WE8ISO8859P1
+national character set utf8
+undo tablespace undotbs1
+default temporary tablespace temp;
+create database test;
+
+6.  Run catalog and catproc
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@?/rdbms/admin/catalog.sql
+@?/rdbms/admin/catproc.sql
+
+
+Standard create Oracle database syntax
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+shutdown;
+startup nomount;
+
+CREATE CONTROLFILE REUSE DATABASE "OLDLSQ" NORESETLOGS
+NOARCHIVELOG
+MAXLOGFILES 16
+MAXLOGMEMBERS 2
+MAXDATAFILES 240
+MAXINSTANCES 1
+MAXLOGHISTORY 113
+LOGFILE
+GROUP 1 ('/u03/oradata/oldlsq/log1a.dbf','/u03/oradata/olslsq/log1b.dbf') SIZE 30M,
+GROUP 2 ('/u04/oradata/oldlsq/log2a.dbf','/u04/oradata/oldlsq/log2b.dbf') SIZE 30M
+DATAFILE '/u01/oradata/oldlsq/system01.dbf','/u01/oradata/oldlsq/mydatabase.dbf';
+
+-------------------------------------------------------------
+Creating Oracle Sample Database For Practice
+-------------------------------------------------------------
+
+https://www.oracletutorial.com/getting-started/create-oracle-sample-database-for-practice/
+https://www.javatpoint.com/sql-create-database
+
+sys as sysdba
+SQL> SHOW con_name;
+SQL> ALTER SESSION SET CONTAINER = pdborcl;
+SQL> SHOW con_name;
+SQL> ALTER DATABASE OPEN;
+SQL> CREATE USER OT IDENTIFIED BY Orcl1234;
+SQL> GRANT CONNECT, RESOURCE, DBA TO OT;
+SQL> CONNECT ot@pdborcl
+
+SQL>@c:\dbsample\ot_schema.sql
+SQL> SELECT table_name FROM user_tables ORDER BY table_name;
+
+Loading data into tables
+SQL>@c:\dbsample\ot_data.sql
+SQL> SELECT COUNT(*) FROM contacts;
+
+
+-------------------------------------------------------------
+create new DB
+-------------------------------------------------------------
+
+https://www.sqlsplus.com/7-steps-to-create-a-new-oracle-database-from-the-command-line/
+
+1. CONFIGURE THE CORRESPONDING ORACLE ENVIRONMENT VARIABLES /u01/app/oracle/product
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+echo $ORACLE_BASE # /opt/oracle/app
+echo $ORACLE_HOME # /opt/oracle/app/product/11.2.0/dbhome_1
+echo $ORACLE_SID # orcl
+export ORACLE_SID=dev
+
+2. CREATION OF INI-INITDEV.ORA FILE $ORACLE_HOME/DBS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cd $ORACLE_HOME/dbs
+ls # hc_DBUA0.dat  hc_orcl.dat  init.ora  initorcl.ora  lkORCL  orapworcl  spfileorcl.ora
+
+cp init.ora initdev.ora
+
+
+3. CREATE A SERVE PARAMETER FILE (SPFILE)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+sqlplus / as sysdba
+CREATE SPFILE FROM PFILE;
+
+ls -1 $ORACLE_HOME/dbs/
+
+4. RUN IDLE INSTANCE
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+STARTUP NOMOUNT;
+STARTUP NOMOUNT PFILE=/opt/oracle/app/product/11.2.0/dbhome_1/dbs/initdev.ora
+STARTUP NOMOUNT
+
+5. CREATING A NEW ORACLE DATABASE
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+CREATE DATABASE dev
+USER SYS IDENTIFIED BY DevSysPass
+USER SYSTEM IDENTIFIED BY DevSystemPass
+LOGFILE GROUP 1 ('/home/oracle/u02/oradata/dev/redomed_01.log') SIZE 50M,
+GROUP 2 ('/home/oracle/u02/oradata/dev/redomed_02.log') SIZE 50M,
+MAXLOGFILES 5
+MAXLOGHISTORY 10
+MAXDATAFILES 50
+CHARACTER SET US7ASCII
+NATIONAL CHARACTER SET AL16UTF16
+DATAFILE '/home/oracle/u02/oradata/dev/system01.dbf' SIZE 100M REUSE
+SYSAUX DATAFILE '/home/oracle/u02/oradata/dev/sysaux01.dbf' SIZE 100M REUSE
+DEFAULT TABLESPACE USERS
+DATAFILE '/home/oracle/u02/oradata/dev/users01.dbf'
+SIZE 50M REUSE AUTOEXTEND ON MAXSIZE UNLIMITED
+DEFAULT TEMPORARY TABLESPACE TEMPTS
+TEMPFILE '/home/oracle/u02/oradata/dev/tempts01.dbf'
+SIZE 30M REUSE
+UNDO TABLESPACE UNDOTS
+DATAFILE '/home/oracle/u02/oradata/dev/undots01.dbf'
+SIZE 100M REUSE AUTOEXTEND ON MAXSIZE UNLIMITED;
+
+
+initdev.ora.
+
+# vi initdev.ora
+DB_CREATE_FILE_DEST='/home/oracle/u02/oradata/dev'.
+
+
+SQL> CREATE DATABASE dev
+USER SYS IDENTIFIED BY DevSysPass
+USER SYSTEM IDENTIFIED BY DevSystemPass
+MAXLOGFILES 5
+MAXLOGHISTORY 10
+MAXDATAFILES 50
+CHARACTER SET US7ASCII
+NATIONAL CHARACTER SET AL16UTF16
+DEFAULT TABLESPACE USERS
+DEFAULT TEMPORARY TABLESPACE TEMPTS
+UNDO TABLESPACE UNDOTS
+
+7. VERIFICATION – COMPLETION AND COMMISSIONING
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+sqlplus / as sysdba
+SQL> SHUTDOWN;
+SQL> exit;
+SQL> STARTUP;
+
+------------------------------------------------------------------------------------
+https://www.dbasupport.com/forums/showthread.php?24872-ORA-01504-Control-File
+------------------------------------------------------------------------------------
+
+startup nomount pfile='c:\oracle\ora81\initBBBB.ora';
+
+SQL> CREATE DATABASE dbpro
+DATAFILE '/opt/app/dbpro/oradata/oracle/system01.dbf' SIZE 100M REUSE AUTOEXTEND ON
+UNDO TABLESPACE undotbs1 DATAFILE '/opt/app/dbpro/oradata/oracle/undotbs1.dbf' SIZE 50M REUSE AUTOEXTEND ON
+default temporary tablespace temp tempfile '/opt/app/dbpro/oradata/oracle/temp01.dbf' size 10m reuse autoextend on
+LOGFILE GROUP 1 '/opt/app/dbpro/oradata/oracle/redo01.log' SIZE 10M,
+GROUP 2 '/opt/app/dbpro/oradata/oracle/redo02.log' SIZE 10M;
+
+CREATE DATABASE dbpro
+set as db_name=dbpro in pfile;
+
+------------------------------------------------------------------------------------
+How to create database in oracle 19c step by step
+------------------------------------------------------------------------------------
+
+https://www.youtube.com/watch?v=ONWD0YmzQt0
+
+echo $ORACLE_HOME
+cd $ORACLE_HOME/bin
+./dbca
+

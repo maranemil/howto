@@ -1,0 +1,815 @@
+
+#####################################################
+https://hub.docker.com/r/chameleon82/oracle-xe-10g - OK
+https://hub.docker.com/v2/repositories/chameleon82/oracle-xe-10g/tags
+"size":272738290 - 0.272 BG
+#####################################################
+
+docker pull chameleon82/oracle-xe-10g
+docker run -d -p 49160:22 -p 49161:1521 -p 49162:8080 chameleon82/oracle-xe-10g
+
+Connect database with following setting:
+
+hostname: localhost
+port: 49161
+sid: xe
+username: system
+password: oracle
+For example, connect to database with sqlplus:
+
+sqlplus system/oracle@localhost:49161/xe
+Password for SYS & SYSTEM
+
+oracle
+Login by SSH
+
+ssh root@localhost -p 49160
+password: admin
+
+Login to web administrator on a browser:
+
+http://localhost:49162/apex
+
+su oracle
+sqlplus / as sysdba
+
+
+version: '3.1'
+services:
+   oracledb:
+      # docker pull chameleon82/oracle-xe-10g # 1.63 GB
+      image: chameleon82/oracle-xe-10g
+      restart: always
+      ports:
+        - "49160:22"
+        - "49161:1521"
+        - "49162:8080"
+
+
+#####################################################
+https://hub.docker.com/r/iatebes/oracle_11g - OK
+https://hub.docker.com/v2/repositories/iatebes/oracle_11g/tags
+size":2564727284 - 2.5 GB
+#####################################################
+
+docker run -d -p 1521:1521 iatebes/oracle_11g
+
+OS users
+root/install
+oracle/install
+
+DB users
+SYS/oracle
+
+SID
+orcl
+
+Database location
+/opt/oracle
+
+docker run -d --privileged --name oracle11g -p 1521:1521 -v <local_dpdump>:/opt/oracle/dpdump iatebes/oracle_11g
+
+oracle.yml
+
+version: '3.5'
+services:
+
+  oracle:
+    container_name: oracle11g
+    image: iatebes/oracle_11g
+    ports:
+      - "1521:1521"
+
+  php-oracle:
+    image: davidgaya/apache-php-oci
+    ports:
+      - "8080:8080"
+
+
+
+save img
+
+docker save iatebes/oracle_11g -o iatebes_oracle_11g.tar
+docker load -i iatebes_oracle_11g.tar
+
+
+
+
+
+#
+# https://hub.docker.com/r/iatebes/oracle_11g
+#
+# docker run -d -p 1521:1521 iatebes/oracle_11g
+#
+# OS users
+# root/install
+# oracle/install
+#
+# DB users
+# SYS/oracle
+#
+# SID
+# orcl
+#
+# Database location
+# /opt/oracle
+#
+# su - oracle
+# source oraenv
+# (Enter SID) orcl
+# The Oracle base for ORACLE_HOME=/opt/oracle/app/product/11.2.0/dbhome_1 is /opt/oracle/app
+# sqlplus / as sysdba
+#
+# Connected to:
+# Oracle Database 11g Enterprise Edition Release 11.2.0.1.0 - 64bit Production
+# With the Partitioning, Oracle Label Security, OLAP, Data Mining,
+# Oracle Database Vault and Real Application Testing options
+#
+# SQL> select username from dba_users order by 1; # 30 rows selected.
+# SQL> SELECT USERNAME FROM ALL_USERS ORDER BY USERNAME;
+# SQL> SELECT TABLESPACE_NAME FROM USER_TABLESPACES;
+#
+# TABLESPACE_NAME
+#------------------------------
+# SYSTEM
+# SYSAUX
+# UNDOTBS1
+# TEMP
+# USERS
+#
+# select * from dba_users order by 1;
+Footer
+© 2022 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+
+
+
+#####################################################
+https://hub.docker.com/r/mritschel/oracle12cr1_base
+https://hub.docker.com/v2/repositories/mritschel/oracle12cr1_base/tags
+size:8287290258 - 8.28 GB
+#####################################################
+
+docker pull mritschel/oracle12cr1_base
+
+docker run -d -p 8080:8080 -p 5500:5500 -p 1521:1521 -v .:/u01/oracle/oradata  --name oracle12cr2_base mritschel/oracle12cr1_base
+
+Environment variable	Default value	Comments
+DBCA_TOTAL_MEMORY	1024	Keep in mind that DBCA fails if you set this value too low
+ORACLE_BASE	/u01/app/oracle	Oracle Base directory
+ORACLE_HOME	/u01/app/oracle/product/12.1.0.2/dbhome_1	Oracle Home directory
+PATH	$ORACLE_HOME/bin:$ORACLE_HOME/OPatch/:/usr/sbin:$PATH \	Path
+ORACLE_SID	ORCLCDB	The Oracle SID
+SOFTWARE_HOME	$ORACLE_BASE/install	Install directory
+SCRIPTS_HOME	$ORACLE_BASE	Scripts directory
+
+
+Database Connections
+sqlplus sys/
+
+https://localhost:5500/em/
+
+Changing the admin accounts passwords
+docker exec <container name> ./set_Password.sh <your password>
+
+Backup
+docker stop oracle12cr2_base
+docker run --rm --volumes-from oracle12cr2_base -v $(pwd):/backup linux tar czvf /backup/oracle12cr2_base.tar.gz /u01/app/oracle
+docker start oracle12cr2_base
+
+
+  oracle:
+    # docker pull mritschel/oracle12cr1_base
+    container_name: oracle12cr2_base
+    image: mritschel/oracle12cr1_base
+    ports:
+      - "1521:1521"
+      - "8080:8080"
+      - "5500:5500"
+    volumes:
+      - .:/u01/oracle/oradata
+
+
+#####################################################
+https://hub.docker.com/r/babim/oracledatabase
+https://hub.docker.com/v2/repositories/babim/oracledatabase/tags
+size":5100100790 - 5.10 BG
+#####################################################
+
+docker pull babim/oracledatabase:11.2.0.4
+docker run -d -p 8080:8080 -p 1521:1521 babim/oracledatabase:11.2.0.4
+docker run -d -p 8080:8080 -p 1521:1521 -v /my/oracle/data:/u01/app/oracle babim/oracledatabase:11.2.0.4
+docker run -d -p 8080:8080 -p 1521:1521 -v /my/oracle/data:/u01/app/oracle -e DBCA_TOTAL_MEMORY=1024 babim/oracledatabase:11.2.0.4
+
+Connect database with following setting:
+
+hostname: localhost
+port: 1521
+sid: EE
+service name: EE.oracle.docker
+username: system
+password: oracle
+To connect using sqlplus:
+
+sqlplus system/oracle@//localhost:1521/EE.oracle.docker
+Password for SYS & SYSTEM:
+
+oracle
+
+Connect to Oracle Enterprise Management console with following settings:
+
+http://localhost:8080/em
+user: sys
+password: oracle
+connect as sysdba: true
+
+web management console is enabled. To disable add env variable:
+
+docker run -d -e WEB_CONSOLE=false -p 1521:1521 -v /my/oracle/data:/u01/app/oracle babim/oracledatabase:11.2.0.4
+#You can Enable/Disable it on any time
+
+
+Start with additional init scripts or dumps:
+
+docker run -d -p 1521:1521 -v /my/oracle/data:/u01/app/oracle -v /my/oracle/init/SCRIPTSorSQL:docker-entrypoint-initdb.d babim/oracledatabase:11.2.0.1
+
+
+#####################################################
+https://hub.docker.com/r/banglamon/oracle193db
+https://hub.docker.com/v2/repositories/banglamon/oracle193db/tags
+"size":2856552905, = 2.8 BG
+#####################################################
+
+docker login -u username
+docker pull banglamon/oracle193db:19.3.0-ee
+docker image ls|grep oracle
+
+sudo su - oracle docker run -d --name oracle19db
+-p 1521:1521
+-e ORACLE_SID=MONGO
+-e ORACLE_PDB=MONGOPDB
+-e ORACLE_PWD=Oracle123
+-v /u01/app/oracle/oradata:/opt/oracle/oradata
+banglamon/oracle193db:19.3.0-ee
+
+docker exec -it oracle19db bash -c "source /home/oracle/.bashrc; sqlplus /nolog”
+
+SQL> conn / as sysdba
+SQL> select name from v$database;
+SQL> show con_name
+SQL> show pdbs
+SQL> select tablespace_name from dba_tablespaces;
+
+Create a sample table
+
+connect sys as sysdba;
+alter session set "_ORACLE_SCRIPT"=true;
+create user dummy identified by dummy;
+GRANT CONNECT, RESOURCE, DBA TO dummy;
+
+create table DockerTst (id int,name varchar2(20));
+SQL> conn / as sysdba
+SQL> show con_name
+SQL> show pdbs
+SQL> alter session set container=BONGOPDB;
+SQL> create user dummy identified by dummy;
+SQL> GRANT CONNECT, RESOURCE, DBA TO dummy;
+SQL> create table Docker (id int,name varchar2(20));
+
+#####################################################
+https://hub.docker.com/r/orangehrm/oracle-xe-11g
+https://hub.docker.com/v2/repositories/orangehrm/oracle-xe-11g/tags
+size":833936984 = 0.83BG
+#####################################################
+
+docker pull alexeiled/docker-oracle-xe-11g
+docker run -d --shm-size=2g -p 1521:1521 -p 8080:8080 alexeiled/docker-oracle-xe-11g
+
+
+Start Oracle XE and execute SQL on startup
+Put your *.sql files for database init into some local folder and mount this folder during container startup to /etc/entrypoint-initdb.d volume.
+
+docker run -d --shm-size=1g -p 8080:8080 -p 1521:1521 -v /local-initdb:/etc/entrypoint-initdb.d alexeiled/docker-oracle-xe-11g
+Connect
+Connect database with following setting:
+
+hostname: localhost
+port: 1521
+sid: xe
+username: system
+password: oracle
+Password for SYS user
+
+oracle
+Connect to Oracle Application Express web management console with following settings:
+
+url: http://localhost:8080/apex
+workspace: internal
+user: admin
+password: oracle
+
+#####################################################
+https://hub.docker.com/r/loliconneko/oracle-ee-11g
+https://hub.docker.com/v2/repositories/loliconneko/oracle-ee-11g/tags
+size":2412266378 = 2.4 BG
+#####################################################
+
+Oracle Enterprise Edition 11g Release 2
+
+docker pull loliconneko/oracle-ee-11g
+docker run -d -p 8080:8080 -p 1521:1521 loliconneko/oracle-ee-11g
+docker run -d -p 8080:8080 -p 1521:1521 -v /my/oracle/data:/u01/app/oracle loliconneko/oracle-ee-11g
+docker run -d -p 8080:8080 -p 1521:1521 -v /my/oracle/data:/u01/app/oracle -e DBCA_TOTAL_MEMORY=1024 loliconneko/oracle-ee-11g
+
+Connect database with following setting:
+
+hostname: localhost
+port: 1521
+sid: EE
+service name: EE.oracle.docker
+username: system
+password: oracle
+To connect using sqlplus:
+
+sqlplus system/oracle@//localhost:1521/EE.oracle.docker
+Password for SYS & SYSTEM:
+
+oracle
+
+
+Connect to Oracle Enterprise Management console with following settings:
+
+http://localhost:8080/em
+user: sys
+password: oracle
+connect as sysdba: true
+
+
+
+#####################################################
+https://hub.docker.com/r/bofm/oracle12c
+https://hub.docker.com/v2/repositories/bofm/oracle12c/tags
+"size":131859906,  = 0.13 BG
+#####################################################
+
+# Create and start
+docker run -d --shm-size 1GB --name oracle_database -p 1521:1521 -v /data bofm/oracle12c
+# Stop
+docker stop -t 120 oracle_database
+# Start again
+docker start oracle_database
+
+
+# Start
+docker run -it --shm-size 1GB --name oracle_database -p 1521:1521 -v /data bofm/oracle12c
+# `ctrl+c` (SIGINT) to stop
+
+
+# The saved image can be loaded from the file
+# The image will be loaded with tag bofm/oracle12c:created
+docker load < docker_img_oracle_database_created_YYYY-MM-DD.tgz
+
+# Run the image in the new container
+# Daemon
+docker run -d --shm-size 1GB --name oracle_database -p 1521:1521 bofm/oracle12c:created
+# Foreground
+docker run -it --shm-size 1GB --name oracle_database -p 1521:1521 bofm/oracle12c:created
+
+
+Logs
+
+# Check all the logs in one place
+docker logs oracle_database
+
+# Check alert log
+docker logs oracle_database | grep alertlog:
+
+# Check listener log
+docker logs oracle_database | grep listener:
+SQL*Plus, RMAN or any other program
+
+# Bash
+# as root
+docker exec -it -u root oracle_database bash
+# as oracle
+docker exec -it oracle_database bash
+
+# Run sqlplus in the running container
+docker exec -it oracle_database sqlplus / as sysdba
+
+# Run rman in the running container
+docker exec -it oracle_database rman target /
+
+# Run sqlplus in a separate container and
+# connect to the database in the linked container
+docker run -it --rm --link oracle_database:oradb bofm/oracle12c sqlplus sys/sys@oradb/ORCL as sysdba
+
+
+Start listener only (not sure if anybody needs it :) )
+
+docker run -d --name listener -p 1521:1521 bofm/oracle12c listener
+# Or link it to the running container
+docker run -d --name listener -p 1521:1521 --link <database_container> bofm/oracle12c listener
+
+
+#####################################################
+https://hub.docker.com/r/acktsw/oracle-xe-11g
+https://hub.docker.com/v2/repositories/acktsw/oracle-xe-11g/tags
+size":405468880, = 0.40 GB
+#####################################################
+
+docker pull sath89/oracle-xe-11g
+docker run -d -p 8080:8080 -p 1521:1521 sath89/oracle-xe-11g
+docker run -d -p 8080:8080 -p 1521:1521 -v /my/oracle/data:/u01/app/oracle sath89/oracle-xe-11g
+
+
+##Consider this formula before customizing:
+#processes=x
+#sessions=x*1.1+5
+#transactions=sessions*1.1
+docker run -d -p 8080:8080 -p 1521:1521 -v /my/oracle/data:/u01/app/oracle\
+-e processes=1000 \
+-e sessions=1105 \
+-e transactions=1215 \
+sath89/oracle-xe-11g
+
+
+Run with custom sys password:
+
+docker run -d -p 8080:8080 -p 1521:1521 -e DEFAULT_SYS_PASS=sYs-p@ssw0rd sath89/oracle-xe-11g
+Connect database with following setting:
+
+hostname: localhost
+port: 1521
+sid: xe
+username: system
+password: oracle
+Password for SYS & SYSTEM:
+
+oracle
+Connect to Oracle Application Express web management console with following settings:
+
+http://localhost:8080/apex
+workspace: INTERNAL
+user: ADMIN
+password: oracle
+
+
+Auto import of sh sql and dmp files
+
+docker run -d -p 8080:8080 -p 1521:1521 -v /my/oracle/data:/u01/app/oracle -v /my/oracle/init/sh_sql_dmp_files:/docker-entrypoint-initdb.d sath89/oracle-xe-11g
+
+
+#####################################################
+https://hub.docker.com/r/rohitbasu77/oracle11g
+https://hub.docker.com/v2/repositories/rohitbasu77/oracle11g/tags
+size":1450451009 = 1.45 GB
+#####################################################
+
+docker pull rohitbasu77/oracle11g:latest
+docker run -d --name oracle11g -p 40022:22 -p 41521:1521 -p 48080:8080 rohitbasu77/oracle11g:latest
+
+Connect database:
+hostname: localhost or docker machine ip
+port: 41521
+sid: xe
+username: system
+password: oracle
+Password for SYS & SYSTEM is oracle
+Password for fareuser, searchuser, bookinguser, checkinuser is rohit123
+
+Login by SSH:
+ssh root@docker_machine_ip -p 40022
+
+password: admin
+
+#####################################################
+https://hub.docker.com/r/medgetablelevvel/oracle-12c-base
+https://hub.docker.com/v2/repositories/medgetablelevvel/oracle-12c-base/tags
+size":3239471107 = 3.23 GB
+#####################################################
+
+Build from the sath89/oracle-12c container with the following Dockerfile:
+
+FROM sath89/oracle-12c
+ENV WEB_CONSOLE=false
+ENV IMPORT_FROM_VOLUME=true
+
+#####################################################
+https://hub.docker.com/r/klwang/oracle10g
+https://hub.docker.com/v2/repositories/klwang/oracle10g/tags
+ize":3387488481 = 3.38 GB
+#####################################################
+
+docker pull klwang/oracle10g
+
+come from vkanjilal/oracle10g
+
+enable sshd
+Login/password : sys / oracle
+Login/password : system / oracle
+Oracle_SID: orcl
+System Oracle user : oracle / oracle
+System Root user : root / oracle
+Start listener : lsnrctl start
+Usage:
+
+docker run -p 2222:22 -p 1521:1521 -d -t klwang/oracle10g
+wait util database create finish and sshd came up
+
+
+#####################################################
+https://hub.docker.com/r/daggerok/oracle
+https://hub.docker.com/v2/repositories/daggerok/oracle/tags
+"size":717703694, = 0.71 GB
+#####################################################
+
+
+# xe
+docker run -d --rm --name oracle-xe \
+  --shm-size=1g \
+  -p 1521:1521 \
+  -e ORACLE_PWD=password \
+  daggerok/oracle
+# daggerok/oracle:xe
+# daggerok/oracle:11.2.0.2-xe
+
+# se
+docker run -d --rm --name oracle-se \
+  --shm-size=1g \
+  -p 1521:1521 \
+  -e ORACLE_SID=ORCLCDB \
+  -e ORACLE_PWD=password \
+  -e ORACLE_PDB=ORCLPDB1 \
+  -e ORACLE_CHARACTERSET=AL32UTF8 \
+  daggerok/oracle:12.1.0.2-se2
+# daggerok/oracle:12.1.0.2-se
+# daggerok/oracle:latest
+# daggerok/oracle:se2
+# daggerok/oracle:se
+
+
+
+docker-compose
+simple
+
+version: "2.1"
+
+services:
+  oracle-xe:
+    image: daggerok/oracle:xe
+    shm_size: 1g
+    environment:
+      ORACLE_PWD: password
+    ports: ["1521:1521"]
+    networks: [backing-services]
+
+networks:
+  backing-services:
+    driver: bridge
+
+advanced
+
+version: "2.1"
+
+services:
+  oracle-se:
+    image: daggerok/oracle:se
+    shm_size: 1g
+    environment:
+      ORACLE_SID: xe
+      ORACLE_PWD: password
+    ports:
+    - "1521:1521"
+    - "5500:5500"
+    volumes:
+    - "oracle-se2-data:/opt/oracle/oradata"
+    - "./db-startup-migration-scripts:/opt/oracle/scripts/startup"
+    - "./db-setup-migration-scripts:/docker-entrypoint-initdb.d/setup"
+    networks: [backing-services]
+    restart: unless-stopped
+
+volumes:
+  oracle-se2-data: {}
+
+networks:
+  backing-services:
+    driver: bridge
+
+
+
+prepare yours! (without volumes config, so you can commit your own oracle and re-use it later)
+
+# 1. start container with needed configurations
+docker container run \
+  --shm-size=1g \
+  -p 8080:8080 -p 1521:1521 \
+  -e ORACLE_PWD=password \
+  -it --name oracle-xe \
+  daggerok/oracle:prebuiltdb
+
+# 2. wait until oracle database will be ready and gracefully stop oracle-xe container
+docker container stop oracle-xe
+
+# 3. commit container as an reusable image
+docker commit -m 'Oracle XE with credentials SYSTEM / password' oracle-xe daggerok/oracle-xe:latest
+
+# 4. docker push daggerok/oracle-xe:latest
+
+# 5. usage (somewhere else): now you can re-use it without additional configurations, justl ike so:
+docker container run \
+  --shm-size=1g \
+  -p 8080:8080 -p 1521:1521 \
+  -it --name oracle-xe \
+  daggerok/oracle-xe
+
+
+Oracle XE for rapid development
+
+docker container run \
+  --shm-size=1g \
+  -p 8080:8080 -p 1521:1521 \
+  -it --name oracle-xe \
+  daggerok/oracle-xe
+
+NOTE 1: username: SYSTEM, password: password NOTE 2: using flag --shm-size=1g from my experience is required
+
+
+
+#####################################################
+https://hub.docker.com/r/wnameless/oracle-xe-11g-r2
+https://hub.docker.com/v2/repositories/wnameless/oracle-xe-11g-r2/tags
+size":639994104 = 0.63 GB
+#####################################################
+
+docker pull wnameless/oracle-xe-11g-r2
+docker run -d -p 49161:1521 wnameless/oracle-xe-11g-r2
+docker run -d -p 49161:1521 -e ORACLE_ALLOW_REMOTE=true wnameless/oracle-xe-11g-r2
+docker run -d -p 49161:1521 -e ORACLE_DISABLE_ASYNCH_IO=true wnameless/oracle-xe-11g-r2
+docker run -d -p 49161:1521 -e ORACLE_ENABLE_XDB=true wnameless/oracle-xe-11g-r2
+docker run -d -p 49161:1521 -p 8080:8080 wnameless/oracle-xe-11g-r2
+
+
+# Login http://localhost:8080/apex/apex_admin with following credential:
+username: ADMIN
+password: admin
+
+docker run -d -p 49161:1521 -p 8080:8080 wnameless/oracle-xe-11g:18.04-apex
+
+# Login http://localhost:8080/apex/apex_admin with following credential:
+username: ADMIN
+password: Oracle_11g
+
+
+Connect database with following setting:
+
+hostname: localhost
+port: 49161
+sid: xe
+username: system
+password: oracle
+Password for SYS & SYSTEM
+
+oracle
+
+Support custom DB Initialization and running shell scripts
+
+# Dockerfile
+FROM wnameless/oracle-xe-11g-r2
+
+ADD init.sql /docker-entrypoint-initdb.d/
+ADD script.sh /docker-entrypoint-initdb.d/
+
+
+#####################################################
+https://hub.docker.com/r/pvargacl/oracle-xe-18.4.0
+https://hub.docker.com/v2/repositories/pvargacl/oracle-xe-18.4.0/tags
+size":6660078823 = 6.6 GB
+#####################################################
+https://github.com/oracle/docker-images/blob/master/OracleDatabase/SingleInstance/README.md
+
+docker pull pvargacl/oracle-xe-18.4.0:latest
+docker run --name oracle18 -d -p 1521:1521 pvargacl/oracle-xe-18.4.0
+
+The password for system is oracle
+
+#####################################################
+https://hub.docker.com/r/doctorkirk/oracle-19c
+https://hub.docker.com/v2/repositories/doctorkirk/oracle-19c/tags
+size":5191810081, = 5.5 GB
+#####################################################
+
+
+Copy the image
+
+docker pull doctorkirk/oracle-19c
+
+Create local directory
+
+mkdir -p /your/custom/path/oracle-19c/oradata
+
+cd /your/custom/path/
+
+sudo chown -R 54321:54321 oracle-19c/
+
+Run the Container
+
+docker run --name oracle-19c \
+-p 1521:1521 \
+-e ORACLE_SID=[ORACLE_SID] \
+-e ORACLE_PWD=[ORACLE_PASSWORD] \
+-e ORACLE_CHARACTERSET=[CHARSET] \
+-v /your/custom/path/oracle-19c/oradata/:/opt/oracle/oradata \
+doctorkirk/oracle-19c
+
+
+Characterset Reference Table
+Charset Value	Default *
+WE8MSWIN1252	Y
+AL16UTF8	N
+US7ASCII	N
+
+
+#####################################################
+https://github.com/oracle/docker-images
+#####################################################
+https://docs.oracle.com/en/database/oracle/oracle-database/index.html
+https://docs.oracle.com/en/database/oracle/oracle-database/21/lacli/index.html
+https://docs.oracle.com/en/database/oracle/oracle-database/21/xeinl/index.html
+https://docs.oracle.com/en/database/oracle/oracle-database/21/ladbi/index.html
+https://docs.oracle.com/en/database/oracle/oracle-database/21/cwlin/index.html
+https://docs.oracle.com/en/database/oracle/oracle-database/21/deeck/index.html
+https://docs.oracle.com/en/database/oracle/oracle-database/21/deeck/index.html#DEEDK-GUID-375BBD63-755D-4477-AE2A-13384B7B1631
+https://docs.oracle.com/en/database/oracle/oracle-database/21/deeck/index.html#DEEDK-GUID-6F97BC9A-15E5-4D59-B293-99D8605D9C85
+https://docs.oracle.com/en/database/oracle/oracle-database/21/deeck/index.html#DEEDK-GUID-E9978222-E0CF-4899-B767-3D6626918E78
+https://docs.oracle.com/en/database/oracle/oracle-database/21/deeck/index.html#DEEDK-GUID-6589D4A1-14F3-42B3-8461-C9A7B840D148
+https://docs.oracle.com/en/database/oracle/oracle-database/21/deeck/index.html#DEEDK-GUID-6F97BC9A-15E5-4D59-B293-99D8605D9C85
+https://docs.oracle.com/en/database/oracle/oracle-database/21/deeck/index.html#DEEDK-GUID-5F0A8AA3-D2E7-4377-B0B7-FEE9755883F5
+https://docs.oracle.com/en/database/oracle/oracle-database/21/deeck/index.html#DEEDK-GUID-A835E50E-5FBA-4482-8987-29ADAFA79C79
+https://github.com/oracle/docker-images/tree/main/OracleDatabase/SingleInstance#running-oracle-database-express-edition-in-a-docker-container
+
+
+Connecting to the Database from Within the Container
+
+
+docker exec -it dbname sqlplus / as sysdba
+docker exec -it dbname sqlplus sys/cdb-user-password@cdb-sid as sysdba
+docker exec -it dbname sqlplus system/cdb-user-password@cdb-sid
+docker exec -it dbname sqlplus pdbadmin/pdb-user-password@pdbname
+
+
+Connecting to the Database from Outside the Container
+
+docker port db-name
+sqlplus sys/cdb-user-password@//localhost:1521/cdb-sid as sysdba
+sqlplus system/cdb-user-password@//localhost:1521/cdb-sid
+sqlplus pdbadmin/pdb-password>@//localhost:1521/pdbname
+
+
+
+Change the Administrative Users Password for the Database
+docker exec dbname ./setPassword.sh pdb-password
+
+
+
+Use Custom Configuration Parameters for the Database on Docker
+
+
+ docker run -d --name container_name \
+ -p host_port:1521 -p host_port:5500 \
+ -e ORACLE_SID=cdb-system-identifer \
+ -e ORACLE_PDB=pdb-name \
+ -e ORACLE_PWD=oracle-user-password \
+ -e INIT_SGA_SIZE=cdb-database-sga-memory-in-mb \
+ -e INIT_PGA_SIZE=cdb-database-pga-memory-in-mb \
+ -e ORACLE_EDITION=ee-or-se-database-edition \
+ -e ORACLE_CHARACTERSET=character-set \
+ -e ENABLE_ARCHIVELOG=[true|false]
+ -v [host-mount-point:]/opt/oracle/oradata \
+container-registry.oracle.com/database/enterprise:21.3.0
+
+docker run -d --name oracle-db
+  container-registry.oracle.com/database/enterprise:21.3.0.0
+
+docker logs oracle-db
+
+
+
+Reuse the Existing Database
+
+docker run -d --name dbname -v
+OracleDBData:/opt/oracle/oradata
+container-registry.oracle.com/database/enterprise:21.3.0
+
+docker run -d --name dbname -v
+writable-directory-path:/opt/oracle/oradata
+container-registry.oracle.com/database/enterprise:21.3.0
+
+
+docker run -d --name dbtest -v
+/home/oracle/myScripts:/opt/oracle/scripts/startup
+container-registry.oracle.com/database/enterprise:21.3.0
+

@@ -193,7 +193,20 @@ Openssh
 https://vscodium.com/
 Darktable
 WireShark/TCPdump
+```
 
 
+```
+########################################
+ Linux Sticky Notes With Xpad
+########################################
 
+https://www.makeuseof.com/tag/5-little-useful-sticky-notes-app-for-linux/
+https://askubuntu.com/questions/245019/what-alternatives-for-sticky-notes-are-available
+
+sudo apt install xpad
+
+sudo apt install knotes
+sudo apt-get install tomboy
+sudo apt-get install xfce4-notes*
 ```

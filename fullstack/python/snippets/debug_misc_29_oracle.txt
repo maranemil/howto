@@ -189,3 +189,407 @@ SQL> SPOOL C:\External_Tables\emp.csv
 SQL> @C:\External_Tables\emp_query.sql
 SQL> SPOOL OFF
 host type C:\External_Tables\emp.csv
+
+
+
+##############################################################
+Connect Python to Oracle Database
+##############################################################
+
+https://datatofish.com/how-to-connect-python-to-an-oracle-database-using-cx_oracle/
+https://blogs.oracle.com/coretec/post/python-mit-oracle-database-so-einfach-geht-das
+https://www.oracletutorial.com/python-oracle/connecting-to-oracle-database-in-python/
+https://oracle.github.io/python-cx_Oracle/samples/tutorial/Python-and-Oracle-Database-Scripting-for-the-Future.html
+https://www.geeksforgeeks.org/oracle-database-connection-in-python/
+https://stackoverflow.com/questions/3521692/how-can-i-access-oracle-from-python
+
+
+sudo apt install python3-pip
+pip install cx_Oracle
+
+python -m pip install cx_Oracle --upgrade
+python3 -m pip install cx_Oracle --upgrade
+
+
+open tnsnames.ora file and look for your desired connection.
+
+
+
+import cx_Oracle
+
+dsn_tns = cx_Oracle.makedsn('Host Name', 'Port Number', service_name='Service Name')
+conn = cx_Oracle.connect(user=r'User Name', password='Personal Password', dsn=dsn_tns)
+
+c = conn.cursor()
+c.execute('select * from database.table') # use triple quotes if you want to spread your query across multiple lines
+for row in c:
+    print (row[0], '-', row[1]) # this only shows the first two columns. To add an additional column you'll need to add , '-', row[2], etc.
+#conn.close()
+
+
+select sys_context('userenv','service_name') from dual
+select username from dba_users
+
+...
+
+import cx_Oracle
+db_connection_string = 'username/passwort@hostname.de.oracle.com:1521/servicename'
+con = cx_Oracle.connect(db_connection_string)
+print("Database version:", con.version)
+con.close()
+
+
+import cx_Oracle
+db_connection_string = 'username/passwort@servicename'
+con = cx_Oracle.connect(db_connection_string)
+print("Database version:", con.version)
+con.close()
+
+...
+
+import cx_Oracle
+con = cx_Oracle.connect('username/password@localhost')
+cursor = con.cursor()
+cursor.execute(sqlquery)
+cursor.executemany(sqlqueries)
+cursor.close()
+con.close()
+
+
+
+1. Creation of table
+------------------------
+# importing module
+import cx_Oracle
+
+# Create a table in Oracle database
+try:
+
+    con = cx_Oracle.connect('tiger/scott@localhost:1521/xe')
+    print(con.version)
+
+    # Now execute the sqlquery
+    cursor = con.cursor()
+
+    # Creating a table employee
+    cursor.execute(
+        "create table employee(empid integer primary key, name varchar2(30), salary number(10, 2))")
+
+    print("Table Created successfully")
+
+except cx_Oracle.DatabaseError as e:
+    print("There is a problem with Oracle", e)
+
+# by writing finally if any error occurs
+# then also we can close the all database operation
+finally:
+    if cursor:
+        cursor.close()
+    if con:
+        con.close()
+
+
+..
+
+2. Inserting a record into table using execute() method
+------------------------
+
+# importing module
+import cx_Oracle
+
+# Inserting a record into a table in Oracle database
+try:
+    con = cx_Oracle.connect('tiger/scott@localhost:1521/xe')
+    cursor = con.cursor()
+
+    #con.autocommit = True
+    # Inserting a record into table employee
+    cursor.execute('insert into employee values(10001,\'Rahul\',50000.50)')
+
+    # commit() to make changes reflect in the database
+    con.commit()
+    print('Record inserted successfully')
+
+except cx_Oracle.DatabaseError as e:
+    print("There is a problem with Oracle", e)
+
+# by writing finally if any error occurs
+# then also we can close the all database operation
+finally:
+    if cursor:
+        cursor.close()
+    if con:
+        con.close()
+
+
+ 3. Inserting multiple records into a table using executemany() method
+------------------------
+
+import cx_Oracle
+
+# Load data from a csv file into Oracle table using executemany
+try:
+    con = cx_Oracle.connect('tiger/scott@localhost:1521/xe')
+
+except cx_Oracle.DatabaseError as er:
+    print('There is an error in Oracle database:', er)
+
+else:
+    try:
+        cur = con.cursor()
+        data = [[10007, 'Vikram', 48000.0], [10008, 'Sunil', 65000.1], [10009, 'Sameer', 75000.0]]
+
+        cur = con.cursor()
+        # Inserting multiple records into employee table
+        # (:1,:2,:3) are place holders. They pick data from a list supplied as argument
+        cur.executemany('insert into employee values(:1,:2,:3)', data)
+
+    except cx_Oracle.DatabaseError as er:
+        print('There is an error in Oracle database:', er)
+
+    except Exception as er:
+        print(er)
+
+    else:
+        # To commit the transaction manually
+        con.commit()
+        print('Multiple records are inserted successfully')
+
+finally:
+    if cur:
+        cur.close()
+    if con:
+        con.close()
+
+
+
+4. View result set from a select query using fetchall(), fetchmany(int), fetchone()
+------------------------
+
+import cx_Oracle
+
+try:
+    con = cx_Oracle.connect('tiger/scott@localhost:1521/xe')
+
+except cx_Oracle.DatabaseError as er:
+    print('There is an error in the Oracle database:', er)
+
+else:
+    try:
+        cur = con.cursor()
+
+        # fetchall() is used to fetch all records from result set
+        cur.execute('select * from employee')
+        rows = cur.fetchall()
+        print(rows)
+
+        # fetchmany(int) is used to fetch limited number of records from result set based on integer argument passed in it
+        cur.execute('select * from employee')
+        rows = cur.fetchmany(3)
+        print(rows)
+
+        # fetchone() is used fetch one record from top of the result set
+        cur.execute('select * from employee')
+        rows = cur.fetchone()
+        print(rows)
+
+    except cx_Oracle.DatabaseError as er:
+        print('There is an error in the Oracle database:', er)
+
+    except Exception as er:
+        print('Error:'+str(er))
+
+    finally:
+        if cur:
+            cur.close()
+
+finally:
+    if con:
+        con.close()
+
+
+
+5. View result set from a select query using bind variable
+------------------------
+
+import cx_Oracle
+
+try:
+    con = cx_Oracle.connect('tiger/scott@localhost:1521/xe')
+
+except cx_Oracle.DatabaseError as er:
+    print('There is error in the Oracle database:', er)
+
+else:
+    try:
+        cur = con.cursor()
+
+        cur.execute('select * from employee where salary > :sal', {'sal': 50000})
+        rows = cur.fetchall()
+        print(rows)
+
+    except cx_Oracle.DatabaseError as er:
+        print('There is error in the Oracle database:', er)
+
+    except Exception as er:
+        print('Error:', er)
+
+    finally:
+        if cur:
+            cur.close()
+
+finally:
+    if con:
+        con.close()
+
+
+..............................
+
+https://python-oracledb.readthedocs.io/en/latest/user_guide/connection_handling.html
+
+import oracledb
+import getpass
+
+userpwd = getpass.getpass("Enter password: ")
+connection = oracledb.connect(user="hr", password=userpwd, dsn="dbhost.example.com/orclpdb")
+
+userpwd = os.environ.get("PYTHON_PASSWORD")
+connection = oracledb.connect(user="hr", password=userpwd, dsn="localhost/orclpdb")
+
+import os
+
+userpwd = os.environ.get("PYTHON_PASSWORD")
+connection = oracledb.connect(user="hr", password=userpwd, host="localhost", port=1521, service_name="orclpdb")
+
+params = oracledb.ConnectParams(host="my_host", port=my_port, service_name="my_service_name")
+conn = oracledb.connect(user="my_user", password="my_password", params=params)
+
+..............................
+
+import cx_Oracle
+
+conn_str = u'user/password@host:port/service'
+conn = cx_Oracle.connect(conn_str)
+c = conn.cursor()
+c.execute(u'select your_col_1, your_col_2 from your_table')
+for row in c:
+    print row[0], "-", row[1]
+conn.close()
+
+..............................
+
+
+import pandas as pd
+import cx_Oracle
+conn= cx_Oracle.connect('username/pwd@host:port/service_name')
+try:
+    query = '''
+         SELECT * from dual
+             '''
+    df = pd.read_sql(con = conn, sql = query)
+finally:
+    conn.close()
+df.head()
+
+..............................
+
+With SID:
+
+import cx_Oracle
+dsn_tns = cx_Oracle.makedsn('server', 'port', 'sid')
+conn = cx_Oracle.connect(user='username', password='password', dsn=dsn_tns)
+c = conn.cursor()
+c.execute('select count(*) from TABLE_NAME')
+for row in c:
+   print(row)
+conn.close()
+
+With Service Name:
+
+import cx_Oracle
+dsn_tns = cx_Oracle.makedsn('server', 'port', service_name='service_name')
+conn = cx_Oracle.connect(user='username', password='password', dsn=dsn_tns)
+c = conn.cursor()
+c.execute('select count(*) from TABLE_NAME')
+for row in c:
+   print(row)
+conn.close()
+
+..............................
+
+import cx_Oracle
+   dsn_tns = cx_Oracle.makedsn('host', 'port', service_name='give service name')
+   conn = cx_Oracle.connect(user='username', password='password', dsn=dsn_tns)
+   c = conn.cursor()
+   c.execute('select count(*) from schema.table_name')
+for row in c:
+   print row
+conn.close()
+
+..............................
+
+config.py
+
+username = 'OT'
+password = '<password>'
+dsn = 'localhost/pdborcl'
+port = 1512
+encoding = 'UTF-8'
+
+
+connect.py
+
+import cx_Oracle
+import config
+
+connection = None
+try:
+    connection = cx_Oracle.connect(
+        config.username,
+        config.password,
+        config.dsn,
+        encoding=config.encoding)
+
+    # show the version of the Oracle Database
+    print(connection.version)
+except cx_Oracle.Error as error:
+    print(error)
+finally:
+    # release the connection
+    if connection:
+        connection.close()
+
+
+
+
+connect_pool.py
+
+import cx_Oracle
+import config
+
+# Create the session pool
+pool = cx_Oracle.SessionPool(
+    config.username,
+    config.password,
+    config.database,
+    min=100,
+    max=100,
+    increment=0,
+    encoding=config.encoding
+)
+
+# Acquire a connection from the pool
+connection = pool.acquire()
+
+# Use the pooled connection
+print('Using the connection')
+
+# Release the connection to the pool
+pool.release(connection)
+
+# Close the pool
+pool.close()
+
+
+
+
