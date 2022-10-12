@@ -1,0 +1,804 @@
+
+#################################################################
+Oracle Database import .sql file by command prompt
+#################################################################
+
+https://stackoverflow.com/questions/17723152/oracle-database-import-sql-file-by-command-prompt
+https://docs.oracle.com/cd/B25329_01/doc/appdev.102/b25108/xedev_sqlplus.htm
+https://www.techonthenet.com/oracle/questions/script.php
+https://www.anycodings.com/1questions/5118428/oracle-database-import-sql-file-by-command-prompt
+https://www.jetbrains.com/help/idea/import-data.html
+
+sqlplus user_name/user_password@connect_string @path\your_sql.sql
+sqlplus user/password@connect @/Nisarg/NEult/softpoint.sql
+
+
+https://ora14.informatik.haw-hamburg.de/sutil/datapump-import-utility.html#GUID-BED8270E-9909-4B67-8CD5-569CB8BF24A6
+https://docs.oracle.com/cd/E17781_01/server.112/e18804/impexp.htm#BABHFHGH
+https://docs.oracle.com/cd/B19306_01/server.102/b14215/dp_import.htm#i1007024
+https://docs.oracle.com/cd/E17781_01/server.112/e18804/impexp.htm#BABCJCBD
+https://docs.oracle.com/cd/E11882_01/server.112/e22490/dp_import.htm#SUTIL906
+https://docs.oracle.com/database/121/SUTIL/GUID-DCFE91B2-D1FE-495F-9C6E-57987F020389.htm#SUTIL956
+http://www.rebellionrider.com/data-pump-impdp-how-to-import-schema/
+
+impdp hr DIRECTORY=dpump_dir1 DUMPFILE=expfull.dmp SQLFILE=dpump_dir2:expfull.sql
+impdp hr/hr DIRECTORY=dpump_dir1 DUMPFILE=expfull.dmp SQLFILE=dpump_dir2:expfull.sql
+impdp hr/hr SCHEMAS=hr DIRECTORY=dpump_dir1 LOGFILE=schemas.log DUMPFILE=expdat.dmp
+impdp hr/hr NOLOGFILE=y STATUS=120 DIRECTORY=dpump_dir1 DUMPFILE=expfull.dmp
+impdp  system/oracle@ORCL  DIRECTORY = exp_schema  DUMPFILE = exp_schm.dmp  SCHEMAS = scott
+
+
+#################################################################
+oracle-import-csv-file
+#################################################################
+
+https://stackoverflow.com/questions/6198863/oracle-import-csv-file
+
+# csv import
+LOAD DATA infile '/ipoapplication/utl_file/table.csv'
+    REPLACE INTO TABLE LOAN_BALANCE_MASTER_INT fields terminated by ',' optionally enclosed by '"'
+    ( ACCOUNT_NO, CUSTOMER_NAME, LIMIT, REGION )
+
+
+# use SQLPLUS with the following commands:
+
+set markup csv on
+set lines 1000
+set pagesize 100000 linesize 1000
+set feedback off
+set trimspool on
+spool /MyFolderAndFilename.csv
+Select *  from MYschema.MYTABLE  where MyWhereConditions ;
+spool off
+exit
+
+# From Oracle 18c you could use Inline External Tables:
+https://docs.oracle.com/en/database/oracle/oracle-database/18/admin/managing-tables.html#GUID-621E5DDE-36D9-4661-9D14-80DE35858C3F
+
+INSERT INTO target_table(time_id, prod_id, quantity_sold, amount_sold)
+SELECT time_id, prod_id, quantity_sold, amount_sold
+FROM   EXTERNAL (
+    (time_id        DATE NOT NULL,
+     prod_id        INTEGER NOT NULL,
+     quantity_sold  NUMBER(10,2),
+     amount_sold    NUMBER(10,2))
+    TYPE ORACLE_LOADER
+    DEFAULT DIRECTORY data_dir1
+    ACCESS PARAMETERS (
+      RECORDS DELIMITED BY NEWLINE
+      FIELDS TERMINATED BY '|')
+   LOCATION ('sales_9.csv') REJECT LIMIT UNLIMITED) sales_external;
+
+
+https://docs.oracle.com/en/database/oracle/property-graph/22.2/spgdg/importing-data-csv-files.html
+
+CREATE TABLE bank_accounts(id NUMBER, name VARCHAR2(10));
+CREATE TABLE bank_txns(from_acct_id NUMBER, to_acct_id NUMBER, description VARCHAR2(10), amount NUMBER);
+
+# Create a SQL*Loader control file to load the vertices from bank_nodes.csv as shown:
+
+load data
+infile '<path_to_bank_nodes.csv>'
+into table bank_accounts
+fields terminated by "," optionally enclosed by '"' ( id, name )
+
+Invoke SQL*Loader
+sqlldr <dbuser>/<password> CONTROL=<path_to_vertex_loader.ctl>
+
+# Create a SQL*Loader control file to load the edge from bank_edges_amt.csv as shown
+
+load data
+infile '<path_to_bank_edges_amt.csv>'
+into table bank_txns
+fields terminated by "," optionally enclosed by '"'
+(from_acct_id,to_acct_id,description,amount)
+
+Invoke SQL*Loader from the command lin
+
+sqlldr <dbuser>/<password> CONTROL=<path_to_edge_loader.ctl>
+
+# Execute the following SQL statement to add the primary key constraint in the bank_accounts table
+
+ALTER TABLE bank_accounts ADD PRIMARY KEY (id);
+
+# Execute the following SQL statements to add a primary key column to the bank_txns
+
+
+ALTER TABLE bank_txns ADD txn_id NUMBER;
+UPDATE bank_txns SET txn_id = ROWNUM;
+COMMIT;
+ALTER TABLE bank_txns ADD PRIMARY KEY (txn_id);
+
+
+# Execute the following SQL statements to add the foreign key constraints to the bank_txns table
+
+ALTER TABLE bank_txns MODIFY from_acct_id REFERENCES bank_accounts(id);
+ALTER TABLE bank_txns MODIFY to_acct_id REFERENCES bank_accounts(id);
+
+#################################################################
+How to split CSV files as per number of rows specified?
+#################################################################
+
+https://stackoverflow.com/questions/20721120/how-to-split-csv-files-as-per-number-of-rows-specified
+https://stackoverflow.com/questions/25962114/how-do-i-read-a-large-csv-file-with-pandas
+https://stackoverflow.com/questions/25962114/how-do-i-read-a-large-csv-file-with-pandas
+
+split -l 20000 file.txt new_
+split -d -l 20000 file_name.csv file_part_
+head -20000 file.csv | split -l 10000 - new_
+cat bigFile.csv | parallel --header : --pipe -N999 'cat >file_{#}.csv'
+
+# chunk in python pandas
+
+chunksize = 10 ** 6
+for chunk in pd.read_csv(filename, chunksize=chunksize):
+    process(chunk)
+
+chunksize = 10 ** 6
+with pd.read_csv(filename, chunksize=chunksize) as reader:
+    for chunk in reader:
+        process(chunk)
+
+
+# Dataframes implement the Pandas API
+import dask.dataframe as dd
+df = dd.read_csv('s3://.../2018-*-*.csv')
+
+# Datatable python library
+import datatable as dt
+df = dt.fread("s3://.../2018-*-*.csv")
+
+
+chunks=pd.read_table('aphro.csv',chunksize=1000000,sep=';',\
+       names=['lat','long','rf','date','slno'],index_col='slno',\
+       header=None,parse_dates=['date'])
+
+df=pd.DataFrame()
+%time df=pd.concat(chunk.groupby(['lat','long',chunk['date'].map(lambda x: x.year)])['rf'].agg(['sum']) for chunk in chunks)
+
+...
+
+# Split
+
+import pandas as pd
+import pickle
+
+in_path = "" #Path where the large file is
+out_path = "" #Path to save the pickle files to
+chunk_size = 400000 #size of chunks relies on your available memory
+separator = "~"
+
+reader = pd.read_csv(in_path,sep=separator,chunksize=chunk_size,
+                    low_memory=False)
+
+
+for i, chunk in enumerate(reader):
+    out_file = out_path + "/data_{}.pkl".format(i+1)
+    with open(out_file, "wb") as f:
+        pickle.dump(chunk,f,pickle.HIGHEST_PROTOCOL)
+
+# In the next step you read in the pickles and append each pickle to your desired dataframe.
+
+import glob
+pickle_path = "" #Same Path as out_path i.e. where the pickle files are
+
+data_p_files=[]
+for name in glob.glob(pickle_path + "/data_*.pkl"):
+   data_p_files.append(name)
+
+
+df = pd.DataFrame([])
+for i in range(len(data_p_files)):
+    df = df.append(pd.read_pickle(data_p_files[i]),ignore_index=True)
+
+
+
+######################################################
+ORA-00906: missing left parenthesis
+ORA-00902: invalid datatype
+######################################################
+
+https://stackoverflow.com/questions/22063030/ora-00906-missing-left-parenthesis
+https://www.techonthenet.com/oracle/errors/ora00902.php
+https://stackoverflow.com/questions/29592048/ora-00902-invalid-datatype-trying-to-define-a-column-with-a-unique-constraint
+https://stackoverflow.com/questions/48892463/oracle-pl-sql-functions-invalid-datatype
+
+create table widep(
+ type VARCHAR2,
+ supplier_id big_number,
+ amount NUMBER(10,2)
+)
+
+FIX
+
+create table widep(
+ type VARCHAR2 (200),
+ supplier_id number,
+ amount NUMBER(10,2)
+)
+
+######################################################
+ORA-01950: no privileges on tablespace 'USERS' [closed]
+ORA-01950: no privileges on tablespace 'SYSTEM'
+######################################################
+
+https://dba.stackexchange.com/questions/36373/ora-01950-no-privileges-on-tablespace-system-what-error-is-it
+https://stackoverflow.com/questions/21671008/ora-01950-no-privileges-on-tablespace-users
+http://www.dba-oracle.com/t_ora_01950_no+priviledges_on_tablespace_string.htm
+
+ALTER USER <user> quota unlimited on <tablespace name>;
+ALTER USER <user> quota 100M on <tablespace name>;
+
+ALTER USER <username> QUOTA 100M ON <tablespace name>
+GRANT UNLIMITED TABLESPACE TO <username>
+
+sql> alter user scott quota 50m on system;
+sql> create smallfile tablespace users datafile '/u01/app/oracle/oradata/ORCL/users.dbf' size 10g;
+sql> alter database default tablespace users;
+
+
+ALTER USER system quota unlimited on SYSTEM;
+GRANT UNLIMITED TABLESPACE TO system;
+
+-------
+
+http://www.dba-oracle.com/t_ora_01950_no+priviledges_on_tablespace_string.htm
+https://stackoverflow.com/questions/21671008/ora-01950-no-privileges-on-tablespace-users
+https://dba.stackexchange.com/questions/36373/ora-01950-no-privileges-on-tablespace-system-what-error-is-it
+
+ALTER USER <username> QUOTA 100M ON <tablespace name>
+GRANT UNLIMITED TABLESPACE TO <username>
+
+
+ALTER USER system QUOTA 100M ON SYSTEM;
+GRANT UNLIMITED TABLESPACE TO system;
+
+ALTER USER <user> quota unlimited on <tablespace name>;
+ALTER USER <user> quota 100M on <tablespace name>;
+GRANT UNLIMITED TABLESPACE TO <user>;
+
+
+######################################################
+How to Find Out Oracle Database Name
+######################################################
+
+https://www.oratable.com/find-your-database-name-in-oracle/
+https://docs.oracle.com/en/database/oracle/oracle-database/12.2/rilin/selecting-a-database-name.html#GUID-3C954866-8375-4319-9184-CAA5F3B299D4
+https://docs.oracle.com/cd/B28359_01/server.111/b31189/qstart.htm#i1049292
+https://stackoverflow.com/questions/22298005/how-to-find-schema-name-in-oracle-when-you-are-connected-in-sql-session-using
+
+
+SQL> select name from V$database;
+SQL> select * from global_name;
+
+Connecting to a Different Database
+SQL> connect username@connect_identifier
+
+SELECT sys_context( 'userenv', 'current_schema' ) from dual;
+SELECT * FROM ALL_TABLES WHERE OWNER NOT IN ('SYS', 'SYSTEM', 'CTXSYS', 'MDSYS');
+
+
+FIX -----
+
+-- change to your schema
+ALTER SESSION SET CURRENT_SCHEMA=yourSchemaName;
+
+-- check current schema
+SELECT SYS_CONTEXT('USERENV','CURRENT_SCHEMA') FROM DUAL;
+
+-- generate drop table statements
+SELECT 'drop table ', table_name, 'cascade constraints;' FROM ALL_TABLES WHERE OWNER = 'yourSchemaName';
+
+
+------------
+
+SELECT username FROM user_users;
+SYS
+
+# SELECT username INTO v_schema FROM user_users;
+
+
+-------------------
+
+https://stackoverflow.com/questions/21412747/oracle-grant-create-table-in-another-schema
+
+CREATE ANY TABLE
+SCHEMA1 by a user having the CREATE ANY PRIVILEGE
+
+# FIX ?
+grant create any table to ABC_DB;
+GRANT EXECUTE ON schema2.procedure_name TO schema1;
+
+
+
+
+######################################################
+######################################################
+ORA-01950: No Privileges On Tablespace ‘USERS
+######################################################
+######################################################
+https://dbaclass.com/article/ora-01950-no-privileges-tablespace-users/
+https://oracledbwr.com/ora-01950-no-privileges-on-tablespace-users/
+https://logic.edchen.org/how-to-resolve-ora-01950-no-privileges-on-tablespace/
+https://orahow.com/ora-01950-no-privileges-on-tablespace/
+
+FIX !!!!
+
+
+1. Check the tablespace quota.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+select username,tablespace_name,bytes/1024/1024/1024,MAX_BYTES/1024/1024/1024 from dba_ts_quotas where username='DBACLASS';
+
+# output SQL> no rows selected.
+
+
+2. Grant some QUOTA to the user
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SQL> alter user DBNAME quota 15G on USERS;
+
+User altered.
+
+SQL> select username,tablespace_name,bytes/1024/1024/1024,MAX_BYTES/1024/1024/1024 from dba_ts_quotas where username='DBACLASS';
+
+Output:
+
+USERNAME TABLESPACE_NAME BYTES/1024/1024/1024 MAX_BYTES/1024/1024/1024
+---------------- ------------------------------ -------------------- ------------------------
+DBACLASS USERS 0 5
+
+
+3. Create Table
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SQL> SQL> create table DBACLASS.EMPLO as select * from user_objects;
+
+Output:
+Table created.
+
+
+4. Check how much quota has been used.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SQL> select username,tablespace_name,bytes/1024/1024/1024,MAX_BYTES/1024/1024/1024 from dba_ts_quotas where username='DBACLASS';
+
+Output:
+USERNAME TABLESPACE_NAME BYTES/1024/1024/1024 MAX_BYTES/1024/1024/1024
+---------------- ------------------------------ -------------------- ------------------------
+DBACLASS USERS .005493164 5
+
+
+
+######################################################
+Oracle Exporting and Importing Metadata and Data
+######################################################
+
+
+https://docs.oracle.com/cd/E17781_01/server.112/e18804/impexp.htm#BABCJCBD
+
+CSV
+
+100,"Susan, Susie",Kochhar,17-JUN-1997,daughter,101,NULL,
+102,David,Kochhar,02-APR-1999,son,101,NULL,
+104,Jill,Colmenares,10-FEB-1992,daughter,119,NULL,
+
+
+Import
+~~~~~~~~~~~~~~~~~~~~~
+LOAD DATA INFILE dependents.dat INTO TABLE dependents
+REPLACE FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
+( dep_id, first_name, last_name, birthdate, relation, relative_id, benefits )
+
+sqlplus hr/hr
+
+#  create the dependents table,
+CREATE TABLE dependents (
+  dep_id      NUMBER(6),
+  first_name  VARCHAR2(20),
+  last_name   VARCHAR2(25) CONSTRAINT dep_last_name_nn NOT NULL,
+  birthdate   DATE,
+  relation    VARCHAR2(25),
+  relative_id  NUMBER(6) CONSTRAINT emp_dep_rel_id_fk REFERENCES employees
+    (employee_id),
+  benefits    CLOB
+)
+
+sqlldr hr/hr DATA=dependents.dat CONTROL=dependents.ctl LOG=dependents.log
+
+
+Exporting
+~~~~~~~~~~~~~~~~~~~~~
+mkdir /usr/lib/oracle/xe/tmp
+
+sqlplus SYSTEM/password
+
+CREATE OR REPLACE DIRECTORY dmpdir AS '/usr/lib/oracle/xe/tmp';
+GRANT READ,WRITE ON DIRECTORY dmpdir TO hr;
+
+expdp SYSTEM/password SCHEMAS=hr DIRECTORY=dmpdir DUMPFILE=schema.dmp LOGFILE=expschema.log
+
+
+Import the dump file, schema.dmp
+~~~~~~~~~~~~~~~~~~~~~
+
+impdp SYSTEM/password SCHEMAS=hr DIRECTORY=dmpdir DUMPFILE=schema.dmp
+  REMAP_SCHEMA=hr:hrdev EXCLUDE=constraint, ref_constraint, index
+  TABLE_EXISTS_ACTION=replace LOGFILE=impschema.log
+
+ALTER USER hrdev IDENTIFIED BY hrdev;
+
+
+######################################################
+Oracle Export und Import Tutorial: Beispiele
+######################################################
+
+https://www.datenbank-export.de/beispiele.htm
+
+# Beispiel Full Export
+exp userid=system/manager file=full_exp.dmp log=full_exp.log compress=no full=yes statistics=none consistent=yes
+
+# Beispiel Export der Datenstruktur eines Benutzers (keine Daten)
+exp userid=system/manager file=pt_exp.dmp log=pt_exp.log compress=no owner=protime statistics=none rows=no
+
+# Beispiel Export der Daten einer einzelnen Tabelle
+exp userid=system/manager file=pt_ma_exp.dmp log=pt_ma_exp.log compress=no tables=protime.ma statistics=none consistent=yes
+
+
+# Beispiel Full Import
+imp userid=system/manager file=full_exp.dmp log=full_imp.log full=yes ignore=yes feedback=50
+
+# Beispiel Import mit Änderung des Benutzernamens
+imp userid=system/manager file=pt_exp.dmp log=pt_imp.log fromuser=protime touser=pt ignore=yes feedback=50
+
+# Beispiel Import einer einzelnen Tabelle
+imp userid=system/manager file=full_exp.dmp log=full_imp.log fromuser=protime touser=pt tables=ma ignore=yes feedback=50
+
+######################################################
+oracle data Exports/Imports
+######################################################
+https://oracle-base.com/articles/10g/oracle-data-pump-10g
+
+sqlplus / as sysdba
+ALTER USER scott IDENTIFIED BY tiger ACCOUNT UNLOCK;
+
+CREATE OR REPLACE DIRECTORY test_dir AS '/u01/app/oracle/oradata/';
+GRANT READ, WRITE ON DIRECTORY test_dir TO scott;
+
+
+Table Exports/Imports
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+expdp scott/tiger@db10g tables=EMP,DEPT directory=TEST_DIR dumpfile=EMP_DEPT.dmp logfile=expdpEMP_DEPT.log
+impdp scott/tiger@db10g tables=EMP,DEPT directory=TEST_DIR dumpfile=EMP_DEPT.dmp logfile=impdpEMP_DEPT.log
+
+
+Schema Exports/Imports
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+expdp scott/tiger@db10g schemas=SCOTT directory=TEST_DIR dumpfile=SCOTT.dmp logfile=expdpSCOTT.log
+impdp scott/tiger@db10g schemas=SCOTT directory=TEST_DIR dumpfile=SCOTT.dmp logfile=impdpSCOTT.log
+
+Database Exports/Imports
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+expdp system/password@db10g full=Y directory=TEST_DIR dumpfile=DB10G.dmp logfile=expdpDB10G.log
+impdp system/password@db10g full=Y directory=TEST_DIR dumpfile=DB10G.dmp logfile=impdpDB10G.log
+
+
+
+CONTENT and QUERY
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+expdp system/password@db10g schemas=SCOTT directory=TEST_DIR dumpfile=scott_meta.dmp logfile=expdp.log content=METADATA_ONLY
+expdp system/password@db10g schemas=SCOTT directory=TEST_DIR dumpfile=scott_data.dmp logfile=expdp.log content=DATA_ONLY
+
+expdp system/password@db10g full=Y directory=TEST_DIR dumpfile=full.dmp logfile=expdp_full.log query='SCOTT.EMP:"WHERE deptno=0",SCOTT.DEPT:"WHERE deptno=0"'
+
+# Single Table. Multiple quoting methods possible.
+expdp scott/tiger@pdb1 schemas=scott directory=TEST_DIR dumpfile=scott1.dmp logfile=scott1.log query=SCOTT.EMP:'"WHERE deptno=10"'
+expdp scott/tiger@pdb1 schemas=scott directory=TEST_DIR dumpfile=scott2.dmp logfile=scott2.log query=SCOTT.EMP:\"WHERE deptno=10\"
+expdp scott/tiger@pdb1 schemas=scott directory=TEST_DIR dumpfile=scott3.dmp logfile=scott3.log query='SCOTT.EMP:"WHERE deptno=10"'
+
+# Multiple WHERE clause on each table.
+expdp scott/tiger@pdb1 schemas=scott directory=TEST_DIR dumpfile=scott4.dmp logfile=scott4.log query='SCOTT.EMP:"WHERE deptno=10",SCOTT.DEPT:"WHERE deptno=20"'
+
+
+
+Miscellaneous Information
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+expdp scott/tiger@db10g schemas=SCOTT directory=TEST_DIR parallel=4 dumpfile=SCOTT_%U.dmp logfile=expdpSCOTT.log
+impdp scott/tiger@db10g schemas=SCOTT directory=TEST_DIR parallel=4 dumpfile=SCOTT_%U.dmp logfile=impdpSCOTT.log
+
+
+
+
+######################################################
+misc
+######################################################
+
+sqlplus /nolog
+
+https://stackoverflow.com/questions/21671008/ora-01950-no-privileges-on-tablespace-users
+https://chartio.com/resources/tutorials/how-to-create-a-user-and-grant-permissions-in-oracle/
+https://dba.stackexchange.com/questions/265186/grant-rights-to-create-a-table-with-an-identity-column-on-another-schema
+https://connor-mcdonald.com/2020/08/25/schema-level-grant-in-oracle/
+https://blogs.oracle.com/sql/post/how-to-create-users-grant-them-privileges-and-remove-them-in-oracle-database
+https://community.oracle.com/tech/developers/discussion/835805/create-tables-on-another-schema
+http://dba.fyicenter.com/faq/oracle/Privilege-to-Create-Table.html
+http://www.dba-oracle.com/t_ora_01950_no+priviledges_on_tablespace_string.htm
+https://dba.stackexchange.com/questions/36373/ora-01950-no-privileges-on-tablespace-system-what-error-is-it
+https://www.techonthenet.com/oracle/questions/instance.php
+https://www.complexsql.com/oracle-database-name-how-to-find-oracle-database-name/
+https://docs.oracle.com/cd/E17781_01/server.112/e18804/impexp.htm#BABCJCBD
+
+
+
+
+######################################################
+oracle set options
+######################################################
+
+SET System Variable Summary
+https://docs.oracle.com/cd/E11882_01/server.112/e16604/ch_twelve040.htm#SQPUG060
+https://www.filibeto.org/sun/lib/nonsun/oracle/11.1.0.6.0/B28359_01/server.111/b31189.pdf
+
+set sqlblanklines on;
+
+list sql options with : SQL> help index
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ @             COPY         PAUSE                    SHUTDOWN
+ @@            DEFINE       PRINT                    SPOOL
+ /             DEL          PROMPT                   SQLPLUS
+ ACCEPT        DESCRIBE     QUIT                     START
+ APPEND        DISCONNECT   RECOVER                  STARTUP
+ ARCHIVE LOG   EDIT         REMARK                   STORE
+ ATTRIBUTE     EXECUTE      REPFOOTER                TIMING
+ BREAK         EXIT         REPHEADER                TTITLE
+ BTITLE        GET          RESERVED WORDS (SQL)     UNDEFINE
+ CHANGE        HELP         RESERVED WORDS (PL/SQL)  VARIABLE
+ CLEAR         HOST         RUN                      WHENEVER OSERROR
+ COLUMN        INPUT        SAVE                     WHENEVER SQLERROR
+ COMPUTE       LIST         SET                      XQUERY
+ CONNECT       PASSWORD     SHOW
+
+
+SQL*Plus Enhancements in Oracle Database 12c (12.1 and 12.2)
+
+http://www.dba-oracle.com/t_sqlplus_history.htm
+https://oracle-base.com/articles/12c/sqlplus-enhancements-12c
+https://docs.oracle.com/en/database/oracle/oracle-database/12.2/sqpug/HISTORY.html#GUID-CCF9B047-3122-4644-BA06-5FA4B5812E9F
+https://docs.oracle.com/en/database/oracle/oracle-database/12.2/sqpug/SET-system-variable-summary.html#GUID-A6A5ADFF-4119-4BA4-A13E-BC8D29166FAE
+https://ora14.informatik.haw-hamburg.de/sqpug/sqlplus-users-guide-and-reference.pdf
+https://www.mcours.net/cours/pdf/hasclic2/hassclic29.pdf
+https://studfile.net/preview/279001/page:36/
+
+
+SQL> HISTORY
+SQL> SET HISTORY ON
+SQL> HISTORY
+SQL> HELP HISTORY
+
+HIST[ORY] [n RUN | EDIT | DEL[ETE]] | [CLEAR | LIST]
+
+
+
+SP2-0042: unknown command "HISTORY"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+https://serverfault.com/questions/387184/display-sql-syntax-in-oracles-sqlplus
+
+You need to install this feature, log in with SYSTEM account and run this SQL script:
+
+@%ORACLE_HOME%\SQLPLUS\ADMIN\HELP\HLPBLD.SQL HELPUS.SQL
+After HLPBLD.SQL run, you have created the help tables on SQL-Plus.
+
+
+
+
+
+Install SQL HELP on Oracle 11g - SP2-0042: unknown command "HISTORY"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+https://dylanninin.com/blog/2013/01/22/sql_help.html
+
+Go to the following directory:
+% cd $ORACLE_HOME/sqlplus/admin/help
+
+Login to SQL*Plus as the user SYSTEM.
+% sqlplus system/password
+
+Run the “helptbl.sql” script.
+SQL> @helptbl
+
+Exit SQL*Plus and execute the following SQL*Loader commands:
+% sqlldr system/manager control=plushelp.ctl
+% sqlldr system/manager control=sqlhelp.ctl
+% sqlldr system/manager control=plshelp.ctl
+
+Log back into SQL*Plus as the user SYSTEM and run the “helpindx.sql” script.
+SQL> @helpindx
+SQL> help topics
+SQL> help index
+
+
+#####################################
+Task execution failed
+
+Reason:
+Java heap space
+#####################################
+
+Understand the OutOfMemoryError Exception
+https://docs.oracle.com/javase/8/docs/technotes/guides/troubleshoot/memleaks002.html
+Exception in thread thread_name: java.lang.OutOfMemoryError: Java heap space
+
+
+Cause: The detail message Java heap space indicates object could not be allocated in the Java heap. This error does not necessarily imply a memory leak. The problem can be as simple as a configuration issue, where the specified heap size (or the default size, if it is not specified) is insufficient for the application.
+In other cases, and in particular for a long-lived application, the message might be an indication that the application is unintentionally holding references to objects, and this prevents the objects from being garbage collected. This is the Java language equivalent of a memory leak. Note: The APIs that are called by an application could also be unintentionally holding object references.
+
+One other potential source of this error arises with applications that make excessive use of finalizers. If a class has a finalize method, then objects of that type do not have their space reclaimed at garbage collection time. Instead, after garbage collection, the objects are queued for finalization, which occurs at a later time. In the Oracle Sun implementation, finalizers are executed by a daemon thread that services the finalization queue. If the finalizer thread cannot keep up, with the finalization queue, then the Java heap could fill up and this type of OutOfMemoryError exception would be thrown. One scenario that can cause this situation is when an application creates high-priority threads that cause the finalization queue to increase at a rate that is faster than the rate at which the finalizer thread is servicing that queue.
+
+Action: You can find more information about how to monitor objects for which finalization is pending in Monitor the Objects Pending Finalization. See Finalization and Weak, Soft, and Phantom References in Java Platform, Standard Edition HotSpot Virtual Machine Garbage Collection Tuning Guide for information about detecting and migrating from finalization.
+
+
+https://docs.oracle.com/javase/8/docs/technotes/guides/troubleshoot/memleaks004.html#CIHCDBJB
+https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/considerations.html#sthref63
+https://community.oracle.com/tech/apps-infra/discussion/3873395/java-heap-space
+
+increase values for below 2 parameters?
+ODI_INIT_HEAP and ODI_MAX_HEAP
+
+------------
+https://github.com/gradle/gradle/issues/8139
+
+-Xmx2048m
+
+org.gradle.jvmargs=-Xmx2048m -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
+org.gradle.jvmargs=-XX:MaxHeapSize=512m -Xmx512m
+org.gradle.jvmargs=-Xms512M -Xmx4g -XX:MaxPermSize=1024m -XX:MaxMetaspaceSize=1g -Dkotlin.daemon.jvm.options="-Xmx1g"
+
+org.gradle.jvmargs=-Xmx4096m -XX:MaxPermSize=4096m -XX:+HeapDumpOnOutOfMemoryError
+org.gradle.daemon=true
+org.gradle.parallel=true
+org.gradle.configureondemand=true
+
+------------
+
+https://stackoverflow.com/questions/37335/how-to-deal-with-java-lang-outofmemoryerror-java-heap-space-error
+https://support.snyk.io/hc/en-us/articles/360001857918-Gradle-Java-project-java-lang-OutOfMemoryError-Java-heap-space
+
+-Xms<size>        set initial Java heap size
+-Xmx<size>        set maximum Java heap size
+-Xss<size>        set java thread stack size
+
+-XX:ParallelGCThreads=8
+-XX:+CMSClassUnloadingEnabled
+-XX:InitiatingHeapOccupancyPercent=70
+-XX:+UnlockDiagnosticVMOptions
+-XX:+UseConcMarkSweepGC
+-Xms512m
+-Xmx8192m
+-XX:MaxPermSize=256m (in java 8 optional)
+
+
+nano  /opt/tomcat/bin/setenv.sh
+
+export CATALINA_OPTS="$CATALINA_OPTS -XX:ParallelGCThreads=8"
+export CATALINA_OPTS="$CATALINA_OPTS -XX:+CMSClassUnloadingEnabled"
+export CATALINA_OPTS="$CATALINA_OPTS -XX:InitiatingHeapOccupancyPercent=70"
+export CATALINA_OPTS="$CATALINA_OPTS -XX:+UnlockDiagnosticVMOptions"
+export CATALINA_OPTS="$CATALINA_OPTS -XX:+UseConcMarkSweepGC"
+export CATALINA_OPTS="$CATALINA_OPTS -Xms512m"
+export CATALINA_OPTS="$CATALINA_OPTS -Xmx8192m"
+export CATALINA_OPTS="$CATALINA_OPTS -XX:MaxMetaspaceSize=256M"
+
+
+
+
+
+####################################################
+ oracle cx_oracle
+####################################################
+
+Oracle.DatabaseError: DPI-1047: Cannot locate a 64-bit Oracle Client library - Python
+https://stackoverflow.com/questions/55823744/how-to-fix-cx-oracle-databaseerror-dpi-1047-cannot-locate-a-64-bit-oracle-cli
+
+pip install cx_oracle
+
+cx_Oracle.DatabaseError:
+DPI-1047: Cannot locate a 64-bit Oracle Client library: "libclntsh.so: cannot open shared object file: No such file or directory". See https://cx-oracle.readthedocs.io/en/latest/user_guide/installation.html for help
+
+sqlalchemy.exc.DatabaseError: (cx_Oracle.DatabaseError)
+DPI-1047: Cannot locate a 64-bit Oracle Client library: "libclntsh.so: cannot open shared object file: No such file or directory". See https://cx-oracle.readthedocs.io/en/latest/user_guide/installation.html for help
+
+
+https://cx-oracle.readthedocs.io/en/latest/user_guide/installation.html
+
+
+python -m pip install cx_Oracle --upgrade
+# Requirement already satisfied: cx_Oracle in ./venv/lib/python3.7/site-packages (8.3.0)
+
+Oracle Instant Client
+https://help.ubuntu.com/community/Oracle%20Instant%20Client
+https://github.com/sqlmapproject/sqlmap/issues/3726
+https://www.performatune.com/en/python-oracle-instant-client-connection-setup-on-linux/
+https://www.balioglu.net/cx_oracle-databaseerror-dpi-1047-cannot-locate-a-64-bit-oracle-client-library-libclntsh-so-cannot-open-shared-object-file-no-such-file-or-directory/
+https://splunktool.com/cxoracle-error-dpi1047-cannot-locate-a-64bit-oracle-client-library
+https://stackoverflow.com/questions/55823744/how-to-fix-cx-oracle-databaseerror-dpi-1047-cannot-locate-a-64-bit-oracle-cli
+
+find . -name "libcl*"
+
+sudo apt-get install libaio1 libaio-dev
+
+Oracle Instant Client
+https://help.ubuntu.com/community/Oracle%20Instant%20Client
+https://www.oracle.com/database/technologies/instant-client/downloads.html
+https://stackoverflow.com/questions/63596238/alternative-download-sites-for-oracle-tools
+https://www.oracle.com/it/database/technologies/instant-client/linux-x86-64-downloads.html
+https://www.oracle.com/it/database/technologies/instant-client/linux-x86-64-downloads.html
+https://www.oracle.com/fr/database/technologies/instant-client/linux-x86-64-downloads.html
+https://www.oracle.com/de/database/technologies/instant-client/linux-x86-32-downloads.html
+https://stackoverflow.com/questions/63596238/alternative-download-sites-for-oracle-tools
+https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html
+https://linuxsoft.cern.ch/cern/centos/7/cernonly/x86_64/Packages/
+
+https://download.oracle.com/otn_software/linux/instantclient/217000/oracle-instantclient-basic-21.7.0.0.0-1.el8.x86_64.rpm
+https://download.oracle.com/otn_software/linux/instantclient/217000/oracle-instantclient-basic-21.7.0.0.0-1.x86_64.rpm
+https://download.oracle.com/otn_software/linux/instantclient/217000/oracle-instantclient-basiclite-21.7.0.0.0-1.el8.x86_64.rpm
+https://download.oracle.com/otn_software/linux/instantclient/217000/oracle-instantclient-basiclite-21.7.0.0.0-1.x86_64.rpm
+
+sudo apt install alien
+
+alien -i oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64.rpm
+alien -i oracle-instantclient12.1-sqlplus-12.1.0.2.0-1.x86_64.rpm
+alien -i oracle-instantclient12.1-devel-12.1.0.2.0-1.x86_64.rpm
+
+sudo alien -i oracle-instantclient-basic-21.7.0.0.0-1.el8.x86_64.rpm
+sudo alien -i oracle-instantclient-basiclite-21.7.0.0.0-1.el8.x86_64.rpm
+
+sudo apt-get install libaio1
+sudo apt-get install libaio1:i386
+
+
+######################################################
+cx_Oracle.DatabaseError: ORA-12514: TNS:listener does not currently know of service requested in connect descriptor
+######################################################
+
+https://stackoverflow.com/questions/10786782/ora-12514-tnslistener-does-not-currently-know-of-service-requested-in-connect-d
+https://stackoverflow.com/questions/47005505/cx-oracle-databaseerror-ora-12514-tnslistener-does-not-currently-know-of-serv
+
+######################################################
+ORA-01045: user xxx lacks CREATE SESSION privilege; logon denied
+######################################################
+
+https://logic.edchen.org/how-to-resolve-ora-01045-user-lacks-create-session-privilege-logon-denied/
+https://tableplus.com/blog/2019/09/01045-create-session-privilege-logon-denied.html
+https://community.oracle.com/tech/developers/discussion/2141972/ora-01045-user-lacks-create-session-privilege-logon-denied-10-2-0-5
+
+
+alter session set container=<schema_name>;
+grant create session to <schema_name>;
+GRANT CREATE SESSION TO <schema_name>;
+
+
+
+############################################
+Create a User and Grant Permissions in Oracle
+############################################
+
+https://chartio.com/resources/tutorials/how-to-create-a-user-and-grant-permissions-in-oracle/
+https://www.oracletutorial.com/oracle-basics/oracle-create-table/
+https://stackoverflow.com/questions/8978047/how-to-query-database-name-in-oracle-sql-developer
+
+CREATE USER books_admin IDENTIFIED BY MyPassword;
+GRANT CONNECT TO books_admin;
+GRANT CONNECT, RESOURCE, DBA TO books_admin;
+
+GRANT CREATE SESSION GRANT ANY PRIVILEGE TO books_admin;
+GRANT UNLIMITED TABLESPACE TO books_admin;
+
+GRANT
+  SELECT,
+  INSERT,
+  UPDATE,
+  DELETE
+ON
+  schema.books
+TO
+  books_admin;
+
+
+
+DESCRIBE DATABASE NAME;

@@ -1,0 +1,116 @@
+
+#################################################################
+sqlite to oracle migration
+#################################################################
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~
+docker_oracle.yml
+~~~~~~~~~~~~~~~~~~~~~~~~~
+version: '3.1'
+
+services:
+   oracledb:
+      # docker pull chameleon82/oracle-xe-10g
+      image: chameleon82/oracle-xe-10g
+      restart: always
+      ports:
+        - "49160:22"
+        - "49161:1521"
+        - "49162:8080"
+
+
+
+# docker pull chameleon82/oracle-xe-10g
+# docker run -d -p 49160:22 -p 49161:1521 -p 49162:8080 chameleon82/oracle-xe-10g
+
+~~~~~~~~~~~~~~~~~~~~~~~~~
+docker settings
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Connect database with following setting:
+# hostname: localhost
+# port: 49161
+# sid: xe
+# username: system
+# password: oracle
+
+# For example, connect to database with sqlplus:
+# sqlplus system/oracle@localhost:49161/xe
+
+# Password for SYS & SYSTEM
+# oracle
+
+# Login by SSH
+# ssh root@localhost -p 49160
+# password: admin
+
+# Login to web administrator on a browser:
+# http://localhost:49162/apex
+
+# su oracle
+# sqlplus / as sysdba
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~
+# sqlite to csv
+~~~~~~~~~~~~~~~~~~~~~~~~~
+sqlite3 -header -csv file.db "select * from table;" > table.csv
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~
+# create SQL Oracle
+~~~~~~~~~~~~~~~~~~~~~~~~~
+csvsql --dialect oracle --snifflimit 10000 table.csv > table.sql
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~
+# Open con in dbeaver and create table
+~~~~~~~~~~~~~~~~~~~~~~~~~
+CREATE TABLE DBNAME.tablename (
+	code VARCHAR(200) NOT NULL,
+	type VARCHAR(200) NOT NULL
+);
+
+# DROP TABLE DBNAME.tablename;
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~
+# Add limit 15GB
+~~~~~~~~~~~~~~~~~~~~~~~~~
+alter user DBNAME quota 15G on USERS;
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~
+# Open con in dbeaver and import csv
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~
+# Check import
+~~~~~~~~~~~~~~~~~~~~~~~~~
+sqlplus / as sysdba
+SELECT count(*) FROM DBNAME.tablename;
+
+~~~~~~~~~~~~~~~~~~~~~~~~~
+# docker ssh export
+~~~~~~~~~~~~~~~~~~~~~~~~~
+expdp system/oracle@localhost schemas=DBNAME dumpfile=DBNAME.dmp logfile=expdpDBNAME.log
+
+Dump file set for SYSTEM.SYS_EXPORT_SCHEMA_01 is:
+  /usr/lib/oracle/xe/app/oracle/admin/XE/dpdump/DBNAME.dmp
+
+cd /usr/lib/oracle/xe/app/oracle/admin/XE/dpdump/DBNAME.dmp /home
+rm /usr/lib/oracle/xe/app/oracle/admin/XE/dpdump/*
+
+ls -lha home/
+3.2G DBNAME.dmp
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~
+# docker copy file to backup
+~~~~~~~~~~~~~~~~~~~~~~~~~
+docker cp container_oracledb_1:/home/DBNAME.dmp .
