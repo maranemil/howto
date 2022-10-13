@@ -1,4 +1,15 @@
 
+jetbrains
+
+- https://www.jetbrains.com/help/fleet/getting-started-with-kotlin-in-fleet.html#set-up-a-workspace
+- https://www.jetbrains.com/help/fleet/getting-started-with-go.html
+- https://www.jetbrains.com/help/fleet/getting-started-with-python.html
+- https://www.jetbrains.com/help/fleet/getting-started-with-php.html
+- https://www.jetbrains.com/help/fleet/getting-started-with-javascript.html
+- https://www.jetbrains.com/help/fleet/getting-started-with-csharp.html
+- https://www.jetbrains.com/help/fleet/getting-started-with-java-in-fleet.html
+
+
 Web Development
 
 - https://www.tutorialspoint.com/cakephp/cakephp_folder_structure.htm

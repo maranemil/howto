@@ -90,13 +90,13 @@ https://github.com/webcamoid/webcamoid
 https://github.com/maxrd2/subtitlecomposer
 https://github.com/phw/peek
 ```
-#
+
 ### slack
 ```
 https://snapcraft.io/slack
 sudo snap install slack --classic
 ```
-#
+
 ### swoole
 ```
 https://zendframework.github.io/
@@ -108,7 +108,6 @@ composer require zendframework/zend-expressive-swoole
 ```
 
 ######
-#
 ### Sticky Notes Apps for Ubuntu
 ######
 ```
@@ -142,10 +141,9 @@ https://gitlab.com/jaysaurus/Gnut
 
 
 ######
-#
 ### What's a must-have app for Linux users
 #### https://twitter.com/itsfoss2/status/1500788865749028865
-### It's FOSS - Linux Portal
+#### It's FOSS - Linux Portal
 ######
 ```
 Peek - to record gifs and video
@@ -194,19 +192,22 @@ https://vscodium.com/
 Darktable
 WireShark/TCPdump
 ```
-
-
+#
+### Linux Sticky Notes With Xpad
 ```
-########################################
- Linux Sticky Notes With Xpad
-########################################
-
 https://www.makeuseof.com/tag/5-little-useful-sticky-notes-app-for-linux/
 https://askubuntu.com/questions/245019/what-alternatives-for-sticky-notes-are-available
 
 sudo apt install xpad
-
+# alternatives
 sudo apt install knotes
 sudo apt-get install tomboy
 sudo apt-get install xfce4-notes*
+```
+#
+### Obsidian Markdown Editor
+```
+https://obsidian.md/
+https://www.markdownguide.org/tools/obsidian/
+https://help.obsidian.md/How+to/Format+your+notes
 ```
