@@ -42,3 +42,11 @@ for colname in cursor:
 
 
 
+"""
+################################################
+cx_Oracle install
+################################################
+https://oracle.github.io/python-cx_Oracle/
+https://pypi.org/project/cx-Oracle/
+https://help.ubuntu.com/community/Oracle%20Instant%20Client
+"""

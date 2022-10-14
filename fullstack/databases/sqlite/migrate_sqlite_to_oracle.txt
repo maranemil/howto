@@ -5,6 +5,27 @@ sqlite to oracle migration
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~
+dbeaver Java heap space error
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+https://stackoverflow.com/questions/52425381/java-lang-outofmemoryerror-java-heap-space-in-dbeaver
+https://github.com/dbeaver/dbeaver/issues/12048
+https://github.com/dbeaver/dbeaver/issues/6521
+https://exchangetuts.com/javalangoutofmemoryerror-java-heap-space-in-dbeaver-duplicate-1640149684008476
+https://www.folkstalk.com/2022/10/dbeaver-memory-size-with-code-examples.html
+https://www.anycodings.com/1questions/2114897/javalangoutofmemoryerror-java-heap-space-in-dbeaver-duplicate
+
+Preferences->General->Show heap status
+change -Xmx1024m into -Xmx4096m to increase maximum memory to 4Gb.?
+
+FIX
+
+dbeaver -vmargs -Xmx4096m
+dbeaver -vmargs -Xmx12096m
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~
 docker_oracle.yml
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 version: '3.1'
@@ -114,3 +135,49 @@ ls -lha home/
 # docker copy file to backup
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 docker cp container_oracledb_1:/home/DBNAME.dmp .
+
+
+
+################################################################
+How to import an Oracle database from dmp file and log file?
+################################################################
+
+https://dba.stackexchange.com/questions/216476/ora-39001-ora-39000-ora-31640-ora-27041-and-linux-x86-64-error-13-permissi
+https://stackoverflow.com/questions/6463614/how-to-import-an-oracle-database-from-dmp-file-and-log-file
+
+
+Restore Oracle DB
+
+docker cp tmp/DBNAME.dmp dev_oracledb_1:/home
+cp /home/DBNAME.dmp    /usr/lib/oracle/xe/app/oracle/admin/XE/dpdump/
+
+impdp system/oracle@localhost dumpfile=File.dmp  full=y;
+
+ORA-27041: unable to open file
+Linux Error: 13: Permission denied
+
+
+cd /usr/lib/oracle/xe/app/oracle/admin/XE/dpdump/
+chmod 777 -R .
+
+impdp system/oracle@localhost dumpfile=DBNAME.dmp;
+
+....
+
+[stackexchange] If exported using exp and a full schema was exported, then
+
+1. Create the user:
+create user <username> identified by <password> default tablespace <tablespacename> quota unlimited on <tablespacename>;
+
+2. Grant the rights:
+grant connect, create session, imp_full_database to <username>;
+
+3. Start the import with imp:
+imp <username>/<password>@<hostname> file=<filename>.dmp log=<filename>.log full=y;
+
+If exported using expdp, then start the import with impdp:
+impdp <username>/<password> directory=<directoryname> dumpfile=<filename>.dmp logfile=<filename>.log full=y;
+
+
+
+
