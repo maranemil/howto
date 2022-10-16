@@ -352,7 +352,13 @@ myModule.constant('__env', __env);
 ```
 
 
+```
 
+list all npm pkgs with beta 0
+https://www.youtube.com/watch?v=GWgRw5jiYy0
+
+npm ls | grep @0
+```
 
 
 

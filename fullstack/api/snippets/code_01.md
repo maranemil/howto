@@ -155,3 +155,50 @@ Array
 )
 
 ```
+
+```
+
+Common API security pitfalls by Philippe De Ryck
+Effective Service API Design by Elliotte Rusty Harold
+
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+https://www.youtube.com/watch?v=YQzU8xEBiPg
+https://www.youtube.com/watch?v=JG00rfoWVeU
+
+
+https strict transport security
+Strict-Transport-Security: max-age=<expire-time>
+
+429 too many request
+403
+503
+
+JSON Web Tokens
+HMAC256
+hmac-sha
+rsa-sha
+Secret Key
+Public Key
+Authorisation
+Authe
+ntification
+oAuth, OpenID, JWT
+Developer Key
+TLS
+cookies https only
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

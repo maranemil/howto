@@ -1,0 +1,108 @@
+------------------------------------
+aws chalice
+------------------------------------
+https://github.com/aws/chalice
+https://aws.github.io/chalice/
+
+------------------------------------
+aws lambda vpc
+------------------------------------
+
+https://aws.amazon.com/de/premiumsupport/knowledge-center/cloudformation-s3-notification-lambda/
+https://www.itonaut.com/2018/10/03/implement-s3-bucket-lambda-triggers-in-aws-cloudformation/
+
+https://www.youtube.com/watch?v=_mB1JVlhScs
+
+aws lambda update-function-code --function-name myfunction
+aws lambda publish-version --function-name myfunction
+aws lambda update-alias --function-name myfunction --name myalias routing-config '{"AdditionalVersionWeights": {"2":0.5}}'
+
+
+
+https://medium.com/monsoon-engineering/running-aws-sam-in-a-docker-container-2491596672c2
+
+docker run --rm -v "$PWD":/var/task lambci/lambda:build-nodejs8.10 sh -c 'npm install && npm run tsc'
+
+Dockerfile
+FROM python:alpine
+RUN apk update && \
+    apk upgrade && \
+    apk add bash && \
+    apk add --no-cache --virtual build-deps build-base gcc && \
+    pip install aws-sam-cli && \
+    apk del build-deps
+RUN mkdir /app
+WORKDIR /app
+EXPOSE 3001
+ENTRYPOINT ["./bin/sam_entrypoint.sh"]
+
+
+./bin/sam_entrypoint.sh
+#!/bin/bash
+set -o errexit
+BASEDIR="$1"
+/usr/local/bin/sam local start-lambda \
+  --template dist/template.yaml \
+  --host 0.0.0.0 \
+  --docker-volume-basedir "${BASEDIR}" \
+  --docker-network monsoon-samples_default \
+  --skip-pull-image
+
+
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: A sample AWS Lambda Function
+Resources:
+  SampleFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/index.handler
+      Runtime: nodejs8.10
+      CodeUri: ./
+
+
+version: '3.6'
+services:
+  sam_app:
+    build: .
+    command: ["$PWD"]
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+
+
+docker-compose up sam_app
+
+------------------------------------
+sam aws
+------------------------------------
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html
+https://docs.aws.amazon.com/de_de/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-notificationconfig-lambdaconfig.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html
+https://aws.amazon.com/de/blogs/compute/using-container-image-support-for-aws-lambda-with-aws-sam/
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-image-repositories.html
+https://hub.docker.com/r/amazon/aws-sam-cli-build-image-provided
+https://hub.docker.com/r/cnadiminti/aws-sam-local/
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html
+
+------------------------------------
+codebuild aws
+------------------------------------
+https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-available.html
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codebuild-project.html
+https://docs.aws.amazon.com/codebuild/index.html
+
+
+------------------------------------
+aws glacier
+------------------------------------
+https://docs.aws.amazon.com/cli/latest/reference/glacier/upload-archive.html
+https://docs.aws.amazon.com/cli/latest/reference/events/create-archive.html
+https://docs.aws.amazon.com/cli/latest/reference/events/list-archives.html
+https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/glacier.html
+https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/glacier.html#archive
+https://boto3.amazonaws.com/v1/documentation/api/1.18.48/guide/quickstart.html
+https://docs.aws.amazon.com/amazonglacier/latest/dev/example_glacier_Usage_RetrieveDelete_section.html
+https://docs.aws.amazon.com/amazonglacier/latest/dev/example_glacier_InitiateJob_ArchiveRetrieval_section.html
