@@ -1,0 +1,718 @@
+############################################################################################
+# DPY-3010: connections to this database server version are not supported by python-oracledb in thin mode
+############################################################################################
+
+https://stackoverflow.com/questions/72385500/error-dpy-3010-when-connecting-python-oracledb-to-oracle-db-11-2
+https://oracle.github.io/python-oracledb/
+https://python-oracledb.readthedocs.io/en/latest/user_guide/installation.html
+https://python-oracledb.readthedocs.io/en/latest/user_guide/appendix_c.html#upgrading-from-cx-oracle-8-3-to-python-oracledb
+https://medium.com/@sharad-chandran/upgrade-your-python-apps-from-cx-oracle-8-to-python-oracledb-2bfeaee7aac9
+https://github.com/oracle/python-oracledb/issues/44
+
+
+Python-oracledb's default Thin mode can connect to Oracle Database 12.1 or later. If you want to connect to Oracle Database 11.2 you need to enable Thick mode by calling oracledb.init_oracle_client() in your code. See the user documentation Enabling python-oracledb Thick mode
+
+Oracle DB 11.2 is very old. There are newer versions of Oracle Database available, including the XE 21c "Express Edition". To get a newer XE release see database/technologies/xe-downloads
+
+
+By default, python-oracledb runs in a Thin mode which connects directly to Oracle Database so no further installation steps are required. However, to use additional features available in Thick mode you need Oracle Client libraries installed. Oracle Client versions 21, 19, 18, 12, and 11.2 are supported.
+
+To use python-oracledb in Thick mode you must call oracledb.init_oracle_client() in your application, see Enabling python-oracledb Thick mode. For example:
+
+import oracledb
+oracledb.init_oracle_client()
+
+
+FIX: use Thick mode and add a call to init_oracle_client().
+
+import sys
+import oracledb
+oracledb.version = "8.3.0"
+sys.modules["cx_Oracle"] = oracledb
+oracledb.init_oracle_client()
+sql_conn = sqlalchemy.create_engine('oracle://system:oracle@172.23.0.2:1521/xe)
+
+
+...
+
+import ctypes.util
+import sys
+
+try:
+    import oracledb
+except ImportError:
+    import cx_Oracle as oracledb
+
+clntsh = ctypes.util.find_library("clntsh")
+if clntsh:
+    print(f"Client library found ({clntsh}), using Thick driver")
+    oracledb.init_oracle_client()
+else:
+    print("No Client library found")
+    if oracledb.__name__ == "cx_Oracle":
+        print("Cannot proceed, cx_Oracle requires Instant Client libraries")
+        sys.exit(1)
+    else:
+        print("Using oracledb Thin client")
+
+
+
+############################################################################################
+# Python python-oracledb Driver
+############################################################################################
+
+https://oracle.github.io/python-oracledb/
+https://python-oracledb.readthedocs.io/en/latest/user_guide/installation.html
+https://github.com/oracle/python-oracledb
+https://pypi.org/project/oracledb/
+https://www.youtube.com/watch?v=ywEJKkzwRN0
+
+
+pip install oracledb
+python -m pip install oracledb --upgrade
+python -m pip install oracledb --upgrade --user # local scope when not having write permission to system directories
+
+# test.py
+
+import oracledb
+import os
+
+un = os.environ.get('PYTHON_USERNAME')
+pw = os.environ.get('PYTHON_PASSWORD')
+cs = os.environ.get('PYTHON_CONNECTSTRING')
+
+with oracledb.connect(user=un, password=pw, dsn=cs) as connection:
+    with connection.cursor() as cursor:
+        sql = """select sysdate from dual"""
+        for r in cursor.execute(sql):
+            print(r)
+
+
+--------------------------------------------------------------------
+
+https://levelup.gitconnected.com/using-python-oracledb-1-0-with-sqlalchemy-pandas-django-and-flask-5d84e910cb19
+https://levelup.gitconnected.com/open-source-python-thin-driver-for-oracle-database-e82aac7ecf5a
+
+Then add this to your top level SQLAlchemy file:
+
+import sys
+import oracledb
+oracledb.version = "8.3.0"
+sys.modules["cx_Oracle"] = oracledb
+
+import os
+import platform
+if platform.system() == "Darwin":
+    oracledb.init_oracle_client(lib_dir=os.environ.get("HOME")+"/Downloads/instantclient_19_8")
+elif platform.system() == "Windows":
+    oracledb.init_oracle_client(lib_dir=r"C:\oracle\instantclient_19_14")
+else:
+    oracledb.init_oracle_client()
+
+
+
+
+engine = create_engine(
+    f'oracle://{un}:{pw}@{host}:{port}/?service_name={service_name}', max_identifier_length=128
+)
+
+..
+
+import os
+import oracledb
+import sys
+oracledb.version = "8.3.0"
+sys.modules["cx_Oracle"] = oracledb
+from sqlalchemy import create_engine
+from sqlalchemy import text
+un = os.environ.get("PYTHON_USERNAME")
+pw = os.environ.get("PYTHON_PASSWORD")
+engine = create_engine(f'oracle://{un}:{pw}@',
+                       connect_args={
+                           "host": "localhost",
+                           "port": 1521,
+                           "service_name": "orclpdb"
+                       }
+         )
+with engine.connect() as conn:
+    print(conn.scalar(text(
+           """SELECT UNIQUE CLIENT_DRIVER
+              FROM V$SESSION_CONNECT_INFO
+              WHERE SID = SYS_CONTEXT('USERENV', 'SID')""")))
+
+
+https://docs.sqlalchemy.org/en/14/changelog/changelog_14.html?highlight=oracledb
+https://github.com/sqlalchemy/sqlalchemy/discussions/8066
+Added two new error codes for Oracle disconnect handling to support early testing of the new “python-oracledb” driver released by Oracle.
+
+
+import oracledb
+connection = oracledb.connect(user='scott', password=mypw, dsn='localhost/oraclepdb1')
+with connection.cursor() as cursor:
+  for row in cursor.execute('select city from locations'):
+      print(row)
+
+--------------------------------------------------------------------
+
+https://medium.com/oracledevs/using-the-development-branch-of-sqlalchemy-2-0-with-python-oracledb-d6e89090899c
+https://stackoverflow.com/questions/28453545/connecting-to-an-oracle-database-using-sqlalchemy
+
+# sa-pydb.py
+#
+# Using SQLAlchemy 2.0 with python-oracledb
+#
+# https://oracle.github.io/python-oracledb/
+
+import os
+
+import oracledb
+from sqlalchemy import create_engine
+from sqlalchemy import text
+
+# Database Credentials
+username = os.environ.get("PYTHON_USERNAME")
+password = os.environ.get("PYTHON_PASSWORD")
+
+# I use Easy Connect strings like "localhost/orclpdb1".  These two lines
+# let me access the components individually
+cp = oracledb.ConnectParams()
+cp.parse_connect_string(os.environ.get("PYTHON_CONNECTSTRING"))
+
+# For the default, python-oracledb Thin mode that doesn't use Oracle Instant Client
+thick_mode = None
+
+# To use python-oracledb Thick mode on macOS (Intel x86).
+#thick_mode = {"lib_dir": os.environ.get("HOME")+"/Downloads/instantclient_19_8"}
+
+# To use python-oracledb Thick mode on Windows
+#thick_mode = {"lib_dir": r"C:\oracle\instantclient_19_15"}
+
+# For thick mode on Linux use {} ie. no lib_dir parameter.  On Linux you
+# must configure the Instant Client directory by setting LD_LIBRARY_PATH or
+# running ldconfig before starting Python.
+#thick_mode = {}
+
+engine = create_engine(
+    f'oracle+oracledb://{username}:{password}@{cp.host}:{cp.port}/?service_name={cp.service_name}',
+    thick_mode=thick_mode)
+
+with engine.connect() as connection:
+    print(connection.scalar(text("""SELECT UNIQUE CLIENT_DRIVER
+                                    FROM V$SESSION_CONNECT_INFO
+                                    WHERE SID = SYS_CONTEXT('USERENV', 'SID')""")))
+
+
+
+...
+
+engine = create_engine(
+    f'oracle+oracledb://{username}:{password}@',
+    thick_mode=thick_mode,
+    connect_args={
+        "host": cp.host,
+        "port": cp.port,
+        "service_name": cp.service_name
+    })
+
+
+engine = create_engine(
+    f'oracle+oracledb://{username}:{password}@',
+    thick_mode=thick_mode,
+    connect_args={
+        "dsn": os.environ.get("PYTHON_CONNECTSTRING")
+    })
+
+
+
+
+
+############################################################################################
+# Oracle Linux
+############################################################################################
+
+https://hub.docker.com/_/oraclelinux
+https://www.oracle.com/linux/
+https://docs.oracle.com/en/operating-systems/oracle-linux/index.html
+https://yum.oracle.com/oracle-linux-isos.html
+https://yum.oracle.com/boxes/
+
+example:
+
+$ vagrant init oraclelinux/8 https://oracle.github.io/vagrant-projects/boxes/oraclelinux/8.json
+$ vagrant up
+$ vagrant ssh
+
+To launch an Oracle Linux 8 box with Btfs root filesystem :
+
+$ vagrant init oraclelinux/8-btrfs https://oracle.github.io/vagrant-projects/boxes/oraclelinux/8-btrfs.json
+$ vagrant up
+$ vagrant ssh
+
+
+
+############################################################################################
+# AWS Glue
+############################################################################################
+
+https://www.youtube.com/watch?v=-Vdgkg-UqfY
+
+import sys
+from aws glue.transform import *
+from awsglue.utils import getResolvedOptions
+from pyspark.context import SparkContext
+from aswglue.context import GlueContext
+from awsglue.job import Job
+
+sys.argv += ['--JOB_NAME','ETL Job']
+args = getResolveOptions(sys.args,['Job_NAME'])
+
+sc = Sparkcontext.getOrCreate()
+glueContext = GlueContext(sc)
+spark = glueContext.spark_session
+job = Job(glueContext)
+job.init(args['JOB_NAME'],args)
+
+customer_dyamicframe = glueContext.create_dynamic_frame_from_options(
+	's3',
+	{'paths': ['s3://server-aws-east-1/raw/customer/customer_order/']},
+	'parquet',
+	{'withHeader': True}
+)
+print('Count', customer_dyamicframe.count())
+customer_dyamicframe.printSchema()
+
+edited_df = DropFields.apply(customer_dyamicframe.paths=['order_id'])
+edited_df.show()
+job.commit()
+
+
+############################################################################################
+# AWS Glue Accessing parameters using getResolvedOptions
+############################################################################################
+
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-api-crawler-pyspark-extensions-get-resolved-options.html
+https://docs.amazonaws.cn/en_us/glue/latest/dg/aws-glue-api-crawler-pyspark-extensions-get-resolved-options.html
+https://docs.amazonaws.cn/en_us/glue/latest/dg/aws-glue-programming-python-libraries.html
+https://docs.amazonaws.cn/en_us/glue/latest/dg/aws-glue-programming-python-samples-legislators.html
+https://docs.amazonaws.cn/en_us/glue/latest/dg/aws-glue-programming-python-samples-medicaid.html
+https://stackoverflow.com/questions/52316668/aws-glue-job-input-parameters
+https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-package.html#gettingstarted-package-images
+https://docs.aws.amazon.com/lambda/latest/dg/python-package.html
+https://aws.amazon.com/sdk-for-python/
+https://github.com/boto/boto3
+https://aws.amazon.com/developer/language/python/
+https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ec2.html#client
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/dynamodb.html
+
+import sys
+from awsglue.utils import getResolvedOptions
+
+response = client.start_job_run(
+             JobName = 'my_test_Job',
+             Arguments = {
+               '--day_partition_key':   'partition_0',
+               '--hour_partition_key':  'partition_1',
+               '--day_partition_value':  day_partition_value,
+               '--hour_partition_value': hour_partition_value } )
+
+
+# retrieve the arguments that are passed
+import sys
+from awsglue.utils import getResolvedOptions
+
+args = getResolvedOptions(sys.argv,
+                          ['JOB_NAME',
+                           'day_partition_key',
+                           'hour_partition_key',
+                           'day_partition_value',
+                           'hour_partition_value'])
+print "The day-partition key is: ", args['day_partition_key']
+print "and the day-partition value is: ", args['day_partition_value']
+
+
+# boilerplate script to the development endpoint notebook
+
+import sys
+from awsglue.transforms import *
+from awsglue.utils import getResolvedOptions
+from pyspark.context import SparkContext
+from awsglue.context import GlueContext
+from awsglue.job import Job
+
+glueContext = GlueContext(SparkContext.getOrCreate())
+
+# Examine the schemas from the data in the Data Catalog
+
+persons = glueContext.create_dynamic_frame.from_catalog(
+             database="legislators",
+             table_name="persons_json")
+print "Count: ", persons.count()
+persons.printSchema()
+memberships = glueContext.create_dynamic_frame.from_catalog(
+                 database="legislators",
+                 table_name="memberships_json")
+print "Count: ", memberships.count()
+memberships.printSchema()
+orgs = glueContext.create_dynamic_frame.from_catalog(
+           database="legislators",
+           table_name="organizations_json")
+print "Count: ", orgs.count()
+orgs.printSchema()
+
+
+...
+
+
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-api-crawler-pyspark-extensions-get-resolved-options.html
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-python-calling.html
+https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/glue.html#Glue.Client.create_job
+https://docs.aws.amazon.com/step-functions/latest/dg/welcome.html
+
+Glue job code
+-------------------------------
+import sys
+from awsglue.transforms import *
+from awsglue.utils import getResolvedOptions
+from pyspark.context import SparkContext
+from awsglue.context import GlueContext
+from awsglue.job import Job
+
+## @params: [JOB_NAME]
+args = getResolvedOptions(sys.argv, ['JOB_NAME'])
+
+sc = SparkContext()
+glueContext = GlueContext(sc)
+spark = glueContext.spark_session
+job = Job(glueContext)
+args = getResolvedOptions(sys.argv, ['JOB_NAME','VAL1','VAL2','VAL3','DEST_FOLDER'])
+job.init(args['JOB_NAME'], args)
+
+v_list=[{"VAL1":args['VAL1'],"VAL2":args['VAL2'],"VAL3":args['VAL3']}]
+
+df=sc.parallelize(v_list).toDF()
+df.repartition(1).write.mode('overwrite').format('csv').options(header=True, delimiter = ';').save("s3://"+ args['DEST_FOLDER'] +"/")
+
+job.commit()
+
+
+--------------------------------
+
+import boto3
+
+def lambda_handler(event, context):
+    glue = boto3.client('glue')
+
+
+    myJob = glue.create_job(Name='example_job2', Role='AWSGlueServiceDefaultRole',
+                            Command={'Name': 'glueetl','ScriptLocation': 's3://aws-glue-scripts/example_job'},
+                            DefaultArguments={"VAL1":"value1","VAL2":"value2","VAL3":"value3"}
+                                   )
+    glue.start_job_run(JobName=myJob['Name'], Arguments={"VAL1":"value11","VAL2":"value22","VAL3":"value33"})
+
+############################################################################################
+# EC2  boto3
+############################################################################################
+
+https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ec2.html
+https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ec2.html#client
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/ec2-example-managing-instances.html
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/ec2-examples.html
+
+import boto3
+
+ec2 = boto3.resource('ec2')
+client = boto3.client('ec2')
+
+response = client.describe_instances()
+print(response)
+
+
+https://www.youtube.com/watch?v=9occfhrM4gg
+
+pip install awscli
+aws configure
+whoami
+echo ${HOME}
+PWD
+ls -lart
+.aws
+ls .aws/
+cat credentials
+
+############################################################################################
+# AWS Glue Data Catalog RDS
+############################################################################################
+
+https://docs.aws.amazon.com/prescriptive-guidance/latest/serverless-etl-aws-glue/aws-glue-data-catalog.html
+https://docs.aws.amazon.com/glue/latest/dg/crawler-data-stores.html
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.html
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/SampleData.LoadData.html
+https://docs.localstack.cloud/aws/rds/
+
+Amazon Relational Database Service (Amazon RDS)
+
+Amazon Aurora
+Microsoft SQL Server
+MySQL
+Oracle
+PostgreSQL
+
+Publicly accessible databases (on-premises or on another cloud provider environment)
+
+Aurora
+Microsoft SQL Server
+MySQL
+Oracle
+PostgreSQL
+
+############################################################################################
+# Python shell jobs in AWS Glue
+############################################################################################
+
+https://docs.aws.amazon.com/glue/latest/dg/add-job-python.html
+
+
+ aws glue create-job --name python-job-cli --role Glue_DefaultRole
+     --command '{"Name" :  "pythonshell", "PythonVersion": "3.9", "ScriptLocation" : "s3://aws-glue-scripts-123456789012-us-east-1/Admin/python-job-cli.py"}'
+     --max-capacity 0.0625
+
+
+import numpy as np
+print("Hello world")
+
+a = np.array([20,30,40,50])
+print(a)
+b = np.arange( 4 )
+print(b)
+
+Using Python shell
+
+You can use either 1 DPU to use 16 GB of memory or 0.0625 DPU to use 1 GB of memory. Note that a Python shell job does not use the Apache Spark environment to run Python, so it is not shown in the following table. Python shell is for jobs where the size of data is very small.
+
+
+
+############################################################################################
+# How to access and analyze on-premises data stores using AWS Glue
+############################################################################################
+
+https://aws.amazon.com/de/blogs/big-data/how-to-access-and-analyze-on-premises-data-stores-using-aws-glue/
+
+curl -s https://ip-ranges.amazonaws.com/ip-ranges.json | jq -r '.prefixes[] | select(.service=="S3") | select(.region=="us-east-1") | .ip_prefix'
+
+############################################################################################
+# Amazon Documentation EC2
+############################################################################################
+
+https://docs.aws.amazon.com/ec2/index.html?nc2=h_ql_doc_ec2
+https://docs.aws.amazon.com/s3/index.html?nc2=h_ql_doc_s3
+https://docs.aws.amazon.com/cli/index.html?nc2=h_ql_doc_cli
+https://docs.aws.amazon.com/iam/index.html?nc2=h_ql_doc_iam
+
+############################################################################################
+# lambda
+############################################################################################
+
+https://aws.amazon.com/lambda/
+https://docs.aws.amazon.com/cli/latest/reference/lambda/create-function.html
+https://awscli.amazonaws.com/v2/documentation/api/2.0.34/reference/lambda/create-function.html
+https://docs.aws.amazon.com/lambda/latest/dg/API_CreateFunction.html
+https://awscli.amazonaws.com/v2/documentation/api/2.1.29/reference/lambda/create-function.html
+https://docs.aws.amazon.com/de_de/lambda/latest/dg/API_CreateFunction.html
+
+https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-awscli.html
+
+aws lambda create-function --function-name my-function \
+--zip-file fileb://function.zip --handler index.handler --runtime nodejs16.x \
+--role arn:aws:iam::123456789012:role/lambda-ex
+
+############################################################################################
+# pandas whl
+############################################################################################
+
+https://pypi.org/project/pandas/1.1.5/
+https://pypi.org/project/pandas/1.1.5/#files
+
+pandas-1.1.5-cp37-cp37m-manylinux1_x86_64.whl
+
+https://pandas.pydata.org/pandas-docs/version/1.3.2/getting_started/install.html
+https://pypi.org/project/pandas/
+https://pandas.pydata.org/pandas-docs/version/1.3.2/getting_started/index.html
+https://github.com/pandas-dev/pandas/releases
+https://pandas.pydata.org/pandas-docs/stable/getting_started/install.html#installing-from-source
+
+pip install wheel
+wheel unpack file.whl
+
+move extracted folders into "python" folder and zip
+
+############################################################################################
+# Local AWS Services Glue
+############################################################################################
+
+https://docs.localstack.cloud/aws/glue/
+https://docs.localstack.cloud/aws/feature-coverage/
+https://aws.amazon.com/sdk-for-python/
+https://github.com/boto/boto3
+https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ec2.html#client
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/dynamodb.html
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/ec2-examples.html
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/SampleData.html
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html#docker
+
+
+############################################################################################
+# AWS DynamoDB local with Docker compose
+############################################################################################
+
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html#docker
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/getting-started-step-1.html
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/getting-started-step-2.html
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/getting-started-step-3.html
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/getting-started-step-4.html
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/getting-started-step-5.html
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/getting-started-step-6.html
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/getting-started-step-7.html
+https://docs.localstack.cloud/integrations/aws-cli/
+https://docs.localstack.cloud/aws/feature-coverage/
+https://docs.localstack.cloud/integrations/chalice/
+
+aws dynamodb list-tables --endpoint-url http://localhost:8000
+
+aws dynamodb create-table \
+    --table-name Music \
+    --attribute-definitions \
+        AttributeName=Artist,AttributeType=S \
+        AttributeName=SongTitle,AttributeType=S \
+    --key-schema \
+        AttributeName=Artist,KeyType=HASH \
+        AttributeName=SongTitle,KeyType=RANGE \
+    --provisioned-throughput \
+        ReadCapacityUnits=5,WriteCapacityUnits=5 \
+    --table-class STANDARD
+
+aws dynamodb put-item \
+    --table-name Music  \
+    --item \
+        '{"Artist": {"S": "No One You Know"}, "SongTitle": {"S": "Call Me Today"}, "AlbumTitle": {"S": "Somewhat Famous"}, "Awards": {"N": "1"}}'
+
+aws dynamodb get-item --consistent-read \
+    --table-name Music \
+    --key '{ "Artist": {"S": "Acme Band"}, "SongTitle": {"S": "Happy Day"}}'
+
+aws dynamodb update-item \
+    --table-name Music \
+    --key '{ "Artist": {"S": "Acme Band"}, "SongTitle": {"S": "Happy Day"}}' \
+    --update-expression "SET AlbumTitle = :newval" \
+    --expression-attribute-values '{":newval":{"S":"Updated Album Title"}}' \
+    --return-values ALL_NEW
+
+aws dynamodb query \
+    --table-name Music \
+    --key-condition-expression "Artist = :name" \
+    --expression-attribute-values  '{":name":{"S":"Acme Band"}}'
+
+aws dynamodb update-table \
+    --table-name Music \
+    --attribute-definitions AttributeName=AlbumTitle,AttributeType=S \
+    --global-secondary-index-updates \
+        "[{\"Create\":{\"IndexName\": \"AlbumTitle-index\",\"KeySchema\":[{\"AttributeName\":\"AlbumTitle\",\"KeyType\":\"HASH\"}], \
+        \"ProvisionedThroughput\": {\"ReadCapacityUnits\": 10, \"WriteCapacityUnits\": 5      },\"Projection\":{\"ProjectionType\":\"ALL\"}}}]"
+
+aws dynamodb describe-table --table-name Music | grep IndexStatus
+
+aws dynamodb query \
+    --table-name Music \
+    --index-name AlbumTitle-index \
+    --key-condition-expression "AlbumTitle = :name" \
+    --expression-attribute-values  '{":name":{"S":"Somewhat Famous"}}'
+
+
+------------------
+
+
+version: '3.8'
+services:
+  dynamodb-local:
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    image: "amazon/dynamodb-local:latest"
+    container_name: dynamodb-local
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./docker/dynamodb:/home/dynamodblocal/data"
+    working_dir: /home/dynamodblocal
+
+
+
+# Application and DynamoDB local to be in separate containers,
+
+
+version: '3.8'
+services:
+  dynamodb-local:
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    image: "amazon/dynamodb-local:latest"
+    container_name: dynamodb-local
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./docker/dynamodb:/home/dynamodblocal/data"
+    working_dir: /home/dynamodblocal
+  app-node:
+    depends_on:
+      - dynamodb-local
+    image: banst/awscli
+    container_name: app-node
+    ports:
+     - "8080:8080"
+    environment:
+      AWS_ACCESS_KEY_ID: 'DUMMYIDEXAMPLE'
+      AWS_SECRET_ACCESS_KEY: 'DUMMYEXAMPLEKEY'
+    command:
+      dynamodb describe-limits --endpoint-url http://dynamodb-local:8000 --region us-west-2
+
+
+# To use with your own application image, replace the image value in the example below with that of your application.
+
+version: '3.8'
+services:
+  dynamodb-local:
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    image: "amazon/dynamodb-local:latest"
+    container_name: dynamodb-local
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./docker/dynamodb:/home/dynamodblocal/data"
+    working_dir: /home/dynamodblocal
+  app-node:
+    image: location-of-your-dynamodb-demo-app:latest
+    container_name: app-node
+    ports:
+      - "8080:8080"
+    depends_on:
+      - "dynamodb-local"
+    links:
+      - "dynamodb-local"
+    environment:
+      AWS_ACCESS_KEY_ID: 'DUMMYIDEXAMPLE'
+      AWS_SECRET_ACCESS_KEY: 'DUMMYEXAMPLEKEY'
+      REGION: 'eu-west-1'
+
+
+############################################################################################
+# cloud limitation
+############################################################################################
+
+https://cloud.google.com/functions/quotas
+https://aws.amazon.com/about-aws/whats-new/2020/12/aws-lambda-supports-10gb-memory-6-vcpu-cores-lambda-functions/
+https://docs.aws.amazon.com/lambda/latest/operatorguide/computing-power.html
+https://aws.amazon.com/lambda/pricing/
+https://aws.amazon.com/premiumsupport/knowledge-center/lambda-troubleshoot-invocation-timeouts/
+https://aws.amazon.com/about-aws/whats-new/2018/10/aws-lambda-supports-functions-that-can-run-up-to-15-minutes/
+https://docs.aws.amazon.com/prescriptive-guidance/latest/serverless-etl-aws-glue/aws-glue-etl.html
+
+
+
+

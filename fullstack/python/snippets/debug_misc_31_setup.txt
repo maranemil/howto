@@ -1,0 +1,376 @@
+
+############################################################################################
+# Build System Interface setup
+############################################################################################
+
+
+https://pip.pypa.io/en/stable/reference/build-system/pyproject-toml/
+https://pip.pypa.io/en/stable/reference/build-system/
+https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
+https://peps.python.org/pep-0621/
+https://peps.python.org/pep-0518/
+https://peps.python.org/pep-0631/
+https://stackoverflow.com/questions/62983756/what-is-pyproject-toml-file-for
+https://godatadriven.com/blog/a-practical-guide-to-setuptools-and-pyproject-toml/#
+https://pypi.org/project/pyproject-toml/#description
+https://github.com/pyproject-toml/pyproject-toml
+https://github.com/pypa/setuptools
+https://packaging.python.org/en/latest/tutorials/installing-packages/#ensure-pip-setuptools-and-wheel-are-up-to-date
+https://packaging.python.org/en/latest/specifications/declaring-project-metadata/
+https://python-poetry.org/docs/pyproject/
+https://pip.pypa.io/en/stable/reference/build-system/pyproject-toml/
+
+pyproject.toml is the new unified Python project settings file that replaces setup.py.
+Editable installs still need a setup.py: import setuptools; setuptools.setup()
+
+...
+
+To use pyproject.toml, run
+----------------------
+python -m pip install .
+pip3 install .
+
+
+
+
+pyproject.toml Examples
+----------------------
+[project]
+name = "my-package"
+requires-python = ">3.5.2"
+version = "0.1.0"
+description = "A short description of the package."
+license = "MIT"
+authors = [
+    "John Doe <example@example.io>",
+]
+maintainers = [
+    "John Smith <johnsmith@example.org>",
+    "Jane Smith <janesmith@example.org>",
+]
+
+
+[tool.poetry]
+readme = ["docs/README1.md", "docs/README2.md"]
+homepage = "https://python-poetry.org/"
+repository = "https://github.com/python-poetry/poetry"
+documentation = "https://python-poetry.org/docs/"
+keywords = ["packaging", "poetry"]
+classifiers = [
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
+packages = [
+    { include = "my_package" },
+    { include = "extra_package/**/*.py" },
+    { include = "my_package", from = "lib" },
+    { include = "my_other_package", format = "sdist" },
+    { include = "extra_package" },
+]
+include = ["CHANGELOG.md"]
+include = [
+    { path = "tests", format = "sdist" },
+    { path = "for_wheel.txt", format = ["sdist", "wheel"] }
+]
+exclude = ["my_package/excluded.py"]
+
+[tool.poetry.dependencies]
+requests = "^2.13.0"
+
+[[tool.poetry.source]]
+name = "private"
+url = "http://example.com/simple"
+
+[tool.poetry.dependencies]
+requests = { version = "^2.13.0", source = "private" }
+
+[tool.poetry.dependencies]
+python = "^3.7"
+
+[tool.poetry.group.test.dependencies]
+pytest = "*"
+
+[tool.poetry.group.docs.dependencies]
+mkdocs = "*"
+
+[tool.poetry.scripts]
+my_package_cli = 'my_package.console:run'
+
+[tool.poetry.scripts]
+devtest = { callable = "mypackage:test.run_tests", extras = ["test"] }
+
+
+Poetry supports extras to allow expression of:
+
+[tool.poetry]
+name = "awesome"
+
+[tool.poetry.dependencies]
+# These packages are mandatory and form the core of this package’s distribution.
+mandatory = "^1.0"
+
+# A list of all of the optional dependencies, some of which are included in the
+# below `extras`. They can be opted into by apps.
+psycopg2 = { version = "^2.9", optional = true }
+mysqlclient = { version = "^1.3", optional = true }
+
+[tool.poetry.extras]
+mysql = ["mysqlclient"]
+pgsql = ["psycopg2"]
+databases = ["mysqlclient", "psycopg2"]
+
+poetry install --extras "mysql pgsql"
+poetry install -E mysql -E pgsql
+poetry install --all-extras
+pip install awesome[databases]
+
+# plugins
+
+
+[tool.poetry.plugins] # Optional super table
+
+[tool.poetry.plugins."A"]
+"B" = "C:D"
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/python-poetry/poetry/issues"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+
+
+pyproject.toml
+----------------------
+[options]
+install_requires =
+    pandas == 1.4.1
+    PyYAML >= 6.0
+    typer
+
+[options.extras_require]
+notebook = jupyter>=1.0.0, matplotlib
+dev =
+    black==22.1.0
+    flake8==4.0.1
+
+#[options.entry_points]
+#console_scripts =
+#    my-example-utility = example.example_module:main
+
+[options.entry_points]
+console_scripts =
+    example-tool = example.cli:app
+
+cli.py
+----------------------
+from typer import Typer
+
+app = Typer()
+
+@app.command()
+def hello():
+    print("Hello.")
+
+@app.command()
+def bye(name: str):
+    print(f"Bye {name}")
+
+
+
+----------------------
+https://pypi.org/project/toml/
+https://stackoverflow.com/questions/62983756/what-is-pyproject-toml-file-for
+https://pip.pypa.io/en/stable/reference/build-system/pyproject-toml/
+https://blog.finxter.com/how-to-install-toml-in-python/
+
+pip install toml
+python -m pip install toml
+pip3 install toml
+
+pip install -e .
+
+pip install Installing collected packages: UNKNOWN
+
+https://stackoverflow.com/questions/53077360/pip-install-issue-with-egg-fragments-that-lead-to-an-unknown-installation-of-a-p
+https://github.com/pypa/setuptools/issues/3301
+https://pythontechworld.com/issue/pypa/setuptools/3226
+
+pip install setuptools --upgrade
+pip install setuptools --upgrade should fix the issue
+
+'pyproject.toml' and its build backend is missing the 'build_editable' hook
+---------------------------------------------------
+https://stackoverflow.com/questions/69711606/how-to-install-a-package-using-pip-in-editable-mode-with-pyproject-toml
+https://github.com/pypa/setuptools/issues/3390
+https://stackoverflow.com/questions/69711606/how-to-install-a-package-using-pip-in-editable-mode-with-pyproject-toml
+https://github.com/pypa/setuptools/issues/3301
+https://packaging.python.org/en/latest/tutorials/packaging-projects/
+https://stackoverflow.com/questions/72294299/multiple-top-level-packages-discovered-in-a-flat-layout
+https://github.com/pypa/setuptools/issues/3197
+https://setuptools.pypa.io/en/latest/userguide/package_discovery.html
+https://packaging.python.org/en/latest/tutorials/installing-packages/#ensure-pip-setuptools-and-wheel-are-up-to-date
+https://hynek.me/til/pip-tools-and-pyproject-toml/
+https://pip.pypa.io/en/stable/reference/build-system/pyproject-toml/
+https://setuptools.pypa.io/en/latest/userguide/declarative_config.html
+https://python-poetry.org/docs/pyproject/
+https://peps.python.org/pep-0518/
+https://github.com/toml-lang/toml
+https://pypi.org/project/pip/
+https://github.com/pypa/setuptools
+https://pypi.org/project/setuptools/
+
+python3 -m pip install --upgrade pip
+python3 -m pip install --upgrade pip
+
+https://hynek.me/til/pip-tools-and-pyproject-toml/
+https://pypi.org/project/pip-tools/1.8.0/
+
+pip install pip-tools
+python3 -m piptools compile  -o requirements.txt  pyproject.toml
+
+--------------------------------
+
+Examples
+
+https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
+
+
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "my_package"
+description = "My package description"
+readme = "README.rst"
+requires-python = ">=3.7"
+keywords = ["one", "two"]
+license = {text = "BSD 3-Clause License"}
+classifiers = [
+    "Framework :: Django",
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "requests",
+    "pandas"
+    'importlib-metadata; python_version<"3.8"',
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+pdf = ["ReportLab>=1.2", "RXP"]
+rest = ["docutils>=0.3", "pack ==1.1, ==1.3"]
+
+[project.scripts]
+my-script = "my_package.module:function"
+
+# ... other project metadata fields as specified in:
+#     https://packaging.python.org/en/latest/specifications/declaring-project-metadata/
+
+--------------------------------
+
+
+https://github.com/nucleic/atom/blob/main/pyproject.toml
+
+[project]
+name = "atom"
+description = "Memory efficient Python objects"
+readme = "README.rst"
+requires-python = ">=3.8"
+license = {file = "LICENSE"}
+authors = [
+  {name = "The Nucleic Development Team", email = "sccolbert@gmail.com"}
+]
+maintainers = [
+  {name = "Matthieu C. Dartiailh", email = "m.dartiailh@gmail.com"}
+]
+classifiers = [
+    "License :: OSI Approved :: BSD License",
+]
+dynamic=["version"]
+
+[project.urls]
+homepage = "https://github.com/nucleic/atom"
+documentation = "https://atom.readthedocs.io/en/latest/"
+repository = "https://github.com/nucleic/atom"
+changelog = "https://github.com/nucleic/atom/blob/main/releasenotes.rst"
+
+[build-system]
+requires = ["setuptools>=61.2", "wheel", "setuptools_scm[toml]>=3.4.3", "cppy>=1.2.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+include-package-data = false
+package-data = {atom = ["py.typed", "*.pyi"]}
+
+[tool.setuptools_scm]
+write_to = "atom/version.py"
+write_to_template = """
+__version__ = "{version}"
+"""
+
+[tool.black]
+line-length = 88  # Enforce the default value
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+
+[tool.mypy]
+follow_imports = "normal"
+strict_optional = true
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+combine_as_imports = true
+force_grid_wrap = 0
+use_parentheses = true
+line_length = 88
+
+
+.....................
+
+https://stackoverflow.com/questions/73247204/black-not-respecting-extend-exclude-in-pyproject-toml
+https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html
+https://github.com/microsoft/vscode-python/issues/7047
+
+[tool.black]
+line-length = 200
+target-version = ['py39']
+include = '\.pyi?$'
+explude = ['tmp', 'dev', 'data', 'volume', 'source', 'notebooks']
+extend-exclude = '''.*test_.*'''
+
+
+.....................
+
+rm -rf /tmp/myproj
+mkdir -p /tmp/myproj
+cd /tmp/myproj
+mkdir -p src/my_package
+touch src/my_package/__init__.py
+cat <<EOS > pyproject.toml
+[build-system]
+requires = ["setuptools>=42"]
+build-backend = "setuptools.build_meta"
+EOS
+cat <<EOS > setup.cfg
+[metadata]
+name = my-package
+version = 0.1.0
+
+[options]
+packages = my_package
+package_dir =
+    my_package = src/my_package
+EOS
+virtualenv .venv
+.venv/bin/pip install -e .
+.venv/bin/python -c 'import my_package'
+# ...
+# ModuleNotFoundError: No module named 'my_package'
+
+
+
