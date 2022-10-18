@@ -1,0 +1,916 @@
+
+############################################################################################
+# Build System Interface setup
+############################################################################################
+
+
+https://pip.pypa.io/en/stable/reference/build-system/pyproject-toml/
+https://pip.pypa.io/en/stable/reference/build-system/
+https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
+https://peps.python.org/pep-0621/
+https://peps.python.org/pep-0518/
+https://peps.python.org/pep-0631/
+https://stackoverflow.com/questions/62983756/what-is-pyproject-toml-file-for
+https://godatadriven.com/blog/a-practical-guide-to-setuptools-and-pyproject-toml/#
+https://pypi.org/project/pyproject-toml/#description
+https://github.com/pyproject-toml/pyproject-toml
+https://github.com/pypa/setuptools
+https://packaging.python.org/en/latest/tutorials/installing-packages/#ensure-pip-setuptools-and-wheel-are-up-to-date
+https://packaging.python.org/en/latest/specifications/declaring-project-metadata/
+https://python-poetry.org/docs/pyproject/
+https://pip.pypa.io/en/stable/reference/build-system/pyproject-toml/
+
+pyproject.toml is the new unified Python project settings file that replaces setup.py.
+Editable installs still need a setup.py: import setuptools; setuptools.setup()
+
+...
+
+To use pyproject.toml, run
+----------------------
+python -m pip install .
+pip3 install .
+
+
+
+
+pyproject.toml Examples
+----------------------
+[project]
+name = "my-package"
+requires-python = ">3.5.2"
+version = "0.1.0"
+description = "A short description of the package."
+license = "MIT"
+authors = [
+    "John Doe <example@example.io>",
+]
+maintainers = [
+    "John Smith <johnsmith@example.org>",
+    "Jane Smith <janesmith@example.org>",
+]
+
+
+[tool.poetry]
+readme = ["docs/README1.md", "docs/README2.md"]
+homepage = "https://python-poetry.org/"
+repository = "https://github.com/python-poetry/poetry"
+documentation = "https://python-poetry.org/docs/"
+keywords = ["packaging", "poetry"]
+classifiers = [
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
+packages = [
+    { include = "my_package" },
+    { include = "extra_package/**/*.py" },
+    { include = "my_package", from = "lib" },
+    { include = "my_other_package", format = "sdist" },
+    { include = "extra_package" },
+]
+include = ["CHANGELOG.md"]
+include = [
+    { path = "tests", format = "sdist" },
+    { path = "for_wheel.txt", format = ["sdist", "wheel"] }
+]
+exclude = ["my_package/excluded.py"]
+
+[tool.poetry.dependencies]
+requests = "^2.13.0"
+
+[[tool.poetry.source]]
+name = "private"
+url = "http://example.com/simple"
+
+[tool.poetry.dependencies]
+requests = { version = "^2.13.0", source = "private" }
+
+[tool.poetry.dependencies]
+python = "^3.7"
+
+[tool.poetry.group.test.dependencies]
+pytest = "*"
+
+[tool.poetry.group.docs.dependencies]
+mkdocs = "*"
+
+[tool.poetry.scripts]
+my_package_cli = 'my_package.console:run'
+
+[tool.poetry.scripts]
+devtest = { callable = "mypackage:test.run_tests", extras = ["test"] }
+
+
+Poetry supports extras to allow expression of:
+
+[tool.poetry]
+name = "awesome"
+
+[tool.poetry.dependencies]
+# These packages are mandatory and form the core of this package’s distribution.
+mandatory = "^1.0"
+
+# A list of all of the optional dependencies, some of which are included in the
+# below `extras`. They can be opted into by apps.
+psycopg2 = { version = "^2.9", optional = true }
+mysqlclient = { version = "^1.3", optional = true }
+
+[tool.poetry.extras]
+mysql = ["mysqlclient"]
+pgsql = ["psycopg2"]
+databases = ["mysqlclient", "psycopg2"]
+
+poetry install --extras "mysql pgsql"
+poetry install -E mysql -E pgsql
+poetry install --all-extras
+pip install awesome[databases]
+
+# plugins
+
+
+[tool.poetry.plugins] # Optional super table
+
+[tool.poetry.plugins."A"]
+"B" = "C:D"
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/python-poetry/poetry/issues"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+
+
+pyproject.toml
+----------------------
+[options]
+install_requires =
+    pandas == 1.4.1
+    PyYAML >= 6.0
+    typer
+
+[options.extras_require]
+notebook = jupyter>=1.0.0, matplotlib
+dev =
+    black==22.1.0
+    flake8==4.0.1
+
+#[options.entry_points]
+#console_scripts =
+#    my-example-utility = example.example_module:main
+
+[options.entry_points]
+console_scripts =
+    example-tool = example.cli:app
+
+cli.py
+----------------------
+from typer import Typer
+
+app = Typer()
+
+@app.command()
+def hello():
+    print("Hello.")
+
+@app.command()
+def bye(name: str):
+    print(f"Bye {name}")
+
+
+
+----------------------
+https://pypi.org/project/toml/
+https://stackoverflow.com/questions/62983756/what-is-pyproject-toml-file-for
+https://pip.pypa.io/en/stable/reference/build-system/pyproject-toml/
+https://blog.finxter.com/how-to-install-toml-in-python/
+
+pip install toml
+python -m pip install toml
+pip3 install toml
+
+pip install -e .
+
+pip install Installing collected packages: UNKNOWN
+
+https://stackoverflow.com/questions/53077360/pip-install-issue-with-egg-fragments-that-lead-to-an-unknown-installation-of-a-p
+https://github.com/pypa/setuptools/issues/3301
+https://pythontechworld.com/issue/pypa/setuptools/3226
+
+pip install setuptools --upgrade
+pip install setuptools --upgrade should fix the issue
+
+'pyproject.toml' and its build backend is missing the 'build_editable' hook
+---------------------------------------------------
+https://stackoverflow.com/questions/69711606/how-to-install-a-package-using-pip-in-editable-mode-with-pyproject-toml
+https://github.com/pypa/setuptools/issues/3390
+https://stackoverflow.com/questions/69711606/how-to-install-a-package-using-pip-in-editable-mode-with-pyproject-toml
+https://github.com/pypa/setuptools/issues/3301
+https://packaging.python.org/en/latest/tutorials/packaging-projects/
+https://stackoverflow.com/questions/72294299/multiple-top-level-packages-discovered-in-a-flat-layout
+https://github.com/pypa/setuptools/issues/3197
+https://setuptools.pypa.io/en/latest/userguide/package_discovery.html
+https://packaging.python.org/en/latest/tutorials/installing-packages/#ensure-pip-setuptools-and-wheel-are-up-to-date
+https://hynek.me/til/pip-tools-and-pyproject-toml/
+https://pip.pypa.io/en/stable/reference/build-system/pyproject-toml/
+https://setuptools.pypa.io/en/latest/userguide/declarative_config.html
+https://python-poetry.org/docs/pyproject/
+https://peps.python.org/pep-0518/
+https://github.com/toml-lang/toml
+https://pypi.org/project/pip/
+https://github.com/pypa/setuptools
+https://pypi.org/project/setuptools/
+
+python3 -m pip install --upgrade pip
+python3 -m pip install --upgrade pip
+
+https://hynek.me/til/pip-tools-and-pyproject-toml/
+https://pypi.org/project/pip-tools/1.8.0/
+
+pip install pip-tools
+python3 -m piptools compile  -o requirements.txt  pyproject.toml
+
+--------------------------------
+
+Examples
+
+https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
+
+
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "my_package"
+description = "My package description"
+readme = "README.rst"
+requires-python = ">=3.7"
+keywords = ["one", "two"]
+license = {text = "BSD 3-Clause License"}
+classifiers = [
+    "Framework :: Django",
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "requests",
+    "pandas"
+    'importlib-metadata; python_version<"3.8"',
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+pdf = ["ReportLab>=1.2", "RXP"]
+rest = ["docutils>=0.3", "pack ==1.1, ==1.3"]
+
+[project.scripts]
+my-script = "my_package.module:function"
+
+# ... other project metadata fields as specified in:
+#     https://packaging.python.org/en/latest/specifications/declaring-project-metadata/
+
+--------------------------------
+
+
+https://github.com/nucleic/atom/blob/main/pyproject.toml
+
+[project]
+name = "atom"
+description = "Memory efficient Python objects"
+readme = "README.rst"
+requires-python = ">=3.8"
+license = {file = "LICENSE"}
+authors = [
+  {name = "The Nucleic Development Team", email = "sccolbert@gmail.com"}
+]
+maintainers = [
+  {name = "Matthieu C. Dartiailh", email = "m.dartiailh@gmail.com"}
+]
+classifiers = [
+    "License :: OSI Approved :: BSD License",
+]
+dynamic=["version"]
+
+[project.urls]
+homepage = "https://github.com/nucleic/atom"
+documentation = "https://atom.readthedocs.io/en/latest/"
+repository = "https://github.com/nucleic/atom"
+changelog = "https://github.com/nucleic/atom/blob/main/releasenotes.rst"
+
+[build-system]
+requires = ["setuptools>=61.2", "wheel", "setuptools_scm[toml]>=3.4.3", "cppy>=1.2.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+include-package-data = false
+package-data = {atom = ["py.typed", "*.pyi"]}
+
+[tool.setuptools_scm]
+write_to = "atom/version.py"
+write_to_template = """
+__version__ = "{version}"
+"""
+
+[tool.black]
+line-length = 88  # Enforce the default value
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+
+[tool.mypy]
+follow_imports = "normal"
+strict_optional = true
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+combine_as_imports = true
+force_grid_wrap = 0
+use_parentheses = true
+line_length = 88
+
+
+.....................
+
+https://stackoverflow.com/questions/73247204/black-not-respecting-extend-exclude-in-pyproject-toml
+https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html
+https://github.com/microsoft/vscode-python/issues/7047
+
+[tool.black]
+line-length = 200
+target-version = ['py39']
+include = '\.pyi?$'
+explude = ['tmp', 'dev', 'data', 'volume', 'source', 'notebooks']
+extend-exclude = '''.*test_.*'''
+
+
+.....................
+
+rm -rf /tmp/myproj
+mkdir -p /tmp/myproj
+cd /tmp/myproj
+mkdir -p src/my_package
+touch src/my_package/__init__.py
+cat <<EOS > pyproject.toml
+[build-system]
+requires = ["setuptools>=42"]
+build-backend = "setuptools.build_meta"
+EOS
+cat <<EOS > setup.cfg
+[metadata]
+name = my-package
+version = 0.1.0
+
+[options]
+packages = my_package
+package_dir =
+    my_package = src/my_package
+EOS
+virtualenv .venv
+.venv/bin/pip install -e .
+.venv/bin/python -c 'import my_package'
+# ...
+# ModuleNotFoundError: No module named 'my_package'
+
+###########################################################
+Basic usage poetry
+###########################################################
+
+https://serpapi.com/blog/python-virtual-environments-using-virtualenv-and-poetry/
+https://splunktool.com/specifying-command-line-scripts-in-pyprojecttoml
+https://python-poetry.org/docs/basic-usage/
+https://python-poetry.org/docs/pyproject/#poetry-and-pep-517
+https://python-poetry.org/docs/basic-usage/
+https://python-poetry.org/docs/pyproject/#dependencies-and-dependency-groups
+
+https://github.com/tiangolo/typer-cli/blob/master/pyproject.toml
+https://github.com/darrikonn/td-cli/blob/master/pyproject.toml
+https://github.com/pypa/virtualenv/blob/main/pyproject.toml
+https://github.com/python-poetry/poetry/issues/2937
+https://github.com/python-poetry/poetry/issues/2937
+https://peps.python.org/pep-0631/
+https://stackoverflow.com/questions/64150719/how-to-write-a-minimally-working-pyproject-toml-file-that-can-install-packages
+
+-----------------------------------
+# Install virtualenv:
+-----------------------------------
+pip install virtualenv
+sudo apt install python3.8-venv
+
+# Create environment
+python3 -m venv env
+
+# Activate On Linux
+source env/bin/activate
+
+pip install -e -
+pip install google-search-results
+
+
+-----------------------------------
+# Create a virtual environment for a specific Python version
+-----------------------------------
+# For Linux:
+# install package for specific Python version
+$ python3.6 -m pip install virtualenv
+
+# create venv for specific Python version
+$ python3.6 -m venv my_test_env
+
+# Deactivate virtual environment when done:
+deactivate
+
+-----------------------------------
+# Poetry
+-----------------------------------
+
+pip install poetry
+
+# For Linux:
+$ python3.6 -m pip install poetry
+
+poetry init
+-----
+-----------------------------------
+# pyproject.toml file
+-----------------------------------
+[tool.poetry]
+name = "virtual environments"
+version = "0.1.0"
+description = ""
+authors = ["Dimitry Zub <dimitryzub@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+google-search-results = "^2.4.0"
+# other site-packages will appear here..
+
+[tool.poetry.dev-dependencies]
+# development dependencies will appear here..
+
+[build-system]
+requires = ["poetry-core=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+------
+
+# Add dependencies to your package/project:
+poetry add google-search-results
+
+poetry add google-search-results@^2.1.0
+poetry add 'google-search-results>=1.8.5'
+poetry add 'google-search-results==1.8.5'
+poetry add google-search-results@latest
+
+poetry install
+poetry install --no-dev
+poetry config --list
+poetry shell
+
+-----------------------------------
+# pyproject.toml file example
+-----------------------------------
+[tool.poetry]
+name = "typer-cli"
+version = "0"
+description = "Run Typer scripts with completion, without having to create a package, using Typer CLI."
+authors = ["Sebastián Ramírez <tiangolo@gmail.com>"]
+readme = "README.md"
+license = "MIT"
+homepage = "https://github.com/tiangolo/typer-cli"
+repository = "https://github.com/tiangolo/typer-cli"
+documentation = "https://typer.tiangolo.com/typer-cli/"
+classifiers = [
+    "Environment :: Console",
+]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.0.1"
+pytest-cov = "^2.8.1"
+pytest-xdist = "^2.1.0"
+pytest-sugar = "^0.9.2"
+flake8 = "^3.7.9"
+isort = "^5.0.6"
+black = {version = "^20.8b1", allow-prereleases = true}
+
+[tool.poetry.scripts]
+typer = "typer_cli.main:main"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
+
+[tool.poetry-version-plugin]
+source = "init"
+
+[tool.isort]
+profile = "black"
+
+-----------------------------------
+# pyproject.toml file example
+-----------------------------------
+[tool.black]
+line-length = 100
+
+[tool.isort]
+not_skip = "__init__.py"
+force_grid_wrap = 0
+include_trailing_comma = true
+line_length = 100
+multi_line_output = 3
+order_by_type = "1"
+known_first_party = ["todo"]
+known_third_party = []
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "CORE", "FIRSTPARTY", "LOCALFOLDER"]
+
+[tool.poetry]
+name = "td-cli"
+version = "1.0.0"
+description = "A command line todo manager"
+authors = [
+    "Darri Steinn Konn Konradsson <darrikonn@gmail.com>"
+]
+readme = "README.md"
+repository = "https://github.com/darrikonn/td-cli"
+homepage = "https://github.com/darrikonn/td-cli"
+keywords = ["td-cli"]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+
+[tool.poetry.dev-dependencies]
+black = "^19.10b0"
+ipdb = "^0.13.2"
+ipython = "^7.16.3"
+isort = "^4.3.21"
+mypy = "^0.770"
+twine = {version = "^3.2.0", optional = true}
+flake8 = "^3.8.3"
+wheel = {version = "^0.34.2", optional = true}
+
+######################################
+pip get version of package
+######################################
+
+https://stackoverflow.com/questions/10214827/find-which-version-of-package-is-installed-with-pip
+https://note.nkmk.me/en/python-package-version/
+
+pip show numpy
+
+
+######################################
+setup options
+######################################
+https://stackoverflow.com/questions/64150719/how-to-write-a-minimally-working-pyproject-toml-file-that-can-install-packages
+https://stackoverflow.com/questions/71079036/conflicting-package-defined-in-dependencies-and-dev-dependencies-in-pyproject-to
+https://pip.pypa.io/en/stable/reference/build-system/pyproject-toml/
+https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
+https://python-poetry.org/docs/pyproject/
+https://peps.python.org/pep-0631/
+https://github.com/python-poetry/poetry/issues/5424
+https://github.com/python-poetry/poetry-core/pull/305
+https://lightrun.com/answers/python-poetry-poetry-use-the-project-section-in-pyprojecttoml-according-to-pep-621-and-pep-631
+
+------------------------------------------
+setup.cfg example + pip install -e .
+------------------------------------------
+
+[metadata]
+name = Thing
+version = 1.2.3
+
+[options]
+install_requires =
+    SomeLibrary ~= 2.2
+packages = find:
+
+setup.py
+import setuptools
+setuptools.setup()
+
+
+------------------------------------------
+setup.cfg example + pip install .
+------------------------------------------
+
+[project]
+name = "Thing"
+dependencies = ['numpy']
+
+[project.optional-dependencies]
+dev = [  "pytest < 5.0.0",]
+test = ['Thing[testing]']
+
+[tool.poetry]
+dev-dependencies = "dev"
+
+[tool.poetry.dep-sources]
+floob = { git = 'https://git.company.int/Thing.git' }
+------------------------------------------
+pyproject.toml + pip install .
+------------------------------------------
+[build-system]
+build-backend = 'setuptools.build_meta'
+requires = [
+    'setuptools >= 43.0.0',
+]
+
+------------------------------------------
+pyproject.toml + poetry install
+------------------------------------------
+[tool.poetry]
+name = 'Thing'
+version = '1.2.3'
+
+[tool.poetry.dependencies]
+python = '^3.6'
+SomeLibrary = '~2.2'
+
+[build-system]
+requires = ['poetry-core~=1.0']
+build-backend = 'poetry.core.masonry.api'
+
+
+
+######################################
+two parquet files compared
+######################################
+
+https://stackoverflow.com/questions/50073678/can-two-parquet-files-be-compared
+https://github.com/subkanthi/parquetdiff
+
+import pyarrow.parquet as pq
+table1 = pq.read_table('file1.parquet')
+table2 = pq.read_table('file2.parquet')
+assert table1.equals(table2)
+
+...
+
+https://learn.microsoft.com/en-us/answers/questions/708997/comparision-of-2-parquet-files-and-store-differenc.html
+
+import pandas as pd
+import numpy as np
+from pyspark.sql.types import StructType,StructField, StringType, IntegerType
+data1 = [("James","","Smith","36636","M",3000),
+("Michael","Rose","","40288","M",4000),
+("Robert","","Williams","42114","M",4000),
+("Maria","Anne","Jones","39192","F",4000),
+("Jen","Mary","Brown","","F",-1)
+]
+
+data2 = [("James","","Smith","36636","M",3000),
+("Michael","Rose","","40288","M",4000),
+("Robert","","Williams","42114","M",4000),
+("Maria","Anne","Jones","39192","F",4000),
+("Jen","Mary","Brown","","F",-1),
+("Himanshu","XXXX","YYYYY","","M",-1) ]
+
+
+schema = StructType([ \
+StructField("firstname",StringType(),True), \
+StructField("middlename",StringType(),True), \
+StructField("lastname",StringType(),True), \
+StructField("id", StringType(), True), \
+StructField("gender", StringType(), True), \
+StructField("salary", IntegerType(), True) \
+])
+
+
+df2 = spark.createDataFrame(data=data2,schema=schema)
+df1 = spark.createDataFrame(data=data1,schema=schema)
+finaldf = df2.subtract(df1)
+display(finaldf)###
+
+
+--------------------------
+
+https://stackoverflow.com/questions/41567081/get-schema-of-parquet-file-in-python
+
+Schema
+
+import pyarrow.parquet as pq
+pfile = pq.read_table("file.parquet")
+print("Column names: {}".format(pfile.column_names))
+print("Schema: {}".format(pfile.schema))
+
+
+from pyarrow.parquet import read_schema
+import json
+schema = read_schema(source)
+schema_dict = json.loads(schema.metadata[b'org.apache.spark.sql.parquet.row.metadata'])['fields']
+
+
+import pyarrow.parquet as pq
+table = pq.read_table(path)
+table.schema # returns the schema
+
+
+import pyarrow as pa
+pa.schema([
+    pa.field("id", pa.int64(), True),
+    pa.field("last_name", pa.string(), True),
+    pa.field("position", pa.string(), True)])
+
+
+from fastparquet import ParquetFile
+pf = ParquetFile('file.parquet')
+print(pf.schema)
+
+
+--------------------------
+
+import pandas as pd
+import numpy as np
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType
+import pandas as pd
+import pyarrow.parquet
+
+
+def read_parquet_schema_df(uri: str) -> pd.DataFrame:
+    """Return a Pandas dataframe corresponding to the schema of a local URI of a parquet file.
+
+    The returned dataframe has the columns: column, pa_dtype
+    """
+    # Ref: https://stackoverflow.com/a/64288036/
+    schema = pyarrow.parquet.read_schema(uri, memory_map=True)
+    schema = pd.DataFrame(
+        ({"column": name, "pa_dtype": str(pa_dtype)} for name, pa_dtype in
+         zip(schema.names, schema.types)))
+    schema = schema.reindex(columns=["column", "pa_dtype"],
+                            fill_value=pd.NA)
+    # Ensures columns in case the parquet file has an empty dataframe.
+    return schema
+
+
+data1 = pd.read_parquet('file1.parquet')
+data2 = pd.read_parquet('file2.parquet')
+
+df1 = pd.DataFrame(data=data1, columns=data1.columns)
+df2 = pd.DataFrame(data=data2, columns=data2.columns)
+finaldf = df2.equals(df1)
+print(finaldf)
+
+
+###########################################
+fill nan
+###########################################
+
+https://stackoverflow.com/questions/23743460/replace-none-with-nan-in-pandas-dataframe
+
+import pandas as pd
+import numpy as np
+For dataframe:
+
+df = df.fillna(value=np.nan)
+For column or series:
+
+df.mycol.fillna(value=np.nan, inplace=True)
+
+
+
+
+
+
+
+
+
+##########################################################
+Indexing and Selecting Data
+##########################################################
+https://stackoverflow.com/questions/20625582/how-to-deal-with-settingwithcopywarning-in-pandas
+https://www.dataquest.io/blog/settingwithcopywarning/
+https://pandas.pydata.org/pandas-docs/version/0.22/indexing.html
+https://datascientyst.com/fix-settingwithcopywarning-pandas-value-trying-set-copy/
+https://towardsdatascience.com/settingwithcopywarning-in-pandas-782e4aa54ff7
+https://datascientyst.com/fix-settingwithcopywarning-pandas-value-trying-set-copy/
+https://towardsdatascience.com/settingwithcopywarning-in-pandas-782e4aa54ff7
+https://stackoverflow.com/questions/50038081/try-using-locrow-indexer-col-indexer-value-instead
+https://stackoverflow.com/questions/68237941/warning-try-using-locrow-indexer-col-indexer-value-instead
+https://notebook.community/MaxPowerWasTaken/MaxPowerWasTaken.github.io/jupyter_notebooks/Pandas_View_vs_Copy
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.replace.html
+https://stackoverflow.com/questions/23307301/replacing-column-values-in-a-pandas-dataframe
+https://www.geeksforgeeks.org/how-to-replace-values-in-column-based-on-condition-in-pandas/
+https://datascientyst.com/fix-settingwithcopywarning-pandas-value-trying-set-copy/
+https://www.analyticsvidhya.com/blog/2021/11/3-ways-to-deal-with-settingwithcopywarning-in-pandas/
+https://www.dataquest.io/blog/settingwithcopywarning/
+https://stackoverflow.com/questions/20625582/how-to-deal-with-settingwithcopywarning-in-pandas
+https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.info.html
+https://stackoverflow.com/questions/48350850/subtract-two-columns-in-dataframe
+
+
+df = pd.DataFrame([["Australia", 1, 3, 5],
+                   ["Bambua", 12, 33, 56],
+                   ["Tambua", 14, 34, 58]
+                  ], columns=["Country", "Val1", "Val2", "Val10"]
+                 )
+
+
+import numpy as np
+import pandas as pd
+
+df = pd.DataFrame([["Australia", 1, 3, 5],
+                   ["Bambua", 12, 33, 56],
+                   ["Tambua", 14, 34, 58]
+                  ], columns=["Country", "Val1", "Val2", "Val10"]
+                 )
+
+df = df.assign(Val10_minus_Val1 = df['Val10'] - df['Val1'])
+
+...
+
+int_values = [1, 2, 3, 4, 5]
+text_values = ['alpha', 'beta', 'gamma', 'delta', 'epsilon']
+float_values = [0.0, 0.25, 0.5, 0.75, 1.0]
+df = pd.DataFrame({"int_col": int_values, "text_col": text_values,
+                  "float_col": float_values})
+df
+df.info(verbose=True)
+
+...
+
+random_strings_array = np.random.choice(['a', 'b', 'c'], 10 ** 6)
+df = pd.DataFrame({
+    'column_1': np.random.choice(['a', 'b', 'c'], 10 ** 6),
+    'column_2': np.random.choice(['a', 'b', 'c'], 10 ** 6),
+    'column_3': np.random.choice(['a', 'b', 'c'], 10 ** 6)
+})
+df.info()
+
+...
+
+
+dfmi = pd.DataFrame([list('abcd'),
+                     list('efgh'),
+                     list('ijkl'),
+                     list('mnop')],
+                    columns=pd.MultiIndex.from_product([['one', 'two'],
+                                                        ['first', 'second']]))
+
+dfmi['one']['second']
+dfmi.loc[:, ('one', 'second')]
+
+...
+
+# switch off the SettingWithCopy warning:
+pd.set_option('mode.chained_assignment', None)
+data[data.bidder == 'parakeet2004']['bidderrate'] = 100
+
+# set exception
+pd.set_option('mode.chained_assignment', 'raise')
+data[data.bidder == 'parakeet2004']['bidderrate'] = 100
+
+# resets the option we set in the previous code segment
+pd.reset_option('mode.chained_assignment')
+with pd.option_context('mode.chained_assignment', None):
+    data[data.bidder == 'parakeet2004']['bidderrate'] = 100
+
+
+import numpy as np
+single_dtype_df = pd.DataFrame(np.random.rand(5,2), columns=list('AB'))
+print(single_dtype_df.dtypes)
+single_dtype_df
+
+multiple_dtype_df = pd.DataFrame({'A': np.random.rand(5),'B': list('abcde')})
+print(multiple_dtype_df.dtypes)
+multiple_dtype_df
+
+data['bidtime_hours'] = data.bidtime.map(lambda x: x * 24)
+data.head(2)
+data.loc[:, 'bidtime_hours'] = data.bidtime.apply(lambda x: x * 24)
+data.head(2)
+
+sample = data.sample(2)
+sample.loc[:, 'price'] = 120
+sample.head()
+
+df1 = pd.DataFrame(np.arange(6).reshape((3,2)), columns=list('AB'))
+df1
+df2 = df1.loc[:1]
+df2
+# Our code
+data[data.bidder == 'parakeet2004']['bidderrate'] = 100
+data.loc[data.bidder == 'parakeet2004', 'bidderrate'] = 100
+
+https://www.analyticsvidhya.com/blog/2021/11/3-ways-to-deal-with-settingwithcopywarning-in-pandas/
+
+car_sales[car_sales['Manufacturer'] == 'Porsche']['Fuel_capacity'] = 18.0
+car_sales[car_sales['Manufacturer'] == 'Porsche']['Fuel_capacity']._is_view
+car_sales[car_sales['Manufacturer'] == 'Porsche']['Fuel_capacity']._is_copy
+car_sales.loc[car_sales.Manufacturer == 'Porsche', 'Fuel_capacity'] = 18.0
+car_sales[car_sales.Manufacturer == 'Porsche']['Fuel_capacity']
+
+
+
+
+--------------------------
+
+
+
+
+
+
+
