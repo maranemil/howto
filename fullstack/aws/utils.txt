@@ -1,0 +1,122 @@
+#################################################################
+How to import a text file on AWS S3 into pandas without writing to disk
+#################################################################
+
+https://stackoverflow.com/questions/37703634/how-to-import-a-text-file-on-aws-s3-into-pandas-without-writing-to-disk
+https://pypi.org/project/s3fs/
+https://s3fs.readthedocs.io/en/latest/
+https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html
+
+# read
+--------------------
+df = pd.read_csv('s3://pandas-test/tips.csv')
+
+import boto3
+import pandas as pd
+import s3fs
+df = pd.read_csv('s3://bucket-name/file.csv')
+
+
+# write
+--------------------
+import boto3
+import io
+s3 = boto3.client('s3')
+obj = s3.get_object(Bucket='bucket', Key='key')
+df = pd.read_csv(io.BytesIO(obj['Body'].read()))
+
+# read
+--------------------
+import pandas as pd
+import io
+import boto3
+s3_client = boto3.client('s3', use_ssl=False)
+bucket = #
+prefix = #
+obj = s3_client.get_object(Bucket=bucket, Key=prefix+ filename)
+df = pd.read_fwf((io.BytesIO(obj['Body'].read())) , encoding= 'unicode_escape', delimiter='|', error_bad_lines=False,header=None, dtype=str)
+
+
+--------------------
+#With s3fs it can be done as follow:
+--------------------
+import s3fs
+import pandas as pd
+fs = s3fs.S3FileSystem(anon=False)
+# CSV
+with fs.open('mybucket/path/to/object/foo.pkl') as f:
+    df = pd.read_csv(f)
+# Pickle
+with fs.open('mybucket/path/to/object/foo.pkl') as f:
+    df = pd.read_pickle(f)
+
+
+###########################################################
+boto3 get credentials
+###########################################################
+
+https://stackoverflow.com/questions/36287720/boto3-get-credentials-dynamically
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html
+https://analyticshut.com/configure-credentials-with-boto3/
+https://blog.knoldus.com/how-to-specify-credentials-when-connecting-to-aws-services-using-boto3/
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/s3-uploading-files.html
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/s3-examples.html
+https://stackoverflow.com/questions/45981950/how-to-specify-credentials-when-connecting-to-boto3-s3
+https://stackoverflow.com/questions/55909297/is-there-now-a-way-to-get-aws-region-names-in-boto3
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html
+
+cat ~/.aws/credentials
+
+
+--------------------
+credentials
+--------------------
+import boto3
+session = boto3.Session(profile_name='localstack')
+credentials = session.get_credentials()
+print(session.available_profiles)
+print(session.profile_name)
+credentials = credentials.get_frozen_credentials()
+access_key = credentials.access_key
+secret_key = credentials.secret_key
+
+print(access_key)
+print(secret_key)
+
+
+session = boto3.Session(profile_name='localstack', region_name=session.region_name)
+aws_s3 = session.resource("s3")
+
+..
+
+import botocore.session
+session = botocore.session.get_session()
+session.get_credentials().access_key
+session.get_credentials().secret_key
+session.get_config_variable('region')
+
+
+--------------------
+get regions
+--------------------
+import boto3
+
+region = "us-east-1"
+print("Using region:", region)
+
+ec2 = boto3.client("ec2", region_name=region)
+ec2_responses = ec2.describe_regions()
+ssm_client = boto3.client('ssm', region_name=region)
+for resp in ec2_responses['Regions']:
+	region_id = resp['RegionName']
+	tmp = '/aws/service/global-infrastructure/regions/%s/longName' % region_id
+	ssm_response = ssm_client.get_parameter(Name = tmp)
+	region_name = ssm_response['Parameter']['Value']
+        print ("region_id:",region_id,"region_name:",region_name)
+
+
+
+
+
+
+

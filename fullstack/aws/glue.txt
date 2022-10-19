@@ -1,0 +1,947 @@
+
+################################################
+Glue AWS
+################################################
+
+https://docs.localstack.cloud/aws/glue/
+https://docs.aws.amazon.com/glue/latest/dg/components-overview.html
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming.html
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-intro-tutorial.html
+
+----------------------
+
+https://aws.amazon.com/blogs/big-data/developing-aws-glue-etl-jobs-locally-using-a-container/
+
+docker pull amazon/aws-glue-libs:glue_libs_1.0.0_image_01
+
+docker run -itd -p 8888:8888 -p 4040:4040 -v ~/.aws:/root/.aws:ro --name glue_jupyter amazon/aws-glue-libs:glue_libs_1.0.0_image_01 /home/jupyter/jupyter_start.sh
+
+docker run -itd -p 8888:8888 -p 4040:4040 -v %UserProfile%\.aws:/root/.aws:rw --name glue_jupyter amazon/aws-glue-libs:glue_libs_1.0.0_image_01 /home/jupyter/jupyter_start.sh
+
+docker run -itd -p 8080:8080 -p 4040:4040 -v ~/.aws:/root/.aws:ro --name glue_zeppelin amazon/aws-glue-libs:glue_libs_1.0.0_image_01 /home/zeppelin/bin/zeppelin.sh
+
+docker ps
+docker exec -it glue_jupyter bash
+
+#  without the notebook server startup
+docker run -itd -p 8888:8888 -p 4040:4040 -v ~/.aws:/root/.aws:ro --name glue_jupyter amazon/aws-glue-libs:glue_libs_1.0.0_image_01
+
+
+Zeppelin is http://localhost:8080
+
+
+from pyspark import SparkContext
+from awsglue.context import GlueContext
+
+glueContext = GlueContext(SparkContext.getOrCreate())
+inputDF = glueContext.create_dynamic_frame_from_options(connection_type = "s3", connection_options = {"paths": ["s3://awsglue-datasets/examples/us-legislators/all/memberships.json"]}, format = "json")
+inputDF.toDF().show()
+spark.sql("show databases").show()
+
+
+
+# Setting up the Docker image with PyCharm Professional
+
+docker pull amazon/aws-glue-libs:glue_libs_1.0.0_image_01
+
+
+from pyspark import SparkContext
+from awsglue.context import GlueContext
+
+glueContext = GlueContext(SparkContext.getOrCreate())
+inputDF = glueContext.create_dynamic_frame_from_options(connection_type = "s3", connection_options = {"paths": ["s3://awsglue-datasets/examples/us-legislators/all/memberships.json"]}, format = "json")
+inputDF.toDF().show()
+spark.sql("show databases").show()
+
+docker exec -it <container_name> bash
+
+----------------------------------------------------------------------------------------
+
+https://aws.amazon.com/blogs/big-data/building-an-aws-glue-etl-pipeline-locally-without-an-aws-account/
+
+Importing GlueContext
+----------------
+import sys
+from pyspark.context import SparkContext
+from awsglue.context import GlueContext
+from awsglue.transforms import *
+from awsglue.dynamicframe import DynamicFrame
+from pyspark.sql.types import *
+from pyspark.sql import Row
+glueContext = GlueContext(SparkContext.getOrCreate())
+
+
+Dataset 1
+----------------
+order_list = [
+               ['1005', '623', 'YES', '1418901234', '75091'],\
+               ['1006', '547', 'NO', '1418901256', '75034'],\
+               ['1007', '823', 'YES', '1418901300', '75023'],\
+               ['1008', '912', 'NO', '1418901400', '82091'],\
+               ['1009', '321', 'YES', '1418902000', '90093']\
+             ]
+
+
+# Define schema for the order_list
+order_schema = StructType([
+                      StructField("order_id", StringType()),
+                      StructField("customer_id", StringType()),
+                      StructField("essential_item", StringType()),
+                      StructField("timestamp", StringType()),
+                      StructField("zipcode", StringType())
+                    ])
+
+# Create a Spark Dataframe from the python list and the schema
+df_orders = spark.createDataFrame(order_list, schema = order_schema)
+df_orders.show()
+
+
+# DynamicFrame
+----------------
+dyf_orders = DynamicFrame.fromDF(df_orders, glueContext, "dyf")
+
+# Input
+dyf_applyMapping = ApplyMapping.apply( frame = dyf_orders, mappings = [
+  ("order_id","String","order_id","Long"),
+  ("customer_id","String","customer_id","Long"),
+  ("essential_item","String","essential_item","String"),
+  ("timestamp","String","timestamp","Long"),
+  ("zipcode","String","zip","Long")
+])
+
+dyf_applyMapping.printSchema()
+
+
+# Filter
+----------------
+# Input
+dyf_filter = Filter.apply(frame = dyf_applyMapping, f = lambda x: x["essential_item"] == 'YES')
+
+dyf_filter.toDF().show()
+
+
+# Map
+----------------
+# Input
+
+# This function takes in a dynamic frame record and checks if zipcode # 75034 is present in it. If present, it adds another column
+# “next_day_air” with value as True
+
+def next_day_air(rec):
+  if rec["zip"] == 75034:
+    rec["next_day_air"] = True
+  return rec
+
+mapped_dyF =  Map.apply(frame = dyf_applyMapping, f = next_day_air)
+mapped_dyF.toDF().show()
+
+
+Dataset 2
+----------------
+# Input
+jsonStr1 = u'{ "zip": 75091, "customers": [{ "id": 623, "address": "108 Park Street, TX"}, { "id": 231, "address": "763 Marsh Ln, TX" }]}'
+jsonStr2 = u'{ "zip": 82091, "customers": [{ "id": 201, "address": "771 Peek Pkwy, GA" }]}'
+jsonStr3 = u'{ "zip": 75023, "customers": [{ "id": 343, "address": "66 P Street, NY" }]}'
+jsonStr4 = u'{ "zip": 90093, "customers": [{ "id": 932, "address": "708 Fed Ln, CA"}, { "id": 102, "address": "807 Deccan Dr, CA" }]}'
+df_row = spark.createDataFrame([
+  Row(json=jsonStr1),
+  Row(json=jsonStr2),
+  Row(json=jsonStr3),
+  Row(json=jsonStr4)
+])
+
+df_json = spark.read.json(df_row.rdd.map(lambda r: r.json))
+df_json.show()
+# Input
+df_json.printSchema()
+
+
+# SelectFields
+----------------
+# Input
+dyf_selectFields = SelectFields.apply(frame = dyf_filter, paths=['zip'])
+dyf_selectFields.toDF().show()
+
+
+Join
+----------------
+# Input
+dyf_join = Join.apply(dyf_json, dyf_selectFields, 'zip', 'zip')
+dyf_join.toDF().show()
+
+
+DropFields
+----------------
+# Input
+dyf_dropfields = DropFields.apply(
+  frame = dyf_join,
+  paths = "`.zip`"
+)
+dyf_dropfields.toDF().show()
+
+
+Relationalize
+----------------
+# Input
+dyf_relationize = dyf_dropfields.relationalize("root", "/home/glue/GlueLocalOutput")
+# Input
+dyf_relationize.keys()
+# Output
+dict_keys(['root', 'root_customers'])
+
+
+SelectFromCollection
+----------------
+# Input
+dyf_selectFromCollection = SelectFromCollection.apply(dyf_relationize, 'root')
+dyf_selectFromCollection.toDF().show()
+# Input
+dyf_selectFromCollection = SelectFromCollection.apply(dyf_relationize, 'root_customers')
+dyf_selectFromCollection.toDF().show()
+
+
+RenameField
+----------------
+# Input
+dyf_renameField_1 = RenameField.apply(dyf_selectFromCollection, "`customers.val.address`", "address")
+dyf_renameField_2 = RenameField.apply(dyf_renameField_1, "`customers.val.id`", "cust_id")
+dyf_dropfields_rf = DropFields.apply(
+  frame = dyf_renameField_2,
+  paths = ["index", "id"]
+)
+dyf_dropfields_rf.toDF().show()
+
+
+ResolveChoice
+----------------
+# Input
+dyf_resolveChoice = dyf_dropfields_rf.resolveChoice(specs = [('cust_id','cast:String')])
+dyf_resolveChoice.printSchema()
+
+
+Dataset 3
+----------------
+# Input
+warehouse_inventory_list = [
+              ['TX_WAREHOUSE', '{\
+                          "strawberry":"220",\
+                          "pineapple":"560",\
+                          "mango":"350",\
+                          "pears":null}'
+               ],\
+              ['CA_WAREHOUSE', '{\
+                         "strawberry":"34",\
+                         "pineapple":"123",\
+                         "mango":"42",\
+                         "pears":null}\
+              '],
+    		   ['CO_WAREHOUSE', '{\
+                         "strawberry":"340",\
+                         "pineapple":"180",\
+                         "mango":"2",\
+                         "pears":null}'
+              ]
+            ]
+
+
+warehouse_schema = StructType([StructField("warehouse_loc", StringType())\
+                              ,StructField("data", StringType())])
+
+df_warehouse = spark.createDataFrame(warehouse_inventory_list, schema = warehouse_schema)
+dyf_warehouse = DynamicFrame.fromDF(df_warehouse, glueContext, "dyf_warehouse")
+dyf_warehouse.printSchema()
+
+
+
+Unbox
+----------
+# Input
+dyf_unbox = Unbox.apply(frame = dyf_warehouse, path = "data", format="json")
+dyf_unbox.printSchema()
+
+
+Unnest
+----------
+# Input
+dyf_unnest = UnnestFrame.apply(frame = dyf_unbox)
+dyf_unnest.printSchema()
+dyf_unnest.toDF().show()
+
+
+
+DropNullFields
+----------
+# Input
+dyf_dropNullfields = DropNullFields.apply(frame = dyf_unnest)
+dyf_dropNullfields.toDF().show()
+
+
+SplitFields
+----------
+# Input
+dyf_splitFields = SplitFields.apply(frame = dyf_dropNullfields, paths = ["`data.strawberry`", "`data.pineapple`"], name1 = "a", name2 = "b")
+# Input
+dyf_retrieve_a = SelectFromCollection.apply(dyf_splitFields, "a")
+dyf_retrieve_a.toDF().show()
+# Input
+dyf_retrieve_b = SelectFromCollection.apply(dyf_splitFields, "b")
+dyf_retrieve_b.toDF().show()
+
+
+
+SplitRows
+----------
+# Input
+dyf_splitRows = SplitRows.apply(frame = dyf_dropNullfields, comparison_dict = {"`data.pineapple`": {">": "100", "<": "200"}}, name1 = 'pa_200_less', name2 = 'pa_200_more')
+# Input
+dyf_pa_200_less = SelectFromCollection.apply(dyf_splitRows, 'pa_200_less')
+dyf_pa_200_less.toDF().show()
+# Input
+dyf_pa_200_more = SelectFromCollection.apply(dyf_splitRows, 'pa_200_more')
+dyf_pa_200_more.toDF().show()
+
+
+Spigot
+----------
+# Input
+dyf_splitFields = Spigot.apply(dyf_pa_200_less, '/home/glue/GlueLocalOutput/Spigot/', 'top10')
+
+
+
+Write Dynamic Frame
+----------
+# Input
+glueContext.write_dynamic_frame.from_options(\
+frame = dyf_splitFields,\
+connection_options = {'path': '/home/glue/GlueLocalOutput/'},\
+connection_type = 's3',\
+format = 'json')
+
+
+----------------------------------------------------------------------------------------
+
+https://github.com/localstack/localstack
+https://github.com/localstack/localstack/issues/1446
+
+import boto3
+
+client = boto3.client('glue', region_name='eu-west-1', endpoint_url='http://localhost:4566')
+
+# Works
+client.get_crawler(Name='crawler_name')
+
+# 2021-09-22T14:17:59:INFO:localstack_ext.services.glue.glue_listener: Unsupported Glue API method "StartCrawler"
+client.start_crawler(Name='crawler_name')
+
+# 2021-09-22T14:16:17:INFO:localstack_ext.services.glue.glue_listener: Unsupported Glue API method "GetCrawlers"
+client.get_crawlers()
+
+# AttributeError: 'dict' object has no attribute 'value'
+client.get_databases()
+
+----------------------------------------------------------------------------------------
+
+https://towardsdev.com/integration-testing-aws-spark-jobs-using-localstack-docker-7f5ec1389d10
+
+version: "3"
+
+services:
+  aws-docker:
+    container_name: my-tests.aws-docker
+    image: localstack/localstack
+    ports:
+      - '4560-4600:4560-4600'
+      - '8055:8080'
+    environment:
+      - SERVICES=cloudwatch,logs,s3
+      - DEBUG=1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - HOSTNAME=localhost
+      - HOSTNAME_EXTERNAL=localhost
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+
+
+Dockerfile
+--------------
+FROM frolvlad/alpine-java:jdk8-slim
+
+RUN apk --update add wget tar bash
+
+RUN wget https://archive.apache.org/dist/spark/spark-2.4.4/spark-2.4.4-bin-without-hadoop.tgz
+RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-2.8.5/hadoop-2.8.5.tar.gz
+
+RUN tar -xzf spark-2.4.4-bin-without-hadoop.tgz && mv spark-2.4.4-bin-without-hadoop /usr/local && rm spark-2.4.4-bin-without-hadoop.tgz
+RUN tar -xzf hadoop-2.8.5.tar.gz && mv hadoop-2.8.5 /usr/local
+
+RUN cd /usr/local && ln -s spark-2.4.4-bin-without-hadoop spark && ln -s hadoop-2.8.5 hadoop
+
+ENV SPARK_HOME "/usr/local/spark"
+ENV HADOOP_HOME "/usr/local/hadoop/bin"
+ENV PYTHONPATH "$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.7-src.zip:$SPARK_HOME/python/lib/pyspark.zip"
+ENV PYSPARK_PYTHON "python3"
+
+ENV PATH $PATH:$SPARK_HOME/bin
+
+RUN apk add --update make python3
+RUN pip3 install awscli
+COPY spark/conf /usr/local/spark/conf/
+
+ENV AWS_ACCESS_KEY_ID FAKE
+ENV AWS_SECRET_ACCESS_KEY FAKE
+
+RUN mkdir -p /opt/search-ml
+
+COPY . /opt/search-ml
+WORKDIR /opt/search-ml
+
+
+test
+--------------
+def read_df(spark_session: SparkSession, path: str) -> Dataframe:
+    return spark_session.read.json(path)
+
+
+def transform(df: Dataframe) -> Dataframe:
+    return df
+
+
+def upload_df(df: Dataframe, output_path: str)-> None:
+    df.write.parquet(output_path)
+
+
+def run(args: List[str], spark: SparkSession) -> None:
+    input_s3_path = args[0]
+    output_s3_path = args[1]
+
+    input_df = read_df(spark, input_s3_path)
+    transformed_df = transform(input_df)
+    upload_df(transformed_df, output_s3_path)
+
+
+
+run function
+--------------
+S3 = 'http://aws-docker:4572'
+
+class UploaderIntegrationTest(TestCase):
+
+    def setUp(self) -> None:
+        self.spark = SparkSession \
+            .builder \
+            .master('local') \
+            .getOrCreate()
+
+        # Setup aws buckets
+        os.system('aws --endpoint-url={} s3 mb s3://my-test'.format(S3))
+        os.system('aws --endpoint-url={} s3 sync data s3://my-test/data'.format(S3))
+        os.system('aws --endpoint-url={} s3 ls s3://my-test/data/'.format(S3))
+
+    def test_upload_to_s3(self):
+        run(["s3://my-test/data", "s3://my-test/result.parquet"], self.spark)
+
+        output_df = self.spark.read.parquet('s3://my-test/result.parquet/*')
+        self.assertEqual(output_df.count(), 2)
+
+
+
+
+----------------------------------------------------------------------------------------
+Working with AWS Glue Data Crawlers
+https://hands-on.cloud/working-with-aws-glue-in-python-using-boto3/
+
+
+# Creating an AWS Glue Crawler
+import boto3
+client = boto3.client('glue', region_name="us-east-1")
+
+
+# Creating an AWS Glue Data Crawler using Boto3
+import boto3
+import json
+client = boto3.client('glue', region_name="us-east-1")
+response = client.create_crawler(
+    Name='S3Crawler',
+    Role='GlueFullAccess',
+    DatabaseName='S3CrawlerHOC',
+    Targets={
+        'S3Targets': [
+            {
+                'Path': 's3://glue-source-hoc/read',
+                'Exclusions': [
+                    'string',
+                ],
+                'SampleSize': 2
+            },
+            {
+                'Path': 's3://glue-source-hoc/write',
+                'Exclusions': [
+                    'string',
+                ],
+                'SampleSize': 2
+            },
+        ]
+    },
+    Schedule='cron(15 12 * * ? *)',
+    SchemaChangePolicy={
+        'UpdateBehavior': 'UPDATE_IN_DATABASE',
+        'DeleteBehavior': 'DEPRECATE_IN_DATABASE'
+    },
+    RecrawlPolicy={
+        'RecrawlBehavior': 'CRAWL_EVERYTHING'
+    },
+    LineageConfiguration={
+        'CrawlerLineageSettings': 'DISABLE'
+    }
+)
+print(json.dumps(response, indent=4, sort_keys=True, default=str))
+
+
+# ListingAWS Glue Crawlers
+------------------
+import boto3
+import json
+client = boto3.client('glue', region_name="us-east-1")
+response = client.list_crawlers()
+print(json.dumps(response, indent=4, sort_keys=True, default=str))
+
+
+
+# Starting an AWS Glue Data Crawler
+------------------
+import boto3
+import json
+client = boto3.client('glue', region_name="us-east-1")
+response = client.list_crawlers()
+response2 = client.start_crawler(
+    Name=response['CrawlerNames'][0]
+)
+print(json.dumps(response2, indent=4, sort_keys=True, default=str))
+
+
+Deleting an AWS Glue Data Crawler
+------------------
+import boto3
+import json
+client = boto3.client('glue', region_name="us-east-1")
+response = client.list_crawlers()
+response2 = client.delete_crawler(
+    Name=response['CrawlerNames'][0]
+)
+print(json.dumps(response2, indent=4, sort_keys=True, default=str))
+
+
+Working with AWS Glue Jobs
+------------------
+git clone https://github.com/datawrangl3r/hoc-glue-example.git
+
+
+Creating an AWS Glue Job
+------------------
+import boto3
+import json
+
+client = boto3.client('glue', region_name="us-east-1")
+
+response = client.create_job(
+    Name='IrisJob',
+    Role='AWSGlueServiceRole-Demo',
+    Command={
+        'Name': 'glueetl',
+        'ScriptLocation': 's3://glue-source-hoc/iris_onboarder.py',
+        'PythonVersion': '3'
+    },
+    DefaultArguments={
+      '--TempDir': 's3://glue-source-hoc/temp_dir',
+      '--job-bookmark-option': 'job-bookmark-disable'
+    },
+    MaxRetries=1,
+    GlueVersion='3.0',
+    NumberOfWorkers=2,
+    WorkerType='Standard'
+)
+print(json.dumps(response, indent=4, sort_keys=True, default=str))
+
+
+Listing AWS Glue Jobs
+------------------
+import boto3
+import json
+client = boto3.client('glue', region_name="us-east-1")
+response = client.list_jobs()
+print(json.dumps(response, indent=4, sort_keys=True, default=str))
+
+
+
+
+Starting an AWS Glue Job
+------------------
+import boto3
+import json
+client = boto3.client('glue', region_name="us-east-1")
+response = client.start_job_run(
+    JobName='IrisJob'
+)
+print(json.dumps(response, indent=4, sort_keys=True, default=str))
+
+
+
+Deleting an AWS Glue Job
+------------------
+import boto3
+import json
+client = boto3.client('glue', region_name="us-east-1")
+response = client.delete_job(
+    JobName='IrisJob'
+)
+print(json.dumps(response, indent=4, sort_keys=True, default=str))
+
+
+Working with AWS Glue Blueprints and Workflows
+------------------
+git clone https://github.com/awslabs/aws-glue-blueprint-libs.git
+cd aws-glue-blueprint-libs/samples/
+zip crawl_s3_locations.zip crawl_s3_locations/*
+
+
+Creating an AWS Glue Blueprint
+------------------
+import boto3
+import json
+client = boto3.client('glue', region_name="us-east-1")
+response = client.create_blueprint(
+    Name='Crawler_Blueprint_From_S3',
+    BlueprintLocation='s3://glue-source-hoc/crawl_s3_locations.zip'
+)
+
+print(json.dumps(response, indent=4, sort_keys=True, default=str))
+
+
+
+Listing AWS Glue Blueprints
+------------------
+import boto3
+import json
+client = boto3.client('glue', region_name="us-east-1")
+response = client.list_blueprints()
+print(json.dumps(response, indent=4, sort_keys=True, default=str))
+
+
+Creating an AWS Glue Workflow from a Blueprint
+------------------
+import boto3
+import json
+client = boto3.client('glue', region_name="us-east-1")
+response = client.start_blueprint_run(
+    BlueprintName='Crawler_Blueprint_From_S3',
+    Parameters='{"WorkflowName": "s3_crawl_wflow", \
+        "IAMRole": "arn:aws:iam::585584209241:role/GlueFullAccess", \
+        "S3Paths": ["s3://covid19-lake/enigma-aggregation/json/global/", \
+        "s3://covid19-lake/enigma-aggregation/json/global_countries/", \
+        "s3://covid19-lake/enigma-aggregation/json/us_counties/", \
+        "s3://covid19-lake/enigma-aggregation/json/us_states/"], \
+        "DatabaseName": "blueprint_tutorial"}',
+    RoleArn='arn:aws:iam::585584209241:role/GlueForDemo'
+)
+print(json.dumps(response, indent=4, sort_keys=True, default=str))
+
+
+
+Listing AWS Glue Workflows
+------------------
+import boto3
+import json
+client = boto3.client('glue', region_name="us-east-1")
+response = client.list_workflows()
+print(json.dumps(response, indent=4, sort_keys=True, default=str))
+
+
+Starting an AWS Glue Workflow
+------------------
+import boto3
+import json
+client = boto3.client('glue', region_name="us-east-1")
+response = client.start_workflow_run(
+    Name='s3_crawl_wflow'
+)
+print(json.dumps(response, indent=4, sort_keys=True, default=str))
+
+
+Deleting an AWS Glue Workflow
+------------------
+import boto3
+import json
+client = boto3.client('glue', region_name="us-east-1")
+response = client.delete_workflow(Name='s3_crawl_wflow')
+print(json.dumps(response, indent=4, sort_keys=True, default=str))
+
+
+Deleting an AWS Glue Blueprint
+------------------
+import boto3
+import json
+client = boto3.client('glue', region_name="us-east-1")
+response = client.delete_blueprint(Name='Crawler_Blueprint_From_S3')
+print(json.dumps(response, indent=4, sort_keys=True, default=str))
+
+
+
+----------------------------------------------------------------------------------------
+https://stackoverflow.com/questions/46329561/use-aws-glue-python-with-numpy-and-pandas-python-packages
+
+
+import os
+import site
+from setuptools.command import easy_install
+install_path = os.environ['GLUE_INSTALLATION']
+easy_install.main( ["--install-dir", install_path, "<library-name>"] )
+reload(site)
+import <installed library>
+
+
+import site
+from importlib import reload
+from setuptools.command import easy_install
+# install_path = site.getsitepackages()[0]
+install_path = '/home/spark/.local/lib/python3.7/site-packages/'
+easy_install.main( ["--install-dir", install_path, "https://files.pythonhosted.org/packages/60/c7/126ad8e7dfbffaf9a5384ca6123da85db6c7b4b4479440ce88c94d2bb23f/sagemaker-2.3.0.tar.gz"] )
+reload(site)
+
+
+Python library path
+s3://bucket-name/folder-name/file-name
+Dependent jars path
+s3://bucket-name/folder-name/file-name
+Referenced files path s3://bucket-name/folder-name/file-name
+
+
+The picked answer is not longer true since 2019
+awswrangler is what you need. It allows you to use pandas in glue and lambda
+https://github.com/awslabs/aws-data-wrangler
+
+Install using AWS Lambda Layer
+https://aws-data-wrangler.readthedocs.io/en/latest/install.html#setting-up-lambda-layer
+
+Example: Typical Pandas ETL
+import pandas
+import awswrangler as wr
+
+df = pandas.read_...  # Read from anywhere
+# Typical Pandas, Numpy or Pyarrow transformation HERE!
+wr.pandas.to_parquet(  # Storing the data and metadata to Data Lake
+    dataframe=df,
+    database="database",
+    path="s3://...",
+    partition_cols=["col_name"],
+)
+
+
+https://aws.amazon.com/about-aws/whats-new/2019/01/introducing-python-shell-jobs-in-aws-glue/
+https://docs.aws.amazon.com/glue/latest/dg/reduced-start-times-spark-etl-jobs.html#reduced-start-times-new-features
+https://docs.aws.amazon.com/glue/latest/dg/glue-version-support-policy.html
+
+
+import sys
+from awsglue.transforms import *
+from awsglue.utils import getResolvedOptions
+from pyspark.context import SparkContext
+from awsglue.context import GlueContext
+from awsglue.job import Job
+import pandas as pd
+args = getResolvedOptions(sys.argv, ['JOB_NAME'])
+sc = SparkContext()
+glueContext = GlueContext(sc)
+spark = glueContext.spark_session
+job = Job(glueContext)
+job.init(args['JOB_NAME'], args)
+excel_path= r"s3://input/employee.xlsx"
+df_xl_op = pd.read_excel(excel_path,sheet_name = "Sheet1")
+df=df_xl_op.applymap(str)
+input_df = spark.createDataFrame(df)
+input_df.printSchema()
+job.commit()
+----------------------------------------------------------------------------------------
+
+
+
+
+
+
+https://aws.amazon.com/blogs/big-data/aws-glue-python-shell-now-supports-python-3-9-with-a-flexible-pre-loaded-environment-and-support-to-install-additional-libraries/
+https://aws.amazon.com/glue/
+https://aws.amazon.com/premiumsupport/knowledge-center/glue-version2-external-python-libraries/
+https://aws.amazon.com/premiumsupport/knowledge-center/start-glue-job-crawler-completes-lambda/
+
+https://blog.devgenius.io/develop-aws-glue-etl-pipeline-with-python-shell-fe6f66763e9d
+https://cloudonaut.io/etl-glue-python-shell-job-load-data-from-s3-to-redshift/
+
+https://docs.aws.amazon.com/glue/latest/dg/add-job-python.html
+https://docs.aws.amazon.com/glue/latest/dg/add-job-python.html
+https://docs.aws.amazon.com/glue/latest/dg/add-job-python.html#python-shell-supported-library
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-libraries.html
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-intro-tutorial.html
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-python-libraries.html
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-python-samples-legislators.html
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-python-samples-legislators.html
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-python-samples-legislators.html#
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-python-samples-medicaid.html
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-python-samples.html
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-python.html
+https://docs.aws.amazon.com/glue/latest/dg/console-custom-created.html
+https://docs.aws.amazon.com/glue/latest/dg/glue-version-support-policy.html
+https://docs.aws.amazon.com/glue/latest/dg/release-notes.html
+
+https://docs.localstack.cloud/aws/glue/
+https://docs.localstack.cloud/get-started/pro/
+https://docs.localstack.cloud/localstack/coverage/#glue
+
+https://github.com/angelocarvalho/glue-python-shell-sample/blob/master/etl_with_pandas.py
+https://github.com/aws-samples/aws-glue-samples
+https://github.com/aws-samples/aws-glue-samples/blob/master/examples/join_and_relationalize.py
+
+https://hands-on.cloud/aws-lambda-how-to-process-dynamodb-streams/
+https://hands-on.cloud/how-to-start-using-aws-step-functions/
+https://hands-on.cloud/how-to-use-aws-cli-to-manage-amazon-s3/
+https://hands-on.cloud/quick-introduction-to-python-for-aws-automation-engineers/
+https://hands-on.cloud/the-ultimate-guide-real-world-use-cases-for-aws-lambda/
+https://hands-on.cloud/working-with-s3-in-python-using-boto3/
+
+https://hub.docker.com/r/amazon/aws-glue-libs
+https://localstack.cloud/pricing/
+https://localstack.cloud/products/cockpit/
+https://towardsdatascience.com/aws-glue-101-all-you-need-to-know-with-a-real-world-example-f34af17b782f
+
+----------------------------------------------------------------------------------------
+
+
+https://www.linkedin.com/pulse/development-testing-etl-pipelines-aws-locally-kamal-k
+
+docker-compose.yml
+
+
+version: '2'
+services:
+    glue-service:
+        image: amazon/aws-glue-libs:glue_libs_1.0.0_image_01
+        container_name: "glue_ontainer_demo"
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "8000:8000"
+        volumes:
+            - .:/opt
+        links:
+            - localstack-s3
+        environment:
+          S3_ENDPOINT: http://localstack:4566
+    localstack-s3:
+      image: localstack/localstack
+      container_name: "localstack_container_demo"
+      volumes:
+        - ./stubs/s3:/tmp/localstack
+      environment:
+        - SERVICES=s3
+        - DEFAULT_REGION=us-east-1
+        - HOSTNAME=localstack
+        - DATA_DIR=/tmp/localstack/data
+        - HOSTNAME_EXTERNAL=localstack
+      ports:
+        - "4566:4566"
+
+----------------------
+DockerFile
+FROM python:3.6.10
+
+WORKDIR /opt
+
+# By copying over requirements first, we make sure that Docker will cache
+# our installed requirements rather than reinstall them on every build
+COPY requirements.txt /opt/requirements.txt
+RUN pip install -r requirements.txt
+
+# Now copy in our code, and run it
+COPY . /opt
+
+-----------
+
+Required libraries
+
+moto[all]==2.0.5
+
+-----------
+Add a file to S3 bucket running on LocalStack
+
+import boto3
+import os
+from pyspark.sql import SparkSession
+
+def add_to_bucket(bucket_name: str, file_name: str):
+    try:
+        # host.docker.internal
+        s3 = boto3.client('s3',
+                          endpoint_url="http://host.docker.internal:4566",
+                          use_ssl=False,
+                          aws_access_key_id='mock',
+                          aws_secret_access_key='mock',
+                          region_name='us-east-1')
+        s3.create_bucket(Bucket=bucket_name)
+
+        file_key = f'{os.getcwd()}/{file_name}'
+        with open(file_key, 'rb') as f:
+            s3.put_object(Body=f, Bucket=bucket_name, Key=file_name)
+        print(file_name)
+
+        return s3
+    except Exception as e:
+        print(e)
+        return None
+
+-----------
+Setup PySpark session to read from S3
+
+def create_testing_pyspark_session():
+    print('creating pyspark session')
+    sparksession = (SparkSession.builder
+                    .master('local[2]')
+                    .appName('pyspark-demo')
+                    .enableHiveSupport()
+                    .getOrCreate())
+
+    hadoop_conf = sparksession.sparkContext._jsc.hadoopConfiguration()
+    hadoop_conf.set("fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
+    hadoop_conf.set("fs.s3a.path.style.access", "true")
+    hadoop_conf.set("fs.s3a.connection.ssl.enabled", "false")
+    hadoop_conf.set("com.amazonaws.services.s3a.enableV4", "true")
+    hadoop_conf.set("fs.s3a.aws.credentials.provider", "org.apache.hadoop.fs.s3a.TemporaryAWSCredentialsProvider")
+    hadoop_conf.set("fs.s3a.access.key", "mock")
+    hadoop_conf.set("fs.s3a.secret.key", "mock")
+    hadoop_conf.set("fs.s3a.session.token", "mock")
+    hadoop_conf.set("fs.s3a.endpoint", "http://host.docker.internal:4566")
+    return sparksession
+
+-----------
+read from S3 directly using the PySpark session created
+
+
+test_bucket = 'dummypysparkbucket'
+# Write to S3 bucket
+add_to_bucket(bucket_name=test_bucket, file_name='dummy.csv')
+spark_session = create_testing_pyspark_session()
+file_path = f's3a://{test_bucket}/dummy.csv'
+
+# Read from s3 bucket
+data_df = spark_session.read.option('delimiter', ',').option('header', 'true').option('inferSchema',
+                                                                                      'False').format('csv').load(
+    file_path)
+print(data_df.show())
+
+-----------
+
+# Write to S3 as parquet
+write_path = f's3a://{test_bucket}/testparquet/'
+data_df.write.parquet(write_path, mode='overwrite')
+
+
+
