@@ -1,0 +1,783 @@
+
+
+
+#############################################################
+credentials aws
+#############################################################
+
+https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html
+https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/guide_credentials_profiles.html
+https://docs.aws.amazon.com/sdkref/latest/guide/file-format.html
+https://docs.aws.amazon.com/sdkref/latest/guide/file-location.html
+https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html
+https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
+https://wellarchitectedlabs.com/common/documentation/aws_credentials/
+
+~/.aws/credentials
+
+[default]
+aws_access_key_id=YOUR_AWS_ACCESS_KEY_ID
+aws_secret_access_key=YOUR_AWS_SECRET_ACCESS_KEY
+
+[project1]
+role_arn = arn:aws:iam::123456789012:role/testing
+source_profile = default
+role_session_name = OPTIONAL_SESSION_NAME
+
+[project2]
+aws_access_key_id = YOUR_AWS_ACCESS_KEY_ID
+aws_secret_access_key = YOUR_AWS_SECRET_ACCESS_KEY
+
+[profile developers]
+region = us-east-2
+output = text
+
+[profile testers]
+region = us-west-2
+s3 =
+    max_concurrent_requests=10
+    max_queue_size=1000
+
+
+~/.aws/config
+
+region=us-west-2
+output=json
+
+aws configure list-profiles
+
+---------------------------------
+
+https://github.com/aws/aws-cli/issues/1270
+https://stackoverflow.com/questions/52494196/is-there-any-way-to-specify-endpoint-url-in-aws-cli-config-file
+https://kb.selectel.com/docs/cloud-services/cloud-storage/tools/aws_cli/
+https://storadera.com/integrations/aws-cli
+https://docs.lakefs.io/integrations/aws_cli.html
+https://airflow.apache.org/docs/apache-airflow-providers-amazon/stable/connections/aws.html
+
+
+aws --profile local --endpoint-url http://localhost:8000 dynamodb list-tables
+
+[profile development]
+aws_access_key_id=foo
+aws_secret_access_key=bar
+s3 =
+  endpoint-url = test.org
+
+
+[profile local]
+dynamodb =
+    endpoint_url = http://localhost:8000
+
+aws dynamodb list-tables --profile local
+
+# localstack
+# https://github.com/localstack/awscli-local
+aws --endpoint-url=http://localhost:4566
+aws --endpoint-url=http://localhost:4566 kinesis list-streams
+
+
+# docker-compose.yml
+version: '3.8'
+services:
+  # usage: docker-compose run --rm awscli dynamodb [operation]
+  awscli:
+     image: amazon/aws-cli
+     entrypoint: aws --endpoint-url http://dynamodb:8000
+     command: --version
+     environment:
+       AWS_ACCESS_KEY_ID: dummy
+       AWS_SECRET_ACCESS_KEY: dummy
+       AWS_REGION: eu-west-1
+
+
+
+
+
+################################################
+Ubuntu GUIs for Managing AWS S3 Buckets
+################################################
+
+https://medium.com/daniels-tech-world/review-ubuntu-guis-for-managing-aws-s3-buckets-c88f41e168f6
+https://s3tools.org/s3cmd
+https://www.interserver.net/tips/kb/mount-s3-bucket-centos-ubuntu-using-s3fs/
+https://askubuntu.com/questions/202072/what-is-a-good-amazon-s3-client
+https://www.baeldung.com/linux/aws-s3-cli
+
+
+CrossFTP ***
+http://www.crossftp.com/
+http://www.crossftp.com/download.htm
+http://www.crossftp.com/crossftp_1.99.9.deb
+
+DragonDisk ***
+http://www.s3-client.com/
+http://www.s3-client.com/download-amazon-s3-client/dragondisk-1.0.5-linux-i386.tar.gz
+
+https://s3tools.org/download
+https://s3tools.org/s3_about
+
+https://github.com/s3fs-fuse/s3fs-fuse
+https://github.com/s3fs-fuse/s3fs-fuse
+
+https://github.com/minio/mc
+https://github.com/minio/minio
+http://www.panticz.de/s3
+
+https://github.com/kahing/goofys
+
+https://rclone.org/s3/
+https://rclone.org/downloads/
+
+https://www.expandrive.com/download-expandrive/
+
+qts3browser ***
+https://snapcraft.io/qts3browser
+
+s3-browsers
+https://github.com/topics/s3-browser
+
+gui
+https://github.com/mickael-kerjean/filestash
+https://github.com/indece-official/s3-explorer
+https://github.com/tlinhart/s3-browser
+https://github.com/ryfeus/s3-browser
+https://github.com/nisarg1499/AWSS3
+
+cli
+https://github.com/giftig/s3-browser
+
+################################################
+AWS CLI
+################################################
+
+https://docs.lakefs.io/integrations/aws_cli.html
+https://storadera.com/integrations/aws-cli
+https://www.baeldung.com/linux/aws-s3-cli
+
+
+
+
+################################################
+boto3 get_available_resources localstack
+################################################
+
+session = boto3.Session(profile_name=profile)
+credentials = session.get_credentials()
+print(credentials)
+print(session.get_available_resources())
+
+['cloudformation', 'cloudwatch', 'dynamodb', 'ec2', 'glacier', 'iam', 'opsworks', 's3', 'sns', 'sqs']
+
+print(session.region_name)
+us-east-1
+
+
+
+https://stackoverflow.com/questions/32618216/override-s3-endpoint-using-boto3-configuration-file
+https://github.com/boto/boto3/pull/2746
+https://github.com/rwillmer/boto3
+https://boto3.amazonaws.com/v1/documentation/api/1.9.88/guide/quickstart.html
+https://boto3.amazonaws.com/v1/documentation/api/1.9.88/guide/configuration.html#guide-configuration
+https://github.com/boto/boto3/issues/1166
+
+
+
+endpoint_url = os.environ["AWS_ENDPOINT_URL"]
+
+
+try:
+    endpoint_url = os.environ["AWS_ENDPOINT_URL"]
+except KeyError:
+     pass
+endpoint_url = os.environ.get("AWS_ENDPOINT_URL")
+del os.environ["AWS_ENDPOINT_URL"]
+
+import os
+
+from botocore.session import Session
+from pynamodb.models import Model
+
+
+class BaseModel(Model):
+    class Meta:
+        if os.environ['APP_ENV'] in ['local', 'test']:
+            host = os.environ['AWS_ENDPOINT_URL']
+            region = os.environ['AWS_DEFAULT_REGION']
+        else:
+            region = Session().get_config_variable('region')
+
+
+
+import os
+from boto3.session import Session
+class BotoSession(Session):
+    def client(self, *args, **kwargs):
+        if kwargs.get('endpoint_url') is None:
+            kwargs['endpoint_url'] = os.environ.get("AWS_ENDPOINT_URL")
+        return super().client(*args, **kwargs)
+
+# s3_client = BotoSession().client('s3')
+
+
+
+import boto3
+import urllib.parse
+
+ep = boto3.client("s3", region_name="eu-west-1").meta.endpoint_url
+ep = urllib.parse.urlparse(ep).hostname
+
+
+https://github.com/boto/boto3/issues/1166
+
+print(session.client('s3').meta.endpoint_url)
+https://s3.amazonaws.com
+
+
+https://docs.localstack.cloud/aws/s3/
+https://github.com/localstack/awscli-local
+https://pypi.org/project/awscli-local/
+https://docs.aws.amazon.com/cli/latest/reference/s3api/create-bucket.html
+https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3api/create-bucket.html
+
+
+https://www.baeldung.com/linux/aws-s3-cli
+https://docs.lakefs.io/integrations/aws_cli.html
+https://storadera.com/integrations/aws-cli
+
+
+configure the credentials, run:
+aws configure --profile localstack
+
+# create bucket
+aws s3api create-bucket --bucket test-bucket --endpoint-url http://localhost:4566
+
+# list s3 buckets
+aws s3 ls --endpoint-url http://localhost:4566
+
+
+# list s3 bucket files
+aws s3 ls test-bucket --endpoint-url http://localhost:4566
+
+################################################
+aws docker
+################################################
+https://hub.docker.com/u/amazon?page=1
+
+https://aws.amazon.com/blogs/big-data/developing-aws-glue-etl-jobs-locally-using-a-container/
+https://aws.amazon.com/blogs/big-data/develop-and-test-aws-glue-version-3-0-jobs-locally-using-a-docker-container/
+
+https://hub.docker.com/r/amazon/aws-glue-libs
+https://hub.docker.com/r/amazon/amazon-ecs-sample
+https://hub.docker.com/r/amazon/aws-lambda-python
+
+https://aws.plainenglish.io/aws-glue-development-using-docker-c6b1ccfab12b
+docker pull amazon/aws-glue-libs:glue_libs_1.0.0_image_01
+
+https://github.com/webysther/aws-glue-docker
+https://github.com/zagovorichev/aws-glue-docker
+
+
+
+https://www.linkedin.com/pulse/local-aws-glue-development-via-docker-private-ca-bundle-surin
+
+Dockerfile
+
+FROM amazon/aws-glue-libs:glue_libs_3.0.0_image_01
+WORKDIR /home/glue_user/workspace/glue
+ENTRYPOINT ["bash"]
+USER root
+COPY private_aws_ca_cert.pem /home/glue_user/aws_helper/
+RUN myjava=$(java -XshowSettings:properties -verbose 2>&1 | head -1) && prefix_out=${myjava#[Opened} && container_java=${prefix_out%rt.jar]} && keytool -import -alias private_aws_ca_cert -keystore $container_java/security/cacerts -storepass changeit -noprompt -file /home/glue_user/aws_helper/private_aws_ca_cert.pem
+USER glue_user
+WORKDIR /home/glue_user/workspace
+
+
+Docker Compose
+
+version: "3.8"
+services:
+  glue_pyspark_local:
+    build:
+      context: .
+    image: 'glue_pyspark_local_image'
+    ports:
+      - '4040:4040'
+      - '18080:18080'
+    environment:
+      - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID #boto3
+      - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY #boto3
+      - AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN #boto3
+      - AWS_REGION=$AWS_REGION #boto3
+      - WR_VERIFY=/home/glue_user/aws_helper/${PRIVATE_CA_FILE} #awswrangler
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/home/glue_user/workspace
+    container_name: glue_pyspark_local
+........................
+
+https://docs.amazonaws.cn/en_us/glue/latest/dg/aws-glue-programming-etl-libraries.html
+
+For Amazon Glue version 3.0: amazon/aws-glue-libs:glue_libs_3.0.0_image_01
+For Amazon Glue version 2.0: amazon/aws-glue-libs:glue_libs_2.0.0_image_01
+
+docker pull amazon/aws-glue-libs:glue_libs_3.0.0_image_01
+
+docker run -it -v ~/.aws:/home/glue_user/.aws -v $WORKSPACE_LOCATION:/home/glue_user/workspace/ -e AWS_PROFILE=$PROFILE_NAME -e DISABLE_SSL=true --rm -p 4040:4040 -p 18080:18080 --name glue_spark_submit amazon/aws-glue-libs:glue_libs_3.0.0_image_01 spark-submit /home/glue_user/workspace/src/$SCRIPT_FILE_NAME
+
+docker run -it -v ~/.aws:/home/glue_user/.aws -e AWS_PROFILE=$PROFILE_NAME -e DISABLE_SSL=true --rm -p 4040:4040 -p 18080:18080 --name glue_pyspark amazon/aws-glue-libs:glue_libs_3.0.0_image_01 pyspark
+
+docker run -it -v ~/.aws:/home/glue_user/.aws -v $WORKSPACE_LOCATION:/home/glue_user/workspace/ -e AWS_PROFILE=$PROFILE_NAME -e DISABLE_SSL=true --rm -p 4040:4040 -p 18080:18080 --name glue_pytest amazon/aws-glue-libs:glue_libs_3.0.0_image_01 -c "python3 -m pytest"
+
+$ JUPYTER_WORKSPACE_LOCATION=/local_path_to_workspace/jupyter_workspace/
+
+$ docker run -it -v ~/.aws:/home/glue_user/.aws -v $JUPYTER_WORKSPACE_LOCATION:/home/glue_user/workspace/jupyter_workspace/ -e AWS_PROFILE=$PROFILE_NAME -e DISABLE_SSL=true --rm -p 4040:4040 -p 18080:18080 -p 8998:8998 -p 8888:8888 --name glue_jupyter_lab amazon/aws-glue-libs:glue_libs_3.0.0_image_01 /home/glue_user/jupyter/jupyter_start.sh
+
+
+
+$ WORKSPACE_LOCATION=/local_path_to_workspace
+$ SCRIPT_FILE_NAME=sample.py
+$ mkdir -p ${WORKSPACE_LOCATION}/src
+$ vim ${WORKSPACE_LOCATION}/src/${SCRIPT_FILE_NAME}
+
+
+$ WORKSPACE_LOCATION=/local_path_to_workspace
+$ SCRIPT_FILE_NAME=sample.py
+$ UNIT_TEST_FILE_NAME=test_sample.py
+$ mkdir -p ${WORKSPACE_LOCATION}/tests
+$ vim ${WORKSPACE_LOCATION}/tests/${UNIT_TEST_FILE_NAME}
+
+........................
+
+https://www.bitovi.com/blog/running-aws-resources-on-localstack
+
+
+version: '3.8'services:
+  localstack:
+    network_mode: bridge
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: localstack-example
+    hostname: localstack
+    ports:
+      - "4566:4566"
+    environment:
+      # Declare which aws services will be used in localstack
+      - SERVICES=sqs,sns,iam,s3,lambda
+      # These variables are needed for localstack
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=testUser
+      - AWS_SECRET_ACCESS_KEY=testAccessKey
+      - LAMBDA_EXECUTOR=local
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - DATA_DIR=/tmp/localstack/data
+    volumes:
+      - "${TMPDIR:-/tmp}/localstack:/tmp/localstack"
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./create-resources.sh:/docker-entrypoint-initaws.d/create-resources.sh
+
+
+create-resources.sh
+
+echo "Create admin"
+aws \
+ --endpoint-url=http://localhost:4566 \
+ iam create-role \
+ --role-name admin-role \
+ --path / \
+ --assume-role-policy-document file:./admin-policy.json
+echo "Make S3 bucket"
+aws \
+  s3 mb s3://lambda-functions \
+  --endpoint-url http://localhost:4566
+echo "Copy the lambda function to the S3 bucket"
+aws \
+  s3 cp lambdas.zip s3://lambda-functions \
+  --endpoint-url http://localhost:4566
+
+
+echo "Create the lambda exampleLambda"
+aws \
+  lambda create-function \
+  --endpoint-url=http://localhost:4566 \
+  --function-name exampleLambda \
+  --role arn:aws:iam::000000000000:role/admin-role \
+  --code S3Bucket=lambda-functions,S3Key=lambdas.zip
+  --handler index.handler \
+  --runtime nodejs10.x \
+  --description "SQS Lambda handler for test sqs." \
+  --timeout 60 \
+  --memory-size 128 \
+echo "Map the testQueue to the lambda function"
+aws \
+  lambda create-event-source-mapping \
+  --function-name exampleLambda \
+  --batch-size 1 \
+  --event-source-arn "arn:aws:sqs:us-east-1:000000000000:testQueue" \
+  --endpoint-url=http://localhost:4566
+echo "All resources initialized!
+
+Testing Your Lambda
+
+
+aws sns publish --endpoint-url=http://localhost:4566 --topic-arn arn:aws:sns:us-east-1:000000000000:testTopic --region us-east-1 --message 'Test Topic!'
+
+aws sqs send-message --endpoint-url=http://localhost:4566 --queue-url http://localhost:4576/000000000000/testQueue --region us-east-1 --message-body 'Test Message!'
+
+.......................
+
+https://levelup.gitconnected.com/aws-run-an-s3-triggered-lambda-locally-using-localstack-ac05f03dc896
+
+
+const aws = require('aws-sdk');
+
+const s3 = new aws.S3({
+    apiVersion: '2006-03-01',
+    endpoint: `http://${process.env.LOCALSTACK_HOSTNAME}:4566`, // This two lines are
+    s3ForcePathStyle: true,                                     // only needed for LocalStack.
+});
+
+exports.handler = async (event, context) => {
+    // Get the object from the event and show its content type
+    const bucket = event.Records[0].s3.bucket.name;
+    const key = decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, ' '));
+    const params = {
+        Bucket: bucket,
+        Key: key,
+    };
+    try {
+        const { ContentType } = await s3.getObject(params).promise();
+        console.log('CONTENT TYPE:', ContentType);
+        return ContentType;
+    } catch (err) {
+        console.log(err);
+        const message = `Error getting object ${key} from bucket ${bucket}. Make sure they exist and your bucket is in the same region as this function.`;
+        console.log(message);
+        throw new Error(message);
+    }
+};
+
+
+zip -r function.zip .
+
+aws --endpoint-url=http://localhost:4566 \
+lambda create-function --function-name my-lambda \
+--zip-file fileb://function.zip \
+--handler index.handler --runtime nodejs12.x \
+--role arn:aws:iam::000000000000:role/lambda-role
+
+
+aws --endpoint-url=http://localhost:4566 s3 mb s3://my-bucket
+
+aws --endpoint-url=http://localhost:4566 \
+s3api put-bucket-notification-configuration --bucket my-bucket \
+--notification-configuration file://s3-notif-config.json
+
+aws --endpoint-url=http://localhost:4566 \
+s3api put-object --bucket my-bucket \
+--key dummyfile.txt --body=dummyfile.txt
+
+
+..............
+
+####################################################################
+lambda aws
+####################################################################
+https://docs.localstack.cloud/aws/lambda/
+https://docs.aws.amazon.com/lambda/latest/dg/configuration-function-zip.html
+https://docs.aws.amazon.com/lambda/latest/dg/python-package.html
+https://github.com/mthenw/awesome-layers
+https://dashbird.io/knowledge-base/aws-lambda/lambda-layers/
+https://keras.io/api/layers/core_layers/lambda/
+https://docs.aws.amazon.com/lambda/latest/dg/invocation-layers.html
+https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html
+https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html
+https://docs.localstack.cloud/aws/lambda/
+https://docs.localstack.cloud/aws/lambda/
+
+Images
+https://docs.aws.amazon.com/lambda/latest/dg/images-create.html
+https://docs.aws.amazon.com/lambda/latest/dg/runtimes-images.html
+https://docs.aws.amazon.com/lambda/latest/dg/python-image.html
+https://github.com/aws/aws-lambda-base-images/blob/python3.9/Dockerfile.python3.9
+https://docs.aws.amazon.com/lambda/latest/dg/images-test.html
+https://docs.aws.amazon.com/lambda/latest/dg/images-create.html#images-reqs
+https://docs.aws.amazon.com/lambda/latest/dg/images-create.html#images-types
+https://docs.aws.amazon.com/lambda/latest/dg/images-create.html#images-parms
+https://docs.aws.amazon.com/lambda/latest/dg/images-create.html#images-create-from-alt
+https://docs.aws.amazon.com/lambda/latest/dg/images-create.html#images-upload
+https://docs.aws.amazon.com/lambda/latest/dg/images-create.html#images-create-sam
+
+
+# create
+aws lambda publish-layer-version --layer-name hello-world-layer --description "Hello World Layer" --license-info "MIT" --content S3Bucket=lambda-layers-us-east-1-1234567890,S3Key=hello-world-layer.zip
+
+# add layer
+aws lambda update-function-configuration --function-name hello-world --layers arn:aws:lambda:us-east-1:1234567890:layer:helloworld-layer:1 arn:aws:lambda:us-east-1:1234567890:layer:foobar-layer:2
+
+# remove
+aws lambda update-function-configuration --function-name hello-world --layers []
+
+
+aws lambda publish-layer-version --layer-name my-layer --description "My layer"  \
+--license-info "MIT" --content S3Bucket=lambda-layers-us-east-2-123456789012,S3Key=layer.zip \
+ --compatible-runtimes python3.6 python3.7 python3.8
+  --compatible-architectures "arm64" "x86_64"
+
+awslocal lambda create-function \
+    --function-name <function-name> \
+    --runtime <lambda-runtime> \
+    --zip-file fileb://<path/to/zip/file> \
+    --handler index.handler \
+    --role cool-stacklifter
+
+awslocal lambda create-function-url-config \
+    --function-name <function-name> \
+    --auth-type NONE
+
+
+docker build -t myfunction:latest .
+docker run -p 9000:8080  myfunction:latest
+curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{}'
+
+#!/bin/sh
+if [ -z "${AWS_LAMBDA_RUNTIME_API}" ]; then
+  exec /usr/local/bin/aws-lambda-rie /usr/local/bin/python -m awslambdaric $@
+else
+  exec /usr/local/bin/python -m awslambdaric $@
+fi
+
+-.--------
+
+
+create an image from an AWS base image for Lambda
+
+FROM public.ecr.aws/lambda/python:3.8
+# Install the function's dependencies using file requirements.txt
+# from your project folder.
+COPY requirements.txt  .
+RUN  pip3 install -r requirements.txt --target "${LAMBDA_TASK_ROOT}"
+# Copy function code
+COPY app.py ${LAMBDA_TASK_ROOT}
+# Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
+CMD [ "app.handler" ]
+
+
+docker build -t hello-world .
+docker run -p 9000:8080 hello-world
+curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{}'
+
+
+Dockerfile for Python:
+
+# Define function directory
+ARG FUNCTION_DIR="/function"
+FROM python:buster as build-image
+# Install aws-lambda-cpp build dependencies
+RUN apt-get update && \
+  apt-get install -y \
+  g++ \
+  make \
+  cmake \
+  unzip \
+  libcurl4-openssl-dev
+
+# Include global arg in this stage of the build
+ARG FUNCTION_DIR
+# Create function directory
+RUN mkdir -p ${FUNCTION_DIR}
+# Copy function code
+COPY app/* ${FUNCTION_DIR}
+# Install the runtime interface client
+RUN pip install \
+        --target ${FUNCTION_DIR} \
+        awslambdaric
+# Multi-stage build: grab a fresh copy of the base image
+FROM python:buster
+# Include global arg in this stage of the build
+ARG FUNCTION_DIR
+# Set working directory to function root directory
+WORKDIR ${FUNCTION_DIR}
+# Copy in the build image dependencies
+COPY --from=build-image ${FUNCTION_DIR} ${FUNCTION_DIR}
+ENTRYPOINT [ "/usr/local/bin/python", "-m", "awslambdaric" ]
+CMD [ "app.handler" ]
+
+docker build -t hello-world .
+
+
+Upload the image to the Amazon ECR repository
+
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 123456789012.dkr.ecr.us-east-1.amazonaws.com
+aws ecr create-repository --repository-name hello-world --image-scanning-configuration scanOnPush=true --image-tag-mutability MUTABLE
+docker tag  hello-world:latest 123456789012.dkr.ecr.us-east-1.amazonaws.com/hello-world:latest
+docker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/hello-world:latest
+
+.........................
+
+https://stackoverflow.com/questions/48232094/is-there-a-temporary-folder-that-i-can-access-while-using-aws-glue
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-glue-arguments.html
+
+Are you asking for this? There are a number of argument names that are recognized and used by AWS Glue, that you can use to set up the script environment for your Jobs and JobRuns:
+
+--TempDir — Specifies an S3 path to a bucket that can be used as a temporary directory for the Job.
+Here is a link, which you can refer.
+
+s3 = boto3.resource('s3')
+s3.Bucket(bucket_name).download_file(DATA_DIR+file,'tmp/'+file)
+
+aws glue start-job-run --job-name "CSV to CSV" --arguments='--scriptLocation="s3://my_glue/libraries/test_lib.py"'
+
+
+'--TempDir': 's3-path-to-directory'
+
+
+
+.........................
+
+https://docs.aws.amazon.com/lambda/latest/dg/python-package.html
+https://gist.github.com/gene1wood/4a052f39490fae00e0c3
+https://docs.aws.amazon.com/lambda/latest/dg/python-package.html
+https://docs.aws.amazon.com/glue/latest/dg/add-job-python.html
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-python-libraries.html
+.........................
+
+https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtime-environment.html
+https://aws.amazon.com/premiumsupport/knowledge-center/start-glue-job-crawler-completes-lambda/
+https://medium.com/@jkimera5/automating-etl-jobs-on-aws-using-glue-lambda-eventsbridge-and-athena-5bd207049bd9
+https://medium.com/zenofai/create-an-etl-solution-using-aws-step-functions-lambda-and-glue-302623bc2fea
+https://docs.aws.amazon.com/lambda/latest/dg/welcome.html#when-to-use-cloud-functions
+https://docs.aws.amazon.com/lambda/index.html
+https://aws.amazon.com/lambda/features/?pg=ln&sec=hs
+https://aws.amazon.com/lambda/
+https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway.html
+https://aws.amazon.com/blogs/compute/managing-federated-schema-with-aws-lambda-and-amazon-s3/
+https://aws.amazon.com/blogs/database/automate-schema-version-control-and-migration-with-flyway-and-aws-lambda-on-amazon-aurora-postgresql/
+https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/eventbridge-schemas.html
+
+
+
+
+
+#############################################################
+S3 bucket local stack
+#############################################################
+
+https://nikhilvijayan.com/aws-s3-create-bucket-copy-files-localstack
+
+# Create a new bucket
+awslocal s3api create-bucket --bucket business-time-nonprod --region eu-west-1
+
+# Create a new folder inside your newly created bucket
+awslocal s3api put-object --bucket business-time-nonprod --key some/folder/name/here/
+
+# Add a new file to it
+touch helloworld.txt # Create a file if you don't already have it
+awslocal s3 cp helloworld.txt s3://business-time-nonprod/some/folder/name/here/
+
+#Verify that your new bucket exists
+awslocal s3api list-buckets --query "Buckets[].Name"
+
+# Verify that the file you just added exists
+awslocal s3 ls s3://business-time-nonprod/some/folder/name/here --recursive --human-readable --summarize
+
+Add tags to your file
+awslocal s3api put-object-tagging \
+    --bucket business-time-nonprod \
+    --key helloworld.txt \
+    --tagging '{"TagSet": [{ "Key": "version", "Value": "1.0.0" }]}'
+
+Check the tags on a file
+awslocal s3api get-object-tagging \
+  --bucket business-time-nonprod \
+  --key helloworld.txt
+
+
+
+awslocal s3api create-bucket --bucket test
+
+
+https://github.com/localstack/localstack/issues/582
+
+
+aws --endpoint-url=http://localhost:4572 s3api create-bucket --bucket my-bucket
+aws --endpoint-url=http://localhost:4572 s3api put-bucket-versioning --bucket my-bucket --versioning-configuration Status=Enabled
+aws --endpoint-url=http://localhost:4572 s3 cp /tmp/000_1 s3://my-bucket/output/000_1
+aws --endpoint-url=http://localhost:4572 s3 rm s3://my-bucket/output/000_1
+aws --endpoint-url=http://localhost:4572 s3api list-object-versions --bucket my-bucket --prefix output/
+aws --endpoint-url=http://localhost:4572 s3api get-object --bucket my-bucket --key output/ --version-id 0 /tmp/a
+
+
+https://github.com/localstack/localstack/issues/799
+
+python awslocal s3api create-bucket --bucket sample-bucket
+python awslocal s3api put-bucket-versioning --bucket sample-bucket --versioning-configuration Status=Enabled
+
+
+https://github.com/localstack/awscli-local
+
+aws --endpoint-url=http://localhost:4566 kinesis list-streams
+awslocal kinesis list-streams
+
+awslocal dynamodb d<TAB>
+delete-backup                        describe-global-table
+delete-item                          describe-global-table-settings
+delete-table                         describe-limits
+describe-backup                      describe-table
+describe-continuous-backups          describe-table-replica-auto-scaling
+describe-contributor-insights        describe-time-to-live
+describe-endpoints
+
+
+https://docs.localstack.cloud/aws/s3/
+
+awslocal s3api create-bucket --bucket sample-bucket
+awslocal s3api list-buckets
+awslocal s3api put-object --bucket sample-bucket --key index.html --body index.html
+
+
+https://www.baeldung.com/linux/aws-s3-cli
+
+aws s3 mb s3://linux-is-cool
+aws s3 mb s3://linux-is-awesome --region eu-central-1
+aws s3 ls
+aws s3 ls s3://linux-is-awesome
+aws s3 ls s3://linux-is-awesome --recursive --human-readable
+aws s3 rb s3://linux-is-cool
+aws s3 rb s3://bucket-with-objects --force
+aws s3 cp new.txt s3://linux-is-awesome
+aws s3 cp new.txt s3://linux-is-awesome/new-from-local.txt
+aws s3 cp s3://linux-is-awesome/new-from-local.txt s3://a-back-up-bucket/file.txt
+aws s3 cp s3://linux-is-awesome/new-from-local.txt copied-from-s3.txt
+aws s3 mv my-local-file.log s3://linux-is-awesome/moved-from-local.log
+aws s3 mv s3://linux-is-awesome/moved-from-local.log .
+aws s3 rm s3://linux-is-awesome/delete-me
+aws s3 website s3://linux-is-cool --index-document index.html --error-document error.html
+
+
+https://docs.lakefs.io/integrations/aws_cli.html
+
+aws s3 --profile lakefs  --endpoint-url https://lakefs.example.com   ls s3://example-repo/main/example-directory
+aws --profile lakefs  --endpoint-url https://lakefs.example.com s3 ls s3://example-repo/main/example-directory
+aws --profile lakefs  --endpoint-url https://lakefs.example.com  s3 cp s3://example-repo/main/example-file-1 s3://example-repo/main/example-file-2
+aws --profile lakefs  --endpoint-url https://lakefs.example.com  s3 cp s3://example-repo/main/example-file-1 /path/to/local/file
+aws --profile lakefs  --endpoint-url https://lakefs.example.com  s3 cp /path/to/local/file s3://example-repo/main/example-file-1
+aws --profile lakefs  --endpoint-url https://lakefs.example.com  s3 rm s3://example-repo/main/example-directory/example-file
+aws --profile lakefs  --endpoint-url https://lakefs.example.com  s3 rm s3://example-repo/main/example-directory/ --recursive
+
+https://storadera.com/integrations/aws-cli
+
+aws configure
+aws s3 ls --endpoint-url https://eu-east-1.s3.storadera.com
+aws s3 ls test-bucket/my-folder --endpoint-url https://eu-east-1.s3.storadera.com
+aws s3 cp <local-directory>/ s3://<destination-bucket>/ --recursive --endpoint-url https://eu-east-1.s3.storadera.com
+
+aws configure --profile storadera
+aws s3 ls --profile storadera --endpoint-url https://eu-east-1.s3.storadera.co
+aws s3 cp s3://<source-bucket>/ <local-directory> --recursive
+aws s3 cp <local-directory>/ s3://<destination-bucket>/ --recursive --profile storadera --endpoint-url https://eu-east-1.s3.storadera.com
+aws s3api create-bucket --bucket my-bucket --endpoint-url https://eu-east-1.s3.storadera.com
+
+
