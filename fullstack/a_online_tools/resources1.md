@@ -117,7 +117,14 @@ https://atkinsio.com/bookmarks-html-generator/
 #### Matched person profile + Finance & Credit Card information
 
 - https://www.fakexy.com/de-fake-address-generator-bw
+------------------------------------------------------------------
+### Git
 
+- https://gitea.io/en-us/
+- https://codeberg.org/
+- https://github.com/
+- https://bitbucket.org/product
+- https://gitlab.com/gitlab-org/gitlab
 
 ------------------------------------------------------------------
 ### Charts and Graphs
