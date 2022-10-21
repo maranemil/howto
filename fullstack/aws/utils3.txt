@@ -1,0 +1,844 @@
+loaclstack services
+['cloudformation', 'cloudwatch', 'dynamodb', 'ec2', 'glacier', 'iam', 'opsworks', 's3', 'sns', 'sqs']
+
+##########################################################
+aws create buckets with files
+##########################################################
+
+# check list buckets
+aws --endpoint-url=http://localhost:4566 s3api list-buckets
+aws s3api list-buckets --endpoint-url=http://localhost:4566
+
+# create sorage
+aws --endpoint-url=http://localhost:4566 s3api create-bucket --bucket test-storage
+
+# upload
+aws --endpoint-url=http://localhost:4566 s3 cp files/file.parquet s3://test-storage/
+
+
+aws --endpoint-url=http://localhost:4566 s3api list-objects --bucket test-storage
+aws --endpoint-url=http://localhost:4566 s3api list-objects-v2 --bucket test-storage
+aws --endpoint-url=http://localhost:4566 s3api list-object-versions --bucket test-storage
+
+.................................
+
+
+https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3api/list-object-versions.html
+https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3api/list-objects.html
+https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3api/list-objects-v2.html
+https://docs.aws.amazon.com/cli/latest/reference/s3api/list-object-versions.html
+https://docs.aws.amazon.com/cli/latest/reference/s3api/list-objects-v2.html
+
+
+
+#######################################################
+when calling the CreateBucket operation: The unspecified location constraint is incompatible for the region specific endpoint this request was sent to.
+#######################################################
+https://stackoverflow.com/questions/58244128/an-error-occurred-illegallocationconstraintexception-when-calling-the-createbu
+https://dev.to/abhishekamralkar/unspecified-location-constraint-ie2
+https://github.com/aws/aws-cli/issues/2603
+https://github.com/spulec/moto/issues/3292
+
+ERR
+aws s3api create-bucket --bucket yourbucketname --region us-east-2
+
+FIX
+aws s3api create-bucket --bucket yourbucketname --region us-east-2 --create-bucket-configuration LocationConstraint=us-east-2
+aws s3api create-bucket --bucket avengers-docker-eb --region us-east-1 --create-bucket-configuration LocationConstraint=us-east-1
+
+
+
+
+
+
+#######################################################
+php
+#######################################################
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/example_s3_ListObjects_section.html
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/ListingKeysUsingAPIs.html
+https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectsV2.html
+
+
+#######################################################
+Lambda container images
+#######################################################
+https://docs.aws.amazon.com/lambda/latest/dg/images-create.html
+https://docs.aws.amazon.com/de_de/lambda/latest/dg/images-create.html
+https://docs.aws.amazon.com/lambda/latest/dg/python-image.html
+https://docs.aws.amazon.com/de_de/lambda/latest/dg/images-test.html
+https://docs.aws.amazon.com/de_de/lambda/latest/dg/go-image.html
+https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/deploy-lambda-functions-with-container-images.html
+https://aws.amazon.com/de/blogs/aws/new-for-aws-lambda-container-image-support/
+https://docs.aws.amazon.com/lambda/latest/dg/images-test.html
+https://hub.docker.com/r/amazon/aws-lambda-python
+https://github.com/aws/aws-lambda-base-images
+
+#######################################################
+Localstack - Can't access dashboard
+#######################################################
+https://stackoverflow.com/questions/57554575/localstack-cant-access-dashboard
+https://github.com/localstack/localstack/issues/303
+https://github.com/localstack/localstack/blob/master/docker-compose.yml
+https://github.com/localstack/localstack/issues/1392
+
+PORT_WEB_UI: Port for the Web user interface / dashboard (default: 8080).
+Note that the Web UI is now deprecated,
+and requires to use the localstack/localstack-full Docker image.
+Try using the localstack/localstack-full image instead.
+
+
+version: "3.8"
+
+services:
+  localstack:
+    container_name: "${LOCALSTACK_DOCKER_NAME-localstack_main}"
+    image: localstack/localstack
+    ports:
+      - "127.0.0.1:4566:4566"            # LocalStack Gateway
+      - "127.0.0.1:4510-4559:4510-4559"  # external services port range
+      - "127.0.0.1:53:53"                # DNS config (only required for Pro)
+      - "127.0.0.1:53:53/udp"            # DNS config (only required for Pro)
+      - "127.0.0.1:443:443"              # LocalStack HTTPS Gateway (only required for Pro)
+    environment:
+      - DEBUG=${DEBUG-}
+      - PERSISTENCE=${PERSISTENCE-}
+      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR-}
+      - LOCALSTACK_API_KEY=${LOCALSTACK_API_KEY-}  # only required for Pro
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+
+
+
+docker-compose.yml
+
+version: '3.2'
+services:
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack_s3
+    ports:
+      - '4563-4584:4563-4584'
+      - '8055:8080'
+    environment:
+      - SERVICES=s3
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+    volumes:
+      - './.localstack:/tmp/localstack'
+     # - '/var/run/docker.sock:/var/run/docker.sock'
+    networks:
+      aws_local:
+        ipv4_address: 192.168.10.2
+        aliases:
+          - localstack-s3
+networks:
+  aws_local:
+    external:
+      name: aws-local
+
+
+
+docker-compose file
+
+version: "2.1"
+services:
+  localstack:
+    image: localstack/localstack
+    container_name: localstack
+    ports:
+      # - "4567-4584:4567-4584"
+      - '4563-4584:4563-4584'
+      - '8055:8080'
+     environment:
+      - SERVICES=s3,lambda,es
+      - DEBUG=0
+      - DEFAULT_REGION=us-west-2
+      - DATA_DIR=/tmp/localstack/data
+      - HOSTNAME=localhost
+      - LAMBDA_EXECUTOR=local
+      - DOCKER_HOST=unix:///var/run/docker.sock
+     volumes:
+      - ./.localstack:/tmp/localstack
+# healthcheck:
+#     test: ["CMD", "curl", "-f", "http://localhost:4571"]
+#     interval: 15s
+#     timeout: 20s
+#     retries: 5
+
+
+version: '3.2'
+services:
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack_demo
+    user: localstack
+    ports:
+      - '4563-4584:4563-4584'
+      - '8055:8080'
+    environment:
+      - SERVICES=s3
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+    volumes:
+      - './.tmp:/tmp'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+
+
+
+version: "3"
+
+services:
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - "4568-4597:4568-4597"
+      - "${PORT_WEB_UI-8080}:${PORT_WEB_UI-8080}"
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - SERVICES=dynamodb,s3,lambda,cloudwatchlogs,iam,sqs,kinesis
+      - DEFAULT_REGION=us-west-2
+      - AWS_DEFAULT_REGION=us-west-2
+      - AWS_EXECUTION_ENV=True
+    volumes:
+      - "${TMPDIR:-/tmp/localstack}:/tmp"
+
+
+https://nexiality.github.io/documentation/userguide/InstallingLocalstack.html
+
+
+ version: '2.1'
+
+  services:
+    localstack:
+      container_name: "${LOCALSTACK_DOCKER_NAME-localstack_main}"
+      image: localstack/localstack
+      ports:
+        - "4566-4599:4566-4599"
+        - "${PORT_WEB_UI-8080}:${PORT_WEB_UI-8080}"
+      environment:
+        - SERVICES=${SERVICES- }
+        - DEBUG=${DEBUG- }
+        - DATA_DIR=${DATA_DIR- }
+        - PORT_WEB_UI=${PORT_WEB_UI- }
+        - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR- }
+        - KINESIS_ERROR_PROBABILITY=${KINESIS_ERROR_PROBABILITY- }
+        - DOCKER_HOST=unix:///var/run/docker.sock
+        - HOST_TMP_FOLDER=${TMPDIR}
+      volumes:
+        - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
+        - "/var/run/docker.sock:/var/run/docker.sock"
+
+Navigate to the directory where `docker-compose.yml` is present and Run localstack using the command `docker-compose up`
+
+**Note:**
+- On linux machine, you may require to use with `sudo`.
+- Change the volumes directory path in `docker-compose.yml as per your local directory path.
+- To find default ports used for AWS service in `localstack` you can see the console output of `docker-compose up`
+ command.
+
+.......
+
+
+https://github.com/localstack/localstack/issues/5177
+
+Kubernetes config
+
+    spec:
+      containers:
+        - name: kinesis
+          image: 'docker.io/localstack/localstack:0.13.2'
+          env:
+            - name: SERVICES
+              value: "kinesis:4568,dynamodb:4569"
+            - name: DEBUG
+              value: "1"
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - '/bin/sh'
+                  - '-c'
+                  - >
+                    sleep 20 && awslocal kinesis create-stream --stream-name vssKinesisStream --shard-count 1
+          ports:
+            - containerPort: 4566
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 536Mi
+            limits:
+              cpu: 1
+              memory: 536Mi
+
+
+https://github.com/localstack/localstack/issues/1754
+
+version: "3.7"
+services:
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "4567-4584:4567-4584"
+      - "${PORT_WEB_UI-8080}:${PORT_WEB_UI-8080}"
+    environment:
+      - LOCALSTACK_SERVICES=S3
+      - DEBUG=1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - localstack-data:/tmp/localstack
+volumes:
+  localstack-data:
+
+
+
+###############################################################
+aws lambda docker
+###############################################################
+
+docker-compose.yml
+-------------------
+version: "3.8"
+
+services:
+  localstack-s3:
+    container_name: localstack-s3
+    image: localstack/localstack-full
+    ports:
+      #- "127.0.0.1:4566:4566"            # LocalStack Gateway
+      #- "127.0.0.1:4510-4559:4510-4559"  # External services port range
+      - "4566-4599:4566-4599"
+      #- "${PORT_WEB_UI-8080}:${PORT_WEB_UI-8080}" # localhost:9999/#/infra
+      #- '9999:8080'
+    environment:
+      - AWS_ACCESS_KEY_ID=dummy
+      - AWS_DEFAULT_REGION=eu-central-1 # eu-central-1 eu-west-2
+      - AWS_SECRET_ACCESS_KEY=dummy
+      - DEBUG=1
+      - DEFAULT_REGION=eu-west-2
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - PORT_WEB_UI=9999
+      - SERVICES=s3
+    volumes:
+      - "./stubs/s3:/tmp/localstack"
+      - "./volume:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  aws-lambda-python_demo:
+      container_name: "aws-lambda-python_demo"
+      build:
+        context: .
+        dockerfile: Dockerfile
+      ports:
+        - "9000:8080"
+
+
+
+
+Dockerfile
+-------------------
+FROM public.ecr.aws/lambda/python:3.8
+
+# Copy function code
+COPY app.py ${LAMBDA_TASK_ROOT}
+
+# install pip libs
+COPY requirements.txt  .
+RUN  pip3 install -r requirements.txt --target "${LAMBDA_TASK_ROOT}"
+
+CMD ["app.handler"]
+
+
+
+app.py
+-------------------
+import sys
+
+def lambda_handler(event, context):
+    return 'Hello from AWS Lambda using Python' + sys.version + '!'
+
+def handler(event, context):
+    return 'Hello from AWS Lambda using Python' + sys.version + '!'
+
+
+# pip install awslambdaric
+# python3.10 -m pip install --upgrade pip
+# python3.10 -m pip install --upgrade pip
+
+
+requirements.txt
+pandas
+numpy
+
+
+/usr/bin/docker-compose -f docker-compose.yml up -d aws-lambda-python_demo
+/usr/bin/docker-compose -f docker-compose.yml down --remove-orphans --rmi local
+
+
+Test
+curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{}'
+curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{"payload":"hello world!"}'
+
+
+"Hello from AWS Lambda using Python3.8.14 (default, Oct 14 2022, 11:49:31) \n[GCC 7.3.1 20180712 (Red Hat 7.3.1-15)]!
+
+
+----------------
+
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+WARNING: You are using pip version 22.0.4; however, version 22.3 is available.
+You should consider upgrading via the '/var/lang/bin/python3.8 -m pip install --upgrade pip' command.
+Removing intermediate container 307979f7527e
+
+
+###############################################
+lamnda docs
+###############################################
+
+https://hub.docker.com/r/amazon/aws-lambda-python
+https://docs.aws.amazon.com/lambda/latest/dg/python-image.html
+https://docs.aws.amazon.com/AmazonECR/latest/public/public-repositories.html
+https://gallery.ecr.aws/
+https://hub.docker.com/r/amazon/aws-lambda-python
+https://github.com/aws/aws-lambda-base-images
+https://gallery.ecr.aws/lambda/python
+https://github.com/aws/aws-lambda-base-images
+https://hub.docker.com/r/amazon/aws-lambda-python
+https://docs.aws.amazon.com/lambda/latest/dg/images-test.html
+https://aws.amazon.com/de/blogs/aws/new-for-aws-lambda-container-image-support/
+https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/deploy-lambda-functions-with-container-images.html
+https://docs.aws.amazon.com/de_de/lambda/latest/dg/images-test.html
+https://docs.aws.amazon.com/lambda/latest/dg/python-image.html#python-image-clients
+https://docs.aws.amazon.com/lambda/latest/dg/images-test.html
+https://docs.aws.amazon.com/lambda/latest/dg/images-create.html#images-create-from-base
+https://github.com/aws/aws-lambda-base-images
+https://docs.aws.amazon.com/lambda/latest/dg/python-image.html
+https://docs.aws.amazon.com/de_de/lambda/latest/dg/images-create.html
+https://docs.aws.amazon.com/lambda/latest/dg/images-create.html
+https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html
+https://gist.github.com/seeebiii/6d73b838dc4de74fd6323010e8a650b6
+https://docs.aws.amazon.com/lambda/latest/dg/images-create.html
+https://docs.aws.amazon.com/lambda/latest/dg/images-test.html
+https://stackoverflow.com/questions/65107143/lambda-container-images-complain-about-entrypoint-needing-handler-name-as-the-fi
+https://docs.aws.amazon.com/lambda/latest/dg/troubleshooting-deployment.html
+https://stackoverflow.com/questions/66369212/aws-lambda-is-unable-to-find-app-handler-custom-docker-image
+https://github.com/localstack/localstack/issues/3518
+https://hub.docker.com/r/lambci/lambda/
+https://repost.aws/questions/QUs6ATaNRdSzmZslJOrGB5zA/handler-error-when-connecting-lambda-function-to-rds-database
+https://stackoverflow.com/questions/62853089/aws-s3-cli-connection-was-closed-before-we-received-a-valid-response-from-endp
+https://superuser.com/questions/1604904/aws-lambda-update-function-code-connection-was-closed-before-we-received-a-vali
+
+
+aws lambda invoke --function-name CreateTableAddRecordsAndRead output.txt
+
+--cli-connect-timeout 6000
+
+aws lambda update-function-code --function-name LAMBDA_FUNCTION_NAME \
+--zip-file fileb://lambdaFunc.zip --cli-connect-timeout 6000 --publish
+
+
+
+
+
+
+
+
+https://sixfeetup.com/blog/secrets-of-building-python-container-images-for-aws-lambda
+
+
+Adding dependency packages in Lambda images
+------------------------------------------------
+
+FROM public.ecr.aws/lambda/python:3.8
+
+# Create function directory
+WORKDIR /app
+
+# Install the function's dependencies
+# Copy file requirements.txt from your project folder and install
+# the requirements in the app directory.
+
+COPY requirements.txt  .
+RUN pip3 install -r requirements.txt
+
+# Copy handler function (from the local app directory)
+COPY app.py  .
+
+# Overwrite the command by providing a different command directly in the template.
+CMD ["/app/app.handler"]
+
+
+
+
+Using the base of the base image
+------------------------------------------------
+
+FROM amazonlinux:2 as build
+
+RUN yum groupinstall -y "Development Tools"
+RUN amazon-linux-extras enable python3.8
+RUN yum clean metadata
+RUN yum install -y python38 python38-devel
+
+# We create an /app directory with a virtual environment in it to store our
+# application in.
+RUN set -x \
+    && python3.8 -m venv /app
+
+# Setting the PATH ensures that our pip commands below use the pip inside the virtual environment,
+# adding the compiled wheels to the collection we will later copy to the final image.
+ENV PATH="/app/bin:${PATH}"
+
+RUN mkdir /app/wheels
+
+# Next, we want to update pip, setuptools, and wheel inside of this virtual
+# environment to ensure that we have the latest versions of them.
+
+RUN pip --no-cache-dir --disable-pip-version-check install --upgrade pip setuptools wheel
+
+# We now grab the requirements files (the specification of which packages we depend on)
+COPY requirements /tmp/requirements
+
+# This installs the packages into the venv we created above, but as a side effect
+# it puts all of the wheel files into the /app/wheels directory, and this directory
+# and its contents are what we will copy to the final image.
+RUN pip install --no-cache-dir --disable-pip-version-check --no-deps \
+    -r /tmp/requirements/requirements.txt
+
+FROM public.ecr.aws/lambda/python:3.8
+
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONPATH /app
+ENV PATH="/app/bin:${PATH}"
+ENV BOGUS 1
+
+WORKDIR /app
+
+ARG DEVEL=no
+
+COPY requirements /tmp/requirements
+
+# We now copy all the wheels we created in the build phase
+COPY --from=build /app/wheels /app/wheels
+
+# And now we install them (into the image's system Python), specifying that only these wheels
+# should be used, not any external downloads such as from PyPI.
+RUN pip install --no-cache-dir --disable-pip-version-check --no-index \
+    -f /app/wheels -r /tmp/requirements/requirements.in
+
+COPY app/app.py /app
+
+# Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
+CMD [ "app.handler" ]
+
+
+
+https://hichaelmart.medium.com/using-container-images-with-aws-lambda-7ffbd23697f1
+
+
+FROM golang:1-alpine3.12 AS build-image
+WORKDIR /app
+COPY *.go ./
+RUN go build main.go
+FROM alpine:3.12
+WORKDIR /app
+
+# pdf2cairo is part of the poppler-utils package
+# ttf-liberation includes common fonts we might need
+RUN apk add --no-cache poppler-utils ttf-liberation
+
+COPY --from=build-image /app/main ./
+ENTRYPOINT ["/app/main"]
+
+https://techblog.geekyants.com/using-aws-lambda-functions-with-docker-containers-a-tutorial
+
+FROM public.ecr.aws/lambda/nodejs:12
+COPY app.js package*.json ./
+RUN npm install
+CMD [ "app.lambdaHandler" ]
+
+
+https://docs.aws.amazon.com/lambda/latest/dg/with-s3-example.html
+
+Example lambda-function.py
+
+import json
+import urllib.parse
+import boto3
+
+print('Loading function')
+
+s3 = boto3.client('s3')
+
+
+def lambda_handler(event, context):
+    #print("Received event: " + json.dumps(event, indent=2))
+
+    # Get the object from the event and show its content type
+    bucket = event['Records'][0]['s3']['bucket']['name']
+    key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
+    try:
+        response = s3.get_object(Bucket=bucket, Key=key)
+        print("CONTENT TYPE: " + response['ContentType'])
+        return response['ContentType']
+    except Exception as e:
+        print(e)
+        print('Error getting object {} from bucket {}. Make sure they exist and your bucket is in the same region as this function.'.format(key, bucket))
+        raise e
+
+
+
+
+
+
+############################################
+Writing pandas dataframe to S3 bucket (AWS)
+############################################
+
+https://stackoverflow.com/questions/53619901/auto-create-s3-buckets-on-localstack
+https://github.com/aws/aws-sdk-pandas/issues/558
+https://stackoverflow.com/questions/61253928/writing-pandas-dataframe-to-s3-bucket-aws
+https://gist.github.com/sats17/493d05d8d4dfd16b7dad399163075156
+https://docs.localstack.cloud/aws/s3/
+https://gist.github.com/duncangh/19f20399899788882ecf94b51804740b
+https://towardsai.net/p/data-science/aws-s3-read-write-operations-using-the-pandas-api
+https://joshua-robinson.medium.com/faster-data-loading-for-pandas-on-s3-171628896f81
+https://towardsdatascience.com/reading-and-writing-files-from-to-amazon-s3-with-pandas-ccaf90bfe86c
+https://pandas.pydata.org/docs/reference/api/pandas.read_parquet.html
+https://janakiev.com/blog/pandas-pyarrow-parquet-s3/
+https://stackoverflow.com/questions/45043554/how-to-read-a-list-of-parquet-files-from-s3-as-a-pandas-dataframe-using-pyarrow
+
+
+Using s3fs-supported pandas API
+---------------------------------------
+import os
+import pandas as pd
+AWS_S3_BUCKET = os.getenv("AWS_S3_BUCKET")
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_SESSION_TOKEN = os.getenv("AWS_SESSION_TOKEN")
+books_df = pd.DataFrame(
+    data={"Title": ["Book I", "Book II", "Book III"], "Price": [56.6, 59.87, 74.54]},
+    columns=["Title", "Price"],
+)
+key = "files/books.csv"
+books_df.to_csv(
+    f"s3://{AWS_S3_BUCKET}/{key}",
+    index=False,
+    storage_options={
+        "key": AWS_ACCESS_KEY_ID,
+        "secret": AWS_SECRET_ACCESS_KEY,
+        "token": AWS_SESSION_TOKEN,
+    },
+)
+
+
+
+Using boto3
+---------------------------------------
+import os
+import boto3
+import pandas as pd
+AWS_S3_BUCKET = os.getenv("AWS_S3_BUCKET")
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_SESSION_TOKEN = os.getenv("AWS_SESSION_TOKEN")
+s3_client = boto3.client(
+    "s3",
+    aws_access_key_id=AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+    aws_session_token=AWS_SESSION_TOKEN,
+)
+response = s3_client.get_object(Bucket=AWS_S3_BUCKET, Key="files/books.csv")
+status = response.get("ResponseMetadata", {}).get("HTTPStatusCode")
+if status == 200:
+    print(f"Successful S3 get_object response. Status - {status}")
+    books_df = pd.read_csv(response.get("Body"))
+    print(books_df)
+else:
+    print(f"Unsuccessful S3 get_object response. Status - {status}")
+
+
+
+Using s3fs-supported pandas API
+---------------------------------------
+import os
+import pandas as pd
+AWS_S3_BUCKET = os.getenv("AWS_S3_BUCKET")
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_SESSION_TOKEN = os.getenv("AWS_SESSION_TOKEN")
+key = "files/books.csv"
+books_df = pd.read_csv(
+    f"s3://{AWS_S3_BUCKET}/{key}",
+    storage_options={
+        "key": AWS_ACCESS_KEY_ID,
+        "secret": AWS_SECRET_ACCESS_KEY,
+        "token": AWS_SESSION_TOKEN,
+    },
+)
+print(books_df)
+
+
+Prerequisite libraries
+---------------------------------------
+import boto3
+import pandas as pd
+import io
+emp_df=pd.read_csv(r’python_ETL\emp.dat’)
+emp_df.head(10)
+
+# Write the Pandas DataFrame to AWS S3
+---------------------------------------
+from io import StringIO
+REGION = ‘us-east-2’
+ACCESS_KEY_ID = xxxxxxxxxxxxx’
+SECRET_ACCESS_KEY = ‘xxxxxxxxxxxxxxxx’
+BUCKET_NAME = ‘pysparkcsvs3’
+FileName=’pysparks3/emp.csv’
+csv_buffer=StringIO()
+emp_df.to_csv(csv_buffer, index=False)
+s3csv = boto3.client(‘s3’,
+ region_name = REGION,
+ aws_access_key_id = ACCESS_KEY_ID,
+ aws_secret_access_key = SECRET_ACCESS_KEY
+ )
+
+Read the AWS S3 file to Pandas DataFrame
+---------------------------------------
+REGION = ‘us-east-2’
+ACCESS_KEY_ID = ‘xxxxxxxxx’
+SECRET_ACCESS_KEY = ‘xxxxxxxxx’
+BUCKET_NAME = ‘pysparkcsvs3’
+KEY = ‘pysparks3/emp.csv’ # file path in S3
+s3c = boto3.client(‘s3’,
+ region_name = REGION,
+ aws_access_key_id = ACCESS_KEY_ID,
+ aws_secret_access_key = SECRET_ACCESS_KEY)
+ obj = s3c.get_object(Bucket= BUCKET_NAME , Key = KEY)
+ emp_df = pd.read_csv(io.BytesIO(obj[‘Body’].read()),            encoding='utf8')
+emp_df.head(5)
+
+
+
+
+
+---------------------------------------
+import dask.dataframe as dd
+ENDPOINT_URL="http://10.62.64.200"
+storage_opts = {'client_kwargs': {'endpoint_url': ENDPOINT_URL}}
+ddf = dd.read_csv("s3://"+BUCKETPATH, storage_options=storage_opts)
+df = ddf.compute(scheduler='processes')
+---------------------------------------
+import pandas as pd
+ENDPOINT_URL="http://10.62.64.200"
+storage_opts = {'client_kwargs': {'endpoint_url': ENDPOINT_URL}}
+df = pd.read_csv("s3://" + BUCKETPATH, storage_options=storage_opts)
+
+---------------------------------------
+import pandas as pd
+import s3fs
+df = pd.read_parquet('http://localhost:4566/storage/df.parquet')
+print(df.head())
+---------------------------------------
+import boto3
+import pandas as pd
+from io import BytesIO
+bucket, filename = "bucket_name", "filename.csv"
+s3 = boto3.resource('s3')
+obj = s3.Object(bucket, filename)
+with BytesIO(obj.get()['Body'].read()) as bio:
+    df = pd.read_csv(bio)
+
+
+from io import StringIO  # python3 (or BytesIO for python2)
+import boto3
+bucket = 'info'  # already created on S3
+csv_buffer = StringIO()
+df.to_csv(csv_buffer)
+s3_resource = boto3.resource('s3')
+s3_resource.Object(bucket, 'df.csv').put(Body=csv_buffer.getvalue())
+---------------------------------------
+import pandas as pd
+df = pd.DataFrame()
+# df.to_csv("s3://<bucket_name>/<obj_key>")
+# In your case
+df.to_csv("s3://info/test.csv")
+---------------------------------------
+import dask.dataframe as dd
+df = dd.read_parquet('s3://bucket/path/to/data-*.parq')
+---------------------------------------
+import boto3
+import io
+import pandas as pd
+# Read the parquet file
+buffer = io.BytesIO()
+s3 = boto3.resource('s3')
+object = s3.Object('bucket_name','key')
+object.download_fileobj(buffer)
+df = pd.read_parquet(buffer)
+print(df.head())
+---------------------------------------
+
+
+import numpy as np
+import pandas as pd
+df = pd.DataFrame({'data': np.random.random((1000,))})
+df.to_parquet("data/data.parquet")
+from dotenv import load_dotenv
+load_dotenv();
+
+import os
+import s3fs
+fs = s3fs.S3FileSystem(
+    anon=False,
+    use_ssl=True,
+    client_kwargs={
+        "region_name": os.environ['S3_REGION'],
+        "endpoint_url": os.environ['S3_ENDPOINT'],
+        "aws_access_key_id": os.environ['S3_ACCESS_KEY'],
+        "aws_secret_access_key": os.environ['S3_SECRET_KEY'],
+        "verify": True,
+    }
+)
+with fs.open('s3-example/data.parquet', 'wb') as f:
+    df.to_parquet(f)
+
+
+import pyarrow as pa
+import pyarrow.parquet as pq
+from pyarrow import Table
+s3_filepath = 's3-example/data.parquet'
+pq.write_to_dataset(
+    Table.from_pandas(df),
+    s3_filepath,
+    filesystem=fs,
+    use_dictionary=True,
+    compression="snappy",
+    version="2.4",
+)
+s3_filepath = "s3-example/data.parquet"
+pf = pq.ParquetDataset(
+    s3_filepath,
+    filesystem=fs)
+
+s3_filepath = 's3://s3-example'
+s3_filepaths = [path for path in fs.ls(s3_filepath)
+                if path.endswith('.parquet')]
+s3_filepaths
+
+
+
+
+------------------------------------------------------------------
+https://pypi.org/project/s3fs/
+pip install s3fs
+
+------------------------------------------------------------------
+
+
+
+
