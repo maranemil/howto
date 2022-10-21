@@ -29,7 +29,8 @@ sudo apt install ffmpeg -y
 sudo apt install p7zip p7zip-full p7zip-rar -y
 sudo apt install audacity -y
 sudo apt install gnome-mpv -y
-sudo apt install gnome-tweak-tool -y
+# sudo apt install gnome-tweak-tool -y
+sudo apt install gnome-tweaks -y
 sudo apt install milkytracker -y
 sudo apt install curl -y
 sudo apt install kdenlive -y
