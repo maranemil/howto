@@ -1,0 +1,553 @@
+
+#############################################################
+kubernetes Install using other package management
+#############################################################
+
+https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
+
+snap install kubectl --classic
+kubectl version --client
+kubectl cluster-info
+kubectl cluster-info dump
+
+
+
+
+
+
+# Specify a memory request and a memory limit  - pods/resource/memory-request-limit.yaml
+-----------------------------------------------
+apiVersion: v1
+kind: Pod
+metadata:
+  name: memory-demo
+  namespace: mem-example
+spec:
+  containers:
+  - name: memory-demo-ctr
+    image: polinux/stress
+    resources:
+      requests:
+        memory: "100Mi"
+      limits:
+        memory: "200Mi"
+    command: ["stress"]
+    args: ["--vm", "1", "--vm-bytes", "150M", "--vm-hang", "1"]
+
+
+#kubectl apply -f https://k8s.io/examples/pods/resource/memory-request-limit.yaml --namespace=mem-example
+kubectl apply -f memory-request-limit.yaml --namespace=mem-example
+kubectl get pod memory-demo-2 --namespace=mem-example
+
+# Assign CPU Resources to Containers and Pods
+
+minikube addons enable metrics-server
+kubectl get apiservices
+kubectl create namespace cpu-example
+
+# Specify a CPU request and a CPU limit - cpu-request-limit.yaml
+-----------------------------------------------
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cpu-demo
+  namespace: cpu-example
+spec:
+  containers:
+  - name: cpu-demo-ctr
+    image: vish/stress
+    resources:
+      limits:
+        cpu: "1" # "100"
+      requests:
+        cpu: "0.5" # "100"
+    args:
+    - -cpus
+    - "2"
+
+
+kubectl apply -f https://k8s.io/examples/pods/resource/cpu-request-limit.yaml --namespace=cpu-example
+kubectl get pod cpu-demo --namespace=cpu-example
+kubectl get pod cpu-demo --output=yaml --namespace=cpu-example
+kubectl top pod cpu-demo --namespace=cpu-example
+kubectl describe pod cpu-demo-2 --namespace=cpu-example
+
+
+# Install Kompose
+https://kubernetes.io/docs/tasks/configure-pod-container/translate-compose-kubernetes/
+
+
+# Linux
+curl -L https://github.com/kubernetes/kompose/releases/download/v1.26.0/kompose-linux-amd64 -o kompose
+chmod +x kompose
+sudo mv ./kompose /usr/local/bin/kompose
+
+Use Kompose - docker-compose.yml
+-----------------------------------------------
+
+version: "2"
+
+services:
+
+  redis-master:
+    image: registry.k8s.io/redis:e2e
+    ports:
+      - "6379"
+
+  redis-slave:
+    image: gcr.io/google_samples/gb-redisslave:v3
+    ports:
+      - "6379"
+    environment:
+      - GET_HOSTS_FROM=dns
+
+  frontend:
+    image: gcr.io/google-samples/gb-frontend:v4
+    ports:
+      - "80:80"
+    environment:
+      - GET_HOSTS_FROM=dns
+    labels:
+      kompose.service.type: LoadBalancer
+
+kompose convert
+kubectl apply -f frontend-service.yaml,redis-master-service.yaml,redis-slave-service.yaml,frontend-deployment.yaml,redis-master-deployment.yaml,redis-slave-deployment.yaml
+
+minikube service frontend
+kubectl describe svc frontend
+curl http://192.0.2.89
+
+kompose --file docker-voting.yml convert
+kompose -f docker-compose.yml -f docker-guestbook.yml convert
+
+# OpenShift kompose convert example
+-----------------------------------------------
+kompose --provider openshift --file docker-voting.yml convert
+kompose --provider openshift --file buildconfig/docker-compose.yml convert
+
+
+
+Run Applications https://kubernetes.io/docs/tasks/run-application/
+-----------------------------------------------
+
+application/deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 2 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+
+
+kubectl apply -f https://k8s.io/examples/application/deployment.yaml
+kubectl describe deployment nginx-deployment
+kubectl get pods -l app=nginx
+kubectl describe pod <pod-name>
+
+
+Updating the deployment  application/deployment-update.yaml
+-----------------------------------------------
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.16.1 # Update the version of nginx from 1.14.2 to 1.16.1
+        ports:
+        - containerPort: 80
+
+kubectl apply -f https://k8s.io/examples/application/deployment-update.yaml
+kubectl get pods -l app=nginx
+
+
+Scaling the application by increasing the replica count application/deployment-scale.yaml
+-----------------------------------------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 4 # Update the replicas from 2 to 4
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+
+
+kubectl apply -f https://k8s.io/examples/application/deployment-scale.yaml
+kubectl get pods -l app=nginx
+kubectl delete deployment nginx-deployment
+
+
+
+
+Run a Single-Instance Stateful Application
+https://kubernetes.io/docs/tasks/run-application/run-single-instance-stateful-application/
+-----------------------------------------------
+
+Deploy MySQL
+
+application/mysql/mysql-deployment.yaml
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+spec:
+  ports:
+  - port: 3306
+  selector:
+    app: mysql
+  clusterIP: None
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - image: mysql:5.6
+        name: mysql
+        env:
+          # Use secret in real usage
+        - name: MYSQL_ROOT_PASSWORD
+          value: password
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim
+
+
+application/mysql/mysql-pv.yaml
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+
+
+
+
+kubectl apply -f https://k8s.io/examples/application/mysql/mysql-pv.yaml
+kubectl apply -f https://k8s.io/examples/application/mysql/mysql-deployment.yaml
+kubectl describe deployment mysql
+kubectl get pods -l app=mysql
+kubectl describe pvc mysql-pv-claim
+
+Accessing the MySQL instance
+kubectl run -it --rm --image=mysql:5.6 --restart=Never mysql-client -- mysql -h mysql -ppassword
+
+Deleting a deployment
+kubectl delete deployment,svc mysql
+kubectl delete pvc mysql-pv-claim
+kubectl delete pv mysql-pv-volume
+
+
+
+https://kubernetes.io/docs/tasks/run-application/run-replicated-stateful-application/
+
+
+Officially-supported Kubernetes client libraries
+-------------------------------------------------------------------------------
+https://kubernetes.io/docs/reference/using-api/client-libraries/
+https://kubernetes.io/docs/reference/using-api/client-libraries/
+https://github.com/kubernetes-client/python/
+https://github.com/kubernetes-client/python/tree/master/examples
+
+pip install kubernetes
+
+list all pods:
+-------------------
+from kubernetes import client, config
+
+# Configs can be set in Configuration class directly or using helper utility
+config.load_kube_config()
+
+v1 = client.CoreV1Api()
+print("Listing pods with their IPs:")
+ret = v1.list_pod_for_all_namespaces(watch=False)
+for i in ret.items:
+    print("%s\t%s\t%s" % (i.status.pod_ip, i.metadata.namespace, i.metadata.name))
+
+
+
+
+watch on namespace object:
+-------------------
+from kubernetes import client, config, watch
+
+# Configs can be set in Configuration class directly or using helper utility
+config.load_kube_config()
+
+v1 = client.CoreV1Api()
+count = 10
+w = watch.Watch()
+for event in w.stream(v1.list_namespace, _request_timeout=60):
+    print("Event: %s %s" % (event['type'], event['object'].metadata.name))
+    count -= 1
+    if not count:
+        w.stop()
+
+print("Ended.")
+
+
+########################################################
+AWS – Lambda: kubectl
+########################################################
+
+https://artem.services/?p=1963&lang=en
+
+
+
+mkdir lambda
+cd lambda
+
+
+pip3 install virtualenv
+python3 -m virtualenv .
+source bin/activate
+pip3 install kubernetes
+pip3 install boto3
+
+$VIRTUAL_ENV/lib/python3.7/site-packages
+
+
+mkdir ~/lambda_upload
+cp -R /private/tmp/lambda/lib/python3.7/site-packages/. ~/lambda_upload/
+
+
+Kubeconfig with AWS authorization:
+
+...
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1alpha1
+      args:
+      - --region
+      - eu-central-1
+      - eks
+      - get-token
+      - --cluster-name
+      - artem-services-stage-eks
+      command: aws
+
+
+lambda_function.py:
+
+
+import os
+import time
+import random
+import string
+import boto3
+
+from kubernetes import config
+from kubernetes.client import Configuration
+from kubernetes.client.api import core_v1_api
+from kubernetes.client.rest import ApiException
+from kubernetes.stream import stream
+
+# Get Kubeconfig from SSM
+def get_kube_config():
+    awsRegion = os.environ['AWS_REGION']
+    ssmParameter = os.environ['SSM']
+
+    ssm = boto3.client('ssm', region_name=awsRegion)
+    parameter = ssm.get_parameter(Name=ssmParameter, WithDecryption=True)
+
+    kubeconfig = open( '/tmp/kubeconfig.yaml', 'w' )
+    kubeconfig.write(parameter['Parameter']['Value'])
+    kubeconfig.close()
+
+# Generate random string for unique name of Pod
+def randomString(stringLength=8):
+    letters = string.ascii_lowercase + string.digits
+    return ''.join(random.choice(letters) for i in range(stringLength))
+
+def exec_commands(api_instance):
+    name = "busybox-" + randomString()
+    namespace = "default"
+    resp = None
+
+    print("Creating pod...")
+
+    pod_manifest = {
+        'apiVersion': 'v1',
+        'kind': 'Pod',
+        'metadata': {
+            'name': name
+        },
+        'spec': {
+            'containers': [{
+                'image': 'busybox',
+                'name': 'busybox',
+                "args": [
+                    "/bin/sh",
+                    "-c",
+                    "while true;do date;sleep 5; done"
+                ]
+            }]
+        }
+    }
+    resp = api_instance.create_namespaced_pod(body=pod_manifest, namespace=namespace)
+
+    while True:
+        resp = api_instance.read_namespaced_pod(name=name, namespace=namespace)
+        if resp.status.phase == 'Pending' or resp.status.phase == 'Running':
+            print("Done. Pod " + name + " was created.")
+            break
+        time.sleep(1)
+
+def main(event, context):
+    get_kube_config()
+
+    config.load_kube_config(config_file="/tmp/kubeconfig.yaml")
+    c = Configuration()
+    c.assert_hostname = False
+    Configuration.set_default(c)
+    core_v1 = core_v1_api.CoreV1Api()
+
+    exec_commands(core_v1)
+
+
+if __name__ == '__main__':
+    main()
+
+
+
+
+
+###############################################################
+Kubernetes Overview
+###############################################################
+
+https://www.velotio.com/engineering-blog/kubernetes-python-client
+https://medium.com/@alejandro.millan.frias/managing-kubernetes-from-aws-lambda-7922c3546249
+https://www.cockroachlabs.com/blog/aws-lambda-function-python-cockroachdb-serverless/
+https://github.com/pahud/eks-lambda-py
+
+pip install kubernetes
+
+
+from kubernetes import client, config
+config.load_kube_config()  # for local environment
+# or
+config.load_incluster_config()
+v1 = client.CoreV1Api()
+v1.list_node()
+v1.list_namespace()
+v1.list_pod_for_all_namespaces()
+v1.list_persistent_volume_claim_for_all_namespaces()
+v1.list_namespaced_pod(namespace=’default’)
+
+
+kubectl get nodes  # lists all the nodes
+kubectl get namespaces
+kubectl create deployment my-nginx-depl --image=nginx
+kubectl apply -f nginx_depl.yaml
+
+
+
+nginx_depl.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+
+
+
+kubectl logs my-pod
+
+

@@ -1,0 +1,338 @@
+
+##############################################################################
+# Reading and writing files from/to Amazon S3 with Pandas
+##############################################################################
+
+https://towardsdatascience.com/reading-and-writing-files-from-to-amazon-s3-with-pandas-ccaf90bfe86c
+https://gist.github.com/onelharrison/83b428803d605c7ddf312de8f2349e0f#file-pandas_write_to_s3_using_boto3-py
+
+
+python -m pip install boto3 pandas "s3fs<=0.4"
+python -m pip install boto3 pandas s3fs
+
+Write pandas data frame to CSV file on S3
+---------------------------------
+"""
+Demo script for writing a pandas data frame to a CSV file on S3 using the boto3 library
+"""
+
+import io
+import os
+
+import boto3
+import pandas as pd
+
+
+AWS_S3_BUCKET = os.getenv("AWS_S3_BUCKET")
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_SESSION_TOKEN = os.getenv("AWS_SESSION_TOKEN")
+
+s3_client = boto3.client(
+    "s3",
+    aws_access_key_id=AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+    aws_session_token=AWS_SESSION_TOKEN,
+)
+
+books_df = pd.DataFrame(
+    data={"Title": ["Book I", "Book II", "Book III"], "Price": [56.6, 59.87, 74.54]},
+    columns=["Title", "Price"],
+)
+
+
+with io.StringIO() as csv_buffer:
+    books_df.to_csv(csv_buffer, index=False)
+
+    response = s3_client.put_object(
+        Bucket=AWS_S3_BUCKET, Key="files/books.csv", Body=csv_buffer.getvalue()
+    )
+
+    status = response.get("ResponseMetadata", {}).get("HTTPStatusCode")
+
+    if status == 200:
+        print(f"Successful S3 put_object response. Status - {status}")
+    else:
+        print(f"Unsuccessful S3 put_object response. Status - {status}")
+
+
+
+
+Using s3fs-supported pandas API
+---------------------------------
+
+"""
+Demo script for writing a pandas data frame to a CSV file on S3 using s3fs-supported pandas APIs
+"""
+
+import os
+
+import pandas as pd
+
+AWS_S3_BUCKET = os.getenv("AWS_S3_BUCKET")
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_SESSION_TOKEN = os.getenv("AWS_SESSION_TOKEN")
+
+books_df = pd.DataFrame(
+    data={"Title": ["Book I", "Book II", "Book III"], "Price": [56.6, 59.87, 74.54]},
+    columns=["Title", "Price"],
+)
+
+key = "files/books.csv"
+
+books_df.to_csv(
+    f"s3://{AWS_S3_BUCKET}/{key}",
+    index=False,
+    storage_options={
+        "key": AWS_ACCESS_KEY_ID,
+        "secret": AWS_SECRET_ACCESS_KEY,
+        "token": AWS_SESSION_TOKEN,
+    },
+)
+
+
+
+Read a CSV file on S3 into a pandas data frame
+---------------------------------
+
+"""
+Demo script for reading a CSV file from S3 into a pandas data frame using the boto3 library
+"""
+
+import os
+
+import boto3
+import pandas as pd
+
+
+AWS_S3_BUCKET = os.getenv("AWS_S3_BUCKET")
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_SESSION_TOKEN = os.getenv("AWS_SESSION_TOKEN")
+
+s3_client = boto3.client(
+    "s3",
+    aws_access_key_id=AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+    aws_session_token=AWS_SESSION_TOKEN,
+)
+
+response = s3_client.get_object(Bucket=AWS_S3_BUCKET, Key="files/books.csv")
+
+status = response.get("ResponseMetadata", {}).get("HTTPStatusCode")
+
+if status == 200:
+    print(f"Successful S3 get_object response. Status - {status}")
+    books_df = pd.read_csv(response.get("Body"))
+    print(books_df)
+else:
+    print(f"Unsuccessful S3 get_object response. Status - {status}")
+
+
+
+
+Using s3fs-supported pandas API
+---------------------------------
+"""
+Demo script for reading a CSV file from S3 into a pandas data frame using s3fs-supported pandas
+APIs
+"""
+
+import os
+
+import pandas as pd
+
+AWS_S3_BUCKET = os.getenv("AWS_S3_BUCKET")
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_SESSION_TOKEN = os.getenv("AWS_SESSION_TOKEN")
+
+key = "files/books.csv"
+
+books_df = pd.read_csv(
+    f"s3://{AWS_S3_BUCKET}/{key}",
+    storage_options={
+        "key": AWS_ACCESS_KEY_ID,
+        "secret": AWS_SECRET_ACCESS_KEY,
+        "token": AWS_SESSION_TOKEN,
+    },
+)
+
+print(books_df)
+
+
+
+##############################################################################
+# How To Write Pandas Dataframe As CSV To S3 Using Boto3 Python – Definitive Guide
+##############################################################################
+
+
+https://www.stackvidhya.com/write-pandas-dataframe-as-csv-to-s3-using-boto3/
+
+
+from sklearn import datasets
+import pandas as pd
+iris = datasets.load_iris()
+df = pd.DataFrame(data=iris.data, columns=iris.feature_names)
+df
+
+
+
+Using To_CSV() And S3 Path
+---------------------------------
+df.to_csv("s3://stackvidhya/df_new.csv",
+          storage_options={'key': '<your_access_key_id>',
+                           'secret': '<your_secret_access_key>'})
+
+print("Dataframe is saved as CSV in S3 bucket.")
+
+
+
+
+
+Using Object.Put()
+---------------------------------
+from io import StringIO
+import boto3
+
+
+#Creating Session With Boto3.
+session = boto3.Session(
+aws_access_key_id='<your_access_key_id>',
+aws_secret_access_key='<your_secret_access_key>'
+)
+
+#Creating S3 Resource From the Session.
+s3_res = session.resource('s3')
+
+csv_buffer = StringIO()
+df.to_csv(csv_buffer)
+bucket_name = 'stackvidhya'
+s3_object_name = 'df.csv'
+s3_res.Object(bucket_name, s3_object_name).put(Body=csv_buffer.getvalue())
+print("Dataframe is saved as CSV in S3 bucket.")
+
+
+##############################################################################
+#       Upload a Pandas Dataframe to AWS S3 With Ease
+##############################################################################
+
+https://www.mayn.es/post/2021-08-31-upload-pandas-df-to-s3/
+https://stackoverflow.com/questions/42809096/difference-in-boto3-between-resource-client-and-session
+https://finbox.in/blog/a-compact-way-to-store-your-dataframes-to-s3-directly-from-python/
+https://towardsai.net/p/data-science/aws-s3-read-write-operations-using-the-pandas-api
+
+from io import BytesIO
+import boto3
+import pandas
+from pandas import util
+df = util.testing.makeMixedDataFrame()
+s3_resource = boto3.resource("s3")
+buffer = BytesIO()
+df.to_csv(buffer, sep=",", index=False, mode="wb", encoding="UTF-8")
+df.seek(0)  # Make sure the stream position is at the beginning!
+s3_resource.Object("test-bucket", "test_df_from_resource.csv").put(Body=buffer.getvalue())
+
+
+from io import BytesIO
+import boto3
+import pandas
+from pandas import util
+df = util.testing.makeMixedDataFrame()
+s3_client = boto3.client("s3")
+campaign_buffer = BytesIO()
+df.to_csv(campaign_buffer, sep=",", index=False, mode="wb", encoding="UTF-8")
+df.seek(0)
+s3_client.upload_fileobj(campaign_buffer, Bucket="test-bucket", Key="test_df_from_client.csv")
+
+
+
+##############################################################################
+#       Write a Pandas dataframe to Parquet format on AWS S3.
+##############################################################################
+
+https://gist.github.com/jitsejan/557124bcbaf0780ab4efc6054199550a
+
+
+write_dataframe_to_parquet_on_s3.py
+# Note: make sure `s3fs` is installed in order to make Pandas use S3.
+#       Credentials for AWS in the normal location ~/.aws/credentials
+def _write_dataframe_to_parquet_on_s3(dataframe, filename):
+    """ Write a dataframe to a Parquet on S3 """
+    print("Writing {} records to {}".format(len(dataframe), filename))
+    output_file = f"s3://{DESTINATION}/{filename}/data.parquet"
+    dataframe.to_parquet(output_file)
+
+
+
+##############################################################################
+#           Save Dataframe to csv directly to s3 Python
+##############################################################################
+
+https://stackoverflow.com/questions/38154040/save-dataframe-to-csv-directly-to-s3-python
+
+import pandas as pd
+df = pd.DataFrame( [ [1, 1, 1], [2, 2, 2] ], columns=['a', 'b', 'c'])
+df
+df.to_csv('s3://experimental/playground/temp_csv/dummy.csv', index=False)
+pd.__version__
+new_df = pd.read_csv('s3://experimental/playground/temp_csv/dummy.csv')
+new_df
+
+.......
+
+import s3fs
+bytes_to_write = df.to_csv(None).encode()
+fs = s3fs.S3FileSystem(key=key, secret=secret)
+with fs.open('s3://bucket/path/to/file.csv', 'wb') as f:
+    f.write(bytes_to_write)
+
+
+import s3fs
+s3 = s3fs.S3FileSystem(anon=False)
+# Use 'w' for py3, 'wb' for py2
+with s3.open('<bucket-name>/<filename>.csv','w') as f:
+    df.to_csv(f)
+
+
+import awswrangler as wr
+wr.s3.to_csv(
+    df=df,
+    path="s3://...",
+)
+
+.......
+
+from io import StringIO
+import boto3
+s3 = boto3.client("s3",\
+                  region_name=region_name,\
+                  aws_access_key_id=aws_access_key_id,\
+                  aws_secret_access_key=aws_secret_access_key)
+csv_buf = StringIO()
+df.to_csv(csv_buf, header=True, index=False)
+csv_buf.seek(0)
+s3.put_object(Bucket=bucket, Body=csv_buf.getvalue(), Key='path/test.csv')
+
+.......
+
+import awswrangler as wr
+import pandas as pd
+# read a local dataframe
+df = pd.read_parquet('my_local_file.gz')
+# upload to S3 bucket
+wr.s3.to_parquet(df=df, path='s3://mys3bucket/file_name.gz')
+
+.......
+
+from io import StringIO # python3; python2: BytesIO
+import boto3
+bucket = 'my_bucket_name' # already created on S3
+csv_buffer = StringIO()
+df.to_csv(csv_buffer)
+s3_resource = boto3.resource('s3')
+s3_resource.Object(bucket, 'df.csv').put(Body=csv_buffer.getvalue())
+
+
+

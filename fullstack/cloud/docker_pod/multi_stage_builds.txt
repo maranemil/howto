@@ -1,0 +1,148 @@
+
+##############################################################################
+Multi-stage builds
+##############################################################################
+
+To rebuild this image you must use `docker-compose build` or `docker-compose up --build`.
+
+https://docs.docker.com/build/building/multi-stage/
+https://gabnotes.org/lighten-your-python-image-docker-multi-stage-builds/
+https://pythonspeed.com/articles/multi-stage-docker-python/
+https://gist.github.com/praveenweb/9cabe480c1811b85337de988e43b8633
+https://stackoverflow.com/questions/48543834/how-do-i-reduce-a-python-docker-image-size-using-a-multi-stage-build
+https://www.blogfoobar.com/post/2018/02/10/python-and-docker-multistage-build
+https://stackoverflow.com/questions/48543834/how-do-i-reduce-a-python-docker-image-size-using-a-multi-stage-build
+
+Solution #1: pip install –user
+---------------------------------------
+ROM python:3.7-slim AS compile-image
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends build-essential gcc
+COPY requirements.txt .
+RUN pip install --user -r requirements.txt
+COPY setup.py .
+COPY myapp/ .
+RUN pip install --user .
+
+FROM python:3.7-slim AS build-image
+COPY --from=compile-image /root/.local /root/.local
+# Make sure scripts in .local are usable:
+ENV PATH=/root/.local/bin:$PATH
+CMD ['myapp']
+
+
+
+Solution #2: virtualenv
+---------------------------------------
+FROM python:3.7-slim AS compile-image
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends build-essential gcc
+RUN python -m venv /opt/venv
+# Make sure we use the virtualenv:
+ENV PATH="/opt/venv/bin:$PATH"
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY setup.py .
+COPY myapp/ .
+RUN pip install .
+
+FROM python:3.7-slim AS build-image
+COPY --from=compile-image /opt/venv /opt/venv
+# Make sure we use the virtualenv:
+ENV PATH="/opt/venv/bin:$PATH"
+CMD ['myapp']
+
+
+
+
+# Dockerfile
+---------------------------------------
+FROM golang:alpine as builder
+RUN mkdir /build
+ADD . /build/
+WORKDIR /build
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflags "-static"' -o main .
+
+FROM scratch
+COPY --from=builder /build/main /app/
+WORKDIR /app
+CMD ["./main"]
+
+
+# Dockerfile
+---------------------------------------
+FROM public.ecr.aws/lambda/python:3.7 AS compile-image
+# install pip libs
+COPY requirements.txt  .
+RUN  pip3 install -r requirements.txt --target "${LAMBDA_TASK_ROOT}"
+ENV APP_VERSION=1.0.0
+
+FROM public.ecr.aws/lambda/python:3.7 AS build-image
+COPY --from=compile-image /var/task /var/task
+ENV APP_VERSION=1.0.0
+# Copy function code to /var/task
+COPY app/app.py ${LAMBDA_TASK_ROOT}
+CMD ["app.handler"]
+
+
+# Dockerfile
+---------------------------------------
+FROM python:2.7-alpine as base
+RUN mkdir /svc
+COPY . /svc
+WORKDIR /svc
+RUN apk add --update \
+    postgresql-dev \
+    gcc \
+    musl-dev \
+    linux-headers
+RUN pip install wheel && pip wheel . --wheel-dir=/svc/wheels
+
+FROM python:2.7-alpine
+COPY --from=base /svc /svc
+WORKDIR /svc
+RUN pip install --no-index --find-links=/svc/wheels -r requirements.txt
+
+
+Dockerfile
+---------------------------------------
+# Name the single Python image we're using everywhere.
+ARG python=python:3.10-slim
+
+# Build stage:
+FROM ${python} AS build
+# Install a full C toolchain and C build-time dependencies for
+# everything we're going to need.
+RUN apt-get update \
+ && DEBIAN_FRONTEND=noninteractive \
+    apt-get install --no-install-recommends --assume-yes \
+      build-essential \
+      libpq-dev
+
+# Create the virtual environment.
+RUN python3 -m venv /venv
+ENV PATH=/venv/bin:$PATH
+
+# Install the Python library dependencies, including those with
+# C extensions.  They'll get installed into the virtual environment.
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+# Final stage:
+FROM ${python}
+# Install the runtime-only C library dependencies we need.
+RUN apt-get update \
+ && DEBIAN_FRONTEND=noninteractive \
+    apt-get install --no-install-recommends --assume-yes \
+      libpq5
+
+# Copy the virtual environment from the first stage.
+COPY --from=build /venv /venv
+ENV PATH=/venv/bin:$PATH
+# Copy the application in.
+COPY . .
+CMD ["./main.py"]
+
+
+

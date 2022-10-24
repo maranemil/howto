@@ -1,0 +1,333 @@
+------------------------------------
+AWS chalice
+------------------------------------
+https://github.com/aws/chalice
+https://aws.github.io/chalice/
+
+
+------------------------------------
+AWS lambda vpc
+------------------------------------
+
+https://aws.amazon.com/de/premiumsupport/knowledge-center/cloudformation-s3-notification-lambda/
+https://www.itonaut.com/2018/10/03/implement-s3-bucket-lambda-triggers-in-aws-cloudformation/
+
+https://www.youtube.com/watch?v=_mB1JVlhScs
+
+aws lambda update-function-code --function-name myfunction
+aws lambda publish-version --function-name myfunction
+aws lambda update-alias --function-name myfunction --name myalias routing-config '{"AdditionalVersionWeights": {"2":0.5}}'
+
+
+
+https://medium.com/monsoon-engineering/running-aws-sam-in-a-docker-container-2491596672c2
+
+docker run --rm -v "$PWD":/var/task lambci/lambda:build-nodejs8.10 sh -c 'npm install && npm run tsc'
+
+Dockerfile
+FROM python:alpine
+RUN apk update && \
+    apk upgrade && \
+    apk add bash && \
+    apk add --no-cache --virtual build-deps build-base gcc && \
+    pip install aws-sam-cli && \
+    apk del build-deps
+RUN mkdir /app
+WORKDIR /app
+EXPOSE 3001
+ENTRYPOINT ["./bin/sam_entrypoint.sh"]
+
+
+./bin/sam_entrypoint.sh
+#!/bin/bash
+set -o errexit
+BASEDIR="$1"
+/usr/local/bin/sam local start-lambda \
+  --template dist/template.yaml \
+  --host 0.0.0.0 \
+  --docker-volume-basedir "${BASEDIR}" \
+  --docker-network monsoon-samples_default \
+  --skip-pull-image
+
+
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: A sample AWS Lambda Function
+Resources:
+  SampleFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/index.handler
+      Runtime: nodejs8.10
+      CodeUri: ./
+
+
+version: '3.6'
+services:
+  sam_app:
+    build: .
+    command: ["$PWD"]
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+
+
+docker-compose up sam_app
+
+------------------------------------
+AWS Sam
+------------------------------------
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html
+https://docs.aws.amazon.com/de_de/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-notificationconfig-lambdaconfig.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html
+https://aws.amazon.com/de/blogs/compute/using-container-image-support-for-aws-lambda-with-aws-sam/
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-image-repositories.html
+https://hub.docker.com/r/amazon/aws-sam-cli-build-image-provided
+https://hub.docker.com/r/cnadiminti/aws-sam-local/
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html
+
+------------------------------------
+AWS codebuild
+------------------------------------
+https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-available.html
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codebuild-project.html
+https://docs.aws.amazon.com/codebuild/index.html
+
+
+------------------------------------
+AWS glacier
+------------------------------------
+https://docs.aws.amazon.com/cli/latest/reference/glacier/upload-archive.html
+https://docs.aws.amazon.com/cli/latest/reference/events/create-archive.html
+https://docs.aws.amazon.com/cli/latest/reference/events/list-archives.html
+https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/glacier.html
+https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/glacier.html#archive
+https://boto3.amazonaws.com/v1/documentation/api/1.18.48/guide/quickstart.html
+https://docs.aws.amazon.com/amazonglacier/latest/dev/example_glacier_Usage_RetrieveDelete_section.html
+https://docs.aws.amazon.com/amazonglacier/latest/dev/example_glacier_InitiateJob_ArchiveRetrieval_section.html
+
+
+------------------------------------
+Invoking Lambda functions
+------------------------------------
+https://docs.aws.amazon.com/lambda/latest/dg/lambda-invocation.html
+https://dashbird.io/blog/what-are-aws-lambda-triggers/
+https://docs.aws.amazon.com/lambda/latest/dg/lambda-urls.html
+https://docs.aws.amazon.com/lambda/latest/dg/lambda-services.html
+
+https://docs.aws.amazon.com/lambda/latest/dg/invocation-async.html
+https://docs.aws.amazon.com/lambda/latest/dg/invocation-sync.html
+https://docs.aws.amazon.com/lambda/latest/dg/lambda-urls.html
+https://docs.aws.amazon.com/lambda/latest/dg/getting-started.html#get-started-invoke-manually
+
+https://www.freecodecamp.org/news/going-serverless-how-to-run-your-first-aws-lambda-function-in-the-cloud-d866a9b51536/
+
+
+
+
+
+
+###############################################################################
+          Containerizing Python Apps for Lambda
+###############################################################################
+
+https://www.slim.ai/blog/containerized-lambda-in-python-language.html
+
+
+app.py
+_app.py_
+---------------------------------
+import os
+import os
+import json
+
+def handler(event, context):
+	version = os.environ\['APP_VERSION'\]
+	return {
+		"statusCode": 200,
+		"headers": {
+			"Content-Type": "application/json"
+		},
+		"body": json.dumps({
+			"Version ": version
+		})
+}
+
+
+
+Dockerfile
+---------------------------------
+FROM public.ecr.aws/lambda/python:3.9
+COPY app.py ${LAMBDA_TASK_ROOT}
+COPY requirements.txt
+RUN pip3 install -r requirements.txt --target "${LAMBDA_TASK_ROOT}"
+ENV APP_VERSION=1.0.0
+CMD \[ "app.handler" \]
+
+
+
+docker build -t hello-world:latest .
+docker run -p 9000:8080 hello-world:latest
+
+# test
+curl -XPOST  "http://localhost:9000/2015-03-31/functions/function/invocations" -d  '{}'
+
+
+
+Custom Dockerfile for Lambda
+---------------------------------
+
+ARG FUNCTION_DIR="/function"
+FROM python:3.10-buster as build-image
+RUN apt-get update && \
+	apt-get install -y \
+    g++ \
+    make \
+	cmake \
+	unzip \
+	libcurl4-openssl-dev
+
+ARG FUNCTION_DIR
+RUN mkdir -p ${FUNCTION_DIR}
+COPY app.py ${FUNCTION_DIR}
+COPY requirements.txt .
+RUN pip install \
+	-r requirements.txt \\
+	--target ${FUNCTION_DIR} \\
+	awslambdaric
+
+FROM python:3.10-buster
+ARG FUNCTION_DIR
+WORKDIR ${FUNCTION_DIR}
+COPY --from=build-image ${FUNCTION_DIR} ${FUNCTION_DIR}
+ENV APP_VERSION=1.0.0
+ENTRYPOINT \[ "/usr/local/bin/python", "-m", "awslambdaric" ]
+CMD [ "app.handler" ]
+
+
+
+install the AWS Lambda Runtime Interface Emulator (RIE) locally and mount it as a volume?
+---------------------------------
+mkdir -p \~/.aws-lambda-rie && curl -Lo ~/.aws-lambda-rie/aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie  && chmod +x \~/.aws-lambda-rie/aws-lambda-rie
+
+
+build and run
+---------------------------------
+docker build -t hello-world:latest .
+docker run -d -v \~/.aws-lambda-rie:/aws-lambda -p 9000:8080  --entrypoint /aws-lambda/aws-lambda-rie hello-world:latest  /usr/local/bin/python -m awslambdaric app.handler
+
+
+curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{}'
+
+
+
+Deploying a Containerized Lambda Application in AWS
+---------------------------------
+aws configure
+
+IAM policy
+
+{
+  "Version": "2012-10-17",
+  "Statement": \[
+      {
+          "Sid": "VisualEditor0",
+          "Effect": "Allow",
+          "Action": \[
+              "ecr:CreateRepository",
+              "ecr:DescribeImages",
+              "ecr:DescribeRepositories"
+          ],
+          "Resource": "*"
+		}
+	]
+}
+
+
+aws ecr create-repository --repository-name hello-world --image-tag-mutability IMMUTABLE --image-scanning-configuration scanOnPush=true
+aws ecr get-login-password --region eu-west-1 | docker login  --username AWS --password-stdin  <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com
+Login Succeeded
+
+docker tag hello-world <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/hello-world
+docker push <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/hello-world
+
+aws lambda create-function --region <REGION> --function-name hello-world --package-type Image --code ImageUri=<ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/hello-world:latest --role arn:aws:iam::<ACCOUNT_ID>:role/service-role/hello-world-role
+
+
+
+
+##############################################################################
+AWS Lambda Images: How to Use Container Images with AWS Lambda Functions
+##############################################################################
+
+
+https://cloud.netapp.com/blog/aws-cvo-blg-aws-lambda-images-how-to-use-container-images-to-deploy-lambda
+
+
+
+Dockerfile
+---------------------------------
+FROM public.ecr.aws/lambda/nodejs:14
+COPY app.js package.json   ${LAMBDA_TASK_ROOT}
+RUN npm install
+CMD [ "app.handler" ]
+
+
+
+https://nodejs.org/en/docs/guides/getting-started-guide/
+
+
+app.js
+
+const http = require('http');
+const hostname = '127.0.0.1';
+const port = 3000;
+const server = http.createServer((req, res) => {
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'text/plain');
+  res.end('Hello World');
+});
+server.listen(port, hostname, () => {
+  console.log(`Server running at http://${hostname}:${port}/`);
+});
+
+
+index.js
+...
+
+docker build -t darwin.
+docker run -p 9000:8080 darwin
+curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{}'
+aws ecr get-login-password --region us-east-2 | docker login
+aws ecr get-login-password
+
+--------------------------------------------------------------------------------
+
+https://hub.docker.com/r/amazon/aws-lambda-nodejs
+https://hub.docker.com/r/amazon/aws-lambda-python
+https://hub.docker.com/r/amazon/aws-lambda-ruby
+https://docs.aws.amazon.com/lambda/latest/dg/images-test.html
+https://docs.aws.amazon.com/de_de/lambda/latest/dg/images-test.html
+https://docs.amazonaws.cn/en_us/lambda/latest/dg/images-test.html
+https://github.com/aws/aws-lambda-runtime-interface-emulator
+https://docs.aws.amazon.com/lambda/latest/dg/configuration-versions.html
+https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function
+https://github.com/aws/aws-lambda-python-runtime-interface-client/blob/main/README.md
+https://stackoverflow.com/questions/65223288/locally-invoke-aws-lambda-functions-using-container
+https://gist.github.com/seeebiii/6d73b838dc4de74fd6323010e8a650b6
+https://cloud.netapp.com/blog/aws-cvo-blg-aws-lambda-images-how-to-use-container-images-to-deploy-lambda
+https://stackoverflow.com/questions/70812613/using-container-image-for-lamda-function
+https://earthly.dev/blog/aws-lambda-docker/
+https://github.com/lambci/docker-lambda/issues/175
+https://docs.docker.com/engine/reference/run/#user-memory-constraints
+https://docs.docker.com/engine/reference/commandline/cp/
+https://docs.docker.com/develop/develop-images/dockerfile_best-practices/
+https://www.dataset.com/blog/create-docker-image/
+https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html
+https://docs.aws.amazon.com/lambda/latest/dg/python-image.html
+https://hub.docker.com/r/amazon/aws-lambda-python
+
+--------------------------------------------------------------------------------
+
