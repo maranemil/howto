@@ -1,0 +1,282 @@
+##########################################################
+aws glue
+##########################################################
+https://noise.getoto.net/tag/amazon-elastic-container-registry/
+
+
+docker pull amazon/aws-glue-libs:glue_libs_3.0.0_image_01
+
+docker run -it -v ~/.aws:/home/glue_user/.aws -v $WORKSPACE_LOCATION:/home/glue_user/workspace/  \
+-e AWS_PROFILE=$PROFILE_NAME -e DISABLE_SSL=true --rm -p 4040:4040 -p 18080:18080 \
+--name glue_spark_submit amazon/aws-glue-libs:glue_libs_3.0.0_image_01 spark-submit /home/glue_user/workspace/src/$SCRIPT_FILE_NAME
+
+docker run -it -v ~/.aws:/home/glue_user/.aws -v $WORKSPACE_LOCATION:/home/glue_user/workspace/ \
+-e AWS_PROFILE=$PROFILE_NAME -e DISABLE_SSL=true --rm -p 4040:4040 -p 18080:18080 --name glue_pytest amazon/aws-glue-libs:glue_libs_3.0.0_image_01 -c "python3 -m pytest"
+
+JUPYTER_WORKSPACE_LOCATION=/local_path_to_workspace/jupyter_workspace/
+$ docker run -it -v ~/.aws:/home/glue_user/.aws -v $JUPYTER_WORKSPACE_LOCATION:/home/glue_user/workspace/jupyter_workspace/ \
+-e AWS_PROFILE=$PROFILE_NAME -e DISABLE_SSL=true --rm -p 4040:4040 -p 18080:18080 -p 8998:8998 -p 8888:8888 \
+--name glue_jupyter_lab amazon/aws-glue-libs:glue_libs_3.0.0_image_01 /home/glue_user/jupyter/jupyter_start.sh
+
+docker run -it -v ~/.aws:/home/glue_user/.aws -v $WORKSPACE_LOCATION:/home/glue_user/workspace/ \
+-e AWS_PROFILE=$PROFILE_NAME -e DISABLE_SSL=true --rm -p 4040:4040 -p 18080:18080 --name glue_pyspark amazon/aws-glue-libs:glue_libs_3.0.0_image_01 pyspark
+
+---------------
+AWS Glue job sample codes for testing
+---------------
+
+test_sample.py
+---------------------------
+import sys
+from pyspark.context import SparkContext
+from awsglue.context import GlueContext
+from awsglue.job import Job
+from awsglue.utils import getResolvedOptions
+
+
+class GluePythonSampleTest:
+    def __init__(self):
+        params = []
+        if '--JOB_NAME' in sys.argv:
+            params.append('JOB_NAME')
+        args = getResolvedOptions(sys.argv, params)
+
+        self.context = GlueContext(SparkContext.getOrCreate())
+        self.job = Job(self.context)
+
+        if 'JOB_NAME' in args:
+            jobname = args['JOB_NAME']
+        else:
+            jobname = "test"
+        self.job.init(jobname, args)
+
+    def run(self):
+        dyf = read_json(self.context, "s3://awsglue-datasets/examples/us-legislators/all/persons.json")
+        dyf.printSchema()
+
+        self.job.commit()
+
+
+def read_json(glue_context, path):
+    dynamicframe = glue_context.create_dynamic_frame.from_options(
+        connection_type='s3',
+        connection_options={
+            'paths': [path],
+            'recurse': True
+        },
+        format='json'
+    )
+    return dynamicframe
+
+
+if __name__ == '__main__':
+    GluePythonSampleTest().run()
+
+
+test_sample.py
+---------------------------
+import pytest
+from pyspark.context import SparkContext
+from awsglue.context import GlueContext
+from awsglue.job import Job
+from awsglue.utils import getResolvedOptions
+import sys
+from src import sample
+
+
+@pytest.fixture(scope="module", autouse=True)
+def glue_context():
+    sys.argv.append('--JOB_NAME')
+    sys.argv.append('test_count')
+    args = getResolvedOptions(sys.argv, ['JOB_NAME'])
+    context = GlueContext(SparkContext.getOrCreate())
+    job = Job(context)
+    job.init(args['JOB_NAME'], args)
+    yield(context)
+    job.commit()
+
+
+def test_counts(glue_context):
+    dyf = sample.read_json(glue_context, "s3://awsglue-datasets/examples/us-legislators/all/persons.json")
+    assert dyf.toDF().count() == 1961
+
+
+
+
+AWS GLUE Image certificate related issue
+-----------------------------------------------------------
+https://repost.aws/questions/QUj0Eq3fufTK2VAX4Z06Hreg/aws-glue-image-certificate-related-issue
+https://repost.aws/questions/QUT9y3JKItR0m2HdOAdudDXw/aws-glue-libs-glue-libs-3-0-0-image-01-image-issue
+
+version: "2"
+
+services:
+ spark:
+  image: glue/spark:latest
+  container_name: spark
+  build: ./spark
+  hostname: spark
+  ports:
+   - "8888:8888"
+   - "4040:4040"
+  entrypoint : sh
+  command : -c "/home/glue_user/jupyter/jupyter_start.sh"
+  volumes:
+  - ../app/territoryhub-replication:/home/glue_user/workspace/jupyter_workspace
+
+
+
+FROM amazon/aws-glue-libs:glue_libs_3.0.0_image_01
+USER root
+RUN mkdir -p /root/.aws
+RUN echo "[default]\nregion=us-east-1" >> /root/.aws/config
+
+
+##################################
+Jupyter  Using the Docker CLI
+##################################
+https://jupyter-docker-stacks.readthedocs.io/en/latest/using/running.html
+
+docker run -it -p 8888:8888 jupyter/scipy-notebook:9e63909e0317
+
+########################################
+########################################
+
+https://pypi.org/
+https://www.activestate.com/resources/quick-reads/how-to-list-installed-python-packages/
+pip list
+state show packages
+
+########################################
+########################################
+https://docs.aws.amazon.com/glue/latest/dg/glue-troubleshooting-errors.html
+https://docs.aws.amazon.com/glue/latest/dg/glue-troubleshooting-errors.html#error-local-notebook-fails-to-start
+https://docs.aws.amazon.com/glue/latest/dg/resuming-workflow.html
+https://docs.aws.amazon.com/glue/latest/dg/glue-known-issues.html
+https://docs.aws.amazon.com/glue/latest/dg/resuming-workflow.html
+https://docs.aws.amazon.com/glue/latest/dg/blueprint_workflow_troubleshoot.html
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-glue-arguments.html
+https://docs.aws.amazon.com/glue/latest/dg/add-job.html
+https://docs.aws.amazon.com/glue/latest/dg/add-job-python.html#create-job-python-properties
+https://docs.aws.amazon.com/glue/latest/dg/getting-started-access.html
+https://aws.amazon.com/blogs/big-data/develop-and-test-aws-glue-version-3-0-jobs-locally-using-a-docker-container/
+https://aws.amazon.com/blogs/big-data/developing-aws-glue-etl-jobs-locally-using-a-container/
+https://repost.aws/questions/QUT9y3JKItR0m2HdOAdudDXw/aws-glue-libs-glue-libs-3-0-0-image-01-image-issue
+
+
+######################################
+misc glue
+######################################
+
+https://nessphan.medium.com/7-things-i-found-annoying-about-aws-glue-d7eb24fdc49b
+
+
+######################################
+FileNotFoundError: [Errno 2] No such file or directory: '/usr/bin/pip'
+######################################
+https://stackoverflow.com/questions/41275541/no-such-file-or-directory-usr-local-bin-pip
+https://github.com/boltgolt/howdy/issues/598
+https://github.com/opencv/opencv-python/issues/571
+https://lightrun.com/answers/boltgolt-howdy-filenotfounderror-errno-2-no-such-file-or-directory-pip3
+
+
+######################################################
+AWS Glue ETL  local
+######################################################
+https://medium.com/dataengineerbr/how-to-run-aws-glue-jobs-on-your-own-computer-using-docker-vscode-and-jupyter-notebook-780c9305d804
+https://ncleguizamon.co/etl-aws-glue-desarrollo-local/
+https://pypi.org/project/awsglue-dev/2021.12.30/
+
+sudo docker pull amazon/aws-glue-libs:glue_libs_1.0.0_image_01
+sudo docker run -itd -p 8888:8888 -p 4040:4040 -v ~/.aws:/root/.aws:ro -v ~/projetos:/home/projetos --name glue amazon/aws-glue-libs:glue_libs_1.0.0_image_01
+
+docker pull amazon/aws-glue-libs:glue_libs_1.0.0_image_01
+docker run -itd -p 8888:8888 -p 4040:4040 -v ~/.aws:/root/.aws:ro --name glue_jupyter \amazon/aws-glue-libs:glue_libs_1.0.0_image_01 \
+/home/jupyter/jupyter_start.sh
+
+------------------------
+https://www.linkedin.com/pulse/local-aws-glue-development-via-docker-private-ca-bundle-surin
+------------------------
+
+version: "3.8"
+services:
+  glue_pyspark_local:
+    build:
+      context: .
+    image: 'glue_pyspark_local_image'
+    ports:
+      - '4040:4040'
+      - '18080:18080'
+    environment:
+      - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID #boto3
+      - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY #boto3
+      - AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN #boto3
+      - AWS_REGION=$AWS_REGION #boto3
+      - WR_VERIFY=/home/glue_user/aws_helper/${PRIVATE_CA_FILE} #awswrangler
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/home/glue_user/workspace
+    container_name: glue_pyspark_local
+
+
+Dockerfile
+
+FROM amazon/aws-glue-libs:glue_libs_3.0.0_image_01
+WORKDIR /home/glue_user/workspace/glue
+ENTRYPOINT ["bash"]
+USER root
+COPY private_aws_ca_cert.pem /home/glue_user/aws_helper/
+RUN myjava=$(java -XshowSettings:properties -verbose 2>&1 | head -1) && prefix_out=${myjava#[Opened} && container_java=${prefix_out%rt.jar]} && keytool -import -alias private_aws_ca_cert -keystore $container_java/security/cacerts -storepass changeit -noprompt -file /home/glue_user/aws_helper/private_aws_ca_cert.pem
+USER glue_user
+WORKDIR /home/glue_user/workspace
+
+------------------------
+https://repost.aws/questions/QUT9y3JKItR0m2HdOAdudDXw/aws-glue-libs-glue-libs-3-0-0-image-01-image-issue
+------------------------
+
+docker run -it -p 8888:8888 -p 4040:4040 -e DISABLE_SSL="true" -v .jupyter_workspace:/Docker/jupyter_workspace:/home/glue_user/workspace/jupyter_workspace/ --name glue_jupyter amazon/aws-glue-libs:glue_libs_3.0.0_image_01 /home/glue_user/jupyter/jupyter_start.sh
+
+df = spark.read.csv("employees.csv")
+df = spark.read.csv("jupyter_workspace/employees.csv")
+
+------------------------
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-libraries.html
+------------------------
+
+https://cevo.com.au/post/local-development-of-aws-glue-3-0-and-later/
+https://maara.dev/post/aws-glue-local-development/
+https://towardsdatascience.com/develop-glue-jobs-locally-using-docker-containers-bffc9d95bd1
+https://awstip.com/howto-develop-aws-glue-etl-scripts-on-aws-cloud9-b67e8e801c1f
+https://zditect.com/code/python/developing-aws-glue-etl-jobs-locally-using-a-container.html
+https://docs.databricks.com/data/metastores/aws-glue-metastore.html
+https://engineering.klarna.com/how-to-master-java-transformations-in-aws-glue-2952d3ce0df3
+https://www.kdnuggets.com/2021/08/development-testing-etl-pipelines-aws-locally.html
+https://aws.amazon.com/de/blogs/big-data/developing-aws-glue-etl-jobs-locally-using-a-container/
+https://aws.amazon.com/de/blogs/big-data/develop-and-test-aws-glue-version-3-0-jobs-locally-using-a-docker-container/
+https://docs.aws.amazon.com/de_de/glue/latest/dg/aws-glue-programming-etl-libraries.html
+https://aws.plainenglish.io/aws-glue-development-using-docker-c6b1ccfab12b
+https://stackoverflow.com/questions/71171490/issue-developing-aws-glue-etl-jobs-locally-using-a-docker-container
+
+https://github.com/awslabs/aws-glue-libs
+https://hub.docker.com/r/amazon/aws-glue-libs
+https://github.com/awslabs/aws-glue-libs/issues/120
+
+DISABLE_SSL="true"
+/home/jupyter/jupyter_start.sh
+This works for me:
+docker run -it -p 8888:8888 -p 4040:4040 -e DISABLE_SSL="true" \
+  --env-file ~/Projects/glue_config/env_variables.txt \
+  --name glue_jupyter amazon/aws-glue-libs:glue_libs_3.0.0_image_01
+
+docker run -itd -p 8888:8888 -p 4040:4040 -v ~/.aws:/root/.aws:ro — name glue_jupyter amazon/aws-glue-libs:glue_libs_1.0.0_image_01 /home/jupyter/jupyter_start.sh
+
+
+from pyspark import SparkContext
+from awsglue.context import GlueContext
+glueContext = GlueContext(SparkContext.getOrCreate())
+
+
+
+
+
