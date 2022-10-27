@@ -146,6 +146,11 @@ ffplay -i in.mp4 -vf "setpts=1/4*PTS"
 ffmpeg -i in.mp4 -t 180 -c copy output.mp4
 ```
 
+### thumbnail
+```
+ffmpeg -i vid.mp4 -vf thumbnail -frames:v 1 out.png
+```
+
 ### Cut last 3 minutes
 ```
 * echo dur=$(ffprobe -i in.mp4 -show_entries format=duration -v quiet -of csv="p=0")
