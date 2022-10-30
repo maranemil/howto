@@ -1,0 +1,857 @@
+#########################################################
+ping: command not found - CentOS 8 / RHEL 8 Linux server
+#########################################################
+
+
+https://qnaplus.com/how-to-install-ping-or-ping6-using-yum/
+https://monovm.com/blog/how-to-ping-in-centos/
+https://globedrill.com/ping-command-not-found-how-to-install-ping-on-ubuntu-and-centos-server/
+https://globedrill.com/how-to-install-ping-ping6-command-on-centos-8/
+http://oracle.ehelp365.com/ora-12170
+https://qnaplus.com/how-to-install-ping-or-ping6-using-yum/
+
+
+su
+yum install yum-utils
+yum install iputils
+
+ping 172.25.0.2
+telnet 172.25.0.2 1521
+
+#########################################################
+SQLAlchemy engine SELECT
+#########################################################
+
+https://code-maven.com/slides/python/sqlalchemy-engine-select
+
+from sqlalchemy import create_engine
+
+dbname = 'test.db'
+
+engine = create_engine('sqlite:///' + dbname)
+result = engine.execute('SELECT * FROM person WHERE id=:id', id=3)
+
+print(result)            # <sqlalchemy.engine.result.ResultProxy object at 0x1013c9da0>
+
+row = result.fetchone()
+print(row)               # (3, 'Melinda', 100)  - Its a tuple
+print(row['name'])       # Melinda              - And a dictionary
+print(row.name)          # Melinda   - and object with methods for the columns
+
+for k in row.keys():     # keys also works on it
+    print(k)             # id, name, balance
+
+result.close()
+
+#########################################################
+SQLAlchemy engine INSERT
+#########################################################
+
+import os
+from sqlalchemy import create_engine
+
+dbname = 'test.db'
+
+engine = create_engine('sqlite:///' + dbname)
+
+engine.execute('INSERT INTO person (name, balance) VALUES (:name, :balance)', name = 'Joe', balance = 100)
+engine.execute('INSERT INTO person (name, balance) VALUES (:name, :balance)', name = 'Jane', balance = 100)
+engine.execute('INSERT INTO person (name, balance) VALUES (:name, :balance)', name = 'Melinda', balance = 100)
+engine.execute('INSERT INTO person (name, balance) VALUES (:name, :balance)', name = 'George', balance = 100)
+
+
+
+#########################################################
+SQLAlchemy engine CREATE TABLE
+#########################################################
+
+https://code-maven.com/slides/python/sqlalchemy-engine-create
+
+import os
+from sqlalchemy import create_engine
+
+dbname = 'test.db'
+if os.path.exists(dbname):
+    os.unlink(dbname)
+
+engine = create_engine('sqlite:///' + dbname)  # Engine
+
+engine.execute('''
+    CREATE TABLE person (
+        id INTEGER PRIMARY KEY,
+        name VARCHAR(100) UNIQUE,
+        balance INTEGER NOT NULL
+    );
+''')
+
+
+
+
+#########################################################
+SQLAlchemy engine SELECT all
+#########################################################
+
+import os
+from sqlalchemy import create_engine
+
+dbname = 'test.db'
+
+engine = create_engine('sqlite:///' + dbname)
+result = engine.execute('SELECT * FROM person')
+
+for row in result:
+    print(row)
+
+result.close()
+
+# (1, 'Joe', 100)
+# (2, 'Jane', 100)
+# (3, 'Melinda', 100)
+# (4, 'George', 100)
+
+#########################################################
+SQLAlchemy engine SELECT fetchall
+#########################################################
+
+https://github.com/szabgab/slides/blob/main/python/examples/sqla/sqlite_engine_select_fetchall.py
+
+from sqlalchemy import create_engine
+
+dbname = 'test.db'
+engine = create_engine('sqlite:///' + dbname)
+result = engine.execute('SELECT * FROM person WHERE id >= :id', id=3)
+rows = result.fetchall()
+print(rows)        # [(3, 'Melinda', 100), (4, 'George', 100)]
+result.close()
+
+
+
+#########################################################
+Selecting SQLAlchemy 1.4 Documentation
+#########################################################
+
+https://docs.sqlalchemy.org/en/14/core/tutorial.html#selecting
+
+
+users = "SELECT users.id, users.name, users.fullname FROM users"
+from sqlalchemy.sql import select
+s = select(users)
+result = conn.execute(s)
+for row in result:
+...     print(row)
+
+#########################################################
+pandas.read_sql
+#########################################################
+
+https://stackoverflow.com/questions/30785892/simple-select-statement-on-existing-table-with-sqlalchemy
+https://pandas.pydata.org/docs/reference/api/pandas.read_sql.html
+https://stackoverflow.com/questions/34322471/sqlalchemy-engine-connection-and-session-difference
+
+from sqlalchemy import create_engine
+import pandas as pd
+
+engine = create_engine(.....)
+sql = "select name, age from users where name = 'joe' and age = 100"
+df = pd.read_sql(sql,con=engine)
+
+
+
+#########################################################
+Pyspark Code failing while connecting to Oracle database
+#########################################################
+
+https://repost.aws/questions/QUPIjWlmZ7QAKrrL-C1yZqIg/pyspark-code-failing-while-connecting-to-oracle-database-invalid-oracle-url-specified
+https://orca.security/resources/cloud-risk-encyclopedia/security-group-allows-inbound-access-to-tcp-port-1521-oracle-db/
+https://docs.oracle.com/cd/E11882_01/network.112/e41945/connect.htm#NETAG383
+
+version: "2"
+
+services:
+ spark-postgres:
+  image: postgres:latest
+  container_name: spark-postgres
+  build: ./postgresql
+  restart: always
+  hostname: spark-postgres
+  env_file:
+   - ./env/postgresdb-env-vars.env
+  ports:
+   - "5432:5432"
+  volumes:
+  - ./data/territoryhub-replication/postgresql:/var/lib/postgresql/data
+  networks:
+   glue-network:
+    ipv4_address: 10.4.0.4
+ spark-oracle:
+  image: oracle:test
+  container_name: spark-oracle
+  build: ./oracle
+  restart: always
+  hostname: spark-oracle
+  env_file:
+   - ./env/oracledb-env-vars.env
+  ports:
+   - "1521:1521"
+  volumes:
+  - ./data/territoryhub-replication/oracle:/opt/oracle/oradata
+  - ./oracle/oracle-scripts:/opt/oracle/scripts/startup
+  networks:
+   glue-network:
+    ipv4_address: 10.4.0.5
+ spark-master:
+  image: spark-master
+  container_name: spark-master
+  build: ./spark
+  hostname: spark-master
+  depends_on :
+   - spark-postgres
+   - spark-oracle
+  ports:
+   - "8888:8888"
+   - "4040:4040"
+  env_file:
+   - ./env/spark-env-vars.env
+  command :  "/home/jupyter/jupyter_start.sh"
+  volumes:
+  - ../app/territoryhub-replication:/home/jupyter/jupyter_default_dir
+  networks:
+   glue-network:
+    ipv4_address: 10.4.0.3
+networks:
+  glue-network:
+    driver: bridge
+    ipam:
+      config:
+       - subnet: 10.4.0.0/16
+         gateway: 10.4.0.1
+
+
+
+
+
+#########################################################
+SQS queues
+#########################################################
+
+
+https://blog.bullgare.com/2021/11/create-sqs-queues-on-localstack-container-start/
+https://docs.aws.amazon.com/cli/latest/reference/sqs/create-queue.html
+https://joerg-pfruender.github.io/software/docker/microservices/testing/2020/01/25/Localstack_in_Docker.html
+https://aws.amazon.com/de/blogs/architecture/design-pattern-for-highly-parallel-compute-recursive-scaling-with-amazon-sqs/
+https://hub.docker.com/r/roribio16/alpine-sqs/
+https://aws.plainenglish.io/how-to-test-amazon-sqs-with-docker-using-serverless-b717258f5d3d
+
+
+services:
+  localstack:
+    container_name: aws_sqs
+    hostname: sqs
+    image: localstack/localstack:latest
+    environment:
+      - AWS_DEFAULT_REGION=ap-southeast-1
+      - EDGE_PORT=4566
+      - SERVICES=sqs
+    ports:
+      - '4566:4566'
+    volumes:
+      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - ./localstack_bootstrap:/docker-entrypoint-initaws.d/
+
+
+
+
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# enable debug
+# set -x
+
+echo "configuring sqs"
+echo "==================="
+LOCALSTACK_HOST=localhost
+AWS_REGION=eu-central-1
+
+# https://docs.aws.amazon.com/cli/latest/reference/sqs/create-queue.html
+create_queue() {
+  local QUEUE_NAME_TO_CREATE=$1
+  awslocal --endpoint-url=http://${LOCALSTACK_HOST}:4566 sqs create-queue --queue-name ${QUEUE_NAME_TO_CREATE} --region ${AWS_REGION} --attributes VisibilityTimeout=30
+}
+
+create_queue "queue2"
+create_queue "queue1"
+
+
+------------
+
+https://betterprogramming.pub/how-to-emulate-aws-sqs-for-development-in-dockerized-ruby-on-rails-app-c0c16aadb84c
+
+
+version: '3'
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: mysecretpassword
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  delayed_job:
+    build: .
+    command: bundle exec rails jobs:work
+    volumes:
+      - .:/rails-docker
+    depends_on:
+      - db
+  cron_job:
+    build: .
+    command: cron -f
+    depends_on:
+      - db
+  sqs:
+    image: roribio16/alpine-sqs
+    ports:
+      - "9324:9324"
+      - "9325:9325"
+    volumes:
+      - ./config/elasticmq.conf:/opt/config/elasticmq.conf
+  web:
+    build: .
+    command: bundle exec rails s webrick -b '0.0.0.0'
+    volumes:
+      - .:/rails-docker
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - sqs
+    tty: true
+    stdin_open: true
+volumes:
+  pgdata:
+
+
+------------
+
+https://github.com/vsouza/docker-SQS-local
+
+docker run -d -p 9324:9324 vsouza/sqs-local
+
+------------
+In-memory message queue with an Amazon SQS-compatible interface. Runs stand-alone or embedded.
+
+https://github.com/softwaremill/elasticmq
+https://hub.docker.com/r/softwaremill/elasticmq
+https://hub.docker.com/r/softwaremill/elasticmq-native/
+
+
+docker run -p 9324:9324 -p 9325:9325 softwaremill/elasticmq
+# docker run -p 9324:9324 -p 9325:9325 softwaremill/elasticmq-native
+
+Dockerfile:
+
+FROM openjdk:8-jre-alpine
+ARG ELASTICMQ_VERSION
+ENV ELASTICMQ_VERSION ${ELASTICMQ_VERSION:-0.14.6}
+RUN apk add --no-cache curl ca-certificates
+RUN mkdir -p /opt/elasticmq/log /opt/elasticmq/lib /opt/elasticmq/config
+RUN curl -sfLo /opt/elasticmq/lib/elasticmq.jar https://s3-eu-west-1.amazonaws.com/softwaremill-public/elasticmq-server-${ELASTICMQ_VERSION}.jar
+WORKDIR /opt/elasticmq
+EXPOSE 9324
+EXPOSE 9325
+ENTRYPOINT [ "/usr/bin/java", "-jar", "/opt/elasticmq/lib/elasticmq.jar" ]
+
+
+----
+
+docker run -p 9324:9324 -p 9325:9325 softwaremill/elasticmq
+
+aws --region=us-west-2 --endpoint=http://localhost:9324 sqs list-queues
+aws --region=us-west-2 --endpoint=http://localhost:9324 sqs create-queue --queue-name=test
+aws --region=us-west-2 --endpoint=http://localhost:9324 sqs list-queues
+
+-----
+
+https://github.com/localstack/localstack/blob/master/docker-compose.yml
+https://github.com/localstack/localstack
+https://docs.localstack.cloud/overview/
+https://docs.localstack.cloud/aws/sqs/
+
+
+version: "3.8"
+
+services:
+  localstack:
+    container_name: "${LOCALSTACK_DOCKER_NAME-localstack_main}"
+    image: localstack/localstack
+    ports:
+      - "127.0.0.1:4566:4566"            # LocalStack Gateway
+      - "127.0.0.1:4510-4559:4510-4559"  # external services port range
+      - "127.0.0.1:53:53"                # DNS config (only required for Pro)
+      - "127.0.0.1:53:53/udp"            # DNS config (only required for Pro)
+      - "127.0.0.1:443:443"              # LocalStack HTTPS Gateway (only required for Pro)
+    environment:
+      - DEBUG=${DEBUG-}
+      - PERSISTENCE=${PERSISTENCE-}
+      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR-}
+      - LOCALSTACK_API_KEY=${LOCALSTACK_API_KEY-}  # only required for Pro
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+
+
+
+localstack status services
+awslocal sqs create-queue --queue-name sample-queue
+awslocal sqs list-queues
+awslocal sqs send-message --queue-url http://localhost:4566/00000000000/sample-queue --message-body test
+
+
+curl "http://localhost:4566/000000000000/sample-queue?Action=SendMessage&MessageBody=hello%2Fworld"
+
+
+--------------------------
+
+https://docs.localstack.cloud/aws/lambda/
+https://docs.localstack.cloud/aws/s3/
+https://docs.localstack.cloud/aws/sns/
+https://docs.localstack.cloud/aws/sqs/
+
+awslocal lambda create-function \
+    --function-name <function-name> \
+    --runtime <lambda-runtime> \
+    --zip-file fileb://<path/to/zip/file> \
+    --handler index.handler \
+    --role cool-stacklifter
+
+awslocal lambda create-function-url-config \
+    --function-name <function-name> \
+    --auth-type NONE
+
+
+aws lambda add-layer-version-permission
+  --layer-name test-layer
+  --version-number 1
+  --statement-id layerAccessFromLocalStack
+  --principal 886468871268
+  --action lambda:GetLayerVersion
+
+
+
+
+
+###############################################################
+Connecting to Oracle Database
+###############################################################
+
+https://python-oracledb.readthedocs.io/en/latest/user_guide/connection_handling.html
+
+
+dsn = f'{username}/{userpwd}@{host}:{port}/{service_name}'
+connection = oracledb.connect(dsn)
+
+
+with oracledb.connect(user="hr", password=userpwd,
+                      dsn="dbhost.example.com/orclpdb") as connection:
+    with connection.cursor() as cursor:
+        cursor.execute("insert into SomeTable values (:1, :2)",
+                       (1, "Some string"))
+        connection.commit()
+connection.close()
+
+
+
+
+# Creating a Connection Pool
+# Create the connection pool during application initialization
+pool = oracledb.create_pool(user="hr", password=userpwd, dsn="dbhost.example.com/orclpdb",
+                            min=2, max=5, increment=1)
+
+# Acquire a connection from the pool
+connection = pool.acquire()
+
+# Use the pooled connection
+with connection.cursor() as cursor:
+    for result in cursor.execute("select * from mytab"):
+        print(result)
+
+# Release the connection to the pool
+pool.release(connection)
+
+# Close the pool at application shutdown
+pool.close()
+
+
+###############################################################
+ORA-12170: TNS:Connect timeout occurred
+###############################################################
+
+http://www.dba-oracle.com/t_ora_12170_tns_connect_timeout.htm
+https://ittutorial.org/ora-12170-tns-connect-timeout-occurred/
+https://community.alteryx.com/t5/Alteryx-Designer-Knowledge-Base/Error-quot-ORA-12170-TNS-Connect-timeout-occurred-quot-when/ta-p/713881
+https://stackoverflow.com/questions/23970158/ora-12170-tnsconnect-timeout-occurred#
+https://docs.oracle.com/cd/E11882_01/network.112/e41945/connect.htm#NETAG378
+
+cat /etc/hosts
+
+lsnrctl status
+
+tnsping xe 2
+
+Used TNSNAMES adapter to resolve the alias
+Attempting to contact (DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = 01168efbc06d)(PORT = 1521)) (CONNECT_DATA = (SERVER = DEDICATED) (SERVICE_NAME = XE)))
+OK (0 msec)
+OK (0 msec)
+
+trcroute xe
+
+Route of TrcRoute:
+------------------
+
+Node: Client            Time and address of entry into node:
+-------------------------------------------------------------
+28-OCT-2022 13:29:40 ADDRESS= PROTOCOL=TCP  HOST=01168efbc06d  PORT=1521
+
+Node: Server            Time and address of entry into node:
+-------------------------------------------------------------
+28-OCT-2022 13:29:40 ADDRESS= PROTOCOL=TCP  HOST=01168efbc06d  PORT=1521
+
+
+
+
+
+JDBC connectionType values
+-------------------------------
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-connect.html#aws-glue-programming-etl-connect-jdbc
+
+Product			for Glue 0.9, 1.0, 2.0	for Glue 3.0
+Microsoft SQL Server	6.x			7.x
+MySQL			5.1			8.0.23
+Oracle Database		11.2			21.1
+PostgreSQL		42.1.x			42.2.18
+MongoDB			2.0.0			4.0.0
+Amazon Redshift		4.1			4.1
+
+
+
+-------------------------------
+
+open sqlnet.ora
+
+NAMES.DIRECTORY_PATH= (TNSNAMES, EZCONNECT)
+SQLNET.INBOUND_CONNECT_TIMEOUT=360
+SQLNET.RECV_TIMEOUT=10
+SQLNET.SEND_TIMEOUT=10
+
+changes in the tnsnames.ora file:
+
+ORCL =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.130.52)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = orcl)
+    )
+  )
+
+
+-------------------------------
+
+
+To solve this error, add the following parameters to the sqlnet.ora file under $ORACLE_HOME/network/admin.
+
+
+NAMES.DIRECTORY_PATH= (TNSNAMES, EZCONNECT)
+SQLNET.INBOUND_CONNECT_TIMEOUT=360
+SQLNET.RECV_TIMEOUT=10
+SQLNET.SEND_TIMEOUT=10
+
+
+Resolution
+-------------------------------
+
+apt-get install nano
+apt-get update --fix-missing
+
+https://deb.debian.org/debian/pool/main/n/nano/
+https://deb.debian.org/debian/pool/main/n/neovim/
+
+
+Resolution A
+
+Ensure the defined port to the Oracle connection is open to the machine running the workflow, the default port number for Oracle is 1521.
+
+
+Resolution B
+
+Add/edit the parameters below in the sqlnet.ora file for the Oracle host server:
+
+$ORACLE_HOME/network/admin
+# /usr/lib/oracle/xe/app/oracle/product/10.2.0/server/network/admin
+
+SQLNET.INBOUND_CONNECT_TIMEOUT=3
+SQLNET.SEND_TIMEOUT=3
+SQLNET.RECV_TIMEOUT=3
+
+Add/edit the following parameter in the listener.ora:
+
+INBOUND_CONNECT_TIMEOUT_listener=2
+
+Note 1
+
+By default the listener name is called "listener", otherwise used the defined listener name. (i.e. INBOUND_CONNECT_TIMEOUT_defined_listener_name).
+
+Note 2
+
+It's recommended to start with a low number and then increase as needed.
+
+
+
+
+
+###############################################################
+Pinging servers in Python
+###############################################################
+
+https://stackoverflow.com/questions/2953462/pinging-servers-in-python
+https://pypi.org/project/pythonping/
+
+
+import os
+hostname = "google.com" #example
+response = os.system("ping -c 1 " + hostname)
+if response == 0:
+  print hostname, 'is up!'
+else:
+  print hostname, 'is down!'
+
+
+
+import subprocess
+ping_response = subprocess.Popen(["/bin/ping", "-c1", "-w100", "192.168.0.1"], stdout=subprocess.PIPE).stdout.read()
+
+
+
+
+import socket
+def ping_server(server: str, port: int, timeout=3):
+    """ping server"""
+    try:
+        socket.setdefaulttimeout(timeout)
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((server, port))
+    except OSError as error:
+        return False
+    else:
+        s.close()
+        return True
+
+
+
+
+#!/usr/bin/python3
+import subprocess as sp
+def ipcheck():
+    status,result = sp.getstatusoutput("ping -c1 -w2 " + str(pop))
+    if status == 0:
+        print("System " + str(pop) + " is UP !")
+    else:
+        print("System " + str(pop) + " is DOWN !")
+
+
+pop = input("Enter the ip address: ")
+ipcheck()
+
+
+
+
+pip install pyping
+#!/usr/bin/python
+import pyping
+response = pyping.ping('Your IP')
+if response.ret_code == 0:
+    print("reachable")
+else:
+    print("unreachable")
+
+import pyping
+response = pyping.send('Your IP')
+if response['ret_code'] == 0:
+    print("reachable")
+else:
+    print("unreachable")
+
+
+
+
+#!/usr/bin/python3
+import subprocess as sp
+ip = "192.168.122.60"
+status,result = sp.getstatusoutput("ping -c1 -w2 " + ip)
+if status == 0:
+    print("System " + ip + " is UP !")
+else:
+    print("System " + ip + " is DOWN !")
+
+
+
+
+
+import os #to get clear screen
+import subprocess as sp #to get system ping
+os.system("clear") #clear screen
+print('Wait or Press Ctrl+Z to Terminate\n') #notice to terminate or wait
+for i in range(255): #0 to 255 loop
+    ip='192.168.1.'+str(i) #concatenating str and int
+    s,r=sp.getstatusoutput("ping -c1 -w2 " + ip) #ping and store status in s
+    if s==0: #if status is 0 equal to pass
+        print(ip+" is UP ✓ ") #output
+    else: #if status is not 0 equal to fail
+        pass #skip and try next ip from loop
+
+
+
+
+
+
+
+
+
+############################################################
+Docker internal network 192.168.xxx.0
+############################################################
+https://forums.docker.com/t/compose-now-deploying-on-internal-network-192-168-xxx-0-while-it-was-previously-on-172-xxx-0-0/118029/4
+https://docs.docker.com/engine/reference/commandline/network_create/
+
+
+docker network ls
+
+version: "3.7"
+
+services:
+  mariadb6:
+    image: mariadb:latest
+    restart: unless-stopped
+    networks:
+      test_net:
+        ipv4_address: 192.168.1.71
+    volumes:
+      - mariadb-data:/var/lib/mysql
+      - mariadb-conf:/etc/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: test
+    ports:
+      - "3306:3306"
+
+volumes:
+  mariadb-data:
+  mariadb-conf:
+
+networks:
+  test_net:
+    driver: macvlan
+    driver_opts:
+      parent: enp0s4
+    ipam:
+      config:
+        - subnet: "192.168.1.0/24"
+          ip_range: "192.168.1.71/32"
+          gateway: "192.168.1.1"
+
+
+...
+
+docker network create --driver=bridge --subnet=192.168.0.0/16 br0
+
+docker network create \
+  --driver=bridge \
+  --subnet=172.28.0.0/16 \
+  --ip-range=172.28.5.0/24 \
+  --gateway=172.28.5.254 \
+  br0
+
+
+docker network create -d overlay \
+  --subnet=192.168.10.0/25 \
+  --subnet=192.168.20.0/25 \
+  --gateway=192.168.10.100 \
+  --gateway=192.168.20.100 \
+  --aux-address="my-router=192.168.10.5" --aux-address="my-switch=192.168.10.6" \
+  --aux-address="my-printer=192.168.20.5" --aux-address="my-nas=192.168.20.6" \
+  my-multihost-network
+
+
+docker network create \
+    -o "com.docker.network.bridge.host_binding_ipv4"="172.19.0.1" \
+    simple-network
+
+
+docker network create -d overlay \
+  --subnet=10.11.0.0/16 \
+  --ingress \
+  --opt com.docker.network.driver.mtu=9216 \
+  --opt encrypted=true \
+  my-ingress-network
+
+ ....
+
+
+https://docs.docker.com/network/ipvlan/
+https://www.freecodecamp.org/news/how-to-get-a-docker-container-ip-address-explained-with-examples/
+
+ip addr show eth0
+ip addr show wlp0s20f3
+
+docker network ls
+docker network inspect bridge webapp_default | grep Subnet
+
+
+docker network  create -d ipvlan \
+    --subnet=192.168.1.0/24 \
+    --gateway=192.168.1.1 \
+    -o ipvlan_mode=l2 \
+    -o parent=eth0 db_net
+
+docker  run --net=db_net -it --rm alpine /bin/sh
+
+https://blog.uni-koeln.de/rrzk-knowhow/2020/09/23/privaten-ip-adressbereich-von-docker-anpassen/
+
+
+docker network create --driver=bridge --subnet=192.168.0.0/24 local_anleitung
+
+docker network inspect local_anleitung | grep Subnet
+                    "Subnet": "192.168.1.0/24"
+
+
+networks:
+  default:
+    ipam:
+      driver: default
+      config:
+        - subnet: "192.168.1.0/24"
+
+
+
+
+docker network create --driver=bridge --subnet=192.168.10.1/24 local_anleitung
+
+------------------------------------------------
+####################################################
+class
+####################################################
+
+https://www.w3schools.com/python/python_classes.asp
+
+class Person:
+  def __init__(self, name, age):
+    self.name = name
+    self.age = age
+
+p1 = Person("John", 36)
+
+print(p1.name)
+print(p1.age)

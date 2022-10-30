@@ -1,0 +1,1033 @@
+######################################################################
+AWS Lambda function for Oracle database
+######################################################################
+
+https://jag.hashnode.dev/aws-lambda-function-for-oracle-database
+https://github.com/JAG-010/lambda-function-for-oracle-db
+
+python --version
+sudo apt install python3-pip	# Install pip
+pip3 install virtualenv		# Install Virtual Python Environment builder
+virtualenv oralmdfn		# Create virtual environment
+source oralmdfn/bin/activate	# Activate virtual environment
+
+# Install cx_Oracle module vai pip
+pip3 install cx_Oracle-8.2.1-cp38-cp38-manylinux1_x86_64.whl
+
+# verify cx-Oracle installation
+oralmdfn/lib/python3.8/site-packages/cx*
+
+# Extract libiao rpm
+apt-get install rpm2cpio
+apt-get install cpio
+rpm2cpio lib64aio1-0.3.111-2pclos2020.x86_64.rpm | cpio -idmv
+ls -l $PWD/usr/lib64/
+rm $PWD/usr/lib64/libaio.so.1   ## to remove the soft link
+cp $PWD/usr/lib64/libaio.so.1.0.1 $PWD/usr/lib64/libaio.so.1
+
+# Create lambda function zip file
+mkdir ora_lmd_fn_py38
+cp -rp oralmdfn/lib/python3.8/site-packages/cx_Oracle* ora_lmd_fn_py38/
+cp -rp instantclient_18_5/* ora_lmd_fn_py38/
+cp usr/lib64/libaio.so.1 ora_lmd_fn_py38/
+cp oralmdfn.py ora_lmd_fn_py38/
+ls ora_lmd_fn_py38/
+
+Archive the ora_lmd_fn_py38 folder with zip
+cd ora_lmd_fn_py38/
+zip -r ora_lmd_fn_py38.zip *
+ls -lh *.zip
+
+-------------------
+######################################################################
+AWS Glue apt-get: command not found
+######################################################################
+
+https://docs.aws.amazon.com/cli/v1/userguide/install-linux.html
+https://docs.docker.com/engine/reference/commandline/exec/
+
+aws --version
+which aws
+
+sudo su
+yum install curl
+sudo yum install -y jq
+
+[Errno 13] Permission denied: '/var/lib/rpm/__db.001'
+You need to be root to perform this command.
+
+# docker run --user=root ...
+
+whoami # glue_user
+
+######################################################################
+Glue Base Docker Image JAVA
+######################################################################
+
+https://cevo.com.au/post/local-development-of-aws-glue-3-0-and-later/
+
+
+-----------------
+## glue-base/3.0/Dockerfile
+-----------------
+FROM python:3.7.12-bullseye
+
+## Install utils
+RUN apt-get update && apt-get install -y zip
+
+RUN curl “https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip” -o “awscliv2.zip” \
+    && unzip awscliv2.zip && ./aws/install
+
+## Install Open JDK 8
+RUN apt-get update \
+  && apt-get install -y software-properties-common \
+  && apt-add-repository ‘deb http://security.debian.org/debian-security stretch/updates main’ \
+  && apt-get update \
+  && apt-get install -y openjdk-8-jdk
+
+## Create environment variables
+ENV M2_HOME=/opt/apache-maven-3.6.0
+ENV SPARK_HOME=/opt/spark-3.1.1-amzn-0-bin-3.2.1-amzn-3
+ENV PATH=“${PATH}:${M2_HOME}/bin”
+
+## Add Maven, Spark and AWS Glue Libs to /opt
+RUN curl -SsL https://aws-glue-etl-artifacts.s3.amazonaws.com/glue-common/apache-maven-3.6.0-bin.tar.gz \
+    | tar -C /opt –warning=no-unknown-keyword -xzf –
+RUN curl -SsL https://aws-glue-etl-artifacts.s3.amazonaws.com/glue-3.0/spark-3.1.1-amzn-0-bin-3.2.1-amzn-3.tgz \
+    | tar -C /opt –warning=no-unknown-keyword -xf –
+RUN curl -SsL https://github.com/awslabs/aws-glue-libs/archive/refs/tags/v3.0.tar.gz \
+    | tar -C /opt –warning=no-unknown-keyword -xzf –
+
+# Install Glue dependencies
+RUN cd /opt/aws-glue-libs-3.0/bin/ \
+    && bash -c “source glue-setup.sh”
+
+## Add default Python packages
+COPY ./requirements.txt /tmp/requirements.txt
+RUN pip install -r /tmp/requirements.txt
+
+## Update Python path
+ENV GLUE_HOME=/opt/aws-glue-libs-3.0
+ENV PYTHONPATH=$GLUE_HOME:$SPARK_HOME/python/lib/pyspark.zip:$SPARK_HOME/python/lib/py4j-0.10.9-src.zip:$SPARK_HOME/python
+
+EXPOSE 4040
+
+CMD [“bash”]
+
+-----------------
+Usage:
+-----------------
+docker run –rm -it \
+  -v $HOME/.aws:/root/.aws \
+  public.ecr.aws/cevoaustralia/glue-base bash -c “/opt/aws-glue-libs-3.0/bin/gluepyspark”
+
+docker run –rm -it \
+  -v $HOME/.aws:/root/.aws \
+  -v $PWD:/tmp/glue-vscode \
+  public.ecr.aws/cevoaustralia/glue-base bash -c “/opt/aws-glue-libs-3.0/bin/gluesparksubmit /tmp/glue-vscode/example.py”
+
+
+-----------------
+Extend Glue Base Image
+-----------------
+
+
+## .devcontainer/Dockerfile
+-----------------
+FROM public.ecr.aws/i0m5p1b5/glue-base:3.0
+
+ARG USERNAME
+ARG USER_UID
+ARG USER_GID
+
+## Create non-root user
+RUN groupadd –gid $USER_GID $USERNAME \
+    && useradd –uid $USER_UID –gid $USER_GID -m $USERNAME
+
+## Add sudo support in case we need to install software after connecting
+RUN apt-get update \
+    && apt-get install -y sudo nano \
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+    && chmod 0440 /etc/sudoers.d/$USERNAME
+
+## Install Python packages
+COPY ./pkgs /tmp/pkgs
+RUN pip install -r /tmp/pkgs/dev.txt
+
+
+./execute.sh spark-submit example.py
+-----------------
+## example.py
+
+from awsglue.dynamicframe import DynamicFrame
+from awsglue.transforms import Join
+from awsglue.utils import getResolvedOptions
+from pyspark.context import SparkContext
+from awsglue.context import GlueContext
+
+glueContext = GlueContext(SparkContext.getOrCreate())
+
+DATABASE = “legislators”
+OUTPUT_PATH = “s3://glue-python-samples-fbe445ee/output_dir”
+
+## create dynamic frames from data catalog
+persons: DynamicFrame = glueContext.create_dynamic_frame.from_catalog(
+    database=DATABASE, table_name=“persons_json”
+)
+
+memberships: DynamicFrame = glueContext.create_dynamic_frame.from_catalog(
+    database=DATABASE, table_name=“memberships_json”
+)
+
+orgs: DynamicFrame = glueContext.create_dynamic_frame.from_catalog(
+    database=DATABASE, table_name=“organizations_json”
+)
+
+## manipulate data
+orgs = (
+    orgs.drop_fields([“other_names”, “identifiers”])
+    .rename_field(“id”, “org_id”)
+    .rename_field(“name”, “org_name”)
+)
+
+l_history: DynamicFrame = Join.apply(
+    orgs, Join.apply(persons, memberships, “id”, “person_id”), “org_id”, “organization_id”
+)
+l_history = l_history.drop_fields([“person_id”, “org_id”])
+
+l_history.printSchema()
+
+## write to s3
+glueContext.write_dynamic_frame.from_options(
+    frame=l_history,
+    connection_type=“s3”,
+    connection_options={“path”: f”{OUTPUT_PATH}/legislator_history”},
+    format=“parquet”,
+)
+
+
+
+
+Pytest /execute.sh pytest -svv
+-----------------
+## src/utils.py
+from awsglue.dynamicframe import DynamicFrame
+
+def filter_dynamic_frame(dyf: DynamicFrame, column_name: str, value: int):
+    return dyf.filter(f=lambda x: x[column_name] > value)
+
+## tests/conftest.py
+from pyspark.context import SparkContext
+from awsglue.context import GlueContext
+import pytest
+
+@pytest.fixture(scope=”session”)
+def glueContext():
+    sparkContext = SparkContext()
+    glueContext = GlueContext(sparkContext)
+    yield glueContext
+    sparkContext.stop()
+
+
+## tests/test_utils.py
+from typing import List
+from awsglue.dynamicframe import DynamicFrame
+import pandas as pd
+from src.utils import filter_dynamic_frame
+
+def _get_sorted_data_frame(pdf: pd.DataFrame, columns_list: List[str] = None):
+    if columns_list is None:
+        columns_list = list(pdf.columns.values)
+    return pdf.sort_values(columns_list).reset_index(drop=True)
+
+
+def test_filter_dynamic_frame_by_value(glueContext):
+    spark = glueContext.spark_session
+
+    input = spark.createDataFrame(
+        [(“charly”, 15), (“fabien”, 18), (“sam”, 21), (“sam”, 25), (“nick”, 19), (“nick”, 40)],
+        [“name”, “age”],
+    )
+
+    expected_output = spark.createDataFrame(
+        [(“sam”, 25), (“sam”, 21), (“nick”, 40)],
+        [“name”, “age”],
+    )
+
+    real_output = filter_dynamic_frame(DynamicFrame.fromDF(input, glueContext, “output”), “age”, 20)
+
+    pd.testing.assert_frame_equal(
+        _get_sorted_data_frame(real_output.toDF().toPandas(), [“name”, “age”]),
+        _get_sorted_data_frame(expected_output.toPandas(), [“name”, “age”]),
+        check_like=True,
+    )
+
+
+
+
+
+###############################################################
+Upgrade dependencies to latest versions #117 awslabs aws-glue-schema-registry
+###############################################################
+
+https://github.com/awslabs/aws-glue-schema-registry/actions/runs/1309836094/jobs/1624892862
+https://github.com/awslabs/aws-glue-schema-registry
+https://github.com/awslabs/aws-glue-schema-registry/actions/runs/1309836094/jobs/1624572772
+
+
+###############################################################
+misc
+###############################################################
+
+
+https://aws.amazon.com/premiumsupport/knowledge-center/glue-job-use-external-python-libraries/
+https://jensenmo.github.io/posts/install-glue-on-ubuntu-20.04/
+https://awstip.com/aws-cannot-be-found-after-installing-awscli-using-pip-on-ubuntu-18-04-921a819ddef3
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-python-setup.html
+https://www.python.org/downloads/
+https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html
+https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/quickstart.html
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/examples.html
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/ec2-example-managing-instances.html
+https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/glue.html#client
+https://github.com/aws-samples/aws-glue-samples
+
+https://levelup.gitconnected.com/open-source-python-thin-driver-for-oracle-database-e82aac7ecf5a
+https://github.com/oracle/python-oracledb
+https://python-oracledb.readthedocs.io/en/latest/index.html
+https://oracle.github.io/python-oracledb/index.html
+https://python-oracledb.readthedocs.io/en/latest/user_guide/installation.html
+https://python-oracledb.readthedocs.io/en/latest/index.html
+
+https://programmaticponderings.com/2020/12/02/running-pyspark-applications-on-amazon-emr-methods-for-interacting-with-pyspark-and-automating-job-submissions-on-amazon-emr/
+https://tech2daily.com/develop-and-check-aws-glue-model-3-0-jobs-domestically-utilizing-a-docker-container/
+https://splunktool.com/how-to-execute-aws-glue-scripts-using-python-27-from-local-machine
+https://dev.to/mvillarrealb/creating-a-spark-standalone-cluster-with-docker-and-docker-compose-2021-update-6l4
+https://noise.getoto.net/tag/amazon-ec2/page/3/
+https://aws.amazon.com/blogs/apn/how-to-use-aws-glue-to-prepare-and-load-amazon-s3-data-for-analysis-by-teradata-vantage/
+https://docs.databricks.com/data/metastores/aws-glue-metastore.html
+https://aws.amazon.com/premiumsupport/knowledge-center/glue-test-connection-failed/
+https://docs.aws.amazon.com/glue/latest/dg/glue-specifying-resource-arns.html
+https://aws.amazon.com/blogs/big-data/introducing-aws-glue-interactive-sessions-for-jupyter/
+
+
+https://docs.cloudera.com/documentation/enterprise/6/6.3/topics/hue_dbs_oracle_pkg.html
+https://docs.dominodatalab.com/en/latest/user_guide/77bf79/connect-to-oracle-database/#_python_and_cs_oracle
+https://docs.aws.amazon.com/dms/latest/userguide/CHAP_LargeDBs.SBS.configure-dms-agent-linux-host.oracle.html
+https://docs.aws.amazon.com/de_de/mwaa/latest/userguide/t-cloudwatch-cloudtrail-logs.html#t-plugins-logs
+https://docs.aws.amazon.com/de_de/mwaa/latest/userguide/configuring-env-variables.html#configuring-2.0-airflow-override
+https://jimmdd.medium.com/the-complete-guide-to-use-node-oracledb-on-aws-lambda-using-serverless-framework-and-lambda-layers-52b374d6cfe7
+https://cloudaffaire.com/faq/how-to-make-an-oracle-database-connection-from-an-aws-lambda-function-python/
+
+
+https://aws.amazon.com/blogs/big-data/developing-aws-glue-etl-jobs-locally-using-a-container/#
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-libraries.html#
+https://docs.aws.amazon.com/glue/latest/dg/authentication-and-access-control.html
+https://docs.aws.amazon.com/glue/latest/webapi/API_Connection.html
+https://docs.aws.amazon.com/glue/latest/dg/encrypt-connection-passwords.html
+https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_passwords_change-root.html
+
+https://docs.singlestore.com/db/v7.8/en/user-and-cluster-administration/changing-the-root-password.html
+https://docs.bridgecrew.io/docs/bc_aws_general_41
+https://www.wellarchitectedlabs.com/security/100_labs/100_aws_account_and_root_user/
+https://wellarchitectedlabs.com/reliability/300_labs/300_testing_for_resiliency_of_ec2_rds_and_s3/documentation/aws_credentials/
+
+https://cevo.com.au/post/aws-glue-local-development/
+
+https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html
+https://aws.amazon.com/blogs/database/configuring-and-using-oracle-connection-manager-on-amazon-ec2-for-amazon-rds-for-oracle/
+https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html
+https://aws.amazon.com/de/premiumsupport/knowledge-center/rds-oracle-instant-client-datapump/
+
+https://linuxconfig.org/how-to-check-centos-version
+https://www.cyberciti.biz/faq/how-to-check-os-version-in-linux-command-line/
+https://linux-audit.com/how-to-see-version-of-oracle-linux/
+
+https://thehelpfuldba.com/installing-the-oracle-client-12c-on-an-aws-linux-ec2-silent-mode/
+https://oracle-base.com/articles/vm/aws-ec2-installation-of-oracle
+
+https://www.anycodings.com/1questions/4159855/docker-python-use-odpi-c-for-oracle-db-connection
+https://www.anycodings.com/1questions/5447313/create-connection-to-oracle-autonomous-database-from-docker-container-via-sqlalchemy
+https://www.anycodings.com/1questions/4159855/docker-python-use-odpi-c-for-oracle-db-connection
+https://cloud.tencent.com/developer/ask/sof/852743/answer/1226307/comments
+https://stackoverflow.com/questions/70975645/how-to-install-oracle-instantclient-on-a-custom-jenkins-agent
+https://stackoverflow.com/questions/72047945/cant-run-oracle-sqlldr-in-alpine-container
+
+###############################################################
+make an Oracle Database connection from an AWS Lambda function (Python)
+###############################################################
+https://cloudaffaire.com/faq/how-to-make-an-oracle-database-connection-from-an-aws-lambda-function-python/
+
+oraclePath = os.environ['LAMBDA_TASK_ROOT'] + '/lib'
+if oraclePath not in os.environ['LD_LIBRARY_PATH'].split(':'):
+  os.environ['LD_LIBRARY_PATH'] = oraclePath + ':' + os.environ['LD_LIBRARY_PATH']
+if ('TNS_ADMIN' not in os.environ) or (os.environ['TNS_ADMIN'] != os.environ['LAMBDA_TASK_ROOT']):
+  os.environ['TNS_ADMIN'] = os.environ['LAMBDA_TASK_ROOT']
+
+
+
+
+
+###############################################################
+Amazon glue Linux release Info
+- apt-get command not found in Linux
+###############################################################
+
+https://docs.aws.amazon.com/de_de/glue/latest/dg/glue-dg.pdf
+https://noise.getoto.net/tag/aws-glue/
+
+cat /etc/*-release
+
+
+	GLUE
+	--------------------------
+	NAME="Amazon Linux"
+	VERSION="2"
+	ID="amzn"
+	ID_LIKE="centos rhel fedora"
+	VERSION_ID="2"
+	PRETTY_NAME="Amazon Linux 2"
+	ANSI_COLOR="0;33"
+	CPE_NAME="cpe:2.3:o:amazon:amazon_linux:2"
+	HOME_URL="https://amazonlinux.com/"
+	Amazon Linux release 2 (Karoo)
+
+	LAMBDA
+	--------------------------
+	NAME="Amazon Linux"
+	VERSION="2"
+	ID="amzn"
+	ID_LIKE="centos rhel fedora"
+	VERSION_ID="2"
+	PRETTY_NAME="Amazon Linux 2"
+	ANSI_COLOR="0;33"
+	CPE_NAME="cpe:2.3:o:amazon:amazon_linux:2"
+	HOME_URL="https://amazonlinux.com/"
+	VARIANT_ID="202209281805-2.0.949.0"
+	Amazon Linux release 2 (Karoo)
+
+	bash-4.2#
+
+
+
+# check oracle centos fedora version
+
+cat /etc/oracle-release
+ls -l /etc/*-release
+cat /etc/os-release
+
+
+	GLUE
+	--------------------------
+	NAME="Amazon Linux"
+	VERSION="2"
+	ID="amzn"
+	ID_LIKE="centos rhel fedora"
+	VERSION_ID="2"
+	PRETTY_NAME="Amazon Linux 2"
+	ANSI_COLOR="0;33"
+	CPE_NAME="cpe:2.3:o:amazon:amazon_linux:2"
+	HOME_URL="https://amazonlinux.com/"
+
+
+
+cat /proc/version
+
+	Linux version 5.15.0-52-generic (buildd@lcy02-amd64-032) (gcc (Ubuntu 11.2.0-19ubuntu1) 11.2.0,
+	GNU ld (GNU Binutils for Ubuntu) 2.38) #58-Ubuntu SMP Thu Oct 13 08:03:55 UTC 2022
+
+
+cat /etc/*-release
+
+	NAME="Amazon Linux"
+	VERSION="2"
+	ID="amzn"
+	ID_LIKE="centos rhel fedora"
+	VERSION_ID="2"
+	PRETTY_NAME="Amazon Linux 2"
+	ANSI_COLOR="0;33"
+	CPE_NAME="cpe:2.3:o:amazon:amazon_linux:2"
+	HOME_URL="https://amazonlinux.com/"
+	Amazon Linux release 2 (Karoo)
+
+
+
+
+
+CentOS, and RHEL use Yum
+sudo yum install <packagename>
+
+echo $ORACLE_HOME
+cd $ORACLE_HOME
+find . -name "libcl*"
+
+
+#############################################################
+Failed to create bus connection: No such file or directory
+#############################################################
+
+hostnamectl
+systemctl --user
+timedatectl
+
+
+sudo dpkg -l | grep dbus
+sudo apt-get install dbus
+
+yum install dbus
+
+echo $DBUS_SESSION_BUS_ADDRESS
+unix:path=/run/user/0/bus
+
+export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/0/bus"
+systemctl --user restart my-service
+
+
+
+
+------------------------------
+systemctl status dbus
+Failed to get D-Bus connection: Operation not permitted
+------------------------------
+https://serverfault.com/questions/824975/failed-to-get-d-bus-connection-operation-not-permitted
+https://bobcares.com/blog/docker-failed-to-get-d-bus-connection-operation-not-permitted/
+https://stackoverflow.com/questions/50393525/failed-to-get-d-bus-connection-operation-not-permitted
+https://dev.to/aciklab/failed-to-create-bus-connection-no-such-file-or-directory-hatasi-cozumu-1idi
+
+docker run -d -it --privileged {Image ID} /usr/sbin/init
+systemctl start httpd.service
+
+------------------------------
+centos image Set up a dockerfile like the one below:
+------------------------------
+FROM centos
+MAINTAINER "Yourname" <youremail@address.com>
+ENV container docker
+RUN yum -y update; yum clean all
+RUN yum -y install systemd; yum clean all; \
+(cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
+rm -f /lib/systemd/system/multi-user.target.wants/*;\
+rm -f /etc/systemd/system/*.wants/*;\
+rm -f /lib/systemd/system/local-fs.target.wants/*; \
+rm -f /lib/systemd/system/sockets.target.wants/*udev*; \
+rm -f /lib/systemd/system/sockets.target.wants/*initctl*; \
+rm -f /lib/systemd/system/basic.target.wants/*;\
+rm -f /lib/systemd/system/anaconda.target.wants/*;
+VOLUME [ "/sys/fs/cgroup" ]
+CMD ["/usr/sbin/init"]
+
+docker build -t centos7-systemd - < dockerfile
+docker run --rm --privileged  -ti -e container=docker  -v /sys/fs/cgroup:/sys/fs/cgroup  centos7-systemd /usr/sbin/init
+
+
+
+dockerfile
+------------------------------
+FROM centos:7
+
+ENV container docker
+RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
+systemd-tmpfiles-setup.service ] || rm -f $i; done); \
+rm -f /lib/systemd/system/multi-user.target.wants/*;\
+rm -f /etc/systemd/system/*.wants/*;\
+rm -f /lib/systemd/system/local-fs.target.wants/*; \
+rm -f /lib/systemd/system/sockets.target.wants/*udev*; \
+rm -f /lib/systemd/system/sockets.target.wants/*initctl*; \
+rm -f /lib/systemd/system/basic.target.wants/*;\
+rm -f /lib/systemd/system/anaconda.target.wants/*;
+
+# Install anything. The service you want to start must be a SystemD service.
+
+CMD ["/usr/sbin/init"]
+
+
+
+###############################################################
+Oracle Instant Client Downloads for Linux
+###############################################################
+
+https://oracle.github.io/odpi/doc/installation.html#linux
+https://yum.oracle.com/oracle-instant-client.html
+https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html
+https://yum.oracle.com/oracle-instant-client.html
+
+Oracle Instant Client Zip Files
+-------------------------------
+mkdir -p /opt/oracle
+cd /opt/oracle
+unzip instantclient-basic-linux.x64-21.1.0.0.0.zip
+
+sudo yum install libaio
+
+Oracle Instant Client RPM Files
+-------------------------------
+sudo yum install oracle-instantclient-basic-21.1.0.0.0-1.x86_64.rpm
+yum install oracle-instantclient-release-el7
+yum install oracle-instantclient-basic
+
+
+On Oracle Linux 7
+-------------------------------
+sudo yum install oracle-instantclient-release-el7
+sudo yum install oracle-instantclient-basic
+
+
+On Oracle Linux 8
+-------------------------------
+sudo dnf install oracle-instantclient-release-el8
+sudo dnf install oracle-instantclient-basic
+
+
+Additional Configuration for Instant Client releases 18 and older
+For Oracle Instant Client releases 18 and older, you must set up the environment so that your application can find the necessary libraries.
+
+For example, for Oracle Instant Client release 18.3:
+
+$ sudo sh -c "echo /usr/lib/oracle/18.3/client64/lib > /etc/ld.so.conf.d/oracle-instantclient.conf"
+$ sudo ldconfig
+
+
+Local Database or Full Oracle Client
+-------------------------------
+source /usr/local/bin/oraenv
+source /u01/app/oracle/product/11.2.0/xe/bin/oracle_env.sh
+
+
+Dockerfiles
+-------------------------------
+
+FROM oraclelinux:8-slim
+
+RUN  microdnf install oracle-instantclient-release-el8 && \
+     microdnf install oracle-instantclient-basic oracle-instantclient-devel oracle-instantclient-sqlplus && \
+     microdnf clean all
+
+docker build -t oracle/instantclient:21 .
+
+
+###############################################################
+use external Python libraries in my AWS Glue 2.0 ETL job
+###############################################################
+
+https://aws.amazon.com/premiumsupport/knowledge-center/glue-version2-external-python-libraries/
+https://aws.amazon.com/premiumsupport/knowledge-center/glue-job-use-external-python-libraries/
+
+Launch an Amazon Elastic Compute Cloud (Amazon EC2) Linux instance and Install Docker container on the EC2 instance
+
+sudo yum install docker -y
+sudo usermod -a -G docker ec2-user
+sudo service docker start
+
+
+Create a file dockerfile_grpcio and copy the following into the file:
+
+# Base for AWS Glue
+FROM amazonlinux
+RUN yum update -y
+RUN yum install shadow-utils.x86_64 -y
+RUN yum install -y java-1.8.0-openjdk.x86_64
+RUN yum install -y python3
+RUN yum install -y cython doxygen numpy scipy gcc autoconf automake libtool zlib-devel openssl-devel maven wget protobuf-compiler cmake make gcc-c++
+# Additional components needed for grpcio
+WORKDIR /root
+RUN yum install python3-devel -y
+RUN yum install python-devel -y
+RUN pip3 install wheel
+# Install grpcio and related modules
+RUN pip3 install Cython
+RUN pip3 install cmake scikit-build
+RUN pip3 install grpcio
+# Create a directory for the wheel
+RUN mkdir wheel_dir
+# Create the wheel
+RUN pip3 wheel grpcio -w wheel_dir
+
+Run the following commands to restart the Docker daemon:
+
+$ sudo service docker restart
+$ docker build -f dockerfile_grpcio .
+
+Extract the wheel file from the Docker container. Run the following commands to extract the .whl file:
+
+# Get the docker image ID
+$ docker image ls
+
+# Run the container
+$ docker run -dit 111122223334444
+
+# Verify the location of the wheel file and retrieve the name of the wheel file
+$ docker exec -t -i 5555666677778888 ls /root/wheel_dir/
+
+# Copy the wheel out of docker to EC2
+$ docker cp 5555666677778888:/root/wheel_dir/doc-example-wheel .
+
+
+Upload the wheel to Amazon S3 by running the following commands:
+
+aws s3 cp doc-example-wheel s3://path/to/wheel/
+aws s3 cp grpcio-1.32.0-cp37-cp37m-linux_x86_64.whl s3://aws-glue-add-modules/grpcio/
+
+For the AWS Glue ETL job, in the AWS Glue console, under Job parameters, do the following: For Key, enter --additional-python-modules.
+For Value, enter s3://aws-glue-add-modules/grpcio/grpcio-1.32.0-cp37-cp37m-linux_x86_64.whl.
+Note: Be sure to replace grpcio-1.32.0-cp37-cp37m-linux_x86_64.whl with the name of the Python package file.
+
+
+###############################################################
+# Customized Glue v3 image dockerfile
+###############################################################
+
+https://github.com/awslabs/aws-glue-libs/issues/113
+https://aws.amazon.com/blogs/big-data/develop-and-test-aws-glue-version-3-0-jobs-locally-using-a-docker-container/
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-python-libraries.html
+https://awstip.com/step-functions-with-glue-7a2ac6c10100
+
+Dockerfile
+--------------
+FROM amazon/aws-glue-libs:glue_libs_3.0.0_image_01
+USER root
+RUN echo 'root:root' | chpasswd
+RUN yum install -y ping telnet sudo
+ADD ./aws-glue/config/spark/core-site.xml /home/glue_user/spark/conf
+RUN chown glue_user:root /home/glue_user/spark/conf/core-site.xml
+
+RUN mkdir /home/glue_user/.aws
+ADD .aws /home/glue_user/
+RUN chown glue_user:root -R /home/glue_user/.aws
+WORKDIR /home/glue_user
+USER glue_user
+CMD ["./jupyter/jupyter_start.sh"]
+
+
+
+test.py
+--------------
+import os
+# Getting non-existent keys
+GLUE_VERSION = os.getenv('GLUE_VERSION') # None
+
+sc = None
+spark = None
+
+if (GLUE_VERSION != None):
+
+    import sys
+    from awsglue.transforms import *
+    from awsglue.utils import getResolvedOptions
+    from pyspark.context import SparkContext
+    from awsglue.context import GlueContext
+    from awsglue.job import Job
+
+    ## @params: [JOB_NAME]
+    args = getResolvedOptions(sys.argv, ['JOB_NAME'])
+
+    sc = SparkContext()
+    glueContext = GlueContext(sc)
+    spark = glueContext.spark_session
+    job = Job(glueContext)
+    job.init(args['JOB_NAME'], args)
+    job.commit()
+
+
+if (GLUE_VERSION == None):
+    spark = SparkSession \
+        .builder \
+        .appName("Python Spark SQL basic example") \
+        .config("spark.some.config.option", "some-value") \
+        .getOrCreate()
+    sc = spark.sparkContext
+
+
+
+
+Glue Script init
+-----------------------------
+import sys
+from awsglue.transforms import *
+from awsglue.utils import getResolvedOptions
+from pyspark.context import SparkContext, SparkConf
+from awsglue.context import GlueContext
+from awsglue.job import Job
+import time
+from pyspark.sql.types import StructType, StructField, IntegerType, StringType
+import pymysql
+import boto3
+
+session = boto3.Session(region_name="${AWS::Region}")
+ssm = session.client("ssm")
+args = getResolvedOptions(sys.argv, ['JOB_NAME', 'tenant', 'file_key', 'bucket'])
+
+tenant = args['tenant'];
+file_key = args['file_key']
+bucket = args['bucket']
+
+print("tenant: " + tenant)
+print("file_key: " + file_key)
+print("bucket: " + bucket)
+
+sc = SparkContext()
+glueContext = GlueContext(sc)
+spark = glueContext.spark_session
+...
+
+
+
+bakery_csv_to_parquet_ssm.py
+---------------------------------------------
+https://programmaticponderings.com/2020/12/02/running-pyspark-applications-on-amazon-emr-methods-for-interacting-with-pyspark-and-automating-job-submissions-on-amazon-emr/
+
+
+#!/usr/bin/env python3
+
+# Process raw CSV data and output Parquet
+# Author: Gary A. Stafford (November 2020)
+
+import os
+
+import boto3
+from ec2_metadata import ec2_metadata
+from pyspark.sql import SparkSession
+
+os.environ['AWS_DEFAULT_REGION'] = ec2_metadata.region
+
+ssm_client = boto3.client('ssm')
+
+
+def main():
+    params = get_parameters()
+
+    spark = SparkSession \
+        .builder \
+        .appName("bakery-csv-to-parquet") \
+        .getOrCreate()
+
+    convert_to_parquet(spark, "bakery", params)
+
+
+def convert_to_parquet(spark, file, params):
+    df_bakery = spark.read \
+        .format("csv") \
+        .option("header", "true") \
+        .option("delimiter", ",") \
+        .option("inferSchema", "true") \
+        .load(f"s3a://{params['bronze_bucket']}/bakery/{file}.csv")
+
+    write_parquet(df_bakery, params)
+
+
+def write_parquet(df_bakery, params):
+    df_bakery.write \
+        .format("parquet") \
+        .save(f"s3a://{params['silver_bucket']}/bakery/", mode="overwrite")
+
+
+def get_parameters():
+    params = {
+        'bronze_bucket': ssm_client.get_parameter(Name='/emr_demo/bronze_bucket')['Parameter']['Value'],
+        'silver_bucket': ssm_client.get_parameter(Name='/emr_demo/silver_bucket')['Parameter']['Value']
+    }
+
+    return params
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+###############################################################
+user and group in Docker Compose
+###############################################################
+
+https://blog.giovannidemizio.eu/2021/05/24/how-to-set-user-and-group-in-docker-compose/
+https://stackoverflow.com/questions/40462189/docker-compose-set-user-and-group-on-mounted-volume
+https://docs.docker.com/engine/reference/commandline/exec/
+
+version: '3'
+services:
+    app:
+        image: alpine
+        user: "${UID}:${GID}"
+
+version: '3'
+services:
+  app:
+    user: 1001:1001
+
+docker-compose run app id
+export UID=$(id -u)
+export GID=$(id -g)
+
+env UID=${UID} GID=${GID} docker-compose run app
+
+docker-compose run -u 1001:1001 app id
+
+.env file:
+UID=1001
+GID=1001
+
+version: '3.5'
+services:
+  dokuwiki:
+    user: "${UID}" # set a specific user id so the container can write in the data dir
+    image: bitnami/dokuwiki:latest
+    ports:
+      - '8080:8080'
+    volumes:
+      - '/home/manuel/docker/dokuwiki/data:/bitnami/dokuwiki/'
+    restart: unless-stopped
+    expose:
+      - "8080"
+
+  php: # this is my service name
+     user: "${UID}:${GID}" # we added this line to get a specific user / group id
+     image: php:7.3-fpm-alpine # this is my image
+
+
+---------------------
+
+sudo yum install curl
+sudo su
+
+We trust you have received the usual lecture from the local System
+Administrator. It usually boils down to these three things:
+
+    #1) Respect the privacy of others.
+    #2) Think before you type.
+    #3) With great power comes great responsibility.
+
+[sudo] password for glue_user:
+
+---------------------
+
+yum list oracle-instantclient*
+
+Loaded plugins: ovl, priorities
+ovl: Error while doing RPMdb copy-up:
+[Errno 13] Permission denied: '/var/lib/rpm/__db.001'
+230 packages excluded due to repository priority protections
+Error: No matching Packages to list
+
+https://github.com/oracle/docker-images/issues/1244
+
+docker run --user=root ...
+
+
+############################################################
+Installing yum-utils in RHEL/CentOS
+############################################################
+
+https://www.tecmint.com/linux-yum-package-management-with-yum-utils/
+https://man7.org/linux/man-pages/man1/yum-utils.1.html
+https://linux.die.net/man/1/yum-utils
+
+yum update && yum install yum-utils
+man yum-utils
+
+# package-cleanup --orphans
+# package-cleanup --oldkernels
+
+
+############################################################
+Installing Oracle Instant Client From the yum Server centos
+############################################################
+
+https://docs.oracle.com/en/database/oracle/oracle-database/21/lacli/install-instant-client-using-rpm.html#GUID-2E81E2AE-E94C-413F-99B2-AE9A3949F05D
+https://www.oracle.com/de/database/technologies/instant-client/linux-x86-64-downloads.html
+https://www.dbasolved.com/2020/08/oracle-instant-client-installed-via-yum/
+https://oracle-base.com/articles/misc/oracle-instant-client-installation
+https://www.unixmen.com/install-oracle-client-centos/
+https://martincarstenbach.wordpress.com/2021/05/21/installing-instant-clients-on-oracle-linux-8-in-oracle-cloud-infrastructure/
+https://qiita.com/tkprof/items/2a4eb868f45fb5759110
+https://ostechnix.com/solve-error-rpmdb-open-failed-error-centos/
+
+
+For Oracle Linux 7:
+$ sudo yum install oracle-instantclient-release-el7
+
+For Oracle Linux 8:
+$ sudo dnf install oracle-instantclient-release-el8
+
+
+Install Oracle Instant Client packages using yum.
+
+For Oracle Linux 7:
+$ sudo yum install oracle-instantclient-basic
+
+For Oracle Linux 8:
+$ sudo dnf install oracle-instantclient-basic
+
+
+Install other Oracle Instant Client packages like SQL*Plus, run:
+
+For Oracle Linux 7:
+$ sudo yum install oracle-instantclient-sqlplus
+
+For Oracle Linux 8:
+$ sudo dnf install oracle-instantclient-sqlplus
+
+
+Manually Downloading and Installing Oracle Instant Client RPM Packages
+
+For Oracle Linux 7:
+$ sudo yum install oracle-instantclient-basic-21.3.0.0.0-1.x86_64.rpm
+
+For Oracle Linux 8:
+$ sudo dnf install oracle-instantclient-basic-21.3.0.0.0-1.el8.x86_64.rpm
+
+
+yum install -y yum-utils
+# yum-config-manager --enable ol7_oracle_instantclient
+
+#yum list oracle-instantclient*
+#yum -y -q install oracle-instantclient18.3-basic.x86_64
+
+yum list oracle-instantclient*
+# yum install oracle-instantclient18.3-basic
+# yum install oracle-instantclient18.3-devel
+# yum install oracle-instantclient18.3-jdbc
+# yum install oracle-instantclient18.3-sqlplus
+
+
+#######################################################
+developing AWS Glue ETL jobs locally using a Docker container
+#######################################################
+
+https://github.com/awslabs/aws-glue-libs/issues/83
+https://stackoverflow.com/questions/71171490/issue-developing-aws-glue-etl-jobs-locally-using-a-docker-container
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-libraries.html
+https://aws.amazon.com/blogs/big-data/developing-aws-glue-etl-jobs-locally-using-a-container/
+https://cevo.com.au/post/aws-glue-local-development/
+https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_passwords_change-root.html
+
+docker run -itd -p 8888:8888 -p 4040:4040 -e DISABLE_SSL="true" -v ~/.aws:/root/.aws:ro --platform linux/amd64 --name glue3_jupyter amazon/aws-glue-libs:glue_libs_3.0.0_image_01 /home/glue_user/jupyter/jupyter_start.sh
+
+docker run -itd -p 8888:8888 -p 4040:4040 -e DISABLE_SSL="true" -v ~/.aws:/root/.aws:ro --name glue_jupyter amazon/aws-glue-libs:glue_libs_3.0.0_image_01 /home/glue_user/jupyter/jupyter_start.sh
+
+
+http://127.0.0.1:8888/lab/tree
+
+######################################################################
+RUN rpm -i oracle-instantclient-basic-21.8.0.0.0-1.x86_64.rpm
+ ---> Running in 5b624a2412b8
+error: Failed dependencies:
+        libaio is needed by oracle-instantclient-basic-21.8.0.0.0-1.x86_64
+######################################################################
+
+https://docs.actian.com/ingres/11.0/index.html#page/Ing_Install/Install_libaio.htm
+https://yum-info.contradodigital.com/view-package/installed/libaio/
+https://yum-info.contradodigital.com/view-package/base/libaio-devel/
+
+yum install libaio
+
+
+#################################################################
+FTP server for UNIX-like systems.
+#################################################################
+
+https://security.appspot.com/vsftpd.html
+
+
+
+
+
