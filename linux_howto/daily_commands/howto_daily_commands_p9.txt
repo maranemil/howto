@@ -252,3 +252,91 @@ Commands:
   create    Create extension
   pack      Package extension
   install   Install extension bundle
+
+
+##################################################
+FIX Unknown interface 'tun': No such device
+##################################################
+
+FIX!
+sudo apt purge resolvconf
+
+https://forum.armbian.com/topic/17156-solved-wireguard-client-up-error-unknown-interface-tun-no-such-device/
+https://www.reddit.com/r/WireGuard/comments/m16v3k/unable_to_start_wg_interface_with_wgquick_up/
+https://debianforum.de/forum/viewtopic.php?t=183224
+https://www.reddit.com/r/WireGuard/comments/nnv9b0/resolvconf_error_when_attempting_wgquick_up/
+
+lsmod | grep 'tun\|wireguard'
+lsmod|grep -i tun
+
+Solution:
+remove the DNS value from the configuration
+
+
+ls -lah $(which resolvconf)
+sudo unlink /usr/local/bin/resolvconf
+sudo apt-get install resolvconf
+
+set dns=none to [main] section in /etc/NetworkManager/NetworkManager.conf:
+
+[main]
+...
+dns=none
+
+Place desired DNS servers as nameserver in /etc/resolv.conf:
+
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+nameserver 1.1.1.1
+
+Use resolvconf to set DNS
+This is preferred way if you're using a VPN with specific DNS servers configured through it
+
+sudo ln -sfn /run/resolvconf/resolv.conf /etc/resolv.conf
+
+...
+
+lsmod | grep -i tun
+
+ls -la /etc/systemd/network | grep -i wg0
+
+cat /etc/systemd/network/wg0.netdev
+cat /etc/systemd/network/wg0.network
+
+systemctl is-enabled systemd-networkd
+ip a s wg0
+
+systemctl list-units --all | grep -iE 'quick|wire'
+ls -la /etc/systemd/network | grep -i wg0
+nano /etc/systemd/network/wg0.network
+
+systemctl daemon-reload
+systemctl enable systemd-networkd
+systemctl start systemd-networkd
+
+systemctl is-enabled systemd-networkd
+systemctl is-active systemd-networkd
+systemctl status systemd-networkd
+ip a s wg0
+
+...
+
+resolvconf -a tun.mul -m 0 -x
+Failed to resolve interface "tun"
+
+ls -la /etc/resolv.conf
+
+###############################################################
+FIX ubuntu 22.04 audio output not working (dummy audio)
+###############################################################
+
+https://askubuntu.com/questions/1406646/ubuntu-22-04-audio-output-not-working-dummy-audio
+https://superuser.com/questions/17312/restart-ubuntu-sound-processes-via-command-line
+
+sudo touch /usr/share/pipewire/media-session.d/with-pulseaudio
+systemctl --user restart pipewire-session-manager
+
+
+
+
+
