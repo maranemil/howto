@@ -114,9 +114,222 @@ for resp in ec2_responses['Regions']:
 	region_name = ssm_response['Parameter']['Value']
         print ("region_id:",region_id,"region_name:",region_name)
 
+#######################################################
+#   TypeError: APIClient.__init__() got an unexpected keyword argument 'use_ssh_client'
+#   `docker-compose` process finished with exit code 1
+#######################################################
+
+https://github.com/docker/compose/issues/7970
+
+FIX:
+pip install docker==4.4.4
+
+DEBUG:
+
+pip3 check
+mysql-connector-python 8.0.30 requires protobuf, which is not installed.
+pyopenssl 22.0.0 has requirement cryptography>=35.0, but you have cryptography 3.4.8.
+
+
+docker-compose version | fgrep docker-py
+docker-py version: 4.2.2
+
+pip uninstall -y cryptography
+pip install cryptography==36.0.2
 
 
 
+# virtualenv --python=python3.7 venv
+# source venv/bin/activate
+# pip install docker==4.4.4
+# python -c 'from docker import APIClient; APIClient(use_ssh_client=False)' ; echo $?
+0
+# pip install docker-compose==1.28.5
+# python -c 'from compose.cli.docker_client import APIClient; APIClient(use_ssh_client=False)' ; echo $?
+0
+# docker-compose version | fgrep docker-py
+docker-py version: 4.4.4
+
+/usr/lib/python3/dist-packages/paramiko/transport.py:236: CryptographyDeprecationWarning: Blowfish has been deprecated   "class": algorithms.Blowfish,
+https://github.com/paramiko/paramiko/issues/2038
+
+pip install fabric
+pip uninstall -y cryptography # uninstall 37.0.0
+pip install cryptography==36.0.2
+...
+pip3 uninstall -y cryptography
+pip3 install cryptography==36.0.2
+...
+pip3 install pip -U
+
+#######################################################
+Installing AWS SAM with pip on Ubuntu
+#######################################################
+
+https://annadodson.co.uk/blog/2020/10/04/install-aws-sam-with-pip/
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install-linux.html
+
+sudo apt-get install python3-pip
+pip3 install --user aws-sam-cli
+sam --version
+
+###################################################
+AWS Linux Info
+###################################################
+https://yum.oracle.com/
+https://aws.amazon.com/de/mp/linux/
+https://serverfault.com/questions/798427/what-linux-distribution-is-the-amazon-linux-ami-based-on
 
 
+cat /proc/version
+uname -a
+cat /etc/os-release
+rpm -E %{rhel}
+
+
+-------------------------------------------
+
+https://docs.aws.amazon.com/lambda/latest/dg/foundation-console.html
+https://www.freecodecamp.org/news/aws-lambda-offering-developers-ultimate-flexibility-d8939ff4220/
+https://stackoverflow.com/questions/58643905/how-aws-credentials-works-at-github-actions
+https://www.automat-it.com/post/using-github-actions-with-aws-iam-roles
+https://docs.github.com/en/actions/security-guides/encrypted-secrets
+https://machinelearningprojects.net/schedule-a-python-script-in-aws-glue-as-a-job/
+https://docs.aws.amazon.com/glue/latest/dg/interactive-sessions-convert.html
+https://docs.aws.amazon.com/glue/latest/ug/edit-nodes-chapter.html
+https://docs.aws.amazon.com/glue/latest/ug/tutorial-create-job.html
+https://docs.amazonaws.cn/en_us/glue/latest/ug/edit-script.html
+
+
+###################################################
+time.perf_counter() function in Python
+###################################################
+
+https://www.geeksforgeeks.org/time-perf_counter-function-in-python/
+https://docs.python.org/3/library/time.html
+
+# Python program to show time by perf_counter()
+from time import perf_counter
+# integer input from user, 2 input in single line
+n, m = map(int, input().split())
+
+# Start the stopwatch / counter
+t1_start = perf_counter()
+
+for i in range(n):
+    t = int(input()) # user gave input n times
+    if t % m == 0:
+        print(t)
+
+# Stop the stopwatch / counter
+t1_stop = perf_counter()
+
+print("Elapsed time:", t1_stop, t1_start)
+print("Elapsed time during the whole program in seconds:", t1_stop-t1_start)
+
+In nanoseconds
+
+
+# Python program to show time by
+# perf_counter_ns()
+from time import perf_counter_ns
+
+# integer input from user, 2 input in single line
+n, m = map(int, input().split())
+
+# Start the stopwatch / counter
+t1_start = perf_counter_ns()
+
+for i in range(n):
+    t = int(input()) # user gave input n times
+    if t % m == 0:
+        print(t)
+
+# Stop the stopwatch / counter
+t1_stop = perf_counter_ns()
+
+print("Elapsed time:", t1_stop, 'ns', t1_start, 'ns')
+
+print("Elapsed time during the whole program in ns after n, m inputs:",
+       t1_stop-t1_start, 'ns')
+
+#############################################
+#  	Python Get Current time
+#############################################
+
+https://www.programiz.com/python-programming/datetime/current-time
+https://www.programiz.com/python-programming/datetime/current-datetime
+https://python.engineering/time-perf_counter-function-in-python/
+
+from datetime import datetime
+now = datetime.now()
+current_time = now.strftime("%H:%M:%S")
+print("Current Time =", current_time) # 07:41:19
+
+
+# Current date in different formats
+
+from datetime import date
+today = date.today()
+# dd/mm/YY
+d1 = today.strftime("%d/%m/%Y")
+print("d1 =", d1) # 16/09/2019
+
+
+from datetime import date
+today = date.today()
+print("Today's date:", today)
+
+
+#############################################
+#	Python Benchmark 4sec
+#############################################
+
+https://stackabuse.com/python-get-number-of-elements-in-a-list/
+https://stackoverflow.com/questions/1593019/is-there-any-simple-way-to-benchmark-python-script
+https://www.w3schools.com/python/ref_func_round.asp
+
+t1_start = perf_counter()
+
+lst = []
+for i in range(100000000):
+   lst.append(i)
+print("list count ",len(lst))
+# list count  100000000
+
+t1_stop = perf_counter()
+res1_stop = round( (t1_stop - t1_start), 2)
+print("Elapsed time in seconds:", res1_stop)
+# Elapsed time in seconds: 4.31
+
+#############################################
+#	Determine if a Boto 3 S3 bucket resource exists
+#############################################
+
+https://stackoverflow.com/questions/26871884/how-can-i-easily-determine-if-a-boto-3-s3-bucket-resource-exists
+
+import boto3
+s3 = boto3.resource('s3')
+s3.Bucket('Hello') in s3.buckets.all() # False
+s3.Bucket('some-docs') in s3.buckets.all() # True
+
+#############################################
+aws-sam templates
+#############################################
+
+https://github.com/aws/aws-sam-cli-app-templates
+
+Cloning from https://github.com/aws/aws-sam-cli-app-templates (process may take a moment)
+
+    -----------------------
+    Generating application:
+    -----------------------
+    Name: test
+    Runtime: python3.9
+    Architectures: x86_64
+    Dependency Manager: pip
+    Application Template: hello-world
+    Output Directory: .
+
+    Next steps can be found in the README file at ./test/README.md
 
