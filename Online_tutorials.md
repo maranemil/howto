@@ -413,3 +413,7 @@
 | https://www.youtube.com/watch?v=YYnf5vJRuUY&list=PLC3y8-rFHvwh11bWtwm3_qKvo46uDmaal         | MongoDB Tutorial for Beginners                             | 
 | https://www.youtube.com/watch?v=ZRBRtA_2NAo&list=PLQH1-k79HB39Kzr43Xyja4tlRHMCqWsuy         | api-platform                                               | 
 | https://devbrains.tn/tutorials/easy-admin-api-platform-course-introduction                  | api-platform                                               | 
+| https://www.youtube.com/watch?v=U2lQWR6uIuo&list=PL3VM-unCzF8ipG50KDjnzhugceoSG3RTC         | PHP for Beginners (2023 Edition)                           |
+| https://www.youtube.com/watch?v=BZwn47RPiAM&list=PL3VM-unCzF8jX-GoazLPcbi7M0wJux8F-         | Learn Vue 3: Step By Step                                  |
+
+                                           |
