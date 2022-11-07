@@ -1,0 +1,830 @@
+
+########################################################
+#    aws sam serverless
+########################################################
+
+[option 1]
+npm install -g serverless
+serverless
+serverless create --template aws-nodejs
+serverless invoke local --function hello
+serverless offline start
+
+[option 2]
+pip install aws-sam-cli
+sam init
+sam local invoke "HelloWorldFunction" -e events/event.json
+
+########################################################
+#   pip install of aws-sam-cli package with python3.7 version
+########################################################
+
+https://stackoverflow.com/questions/57229496/pip-install-of-aws-sam-cli-package-with-python3-7-version
+
+FROM python:3.7-alpine3.9
+
+ENV HOME /home/samcli
+ENV PATH $HOME/.local/bin:$PATH
+RUN ln -fs /usr/share/zoneinfo/Etc/UTC /etc/localtime
+RUN apk add --no-cache --virtual .build-deps python2-dev  python3-dev gcc linux-headers musl-dev && \
+    adduser samcli -Du 5566; \
+    chown -R samcli $HOME;
+RUN apk add --no-cache groff less bash jq curl py-pip tzdata
+USER samcli
+
+WORKDIR $HOME
+
+RUN pip install --user --upgrade awscli aws-sam-cli;
+USER root
+
+RUN apk del .build-deps; \
+    rm -rf /var/cache/apk/*
+
+.....
+
+FROM alpine:latest
+RUN apk update && apk upgrade
+RUN apk --no-cache add python3 py3-pip gcc musl-dev python3-dev
+RUN pip install aws-sam-cli awscli
+
+########################################################
+#   python3 upgrade all local package
+########################################################
+
+https://stackoverflow.com/questions/2720014/how-to-upgrade-all-python-packages-with-pip?rq=1
+
+
+pip install pip-review
+pip-review --local --interactive
+pip-review --local --auto
+pip install -U `pip list --outdated | awk 'NR>2 {print $1}'`
+pip list --outdated
+pip list --outdated | cut -d ' ' -f1 | xargs -n1 pip install -U
+pip install -r <(pip freeze) --upgrade
+pip freeze > requirements.txt && pip install --upgrade -r requirements.txt && rm requirements.txt
+pip install -U $(pip list --outdated | awk '{printf $1" "}')
+
+
+########################################################
+#   AWS SAM CLI Hello World application
+########################################################
+
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-getting-started-hello-world.html
+
+#Step 1 - Download a sample application
+sam init
+
+#Step 2 - Build your application
+cd sam-app
+sam build
+
+#Step 3 - Deploy your application to the AWS Cloud
+sam deploy --guided
+
+#Invoke Lambda function directly
+sam local invoke "HelloWorldFunction" -e events/event.json
+
+# Host your API locally - Test your application locally
+sam local start-api
+curl http://127.0.0.1:3000/hello
+
+# generating input event
+sam local generate-event apigateway aws-proxy --body "" --path "hello" --method GET > api-event.json
+diff api-event.json events/event.json
+
+
+########################################################
+#   Lambda Function + Github Action
+########################################################
+
+https://www.youtube.com/watch?v=UQiRhKgQ5X0
+
+1. create lambda function from scratch in AWS (Lambda > Functions > Create Function)
+2. create lambda trigger (Lambda > Add trigger) (API Gateway) (URL)
+(arn:aws:execute-api:us-east-1:6454/*/*/lambda_demo)
+(https://sfsgwerwt.execute-api.us-east-1.amazonaws.com/default/lambda-demo)
+
+3. Go to lambda Code, edit and deploy
+4. create local dir project lambda-demo
+5. init project ( npm init )
+5. Edit index.ts (touch index.ts)(touch tsconfig.json)
+6. npm -i --save typescript
+7. npm -i --save lodash
+8. npm i --save-dev @types/lodash @types/node @types/aws-lambda @vercel/ncc
+
+9. code .
+10. open index.ts code and copy code from aws lamnda code
+
+https://github.com/BiteSizeAcademy/github-action-lambda
+
+import { APIGatewayProxyEvent, APIGatewayProxyResultV2, Handler } from 'aws-lambda';
+import * as _ from 'lodash';
+
+export const handler: Handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResultV2> => {
+  const max = 999;
+  const val = _.random(max);
+  const response = {
+    statusCode: 200,
+    body: `The random value (max ${max}) is: ${val}`,
+  };
+  return response;
+};
+
+11. Create github repo lambda-demo
+12. init git in local project (git init)
+13. add git ignore file for (node_modules) and commit
+
+node_modules/
+dist/
+deploy.zip
+
+14. Add git origin and push changes
+
+15. Add local .github/workflows/main.yml and add deploy code
+
+name: Deploy
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  deploy_lambda:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '12'
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: npm install
+        env:
+          CI: true
+        run: |
+          npm ci
+      - name: deploy
+        run: |
+          npx ncc build index.ts
+          zip -j deploy.zip ./dist/*
+          aws lambda update-function-code --function-name=lambda-gh-action --zip-file=fileb://deploy.zip
+
+
+
+16. commit and push
+17. check action in progress on github repo
+18. Go to AWS IAM and create new user XXX and add programatic access with AWSLambda_FullAccess
+19. Go to github settings and add in secrets the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY based on AWS IAM
+
+20. commit repo changes and push, check actions in github
+
+#####################################################################
+#   5 Ways to DevOps-ify your App - Github Actions Tutorial
+#####################################################################
+
+https://www.youtube.com/watch?v=eB0nUzAI7M8
+https://github.com/fireship-io/225-github-actions-demo
+https://github.com/features/actions
+
+
+
+.github/workflows/integrate.yml
+
+name: Node Continuous Integration
+
+on:
+  pull_request:
+    branches: [ master ]
+
+
+jobs:
+  test_pull_request:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+
+
+.github/workflows/deploy.yml
+
+
+name: Firebase Continuous Deployment
+
+on:
+  push:
+    branches: [ master ]
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@master
+        with:
+          node-version: 12
+      - run: npm ci
+      - run: npm run build
+      - uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only hosting
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+
+
+#####################################################################
+#   CI/CD from GitHub to AWS Lambda
+#####################################################################
+
+https://www.youtube.com/watch?v=AmHZxULclLQ
+https://github.com/felixyu9/github-to-lambda-demo
+
+AWS management console
+
+add lambda / python "github-to-lambda-demo"
+create github repo  "github-to-lambda-demo"
+clone locally and edit lambda_function.py
+
+import pandas as pd
+
+def lambda_handler(event, context):
+    d = {'col1': [1,2], 'col2': [3,4]}
+    df = pd.DataFrame(data=d)
+    print(df)
+    print('Done x1.1')
+
+
+add requirements.txt with pandas==1.2.1
+
+add deploy
+
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+    commands:
+      - echo "Installing dependencies..."
+      - pip install -r requirements.txt -t lib
+  build:
+    commands:
+      - echo "Zipping deployment package..."
+      - cd lib
+      - zip -r9 ../deployment_package.zip .
+      - cd ..
+      - zip -g deployment_package.zip lambda_function.py
+  post_build:
+    commands:
+      - echo "Updating lambda Function..."
+      - aws lambda update-function-code --function-name github-to-lambda-demo --zip-file fileb://deployment_package.zip
+      - echo "DONE!!"
+
+
+
+AWS Developer tools > Codebuild > Build projects > create build poject
+Select "github" as source and event type "push"
+Select OS ubuntu
+Runtime standard
+Image aws/codebuild/standard:5.0
+Create new servie role
+Add IAM role in "build details" tab by modifing policy role
+
+
+#####################################################################
+#   Deploying to AWS Lambda in Python with Serverless Framework  GitHub Actions
+#####################################################################
+
+https://www.youtube.com/watch?v=KorJPUKvHKc
+
+https://www.serverless.com/
+https://github.com/features/actions
+https://github.com/jacksonyuan-yt/basic-serverless-lambda-python
+
+serverless.yml
+
+service: basic-serverless-lambda-python
+
+provider:
+  name: aws
+  runtime: python3.8
+  stage: dev
+  region: us-west-1
+
+plugins:
+  - serverless-python-requirements
+
+package:
+  individually: true
+
+functions:
+  theLambda:
+    name: test-lambda
+    handler: lambda.handler
+    description: test-lambda
+    timeout: 5 # seconds
+    memorySize: 128 # mb
+    package:
+      patterns:
+        - "!node_modules/**"
+        - "!yarn.lock"
+        - "!package-lock.json"
+        - "!package.json"
+
+
+
+
+
+
+
+
+.github/workflows/main.yml
+
+name: Deploy Python Lambda
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+    env:
+      NODE_VERSION: 14.x # used for installing the serverless-python-requirements dependency from NPM
+    strategy:
+      matrix:
+        python-version:
+          - 3.8 # with a build matrix, you can specify a list of python versions to deploy with
+    steps:
+      # --------- use Python to install Python dependencies and run linter, tests, etc. ---------
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Cache pip
+        uses: actions/cache@v2
+        with:
+          # This path is specific to Ubuntu
+          path: ~/.cache/pip
+          # Look to see if there is a cache hit for the corresponding requirements file
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+            ${{ runner.os }}-
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pytest
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Lint with flake8
+        run: |
+          # stop the build if there are Python syntax errors or undefined names
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      # --------- Use Node and NPM to install serverless-python-requirements ---------
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+      - name: Install Node dependencies (specifically, serverless-python-requirements)
+        run: npm install
+
+      - name: Serverless Deploy
+        uses: dhollerbach/github-action-serverless-with-python-requirements@master
+        env:
+          # SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+          # or if using AWS credentials directly
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+
+
+
+############################################################################
+#   CICD Pipelines with AWS Lambda + Serverless + GitHub Actions
+############################################################################
+
+https://www.youtube.com/watch?v=RklVsvE8iyQ
+
+https://www.serverless.com/
+https://github.com/features/actions
+https://github.com/jacksonyuan-yt/basic-serverless-lambda
+
+npm i -g serverless
+serverless create --template aws-nodejs
+
+
+serverless.yml
+
+service: basic-serverless-lambda
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: us-west-1
+
+functions:
+  hello:
+    handler: src/handler.generateRandomNumber
+    timeout: 60 # seconds
+    memorySize: 128 # mb
+
+
+.github/workflows/main.yml
+
+name: Deploy Lambda
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: serverless deploy
+      uses: serverless/github-action@master
+      with:
+        args: deploy
+      env:
+        # SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+        # or if using AWS credentials directly
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+
+
+deploy and check lambda in AWS by region
+
+
+
+############################################################################
+#   Serverless Offline for testing on your local machine. Tutorial with DynamoDB
+############################################################################
+
+
+https://www.youtube.com/watch?v=ul_85jfM0oo
+
+https://github.com/SamWSoftware/ServerlessYoutubeSeries/tree/l19-serverless-offline
+
+npm install sls dynamodb install
+sls offline start --location .
+
+
+############################################################################
+#   Serverless / Lambda Continuous Deployment using AWS CodePipeline & CloudFormation
+############################################################################
+
+https://www.youtube.com/watch?v=aGI4Wlm5c9U
+
+Route 53 - Api Gateway - Lambda - S3 + EC2 + Dynamo DB
+
+
+Create Cloudformation Service Role (S3,CodePipeline,Lambda,API GAteway,Cloudformation)
+Create SAM Template yaml + CodeBuild yml
+Create Pipeline Stages (Source, build, Create/Approve/Execute change set)
+
+IAM create roles + add Lambda Full role + policies
+
+
+############################################################################
+#   How to use AWS SAM to build a serverless app
+############################################################################
+
+https://www.youtube.com/watch?v=xaCbIFH_d9k
+
+https://github.com/chenr2/AWS-SAM-Tutorial
+
+classic : web server / App Server / DB
+aws 	: s3 / Api Gateway / Lambda / DynamoDB
+
+npm -i serverless -g
+serverless create --template hello-world
+serverless deploy
+http://endpoint.aws.com/hello-world
+
+SAM
+
+aws cloudformation package
+aws cloudformation deploy
+
+AWS::Serverless::Api
+AWS::Serverless::Function
+AWS::Serverless::SimpleTable
+
+
+bash
+
+PROJECT=SAM-TUT
+BUCKET=SOME NAME
+aws s3 mb se://$BUCKET
+aws cloudformation package \
+	---template-file tempalte.yaml \
+	--output-template-file build/output.yaml \
+	--s3-bucket $BUCKET
+aws cloudformation deploy \
+	--template-file build/output.yaml \
+	--stack-name $PROJECT \
+	--capabilities CAPABILITY_IAM \
+
+
+
+############################################################################
+#   Serverless Offline testing and deployment #09
+############################################################################
+https://www.youtube.com/watch?v=bPd7z_5NM-8
+
+serverless invoke local --function hello
+serverless offline start
+
+
+############################################################################
+#   FastAPI AWS Lambda Deployment with GitHub Actions Pipeline
+############################################################################
+
+https://www.youtube.com/watch?v=UauMQGqaxGo
+
+https://github.com/veryacademy/FastAPI_AWS_Lambda_Deployment
+
+
+############################################################################
+#   GitHub Actions Tutorial - Basic Concepts and CI/CD Pipeline with Docker
+############################################################################
+
+
+workflows action templates
+
+https://docs.github.com/en/actions/using-workflows/creating-starter-workflows-for-your-organization
+https://github.blog/changelog/2020-06-23-github-actions-workflow-templates/
+
+Deploy to Amazon ECS
+Deploy to Azure Web App
+Deploy to IBM Cloud
+Terraform
+
+https://github.com/nanuchi/my-project
+https://gitlab.com/nanuchi/youtube-tutorial-series/-/blob/master/github-actions/links.md
+
+
+############################################################################
+#   Mastering the AWS Serverless Application Model (AWS SAM) - AWS Online Tech Talks
+############################################################################
+
+https://www.youtube.com/watch?v=QBBewrKR1qg
+https://www.youtube.com/watch?v=CIdUU6rNdk4
+https://www.youtube.com/watch?v=fDv_RKygOXU
+
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-using-debugging.html
+https://docs.aws.amazon.com/toolkit-for-vscode/latest/userguide/welcome.html
+https://programmingpercy.tech/blog/develop-and-debug-sam
+https://www.youtube.com/watch?v=QWfuA5SrmW8
+https://www.moesif.com/blog/technical/serverless/debug-lambda-functions-locally-with-the-sam-cli-and-vscode/
+https://code.visualstudio.com/
+
+AWS::Serverless::Function (Lambda)
+AWS::Serverless::Api
+AWS::Serverless::HttpApi
+AWS::Serverless::SimpleTable
+AWS::Serverless::LayerVersion
+AWS::Serverless::Application
+AWS::Serverless::StateMachine
+
+AWS Globals
+AWS SAM Template
+AWS SAM CLI
+
+sam local generate-event s3 put
+sam local start-api
+curl https://127.0.0.1:3000/hello
+
+aws lamnda invoke --function-name "HelooFunction" --end-point "https://127.0.0.1:3000" --no-verify-ssl out.txt
+sam local start-lambda
+sam local invoke HelooFunction -e events/event.json
+sam logs --stack-name sam-app --name HelooFunction --tail
+
+
+Running AWS SAM locally in debug mode
+
+# Invoke a function locally in debug mode on port 5858
+sam local invoke -d 5858 <function logical id>
+
+# Start local API Gateway in debug mode on port 5858
+sam local start-api -d 5858
+
+
+
+############################################################################
+#   Local AWS Lambda & Api Gateway with serverless python
+############################################################################
+
+https://www.youtube.com/watch?v=lo6T8CToR6c
+https://www.youtube.com/watch?v=TOjt6IHGnWw
+https://github.com/knittledan/awsoverflow/tree/slsLocalDev
+https://github.com/knittledan/awsoverflow/tree/slsSetup
+
+npm install serverless -g
+serverless
+serverless create --template aws-python3
+
+service: awsoverflow
+
+provider:
+  name: aws
+  runtime: python3.6
+  versionFunctions: false
+  memorySize: 128
+  region: us-west-2
+
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - http:
+          path: echo/hello
+          method: get
+
+
+
+
+sls config credentials --provider aws --key XXXXXX --secret XXXXXX
+sls deploy --stage dev
+
+
+npm -i
+npm install request --save
+
+sls plugin search -q simulate
+sls plugin search -q requirements
+
+sls plugin install -n serverless-plugin-simulate
+sls plugin install -n serverless-python-requirements
+sls simulate lambda -port 4000
+sls simulate apigateway -port 5000
+
+
+service: awsoverflow
+
+provider:
+  name: aws
+  runtime: python3.6
+  versionFunctions: false
+  memorySize: 128
+  region: us-west-2
+
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - http:
+          path: echo/hello
+          method: get
+
+plugins:
+  - serverless-plugin-simulate
+  - serverless-python-requirements
+
+
+############################################################################
+#   A Crash Course on Serverless Applications in Python
+############################################################################
+
+https://www.youtube.com/watch?v=6Qj0XLsQe-0
+
+pip install awscli
+aws configure
+aws lamnda create-function --function-name hello --handler app.handler --zip-file deploy.zip
+aws lamnda invoke --function-name hello
+aws lamnda invoke --function-name hello --payload '{"foo":"bar"}'
+
+
+zip -r app.zip app.py
+aws iam create-role ... with Action sts.AssumeRole and role-name YYYY
+
+aws lambda create-function --function-name hello
+	--role-name YYYY \
+	--runtime python3.7 \
+	-- handler app.handler \
+	--zip-file fileb://app.zip
+
+chalice deploy
+chalice invoke -n hello_world
+
+
+
+############################################################################
+#   Serverless Framework with AWS Lambda Crash Course
+############################################################################
+
+https://www.youtube.com/watch?v=woqLi6NEW58
+
+AWS
+AWS CLI
+IAM
+
+aws configure
+npm install -g serverless
+serverless
+
+
+############################################################################
+#   Setting up the YubiKey on Ubuntu (Desktop and Server)
+############################################################################
+
+https://www.youtube.com/watch?v=pfVhAtJt5_o
+https://www.youtube.com/watch?v=INi-xKpYjbE
+https://www.youtube.com/watch?v=_p6NemXF_BY
+
+apt install libpam-u2f
+mkdir -p ~/.config/Yubico
+pamu2fcfg > ~/.config/Yubico/u2f_keys
+
+sudo nano /etc/pam.d/sudo
+auth required pam_u2f.so
+
+sudo nano /etc/pam.d/gdm-password
+auth required pam_u2f.so
+
+sudo nano /etc/pam.d/login
+auth required pam_u2f.so
+
+# for remote server
+
+sudo add-apt-repository ppa:yubico/stable
+sudo apt update
+sudo apt install libpam-yubico
+
+sudo nano /etc/ssh/auth_yubikeys
+username:<12chars_from_key>
+
+sudo nano /etc/pam.d/sshd
+auth required pam_yubico.so id=<CLIENT ID> key=<SECRET> authfile=/etc/ssh/auth_yubikeys
+
+############################################################################
+#   misc
+############################################################################
+
+https://pypi.org/project/magnum/
+https://fastapi.tiangolo.com/
+https://flask.palletsprojects.com/en/2.2.x/
+https://www.yubico.com/
+
+wc -l data.csv
+diff  data.csv  data1.csv
+assume_role .sh Legacy_Role # redaction type ec2 instance
+
+
+
+
+
+
+
+
+
+
+
+
+
+
