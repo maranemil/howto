@@ -1,0 +1,1271 @@
+AWS Glue SAM Template
+--------------------------------
+https://gist.github.com/vdparikh/4c5d493fce53b9baf33edb39b17ff864
+https://docs.amazonaws.cn/en_us/AWSCloudFormation/latest/UserGuide/aws-resource-glue-job.html
+
+AWS::Glue::Database
+AWS::Glue::Table
+AWS::Athena::NamedQuery
+
+template.yaml
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+    Lab Data Analytics.
+Parameters:
+  StudentLabDataBucket:
+    Type: String
+Globals:
+  Function:
+    Runtime: python3.6 # language used at runtime
+    Timeout: 180 # timeout for a given lambda function execution
+    MemorySize: 512
+Resources:
+  DatabaseLabMonitor:
+    Type: AWS::Glue::Database
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseInput:
+        Name: !Sub lab_monitor_${AWS::StackName}
+        Description: Lab Monitor Database
+
+  TableEvents:
+    # Creating the table waits for the database to be created
+    DependsOn: DatabaseLabMonitor
+    Type: AWS::Glue::Table
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseName: !Ref DatabaseLabMonitor
+      TableInput:
+        Name: event_stream
+        Description: Event from students.
+        TableType: EXTERNAL_TABLE
+        Parameters: {
+          "classification": "json"
+        }
+        PartitionKeys:
+          - Name: year
+            Type: int
+          - Name: month
+            Type: int
+          - Name: day
+            Type: int
+          - Name: hour
+            Type: int
+          - Name: id
+            Type: string
+        StorageDescriptor:
+          OutputFormat: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+          Columns:
+            - Name: x
+              Type: int
+            - Name: y
+              Type: int
+            - Name: dx
+              Type: int
+            - Name: dy
+              Type: int
+            - Name: time
+              Type: timestamp
+            - Name: button
+              Type: string
+            - Name: pressed
+              Type: string
+            - Name: key
+              Type: string
+            - Name: name
+              Type: string
+            - Name: ip
+              Type: string
+            - Name: student
+              Type: string
+          InputFormat: org.apache.hadoop.mapred.TextInputFormat
+          Location:
+            Fn::Sub: 's3://${StudentLabDataBucket}/event_stream'
+          SerdeInfo:
+            Parameters:
+              paths: 'button,dx,dy,ip,key,name,pressed,student,time,x,y'
+            SerializationLibrary: org.openx.data.jsonserde.JsonSerDe
+
+  TableProcesses:
+    # Creating the table waits for the database to be created
+    DependsOn: DatabaseLabMonitor
+    Type: AWS::Glue::Table
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseName: !Ref DatabaseLabMonitor
+      TableInput:
+        Name: process_stream
+        Description: process from students.
+        TableType: EXTERNAL_TABLE
+        Parameters: {
+          "classification": "json"
+        }
+        PartitionKeys:
+          - Name: year
+            Type: int
+          - Name: month
+            Type: int
+          - Name: day
+            Type: int
+          - Name: hour
+            Type: int
+          - Name: id
+            Type: string
+        StorageDescriptor:
+          OutputFormat: org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+          Columns:
+          - Name: name
+            Type: string
+          - Name: pid
+            Type: string
+          - Name: time
+            Type: string
+          - Name: is_killed
+            Type: boolean
+          - Name: ip
+            Type: string
+          - Name: student
+            Type: string
+          InputFormat: org.apache.hadoop.mapred.TextInputFormat
+          Location:
+            Fn::Sub: 's3://${StudentLabDataBucket}/process_stream'
+          SerdeInfo:
+            Parameters:
+              paths: 'ip,is_killed,name,pid,student,time'
+            SerializationLibrary: org.openx.data.jsonserde.JsonSerDe
+
+  AthenaNamedQueryStudentKeyboardStream:
+    DependsOn: TableEvents
+    Type: AWS::Athena::NamedQuery
+    Properties:
+      Database: !Ref DatabaseLabMonitor
+      Description: !Sub ${AWS::StackName} Student Keyboard Stream
+      Name: !Sub ${AWS::StackName} Student Keyboard Stream
+      QueryString: !Sub >
+                    SELECT distinct(id), array_agg(key)
+                    FROM "studentevents${AWS::StackName}"."event_stream"
+                    WHERE name='KeyPressEvent'
+                    GROUP BY id;
+
+
+
+
+https://stackoverflow.com/questions/65558696/tags-not-getting-added-updated-after-adding-in-aws-glue-job-and-crawler-in-sam-t
+
+
+MainGlueJob:
+    Type: AWS::Glue::Job
+    Properties:
+      Name: !Ref GlueJobName
+      Role: !Ref GlueResourcesServiceRoleName
+      Description: Job created with CloudFormation.
+      GlueVersion: 2.0
+      Command:
+        Name: glueetl
+        PythonVersion: 3
+        ScriptLocation: !Ref JobScriptLocation
+      AllocatedCapacity: 3
+      ExecutionProperty:
+        MaxConcurrentRuns: 1
+      DefaultArguments:
+        --job-bookmark-option: job-bookmark-enable
+        --enable-continuous-cloudwatch-log: true
+        --enable-metrics: true
+        --enable-s3-parquet-optimized-committer: true
+        --TempDir: 's3://aws-glue-temporary-123-ap-south-1/dir'
+      Tags: {
+        "tag:Key1": "Value1",
+        "tag:Key2": "Value2"
+      }
+
+  MainCrawler:
+    Type: AWS::Glue::Crawler
+    Properties:
+      Name: Main
+      Role: !Ref GlueResourcesServiceRoleName
+      Description: AWS Glue crawler
+      DatabaseName: !Ref DatabaseName
+      Targets:
+        S3Targets:
+          - Path: !Ref S3Path
+      SchemaChangePolicy:
+        UpdateBehavior: "UPDATE_IN_DATABASE"
+        DeleteBehavior: "LOG"
+      Configuration: '{"Version":1.0,"CrawlerOutput":{"Partitions":{"AddOrUpdateBehavior":"InheritFromTable"},"Tables":{"AddOrUpdateBehavior":"MergeNewColumns"}}}'
+      Tags: {
+    tagKeyName1: !Ref tagValue1
+    tagKeyName2: !Ref tagValue2
+    tagKeyName3: !Ref tagValue3
+  }
+
+
+
+AWS CloudFormation for AWS Glue
+--------------------------------
+https://docs.aws.amazon.com/glue/latest/dg/populate-with-cloudformation-templates.html
+
+
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "cloudformation:*"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+
+
+
+AWSTemplateFormatVersion: '2010-09-09'
+# Sample CloudFormation template in YAML to demonstrate creating a database named mysampledatabase
+# The metadata created in the Data Catalog points to the flights public S3 bucket
+#
+# Parameters section contains names that are substituted in the Resources section
+# These parameters are the names the resources created in the Data Catalog
+Parameters:
+  CFNDatabaseName:
+    Type: String
+    Default: cfn-mysampledatabse
+
+# Resources section defines metadata for the Data Catalog
+Resources:
+# Create an AWS Glue database
+  CFNDatabaseFlights:
+    Type: AWS::Glue::Database
+    Properties:
+      # The database is created in the Data Catalog for your account
+      CatalogId: !Ref AWS::AccountId
+      DatabaseInput:
+        # The name of the database is defined in the Parameters section above
+        Name: !Ref CFNDatabaseName
+        Description: Database to hold tables for flights data
+        LocationUri: s3://crawler-public-us-east-1/flight/2016/csv/
+        #Parameters: Leave AWS database parameters blank
+
+
+https://docs.aws.amazon.com/glue/latest/dg/populate-with-cloudformation-templates.html#sample-cfn-template-trigger-scheduled
+
+
+AWSTemplateFormatVersion: '2010-09-09'
+# Sample CFN YAML to demonstrate creating a scheduled trigger
+#
+# Parameters section contains names that are substituted in the Resources section
+# These parameters are the names the resources created in the Data Catalog
+Parameters:
+  # The existing job to be started by this trigger
+  CFNJobName:
+    Type: String
+    Default: cfn-job-S3-to-S3-1
+  # The name of the trigger to be created
+  CFNTriggerName:
+    Type: String
+    Default: cfn-trigger-scheduled-flights-1
+#
+# Resources section defines metadata for the Data Catalog
+# Sample CFN YAML to demonstrate creating a scheduled trigger for a job
+#
+Resources:
+# Create trigger to run an existing job (CFNJobName) on a cron schedule.
+  TriggerSample1CFN:
+    Type: AWS::Glue::Trigger
+    Properties:
+      Name:
+        Ref: CFNTriggerName
+      Description: Trigger created with CloudFormation
+      Type: SCHEDULED
+      Actions:
+        - JobName: !Ref CFNJobName
+        # Arguments: JSON object
+      # # Run the trigger every 10 minutes on Monday to Friday
+      Schedule: cron(0/10 * ? * MON-FRI *)
+      #Predicate:
+
+
+
+
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-guide.html
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/CHAP_TemplateQuickRef.html
+
+
+Amazon S3 template snippets
+--------------------------------
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/quickref-s3.html
+
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      AccessControl: PublicRead
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+    DeletionPolicy: Retain
+  BucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      PolicyDocument:
+        Id: MyPolicy
+        Version: 2012-10-17
+        Statement:
+          - Sid: PublicReadForGetBucketObjects
+            Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref S3Bucket
+                - /*
+      Bucket: !Ref S3Bucket
+Outputs:
+  WebsiteURL:
+    Value: !GetAtt
+      - S3Bucket
+      - WebsiteURL
+    Description: URL for website hosted on S3
+  S3BucketSecureURL:
+    Value: !Join
+      - ''
+      - - 'https://'
+        - !GetAtt
+          - S3Bucket
+          - DomainName
+    Description: Name of S3 bucket to hold website content
+
+
+
+AWS Lambda template
+--------------------------------
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/quickref-lambda.html
+
+
+
+General template snippets
+--------------------------------
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/quickref-general.html
+
+
+AWS::Glue::Job #####
+--------------------------------
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-glue-job.html
+
+
+Description: "AWS Glue Job Test"
+Resources:
+  MyJobRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "glue.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        -
+          PolicyName: "root"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: "Allow"
+                Action: "*"
+                Resource: "*"
+
+  MyJob:
+    Type: AWS::Glue::Job
+    Properties:
+      Command:
+        Name: glueetl
+        ScriptLocation: "s3://aws-glue-scripts//prod-job1"
+      DefaultArguments:
+        "--job-bookmark-option": "job-bookmark-enable"
+      ExecutionProperty:
+        MaxConcurrentRuns: 2
+      MaxRetries: 0
+      Name: cf-job1
+      Role: !Ref MyJobRole
+
+
+
+
+AWS::Glue::Database ###
+--------------------------------
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-glue-database.html
+
+Type: AWS::Glue::Database
+Properties:
+  CatalogId: String
+  DatabaseInput:
+    DatabaseInput
+
+
+
+
+How to install and use the S3Objects macro in your AWS account
+--------------------------------
+https://github.com/awslabs/aws-cloudformation-templates/tree/master/aws/services/CloudFormation/MacrosExamples/S3Objects
+
+
+Creating a new S3 object
+
+
+NewObject:
+  Type: AWS::S3::Object
+  Properties:
+    Target:
+      Bucket: !Ref TargetBucket
+      Key: README.md
+    Body: |
+      # My text file
+
+      This is my text file;
+      there are many like it,
+      but this one is mine.
+
+Copying an S3 object from another bucket
+
+CopiedObject:
+  Type: AWS::S3::Object
+  Properties:
+    Source:
+      Bucket: !Ref SourceBucket
+      Key: index.html
+    Target:
+      Bucket: !Ref TargetBucket
+      Key: index.html
+      ACL: public-read
+
+
+
+CREATE THE CLOUDFORMATION STACK
+--------------------------------
+https://www.wellarchitectedlabs.com/cost/300_labs/300_automated_cur_updates_and_ingestion/1_cf_stack/
+
++
++
++
++
++
++
+
+
+aws-etl-orchestrator
+--------------------------------
+https://github.com/aws-samples/aws-etl-orchestrator/blob/master/cloudformation/glue-resources.yaml
+https://github.com/aws-samples/aws-etl-orchestrator/tree/master/cloudformation
+https://github.com/aws-samples/aws-etl-orchestrator
+https://github.com/rags/pynt
+https://github.com/aws-samples/aws-etl-orchestrator/tree/master/glue-scripts
+https://github.com/aws-samples/aws-etl-orchestrator/tree/master/lambda
+
+
+AWS::Glue::Crawler
+AWS::Glue::Database
+AWS::Glue::Job
+AWS::Glue::Table
+AWS::Glue::Trigger
+AWS::Glue::Workflow
+AWS::DynamoDB::Table
+AWS::ApiGatewayV2::Api
+AWS::ApiGatewayV2::Route
+AWS::ApiGateway::RestApi
+AWS::EC2::Instance
+AWS::ECS::Service
+AWS::EFS::FileSystem
+AWS::EKS::Cluster
+AWS::EMR::Studio
+AWS::IAM::Policy
+AWS::IAM::Role
+AWS::IAM::User
+AWS::ImageBuilder::Image
+AWS::KMS::Key
+AWS::Lambda::Function
+AWS::Lambda::LayerVersion
+AWS::Lambda::EventSourceMapping
+AWS::Lambda::EventInvokeConfig
+AWS::Route53::RecordSet
+AWS::S3::AccessPoint
+AWS::S3::Bucket
+AWS::S3::BucketPolicy
+AWS::S3::StorageLens
+AWS::S3ObjectLambda::AccessPoint
+AWS::SNS::Topic
+AWS::SES::Template
+AWS::SQS::Queue
+AWS::SQS::QueuePolicy
+AWS::ServiceCatalog::CloudFormationProduct
+AWS::ServiceDiscovery::Service
+AWS::StepFunctions::Activity
+AWS::StepFunctions::StateMachine
+--------------------------------
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/aws-resource-glue-crawler.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/tree/main/doc_source
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_CodeDeploy.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_ApiGateway.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_ApiGatewayV2.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_Athena.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_Budgets.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_CertificateManager.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_CloudFormation.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_CodeBuild.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_DynamoDB.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_EC2.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_ECS.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_ECR.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_EFS.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_EKS.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_EMR.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_ElastiCache.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_Glue.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_IAM.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_IVS.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_ImageBuilder.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_KMS.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_Lambda.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_Route53.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_S3.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_S3ObjectLambda.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_SNS.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_SES.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_SQS.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_ServiceCatalog.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_ServiceDiscovery.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/AWS_StepFunctions.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/GettingStarted.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/GettingStarted.Walkthrough.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/template-formats.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/gettingstarted.templatebasics.md
+
+
++
++
++
++
++
++
+
+
+SAM
+https://github.com/aws/aws-sam-cli
+https://aws.amazon.com/de/getting-started/tools-sdks/#IDE_and_IDE_Toolkits
+https://aws.amazon.com/de/intellij/?pg=developertools
+https://aws.amazon.com/de/pycharm/
+https://aws.amazon.com/de/visualstudiocode/
+
+https://serverlessland.com/learn
+https://serverlessland.com/learn/serverless-101#
+https://serverlessland.com/learn/lambda-extensions
+https://serverlessland.com/learn/Getting-started
+https://serverlessland.com/learn/Serverless-LAMP-stack
+https://serverlessland.com/learn/eventbridge
+https://serverlessland.com/learn/aws-step-functions
+
+https://aws.amazon.com/de/blogs/compute/building-a-serverless-url-shortener-app-without-lambda-part-1/
+https://aws.amazon.com/de/blogs/opensource/simplifying-serverless-best-practices-with-lambda-powertools/
+https://awslabs.github.io/aws-lambda-powertools-python/2.2.0/
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-example-s3.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-example-ddb.html
+https://serverlessland.com/patterns
+https://serverlessland.com/blog/orchestrating-aws-glue-crawlers-using-aws-step-functions--aws-compute-blog
+https://aws.amazon.com/de/blogs/compute/orchestrating-aws-glue-crawlers-using-aws-step-functions/
+
+[serverless-101]
+https://serverlessland.com/learn/serverless-101
+https://www.youtube.com/watch?v=yfJZc3sJZ8E
+https://www.youtube.com/watch?v=TOn0xhev0Uk
+https://www.youtube.com/watch?v=-AXSz3jlGiY
+https://www.youtube.com/watch?v=ljDXHXiTmso
+https://www.youtube.com/watch?v=5K6qpMOVS0E
+https://www.youtube.com/watch?v=VysqHqjlWIo
+https://www.youtube.com/watch?v=RxGaMI_19nA
+https://www.youtube.com/watch?v=_iz9ZirLVlw
+https://www.youtube.com/watch?v=ZunERVO7ECk
+https://www.youtube.com/watch?v=GEABePyhFPA
+https://www.youtube.com/watch?v=7JOzMcUVROs
+
+[lambda-extensions]
+https://serverlessland.com/learn/lambda-extensions
+https://github.com/aws-samples/
+https://github.com/aws-samples/aws-lambda-powertools-examples
+https://github.com/aws-samples/aws-lambda-extensions
+https://github.com/aws-samples/aws-lambda-extensions/tree/main/python-example-extension
+https://github.com/aws-samples/aws-lambda-extensions/tree/main/python-example-wrapper
+https://github.com/aws-samples/aws-lambda-extensions/tree/main/custom-runtime-extension-demo
+https://aws.amazon.com/de/blogs/compute/working-with-lambda-layers-and-extensions-in-container-images/
+https://www.youtube.com/watch?v=sAgUcJOwElU
+https://www.youtube.com/watch?v=ozWyaos1uhk
+https://www.youtube.com/watch?v=DViguuHAQf0
+https://www.youtube.com/watch?v=lenRJt3JOsk
+https://www.youtube.com/watch?v=z32Rp0gRPd0
+https://www.youtube.com/watch?v=17R0vN8bt-0
+
+
+extension api BODY events types - INVOKE/SHUTDOWN
+runtime api
+logs api
+
+
+aws lambda create-function \
+ --function-name "custom-runtime-extension-demo-function" \
+ --runtime "provided.al2" \
+ --region <use your Region> \
+ --role <use the Lambda IAM role arn created previously> \
+ --layers <use the runtime and extensions layers previously created in the format "arn:aws:lambda:<Region>:1234567890123:layer:custom-runtime-layer:1" "arn:aws:lambda:<Region>:123456789012:layer:extensions-layer:1"> \
+ --timeout 120 \
+ --handler "function.handler" \
+ --zip-file "fileb://function.zip"
+
+ aws lambda invoke \
+ --function-name "custom-runtime-extension-demo-function" \
+ --payload '{"payload": "hello"}' /tmp/invoke-result \
+ --cli-binary-format raw-in-base64-out \
+ --log-type Tail \
+ --region <use your Region>
+
+
+layers
+---------
+[Bash]
+ aws lambda create-function --region us-east-1 --function-name my-function \
+    --role arn:aws:iam::123456789012:role/lambda-role \
+    --layers \
+        "arn:aws:lambda:us-east-1:123456789012:layer:shared-lib-layer:1" \
+        "arn:aws:lambda:us-east-1:987654321987:extensions-layer:1" \
+        ........
+
+[Dockerfile]
+FROM public.ecr.aws/myrepo/shared-lib-layer:1 AS shared-lib-layer
+# Layer code
+WORKDIR /opt
+COPY --from=shared-lib-layer /opt/ .
+FROM aws-partner/extensions-layer:1 as extensions-layer
+# Extension  code
+WORKDIR /opt/extensions
+COPY --from=extensions-layer /opt/extensions/ .
+
+[Dockerfile]
+FROM alpine:latest as layer-copy # Create a build stage to copy the files from S3 using credentials
+ARG AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-"us-east-1"}
+ARG AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-""}
+ARG AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-""}
+ENV AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+ENV AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+ENV AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+RUN apk add aws-cli curl unzip
+RUN mkdir -p /opt
+RUN curl $(aws lambda get-layer-version-by-arn --arn arn:aws:lambda:us-east-1:1234567890123:layer:shared-lib-layer:1 --query 'Content.Location' --output text) --output layer.zip
+RUN unzip layer.zip -d /opt
+RUN rm layer.zip
+RUN curl $(aws lambda get-layer-version-by-arn --arn arn:aws:lambda:us-east-1:987654321987:extensions-layer:1 --query 'Content.Location' --output text) --output layer.zip
+RUN unzip layer.zip -d /opt
+RUN rm layer.zip
+FROM scratch # Start second stage from blank image to squash all previous history, including credentials.
+WORKDIR /opt
+COPY --from=layer-copy /opt .
+
+[Bash]
+docker build . -t layer-image1:latest \
+--build-arg AWS_DEFAULT_REGION=us-east-1 \
+--build-arg AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE \
+--build-arg AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+
+
+
+Build a container image from a Lambda layer
+------------------
+[Docker]
+FROM python:3.8-alpine AS installer
+#Layer Code
+COPY extensionssrc /opt/
+COPY extensionssrc/requirements.txt /opt/
+RUN pip install -r /opt/requirements.txt -t /opt/extensions/lib
+FROM scratch AS base
+WORKDIR /opt/extensions
+COPY --from=installer /opt/extensions .
+
+[Bash]
+docker build -t log-extension-image:latest  .
+docker tag log-extension-image:latest 123456789012.dkr.ecr.us-east-1.amazonaws.com/log-extension-image:latest
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 123456789012.dkr.ecr.us-east-1.amazonaws.com
+docker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/log-extension-image:latest
+
+[Docker]
+FROM 123456789012.dkr.ecr.us-east-1.amazonaws.com/log-extension-image:latest AS layer
+FROM public.ecr.aws/lambda/python:3.8
+# Layer code
+WORKDIR /opt
+COPY --from=layer /opt/ .
+# Function code
+WORKDIR /var/task
+COPY app.py .
+CMD ["app.lambda_handler"]
+
+[Bash]
+docker build -t log-extension-function:latest  .
+docker tag log-extension-function:latest 123456789012.dkr.ecr.us-east-1.amazonaws.com/log-extension-function:latest
+docker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/log-extension-function:latest
+
+[Bash]
+aws lambda create-function --region us-east-1  --function-name log-extension-function \
+--package-type Image --code ImageUri=123456789012.dkr.ecr.us-east-1.amazonaws.com/log-extension-function:latest \
+--role "arn:aws:iam:: 123456789012:role/lambda-role" \
+--environment  "Variables": {"S3_BUCKET_NAME": "s3-logs-extension-demo-logextensionsbucket-us-east-1"}
+
+[Bash]
+aws lambda update-function-code --function-name log-extension-function --image-uri 123456789012.dkr.ecr.us-east-1.amazonaws.com/log-extension-function:latest
+
++
++
++
++
++
++
+
+[Getting started with serverless]
+https://serverlessland.com/learn/Getting-started
+https://aws.amazon.com/de/blogs/compute/getting-started-with-serverless-for-developers-part-2-the-business-logic/
+https://aws.amazon.com/de/blogs/compute/getting-started-with-serverless-for-developers-part-3-the-front-door/
+https://aws.amazon.com/de/blogs/compute/getting-started-with-serverless-for-developers-part-4-local-developer-workflow/
+https://aws.amazon.com/de/blogs/compute/getting-started-with-serverless-for-developers-part-5-sandbox-developer-account/
+https://github.com/aws-samples/getting-started-with-serverless
+https://www.youtube.com/watch?v=9uKsdseowqE
+
+[YAML]
+# PushWebhookHandler:
+#   Type: AWS::Serverless::Function
+#   Description: A github webhook handler when a new push is made
+#   Properties:
+#     CodeUri: src_push/
+#     Handler: app.handler
+#     Runtime: nodejs12.x
+#     Timeout: 3
+#     Environment:
+#       Variables:
+#         slackEndpoint: !Ref slackUrl
+#     Events:
+#       HttpApiEvent:
+#         Type: HttpApi
+#         Properties:
+#           Path: /push
+#           Method: POST
+
+
+sam logs -n StarWebhookLambdaFunctionName --tail
+
+aws lambda invoke --function-name StarWebhookLambdaFunctionName \
+--payload fileb://events/testEvent.json  \
+out.txt
+
++
++
++
++
++
++
+
+[Build scalable PHP applications with the Serverless LAMP stack]
+https://serverlessland.com/learn/Serverless-LAMP-stack
+https://github.com/aws-samples/php-examples-for-aws-lambda/tree/master/0.2-Relational-Database-RDS-Proxy-Example
+https://github.com/aws-samples/php-examples-for-aws-lambda/tree/master/0.4-Building-A-Serverless-Laravel-App-With-AWS-SAM
+https://github.com/aws-samples/php-examples-for-aws-lambda/tree/master/0.6-MVC-to-microservice
+https://www.youtube.com/watch?v=L00xYXF5iMM
+
++
++
++
++
++
++
+
+
+[Use Amazon EventBridge to Build Decoupled, Event-Driven Architectures]
+https://serverlessland.com/learn/eventbridge
+https://www.youtube.com/watch?v=TXh5oU_yo9M
+
++
++
++
++
++
++
+
+[Orchestrate APIs, complex workflows and processes]
+https://serverlessland.com/learn/aws-step-functions
+https://www.youtube.com/watch?v=1RJtCKpdELQ
+
+
+#######################################################
+Tools SAM Templates / SAM CLI
+#######################################################
+--------------------------------
+# https://pypi.org/project/aws-sam-cli/
+pip3 install --user aws-sam-cli
+sam --version
+
+# https://www.serverless.com/framework/docs/getting-started
+npm install serverless -g
+serverless create --template
+serverless create
+
+pip install "aws-lambda-powertools"
+aws appconfig extension
+
+# https://aws.amazon.com/de/cli/
+pip3 install awscli
+pip3 install awscli --upgrade --user
+pip3 uninstall awscli
+aws --version
+aws help
+aws autoscaling help
+aws ec2 describe-instances
+aws ec2 start-instances --instance-ids i-1348636c
+aws sns publish --topic-arn arn:aws:sns:us-east-1:546419318123:OperationsError --message "Script Failure"
+aws sqs receive-message --queue-url https://queue.amazonaws.com/546419318123/Test
+
+
+https://awslabs.github.io/aws-lambda-powertools-python/2.2.0/tutorial/#code-example
+sam init --runtime python3.9 --dependency-manager pip --app-template hello-world --name powertools-quickstart
+sam build && sam local start-api
+curl http://127.0.0.1:3000/hello
+sam build && sam deploy --guided
+curl https://1234567890.execute-api.eu-central-1.amazonaws.com/Prod/hello
+
+
+
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-getting-started-hello-world.html
+
+
+sam init # Hello World Example
+sam build
+# sam deploy --guided
+sam local start-api
+curl http://127.0.0.1:3000/hello
+sam local invoke "HelloWorldFunction" -e events/event.json
+sam local generate-event apigateway aws-proxy --body "" --path "hello" --method GET > api-event.json
+diff api-event.json events/event.json
+# aws cloudformation delete-stack --stack-name sam-app --region region
+
+
+
+Process Amazon S3 events
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-example-s3.html
+https://github.com/aws-samples/cookiecutter-aws-sam-s3-rekognition-dynamodb-python
+https://github.com/amazon-archives/serverless-app-examples
+
+sam init \
+--location https://github.com/aws-samples/cookiecutter-aws-sam-s3-rekognition-dynamodb-python \
+--no-input
+
+aws s3 mb s3://bucketname
+
+# Test the application locally
+sam local invoke --event SampleEvent.json
+
+
+sam package \
+    --template-file template.yaml \
+    --output-template-file packaged.yaml \
+    --s3-bucket bucketname
+
+sam deploy \
+    --template-file packaged.yaml \
+    --stack-name aws-sam-ocr \
+    --capabilities CAPABILITY_IAM \
+    --region us-east-1
+
+
+AWS Serverless Application Repository Examples
+https://github.com/amazon-archives/serverless-app-examples/tree/master/python
+https://github.com/amazon-archives/serverless-app-examples/tree/master/python/hello-world-python3
+https://github.com/amazon-archives/serverless-app-examples/blob/master/python/hello-world-python3/template.yaml
+https://github.com/amazon-archives/serverless-app-examples/tree/master/python/lambda-canary-python3
+https://github.com/amazon-archives/serverless-app-examples/tree/master/python/s3-get-object-python3
+https://github.com/amazon-archives/serverless-app-examples/tree/master/python/ses-notification-python
+https://github.com/amazon-archives/serverless-app-examples/tree/master/python/sns-message-python
+https://github.com/amazon-archives/serverless-app-examples/tree/master/python/step-functions-send-to-sns
+
+https://github.com/aws/aws-sam-cli-app-templates
+https://github.com/aws/aws-sam-cli-app-templates/tree/master/python3.9
+https://github.com/aws/aws-sam-cli-app-templates/tree/master/python3.9/cookiecutter-aws-sam-efs-python
+https://github.com/aws/aws-lambda-builders
+
+
+
+
+AWS SAM CLI command reference
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-command-reference.html
+
+sam build
+sam delete
+sam deploy
+sam init
+sam local generate-event
+sam local invoke
+sam local start-api
+sam local start-lambda
+sam logs
+sam package
+sam pipeline bootstrap
+sam pipeline init
+sam publish
+sam sync
+sam traces
+sam validate
+
+
+sam local generate-event s3 [put/delete] --help
+sam local generate-event s3 [put/delete] --bucket <bucket> --key <key>
+sam local invoke MyFunction --invoke-image amazon/aws-sam-cli-emulation-image-python3.8
+sam local start-api
+sam local start-api --invoke-image public.ecr.aws/sam/emu-python3.8 --invoke-image Function1=amazon/aws-sam-cli-emulation-image-python3.8
+sam local start-lambda
+aws lambda invoke --function-name "HelloWorldFunction" --endpoint-url "http://127.0.0.1:3001" --no-verify-ssl out.txt
+
+
+local development
+-----------------------
+sam build -c -p
+sam local invoke
+sam local start-api
+sam local start-lambda
+sam local generate-event
+sam logs
+sam local invoke --no-event
+
+
+
+
+# USING AWS SDK
+# -------------
+# You can also use the AWS SDK in your automated tests to invoke your functions programatically.
+# Here is a Python example:
+#
+#     self.lambda_client = boto3.client('lambda',
+#                                  endpoint_url="http://127.0.0.1:3001",
+#                                  use_ssl=False,
+#                                  verify=False,
+#                                  config=Config(signature_version=UNSIGNED,
+#                                                read_timeout=0,
+#                                                retries={'max_attempts': 0}))
+#    self.lambda_client.invoke(FunctionName="HelloWorldFunction")
+
+sam logs -n HelloWorldFunction --stack-name mystack
+
++
++
++
++
+
+#########################################################
+Serverless Patterns Collection
+#########################################################
+https://serverlessland.com/patterns
+
+AWS Glue Job trigger a Lambda Function over Eventbridge Rule after change state to timed out
+https://serverlessland.com/patterns/glue-eventbridge-lambda-cdk
+
+git clone https://github.com/aws-samples/serverless-patterns/
+cd serverless-patterns/glue-eventbridge-lambda-cdk
+cdk deploy
+cdk destroy
+
+
+https://serverlessland.com/patterns/apigw-canary-deployment-cdk
+https://serverlessland.com/patterns/apigateway-http-eventbridge-terraform
+https://serverlessland.com/patterns/apigw-http-api-lambda-efs-cdk
+https://serverlessland.com/patterns/apigw-http-lambda-cdk
+https://serverlessland.com/patterns/apigw-http-lambda-terraform
+https://serverlessland.com/patterns/apigw-http-sqs-lambda-cdk
+https://serverlessland.com/patterns/apigw-lambda-dynamodb-terraform
+https://serverlessland.com/patterns/apigw-lambda-dynamodb
+https://serverlessland.com/patterns/apigw-mappingtemplate-lambda
+https://serverlessland.com/patterns/apigw-lambda-efs-sam
+https://serverlessland.com/patterns/codecommit-s3
+https://serverlessland.com/patterns/eventbridge-scheduled-lambda-terraform
+https://serverlessland.com/patterns/eventbridge-scheduled-lambda
+https://serverlessland.com/patterns/iot-s3-lambda-cdk
+https://serverlessland.com/patterns/iot-sqs-lambda-cdk
+
+
+
+
+
+
+
+
+
+https://docs.aws.amazon.com/cli/latest/reference/glue/index.html
+https://docs.aws.amazon.com/cli/latest/reference/glue/create-trigger.html
+https://docs.amazonaws.cn/en_us/AWSCloudFormation/latest/UserGuide/aws-resource-glue-job.html
+https://aws.amazon.com/de/blogs/compute/orchestrating-aws-glue-crawlers-using-aws-step-functions/
+https://aws.amazon.com/de/blogs/opensource/simplifying-serverless-best-practices-with-lambda-powertools/
+
+############################################
+Events that Trigger AWS Lambda
+############################################
+https://www.guru99.com/aws-lambda-function.html
+https://docs.aws.amazon.com/toolkit-for-eclipse/v1/user-guide/lambda-tutorial.html
+https://docs.aws.amazon.com/lambda/latest/dg/lambda-foundation.html
+https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-concepts.html#gettingstarted-concepts-trigger
+https://docs.aws.amazon.com/cloud9/latest/user-guide/lambda-toolkit.html
+https://docs.aws.amazon.com/lambda/latest/dg/lambda-invocation.html
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html
+
+Here, are Events which will be triggered when you use AWS Lambda.
+
+Insert, updating and deleting data Dynamo DB table
+To include push notifications in SNS
+To search for log history in CloudTrail
+Entry into an S3 object
+DynamoDB can trigger AWS Lambda whenever there is data added, modified, and deleted in the table.
+Helps you to schedule the event to carry out the task at regular time pattern.
+Modifications to objects in S3 buckets
+Notifications sent from Amazon SNS.
+AWS Lambda can be used to process the CloudTrail logs
+API Gateway allows you to trigger AWS Lambda on GET/POST methods.
+
+
+YAML
+
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Lambda function with cfn-response.
+Resources:
+  primer:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: nodejs12.x
+      Role: arn:aws:iam::123456789012:role/lambda-role
+      Handler: index.handler
+      Code:
+        ZipFile: |
+          var aws = require('aws-sdk')
+          ...
+          }
+      Description: Invoke a function during stack creation.
+      TracingConfig:
+        Mode: Active
+
+
+
+YAML
+
+AWSTemplateFormatVersion: '2010-09-09'
+Description: VPC function.
+Resources:
+  Function:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.handler
+      Role: arn:aws:iam::123456789012:role/lambda-role
+      Code:
+        S3Bucket: my-bucket
+        S3Key: function.zip
+      Runtime: nodejs12.x
+      Timeout: 5
+      TracingConfig:
+        Mode: Active
+      VpcConfig:
+        SecurityGroupIds:
+          - sg-085912345678492fb
+        SubnetIds:
+          - subnet-071f712345678e7c8
+          - subnet-07fd123456788a036
+
++
++
++
++
++
++
+
+
+##########################################
+AWS CDK
+##########################################
+
+https://docs.aws.amazon.com/cdk/v2/guide/home.html
+https://docs.aws.amazon.com/cdk/v2/guide/cli.html
+https://docs.aws.amazon.com/cdk/v2/guide/serverless_example.html
+https://aws.amazon.com/de/cdk/
+https://github.com/aws/aws-cdk
+https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#hello_world_tutorial
+https://docs.aws.amazon.com/cdk/v2/guide/cli.html
+https://docs.aws.amazon.com/cdk/v2/guide/vscode.html
+https://docs.aws.amazon.com/cdk/v2/guide/sam.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html
+
+mkdir MyWidgetService
+cd MyWidgetService
+cdk init --language python
+source .venv/bin/activate
+pip install -r requirements.txt
+
+app.py – Main entry point for the application
+my_widget_service/my_widget_service_stack.py – Defines the widget service stack
+
+cdk synth # output beginning with YAML code
+
+
+Toolkit commands
+
+cdk list (ls)		Lists the stacks in the app
+cdk deploy		Deploys one or more specified stacks
+cdk destroy		Destroys one or more specified stacks
+cdk init		Creates a new CDK project in the current directory from a specified template
+
+
+
+python -m pip install aws-cdk-lib
+import aws_cdk as cdk
+
+npm i -g aws-cdk
+npm install -g aws-cdk
+
+npm install aws-cdk-lib
+const cdk = require('aws-cdk-lib');
+
++
++
++
++
++
++
+
+
+https://github.com/amazon-archives/serverless-app-examples/tree/master/python/hello-world-python3
+https://github.com/amazon-archives/serverless-app-examples/tree/master/python/s3-get-object-python
+https://github.com/amazon-archives/serverless-app-examples/tree/master/python/s3-get-object-python3
+https://github.com/amazon-archives/serverless-app-examples/tree/master/python/sns-message-python
+https://github.com/amazon-archives/serverless-app-examples/tree/master/python/step-functions-send-to-sns
+
+https://github.com/awsdocs/aws-cloudformation-user-guide/tree/main/doc_source
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/GettingStarted.Walkthrough.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/template-formats.md
+https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/gettingstarted.templatebasics.md
+
+https://aws.amazon.com/de/blogs/compute/building-a-serverless-url-shortener-app-without-lambda-part-1/
+https://github.com/aws-samples/getting-started-with-serverless
+
++
++
++
++
++
++
+
+
+https://aws.amazon.com/de/products/
+https://aws.amazon.com/de/prescriptive-guidance/
+https://aws.amazon.com/de/about-aws/global-infrastructure/regions_az/
+https://aws.amazon.com/containers/?nc1=h_ls
+https://aws.amazon.com/serverless/?nc1=h_ls
+https://aws.amazon.com/products/compute/?nc1=h_ls
+https://aws.amazon.com/products/end-user-computing/?nc1=h_ls
+
+
+
+https://aws.amazon.com/codebuild/?nc1=h_ls
+https://docs.aws.amazon.com/managedservices/latest/userguide/code-build.html
+https://aws.amazon.com/codepipeline/?nc1=h_ls
+https://docs.aws.amazon.com/codebuild/latest/userguide/how-to-create-pipeline.html
+https://aws.amazon.com/cloudformation/?nc1=h_ls
+
++
++
++
++
++
++
+
+Simple test Lambda Docker node.js by Eric Johnson
+----------------------------------------------------
+https://www.youtube.com/watch?v=EwsB845pCV8
+https://docs.aws.amazon.com/lambda/latest/dg/images-test.html
+https://docs.aws.amazon.com/lambda/latest/dg/images-test.html
+https://docs.aws.amazon.com/lambda/latest/dg/images-create.html
+https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/deploy-lambda-functions-with-container-images.html
+
+sam-app-hello-test
+ app.js
+ Dockerfile
+ package.json
+ template.yaml
+
+FROM public.ecr.aws/lambda/nodejs:12
+COPY app.js package.json ./
+RUN npm install
+CMD ["app.handler"]
+
+docker build -t hello-test
+docker run -p 9000:8080 hello-test:latest
+
+curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{}'
+
+# deploy on aws
+asp developer-demo
+aws ecr create-repositoy --repository-name sam-app-hello-test --image-tag-mutability IMMUTABLE --image-scanning-configuration sanOnPush=true
+
+same with sam cli:
+----------------------------
+sam init
+
+1 AWS Quick Start Templates > Image
+2 Image > node 1.2
+
+sam build
+sam local invoke
+sam local start-api
+sam curl https://127.0.0.1:3000/hello
+
+# change code
+
+sam build
+sam curl https://127.0.0.1:3000/hello
+
+sam local generate-event apigateway aws-proxy
+sam local generate-event lex book
+sam local generate-event sqs
+sam local generate-event sqs receive-message > event.json
+sam local invoke -e event.json
+
+# samconfig.toml [
+define:
+	stack name
+	s3_bucket
+	s3_prefix
+	region
+	capabilities
+	image_repositories (just in case of reusing same lambda)
+]
+
+# deploy on aws
+sam deploy -g
+ecr-repositories rm-stack hello-repos # in case that exists and should be overwritten
+
++
++
++
++
++
++
+
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-specification-generated-resources-function.html
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-aws-serverless.html
+https://www.serverless.com/aws-lambda
+https://github.com/micronaut-guides/mn-serverless-function-aws-lambda-graalvm
+https://github.com/serverless/serverless
+https://github.com/aws/serverless-application-model
+https://www.serverless.com/framework/docs/providers/aws/guide/functions/
