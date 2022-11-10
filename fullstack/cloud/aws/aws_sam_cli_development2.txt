@@ -1,0 +1,801 @@
+AWS::S3::Bucket
+
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/quickref-s3.html
+https://docs.aws.amazon.com/de_de/AWSCloudFormation/latest/UserGuide/aws-properties-s3-policy.html
+https://github.com/aws-samples/amazon-s3-presigned-urls-aws-sam/blob/master/template.yaml
+https://www.chaossearch.io/blog/how-to-create-an-s3-bucket-with-aws-cli
+
+YAML
+Resources:
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      AccessControl: PublicRead
+      BucketName: public-bucket
+      MetricsConfigurations:
+        - Id: EntireBucket
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+        RoutingRules:
+          - RoutingRuleCondition:
+              HttpErrorCodeReturnedEquals: '404'
+              KeyPrefixEquals: out1/
+            RedirectRule:
+              HostName: ec2-11-22-333-44.compute-1.amazonaws.com
+              ReplaceKeyPrefixWith: report-404/
+    DeletionPolicy: Retain
+Outputs:
+  WebsiteURL:
+    Value: !GetAtt
+      - S3Bucket
+      - WebsiteURL
+    Description: URL for website hosted on S3
+  S3BucketSecureURL:
+    Value: !Join
+      - ''
+        - 'https://'
+        - !GetAtt
+          - S3Bucket
+          - DomainName
+    Description: Name of S3 bucket to hold website content
+
+# Enable cross-origin resource sharing
+
+YAML
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      AccessControl: PublicRead
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - '*'
+            AllowedMethods:
+              - GET
+            AllowedOrigins:
+              - '*'
+            ExposedHeaders:
+              - Date
+            Id: myCORSRuleId1
+            MaxAge: 3600
+          - AllowedHeaders:
+              - x-amz-*
+            AllowedMethods:
+              - DELETE
+            AllowedOrigins:
+              - 'http://www.example.com'
+              - 'http://www.example.net'
+            ExposedHeaders:
+              - Connection
+              - Server
+              - Date
+            Id: myCORSRuleId2
+            MaxAge: 1800
+Outputs:
+  BucketName:
+    Value: !Ref S3Bucket
+    Description: Name of the sample Amazon S3 bucket with CORS enabled.
+
+
+# Manage the lifecycle for S3 objects
+
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      AccessControl: Private
+      LifecycleConfiguration:
+        Rules:
+          - Id: GlacierRule
+            Prefix: glacier
+            Status: Enabled
+            ExpirationInDays: 365
+            Transitions:
+              - TransitionInDays: 1
+                StorageClass: GLACIER
+Outputs:
+  BucketName:
+    Value: !Ref S3Bucket
+    Description: Name of the sample Amazon S3 bucket with a lifecycle configuration.
+
+# Log access requests for a specific S3 bucket
+
+YAML
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      AccessControl: Private
+      LoggingConfiguration:
+        DestinationBucketName: !Ref LoggingBucket
+        LogFilePrefix: testing-logs
+  LoggingBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      AccessControl: LogDeliveryWrite
+Outputs:
+  BucketName:
+    Value: !Ref S3Bucket
+    Description: Name of the sample Amazon S3 bucket with a logging configuration.
+
+
+### Receive S3 bucket notifications to an SNS topic
+
+
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      AccessControl: Private
+      NotificationConfiguration:
+        TopicConfigurations:
+          - Topic: 'arn:aws:sns:us-east-1:123456789012:TestTopic'
+            Event: 's3:ReducedRedundancyLostObject'
+Outputs:
+  BucketName:
+    Value: !Ref S3Bucket
+    Description: Name of the sample Amazon S3 bucket with a notification configuration.
+
+
+### Enable versioning and replicate objects
+
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      VersioningConfiguration:
+        Status: Enabled
+      ReplicationConfiguration:
+        Role: 'arn:aws:iam::123456789012:role/replication_role'
+        Rules:
+          - Id: MyRule1
+            Status: Enabled
+            Prefix: MyPrefix
+            Destination:
+              Bucket: 'arn:aws:s3:::my-replication-bucket'
+              StorageClass: STANDARD
+          - Status: Enabled
+            Prefix: MyOtherPrefix
+            Destination:
+              Bucket: 'arn:aws:s3:::my-replication-bucket'
+
+
+### Specify analytics and inventory configurations for an S3 bucket
+
+YAML
+AWSTemplateFormatVersion: 2010-09-09
+Description: S3 Bucket with Inventory and Analytics Configurations
+Resources:
+  Helper:
+    Type: 'AWS::S3::Bucket'
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      AnalyticsConfigurations:
+        - Id: AnalyticsConfigurationId
+          StorageClassAnalysis:
+            DataExport:
+              Destination:
+                BucketArn: !GetAtt
+                  - Helper
+                  - Arn
+                Format: CSV
+                Prefix: AnalyticsDestinationPrefix
+              OutputSchemaVersion: V_1
+          Prefix: AnalyticsConfigurationPrefix
+          TagFilters:
+            - Key: AnalyticsTagKey
+              Value: AnalyticsTagValue
+      InventoryConfigurations:
+        - Id: InventoryConfigurationId
+          Destination:
+            BucketArn: !GetAtt
+              - Helper
+              - Arn
+            Format: CSV
+            Prefix: InventoryDestinationPrefix
+          Enabled: true
+          IncludedObjectVersions: Current
+          Prefix: InventoryConfigurationPrefix
+          ScheduleFrequency: Weekly
+
+
+
+### Creating an Amazon S3 bucket with defaults
+
+YAML
+MyS3Bucket:
+    Type: AWS::S3::Bucket
+
+
+
+###################################################
+AWS SAM template for an Amazon S3 application with Lambda
+###################################################
+
+https://docs.aws.amazon.com/lambda/latest/dg/with-s3-example-use-app-spec.html
+https://docs.aws.amazon.com/lambda/latest/dg/with-s3-example.html
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  CreateThumbnail:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handler
+      Runtime: runtime
+      Timeout: 60
+      Policies: AWSLambdaExecute
+      Events:
+        CreateThumbnailEvent:
+          Type: S3
+          Properties:
+            Bucket: !Ref SrcBucket
+            Events: s3:ObjectCreated:*
+
+  SrcBucket:
+    Type: AWS::S3::Bucket
+
+###################################################
+Transforming objects with S3 Object Lambda
+###################################################
+
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/transforming-objects.html
+https://github.com/aws-samples/amazon-s3-object-lambda-default-configuration
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/olap-create.html
+https://docs.aws.amazon.com/lambda/latest/dg/with-s3-example.html
+
+
+###################################################
+Support one Local Lambda calling another Local Lambda scenarios
+###################################################
+
+Dowgnrade
+pip3 install --user 'aws-sam-cli<=1.13.0' --force-reinstall
+Upgrade
+pip3 install --user aws-sam-cli -U
+
+
+https://github.com/aws/aws-sam-cli/issues/510
+https://github.com/jb3rndt/local-l2l-invocation
+https://github.com/aws/aws-sam-cli/issues/2510
+
+curl http://127.0.0.1:3000/test
+curl http://172.17.0.1:3000/test
+
+sam build --use-container && sam local start-lambda --host 0.0.0.0 -n env.json
+sam local start-api
+sam local start-lambda --host 172.17.0.1
+aws lambda invoke --function-name "lambdaB" --endpoint-url "http://172.17.0.1:3001" --no-verify-ssl --payload '{}' out.txt
+
+
+to call the target lambda in another lambda, I'm using this host URL: http://172.17.0.1:3001, basically points to docker IP 172.17.0.1.
+
+
+const AWS = require('aws-sdk');
+const lambda = new AWS.Lambda({
+  apiVersion: '2015-03-31',
+  endpoint: 'http://172.17.0.1:3001', // docker0 network adapter ip
+  sslEnabled: false,
+  region: 'us-west-2',
+  accessKeyId: 'any', // I also tried with my aws credentials
+  secretAccessKey: 'any' // I also tried with my aws credentials
+});
+lambda.invoke({
+  FunctionName: 'lambdaB'
+}, (err, res) => {
+  console.log(res);
+});
+
+
+
+###################################################
+AWS SAM Local access service on host from Lambda function
+###################################################
+
+https://stackoverflow.com/questions/48487875/aws-sam-local-access-service-on-host-from-lambda-function
+
+LogicFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: function-name
+      Handler: src/handlers/index.handler
+      Runtime: nodejs12.x
+      Environment:
+        Variables:
+          VAR_ENVIRONMENT: value
+      Events:
+        # Server
+        GetServiceRunningAPI:
+          Type: Api
+          Properties:
+            Path: /api/ping
+            Method: GET
+
+
+###################################################
+AWS SAM
+###################################################
+
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-package.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-getting-started-hello-world.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-init.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-init.html
+
+
+
+###################################################
+Create an S3 Bucket using AWS CloudFormation
+###################################################
+https://www.techielass.com/create-an-s3-bucket-using-aws-cloudformation/
+https://cloudkatha.com/how-to-create-an-s3-bucket-using-cloudformation/
+https://www.youtube.com/watch?v=v43klLmM4AY
+
+YAML S3 bucket
+AWSTemplateFormatVersion: 2010-09-09
+Description: CloudFormation template for s3 bucket
+Resources:
+  S3Bucket:
+    DeletionPolicy: Retain
+    Type: 'AWS::S3::Bucket'
+    Description: Creating Amazon S3 bucket from CloudFormation
+    Properties:
+      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      VersioningConfiguration:
+        Status: Enabled
+Outputs:
+  S3Bucket:
+    Description: Bucket Created using this template.
+    Value: !Ref S3Bucket
+
+
+---
+
+AWSTemplateFormatVersion: 2010-09-09
+Description: CloudFormation template for s3 bucket
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Description: Creating Amazon S3 bucket from CloudFormation
+    Properties:
+      BucketName: i-named-this-bucket
+Outputs:
+  S3Bucket:
+    Description: Bucket Created using this template.
+    Value: !Ref S3Bucket
+VersioningConfiguration:
+  Status: Enabled
+
+
+---
+
+
+CloudFormation Template to Enable Versioning on a Bucket
+-------------------------------------------------------------
+AWSTemplateFormatVersion: 2010-09-09
+Description: CloudFormation template for s3 bucket
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Description: Creating Amazon S3 bucket from CloudFormation
+    Properties:
+      BucketName: i-named-this-bucket
+      VersioningConfiguration:
+        Status: Enabled
+Outputs:
+  S3Bucket:
+    Description: Bucket Created using this template.
+    Value: !Ref S3Bucket
+
+
+Encryption on S3
+-------------------------------------------------------------
+BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256
+
+
+Prevent objects from becoming public
+-------------------------------------------------------------
+AccessControl: Private
+PublicAccessBlockConfiguration:
+   BlockPublicAcls: true
+   BlockPublicPolicy: true
+   IgnorePublicAcls: true
+   RestrictPublicBuckets: true
+
+
+
+
+Final Template to Create an S3 Bucket using CloudFormation in YAML.
+-------------------------------------------------------------
+
+AWSTemplateFormatVersion: 2010-09-09
+Description: CloudFormation template for s3 bucket
+Resources:
+  S3Bucket:
+    DeletionPolicy: Retain
+    Type: 'AWS::S3::Bucket'
+    Description: Creating Amazon S3 bucket from CloudFormation
+    Properties:
+      BucketName: i-named-this-bucket
+      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      VersioningConfiguration:
+        Status: Enabled
+Outputs:
+  S3Bucket:
+    Description: Bucket Created using this template.
+    Value: !Ref S3Bucket
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+######################################################
+sam validate
+
+botocore.exceptions.ClientError: An error occurred (InvalidClientTokenId) when calling the ListPolicies operation: The security token included in the request is invalid.
+######################################################
+
+
+aws iam
+aws iam list-users
+aws configure help
+aws configure list
+
+######################################################
+sam local invoke
+######################################################
+Error: You must provide a function logical ID when there are more than one functions in your template. Possible options in your template: []
+
+######################################################
+sam local start-api
+######################################################
+Error: Template does not have any APIs connected to Lambda functions
+
+
+
+
+
+######################################################
+aws cli info
+######################################################
+aws help | grep s3
+aws s3 help
+
+
+
+######################################################
+aws sam cli info
+######################################################
+
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-init.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-package.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-local-invoke.html
+
+######################################################
+CloudFormation (YAML) Memory
+######################################################
+
+https://awslabs.github.io/serverless-rules/rules/lambda/default_memory_size/
+https://www.baeldung.com/aws-serverless
+http://www.jimlynchcodes.com/blog/dont-forget-to-set-memorysize-and-timeout-on-your-aws-sam-templates
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
+
+Resources:
+  MyFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      # Required properties
+      CodeUri: .
+      Runtime: python3.8
+      Handler: main.handler
+
+      # Change the function memory size
+      MemorySize: 2048
+
+
+######################################################
+Transforming data for your application with S3 Object Lambda
+######################################################
+
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/tutorial-s3-object-lambda-uppercase.html
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html#CoreConcepts
+https://docs.aws.amazon.com/
+https://docs.aws.amazon.com/lambda/latest/dg/with-s3.html
+https://docs.aws.amazon.com/cli/latest/userguide/cli-services-s3-commands.html
+
+https://hub.docker.com/r/minio/minio/
+https://hub.docker.com/r/amazon/aws-lambda-python
+https://hub.docker.com/r/amazon/aws-cli
+
+
+######################################################
+Example 2: Makefile builder for Python3.7 (alternative to using the bundled builder)
+######################################################
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/building-custom-runtimes.html
+
+
+Resources:
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: hello_world/
+      Handler: app.lambda_handler
+      Runtime: python3.7
+    Metadata:
+      BuildMethod: makefile
+
+
+Makefile.
+
+build-HelloWorldFunction:
+    cp *.py $(ARTIFACTS_DIR)
+    cp requirements.txt $(ARTIFACTS_DIR)
+    python -m pip install -r requirements.txt -t $(ARTIFACTS_DIR)
+    rm -rf $(ARTIFACTS_DIR)/bin
+
+
+
+######################################################
+Create sam python3 lambda from scratch local dev
+######################################################
+
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-build.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/building-custom-runtimes.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-build.html
+
+
+sam init --name sam-mylambdapack --runtime python3.9 --dependency-manager pip --app-template hello-world
+cd sam-mylambdapack
+
+sam --version
+sam init
+sam build --use-container
+sam build --use-container --debug
+
+Starting Build inside a container
+Your template contains a resource with logical ID "ServerlessRestApi", which is a reserved logical ID in AWS SAM. It could result in unexpected behaviors and is not recommended.
+
+Building codeuri: sam-app/hello_world runtime: python3.9 metadata: {} architecture: x86_64 functions: HelloWorldFunction
+
+Fetching public.ecr.aws/sam/build-python3.9:latest-x86_64 Docker container image....
+
+Mounting /home/user/sam-app/hello_world as /tmp/samcli/source:ro,delegated inside runtime container
+
+Build Succeeded
+
+Built Artifacts  : .aws-sam/build
+Built Template   : .aws-sam/build/template.yaml
+
+Commands you can use next
+=========================
+[*] Validate SAM template: sam validate
+[*] Invoke Function: sam local invoke
+[*] Test Function in the Cloud: sam sync --stack-name {stack-name} --watch
+[*] Deploy: sam deploy --guided
+
+Running PythonPipBuilder:ResolveDependencies
+Running PythonPipBuilder:CopySource
+
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-local-start-api.html
+
+sam local start-api
+
+Mounting HelloWorldFunction at http://127.0.0.1:3000/hello [GET]
+You can now browse to the above endpoints to invoke your functions. You do not need to restart/reload SAM CLI while working on your functions, changes will be reflected instantly/automatically. You only need to restart SAM CLI if you update your AWS SAM template
+2022-11-09 12:04:43  * Running on http://127.0.0.1:3000/ (Press CTRL+C to quit)
+---
+curl http://localhost:3000/
+{"message":"Missing Authentication Token"}
+---
+curl http://localhost:3000/hello
+{"message": "hello world"}
+---
+# stop local docker instance   CTRL+C
+# modify code
+# build again [sam build --use-container]
+# start api again [sam local start-api]
+# test http://127.0.0.1:3000/hello
+
+
+
+sam local -h
+
+  generate-event  You can use this command to generate sample payloads...
+  invoke          Invokes a local Lambda function once.
+  start-api       Sets up a local endpoint you can use to test your API.
+                  Supports hot-reloading so you don't need to restart this
+                  service when you make changes to your function.
+  start-lambda    Starts a local endpoint you can use to invoke your local
+                  Lambda functions.
+
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-local-generate-event.html
+https://stackoverflow.com/questions/60758287/how-to-generate-an-event-with-sam-local-generate-event-with-queryparameters
+https://aws.amazon.com/de/blogs/compute/working-with-aws-lambda-and-lambda-layers-in-aws-sam/
+
+
+sam local invoke
+
+---
+
+sam local generate-event apigateway aws-proxy --method GET > local-event.json
+sam local invoke -e local-event.json
+
+---
+
+https://aws.amazon.com/de/blogs/compute/using-container-image-support-for-aws-lambda-with-aws-sam/
+
+
+sam local invoke HelloWorldFunction
+sam logs -n HelloWorldFunction --stack-name sam-lambda-api --tail
+
+
+docker container ls
+docker exec -it lucid_kepler sh
+cd /var/task/
+python3 app.py
+
+
+
+
+https://github.com/aws/aws-sam-cli/issues/238
+https://github.com/aws/aws-sam-cli/issues/196
+https://github.com/aws/aws-sam-cli/issues/2510
+https://github.com/aws/aws-sam-cli/issues/3860
+https://github.com/aws/aws-sam-cli/issues/260
+https://github.com/aws/aws-sam-cli/issues/510
+
+https://www.youtube.com/watch?v=AUQRyl1SNcU
+
+Makefile
+
+build:
+	cd sam-helloworld && sam build --use-container --debug --skip-pull-image
+
+start-api:
+	cd sam-helloworld && sam local start-api
+
+invoke-apigateway:
+	cd sam-helloworld && sam local invoke --debug --container-host localhost --docker-network bridge
+
+
+##############################################################
+Return first row from panda DF
+##############################################################
+
+https://www.online-python.com/
+https://www.programiz.com/python-programming/online-compiler/
+https://pynative.com/online-python-code-editor-to-execute-python-code/
+https://appdividend.com/2022/03/15/pandas-to_json/
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_json.html
+
+import pandas as pd
+df = pd.DataFrame(
+            [['Stranger Things', 'Money Heist'],
+             ['Most Dangerous Game', 'The Stranger']],
+            columns=['Netflix', 'Quibi'])
+data_json = df.head(1).to_json(orient='columns')
+print(data_json)
+
+##############################################################
+get local ip
+##############################################################
+
+https://stackoverflow.com/questions/166506/finding-local-ip-addresses-using-pythons-stdlib
+
+import socket
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("8.8.8.8", 80))
+print(s.getsockname()[0])
+s.close()
+
+
+##############################################################
+get ip
+##############################################################
+
+https://stackoverflow.com/questions/25491090/how-to-use-python-to-execute-a-curl-command
+
+import requests
+r = requests.get('https://github.com/timeline.json')
+r.json()
+
+##############################################################
+How to remove old Docker containers -  orphan containers
+##############################################################
+
+https://stackoverflow.com/questions/17236796/how-to-remove-old-docker-containers
+https://linuxize.com/post/how-to-remove-docker-images-containers-volumes-and-networks/
+https://docs.docker.com/config/pruning/
+https://stackoverflow.com/questions/50947938/docker-compose-orphan-containers-warning
+
+docker rm $(docker ps -a -q)
+docker rm `docker ps -aq`
+docker system prune -a
+docker system prune
+docker container prune
+docker system prune
+docker rm `docker ps --no-trunc -aq`
+docker rm $(docker ps -q -f status=exited)
+
+remove all
+docker rm  -f $(docker ps -a -q)
+
+##############################################################
+Misc
+##############################################################
+
+https://stackoverflow.com/questions/68459564/aws-sam-how-to-locally-invoke-all-node-js-functions-instead-one-by-one
+https://stackoverflow.com/questions/34582318/how-can-i-resolve-the-error-the-security-token-included-in-the-request-is-inval
+https://stackoverflow.com/questions/50680191/aws-sam-template-does-not-have-any-apis-connected-to-lambda-functions
+https://docs.aws.amazon.com/de_de/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-build.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-build.html
+https://github.com/aws/aws-sam-cli/issues/2572
+https://github.com/aws/aws-lambda-builders/issues/302
+https://www.entechlog.com/blog/aws/aws-sam-in-docker-container/
+https://github.com/aws/aws-sam-cli/issues/2863
+https://github.com/aws/aws-sam-cli/issues/1231
+https://stackoverflow.com/questions/73507177/aws-sam-dockerbuildargs-it-does-not-add-them-when-creating-the-lambda-image
+https://medium.com/monsoon-engineering/running-aws-sam-in-a-docker-container-2491596672c2
+https://stackoverflow.com/questions/71638085/is-there-a-way-to-incrementally-build-container-images-with-aws-sam
+https://medium.com/platform-engineer/automating-lambda-container-image-deployments-with-aws-sam-cli-71afbf09e172
+https://aws.amazon.com/de/premiumsupport/knowledge-center/lambda-function-retry-timeout-sdk/
+https://github.com/localstack/localstack/issues/4170
+https://docs.aws.amazon.com/lambda/latest/dg/with-s3.html
+https://aws.amazon.com/de/premiumsupport/knowledge-center/lambda-execution-role-s3-bucket/
+https://medium.com/geekculture/working-with-amazon-s3-object-lambda-6cebd6ccd400
+https://www.serverlessguru.com/blog/accessing-s3-using-lambda-inside-a-private-subnet-of-a-vpc
+https://towardsdatascience.com/serverless-functions-and-using-aws-lambda-with-s3-buckets-8c174fd066a1
+https://hevodata.com/learn/aws-lambda-s3/
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/quickref-s3.html
+https://www.varonis.com/blog/create-s3-bucket
+https://gist.github.com/austoonz/b9779a3a77b2ca658c7ebac9416671eb
+https://www.techielass.com/create-an-s3-bucket-using-aws-cloudformation/
+https://stackoverflow.com/questions/71255324/getting-validationerror-while-creating-s3-bucket-using-cloudformation-template
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-timeout
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-specification-template-anatomy-globals.html
+https://medium.com/@edjgeek/meet-aws-sam-cli-sam-init-bab68b4cc0d4
+https://dev.to/vikasgarghb/sam-local-with-localstack-4285
+https://github.com/localstack/aws-sam-cli-local
+https://aws.amazon.com/de/blogs/compute/working-with-aws-lambda-and-lambda-layers-in-aws-sam/
+https://stackoverflow.com/questions/55098261/aws-sam-build-use-container-without-cleaning
