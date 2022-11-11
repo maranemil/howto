@@ -1,0 +1,526 @@
+###################################################
+ping
+###################################################
+
+ping 172.17.0.22
+ping 172.17.0.22 -c 5 -n
+
+###################################################
+SSH into a Container DevTools
+###################################################
+
+https://phase2.github.io/devtools/common-tasks/ssh-into-a-container/#ssh-into-a-container
+
+
+docker exec -it <container name> /bin/bash
+docker exec -it <container name> <command>
+docker run -it <image name> <command> # run container not defined by a docker-compose.yml file
+
+
+###################################################
+Runtime options with Memory, CPUs, and GPUs
+###################################################
+
+https://docs.docker.com/config/containers/resource_constraints/#limit-a-containers-access-to-memory
+https://docs.docker.com/config/containers/resource_constraints/
+https://stackoverflow.com/questions/42345235/how-to-specify-memory-cpu-limit-in-docker-compose-version-3
+https://www.baeldung.com/ops/docker-memory-limit
+
+docker run -it --cpus=".5" ubuntu /bin/bash
+
+
+services:
+  service:
+    image: nginx
+    deploy:
+        resources:
+            limits:
+              cpus: 0.50
+              memory: 512M
+            reservations:
+              cpus: 0.25
+              memory: 128M
+
+service:
+  image: nginx
+  mem_limit: 512m
+  mem_reservation: 128M
+  cpus: 0.5
+  ports:
+    - "80:80"
+
+...
+docker stats
+...
+deploy:
+    resources:
+        limits:
+          memory: 3G
+        reservations:
+          memory-swap: 6G
+
+
+deploy:
+  resources:
+    limits:
+      cpus: '0.001'
+      memory: 50M
+
+
+deploy:
+  resources:
+    limits:
+      cpus: '0.50'
+      memory: 1024M
+
+# v2
+---------------------------------
+version: '3.9'
+services:
+  app:
+    image: nginx
+    cpus: "0.5"
+    mem_reservation: "10M"
+    mem_limit: "250M"
+
+docker stats -all
+docker stats my-nginx
+
+# v3
+---------------------------------
+version: "3"
+services:
+  node:
+    image: USER/Your-Pre-Built-Image
+    environment:
+      - VIRTUAL_HOST=localhost
+    volumes:
+      - logs:/app/out/
+    command: ["npm","start"]
+    cap_drop:
+      - NET_ADMIN
+      - SYS_ADMIN
+    deploy:
+      resources:
+        limits:
+          cpus: '0.001'
+          memory: 50M
+        reservations:
+          cpus: '0.0001'
+          memory: 20M
+
+volumes:
+  - logs
+
+networks:
+  default:
+    driver: overlay
+
+###################################################
+Create an S3 bucket
+###################################################
+
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html
+
+Resources:
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    DeletionPolicy: Retain
+    Properties:
+        AccessControl: PublicRead
+        BucketName: public-bucket
+
+
+###################################################
+AWS SAM
+###################################################
+
+https://www.techmagic.co/blog/serverless-framework-vs-aws-sam/
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-reference.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-specification-template-anatomy-globals.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-using-invoke.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
+
+https://github.com/aws/serverless-application-model
+https://github.com/aws/aws-lambda-builders
+https://github.com/aws/aws-lambda-python-runtime-interface-client
+
+https://github.com/aws/serverless-application-model
+https://github.com/aws/aws-sam-cli-app-templates
+https://github.com/aws/aws-sam-build-images
+https://github.com/aws/aws-sam-cli-app-templates/tree/master/python3.9-image
+https://github.com/aws/aws-sam-build-images/tree/develop/build-image-src
+
+main AWS SAM components are as follows:
+
+S3 objects;
+CloudWatch events;
+API actions;
+Amazon SNS notifications;
+Amazon Kinesis objects;
+DynamoDB tables;
+Alexa Events.
+
+
+###################################################
+Lambda function handler in Python
+###################################################
+
+https://docs.aws.amazon.com/lambda/latest/dg/python-handler.html
+https://docs.aws.amazon.com/lambda/latest/dg/python-image.html
+https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-images.html#configuration-images-update
+
+aws lambda create-function --region sa-east-1 --function-name my-function \
+    --package-type Image  \
+    --code ImageUri=<ECR Image URI>   \
+    --role arn:aws:iam::123456789012:role/lambda-ex
+
+aws lambda update-function-configuration  --function-name my-function \
+--image-config '{"EntryPoint": ["/usr/bin/npx", "aws-lambda-ric"],  \
+                 "Command":   ["app.handler"] ,          \
+                  "WorkingDirectory": "/var/task"}'
+
+
+###################################################
+Comparing the Serverless framework with AWS SAM
+###################################################
+
+https://github.com/SanderKnape/comparing-serverless-and-sam
+https://github.com/SanderKnape/comparing-serverless-and-sam/blob/master/template.yaml
+
+###################################################
+Invoking Lambda functions locally
+###################################################
+
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-using-invoke.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-using-debugging.html
+
+
+sam local invoke "Ratings" -e event.json
+echo '{"message": "Hey, are you there?" }' | sam local invoke --event - "Ratings"
+sam local invoke --help
+sam local invoke --env-vars env.json
+
+# call gateway
+sam local start-api
+sam local start-api --env-vars env.json
+
+# Integrating with automated tests
+sam local start-lambda
+
+# Generating sample event payloads
+sam local generate-event --help
+
+# Invoke a function locally in debug mode on port 5858
+sam local invoke -d 5858 <function logical id>
+
+# Start local API Gateway in debug mode on port 5858
+sam local start-api -d 5858
+
+###################################################
+docker restart
+###################################################
+
+https://www.ibm.com/docs/en/spectrum-discover/2.0.3?topic=ni-multi-node-network-settings-get-stuck-while-checking-docker-run-status
+https://www.ibm.com/support/pages/qradar-ui-unavailable-hostservices-service-unable-start-console-when-docker-service-unable-start
+https://www.ibm.com/support/pages/ibm-infosphere-information-server-enterprise-search-installation-failure-due-docker-related-errors
+https://serverfault.com/questions/859805/docker-failing-to-start-in-debian-8-status-1-failure
+https://stackoverflow.com/questions/61429280/docker-issue-code-exited-status-1-failure
+
+
+sudo systemctl stop docker
+sudo systemctl start docker
+
+journalctl -xeu docker.service
+journalctl -u hostservices
+
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+
+
+systemctl status hostservices
+systemctl status docker
+systemctl status docker.service
+systemctl status docker.service
+sudo systemctl restart docker.service
+
+systemctl start hostservices
+systemctl start hostcontext
+
+service --status-all
+
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+sudo systemctl start docker
+
+###################################################
+Creating Lambda container images
+###################################################
+
+
+https://dev.to/aws-builders/let-s-try-lambda-container-support-with-sam-cli-4h0l
+https://docs.aws.amazon.com/lambda/latest/dg/images-create.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/building-custom-runtimes.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/building-layers.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-build.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-using-build.html
+
+
+FROM public.ecr.aws/lambda/python:3.9
+# Install the function's dependencies using file requirements.txt
+# from your project folder.
+COPY requirements.txt  .
+RUN  pip3 install -r requirements.txt --target "${LAMBDA_TASK_ROOT}"
+# Copy function code
+COPY app.py ${LAMBDA_TASK_ROOT}
+# Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
+CMD [ "app.handler" ]
+
+
+FROM public.ecr.aws/lambda/nodejs:12
+COPY app.js package.json ./
+RUN npm install
+# Command can be overwritten by providing a different command in the template directly.
+CMD ["app.lambdaHandler"]
+
+
+Resources:
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      ImageConfig:
+        Command: ["app.lambda_handler"]
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: ./hello_world
+      DockerTag: v1
+
+    Metadata:
+      BuildMethod: python3.8
+      BuildArchitecture: arm64
+
+
+FROM public.ecr.aws/lambda/python:3.8
+COPY app.py requirements.txt ./
+RUN python3.8 -m pip install -r requirements.txt
+# Overwrite the command by providing a different command directly in the template.
+CMD ["app.lambda_handler"]
+
+
+###################################################
+Docker images and test runners that replicate the live AWS Lambda environment
+###################################################
+
+https://github.com/lambci/docker-lambda
+
+docker run --rm [-d] \
+  -e DOCKER_LAMBDA_STAY_OPEN=1 \
+  -p 9001:9001 \
+  -v <code_dir>:/var/task:ro,delegated \
+  [-v <layer_dir>:/opt:ro,delegated] \
+  lambci/lambda:<runtime> \
+  [<handler>]
+
+aws lambda invoke --endpoint http://localhost:9001 --no-sign-request \
+  --function-name myfunction --payload '{}' output.json
+
+
+###################################################
+ Python shell jobs Glue
+###################################################
+
+https://docs.aws.amazon.com/glue/latest/dg/add-job-python.html
+https://docs.aws.amazon.com/glue/latest/dg/populate-with-cloudformation-templates.html
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-intro-tutorial.html
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-glue-job.html
+
+aws glue create-job --name python-job-cli --role Glue_DefaultRole
+     --command '{"Name" :  "pythonshell", "PythonVersion": "3.9", "ScriptLocation" : "s3://aws-glue-scripts-123456789012-us-east-1/Admin/python-job-cli.py"}'
+     --max-capacity 0.0625
+
+
+Sample AWS CloudFormation template for an AWS Glue job for Amazon S3 to Amazon S3
+----------------------------------------------------------------------------------
+AWSTemplateFormatVersion: '2010-09-09'
+# Sample CFN YAML to demonstrate creating a job using the public flights S3 table in a public bucket
+#
+# Parameters section contains names that are substituted in the Resources section
+# These parameters are the names the resources created in the Data Catalog
+Parameters:
+# The name of the job to be created
+  CFNJobName:
+    Type: String
+    Default: cfn-job-S3-to-S3-2
+# The name of the IAM role that the job assumes. It must have access to data, script, temporary directory
+  CFNIAMRoleName:
+    Type: String
+    Default: AWSGlueServiceRoleGA
+# The S3 path where the script for this job is located
+  CFNScriptLocation:
+    Type: String
+    Default: s3://aws-glue-scripts-123456789012-us-east-1/myid/sal-job-test2
+#
+#
+# Resources section defines metadata for the Data Catalog
+Resources:
+# Create job to run script which accesses flightscsv table and write to S3 file as parquet.
+# The script already exists and is called by this job
+  CFNJobFlights:
+    Type: AWS::Glue::Job
+    Properties:
+      Role: !Ref CFNIAMRoleName
+      #DefaultArguments: JSON object
+      # If script written in Scala, then set DefaultArguments={'--job-language'; 'scala', '--class': 'your scala class'}
+      #Connections:  No connection needed for S3 to S3 job
+      #  ConnectionsList
+      #MaxRetries: Double
+      Description: Job created with CloudFormation
+      #LogUri: String
+      Command:
+        Name: glueetl
+        ScriptLocation: !Ref CFNScriptLocation
+             # for access to directories use proper IAM role with permission to buckets and folders that begin with "aws-glue-"
+             # script uses temp directory from job definition if required (temp directory not used S3 to S3)
+             # script defines target for output as s3://aws-glue-target/sal
+      AllocatedCapacity: 5
+      ExecutionProperty:
+        MaxConcurrentRuns: 1
+      Name: !Ref CFNJobName
+
+
+
+###################################################
+awslocal" - Thin wrapper around the "aws" command line interface for use with LocalStack
+###################################################
+
+https://github.com/localstack/awscli-local
+pip install awscli-local
+
+
+aws s3 ls s3://mybucket --recursive --human-readable --summarize
+aws s3api list-objects --bucket "public-bucket"
+aws s3 ls s3://public-bucket  --endpoint-url=http://127.0.0.1
+aws s3 ls s3://public-bucket  --region eu-west-1 --endpoint-url http://localhost:8000
+aws s3 ls s3://public-bucket  --region eu-west-1 --endpoint-url http://localhost:9001
+
+--no-verify-ssl --debug
+--output text
+--profile
+--region
+
+
+aws --version
+sam --version
+docker --version
+
+sam init --runtime python3.8 --name demo-serverless-app
+sam build --use-container
+sam local start-api
+sam local invoke --event events/event.json
+sam local invoke --no-event HelloWorldFunction
+sam local generate-event s3 put
+
+
+sam local generate-event s3 -h
+delete
+put
+
+sam local generate-event s3 put --region eu-west-1 --bucket public-bucket  --key file.txt
+
+sam local invoke -d 5000
+sam local start-api -d 5000
+sam local invoke -d 5858
+sam local start-api -d 5858
+
+
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-using-debugging.html
+https://docs.aws.amazon.com/lambda/latest/dg/configuration-filesystem.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-local-invoke.html
+https://hayao-k.dev/lets-try-lambda-container-support-with-sam-cli
+https://cloudengineer.home.blog/2019/04/14/local-lambda-development-with-aws-sam/
+https://seanjziegler.com/how-to-build-an-api-with-aws-lambda-and-api-gateway-using-aws-sam/
+https://serialized.io/guides/projecting-events-using-aws-lambda/
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-example-s3.html
+https://community.opengroup.org/osdu/platform/security-and-compliance/entitlements-aws/-/tree/master
+https://medium.com/spaceapetech/developing-applications-with-aws-sam-295c320d563c
+https://mydeveloperplanet.com/2022/02/22/an-introduction-to-aws-serverless-application-model/
+https://dev.to/vikasgarghb/sam-local-with-localstack-4285
+https://egghead.io/lessons/aws-deploy-an-s3-bucket-and-trigger-an-aws-lambda-function-with-aws-sam
+https://dev.to/goodidea/how-to-fake-aws-locally-with-localstack-27me
+https://mmarcosab.medium.com/how-about-s3-bucket-and-localstack-b0816bab452a
+https://lobster1234.github.io/2017/04/05/working-with-localstack-command-line/
+https://stackoverflow.com/questions/36813327/how-to-display-only-files-from-aws-s3-ls-command
+https://docs.localstack.cloud/integrations/aws-cli/
+https://nexiality.github.io/documentation/userguide/InstallingLocalstack.html
+https://pypi.org/project/awscli-local/
+https://github.com/localstack/awscli-local
+https://aws.amazon.com/de/blogs/developer/leveraging-the-s3-and-s3api-commands/
+https://aws.amazon.com/de/premiumsupport/knowledge-center/s3-access-file-folder/
+https://stackoverflow.com/questions/69843358/why-am-i-not-seeing-the-contents-of-a-localhost-s3-bucket
+https://stackoverflow.com/questions/36813327/how-to-display-only-files-from-aws-s3-ls-command
+https://docs.aws.amazon.com/cli/latest/reference/s3/ls.html
+
+
+
+curl -i http://127.0.0.1:3000/project-event \
+    --header "Content-Type: application/json" \
+    --data '
+    {
+      "metadata" : {
+        "aggregateId": "a341b64c-b01f-43fb-907c-50c0067df672",
+        "createdAt": 1587366182487,
+        "updatedAt": 1587366182487
+      },
+      "currentState": {},
+      "event": {
+        "eventId": "d710b9b1-063a-4b65-98be-0d46de443bdd",
+        "eventType": "UserLoggedInEvent",
+        "data": {
+          "userId": "618f5a47-9d4c-4f42-9380-ca47c12087a1"
+        }
+      }
+    }
+    '
+
+
+aws s3api create-bucket --bucket event-projector-lambda --region eu-west-1 --create-bucket-configuration LocationConstraint=eu-west-1
+
+aws --endpoint-url=http://127.0.0.1:4566 s3api create-bucket --bucket bucket-example
+aws s3api create-bucket --bucket bucket-example
+aws --endpoint-url=http://localhost:4572 s3 mb s3://mytestbucket
+aws --endpoint-url=http://localhost:4576 sqs create-queue --queue-name my_queue_name
+awslocal sqs create-queue --queue-name my_queue_name
+
+aws s3api list-buckets --query Owner.ID
+aws s3api list-objects --bucket DOC-EXAMPLE-BUCKET --prefix index.html
+aws s3api put-object-acl --bucket DOC-EXAMPLE-BUCKET --key object-name --acl bucket-owner-full-control
+
+aws s3 ls s3://arn:aws:s3:eu-west-1:123456789012:accesspoint/public-bucket
+aws s3 ls s3://arn:aws:s3:us-west-2:123456789012:accesspoint/myaccesspoint/
+sam local generate-event s3
+
+
+
+
+https://aws.amazon.com/de/blogs/compute/the-aws-serverless-application-model-cli-is-now-generally-available/
+https://aws.amazon.com/de/blogs/compute/using-container-image-support-for-aws-lambda-with-aws-sam/
+https://aws.amazon.com/de/premiumsupport/knowledge-center/read-access-objects-s3-bucket/
+https://aws.amazon.com/de/premiumsupport/knowledge-center/s3-private-connection-no-authentication/
+https://aws.plainenglish.io/aws-s3-options-to-get-access-to-s3-objects-usage-of-sign-links-af6063cf56fe
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/HostingWebsiteOnS3Setup.html
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteAccessPermissionsReqd.html
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-arn-format.html
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-local-generate-event.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-local-start-api.html
+https://github.com/aws/aws-sam-cli/issues/164
+https://github.com/hypnoglow/helm-s3
+https://github.com/minio/minio/issues/9435
+https://rochisha-jaiswal70.medium.com/using-an-amazon-s3-trigger-to-invoke-a-lambda-function-on-localstack-4066e5b82ff3
+https://stackoverflow.com/questions/51802817/sam-local-start-lambda-how-to-send-send-s3-event-to-sam-local-endpoint
+https://stackoverflow.com/questions/57392422/how-to-run-a-aws-lambda-via-sam-local-that-writes-to-an-s3-bucket
+https://stackoverflow.com/questions/68292458/403-error-on-upload-to-s3-private-bucket-using-pre-signed-url
+https://www.sqlshack.com/set-up-a-local-serverless-environment-using-the-aws-sam-cli/#
+
