@@ -4,8 +4,6 @@ $lnks = '
 
 https://www.youtube.com/watch?v=GNUSdekIaMw
 
-
-
 ';
 
 $lines = preg_split("~\n~", $lnks);
