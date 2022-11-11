@@ -1,0 +1,537 @@
+##########################################################################
+IntelliJ is hiding folder in project window mentioned in .gitignore file
+##########################################################################
+
+Some updates to .ignore plugin suggested in this answer. IntelliJ now suggests installing foldable-projectview
+
+https://stackoverflow.com/questions/44396952/intellij-is-hiding-folder-in-project-window-mentioned-in-gitignore-file-how-to/44398007#44398007
+https://stackoverflow.com/questions/44396952/intellij-is-hiding-folder-in-project-window-mentioned-in-gitignore-file-how-to/44398007#44398007
+https://github.com/hsz/intellij-foldable-projectview/issues/4
+
+https://plugins.jetbrains.com/plugin/17288-foldable-projectview
+
+
+##########################################################################
+Limit Docker Container Memory
+##########################################################################
+
+https://blog.56k.cloud/put-the-brakes-on-docker-containers/
+https://github.com/docker-archive/classicswarm/issues/2421
+https://stackoverflow.com/questions/38200028/docker-service-limits-and-reservations
+https://docs.docker.com/config/containers/resource_constraints/
+
+
+Reserve holds those resources on the host so they are always available for the container. Think dedicated resources.
+
+Limit prevents the binary inside the container from using more than that. Think of controlling runaway processes in container.
+
+docker run -it --cpus=".5" ubuntu /bin/bash
+docker run -m 1G — memory-reservation 750M ubuntu /bin/bash
+docker run -it \
+    --cpu-rt-runtime=950000 \
+    --ulimit rtprio=99 \
+    --cap-add=sys_nice \
+    debian:jessie
+
+...
+
+resource:
+ cpu_count: 4
+ cpu_percent: 85
+# cpu_period: 5h34m00s
+ mem_reservation: 16G
+ mem_swappiness: 60
+ deploy:
+   resources:
+    limits:
+     cpus: ‘0.25’
+     memory: 128M
+   reservations:
+     cpus: ‘0.10’
+     memory: 64M
+
+
+##########################################################################
+docker compatibility
+##########################################################################
+
+The following deploy sub-keys are not supported and have been ignored: resources.reservations.cpus
+
+https://stackoverflow.com/questions/58308238/the-following-deploy-sub-keys-are-not-supported-in-compatibility-mode
+
+https://github.com/docker/compose/pull/5684#issuecomment-409206672
+https://docs.docker.com/config/containers/resource_constraints/#--memory-swap-details
+https://docs.docker.com/config/containers/resource_constraints/
+https://nickjanetakis.com/blog/docker-tip-78-using-compatibility-mode-to-set-memory-and-cpu-limits
+https://medium.com/@BeNitinAgarwal/whats-new-in-docker-compose-v3-139bbdafa5ed
+https://github.com/docker/compose/pull/5684
+https://github.com/docker/compose/issues/8490
+https://medium.com/@BeNitinAgarwal/whats-new-in-docker-compose-v3-139bbdafa5ed
+https://docs.docker.com/config/containers/resource_constraints/
+https://medium.com/codex/how-to-limit-cpu-and-memory-usage-in-docker-containers-a024b429f55e
+https://narasimmantech.com/how-to-limit-cpu-and-memory-usage-in-docker-containers/
+
+docker info --format '{{.Swarm.ControlAvailable}}'
+false
+docker-compose --compatibility up -d
+
+
+version: '3'
+services:
+  redis:
+    image: my-image
+    cpu_period: 50000
+    cpu_quota: 25000
+    memory: 512m
+
+
+version: "3.4"
+services:
+  redis:
+    image: "redis:alpine"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: "50M"
+
+docker-compose --compatibility up
+docker-compose --compatibility config
+
+
+version: '3.5'
+services:
+  web:
+    image: nginx:alpine
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 50M
+
+
+version: '3.9'
+services:
+  redis:
+    image: docker.io/library/redis:5.0
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 0s
+        max_attempts: 10
+        window: 3s
+      resources:
+        limits:
+          cpus: '1.00'
+          memory: 1GB
+        reservations:
+          cpus: '0.50'
+          memory: 500M
+
+
+##########################################################################
+Automated_Swap_Management_with_systemd-swap
+##########################################################################
+
+https://wiki.manjaro.org/index.php/Swap
+https://wiki.manjaro.org/index.php/Swap#Automated_Swap_Management_with_systemd-swap
+https://wiki.manjaro.org/index.php/Swap/de
+https://wiki.manjaro.org/index.php?title=Swap#Creating_and_Enabling_a_Swap_Partition
+https://wiki.manjaro.org/index.php?title=Swap#Creating_and_Enabling_a_Static_Swapfile
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/storage_administration_guide/ch-swapspace
+https://web.mit.edu/rhel-doc/5/RHEL-5-manual/Deployment_Guide-en-US/ch-swapspace.html
+https://linuxize.com/post/how-to-add-swap-space-on-ubuntu-20-04/
+https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-20-04
+https://unix.stackexchange.com/questions/134258/dynamically-growing-swap-file-on-debian
+https://wiki.ubuntuusers.de/Swap/
+https://manpages.ubuntu.com/manpages/xenial/man8/swapspace.8.html
+
+sudo apt-get install swapspace
+sysctl vm.swappiness
+sudo sysctl vm.swappiness=25
+swapon -s
+
+# Swap leeren
+sudo swapoff -a  ## Swap ausschalten
+sudo swapon -a   ## Swap einschalten
+free -s 3 |grep Swap
+top
+swapoff /dev/sda2
+swapon /dev/sda2
+
+Swap deaktivieren
+sudo systemctl --type swap
+sudo swapoff -a
+
+sudo apt install dphys-swapfile
+sudo update-rc.d dphys-swapfile enable
+then setting CONF_SWAPFACTOR=2 in /etc/dphys-swapfile and finally
+sudo service dphys-swapfile start
+
+##########################################################################
+How to Enlarge a Virtual Machine’s Disk in VirtualBox or VMware
+##########################################################################
+
+https://www.howtogeek.com/124622/how-to-enlarge-a-virtual-machines-disk-in-virtualbox-or-vmware/
+
+# add more space in vbox
+
+# start machine and install GParted’s
+sudo apt install gparted
+gparted
+
+# resize partition in gparted
+
+##########################################################################
+ValueError: feather does not support serializing <class 'pandas.core.indexes.base.Index'> for the index; you can .reset_index() to make the index into column(s)
+##########################################################################
+
+https://stackoverflow.com/questions/52210638/csv-to-feather-in-pandas-with-slicing-rows
+https://pandas.pydata.org/pandas-docs/version/0.23/generated/pandas.DataFrame.reset_index.html
+
+df.loc[2000000:4000000].reset_index().to_feather("./myfeather.ftr")
+
+
+df = pd.DataFrame([('bird',    389.0),
+                    ('bird',     24.0),
+                   ('mammal',   80.5),
+                    ('mammal', np.nan)],
+                   index=['falcon', 'parrot', 'lion', 'monkey'],
+                   columns=('class', 'max_speed'))
+df
+df.reset_index()
+df.reset_index(drop=True)
+
+
+##########################################################################
+pandas.DataFrame.to_pickle
+##########################################################################
+
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_pickle.html
+https://docs.python.org/3/library/pickle.html
+
+
+original_df = pd.DataFrame({"foo": range(5), "bar": range(5, 10)})
+original_df
+original_df.to_pickle("./dummy.pkl")
+unpickled_df = pd.read_pickle("./dummy.pkl")
+unpickled_df
+
+##########################################################################
+Experiment Fast-Serialization
+##########################################################################
+
+https://matthewrocklin.com/blog/work/2015/03/16/Fast-Serialization
+
+df = pd.DataFrame({'text': [str(i % 1000) for i in range(1000000)],
+                   'numbers': range(1000000)})
+
+##########################################################################
+ Apache Arrow-based Feather File Format
+##########################################################################
+
+
+https://github.com/wesm/feather
+https://pypi.org/project/feather-format/
+https://snyk.io/advisor/python/feather-format
+https://pythontic.com/pandas/serialization/feather
+https://arrow.apache.org/docs/python/feather.html
+https://arrow.apache.org/docs/python/feather.html
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_feather.html
+
+pip install feather-format
+
+
+
+import pandas as pd
+import feather
+dataFrame   = pd.DataFrame(data=pingInfo);
+dataFrame.to_feather(pingInfoFilePath);
+readFrame = pd.read_feather(pingInfoFilePath, columns=None, use_threads=True);
+print(readFrame);
+
+
+import pyarrow.feather as feather
+feather.write_feather(df, '/path/to/file')
+
+# Result is pandas.DataFrame
+read_df = feather.read_feather('/path/to/file')
+# Result is pyarrow.Table
+read_arrow = feather.read_table('/path/to/file')
+
+
+
+# Uses LZ4 by default
+feather.write_feather(df, file_path)
+# Use LZ4 explicitly
+feather.write_feather(df, file_path, compression='lz4')
+# Use ZSTD
+feather.write_feather(df, file_path, compression='zstd')
+# Do not compress
+feather.write_feather(df, file_path, compression='uncompressed')
+
+
+##########################################################################
+HDFStore pandas
+##########################################################################
+
+https://pandas.pydata.org/docs/reference/api/pandas.HDFStore.get.html
+https://www.numpyninja.com/post/hdf5-file-format-with-pandas
+https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.HDFStore.put.html
+https://stackoverflow.com/questions/17098654/how-to-reversibly-store-and-load-a-pandas-dataframe-to-from-disk
+
+
+import pandas as pd
+from pandas import HDFStore
+hdf = HDFStore('hdf_file.h5')
+
+import numpy as np
+df2 = pd.DataFrame(np.random.rand(5,3) #dataframe df2
+hdf.put(‘key2’,df2) # to add a dataframe to the hdf file
+df3= pd.DataFrame(np.random.rand(10,2)
+hdf.put(‘/group1/key3’,df3) # to add a group with df3 in the hdf file
+hdf[‘/group1/key3’].shape()
+
+write_data = pd.DataFrame(np.random.rand(5,3))
+write_data.to_hdf(‘hdf_file.h5’,’key’,mode=’w’)#writes data to hdf file
+
+hdf.append('/key2',pd.DataFrame(np.random.rand(5,3))
+
+hdf =HDFStore(‘hdf_file.h5', mode=’r’)
+data = hdf.get(‘/key1’)
+
+read_data = pd.read_hdf('hdf_file.h5','/key1',where=['Id>10'], columns=[‘Species’])
+read_data.head()   #read head of file
+read_data.shape    #fetching shape of the file
+read_data.describe  #describe the dataset
+hdf.close()
+
+
+
+import pandas as pd
+store = pd.HDFStore('store.h5')
+store['df'] = df  # save it
+store['df']  # load it
+
+
+##########################################################################
+to_parquet
+##########################################################################
+
+https://pandas.pydata.org/pandas-docs/version/1.2.4/reference/api/pandas.DataFrame.to_parquet.html
+https://www.educative.io/answers/how-to-write-a-dataframe-to-a-parquet-file-in-python
+https://stackoverflow.com/questions/41066582/python-save-pandas-data-frame-to-parquet-file
+https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.to_parquet.html
+https://pandas.pydata.org/pandas-docs/version/1.1/reference/api/pandas.DataFrame.to_parquet.html
+https://stackoverflow.com/questions/41066582/python-save-pandas-data-frame-to-parquet-file
+https://pandas.pydata.org/pandas-docs/version/1.1/reference/api/pandas.DataFrame.to_parquet.html
+
+
+import pandas as pd
+import os
+data = [['dom', 10], ['abhi', 15], ['celeste', 14]]
+df = pd.DataFrame(data, columns = ['Name', 'Age'])
+df.to_parquet("dataframe.parquet")
+print("Listing the contents of the current directory:")
+print(os.listdir('.'))
+
+
+
+##########################################################################
+pip cache
+##########################################################################
+
+
+https://pip.pypa.io/en/stable/cli/pip_cache/
+https://pip.pypa.io/en/stable/topics/caching/
+
+
+python -m pip cache dir
+python -m pip cache info
+python -m pip cache list [<pattern>] [--format=[human, abspath]]
+python -m pip cache remove <pattern>
+python -m pip cache purge
+
+python -m pip download sampleproject==1.0.0 --no-binary :all:
+python -m pip install sampleproject-1.0.0.tar.gz
+
+pip cache info
+pip cache remove setuptools
+pip cache purge
+pip cache list
+pip cache list setuptools
+
+
+
+##########################################################################
+Is there a way to answer "y" to (or ignore) all y/n prompts?
+Once deleted, variables cannot be recovered. Proceed
+##########################################################################
+
+https://www.delftstack.com/howto/python/how-to-clear-variables-in-ipython/
+https://stackoverflow.com/questions/16261240/releasing-memory-of-huge-numpy-array-in-ipython
+
+%xdel testcube
+%reset out
+%reset array
+del array
+
+%reset -f
+%reset_selective -f
+
+Use %reset -f to Clear All Variables in IPython - No User Confirmation
+Use del to Clear a Specific Variable in IPython
+Use magic('reset -sf') to Clear Variables Before Script Runs
+
+
+Use %reset to Clear All Variables in IPython - Requires User Confirmation
+Use %reset -f to Clear All Variables in IPython - No User Confirmation
+Use del to Clear a Specific Variable in IPython
+Use magic('reset -sf') to Clear Variables Before Script Runs
+Conclusion
+
+
+
+##########################################################################
+How to get swap memory statistics in Python
+##########################################################################
+
+https://www.educative.io/answers/how-to-get-swap-memory-statistics-in-python
+https://napuzba.com/a/extend-memory-swap/p2
+https://medium.com/analytics-vidhya/swap-space-ram-memory-extension-c7d371bdc2f0
+https://aws.amazon.com/fr/ec2/pricing/on-demand/
+https://www.programcreek.com/python/example/53872/psutil.swap_memory
+
+import psutil
+print("Swap Memory Information:")
+print(psutil.swap_memory())
+
+
+memory-test.py
+
+#! /usr/bin/python
+ import ctypes
+ import sys
+
+ size = int(sys.argv[1])
+ class MemoryTest(ctypes.Structure):
+     _fields_ = [  ('chars' , ctypes.c_char*size * 1024*1024 ) ]
+
+ try:
+     test = MemoryTest()
+     print('success => {0:>4}MB was allocated'.format(size) )
+ except:
+     print('failure => {0:>4}MB can not be allocated'.format(size) )
+
+
+chmod 755 memory-test.py
+./memory-test.py 10
+./memory-test.py 310
+./memory-test.py 1000
+
+
+!pip3 install --user psutil
+import psutil
+print("Swap Memory Information:")
+#print(psutil.swap_memory())
+swap = psutil.swap_memory()
+print('swap.total', swap.total)
+print('swap.used', swap.used)
+print('swap.free', swap.free)
+print('swap.percent', swap.percent)
+print(psutil.virtual_memory())
+print(psutil.swap_memory())
+print(psutil.cpu_times())
+print(psutil.cpu_times_percent(interval=0))
+print(psutil.net_io_counters())
+
+
+##########################################################################
+banchmark memory
+##########################################################################
+
+https://bytes.com/topic/python/answers/825401-swap-memory-python-three-questions
+
+AMD 64 x 2 Ubuntu 8.04. Ubuntu  64 bit.  3gb RAM , 15 GB swap drive.
+
+g=numpy.ones([1000,1000,1000],numpy.int32)
+This returns a memory error.
+
+
+A smaller array ([500,500,500]) worked fine..
+Two smaller arrays again crashed the system.
+
+
+##########################################################################
+dask
+##########################################################################
+
+https://docs.dask.org/en/stable/install.html
+https://docs.dask.org/en/stable/dataframe-parquet.html
+https://www.coiled.io/blog/write-multiple-parquet-files-to-a-single-csv-using-python
+https://www.coiled.io/blog/dask-dataframe-merge-join
+https://docs.dask.org/en/stable/generated/dask.dataframe.multi.merge.html
+
+!pip3 install --user dask
+import dask.dataframe as dd
+ddf = dd.read_parquet('transfer/merge/*.parquet')
+ddf.to_csv("df_all.csv",
+           single_file=True,
+           index=False
+)
+ddf.to_parquet("df_all.parquet", engine='fastparquet')
+
+##########################################################################
+pyspark
+##########################################################################
+
+# Import SparkSession
+from pyspark.sql import SparkSession
+from pyspark.sql import SQLContext, Row
+
+# Create SparkSession
+spark = SparkSession.builder \
+      .master("local[1]") \
+      .appName("SparkByExamples.com") \
+      .getOrCreate()
+
+df = spark.read.parquet("transfer/merge/*.parquet")
+# df = spark.read.parquet("/path/to/dir/part_1.gz", "/path/to/dir/part_2.gz")
+df.printSchema()
+#for c in df.columns:
+df = df.withColumnRenamed(c, c.replace("abc " , "abc"))
+df.write.parquet("merged.parquet")
+
+# AnalysisException: Attribute name "abc " contains invalid character(s) among " ,;{}()\n\t=". Please use alias to rename it.
+#  java.lang.OutOfMemoryError: GC overhead limit exceeded
+
+# Attribute name "max(my_date_int)" contains
+invalid character(s) among " ,;{}()\n\t=". Please use alias to rename it.;
+
+##########################################################################
+
+https://duckdb.org/docs/data/parquet
+https://pola-rs.github.io/polars-book/user-guide/multiple_files/intro.html
+https://stackoverflow.com/questions/30421162/read-few-parquet-files-at-the-same-time-in-spark
+https://deephaven.io/core/docs/how-to-guides/parquet-partitioned/
+https://github.com/delta-io/delta/issues/462
+https://fastparquet.readthedocs.io/en/latest/quickstart.html#reading
+https://sparkbyexamples.com/pyspark/pyspark-read-and-write-parquet-file/
+https://spark.apache.org/docs/latest/sql-data-sources-parquet.html
+https://spark.apache.org/docs/1.6.1/sql-programming-guide.html
+https://spark.apache.org/docs/latest/sql-data-sources-parquet.html
+https://sparkbyexamples.com/spark/spark-sqlcontext-explained-with-examples/
+https://stackoverflow.com/questions/41254011/sparksql-read-parquet-file-directly
+https://sparkbyexamples.com/pyspark/pyspark-read-and-write-parquet-file/
+https://sparkbyexamples.com/pyspark-tutorial/
+https://python.hotexamples.com/examples/pyspark.sql/SQLContext/parquetFile/python-sqlcontext-parquetfile-method-examples.html
+https://gist.github.com/sambos/2471d64ab2f34712feb3605c69cd58b5
+https://github.com/delta-io/delta/issues/462
+https://sparkbyexamples.com/spark/spark-convert-parquet-file-to-csv-format/
+https://spark.apache.org/docs/3.1.2/sql-data-sources-parquet.html
+https://sparkbyexamples.com/pyspark/pyspark-read-and-write-parquet-file/
+https://stackoverflow.com/questions/45804534/pyspark-org-apache-spark-sql-analysisexception-attribute-name-contains-inv
+https://www.appsloveworld.com/scala/100/112/how-fix-spark-aggregation-max-contains-invalid-characters-among-error
+https://community.databricks.com/s/question/0D58Y000092eaqcSAA/ingest-a-csv-file-with-spaces-in-column-names-using-delta-live-into-a-streaming-table
+https://docs.databricks.com/delta/delta-column-mapping.html
+
