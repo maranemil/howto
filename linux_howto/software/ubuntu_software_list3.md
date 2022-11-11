@@ -211,3 +211,9 @@ https://obsidian.md/
 https://www.markdownguide.org/tools/obsidian/
 https://help.obsidian.md/How+to/Format+your+notes
 ```
+
+### podman
+https://podman-desktop.io/
+
+### dust
+deb-get install du-dust
