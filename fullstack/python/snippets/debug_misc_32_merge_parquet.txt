@@ -1,0 +1,288 @@
+
+######################################################################
+merge pyspark
+######################################################################
+
+# Import SparkSession
+from pyspark.sql import SparkSession
+from pyspark.sql import SQLContext, Row
+import math
+
+# Create SparkSession
+spark = SparkSession.builder \
+      .master("local[1]") \
+      .appName("SparkByExamples.com") \
+      .getOrCreate()
+sc=spark.sparkContext
+
+
+df.printSchema()
+df.show()
+df=spark.read.parquet("stocks")
+df.write.parquet("pyspark_output.parquet")
+
+
+
+Reading all files at once using mergeSchema option
+https://medium.com/data-arena/merging-different-schemas-in-apache-spark-2a9caca2c5ce
+https://gist.github.com/cordon-thiago/8d27f7bb3347da525c1fb6ad17179573#file-merge-schemas-spark-py
+https://gist.github.com/cordon-thiago/b7c6fc9e83dd36963c5b87fca7e5e14f#file-count-df-null-rows-py
+
+data_path = "/home/jovyan/work/data/raw/test_data_parquet"
+df = spark.read.option("mergeSchema", "true").parquet(data_path)
+
+
+######################################################################
+merge dask
+######################################################################
+
+!pip3 install --user dask
+import dask.dataframe as dd
+ddf = dd.read_parquet('stocks/stocks_*.parquet')
+ddf.to_parquet("dask_df_all.parquet", engine='fastparquet')
+
+# IndexError: list index out of range
+
+######################################################################
+merge pandas
+######################################################################
+
+stocks3 = pd.DataFrame()
+# filenames = glob.glob("batch_merge/*.parquet")
+filenames3 = ['stocks3_p1.parquet', 'stocks3_p2.parquet']
+k = 0
+for file3 in filenames3:
+    print(f"merging file {file3} ...")
+    df3 = pd.read_parquet(f"{file3}")
+    # stocks = pd.concat([stocks, df], ignore_index=True, axis=0)
+    stocks3 = pd.concat([stocks3, df3], axis=0)
+    del df3
+    time.sleep(1)
+
+pd.DataFrame(stocks3).to_parquet('stocks3_final.parquet', compression='snappy', index=True, engine='pyarrow')
+del stocks3
+print(f"merging final done ...")
+
+
+######################################################################
+merge fastparquet
+######################################################################
+
+# https://readthedocs.org/projects/fastparquet/downloads/pdf/latest/
+
+from fastparquet import ParquetFile
+#pf = ParquetFile('stocks3_p1.parquet','stocks3_p2.parquet')
+files = glob.glob("tmp/*.parquet")
+print(files)
+pf = ParquetFile(list(files))
+df = pf.to_pandas()
+df.head()
+
+from fastparquet import write
+write('stocks3_outfile.parquet', df)
+del df
+
+# buffer is smaller than requested size
+
+....
+
+https://blog.datasyndrome.com/python-and-parquet-performance-e71da65269ce
+
+import os
+from glob import glob
+import fastparquet
+# Walk the directory and find all the parquet files within
+parquet_root = 'analytics'
+parquet_files = [y for x in os.walk(parquet_root) for y in glob(os.path.join(x[0], '*.parquet'))]
+# The root argument lets it know where to look for partitions
+pf = fastparquet.ParquetFile(parquet_files, root=parquet_root)
+# Now we convert to pd.DataFrame specifying columns and filters
+df = pf.to_pandas(
+    columns=['event_name', 'other_column'],
+    filters=('event_name', '=', 'SomeEvent')
+)
+
+
+######################################################################
+Replace a specific string in a list
+######################################################################
+https://note.nkmk.me/en/python-list-str-select-replace/
+
+l = ['oneXXXaaa', 'twoXXXbbb', 'three999aaa', '000111222']
+
+# Extract strings that contain or do not contain a specific string
+l_in = [s for s in l if 'XXX' in s]
+print(l_in)
+# ['oneXXXaaa', 'twoXXXbbb']
+l_in_not = [s for s in l if 'XXX' not in s]
+print(l_in_not)
+# ['three999aaa', '000111222']
+
+# replace
+l_replace = [s.replace('XXX', 'ZZZ') for s in l]
+print(l_replace)
+# ['oneZZZaaa', 'twoZZZbbb', 'three999aaa', '000111222']
+
+
+######################################################################
+Oracle TRIM
+######################################################################
+
+https://www.oracletutorial.com/oracle-string-functions/oracle-trim/
+https://docs.oracle.com/cd/B19306_01/server.102/b14200/functions199.htm
+https://www.w3resource.com/oracle/character-functions/oracle-trim-function.php
+
+SELECT TRIM('removing trailing white spaces    ') FROM DUAL;
+
+######################################################################
+Python TRIM
+######################################################################
+
+
+https://www.digitalocean.com/community/tutorials/python-trim-string-rstrip-lstrip-strip
+
+s1 = '  abc  '
+print(f'String =\'{s1}\'')
+print(f'After Removing Leading Whitespaces String =\'{s1.lstrip()}\'')
+print(f'After Removing Trailing Whitespaces String =\'{s1.rstrip()}\'')
+print(f'After Trimming Whitespaces String =\'{s1.strip()}\'')
+
+
+######################################################################
+######################################################################
+
+https://sparkbyexamples.com/pyspark/spark-context-sc-not-defined/
+https://fastparquet.readthedocs.io/en/latest/quickstart.html#reading
+https://sparkbyexamples.com/pyspark/pyspark-read-and-write-parquet-file/
+https://docs.dask.org/en/stable/dataframe-parquet.html
+https://medium.com/bigspark/compaction-merge-of-small-parquet-files-bef60847e60b
+https://pandas.pydata.org/pandas-docs/version/1.0/reference/api/pandas.DataFrame.to_parquet.html
+https://www.coiled.io/blog/write-multiple-parquet-files-to-a-single-csv-using-python
+https://www.appsloveworld.com/pandas/100/440/pandas-merge-parquet-files-with-different-column-dtypes-write-parquet-with-pre
+https://issues.apache.org/jira/browse/ARROW-3728
+
+######################################################################
+Oracle Search String with empty space
+######################################################################
+
+https://www.w3resource.com/oracle/character-functions/oracle-instr-function.php
+https://www.oracletutorial.com/oracle-string-functions/
+https://www.w3schools.com/sql/sql_top.asp
+https://www.oracletutorial.com/oracle-basics/oracle-fetch/
+
+REGEXP_COUNT	REGEXP_COUNT(‘1 2 3 abc’,’\d’)
+REGEXP_INSTR	REGEXP_INSTR( ‘Y2K problem’,’\d+’)
+REGEXP_LIKE	REGEXP_LIKE( ‘Year of 2017′,’\d+’ )
+REGEXP_REPLACE	REGEXP_REPLACE( ‘Year of 2017′,’\d+’, ‘Dragon’ )
+REGEXP_SUBSTR	REGEXP_SUBSTR( ‘Number 10’, ‘\d+’ )
+
+
+SELECT
+-- TRIM(REFERENCE),
+REFERENCE,
+VALUE
+FROM REFERENCES
+WHERE REGEXP_LIKE(REFERENCE, '\s+')
+AND ROWNUM <= 4
+
+
+
+######################################################################
+manjaro
+######################################################################
+
+https://manjaro.org/download/
+
+https://wiki.manjaro.org/index.php?title=Swap#Automated_Swap_Management_with_systemd-swap
+https://github.com/Nefelim4ag/systemd-swap
+https://wiki.manjaro.org/index.php?title=Swap
+https://wiki.archlinux.org/title/Swap
+https://wiki.manjaro.org/index.php/Swap#Creating_and_Enabling_a_Swap_Partition
+https://wiki.manjaro.org/index.php/Swap/de
+
+
+# install brave
+
+
+sudo pacman -S snapd
+sudo systemctl enable --now snapd.socket
+sudo ln -s /var/lib/snapd/snap /snap
+sudo snap install brave
+
+https://snapcraft.io/install/brave/manjaro#install
+https://snapcraft.io/dbeaver-ce
+https://status.snapcraft.io/
+https://hub.docker.com/search?q=aws
+
+snap search pycharm
+sudo snap install pycharm-community --classic
+sudo snap install dbeaver-ce
+
+sudo pacman -S docker docker-compose
+
+https://docs.docker.com/engine/install/linux-postinstall/
+https://docs.docker.com/engine/install/linux-postinstall/
+
+sudo groupadd docker
+sudo usermod -aG docker $USER
+reboot
+
+sudo systemctl start docker
+sudo systemctl restart docker.service
+
+https://stackoverflow.com/questions/43479614/docker-parallel-operations-limit
+https://docs.docker.com/config/daemon/
+
+sudo nano /etc/docker/daemon.json
+
+{
+    "max-concurrent-uploads": 1,
+    "max-concurrent-downloads": 1
+}
+
+
+Automated Swap Management with systemd-swap
+https://wiki.manjaro.org/index.php/Swap
+https://wiki.manjaro.org/index.php/Swap/de
+https://wiki.archlinux.org/title/swap
+https://wiki.archlinux.org/title/swap
+
+pamac install systemd-swap
+sudo systemctl enable systemd-swap.service
+
+sudo nano /etc/systemd/swap.conf
+
+zswap_enabled=0
+zram_enabled=0
+swapfc_enabled=1
+
+sudo systemctl restart systemd-swap.service
+systemctl --type swap
+
+
+swapspace ubuntu
+https://help.ubuntu.com/community/SwapFaq
+https://manpages.ubuntu.com/manpages/xenial/man8/swapspace.8.html
+https://opensource.com/article/18/9/swap-space-linux-systems
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/storage_administration_guide/ch-swapspace
+https://linuxize.com/post/create-a-linux-swap-file/
+
+/etc/swapspace.conf
+gnome-disks
+
+/etc/init.d/swapspace
+/etc/swapspace.conf
+/usr/sbin/swapspace
+/var/lib/swapspace/
+
+
+
+
+
+
+
+
+
+
+
+
