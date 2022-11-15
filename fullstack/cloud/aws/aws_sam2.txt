@@ -1,0 +1,329 @@
+https://serverlessland.com/patterns
+https://cdkpatterns.com/
+
+
+########################################################
+Deploy a Lambda Function as a Container Image: Docker + SAM + ECR
+########################################################
+
+https://levelup.gitconnected.com/how-to-deploy-a-lambda-function-as-a-container-image-docker-sam-ecr-2846809f90e1
+
+.
+├── app.py
+├── requirements.txt
+├── samconfig.toml
+└── template.yaml
+
+
+Dockerfile
+
+FROM public.ecr.aws/lambda/python:3.9
+ARG wd=/var/task/
+COPY app.py requirements.txt ${wd}
+RUN python3.9 -m pip install -r requirements.txt -t "${wd}"
+# Command can be overwritten by providing a different command in the template directly.
+CMD ["app.lambda_handler"]
+
+
+.
+├── Dockerfile
+├── app.py
+├── requirements.txt
+├── samconfig.toml
+└── template.yaml
+
+
+template.yaml
+
+Resources:
+  Function:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: Weekly_Pocket_Readtime_Tagger
+      Description: >
+        Lambda function which tags unread articles (saved in the last 7 days) in my Pocket based on read-time.
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Timeout: 300
+      Metadata:
+	  Dockerfile: Dockerfile
+	  DockerContext: .
+
+
+sam build -u
+sam build -u --parameter-overrides 'Tag=TAG_GOES_HERE'
+
+sam local invoke
+
+aws ecr create-repository --repository-name <REPO_NAME>
+
+aws ecr create-repository --repository-name <REPO_NAME> --query 'repository.repositoryUri' > repoUri.txt
+
+
+Automating Lambda Container Image Deployments with AWS SAM CLI
+https://medium.com/platform-engineer/automating-lambda-container-image-deployments-with-aws-sam-cli-71afbf09e172
+
+sam init
+hello-world-app
+
+sam build
+
+docker run -d -p 9000:8080 helloworldfunction:nodejs14.x-v1
+
+curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{}'
+
+aws ecr get-login-password  --region <region> | docker login
+     --username AWS --password-stdin
+     <accountID>.dkr.ecr.<region>.amazonaws.com
+
+aws ecr create-repository
+     --repository-name hello-world-container
+     --image-tag-mutability IMMUTABLE
+     --image-scanning-configuration scanOnPush=true
+
+...
+
+https://github.com/azmimengu/lambda-docker-example
+
+....
+
+Running AWS SAM in a Docker Container
+
+https://medium.com/monsoon-engineering/running-aws-sam-in-a-docker-container-2491596672c2
+
+Dockerfile
+
+FROM python:alpine
+RUN apk update && \
+    apk upgrade && \
+    apk add bash && \
+    apk add --no-cache --virtual build-deps build-base gcc && \
+    pip install aws-sam-cli && \
+    apk del build-deps
+RUN mkdir /app
+WORKDIR /app
+EXPOSE 3001
+ENTRYPOINT ["./bin/sam_entrypoint.sh"]
+
+sam_entrypoint.sh
+
+#!/bin/bash
+set -o errexit
+BASEDIR="$1"
+/usr/local/bin/sam local start-lambda \
+  --template dist/template.yaml \
+  --host 0.0.0.0 \
+  --docker-volume-basedir "${BASEDIR}" \
+  --docker-network monsoon-samples_default \
+  --skip-pull-image
+
+template.yaml
+
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: A sample AWS Lambda Function
+Resources:
+  SampleFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/index.handler
+      Runtime: nodejs8.10
+      CodeUri: ./
+
+
+docker-compose.yaml
+
+version: '3.6'
+services:
+  sam_app:
+    build: .
+    command: ["$PWD"]
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+
+
+
+echo '{"itemRecord":{"value":[{"longValue":"12345"},{"stringValue":{"number":"false","$t":"this is a string value"}},{"moneyValue":{"number":"true","currencyId":"USD","text":"123.45","$t":"104.95"}},{"moneyValue":{"currencyId":"USD","$t":"104.95"}},{"longValue":"0","bool":{"id":"0","$t":"true"}},{"longValue":"0"},{"dateValue":"2012-02-16T17:03:33.000-07:00"},{"stringValue":"SmDZ8RlMIjDvlEW3KUibzj2Q"},{"text":"42.42"}]}}' | curl \
+  --request POST \
+  --header "Content-Type: application/json" \
+  --data @- \
+  http://localhost:3001/2015-03-31/functions/SampleFunction/invocations
+
+...
+
+
+Deploy and run AWS Lambda functions as container images
+
+https://www.linkedin.com/pulse/deploy-run-aws-lambda-functions-container-images-tom-reid
+
+import awswrangler as wr
+def lambda_handler(event, context):
+# The bucket name below is a dummy one
+    print(wr.s3.list_objects('s3://my-bucket/’))
+
+template.yaml
+
+AWSTemplateFormatVersion: '2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  sam-app
+
+
+  Sample SAM Template for sam-app
+
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 10
+
+
+Resources:
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      PackageType: Image
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /hello
+            Method: get
+    Metadata:
+      DockerTag: python3.7-v1
+      DockerContext: ./hello_world
+      Dockerfile: Dockerfile
+
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  HelloWorldApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+HelloWorldFunction:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt HelloWorldFunction.Arn
+  HelloWorldFunctionIamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: !GetAtt HelloWorldFunctionRole.Arn
+
+
+
+Dockerfile
+
+FROM public.ecr.aws/lambda/python:3.
+COPY app.py requirements.txt ./
+RUN python3.7 -m pip install -r requirements.txt -t .
+# Command can be overwritten by providing a different command in the template directly.
+CMD ["app.lambda_handler"]
+
+
+...
+https://github.com/aws/aws-sam-cli/issues/161
+https://arcadian.cloud/aws/2022/02/23/aws-sam-in-a-docker-container/
+https://github.com/aws/serverless-application-model/issues/142
+https://dev.to/aws-builders/stop-and-start-ec2-instances-at-predefined-times-using-lambda-and-cloudwatch-stopinator-20-day-7-2b0c
+...
+
+https://www.philschmid.de/aws-lambda-with-custom-docker-image
+
+app.py
+
+import json
+def handler(event, context):
+    body = {
+        "message": "Go Serverless v1.0! Your function executed successfully!",
+        "input": event
+    }
+    response = {
+        "statusCode": 200,
+        "body": json.dumps(body)
+    }
+    return response
+
+
+dockerfile
+
+FROM public.ecr.aws/lambda/python:3.8
+# Copy function code
+COPY app.py ${LAMBDA_TASK_ROOT}
+# Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
+CMD [ "app.handler" ]
+
+.dockerignore
+
+Dockerfile
+README.md
+*.pyc
+*.pyo
+*.pyd
+__pycache__
+.pytest_cache
+events
+
+docker build -t docker-lambda .
+docker run -d -p 8080:8080 docker-lambda
+
+curl -XPOST "http://localhost:8080/2015-03-31/functions/function/invocations" -d '{"payload":"hello world!"}'
+
+aws ecr create-repository --repository-name docker-lambda
+
+
+
+
+#####################################################
+AWS
+#####################################################
+https://docs.aws.amazon.com/
+
+
+https://aws.amazon.com/step-functions/?nc1=h_ls
+https://aws.amazon.com/blogs/compute/using-container-image-support-for-aws-lambda-with-aws-sam/
+https://docs.aws.amazon.com/lambda/latest/dg/images-create.html
+https://docs.aws.amazon.com/lambda/latest/dg/python-image.html
+https://docs.aws.amazon.com/lambda/latest/dg/images-test.html
+https://docs.aws.amazon.com/lambda/latest/dg/images-create.html#images-reqs
+https://docs.aws.amazon.com/lambda/latest/dg/images-create.html#images-tools
+https://docs.aws.amazon.com/lambda/latest/dg/images-create.html#images-parms
+https://docs.aws.amazon.com/lambda/latest/dg/images-create.html#images-create-from-base
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-local-invoke.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-local-start-lambda.html
+https://aws.amazon.com/de/blogs/compute/learn-how-to-integrate-aws-services-with-the-serverless-patterns-collection/
+https://www.serverless.com/blog/serverless-architecture-code-patterns/
+https://serverlessland.com/patterns?services=lambda&language=Python
+https://docs.aws.amazon.com/workspaces/?icmpid=docs_homepage_euc
+https://docs.aws.amazon.com/workspaces/latest/userguide/workspaces-user-getting-started.html
+https://docs.aws.amazon.com/workspaces/latest/userguide/amazon-workspaces-linux-client.html
+https://docs.aws.amazon.com/workspaces/latest/adminguide/amazon-workspaces.html
+https://docs.aws.amazon.com/workspaces-web/?icmpid=docs_homepage_euc
+https://docs.aws.amazon.com/serverless-application-model/?icmpid=docs_homepage_compute
+https://docs.aws.amazon.com/cognito/?icmpid=docs_homepage_security
+https://docs.aws.amazon.com/glue/?icmpid=docs_homepage_analytics
+https://docs.aws.amazon.com/lambda/?icmpid=docs_homepage_serverless
+https://docs.aws.amazon.com/lambda/latest/dg/welcome.html
+https://docs.aws.amazon.com/apigateway/?icmpid=docs_homepage_serverless
+https://docs.aws.amazon.com/lambda/latest/dg/lambda-services.html
+https://docs.aws.amazon.com/eventbridge/?icmpid=docs_homepage_serverless
+https://docs.aws.amazon.com/sns/?icmpid=docs_homepage_serverless
+https://docs.aws.amazon.com/sqs/?icmpid=docs_homepage_serverless
+https://docs.aws.amazon.com/s3/?icmpid=docs_homepage_serverless
+https://docs.aws.amazon.com/step-functions/?icmpid=docs_homepage_serverless
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html
+https://docs.aws.amazon.com/ec2/index.html
+https://docs.aws.amazon.com/ec2/index.html#best-practices
+https://docs.aws.amazon.com/s3/?icmpid=docs_homepage_featuredsvcs
+https://docs.aws.amazon.com/amazonglacier/latest/dev/introduction.html
+https://docs.aws.amazon.com/lambda/?icmpid=docs_homepage_featuredsvcs
+https://docs.aws.amazon.com/lambda/latest/dg/welcome.html
+https://docs.aws.amazon.com/lambda/?icmpid=docs_homepage_compute
+https://docs.aws.amazon.com/ec2/?icmpid=docs_homepage_compute
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html
+https://docs.aws.amazon.com/s3/?icmpid=docs_homepage_storage
+https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-services.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-build.html
+https://docs.aws.amazon.com/de_de/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-build.html

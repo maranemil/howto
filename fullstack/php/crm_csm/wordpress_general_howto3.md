@@ -345,7 +345,32 @@ https://redrice.biz/wordpress-reparieren/
 https://ihre_webseite/wp-admin/maint/repair.php
 define('WP_ALLOW_REPAIR', true);
 ```
+```
+#####################################################
+Docker Official Image packaging for WordPress SHA
+#####################################################
 
+https://wordpress.org/download/releases/
+https://github.com/docker-library/wordpress
+https://github.com/docker-library/wordpress/blob/master/latest/php7.4/fpm-alpine/Dockerfile
+https://docs.docker.com/samples/wordpress/
+https://github.com/docker/awesome-compose/tree/master/wordpress-mysql
+https://github.com/docker-library/wordpress
+https://hub.docker.com/_/wordpress
 
+ENV WORDPRESS_VERSION 6.1
+ENV WORDPRESS_SHA1 d7ca8d05b33caf1ebf473387c8357f04a01cf0b5
+
+define('WP_ALLOW_REPAIR', true);
+
+/wp-admin/maint/repair.php?repair=1
+/wp-admin/maint/repair.php?repair=2
+
+define('FS_METHOD','direct');
+
+sudo chmod -R 777 wordpress/
+sudo chmod -R 777 wordpress/wp-content/
+sudo chown -R www-data:www-data wordpress/
+```
 
 
