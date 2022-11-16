@@ -1,0 +1,649 @@
+
+##################################################
+aws sam
+##################################################
+
+https://medium.com/monsoon-engineering/running-aws-sam-in-a-docker-container-2491596672c2
+https://aws.amazon.com/de/blogs/containers/automated-software-delivery-using-docker-compose-and-amazon-ecs/
+
+$ git clone https://github.com/aws-containers/demo-app-for-docker-compose.git
+$ cd demo-app-for-docker-compose/application
+$ docker compose up
+
+---------------------------------------------------
+https://avdi.codes/aws-sam-in-a-docker-dev-container/
+https://github.com/avdi/aws-sam/blob/bdcdde384bee7332c0bd3c94d8510605668143df/.devcontainer/Dockerfile#L58
+
+RUN pip install aws-sam-cli
+
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+    && unzip awscliv2.zip \
+    && ./aws/install
+
+---------------------------------------------------
+
+https://cbax.me/posts/2019/03/aws-sam-cli-inside-docker-compose/
+
+
+# Dockerfile.lambdas
+
+FROM: alpine:3.9
+RUN apk add --no-cache build-base python3
+RUN pip install --upgrade pip
+RUN pip install awscli
+RUN pip install aws-sam-cli
+WORKDIR /var/task
+COPY ./sam-cli-template.yml template.yml
+VOLUME /var/run/docker.sock
+EXPOSE 3001
+ENTRYPOINT ["/bin/sh"]
+
+
+# docker-compose.yml
+
+version: '3'
+services:
+  lambdas:
+    build:
+      context: ./
+      dockerfile: Dockerfile.lambdas
+    image: myapp-lambda:local
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint: sam local start-lambda --host 0.0.0.0 --port 3001 --docker-volume-basedir /c/Users/Carl/DevProjects/sam-cli-example
+    networks:
+      - lambda
+
+---------------------------------------------------
+
+https://github.com/cnadiminti/docker-aws-sam-local
+
+version: '3'
+
+services:
+  aws-sam-local:
+    image: cnadiminti/aws-sam-local
+    command: local start-api --docker-volume-basedir "$PWD/example" --host 0.0.0.0
+    ports:
+      - '3000:3000'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./example:/var/opt
+
+---------------------------------------------------
+
+Run AWS SAM in a Docker Container
+
+https://arcadian.cloud/aws/2022/02/23/aws-sam-in-a-docker-container/
+https://github.com/chrishart0/containerized-aws-sam
+
+Dockerfile
+
+
+FROM mcr.microsoft.com/playwright:focal
+WORKDIR /app
+
+#Install CDK and Frontend
+RUN apt-get update && apt-get install -y \
+    make \
+    software-properties-common \
+    && npm install -g aws-cdk ts-node
+
+# Install deps for SAM Backend
+RUN apt-get install -y \
+    python3.9 \
+    python3.8-venv python3.9-venv \
+    && pip install pip \
+    && pip install awscli aws-sam-cli==1.12.0 \
+    && rm -rf /var/lib/apt/lists/*
+
+# We are able to override the CMD instruction and execute any command successfully.
+# However, while we were successful, this process of overriding the CMD instruction
+# is rather clunky.
+CMD ["make", "_run"]
+
+
+docker-compose.yaml
+
+version: '3.6'
+services:
+  sam:
+    build: .
+    environment:
+      - TZ=Etc/GMT
+      - SAM_CLI_TELEMETRY=false
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - $PWD:$PWD
+      - /var/run/docker.sock:/var/run/docker.sock #Needed so a docker container can be run from inside a docker container
+      - ~/.aws/:/root/.aws:ro
+    working_dir: $PWD
+    command: ['/bin/bash', "./entrypoint.sh"]
+    ports:
+      - "3000:3000"
+    networks:
+      - "backend"
+
+networks:
+  backend:
+    name: aws_backend
+    driver: bridge
+
+
+entrypoint.sh
+
+sam local start-api -p 3000 --host 0.0.0.0 --docker-network aws_backend
+
+Start up the container
+docker-compose up
+
+----------------------------------------------------------------
+
+Deploy and run AWS Lambda functions as container images
+https://www.linkedin.com/pulse/deploy-run-aws-lambda-functions-container-images-tom-reid
+
+
+AWSTemplateFormatVersion: '2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  sam-app
+
+  Sample SAM Template for sam-app
+
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 10
+
+
+Resources:
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      PackageType: Image
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /hello
+            Method: get
+    Metadata:
+      DockerTag: python3.7-v1
+      DockerContext: ./hello_world
+      Dockerfile: Dockerfile
+
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  HelloWorldApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+HelloWorldFunction:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt HelloWorldFunction.Arn
+  HelloWorldFunctionIamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: !GetAtt HelloWorldFunctionRole.Arn
+
+
+
+
+Dockerfile
+
+FROM public.ecr.aws/lambda/python:3.
+COPY app.py requirements.txt ./
+RUN python3.7 -m pip install -r requirements.txt -t .
+# Command can be overwritten by providing a different command in the template directly.
+CMD ["app.lambda_handler"]
+
+sam local invoke
+
+##################################################
+sam create lambda
+##################################################
+
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-local-invoke.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-local-start-api.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-build.html
+https://aws.amazon.com/de/premiumsupport/knowledge-center/lambda-sam-template-permissions/
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-template-list.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html
+https://repost.aws/questions/QUeahDxEBmTL-Hr-i4VTwqvQ/invalid-client-token-id-exception-while-validating-access-key-id
+https://docs.aws.amazon.com/IAM/latest/APIReference/API_ListPolicies.html
+https://docs.aws.amazon.com/organizations/latest/APIReference/API_ListPolicies.html
+https://awslabs.github.io/serverless-rules/rules/lambda/default_timeout/
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-local-generate-event.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
+https://docs.sentry.io/platforms/node/guides/aws-lambda/
+https://docs.aws.amazon.com/lambda/latest/operatorguide/code-storage-best-practice.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-config.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-local-start-lambda.html
+https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_managed-vs-inline.html#aws-managed-policies
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-build.html#
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html#
+https://docs.aws.amazon.com/lambda/latest/dg/python-image.html#
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-local-invoke.html#
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-init.html#
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-local-start-api.html#
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-logs.html#
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-using-invoke.html#
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-validate.html#
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-sync.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-package.html
+https://aws.amazon.com/blogs/compute/using-container-image-support-for-aws-lambda-with-aws-sam/#
+https://docs.aws.amazon.com/lambda/latest/dg/images-create.html#
+https://aws.amazon.com/blogs/compute/using-container-image-support-for-aws-lambda-with-aws-sam/
+https://docs.aws.amazon.com/lambda/latest/dg/python-image.html#python-image-create
+https://aws.amazon.com/blogs/architecture/field-notes-three-steps-to-port-your-containerized-application-to-aws-lambda/
+https://docs.aws.amazon.com/lambda/latest/dg/images-test.html
+https://aws.amazon.com/blogs/aws/new-for-aws-lambda-container-image-support/
+https://docs.aws.amazon.com/lambda/latest/dg/images-create.html
+https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/generate-a-static-outbound-ip-address-using-a-lambda-function-amazon-vpc-and-a-serverless-architecture.html
+
+
+...
+
+https://blog.tericcabrel.com/backup-database-using-aws-lambda-container/
+https://cloudbytes.dev/snippets/run-chrome-extensions-with-python-selenium-on-aws-lambda
+
+
+# Define function directory
+ARG FUNCTION_DIR="/function"
+ARG RUNTIME_VERSION="3.9"
+
+
+FROM ubuntu:latest as base-image
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC
+RUN apt-get install -y g++ make cmake unzip libcurl4-openssl-dev
+RUN apt-get install -y python3 python3-pip
+RUN apt-get install xvfb python3-tk python3-dev -y
+RUN apt-get install curl wget -y
+
+ARG FUNCTION_DIR
+# Create function directory
+RUN mkdir -p ${FUNCTION_DIR}
+# Copy function code
+
+
+RUN pip install \
+    --target ${FUNCTION_DIR} \
+    awslambdaric
+
+# Include global arg in this stage of the build
+ARG FUNCTION_DIR
+# Set working directory to function root directory
+WORKDIR ${FUNCTION_DIR}
+
+# Copy setup & other temporary files
+COPY requirements.txt /tmp/
+#COPY GoFullPage.crx /opt/
+RUN pip install --upgrade pip -q
+RUN pip install -r /tmp/requirements.txt -q
+COPY install_chrome.sh /tmp/
+RUN /bin/bash /tmp/install_chrome.sh
+COPY install_driver.sh /tmp/
+RUN /bin/bash /tmp/install_driver.sh
+COPY install_chromium.sh /tmp/
+RUN /bin/bash /tmp/install_chromium.sh
+COPY app.py ${FUNCTION_DIR}
+
+COPY GoFullPage.crx /opt/
+RUN ls -al /opt/chrome/stable/
+
+ENTRYPOINT [ "python3", "-m", "awslambdaric" ]
+CMD [ "app.handler" ]
+
+
+
+
+install Chrome browser
+
+#!/bin/bash
+
+apt-get update && apt-get upgrade -y
+echo "Download the latest Chrome .deb file..."
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -q
+echo "Install Google Chrome..."
+dpkg -i google-chrome-stable_current_amd64.deb
+echo "Fix dependencies..."
+apt-get --fix-broken install -y
+
+##################################################################################
+Lambda with layers
+##################################################################################
+
+https://github.com/aws/aws-lambda-python-runtime-interface-client/issues/11
+https://github.com/aws/aws-lambda-python-runtime-interface-client/blob/main/README.md#Requirements
+
+
+dockerfile
+
+# Define function directory
+ARG LAYER_DIR="/opt"
+
+FROM public.ecr.aws/docker/library/python:buster as build-image
+
+# Install aws-lambda-cpp build dependencies
+RUN yum -y install \
+  g++ \
+  make \
+  cmake \
+  unzip \
+  libcurl4-openssl-dev
+
+# Include global arg in this stage of the build
+ARG LAYER_DIR
+# Create function directory
+RUN mkdir -p ${LAYER_DIR}
+# Install the runtime interface client
+RUN pip install \
+        --target ${LAYER_DIR} \
+        awslambdaric
+
+# Add layer start
+ARG AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-"cn-northwest-1"}
+ARG AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-"xxxx"}
+ARG AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-"xxxx"}
+ENV AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+ENV AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+ENV AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+
+RUN yum install -y curl unzip
+
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+RUN unzip awscliv2.zip
+RUN ./aws/install
+
+# layer1
+RUN curl $(aws lambda get-layer-version-by-arn --arn arn:aws-cn:lambda:cn-northwest-1:xxxx:layer:xxxx:3 --query 'Content.Location' --output text) --output layer.zip
+RUN unzip layer.zip -d ${LAYER_DIR}
+RUN rm layer.zip
+
+# layer2
+RUN curl $(aws lambda get-layer-version-by-arn --arn arn:aws-cn:lambda:cn-northwest-1:xxxx:layer:xxxx:1 --query 'Content.Location' --output text) --output layer.zip
+RUN unzip layer.zip -d ${LAYER_DIR}
+RUN rm layer.zip
+# Add layer done
+
+
+# Multi-stage build: grab a fresh copy of the base image, use custom image instead of official one
+FROM python:buster
+
+# Include global arg in this stage of the build
+ARG LAYER_DIR
+
+# Copy in the build image dependencies
+WORKDIR ${LAYER_DIR}
+COPY --from=build-image ${LAYER_DIR} .
+
+COPY app.py .
+
+ADD https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie /usr/bin/aws-lambda-rie
+RUN chmod 755 /usr/bin/aws-lambda-rie
+
+COPY entry.sh /
+RUN chmod 755 /entry.sh
+
+# Production env
+ENTRYPOINT [ "/entry.sh" ]
+CMD [ "app.handler" ]
+
+
+
+
+entry.sh
+
+#!/bin/sh
+if [ -z "${AWS_LAMBDA_RUNTIME_API}" ]; then
+    exec /usr/bin/aws-lambda-rie /usr/local/bin/python -m awslambdaric $1
+else
+    exec /usr/local/bin/python -m awslambdaric $1
+fi
+
+
+-----------
+
+# Define custom function directory
+ARG FUNCTION_DIR="/function"
+
+FROM public.ecr.aws/docker/library/python:buster as build-image
+
+# Include global arg in this stage of the build
+ARG FUNCTION_DIR
+
+# Install aws-lambda-cpp build dependencies
+RUN apt-get update && \
+  apt-get install -y \
+  g++ \
+  make \
+  cmake \
+  unzip \
+  libcurl4-openssl-dev
+
+# Copy function code
+RUN mkdir -p ${FUNCTION_DIR}
+COPY app/* ${FUNCTION_DIR}
+
+# Install the function's dependencies
+RUN pip install \
+    --target ${FUNCTION_DIR} \
+        awslambdaric
+
+
+FROM public.ecr.aws/docker/library/python:buster
+
+# Include global arg in this stage of the build
+ARG FUNCTION_DIR
+# Set working directory to function root directory
+WORKDIR ${FUNCTION_DIR}
+
+# Copy in the built dependencies
+COPY --from=build-image ${FUNCTION_DIR} ${FUNCTION_DIR}
+
+ENTRYPOINT [ "/usr/local/bin/python", "-m", "awslambdaric" ]
+CMD [ "app.handler" ]
+
+
+Example Python handler app.py:
+
+def handler(event, context):
+    return "Hello World!"
+
+
+##################################################
+Python to execute a cURL command
+##################################################
+
+https://stackoverflow.com/questions/25491090/how-to-use-python-to-execute-a-curl-command
+
+import requests
+r = requests.get('https://github.com/timeline.json')
+r.json()
+
+
+##################################################
+Python main
+##################################################
+
+https://www.guru99.com/learn-python-main-function-with-examples-understand-main.html
+https://realpython.com/python-main-function/
+https://www.digitalocean.com/community/tutorials/python-main-function
+
+def main():
+    print("Hello World!")
+
+if __name__ == "__main__":
+    main()
+
+
+
+def main():
+     print ("Hello World!")
+print ("Guru99")
+
+
+
+def main():
+    print("Hello World!")
+if __name__ == "__main__":
+    main()
+print("Guru99")
+
+
+
+print("__name__ value: ", __name__)
+def main():
+    print("python main function")
+if __name__ == '__main__':
+    main()
+
+
+##################################################
+RecursionError: maximum recursion depth exceeded while calling a Python object
+##################################################
+
+https://github.com/boto/boto3/issues/2148
+https://www.codingem.com/python-maximum-recursion-depth/
+https://www.pythonpool.com/recursionerror-maximum-recursion-depth-exceeded-while-calling-a-python-object/
+
+import sys
+print(sys.getrecursionlimit()) # 1000
+sys.setrecursionlimit(2000)
+
+
+print("Factorial is :", find_fact(5000))
+# RecursionError: maximum recursion depth exceeded in comparison
+
+
+import boto3
+
+session = boto3.session.Session()
+s3 = session.resource("s3",
+aws_access_key_id="KEY1", aws_secret_access_key="KEY2",
+endpoint_url="https://fra1.digitaloceanspaces.com/")
+
+bucket = s3.Bucket('test.fra1.digitaloceanspaces.com')
+for obj in bucket.objects.all():
+key = obj.key
+print(key)
+#body = obj.get()['Body'].read()
+
+
+##################################################
+Public n AWS S3 Buckets
+##################################################
+
+https://app.cloudcheckr.com/IsS3BucketPublic/#!/isS3BucketPublic
+https://github.com/juvs/s3-bucket-browser
+https://www.filestash.app/
+
+
+https://buckets.grayhatwarfare.com/results
+https://buckets.grayhatwarfare.com/files?bucket=51
+https://buckets.grayhatwarfare.com/results/test
+https://buckets.grayhatwarfare.com/files?bucket=159
+https://buckets.grayhatwarfare.com/results/csv/160
+https://buckets.grayhatwarfare.com/results/parquet
+https://buckets.grayhatwarfare.com/results/pqt
+
+
+https://test.fra1.digitaloceanspaces.com/
+http://coolix.s3.eu-central-1.amazonaws.com/
+http://campster-dev.s3.eu-central-1.amazonaws.com/
+https://nomads.ams3.digitaloceanspaces.com/
+http://lunchclub.s3-us-west-2.amazonaws.com/
+http://holdspilsdagen.dk.s3-eu-west-1.amazonaws.com/
+
+df = pd.read_csv("http://pg-dev.s3.amazonaws.com/PG_Export_2011-11-05_11_NevadaMusic.co.uk.csv")
+print(df.head(5))
+
+df = pd.read_parquet("http://deane-test.s3.amazonaws.com/inglisweb/cms_inglis/cms_inglis.article_category/part-00000-7eeb0a75-2349-435b-b840-b3faee58e7f7-c000.gz.parquet")
+print(df.head(5))
+
+# http://starburstdata.s3.amazonaws.com/snowflake_export/data_0_3_2.snappy.parquet
+# http://h2o-public-test-data.s3.amazonaws.com/smalldata/parser/parquet/iris_training_data_decimal.parquet
+
+df = pd.read_parquet("http://h2o-public-test-data.s3.amazonaws.com/smalldata/parser/parquet/iris_training_data_decimal.parquet")
+print(df.head(5))
+
+
+##################################################
+Python | os.system() method
+##################################################
+
+https://www.geeksforgeeks.org/python-os-system-method/
+
+import os
+cmd = 'notepad'
+os.system(cmd)
+
+##################################################
+Network containers
+##################################################
+
+https://docs.docker.com/engine/tutorials/networkingcontainers/
+https://forums.docker.com/t/change-default-docker0-bridge-ip-address/30470/5
+
+docker network ls
+docker run -itd --name=networktest ubuntu
+docker network inspect bridge
+docker network disconnect bridge networktest
+
+docker network create -d bridge my_bridge
+docker network ls
+docker network inspect my_bridge
+docker run -d --net=my_bridge --name db training/postgres
+docker inspect --format='{{json .NetworkSettings.Networks}}'  db
+docker run -d --name web training/webapp python app.py
+docker inspect --format='{{json .NetworkSettings.Networks}}'  web
+docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' web
+docker container exec -it db bash
+docker network connect my_bridge web
+docker container exec -it db bash
+
+
+change the IP address and subnet of the bridge via the /etc/docker/daemon.json file ?
+
+/etc/docker/daemon.json file:
+
+{
+  "bip": "172.17.1.1/24",
+  "ipv6": false,
+  "storage-driver": "devicemapper",
+  "storage-opts":
+     [
+       "dm.basesize = 41G",
+       "dm.thinpooldev=/dev/mapper/docker--vg-thinpool",
+       "dm.use_deferred_removal=true"
+     ]
+}
+
+docker run -it --net tempnet opensuse /bin/bash
+
+sudo systemctl stop docker
+touch daemon.json
+echo ‘{’ > daemon.json
+echo ’ “bip”: “192.168.1.5/24”,’ >> daemon.json
+echo ’ “fixed-cidr”: “192.168.1.5/25”’ >> daemon.json
+echo ‘}’ >> daemon.json
+sudo cp daemon.json /etc/docker
+sudo systemctl start docker
+rm daemon.json
+ip addr
+
+
+sudo printf '{\n     "bip": "172.18.1.1/16",\n     "ipv6": false,\n     "fixed-cidr": "172.18.1.1/24"\n}\n' > /etc/docker/daemon.json
+sudo systemctl restart docker
+ip a
+
+
+
+
+
+
+
+

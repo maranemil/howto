@@ -10,6 +10,12 @@
 
 ------------------------------------------------------------------
 
+### AWS s3 public buckets
+
+- https://buckets.grayhatwarfare.com/results
+
+------------------------------------------------------------------
+
 ### Animation
 
 - https://blush.design/de
@@ -22,7 +28,7 @@
 
 ### Bookmarks generator for Chrome
 
-https://atkinsio.com/bookmarks-html-generator/
+- https://atkinsio.com/bookmarks-html-generator/
 
 ------------------------------------------------------------------
 
