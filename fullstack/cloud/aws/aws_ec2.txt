@@ -1,0 +1,530 @@
+
+
+#############################################################
+EC2 AWS
+#############################################################
+
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/ec2-example-managing-instances.html
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/ec2-examples.html
+https://www.ipswitch.com/blog/how-to-create-an-ec2-instance-with-python
+https://linuxhint.com/transfer-files-ec2-instance/
+https://winscp.net/eng/docs/guide_amazon_ec2
+
+import boto3
+
+ec2 = boto3.client('ec2')
+response = ec2.describe_instances()
+print(response)
+
+https://docs.aws.amazon.com/code-library/latest/ug/python_3_ec2_code_examples.html
+https://docs.aws.amazon.com/code-library/latest/ug/ec2_code_examples.html
+https://docs.aws.amazon.com/code-library/latest/ug/ec2_example_ec2_RunInstances_section.html
+https://blog.knoldus.com/how-to-create-ec2-instance-using-python3-with-boto3/
+
+https://dev.to/aws-builders/how-to-apply-aws-ec2-with-boto3-python-3jkk
+https://github.com/MakendranG/aws-ec2-boto3-python/blob/main/ec2_create_instance.py
+
+# Importing boto3 library to make functionality available
+ import boto3
+# Creating the connection with the resource of AWS EC2 service
+ ec2 = boto3.resource('ec2')
+# creating a new EC2 instance
+ instances = ec2.create_instances(
+      ImageId='ami-09d56f8956ab235b3',
+      MinCount=1,
+      MaxCount=1,
+      InstanceType='t2.micro',
+  )
+  print("AWS EC2 Instance Launched successfully")
+
+
+
+
+--------------------------------------------
+Amazon EC2 Instance Types
+--------------------------------------------
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-connect-methods.html
+https://aws.amazon.com/ec2/instance-types/
+
+https://www.youtube.com/watch?v=awFLzy0XwXo
+https://www.youtube.com/watch?v=JcsxpTFQ9pU#
+https://www.youtube.com/watch?v=cdqbPfGkUu4
+
+
+https://aws.amazon.com/ec2/resources/
+https://aws.amazon.com/developer/tools/
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/examples.html
+https://aws.amazon.com/developer/language/python/
+https://aws.amazon.com/getting-started/hands-on/
+https://aws.amazon.com/ec2/videos/
+https://instances.vantage.sh/
+https://www.amazonaws.cn/en/ec2/instance-types/
+
+Instance Size	vCPU	Memory (GiB)
+mac1.metal	12	32
+mac2.metal	8	16
+t4g.2xlarge	8	32
+t3.xlarge	4	16
+t3.2xlarge	8	32
+t3a.2xlarge	8	32
+t2.2xlarge	8	32
+m6g.2xlarge	8	32
+m6g.4xlarge	16	64
+m6gd.2xlarge	8	32
+m6gd.4xlarge	16	64
+m6gd.8xlarge	32	128
+m6i.2xlarge	8	32
+m6i.4xlarge	16	64
+m6a.2xlarge	8	32
+m6a.4xlarge	16	64
+m5.2xlarge	8	32
+m5.4xlarge	16	64
+m5a.2xlarge	8	32
+m5a.4xlarge	16	64
+m5n.2xlarge	8	32
+m5n.4xlarge	16	64
+c7g.4xlarge	16	32
+
+--------------------------------------------
+Limitations
+--------------------------------------------
+Supported Linux distributions:
+Amazon Linux 2 (any version)
+Ubuntu 16.04 or later
+
+To connect using the Amazon EC2 console, the instance must have a public IPv4 address.
+
+If the instance does not have a public IP address, you can connect to the instance over a private network using an SSH client or the EC2 Instance Connect CLI. For example, you can connect from within the same VPC or through a VPN connection, transit gateway, or AWS Direct Connect.
+
+EC2 Instance Connect does not support connecting using an IPv6 address.
+
+--------------------------------------------
+Run Amazon Linux 2 as a virtual machine on premises
+--------------------------------------------
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/amazon-linux-2-virtual-machine.html
+https://cdn.amazonlinux.com/os-images/2.0.20190612/
+https://cdn.amazonlinux.com/os-images/2.0.20190612/container/
+https://cdn.amazonlinux.com/os-images/2.0.20190612/virtualbox/
+
+amzn2-virtualbox-2.0.20190612-x86_64.xfs.gpt.vdi	1.5G
+Amazon Linux 2 LTS 2.0.20190612 x86_64 VirtualBox image
+
+
+--------------------------------------------
+Run Amazon Linux 2 as a docker image
+--------------------------------------------
+https://medium.com/appgambit/part-1-running-docker-on-aws-ec2-cbcf0ec7c3f8
+
+
+FROM alpine
+MAINTAINER dhavaln
+LABEL description="Running Docker on AWS EC2"
+WORKDIR /src
+RUN echo "Hello world" > hello.txt
+CMD ["cat", "hello.txt"]
+
+
+FROM node:10
+MAINTAINER dhavaln
+LABEL description="NodeJS Hello World App"
+WORKDIR /src
+RUN echo "console.log('Hello world');" > hello.js
+CMD ["node", "hello.js"]
+
+
+Install Docker on EC2 (Manually)
+docker exec -it docker_instance_ec2 bash
+sudo yum update -y
+sudo amazon-linux-extras install docker
+sudo service docker start
+sudo usermod -a -G docker ec2-user
+docker info
+
+
+Install Docker on EC2 (via EC2 User data)
+#! /bin/sh
+yum update -y
+amazon-linux-extras install docker
+service docker start
+usermod -a -G docker ec2-user
+chkconfig docker on
+
+
+--------------------------------------------
+Creating a container image for use on Amazon ECS
+--------------------------------------------
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/create-container-image.html
+https://docs.aws.amazon.com/de_de/AmazonECS/latest/developerguide/create-container-image.html
+
+
+touch Dockerfile
+
+FROM ubuntu:18.04
+
+# Install dependencies
+RUN apt-get update && \
+ apt-get -y install apache2
+
+# Install apache and write hello world message
+RUN echo 'Hello World!' > /var/www/html/index.html
+
+# Configure apache
+RUN echo '. /etc/apache2/envvars' > /root/run_apache.sh && \
+ echo 'mkdir -p /var/run/apache2' >> /root/run_apache.sh && \
+ echo 'mkdir -p /var/lock/apache2' >> /root/run_apache.sh && \
+ echo '/usr/sbin/apache2 -D FOREGROUND' >> /root/run_apache.sh && \
+ chmod 755 /root/run_apache.sh
+
+EXPOSE 80
+
+CMD /root/run_apache.sh
+
+docker build -t hello-world .
+docker images --filter reference=hello-world
+docker run -t -i -p 80:80 hello-world
+
+
+
+
+
+
+--------------------------------------------
+Deploying Docker containers on ECS
+--------------------------------------------
+https://docs.docker.com/cloud/ecs-integration/
+
+--------------------------------------------
+Build and Deploy Docker Images to AWS using EC2 Image Builder
+--------------------------------------------
+https://aws.amazon.com/blogs/devops/build-and-deploy-docker-images-to-aws-using-ec2-image-builder/
+
+git clone https://github.com/aws-samples/build-and-deploy-docker-images-to-aws-using-ec2-image-builder.git
+
+
+
+https://github.com/approov/aws-ec2-traefik-setup
+https://www.zehncloud.com/how-to-install-docker-on-amazon-ec2-instance/
+
+sudo docker search ubuntu
+sudo docker run hello-world
+docker run -d -p 80:80 - -name nginx nginx
+
+
+
+
+--------------------------------------------
+https://awstip.com/to-set-up-docker-container-inside-ec2-instance-with-terraform-3af5d53e54ba
+
+linux.sh
+
+#! /bin/bash
+sudo yum update -y
+sudo yum install -y docker
+sudo service docker start
+sudo usermod -a -G docker ec2-user
+sudo docker pull nginx:latest
+sudo docker run --name mynginx1 -p 80:80 -d nginx
+
+
+
+ubuntu.sh
+
+#! /bin/bash
+sudo apt update
+sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu  $(lsb_release -cs)  stable"
+sudo apt update
+sudo apt-get install docker-ce
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo groupadd docker
+sudo usermod -aG docker ubuntu
+sudo docker pull nginx:latest
+sudo docker run --name mynginx1 -p 80:80 -d nginx
+
+
+--------------------------------------------
+Amazon Web Services (AWS) EC2 example
+--------------------------------------------
+https://docker-docs.netlify.app/machine/examples/aws/
+https://www.elasticourse.com/how-to-launch-an-aws-ec2-instance-with-docker-engine-installed/
+https://hackernoon.com/running-docker-on-aws-ec2-83a14b780c56
+
+
+sudo apt-get update
+sudo apt-get install docker.io
+
+
+#!/bin/bash
+sudo snap install docker
+sudo addgroup --system docker
+sudo adduser ubuntu docker
+newgrp docker
+sudo snap disable docker
+sudo snap enable docker
+
+
+
+--------------------------------------------
+Dockerfile Java
+--------------------------------------------
+https://towardsaws.com/deploy-spring-boot-application-to-aws-ec2-using-docker-f359e7ad2026
+https://hashinteractive.com/blog/docker-machine-remote-deployment-management/
+
+# Use Java 11
+FROM openjdk:11-jdk
+
+#COPY JAR FILE
+COPY target/aws-springboot-dp-1.0.0.jar yadacode-aws-springboot-dp-1.0.0.jar
+
+ENTRYPOINT ["java","-jar","/yadacode-aws-springboot-dp-1.0.0.jar"]
+
+
+sudo yum update -y
+sudo yum install docker -y
+sudo service docker start
+
+docker run --name simple-nginx --rm -p 80:80 -d nginx
+
+--------------------------------------------
+Running an Apache web server using Docker on EC2
+--------------------------------------------
+https://www.imrankhan.dev/pages/apache-docker-ec2.html
+
+aws ec2 run-instances \
+    --image-id ami-0274e11dced17bb5b \
+    --count 1 \
+    --instance-type t2.micro \
+    --key-name my_key \
+    --security-group-ids sg-0d7ed0aa18a3dba3f
+
+ssh -i ~/.ssh/my_key.pem ec2-user@18.130.136.192
+sudo yum update -y
+sudo amazon-linux-extras install docker -y
+sudo service docker start
+sudo usermod -a -G docker ec2-user
+docker ps
+docker pull httpd
+docker run -d -p 80:80 httpd
+docker exec -it cedb8a298984 bash
+
+
+--------------------------------------------
+https://containersonaws.com/introduction/why-containers/
+
+FROM node:9 AS build
+WORKDIR /srv
+ADD package.json .
+RUN npm install
+
+FROM node:9-slim
+COPY --from=build /srv .
+ADD . .
+EXPOSE 3000
+CMD ["node", "index.js"]
+
+
+
+--------------------------------------------
+Docker Image Java
+--------------------------------------------
+https://www.mobilise.cloud/deploy-docker-container-to-aws/
+
+FROM openjdk:8-jdk-alpine
+ARG JAR_FILE=build/libs/*.jar
+COPY ${JAR_FILE} app.jar
+ENTRYPOINT [“java”,”-jar”,”/app.jar”]
+EXPOSE 8080
+
+
+--------------------------------------------
+AWS EC2 instance
+--------------------------------------------
+https://www.edureka.co/community/80032/configure-instance-commands-working-inside-docker-container
+
+docker run --name ubuntu_bash --rm -i -t ubuntu bash
+docker exec -d ubuntu_bash touch /tmp/execWorks
+docker exec -it ubuntu_bash bash
+docker exec -it -e VAR=1 ubuntu_bash bash
+docker exec -it ubuntu_bash pwd
+docker exec -it -w /root ubuntu_bash pwd
+
+
+
+Deploying Django to AWS with Docker and Let's Encrypt
+https://testdriven.io/blog/django-docker-https-aws/
+
+
+
+
+--------------------------------------------
+ Amazon Linux Docker image
+--------------------------------------------
+https://docs.aws.amazon.com/AmazonECR/latest/userguide/amazon_linux_container_image.html
+https://docs.aws.amazon.com/linux/al2022/ug/install-docker.html
+https://www.techrepublic.com/article/amazon-linux-container-image/
+https://www.how2shout.com/linux/how-to-install-and-use-amazonlinux-on-docker-container/
+https://raw.githubusercontent.com/awsdocs/amazon-ecr-user-guide/master/doc_source/amazon_linux_container_image.md
+https://awstip.com/send-data-to-amazon-msk-topic-from-aws-lambda-fddda962cea0
+https://www.mslinn.com/blog/2021/04/28/buildah-podman.html
+https://noise.getoto.net/2019/01/28/how-to-use-docker-images-from-a-private-registry-for-your-build-environment/
+https://www.cyberciti.biz/faq/how-to-install-docker-on-amazon-linux-2/
+
+
+https://hub.docker.com/r/amazon/amazon-ec2-instance-selector
+
+
+A sample PHP app running under Amazon Linux 2, used as a demo application for Amazon ECS
+https://hub.docker.com/r/amazon/amazon-ecs-sample
+docker pull amazon/amazon-ecs-sample
+
+https://hub.docker.com/_/amazonlinux
+https://gallery.ecr.aws/amazonlinux/amazonlinux
+
+# Docker Hub
+docker pull amazonlinux
+docker run -it amazonlinux:latest /bin/bash
+
+docker pull amazonlinux:2022
+docker run -it amazonlinux:2022 /bin/bash
+
+# Amazon ECR Public Gallery
+docker pull public.ecr.aws/amazonlinux/amazonlinux:latest
+docker run -it public.ecr.aws/amazonlinux/amazonlinux /bin/bash
+
+docker pull public.ecr.aws/amazonlinux/amazonlinux:2022
+docker run -it --security-opt seccomp=unconfined public.ecr.aws/amazonlinux/amazonlinux:2022 /bin/bash
+
+...
+
+docker run -it --name amazonlinux -d amazonlinux
+docker exec -it --user root amazonlinux /bin/bash
+docker stop amazonlinux
+docker start amazonlinux
+
+
+https://sangchul.kr/260
+
+docker pull amazonlinux:2022
+docker run -it --rm --name amzn amazonlinux:2022 /bin/bash
+
+
+https://www.windowspro.de/tipp/openssl-windows-installieren-hashes-erstellen
+
+docker pull amazonlinux
+docker run -name amazonlinux -rm -i -t amazonlinux bash
+sudo yum install openssl
+openssl passwd -1 "MyPassword"
+
+
+
+###############################################################################
+How to connect to MySQL on local Docker development on AMI Linux with PHP7.1 using Apache
+###############################################################################
+https://stackoverflow.com/questions/46855359/how-to-connect-to-mysql-on-local-docker-development-on-ami-linux-with-php7-1-usi
+
+docker-machine create --driver virtualbox default
+eval "$(docker-machine env default)"
+docker pull amazonlinux
+
+
+
+AppFolder/docker/images//apachephp/ami/Dockerfile
+............
+FROM amazonlinux
+MAINTAINER Cameron Macfarlane <cammac1984@gmail.com>
+RUN yum update -y
+RUN yum install httpd24 vim php71 php71-pdo php71-mbstring php71-pecl-imagick php71-opcache -y
+EXPOSE 80
+# Start the service
+CMD ["-D", "FOREGROUND"]
+ENTRYPOINT ["/usr/sbin/httpd"
+
+docker build -t killacam/apachephp docker/images/apachephp/ami/.
+
+AppFolder/docker/vhost.cnf
+............
+<VirtualHost *:80>
+    ServerAdmin webmaster@local
+    DocumentRoot /var/www/html/public
+    ServerName docker.dev
+    <Directory /var/www/html/public>
+         Options Indexes FollowSymLinks MultiViews
+         AllowOverride All
+         Order allow,deny
+         allow from all
+    </Directory>
+</VirtualHost>
+
+
+AppFolder/docker/images/mysql/ami/Dockerfile
+............
+FROM amazonlinux
+MAINTAINER Cameron Macfarlane <cammac1984@gmail.com>
+RUN yum update -y
+RUN yum install mysql56-server -y
+RUN chown -R mysql:root /var/lib/mysql/
+EXPOSE 3306
+
+docker build -t killacam/mysql docker/images/mysql/ami/.
+
+
+AppFolder/my.cnf
+............
+[mysqld]
+user=root
+datadir=/var/lib/mysql
+socket=/var/lib/mysql/mysql.sock
+sql-mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+
+
+
+docker-compose.yml
+............
+version: '2'
+services:
+    apachephp:
+        image: killacam/apachephp
+        ports:
+            - "8080:80"
+        volumes:
+            - ./:/var/www/html
+            - ./docker/vhost.conf:/etc/httpd/conf.d/vhost.conf
+        networks:
+            - appnet
+    mysql:
+
+        image: mysql:5.6
+        ports:
+            - "3306:3306"
+        volumes:
+            - ./data/:/var/lib/mysql
+        user: "1000:50"
+        tty: true
+        networks:
+            - appnet
+        environment:
+            #  - "MYSQL_DATABASE=csg"
+            #- "MYSQL_USER=test"
+            #- "MYSQL_PASSWORD=qwe123"
+            - "MYSQL_ROOT_PASSWORD=root"
+networks:
+    appnet:
+        driver: "bridge"
+
+
+...
+
+docker-compose up
+
+
+
+
+
+
+
+
+
+
+

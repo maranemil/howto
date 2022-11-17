@@ -10,6 +10,7 @@ https://gist.github.com/onelharrison/83b428803d605c7ddf312de8f2349e0f#file-panda
 python -m pip install boto3 pandas "s3fs<=0.4"
 python -m pip install boto3 pandas s3fs
 
+---------------------------------
 Write pandas data frame to CSV file on S3
 ---------------------------------
 """
@@ -57,7 +58,7 @@ with io.StringIO() as csv_buffer:
 
 
 
-
+---------------------------------
 Using s3fs-supported pandas API
 ---------------------------------
 
@@ -214,6 +215,8 @@ s3_res.Object(bucket_name, s3_object_name).put(Body=csv_buffer.getvalue())
 print("Dataframe is saved as CSV in S3 bucket.")
 
 
+
+
 ##############################################################################
 #       Upload a Pandas Dataframe to AWS S3 With Ease
 ##############################################################################
@@ -248,6 +251,7 @@ s3_client.upload_fileobj(campaign_buffer, Bucket="test-bucket", Key="test_df_fro
 
 
 
+
 ##############################################################################
 #       Write a Pandas dataframe to Parquet format on AWS S3.
 ##############################################################################
@@ -263,6 +267,7 @@ def _write_dataframe_to_parquet_on_s3(dataframe, filename):
     print("Writing {} records to {}".format(len(dataframe), filename))
     output_file = f"s3://{DESTINATION}/{filename}/data.parquet"
     dataframe.to_parquet(output_file)
+
 
 
 
@@ -336,3 +341,123 @@ s3_resource.Object(bucket, 'df.csv').put(Body=csv_buffer.getvalue())
 
 
 
+
+
+############################################################################
+localstack full
+############################################################################
+
+https://hub.docker.com/u/localstack
+
+https://hub.docker.com/r/localstack/localstack
+https://hub.docker.com/r/localstack/localstack-light
+https://hub.docker.com/r/localstack/localstack-full
+https://hub.docker.com/r/localstack/lambda-provided
+https://hub.docker.com/r/localstack/lambda-nodejs
+https://hub.docker.com/r/localstack/lambda-python
+https://hub.docker.com/r/localstack/localstack-docker-desktop
+https://hub.docker.com/r/localstack/localstack-docker-extension
+https://hub.docker.com/r/localstack/lambda
+https://hub.docker.com/r/localstack/lambda-js
+https://hub.docker.com/r/localstack/lambda-runtime-python
+
+....
+
+https://github.com/localstack/localstack
+https://github.com/localstack/localstack/blob/master/Dockerfile
+https://github.com/localstack/localstack-docker-extension
+https://github.com/localstack/localstack/issues/4535
+https://rochisha-jaiswal70.medium.com/using-aws-lambda-with-amazon-simple-queue-service-bb0694257a2b
+https://leviwheatcroft.github.io/selfhosted-awesome-unlist/localstack.html
+
+
+
+....
+
+ERROR WARNING
+
+It seems you are mounting the LocalStack volume into /tmp/localstack.
+
+2022-11-17T09:49:47.974795895Z   This will break the LocalStack container! Please update your volume mount
+2022-11-17T09:49:47.974797747Z   destination to /var/lib/localstack. In the meantime, we have set
+2022-11-17T09:49:47.974799591Z   LEGACY_DIRECTORIES=1, to make LocalStack behave as in <1.0.0, and which
+2022-11-17T09:49:47.974801794Z   should prevent any serious issues, but will be removed soon!
+2022-11-17T09:49:47.974803653Z   You can suppress this warning by setting LEGACY_DIRECTORIES=1
+
+
+Waiting for all LocalStack services to be ready
+2022-11-17T09:52:05.030411302Z 2022-11-17 09:52:05,030 CRIT Supervisor is running as root.  Privileges were not dropped because no user is specified in the config file.  If you intend to run as root, you can set user=root in the config file to avoid this message.
+2022-11-17T09:52:05.031273721Z 2022-11-17 09:52:05,031 INFO supervisord started with pid 16
+2022-11-17T09:52:06.035483764Z 2022-11-17 09:52:06,034 INFO spawned: 'infra' with pid 21
+2022-11-17T09:52:06.199050091Z SERVICES variable is ignored if EAGER_SERVICE_LOADING=0.
+
+
+
+....
+
+version: "3"
+
+services:
+  localstack:
+    image: localstack/localstack-full:latest
+    container_name: localstack
+    ports:
+      - "443:443"
+      - "4566:4566"
+      - "4571:4571"
+      - "${PORT_WEB_UI-8080}:${PORT_WEB_UI-8080}"
+    environment:
+      - SERVICES=s3,cognito,amplify,lambda,iam,cloudwatch,cloudformation,sts
+      - DEFAULT_REGION=ap-northeast-2
+      - HOSTNAME=localhost
+      - DATA_DIR=/tmp/localstack/data
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - LOCALSTACK_API_KEY=
+      - PORT_WEB_UI=${PORT_WEB_UI- }
+      - START_WEB=1
+
+    volumes:
+      - "${TMPDIR:-/tmp/localstack}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+....
+
+version: '2.1'services:
+  localstack:
+    container_name: "localstack-image"
+    image: localstack/localstack-full
+    network_mode: bridge
+    ports:
+      - "4566:4566"
+      - "4571:4571"
+      - "8082:8082"
+    environment:
+      - USE_LIGHT_IMAGE=0
+      - DEBUG=1
+      - PORT_WEB_UI=8082
+      - LAMBDA_EXECUTOR=local
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - HOST_TMP_FOLDER=${TMPDIR}
+      - START_WEB=1
+    volumes:
+      - "${TMPDIR:-/tmp/localstack}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+
+docker-compose up
+
+aws iam create-role --role-name lambda-ex --assume-role-policy-document "{"Version": "2012-10-17","Statement": [{ "Effect": "Allow", "Principal": {"Service": "lambda.amazonaws.com"}, "Action": "sts:AssumeRole"}]}"  --endpoint-url http://localhost:4566
+
+aws iam create-policy --policy-name my-policy --policy-document file://policy.txt --endpoint-url http://localhost:4566
+
+aws iam attach-role-policy --policy-arn arn:aws:iam::000000000000:policy/my-policy --role-name lambda-ex --endpoint-url http://localhost:4566
+
+aws lambda create-function --function-name my-math-function --zip-file fileb://blank-java-1.0-SNAPSHOT.jar --handler example.Handler::handleRequest --runtime java8 --role arn:aws:iam::000000000000:role/lambda-ex --endpoint-url http://localhost:4566
+
+aws sqs create-queue --queue-name MyQueue --endpoint-url http://localhost:4566
+
+aws sqs get-queue-attributes --queue-url http://localhost:4566/000000000000/MyQueue --attribute-names All --endpoint-url http://localhost:4566
+
+aws lambda create-event-source-mapping --function-name my-math-function --batch-size 5 --maximum-batching-window-in-seconds 60  --event-source-arn arn:aws:sqs:us-east-1:000000000000:MyQueue --endpoint-url http://localhost:4566
+
+aws sqs send-message --queue-url  http://localhost:4566/000000000000/MyQueue  --message-body "Successfull!!" --endpoint-url http://localhost:4566
