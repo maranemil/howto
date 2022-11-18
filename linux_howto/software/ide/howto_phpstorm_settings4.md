@@ -873,5 +873,13 @@ https://blog.jetbrains.com/phpstorm/2022/08/phpstorm-2022-2-is-now-available/
 ~~~
 
 
+### PyCharm sdk seems invalid error 
+~~~
 
+https://stackoverflow.com/questions/34618858/why-do-i-get-an-sdk-seems-invalid-error-when-setting-up-my-project-interpreter
+https://youtrack.jetbrains.com/issue/PY-40034/Cannot-set-up-a-python-SDK-at-Python-3.8.-The-SDK-seems-invalid.
 
+rm -r .idea
+
+# install project again
+~~~
