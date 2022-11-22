@@ -1,0 +1,483 @@
+https://hub.docker.com/_/httpd
+https://hub.docker.com/_/php
+https://hub.docker.com/_/adminer
+https://hub.docker.com/_/php
+
+----------------------------------------------------------------------------------
+
+https://gist.github.com/geraldvillorente/4c60e7fdb5562f443f16ad2bbe4235ce
+
+
+docker/mysql/Dockerfile
+---------------------------
+FROM mysql:5.7.34
+# Copy content from .sql to Docker mysql container
+COPY ./docker/mysql/mydatabase.sql /docker-entrypoint-initdb.d/init.sql
+EXPOSE 3306
+
+
+docker/apache/Dockerfile
+---------------------------
+FROM php:7.3-apache
+USER root
+RUN apt-get update
+WORKDIR /var/www/html
+
+
+---------------------------
+version: '3'
+services:
+    db:
+        build:
+            context: .
+            dockerfile: docker/mysql/Dockerfile
+    app:
+        build:
+            context: .
+            dockerfile: docker/apache/Dockerfile
+
+
+----------------------------------------------------------------------------------
+
+https://stackoverflow.com/questions/43880026/import-data-sql-mysql-docker-container
+
+
+version: '3'
+
+services:
+
+	nginx:
+	  build: ./nginx/
+	  container_name: nginx-container
+	  ports:
+	    - 80:80
+	  links:
+	    - php
+	  volumes_from:
+	    - app-data
+
+	php:
+	  build: ./php/
+	  container_name: php-container
+	  expose:
+	    - 9000
+	  links:
+	    - mysql
+	  volumes_from:
+	    - app-data
+
+	app-data:
+	  image: php:7.0-fpm
+	  container_name: app-data-container
+	  volumes:
+	    - ./www/html/:/var/www/html/
+	  command: "true"
+
+
+  mysql:
+    image: mariadb:10.3
+    container_name: mariadb
+    volumes:
+      - container-volume:/var/lib/mysql
+      - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: name_db
+    ports:
+      - "3306:3306"
+
+volumes:
+  container-volume:
+
+----------------------------------------------------------------------------------
+
+https://docs.docker.com/compose/gettingstarted/
+
+# syntax=docker/dockerfile:1
+FROM python:3.7-alpine
+WORKDIR /code
+ENV FLASK_APP=app.py
+ENV FLASK_RUN_HOST=0.0.0.0
+RUN apk add --no-cache gcc musl-dev linux-headers
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+EXPOSE 5000
+COPY . .
+CMD ["flask", "run"]
+
+version: "3.9"
+services:
+  web:
+    build: .
+    ports:
+      - "8000:5000"
+  redis:
+    image: "redis:alpine"
+
+
+version: "3.9"
+services:
+  web:
+    build: .
+    ports:
+      - "8000:5000"
+    volumes:
+      - .:/code
+    environment:
+      FLASK_DEBUG: True
+  redis:
+    image: "redis:alpine"
+----------------------------------------------------------------------------------
+
+
+https://d8devs.com/dockerfile-for-php-8-1-with-apache-and-xdebug3/
+
+FROM php:8.1.1-apache
+RUN echo "Europe/Berlin" > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
+ENV APACHE_DOCUMENT_ROOT /var/www/html/web
+RUN  apt-get update && apt-get install -y ca-certificates gnupg
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+RUN apt-get update && apt-get upgrade -y && apt-get install -y git nodejs
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+RUN /usr/sbin/a2enmod rewrite && /usr/sbin/a2enmod headers && /usr/sbin/a2enmod expires
+RUN apt-get update && apt-get install -y libzip-dev zip && docker-php-ext-install zip
+RUN docker-php-ext-install pdo pdo_mysql mysqli
+RUN apt-get install -y libtidy-dev && docker-php-ext-install tidy && docker-php-ext-enable tidy
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN pecl install xdebug && docker-php-ext-enable xdebug
+RUN echo 'zend_extension=xdebug' >> /usr/local/etc/php/php.ini
+RUN echo 'xdebug.mode=develop,debug' >> /usr/local/etc/php/php.ini
+RUN echo 'xdebug.client_host=host.docker.internal' >> /usr/local/etc/php/php.ini
+RUN echo 'xdebug.start_with_request=yes' >> /usr/local/etc/php/php.ini
+RUN echo 'session.save_path = "/tmp"' >> /usr/local/etc/php/php.ini
+
+
+----------------------------------------------------------------------------------
+
+
+
+https://stackoverflow.com/questions/70964014/loading-custom-php-ini-on-docker-image-php8-1-2-apache
+
+
+Dockerfile
+
+FROM php:8.1.2-apache
+
+RUN apt-get update
+
+# 1. development packages
+RUN apt-get install -y \
+    git \
+    zip \
+    curl \
+    sudo \
+    unzip \
+    libicu-dev \
+    libbz2-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libmcrypt-dev \
+    libreadline-dev \
+    libzip-dev \
+    libfreetype6-dev \
+    g++
+
+
+# 2. apache configs + document root
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+
+# 3. mod_rewrite for URL rewrite and mod_headers for .htaccess extra headers like Access-Control-Allow-Origin-
+RUN a2enmod rewrite headers
+
+
+# 4. start with base php config, then add extensions
+RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+
+RUN docker-php-ext-install \
+    bz2 \
+    intl \
+    iconv \
+    bcmath \
+    opcache \
+    calendar \
+    pdo_mysql \
+    pdo_mysql \
+    zip
+
+# 5. composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+----------------------------------------
+
+version: '3.5'
+
+services:
+
+  # Laravel App
+  laravel:
+    build:
+      context: '.'
+    restart: always
+    volumes:
+      - ./html:/var/www/html
+      - ./Docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+
+  # MySQL
+  mysql:
+    image: mysql:8
+    restart: always
+    volumes:
+      - ./run/var:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+
+  # Meilisearch
+  meilisearch:
+    image: getmeili/meilisearch:latest
+    restart: always
+    volumes:
+      - ./meilisearch/data.ms:/data.ms
+    environment:
+    - MEILI_MASTER_KEY=${MEILISEARCH_KEY}
+
+networks:
+  default:
+    name: nginxproxymanager_default
+    external: true
+
+
+
+----------------------------------------------------------------------------------
+
+
+https://www.section.io/engineering-education/dockerized-php-apache-and-mysql-container-development-environment/
+
+version: '3.8'
+services:
+  php-apache-environment:
+    container_name: php-apache
+    image: php:8.0-apache
+    volumes:
+      - ./php/src:/var/www/html/
+    ports:
+      - 8000:80
+
+  db:
+    container_name: db
+    image: mysql
+    restart: always
+    environment:
+        MYSQL_ROOT_PASSWORD: MYSQL_ROOT_PASSWORD
+        MYSQL_DATABASE: MY_DATABASE
+        MYSQL_USER: MYSQL_USER
+        MYSQL_PASSWORD: MYSQL_PASSWORD
+    ports:
+        - "9906:3306"
+
+
+FROM php:8.0-apache
+RUN docker-php-ext-install mysqli && docker-php-ext-enable mysqli
+RUN apt-get update && apt-get upgrade -y
+
+
+version: '3.8'
+services:
+    php-apache-environment:
+        container_name: php-apache
+        build:
+            context: ./php
+            dockerfile: Dockerfile
+        depends_on:
+            - db
+        volumes:
+            - ./php/src:/var/www/html/
+        ports:
+            - 8000:80
+    db:
+        container_name: db
+        image: mysql
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: MYSQL_ROOT_PASSWORD
+            MYSQL_DATABASE: MYSQL_DATABASE
+            MYSQL_USER: MYSQL_USER
+            MYSQL_PASSWORD: MYSQL_PASSWORD
+        ports:
+            - "9906:3306"
+
+
+
+phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+        - '8080:80'
+    restart: always
+    environment:
+        PMA_HOST: db
+    depends_on:
+        - db
+
+----------------------------------------------------------------------------------
+
+https://marketmix.com/de/docker-apache-mysql-php-und-phpmyadmin-im-container-verbund/
+
+version: "3"
+
+services:
+
+  # --- MySQL 5.7
+  #
+  mysql:
+    container_name: "ampp-mysql"
+    image: bitnami/mysql:5.7
+    build: ./build/mysql
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=__YOUR_PASSWORD_HERE__
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=__YOUR_PASSWORD_HERE__
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./docker/mysql/data:/bitnami/mysql/data
+      - ./docker/mysql/backup:/backup
+
+  # --- PHP 7.4
+  #
+  php:
+    container_name: "ampp-php"
+    image: bitnami/php-fpm:7.4
+    restart: unless-stopped
+    depends_on:
+      - redis
+    volumes:
+      #- /Users/hschneider/Work/Web:/app:delegated
+      - ./docker/www:/app:delegated
+      - ./docker/php/php.ini:/opt/bitnami/php/etc/conf.d/php.ini:ro
+
+  # --- Apache 2.4
+  #
+  apache:
+    container_name: "ampp-apache"
+    image: bitnami/apache:2.4
+    build: ./build/apache
+    ports:
+      - '80:8080'
+      - '443:8443'
+    depends_on:
+      - php
+    volumes:
+      #- /Users/hschneider/Work/Web:/app:delegated
+      - ./docker/www:/app:delegated
+      - ./docker/apache/my_vhost.conf:/vhosts/myapp.conf:ro
+      - ./docker/apache/certs:/certs
+      # Use this for bitnami's builtin certs:
+      # ./docker/apache/certs:/opt/bitnami/apache2/conf/bitnami/certs
+
+  # --- Redis 6.0
+  #
+  redis:
+    container_name: "ampp-redis"
+    image: bitnami/redis:6.0
+    restart: unless-stopped
+    environment:
+      - REDIS_PASSWORD=at15jx13
+
+  # --- PhpMyAdmin latest
+  # Acccess via
+  # http://127.0.0.1:8180 or https://127.0.0.1:8143
+  # Login with user root and mysql-password.
+  #
+  phpmyadmin:
+    container_name: "ampp-phpmyadmin"
+    image: bitnami/phpmyadmin:latest
+    build: ./build/phpmyadmin
+    depends_on:
+      - mysql
+    ports:
+      - '8180:8080'
+      - '8143:8443'
+    environment:
+      - DATABASE_HOST=host.docker.internal
+
+volumes:
+  ampp-mysql:
+    driver: local
+
+
+
+FROM bitnami/apache:2.4
+USER 0
+RUN echo 'Mutex posixsem' >>/opt/bitnami/apache2/conf/httpd.conf
+USER 1001
+
+
+FROM bitnami/phpmyadmin:latest
+USER 0
+RUN echo 'Mutex posixsem' >>/opt/bitnami/apache2/conf/httpd.conf
+USER 1001
+
+
+
+------------------
+
+Bind for 0.0.0.0:8080 failed: port is already allocated
+
+https://github.com/docker/compose/issues/4950
+
+
+docker-compose.yaml
+
+version: '2'
+services:
+  postgis:
+    build: ./postgis
+    volumes:
+      - ../src/main/sql:/sql
+    ports:
+      - "5432:5432"
+
+  etl:
+    build: ./etl
+    volumes:
+      - ..:/national-voter-file
+    entrypoint:
+      - python3
+      - /national-voter-file/load/loader.py
+
+
+
+version: '2.1'
+
+services:
+
+  postgres:
+    image: postgres:9.5.4
+    env_file:
+      - docker-compose.env
+    ports:
+      - 5432:5432
+
+
+nginx:
+    image: nginx:1.12.2-alpine
+    volumes:
+      - .:/usr/share/nginx/app
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80"
+    depends_on:
+      - web
+
+FROM mdillon/postgis:9.5
+ENV POSTGRES_DB VOTER
+RUN  mkdir /sql
+COPY ./dockerResources/z-init-db.sh /docker-entrypoint-initdb.d/
+EXPOSE 5432
+
+sudo chmod -R 777 html/
