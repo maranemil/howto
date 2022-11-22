@@ -22,9 +22,22 @@
 
 ------------------------------------------------------------------
 
+### AI Tools
+
+- https://openai.com/dall-e-2/
+- https://durable.co/
+- https://runwayml.com/
+- https://lumalabs.ai/
+- https://www.jasper.ai/
+- https://www.strmr.com/
+
+------------------------------------------------------------------
+
 ### Api viewer editor
 
 - https://editor.swagger.io/
+- 
+------------------------------------------------------------------
 
 ### Bookmarks generator for Chrome
 
