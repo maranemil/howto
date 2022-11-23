@@ -510,3 +510,15 @@ ssh-keygen -l -f ~/.ssh/id_rsa
 ```
 
 
+### Post-installation steps for Linux
+```
+
+https://docs.docker.com/engine/install/linux-postinstall/
+
+sudo apt install docker.io docker-compose
+sudo groupadd docker
+sudo usermod -aG docker $USER
+sudo systemctl enable docker.service
+sudo systemctl enable containerd.service
+reboot
+```

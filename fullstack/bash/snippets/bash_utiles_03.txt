@@ -236,3 +236,63 @@ clean:
 make clean
 make
 
+
+#################################################################
+Bash function to find newest file matching pattern
+#################################################################
+
+https://stackoverflow.com/questions/5885934/bash-function-to-find-newest-file-matching-pattern
+https://www.baeldung.com/linux/get-recent-file-in-directory
+https://askubuntu.com/questions/61179/find-the-latest-file-by-modified-date
+https://superuser.com/questions/687523/get-the-last-file-name-in-a-variable-in-bash
+https://unix.stackexchange.com/questions/282901/how-can-i-find-the-newest-file-in-a-directory-that-contains-a-certain-string
+https://gist.github.com/brwyatt/c21a888d79927cb476a4
+
+
+ls -t b2* | head -1
+ls -t | head -1
+ls -tp | grep -v /$ | head -1
+
+var=$(ls | sort -V | tail -n 1)
+latest=$(ls -tr | tail -n 1)
+latest=$(ls | sort -n | tail -n 1)
+
+unset -v latest
+for file in "$dir"/*; do
+  [[ $file -nt $latest ]] && latest=$file
+done
+
+
+
+find /path -type f -exec stat -c "%y %n" {} + | sort -r | head
+find /path -printf '%T+ %p\n' | sort -r | head
+
+find . -name "my-pattern" -print0 |    xargs -r -0 ls -1 -t |    head -1
+
+find $DIR -type f -printf '%T+ %p\n' | sort -r | head -n 1 | cut -d' ' -f2
+find ~/Downloads -type f -printf '%T+ %p\n' | sort -r | head -n 1 | cut -d' ' -f2
+stat -f "%m%t%N" b2* | sort -rn | head -1 | cut -f2-
+
+find . -cmin 1 -name "b2*"
+find . -mtime 2 -name "b2*"
+
+
+find /sample_directory -type f -printf "%t - %p\n" | sort -n | tail -1
+find sample_directory/ -type f -exec stat -c '%X %n' {} \; | sort -nr | awk 'NR==1,NR==3 {print $2}'
+ls sample_directory/ -Artls | tail -1
+ls -tp | grep -v /$ | head -1
+
+
+
+CURRENT_DIR='.'
+
+get_recent_file () {
+    FILE=$(ls -Art1 ${CURRENT_DIR} | tail -n 1)
+    if [ ! -f ${FILE} ]; then
+        CURRENT_DIR="${CURRENT_DIR}/${FILE}"
+        get_recent_file
+    fi
+    echo $FILE
+    exit
+}
+get_recent_file
