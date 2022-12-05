@@ -1,0 +1,536 @@
+################################################
+amazonlinux ec2 The Amazon EC2 Metadata Mock is a tool to simulate Amazon EC2 instance metadata for local testing.
+################################################
+
+https://gallery.ecr.aws/amazonlinux/amazonlinux
+https://hub.docker.com/r/amazon/amazon-ec2-metadata-mock
+https://gallery.ecr.aws/aws-ec2/amazon-ec2-metadata-mock
+https://hub.docker.com/r/amazon/amazon-ecs-sample
+
+
+https://aws.amazon.com/de/ecs/
+https://docs.aws.amazon.com/de_de/AmazonECS/latest/developerguide/Welcome.html
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/create-container-image.html
+https://docs.aws.amazon.com/de_de/AmazonECS/latest/developerguide/create-container-image.html
+https://docs.aws.amazon.com/efs/latest/ug/gs-step-one-create-ec2-resources.html
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/get-set-up-for-amazon-ec2.html
+https://docs.aws.amazon.com/efs/latest/ug/gs-step-one-create-ec2-resources.html#
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/get-set-up-for-amazon-ec2.html#
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/create-container-image.html#
+https://docs.aws.amazon.com/de_de/AmazonECS/latest/developerguide/create-container-image.html
+https://aws.amazon.com/blogs/devops/build-and-deploy-docker-images-to-aws-using-ec2-image-builder/#
+
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html#
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/get-set-up-for-amazon-ec2.html#
+
+
+Overview of AWS services
+For this post, we use the following services:
+
+EC2 Image Builder – Image Builder is a fully managed AWS service that makes it easy to automate the creation, management, and deployment of customized, secure, and up-to-date server images that are pre-installed and pre-configured with software and settings to meet specific IT standards.
+Amazon ECR – Amazon ECR is an AWS managed container image registry service that is secure, scalable, and reliable.
+CodeCommit – AWS CodeCommit is a fully-managed source control service that hosts secure Git-based repositories.
+AWS KMS – Amazon Key Management Service (AWS KMS) is a fully managed service for creating and managing cryptographic keys. These keys are natively integrated with most AWS services. You use a KMS key in this post to encrypt resources.
+Amazon S3 – Amazon Simple Storage Service (Amazon S3) is an object storage service utilized for storing and encrypting data. We use Amazon S3 to store our configuration files.
+AWS CloudFormation – AWS CloudFormation allows you to use domain-specific languages or simple text files to model and provision, in an automated and secure manner, all the resources needed for your applications across all Regions and accounts. You can deploy AWS resources in a safe, repeatable manner, and automate the provisioning of infrastructure.
+
+
+
+
+
+aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 123456789101.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
+docker pull 123456789101.dkr.ecr.eu-west-1.amazonaws.com/ecr-public/docker/library/alpine:latest
+
+---------------------------------------------------------------------------------------------
+
+
+version: "3.7"
+
+services:
+
+  ec2:
+    image: amazon/amazon-ecs-sample
+
+
+  ubuntu:
+    image: testbuntu
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+  python:
+    image: testpython
+    build:
+      context: .
+      dockerfile: DockerfilePython
+
+  ubuntu:
+    container_name: testbuntu
+    restart: on-failure
+    image: ubuntu:21.04
+    command:
+      - /bin/sh
+
+
+# Download base image ubuntu 20.04
+FROM ubuntu:22.10
+# https://www.howtoforge.com/tutorial/how-to-create-docker-images-with-dockerfile/
+# https://hub.docker.com/_/ubuntu/tags
+
+LABEL version="0.1"
+LABEL description="This is custom Docker Image"
+RUN apt update && DEBIAN_FRONTEND=noninteractive
+# Install nano from ubuntu repository
+RUN apt install -y nano htop  && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt clean
+# Expose Port for the Application
+EXPOSE 80 443
+CMD bash
+
+
+FROM python:3
+#WORKDIR /usr/src/app
+#COPY requirements.txt ./
+#RUN pip install --no-cache-dir -r requirements.txt
+#COPY . .
+#CMD [ "python", "./your-daemon-or-script.py" ]
+CMD [ "bash"]
+
+------
+
+
+
+
+curl -Lo ec2-metadata-mock https://github.com/aws/amazon-ec2-metadata-mock/releases/download/v1.11.2/ec2-metadata-mock-`uname | tr '[:upper:]' '[:lower:]'`-amd64
+chmod +x ec2-metadata-mock
+
+./ec2-metadata-mock --help
+
+curl localhost:1338/latest/meta-data
+
+./ec2-metadata-mock --mock-delay-sec 10 mocks all metadata paths
+./ec2-metadata-mock spot --action terminate     mocks spot ITN only
+
+
+./ec2-metadata-mock --hostname 172.27.0.2
+Warning:  Config File "aemm-config" Not Found in "[/home/emil]"
+Initiating ec2-metadata-mock for all mocks on port 1338
+
+Flags:
+hostname: 172.27.0.2
+panic: listen tcp 172.27.0.2:1338: bind: cannot assign requested address
+
+# sudo ifconfig lo0 alias 172.27.0.2
+netstat -nr
+
+
+netstat -tulp | grep 1338
+tcp        0      0 0.0.0.0:1338            0.0.0.0:*               LISTEN      -
+tcp6       0      0 [::]:1338               [::]:*                  LISTEN      -
+
+panic: listen tcp 0.0.0.0:1338: bind: address already in use
+
+ifconfig
+
+
+---------------------------------------------------------------------------------------------
+
+https://docs.docker.com/cloud/ecs-integration/
+https://gallery.ecr.aws/aws-ec2/amazon-ec2-metadata-mock
+https://github.com/aws/amazon-ec2-metadata-mock
+https://hub.docker.com/r/amazon/amazon-ec2-metadata-mock
+https://hub.docker.com/u/amazon
+https://hub.docker.com/r/amazon/amazon-ecs-sample
+https://gallery.ecr.aws/amazonlinux/amazonlinux
+https://github.com/aws-samples/build-and-deploy-docker-images-to-aws-using-ec2-image-builder
+https://docs.gitlab.com/ee/ci/cloud_deployment/
+https://medium.com/appgambit/part-1-running-docker-on-aws-ec2-cbcf0ec7c3f8
+https://www.javatpoint.com/aws-ec2-creating-an-instance
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html#ec2-launch-instance
+https://github.com/aws/amazon-ec2-metadata-mock
+https://artifacthub.io/packages/helm/aws/amazon-ec2-metadata-mock
+https://noise.getoto.net/tag/amazon-ecs/
+https://github.com/aws/amazon-ec2-metadata-mock/issues/155
+https://github.com/aws/amazon-ec2-metadata-mock/blob/main/README.md
+
+
+docker pull public.ecr.aws/aws-ec2/amazon-ec2-metadata-mock:v1.11.2
+docker run -it --rm -p 1338:1338 public.ecr.aws/aws-ec2/amazon-ec2-metadata-mock:v1.11.2
+
+
+---------------------------------------------------------------------------------------------
+################################################
+
+################################################
+
+
+https://hub.docker.com/_/oraclelinux
+https://www.howtoforge.com/tutorial/how-to-create-docker-images-with-dockerfile/
+https://hub.docker.com/_/ubuntu/tags
+https://hub.docker.com/search?q=ubuntu
+https://hub.docker.com/_/debian
+https://hub.docker.com/_/amazonlinux
+https://hub.docker.com/_/python
+https://github.com/docker-library/python/blob/770cecbfe5390307d24b2c766786d726252d8821/3.10/buster/Dockerfile
+
+docker exec -i -t testProject_ubuntu_1 /bin/bash
+sudo docker run -p 81:80 httpd
+
+https://www.freecodecamp.org/news/build-and-push-docker-images-to-aws-ecr/
+
+FROM node:12.17.0
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+ENV PORT=3000
+EXPOSE 3000
+CMD [ "npm", "start" ]
+
+
+FROM alpine
+MAINTAINER dhavaln
+LABEL description="Running Docker on AWS EC2"
+WORKDIR /src
+RUN echo "Hello world" > hello.txt
+CMD ["cat", "hello.txt"]
+
+FROM node:10
+MAINTAINER dhavaln
+LABEL description="NodeJS Hello World App"
+WORKDIR /src
+RUN echo "console.log('Hello world');" > hello.js
+CMD ["node", "hello.js"]
+
+
+FROM python:3
+WORKDIR /usr/src/app
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+CMD [ "python", "./your-daemon-or-script.py" ]
+
+
+
+
+################################################
+Install Docker on EC2 (Manually)
+################################################
+sudo yum update -y
+$ sudo amazon-linux-extras install docker
+$ sudo service docker start
+$ sudo usermod -a -G docker ec2-user
+
+Install Docker on EC2 (via EC2 User data)
+
+#! /bin/sh
+yum update -y
+amazon-linux-extras install docker
+service docker start
+usermod -a -G docker ec2-user
+chkconfig docker on
+
+
+---------------------------------------------------------------------------------------------
+################################################
+Launch an instance
+################################################
+
+https://medium.com/@slimm609/aws-instance-profile-for-local-development-f144b0a7b8b9
+https://noise.getoto.net/author/ben-peven/
+https://noise.getoto.net/tag/amazon-ecs/
+https://benjitrapp.github.io/memories/2022-03-25-aws-metadata/
+https://medium.com/@jameshamann/setting-up-an-ubuntu-ec2-instance-from-scratch-78a166167a22
+https://medium.com/nerd-for-tech/how-to-create-a-ubuntu-20-04-server-on-aws-ec2-elastic-cloud-computing-5b423b5bf635
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html#ec2-launch-instance
+https://www.javatpoint.com/aws-ec2-creating-an-instance
+
+---------------------------------------------------------------------------------------------
+
+
+
+cat /proc/cpuinfo
+lsb_release -a
+cat /etc/*-release
+
+---------------------------------------------------------------------------------------------
+
+https://hub.docker.com/r/amazon/amazon-ecs-sample
+https://github.com/aws-samples/ecs-demo-php-simple-app
+
+docker pull amazon/amazon-ecs-sample
+python --version # Python 2.7.14
+Amazon Linux release 2 (Karoo)
+
+---------------------------------------------------------------------------------------------
+
+
+https://hub.docker.com/r/opencpu/ubuntu-20.04/dockerfile
+https://github.com/behance/docker-base/blob/master/Dockerfile-ubuntu-20.04
+https://imperialcollegelondon.github.io/2020-07-13-Containers-Online/11-singularity-images/
+
+FROM ubuntu:20.04 as base
+
+RUN apt-get -y update && apt-get install -y python
+RUN apt-get -y update && apt-get install -y python3
+
+CMD [python -c 'print("Hello World! Hello from our custom Singularity image!")']
+CMD [python3 -c 'print("Hello World! Hello from our custom Singularity image!")']
+
+---------------------------------------------------------------------------------------------
+
+docker run -it  ubuntu:21.04 /bin/sh
+
+---------------------------------------------------------------------------------------------
+https://superuser.com/questions/1634933/bin-sh-1-my-command-not-found
+https://askubuntu.com/questions/938869/docker-run-ubuntu-bin-bash-vs-docker-run-ubuntu
+https://forums.docker.com/t/ubuntu16-04-container-command-not-found-bin-bash/16752
+
+
+docker run -it ubuntu:16.04
+docker run -it ubuntu:16.04 /bin/sh
+docker run -it ubuntu:14.04
+docker run -it ubuntu:16.04
+docker run -it ubuntu:16.04 /bin/sh
+docker run -it --entrypoint /bin/bash ubuntu:16.04
+docker run --rm -it ubuntu:21.04
+docker run -it ubuntu /bin/bash
+sudo docker run -ti python
+sudo docker run -ti python /bin/bash
+
+
+---------------------------------------------------------------------------------------------
+
+https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient21/x86_64/
+https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html
+https://www.oracle.com/it/database/technologies/instant-client/linux-x86-64-downloads.html
+https://www.oracle.com/fr/database/technologies/instant-client/linux-x86-64-downloads.html
+
+---------------------------------------------------------------------------------------------
+################################################
+Install and Manage RPM Packages on Ubuntu/Debian System
+################################################
+
+https://wiki.debian.org/RPM
+https://packages.debian.org/buster/rpm
+https://packages.debian.org/sid/rpm
+https://www.ubuntupit.com/rpm-packages-on-ubuntu-debian-system/
+
+
+sudo apt install alien
+sudo alien google-chrome-stable_current_x86_64.rpm
+sudo dpkg -i google-chrome-stable_88.0.4324.96-2_amd64.deb
+sudo apt install ./google-chrome-stable_88.0.4324.96-2_amd64.deb
+sudo alien -i google-chrome-stable_current_x86_64.rpm
+
+---------------------------------------------------------------------------------------------
+
+Installing on Debian (Wheezy and newer) and Ubuntu (Trusty Tahr and newer) for Python 3.x
+
+https://stackoverflow.com/questions/6587507/how-to-install-pip-with-python-3
+https://www.odoo.com/de_DE/forum/hilfe-1/how-to-install-pip-in-python-3-on-ubuntu-18-04-167715
+
+sudo apt-get install python3-pip
+
+---------------------------------------------------------------------------------------------
+
+
+https://unix.stackexchange.com/questions/671328/why-do-i-not-a-access-to-regular-bash-programs-in-my-docker-container
+
+FROM ubuntu:20.04
+
+RUN apt-get update
+RUN apt-get install vim -y
+RUN apt-get install sudo -y
+RUN apt-get install wget -y
+RUN apt-get install gzip -y
+WORKDIR "/root"
+RUN wget https://github.com/spotbugs/spotbugs/releases/download/4.4.1/spotbugs-4.4.1.tgz
+RUN gunzip -c spotbugs-4.4.1.tgz | tar xvf -
+CMD ["ls"]
+CMD ["/bin/bash"]
+
+
+---------------------------------------------------------------------------------------------
+################################################
+Adding files for Docker and Docker Compose
+################################################
+https://www.jetbrains.com/help/pycharm/using-docker-compose-as-a-remote-interpreter.html#dockerfile
+
+
+FROM python:3.6.7
+WORKDIR /app
+COPY requirements.txt /app/requirements.txt
+RUN pip install -r requirements.txt
+COPY . /app
+EXPOSE 8000
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+
+
+docker-compose.yml
+
+version: '2'
+services:
+    web:
+        build: .
+        ports:
+            - "8000:8000"
+        volumes:
+            - .:/app
+        links:
+            - db
+
+    db:
+        image: "postgres:9.6"
+        ports:
+            - "5432:5432"
+        environment:
+            POSTGRES_PASSWORD: hunter2
+
+
+
+---------------------------------------------------------------------------------------------
+
+################################################
+# Download base image ubuntu 20.04
+################################################
+
+
+FROM ubuntu:22.04 as BaseImageTest
+# https://www.howtoforge.com/tutorial/how-to-create-docker-images-with-dockerfile/
+# https://hub.docker.com/_/ubuntu/tags
+
+RUN apt-get update
+#RUN DEBIAN_FRONTEND=noninteractive
+# Install nano from ubuntu repository
+RUN apt install -y nano htop python3 wget
+RUN apt install -y vim
+RUN apt install -y alien
+RUN apt-get install python3-pip -y
+
+RUN wget https://download.oracle.com/otn_software/linux/instantclient/218000/oracle-instantclient-basic-21.8.0.0.0-1.x86_64.rpm
+RUN alien oracle-instantclient-basic-21.8.0.0.0-1.x86_64.rpm
+RUN dpkg -i oracle-instantclient-basic_21.8.0.0.0-2_amd64.deb
+
+FROM BaseImageTest as PythonTest
+
+WORKDIR /opt
+#WORKDIR /home
+
+COPY requirements.txt .
+RUN pip3 install -r requirements.txt
+
+# Expose Port for the Application
+#EXPOSE 80
+#CMD ["python3 --version"]
+CMD ["bash"]
+
+
+# python3 --version
+# Python 3.10.6
+
+---------------------------------------------------------------------------------------------
+
+
+
+################################################
+get sqlite3 version
+################################################
+https://stackoverflow.com/questions/1545479/force-python-to-forego-native-sqlite3-and-use-the-installed-latest-sqlite3-ver
+https://docs.python.org/3/library/sqlite3.html
+
+
+>>> import sqlite3
+>>> sqlite3.version_info
+(2, 4, 1)
+>>> sqlite3.sqlite_version_info
+(3, 6, 11)
+
+
+################################################
+Unzipping files in Python
+################################################
+https://stackoverflow.com/questions/3451111/unzipping-files-in-python
+https://docs.python.org/3/library/zipfile.html
+https://thispointer.com/python-how-to-unzip-a-file-extract-single-multiple-or-all-files-from-a-zip-archive/
+
+
+zip = ZipFile('file.zip')
+zip.extractall()
+
+from zipfile import ZipFile
+zf = ZipFile('path_to_file/file.zip', 'r')
+zf.extractall('path_to_extract_folder')
+zf.close()
+
+from zipfile import ZipFile
+ZipFile("YOURZIP.zip").extractall("YOUR_DESTINATION_DIRECTORY")
+
+# Create a ZipFile Object and load sample.zip in it
+with ZipFile('sampleDir.zip', 'r') as zipObj:
+   # Extract all the contents of zip file in current directory
+   zipObj.extractall()
+
+
+
+################################################
+Python modules already provided in AWS Glue
+################################################
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-python-libraries.html
+
+
+################################################
+misc
+################################################
+
+https://aws.amazon.com/de/blogs/big-data/developing-aws-glue-etl-jobs-locally-using-a-container/
+https://aws.amazon.com/de/blogs/big-data/develop-and-test-aws-glue-version-3-0-jobs-locally-using-a-docker-container/
+https://aws.amazon.com/de/blogs/big-data/developing-aws-glue-etl-jobs-locally-using-a-container/
+https://docs.aws.amazon.com/de_de/glue/latest/dg/aws-glue-programming-etl-libraries.html
+https://github.com/webysther/aws-glue-docker
+https://github.com/awslabs/aws-glue-libs/issues/130
+https://aws.amazon.com/de/blogs/big-data/building-aws-glue-spark-etl-jobs-by-bringing-your-own-jdbc-drivers-for-amazon-rds/
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-connect.html
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-connect.html#aws-glue-programming-etl-connect-jdbc
+https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ModifyInstance.Oracle.sqlnet.html
+https://docs.aws.amazon.com/dms/latest/sbs/chap-rdsoracle2redshift.steps.connectoracle.html
+https://github.com/aws/aws-secretsmanager-jdbc
+https://aws.amazon.com/de/blogs/database/configuring-and-using-oracle-connection-manager-on-amazon-ec2-for-amazon-rds-for-oracle/
+https://docs.oracle.com/en/database/oracle/oracle-database/21/jajdb/
+https://docs.aws.amazon.com/glue/latest/dg/connection-properties.html#connection-properties-jdbc
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-python-samples.html
+https://docs.aws.amazon.com/glue/latest/dg/connection-properties.html
+https://aws.amazon.com/de/simpledb/
+https://docs.aws.amazon.com/glue/latest/dg/troubleshooting-service-limits.html
+https://aws.amazon.com/de/blogs/big-data/optimize-memory-management-in-aws-glue/
+https://aws.amazon.com/de/blogs/big-data/best-practices-to-scale-apache-spark-jobs-and-partition-data-with-aws-glue/
+https://docs.aws.amazon.com/glue/latest/dg/security.html
+https://docs.aws.amazon.com/general/latest/gr/glue.html
+https://aws.amazon.com/de/premiumsupport/knowledge-center/no-space-left-on-device-emr-spark/
+https://aws.amazon.com/de/blogs/aws/amazon-s3-object-size-limit/
+https://aws.amazon.com/premiumsupport/knowledge-center/s3-large-file-uploads/
+https://github.com/aws/aws-sdk-js/issues/877
+https://github.com/aws/aws-sdk-js/issues/1986
+https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html
+https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html
+https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html
+https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html
+https://python-oracledb.readthedocs.io/en/latest/user_guide/installation.html
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
