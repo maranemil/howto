@@ -1,0 +1,1557 @@
+#################################################
+bash: ssh-keygen: command not found #333
+#################################################
+
+https://github.com/NVIDIA-AI-IOT/jetbot/issues/333
+https://stackoverflow.com/questions/63042314/ssh-keygen-command-not-found-in-docker
+https://www.thegeekdiary.com/ssh-keygen-command-not-found/
+https://www.cyberciti.biz/faq/how-to-set-up-ssh-keys-on-linux-unix/
+https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account
+https://www.adamdehaven.com/blog/how-to-generate-an-ssh-key-and-add-your-public-key-to-the-server-for-authentication/#add-your-key-to-the-ssh-agent
+https://www.linode.com/docs/guides/use-public-key-authentication-with-ssh/
+https://support.atlassian.com/bitbucket-cloud/docs/set-up-an-ssh-key/
+
+
+apt-get -y install openssh-client
+yum install openssh-clients -y
+
+ssh-keygen -t rsa
+ssh-keygen -t rsa -C
+ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+
+ssh-keygen -t rsa -b 4096 -f ~/.ssh/vps-cloud.web-server.key -C "My web-server key"
+
+...
+
+ Debian
+apt-get install openssh-client
+ Ubuntu
+apt-get install openssh-client
+ Alpine
+apk add openssh
+ Arch Linux
+pacman -S openssh
+ Kali Linux
+apt-get install openssh-client
+ CentOS
+yum install openssh
+ Fedora
+dnf install openssh
+ Windows (WSL2)
+sudo apt-get update sudo apt-get install openssh-client
+ OS X
+brew install openssh
+ Raspbian
+apt-get install openssh-client
+ Dockerfile
+ dockerfile.run/ssh-keygen
+ Docker
+docker run cmd.cat/ssh-keygen ssh-keygen
+powered by Commando
+
+
+Generate a key interactively:
+	ssh-keygen
+Specify file in which to save the key:
+	ssh-keygen -f ~/.ssh/filename
+Generate an ed25519 key with 100 key derivation function rounds:
+	ssh-keygen -t ed25519 -a 100
+Generate an RSA 4096-bit key with email as a comment:
+	ssh-keygen -t dsa|ecdsa|ed25519|rsa -b 4096 -C "comment|email"
+Remove the keys of a host from the known_hosts file (useful when a known host has a new key):
+	ssh-keygen -R remote_host
+Retrieve the fingerprint of a key in MD5 Hex:
+	ssh-keygen -l -E md5 -f ~/.ssh/filename
+Change the password of a key:
+	ssh-keygen -p -f ~/.ssh/filename
+Change the type of the key format (for example from OPENSSH format to PEM), the file will be rewritten in-place:
+	ssh-keygen -p -N "" -m PEM -f ~/.ssh/OpenSSH_private_key
+
+
+#################################################
+How to execute ssh-keygen without prompt
+#################################################
+
+https://stackoverflow.com/questions/43235179/how-to-execute-ssh-keygen-without-prompt
+https://unix.stackexchange.com/questions/69314/automated-ssh-keygen-without-passphrase-how
+https://superuser.com/questions/478798/running-ssh-keygen-without-human-interaction
+
+
+ssh-keygen -t dsa -N "my passphrase" -C "test key" -f mykey
+ssh-keygen -t rsa -q -f "$HOME/.ssh/id_rsa" -N ""
+ssh-keygen -t dsa -q -f "$HOME/.ssh/id_dsa" -N ""
+
+
+ssh-keygen -b 2048 -t rsa -f /tmp/sshkey -q -N ""
+ssh-keygen -t rsa -f /home/oracle/.ssh/id_rsa -q -P ""
+sudo -u username bash -c "ssh-keygen -f ~username/.ssh/id_rsa -N ''"
+su - <user> -c "echo |ssh-keygen -t rsa"
+
+cat test.sh
+#!/bin/bash
+set -x
+XYZ=$(expect -c "
+spawn ssh-keygen -b 2048 -t rsa -f /tmp/sshkey -q
+expect \"Enter passphrase (empty for no passphrase):\"
+send \"\r\"
+expect \"Enter same passphrase again:\"
+send \"\r\"
+")
+
+
+ssh-keygen -t rsa -N ''
+ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa <<<y >/dev/null 2>&1
+ssh-keygen -q -t rsa -N '' <<< $'\ny' >/dev/null 2>&1
+
+  -N new_passphrase provides the new passphrase.
+  -q                silence ssh-keygen.
+  -f filename       specifies the filename of the key file.
+
+or
+
+
+ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+
+yes '' | ssh-keygen -N '' > /dev/null # OK
+
+yes 'y' | /usr/bin/ssh-keygen -q -N '' -t rsa -f /etc/ssh/ssh_host_rsa_key && \
+yes 'y' | /usr/bin/ssh-keygen -q -N '' -t dsa -f /etc/ssh/ssh_host_dsa_key
+
+ssh-keygen -t rsa -b 4096 -N '' <<<$'\n'
+ssh-keygen -t rsa -b 4096 -N '' <<<$'\n' >/dev/null
+
+
+
+#################################################
+How to Add SSH Public Key to Server
+#################################################
+
+https://linuxhandbook.com/add-ssh-public-key-to-server/
+https://www.cyberciti.biz/faq/how-to-set-up-ssh-keys-on-linux-unix/
+https://kb.iu.edu/d/aews
+https://www.digitalocean.com/community/tutorials/how-to-configure-ssh-key-based-authentication-on-a-linux-server
+
+man ssh
+man ssh-agent
+man ssh-keygen
+
+Method 1: Automatically
+ssh-copy-id -i ~/.ssh/id_rsa.pub YOUR_USER_NAME@IP_ADDRESS_OF_THE_SERVER
+
+Method 2: Manually
+mkdir -p /home/user_name/.ssh && touch /home/user_name/.ssh/authorized_keys
+chmod 700 /home/user_name/.ssh && chmod 600 /home/user_name/.ssh/authorized_key
+chown -R username:username /home/username/.ssh
+
+ssh user@your-server-ip-address
+ssh -i ~/.ssh/your-key user@your-server-ip-address
+
+ssh username@remote_host
+sudo nano /etc/ssh/sshd_config
+PasswordAuthentication no
+sudo systemctl restart ssh
+sudo /etc/init.d/ssh reload
+sudo systemctl reload ssh
+
+
+
+
+
+##################################################
+systemctl: command not found on ubuntu
+#################################################
+
+https://askubuntu.com/questions/988266/systemctl-command-not-found-on-ubuntu-16-04
+https://allthings.how/how-to-fix-systemctl-command-not-found-error-in-linux/
+https://www.thegeekdiary.com/systemctl-command-not-found/
+https://askubuntu.com/questions/1297226/how-to-run-systemctl-command-inside-docker-container
+
+
+cat /etc/os-release
+ls -al $(which init)
+sudo apt-get install systemd
+sudo apt-get install --reinstall systemd
+sudo dpkg -L systemd
+
+docker run --rm -it centos:7 bash
+docker run --runtime=sysbox-runc -it nestybox/ubuntu-bionic-systemd
+
+docker info 2>/dev/null | grep 'Server Version'
+docker exec sysd-test systemctl status httpd.service | grep Active
+
+docker run -it --rm -v /bin/systemctl:/bin/systemctl -v /run/systemd/system:/run/systemd/system -v /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket -v /sys/fs/cgroup:/sys/fs/cgroup debian:10 systemctl --no-pager status
+
+sudo docker run --privileged \
+-v /run/systemd/system:/run/systemd/system \
+-v /lib/:/lib/ \
+-v /usr/lib/x86_64-linux-gnu/:/usr/lib/x86_64-linux-gnu/ \
+-v /bin/systemctl:/bin/systemctl \
+-v /var/run/docker.sock:/var/run/docker.sock \
+-v /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket \
+-it ubuntu:18.04 /bin/sh -c "systemctl restart openvpn.service; systemctl status openvpn.service"
+
+
+
+FROM centos:7
+MAINTAINER “MD aakir” mdavir@nettolls.net
+ENV container docker
+RUN yum -y update; yum clean all
+RUN yum -y install systemd; yum clean all;
+RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in ; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done);
+RUN rm -rf /lib/systemd/system/multi-user.target.wants/;
+RUN rm -rf /etc/systemd/system/.wants/;
+RUN rm -rf /lib/systemd/system/local-fs.target.wants/;
+RUN rm -rf /lib/systemd/system/sockets.target.wants/udev;
+RUN rm -rf /lib/systemd/system/sockets.target.wants/initctl;
+RUN rm -rf /lib/systemd/system/basic.target.wants/;
+RUN rm -rf /lib/systemd/system/anaconda.target.wants/*;
+VOLUME [ “/sys/fs/cgroup” ]
+CMD ["/usr/sbin/init"]
+
+
+##################################################
+Create a key pair using Amazon EC2
+##################################################
+
+AWS users must use SSH to alter the contents of an EC2.
+
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
+https://docs.aws.amazon.com/cli/latest/userguide/cli-services-ec2-keypairs.html
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html
+https://docs.aws.amazon.com/de_de/AWSEC2/latest/UserGuide/ec2-key-pairs.html
+https://docs.aws.amazon.com/servicecatalog/latest/adminguide/getstarted-keypair.html
+https://docs.aws.amazon.com/ground-station/latest/ug/create-ec2-ssh-key-pair.html
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/replacing-key-pair.html
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-keypair.html
+https://aws.amazon.com/de/premiumsupport/knowledge-center/user-data-replace-key-pair-ec2/
+https://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/create-key-pairs.html
+
+##################################################
+Bootstrapping AWS EC2 instance to update packages
+##################################################
+
+https://medium.com/codex/bootstrapping-aws-ec2-instance-to-update-packages-install-and-start-apache-http-server-f68fe1fe33ba
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/bootstrap_container_instance.html
+https://aws.plainenglish.io/bootstrapping-an-ec2-instance-in-amazon-web-services-17eb0bbd37ed
+https://github.com/ACloudGuru-Resources/course-aws-certified-solutions-architect-associate/blob/main/lab/ec2-instance-bootstrapping/webserver-02.sh
+https://acloudguru.com/hands-on-labs/ec2-instance-bootstrapping
+
+
+Use BootStrap Scripts With EC2 Instance
+https://geekylane.com/bootstrap-scripts-with-ec2-instance/
+https://bootstrap-it.com/awscli/
+
+
+#!/bin/bash
+yum update -y
+yum install httpd -y
+systemctl start httpd
+systemctl enable httpdä
+
+sudo yum history
+
+sudo -i
+sudo yum -y update
+yum install httpd
+systemctl enable httpd
+systemctl start httpd
+
+
+#!/bin/bash
+sudo apt-get update -y
+sudo apt-get install apache2 unzip -y
+apt-get install mysql-server
+
+
+#!/bin/bash
+sudo apt update -y && sudo apt install -y nginx
+sudo systemctl start nginx
+
+
+# run-instances example
+
+aws ec2 run-instances --image-id ami-04681a1dbd79675a5 \
+--count 1 \
+--instance-type r5d.large \
+--key-name newcluster \
+--security-group-ids sg-007e43f80a1958f29 \
+--subnet-id subnet-970ec2f0 \
+--user-data file://my_script.sh \
+--tag-specifications \
+'ResourceType=instance,Tags=[{Key=backend,Value=inventory1}]'
+
+
+# Lookup available EC2 instance types
+
+aws pricing get-attribute-values \
+--service-code AmazonEC2 \
+--attribute-name instanceType
+Using --output and --dry-run
+
+aws --output table ec2 describe-images \
+--filters "Name=description,Values=*CentOS*" \
+"Name=owner-alias,Values=amazon"
+
+aws ec2 run-instances --dry-run \
+--image-id ami-04681a1dbd79675a5 \
+--count 1 \
+--instance-type r5d.large \
+--key-name MyKeyPair \
+--security-group-ids sg-007e43f80a1958f29 \
+--subnet-id subnet-970ec2f0 \
+--user-data file://my_script.sh \
+--tag-specifications \
+'ResourceType=instance,Tags=[{Key=backend,Value=inventory1}]'
+
+# s3api and bucket lifestyle configuration
+
+aws s3api get-bucket-lifecycle-configuration \
+--bucket test4test4
+aws s3api put-bucket-lifecycle-configuration \
+--bucket test4test4 \
+--lifecycle-configuration '{
+"Rules": [
+{
+"Filter": {
+"Prefix": "scripts/"
+},
+"Status": "Enabled",
+"Transitions": [
+{
+"Days": 30,
+"StorageClass": "STANDARD_IA"
+},
+{
+"Days": 60,
+"StorageClass": "GLACIER"
+}
+],
+"Expiration": {
+"Days": 365
+},
+"ID": "Lifecycle for bucket objects."
+}
+]
+}'
+
+
+# Creating users and groups
+
+aws iam create-user --user-name mike
+aws iam get-user --user-name mike
+aws iam list-access-keys --user-name mike
+aws iam create-access-key --user-name mike
+
+aws iam create-group --group-name admins
+aws iam list-policies | grep AmazonEC2 | grep Access
+aws iam attach-group-policy \
+--policy-arn arn:aws:iam::aws:policy/AmazonEC2FullAccess \
+--group-name admins
+
+aws iam add-user-to-group \
+--group-name admins \
+--user-name mike
+
+# Configure a static website in S3
+
+
+aws s3 mb s3://mysite548.com
+aws s3api put-bucket-acl --bucket mysite548.com --acl public-read
+aws s3 sync . s3://mysite548.com --acl public-read
+ls
+aws s3 website s3://mysite548.com/ --index-document index.html --error-document error.html
+aws s3api get-bucket-website --bucket mysite548.com
+
+http://mysite548.com.s3-website-us-east-1.amazonaws.com/
+
+
+# Prepare for EC2 deployment
+
+aws ec2 create-security-group \
+--group-name EC2SecurityGroup \
+--description "Security Group for EC2 instances to allow ports 22, 80 and 443"
+aws ec2 authorize-security-group-ingress \
+--group-name EC2SecurityGroup \
+--protocol tcp \
+--port 22 \
+--cidr 172.54.125.8/32
+aws ec2 authorize-security-group-ingress \
+--group-name EC2SecurityGroup \
+--protocol tcp \
+--port 80 \
+--cidr 0.0.0.0/0
+aws ec2 authorize-security-group-ingress \
+--group-name EC2SecurityGroup \
+--protocol tcp \
+--port 443 \
+--cidr 0.0.0.0/0
+aws ec2 describe-security-groups --group-names EC2SecurityGroup
+
+aws --output table ec2 describe-images \
+--filters "Name=description,Values=*Amazon Linux 2*" \
+"Name=owner-alias,Values=amazon"
+
+aws ec2 describe-subnets
+
+# run-instances command
+
+aws ec2 run-instances --image-id ami-00b94673edfccb7ca --count 1 \
+--instance-type t2.micro --key-name newcluster \
+--security-group-ids sg-06366129d8a9b8a59*** \
+--subnet-id subnet-52d6117c \
+--user-data file://my_script.sh \
+--tag-specifications \
+'ResourceType=instance,Tags=[{Key=webserver,Value=production}]'
+
+# Create RDS database instance command
+
+aws rds create-db-instance
+--db-instance-identifier sg-cli-test \
+--allocated-storage 20 \
+--db-instance-class db.m1.small --engine mysql \
+--master-username myawsuser \
+--master-user-password mypassword
+
+
+https://gist.github.com/palumbo/01ea036e159a81e0efaa1677aab61dc4
+
+AWS EC2 Wordpress bootstrap script
+
+wordpress.sh
+#!/bin/bash
+yum install httpd php-mysql -y
+amazon-linux-extras install -y php7.3
+cd /var/www/html
+wget https://wordpress.org/latest.tar.gz
+tar -xzf latest.tar.gz
+cp -r wordpress/* /var/www/html/
+rm -rf wordpress
+rm -rf latest.tar.gz
+chmod -R 755 wp-content
+chown -R apache:apache wp-content
+service httpd start
+chkconfig httpd on
+
+
+https://gist.github.com/barbietunnie/0b05d7bfc36459bb5eac8d1d0b19f238
+
+AWS EC2 Bootstrap script for setting up PHP and MySQL
+
+bootstrap-php-mysql.sh
+#!/bin/bash
+yum install httpd php php-mysql -y
+yum update -y
+chkconfig httpd on
+service httpd start
+echo "<?php phpinfo();?>" > /var/www/html/index.php
+
+
+
+
+##################################################
+/usr/bin/ssh-copy-id: ERROR: ssh: connect to host port 22: Connection refused
+##################################################
+
+https://askubuntu.com/questions/685890/ssh-connect-t-host-slave-1-port-22-connection-refused
+https://colhountech.com/2021/04/01/solved-ssh-copy-id-port-22-connection-refused/
+
+sudo apt install net-tools
+netstat -an|grep 22
+
+sudo apt-get update
+sudo apt-get install openssh-server openssh-client
+
+sudo nano /etc/ssh/sshd_config
+PasswordAuthentication no
+PasswordAuthentication yes
+
+ssh-copy-id someuser@<my-ip>
+
+sudo systemctl restart sshd
+sudo ufw disable
+sudo ufw enable
+
+##################################################
+simulate config ssh server
+##################################################
+
+https://linuxhint.com/use-ssh-copy-id-command/
+https://serverfault.com/questions/306541/automating-ssh-copy-id
+
+
+docker run -it --name demosssh1 ubuntu:22.04 bash # client docker
+docker run -it --name demosssh2 ubuntu:22.04 bash # server docker
+
+sudo apt-get update
+sudo apt-get install openssh-client			# client docker
+sudo apt-get install openssh-server openssh-client	# server docker
+
+ssh-keygen -t rsa # client docker
+ssh-keygen -t rsa # server docker
+
+# skip questions
+ssh-keygen -t rsa -q -f "$HOME/.ssh/id_rsa" -N "" -y
+
+sudo nano /etc/ssh/sshd_config
+PasswordAuthentication no
+
+sudo systemctl restart sshd.service
+
+ip addr
+ifconfig
+
+touch /root/.ssh/authorized_key
+chmod 600 /root/.ssh/authorized_key
+ll /root/.ssh
+
+
+# copy client docker ssh key to server
+ssh-copy-id -i ~/.ssh/id_rsa.pub demosssh2@ip
+ssh demosssh2@ip
+
+# examppe with port
+ssh-copy-id -i ~/.ssh/id_rsa.pub user@77.134.54.101 -p 6576
+ssh -p 6576 linkfy@77.134.54.101
+
+System has not been booted with systemd as init system (PID 1). Can't operate.
+Failed to connect to bus: Host is down
+Failed to talk to init daemon.
+
+sudo systemctl status
+apt install sudo
+sudo service ssh start
+sudo /etc/init.d/ssh restart
+
+ssh-copy-id Permission denied (publickey)
+
+nano /etc/ssh/sshd_config
+PasswordAuthentication yes
+
+sudo /etc/init.d/ssh restart
+
+echo 'root:docker' | chpasswd
+
+passwd
+New password:
+Retype new password:
+passwd: password updated successfully
+
+apt-get install sudo
+usermod -aG sudo devuser
+sudo ls -la /root
+
+
+RUN echo "root:root" | chpasswd
+
+
+
+
+nano /etc/ssh/sshd_config
+
+PubkeyAuthentication yes
+PasswordAuthentication yes
+PermitEmptyPasswords yes
+
+sudo /etc/init.d/ssh restart
+
+cat /etc/shadow | grep root
+passwd
+cat /etc/shadow | grep root
+
+-----------
+https://github.com/huginn/huginn/issues/2398
+try to add -v /etc/shadow:/etc/shadow
+you will be able to use same root password as the host
+
+-----------
+https://security.stackexchange.com/questions/235263/do-docker-images-have-the-same-root-password
+docker-compose exec -u 0 web bash
+run shell
+docker container ls
+docker container exec -it -u root demo123 bash
+
+
+##################################################
+simulate ec2 ssh server
+##################################################
+
+------------------------------
+------------------------------
+version: "3.7"
+
+services:
+
+  ec2ubuntu2:
+    image: testec2ubuntu2
+    build:
+      context: ./Ubuntu
+      dockerfile: DockerfileUbuntu
+
+  oracledb:
+    image: chameleon82/oracle-xe-10g
+    restart: always
+    ports:
+      - "49160:22"
+      - "49161:1521"
+      - "49162:8080"
+    networks:
+      test_net:
+        ipv4_address: 192.168.1.10
+
+networks:
+  customnetwork:
+    ipam:
+      config:
+        - subnet: 192.168.3.0/16
+  test_net:
+    driver: macvlan
+    #driver: overlay
+    #driver: bridge
+    driver_opts:
+      parent: wlp0s20f3
+    ipam:
+      config:
+        - subnet: "192.168.1.0/24"
+          ip_range: "192.168.1.71/32"
+          gateway: "192.168.1.1"
+  test_bridge:
+    driver: default
+
+------------------------------
+DockerfileUbuntu
+------------------------------
+# Download base image ubuntu 20.04
+FROM ubuntu:22.04 as BaseImageEC2Test
+# https://www.howtoforge.com/tutorial/how-to-create-docker-images-with-dockerfile/
+# https://hub.docker.com/_/ubuntu/tags
+
+RUN echo "root:root" | chpasswd
+
+RUN apt-get update
+#RUN DEBIAN_FRONTEND=noninteractive
+# Install nano from ubuntu repository
+RUN apt install -y nano htop python3 wget sudo systemd
+RUN apt install -y vim
+RUN apt install -y alien
+RUN apt install -y python3-pip
+RUN apt install -y openssh-client openssh-server
+RUN apt install -y libaio1
+RUN apt-get install -y iputils-ping
+
+RUN sudo /etc/init.d/ssh restart
+# skip questions
+RUN mkdir /root/.ssh
+RUN yes '' | ssh-keygen -N '' > /dev/null
+
+RUN wget https://download.oracle.com/otn_software/linux/instantclient/218000/oracle-instantclient-basic-21.8.0.0.0-1.x86_64.rpm
+RUN alien oracle-instantclient-basic-21.8.0.0.0-1.x86_64.rpm
+RUN dpkg -i oracle-instantclient-basic_21.8.0.0.0-2_amd64.deb
+
+
+FROM BaseImageEC2Test as EC2Python
+
+WORKDIR /opt
+#WORKDIR /home
+
+COPY requirements.txt .
+RUN pip3 install -r requirements.txt
+
+# ssh-keygen -t rsa
+
+# Expose Port for the Application
+#EXPOSE 80
+#CMD ["python3 --version"]
+CMD ["bash"]
+
+
+
+------------------------------
+manage ssh login
+------------------------------
+nano /etc/ssh/sshd_config
+
+PasswordAuthentication yes
+PermitRootLogin yes
+
+#KbdInteractiveAuthentication no
+#UsePAM yes
+#X11Forwarding yes
+#PrintMotd no
+
+sudo /etc/init.d/ssh restart
+
+##################################################
+Amazon EC2 key pairs and Linux instances
+##################################################
+
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AccessingInstances.html
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AccessingInstancesLinux.html
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-connect-set-up.html
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-connect-methods.html
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-connect-uninstall.html
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/openssh.html
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/TroubleshootingInstancesConnecting.html#replacing-lost-key-pair
+https://docs.aws.amazon.com/cli/latest/userguide/cli-services-ec2-keypairs.html
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html
+https://docs.aws.amazon.com/servicecatalog/latest/adminguide/getstarted-keypair.html
+
+ssh -i /path/key-pair-name.pem instance-user-name@instance-public-dns-name
+ssh -i /path/key-pair-name.pem instance-user-name@instance-IPv6-address
+scp -i /path/key-pair-name.pem /path/my-file.txt ec2-user@instance-public-dns-name:path/
+scp -i /path/key-pair-name.pem /path/my-file.txt ec2-user@\[instance-IPv6-address\]:path/
+scp -i /path/key-pair-name.pem ec2-user@instance-public-dns-name:path/my-file.txt path/my-file2.txt
+scp -i /path/key-pair-name.pem ec2-user@\[instance-IPv6-address\]:path/my-file.txt path/my-file2.txt
+
+ssh -i my_ec2_private_key.pem ec2-user@ec2-a-b-c-d.us-west-2.compute.amazonaws.com
+[ec2-user ~]$ sudo yum install ec2-instance-connect
+[ec2-user ~]$ sudo less /etc/ssh/sshd_config
+pip install ec2instanceconnectcli
+
+
+Limitations
+Supported Linux distributions:
+
+Amazon Linux 2 (any version)
+Ubuntu 16.04 or later
+
+To connect using the Amazon EC2 console, the instance must have a public IPv4 address.
+If the instance does not have a public IP address, you can connect to the instance over a private network using an SSH client or the EC2 Instance Connect CLI. For example, you can connect from within the same VPC or through a VPN connection, transit gateway, or AWS Direct Connect.
+
+EC2 Instance Connect does not support connecting using an IPv6 address.
+
+
+Amazon Linux 2 / Ubunru - connect to an instance using the EC2 Instance Connect CLI
+
+mssh i-001234a4bf70dec41EXAMPLE
+mssh ubuntu@i-001234a4bf70dec41EXAMPLE
+
+To connect to your instance using your own key and any SSH client
+
+ssh-keygen -t rsa -f my_key
+
+# generate new SSH private and public keys, my_key and my_key.pub
+
+Push your SSH public key to the instance
+
+aws ec2-instance-connect send-ssh-public-key \
+    --instance-id i-001234a4bf70dec41EXAMPLE \
+    --availability-zone us-west-2b \
+    --instance-os-user ec2-user \
+    --ssh-public-key file://my_key.pub
+
+Connect to the instance using your private key
+
+ssh -o "IdentitiesOnly=yes" -i my_key ec2-user@ec2-198-51-100-1.compute-1.amazonaws.com
+
+Uninstall EC2 Instance Connect
+
+ssh -i my_ec2_private_key.pem ubuntu@ec2-a-b-c-d.us-west-2.compute.amazonaws.com
+ubuntu:~$ sudo apt-get remove ec2-instance-connect
+
+ssh -i my_ec2_private_key.pem ec2-user@ec2-a-b-c-d.us-west-2.compute.amazonaws.com
+[ec2-user ~]$ sudo yum remove ec2-instance-connect
+
+
+
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/openssh.html
+
+ssh -i /path/key-pair-name.pem instance-user-name@instance-public-dns-name
+ssh -i /path/key-pair-name.pem instance-user-name@instance-IPv6-address
+
+
+Add the new public key to authorized_keys on the original volume mounted to the temporary instance
+
+[ec2-user ~]$ lsblk
+[ec2-user ~]$ sudo mkdir /mnt/tempvol
+[ec2-user ~]$ sudo mount /dev/xvdf1 /mnt/tempvol 		# for Amazon Linux, Ubuntu, and Debian
+[ec2-user ~]$ sudo mount -o nouuid /dev/xvdf1 /mnt/tempvol	# for Amazon Linux 2, CentOS, SUSE Linux 12, and RHEL 7.x
+
+[ec2-user ~]$ sudo fsck /dev/xvdf1
+[ec2-user ~]$ cp .ssh/authorized_keys /mnt/tempvol/home/ec2-user/.ssh/authorized_keys
+[ec2-user ~]$ sudo ls -l /mnt/tempvol/home/ec2-user/.ssh
+[ec2-user ~]$ sudo cp .ssh/authorized_keys /mnt/tempvol/home/ec2-user/.ssh/authorized_keys
+[ec2-user ~]$ sudo ls -l /mnt/tempvol/home/ec2-user/.ssh
+[ec2-user ~]$ sudo chown 222:500 /mnt/tempvol/home/ec2-user/.ssh/authorized_keys
+[ec2-user ~]$ sudo umount /mnt/tempvol
+
+
+Create a key pair
+
+aws ec2 create-key-pair --key-name MyKeyPair --query 'KeyMaterial' --output text > MyKeyPair.pem
+aws ec2 create-key-pair --key-name MyKeyPair --query 'KeyMaterial' --output text | out-file -encoding ascii -filepath MyKeyPair.pem
+chmod 400 MyKeyPair.pem
+aws ec2 describe-key-pairs --key-name MyKeyPair
+aws ec2 delete-key-pair --key-name MyKeyPair
+
+
+create a key pair using Amazon EC2
+
+
+aws ec2 create-key-pair \
+    --key-name my-key-pair \
+    --key-type rsa \
+    --key-format pem \
+    --query "KeyMaterial" \
+    --output text > my-key-pair.pem
+
+chmod 400 key-pair-name.pem
+
+
+Create a Key Pair for serverless app
+
+https://docs.aws.amazon.com/servicecatalog/latest/adminguide/getstarted-template.html
+https://docs.aws.amazon.com/servicecatalog/latest/adminguide/getstarted-keypair.html
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-keypair.html
+
+development-environment.template
+
+. . .
+  "Parameters" : {
+    "KeyName": {
+      "Description" : "Name of an existing EC2 key pair for SSH access to the EC2 instance.",
+      "Type": "AWS::EC2::KeyPair::KeyName"
+    },
+. . .
+
+JSON
+
+{
+  "Type" : "AWS::EC2::KeyPair",
+  "Properties" : {
+      "KeyName" : String,
+      "KeyType" : String,
+      "PublicKeyMaterial" : String,
+      "Tags" : [ Tag, ... ]
+    }
+}
+
+YAML
+
+Type: AWS::EC2::KeyPair
+Properties:
+  KeyName: String
+  KeyType: String
+  PublicKeyMaterial: String
+  Tags:
+    - Tag
+
+
+
+https://docs.aws.amazon.com/ground-station/latest/ug/create-ec2-ssh-key-pair.html
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/replacing-key-pair.html
+https://aws.amazon.com/de/premiumsupport/knowledge-center/user-data-replace-key-pair-ec2/
+https://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/create-key-pairs.html
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/bootstrap_container_instance.html
+
+----------------------------------------------
+
+How to fix Permission denied (publickey) error
+
+https://docs.docker.com/engine/reference/run/
+https://askubuntu.com/questions/1379425/system-has-not-been-booted-with-systemd-as-init-system-pid-1-cant-operate
+https://github.com/MicrosoftDocs/WSL/issues/457
+https://serverfault.com/questions/684346/ssh-copy-id-permission-denied-publickey
+https://www.digitalocean.com/community/questions/ssh-copy-id-not-working-permission-denied-publickey
+https://dev-pages.info/how-to-fix-permission-denied-publickey-error/
+https://phoenixnap.com/kb/ssh-permission-denied-publickey
+https://unix.stackexchange.com/questions/373210/ssh-copy-id-permission-denied
+https://askubuntu.com/questions/1325303/ssh-copy-id-returning-permission-denied
+https://superuser.com/questions/890128/ssh-copy-id-public-key-denied
+https://serverfault.com/questions/773224/how-can-i-set-the-root-password-in-a-docker-container-from-a-script
+
+sudo vim /etc/ssh/sshd_config
+
+Replace PasswordAuthentication no to PasswordAuthentication yes
+
+sudo service sshd reload
+ssh-copy-id username@server-ip
+ssh username@server-ip
+sudo service sshd reload
+
+or
+
+sudo nano /etc/ssh/sshd_config
+
+In the file, find the PasswordAuthentication line and make sure it ends with yes.
+Find the ChallengeResponseAuthentication option and disable it by adding no.
+
+or
+
+sudo systemctl restart sshd
+sudo nano /etc/ssh/sshd_config
+PermitRootLogin no
+PubkeyAuthentication yes
+
+Comment out the GSSAPI-related options
+#GSSAPIAuthentication yes
+#GSSAPICleanupCredentials no
+UsePAM yes
+systemctl restart sshd
+ls -ld
+chmod 0700 /home/[your-username]
+ls -ld
+chmod 0700 /home/your_home/.ssh
+ls -ld authorized_keys
+chmod 0600 /home/[username]/.ssh/authorized_keys
+
+or
+
+vi /etc/ssh_sshd_config
+
+PasswordAuthentication yes
+PermitRootLogin yes
+service sshd restart
+ssh-copy-id root@154.34.22.109
+
+---
+ssh -v username@your-host-ip-or-domain
+cat ~/.ssh/id_rsa.pub
+
+copy to remote ~/.ssh/authorized_keys
+ssh mynewserver
+
+or
+
+https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-14-04
+
+# Option 1: Use ssh-copy-id
+
+ssh root@SERVER_IP_ADDRESS
+adduser demo
+gpasswd -a demo sudo
+ssh-keygen
+
+ssh-copy-id demo@SERVER_IP_ADDRESS
+
+# Option 2: Manually Install the Key
+
+cat ~/.ssh/id_rsa.pub
+# Add Public Key to New Remote User
+su - demo
+mkdir .ssh
+chmod 700 .ssh
+nano .ssh/authorized_keys
+chmod 600 .ssh/authorized_keys
+exit
+
+# Configure SSH Daemon
+
+nano /etc/ssh/sshd_config
+PermitRootLogin yes
+PermitRootLogin no
+
+service ssh restart
+ssh demo@SERVER_IP_ADDRESS
+sudo ls
+exit
+
+
+https://softhints.com/add-ssh-key-and-permission-denied-publickey/
+
+ssh username@host
+ssh host -l username
+ssh-i ~/.ssh/private_key username@host
+ssh -v -i ~/.ssh/private_key username@host
+sudo tail -f /var/log/auth.log
+ls -l ~/.ssh/
+ssh-i ~/.ssh/private_key username@host
+chown -R your_user:your_user .ssh
+chmod 700 .ssh
+chmod 600 .ssh/authorized_keys
+chmod 600 /home/user/key/id_rsa
+
+# Adding new SSH key
+
+ssh-keygen -t rsa
+ssh-copy-id username@host
+ssh-add ~/.ssh/correct_private_key
+cat <your_key >~/.ssh/authorized_keys
+cat <your_key >>~/.ssh/authorized_keys
+
+
+#############################################################
+Using sudo without password prompt as non-root docker user
+#############################################################
+https://dev.to/emmanuelnk/using-sudo-without-password-prompt-as-non-root-docker-user-52bg
+
+# Get latest official Ubuntu image
+FROM ubuntu
+
+# ubuntu:latest does not have sudo
+# fetch it and install it
+RUN apt-get update && apt-get install -y sudo
+
+# Create new user `docker` and disable
+# password and gecos for later
+# --gecos explained well here:
+# https://askubuntu.com/a/1195288/635348
+RUN adduser --disabled-password \
+--gecos '' docker
+
+#  Add new user docker to sudo group
+RUN adduser docker sudo
+
+# Ensure sudo group users are not
+# asked for a password when using
+# sudo command by ammending sudoers file
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> \
+/etc/sudoers
+
+# now we can set USER to the
+# user we just created
+USER docker
+
+# we can now run sudo commands
+# as non-root user `docker` without
+# password prompt
+RUN sudo apt-get update
+
+WORKDIR /home/docker/src
+
+COPY . .
+
+
+#############################################################
+change docker containers IP address
+#############################################################
+
+https://forums.docker.com/t/ip-address-for-container/27454/7
+https://stackoverflow.com/questions/20771269/change-docker-containers-ip-address
+https://www.howtogeek.com/devops/how-to-assign-a-static-ip-to-a-docker-container/
+https://support.hyperglance.com/knowledge/changing-the-default-docker-subnet
+https://stackoverflow.com/questions/52225493/change-default-docker0-bridge-ip-address
+https://stackoverflow.com/questions/39901311/docker-ubuntu-bash-ping-command-not-found
+
+
+
+docker run --help | grep ip
+docker run -d --ip=“192.168.20.173” wordpressmysql
+
+docker network create mynewbridge
+docker run --net=mynewbridge mysql
+docker run --net=mynewbridge -p 80:80 wordpress
+
+docker run --net=host app
+
+docker network create -d macvlan --subnet=192.168.1.0/24 --gateway=192.168.1.1 -o parent=eth0 my-mcvlan-network
+docker run -dit --name nginx-01 --net my-mcvlan-network --ip 192.168.1.55 arm32v7/nginx:1.17.1
+ping 192.168.1.55 -c 1
+
+sudo docker run -d --ip=“192.168.1.141” ubuntu
+
+.....................
+
+add to /etc/network/interfaces the following:
+
+auto docker0
+iface docker0 inet static
+    address 172.30.0.1
+    netmask 255.255.255.0
+    bridge_ports dummy0
+    bridge_stp off
+    bridge_fd 0
+
+
+ifdown docker0
+ifup docker0
+
+.....................
+
+sudo vim /etc/default/docker
+
+DOCKER_OPTS="--bip=10.66.33.10/24"
+docker run -it --name t2 jangorecki/r-base-dev /bin/bash
+docker inspect --format '{{ .NetworkSettings.IPAddress }}' t2
+
+#centos
+docker exec -it c1 bash -c "echo -e 'IPADDR=172.17.0.4 \n HOSTNAME=c1' >> /etc/sysconfig/network-scripts/ifcfg-eth0; /etc/init.d/network restart";
+
+.....................
+
+docker run --publish=80:8080 nginx
+
+docker network create example
+docker run --net example --name nginx -d nginx
+docker network connect example --alias mongohost mongodb
+
+# Setting Up Static IPs
+docker network create --subnet=172.20.0.0/16 customnetwork
+docker run --net customnetwork --ip 172.20.0.10 -d container
+docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' name_or_id
+
+
+Using Docker Compose
+
+
+version: '2'
+services:
+  webserver:
+    image: nginx
+    container_name: web-server
+    networks:
+      customnetwork:
+        ipv4_address: 172.20.0.10
+networks:
+  customnetwork:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+
+.....................
+
+sudo systemctl restart docker
+sudo /etc/
+ifconfig
+
+#############################################################
+Enable or disable IP forwarding
+#############################################################
+
+https://linuxconfig.org/how-to-turn-on-off-ip-forwarding-in-linux
+https://docker-docs.netlify.app/network/bridge/#enable-forwarding-from-docker-containers-to-the-outside-world
+https://docker-docs.netlify.app/network/overlay/#create-an-overlay-network
+https://docker-docs.netlify.app/network/macvlan/#use-ipv6
+https://www.linuxtechi.com/create-use-macvlan-network-in-docker/
+https://github.com/moby/libnetwork/blob/master/docs/macvlan.md
+
+sysctl net.ipv4.ip_forward
+
+
+sudo sysctl -w net.ipv4.ip_forward=0
+sudo sysctl -w net.ipv4.ip_forward=1
+
+sysctl net.ipv4.conf.all.forwarding=1
+
+
+docker network create -d macvlan  \
+  --subnet=192.168.32.0/24  \
+  --ip-range=192.168.32.128/25 \
+  --gateway=192.168.32.254  \
+  --aux-address="my-router=192.168.32.129" \
+  -o parent=eth0 macnet32
+
+docker network  create  -d macvlan \
+    --subnet=192.168.50.0/24 \
+    --gateway=192.168.50.1 \
+    -o parent=eth0.50 macvlan50
+
+docker network create -d ipvlan \
+    --subnet=192.168.210.0/24 \
+    --subnet=192.168.212.0/24 \
+    --gateway=192.168.210.254  \
+    --gateway=192.168.212.254  \
+     -o ipvlan_mode=l2 ipvlan210
+
+
+
+docker network ls
+docker container inspect e9b71d094e48
+docker ps
+docker exec -it daa09a330b36 ping 192.168.2.110 -4
+docker exec -it daa09a330b36 /bin/sh
+ping 192.168.2.110 -c 4
+
+docker exec -it e9b71d094e48 /bin/sh
+ip route
+
+........
+
+ip addr show eth0
+
+# Macvlan  (-o macvlan_mode= Defaults to Bridge mode if not specified)
+docker network create -d macvlan \
+    --subnet=172.16.86.0/24 \
+    --gateway=172.16.86.1  \
+    -o parent=eth0 pub_net
+
+# Run a container on the new network specifying the --ip address.
+docker  run --net=pub_net --ip=172.16.86.10 -itd alpine /bin/sh
+
+# Start a second container and ping the first
+docker  run --net=pub_net -it --rm alpine /bin/sh
+ping -c 4 172.16.86.10
+
+ip a show eth0
+ip route
+
+docker network create -d macvlan \
+    --subnet=172.16.86.0/24 \
+    --gateway=172.16.86.1  \
+    --aux-address="exclude_host=172.16.86.250" \
+    -o parent=eth0 pub_net
+
+
+docker network create -d macvlan  \
+    --subnet=192.168.32.0/24  \
+    --ip-range=192.168.32.128/25 \
+    --gateway=192.168.32.254  \
+    -o parent=eth0 macnet32
+
+
+docker network create -d macvlan \
+    --subnet=192.168.50.0/24 \
+    --gateway=192.168.50.1 \
+    -o parent=eth0.50 macvlan50
+
+docker network create -d macvlan \
+    --subnet=192.168.60.0/24 \
+    --gateway=192.168.60.1 \
+    -o parent=eth0.60 -o \
+    -o macvlan_mode=bridge macvlan60
+
+docker network create -d macvlan \
+    --subnet=10.1.20.0/24 --subnet=10.1.10.0/24 \
+    --gateway=10.1.20.1 --gateway=10.1.10.1 \
+    -o parent=eth0.101 mcv101
+
+ip link
+
+# Test 10.1.20.10.0/24 connectivity
+docker run --net=mcv101 --ip=10.1.20.9 -itd alpine /bin/sh
+docker run --net=mcv101 --ip=10.1.20.10 -it --rm alpine ping -c 4 10.1.20.10
+
+# Test 10.1.10.10.0/24 connectivity
+docker run --net=mcv101 --ip=10.1.10.10 -itd alpine /bin/sh
+docker run --net=mcv101 --ip=10.1.10.9 -it --rm alpine ping -c 4 10.1.10.10
+
+# Delete All Containers
+docker rm -f `docker ps -qa`
+
+# Delete all Networks
+docker network rm $(docker network ls -q)
+
+# Run ip links again and verify the links are cleaned up
+ip link
+
+
+---
+
+
+# Create multiple subnets w/ dual stacks:
+docker network  create  -d macvlan \
+    --subnet=192.168.216.0/24 --subnet=192.168.218.0/24 \
+    --gateway=192.168.216.1  --gateway=192.168.218.1 \
+    --ipv6 --subnet=2001:db8:abc8::/64 --gateway=2001:db8:abc8::10 \
+     -o parent=eth0.218 \
+     -o macvlan_mode=bridge macvlan216
+
+# Start a container on the first subnet 192.168.216.0/24
+docker run --net=macvlan216 --name=macnet216_test --ip=192.168.216.10 -itd alpine /bin/sh
+
+# Start a container on the second subnet 192.168.218.0/24
+docker run --net=macvlan216 --name=macnet218_test --ip=192.168.218.10 -itd alpine /bin/sh
+
+# Ping the first container started on the 192.168.216.0/24 subnet
+docker run --net=macvlan216 --ip=192.168.216.11 -it --rm alpine /bin/sh
+
+# From inside the container shell ping the other host on the same subnet and then exit
+$ ping -c4 192.168.216.10
+$ exit
+
+# Ping the first container started on the 192.168.218.0/24 subnet
+docker run --net=macvlan216 --ip=192.168.218.11 -it --rm alpine /bin/sh
+
+# From inside the container shell ping the other host on the same subnet and then exit
+$ ping -c4 192.168.218.10
+$ exit
+
+# Start a container in the back explicitly declaring the v6 address
+docker run --net=macvlan216 --ip6=2001:db8:abc8::20 -itd alpine /bin/sh
+
+# Start another container pinging the v6 address of the previous container started in the background
+docker run --net=macvlan216 -it --rm alpine /bin/sh
+$ ping6 -c4 2001:db8:abc8::20
+$ exit
+# Or, run the ping as a explicit process
+docker run --net=macvlan216 -it --rm alpine ping6 -c4 2001:db8:abc8::20
+
+docker run --net=macvlan216 --ip=192.168.216.11 -it --rm alpine /bin/sh
+
+ip a show eth0
+ip route
+ip -6 route
+
+docker run --net=macvlan216 --ip=192.168.216.50  --ip6=2001:db8:abc8::50 -it --rm alpine /bin/sh
+ip a show eth0
+
+docker network create -d macvlan \
+  --subnet=192.168.136.0/24 \
+  --subnet=192.168.138.0/24 \
+  --ipv6 --subnet=fd11::/64 \
+  --ip-range=192.168.136.0/25 \
+  --ip-range=192.168.138.0/25 \
+  --aux-address="reserved1=fd11::2" \
+  --aux-address="reserved2=192.168.136.2" \
+  --aux-address="reserved3=192.168.138.2" \
+  -o parent=eth0 mcv0
+
+docker run --net=mcv0 -it --rm alpine /bin/sh
+
+ip address show eth0
+ip route
+ip -6 route
+
+VLAN: 10, Subnet: 172.16.80.0/24, Gateway: 172.16.80.1
+
+--subnet=172.16.80.0/24 --gateway=172.16.80.1 -o parent=eth0.10
+VLAN: 20, IP subnet: 172.16.50.0/22, Gateway: 172.16.50.1
+
+--subnet=172.16.50.0/22 --gateway=172.16.50.1 -o parent=eth0.20
+VLAN: 30, Subnet: 10.1.100.0/16, Gateway: 10.1.100.1
+
+--subnet=10.1.100.0/16 --gateway=10.1.100.1 -o parent=eth0.30
+
+
+# create a new sub-interface tied to dot1q vlan 40
+ip link add link eth0 name eth0.40 type vlan id 40
+
+# enable the new sub-interface
+ip link set eth0.40 up
+
+# now add networks and hosts as you would normally by attaching to the master (sub)interface that is tagged
+docker network create -d macvlan \
+   --subnet=192.168.40.0/24 \
+   --gateway=192.168.40.1 \
+   -o parent=eth0.40 macvlan40
+
+# in two separate terminals, start a Docker container and the containers can now ping one another.
+docker run --net=macvlan40 -it --name mcv_test5 --rm alpine /bin/sh
+docker run --net=macvlan40 -it --name mcv_test6 --rm alpine /bin/sh
+
+............................
+
+https://collabnix.com/2-minutes-to-docker-macvlan-networking-a-beginners-guide/
+
+docker network ls
+ifconfig
+
+docker network create -d macvlan --subnet=100.98.26.43/24 --gateway=100.98.26.1  -o parent=eth0 pub_net
+docker network ls
+docker  run --net=pub_net --ip=100.98.26.47 -itd alpine /bin/sh
+
+ip link add mac0 link eth0 type macvlan mode bridge
+ip addr add 100.98.26.38/24 dev mac0
+ifconfig mac0 up
+
+docker run --net=pub_net -d --ip=100.98.26.53 -p 81:80 nginx
+ping 100.98.26.53
+
+............................
+
+https://hicu.be/docker-networking-macvlan-bridge-mode-configuration
+
+docker network create -d macvlan \
+    --subnet=10.0.0.0/24 --gateway=10.0.0.1 \
+    --subnet=2001:db8:babe:cafe::/64 --gateway=2001:db8:babe:cafe::1 \
+    -o parent=eth0 \
+    --ipv6 \
+    macvlan0
+
+docker network ls
+docker network inspect macvlan0
+docker exec -ti container0 ip a | grep 'mtu|inet'
+docker exec -ti container0 ip route
+docker exec -ti container0 ip -6 route
+docker network inspect macvlan0
+docker run --name='container0' --hostname='container0' --net=macvlan0 --detach=true --ip=10.0.0.2 busybox
+docker run --name='container1' --hostname='container1' --net=macvlan0 --detach=true --ip=10.0.0.3 busybox
+
+docker exec -ti container0 ping -c 4 10.0.0.1
+docker exec -ti container0 ping -c 4 10.0.0.2
+docker exec -ti container1 ping -c 4 10.0.0.3
+
+show ip arp
+
+
+............................
+https://blog.oddbit.com/post/2018-03-12-using-docker-macvlan-networks/
+https://stackoverflow.com/questions/49600665/docker-macvlan-network-inside-container-is-not-reaching-to-its-own-host
+https://forums.docker.com/t/docker-container-not-reachable-from-the-outside-only-after-ping-from-the-inside-macvlan/89629
+https://github.com/moby/moby/issues/31995
+
+
+
+docker network create -d macvlan -o parent=eno1 \
+  --subnet 192.168.1.0/24 \
+  --gateway 192.168.1.1 \
+  mynet
+
+docker network create -d macvlan -o parent=eno1 \
+  --subnet 192.168.1.0/24 \
+  --gateway 192.168.1.1 \
+  --ip-range 192.168.1.192/27 \
+  --aux-address 'host=192.168.1.223' \
+  mynet
+
+ip link add mynet-shim link eno1 type macvlan  mode bridge
+ip addr add 192.168.1.223/32 dev mynet-shim
+ip link set mynet-shim up
+ip route add 192.168.1.192/27 dev mynet-shim
+
+
+...
+
+version: "3"
+
+services:
+  macvlan_1:
+    image: alpine
+    container: macvlan_1
+    command: ....
+    restart: always
+    networks:
+      macvlan:
+        ipv4_address: 172.18.1.0
+      internalbr:
+        ipv4_address: 10.123.0.2
+
+networks:
+  macvlan:
+    driver: macvlan
+    driver_opts:
+      parent: ens192
+      macvlan_mode: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.0.0/22
+          gateway: 172.18.0.1
+          ip_range: 172.18.1.0/28
+
+  internalbr:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.123.0.0/24
+
+
+
+...
+
+docker network create \
+       --driver macvlan \
+       --subnet 10.99.0.0/24 \
+       --gateway 10.99.0.1 \
+       -o parent=eth1 \
+       management
+
+docker create -ti \
+       --name macvlan-test \
+       --cap-add NET_ADMIN \
+       --cap-add NET_RAW \
+       --cap-add NET_BROADCAST \
+       --net default \
+       debian /bin/bash -l
+
+
+docker network connect --ip 10.99.0.100 management macvlan-test
+docker start macvlan-test
+docker exec -ti macvlan-test ping 10.99.0.220
+tshark -i eth1
+docker exec -ti macvlan-test tshark -i eth1
+docker exec -ti macvlan-test ping 10.99.0.220
+docker exec -ti macvlan-test ip route
+docker exec -ti macvlan-test iptables -L
+
+....
+
+https://blog.uni-koeln.de/rrzk-knowhow/2020/09/23/privaten-ip-adressbereich-von-docker-anpassen/
+https://github.com/moby/moby/issues/37823
+https://github.com/moby/libnetwork/issues/1454
+https://docs.docker.com/engine/reference/commandline/network_create/
+
+
+service docker restart
+docker-compose stop
+docker network ls
+
+docker network inspect bridge webapp_default | grep Subnet
+
+docker network create --driver=bridge --subnet=192.168.1.0/24 rrzk_anleitung
+docker network inspect rrzk_anleitung | grep Subnet
+
+networks:
+  default:
+    ipam:
+      driver: default
+      config:
+        - subnet: "192.168.1.0/24"
+
+............
+
+https://forums.docker.com/t/compose-now-deploying-on-internal-network-192-168-xxx-0-while-it-was-previously-on-172-xxx-0-0/118029/5
+
+version: "3.7"
+
+services:
+  mariadb6:
+    image: mariadb:latest
+    restart: unless-stopped
+    networks:
+      test_net:
+        ipv4_address: 192.168.1.71
+    volumes:
+      - mariadb-data:/var/lib/mysql
+      - mariadb-conf:/etc/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: test
+    ports:
+      - "3306:3306"
+
+volumes:
+  mariadb-data:
+  mariadb-conf:
+
+networks:
+  test_net:
+    driver: macvlan
+    driver_opts:
+      parent: enp0s4
+    ipam:
+      config:
+        - subnet: "192.168.1.0/24"
+          ip_range: "192.168.1.71/32"
+          gateway: "192.168.1.1"
+
+
+
+#############################################################
+ec2 instance
+#############################################################
+
+https://www.javatpoint.com/aws-ec2-creating-an-instance
+https://medium.com/nerd-for-tech/how-to-create-a-ubuntu-20-04-server-on-aws-ec2-elastic-cloud-computing-5b423b5bf635
+https://medium.com/@jameshamann/setting-up-an-ubuntu-ec2-instance-from-scratch-78a166167a22
+https://noise.getoto.net/tag/amazon-ecs/
+https://noise.getoto.net/author/ben-peven/
+https://medium.com/@slimm609/aws-instance-profile-for-local-development-f144b0a7b8b9
+
+#############################################################
+docker root password
+#############################################################
+https://www.baeldung.com/ops/root-user-password-docker-container
+https://security.stackexchange.com/questions/235263/do-docker-images-have-the-same-root-password
+https://github.com/microsoft/mssql-docker/issues/599
+https://stackoverflow.com/questions/28721699/root-password-inside-a-docker-container
+https://www.techrepublic.com/article/how-to-change-a-root-password-in-a-docker-image/
+
+docker exec -u 0 -it mycontainer /bin/bash
+docker exec -u root -it CONTAINERID /bin/bash
+docker exec -u 0 -it containerName bash
+docker ps
+
+yum install -y passwd
+sudo -i
+
+docker run -it centos
+cat /etc/shadow | grep root
+passwd
+
+
+
+
+
+
