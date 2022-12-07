@@ -35,73 +35,10 @@ AWS KMS – Amazon Key Management Service (AWS KMS) is a fully managed service f
 Amazon S3 – Amazon Simple Storage Service (Amazon S3) is an object storage service utilized for storing and encrypting data. We use Amazon S3 to store our configuration files.
 AWS CloudFormation – AWS CloudFormation allows you to use domain-specific languages or simple text files to model and provision, in an automated and secure manner, all the resources needed for your applications across all Regions and accounts. You can deploy AWS resources in a safe, repeatable manner, and automate the provisioning of infrastructure.
 
-
-
-
-
 aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 123456789101.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
 docker pull 123456789101.dkr.ecr.eu-west-1.amazonaws.com/ecr-public/docker/library/alpine:latest
 
 ---------------------------------------------------------------------------------------------
-
-
-version: "3.7"
-
-services:
-
-  ec2:
-    image: amazon/amazon-ecs-sample
-
-
-  ubuntu:
-    image: testbuntu
-    build:
-      context: .
-      dockerfile: Dockerfile
-
-  python:
-    image: testpython
-    build:
-      context: .
-      dockerfile: DockerfilePython
-
-  ubuntu:
-    container_name: testbuntu
-    restart: on-failure
-    image: ubuntu:21.04
-    command:
-      - /bin/sh
-
-
-# Download base image ubuntu 20.04
-FROM ubuntu:22.10
-# https://www.howtoforge.com/tutorial/how-to-create-docker-images-with-dockerfile/
-# https://hub.docker.com/_/ubuntu/tags
-
-LABEL version="0.1"
-LABEL description="This is custom Docker Image"
-RUN apt update && DEBIAN_FRONTEND=noninteractive
-# Install nano from ubuntu repository
-RUN apt install -y nano htop  && \
-    rm -rf /var/lib/apt/lists/* && \
-    apt clean
-# Expose Port for the Application
-EXPOSE 80 443
-CMD bash
-
-
-FROM python:3
-#WORKDIR /usr/src/app
-#COPY requirements.txt ./
-#RUN pip install --no-cache-dir -r requirements.txt
-#COPY . .
-#CMD [ "python", "./your-daemon-or-script.py" ]
-CMD [ "bash"]
-
-------
-
-
-
 
 curl -Lo ec2-metadata-mock https://github.com/aws/amazon-ec2-metadata-mock/releases/download/v1.11.2/ec2-metadata-mock-`uname | tr '[:upper:]' '[:lower:]'`-amd64
 chmod +x ec2-metadata-mock
@@ -391,51 +328,6 @@ services:
             POSTGRES_PASSWORD: hunter2
 
 
-
----------------------------------------------------------------------------------------------
-
-################################################
-# Download base image ubuntu 20.04
-################################################
-
-
-FROM ubuntu:22.04 as BaseImageTest
-# https://www.howtoforge.com/tutorial/how-to-create-docker-images-with-dockerfile/
-# https://hub.docker.com/_/ubuntu/tags
-
-RUN apt-get update
-#RUN DEBIAN_FRONTEND=noninteractive
-# Install nano from ubuntu repository
-RUN apt install -y nano htop python3 wget
-RUN apt install -y vim
-RUN apt install -y alien
-RUN apt-get install python3-pip -y
-
-RUN wget https://download.oracle.com/otn_software/linux/instantclient/218000/oracle-instantclient-basic-21.8.0.0.0-1.x86_64.rpm
-RUN alien oracle-instantclient-basic-21.8.0.0.0-1.x86_64.rpm
-RUN dpkg -i oracle-instantclient-basic_21.8.0.0.0-2_amd64.deb
-
-FROM BaseImageTest as PythonTest
-
-WORKDIR /opt
-#WORKDIR /home
-
-COPY requirements.txt .
-RUN pip3 install -r requirements.txt
-
-# Expose Port for the Application
-#EXPOSE 80
-#CMD ["python3 --version"]
-CMD ["bash"]
-
-
-# python3 --version
-# Python 3.10.6
-
----------------------------------------------------------------------------------------------
-
-
-
 ################################################
 get sqlite3 version
 ################################################
@@ -519,18 +411,4 @@ https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html
 https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html
 https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html
 https://python-oracledb.readthedocs.io/en/latest/user_guide/installation.html
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

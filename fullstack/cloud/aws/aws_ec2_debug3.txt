@@ -1,0 +1,259 @@
+###############################################
+Set Up WireGuard on Ubuntu 22.04
+###############################################
+https://www.digitalocean.com/community/tutorials/how-to-set-up-wireguard-on-ubuntu-20-04
+
+sudo nano /etc/wireguard/wg0.conf
+
+/etc/wireguard/wg0.conf
+[Interface]
+PrivateKey = base64_encoded_private_key_goes_here
+Address = 10.8.0.1/24, fd0d:86fa:c3bc::1/64
+ListenPort = 51820
+SaveConfig = true
+
+
+###############################################
+Connecting to an instance using EC2 Instance Connect
+###############################################
+
+https://aws.amazon.com/de/blogs/compute/new-using-amazon-ec2-instance-connect-for-ssh-access-to-your-ec2-instances/
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-connect-methods.html
+https://blowstack.com/blog/how-to-setup-ec2-instance-connect/
+https://medium.com/the-scale-factory/should-you-use-aws-ec2-instance-connect-to-ssh-into-your-instances-5c13b5fd565a
+https://docs.logrhythm.com/docs/OCbeats/aws-s3-beat/configure-role-based-access-for-an-aws-ec2-instance
+
+
+Supported Linux distributions:
+Amazon Linux 2 (any version)
+Ubuntu 16.04 or later
+
+
+sudo apt-get install ec2-instance-connect
+sudo yum install ec2-instance-connect
+
+
+ssh-keygen -t rsa -f mynew_key
+
+
+aws ec2-instance-connect send-ssh-public-key --region us-east-1 --instance-id i-0989ec3292613a4f9 --availability-zone us-east-1f --instance-os-user ec2-user --ssh-public-key file://mynew_key.pub
+
+Response
+{
+    "RequestId": "505f8675-710a-11e9-9263-4d440e7745c6",
+    "Success": true
+}
+
+
+ssh -i mynew_key ec2-user@ec2-34-204-200-76.compute-1.amazonaws.com
+ssh -i mynew_key ec2-user@ec2-34-204-200-76.compute-1.amazonaws.com
+
+ssh -i mynew_key.pem  ec2-user@ec2-54-215-245-91.us-west-1.compute.amazonaws.com
+
+
+###############################################
+allocate memory to work as swap space in an Amazon EC2 instance by using a swap file
+###############################################
+
+https://aws.amazon.com/de/premiumsupport/knowledge-center/ec2-memory-swap-file/
+
+# create swap file is 4 GB (128 MB x 32):
+
+sudo dd if=/dev/zero of=/swapfile bs=128M count=32
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+sudo swapon -s
+
+Start the swap file at boot time by editing the /etc/fstab file.
+sudo vi /etc/fstab
+/swapfile swap swap defaults 0 0
+
+
+
+###############################################
+amazon marketplace Ubuntu 22.04 LTS - Jammy
+###############################################
+
+https://aws.amazon.com/marketplace/pp/prodview-iftkyuwv2sjxi
+https://aws.amazon.com/marketplace/pp/prodview-f2if34z3a4e3i?sr=0-4&ref_=beagle&applicationId=AWSMPContessa
+https://aws.amazon.com/marketplace/seller-profile?id=565feec9-3d43-413e-9760-c651546613f2&ref=dtl_B087QQNGF1
+
+
+
+
+###############################################
+create mount volume
+###############################################
+
+https://serverfault.com/questions/433703/how-to-use-instance-store-volumes-storage-in-amazon-ec2
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/add-instance-store-volumes.html
+
+sudo fdisk -l
+sudo mkdir /mnt
+sudo mkfs.ext4 /dev/xvdj
+sudo mount -t ext4 /dev/xvdj /mnt
+echo "/dev/xvdj /mnt auto noatime 0 0" | sudo tee -a /etc/fstab
+mount -a
+
+...
+
+df -h
+lsblk
+sudo mkfs -t xfs /dev/nvme1n1
+sudo mkdir /data
+sudo mount /dev/nvme1n1 /data
+
+
+###############################################
+misc aws  ec2
+###############################################
+https://ubuntu.com/tutorials/ubuntu-desktop-aws#2-setting-up-tightvnc-on-aws
+https://aws.amazon.com/de/premiumsupport/knowledge-center/ec2-linux-find-os-platform-or-version/
+https://serverfault.com/questions/218750/why-dont-ec2-ubuntu-images-have-swap?rq=1
+https://serverfault.com/questions/433703/how-to-use-instance-store-volumes-storage-in-amazon-ec2
+https://serverfault.com/questions/365605/how-do-i-access-the-attached-volume-in-amazon-ec2?rq=1
+https://unix.stackexchange.com/questions/132797/how-to-dd-a-remote-disk-using-ssh-on-local-machine-and-save-to-a-local-disk
+https://serverfault.com/questions/364470/how-to-download-private-ubuntu-aws-ec2-ami-for-local-use?rq=1
+https://serverfault.com/questions/275736/amazon-linux-vs-ubuntu-for-amazon-ec2
+https://serverfault.com/questions/268719/amazon-ec2-terminology-ami-vs-ebs-vs-snapshot-vs-volume?rq=1
+https://serverfault.com/questions/39733/permission-denied-publickey-ssh-from-local-ubuntu-to-amazon-ec2-server?rq=1
+https://serverfault.com/questions/268719/amazon-ec2-terminology-ami-vs-ebs-vs-snapshot-vs-volume?rq=1
+https://iqss.github.io/dss-ec2gui/grant-an-ec2-instance-access-to-s3-bucket.html
+https://linuxhint.com/ubuntu-amazon-linux/
+https://stackshare.io/stackups/amazon-linux-vs-ubuntu
+https://ssiddique.info/amazon-linux-vs-ubuntu-differences.html
+https://www.quora.com/Which-EC2-instance-is-better-Amazon-Linux-AMI-or-Ubuntu
+https://stackoverflow.com/questions/34131232/amazon-linux-ami-vs-ubuntu
+https://linuxnetmag.com/amazon-linux-vs-ubuntu/
+https://www.g2.com/compare/amazon-linux-2-vs-ubuntu-server
+https://www.phoronix.com/review/amazon-linux-2022
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-connect-methods.html
+
+
+###############################################
+Linux Distros That Uses Yum or DNF for Package Management
+###############################################
+
+https://embeddedinventor.com/linux-distros-that-uses-yum-or-dnf-for-package-management/
+https://www.makeuseof.com/tag/power-choice-power-package-management/
+https://www.tecmint.com/redhat-based-linux-distributions/
+List_of_Linux_distributions
+
+List of Distros that use Yum or DNF
+
+RedHat Enterprise Linux ***
+Fedora
+CentOS ***
+Oracle Enterprise Linux ***
+Scientific
+CERN
+SUSE
+OpenSUSE
+Mageia
+PCLinuxOS
+Berry
+Elastix
+ClearOS
+FrameOS
+Fermi
+Turbolinux
+
+AlmaLinux
+Rocky Linux
+CentOS
+ClearOS
+Oracle Linux
+
+https://www.centos.org/centos-linux/
+http://isoredirect.centos.org/centos/7/isos/x86_64/
+http://ftp.wrz.de/pub/CentOS/7.9.2009/isos/x86_64/
+http://ftp.wrz.de/pub/CentOS/7.9.2009/isos/x86_64/CentOS-7-x86_64-Minimal-2207-02.iso
+http://ftp.agdsn.de/pub/mirrors/centos/7.9.2009/isos/x86_64/
+https://mirrors.xtom.de/centos/7.9.2009/isos/x86_64/
+http://mirror1.hs-esslingen.de/pub/Mirrors/centos/7.9.2009/isos/x86_64/
+http://ftp.tu-chemnitz.de/pub/linux/centos/7.9.2009/isos/x86_64/
+http://ftp.rz.uni-frankfurt.de/pub/mirrors/centos/7.9.2009/isos/x86_64/
+http://ftp.uni-bayreuth.de/linux/CentOS/7.9.2009/isos/x86_64/
+http://ftp.fau.de/centos/7.9.2009/isos/x86_64/
+http://ftp.antilo.de/pub/linux/centos/7.9.2009/isos/x86_64/
+http://ftp.rrzn.uni-hannover.de/centos/7.9.2009/isos/x86_64/
+
+
+https://almalinux.org/
+https://rockylinux.org/
+https://www.centos.org/
+https://getfedora.org/
+https://www.oracle.com/in/linux/
+https://yum.oracle.com/oracle-linux-isos.html
+https://www.clearos.com/
+https://yum.oracle.com/oracle-linux-isos.html
+
+
+
+https://aws.amazon.com/de/mp/linux/
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html
+https://aws.amazon.com/de/amazon-linux-ami/
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AccessingInstances.html
+https://aws.amazon.com/de/ec2/
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Configure_Instance.html
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AccessingInstancesLinux.html
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/amazon-linux-ami-basics.html
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/get-set-up-for-amazon-ec2.html
+
+###############################################
+Docker - Ubuntu - bash: ping: command not found
+###############################################
+
+https://stackoverflow.com/questions/39901311/docker-ubuntu-bash-ping-command-not-found
+https://dev.to/devtonight/how-to-fix-bash-ping-command-not-found-in-ubuntu-docker-containers-3gnp
+
+
+apt-get update -y
+apt-get install -y iputils-ping
+
+###############################################
+Docker tty: true - configure service container to run with a TTY.
+###############################################
+
+https://kossy0701.medium.com/what-is-tty-true-in-docker-compose-yml-47a72891aee2
+https://docs.docker.com/compose/compose-file/#tty
+https://github.com/docker/compose/issues/5016
+
+
+###############################################
+###############################################
+
+https://jolthgs.wordpress.com/2019/09/25/create-a-debian-container-in-docker-for-development/
+https://www.howtoforge.de/anleitung/so-installierst-du-docker-unter-debian-11/
+https://hub.docker.com/_/debian
+
+
+###############################################
+config value Additional properties are not allowed ('gateway', 'ip_range' were unexpected)
+###############################################
+https://www.reddit.com/r/docker/comments/af9p9h/macvlan_network_in_dockercompose/
+https://github.com/docker/compose/issues/5016
+https://superuser.com/questions/1457915/change-the-gateway-in-a-docker-network
+https://stackoverflow.com/questions/69334107/docker-compose-invalid-additional-properties-are-not-allowed
+https://github.com/docker/compose/issues/4366
+https://github.com/docker/compose/issues/4474
+
+gateway not works in docker compose version 3, return to version 2
+
+Additional IPAM configurations, such as gateway, are only honored for version 2 at the moment.
+
+###############################################
+How do I autoformat some Python code to be correctly formatted?
+###############################################
+
+https://stackoverflow.com/questions/2625294/how-do-i-autoformat-some-python-code-to-be-correctly-formatted
+
+pip install autopep8
+autopep8 your_script.py    # dry-run, only print
+autopep8 -i your_script.py # replace content
+
+
+pip install black
+black file.py

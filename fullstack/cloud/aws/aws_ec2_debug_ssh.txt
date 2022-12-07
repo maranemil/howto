@@ -571,101 +571,6 @@ run shell
 docker container ls
 docker container exec -it -u root demo123 bash
 
-
-##################################################
-simulate ec2 ssh server
-##################################################
-
-------------------------------
-------------------------------
-version: "3.7"
-
-services:
-
-  ec2ubuntu2:
-    image: testec2ubuntu2
-    build:
-      context: ./Ubuntu
-      dockerfile: DockerfileUbuntu
-
-  oracledb:
-    image: chameleon82/oracle-xe-10g
-    restart: always
-    ports:
-      - "49160:22"
-      - "49161:1521"
-      - "49162:8080"
-    networks:
-      test_net:
-        ipv4_address: 192.168.1.10
-
-networks:
-  customnetwork:
-    ipam:
-      config:
-        - subnet: 192.168.3.0/16
-  test_net:
-    driver: macvlan
-    #driver: overlay
-    #driver: bridge
-    driver_opts:
-      parent: wlp0s20f3
-    ipam:
-      config:
-        - subnet: "192.168.1.0/24"
-          ip_range: "192.168.1.71/32"
-          gateway: "192.168.1.1"
-  test_bridge:
-    driver: default
-
-------------------------------
-DockerfileUbuntu
-------------------------------
-# Download base image ubuntu 20.04
-FROM ubuntu:22.04 as BaseImageEC2Test
-# https://www.howtoforge.com/tutorial/how-to-create-docker-images-with-dockerfile/
-# https://hub.docker.com/_/ubuntu/tags
-
-RUN echo "root:root" | chpasswd
-
-RUN apt-get update
-#RUN DEBIAN_FRONTEND=noninteractive
-# Install nano from ubuntu repository
-RUN apt install -y nano htop python3 wget sudo systemd
-RUN apt install -y vim
-RUN apt install -y alien
-RUN apt install -y python3-pip
-RUN apt install -y openssh-client openssh-server
-RUN apt install -y libaio1
-RUN apt-get install -y iputils-ping
-
-RUN sudo /etc/init.d/ssh restart
-# skip questions
-RUN mkdir /root/.ssh
-RUN yes '' | ssh-keygen -N '' > /dev/null
-
-RUN wget https://download.oracle.com/otn_software/linux/instantclient/218000/oracle-instantclient-basic-21.8.0.0.0-1.x86_64.rpm
-RUN alien oracle-instantclient-basic-21.8.0.0.0-1.x86_64.rpm
-RUN dpkg -i oracle-instantclient-basic_21.8.0.0.0-2_amd64.deb
-
-
-FROM BaseImageEC2Test as EC2Python
-
-WORKDIR /opt
-#WORKDIR /home
-
-COPY requirements.txt .
-RUN pip3 install -r requirements.txt
-
-# ssh-keygen -t rsa
-
-# Expose Port for the Application
-#EXPOSE 80
-#CMD ["python3 --version"]
-CMD ["bash"]
-
-
-
 ------------------------------
 manage ssh login
 ------------------------------
@@ -1024,8 +929,6 @@ https://support.hyperglance.com/knowledge/changing-the-default-docker-subnet
 https://stackoverflow.com/questions/52225493/change-default-docker0-bridge-ip-address
 https://stackoverflow.com/questions/39901311/docker-ubuntu-bash-ping-command-not-found
 
-
-
 docker run --help | grep ip
 docker run -d --ip=“192.168.20.173” wordpressmysql
 
@@ -1052,7 +955,6 @@ iface docker0 inet static
     bridge_ports dummy0
     bridge_stp off
     bridge_fd 0
-
 
 ifdown docker0
 ifup docker0
@@ -1549,9 +1451,4 @@ sudo -i
 docker run -it centos
 cat /etc/shadow | grep root
 passwd
-
-
-
-
-
 
