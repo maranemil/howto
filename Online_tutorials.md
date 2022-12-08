@@ -415,5 +415,12 @@
 | https://devbrains.tn/tutorials/easy-admin-api-platform-course-introduction                  | api-platform                                               | 
 | https://www.youtube.com/watch?v=U2lQWR6uIuo&list=PL3VM-unCzF8ipG50KDjnzhugceoSG3RTC         | PHP for Beginners (2023 Edition)                           |
 | https://www.youtube.com/watch?v=BZwn47RPiAM&list=PL3VM-unCzF8jX-GoazLPcbi7M0wJux8F-         | Learn Vue 3: Step By Step                                  |
-
-                                           |
+| https://www.youtube.com/watch?v=hz0_q1MJa2k&list=PL0X6fGhFFNTcBB9N4fPyMgtOxfvyujiEh         | JavaScript                                                 | 
+| https://www.youtube.com/watch?v=RoY3ekCCxKc&list=PL0X6fGhFFNTcU-_MCPe9dkH6sqmgfhy_M         | Cloud Computing                                            | 
+| https://www.youtube.com/watch?v=-DTUdOJv8w8&list=PL0X6fGhFFNTe_vJIlAQQo0IEgPgk9er3g         | React.js                                                   | 
+| https://www.youtube.com/watch?v=WyzHSMtINlg&list=PLt1SIbA8guuvUX8TCLwCJMrhsGN__3yOH         | Amazon EC2 with Auto Scaling                               | 
+| https://www.youtube.com/watch?v=iHX-jtKIVNA&list=PLt1SIbA8guuvvqyRA7BJMrSVtsrGD8fvo         | AWS Explained                                              | 
+| https://www.youtube.com/watch?v=CGFrYNDpzUM&list=PLv2a_5pNAko0Mijc6mnv04xeOut443Wnk         | AWS Essentials                                             | 
+| https://www.youtube.com/watch?v=ZdydaX1ds8I&list=PLzde74P_a04eZ0WTGVaACWWWX-AOEVjrz         | AWS Advanced Networking Specialty                          | 
+| https://www.youtube.com/watch?v=eHwbWYwoZG4&list=PLzde74P_a04emYSLeQAVIK8o7aIy885p4         | Introduction to Cloud Computing                            | 
+| https://www.youtube.com/watch?v=PjKvwxTTSUk&list=PLzde74P_a04cKnuXyi--fkIoY1sxztyqL         | AWS Identity and Access Management                         | 

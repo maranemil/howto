@@ -1,0 +1,271 @@
+
+#####################################################
+ec2-key-pairs
+#####################################################
+
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
+https://docs.aws.amazon.com/de_de/AWSEC2/latest/UserGuide/describe-keys.html
+https://docs.aws.amazon.com/de_de/AWSEC2/latest/UserGuide/create-key-pairs.html
+
+#####################################################
+connect to an EC2 instance using SSH using Linux
+#####################################################
+
+https://www.clickittech.com/aws/connect-ec2-instance-using-ssh/
+https://stackoverflow.com/questions/32906906/generate-pem-file-for-ec2-instance-at-amazon
+
+ssh -i file.pem username@ip-address
+ssh -i file.pem ubuntu@ip
+
+#####################################################
+Default ssh Usernames For Connecting To EC2 Instances
+#####################################################
+
+https://alestic.com/2014/01/ec2-ssh-username/
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/connection-prereqs.html
+
+
+OS/Distro		        Official AMI ssh username	Legacy ssh Usernames
+Amazon Linux		    ec2-user
+Ubuntu			        ubuntu				        root
+Debian			        admin				        root
+RHEL 6.4 and later	    ec2-user
+RHEL 6.3 and earlier	root
+Fedora			        fedora				        ec2-user, root
+Centos			        centos				        root
+SUSE			        ec2-user			        root
+BitNami			        bitnami
+TurnKey			        root
+NanoStack		        ubuntu
+FreeBSD			        ec2-user
+OmniOS			        root
+
+Get the default user name for the AMI that you used to launch your instance:
+
+For Amazon Linux 2 or the Amazon Linux AMI, the user name is ec2-user.
+For a CentOS AMI, the user name is centos or ec2-user.
+For a Debian AMI, the user name is admin.
+For a Fedora AMI, the user name is fedora or ec2-user.
+For a RHEL AMI, the user name is ec2-user or root.
+For a SUSE AMI, the user name is ec2-user or root.
+For an Ubuntu AMI, the user name is ubuntu.
+For an Oracle AMI, the user name is ec2-user.
+For a Bitnami AMI, the user name is bitnami.
+
+#####################################################
+git
+#####################################################
+
+https://stackoverflow.com/questions/71849415/i-cannot-add-the-parent-directory-to-safe-directory-in-git
+https://git-scm.com/docs/git-config/2.35.2
+https://improveandrepeat.com/2022/10/little-git-tricks-fix-a-dubious-ownership-of-a-repository/
+https://nielsberglund.com/2022/06/25/solution-to-git-unsafe-repository-some-repo-is-owned-by-someone-else/
+
+git config -l
+git config --global --add safe.directory '*'
+git status
+
+nano ~/.gitconfig
+
+[user]
+  email = som.uset.it.@gmail.com
+  name = some user
+[core]
+  autocrlf = input
+[safe]
+  directory = *
+
+#####################################################
+AWS CLI
+#####################################################
+
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/important-notes.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html
+https://pypi.org/project/aws-sam-cli/
+https://docs.aws.amazon.com/cli/v1/userguide/install-linux.html
+https://pypi.org/project/awscli/
+
+pip3 install awscli --upgrade --user
+aws --version
+
+pip3 install aws-sam-cli
+sam --version
+
+AWS CLI Command Reference
+https://docs.aws.amazon.com/cli/latest/index.html
+
+AWS SAM CLI command reference
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-command-reference.html
+
+AWS Lambda Python
+https://docs.aws.amazon.com/lambda/latest/dg/lambda-python.html
+
+#####################################################
+AWS Elastic IP Network vpc is not attached to any internet gateway
+Network vpc-05054501693f2f5fb is not attached to any internet gateway
+#####################################################
+
+https://serverfault.com/questions/929024/do-you-need-or-you-dont-need-an-igw-to-get-access-to-the-internet-if-you-create
+https://stackoverflow.com/questions/28778970/aws-elastic-ip-network-vpc-is-not-attached-to-any-internet-gateway
+https://stackoverflow.com/questions/55024861/how-to-make-ec2-instance-in-private-subnet-accessible-from-the-internet-as-in?noredirect=1&lq=1
+
+https://aws.amazon.com/de/premiumsupport/knowledge-center/workspaces-igw-not-attached-vpc/
+https://aws.amazon.com/de/premiumsupport/knowledge-center/create-attach-igw-vpc/
+
+https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html#Add_IGW_Attach_Gateway
+https://docs.aws.amazon.com/vpc/latest/userguide/route-table-options.html#route-tables-internet-gateway
+https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html#Add_IG_EIPs
+https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html#Add_IG_Security_Groups
+https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html
+
+
+To access the internet directly from an instance inside a VPC you need:
+
+An internet gateway (IGW) attached to the VPC
+A subnet with a route table that has a default route (0.0.0.0/0) via the IGW (known as a 'public subnet')
+A public IP or an Elastic IP attached to the instance (note you don't need an Elastic IP to access the internet, instances can have dynamic non-elastic IPs)
+A Security Group attached to the instance that allows the outbound traffic (which it does by default)
+Network ACLs associated to the subnet which allows the traffic (which it does by default)
+These five points are a nice checklist to run through if you ever have issues with direct internet connectivity to an instance in a public subnet.
+
+
+
+
+aws workspaces describe-workspace-directories --region REGIONCODE --directory-ids d-directoryID
+
+
+You are using the new Amazon Virtual Private Cloud instead of the EC2 Classic.
+The cloud you are using lacks the internet gateway virtual component that is necessary for the cloud to be reachable from the public internet.
+
+You need to add an internet gateway to your private cloud for it to be able to connect to internet;
+with that in place, you can use Elastic IPs (after all, they are internet addressable;
+ your VPC instances can have static instance IPs), and add a routing entry for internet addresses (0.0.0.0/0, or a narrower space).
+
+This error occurs because the VPC is not associated with an Internet Gateway.
+To solve this: Go to VPC, then click on Internet Gateway. If none exists,
+Create one(probably will need admin permission) and then attach it to the target VPC-id.
+And try again associating the Elastic IP address to the EC2 instance.
+
+
+
+You need to assign an Internet Gateway to your VPC.
+
+Go to VPC service and under VIRTUAL PRIVATE CLOUD on the left, click "Internet Gateways"
+To create a new one, click on "Create Internet gateway", give it a name and create it
+Select the Gateway on the list, click "Actions" and "Attach to VPC"
+Select the VPC and click on "Attach Internet gateway"
+Then you will be able to Assign the Elastic IP to your EC2 instance.
+
+...
+
+An Amazon EC2 instance in a private subnet will never be directly reachable from the Internet, even if
+ it has a public IP address. This is because a private subnet does not have a Route Table entry
+ that connects the subnet to an Internet Gateway. This is intentional and desired.
+
+So, your options are:
+
+Put your instance in a Public Subnet instead of a Private Subnet, or
+Create a VPN connection to the VPC so you can communicate with resources in the VPC, including the private subnet, or
+Connect to an instance in the Public Subnet and use Port Forwarding to then obtain a connection with the private instance (see below), or
+Use a Load Balancer or Proxy in the Public Subnet to forward traffic to the private subnet (one benefit is that it mimics the production setup)
+Port Forwarding is a common technique to provide private connectivity to a resource that is not directly accessible. For example:
+
+Public-Instance in the public subnet
+Private-Instance in the private subnet
+SSH into Public-Instance with port forwarding, which then establishes a connection to Private-Instance
+Access resources on your local machine and it will actually forward the request to Private-Instance
+A sample connection string would be:
+
+ssh -i pemfile ec2-user@public-instance -L 8000:private-instance:80
+Any request sent to your local computer's port 8000 would be forwarded to Public-Instance,
+which would then forward the request to private-instance:80. This will continue as long as the SSH session is in place.
+
+#####################################################
+AWS VPC Essentials AWS VPC & Subnets For Beginners
+How to Attach AWS Internet Gateway to VPC | New 2022
+AWS Essentials: Internet Gateways (IGW)
+#####################################################
+
+https://www.youtube.com/watch?v=u7obme-h3bc
+https://www.youtube.com/watch?v=TUTqYEZZUdc
+https://www.youtube.com/watch?v=tfSzEU9xfIQ
+https://www.youtube.com/watch?v=Iqzgu5UEDKo
+https://www.youtube.com/watch?v=z07HTSzzp3o
+https://www.youtube.com/watch?v=Pa-YrTEzxZA
+https://www.youtube.com/watch?v=0jAOL75OOD0
+https://www.youtube.com/watch?v=3gpTmTufu-0
+https://www.youtube.com/watch?v=_0ugk0MvpG0
+https://www.youtube.com/watch?v=mhkApxOLUyE
+https://www.youtube.com/watch?v=pAOrBxZ7584
+https://www.youtube.com/watch?v=GrfOsWUVCfg
+https://www.youtube.com/watch?v=KNT463WSjjY
+https://www.youtube.com/watch?v=ET_CSqdGsYg
+https://www.youtube.com/watch?v=U32bPhQyQ6I
+https://www.youtube.com/watch?v=BCM9aaaWvR0
+https://www.youtube.com/watch?v=zGqLQXcwBjI
+https://www.youtube.com/watch?v=2TiBt-y5pAQ
+https://www.youtube.com/watch?v=7tTrN8WXMlg
+https://www.youtube.com/watch?v=LJNNMTicv1c
+https://www.youtube.com/watch?v=q0Sp6bT8giM
+https://www.youtube.com/watch?v=7tTrN8WXMlg
+https://www.youtube.com/watch?v=JcRKdEP94jM
+https://www.youtube.com/watch?v=IMvmWgcbthk
+https://www.youtube.com/watch?v=A360V8N3U84
+https://www.youtube.com/watch?v=k5mS4kxWWEI
+https://www.youtube.com/watch?v=z07HTSzzp3o
+
+
+
+NAT Gateway
+Internet Gateway
+Route Table
+
+Private networks:
+10.0.0.0/24
+172.31.0.0/24
+192.168.0.0/24
+
+Create Gateway
+Attach Gateway to VPC
+Create route Table
+Create route Gateway
+Attach route table
+
+VPC
+1) Elastic IP
+2) attach IG to subnet
+3) Route Table
+4) Router
+
+IP table	Target
+10.0.0.6/16  	IG
+
+Router -> Gateway ->  EC2
+
+Source		Destination
+10.0.0.0/16	local
+10.0.1.0/24	IG
+10.0.2.0/24	IG
+
+...
+
+VPC 		10.0.0.0/16
+IG		Attach to vpc
+Create VPC
+
+Subnet Public1	10.0.0.0/24 + modify -> enable assign publc ip4 address  eu-central-1a
+Subnet Public2	10.0.1.0/24 + modify -> enable assign publc ip4 address  eu-central-1b
+
+public route table
+ + add routes 0.0.0.0/0 - target IG
+ + add subnet to route tables
+
+Create subnets Tier
+10.0.2.0/24  eu-central-1a - tier1
+10.0.3.0/24  eu-central-1b - tier2
+10.0.4.0/24  eu-central-1a - db tier1
+10.0.5.0/24  eu-central-1b - db tier2
+----------------------------
+
+https://gist.github.com/awssimplified/da49577fa48128e1da992dd6ec21085c
+https://hostadvice.com/how-to/how-to-use-docker-containers-with-aws-ec2-2/
