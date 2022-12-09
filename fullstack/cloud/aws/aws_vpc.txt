@@ -269,3 +269,243 @@ Create subnets Tier
 
 https://gist.github.com/awssimplified/da49577fa48128e1da992dd6ec21085c
 https://hostadvice.com/how-to/how-to-use-docker-containers-with-aws-ec2-2/
+
+
+
+########################################################
+TypeError: APIClient.__init__() got an unexpected keyword argument 'use_ssh_client'
+########################################################
+
+FIX
+pip install docker==4.4.4
+
+
+########################################################
+SQLAlchemy - Getting a list of tables
+########################################################
+https://stackoverflow.com/questions/6473925/sqlalchemy-getting-a-list-of-tables
+
+
+from sqlalchemy import inspect
+inspector = inspect(engine)
+schemas = inspector.get_schema_names()
+
+for schema in schemas:
+    print("schema: %s" % schema)
+    for table_name in inspector.get_table_names(schema=schema):
+        for column in inspector.get_columns(table_name, schema=schema):
+            print("Column: %s" % column)
+
+...
+
+from sqlalchemy import create_engine
+engine = create_engine('postgresql://use:pass@localhost/DBname')
+print (engine.table_names())
+
+...
+
+from sqlalchemy import create_engine
+from sqlalchemy import inspect
+engine = create_engine('...')
+insp = inspect(engine)
+print(insp.get_table_names())
+
+..
+
+from sqlalchemy import create_engine
+eng = create_engine('mysql+pymysql://root:password@localhost:3306', pool_recycle=3600)
+q = eng.execute('SHOW TABLES')
+available_tables = q.fetchall()
+
+eng = create_engine('postgresql+psycopg2://root:password@localhost/
+q = eng.execute('SELECT * FROM pg_catalog.pg_tables')
+
+
+
+########################################################
+JDBC connectionType values
+########################################################
+
+https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-connect.html#aws-glue-programming-etl-connect-jdbc
+
+https://www.oracle.com/database/technologies/appdev/jdbc-downloads.html
+https://download.oracle.com/otn-pub/otn_software/jdbc/1917/ojdbc10.jar
+
+import sys
+from awsglue.transforms import *
+from awsglue.utils import getResolvedOptions
+from pyspark.context import SparkContext, SparkConf
+from awsglue.context import GlueContext
+from awsglue.job import Job
+import time
+from pyspark.sql.types import StructType, StructField, IntegerType, StringType
+
+sc = SparkContext()
+glueContext = GlueContext(sc)
+spark = glueContext.spark_session
+
+connection_oracle11_options = {
+    "url": "jdbc:oracle:thin:@//<jdbc-host-name>:1521/ORCL",
+    "dbtable": "test",
+    "user": "admin",
+    "password": "pwd"}
+
+connection_oracle18_options = {
+    "url": "jdbc:oracle:thin:@//<jdbc-host-name>:1521/ORCL",
+    "dbtable": "test",
+    "user": "admin",
+    "password": "pwd",
+    "customJdbcDriverS3Path": "s3://path/ojdbc10.jar",
+    "customJdbcDriverClassName": "oracle.jdbc.OracleDriver"}
+
+# Read DynamicFrame from Oracle 11 and write to Oracle 18
+df_oracle11 = glueContext.create_dynamic_frame.from_options(connection_type="oracle",
+                                                            connection_options=connection_oracle11_options)
+glueContext.write_from_options(frame_or_dfc=df_oracle11, connection_type="oracle",
+                               connection_options=connection_oracle18_options)
+
+
+########################################################
+Deploying using Jenkins - AWS CodePipeline
+########################################################
+
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/deploying-using-jenkins.html
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/deploying-using-codepipeline.html
+
+https://www.jenkins.io/
+
+pipeline {
+    agent { docker { image 'public.ecr.aws/sam/build-nodejs14.x' } }
+    stages {
+        stage('build') {
+            steps {
+                sh 'sam build'
+                sh 'sam deploy --no-confirm-changeset --no-fail-on-empty-changeset'
+            }
+        }
+    }
+}
+
+
+AWS CloudFormation template snippet:
+
+
+  CodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: public.ecr.aws/sam/build-nodejs14.x
+        Type: LINUX_CONTAINER
+      ...
+buildspec.yml snippet:
+
+
+version: 0.2
+phases:
+  build:
+    commands:
+      - sam build
+      - sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
+
+
+
+########################################################
+How do I get AWS_ACCESS_KEY_ID for Amazon?
+########################################################
+
+https://stackoverflow.com/questions/21440709/how-do-i-get-aws-access-key-id-for-amazon
+
+https://aws.amazon.com/de/blogs/security/wheres-my-secret-access-key/
+https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
+https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html
+https://console.aws.amazon.com/iam/
+https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html
+https://docs.aws.amazon.com/powershell/latest/userguide/pstools-appendix-sign-up.html
+https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html
+https://docs.aws.amazon.com/de_de/general/latest/gr/aws-sec-cred-types.html
+https://docs.aws.amazon.com/accounts/latest/reference/root-user-access-key.html
+https://docs.aws.amazon.com/accounts/latest/reference/credentials-access-keys-best-practices.html
+https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html
+https://aws.amazon.com/de/blogs/security/wheres-my-secret-access-key/
+https://docs.aws.amazon.com/STS/latest/APIReference/API_Credentials.html
+
+
+Go to: http://aws.amazon.com/
+Sign Up & create a new account (they'll give you the option for 1 year trial or similar)
+Go to your AWS account overview
+Account menu in the upper-right (has your name on it)
+sub-menu: Security Credentials
+
+
+
+Open the AWS Console
+Click on your username near the top right and select My Security Credentials
+Click on Users in the sidebar
+Click on your username
+Click on the Security Credentials tab
+Click Create Access Key
+Click Show User Security Credentials
+
+
+go to IAM console: https://console.aws.amazon.com/iam
+click on "Users". (see image)
+go to the user you need his access key.
+
+########################################################
+Deploying Docker containers on ECS
+########################################################
+
+
+https://docs.docker.com/develop/
+https://docs.docker.com/cloud/ecs-integration/
+https://docs.docker.com/develop/develop-images/dockerfile_best-practices/
+
+
+https://docs.aws.amazon.com/index.html
+
+https://docs.aws.amazon.com/AmazonECR/latest/userguide/get-set-up-for-amazon-ecr.html
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/create-container-image.html
+https://docs.aws.amazon.com/AmazonECS/latest/userguide/create-container-image.html
+
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/amazon-linux-ami-basics.html
+https://docs.aws.amazon.com/ec2/?icmpid=docs_homepage_compute
+https://docs.aws.amazon.com/imagebuilder/latest/userguide/what-is-image-builder.html
+https://docs.aws.amazon.com/cli/latest/reference/imagebuilder/index.html
+
+touch Dockerfile
+
+FROM ubuntu:18.04
+
+# Install dependencies
+RUN apt-get update && apt-get -y install apache2
+EXPOSE 80
+
+
+docker build -t hello-world .
+docker images --filter reference=hello-world
+docker run -t -i -p 80:80 hello-world
+
+http://localhost/
+
+Push your image to Amazon Elastic Container Registry
+
+aws ecr create-repository --repository-name hello-repository --region region
+docker tag hello-world aws_account_id.dkr.ecr.region.amazonaws.com/hello-repository
+docker login -u AWS -p $(aws ecr get-login-password --region REGION) aws_account_id.dkr.ecr.REGION.amazonaws.com
+docker push aws_account_id.dkr.ecr.region.amazonaws.com/hello-repository
+# aws ecr delete-repository --repository-name hello-repository --region region --force
+
+--------------------------
+
+
+
+
+
+
+
+
+
+
