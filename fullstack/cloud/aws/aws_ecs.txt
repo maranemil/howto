@@ -1,0 +1,702 @@
+#####################################################
+AWS CloudFormation Designer interface overview
+#####################################################
+https://console.aws.amazon.com/cloudformation/designer
+
+
+
+#####################################################
+Example YAML AWSCloudFormation EC2 templates
+#####################################################
+
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/GettingStarted.Walkthrough.html
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-formats.html
+https://s3.us-west-2.amazonaws.com/cloudformation-templates-us-west-2/WordPress_Single_Instance.yaml
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/gettingstarted.templatebasics.html
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-formats.html
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/working-with-templates-cfn-designer-why.html
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/CHAP_TemplateQuickRef.html
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/quickref-ecs.html
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/quickref-lambda.html
+
+
+........
+
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/quickref-ec2.html
+
+
+EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+        ImageId: !FindInMap [ AWSRegionArch2AMI, !Ref 'AWS::Region' , !FindInMap [ AWSInstanceType2Arch, !Ref InstanceType, Arch ] ]
+        KeyName: !Ref KeyName
+        InstanceType: !Ref InstanceType
+        SecurityGroups:
+        - !Ref Ec2SecurityGroup
+        BlockDeviceMappings:
+        -
+          DeviceName: /dev/sda1
+          Ebs:
+            VolumeSize: 50
+        -
+          DeviceName: /dev/sdm
+          Ebs:
+            VolumeSize: 100
+
+
+EC2Instance:
+	Type: AWS::EC2::Instance
+	Properties:
+	  ImageId: !FindInMap [ AWSRegionArch2AMI, !Ref 'AWS::Region', PV64 ]
+	  KeyName: !Ref KeyName
+	  InstanceType: m1.small
+	  SecurityGroups:
+	  - !Ref Ec2SecurityGroup
+	  BlockDeviceMappings:
+	 	  -
+	      DeviceName: /dev/sdc
+	      VirtualName: ephemeral0
+
+
+....................
+
+Resources:
+  ControlPortAddress:
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+  AssociateControlPort:
+    Type: 'AWS::EC2::EIPAssociation'
+    Properties:
+      AllocationId: !GetAtt
+        - ControlPortAddress
+        - AllocationId
+      NetworkInterfaceId: !Ref controlXface
+  WebPortAddress:
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+  AssociateWebPort:
+    Type: 'AWS::EC2::EIPAssociation'
+    Properties:
+      AllocationId: !GetAtt
+        - WebPortAddress
+        - AllocationId
+      NetworkInterfaceId: !Ref webXface
+  SSHSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      VpcId: !Ref VpcId
+      GroupDescription: Enable SSH access via port 22
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          FromPort: 22
+          IpProtocol: tcp
+          ToPort: 22
+  WebSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      VpcId: !Ref VpcId
+      GroupDescription: Enable HTTP access via user defined port
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          FromPort: 80
+          IpProtocol: tcp
+          ToPort: 80
+  controlXface:
+    Type: 'AWS::EC2::NetworkInterface'
+    Properties:
+      SubnetId: !Ref SubnetId
+      Description: Interface for controlling traffic such as SSH
+      GroupSet:
+        - !Ref SSHSecurityGroup
+      SourceDestCheck: true
+      Tags:
+        - Key: Network
+          Value: Control
+  webXface:
+    Type: 'AWS::EC2::NetworkInterface'
+    Properties:
+      SubnetId: !Ref SubnetId
+      Description: Interface for controlling traffic such as SSH
+      GroupSet:
+        - !Ref WebSecurityGroup
+      SourceDestCheck: true
+      Tags:
+        - Key: Network
+          Value: Web
+  Ec2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: !FindInMap
+        - RegionMap
+        - !Ref 'AWS::Region'
+        - AMI
+      KeyName: !Ref KeyName
+      NetworkInterfaces:
+        - NetworkInterfaceId: !Ref controlXface
+          DeviceIndex: 0
+        - NetworkInterfaceId: !Ref webXface
+          DeviceIndex: 1
+      Tags:
+        - Key: Role
+          Value: Test Instance
+      UserData: !Base64
+        'Fn::Sub': |
+          #!/bin/bash -xe
+          yum install ec2-net-utils -y
+          ec2ifup eth1
+          service httpd start
+
+........
+
+MyInstance:
+  Type: AWS::EC2::Instance
+  Properties:
+    AvailabilityZone: us-east-1a
+    ImageId: ami-0ff8a91507f77f867
+
+........
+
+AWSTemplateFormatVersion: "2010-09-09"
+Description: A sample template
+Resources:
+  MyEC2Instance: #An inline comment
+    Type: "AWS::EC2::Instance"
+    Properties:
+      ImageId: "ami-0ff8a91507f77f867" #Another comment -- This is a Linux AMI
+      InstanceType: t2.micro
+      KeyName: testkey
+      BlockDeviceMappings:
+        -
+          DeviceName: /dev/sdm
+          Ebs:
+            VolumeType: io1
+            Iops: 200
+            DeleteOnTermination: false
+            VolumeSize: 20
+
+........
+
+MyInstance:
+  Type: AWS::EC2::Instance
+  Properties:
+    KeyName: !Ref KeyName
+    SecurityGroups:
+    - !Ref logical name of AWS::EC2::SecurityGroup resource
+    UserData:
+      Fn::Base64: !Sub |
+        PORT=80
+        TOPIC=${ logical name of an AWS::SNS::Topic resource }
+    InstanceType: m1.small
+    AvailabilityZone: us-east-1a
+    ImageId: ami-0ff8a91507f77f867
+    Volumes:
+      -
+        VolumeId: !Ref logical name of AWS::EC2::Volume resource
+        Device: /dev/sdk
+    Tags:
+      -
+        Key: Name
+        Value: MyTag
+
+........
+
+ServerSecurityGroup:
+  Type: AWS::EC2::SecurityGroup
+  Properties:
+    GroupDescription: allow connections from specified CIDR ranges
+    SecurityGroupIngress:
+    - IpProtocol: tcp
+      FromPort: 80
+      ToPort: 80
+      CidrIp: 0.0.0.0/0
+    - IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      CidrIp: 192.168.1.1/32
+
+
+ServerSecurityGroupBySG:
+  Type: AWS::EC2::SecurityGroup
+  Properties:
+    GroupDescription: allow connections from specified source security group
+    SecurityGroupIngress:
+    - IpProtocol: tcp
+      FromPort: 80
+      ToPort: 80
+      SourceSecurityGroupName: myadminsecuritygroup
+      SourceSecurityGroupOwnerId: 123456789012
+    - IpProtocol: tcp
+      FromPort: 80
+      ToPort: 80
+      SourceSecurityGroupName: !Ref mysecuritygroupcreatedincfn
+
+
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  myELB:
+    Type: AWS::ElasticLoadBalancing::LoadBalancer
+    Properties:
+      AvailabilityZones:
+        - eu-west-1a
+      Listeners:
+        - LoadBalancerPort: '80'
+          InstancePort: '80'
+          Protocol: HTTP
+  myELBIngressGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: ELB ingress group
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourceSecurityGroupOwnerId: !GetAtt myELB.SourceSecurityGroup.OwnerAlias
+          SourceSecurityGroupName: !GetAtt myELB.SourceSecurityGroup.GroupName
+
+
+........
+
+Resources:
+  DefaultIpv6Route:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationIpv6CidrBlock: "::/0"
+      EgressOnlyInternetGatewayId: !Ref EgressOnlyInternetGateway
+      RouteTableId: !Ref RouteTable
+  EgressOnlyInternetGateway:
+    Type: AWS::EC2::EgressOnlyInternetGateway
+    Properties:
+      VpcId: !Ref VPC
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+
+........
+
+myVPC:
+  Type: AWS::EC2::VPC
+  Properties:
+    CidrBlock: !Ref myVPCCIDRRange
+    EnableDnsSupport: false
+    EnableDnsHostnames: false
+    InstanceTenancy: default
+myInstance:
+  Type: AWS::EC2::Instance
+  Properties:
+    ImageId: !FindInMap [ AWSRegionToAMI , !Ref 'AWS::Region', 64 ]
+    SecurityGroupIds:
+    - !GetAtt myVPC.DefaultSecurityGroup
+    SubnetId: !Ref mySubnet
+
+........
+
+Resources:
+  Ec2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      SecurityGroups:
+      - !Ref InstanceSecurityGroup
+      ImageId: ami-0ff8a91507f77f867
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSH access via port 22
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+  NewVolume:
+    Type: AWS::EC2::Volume
+    Properties:
+      Size: 100
+      AvailabilityZone: !GetAtt Ec2Instance.AvailabilityZone
+  MountPoint:
+    Type: AWS::EC2::VolumeAttachment
+    Properties:
+      InstanceId: !Ref Ec2Instance
+      VolumeId: !Ref NewVolume
+      Device: /dev/sdh
+
+........
+
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Metadata:
+      AWS::CloudFormation::Init:
+        config:
+          packages:
+            :
+          groups:
+            :
+          users:
+            :
+          sources:
+            :
+          files:
+            :
+          commands:
+            :
+          services:
+            :
+    Properties:
+      :
+
+
+........
+
+
+
+Resources:
+  ...
+  WebServer:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !FindInMap [AWSRegionArch2AMI, !Ref 'AWS::Region', !FindInMap [AWSInstanceType2Arch, !Ref InstanceType, Arch]]
+      InstanceType:
+        Ref: InstanceType
+      KeyName:
+        Ref: KeyName
+      SecurityGroups:
+      - Ref: WebServerSecurityGroup
+      UserData:
+        Fn::Base64: !Sub |
+           #!/bin/bash -xe
+           yum update -y aws-cfn-bootstrap
+           /opt/aws/bin/cfn-init -v --stack ${AWS::StackId} --resource WebServer --configsets wordpress_install --region ${AWS::Region}
+           /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackId} --resource WebServer --region ${AWS::Region}
+    ...
+
+  WebServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Enable HTTP access via port 80 locked down to the load balancer + SSH access"
+      SecurityGroupIngress:
+      - CidrIp: 0.0.0.0/0
+        FromPort: 80
+        IpProtocol: tcp
+        ToPort: 80
+      - CidrIp: !Ref SSHLocation
+        FromPort: 22
+        IpProtocol: tcp
+        ToPort: 22
+
+........
+
+
+AWSTemplateFormatVersion: "2010-09-09"
+Description: A sample template
+Resources:
+  MyEC2Instance: #An inline comment
+    Type: "AWS::EC2::Instance"
+    Properties:
+      ImageId: "ami-0ff8a91507f77f867" #Another comment -- This is a Linux AMI
+      InstanceType: t2.micro
+      KeyName: testkey
+      BlockDeviceMappings:
+        -
+          DeviceName: /dev/sdm
+          Ebs:
+            VolumeType: io1
+            Iops: 200
+            DeleteOnTermination: false
+            VolumeSize: 20
+
+........
+
+WebServer:
+  Type: AWS::EC2::Instance
+  Properties:
+    KeyName:
+      Ref: KeyName
+
+........
+
+
+WebServer:
+  Type: AWS::EC2::Instance
+  Properties:
+    SecurityGroups:
+    - Ref: WebServerSecurityGroup
+
+........
+
+Resources:
+  Ec2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      SecurityGroups:
+        - !Ref InstanceSecurityGroup
+      KeyName: mykey
+      ImageId: ''
+  InstanceSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Enable SSH access via port 22
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
+........
+
+Resources:
+  Ec2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      SecurityGroups:
+        - !Ref InstanceSecurityGroup
+        - MyExistingSecurityGroup
+      KeyName: mykey
+      ImageId: ami-7a11e213
+  InstanceSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Enable SSH access via port 22
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
+
+
+........
+
+Parameters:
+  KeyName:
+    Description: The EC2 Key Pair to allow SSH access to the instance
+    Type: 'AWS::EC2::KeyPair::KeyName'
+Resources:
+  Ec2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      SecurityGroups:
+        - !Ref InstanceSecurityGroup
+        - MyExistingSecurityGroup
+      KeyName: !Ref KeyName
+      ImageId: ami-7a11e213
+  InstanceSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Enable SSH access via port 22
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
+........
+
+Parameters:
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
+    Type: String
+Mappings:
+  RegionMap:
+    us-east-1:
+      AMI: ami-76f0061f
+    us-west-1:
+      AMI: ami-655a0a20
+    eu-west-1:
+      AMI: ami-7fd4e10b
+    ap-southeast-1:
+      AMI: ami-72621c20
+    ap-northeast-1:
+      AMI: ami-8e08a38f
+Resources:
+  Ec2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      KeyName: !Ref KeyName
+      ImageId: !FindInMap
+        - RegionMap
+        - !Ref 'AWS::Region'
+        - AMI
+      UserData: !Base64 '80'
+
+
+
+
+
+........
+
+
+Resources:
+  ElasticLoadBalancer:
+    Type: 'AWS::ElasticLoadBalancing::LoadBalancer'
+    Properties:
+      AvailabilityZones: !GetAZs ''
+      Instances:
+        - !Ref Ec2Instance1
+        - !Ref Ec2Instance2
+      Listeners:
+        - LoadBalancerPort: '80'
+          InstancePort: !Ref WebServerPort
+          Protocol: HTTP
+      HealthCheck:
+        Target: !Join
+          - ''
+          - - 'HTTP:'
+            - !Ref WebServerPort
+            - /
+        HealthyThreshold: '3'
+        UnhealthyThreshold: '5'
+        Interval: '30'
+        Timeout: '5'
+
+........
+
+
+Outputs:
+  InstallURL:
+    Value: !Join
+      - ''
+      - - 'http://'
+        - !GetAtt
+          - ElasticLoadBalancer
+          - DNSName
+        - /wp-admin/install.php
+    Description: Installation URL of the WordPress website
+  WebsiteURL:
+    Value: !Join
+      - ''
+      - - 'http://'
+        - !GetAtt
+          - ElasticLoadBalancer
+          - DNSName
+
+
+
+#####################################################
+AWS scheduler Amazon EC2 instances
+#####################################################
+
+https://aws.amazon.com/solutions/implementations/instance-scheduler-on-aws/
+https://aws.amazon.com/answers/infrastructure-management/ec2-scheduler/
+https://aws.amazon.com/solutions/implementations/instance-scheduler-on-aws/?nc1=h_ls
+
+https://www.youtube.com/watch?v=xwikGprUIY0
+https://www.youtube.com/watch?v=8HDm9mOqKIk
+
+
+
+##############################################
+AWS Lambda using Python, Pandas and Layers
+##############################################
+
+https://www.linkedin.com/pulse/process-excel-files-aws-lambda-using-python-pandasand-tom-reid
+https://aws.amazon.com/de/premiumsupport/knowledge-center/lambda-import-module-error-python/
+https://awstip.com/how-to-use-your-favorite-python-packages-in-aws-lambda-1a514c7096f1
+https://github.com/fsspec/s3fs/issues/604
+https://github.com/aws/aws-sdk-pandas/issues/414
+https://filesystem-spec.readthedocs.io/en/latest/
+
+
+pip install --target build/python/lib/python3.7/site-packages pandas xlrd fsspec sfs3 openpyxl
+cd build
+zip -r pandas_layer.zip .
+aws s3 cp pandas_layer.zip s3://my_bucket/my_folder/pandas_layer.zip
+
+.....
+
+mkdir python
+python3.8 -m pip install pandas -t python/
+zip -r layer.zip python
+aws lambda publish-layer-version --layer-name pandas-layer --zip-file fileb://layer.zip --compatible-runtimes python3.8 --region us-east-1
+
+....
+
+Mkdir lambda_layer
+Cd lambda_layer
+virtualenv v-env
+source ./v-env/bin/activate
+pip install pandas matplotlib fsspec tox tox-conda
+deactivate
+
+Mkdir layer_packages
+Cd layer_packages
+cp -r ../v-env/lib64/python3.7/site-packages/* .
+
+Cd ..
+zip -r lambda_layer.zip layer_packages
+
+##############################################
+Layers consume more than the available size of 262144000 bytes
+##############################################
+
+https://aws.amazon.com/de/blogs/aws/new-a-shared-file-system-for-your-lambda-functions/
+https://aws.amazon.com/de/blogs/aws/new-for-aws-lambda-container-image-support/
+https://aws.amazon.com/de/blogs/compute/using-amazon-efs-for-aws-lambda-in-your-serverless-applications/
+https://aws.amazon.com/de/blogs/devops/setting-up-a-ci-cd-pipeline-by-integrating-jenkins-with-aws-codebuild-and-aws-codedeploy/
+https://aws.amazon.com/de/getting-started/hands-on/setup-jenkins-build-server/
+https://aws.amazon.com/fr/blogs/aws/new-for-aws-lambda-container-image-support/
+https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html
+https://docs.aws.amazon.com/lambda/latest/dg/images-create.html
+https://docs.aws.amazon.com/lambda/latest/dg/images-create.html#images-create-from-base
+https://github.com/agutoli/serverless-layers/issues/51
+https://repost.aws/questions/QUvlk-Lrd2Ta2bb5WKjMFr0w/lambda-layers-exceed-quota-how-to-fix
+https://stackoverflow.com/questions/45342990/aws-lambda-error-unzipped-size-must-be-smaller-than-262144000-bytes
+https://stackoverflow.com/questions/54632009/how-to-increase-the-maximum-size-of-the-aws-lambda-deployment-package-requesten
+https://www.cloudtechsimplified.com/run-docker-containers-images-from-ecr-in-aws-lambda-along-with-cicd/
+https://www.linkedin.com/pulse/process-excel-files-aws-lambda-using-python-pandasand-tom-reid
+
+
+A function can use up to 5 layers at a time. The total unzipped size of the function and all layers
+can't exceed the unzipped deployment package size limit of 250 MB.
+
+AWS Lambda functions can mount EFS. You can load libraries or packages that are larger than the 250 MB package
+ deployment size limit of AWS Lambda using EFS.
+
+If your deployment package is larger than 50 MB, we recommend uploading your function code and dependencies
+to an Amazon S3 bucket.
+
+You can create a deployment package and upload the .zip file to your Amazon S3 bucket in the AWS Region
+where you want to create a Lambda function. When you create your Lambda function, specify the S3 bucket
+name and object key name on the Lambda console, or using the AWS Command Line Interface (AWS CLI).
+
+Create and setup EFS file system
+Use EFS with lambda function
+Install the pip dependencies inside EFS access point
+Set the PYTHONPATH environment variable to tell where to look for the dependencies
+
+
+The following are hard limits for Lambda (may change in future):
+
+3 MB for in-console editing
+50 MB zipped as package for upload
+250 MB when unzipped including layers
+
+
+##############################################
+Scheduled EC2 Instance
+##############################################
+
+https://www.youtube.com/watch?v=8HDm9mOqKIk
+https://www.youtube.com/watch?v=xwikGprUIY0
+https://www.youtube.com/watch?v=lTyqzyk86f8
+
+
+
+https://aws.amazon.com/solutions/implementations/instance-scheduler-on-aws/?nc1=h_ls
+https://awstip.com/quick-and-simple-how-to-setup-ec2-instance-scheduler-on-aws-for-single-account-usage-583a3e7e4265
+https://dev.to/aws-builders/stop-and-start-instances-using-the-aws-instance-scheduler-stopinator-3eon
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-instance.html
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-lamp-amazon-linux-2.html
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-lamp-amazon-linux-2022.html
+https://docs.aws.amazon.com/imagebuilder/latest/userguide/what-is-image-builder.html
+https://ecsworkshop.com/introduction/
+https://registry.terraform.io/modules/popovserhii/lambda-scheduler/aws/latest/examples/ec2-schedule
+https://s3.amazonaws.com/solutions-reference/ec2-scheduler/latest/ec2-scheduler.pdf
+https://www.amazonaws.cn/en/solutions/instance-scheduler/
+https://www.stormit.cloud/blog/aws-instance-scheduler/
