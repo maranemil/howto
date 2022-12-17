@@ -563,3 +563,70 @@ def get_filename(url):
     return path.basename(scheme_removed)
 
 
+##################################################
+Open S3 object as a string with Boto3
+##################################################
+
+https://stackoverflow.com/questions/36205481/read-file-content-from-s3-bucket-with-boto3
+https://www.stackvidhya.com/read-file-content-from-s3-using-boto3/
+https://stackoverflow.com/questions/31976273/open-s3-object-as-a-string-with-boto3
+https://stackoverflow.com/questions/52945609/pandas-dataframe-to-parquet-buffer-in-memory
+https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_parquet.html
+https://vperezb.github.io/from-s3-csv-to-pandas-boto3-python3/
+https://stackoverflow.com/questions/45043554/how-to-read-a-list-of-parquet-files-from-s3-as-a-pandas-dataframe-using-pyarrow
+https://stackoverflow.com/questions/45043554/how-to-read-a-list-of-parquet-files-from-s3-as-a-pandas-dataframe-using-pyarrow
+https://stackoverflow.com/questions/53416226/how-to-write-parquet-file-from-pandas-dataframe-in-s3-in-python
+
+
+
+OK
+-----------------------------------------
+import pandas as pd
+import boto3
+from io import BytesIO
+s3 = boto3.client('s3')
+# read s3 parquet file into memory
+obj = s3.get_object(Bucket=bucket_name, Key=key)
+df = pd.read_parquet(BytesIO(obj['Body'].read()), engine='pyarrow')
+# write into s3
+s3r = boto3.resource('s3')
+df.to_parquet('/tmp/file.parquet', index=True, engine="pyarrow", compression="snappy")
+s3r.Bucket(bucket_name).upload_file('/tmp/file.parquet', 'file.parquet')
+# read bucket files
+bucket = s3r.Bucket(bucket_name)
+   for obj in bucket.objects.all():
+      print(obj.key)
+
+
+
+
+
+import boto3
+from io import BytesIO
+session = boto3.Session()
+s3_client = session.client("s3")
+f = BytesIO()
+s3_client.download_fileobj("bucket_name", "filename", f)
+print(f.getvalue())
+
+
+
+import boto3
+print("started")
+s3 = boto3.resource('s3',region_name='region_name', aws_access_key_id='your_access_id', aws_secret_access_key='your access key')
+obj = s3.Object('bucket_name','file_name')
+data=obj.get()['Body'].read()
+print(data)
+
+
+from s3fs import S3FileSystem
+s3 = S3FileSystem()
+bucket = 's3://your-bucket'
+
+def read_file(key):
+    with s3.open(f'{s3_path}/{key}', 'r') as file:  # s3://bucket/file.txt
+        return file.readlines()
+
+for obj in bucket.objects.all():
+    key = obj.key
+    lines = read_file(key)
