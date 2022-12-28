@@ -193,8 +193,19 @@ ffmpeg -i vid.mp4 -vf thumbnail -frames:v 1 out.png
 
 ### mix wave + bg
 ```
-* ffmpeg -i in.mp4 -i input.png   -filter_complex "[0]colorkey=color=black,crop=1920:400,scale=1920:100,pad=iw*200:ih:0:0[keyed];[1][keyed]overlay=y=770" -t 10  out_$(date +%s).mp4
+* ffmpeg -i in.mp4 -i input.png -filter_complex "[0]colorkey=color=black,crop=1920:400,scale=1920:100,pad=iw*200:ih:0:0[keyed];[1][keyed]overlay=y=770" -t 10  out_$(date +%s).mp4
 ```
+
+### fast conversion
+```
+ffmpeg -i input.mkv -preset ultrafast -c:a copy -crf 28 output.mp4
+```
+
+### h264 to h265 conversion
+```
+ffmpeg -i input.mp4 -c:v libx265 -c:a copy -vtag hvc1 -threads 2 output.mp4
+```
+
 
 
 ### ubuntu webcam settings
