@@ -110,3 +110,26 @@ find . -type f | shuf -n 1
 ls |sort -R |tail -$N |while read file; do echo $file; done
 ~~~
 
+
+
+
+### NordVPN 2022
+######
+~~~
+https://askubuntu.com/questions/1130740/cant-connect-using-nordvpn
+https://support.nordvpn.com/Connectivity/Linux/1322207652/Troubleshooting-connectivity-Linux.htm
+https://nordvpn.com/de/download/linux/#
+https://support.nordvpn.com/Connectivity/Linux/1325531132/Installing-and-using-NordVPN-on-Debian-Ubuntu-Raspberry-Pi-Elementary-OS-and-Linux-Mint.htm
+
+
+sudo apt-get --purge remove nordvpn*
+sudo dpkg -P nordvpn && sudo dpkg -P nordvpn-release 
+
+sudo dpkg -i /pathToFile/nordvpn-release_1.0.0_all.deb
+
+sudo apt update 
+sudo apt install nordvpn
+nordvpn login
+nordvpn connect
+~~~
+
