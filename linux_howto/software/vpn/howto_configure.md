@@ -129,7 +129,12 @@ sudo dpkg -i /pathToFile/nordvpn-release_1.0.0_all.deb
 
 sudo apt update 
 sudo apt install nordvpn
+nordvpn set dns 1.1.1.1 1.0.0.1
 nordvpn login
-nordvpn connect
+nordvpn connect             # or nordvpn c
+nordvpn c double_vpn        # Connect to the closest Double VPN server.
+nordvpn connect The_Americas # connect to servers located in the Americas.
+nordvpn disconnect          # or nordvpn d
+nordvpn rate 5
 ~~~
 
