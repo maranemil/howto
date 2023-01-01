@@ -57,6 +57,14 @@
 | https://zyro.com/de                                      |         || 
 | https://zyro.com/de/tools/image-resizer                  |         || 
 
+https://beta.tome.app/
+https://superhuman.com/
+https://chat.openai.com/chat
+https://www.notion.so/product/ai
+https://quillbot.com/
+
+
+
 
 
 https://github.com/LAION-AI/video-clip
