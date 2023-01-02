@@ -106,16 +106,52 @@
 - https://github.com/runwayml/stable-diffusion
 - https://github.com/TheLastBen/fast-stable-diffusion
 - https://github.com/Stability-AI/stablediffusion#
+- https://github.com/runwayml/stable-diffusion#
+- https://github.com/huggingface/diffusers
+- https://github.com/gradio-app/gradio
+- https://github.com/TheLastBen/diffusers
+- https://github.com/ShivamShrirao/diffusers
+- https://github.com/huggingface/diffusers
+- 
+
+
+
+
 - https://huggingface.co/runwayml/stable-diffusion-inpainting
+- https://huggingface.co/spaces/clem/dreambooth-pareidolia
 - https://huggingface.co/spaces/multimodalart/stable-diffusion-inpainting
 - https://huggingface.co/spaces/multimodalart/diffusion
 - https://huggingface.co/spaces/multimodalart/dreambooth-training
 - https://huggingface.co/google/t5-efficient-xxl
 - https://huggingface.co/stabilityai/stable-diffusion-2-inpainting
 - https://huggingface.co/spaces/BAAI/dreambooth-altdiffusion
-- https://huggingface.co/spaces/zwv9/webui-cpu
-- https://huggingface.co/spaces/kamiyamai/stable-diffusion-webui
 - https://huggingface.co/spaces/Aphrodite/stable-diffusion-2
+- https://huggingface.co/spaces/kamiyamai/stable-diffusion-webui#
+- https://huggingface.co/spaces/zwv9/webui-cpu#
+- https://huggingface.co/spaces/multimodalart/rudalle
+- https://huggingface.co/spaces/hysts/projected_gan
+- https://huggingface.co/spaces/CVPR/DualStyleGAN
+- https://huggingface.co/spaces/hysts/StyleSwin
+- https://huggingface.co/spaces/akhaliq/ArcaneGAN
+- https://huggingface.co/spaces/akhaliq/AnimeGANv2
+- https://huggingface.co/spaces/hysts/StyleGAN-Human-Interpolation
+- https://huggingface.co/CompVis/stable-diffusion-v1-4#
+- https://huggingface.co/dreamlike-art/dreamlike-diffusion-1.0#
+- https://huggingface.co/DGSpitzer/Cyberpunk-Anime-Diffusion#
+- https://huggingface.co/dreamlike-art/dreamlike-diffusion-1.0#
+- https://huggingface.co/tasks/text-to-image#
+- https://huggingface.co/stabilityai/stable-diffusion-2-base#
+- https://huggingface.co/runwayml/stable-diffusion-v1-5
+- https://huggingface.co/tasks/text-to-image
+- https://huggingface.co/eimiss/EimisAnimeDiffusion_1.0v
+- https://huggingface.co/nitrosocke/Arcane-Diffusion
+- https://huggingface.co/spaces/akhaliq/dreamlike-diffusion-1.0
+- https://huggingface.co/gpt2#textgen
+- https://huggingface.co/Linaqruf/anything-v3.0
+- https://huggingface.co/spaces/Intel/textual-inversion-training
+- https://huggingface.co/stabilityai/stable-diffusion-2-inpainting
+- https://huggingface.co/spaces/kamiyamai/stable-diffusion-webui
+- https://huggingface.co/spaces/zwv9/webui-cpu
 
 
 - https://colab.research.google.com/drive/1sVsoBd9AjckIXThgtZhGrHRfFI6UUYOo
