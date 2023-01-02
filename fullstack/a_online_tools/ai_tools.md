@@ -106,13 +106,16 @@
 - https://github.com/runwayml/stable-diffusion
 - https://github.com/TheLastBen/fast-stable-diffusion
 - https://github.com/Stability-AI/stablediffusion#
-
 - https://huggingface.co/runwayml/stable-diffusion-inpainting
 - https://huggingface.co/spaces/multimodalart/stable-diffusion-inpainting
 - https://huggingface.co/spaces/multimodalart/diffusion
 - https://huggingface.co/spaces/multimodalart/dreambooth-training
 - https://huggingface.co/google/t5-efficient-xxl
 - https://huggingface.co/stabilityai/stable-diffusion-2-inpainting
+- https://huggingface.co/spaces/BAAI/dreambooth-altdiffusion
+- https://huggingface.co/spaces/zwv9/webui-cpu
+- https://huggingface.co/spaces/kamiyamai/stable-diffusion-webui
+- https://huggingface.co/spaces/Aphrodite/stable-diffusion-2
 
 
 - https://colab.research.google.com/drive/1sVsoBd9AjckIXThgtZhGrHRfFI6UUYOo
