@@ -408,6 +408,16 @@ https://hemingwayapp.com/
 - https://images.google.com/
 - https://yandex.com/images/
 
+
+------------------------------------------------------------------
+
+### photo collage
+
+- https://www.photocollage.com/
+- https://www.photojoiner.net/editor/collage-editor
+- https://www.photovisi.com/collages
+- https://collage-maker.com/photo-collage-maker/
+
 ------------------------------------------------------------------
 
 ### Plugins gittoolbox
