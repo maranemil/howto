@@ -1,69 +1,100 @@
 
-#### ai gpt tools 
+### ai misc tools 
+
+| url                                                      | type                                |
+|:---------------------------------------------------------|:------------------------------------|
+| https://deepai.org/machine-learning-model/text-generator | Text Generation API                 | 
+| https://fastai1.fast.ai/text.models.html                 | NLP                                 |      
+| https://huggingface.co/tasks/text-generation             | Text Generation                     |  
+| https://invoke-ai.github.io/InvokeAI/                    | Stable Diffusion                    |      
+| https://laion.ai/                                        | ai Open Network                     |      
+| https://lexica.art/                                      | The Stable Diffusion search engine  |
+| https://openai.com/blog/whisper/                         | English speech recognition          |      
+| https://replika.com/                                     | AI companion                        |      
+| https://runwayml.com/                                    | generation content creation suite.  |      
+| https://rytr.me/                                         | AI writing assistant                |  
+| https://stability.ai/                                    | ai tools                            |      
+| https://stable-diffusion-art.com/inpainting_basics/      | inpainting tools                    | 
+| https://superhuman.com/                                  | Email app                           | 
+| https://vidiq.com/                                       | Youtube boster                      |      
+   
+
+### code
+
+| url                                            | type                          |
+|:-----------------------------------------------|:------------------------------|
+| https://beta.openai.com/docs/guides/code       | Code completion               | 
+| https://durable.co/ai-website-builder          | website builder               | 
+| https://www.sitekick.ai/                       | Landing page creator          | 
+| https://openai.com/blog/chatgpt/               | ChatGPT                       | 
+| https://www.beautiful.ai/                      | Presentation software         |
 
 
-| url                                                      | domain | desc |
-|:---------------------------------------------------------|:-------|:-----|
-| https://app.jasper.ai/                                   |        |      |
-| https://avatarai.me/                                     |        |      |
-| https://beta.character.ai/                               |        |      |
-| https://beta.openai.com/overview                         |        |      | 
-| https://beta.openai.com/playground                       |        |      | 
-| https://bigspeak.ai/                                     |        |      | 
-| https://chat.openai.com/auth/login                       |        |      | 
-| https://cleanup.pictures/                                |        |      | 
-| https://deepai.org/machine-learning-model/text-generator |        |      | 
-| https://dream.ai/                                        |        |      | 
-| https://durable.co/ai-website-builder                    |        |      | 
-| https://fastai1.fast.ai/text.models.html                 |        |      | 
-| https://huggingface.co/tasks/text-generation             |        |      | 
-| https://imgcreator.zmo.ai/                               |        |      | 
-| https://imglarger.com/                                   |        |      | 
-| https://interiorai.com/                                  |        |      | 
-| https://invoke-ai.github.io/InvokeAI/                    |        |      | 
-| https://laion.ai/                                        |        |      | 
-| https://laion.ai/projects/                               |        |      | 
-| https://lexica.art/                                      |        |      | 
-| https://lumalabs.ai/                                     |        |      | 
-| https://magicstudio.com/magiceraser                      |        |      | 
-| https://midjourney.gitbook.io/docs/                      |        |      | 
-| https://openai.com/blog/chatgpt/                         |        |      | 
-| https://openai.com/blog/whisper/                         |        |      | 
-| https://openai.com/dall-e-2/                             |        |      | 
-| https://openai.com/dall-e-2/                             |        |      | 
-| https://openai.com/dall-e-2/                             |        |      | 
-| https://photosonic.writesonic.com/                       |        |      | 
-| https://prisma-ai.com/lensa                              |        |      | 
-| https://replika.com/                                     |        |      | 
-| https://runwayml.com/                                    |        |      | 
-| https://rytr.me/                                         |        |      | 
-| https://speechify.com/text-to-speech-online              |        |      | 
-| https://stability.ai/                                    |        |      | 
-| https://stable-diffusion-art.com/inpainting_basics/      |        |      | 
-| https://stablediffusion.fr/inpainting                    |        |      | 
-| https://stablediffusionweb.com/                          |        |      | 
-| https://ttsreader.com/                                   |        |      | 
-| https://unrealme.io/                                     |        |      | 
-| https://www.beautiful.ai/                                |        |      | 
-| https://www.capcut.com/                                  |        |      | 
-| https://www.copy.ai/                                     |        |      | 
-| https://www.naturalreaders.com/online/                   |        |      | 
-| https://www.profilepicture.ai/                           |        |      | 
-| https://www.sitekick.ai/                                 |        |      | 
-| https://www.strmr.com/#Astria                            |        |      | 
-| https://www.veed.io/                                     |        |      | 
-| https://www.voicemod.net/                                |        |      | 
-| https://www.wordtune.com/                                |        |      | 
-| https://zyro.com/de                                      |        |      | 
-| https://zyro.com/de/tools/image-resizer                  |        |      | 
-| https://beta.tome.app/                                   |        |      |
-| https://superhuman.com/                                  |        |      |
-| https://chat.openai.com/chat                             |        |      |
-| https://www.notion.so/product/ai                         |        |      |
-| https://quillbot.com/                                    |        |      |
-| https://vidiq.com/                                       |        |      |
-| https://www.gliacloud.com/en/                            |        |      |
-| https://synthesys.io/                                    |        |      |
+### img
+
+| url                                                 | type                                 |
+|:----------------------------------------------------|:-------------------------------------|
+| https://arc.tencent.com/en/ai-demos/faceRestoration | face Restoration                     |  
+| https://www.strmr.com/#Astria                       | AI image generation                  |
+| https://zyro.com/de/tools/image-resizer             | Image Resizer                        | 
+| https://www.profilepicture.ai/                      | Profile picture with AI              |
+| https://beta.openai.com/docs/guides/images          | Image generator                      | 
+| https://avatarai.me/                                | AI Avatars                           |     
+| https://beta.character.ai/                          | AI Avatars                           |  
+| https://imgcreator.zmo.ai/                          | Creating images with text            |      
+| https://imglarger.com/                              | AI Image Enlarger                    |      
+| https://interiorai.com/                             | INTERIOR DESIGN MOCKUPS              | 
+| https://dream.ai/                                   | Artwork Generation                   | 
+| https://openai.com/dall-e-2/                        | AI realistic images  generator       | 
+| https://cleanup.pictures/                           | Retouch images                       | 
+| https://midjourney.gitbook.io/docs/                 | AI Image generator                   | 
+| https://lumalabs.ai/                                | Capture in lifelike 3D               |      
+| https://magicstudio.com/magiceraser                 | Remove unwanted things               |  
+| https://photosonic.writesonic.com/                  | AI painter                           |      
+| https://prisma-ai.com/lensa                         | all-in-one image editing             | 
+| https://stablediffusion.fr/inpainting               | RunwayML Stable Diffusion Inpainting | 
+| https://stablediffusionweb.com/                     | text-to-image diffusion model        | 
+| https://unrealme.io/                                | AI generated avatar                  | 
+
+
+### voice
+
+| url                                          | type                                |
+|:---------------------------------------------|:------------------------------------|
+| https://www.voicemod.net/                    | Voice Changer                       | 
+| https://www.naturalreaders.com/online/       | Natural Reader text2voice           | 
+| https://synthesys.io/                        | Professional AI Voiceover           |  
+| https://bigspeak.ai/                         | Generate English speech from text   |  
+| https://speechify.com/text-to-speech-online  | Text to Speech Online               | 
+| https://ttsreader.com/                       | TEXT TO SPEECH READER               | 
+  
+### text
+
+| url                                 | type                      |
+|:------------------------------------|:--------------------------|
+| https://play.ht/                    | Text to voice generator   |   
+| https://quillbot.com/               | Writing enhancer          |  
+| https://www.notion.so/product/ai    | Content type generator    | 
+| https://chat.openai.com/chat        | Chat                      |  
+| https://www.wordtune.com/           | Text rewriter             | 
+| https://beta.tome.app/              | Storytelling generator    | 
+| https://www.copy.ai/                | Text rewriter             | 
+| https://beta.openai.com/playground  | Text generator            |  
+| https://app.jasper.ai/              | blog posts   Generation   | 
+
+
+### video
+
+| url                                    | type            |
+|:---------------------------------------|:----------------|
+| https://invideo.io/                    | Video editor    | 
+| https://www.gliacloud.com/en/          | Video generator |
+| https://www.veed.io/                   | Video editor    | 
+| https://www.capcut.com/                | video editor    | 
+
+
+
+
 
 
 - https://github.com/LAION-AI/video-clip
@@ -73,7 +104,8 @@
 - https://github.com/invoke-ai/InvokeAI
 - https://github.com/EmpireMediaScience/A1111-Web-UI-Installer
 - https://github.com/runwayml/stable-diffusion
-
+- https://github.com/TheLastBen/fast-stable-diffusion
+- https://github.com/Stability-AI/stablediffusion#
 
 - https://huggingface.co/runwayml/stable-diffusion-inpainting
 - https://huggingface.co/spaces/multimodalart/stable-diffusion-inpainting
@@ -81,6 +113,11 @@
 - https://huggingface.co/spaces/multimodalart/dreambooth-training
 - https://huggingface.co/google/t5-efficient-xxl
 - https://huggingface.co/stabilityai/stable-diffusion-2-inpainting
+
+
+- https://colab.research.google.com/drive/1sVsoBd9AjckIXThgtZhGrHRfFI6UUYOo
+- https://colab.research.google.com/github/TheLastBen/fast-stable-diffusion/blob/main/fast_stable_diffusion_AUTOMATIC1111.ipynb
+- 
 
 
 
