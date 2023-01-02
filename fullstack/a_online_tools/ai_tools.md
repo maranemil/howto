@@ -32,29 +32,31 @@
 
 ### img
 
-| url                                                 | type                                 |
-|:----------------------------------------------------|:-------------------------------------|
-| https://arc.tencent.com/en/ai-demos/faceRestoration | face Restoration                     |  
-| https://www.strmr.com/#Astria                       | AI image generation                  |
-| https://zyro.com/de/tools/image-resizer             | Image Resizer                        | 
-| https://www.profilepicture.ai/                      | Profile picture with AI              |
-| https://beta.openai.com/docs/guides/images          | Image generator                      | 
-| https://avatarai.me/                                | AI Avatars                           |     
-| https://beta.character.ai/                          | AI Avatars                           |  
-| https://imgcreator.zmo.ai/                          | Creating images with text            |      
-| https://imglarger.com/                              | AI Image Enlarger                    |      
-| https://interiorai.com/                             | INTERIOR DESIGN MOCKUPS              | 
-| https://dream.ai/                                   | Artwork Generation                   | 
-| https://openai.com/dall-e-2/                        | AI realistic images  generator       | 
-| https://cleanup.pictures/                           | Retouch images                       | 
-| https://midjourney.gitbook.io/docs/                 | AI Image generator                   | 
-| https://lumalabs.ai/                                | Capture in lifelike 3D               |      
-| https://magicstudio.com/magiceraser                 | Remove unwanted things               |  
-| https://photosonic.writesonic.com/                  | AI painter                           |      
-| https://prisma-ai.com/lensa                         | all-in-one image editing             | 
-| https://stablediffusion.fr/inpainting               | RunwayML Stable Diffusion Inpainting | 
-| https://stablediffusionweb.com/                     | text-to-image diffusion model        | 
-| https://unrealme.io/                                | AI generated avatar                  | 
+| url                                                  | type                                  |
+|:-----------------------------------------------------|:--------------------------------------|
+| https://arc.tencent.com/en/ai-demos/faceRestoration  | face Restoration                      |  
+| https://www.strmr.com/#Astria                        | AI image generation                   |
+| https://zyro.com/de/tools/image-resizer              | Image Resizer                         | 
+| https://www.profilepicture.ai/                       | Profile picture with AI               |
+| https://beta.openai.com/docs/guides/images           | Image generator                       | 
+| https://zyro.com/de/tools/image-upscaler             | Image upscaler                        | 
+| https://zyro.com/de/tools/image-resizer              | Image resizer                         | 
+| https://avatarai.me/                                 | AI Avatars                            |     
+| https://beta.character.ai/                           | AI Avatars                            |  
+| https://imgcreator.zmo.ai/                           | Creating images with text             |      
+| https://imglarger.com/                               | AI Image Enlarger                     |      
+| https://interiorai.com/                              | INTERIOR DESIGN MOCKUPS               | 
+| https://dream.ai/                                    | Artwork Generation                    | 
+| https://openai.com/dall-e-2/                         | AI realistic images  generator        | 
+| https://cleanup.pictures/                            | Retouch images                        | 
+| https://midjourney.gitbook.io/docs/                  | AI Image generator                    | 
+| https://lumalabs.ai/                                 | Capture in lifelike 3D                |      
+| https://magicstudio.com/magiceraser                  | Remove unwanted things                |  
+| https://photosonic.writesonic.com/                   | AI painter                            |      
+| https://prisma-ai.com/lensa                          | all-in-one image editing              | 
+| https://stablediffusion.fr/inpainting                | RunwayML Stable Diffusion Inpainting  | 
+| https://stablediffusionweb.com/                      | text-to-image diffusion model         | 
+| https://unrealme.io/                                 | AI generated avatar                   | 
 
 
 ### voice
