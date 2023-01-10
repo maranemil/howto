@@ -65,3 +65,105 @@ https://hub.docker.com/v2/repositories/mritschel/oracle12cr1_base/tags
 
 
 
+########################################################
+Dockerfile: error: 'docker-php-ext-install' does not exist and extension does not exist
+########################################################
+https://stackoverflow.com/questions/69148441/dockerfile-error-docker-php-ext-install-does-not-exist-and-extension-does-no
+https://stackoverflow.com/questions/47671108/docker-php-ext-install-mcrypt-missing-folder
+https://github.com/docker-library/php/blob/master/docker-php-ext-install
+https://cloudaffaire.com/faq/docker-how-to-install-php-7-4-extension-ext-http/
+
+
+
+FROM php:8.0-apache
+RUN docker-php-ext-install bcmath && docker-php-ext-enable bcmath && \
+        docker-php-ext-install calendar && docker-php-ext-enable calendar && \
+        docker-php-ext-install gd && docker-php-ext-enable gd && \
+        docker-php-ext-install mcrypt && docker-php-ext-enable mcrypt && \
+        docker-php-ext-install pdo_mysql && docker-php-ext-enable pdo_mysql && \
+        docker-php-ext-install mysqli && docker-php-ext-enable mysqli && \
+        docker-php-ext-install soap && docker-php-ext-enable soap && \
+        docker-php-ext-install sockets && docker-php-ext-enable sockets && \
+        docker-php-ext-install exif && docker-php-ext-enable exif && \
+        docker-php-ext-install wddx && docker-php-ext-enable wddx && \
+        docker-php-ext-install wmlrpc && docker-php-ext-enable wmlrpc && \
+        docker-php-ext-install zip && docker-php-ext-enable zip
+RUN apt-get update && apt-get upgrade -y
+
+docker-compose.yml:
+
+version: '3.8'
+services:
+  php-apache-environment:
+    container_name: php-apache
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    volumes:
+      - ./php/src:/var/www/html/
+    ports:
+      - 80:80
+  db:
+    container_name: db
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: MYSQL_ROOT_PASSWORD
+      MYSQL_DATABASE: MYSQL_DATABASE
+      MYSQL_USER: MYSQL_USER
+      MYSQL_PASSWORD: MYSQL_PASSWORD
+    ports:
+      - "9906:3306"
+
+---------------------
+
+FROM php:7.2-apache
+FROM php:7.2-stretch
+
+RUN apt-get update && apt-get install -y libmcrypt-dev \
+    && pecl install mcrypt-1.0.4 \
+    && docker-php-ext-configure mcrypt \
+    && docker-php-ext-enable mcrypt
+
+COPY ./etc/000-default.conf /etc/apache2/sites-available/
+
+EXPOSE 80
+
+---------------------
+https://github.com/mlocati/docker-php-extension-installer
+https://github.com/docker-library/php/blob/master/docker-php-ext-configure
+https://stackoverflow.com/questions/59867951/docker-how-to-install-php-7-4-extension-ext-http
+
+FROM php:${PHP_VERSION}-apache
+
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
+EXPOSE 80
+WORKDIR /${PROJECT_DIRECTORY}
+
+# git, unzip & zip are for composer
+RUN apt-get update -qq && \
+    apt-get install -qy \
+    git \
+    gnupg \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libmcrypt-dev \
+    libicu-dev \
+    libxml2-dev \
+    wget \
+    nano \
+    unzip \
+    zip && \
+    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# PHP Extensions
+RUN docker-php-ext-install -j$(nproc) opcache pdo_mysql intl xml soap
+ADD php/php.ini /usr/local/etc/php/conf.d/${PROJECT_DIRECTORY}.ini
+
+# Apache
+RUN a2enmod rewrite remoteip
+ADD vhosts/vhost.conf /etc/apache2/sites-available/000-default.conf
