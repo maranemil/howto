@@ -80,3 +80,83 @@ aws configure --profile produser
 aws s3 ls --profile produser
 
 docker run --rm -tiv $HOME/.aws:/root/.aws mikesir87/aws-cli aws configure
+
+
+
+
+#################################################
+Best practices for writing Dockerfiles ENV
+#################################################
+
+https://docs.aws.amazon.com/cli/latest/reference/configure/set.html
+https://docs.docker.com/develop/develop-images/dockerfile_best-practices/
+https://www.baeldung.com/ops/dockerfile-env-variable
+https://vsupalov.com/docker-arg-env-variable-guide/
+https://docs.docker.com/engine/reference/builder/
+https://docs.docker.com/compose/environment-variables/
+https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/emr_cluster
+https://developer.hashicorp.com/vault/docs/secrets/aws
+https://velero.io/docs/v0.11.0/aws-config/
+https://stackoverflow.com/questions/29908036/passing-access-and-secret-key-aws-cli
+https://github.com/mikesir87/aws-cli-docker/issues/5
+https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html
+https://docs.aws.amazon.com/cli/latest/reference/configure/
+https://github.com/docker/build-push-action/issues/489
+https://hub.docker.com/r/amazon/aws-cli
+https://stackoverflow.com/questions/34632959/redirecting-command-output-in-docker
+https://github.com/moby/moby/issues/26986
+https://docs.docker.com/engine/reference/builder/
+https://stackoverflow.com/questions/40873165/use-docker-run-command-to-pass-arguments-to-cmd-in-dockerfile
+https://www.cyberciti.biz/faq/how-to-write-the-output-into-the-file-in-linux/
+https://stackoverflow.com/questions/11162406/open-and-write-data-to-text-file-using-bash
+https://linuxize.com/post/bash-write-to-file/
+https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-returncodes.html
+https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-troubleshooting.html
+
+
+Dockerfile
+
+RUN aws configure set aws_access_key_id default_access_key
+RUN aws configure set aws_secret_access_key default_secret_key
+RUN aws configure set default.region us-west-2
+RUN aws configure set default.ca_bundle /path/to/ca-bundle.pem
+RUN aws configure set region us-west-1 --profile testing
+RUN aws configure set profile.testing2.region eu-west-1
+RUN aws configure set preview.cloudsearch true
+
+
+
+
+# syntax=docker/dockerfile:1
+
+ARG name
+ENV env_name $name
+FROM ubuntu:18.04
+COPY . /app
+RUN make /app
+CMD python /app/app.py
+
+
+ARG  CODE_VERSION=latest
+FROM base:${CODE_VERSION}
+CMD  /code/run-app
+FROM extras:${CODE_VERSION}
+CMD  /code/run-extras
+
+
+ARG VERSION=latest
+FROM busybox:$VERSION
+ARG VERSION
+RUN echo $VERSION > image_version
+
+
+
+docker run --rm -v $HOME/.aws:/root/.aws mikesir87/aws-cli aws configure
+docker run --rm -tiv $HOME/.aws:/root/.aws mikesir87/aws-cli aws configure
+
+
+Linux/Mac
+export AWS_ACCESS_KEY_ID=your_key; export AWS_SECRET_ACCESS_KEY=your_secret;  aws  s3 ls
+
+aws configure get aws_access_key_id
+aws configure get aws_secret_access_key
