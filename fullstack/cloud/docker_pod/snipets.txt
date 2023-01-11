@@ -481,3 +481,55 @@ COPY ./dockerResources/z-init-db.sh /docker-entrypoint-initdb.d/
 EXPOSE 5432
 
 sudo chmod -R 777 html/
+
+
+
+
+##########################################################################
+Configure the Docker json
+##########################################################################
+
+https://docs.docker.com/network/proxy/
+https://docs.docker.com/engine/reference/commandline/cli/
+https://stackoverflow.com/questions/42444021/passing-a-json-file-as-environment-variable-in-docker
+https://stackoverflow.com/questions/36680908/read-json-file-into-environment-variable-with-docker-compose
+https://stackoverflow.com/questions/31189123/docker-machine-behind-corporate-proxy
+https://docs.docker.com/network/proxy/#configure-the-docker-client
+https://toedter.com/2015/05/11/docker-on-windows-behind-a-firewall/
+https://github.com/docker/machine/blob/8f82b762749bb8dcf52c6dd0774b927510c5e885/docs/reference/create.md
+
+
+~/.docker/config.json
+
+{
+ "proxies":
+ {
+   "default":
+   {
+     "httpProxy": "http://192.168.1.12:3128",
+     "httpsProxy": "http://192.168.1.12:3128",
+     "noProxy": "*.test.example.com,.example2.com,127.0.0.0/8"
+   }
+ }
+}
+
+
+bash -c "docker run -e \"TEMP_CONFIG=$(</etc/config.json)\" ..."
+
+docker run  --env HTTP_PROXY="172.10.13.14" -it myImage:latest /bin/bash
+
+~/.docker/config.json file like so:
+
+{
+ "proxies":
+ {
+   "default":
+   {
+     "httpProxy": "http://127.0.0.1:3001",
+     "noProxy": "*.test.example.com,.example2.com"
+   }
+ }
+}
+
+
+

@@ -195,6 +195,8 @@
 ### JSON validator
 
 - https://jsonlint.com/
+- https://jsonformatter.org/
+- https://jsonformatter.curiousconcept.com/
 
 ------------------------------------------------------------------
 
