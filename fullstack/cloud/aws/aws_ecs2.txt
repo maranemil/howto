@@ -1,0 +1,2130 @@
+#####################################################################
+Elastic Container Service — When AWS Documentation is not enough
+#####################################################################
+
+https://medium.com/expedia-group-tech/elastic-container-service-when-aws-documentation-is-not-enough-d1288bfb89fb
+https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-environment
+https://github.com/awslabs/amazon-ecs-local-container-endpoints
+https://docs.docker.com/cloud/ecs-integration/
+https://docs.docker.com/cloud/ecs-architecture/#
+https://docs.docker.com/cloud/ecs-compose-examples/#
+https://docs.docker.com/cloud/ecs-integration/#install-the-docker-compose-cli-on-linux
+https://docs.docker.com/cloud/ecs-compose-examples/
+https://github.com/awslabs/amazon-ecr-credential-helper
+
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/get-set-up-for-amazon-ecs.html
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_AWSCLI_Fargate.html
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/create-container-image.html
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/platform-linux-fargate.html
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-agent-install.html
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-account-settings.html
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html
+https://docs.amazonaws.cn/en_us/AmazonECS/latest/developerguide/troubleshoot-task-iam-roles.html
+https://docs.amazonaws.cn/en_us/AmazonECS/latest/developerguide/troubleshoot-task-iam-roles.html
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-account-settings.html
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/platform-linux-fargate.html
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html
+
+
+
+https://aws.amazon.com/de/blogs/compute/a-guide-to-locally-testing-containers-with-amazon-ecs-local-endpoints-and-docker-compose/
+
+Types of Instances
+ECS supports two types of instances, EC2 and Fargate.
+
+Amazon recommends using Fargate type of instances, but it has a drawback. As a Fargate container is managed by AWS, a developer doesn’t have login access to the container and hence any debugging needs to happen through the logs available on CloudWatch. This can sometimes be very time consuming, especially when you are debugging an application which needs to be deployed in a Docker image.
+
+
+created ECS Cluster
+use Docker image from ECR
+
+Issues faced while setting up FARGATE instance type
+
+ECS Task throws the following error and fails to start.
+
+com.amazonaws.SdkClientException: Unable to load AWS credentials from any provider in the chain [EnvironmentVariableCredentialsProvider: Unable to load AWS credentials from environment variables (AWS_ACCESS_KEY_ID (or AWS_ACCESS_KEY) and AWS_SECRET_KEY (or AWS_SECRET_ACCESS_KEY)),
+com.amazonaws.auth.InstanceProfileCredentialsProvider@3c43d5a1: Unable to load credentials from service endpoint
+
+AWS Credentials
+
+curl 161.224.110.2$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI
+output:
+{
+  "RoleArn": "arn:aws:iam::111111111111:role/test-service",
+  "AccessKeyId": "HOTELSIFDSNLCKFN",
+  "SecretAccessKey": "REDACTED",
+  "Token": "REDACTED",
+  "Expiration": "2017-08-10T02:01:43Z"
+}
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Creating a container image for use on Amazon ECS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/create-container-image.html
+
+sudo yum update -y
+sudo amazon-linux-extras install docker
+sudo service docker start
+sudo systemctl enable docker
+sudo usermod -a -G docker ec2-user
+docker info
+
+
+Create a Docker image
+
+touch Dockerfile
+
+.....
+
+FROM ubuntu:18.04
+
+# Install dependencies
+RUN apt-get update && \
+ apt-get -y install apache2
+
+# Install apache and write hello world message
+RUN echo 'Hello World!' > /var/www/html/index.html
+
+# Configure apache
+RUN echo '. /etc/apache2/envvars' > /root/run_apache.sh && \
+ echo 'mkdir -p /var/run/apache2' >> /root/run_apache.sh && \
+ echo 'mkdir -p /var/lock/apache2' >> /root/run_apache.sh && \
+ echo '/usr/sbin/apache2 -D FOREGROUND' >> /root/run_apache.sh && \
+ chmod 755 /root/run_apache.sh
+
+EXPOSE 80
+
+CMD /root/run_apache.sh
+
+.....
+
+docker build -t hello-world .
+docker images --filter reference=hello-world
+
+docker run -t -i -p 80:80 hello-world
+docker-machine ip machine-name
+
+
+Push your image to Amazon Elastic Container Registry
+
+# reate an Amazon ECR repository
+aws ecr create-repository --repository-name hello-repository --region region
+
+# Tag image
+docker tag hello-world aws_account_id.dkr.ecr.region.amazonaws.com/hello-repository
+
+# Run the aws ecr get-login-password command
+docker login -u AWS -p $(aws ecr get-login-password --region REGION) aws_account_id.dkr.ecr.REGION.amazonaws.com
+
+# Push the image to Amazon ECR
+docker push aws_account_id.dkr.ecr.region.amazonaws.com/hello-repository
+
+# Clean up after test
+aws ecr delete-repository --repository-name hello-repository --region region --force
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Creating a cluster with a Fargate Linux task using the AWS CLI
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_AWSCLI_Fargate.html
+
+Create a Cluster
+
+# Create cluster
+aws ecs create-cluster --cluster-name fargate-cluster
+
+# Register a Linux Task Definition
+
+{
+    "family": "sample-fargate",
+    "networkMode": "awsvpc",
+    "containerDefinitions": [
+        {
+            "name": "fargate-app",
+            "image": "public.ecr.aws/docker/library/httpd:latest",
+            "portMappings": [
+                {
+                    "containerPort": 80,
+                    "hostPort": 80,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "entryPoint": [
+                "sh",
+		"-c"
+            ],
+            "command": [
+                "/bin/sh -c \"echo '<html> <head> <title>Amazon ECS Sample App</title> <style>body {margin-top: 40px; background-color: #333;} </style> </head><body> <div style=color:white;text-align:center> <h1>Amazon ECS Sample App</h1> <h2>Congratulations!</h2> <p>Your application is now running on a container in Amazon ECS.</p> </div></body></html>' >  /usr/local/apache2/htdocs/index.html && httpd-foreground\""
+            ]
+        }
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "256",
+    "memory": "512"
+}
+
+
+The above example JSON can be passed to the AWS CLI in two ways: You can save the task definition JSON as a file and pass it with the --cli-input-json file://path_to_file.json option.
+
+
+# To use a JSON file for container definitions:
+aws ecs register-task-definition --cli-input-json file://$HOME/tasks/fargate-task.json
+
+# List Task Definitions
+aws ecs list-task-definitions
+
+
+
+
+Create a Service
+
+using a private subnet.
+
+aws ecs create-service --cluster fargate-cluster --service-name fargate-service --task-definition sample-fargate:1 --desired-count 1 --launch-type "FARGATE" --network-configuration "awsvpcConfiguration={subnets=[subnet-abcd1234],securityGroups=[sg-abcd1234]}"
+
+ using a public subnet.
+
+aws ecs create-service --cluster fargate-cluster --service-name fargate-service --task-definition sample-fargate:1 --desired-count 1 --launch-type "FARGATE" --network-configuration "awsvpcConfiguration={subnets=[subnet-abcd1234],securityGroups=[sg-abcd1234],assignPublicIp=ENABLED}"
+
+
+List Services
+
+aws ecs list-services --cluster fargate-cluster
+
+
+Describe the Running Service
+
+aws ecs describe-services --cluster fargate-cluster --services fargate-service
+
+
+{
+    "services": [
+        {
+            "status": "ACTIVE",
+            "taskDefinition": "arn:aws:ecs:region:aws_account_id:task-definition/sample-fargate:1",
+            "pendingCount": 2,
+            "launchType": "FARGATE",
+            "loadBalancers": [],
+            "roleArn": "arn:aws:iam::aws_account_id:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS",
+            "placementConstraints": [],
+            "createdAt": 1510811361.128,
+            "desiredCount": 2,
+            "networkConfiguration": {
+                "awsvpcConfiguration": {
+                    "subnets": [
+                        "subnet-abcd1234"
+                    ],
+                    "securityGroups": [
+                        "sg-abcd1234"
+                    ],
+                    "assignPublicIp": "DISABLED"
+                }
+            },
+            "platformVersion": "LATEST",
+            "serviceName": "fargate-service",
+            "clusterArn": "arn:aws:ecs:region:aws_account_id:cluster/fargate-cluster",
+            "serviceArn": "arn:aws:ecs:region:aws_account_id:service/fargate-service",
+            "deploymentConfiguration": {
+                "maximumPercent": 200,
+                "minimumHealthyPercent": 100
+            },
+            "deployments": [
+                {
+                    "status": "PRIMARY",
+                    "networkConfiguration": {
+                        "awsvpcConfiguration": {
+                            "subnets": [
+                                "subnet-abcd1234"
+                            ],
+                            "securityGroups": [
+                                "sg-abcd1234"
+                            ],
+                            "assignPublicIp": "DISABLED"
+                        }
+                    },
+                    "pendingCount": 2,
+                    "launchType": "FARGATE",
+                    "createdAt": 1510811361.128,
+                    "desiredCount": 2,
+                    "taskDefinition": "arn:aws:ecs:region:aws_account_id:task-definition/sample-fargate:1",
+                    "updatedAt": 1510811361.128,
+                    "platformVersion": "0.0.1",
+                    "id": "ecs-svc/9223370526043414679",
+                    "runningCount": 0
+                }
+            ],
+            "events": [
+                {
+                    "message": "(service fargate-service) has started 2 tasks: (task 53c0de40-ea3b-489f-a352-623bf1235f08) (task d0aec985-901b-488f-9fb4-61b991b332a3).",
+                    "id": "92b8443e-67fb-4886-880c-07e73383ea83",
+                    "createdAt": 1510811841.408
+                },
+                {
+                    "message": "(service fargate-service) has started 2 tasks: (task b4911bee-7203-4113-99d4-e89ba457c626) (task cc5853e3-6e2d-4678-8312-74f8a7d76474).",
+                    "id": "d85c6ec6-a693-43b3-904a-a997e1fc844d",
+                    "createdAt": 1510811601.938
+                },
+                {
+                    "message": "(service fargate-service) has started 2 tasks: (task cba86182-52bf-42d7-9df8-b744699e6cfc) (task f4c1ad74-a5c6-4620-90cf-2aff118df5fc).",
+                    "id": "095703e1-0ca3-4379-a7c8-c0f1b8b95ace",
+                    "createdAt": 1510811364.691
+                }
+            ],
+            "runningCount": 0,
+            "placementStrategy": []
+        }
+    ],
+    "failures": []
+}
+
+
+Test
+
+aws ecs list-tasks --cluster fargate-cluster --service fargate-service
+aws ecs describe-tasks --cluster fargate-cluster --tasks arn:aws:ecs:us-east-1:123456789012:task/service/EXAMPLE
+aws ec2 describe-network-interfaces --network-interface-id  eni-0fa40520aeEXAMPLE
+
+
+Clean Up
+
+
+aws ecs delete-service --cluster fargate-cluster --service fargate-service --force
+aws ecs delete-cluster --cluster fargate-cluster
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Creating a cluster with an EC2 task using the AWS CLI
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Create a Cluster
+
+aws ecs create-cluster --cluster-name MyCluster
+
+Launch an Instance with the Amazon ECS AMI
+List Container Instances
+
+aws ecs list-container-instances --cluster default
+
+Describe your Container Instance
+
+aws ecs describe-container-instances --cluster default --container-instances container_instance_ID
+
+Register a Task Definition
+
+
+{
+  "containerDefinitions": [
+    {
+      "name": "sleep",
+      "image": "busybox",
+      "cpu": 10,
+      "command": [
+        "sleep",
+        "360"
+      ],
+      "memory": 10,
+      "essential": true
+    }
+  ],
+  "family": "sleep360"
+}
+
+
+
+
+To use a JSON file for container definitions:
+
+aws ecs register-task-definition --cli-input-json file://$HOME/tasks/sleep360.json
+
+
+To use a JSON string for container definitions:
+
+
+aws ecs register-task-definition --family sleep360 --container-definitions "[{\"name\":\"sleep\",\"image\":\"busybox\",\"cpu\":10,\"command\":[\"sleep\",\"360\"],\"memory\":10,\"essential\":true}]"
+
+
+List Task Definitions
+
+
+aws ecs list-task-definitions
+
+
+Run a Task
+
+aws ecs run-task --cluster default --task-definition sleep360:1 --count 1
+
+List Tasks
+
+aws ecs list-tasks --cluster default
+
+Describe the Running Task
+
+aws ecs describe-tasks --cluster default --task task_ID
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Specifying sensitive data using Secrets Manager secrets
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/specifying-sensitive-data-tutorial.html
+
+Create an Secrets Manager secret
+Update your task execution IAM role
+
+In order for Amazon ECS to retrieve the sensitive data from your Secrets Manager secret, you must have the Amazon ECS task execution role and reference it in your task definition.
+
+
+
+To update your task execution IAM role
+Use the IAM console to update your task execution role with the required permissions.
+
+Open the IAM console at https://console.aws.amazon.com/iam/.
+
+In the navigation pane, choose Roles.
+
+Search the list of roles for ecsTaskExecutionRole and select it.
+
+Choose Permissions, Add inline policy.
+
+Choose the JSON tab and specify the following JSON text, ensuring that you specify the full ARN of the Secrets Manager secret you created in step 1.
+
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:GetSecretValue"
+            ],
+            "Resource": [
+                "arn:aws:secretsmanager:region:aws_account_id:secret:username_value-u9bH6K"
+            ]
+        }
+    ]
+}
+Choose Review policy. For Name specify ECSSecretsTutorial, then choose Create policy.
+
+
+
+Step 3: Create an Amazon ECS task definition
+
+You can use the Amazon ECS console to create a task definition that references a Secrets Manager secret.
+
+To create a task definition that specifies a secret
+Use the IAM console to update your task execution role with the required permissions.
+
+Open the Amazon ECS console at https://console.aws.amazon.com/ecs/.
+
+In the navigation pane, choose Task Definitions, Create new Task Definition.
+
+On the Select launch type compatibility page, choose EC2 and choose Next step.
+
+Choose Configure via JSON and enter the following task definition JSON text, ensuring that you specify the full ARN of the Secrets Manager secret you created in step 1 and the task execution IAM role you updated in step 2. Choose Save.
+
+
+{
+    "executionRoleArn": "arn:aws:iam::aws_account_id:role/ecsTaskExecutionRole",
+    "containerDefinitions": [
+        {
+            "entryPoint": [
+                "sh",
+                "-c"
+            ],
+            "portMappings": [
+                {
+                    "hostPort": 80,
+                    "protocol": "tcp",
+                    "containerPort": 80
+                }
+            ],
+            "command": [
+                "/bin/sh -c \"echo '<html> <head> <title>Amazon ECS Sample App</title> <style>body {margin-top: 40px; background-color: #333;} </style> </head><body> <div style=color:white;text-align:center> <h1>Amazon ECS Sample App</h1> <h2>Congratulations!</h2> <p>Your application is now running on a container in Amazon ECS.</p> </div></body></html>' >  /usr/local/apache2/htdocs/index.html && httpd-foreground\""
+            ],
+            "cpu": 10,
+            "secrets": [
+                {
+                    "valueFrom": "arn:aws:secretsmanager:region:aws_account_id:secret:username_value-u9bH6K",
+                    "name": "username_value"
+                }
+            ],
+            "memory": 300,
+            "image": "httpd:2.4",
+            "essential": true,
+            "name": "ecs-secrets-container"
+        }
+    ],
+    "family": "ecs-secrets-tutorial"
+}
+Review the settings and then choose Create.
+
+Step 4: Create an Amazon ECS cluster
+You can use the Amazon ECS console to create a cluster containing a container instance to run the task on. If you have an existing cluster with at least one container instance registered to it with the available resources to run one instance of the task definition created for this tutorial you can skip to the next step.
+
+For this tutorial we will be creating a cluster with one t2.micro container instance using the Amazon ECS-optimized Amazon Linux 2 AMI.
+
+To create a cluster
+Use the Amazon ECS console to create a cluster and register one container instance to it.
+
+Open the Amazon ECS console at https://console.aws.amazon.com/ecs/.
+
+From the navigation bar, select the Region that contains both the Secrets Manager secret and the Amazon ECS task definition you created.
+
+In the navigation pane, choose Clusters.
+
+On the Clusters page, choose Create Cluster.
+
+For EC2 instance type, choose t2.micro.
+
+For Key pair, choose a key pair to add to the container instance.
+
+Leave all other fields at their default values and choose Create.
+
+
+Step 5: Run an Amazon ECS task
+
+
+You can use the Amazon ECS console to run a task using the task definition you created. For this tutorial we will be running a task using the EC2 launch type, using the cluster we created in the previous step.
+
+To run a task
+Open the Amazon ECS console at https://console.aws.amazon.com/ecs/.
+
+In the navigation pane, choose Task Definitions and select the ecs-secrets-tutorial task definition we created.
+
+Select the latest revision of the task definition and then choose Actions, Run Task.
+
+For Launch Type, choose EC2.
+
+For Cluster, choose the ecs-secrets-tutorial cluster we created in the previous step.
+
+For Task tagging configuration, deselect Enable ECS managed tags. They are unnecessary for the purposes of this tutorial.
+
+Review your task information and choose Run Task.
+
+
+
+
+Step 6: Verify
+------------------------
+You can verify all of the steps were completed successfully and the environment variable was created properly in your container using the following steps.
+
+To verify that the environment variable was created
+Find the public IP or DNS address for your container instance.
+
+Open the Amazon ECS console at https://console.aws.amazon.com/ecs/.
+
+Select the ecs-secrets-tutorial cluster that hosts your container instance.
+
+On the Cluster page, choose ECS Instances.
+
+On the Container Instance column, select the container instance to connect to.
+
+On the Container Instance page, record the Public IP or Public DNS for your instance.
+
+If you are using a macOS or Linux computer, connect to your instance with the following command, substituting the path to your private key and the public address for your instance:
+
+
+$ ssh -i /path/to/my-key-pair.pem ec2-user@ec2-198-51-100-1.compute-1.amazonaws.com
+
+List the containers running on the instance. Note the container ID for ecs-secrets-tutorial container.
+docker ps
+
+Connect to the ecs-secrets-tutorial container using the container ID from the output of the previous step.
+docker exec -it container_ID /bin/bash
+
+Use the echo command to print the value of the environment variable.
+echo $username_value
+
+If the tutorial was successful, you should see the following output:
+password_value
+
+
+Step 7: Clean up
+------------------------
+When you are finished with this tutorial, you should clean up the associated resources to avoid incurring charges for unused resources.
+
+To clean up the resources
+Open the Amazon ECS console at https://console.aws.amazon.com/ecs/.
+
+Select the ecs-secrets-tutorial cluster you created.
+
+On the Cluster page, choose Delete Cluster.
+
+Enter the delete cluster confirmation phrase and choose Delete. This will take several minutes but will clean up all of the Amazon ECS cluster resources.
+
+Open the IAM console at https://console.aws.amazon.com/iam/.
+
+In the navigation pane, choose Roles.
+
+Search the list of roles for ecsTaskExecutionRole and select it.
+
+Choose Permissions, then choose the X next to ECSSecretsTutorial. Choose Remove to confirm the removal of the inline policy.
+
+Open the Secrets Manager console at https://console.aws.amazon.com/secretsmanager/.
+
+Select the username_value secret you created and choose Actions, Delete secret.
+
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Listening for Amazon ECS CloudWatch Events
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs_cwet.html
+
+Step 1: Create the Lambda function
+Step 2: Register an event rule
+Step 3: Create a task definition
+Step 4: Test your rule
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Install the Docker Compose CLI on Linux
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+https://docs.docker.com/cloud/ecs-integration/#install-the-docker-compose-cli-on-linux
+
+
+curl -L https://raw.githubusercontent.com/docker/compose-cli/main/scripts/install/install_linux.sh | sh
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Deploying Docker containers on ECS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+https://github.com/docker/compose-cli/blob/main/docs/ecs-architecture.md
+https://docs.docker.com/cloud/ecs-integration/#install-the-docker-compose-cli-on-linux
+https://github.com/docker/compose-cli/blob/main/docs/ecs-architecture.md
+https://docs.docker.com/cloud/ecs-compose-examples/
+https://docs.docker.com/cloud/ecs-compose-examples/
+
+docker context create ecs myecscontext
+docker context use myecscontext
+docker compose up
+docker compose down
+
+docker compose --file mycomposefile.yaml up. --project-name myecsproject
+
+
+View application logs
+
+docker compose logs
+docker compose --project-name PROJECT logs
+docker compose --file /path/to/docker-compose.yaml logs
+
+
+
+Private Docker images
+------------------------------------
+create a token.json
+{
+  "username":"DockerHubUserName",
+  "password":"DockerHubAccessToken"
+}
+
+docker secret create dockerhubAccessToken token.json
+
+Once created, you can use this ARN in your Compose file using x-aws-pull_credentials custom extension with the Docker image URI for your service.
+
+services:
+  worker:
+    image: mycompany/privateimage
+    x-aws-pull_credentials: "arn:aws:secretsmanager:eu-west-3:12345:secret:DockerHubAccessToken"
+
+
+
+Volumes
+------------------------------------
+
+A basic compose service using a volume can be declared like this:
+
+
+services:
+  nginx:
+    image: nginx
+    volumes:
+      - mydata:/some/container/path
+volumes:
+  mydata:
+
+
+if required, the initial file system can be customized using driver-opts:
+
+
+volumes:
+  my-data:
+    driver_opts:
+      # Filesystem configuration
+      backup_policy: ENABLED
+      lifecycle_policy: AFTER_14_DAYS
+      performance_mode: maxIO
+      throughput_mode: provisioned
+      provisioned_throughput: 1
+
+To work around the possible conflict, you can set the volume uid and gid to be used when accessing a volume:
+
+
+volumes:
+  my-data:
+    driver_opts:
+      # Access point configuration
+      uid: 0
+      gid: 0
+
+
+Secrets
+----------------------
+
+You can pass secrets to your ECS services using Docker model to bind sensitive data as files under /run/secrets. If your Compose file declares a secret as file, such a secret will be created as part of your application deployment on ECS. If you use an existing secret as external: true reference in your Compose file, use the ECS Secrets Manager full ARN as the secret name:
+
+services:
+  webapp:
+    image: ...
+    secrets:
+      - foo
+
+secrets:
+  foo:
+    name: "arn:aws:secretsmanager:eu-west-3:1234:secret:foo-ABC123"
+    external: true
+
+Secrets will be available at runtime for your service as a plain text file /run/secrets/foo.
+
+
+services:
+  webapp:
+    image: ...
+    secrets:
+      - foo
+
+secrets:
+  foo:
+    name: "arn:aws:secretsmanager:eu-west-3:1234:secret:foo-ABC123"
+    x-aws-keys:
+      - "bar"
+
+
+Auto scaling
+----------------------
+
+services:
+  foo:
+    deploy:
+      replicas: 3
+
+services:
+  foo:
+    deploy:
+      x-aws-autoscaling:
+        min: 1
+        max: 10 #required
+        cpu: 75
+        # mem: - mutualy exlusive with cpu
+
+
+IAM roles
+----------------------
+services:
+  foo:
+    x-aws-policies:
+      - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+
+services:
+  foo:
+    x-aws-role:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: "Allow"
+          Action:
+            - "some_aws_service"
+          Resource:
+            - "*"
+
+Tuning the CloudFormation template
+----------------------
+Adjusting Load Balancer http HealthCheck configuration
+
+services:
+  webapp:
+    image: acme/webapp
+    ports:
+      - "80:80"
+
+x-aws-cloudformation:
+  Resources:
+    WebappTCP80TargetGroup:
+      Properties:
+        HealthCheckPath: /health
+        Matcher:
+          HttpCode: 200-499
+
+
+Setting SSL termination by Load Balancer
+
+services:
+  webapp:
+    image: acme/webapp
+    ports:
+      - "80:80"
+
+x-aws-cloudformation:
+  Resources:
+    WebappTCP80Listener:
+      Properties:
+        Certificates:
+          - CertificateArn: "arn:aws:acm:certificate/123abc"
+        Protocol: HTTPS
+        Port: 443
+
+Using existing AWS network resources
+
+services:
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+
+
+aws ec2 describe-vpcs --filters Name=isDefault,Values=true --query 'Vpcs[0].VpcId
+aws ec2 describe-subnets --filters Name=vpc-id,Values=vpc-123456 --query 'Subnets[*].SubnetId
+
+aws elbv2 create-load-balancer --name myloadbalancer --type application --subnets "subnet-1234abcd" "subnet-6789ef00"
+
+networks:
+  back_tier:
+    external: true
+    name: "sg-1234acbd"
+
+
+Local simulation
+---------------------------------------------
+
+docker context create ecs --local-simulation ecsLocal
+
+
+
+#####################################################
+Docker Compose: From Local to Amazon ECS
+#####################################################
+https://www.docker.com/blog/docker-compose-from-local-to-amazon-ecs/
+https://github.com/docker/compose-cli/blob/main/INSTALL.md
+https://docs.docker.com/engine/context/working-with-contexts/
+
+
+curl -L https://raw.githubusercontent.com/docker/compose-cli/main/scripts/install/install_linux.sh | sh
+
+
+tree myproject/
+
+myproject/
+├── backend
+│   ├── Dockerfile
+│   ├── main.py
+│   └── requirements.txt
+├── compose.yaml
+└── frontend
+    ├── Dockerfile
+    └── nginx.conf
+
+
+
+cat compose.yaml
+
+services:
+frontend:
+  build: frontend
+  ports:
+    - 80:80
+  depends_on:
+    - backend
+backend:
+  build: backend
+
+
+docker compose up -d
+docker ps
+curl localhost:80
+docker compose down
+
+
+cat compose.yamlservices:
+frontend:
+  image: myhubuser/starter-front
+  build: frontend
+  ports:
+    - 80:80
+  depends_on:
+    - backend
+backend:
+  image: myhubuser/starter-back
+  build: backend
+
+
+docker compose build
+docker login
+docker compose push
+
+
+
+Create an ECS Docker Context
+--------------------------------------------------------
+docker context create ecs myecscontext
+> AWS environment variables
+
+docker context create ecs myecscontext
+docker context ls
+docker context use myecscontext
+docker context ls
+
+Run the Compose application on Amazon ECS
+--------------------------------------------------------
+AWS_ACCESS_KEY="*****" AWS_SECRET_KEY="******" docker compose ls
+export AWS_ACCESS_KEY="*****"
+export AWS_SECRET_KEY="******"
+docker compose up
+docker compose convert  # converts the Compose file to a CloudFormation template
+docker compose ps
+curl mypro-LoadB-1ROWIHLNOG5RZ-1172432386.eu-west-3.elb.amazonaws.com:80
+docker compose logs
+docker compose down
+
+
+
+
+
+
+#####################################################
+Docker Context
+#####################################################
+
+https://docs.docker.com/engine/context/working-with-contexts/
+
+docker context ls
+docker context inspect default
+
+
+docker context create docker-test \
+  --default-stack-orchestrator=swarm \
+  --docker host=unix:///var/run/docker.sock
+
+docker context create k8s-test \
+  --default-stack-orchestrator=kubernetes \
+  --kubernetes config-file=/home/ubuntu/.kube/config \
+  --docker host=unix:///var/run/docker.sock
+
+docker context ls
+
+docker context use k8s-test
+export DOCKER_CONTEXT=docker-test
+docker --context production container ls
+
+
+Exporting and importing Docker contexts
+------------------------------------------
+docker context export docker-test
+cat docker-test.dockercontext
+
+docker context import docker-test docker-test.dockercontext
+
+
+Exporting a Kubernetes context
+------------------------------------------
+docker context export k8s-test --kubeconfig
+cat k8s-test.kubeconfig
+docker context update k8s-test --description "Test Kubernetes cluster"
+
+
+Multi-platform images
+------------------------------------------
+
+docker run --privileged --rm tonistiigi/binfmt --install all
+docker context ls
+docker buildx create --use --name mybuild node-amd64
+docker buildx create --append --name mybuild node-arm64
+docker buildx build --platform linux/amd64,linux/arm64
+
+
+# syntax=docker/dockerfile:1
+FROM --platform=$BUILDPLATFORM golang:alpine AS build
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM" > /log
+FROM alpine
+COPY --from=build /log /log
+
+docker buildx ls
+docker buildx create --name mybuilder --driver docker-container --bootstrap
+docker buildx use mybuilder
+docker buildx inspect
+
+# syntax=docker/dockerfile:1
+FROM alpine:3.16
+RUN apk add curl
+
+############################################################
+Deploy applications on Amazon ECS using Docker Compose
+############################################################
+https://aws.amazon.com/de/blogs/containers/deploy-applications-on-amazon-ecs-using-docker-compose/
+https://github.com/docker/compose-cli
+https://github.com/docker/compose-cli/blob/main/INSTALL.md
+
+
+curl -L https://raw.githubusercontent.com/docker/compose-cli/main/scripts/install/install_linux.sh | sh
+
+git clone https://github.com/mreferre/yelb
+docker-compose up -d
+http://localhost
+
+docker context create ecs myecscontext
+docker context ls
+docker context use myecscontext
+docker context ls
+docker compose up
+docker compose ps
+
+
+
+
+Docker Compose
+
+services:
+  ecsworker-in-region:
+    environment:
+        - SQS_QUEUE_URL=https://sqs.us-east-1.amazonaws.com/123456789/main-queue
+        - EFS_SOURCE_FOLDER=/data/sourcefolder/
+        - EFS_DESTINATION_FOLDER=/data/destinationfolder/
+        - AWS_REGION=us-east-1
+    image: 123456789.dkr.ecr.us-east-1.amazonaws.com/ecsworker:amd64-slim
+    volumes:
+        - efs-share:/data
+    x-aws-role:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action: sqs:*
+          Resource: arn:aws:sqs:us-east-1:123456789:main-queue
+volumes:
+  efs-share:
+
+
+docker compose up
+docker context create ecs --local-simulation ecsLocal
+docker context use ecsLocal
+docker context ls
+
+echo $(aws ecr get-login-password --region us-east-1) | docker login --password-stdin --username AWS 123456789.dkr.ecr.us-east-1.amazonaws.com/ecsworker
+
+docker compose up
+
+
+############################################################
+DOCKER AMAZON ECS PLUGIN
+############################################################
+
+https://docker.awsworkshop.io/31_docker_ecs_integration.html
+https://github.com/anshrma/docker-compose-ecs-sample
+https://fig.io/manual/docker/context/create/ecs
+
+docker context ls
+docker context create ecs --help
+
+docker context create ecs ecs-workshop
+>  AWS environment variables
+docker context use ecs-workshop
+docker context ls
+
+
+Create a secret in AWS Secrets Manager using your Docker Hub credentials
+---------------------
+touch docker-pull-creds.json
+{
+   "username":"YOUR DOCKERHUB USERID",
+   "password":"YOUR DOCKERHUB TOKEN or PASSWORD"
+}
+
+DOCKER_PULL_SECRETS_MANAGER=$(docker secret create pullcredentials docker-pull-creds.json)
+echo $DOCKER_PULL_SECRETS_MANAGER
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+docker-compose.yml
+
+services:
+  db:
+    image: mysql:8.0.19
+    command: '--default-authentication-plugin=mysql_native_password'
+    restart: always
+    secrets:
+      - db-password
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - backnet
+    environment:
+      - MYSQL_DATABASE=example
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/db-password
+  backend:
+    build:
+      context: ./backend
+    restart: always
+    secrets:
+      - db-password
+    # ports:
+    #   - 5000:5000
+    networks:
+      - backnet
+      - frontnet
+    depends_on:
+      - db
+  proxy:
+    build:
+      context: ./proxy
+    restart: always
+    ports:
+      - 3000:80
+    networks:
+      - frontnet
+    depends_on:
+      - backend
+volumes:
+  db-data:
+secrets:
+  db-password:
+    # This is mounted to /run/secrets/ onto the container using it
+    file: db/password.txt
+networks:
+  backnet:
+  frontnet:
+
+
+docker compose build
+docker images
+
+Push images to Docker Hub
+-----------------------------------------------
+DOCKER_HUB_ID=FILL_ME_WITH_YOUR_DOCKER_HUB_ID
+docker login -u ${DOCKER_HUB_ID}
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+docker tag docker-compose-ecs-sample_backend:latest ${DOCKER_HUB_ID}/docker-compose-ecs-sample_backend:latest
+docker tag docker-compose-ecs-sample_frontend:latest ${DOCKER_HUB_ID}/docker-compose-ecs-sample_frontend:latest
+
+docker push ${DOCKER_HUB_ID}/docker-compose-ecs-sample_backend:latest
+docker push ${DOCKER_HUB_ID}/docker-compose-ecs-sample_frontend:latest
+
+
+
+
+Run the application locally
+
+docker compose up -d
+curl http://localhost:3000
+curl http://localhost:3000/add/2/name2
+curl http://localhost:3000/add/3/name3
+curl http://localhost:3000/add/4/name4
+
+docker volume ls
+docker volume inspect docker-compose-ecs-sample_db-data
+docker network ls
+docker compose down
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+MIGRATE THE APPLICATION TO AWS ECS
+-----------------------------------------------
+https://docker.awsworkshop.io/31_docker_ecs_integration/10_migrate_to_ecs.html
+
+cat  docker-compose.prod.migrate.yaml
+docker compose up
+
+DOCKER_HUB_ID=${DOCKER_HUB_ID} DOCKER_PULL_SECRETS_MANAGER=${DOCKER_PULL_SECRETS_MANAGER} docker compose -f docker-compose.yaml -f  docker-compose.prod.migrate.yaml up
+
+DOCKER_HUB_ID=${DOCKER_HUB_ID} DOCKER_PULL_SECRETS_MANAGER=${DOCKER_PULL_SECRETS_MANAGER} docker compose -f docker-compose.yaml -f  docker-compose.prod.migrate.yaml convert > aws-cloudformation.yaml
+
+cat aws-cloudformation.yaml
+
+
+Enable Autoscaling for AWS Fargate tasks
+-------------------------------------------
+docker-compose.prod.scaling.yaml
+
+services:
+backend:
+cap_add:
+  - SYS_PTRACE
+deploy:
+  replicas: 2
+  # resources:
+  #   limits:
+  #     memory: 2Gb
+  #     cpus: '0.5'
+  x-aws-autoscaling:
+      min: 2
+      max: 10 #required
+      cpu: 75
+
+
+aws secretsmanager create-secret --name github-oauth-token
+          --description "Secret for GitHub" --secret-string "insert your GitHub OAuth token"
+
+aws cloudformation create-stack --stack-name docker-compose-code-pipeline --template-body file://operations/code-pipeline-cloudformation.yaml --capabilities CAPABILITY_NAMED_IAM --enable-termination-protection --region us-east-1 --parameters DockerPullSecretsManagerArn=${DOCKER_PULL_SECRETS_MANAGER} GitHubOwner='your GitHub username'
+
+CloudFormation template:
+
+
+        CodeBuildProject:
+    Type: 'AWS::CodeBuild::Project'
+    Properties:
+      Name: !Ref 'AWS::StackName'
+      ServiceRole: !GetAtt
+        - CodeBuildServiceRole
+        - Arn
+      Source:
+        Type: GITHUB
+        Location: !Sub 'https://github.com/${GitHubOwner}/${GitHubRepository}.git'
+        BuildSpec: buildspec.yaml
+        Auth:
+          Type: OAUTH
+          Resource: !Ref CodeBuildSourceCredential
+      Artifacts:
+        Type: NO_ARTIFACTS
+      Triggers:
+        Webhook: true
+        FilterGroups:
+          - - Type: EVENT
+              Pattern: >-
+                PULL_REQUEST_CREATED, PULL_REQUEST_UPDATED,
+                PULL_REQUEST_REOPENED, PULL_REQUEST_MERGED,
+            - Type: BASE_REF
+              Pattern: !Sub '^refs/heads/${GitHubBranch}$'
+          - - Type: EVENT
+              Pattern: >-
+                PUSH
+            - Type: HEAD_REF
+              Pattern: '^refs/tags/.*'
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: !Ref CodeBuildEnvironmentImage
+        EnvironmentVariables:
+          - Name: DOCKERHUB_USERNAME
+            Type: SECRETS_MANAGER
+            Value: $DOCKER_PULL_SECRETS_MANAGER
+          - Name: DOCKERHUB_PASSWORD
+            Type: SECRETS_MANAGER
+            Value: $DOCKER_PULL_SECRETS_MANAGER
+
+Buildspec Build and Deploy
+
+       version: 0.2
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+    commands:
+      - echo "Performing manual install of compose cli"
+      - curl -L -o docker-linux-amd64.tar.gz https://github.com/docker/compose-cli/releases/download/v1.0.10/docker-linux-amd64.tar.gz
+      - tar xzf docker-linux-amd64.tar.gz
+      - chmod +x docker/docker
+      - ls -ltr
+      - docker/docker compose --help
+      - which docker
+      - ln -s $(which docker) /usr/local/bin/com.docker.cli
+  pre_build:
+    commands:
+      - echo Logging in to Docker Hub...
+      - docker login --username $DOCKERHUB_USERNAME --password $DOCKERHUB_PASSWORD
+
+  build:
+    commands:
+      - echo Build started on `date`
+      - docker/docker compose build
+      - echo "Tagging Docker image for Docker Hub"
+      - docker images
+      - docker tag src_backend:latest ${DOCKERHUB_USERNAME}/docker-compose-ecs-sample_backend:${CODEBUILD_RESOLVED_SOURCE_VERSION}
+      - docker tag src_frontend:latest ${DOCKERHUB_USERNAME}/docker-compose-ecs-sample_frontend:${CODEBUILD_RESOLVED_SOURCE_VERSION}
+      - docker push ${DOCKERHUB_USERNAME}/docker-compose-ecs-sample_backend:${CODEBUILD_RESOLVED_SOURCE_VERSION}
+      - docker push ${DOCKERHUB_USERNAME}/docker-compose-ecs-sample_frontend:${CODEBUILD_RESOLVED_SOURCE_VERSION}
+
+  post_build:
+    commands:
+      - echo "build successful"
+
+
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+    commands:
+      - echo "Performing manual install of compose cli"
+      - curl -L -o docker-linux-amd64.tar.gz https://github.com/docker/compose-cli/releases/download/v1.0.10/docker-linux-amd64.tar.gz
+      - tar xzf docker-linux-amd64.tar.gz
+      - chmod +x docker/docker
+      - ls -ltr
+      - docker/docker compose --help
+      - which docker
+      - ln -s $(which docker) /usr/local/bin/com.docker.cli
+  pre_build:
+    commands:
+      - echo Logging in to Docker Hub...
+      - docker login --username $DOCKERHUB_USERNAME --password $DOCKERHUB_PASSWORD
+      - STS_RESPONSE=$(curl 169.254.170.2$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI)
+      - export AWS_ACCESS_KEY_ID=$(echo $STS_RESPONSE | jq .AccessKeyId | tr -d \")
+      - export AWS_SECRET_ACCESS_KEY=$(echo $STS_RESPONSE | jq .SecretAccessKey | tr -d \")
+      - export AWS_SESSION_TOKEN=$(echo $STS_RESPONSE | jq .Token | tr -d \")
+      - echo "Create Docker ECS context"
+      - docker/docker context create ecs ecs-workshop --from-env
+      - aws sts get-caller-identity
+      - echo "Change context to use ECS context"
+      - docker/docker context use ecs-workshop
+
+  build:
+    commands:
+      - DOCKER_HUB_ID=${DOCKERHUB_USERNAME} DOCKER_PULL_SECRETS_MANAGER=${DOCKER_PULL_SECRETS_MANAGER} docker/docker compose -f docker-compose.yaml -f  docker-compose.prod.migrate.yaml -p ${PROJECT_NAME} up
+
+  post_build:
+    commands:
+      - echo "deploy successful"
+
+
+
+TEST PIPELINE
+
+import os
+from flask import Flask
+import mysql.connector
+import uuid
+import os
+
+
+class DBManager:
+    def __init__(self):
+        password_file = os.environ.get('MY_SQL_PASSWORD_FILE','/run/secrets/db-password')
+        pf = open(password_file, 'r')
+        database = os.environ.get('MY_SQL_DATABASE','example')
+        host = os.environ.get('MY_SQL_HOST',"db")
+        user = os.environ.get('MY_SQL_USER',"root")
+        self.connection = mysql.connector.connect(
+            user=user,
+            password=pf.read(),
+            host=host, # name of the mysql service as set in the docker-compose file
+            database=database,
+            auth_plugin='mysql_native_password'
+        )
+        pf.close()
+        self.cursor = self.connection.cursor()
+
+    def populate_db(self):
+
+        self.cursor.execute('DROP TABLE IF EXISTS blog')
+        self.cursor.execute('CREATE TABLE blog (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, title VARCHAR(256))')
+        self.cursor.execute("insert into blog values(NULL,'initial load')")
+
+        self.connection.commit()
+
+    def insert_records(self,id,name):
+        data = (id,str(name))
+        query = (
+                "INSERT INTO blog(id,title)"
+                "VALUES (%s, %s)"
+                )
+        self.cursor.execute(query,data)
+        self.connection.commit()
+
+    def query_titles(self):
+        self.cursor.execute('SELECT title FROM blog')
+        rec = []
+        for c in self.cursor:
+            rec.append(c[0])
+        return rec
+
+
+server = Flask(__name__)
+conn = None
+
+@server.route('/')
+def listName():
+    global conn
+    if not conn:
+        conn = DBManager()
+        conn.populate_db()
+        #conn.insert_records()
+    rec = conn.query_titles()
+
+    response = ''
+    for c in rec:
+        response = response  + '<div>   ' + c + '</div>'
+    return response
+
+@server.route('/add/<id>/<name>')
+def addName(id,name):
+    global conn
+    if not conn:
+        conn = DBManager(password_file='/run/secrets/db-password')
+    conn.insert_records(id,name)
+    rec = conn.query_titles()
+
+    response = ''
+    for c in rec:
+        response = response  + '<div>   ' + c + '</div>'
+    return response
+
+@server.route('/test')
+def hello():
+    return "Hello World!"
+
+if __name__ == '__main__':
+    server.run()
+
+
+git add .
+git commit -m "adding test route to Flask app"
+git push
+docker compose ps
+
+docke-LoadB-ZUJVKEFNFM4J-ce26ed3e7fa4dce7.elb.us-east-1.amazonaws.com:3000/test
+
+
+
+
+
+------------------
+
+https://github.com/docker/compose-cli/issues/2068
+
+docker context create ecs --local-simulation abcdefgh
+docker --context abcdefgh compose --file my-compose.yml up
+
+
+
+
+######################################################################
+Building Multi-Architecture Docker Images With Buildx
+######################################################################
+https://medium.com/@artur.klauser/building-multi-architecture-docker-images-with-buildx-27d80f7e2408
+
+
+
+docker --version
+sudo apt-get install -y docker-ce
+
+
+docker buildx
+export DOCKER_CLI_EXPERIMENTAL=enabled
+cat $HOME/.docker/config.json
+
+docker version
+docker buildx
+
+sudo apt-get install -y qemu-user-static
+sudo apt-get install -y binfmt-support
+update-binfmts --version
+
+docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+docker buildx create --name mybuilder
+docker buildx use mybuilder
+docker buildx inspect --bootstrap
+docker buildx ls
+
+Dockerfile:
+
+FROM alpine:latest
+CMD echo “Running on $(uname -m)”
+
+docker buildx build … --load …
+
+export DOCKER_USER=’someuser’
+$ docker login -u “$DOCKER_USER”
+
+docker buildx build -t “${DOCKER_USER}/buildx-test:latest” \
+  --platform linux/amd64,linux/arm64,linux/ppc64le --push .
+
+docker buildx imagetools inspect “$DOCKER_USER/buildx-test:latest”
+docker run --rm “$DOCKER_USER/buildx-test:latest”
+docker inspect --format “{{.Architecture}}” “$DOCKER_USER/buildx-test:latest”
+
+sudo systemctl restart docker
+docker rmi “$DOCKER_USER/buildx-test:latest”
+docker run --rm --platform linux/aarch64 “$DOCKER_USER/buildx-test:latest”
+
+
+
+
+###############################################################################
+A Guide to Locally Testing Containers with Amazon ECS Local Endpoints and Docker Compose
+###############################################################################
+
+https://aws.amazon.com/de/blogs/compute/a-guide-to-locally-testing-containers-with-amazon-ecs-local-endpoints-and-docker-compose/
+https://github.com/awslabs/amazon-ecs-local-container-endpoints
+https://github.com/awslabs/amazon-ecr-credential-helper
+
+docker-compose.yml
+
+version: "2"
+services:
+  app:
+    build:
+      # Build an image from the Dockerfile in the current directory
+      context: .
+    ports:
+      - 8080:80
+    environment:
+      PORT: "80"
+
+docker-compose.override.yml
+
+version: "2"
+networks:
+    # This special network is configured so that the local metadata
+    # service can bind to the specific IP address that ECS uses
+    # in production
+    credentials_network:
+        driver: bridge
+        ipam:
+            config:
+                - subnet: "169.254.170.0/24"
+                  gateway: 169.254.170.1
+services:
+    # This container vends credentials to your containers
+    ecs-local-endpoints:
+        # The Amazon ECS Local Container Endpoints Docker Image
+        image: amazon/amazon-ecs-local-container-endpoints
+        volumes:
+          # Mount /var/run so we can access docker.sock and talk to Docker
+          - /var/run:/var/run
+          # Mount the shared configuration directory, used by the AWS CLI and AWS SDKs
+          # On Windows, this directory can be found at "%UserProfile%\.aws"
+          - $HOME/.aws/:/home/.aws/
+        environment:
+          # define the home folder; credentials will be read from $HOME/.aws
+          HOME: "/home"
+          # You can change which AWS CLI Profile is used
+          AWS_PROFILE: "default"
+        networks:
+            credentials_network:
+                # This special IP address is recognized by the AWS SDKs and AWS CLI
+                ipv4_address: "169.254.170.2"
+
+    # Here we reference the application container that we are testing
+    # You can test multiple containers at a time, simply duplicate this section
+    # and customize it for each container, and give it a unique IP in 'credentials_network'.
+    app:
+        depends_on:
+            - ecs-local-endpoints
+        networks:
+            credentials_network:
+                ipv4_address: "169.254.170.3"
+        environment:
+          AWS_DEFAULT_REGION: "us-east-1"
+          AWS_CONTAINER_CREDENTIALS_RELATIVE_URI: "/creds"
+
+
+
+docker-compose up
+
+Dockerfile
+
+FROM amazonlinux:latest
+RUN yum install -y iptables
+
+CMD iptables -t nat -A PREROUTING -p tcp -d 169.254.170.2 --dport 80 -j DNAT --to-destination 127.0.0.1:51679 \
+ && iptables -t nat -A OUTPUT -d 169.254.170.2 -p tcp -m tcp --dport 80 -j REDIRECT --to-ports 51679 \
+ && iptables-save \
+ && /bin/bash -c 'while true; do sleep 30; done;'
+
+docker build -t local-pause:latest .
+
+docker-compose.override.yml
+
+version: "2"
+services:
+    ecs-local-endpoints:
+        image: amazon/amazon-ecs-local-container-endpoints
+        volumes:
+          - /var/run:/var/run
+          - $HOME/.aws/:/home/.aws/
+        environment:
+          ECS_LOCAL_METADATA_PORT: "51679"
+          HOME: "/home"
+        network_mode: container:local-pause
+
+    app:
+        depends_on:
+            - ecs-local-endpoints
+        network_mode: container:local-pause
+        environment:
+          ECS_CONTAINER_METADATA_URI: "http://169.254.170.2/v3/containers/app"
+          AWS_CONTAINER_CREDENTIALS_RELATIVE_URI: "/creds"
+
+
+docker run -d -p 8080:8080 -p 3306:3306 --name local-pause --cap-add=NET_ADMIN local-pause
+
+
+Testing multiple applications with local Service Discovery
+
+docker-compose.override.yml
+
+version: "2"
+networks:
+    credentials_network:
+        driver: bridge
+        ipam:
+            config:
+                - subnet: "169.254.170.0/24"
+                  gateway: 169.254.170.1
+services:
+    # This container vends credentials to your containers
+    ecs-local-endpoints:
+        # The Amazon ECS Local Container Endpoints Docker Image
+        image: amazon/amazon-ecs-local-container-endpoints
+        volumes:
+          - /var/run:/var/run
+          - $HOME/.aws/:/home/.aws/
+        environment:
+          HOME: "/home"
+          AWS_PROFILE: "default"
+        networks:
+            credentials_network:
+                ipv4_address: "169.254.170.2"
+                aliases:
+                    - endpoints # settings for the containers which you are testing
+    frontend:
+        image: amazonlinux:latest
+        command: /bin/bash -c 'while true; do sleep 30; done;'
+        depends_on:
+            - ecs-local-endpoints
+        networks:
+            credentials_network:
+                ipv4_address: "169.254.170.3"
+        environment:
+          AWS_DEFAULT_REGION: "us-east-1"
+          AWS_CONTAINER_CREDENTIALS_RELATIVE_URI: "/creds"
+    backend:
+        image: nginx
+        networks:
+            credentials_network:
+                # define an alias for service discovery
+                aliases:
+                    - backend
+                ipv4_address: "169.254.170.4"
+
+
+
+
+
+
+###############################################################
+Amazon ECS CLI
+###############################################################
+
+https://github.com/aws/amazon-ecs-cli
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_CLI.html
+
+
+brew install gnupg
+brew install amazon-ecs-cli
+gpg --import amazon-ecs-public-key.gpg
+curl -o ecs-cli.asc https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-linux-amd64-latest.asc
+gpg --verify ecs-cli.asc /usr/local/bin/ecs-cli
+
+ecs-cli configure profile --profile-name profile_name --access-key $AWS_ACCESS_KEY_ID --secret-key $AWS_SECRET_ACCESS_KEY --session-token AWS_SESSION_TOKEN
+
+ecs-cli configure --cluster cluster_name --region region_name --config-name configuration_name
+ecs-cli configure profile default
+
+Using Credentials from ~/.aws/credentials, Assuming a Role, and Multi-Factor Authentication
+The --aws-profile flag and $AWS_PROFILE environment variable allow you to reference any named profile in ~/.aws/credentials
+
+Creating an ECS Cluster
+ecs-cli up
+ecs-cli up --keypair my-key --capability-iam --size 2
+aws ecs list-container-instances --cluster your-cluster-name
+ecs-cli up --cluster myCluster --empty
+
+ecs-cli up \
+  --capability-iam \
+  --extra-user-data my-shellscript \
+  --extra-user-data my-cloud-boot-hook \
+  --extra-user-data my-mime-multipart-archive \
+  --launch-type EC2
+
+ecs-cli up --launch-type FARGATE
+
+Starting/Running Tasks
+~~~~~~~~~~~~~~~~~~~~~~~
+version: '2'
+services:
+  web:
+    image: amazon/amazon-ecs-sample
+    ports:
+     - "80:80"
+
+ecs-cli compose up
+ecs-cli compose ps
+
+ecs-cli compose --project-name wordpress-test service create
+ecs-cli compose --project-name wordpress-test service start
+ecs-cli compose --project-name wordpress-test service ps
+
+ecs-params.yml
+
+
+version: 1
+task_definition:
+  ecs_network_mode: host
+  task_role_arn: myCustomRole
+  services:
+    logging:
+      essential: false
+    wordpress:
+      cpu_shares: 100
+      mem_limit: 500m
+    mysql:
+      cpu_shares: 105
+      mem_limit: 500m
+      mem_reservation: 450m
+  docker_volumes:
+    - name: database_volume
+      scope: shared
+      autoprovision: true
+      driver: local
+
+
+Example ecs-params.yml with network configuration with EC2 launch type:
+
+version: 1
+task_definition:
+  ecs_network_mode: awsvpc
+  services:
+    my_service:
+      essential: false
+
+run_params:
+  network_configuration:
+    awsvpc_configuration:
+      subnets:
+        - subnet-feedface
+        - subnet-deadbeef
+      security_groups:
+        - sg-bafff1ed
+        - sg-c0ffeefe
+
+Example ecs-params.yml with network configuration with FARGATE launch type:
+
+version: 1
+task_definition:
+  ecs_network_mode: awsvpc
+  task_execution_role: myFargateRole
+  task_size:
+    cpu_limit: 512
+    mem_limit: 2GB
+  services:
+    my_service:
+      essential: false
+
+run_params:
+  network_configuration:
+    awsvpc_configuration:
+      subnets:
+        - subnet-feedface
+        - subnet-deadbeef
+      security_groups:
+        - sg-bafff1ed
+        - sg-c0ffeefe
+      assign_public_ip: ENABLED
+
+Example ecs-params.yml with task placement:
+
+version: 1
+run_params:
+  task_placement:
+    strategy:
+      - field: memory
+        type: binpack
+      - field: attribute:ecs.availability-zone
+        type: spread
+      - type: random
+    constraints:
+      - expression: attribute:ecs.instance-type =~ t2.*
+        type: memberOf
+      - type: distinctInstance`
+
+
+
+ecs-cli compose --ecs-params my-ecs-params.yml up
+ecs-cli compose up
+ecs-cli compose --ecs-params my-ecs-params.yml up --launch-type FARGATE
+ecs-cli compose --ecs-params my-ecs-params.yml service up --launch-type FARGATE
+
+ecs-cli compose --project-name backend service up --private-dns-namespace tutorial --vpc vpc-04deee8176dce7d7d --enable-service-discovery
+ecs-cli compose --project-name frontend service up --private-dns-namespace tutorial --vpc vpc-04deee8176dce7d7d --enable-service-discovery
+ecs-cli compose --project-name frontend service up --update-service-discovery --dns-type SRV --dns-ttl 120 --healthcheck-custom-config-failure-threshold 2
+ecs-cli compose --project-name frontend service down
+ecs-cli compose --project-name backend service down --delete-namespace
+ecs-cli ps
+ecs-cli logs --task-id 4c2df707-a160-475e-9c16-15dfb9df01cc --container-name mysql
+ecs-cli push myRepository:latest --use-fips --debug
+ecs-cli registry-creds up ./cred_input.yml --role-name myTaskExecutionRole
+ecs-cli registry-creds up ./cred_input.yml --role-name myTaskExecutionRole
+
+
+version: "3"
+services:
+  web:
+    environment:
+      - SERVICE_NAME=web
+    image: my-registry.example.com/httpd
+    ports:
+      - "80:80"
+  log:
+    environment:
+      - SERVICE_NAME=log
+    image: my-registry.example.com/logging
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: myApps
+        awslogs-region: us-west-2
+        awslogs-stream-prefix: privateImageApp
+
+ecs-cli compose up
+
+ecs-cli check-attributes --container-instances 28c5abd2-360e-41a0-81d8-0afca2d08d9b,45510138-f24f-47c6-a418-71c46dd51f88,ae66e18e-1d46-47ff-81c5-647f0f1426ce,dffe7f91-8faa-4e00-983b-c58fd279cf6d --cluster practice-cluster --region us-east-2 --task-def fluentd-kinesis
+
+ecs-cli push --tags
+ecs-cli registry-creds up
+
+
+# Running Tasks Locally
+ecs-cli local create
+ecs-cli local up
+ecs-cli local ps
+ecs-cli local ps -f ./app-task-definition.json
+ecs-cli local ps --help
+ecs-cli local down
+ecs-cli local down --all
+
+or ~~~~~~~
+
+
+sudo curl -Lo /usr/local/bin/ecs-cli https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-linux-amd64-latest
+
+
+Install gpg using the package manager on your flavor of Linux.
+echo $PATH
+export PATH=$PATH:<path to GnuPG executable files>
+Create a text file in a text editor such as gedit.
+Save as public_key_filename.txt
+
+Add the following contents of the Amazon ECS PGP public key and save the file.
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v2
+...
+-----END PGP PUBLIC KEY BLOCK-----
+
+
+The details of the Amazon ECS PGP public key for reference:
+
+Key ID: BCE9D9A42D51784F
+Type: RSA
+Size: 4096/4096
+Expires: Never
+User ID: Amazon ECS
+Key fingerprint: F34C 3DDA E729 26B0 79BE AEC6 BCE9 D9A4 2D51 784F
+
+
+gpg --import <public_key_filename.txt>
+curl -Lo ecs-cli.asc https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-linux-amd64-latest.asc
+gpg --verify ecs-cli.asc /usr/local/bin/ecs-cli
+sudo chmod +x /usr/local/bin/ecs-cli
+ecs-cli --version
+
+ecs-cli configure profile --profile-name profile_name --access-key $AWS_ACCESS_KEY_ID --secret-key $AWS_SECRET_ACCESS_KEY
+ecs-cli configure --cluster cluster_name --default-launch-type launch_type --region region_name --config-name configuration_name
+
+
+
+Amazon ECS CLI profile flags:
+
+Amazon ECS profile (--ecs-profile)
+AWS profile (--aws-profile)
+
+Environment variables:
+
+ECS_PROFILE
+AWS_PROFILE
+AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_SESSION_TOKEN
+
+
+Amazon ECS CLI flags:
+
+Region flag (--region)
+Cluster config flag (--cluster-config)
+
+Environment variables—Attempts to fetch the region from the following environment variables:
+
+AWS_REGION
+AWS_DEFAULT_REGION
+
+AWS profile ‐ attempts to use the region from the AWS profile name:
+
+AWS_PROFILE environment variable
+AWS_DEFAULT_PROFILE environment variable (defaults to default)
+------------------------------------------------------------------------
+
+##########################################################
+ECS Tasks Memory
+##########################################################
+
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-optimize-cpu.html
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/cpu-options-supported-instances-values.html
+https://docs.aws.amazon.com/AmazonECS/latest/userguide/create-task-definition-classic.html
+https://docs.aws.amazon.com/AmazonECS/latest/userguide/task_definition_parameters.html
+https://www.stormforge.io/blog/aws-fargate-network-performance/
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/memory-management.html
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-agent-config.html
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/memory-management.html
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/memory-management.html#ecs-reserved-memory
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/bootstrap_container_instance.html
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/container-instance-spot.html
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/memory-optimized-instances.html
+
+https://youtu.be/Hq5cUQ1rLMM?t=629
+https://youtu.be/Hq5cUQ1rLMM?t=609
+
+
+c5.18xlarge 	vCPUs 72 	CPU cores  36
+
+Task memory (GB)
+
+(8 vCPU) Between 16 GB and 60 GB in 4 GB increments
+(16vCPU) Between 32 GB and 120 GB in 8 GB increments
+
+aws ecs register-task-definition --generate-cli-skeleton
+
+
+CPU Units	vCPU	Memory (MiB)	Price per hour (USD)
+256		    0.25	512		        0.019
+256		    0.25	2048		    0.03805
+512		    0.5	    1024		    0.038
+512		    0.5	    4096		    0.0761
+1024		1	    2048		    0.076
+1024		1	    8192		    0.1522
+2048		2	    4096		    0.152
+2048		2	    16384		    0.3044
+4096		4	    8192		    0.304
+4096		4	    30720		    0.5834
+
+
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/memory-optimized-instances.html
+https://parquantix.com/memory-optimized-ec2-instances/
+https://www.cloudysave.com/knowledge-base/ec2-memory-optimized-instances/
+https://www.amazonaws.cn/en/ec2/instance-types/
+https://www.msp360.com/resources/blog/ec2-instance-types/
+https://cloudacademy.com/blog/aws-ec2-instance-types-explained/
+https://spot.io/resources/aws-ec2-pricing/which-ec2-instance-type-is-right-for-you/
+https://www.densify.com/resources/ec2-instance-types
+https://www.cloudzero.com/blog/ec2-instance-types
+
+Instance type	Default vCPUs	Memory (GiB)
+
+r5.2xlarge	    8		64.00
+r5dn.2xlarge	8		64.00
+r6a.2xlarge	    8		64.00
+r6gd.2xlarge	8		64.00
+r6i.2xlarge	    8		64.00
+r6idn.2xlarge	8		64.00
+x2gd.xlarge	    4		64.00
+z1d.2xlarge	    8		64.00
+
+AWS Graviton processors
+AWS Graviton2: R6g, R6gd, X2gd
+
+AMD processors
+AMD EPYC 7000 series processors (AMD EPYC 7571): R5a, R5ad
+3rd generation AMD EPYC processors (AMD EPYC 7R13): R6a
+
+Intel processors
+Intel Xeon Scalable processors (Haswell E7-8880 v3): X1, X1e
+Intel Xeon Scalable processors (Broadwell E5-2686 v4): R4
+Intel Xeon Scalable processors (Skylake 8151): z1d
+Intel Xeon Scalable processors (Skylake 8175M or Cascade Lake 8259CL): R5, R5d
+2nd generation Intel Xeon Scalable processors (Cascade Lake 8259CL): R5b, R5n
+2nd generation Intel Xeon Scalable processors (Cascade Lake 8252C): X2iezn
+3rd generation Intel Xeon Scalable processors (Ice Lake 8375C): R6i, R6id, X2idn, X2iedn
+
+X1 instances include Intel Scalable Memory Buffers, providing 300 GiB/s of sustainable memory-read bandwidth and 140 GiB/s of sustainable memory-write bandwidth.
+
+General Purpose 		    Mac, T, M, A
+Compute Optimized		    C, Hpc
+Memory Optimized		    R, X, High Memory, Z
+Storage Optimized		    I, D, H
+Accelerated Computing		P, DL, Trn, Inf, G, F, VT
+
+
+##########################################################
+AWS Fargate Amazon ECS
+##########################################################
+
+https://youtu.be/Hq5cUQ1rLMM?t=1462
+
+programing logic with AWS EventBridge + Step function for / AWS Batch
+
+- triggers
+- schedulers
+
+Batch jobs with  Apache AirFlow + ECS + Fargate
+
+##########################################################
+How to Deploy a Docker App to AWS ECS
+##########################################################
+
+https://github.com/harblaith7/Docker-AWS-Crash-Course
+https://www.youtube.com/watch?v=YDNSItBN15w
+https://www.youtube.com/watch?v=I9VAMGEjW-Q
+https://www.youtube.com/watch?v=zs3tyVgiBQQ
+https://www.youtube.com/watch?v=-eat05bF_Qs
+
+Timeline:
+0:00 - Creating the Dockerfile
+10:07 - Creating a Repo with ECR
+14:00 - Creating an ECS Cluster
+16:55 - Creating a Task Definition
+20:00 - Configuring the Security Group
+
+##########################################################
+Amazon Honeycode
+##########################################################
+
+https://www.honeycode.aws/
+https://docs.aws.amazon.com/honeycode/latest/UserGuide/what-is.html
+https://www.youtube.com/watch?v=r8KuyZk3WR0
+
+Amazon Honeycode is a fully managed service that allows you to quickly build mobile and web apps for teams—without programming.
+
+
+
+##########################################################
+Best practices for building secure Docker images
+##########################################################
+
+https://www.youtube.com/watch?v=LmUw2H6JgJo
+https://www.youtube.com/watch?v=JofsaZ3H1qM
+https://www.youtube.com/watch?v=x0Kbj4lEOag
+
+gosu docker
+https://github.com/tianon/gosu
+https://stackoverflow.com/questions/36781372/docker-using-gosu-vs-user
+https://hub.docker.com/r/smartlyio/gosu/dockerfile
+https://hub.docker.com/r/obiba/docker-gosu/dockerfile
+https://dockerlabs.collabnix.com/beginners/dockerfile/user.html
+https://blog.container-solutions.com/6-dockerfile-tips-official-images
+
+Dockerfile
+FROM alpine:3.2
+RUN apk add --update nginx && rm -rf /var/cache/apt/*
+CMD ["nginx","-g","daemon off;"]
+
+nginx.conf
+index.html
+
+
+##########################################################
+How to Improve Your Image Builds Using Advance Docker Build with BuildKit
+##########################################################
+https://www.youtube.com/watch?v=noHHEzqP6XA
+https://www.youtube.com/watch?v=JofsaZ3H1qM
+
+export DOCKER_BUILDKIT=1
+
+MULTI STAGE
+--------------
+FROM algine AS build1
+touch text1.txt
+FROM algine AS build2
+touch text2.txt
+FROM alpine as final
+COPY --from-build1 text1.txt .
+COPY --from-build2 text2.txt .
+
+
+CACHE
+--------------
+docker pull myimage:1
+docker build --cache-from myimage:1 --tag myimage:2
+
+
+BUILDKIT CACHE WARMING
+--------------
+export DOCKER_BUILDKIT=1
+docker build --tag localhost:5000/test:1 --build-arg BUILDKIT_INLINE_CACHE=1 .
+docker push localhost:5000/test:1
+
+
+BUILD SECRETS
+--------------
+--build-arg
+
+FROM alphine
+SHELL ["sh","-xec"]
+RUN --mount=type=secret,id=mysite.key && df && ls -l /run/secrets && cat /run/secrets/mysite.key
+RUN df
+
+export DOCKER_BUILDKIT=1
+docker build --secret id=mysite.key, src=./mysite.key --progress plain .
+
+
+SSH AGENT
+--------------
+FROM alpine-ssh
+RUN --mount=type=ssh printenv | grep SSH && ssh-add -l
+RUN printenv | sort
+
+
+PERSIST CACHE DIR
+--------------
+export DOCKER_BUILDKIT=1
+
+FROM ubuntu
+RUN --mount-type=cache, target=/tmp/cache && ls -l /tmp/cache
+
+
+ARG Flavors
+--------------
+ARG flavor=alpine
+FROM openjdk:8-jre-$flavor as release
+
+FROM release as dev
+RUN apk add --no-cache strace vim tcpdump curl
+ENTRYPOINT ["ash"]
+
+FROM release as integration-test
+RUN apk add --nocahe curl
+RUN ./test/run.sh
+
+
+##########################################################
+Using Jenkins and Docker Compose to Deploy to Amazon ECS
+##########################################################
+
+https://www.youtube.com/watch?v=UU4-TB7vR8s
+https://github.com/darinpope/java-web-app
+https://github.com/visweswars/darinpope-java-web-app
+
+
+
+
+
