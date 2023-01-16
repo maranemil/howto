@@ -742,3 +742,8 @@ https://hemingwayapp.com/
 - https://lumen5.com/
 - https://untools.co/
 - https://witeboard.com/
+
+### Meet video
+
+- https://meet.jit.si/
+- https://jitsi.org/jitsi-meet/
