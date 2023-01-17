@@ -747,3 +747,14 @@ https://hemingwayapp.com/
 
 - https://meet.jit.si/
 - https://jitsi.org/jitsi-meet/
+
+### Private Search
+
+- https://search.brave.com/
+- https://www.startpage.com/
+- https://duckduckgo.com/
+
+### Remove Duplicate lines
+
+- https://www.textfixer.de/tools/doppelte-zeilen-entfernen.php
+- https://pinetools.com/remove-duplicate-line
