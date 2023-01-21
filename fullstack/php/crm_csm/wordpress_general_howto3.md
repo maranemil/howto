@@ -374,3 +374,56 @@ sudo chown -R www-data:www-data wordpress/
 ```
 
 
+### WP Repair Database
+~~~
+
+https://georgemastro.com/error-ascii-0-appeared-in-the-statement-but-this-is-not-allowed-unless-option/
+https://hub.docker.com/_/adminer/
+https://themeisle.com/blog/repair-wordpress-database/
+https://wpmudev.com/blog/repairing-corrupted-broken-missing-files-databases-wordpress/
+https://redrice.biz/wordpress-reparieren/
+https://wordpress.org/documentation/article/debugging-in-wordpress/
+https://kinsta.com/de/blog/debugging-wordpress/
+
+
+ERROR: ASCII ‘\0’ appeared in the statement, but this is not allowed unless option…
+
+gunzip myfile.sql.gz
+
+
+version: '3.1'
+services:
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+      
+      
+      
+define( 'WP_DEBUG', true );
+define( 'WP_DEBUG_LOG', true );
+define( 'WP_DEBUG_DISPLAY', false );
+@ini_set( 'display_errors', 0 );
+define( 'SCRIPT_DEBUG', true );
+
+
+define ('WP_ALLOW_REPAIR', true);
+https://example.com/wp-admin/maint/repair.php
+
+
+##########################################################
+WP Export Media Library Plugin
+##########################################################
+
+https://www.wpbeginner.com/plugins/how-to-download-your-entire-wordpress-media-library/
+https://blog.hubspot.com/website/export-media-library-wordpress
+https://athemes.com/tutorials/download-wordpress-media-library/
+https://www.greengeeks.com/tutorials/quickly-download-the-media-library-from-wordpress/
+https://wordpress.org/support/topic/exporting-importing-media/
+
+Tools > Export.  Media
+~~~
+
+
+
