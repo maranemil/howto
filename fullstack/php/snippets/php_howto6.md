@@ -337,3 +337,17 @@ https://hotexamples.com/examples/-/-/mysqli_report/php-mysqli_report-function-ex
 
 sudo apt install php-mysql
 ```
+
+
+
+### Predefined Constants
+~~~
+https://www.php.net/manual/en/dir.constants.php
+https://www.php.net/manual/en/function.dirname.php
+https://www.php.net/manual/en/language.constants.php
+https://www.php.net/manual/en/reserved.variables.php
+
+
+DIRECTORY_SEPARATOR / 
+PATH_SEPARATOR ,
+~~~

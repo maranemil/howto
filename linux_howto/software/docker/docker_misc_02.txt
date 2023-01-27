@@ -167,3 +167,43 @@ ADD php/php.ini /usr/local/etc/php/conf.d/${PROJECT_DIRECTORY}.ini
 # Apache
 RUN a2enmod rewrite remoteip
 ADD vhosts/vhost.conf /etc/apache2/sites-available/000-default.conf
+
+
+#######################################################
+webpack-dev-server
+#######################################################
+https://www.npmjs.com/package/webpack-dev-server
+https://stackoverflow.com/questions/69081410/error-err-require-esm-require-of-es-module-not-supported
+
+sudo chown -R 1000:1000 "/root/.npm"
+sudo npm audit fix --force --legacy-peer-deps
+sudo npm install webpack-dev-server -g
+------------------------------------------------------
+
+- docker build -t myapp .
+- docker run -it myapp bash
+
+https://docs.docker.com/engine/reference/commandline/build/
+
+
+#######################################################
+nginx ssl
+#######################################################
+https://stackoverflow.com/questions/69852628/docker-copy-failed-file-not-found-in-build-context-dockerfile
+
+
+FROM nginx:1.21.3-alpine
+
+RUN rm /etc/nginx/conf.d/default.conf
+RUN mkdir /etc/nginx/ssl
+COPY nginx.conf /etc/nginx/conf.d
+COPY ./etc/.auth_keys/fullchain.pem /etc/nginx/ssl/
+COPY ./etc/.auth_keys/privkey.pem /etc/nginx/ssl/
+
+WORKDIR /usr/src/app
+
+#FROM nginx:1.21.3-alpine
+#COPY test_file /my_test_file
+
+
+
