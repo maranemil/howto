@@ -732,6 +732,11 @@ https://hemingwayapp.com/
 - https://percentagecalculator.guru/846-is-what-percent-of-3600/
 - https://www.flightpedia.org/convert/600-seconds-to-minute.html
 
+### Days since calculator
+
+- https://www.timeanddate.com/date/durationresult.html
+- https://www.thecalculatorsite.com/time/days-between-dates.php
+
  ------------------------------------------------------------------
 
 ### Misc
