@@ -624,5 +624,19 @@ This is useful for defining a list of valid variables and then extracting only
 those variables you have defined out of $_REQUEST, for example.
 ```
 
+```
+#####################################################
+Sending Reading Axios parameters with a POST request in PHP
+#####################################################
+
+https://zerowp.com/sending-axios-parameters-with-a-post-request-in-php/
+https://stackoverflow.com/questions/41457181/axios-posting-params-not-read-by-post
+
+$request_body = file_get_contents('php://input');
+$data = json_decode($request_body, true);
+$item = $data['item']; // Works!
 
 
+$_POST = json_decode(file_get_contents("php://input"),true);
+echo $_POST['data1'];
+```
