@@ -120,7 +120,7 @@
 
 
 
-
+- https://huggingface.co/spaces/AttendAndExcite/Attend-and-Excite
 - https://huggingface.co/runwayml/stable-diffusion-inpainting
 - https://huggingface.co/spaces/clem/dreambooth-pareidolia
 - https://huggingface.co/spaces/multimodalart/stable-diffusion-inpainting
