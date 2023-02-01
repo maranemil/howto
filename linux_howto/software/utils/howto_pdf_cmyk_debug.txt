@@ -1,0 +1,187 @@
+
+############################################################
+png-to-tiff
+############################################################
+https://askubuntu.com/questions/621069/how-to-convert-png-to-tiff
+https://stackoverflow.com/questions/23728601/cmyk-images-turn-negative-with-tcpdf
+https://askubuntu.com/questions/72125/how-to-convert-tiff-scan-file-to-jpeg-or-png-general-file-format-in-ubuntu
+
+
+sudo apt-get install imagemagick
+
+convert -separate image1 image2
+convert <your_png> out.tiff
+
+for f in *.png; do convert "$f" "${f%%.*}.tiff"; done
+
+
+pngtopnm file.png | pnmtotiff >file.tiff
+
+
+############################################################
+cmyk colorspace/embedded profile)
+############################################################
+
+A few formats support CMYK. For example JPG does, but PNG does not.
+Then there is the occasional format that also supports LAB (that is CieLAB) (e.g. TIFF, PSD, JPG, JP2). F
+
+https://imagemagick.org/script/identify.php
+https://imagemagick.org/script/command-line-options.php
+https://imagemagick.org/script/color-management.php
+https://imagemagick.org/script/formats.php#colorspace
+https://imagemagick.org/script/formats.php#supported
+https://stackoverflow.com/questions/63650257/how-can-i-make-imagemagick-respect-colour-profiles-in-a-composite-operation
+
+qpdf -qdf input.pdf output.qdf
+fix-qdf < output_edited.qdf > input_edited.pdf
+
+magick identify -verbose rose.jpg
+magick identify rose.jpg
+magick identify -format "%[fx:w/72] by %[fx:h/72] inches" document.png
+identify -verbose rose.jpg
+
+convert under.jpg over.jpg -gravity center -composite -profile USWebCoatedSWOP.icc comp.jpg
+convert under.jpg over.jpg -gravity center -compose over -composite result6.jpg
+magick under.jpg over.jpg -gravity center -compose over -composite result7.jpg
+
+
+
+
+############################################################
+How to check if a PDF file is in RGB or CMYK
+############################################################
+
+
+https://graphicdesign.stackexchange.com/questions/143024/how-to-check-if-a-pdf-file-is-in-rgb-or-cmyk
+https://unix.stackexchange.com/questions/316760/what-are-gnu-linux-tools-for-checking-pdf-documents-before-publishing
+https://stackoverflow.com/questions/6241282/converting-pdf-to-cmyk-with-identify-recognizing-cmyk
+https://superuser.com/questions/265344/view-cmyk-color-code-in-pdf-with-linux
+
+
+
+
+pdfimages -list example.pdf
+identify -verbose test-gs.pdf
+
+gs -q -sDEVICE=pdfwrite -sColorConversionStrategy=CMYK -o <output.pdf> <intput.pdf>
+
+
+convert test.pdf -depth 8 -colorspace cmyk -alpha Off test-c.pdf
+
+gs -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite  -sOutputFile=test-gs.pdf -dUseCIEColor -sProcessColorModel=DeviceRGB -dProcessColorModel=/DeviceCMYK -sColorConversionStrategy=/CMYK test.pdf
+
+
+# Color PDF to CMYK:
+gs -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite \
+-sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK \
+-sOutputFile=output.pdf input.pdf
+
+
+
+FIX
+
+gs \
+   -o test-cmyk.pdf \
+   -sDEVICE=pdfwrite \
+   -sProcessColorModel=DeviceCMYK \
+   -sColorConversionStrategy=CMYK \
+   -sColorConversionStrategyForImages=CMYK \
+    test.pdf
+
+
+#!/bin/bash
+
+gs \
+-dPDFX \
+-dBATCH \
+-dNOPAUSE \
+-dNOOUTERSAVE \
+-sDEVICE=pdfwrite \
+-sColorConversionStrategy=CMYK \
+-dProcessColorModel=/DeviceCMYK \
+-dPDFSETTINGS=/prepress \
+-sOutputFile="${1%%.pdf}_X-3.pdf" \
+PDFX_def.ps \
+"$1"
+
+
+identify -verbose print_X-3.pdf
+
+gs -sDEVICE=tiffsep -dNOPAUSE -dBATCH -dSAFER -r150x150 -sOutputFile=p%08d.tif test.pdf
+
+#!/bin/bash
+
+# possibly ps2ps2 for keeping fonts?
+pdf2ps -sOutputFile=- "$1" | gs \
+-dPDFX \
+-dBATCH \
+-dNOPAUSE \
+-dNOOUTERSAVE \
+-dPDFSETTINGS=/prepress \
+-dCompatibilityLevel=1.4 \
+-sDEVICE=pdfwrite \
+-sColorConversionStrategy=CMYK \
+-sProcessColorModel=DeviceCMYK \
+-dHaveTransparency=false \
+-sOutputFile="${1%%.pdf}_X-3.pdf" \
+PDFX_def.ps \
+
+
+############################################################
+ImageMagick security policy 'PDF' blocking conversion
+############################################################
+
+attempt to perform an operation not allowed by the security policy `PDF' @ error/constitute.c/IsCoderAuthorized/421.
+
+
+https://stackoverflow.com/questions/52998331/imagemagick-security-policy-pdf-blocking-conversion
+https://askubuntu.com/questions/1127260/imagemagick-convert-not-allowed
+https://cromwell-intl.com/open-source/pdf-not-authorized.html
+https://suay.site/?p=2369
+
+
+gs --version
+
+
+remove this whole following section from /etc/ImageMagick-6/policy.xml:
+
+<!-- disable ghostscript format types -->
+<policy domain="coder" rights="none" pattern="PS" />
+<policy domain="coder" rights="none" pattern="PS2" />
+<policy domain="coder" rights="none" pattern="PS3" />
+<policy domain="coder" rights="none" pattern="EPS" />
+<policy domain="coder" rights="none" pattern="PDF" />
+<policy domain="coder" rights="none" pattern="XPS" />
+
+
+
+############################################################
+GPL Ghostscript 9.56.1: **** Could not open the file
+**** Unable to open the initial device, quitting.
+############################################################
+
+https://ubuntuforums.org/showthread.php?t=2185583
+https://stackoverflow.com/questions/6765640/invoking-ghostscript-from-php-unable-to-open-the-initial-device
+
+
+gs -q -sDEVICE=pdfwrite -sColorConversionStrategy=CMYK -o <output.pdf> <intput.pdf>
+
+FIX: use sudo
+
+sudo gs -q -sDEVICE=pdfwrite -sColorConversionStrategy=CMYK -o <output.pdf> <intput.pdf>
+
+identify -verbose  output.pdf
+
+identify -verbose output-cmyk.pdf | grep -i cmyk
+identify -verbose output-cmyk.pdf | grep -i rgb
+identify -verbose output-cmyk.pdf | grep -i  colorspace
+
+
+FIX for CMYK conversion
+gs  -o cmyk.pdf  -sDEVICE=pdfwrite   -sProcessColorModel=DeviceCMYK  -sColorConversionStrategy=CMYK  -sColorConversionStrategyForImages=CMYK -dPDFSETTINGS=/prepress  -dProcessColorModel=/DeviceCMYK  VisitenKarte_sdf_sdgsdg.pdf
+
+
+identify -verbose cmyk.pdf | grep -i cmyk
+identify -verbose cmyk.pdf|  less
+
+Colorspace: CMYK

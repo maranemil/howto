@@ -819,8 +819,26 @@ align-content: space-between
 align-content: space-around
 ```
 
-
+~~~
 https://www.w3schools.com/css/css3_variables_overriding.asp
 https://vue-loader.vuejs.org/guide/scoped-css.html#deep-selectors
 https://vuejs.org/guide/essentials/class-and-style.html#binding-html-classes
 https://v2.vuejs.org/v2/guide/class-and-style.html
+~~~
+
+~~~
+############################################################
+bulma-tooltip
+############################################################
+
+https://github.com/CreativeBulma/bulma-tooltip/
+https://bulma-tooltip.netlify.app/get-started/
+https://www.jsdelivr.com/package/npm/@creativebulma/bulma-tooltip
+https://fontawesome.com/icons/circle-info?s=regular&f=classic
+https://wikiki.github.io/elements/tooltip/
+https://bulma.io/documentation/columns/sizes/
+https://bulma.io/documentation/elements/button/
+https://bulma.io/documentation/overview/colors/
+
+<link href="https://cdn.jsdelivr.net/npm/@creativebulma/bulma-tooltip@1.2.0/dist/bulma-tooltip.min.css" rel="stylesheet">
+~~~
