@@ -715,3 +715,11 @@ https://www.codegrepper.com/code-examples/javascript/vue+router+route+params
 this.$router.push({name:'Home', params: { param: someValue } });
 ```
 
+
+
+~~~
+const app = Vue.createApp({ data() retuen{}, methods: {}, setup: {}   })
+app.componenet('some-name',{  ...  data, template: '<h3><Hi/h3>>'  })
+app.mount('#app')
+<some-name></some-code>
+~~~
