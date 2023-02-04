@@ -1,0 +1,210 @@
+#######################################################
+certs docker
+#######################################################
+
+https://docs.docker.com/engine/security/certificates/
+https://docs.docker.com/engine/security/protect-access/
+https://stackoverflow.com/questions/26028971/docker-container-ssl-certificates
+https://smallstep.com/docs/tutorials/docker-tls-certificate-authority
+https://smallstep.com/docs/step-cli/installation
+https://stackoverflow.com/questions/36550704/docker-on-windows-certificate-error/39254366#39254366
+https://tech.paulcz.net/blog/secure-docker-with-tls/
+https://docs.docker.com/engine/security/certificates/
+https://docs.docker.com/engine/security/protect-access/
+https://help.kendis.io/en/articles/3382550-configure-ssl-for-docker
+https://faun.pub/setting-up-ssl-certificates-for-nginx-in-docker-environ-e7eec5ebb418
+
+
+mkdir docker_ssl_proxy
+
+openssl req -subj '/CN=localhost' -x509 -newkey rsa:4096 -nodes -keyout key.pem -out cert.pem -days 365
+
+
+docker ps
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'  <kendis-contrainer-id>
+
+
+proxy_ssl.conf
+
+
+server {
+  listen 443;
+  ssl on;
+  ssl_certificate /etc/nginx/conf.d/cert.pem;
+  ssl_certificate_key /etc/nginx/conf.d/key.pem;
+  location / {
+  proxy_pass http://123.12.2.1:8080;
+  proxy_set_header Host $host;
+  proxy_set_header X-Forwarded-For $remote_addr;
+ }
+}
+
+docker run --name nginx_proxy -d -v pwd:/etc/nginx/conf.d -p 443:443 nginx
+
+$docker run --name nginx_proxy -d -v <yourdirectory>:/etc/nginx/conf.d -p 443:443 nginx
+
+
+...........
+
+
+sudo mkdir -p /etc/docker/ssl
+mkdir -p ~/.docker
+openssl genrsa -out ~/.docker/ca-key.pem 2048
+openssl req -x509 -new -nodes -key ~/.docker/ca-key.pem \
+    -days 10000 -out ~/.docker/ca.pem -subj '/CN=docker-CA'
+
+
+sudo cp ~/.docker/ca.pem /etc/docker/ssl
+
+# openssl configuration file for the Docker client ~/.docker/openssl.cnf:
+
+[req]
+req_extensions = v3_req
+distinguished_name = req_distinguished_name
+[req_distinguished_name]
+[ v3_req ]
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth, clientAuth
+
+# configuration file for the Docker server /etc/docker/ssl/openssl.cnf
+
+[req]
+req_extensions = v3_req
+distinguished_name = req_distinguished_name
+[req_distinguished_name]
+[ v3_req ]
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth, clientAuth
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = docker.local
+IP.1 = 172.17.8.101
+IP.2 = 127.0.0.1
+
+# create and sign a certificate for the client:
+
+openssl genrsa -out ~/.docker/key.pem 2048
+
+openssl req -new -key ~/.docker/key.pem -out ~/.docker/cert.csr \
+    -subj '/CN=docker-client' -config ~/.docker/openssl.cnf
+
+openssl x509 -req -in ~/.docker/cert.csr -CA ~/.docker/ca.pem \
+    -CAkey ~/.docker/ca-key.pem -CAcreateserial \
+    -out ~/.docker/cert.pem -days 365 -extensions v3_req \
+    -extfile ~/.docker/openssl.cnf
+
+
+the same for the server:
+
+sudo openssl genrsa -out /etc/docker/ssl/key.pem 2048
+
+sudo openssl req -new -key /etc/docker/ssl/key.pem \
+    -out /etc/docker/ssl/cert.csr \
+    -subj '/CN=docker-server' -config /etc/docker/ssl/openssl.cnf
+
+sudo openssl x509 -req -in /etc/docker/ssl/cert.csr -CA ~/.docker/ca.pem \
+    -CAkey ~/.docker/ca-key.pem -CAcreateserial \
+    -out /etc/docker/ssl/cert.pem -days 365 -extensions v3_req \
+    -extfile /etc/docker/ssl/openssl.cnf
+
+
+# client certs and use a docker volume binding to put the CA and certs into
+
+docker run --rm -v $(pwd)/.docker:/certs \
+    paulczar/omgwtfssl
+
+
+sudo cp ~/.docker/ca.pem /etc/docker/ssl/ca.pem
+$ chown -R $USER ~/.docker
+$ docker run --rm -v /etc/docker/ssl:/server \
+    -v $(pwd)/.docker:/certs \
+    -e SSL_IP=127.0.0.1,172.17.8.101 \
+    -e SSL_DNS=docker.local -e SSL_KEY=/server/key.pem \
+    -e SSL_CERT=/server/cert.pem paulczar/omgwtfssl
+
+
+# Create the file custom.conf in /etc/systemd/system/docker.service.d/:
+
+[Service]
+Environment="DOCKER_OPTS=-H=0.0.0.0:2376 -H unix:///var/run/docker.sock --tlsverify --tlscacert=/etc/docker/ssl/ca.pem --tlscert=/etc/docker/ssl/cert.pem --tlskey=/etc/docker/ssl/key.pem"
+
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+docker -H tcp://127.0.0.1:2376 info
+
+export DOCKER_HOST=tcp://127.0.0.1:2376
+$ export DOCKER_TLS_VERIFY=1
+$ export DOCKER_CERT_PATH=~/.docker
+$ docker info
+
+.......
+
+docker-machine ssh default
+DOMAIN_NAME=<type your domain name here>:5000
+sudo mkdir -p /etc/docker/certs.d/$DOMAIN_NAME
+sudo vi /etc/docker/certs.d/$DOMAIN_NAME/ca.crt
+sudo touch /var/lib/boot2docker/bootlocal.sh && sudo chmod +x /var/lib/boot2docker/bootlocal.sh
+sudo vi /var/lib/boot2docker/bootlocal.sh
+
+#!/bin/bash
+CA_CERTS_DIR=/usr/local/share/ca-certificates
+DOCKER_CERTS_DOMAIN_DIR=/etc/docker/certs.d/<your domain name>
+CERTS_DIR=/etc/ssl/certs
+CAFILE=${CERTS_DIR}/ca-certificates.crt
+
+cp ${DOCKER_CERTS_DOMAIN_DIR}/ca.crt ${CA_CERTS_DIR}
+
+
+for cert in $(/bin/ls -1 ${DOCKER_CERTS_DOMAIN_DIR}); do
+SRC_CERT_FILE=${CA_CERTS_DIR}/${cert}
+CERT_FILE=${CERTS_DIR}/${cert}
+HASH_FILE=${CERTS_DIR}/$(/usr/local/bin/openssl x509 -noout -hash -in ${SRC_CERT_FILE} 2>/dev/null)
+
+[ ! -L ${CERT_FILE} ] && /bin/ln -fs ${SRC_CERT_FILE} ${CERT_FILE}
+
+for idx in $(/usr/bin/seq 0 9); do
+if [ -L ${HASH_FILE}.${idx} ]; then
+[ "$(/usr/bin/readlink ${HASH_FILE}.${idx})" = "${SRC_CERT_FILE}" ] && break
+else
+/bin/ln -fs ${SRC_CERT_FILE} ${HASH_FILE}.${idx}
+break
+fi
+done
+/bin/cat ${SRC_CERT_FILE} >> ${CAFILE}
+done
+
+
+....
+
+docker run -v /host/path/to/certs:/container/path/to/certs -d IMAGE_ID "update-ca-certificates"
+
+# Dockerfile
+FROM some-base-image:0.1
+ADD you_certificate.crt:/container/cert/path
+RUN update-ca-certificates
+
+docker run -v /etc/ssl/certs:/etc/ssl/certs:ro ...
+
+
+docker run -d -v step:/home/step \
+    -p 9000:9000 \
+    -e "DOCKER_STEPCA_INIT_NAME=Smallstep" \
+    -e "DOCKER_STEPCA_INIT_DNS_NAMES=localhost,$(hostname -f)" \
+    smallstep/step-ca
+
+docker pull smallstep/step-ca
+docker run -it -v step:/home/step smallstep/step-ca step ca init
+docker run -it -v step:/home/step smallstep/step-ca sh
+echo "<your password here>" > /home/step/secrets/password
+docker run -d -p 9000:9000 -v step:/home/step smallstep/step-ca
+{
+  CA_FINGERPRINT=$(docker run  -v step:/home/step smallstep/step-ca step certificate fingerprint /home/step/certs/root_ca.crt)
+  step ca bootstrap --ca-url https://localhost:9000 --fingerprint $CA_FINGERPRINT
+}
+
+curl https://localhost:9000/health
+
+
