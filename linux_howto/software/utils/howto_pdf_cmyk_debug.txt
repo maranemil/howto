@@ -185,3 +185,128 @@ identify -verbose cmyk.pdf | grep -i cmyk
 identify -verbose cmyk.pdf|  less
 
 Colorspace: CMYK
+
+
+#####################################
+Converting a PDF to black & white with ghostscript
+#####################################
+
+https://superuser.com/questions/200378/converting-a-pdf-to-black-white-with-ghostscript
+https://stackoverflow.com/questions/20128656/how-to-convert-a-pdf-to-grayscale-from-command-line-avoiding-to-be-rasterized
+https://kofler.info/farb-pdfs-in-graustufen-pdfs-umwandeln/
+https://blog.bitkorn.de/convert-pdf-to-grayscale/
+https://gist.github.com/bzxbot/6967e074130b86d5df2c
+https://github.com/pdfcpu/pdfcpu/issues/295
+https://mitchellroe.dev/convert-a-pdf-to-grayscale.html
+https://tex.stackexchange.com/questions/139480/change-the-color-model-of-an-included-pdf
+
+
+gs  -o out.pdf -sDEVICE=pdfwrite   -sProcessColorModel=DeviceCMYK  -sColorConversionStrategy=CMYK  -sColorConversionStrategyForImages=CMYK -dPDFSETTINGS=/printer  -dBlackText=true -dProcessColorModel=/DeviceCMYK  -sColorConversionStrategy=Gray -dProcessColorModel=/DeviceGray -dOverrideICC -dPDFUseOldCMS=false -dCompatibilityLevel=1.4 foo.pdf
+
+#####################################
+tcpdf alpha
+#####################################
+
+https://tcpdf.org/examples/example_025/
+
+$this->pdf->SetAlpha(0.1);
+$this->pdf->SetAlpha(1);
+
+
+#####################################
+ghostscript
+#####################################
+https://wwwcdf.pd.infn.it/gs/Ps2pdf.htm
+https://ghostscript.com/docs/9.54.0/Devices.htm
+https://ghostscript.com/docs/9.54.0/Use.htm
+https://ghostscript.com/docs/9.54.0/VectorDevices.htm#PDFWRITE
+https://tcpdf.org/examples/example_025/
+
+#####################################
+Details of Ghostscript output devices
+#####################################
+http://osr600doc.sco.com/en/DSK_gscript/Devices.htm
+
+Image file formats
+PNG file format
+JPEG file format (JFIF)
+PNM file format
+TIFF file formats
+fax file formats
+BMP file format
+PCX file format
+PSD file format (DeviceN color model)
+
+High level formats
+PDF file output
+PostScript file output
+EPS file output
+PCL-XL file output
+
+
+
+gs -q -dNOPAUSE -r300x300 -sDEVICE=tiff24nc -sOutputFile=foo.tiff foo.pdf -c quit
+gs -q -dNOPAUSE -g300x300 -sDEVICE=tiffg4 -dBATCH -sOutputFile=foo.tiff foo.pdf
+gs -q -dNOPAUSE -r300x300 -sDEVICE=tiffg4 -dBATCH -sOutputFile=foo.tiff foo.pdf
+gs -q -dNOPAUSE -sDEVICE=tiffg4 -sOutputFile=foo.tiff foo.pdf -c quit
+gs -q -dNOPAUSE -r600 -sDEVICE=tiff24nc -sOutputFile=foo.tif foo.pdf -c quit
+gs -q -dNOPAUSE -dBATCH -r800 -sDEVICE=tiffg4 -sPAPERSIZE=a4 -sOutputFile=foo.tif foo.pdf
+gs -q -dNOPAUSE -dBATCH -r800 -sDEVICE=tiffg4 -sOutputFile=foo.tif foo.pdf -c quit
+gs -q -dNOPAUSE -dBATCH -r800 -sDEVICE=tiff24nc -sOutputFile=foo.tif foo.pdf -c quit
+
+
+
+convert -define quantum:polarity=min-is-white  -endian MSB -units PixelsPerInch -density 204x196 -monochrome -compress Fax -sample 1728 foo.pdf foo.tiff
+
+
+https://wwwcdf.pd.infn.it/gs/Ps2pdf.htm
+
+-dPDFSETTINGS=configuration
+
+Presets the "distiller parameters" to one of four predefined settings:
+/screen selects low-resolution output similar to the Acrobat Distiller "Screen Optimized" setting.
+/ebook selects medium-resolution output similar to the Acrobat Distiller "eBook" setting.
+/printer selects output similar to the Acrobat Distiller "Print Optimized" setting.
+/prepress selects output similar to Acrobat Distiller "Prepress Optimized" setting.
+/default selects output intended to be useful across a wide variety of uses, possibly at the expense of a larger output file.
+
+
+
+#####################################
+eps 2 svg
+#####################################
+
+inkscape --export-plain-svg=foo.svg foo.eps
+inkscape --export-plain-svg=eps.svg foo.svg
+epstopdf foo.eps
+pdf2svg foo.pdf foo.svg
+apt install ghostscript pdf2svg
+
+#####################################
+Convert SVG to transparent PNG with antialiasing, using ImageMagick
+#####################################
+
+https://stackoverflow.com/questions/9530524/convert-svg-to-transparent-png-with-antialiasing-using-imagemagick
+https://superuser.com/questions/249860/how-can-i-change-inkscapes-default-export-background-color-from-yellow-to-white
+https://superuser.com/questions/200378/converting-a-pdf-to-black-white-with-ghostscript
+https://stackoverflow.com/questions/71753640/how-to-force-ghostscript-to-convert-pdf-to-monochrome-bitmap-using-cmyk-colors-i
+https://stackoverflow.com/questions/35596346/ghostscript-convert-pdf-into-cmyk-preserving-pure-black-for-text
+https://stackoverflow.com/questions/221455/ghostscript-pdf-tiff-conversion-is-awful-for-me-people-rave-about-it-i-alon
+https://stackoverflow.com/questions/63833941/ghostcript-converting-pdf-from-rgb-to-cmyk-also-produces-devicegray-object
+
+convert -background none in.svg out.png
+convert -density 200 in.svg -resize 25x25 -transparent white out.png
+convert -channel rgba -background "rgba(0,0,0,0)" in.svg out.png
+
+inkscape \
+    --export-png=out.png --export-dpi=200 \
+    --export-background-opacity=0 --without-gui in.svg
+
+inkscape \
+    --export-type=png --export-dpi=200 \
+    --export-background-opacity=0 picture.svg
+
+inkscape -b FFFFFF -h 1024 input.svg -o output.png
+inkscape -b FFFFFF -h 1024 foo.eps -o foo.svg
+
+
