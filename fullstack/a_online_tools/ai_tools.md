@@ -160,7 +160,7 @@
 
 - https://colab.research.google.com/drive/1sVsoBd9AjckIXThgtZhGrHRfFI6UUYOo
 - https://colab.research.google.com/github/TheLastBen/fast-stable-diffusion/blob/main/fast_stable_diffusion_AUTOMATIC1111.ipynb
-- 
+- https://stable-diffusion-art.com/instruct-pix2pix/
 
 
 
