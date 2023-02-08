@@ -310,3 +310,90 @@ inkscape -b FFFFFF -h 1024 input.svg -o output.png
 inkscape -b FFFFFF -h 1024 foo.eps -o foo.svg
 
 
+################################################
+Convert all to CMYK
+################################################
+
+https://askubuntu.com/questions/1379227/how-to-turn-a-pdf-grayscale-in-ubuntu
+https://stackoverflow.com/questions/35389699/embed-icc-color-profile-in-ps2pdf-ghostscript
+https://forums.pdfforge.org/t/convert-all-to-cmyk/2130
+
+-dTextAlphaBits=4
+-dGraphicsAlphaBits=4
+-dDOINTERPOLATE
+-dBlackText=true
+-dOverrideICC=true
+
+
+-dConvertCMYKImagesToRGB=false
+-sProcessColorModel=DeviceCMYK
+-dProcessColorModel=/DeviceCMYK
+-sColorConversionStrategy=CMYK
+
+
+gs  -o out.pdf \
+     -sDEVICE=pdfwrite  -dPDFSETTINGS=/printer -dBlackText=true -dOverrideICC \
+     -dProcessColorModel=/DeviceCMYK -sColorConversionStrategy=CMYK \
+     -sColorConversionStrategyForImages=CMYK -sProcessColorModel=DeviceCMYK \
+     -dProcessColorModel=/DeviceGray -sColorConversionStrategy=Gray \
+     -dConvertCMYKImagesToRGB=false -dCompatibilityLevel=1.4 foo.pdf
+
+https://unix.stackexchange.com/questions/77799/convert-pdf-from-srgb-color-space-to-cmyk
+https://comp.lang.postscript.narkive.com/R2wXzRAN/pdf-to-pdf-gs-rich-rgb-black-to-plain-k-cmyk-black
+
+identify -verbose blah-slide.pdf | grep -i 'type\|color'
+
+Mime type: application/pdf
+  Colorspace: CMYK
+  Type: ColorSeparation
+  Colors: 11
+  Background color: cmyk(255,255,255,0)
+  Border color: cmyk(223,223,223,0)
+  Matte color: cmyk(189,189,189,0)
+  Transparent color: cmyk(0,0,0,0)
+
+
+gs
+-o c:/path/to/output-cmyk.pdf
+-sDEVICE=pdfwrite
+-dUseCIEColor
+-sProcessColorModel=DeviceCMYK
+-sColorConversionStrategy=CMYK
+-sColorConversionStrategyForImages=CMYK
+ input-rgb.pdf
+
+ -dGraphicsAlphaBits=4
+-dBlackText=true
+-dOverrideICC=true
+-dUseCIEColor
+-dProcessColorModel=/DeviceRGB
+-dProcessColorModel=/DeviceCMYK
+-dProcessColorModel=/DeviceGray
+
+################################################
+How to implement custom fonts in TCPDF
+################################################
+
+https://stackoverflow.com/questions/5263588/how-to-implement-custom-fonts-in-tcpdf
+https://queirozf.com/entries/adding-a-custom-font-to-tcpdf
+https://tcpdf.org/docs/srcdoc/TCPDF/classes-TCPDF-FONTS/
+https://freefontsdownload.net/free-helvetica-light-font-74276.htm
+https://ourcodeworld.com/articles/read/601/how-to-implement-custom-fonts-in-tcpdf
+https://freefontsdownload.net/free-helvetica-light-font-74276.htm
+https://ourcodeworld.com/articles/read/601/how-to-implement-custom-fonts-in-tcpdf
+https://stackoverflow.com/questions/8861260/specific-fonts-in-tcpdf-pdf
+https://www.xml-convert.com/en/convert-tff-font-to-afm-pfa-fpdf-tcpdf
+https://stackoverflow.com/questions/10897235/how-to-set-different-fonts-in-tcpdf
+https://www.rubydoc.info/gems/rfpdf/1.17.4/TCPDF:SetFont
+
+
+cd /var/www/html/vendor/tecnickcom/tcpdf/tools#
+php tcpdf_addfont.php -i ../../../../fonts/HelveticaLt.ttf
+
+>>> Converting fonts for TCPDF:
+*** Output dir set to /var/www/html/vendor/tecnickcom/tcpdf/fonts/
++++ OK   : /var/www/html/fonts/HelveticaLt.ttf added as helveticalt
+>>> Process successfully completed!
+
+
+
