@@ -1,0 +1,607 @@
+#############################################
+Ghostscript 9.50 Color Management
+#############################################
+
+https://ghostscript.com/docs/9.54.0/GS9_Color_Management.pdf
+https://ghostscript.com/docs/GS9_Color_Management.pdf
+https://ghostscript.com/docs/GS9_Color_Management.pdf
+
+https://ghostscript.readthedocs.io/en/latest/GhostscriptColorManagement.html
+https://ghostscript.com/docs/9.54.0/VectorDevices.htm
+
+http://www.graphicsmagick.org/convert.html
+https://legacy.imagemagick.org/Usage/crop/
+https://linux.die.net/man/1/gm
+https://ghostscript.com/docs/9.54.0/VectorDevices.htm
+https://www.dgs-management.de/ImageMagick-6.9.0-10/www/identify.html
+https://imagemagick.org/script/color-thresholding.php
+https://imagemagick.org/script/command-line-options.php
+https://imagemagick.org/script/command-line-options.php#auto-level
+https://imagemagick.org/script/command-line-options.php#channel
+https://github.com/i3v/GS_ColorManagement_and_pdfOutput
+https://www.gnu.org/software/ghostscript/devices.html
+https://www.mankier.com/1/gs
+https://ghostscript.com/docs/9.54.0/Use.htm
+
+To view a file:
+gs -dQUIET -dBATCH file.pdf
+
+Reduce PDF file size to 150 dpi images for reading on a e-book device:
+gs -dNOPAUSE -dQUIET -dBATCH -sDEVICE=pdfwrite -dPDFSETTINGS=/ebook -sOutputFile=output.pdf input.pdf
+
+Convert PDF file (pages 1 through 3) to an image with 150 dpi resolution:
+gs -dQUIET -dBATCH -dNOPAUSE -sDEVICE=jpeg -r150 -dFirstPage=1 -dLastPage=3 -sOutputFile=output_%d.jpg
+ input.pdf
+
+Extract pages from a PDF file:
+gs -dQUIET -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=output.pdf input.pdf
+
+Merge PDF files:
+gs -dQUIET -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=output.pdf input1.pdf input2.pdf
+
+Convert from PostScript file to PDF file:
+gs -dQUIET -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=output.pdf input.ps
+
+
+
+-channel type
+Specify those image color channels to which subsequent operators are limited.
+
+Choose from: Red, Green, Blue, Alpha, Gray, Cyan, Magenta, Yellow, Black, Opacity, Index, RGB, RGBA, CMYK, or CMYKA.
+
+
+gm convert -mattecolor "#697B8F" -frame 6x6 bird.jpg icon.png
+
+convert paged.gif -page 64x64+32+32 -size 32x32 xc:'#fff8' \
+          -matte  -background none  -mosaic    crop_area_br.png
+
+
+-mattecolor <color> 	specify the color to be used with the -frame option
+-matte			store matte channel if the image has one
+-bordercolor <color>	the border color
+
+#############################################
+Ghostscript misc
+#############################################
+
+https://stackoverflow.com/questions/26970665/convert-ps-files-to-pdf-a-via-ghostscript-color-space-problems
+https://askubuntu.com/questions/113544/how-can-i-reduce-the-file-size-of-a-scanned-pdf-file
+https://opensource.com/article/20/8/reduce-pdf
+https://stackoverflow.com/questions/6241282/converting-pdf-to-cmyk-with-identify-recognizing-cmyk
+https://stackoverflow.com/questions/20128656/how-to-convert-a-pdf-to-grayscale-from-command-line-avoiding-to-be-rasterized
+https://ubuntuforums.org/showthread.php?t=1554924
+https://stackoverflow.com/questions/56458628/improve-ghostscript-to-tiff-conversion-quality
+https://graphicdesign.stackexchange.com/questions/132408/can-i-make-a-cmky-pdf-if-the-scribus-project-it-has-some-rgb-images-in-it
+https://github.com/ImageMagick/ImageMagick/issues/2656
+https://unix.stackexchange.com/questions/93959/how-to-convert-a-color-pdf-to-black-white
+https://superuser.com/questions/104656/convert-a-pdf-to-greyscale-on-the-command-line-in-floss
+https://www.documentsnap.com/reduce-pdf-file-size-ghostscript/
+https://stackoverflow.com/questions/44107845/ghostscript-and-imagemagick-to-convert-16-bit-per-channel-48-bit-tiff-image-to
+https://stackoverflow.com/questions/24935837/how-to-create-cmyk-color-seperation-combinations-using-ghostscript
+https://stackoverflow.com/questions/6233400/how-do-you-convert-pdfs-to-pngs-with-ghostscript
+
+
+convert -colorspace GRAY color.pdf gray.pdf
+
+convert music1.pdf -contrast-stretch 20% music1C.pdf
+convert music1.pdf -function polynomial 1,0,0,0 music1C.pdf
+convert 00.png -transparent '#c0c0c0' 01.png
+
+pdfimages -list output.pdf
+
+gs \
+ -sOutputFile=output.pdf \
+ -sDEVICE=pdfwrite \
+ -sColorConversionStrategy=Gray \
+ -dProcessColorModel=/DeviceGray \
+ -dCompatibilityLevel=1.4 \
+ -dNOPAUSE \
+ -dBATCH \
+ input.pdf
+
+
+gs \
+ -q \
+ -dNOPAUSE \
+ -dBATCH \
+ -sDEVICE=pnggray \
+ -g2550x3300 \
+ -dPDFFitPage \
+ -dUseCropBox \
+ -sOutputFile=output.png \
+  input.pdf
+
+----
+
+create RGB pdf with Latex
+
+test.tex:
+
+\documentclass{standalone}
+\usepackage{tikz}
+\begin{document}
+\begin{tikzpicture}
+\draw[fill=none,draw=black,line width=2pt] (0cm,0cm) rectangle (4cm,5cm);
+\draw[fill=red] (1cm,1cm) circle (1cm) ;
+\draw[fill=blue] (2cm,2.5cm) circle (1cm) ;
+\draw[fill=green] (3cm,4cm) circle (1cm) ;
+\end{tikzpicture}
+\end{document}
+
+pdflatex test.tex
+
+gs -sDEVICE=tiffsep -dNOPAUSE -dBATCH -dSAFER -r150x150 -sOutputFile=test%04d.tif test.pdf
+
+convert \
+test0001\(Cyan\).tif \
+test0001\(Magenta\).tif \
+test0001\(Yellow\).tif \
+test0001\(Black\).tif \
+-set colorspace CMYK -negate -combine combined.tif
+
+convert -density 150 -flatten test.pdf test.png
+convert -size 240x299 xc:white white.png
+
+convert \
+test0001\(Cyan\).tif \
+test0001\(Magenta\).tif \
+white.png \
+white.png \
+-set colorspace CMYK -negate -combine combinedCM.tif
+
+convert combinedCM.tif combinedCM.png
+
+#############################################
+Image aspect ratio and resizing calculator
+#############################################
+
+https://red-route.org/code/image-resizing-calculator
+
+#############################################
+PDF Color Reduction CMYK
+#############################################
+
+
+-black-threshold 50%
+-white-threshold 50%
+-auto-gamma
+-auto-level
+
+
+FIX
+
+convert -density 900 -channel CMYK -threshold 50% -black-threshold 60% in.pdf out.pdf
+
+gs -o out2.pdf -r300 -sDEVICE=pdfwrite -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -f out.pdf
+
+identify -verbose out2.pdf | grep -i 'type\|color'
+
+
+#############################################
+scribus
+#############################################
+https://wiki.ubuntuusers.de/Scribus/
+https://ubuntuhandbook.org/index.php/2021/01/scribus-1-5-6-available-install-ppa-ubuntu-20-04/
+https://linuxhint.com/install-scribus-ubuntu/
+
+sudo apt-get install scribus scribus-doc scribus-template
+sudo apt-get install icc-profiles
+
+
+sudo add-apt-repository ppa:scribus/ppa
+sudo apt install scribus-ng
+sudo apt install scribus
+sudo apt remove --autoremove scribus-ng
+
+
+https://www.youtube.com/watch?v=wX3ZcAiLg-4
+https://www.youtube.com/watch?v=B_lFwSJePcI
+https://www.youtube.com/watch?v=PtvPUclx2xQ
+
+#############################################
+Reducing PDF file size using Ghostscript on Linux
+#############################################
+
+
+https://ghostscript.readthedocs.io/en/latest/GhostscriptColorManagement.html
+https://ghostscript.com/docs/GS9_Color_Management.pdf
+https://stackoverflow.com/questions/11850776/reducing-pdf-file-size-using-ghostscript-on-linux-didnt-work
+https://tex.stackexchange.com/questions/139480/change-the-color-model-of-an-included-pdf
+https://stackoverflow.com/questions/15973525/color-conversion-error-after-one-page-using-ghostscript
+https://stackoverflow.com/questions/63833941/ghostcript-converting-pdf-from-rgb-to-cmyk-also-produces-devicegray-object
+https://stackoverflow.com/questions/11007222/ghostscript-how-to-reduce-file-size-of-large-pdfs-without-changing-smaller-pdfs
+https://askubuntu.com/questions/113544/how-can-i-reduce-the-file-size-of-a-scanned-pdf-file
+https://askubuntu.com/questions/113544/how-can-i-reduce-the-file-size-of-a-scanned-pdf-file
+https://superuser.com/questions/597184/good-way-to-reduce-number-of-colors-in-a-pdf-file
+https://superuser.com/questions/200378/converting-a-pdf-to-black-white-with-ghostscript
+https://stackoverflow.com/questions/32340960/replace-colors-in-pdf-using-ghostscript
+
+
+
+
+-dPDFSETTINGS=/screen   (screen-view-only quality, 72 dpi images)
+-dPDFSETTINGS=/ebook    (low quality, 150 dpi images)
+-dPDFSETTINGS=/printer  (high quality, 300 dpi images)
+-dPDFSETTINGS=/prepress (high quality, color preserving, 300 dpi imgs)
+-dPDFSETTINGS=/default  (almost identical to /screen)
+
+-sDeviceLinkProfile = my link profile.icc
+-dRenderIntent = intent
+-dBlackPtComp = 0 / 1  #  turn off or on black point compensation
+
+------
+
+https://askubuntu.com/questions/727906/convert-pdf-to-monochrome-black-and-white-via-command-line
+
+gs -o out.pdf -sDEVICE=pdfwrite \
+-c "/osetrgbcolor {/setrgbcolor} bind def /setrgbcolor {pop [0 0 0] osetrgbcolor} def" \
+-sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -f foo.pdf
+
+
+
+gs -dNODISPLAY -c ".distillersettings {exch ==only ( ) print ===} forall quit" | grep '/screen'
+
+gs -o out72.png -sDEVICE=pngalpha foo.pdf
+gs -o out300.png -sDEVICE=pngalpha -r300 foo.pdf
+gs -o out300.png -sDEVICE=pdfwrite -dColorConversionStrategy=/Gray -dProcessColorModel=/DeviceGray  -dCompatibilityLevel=1.4 foo.pdf
+
+gs -sOutputFile=output.pdf -sDEVICE=pdfwrite -sColorConversionStrategy=Gray -dProcessColorModel=/DeviceGray -dCompatibilityLevel=1.4 input-foo < /dev/null
+
+
+gs -o converted.pdf -sDEVICE=pdfwrite -dColorConversionStrategy=/Gray \
+  -dProcessColorModel=/DeviceGray <(pdftops -level3sep input.pdf -)
+
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH \
+  -dAutoRotatePages=/None -dUseCIEColor -sOutputFile=output.pdf input.pdf
+
+gs -sDEVICE=pdfwrite -sProcessColorModel=DeviceGray -sColorConversionStrategy=Gray \
+   -dOverrideICC -dPDFUseOldCMS=false
+
+
+
+-dColorImageResolution=120 -dMonoImageResolution=38 -dMonoImageDownsampleType=/Average
+ -dOptimize=true -dDownsampleColorImages=true -dDownsampleGrayImages=true -dDownsampleMonoImages=true
+  -dUseCIEColor -dColorConversionStrategy=/sRGB -dFIXEDMEDIA -dDEVICEWIDTHPOINTS=596 -dDEVICEHEIGHTPOINTS=834
+
+
+gs \
+ -sOutputFile=output.PDF \
+ -sDEVICE=pdfwrite \
+ -sColorConversionStrategy=Gray \
+ -dProcessColorModel=/DeviceGray \
+ -dCompatibilityLevel=1.4 \
+  input.PDF < /dev/null
+
+
+gs -o <output-file.pdf> -sDEVICE=pdfwrite \
+-c "/osetcolor {/setcolor} bind def /setcolor {pop [0 0 0] osetcolor} def" \
+-f <input-file.ps>
+
+
+gs \
+-o bw-from-color.pdf \
+-sDEVICE=pdfwrite \
+-c "/setrgbcolor{0 mul 3 1 roll 0 mul 3 1 roll 0 mul 3 1 roll 0 mul add add setgray}def" \
+-f color.ps
+
+
+gs -o gray.ps -sDEVICE=ps2write -sColorConversionStrategy=Gray -dProcessColorModel=/DeviceGray \
+    -dCompatibilityLevel=1.4 -f colored.pdf
+
+gs -o thresholded.pdf -sDEVICE=pdfwrite \
+    -c "/osetgray {setgray} bind def /setgray {0.5 lt {0} {1} ifelse osetgray} def" -f gray.ps
+
+---
+
+For pure black and white PDF, you need to convert it into ps format then into PDF for postscript:
+
+exec(" gs -sDEVICE=psmono  -dNOPAUSE -dBATCH -dSAFER  -sOutputFile=combined.ps  $pdf");
+postscript to PDF -> black and white
+
+exec(" gs -sDEVICE=pdfwrite   -dNOPAUSE -dBATCH -dSAFER  -sOutputFile=file_pdf.pdf  filename.ps");
+
+---
+
+Convert the coloured.ps to blackandwhite.pdf
+
+gswin64c ^
+-dBATCH -dNOPAUSE -q ^
+-sOutputFile=blackandwhite.pdf ^
+-sDEVICE=pdfwrite ^
+-c "/osetrgbcolor {setrgbcolor} bind def /setrgbcolor {pop pop pop 0 0 0 osetrgbcolor} def" ^
+-f coloured.ps
+
+---
+
+https://stackoverflow.com/questions/12299574/ghostscript-color-detection
+
+gs                                                                     \
+  -o color-or-grayscale-test.pdf                                       \
+  -sDEVICE=pdfwrite                                                    \
+  -g5950x2105                                                          \
+  -c "/F1 {10 80 moveto /Helvetica findfont 64 scalefont setfont} def" \
+  -c "F1                         (100% 'pure' black)    show showpage" \
+  -c "F1 .5 .5 .5   setrgbcolor  ( 50% 'rich' rgbgray)  show showpage" \
+  -c "F1 .5 .5 .5 0 setcmykcolor ( 50% 'rich' cmykgray) show showpage" \
+  -c "F1 .5         setgray      ( 50% 'pure' gray)     show showpage"
+
+
+
+gs -q  -o - -sDEVICE=inkcov only-black-ink.pdf | grep -v Page
+  0.00000  0.00000  0.00000  0.05040 CMYK OK
+  0.00000  0.00000  0.00000  0.05401 CMYK OK
+  0.00000  0.00000  0.00000  0.05799 CMYK OK
+  0.00000  0.00000  0.00000  0.04541 CMYK OK
+
+
+gs                                \
+  -o only-black-ink.pdf           \
+  -sDEVICE=pdfwrite               \
+  -dColorConversionStrategy=/Gray \
+  -dProcessColorModel=/DeviceGray \
+   color-or-grayscale-test.pdf
+
+#############################################
+ADOBE ICC PROFILS (RGB)
+ADOBE ICC PROFILS (CMYK)
+#############################################
+
+https://www.adobe.com/support/downloads/iccprofiles/iccprofiles_win.html
+https://www.adobe.com/support/downloads/iccprofiles/iccprofiles_win.html
+https://das-richtwerk.de/icc-profile/
+
+Coated FOGRA 27
+Coated FOGRA 39
+Coated GRACoL 2006
+Japan Color 2001 Coated
+Japan Web Coated
+US Web Coated SWOP
+US Web Uncoated
+Web Coated FOGRA 28
+Web Coated SWOP 2006 Grade 3
+Web Coated SWOP 2006 Grade 5
+
+BASICCCOLOR OFFSET (2009)
+
+ISOcoated v2 300 bas
+ISOcoated v2 bas
+ISOcoated v2 grey1c bas
+ISOnewspaper v4 26 bas
+ISOuncoatedyellowish bas
+PSO Coated 300 NPscreen ISO12647 bas
+PSO Coated NPscreen ISO12647 bas
+PSO LWC Improved bas
+PSO LWC Standard bas
+PSO MFC Paper bas
+PSO SNP Paper bas
+PSO Uncoated ISO12647 bas
+PSO Uncoated NPscreen ISO12647 bas
+SC paper bas
+
+#############################################
+scribus CMYK
+#############################################
+
+https://www.youtube.com/watch?v=RNkWXwk_H8o
+https://www.youtube.com/watch?v=B_lFwSJePcI
+https://www.youtube.com/watch?v=wX3ZcAiLg-4
+https://www.youtube.com/watch?v=_m-D-mBp1UQ
+
+https://stackoverflow.com/questions/6241282/converting-pdf-to-cmyk-with-identify-recognizing-cmyk
+https://www.klaasnotfound.com/2016/06/05/creating-cmyk-prepress-pdfs-with-inkscape-and-scribus/
+https://graphicdesign.stackexchange.com/questions/132408/can-i-make-a-cmky-pdf-if-the-scribus-project-it-has-some-rgb-images-in-it
+https://wiki.scribus.net/canvas/Command_line_scripts
+
+
+pdfimages -list output.pdf
+
+
+gs -o outputfile-cmyk.pdf -sDEVICE=pdfwrite -sProcessColorModel=DeviceCMYK -sColorConversionStrategy=CMYK -sColorConversionStrategyForImages=CMYK      -dOverrideICC=true inputfile-rbg.pdf
+
+
+# Color PDF to CMYK:
+gs -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite \
+-sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK \
+-sOutputFile=output.pdf input.pdf
+
+ gs \
+   -o test-cmyk.pdf \
+   -sDEVICE=pdfwrite \
+   -sProcessColorModel=DeviceCMYK \
+   -sColorConversionStrategy=CMYK \
+   -sColorConversionStrategyForImages=CMYK \
+    test.pdf
+
+#############################################
+ColorManagement
+#############################################
+
+https://github.com/i3v/GS_ColorManagement_and_pdfOutput
+https://github.com/ImageMagick/ImageMagick/issues/431
+https://askubuntu.com/questions/113544/how-can-i-reduce-the-file-size-of-a-scanned-pdf-file
+https://stackoverflow.com/questions/20128656/how-to-convert-a-pdf-to-grayscale-from-command-line-avoiding-to-be-rasterized
+http://flothesof.github.io/pdf-conversion-kindle3.html
+https://stackoverflow.com/questions/8475695/how-to-convert-pdf-from-cmyk-to-rgb-for-displaying-on-ipad
+https://superuser.com/questions/1249323/ghostscript-9-20-successor-to-duseciecolor
+https://gist.github.com/hubgit/daa37a0ca137bf2cd6d4de71bad996b4
+https://gist.github.com/letorbi/31a6ea3cdc41ebc80ad2c7f5351c0556
+https://tex.stackexchange.com/questions/135543/context-pdf-colour-space
+https://fossies.org/linux/gnu-ghostscript/doc/Ps2pdf.htm
+https://ghostscript.com/docs/9.54.0/VectorDevices.htm
+https://graphicdesign.stackexchange.com/questions/142696/indesign-which-cmyk-color-space-to-use
+https://www.adobe.com/support/downloads/iccprofiles/iccprofiles_win.html
+https://graphicdesign.stackexchange.com/questions/145305/inkscape-icc-profiles-location-specifically-adobe-rgb-color-space
+https://inkscape-manuals.readthedocs.io/en/latest/custom-colors.html
+
+------------
+
+ll ~/.local/share/color/icc
+
+------------
+
+https://api.itextpdf.com/iText7/latest/com/itextpdf/kernel/colors/Color.html
+https://stackoverflow.com/questions/52369060/how-to-use-custom-colors-and-custom-fonts-in-itext7
+https://documentation.globalgraphics.com/support/mako/mako-core/documentation/topics/color-management
+
+Ghostscript ImageMagick colorspaces
+-- which are named: "DeviceRGB", "DeviceCMYK", "DeviceGray", "CalRGB",
+"CalGray", "Lab", "ICCBased", "Indexed", "Separation" and "DeviceN".
+
+
+This class has several subclasses: CalGray, CalRgb, DeviceCmyk, DeviceGray, DeviceN, DeviceRgb, IccBased, Indexed, Lab, PatternColor, Separation.
+
+
+https://www.prepressure.com/pdf/basics/color
+
+
+Color in PDF
+
+The PDF file format support a wide range of color spaces. Below is a list of all
+the different possibilities as well as different reasons why you aren’t
+ always allowed to use those color spaces.
+
+Supported color spaces
+Device dependent color spaces
+DeviceGray
+DeviceRGB
+DeviceCMYK
+Device independent color spaces
+CalGray
+CalRGB
+Lab
+ICCBased
+
+
+Intercept color spacesLink to Intercept color spaces
+These are the color spaces that will be used for conversion whenever the color manager is
+ asked to convert from or to DeviceGray, DeviceRGB, or DeviceCMYK, respectively.
+
+
+Grayscale	1	DeviceGray	sGray*
+RGB		2	DeviceRGB	sRGB
+CMYK		4	DeviceCMYK	SWOP ICC
+
+
+------------
+
+https://www.websupergoo.com/helppdfnet/default.htm?page=source%2f6-abcpdf.objects%2fcolorspace%2f2-properties%2fcolorspacetype.htm
+https://documentation.globalgraphics.com/support/hqnc/manuals/harlequin-extensions-manual/color-spaces-and-color-management/icc-color-management/iccbased-color-space
+
+The ColorSpaceType enumeration may take the following values:
+
+None
+DeviceGray
+DeviceRGB
+DeviceCMYK
+CalGray
+CalRGB
+ICCBased
+Lab
+Indexed
+Pattern
+Separation
+DeviceN
+
+------------
+
+identify -colorspace srgb t.pdf
+identify -verbose im-bg.pdf | grep Colorspace
+
+------------
+
+-sColorConversionStrategy=UseDeviceIndependentColor
+
+------------
+
+-dPDFSETTINGS:
+
+-dPDFSETTINGS=/screen lower quality, smaller size. (72 dpi)
+-dPDFSETTINGS=/ebook for better quality, but slightly larger pdfs. (150 dpi)
+-dPDFSETTINGS=/prepress output similar to Acrobat Distiller "Prepress Optimized" setting (300 dpi)
+-dPDFSETTINGS=/printer selects output similar to the Acrobat Distiller "Print Optimized" setting (300 dpi)
+-dPDFSETTINGS=/default selects output intended to be useful across a wide variety of uses, possibly at the expense of a larger output file
+
+------------
+
+gs -dPDFA=1 -dBATCH -dNOPAUSE -dNOOUTERSAVE -sColorConversionStrategy=/RGB -sOutputICCProfile=srgb.icc \
+    -sDEVICE=pdfwrite -sOutputFile=out-a.pdf PDFA_def.ps input.ps
+
+
+
+#!/bin/bash
+gs \
+  -sDEVICE=pdfwrite \
+  -dCompatibilityLevel=1.4 \
+  -dPDFSETTINGS=/prepress \
+  -dNOPAUSE -dQUIET -dBATCH \
+  -dColorConversionStrategy=/LeaveColorUnchanged \
+  -dDownsampleColorImages=true -dDownsampleGrayImages=true -dDownsampleMonoImages=true \
+  -dColorImageDownsampleType=/Bicubic -dGrayImageDownsampleType=/Bicubic -dMonoImageDownsampleType=/Bicubic \
+  -dColorImageResolution=1200 -dGrayImageResolution=1200 -dMonoImageResolution=1200 \
+  -sOutputFile=output.pdf \
+  -c '<< /ColorACSImageDict << /QFactor 0.15 /Blend 1 /HSample [2 1 1 2] /VSample [2 1 1 2] >> >> setdistillerparams' \
+  -f input.pdf
+
+
+
+
+
+
+
+
+
+
+
+
+gs -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -dCompatibilityLevel=1.4 -dNOTRANSPARENCY -dColorConversionStrategy=/sRGB -dProcessColorModel=/DeviceRGB -dColorConversionStrategyForImages=/DeviceRGB -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -dUseCIEColor=true -sOutputFile=output.pdf input.pdf
+
+
+
+gs -sDEVICE=pdfwrite -dPDFSETTINGS=/ebook -dColorConversionStrategy=/Gray -dProcessColorModel=/DeviceGray -o darwin2.pdf darwin.pdf
+
+
+gs -sDEVICE=pdfwrite -dColorConversionStrategy=/Gray -dProcessColorModel=/DeviceGray -dDownsampleGrayImages=true -dGrayImageResolution=72 -dGrayImageDownsampleThreshold=1.0 -o darwin3.pdf darwin.pdf
+
+
+
+gs -o output.pdf -sDEVICE=pdfwrite -dUseCIEColor -dKPreserve=1 -dDeviceGrayToK=true -dUseMediaBox -sOutputICCProfile=CoatedFOGRA27.icc -dRenderIntent=0 -dPDFSETTINGS=/prepress -f input.pdf
+
+gs -dPDFA -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/screen -dColorImageResolution=125 -dGrayImageResolution=125  -dMonoImageResolution=125 -dUseCIEColor -dProcessColorModel=/DeviceCMYK -dNOPAUSE -dBATCH -sOutputFile=output.pdf input.pdf
+
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dDownsampleColorImages=true \
+-dColorImageResolution=150 -dNOPAUSE  -dBATCH -sOutputFile=output.pdf input.pdf
+
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=output.pdf $INPUTFILE
+
+
+#!/bin/sh
+
+gs  -q -dNOPAUSE -dBATCH -dSAFER \
+    -sDEVICE=pdfwrite \
+    -dCompatibilityLevel=1.3 \
+    -dPDFSETTINGS=/screen \
+    -dEmbedAllFonts=true \
+    -dSubsetFonts=true \
+    -dColorImageDownsampleType=/Bicubic \
+    -dColorImageResolution=72 \
+    -dGrayImageDownsampleType=/Bicubic \
+    -dGrayImageResolution=72 \
+    -dMonoImageDownsampleType=/Bicubic \
+    -dMonoImageResolution=72 \
+    -sOutputFile=out.pdf \
+     foo.pdf
+
+
+
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dDownsampleColorImages=true -dDownsampleGrayImages=true -dDownsampleMonoImages=true -dColorImageResolution=130 -dGrayImageResolution=130 -dMonoImageResolution=130 -r130 -dNOPAUSE  -dBATCH -sOutputFile=output_lr.pdf input.pdf
+
+
+
+gs \
+   -sDEVICE=pdfwrite \
+   -sProcessColorModel=DeviceGray \
+   -sColorConversionStrategy=Gray \
+   -dOverrideICC \
+   -o out.pdf \
+   -f page-27.pdf
+

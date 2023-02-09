@@ -723,3 +723,56 @@ app.componenet('some-name',{  ...  data, template: '<h3><Hi/h3>>'  })
 app.mount('#app')
 <some-name></some-code>
 ~~~
+
+
+~~~
+###################################################
+HOW TO INTERCEPT OR CLEAR V-MODEL VALUE AFTER @PASTE EVENT IN VUE 2.6-VUE.JS
+###################################################
+
+
+https://www.appsloveworld.com/vuejs/100/35/how-to-intercept-or-clear-v-model-value-after-paste-event-in-vue-2-6
+https://forum.vuejs.org/t/replacing-complete-object-on-paste/21982
+
+ 
+https://www.reddit.com/r/vuejs/comments/jtlakc/help_with_calling_function_paste/
+https://www.vuemastery.com/blog/vue-3-data-down-events-up/
+https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Vue_methods_events_models
+https://learnvue.co/tutorials/vue-event-handling-guide
+https://developer.mozilla.org/en-US/docs/Web/API/ClipboardEvent/clipboardData
+https://stackoverflow.com/questions/2176861/javascript-get-clipboard-data-on-paste-event-cross-browser
+https://www.w3.org/TR/clipboard-apis/
+https://www.npmjs.com/package/vue3-clipboard
+https://github.com/soerenmartius/vue3-clipboard
+https://github.com/euvl/v-clipboard
+https://stackoverflow.com/questions/44536362/how-to-handle-pastectrlv-or-with-mouse-event-in-vue-js
+https://www.w3jar.com/examples-of-some-vuejs-events/
+https://blog.logrocket.com/use-vue-js-event-emitters-modify-component-data/
+ 
+ 
+ 
+ <input v-model="text" class="input is-primary" @paste="pasteEvent"
+                                       type="text" pattern="\d*"
+                                       placeholder="text" maxlength="17">
+
+
+
+<script>
+    const {createApp, ref, computed} = Vue;
+    const app = createApp({
+		methods: {
+		pasteEvent(event){
+			//let clipped = event.clipboardData.getData('text').split("\n");
+			/*clipped.forEach(item => {
+			    console.log(item)
+			});*/
+			let clipped = event.clipboardData.getData('text');
+			this.text = clipped.replace(/[^0-9]/gi,'')
+			console.log(clipped)               
+			event.target.blur();
+		}}
+	});
+</script>
+~~~
+
+
