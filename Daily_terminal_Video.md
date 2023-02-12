@@ -85,7 +85,10 @@ ffmpeg -v warning -video_size 1920x1080 -framerate 5 -f x11grab -i :1.0  myvid_$
 
 ### Copy Audio and compress video
 ```
+# https://superuser.com/questions/525928/ffmpeg-keeping-quality-during-conversion
+
 * ffmpeg -i file.mp4 -crf 18 -acodec copy file_compressed.mp4 
+* ffmpeg -i test.avi -c:v libx264 -crf 40 -c:a aac -strict -2 test.mp4
 ```
 
 ### Create Test Video
@@ -232,3 +235,19 @@ sudo ubuntu-drivers autoinstall
 * xrandr --output eDP-1-1 --gamma 1.0:1.0:1.0
 ```
 
+### mp4 cut crop 
+~~~
+# https://superuser.com/questions/744823/how-i-could-cut-the-last-7-second-of-my-video-with-ffmpeg
+
+# keep only the last N seconds of a video.
+ffmpeg -sseof -7 -i input.mp4 -c copy output.mp4
+
+# delete the last N seconds of a video and keep the rest. 
+ffmpeg -ss 00:00:00 -to 01:32:00 -i input.mp4 -c copy output.mp4
+
+# delete the last N seconds of a video and keep the rest
+ffmpeg -ss 00:00:04 -t 01:00:00 -i input.mp4 -c copy output.mp4;
+
+# keep only the first N seconds of a video.
+ffmpeg -i input.avi -t 33 -c copy output.avi
+~~~
