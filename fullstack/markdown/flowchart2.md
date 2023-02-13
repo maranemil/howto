@@ -147,5 +147,18 @@ sequenceDiagram
 ```
 
 -------------------------------------------------------------------
+~~~
+#######################################
+Markdown Cheatsheet
+#######################################
+https://towardsdatascience.com/the-ultimate-markdown-cheat-sheet-3d3976b31a0
+https://www.heise.de/mac-and-i/downloads/65/1/1/6/7/1/0/3/Markdown-CheatSheet-Deutsch.pdf
+https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
+https://www.markdownguide.org/cheat-sheet/
+~~~
 
-
+```mermaid
+pie
+"Movies" : 80
+"TV shows" : 20
+```
