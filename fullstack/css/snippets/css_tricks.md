@@ -842,3 +842,22 @@ https://bulma.io/documentation/overview/colors/
 
 <link href="https://cdn.jsdelivr.net/npm/@creativebulma/bulma-tooltip@1.2.0/dist/bulma-tooltip.min.css" rel="stylesheet">
 ~~~
+
+~~~
+###############################################################
+Drop-Shadow: The Underrated CSS Filter
+###############################################################
+
+https://css-irl.info/drop-shadow-the-underrated-css-filter/
+https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/drop-shadow
+
+
+.my-element {
+  filter: drop-shadow(0 0.2rem 0.25rem rgba(0, 0, 0, 0.2));
+}
+img {
+  filter: drop-shadow(0.35rem 0.35rem 0.4rem rgba(0, 0, 0, 0.5));
+}
+
+filter: drop-shadow(0 0 0.75rem crimson);
+~~~

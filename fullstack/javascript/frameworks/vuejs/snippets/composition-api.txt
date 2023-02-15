@@ -1,0 +1,291 @@
+
+###################################################################
+Composition API vs  Options API
+###################################################################
+
+https://www.jenniferbland.com/vue-3-composition-api-vs-options-api/
+https://markus.oberlehner.net/blog/vue-3-composition-api-vs-options-api/
+https://vuejs.org/guide/extras/composition-api-faq.html
+https://medium.com/codex/options-api-vs-composition-api-4a745fb8610
+https://fjolt.com/article/vue-composition-api-vs-options-api
+https://dev.to/the_one/composition-api-or-options-api-59gf
+https://www.webmound.com/composition-api-vs-options-api-in-vue-3/
+https://levelup.gitconnected.com/vuejs-3-migrating-from-options-to-composition-api-e8a765e57b8d
+https://progressivewebninja.com/vue-3-options-api-vs-composition-api/
+https://thecodest.co/blog/stop-using-options-api-in-vue/
+
+
+https://www.youtube.com/watch?v=mZFuR3-oNXQ
+https://www.youtube.com/watch?v=dciF5Pc3G1s
+https://www.youtube.com/watch?v=3B0ry4GI1cE
+
+// Composition API
+import { ref, computed } from 'vue'
+
+export default {
+  setup() {
+    const count = ref(0)
+
+    const increment = () => {
+      count.value++
+    }
+
+    const double = computed(() => {
+      return count.value * 2
+    })
+
+    return {
+      count,
+      increment,
+      double
+    }
+  }
+}
+
+// Options API
+export default {
+  data() {
+    return {
+      count: 0
+    }
+  },
+  methods: {
+    increment() {
+      this.count++
+    }
+  },
+  computed: {
+    double() {
+      return this.count * 2
+    }
+  }
+}
+
+----
+
+
+// Options API
+export default {
+  data() {
+    return {
+      name: 'John',
+    };
+  },
+  methods: {
+    doIt() {
+      console.log(`Hello ${this.name}`);
+    },
+  },
+  mounted() {
+    this.doIt();
+  },
+};
+
+// Composition API
+export default {
+  setup() {
+    const name = ref('John');
+
+    const doIt = () => console.log(`Hello ${name.value}`);
+
+    onMounted(() => {
+      doIt();
+    });
+
+    return { name };
+  },
+};
+
+------
+// Composition API
+<script setup>
+import { ref, onMounted } from 'vue'
+
+// reactive state
+const count = ref(0)
+
+// functions that mutate state and trigger updates
+function increment() {
+  count.value++
+}
+
+// lifecycle hooks
+onMounted(() => {
+  console.log(`The initial count is ${count.value}.`)
+})
+</script>
+
+<template>
+  <button @click="increment">Count is: {{ count }}</button>
+</template>
+
+
+// Options API
+
+import { createApp } from 'vue'
+
+createApp({
+  data() {
+    return {
+      count: 0
+    }
+  }
+}).mount('#app')
+
+<div id="app">
+  <button @click="count++">
+    Count is: {{ count }}
+  </button>
+</div>
+
+
+-----------
+
+
+<template>
+  <div>{{ count }}</div>
+</template>
+
+import { ref } from "vue";
+export default {
+  setup() {
+    const count = ref(10);
+    return { count };
+  },
+};
+
+-------------------------------------------------
+// Composition API reactive()
+
+import { reactive } from "vue";
+export default {
+  setup() {
+    const user = reactive({
+      name: "John",
+      role: "ADMIN",
+    });
+    return { user };
+  },
+};
+
+
+// Options API
+
+export default {
+  data() {
+    return {
+      user: {
+        name: "John",
+        role: "ADMIN",
+      },
+    };
+  },
+};
+
+
+
+-------------------------------------------------
+
+
+// Composition API ref()
+
+To add reactivity to primitive elements you have to wrap them with ref().
+
+Composition API
+
+import { ref } from "vue";
+export default {
+  setup() {
+    const count = ref(10);
+    return { count };
+  },
+};
+Options API
+
+export default {
+  data() {
+    return {
+      count: 10,
+    };
+  },
+};
+
+-------------------------------------------------
+
+Modifying reactive objects
+
+
+import { ref, reactive } from "vue";
+export default {
+  setup() {
+    const user = reactive({
+      name: "John",
+    });
+    user.name = "John Doe"; // Value change
+
+    const count = ref(10);
+    count.value = 20;  // Value change
+
+    return {
+      user,
+      count,
+    };
+  },
+};
+
+<div>{{ count }}</div>
+
+-------------------------------------------------
+Computed Properties
+
+import { reactive, computed } from "vue";
+export default {
+  setup() {
+    const list = reactive([
+      "Item 1",
+      "Item 2",
+    ]);
+
+    // Computed
+    const isEmpty = computed(() => list.length === 0);
+
+    return {
+      list,
+      isEmpty,
+    };
+  },
+};
+-------------------------------------------------
+Methods
+
+import { ref } from "vue";
+export default {
+  setup() {
+    const count = ref(10);
+
+        // Method
+    const increment = () => {
+      count.value++;
+    };
+
+    return {
+      count,
+      increment,
+    };
+  },
+};
+-------------------------------------------------
+Watchers
+
+import { watch, ref } from "vue";
+export default {
+  setup() {
+    const name = ref("John");
+        // Watcher
+    watch(name, (currentValue, oldValue) => {
+      console.log(`Value changed from ${oldValue} to ${currentValue}`);
+    });
+    return { name };
+  },
+};
+

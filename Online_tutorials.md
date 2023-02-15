@@ -429,3 +429,9 @@
 | https://www.youtube.com/watch?v=ZdydaX1ds8I&list=PLzde74P_a04eZ0WTGVaACWWWX-AOEVjrz         | AWS Advanced Networking Specialty                          | 
 | https://www.youtube.com/watch?v=eHwbWYwoZG4&list=PLzde74P_a04emYSLeQAVIK8o7aIy885p4         | Introduction to Cloud Computing                            | 
 | https://www.youtube.com/watch?v=PjKvwxTTSUk&list=PLzde74P_a04cKnuXyi--fkIoY1sxztyqL         | AWS Identity and Access Management                         | 
+| https://www.youtube.com/watch?v=9vsu67uMcko&list=PLEBQazB0HUyTpoJoZecRK6PpDG31Y7RPB         | Introduction to Embedded Linux                             | 
+| https://www.youtube.com/watch?v=Z2bvEpQvYh4&list=PL10piHcP2kVK6FvJk7GVbKCNrBe3NLAzQ         | Vue.js in a Nutshell                                       | 
+| https://www.youtube.com/watch?v=tqnEcVMdZb0&list=PL3-vEIPar_7qI4wlofzK4rRXhs7y7uhhz         | VueJS - Der komplette Einsteiger                           | 
+| https://www.youtube.com/watch?v=SSCeKhoY8Kk&list=PLnqycjkeRGqnBh-2w5PrPPQgI14HHNQkf         | Node JS                                                    | 
+| https://www.youtube.com/watch?v=iHX-jtKIVNA&list=PLt1SIbA8guuvvqyRA7BJMrSVtsrGD8fvo         | AWS Explained                                              |
+
