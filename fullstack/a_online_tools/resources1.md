@@ -591,6 +591,7 @@ https://hemingwayapp.com/
 - https://www.sendspace.com/
 - https://www.trueshare.com
 - https://wetransfer.com/
+- https://filetransfer.io/#fav
 
 ------------------------------------------------------------------
 
