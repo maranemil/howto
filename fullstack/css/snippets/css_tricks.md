@@ -861,3 +861,34 @@ img {
 
 filter: drop-shadow(0 0 0.75rem crimson);
 ~~~
+
+
+~~~
+###############################################################
+keyframes
+###############################################################
+https://developer.mozilla.org/en-US/docs/Web/CSS/@keyframes?retiredLocale=de
+https://www.w3schools.com/cssref/css3_pr_animation-keyframes.php
+https://www.mediaevent.de/css/animation.html
+https://www.w3schools.com/css/css3_animations.asp
+https://css-tricks.com/snippets/css/keyframe-animation-syntax/
+https://wiki.selfhtml.org/wiki/CSS/Tutorials/Animation/Animation
+https://www.html-seminar.de/css3-keyframes-animationen.htm
+
+
+@keyframes slidein {
+  from {
+    transform: translateX(0%);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes mymove {
+  from {top: 0px;}
+  to {top: 200px;}
+}
+
+~~~

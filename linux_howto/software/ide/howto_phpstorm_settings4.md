@@ -883,3 +883,28 @@ rm -r .idea
 
 # install project again
 ~~~
+
+
+~~~
+#############################################################
+idea not excluded from gitignore
+#############################################################
+
+https://stackoverflow.com/questions/32384473/gitignore-not-ignoring-idea-path
+
+
+git rm --cached -r .idea
+
+git rm -rf .idea
+git commit -m "delete .idea"
+git push
+
+
+git clean -f -d .idea
+
+
+git rm --cached .idea/
+echo '.idea' >> .gitignore
+git add .gitignore
+git commit -m "Removed .idea files"
+~~~

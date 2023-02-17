@@ -434,4 +434,4 @@
 | https://www.youtube.com/watch?v=tqnEcVMdZb0&list=PL3-vEIPar_7qI4wlofzK4rRXhs7y7uhhz         | VueJS - Der komplette Einsteiger                           | 
 | https://www.youtube.com/watch?v=SSCeKhoY8Kk&list=PLnqycjkeRGqnBh-2w5PrPPQgI14HHNQkf         | Node JS                                                    | 
 | https://www.youtube.com/watch?v=iHX-jtKIVNA&list=PLt1SIbA8guuvvqyRA7BJMrSVtsrGD8fvo         | AWS Explained                                              |
-
+| https://www.youtube.com/watch?v=zJxJerQtUdk&list=PL-lCrD3QqynWDYLO6GMzqnZL29y_qe-3v         | Frontend Roadmap                                           |
