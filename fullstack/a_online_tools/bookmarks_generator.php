@@ -1,11 +1,11 @@
 <?php
-
+# http://phptester.net/
 $lnks = '
 https://www.youtube.com/watch?v=GNUSdekIaMw
 https://www.youtube.com/watch?v=GNUSdekIaMw
 ';
 
-$lines = preg_split("~\n~", $lnks);
+$lines = array_unique(preg_split("~\n~", $lnks));
 
 echo '<!DOCTYPE NETSCAPE-Bookmark-file-1>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
