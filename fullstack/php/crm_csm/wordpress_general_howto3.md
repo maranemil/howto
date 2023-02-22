@@ -425,5 +425,15 @@ https://wordpress.org/support/topic/exporting-importing-media/
 Tools > Export.  Media
 ~~~
 
+~~~
+#########################################################################
+WPCode – Insert Headers and Footers + Custom Code Snippets – WordPress Code Manager
+#########################################################################
 
+https://developer.wordpress.org/reference/functions/wp_footer/
+https://wpshout.com/quick-guides/wp_footer/
+https://jetpack.com/blog/how-to-add-javascript-to-wordpress/
+https://wordpress.org/plugins/insert-headers-and-footers/
 
+Settings → Insert Headers and Footers
+~~~
