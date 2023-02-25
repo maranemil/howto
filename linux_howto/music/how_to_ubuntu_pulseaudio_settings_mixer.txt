@@ -228,3 +228,182 @@ https://wiki.archlinux.org/index.php/PulseAudio/Troubleshooting
 nano /etc/pulse/daemon.conf
 pulseaudio -k
 pulseaudio --start
+
+
+
+###################################################################
+Family 17h/19h HD Audio Controller
+###################################################################
+
+https://linux-hardware.org/?id=pci:1022-15e3-17aa-5081
+https://linux-hardware.org/?id=pci:1022-15e3-1043-1b11
+https://linux-hardware.org/index.php?id=pci:1022-15e3-103c-8433
+https://answers.launchpad.net/ubuntu/+source/alsa-driver/+question/702020
+https://wiki.ubuntuusers.de/Soundkarten_konfigurieren/HDA/
+https://github.com/pop-os/pop/issues/2584
+https://forum.manjaro.org/t/hdmi-does-not-sound-but-headphones-do/120750/5
+https://forums.linuxmint.com/viewtopic.php?t=324333
+https://bbs.archlinux.org/viewtopic.php?id=279338
+https://askubuntu.com/questions/1230363/internal-speaker-audio-is-not-working-in-ubuntu-20-04-lts-after-upgrading-from
+https://forum.manjaro.org/t/family-17h-models-10h-1fh-hd-audio-controller-is-disabled/97506
+https://gitlab.freedesktop.org/drm/amd/-/issues/1007
+https://packages.debian.org/stretch/alsa-tools-gui
+https://packages.ubuntu.com/search?keywords=alsa-tools-gui
+https://wiki.ubuntuusers.de/ALSA/
+https://wiki.ubuntu.com/PulseAudio
+https://manpages.ubuntu.com/manpages/trusty/man1/pulseaudio.1.html
+https://askubuntu.com/questions/15223/how-can-i-restart-pulseaudio-without-having-to-logout
+
+inxi -a
+inxi -Fazy
+aplay -lL
+aplay --list-devices
+arecord -l
+pactl list cards
+pactl list sinks
+pactl list sources
+cat /proc/asound/cards
+lspci -v | grep -A7 -i "audio"
+inxi -SMA
+amixer --card=1
+lsmod | grep snd_hda_intel
+
+# systemctl --user --now enable pipewire pipewire-pulse
+# echo "options snd-hda-intel dmic_detect=0" | sudo tee -a /etc/modprobe.d/alsa-base.conf echo "blacklist snd_soc_skl" | sudo tee -a /etc/modprobe.d/blacklist.conf
+
+
+sudo apt-get install alsa-base
+cat /proc/asound/cards
+head -n 1 /proc/asound/card0/codec*
+alsa_base.conf
+sudo alsa force-reload
+ls ~/.config/pulse
+
+
+# pactl set-card-profile alsa_card.pci-0000_33_00.6 output:analog-surround-40+input:analog-stereo
+arecord -Dhw:1 -r44100 test.wav
+arecord -Dhw:1 test.wav
+
+dmesg
+lspci
+aplay
+amixer
+alsactl
+rpm, dpkg
+/proc/asound/
+/sys/class/sound/
+
+
+
+sudo apt install alsa-tools-gui
+sudo apt-get install alsa-base alsa-utils
+sudo apt install pavucontrol
+sudo alsa force-reload
+sudo apt install hdajackretask
+alsa-info
+
+
+
+speaker-test -c 1 -D default
+speaker-test -c 1 -D pulse
+
+ps -C pulseaudio
+
+sudo nano /etc/pulse/daemon.conf
+enable-lfe-remixing = yes
+
+
+pulseaudio --check
+pulseaudio -k
+pulseaudio -D
+
+systemctl --user restart pulseaudio.service
+systemctl --user restart pulseaudio.socket
+pulseaudio -k && sudo alsa force-reload
+sudo service pulseaudio restart
+
+https://www.freedesktop.org/wiki/Software/PulseAudio/Documentation/User/SupportedAudioFormats/
+
+ffmpeg -formats | grep PCM
+
+DE alaw            PCM A-law
+DE f32be           PCM 32-bit floating-point big-endian
+DE f32le           PCM 32-bit floating-point little-endian
+DE f64be           PCM 64-bit floating-point big-endian
+DE f64le           PCM 64-bit floating-point little-endian
+DE mulaw           PCM mu-law
+DE s16be           PCM signed 16-bit big-endian
+DE s16le           PCM signed 16-bit little-endian
+DE s24be           PCM signed 24-bit big-endian
+DE s24le           PCM signed 24-bit little-endian
+DE s32be           PCM signed 32-bit big-endian
+DE s32le           PCM signed 32-bit little-endian
+DE s8              PCM signed 8-bit
+DE u16be           PCM unsigned 16-bit big-endian
+DE u16le           PCM unsigned 16-bit little-endian
+DE u24be           PCM unsigned 24-bit big-endian
+DE u24le           PCM unsigned 24-bit little-endian
+DE u32be           PCM unsigned 32-bit big-endian
+DE u32le           PCM unsigned 32-bit little-endian
+DE u8              PCM unsigned 8-bit
+DE vidc            PCM Archimedes VIDC
+
+
+http://trac.ffmpeg.org/wiki/audio%20types
+https://forum.level1techs.com/t/improving-linux-audio-updated/134511
+https://github.com/andres-jurado/audiophile-linux/blob/master/README.md
+https://freedesktop.org/software/pulseaudio/doxygen/sample.html
+https://fitzcarraldoblog.wordpress.com/2015/01/19/audio-in-linux-becomes-annoying-again-continued/
+https://www.reddit.com/r/ManjaroLinux/comments/mk4pr9/improved_sound_quality_with_pulse_audio/
+https://manpages.ubuntu.com/manpages/xenial/man5/pulse-daemon.conf.5.html
+https://manpages.ubuntu.com/manpages/trusty/man1/pulseaudio.1.html
+
+
+ffmpeg -f s32le input_filename.raw output.wav
+ffmpeg -f u16le -ar 44100 -ac 1 -i input.raw output.wav
+ffmpeg -i input -c:a pcm_s32le output.wav
+ffmpeg -i input -f s16le -c:a pcm_s16le output.raw
+ffmpeg -i Downloads/BabyElephantWalk60.wav
+
+sudo nano /etc/pulse/daemon.conf
+sudo nano ~/.pulse/daemon.conf
+
+default-sample-format = s16le
+default-sample-rate = 48000
+alternate-sample-rate = 44100
+default-sample-channels = 2
+default-channel-map = front-left,front-right
+default-fragments = 4
+default-fragment-size-msec = 25
+resample-method = speex-float-1
+enable-lfe-remixing = no
+high-priority = yes
+nice-level = -11
+realtime-scheduling = yes
+realtime-priority = 9
+rlimit-rtprio = 9
+daemonize = no
+
+lscpu | grep 'Byte Order'
+Here is a list of sample formats:
+u8, s16le, s16be, s24le, s24be, s24-32le, s24-32be, s32le, s32be float32le, float32be, ulaw, alaw
+
+
+Old
+
+; resample-method = speex-float-1
+; avoid-resampling = false
+
+; default-sample-format = s16le
+; default-sample-rate = 44100
+; alternate-sample-rate = 48000
+New
+
+ resample-method = speex-float-10
+ avoid-resampling = yes
+
+## These next options should be tailored to your use case and hardware. I mainly play files in 44100 and 96000 bit rate through headphones.
+
+ default-sample-format = float32le
+ default-sample-rate = 44100
+ alternate-sample-rate = 96000
