@@ -1,5 +1,6 @@
+######################################################
 Webpack, Rollup, Parcel, and Snowpack
-
+######################################################
 
 https://github.com/mschwarzmueller/yt-webpack2-basics
 https://www.youtube.com/watch?v=8DDVr6wjJzQ
@@ -10,7 +11,209 @@ npm install webpack --save-dev
 npm install webpack-dev-server --save-dev
 npm run build
 
+######################################################
+Webpack test
+######################################################
 
+https://stackoverflow.com/questions/68712902/webpack-dev-server-configure-for-a-library
+
+src/index.js
+
+function test() {
+  console.log("test");
+}
+export { test };
+webpack.config.js:
+
+const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+
+module.exports = {
+  entry: path.resolve(__dirname, "src/index.js"),
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "index_bundle.js",
+    library: {
+      name: "$",
+      type: "umd",
+    },
+  },
+  devtool: "source-map",
+  devServer: {
+    static: "./dist",
+    port: 9000,
+  },
+  plugins: [new HtmlWebpackPlugin({ title: "Test" })],
+  mode: "development",
+};
+package.json:
+
+{
+  "name": "68712902",
+  "main": "dist/index_bundle.js",
+  "scripts": {
+    "build": "webpack",
+    "start": "webpack serve --open"
+  },
+  "devDependencies": {
+    "html-webpack-plugin": "^5.3.2",
+    "webpack": "^5.51.1",
+    "webpack-cli": "^4.8.0",
+    "webpack-dev-server": "^4.0.0"
+  }
+}
+
+-------------------------
+
+https://linguinecode.com/post/how-to-setup-webpack-dev-server-react-babel
+
+
+Inside the public directory, I will add a file called, index.html.
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>React with Webpack</title>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
+
+install Webpack dependencies?
+
+{
+  "name": "react-with-webpack",
+  "scripts": {
+    "start": "webpack-dev-server --config ./webpack.config.js"
+  },
+  "dependencies": {
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "babel-loader": "^8.0.6",
+    "babel-preset-react-app": "^9.0.0",
+    "html-webpack-plugin": "^3.2.0",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0",
+    "webpack-dev-server": "^3.3.0"
+  }
+}
+
+
+$ npm i react react-dom
+
+$ npm i --save-dev html-webpack-plugin webpack webpack-cli webpack-dev-server
+List of dependencies I’m installing:
+
+react – Will allow us to write React code
+react-dom – Will allow us to grab a React app and dump onto to the DOM
+webpack – Will allow us to bundle all of our code into a final build
+webpack-cli – Allows us to use the webpack command client tool
+webpack-dev-server – Will enable use to create a localhost dev environment
+
+webpack.config.js.
+
+First I’m going to add some helpful variables and functions.
+
+
+const path = require('path');
+const fs = require('fs');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+// App directory
+const appDirectory = fs.realpathSync(process.cwd());
+// Gets absolute path of file within app directory
+const resolveAppPath = relativePath => path.resolve(appDirectory, relativePath);
+// Host
+const host = process.env.HOST || 'localhost';
+// Required for babel-preset-react-app
+process.env.NODE_ENV = 'development';
+module.exports = {}
+
+
+Setup Webpack configuration for entry and output
+
+// ... imports and variables
+module.exports = {
+  // Environment mode
+  mode: 'development',
+  // Entry point of app
+  entry: resolveAppPath('src'),
+  output: {
+    // Development filename output
+    filename: 'static/js/bundle.js',
+  },
+}
+
+
+How to setup Webpack dev server configurations
+
+// ... imports and variables
+module.exports = {
+  // ... mode, entry, output configurations
+  devServer: {
+    // Serve index.html as the base
+    contentBase: resolveAppPath('public'),
+    // Enable compression
+    compress: true,
+    // Enable hot reloading
+    hot: true,
+    host,
+    port: 3000,
+    // Public path is root of content base
+    publicPath: '/',
+  },
+}
+
+How to use HTML webpack plugin for your JS app
+
+// ... imports and variables
+module.exports = {
+  // ... mode, entry, output configurations
+  // ... dev server configurations
+  plugins: [
+    // Re-generate index.html with injected script tag.
+    // The injected script tag contains a src value of the
+    // filename output defined above.
+    new HtmlWebpackPlugin({
+      inject: true,
+      template: resolveAppPath('public/index.html'),
+    }),
+  ],
+}
+
+
+
+https://github.com/rleija703/react-examples/tree/master/with-webpack
+https://linguinecode.com/post/webpack-dev-server-proxy-api-calls-react
+https://linguinecode.com/post/webpack-dev-server-proxy-api-calls-react
+https://www.learnhowtoprogram.com/user-interfaces/responsive-design-development-environments/webpack-development-server
+https://sourcegraph.com/github.com/webpack/webpack-dev-server/-/blob/package.json
+
+Adding Webpack proxy
+If you’d like to follow along, go to this article to help you setup your
+React dev environment or go to the GitHub repo and download it.
+
+
+module.exports = {
+  // ... other configs
+  devServer: {
+    proxy: {
+      '/api/bypass-example': {
+        bypass: (req, res) => res.send({
+          mssg: 'proxy server - Message came from bypass property in webpack'
+        }),
+      },
+    },
+  },
+};
+
+
+http://localhost:3001/api/v1/user or /api/v1/user)
 
 
 
