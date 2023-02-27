@@ -215,6 +215,402 @@ module.exports = {
 
 http://localhost:3001/api/v1/user or /api/v1/user)
 
+######################################################
+Webpack.config how to just copy the index.html to the dist folder
+######################################################
+
+https://stackoverflow.com/questions/32155154/webpack-config-how-to-just-copy-the-index-html-to-the-dist-folder
+https://webpack.js.org/guides/asset-modules/
+https://www.npmjs.com/package/copy-webpack-plugin
+
+# Option 1
+require('file-loader?name=[name].[ext]!../index.html');
+
+# Option 2
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+module.exports = {
+  // ...
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: 'src/index.html'
+    })
+  ]
+}
+
+# Option 3
+"scripts": {
+    "test": "NODE_ENV=test karma start",
+    "start": "node node_modules/.bin/webpack-dev-server --content-base app",
+    "build": "NODE_ENV=production node node_modules/.bin/webpack && cp app/index.html dist/index.html"
+  }
+
+
+-----------------------
+
+npm install copy-webpack-plugin --save-dev
+npm install --save-dev copyfiles
+
+const CopyPlugin = require('copy-webpack-plugin');
+
+module.exports = {
+  plugins: [
+    new CopyPlugin([
+      { from: 'static', to: 'static' },
+      { from: 'index.html', to: 'index.html', toType: 'file'},
+    ]),
+  ],
+};
+
+
+module.exports = {
+  plugins: [
+    new CopyWebpackPlugin([{
+      from: './*.html'
+    }])
+  ]
+}
+
+
+module.exports = {
+  entry: [
+    __dirname + "/index.html",
+    .. other js files here
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.html/,
+        loader: 'file-loader?name=[name].[ext]',
+      },
+      .. other loaders
+    ]
+  }
+}
+
+
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+module.exports = {
+  // ...
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: './path/to/index.html',
+    })
+  ],
+  // ...
+};
+
+######################################################
+webpack hello world
+######################################################
+
+https://webpack.js.org/guides/getting-started/
+
+  webpack-demo
+  |- package.json
+  |- package-lock.json
+ |- index.html
+ |- /src
+   |- index.js
+
+
+src/index.js
+-----------------------
+function component() {
+  const element = document.createElement('div');
+
+  // Lodash, currently included via a script, is required for this line to work
+  element.innerHTML = _.join(['Hello', 'webpack'], ' ');
+
+  return element;
+}
+
+document.body.appendChild(component());
+
+index.html
+-----------------------
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Getting Started</title>
+    <script src="https://unpkg.com/lodash@4.17.20"></script>
+  </head>
+  <body>
+    <script src="./src/index.js"></script>
+  </body>
+</html>
+
+
+package.json
+
+ {
+   "name": "webpack-demo",
+   "version": "1.0.0",
+   "description": "",
+   "private": true,
+   "scripts": {
+     "test": "echo \"Error: no test specified\" && exit 1"
+   },
+   "keywords": [],
+   "author": "",
+   "license": "MIT",
+   "devDependencies": {
+     "webpack": "^5.38.1",
+     "webpack-cli": "^4.7.2"
+   }
+ }
+
+https://tkssharma.gitbook.io/react-training/day-01/hello-world-using-webpack
+
+"scripts": {
+ "dev": "webpack --mode development",
+ "build": "webpack --mode production"
+}
+
+"scripts": {
+ "dev": "webpack --mode development ./foo/src/js/index.js --output ./foo/main.js",
+ "build": "webpack --mode production ./foo/src/js/index.js --output ./foo/main.js"
+}
+
+
+
+npm i html-webpack-plugin html-loader --save-dev
+
+const HtmlWebPackPlugin = require("html-webpack-plugin");
+
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader"
+        }
+      },
+      {
+        test: /\.html$/,
+        use: [
+          {
+            loader: "html-loader",
+            options: { minimize: true }
+          }
+        ]
+      }
+    ]
+  },
+  plugins: [
+    new HtmlWebPackPlugin({
+      template: "./src/index.html",
+      filename: "./index.html"
+    })
+  ]
+};
+
+./src/index.html:
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="utf-8">
+ <title>webpack 4 quickstart</title>
+</head>
+<body>
+ <div id="app">
+ </div>
+</body>
+</html>
+
+run the build with:
+npm run build
+
+"scripts": {
+ "start": "webpack-dev-server --mode development --open",
+ "build": "webpack --mode production"
+}
+
+
+npm run start
+
+------------------------
+
+https://www.sitepoint.com/webpack-beginner-guide/
+
+mkdir learn-webpack
+cd learn-webpack
+npm init -y
+
+npm install webpack webpack-cli --save-dev
+
+# package.json
+{
+  "name": "learn-webpack",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^5.9.0",
+    "webpack-cli": "^4.2.0"
+  }
+}
+
+"scripts": {
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "dev": "webpack --mode development",
+  "build": "webpack --mode production"
+},
+
+npm run dev
+
+create an index.html file in the dist directory:
+
+<!doctype html>
+<html>
+  <head>
+    <title>Getting Started With Webpack</title>
+  </head>
+  <body>
+    <script src="main.js"></script>
+  </body>
+</html>
+
+
+webpack.config.js file in the root directory with the following content:
+
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const path = require('path');
+
+module.exports = {
+  plugins: [
+    new HtmlWebpackPlugin({
+      title: "Webpack Output",
+    }),
+  ],
+};
+
+npm run dev
+
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Webpack Output</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script defer src="main.js"></script>
+  </head>
+  <body>
+  </body>
+</html>
+
+webpack.config.js  add the following before the plugins property:
+
+entry: {
+  main: path.resolve(__dirname, './src/app.js'),
+},
+output: {
+  filename: '[name].bundle.js',
+  path: path.resolve(__dirname, 'deploy')
+},
+
+
+create an src/component.js file:
+
+export default (text = "Hello, Webpack!") => {
+  const element = document.createElement("h1");
+  element.innerHTML = text;
+  return element;
+};
+
+rename index.js to app.js  and replace its content with the following:
+
+import component from './component';
+document.body.appendChild(component());
+
+npm run dev
+npm run dev -- --devtool inline-source-map
+npm install babel-loader @babel/core @babel/preset-env --save-dev
+
+
+in webpack.config.js add module after the output property:
+
+module: {
+  rules: [
+    {
+      test: /\.js$/,
+      exclude: /node_modules/,
+      use: {
+        loader: 'babel-loader',
+        options: {
+          presets: ['@babel/preset-env']
+        }
+      }
+    },
+  ]
+},
+
+npm install css-loader style-loader --save-dev
+
+in webpack.config.js:
+
+module: {
+  rules: [
+    ...
+    {
+      test: /\.css$/,
+      use: ["style-loader", "css-loader"]
+    },
+  ]
+},
+
+webpack.config.js: assets
+
+module: {
+  rules: [
+    ...
+    {
+      test: /\.(?:ico|gif|png|jpg|jpeg)$/i,
+      type: 'asset/resource',
+    },
+  ]
+},
+
+image-component.js file, in the src directory, with the following content:
+
+import image from "./image.png";
+const img = document.createElement("img");
+img.src = image;
+document.body.appendChild(img);
+
+npm install webpack-dev-server --save-dev
+
+"dev": "webpack serve --mode development"
+
+configure the server in webpack.config.js by adding the following property after the output:
+
+devServer: {
+  contentBase: './deploy',
+  open: true
+},
+
+npm install clean-webpack-plugin --save-dev
+
+In webpack.config.js:
+
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+
+...
+
+plugins: [
+  ...
+  new CleanWebpackPlugin()
+],
 
 
 
