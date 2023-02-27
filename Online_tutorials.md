@@ -435,3 +435,11 @@
 | https://www.youtube.com/watch?v=SSCeKhoY8Kk&list=PLnqycjkeRGqnBh-2w5PrPPQgI14HHNQkf         | Node JS                                                    | 
 | https://www.youtube.com/watch?v=iHX-jtKIVNA&list=PLt1SIbA8guuvvqyRA7BJMrSVtsrGD8fvo         | AWS Explained                                              |
 | https://www.youtube.com/watch?v=zJxJerQtUdk&list=PL-lCrD3QqynWDYLO6GMzqnZL29y_qe-3v         | Frontend Roadmap                                           |
+| https://www.youtube.com/watch?v=D-zlCUeYIxk&list=PLIivdWyY5sqJwq_pgOxcHzusWjXDVCEiX&index=1 | Serverless Expeditions                                     |
+| https://www.youtube.com/watch?v=yBGLw_eITfY&list=PLDe9hpDQlNBUPBIjqR4BPDWDaU4n_KFiF&index=1 | Serverless Patterns                                        |
+| https://www.youtube.com/watch?v=kzKFuHk8ovk&list=PLIivdWyY5sqKh1gDR0WpP9iIOY00IE0xL&index=1 | Google Cloud Essentials                                    |
+| https://www.youtube.com/watch?v=VavWEtI5T7c&list=PLD9SRxG6ST3GBsczn8OUKLaErhrvOz9zQ&index=1 | Node MySQL Login                                           |
+| https://www.youtube.com/watch?v=IxcKMcsBGE8&list=PLlameCF3cMEsjpIRxfB9Rjici3aMCaQVo&index=1 | VueJS & NodeJS JWT Authentication                          |
+
+
+
