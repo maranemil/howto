@@ -72,3 +72,29 @@ $this->pdf->SetTextColor(245,0,0);
 
 
 
+~~~
+############################################################
+roundabout 2 digits
+############################################################
+print "<pre>";
+# http://phptester.net/
+foreach (range(0, 100, 10) as $number) {
+    $arr_random[] = $number+random_int(1, 9);
+}
+print_r($arr_random);
+
+function roundabout($int){
+	return substr($int,-2);
+}
+
+foreach($arr_random as $int_rand){
+	$arr_roundabount[] = roundabout($int_rand);
+}
+print_r($arr_roundabount);
+
+/*
+https://www.php.net/manual/de/function.array-rand.php
+https://www.php.net/manual/en/function.random-int
+https://www.php.net/manual/de/function.range.php
+*/
+~~~
