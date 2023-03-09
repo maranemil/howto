@@ -167,3 +167,75 @@ cat /sys/devices/system/cpu/vulnerabilities/spec_store_bypass
 
 
 
+##########################################
+mount encrypted partition
+##########################################
+
+https://www.cyberciti.biz/security/howto-linux-hard-disk-encryption-with-luks-cryptsetup-command/
+https://manpages.ubuntu.com/manpages/trusty/man8/cryptdisks_start.8.html
+https://gist.github.com/labbots/0d66f0eea653624329f7e1fabef3e25c
+https://gist.github.com/labbots/0d66f0eea653624329f7e1fabef3e25c
+https://ubuntu.pkgs.org/18.04/ubuntu-main-amd64/cryptsetup_2.0.2-1ubuntu1_amd64.deb.html
+https://wiki.ubuntuusers.de/System_verschl%C3%BCsseln/
+https://help.ubuntu.com/community/Full_Disk_Encryption_Howto_2019
+
+
+apt-get install cryptsetup
+fdisk -l
+cryptsetup luksFormat --type luks1 /dev/DEVICE
+cryptsetup luksFormat --type luks2 /dev/DEVICE
+cryptsetup -y -v luksFormat /dev/xvdc
+cryptsetup -y -v --type luks2 luksFormat /dev/sdc
+cryptsetup luksOpen /dev/xvdc backup2
+ls -l /dev/mapper/backup2
+cryptsetup -v status backup2
+cryptsetup luksDump /dev/xvdc
+
+# Format Linux LUKS partition
+# dd if=/dev/zero of=/dev/mapper/backup2
+# pv -tpreb /dev/zero | dd of=/dev/mapper/backup2 bs=128M
+# dd if=/dev/zero of=/dev/mapper/backup2 status=progress
+# mkfs.ext4 /dev/mapper/backup2
+
+# mkdir /backup2
+# mount /dev/mapper/backup2 /backup2
+# df -H
+# cd /backup2
+# ls -l
+
+# umount /backup2
+# cryptsetup luksClose backup2
+
+# cryptsetup luksOpen /dev/xvdc backup2
+# mount /dev/mapper/backup2 /backup2
+# df -H
+# mount
+
+
+run fsck on LUKS based partition
+
+# umount /backup2
+# fsck -vy /dev/mapper/backup2
+# mount /dev/mapper/backup2 /backu2
+
+change LUKS passphrase
+
+# cryptsetup luksDump /dev/xvdc
+# cryptsetup luksAddKey /dev/xvdc
+# cryptsetup luksRemoveKey /dev/xvdc # delete the old password
+
+
+------------------------
+Setup LUKS
+
+sudo cryptsetup luksFormat --hash=sha512 --key-size=512 --cipher=aes-xts-plain64 --verify-passphrase /dev/nvme0n1p3
+
+sudo cryptsetup luksOpen /dev/nvme0n1p3 CryptDisk
+sudo dd if=/dev/zero of=/dev/mapper/CryptDisk bs=4M
+
+Setup LVM on /dev/mapper/CryptDisk
+
+    sudo pvcreate /dev/mapper/CryptDisk
+    sudo vgcreate vg0 /dev/mapper/CryptDisk
+    sudo lvcreate -n swap -L 20G vg0
+    sudo lvcreate -n root -l +100%FREE vg0

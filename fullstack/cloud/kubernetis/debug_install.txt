@@ -1,0 +1,1151 @@
+
+##########################################
+Install Kubernetes
+##########################################
+
+https://ubuntu.com/kubernetes/install
+https://microk8s.io/
+https://kubernetes.io/de/docs/tasks/tools/install-kubectl/
+https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
+https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+
+google gke
+
+# apt
+sudo apt-get update && sudo apt-get install -y apt-transport-https
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
+sudo apt-get install -y kubectl
+
+# snap
+sudo snap install kubectl --classic
+kubectl version
+
+# inst v2
+-------------------
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+
+echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+chmod +x kubectl
+mkdir -p ~/.local/bin
+mv ./kubectl ~/.local/bin/kubectl
+
+kubectl version --client
+kubectl version --client --output=yaml
+
+# inst v3 debian
+-------------------
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl
+sudo apt-get install -y apt-transport-https
+
+sudo curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+sudo apt-get update
+sudo apt-get install -y kubectl
+
+
+
+# inst kb admin
+-------------------
+nc 127.0.0.1 6443
+
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl
+
+sudo curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+
+.....
+
+nano ~/.kube/config
+
+kubectl cluster-info
+kubectl cluster-info dump
+
+
+Install Kubernetes(K8s) and Docker on Ubuntu 20.04
+https://www.letscloud.io/community/how-to-install-kubernetesk8s-and-docker-on-ubuntu-2004
+https://itsecblog.de/kubernets-auf-ubuntu-20-04-installieren/
+
+sudo apt update
+sudo apt upgrade
+sudo apt install docker.io
+docker ––version
+sudo systemctl enable docker
+sudo systemctl start docker
+sudo systemctl status docker
+sudo systemctl start docker
+
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
+
+sudo apt-add-repository "deb http://apt.kubernetes.io/kubernetes-xenial main"
+
+sudo apt-get install kubeadm kubelet kubectl
+sudo apt-mark hold kubeadm kubelet kubectl
+kubeadm version
+sudo swapoff –a
+sudo hostnamectl set-hostname master-node
+sudo hostnamectl set-hostname w1
+
+#  Initialize Kubernetes on Master Node
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+# Deploy Pod Network to Cluster
+sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+kubectl get pods --all-namespaces
+
+# Join the Worker Node to Cluster
+kubeadm join --discovery-token abcdef.1234567890abcdef --discovery token-ca-cert-hash sha256:1234..cdef 1.2.3.4:6443
+kubectl get nodes
+
+-----------
+https://www.cloudsigma.com/how-to-install-and-use-kubernetes-on-ubuntu-20-04/
+
+sudo apt install apt-transport-https curl
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
+echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" >> ~/kubernetes.list
+sudo mv ~/kubernetes.list /etc/apt/sources.list.d
+sudo apt update
+sudo apt install kubelet
+sudo apt install kubeadm
+sudo apt install kubectl
+sudo apt-get install -y kubernetes-cni
+sudo apt-get install -y kubelet kubeadm kubectl kubernetes-cni
+
+# Disabling Swap Memory
+sudo swapoff -a
+sudo nano /etc/fstab
+
+sudo hostnamectl set-hostname kubernetes-master
+sudo hostnamectl set-hostname kubernetes-worker
+
+lsmod | grep br_netfilter
+sudo modprobe br_netfilter
+sudo sysctl net.bridge.bridge-nf-call-iptables=1
+
+sudo systemctl enable docker
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+sudo kubeadm init --ignore-preflight-errors=NumCPU,Mem --pod-network-cidr=10.244.0.0/16
+
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+sudo ufw allow 6443
+sudo ufw allow 6443/tcp
+
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/k8s-manifests/kube-flannel-rbac.yml
+
+kubectl get pods --all-namespaces
+kubectl get componentstatus
+kubectl get cs
+
+sudo nano /etc/kubernetes/manifests/kube-scheduler.yaml
+sudo nano /etc/kubernetes/manifests/kube-controller-manager.yaml
+sudo systemctl restart kubelet.service
+
+# Joining Worker Nodes to the Kubernetes Cluster
+sudo kubeadm join 127.0.0.188:6443 --token u81y02.91gqwkxx6rnhnnly --discovery-token-ca-cert-hash sha256:4482ab1c66bf17992ea02c1ba580f4af9f3ad4cc37b24f189db34d6e3fe95c2d
+
+kubectl get nodes
+
+# Deploying an Application to the Kubernetes Cluster
+kubectl create deployment nginx --image=nginx
+kubectl describe deployment nginx
+kubectl create service nodeport nginx --tcp=80:80
+kubectl get svc
+
+curl your-kubernetes-worker-ip:32264
+kubectl delete deployment nginx
+
+----------
+https://www.howtoforge.de/anleitung/kubernetes-cluster-mit-kubeadm-auf-ubuntu-22-04-einrichten/
+
+# setup hostname worker1
+sudo hostnamectl set-hostname worker1
+
+sudo nano /etc/hosts
+192.168.5.10 cplane1
+192.168.5.25 worker1
+192.168.5.26 worker2
+
+ping cplane1 -c3
+ping worker1 -c3
+ping worker2 -c3
+
+sudo ufw allow "OpenSSH"
+sudo ufw enable
+
+sudo ufw allow 6443/tcp
+sudo ufw allow 2379:2380/tcp
+sudo ufw allow 10250/tcp
+sudo ufw allow 10259/tcp
+sudo ufw allow 10257/tcp
+
+sudo ufw allow 10250/tcp
+sudo ufw allow 30000:32767/tcp
+
+sudo modprobe overlay
+sudo modprobe br_netfilter
+
+cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
+
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward                 = 1
+EOF
+
+sudo sysctl --system
+sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+sudo nano /etc/fstab
+sudo swapoff -a
+free -m
+
+sudo apt update
+sudo apt install containerd.io
+sudo systemctl stop containerd
+
+sudo mv /etc/containerd/config.toml /etc/containerd/config.toml.orig
+sudo containerd config default > /etc/containerd/config.toml
+sudo nano /etc/containerd/config.toml
+
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+    SystemdCgroup = true
+
+sudo systemctl start containerd
+sudo systemctl is-enabled containerd
+sudo systemctl status containerd
+sudo apt install apt-transport-https ca-certificates curl -y
+sudo apt update
+sudo apt install kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+
+mkdir -p /opt/bin/
+sudo curl -fsSLo /opt/bin/flanneld https://github.com/flannel-io/flannel/releases/download/v0.19.0/flanneld-amd64
+sudo chmod +x /opt/bin/flanneld
+
+lsmod | grep br_netfilter
+sudo kubeadm config images pull
+
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16 \
+--apiserver-advertise-address=192.168.5.10 \
+--cri-socket=unix:///run/containerd/containerd.sock
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+kubectl cluster-info
+
+kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
+
+kubectl get pods --all-namespaces
+
+kubeadm join 192.168.5.10:6443 --token po3sb1.oux4z76nwb0veuna \
+--discovery-token-ca-cert-hash sha256:f5068150fabaf85f3d04e19a395c60d19298ba441e2d9391e20df3267ea6cd28
+
+kubectl get pods --all-namespaces
+kubectl get nodes -o wide
+
+
+
+#########################################################
+Purging All Unused or Dangling Images, Containers, Volumes, and Networks
+#########################################################
+
+docker system prune
+docker system prune -a
+
+docker images -a
+docker images -f dangling=true
+docker image prune
+
+docker images -a |  grep "pattern"
+docker images -a | grep "pattern" | awk '{print $3}' | xargs docker rmi
+
+docker images -a
+docker rmi $(docker images -a -q)
+
+docker ps -a
+docker ps -a -f status=exited
+docker rm $(docker ps -a -f status=exited -q)
+docker ps -a -f status=exited -f status=created
+docker rm $(docker ps -a -f status=exited -f status=created -q)
+
+
+docker ps -a |  grep "pattern”
+docker ps -a | grep "pattern" | awk '{print $1}' | xargs docker rm
+
+
+docker ps -a
+docker stop $(docker ps -a -q)
+docker rm $(docker ps -a -q)
+
+docker volume ls
+docker volume ls -f dangling=true
+docker volume prune
+docker rm -v container_name
+
+
+
+#########################################################
+kubectl snap
+#########################################################
+
+https://kubernetes.io/docs/setup/production-environment/container-runtimes/
+https://stackoverflow.com/questions/72334044/the-connection-to-the-server-localhost8080-was-refused-did-you-specify-the-r
+https://dev.to/stack-labs/how-to-switch-container-runtime-in-a-kubernetes-cluster-1628
+https://kubernetes.io/docs/setup/production-environment/container-runtimes/
+https://github.com/kubernetes/kubeadm/issues/2364
+https://serverfault.com/questions/877136/debug-kubelet-not-starting
+https://github.com/kubernetes/website/issues/34668
+
+snap search kubectl
+
+sudo snap install kubelet --classic
+sudo snap install kubeadm --classic
+sudo snap install kubectl --classic
+
+swapoff -a
+
+sudo hostnamectl set-hostname kubernetes-master
+sudo hostnamectl set-hostname kubernetes-worker
+
+
+# DEBUG
+kubectl version
+kubeadm version
+docker info
+kubectl version -o json
+kubectl config view
+sudo kubectl get pods --all-namespaces
+kubectl get pods --all-namespaces
+kubectl cluster-info
+journalctl -u kubelet
+journalctl -u containerd
+sudo journalctl -xu kubelet.service
+
+sudo systemctl start kubelet
+# Failed to start kubelet.service: Unit kubelet.service not found.
+
+
+# kube upgrade node
+# kubeadm config images pull
+
+# sudo kubeadm init
+# sudo kubeadm init --v=5 --ignore-preflight-errors=...
+# sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+# kubectl get nodes
+
+kubelet --version
+Kubernetes v1.26.2
+
+kubectl edit deploy -n kube-system kubernetes-dashboard
+
+curl localhost:8080
+
+
+The connection to the server localhost:8080 was refused - did you specify the right host or port?
+-----------------------------------------------------------------------------------------------------
+sudo apt-get update && sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+
+sudo apt-get update && sudo apt-get install -y containerd.io
+
+
+Configure containerd
+sudo -i
+mkdir -p /etc/containerd
+containerd config default > /etc/containerd/config.toml
+systemctl restart containerd
+
+kubectl config view
+-----------------------------------------------------------
+
+# Failed to start kubelet.service: Unit kubelet.service not found.
+
+sudo systemctl status kubelet.service
+# Unit kubelet.service could not be found.
+
+kubeadm init
+# [WARNING FileExisting-socat]: socat not found in system path
+# [ERROR FileExisting-crictl]: crictl not found in system path
+# [ERROR FileExisting-conntrack]: conntrack not found in system path
+# [WARNING Service-Kubelet]: kubelet service is not enabled, please run 'systemctl enable kubelet.service'
+
+kubeadm config images pull
+crictl is required by the container runtime: executable file not found in $PATH
+
+sudo -i
+swapoff -a
+kubeadm reset
+kubeadm init
+systemctl daemon-reload
+kubeadm reset
+kubeadm init
+systemctl restart kubelet
+# Failed to restart kubelet.service: Unit kubelet.service not found.
+
+sudo nano /etc/modules-load.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+
+
+sudo systemctl start kubelet
+sudo systemctl status kubelet
+# Failed to start kubelet.service: Unit kubelet.service not found.
+
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+# cp: cannot stat '/etc/kubernetes/admin.conf': No such file or directory
+
+
+#########################################################
+minikube
+#########################################################
+
+https://kubernetes.io/docs/tasks/tools/
+https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
+https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+https://minikube.sigs.k8s.io/docs/start/
+
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+minikube start
+kubectl get po -A
+minikube kubectl -- get po -A
+
+kubectl create deployment hello-minikube --image=kicbase/echo-server:1.0
+kubectl expose deployment hello-minikube --type=NodePort --port=8080
+kubectl get services hello-minikube
+minikube service hello-minikube
+kubectl port-forward service/hello-minikube 7080:8080
+minikube pause
+minikube unpause
+minikube stop
+minikube config set memory 9001
+minikube addons list
+minikube start -p aged --kubernetes-version=v1.16.1
+minikube delete --all
+
+
+# kubectl
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+chmod +x kubectl
+mkdir -p ~/.local/bin
+mv ./kubectl ~/.local/bin/kubectl
+kubectl version --client
+kubectl version --client --output=yaml
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl
+sudo apt-get install -y apt-transport-https
+sudo curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
+sudo apt-get install -y kubectl
+
+# kubectl snap
+snap install kubectl --classic
+kubectl version --client
+kubectl cluster-info
+kubectl cluster-info dump
+
+--------------------------------------------------------------------------------
+
+ifconfig -a
+sudo cat /sys/class/dmi/id/product_uuid
+nc 127.0.0.1 6443
+
+sudo apt-get update
+#sudo apt-get install -y kubelet kubeadm kubectl
+#sudo apt-mark hold kubelet kubeadm kubectl
+
+# "command failed" err="failed to validate kubelet flags: the container runtime endpoint address was not specified or empty, use --container-runtime-endpoint to set"
+sudo kubelet --container-runtime-endpoint=/run/containerd/containerd.sock
+sudo kubelet --container-runtime=remote --container-runtime-endpoint=/run/containerd/containerd.sock
+
+
+sudo systemctl start kubelet
+sudo systemctl restart containerd
+
+--------------------------------------------------------------------------------
+
+kubeadm version
+snap info kubeadm
+
+sudo apt update --fix-missing && sudo apt upgrade -y
+sudo apt install daemonize
+sudo apt install -y docker.io
+sudo snap install --classic kubelet
+daemonize kubelet
+sudo snap install --classic kubeadm
+kubeadm init
+
+
+
+https://github.com/kubernetes-sigs/cri-tools/blob/master/docs/crictl.md
+https://github.com/kubernetes-sigs/cri-tools
+
+# Install crictl using wget:
+VERSION="v1.26.0"
+wget https://github.com/kubernetes-sigs/cri-tools/releases/download/$VERSION/crictl-$VERSION-linux-amd64.tar.gz
+sudo tar zxvf crictl-$VERSION-linux-amd64.tar.gz -C /usr/local/bin
+rm -f crictl-$VERSION-linux-amd64.tar.gz
+
+# Install crictl using curl:
+VERSION="v1.26.0" # check latest version in /releases page
+curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/$VERSION/crictl-${VERSION}-linux-amd64.tar.gz --output crictl-${VERSION}-linux-amd64.tar.gz
+sudo tar zxvf crictl-$VERSION-linux-amd64.tar.gz -C /usr/local/bin
+rm -f crictl-$VERSION-linux-amd64.tar.gz
+
+
+# Install critest
+VERSION="v1.26.0"
+wget https://github.com/kubernetes-sigs/cri-tools/releases/download/$VERSION/critest-$VERSION-linux-amd64.tar.gz
+sudo tar zxvf critest-$VERSION-linux-amd64.tar.gz -C /usr/local/bin
+rm -f critest-$VERSION-linux-amd64.tar.gz
+
+
+--------------------------------------------------------------------------------
+
+https://docs.sylabs.io/guides/cri/1.0/user-guide/local.html
+https://medium.com/@badawekoo/kubernetes-manual-installation-in-seconds-with-containerd-and-crictl-9c89ac1a03e2
+
+sudo -i
+curl -LJO https://raw.githubusercontent.com/Badawekoo/devops/main/kubernetes/manual_installation/k8s-master.sh
+bash k8s-master.sh
+
+# bash <(curl -s https://raw.githubusercontent.com/Badawekoo/devops/main/kubernetes/manual_installation/k8s-master.sh)
+
+curl -LJO https://raw.githubusercontent.com/Badawekoo/devops/main/kubernetes/manual_installation/k8s-worker.sh
+bash k8s-worker.sh
+
+# bash <(curl -s https://raw.githubusercontent.com/Badawekoo/devops/main/kubernetes/manual_installation/k8s-worker.sh)
+
+kubectl get nodes
+kubectl rollout restart deployment coredns -n kube-system
+
+podman run — name c1 -d busybox
+podman pull alpine
+podman images
+podman ps -a
+
+crictl run — name c1 -d busybox
+crictl pods
+crictl images
+
+--------------------------------------------------------------------------------
+
+https://www.howtoforge.com/how-to-install-cri-o-container-runtime-on-ubuntu-22-04/#google_vignette
+https://github.com/kubernetes-sigs/cri-tools/blob/master/docs/crictl.md#install-crictl
+https://docs.sylabs.io/guides/cri/1.0/user-guide/local.html
+https://docs.openshift.com/container-platform/3.11/crio/crio_runtime.html
+https://kubernetes.io/docs/tasks/debug/debug-cluster/crictl/
+https://github.com/kubernetes-sigs/cri-tools/releases
+https://dev.to/stack-labs/how-to-switch-container-runtime-in-a-kubernetes-cluster-1628
+
+
+Running Nginx
+sudo crictl runp examples/net-pod.json
+sudo crictl pods
+sudo crictl pull nginx &&  sudo crictl create <POD_ID> examples/nginx.json examples/net-pod.json
+sudo crictl ps -a
+sudo crictl start <CONTAINER_ID>
+sudo crictl runp examples/net-pod.json
+
+sudo crictl pull cloud.sylabs.io/sashayakovtseva/test/test-info && sudo crictl create <POD_ID> examples/info-cont.json examples/net-pod.json
+sudo crictl start <CONTAINER_ID>
+sudo crictl logs <CONTAINER_ID>
+
+sudo crictl stopp <POD_ID> && sudo crictl rmp <POD_ID>
+
+--------------------------------------------------------------------------------
+https://archlinux.org/packages/community/x86_64/crictl/
+https://computingforgeeks.com/install-cri-o-container-runtime-on-ubuntu-linux/#google_vignette
+https://www.linkedin.com/pulse/how-solve-connection-server-refused-kubernetes-kubeadm-vikas-mathur
+https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+
+crictl pods
+crictl pods --name nginx-65899c769f-wv2gp
+crictl pods --label run=nginx
+crictl images
+crictl images nginx
+crictl images -q
+crictl ps -a
+crictl ps
+crictl exec -i -t 1f73f2d81bf98 ls
+crictl logs 87d3992f84f74
+crictl logs --tail=1 87d3992f84f74
+
+# create container
+crictl pull busybox
+
+container-config.json
+{
+  "metadata": {
+    "name": "busybox"
+  },
+  "image":{
+    "image": "busybox"
+  },
+  "command": [
+    "top"
+  ],
+  "log_path":"busybox.log",
+  "linux": {
+  }
+}
+
+pod-config.json
+{
+  "metadata": {
+    "name": "busybox-sandbox",
+    "namespace": "default",
+    "attempt": 1,
+    "uid": "aewi4aeThua7ooShohbo1phoj"
+  },
+  "log_directory": "/tmp",
+  "linux": {
+  }
+}
+
+# Create the container, passing the ID of the previously-created pod, the container config file, and the pod config file. The ID of the container is returned.
+
+crictl create f84dd361f8dc51518ed291fbadd6db537b0496536c1d2d6c05ff943ce8c9a54f container-config.json pod-config.json
+#crictl create container-config.json pod-config.json
+crictl ps -a
+crictl start 3e025dd50a72d956c4f14881fbb5b1080c9275674e95fb67f965f6478a957d60
+crictl ps
+
+sudo apt update && sudo apt -y full-upgrade
+sudo apt update
+sudo apt install cri-o cri-o-runc
+
+systemctl daemon-reload
+systemctl restart crio
+journalctl -u crio
+sudo crictl images
+sudo crictl pods
+sudo crictl ps
+sudo crictl ps -a
+
+
+systemctl status docker
+
+minikube start --driver=docker
+minikube start --driver=docker --alsologtostderr
+
+
+https://stackoverflow.com/questions/62407918/kubelet-service-is-not-starting
+
+/etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+Environment="KUBELET_SYSTEM_PODS_ARGS=--pod-manifest-path=/etc/kubernetes/manifests --allow-privileged=true --fail-swap-on=false"
+
+systemctl daemon-reload
+systemctl restart kubelet
+
+
+
+
+#########################################################
+All-In-One Kubernetes tools (kubectl, helm, iam-authenticator, eksctl, kubeseal, etc)
+#########################################################
+
+https://hub.docker.com/r/alpine/k8s
+https://www.docker.com/products/kubernetes/
+https://docs.docker.com/desktop/install/linux-install/
+https://docs.docker.com/desktop/install/ubuntu/
+https://docs.docker.com/desktop/install/debian/
+https://hub.docker.com/r/bitnami/kubectl/
+https://hub.docker.com/r/ibmcom/kubernetes
+https://hub.docker.com/r/rancher/kubernetes-dashboard-amd64
+https://hub.docker.com/r/rancher/kubernetes
+https://hub.docker.com/r/ibmcom/kubernetes-amd64
+https://hub.docker.com/r/amazon/aws-node-termination-handler
+https://hub.docker.com/r/hashicorp/vault-k8s
+https://hub.docker.com/r/portainer/portainer-k8s-beta
+https://hub.docker.com/r/docker/desktop-kubernetes
+https://hub.docker.com/r/mongodb/mongodb-atlas-kubernetes-operator
+https://hub.docker.com/r/amazon/amazon-eks-pod-identity-webhook
+https://hub.docker.com/r/ibmcom/couchdb-operator
+https://hub.docker.com/r/amazon/aws-secrets-manager-secret-adm-controller
+https://hub.docker.com/r/ibmcom/ibm-application-gateway-operator
+https://hub.docker.com/r/ibmcom/ibm-storage-enabler-for-containers
+
+https://www.mongodb.com/docs/atlas/reference/atlas-operator/ak8so-quick-start/
+https://www.mongodb.com/docs/atlas/atlas-operator/
+
+sudo apt install docker docker-compose -y
+snap search pycharm
+sudo snap install pycharm-community --classic
+
+
+docker pull alpine/k8s
+docker pull bitnami/kubectl:latest
+docker run --rm --name kubectl bitnami/kubectl:latest version
+docker run --rm --name kubectl -v /path/to/your/kube/config:/.kube/config bitnami/kubectl:latest
+docker pull ibmcom/kubernetes
+docker pull rancher/kubernetes-dashboard-amd64
+docker pull portainer/portainer-k8s-beta
+
+------
+
+sudo apt install gnome-terminal
+sudo apt remove docker-desktop
+
+rm -r $HOME/.docker/desktop
+sudo rm /usr/local/bin/com.docker.cli
+sudo apt purge docker-desktop
+
+sudo apt-get update
+sudo apt-get install ./docker-desktop-<version>-<arch>.deb
+
+systemctl --user start docker-desktop
+docker compose version
+docker --version
+docker version
+systemctl --user enable docker-desktop
+systemctl --user stop docker-desktop
+sudo apt-get install ./docker-desktop-<version>-<arch>.deb
+
+
+#########################################################
+portainer
+#########################################################
+
+https://github.com/portainer/portainer-k8s/blob/master/README.md
+https://github.com/portainer/portainer-k8s/blob/master/README.md
+https://docs.docker.com/compose/compose-file/compose-file-v3/
+
+https://hub.docker.com/r/portainer/portainer-ee
+https://hub.docker.com/r/portainer/portainer-ce
+https://hub.docker.com/r/portainer/portainer-docker-extension
+https://hub.docker.com/r/portainer/portainer
+https://hub.docker.com/r/portainer/portainerctl
+https://hub.docker.com/r/portainer/kube-tools
+https://hub.docker.com/r/portainer/base
+https://hub.docker.com/r/portainer/kubectl-shell
+https://hub.docker.com/r/portainer/portainer-k8s-beta
+https://hub.docker.com/r/portainer/agent-k8s-beta
+
+
+https://install.portainer.io/docker-standalone-linux
+https://install.portainer.io/
+https://docs.portainer.io/
+https://docs.portainer.io/start/install-ce
+https://docs.portainer.io/start/install-ce/server/docker/linux
+https://docs.portainer.io/start/install-ce/server/swarm/linux
+
+# docker
+docker pull portainer/portainer-ce
+docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
+https://localhost:9443
+
+# swarm
+curl -L https://downloads.portainer.io/ce2-17/portainer-agent-stack.yml -o portainer-agent-stack.yml
+docker stack deploy -c portainer-agent-stack.yml portainer
+https://localhost:9443
+
+docker run -d -p 8000:8000 -p 9443:9443 --name=portainer --restart=always \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v portainer_data:/data \
+    portainer/portainer-ce:latest
+
+
+# A minimalist Debian-based image built specifically to be used as a base image for containers.
+https://hub.docker.com/r/bitnami/kubectl/dockerfile
+https://github.com/bitnami/minideb
+
+docker run --rm -it bitnami/minideb:latest
+docker run --rm -it bitnami/minideb:bullseye
+
+
+------
+
+https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands
+https://docs.bitnami.com/tutorials/understand-rolling-tags-containers/
+https://github.com/bitnami/containers
+https://github.com/bitnami/minideb
+
+docker-composer.yml
+
+version: "3"
+services:
+
+  # https://localhost:9443/#!/init/admin
+  portainer:
+    image: portainer/portainer-ce:latest
+    ports:
+      - "8000:8000"
+      - "9443:9443"
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./portainer_data:/data
+
+
+  kubectl:
+    image: bitnami/kubectl:latest
+    tty: true
+
+  kubectl:
+    image: bitnami/kubectl:1.14
+    tty: true
+
+
+
+Run 'kubectl --help' for usage.
+unknown command "kubectl --help" for "kubectl"
+
+
+
+
+https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/
+https://artifacthub.io/packages/helm/bitnami/consul
+https://aws.amazon.com/de/blogs/opensource/managing-secrets-deployment-in-kubernetes-using-sealed-secrets/
+https://github.com/bitnami/charts/issues/10227
+https://hub.docker.com/r/bitnami/kubectl/
+https://hub.docker.com/r/bitnami/kubectl/dockerfile
+https://docs.bitnami.com/kubernetes/faq/troubleshooting/troubleshooting-pods/
+https://github.com/bitnami/charts/issues/10839
+https://stackoverflow.com/questions/68344231/how-to-remove-kubernetes-shutdown-pods
+https://community.jenkins.io/t/adding-kubectl-container-to-pipeline-not-working/3316
+https://gitlab.com/gitlab-org/gitlab-foss/-/issues/65110
+https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands
+https://stackoverflow.com/questions/49032812/how-to-pull-image-from-dockerhub-in-kubernetes
+
+
+#############################################################
+Install Docker Desktop on Ubuntu
+#############################################################
+
+https://docs.docker.com/desktop/install/ubuntu/
+https://www.docker.com/products/docker-desktop/
+
+
+sudo usermod -aG kvm $USER
+
+
+sudo apt install gnome-terminal
+sudo apt remove docker-desktop
+
+rm -r $HOME/.docker/desktop
+sudo rm /usr/local/bin/com.docker.cli
+sudo apt purge docker-desktop
+
+sudo apt-get update
+sudo apt-get install ./docker-desktop-<version>-<arch>.deb
+systemctl --user start docker-desktop
+docker compose version
+docker --version
+docker version
+systemctl --user enable docker-desktop
+systemctl --user stop docker-desktop
+sudo apt-get install ./docker-desktop-<version>-<arch>.deb
+
+
+
+#############################################################
+#############################################################
+sudo apt install kubernetes
+
+snap search kube
+
+kubectl                      1.26.2                canonical✓             classic   Command line client for controlling a Kubernetes cluster.
+kubelet                      1.26.2                canonical✓             classic   Kubernetes agent that runs on each node in Kubernetes.
+kube-proxy                   1.26.2                canonical✓             classic   Kubernetes network proxy that runs on each node.
+kube-scheduler               1.26.2                canonical✓             -         Kubernetes control plane component that assigns each newly created pod to a node.
+kube-controller-manager      1.26.2                canonical✓             -         Kubernetes control plane component that runs controllers.
+kube-apiserver               1.26.2                canonical✓             -         Kubernetes control plane component that exposes the Kubernetes API.
+kubernetes-worker            0.0.2                 canonical✓             -         A complete Kubernetes worker
+kubeadm                      1.26.2                canonical✓             classic   Tool for bootstrapping Kubernetes clusters.
+kubefed                      1.9.0-alpha3          canonical✓             classic   kubefed controls the Kubernetes cluster federation manager.
+kubernetes-test              1.26.2                canonical✓             classic   tests for kubernetes
+kubekutr                     0.9.2                 mrkaran                -         Cookie cutter templating tool for scaffolding K8s manifests
+kubefedctl                   0.4.0                 joeborg                classic   Kubefed command line tool
+kubelogin                    v0.0.27               exodus                 -         A Kubernetes credential (exec) plugin implementing azure authentication
+kubelet-eks                  1.10.3                canonical-cloud-snaps  classic   kubelet is the primary node agent that runs on each node in Kubernetes.
+kubectl-eks                  1.10.3                canonical-cloud-snaps  classic   kubectl controls the Kubernetes cluster manager.
+kube-commander               0.2.1                 anatoly-rugalev        -         Browse your kubernetes clusters in a casual way
+kube-proxy-eks               1.10.3                canonical-cloud-snaps  classic   Kubernetes network proxy runs on each node.
+kubectx                      0.9.4                 mhalano                classic   kubectx + kubens: Power tools for kubectl
+kubernetes-test-eks          1.10.3                canonical-cloud-snaps  classic   tests for kubernetes
+microk8s                     v1.26.1               canonical✓             classic   Kubernetes for workstations and appliances
+cdk-addons                   1.26.1                canonical✓             -         Addons for Canonical Kubernetes
+k9s                          0.7.12                derailed               -         K9s is a CLI to view and manage your Kubernetes clusters.
+kustomize                    5.0.0                 abskmj                 -         Kubernetes native configuration management
+traefik                      2.9.8                 ed10vi86               -         The Cloud Native Application Proxy
+traefik-nacc                 1.0.1                 nacc                   -         Træfik, a modern reverse proxy
+helm3                        3.3.4                 terraform-snap         -         The Kubernetes package manager
+helm-snap                    2.14.3                terraform-snap         -         The Kubernetes package manager
+
+sudo snap install kubectl --classic  # Client Version: v1.26.2 / Kustomize Version: v4.5.
+sudo snap install kubelet --classic  # kubelet 1.26.2 aus Canonical✓ installiert
+sudo snap install kubeadm --classic  # kubeadm 1.26.2 aus Canonical✓ installiert
+
+kubectl version
+kubectl get nodes
+
+# The connection to the server localhost:8080 was refused
+# kubectl run nginx --image=nginx --expose --port=8081
+# kubectl -s 127.0.0.1:8888 version
+
+kubectl version --short
+kubectl version --output=yaml
+kubectl version --output=json
+
+kubelet --help
+
+kubeadm init
+kubeadm join <arguments-returned-from-init>      │
+
+Available Commands:
+  certs       Commands related to handling kubernetes certificates
+  completion  Output shell completion code for the specified shell (bash or zsh)
+  config      Manage configuration for a kubeadm cluster persisted in a ConfigMap in the cluster
+  help        Help about any command
+  init        Run this command in order to set up the Kubernetes control plane
+  join        Run this on any machine you wish to join an existing cluster
+  kubeconfig  Kubeconfig file utilities
+  reset       Performs a best effort revert of changes made to this host by 'kubeadm init' or 'kubeadm join'
+  token       Manage bootstrap tokens
+  upgrade     Upgrade your cluster smoothly to a newer version with this command
+  version     Print the version of kubeadm
+
+Flags:
+      --add-dir-header           If true, adds the file directory to the header of the log messages
+  -h, --help                     help for kubeadm
+      --log-file string          If non-empty, use this log file (no effect when -logtostderr=true)
+      --log-file-max-size uint   Defines the maximum size a log file can grow to (no effect when -logtostderr=true). Unit is megabytes. If the value is 0, the maximum file size is unlimited. (default 1800)
+      --one-output               If true, only write logs to their native severity level (vs also writing to each lower severity level; no effect when -logtostderr=true)
+      --rootfs string            [EXPERIMENTAL] The path to the 'real' host root filesystem.
+      --skip-headers             If true, avoid header prefixes in the log messages
+      --skip-log-headers         If true, avoid headers when opening log files (no effect when -logtostderr=true)
+  -v, --v Level                  number for the log level verbosity
+
+
+Couldn't create the interface used for talking to the container runtime: crictl is required by the container runtime
+
+apt search crictl
+snap search crictl
+
+https://unofficial-kubernetes.readthedocs.io/en/latest/tasks/configure-pod-container/configmap/
+https://sysdig.com/blog/debug-kubernetes-crashloopbackoff/
+https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/
+https://kubernetes.io/docs/tasks/manage-kubernetes-objects/declarative-config/
+https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/troubleshooting-kubeadm/
+https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands
+
+kubectl create -f ./pod.json
+cat pod.json | kubectl create -f -
+kubectl create -f registry.yaml --edit -o json
+
+The connection to the server localhost:8080 was refused - did you specify the right host or port?
+
+kubectl get pods
+kubectl describe pod the-pod-name
+kubectl logs mypod --all-containers
+kubectl logs mypod -c mycontainer
+kubectl get events
+kubectl get events --field-selector involvedObject.name=mypod
+kubectl describe deployment mydeployment
+kubectl get componentstatuses
+kubectl api-resources
+
+E0309 10:00:59.343325   10061 memcache.go:238] couldn't get current server API group list: Get "http://localhost:8080/api?timeout=32s": dial tcp 127.0.0.1:8080: connect: connection refused
+
+kubectl config get-contexts
+# colima start --cpu 2 --memory 2 --disk 10 --kubernetes test
+
+sudo swapoff -a
+telnet 127.0.0.1 8080
+# telnet: Unable to connect to remote host: Connection refused
+
+sudo netstat -lnpt|grep kube
+netstat -a | grep 6443
+# ?
+
+sudo ufw status verbose
+sudo ufw disable
+sudo ufw enable
+sudo ufw allow 6443/tcp
+telnet 127.0.0.1 6443
+
+
+https://medium.com/@texasdave2/troubleshoot-kubectl-connection-refused-6f5445a396ed
+https://askubuntu.com/questions/1433858/ubuntu-22-04-1-lts-jammy-adding-deb-http-apt-kubernetes-io-kubernetes-xeni
+https://www.vladimircicovic.com/2022/08/kubernetes-setup-on-ubuntu-2204-lts-jammy-jellyfish
+
+cd ~
+ls -la
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+# try your get pods command now
+kubectl get pods
+
+
+ifconfig
+ls /etc/kubernetes
+sudo systemctl status kubelet -l
+
+kubeadm reset -f
+kubeadm init --config /etc/kubernetes/kubeadm-config.yaml
+kubeadm init --config /etc/kubernetes/kubeadm-config.yaml
+
+cat /etc/apt/sources.list
+
+lsb_release -a
+No LSB modules are available.
+Distributor ID:	Ubuntu
+Description:	Ubuntu 22.04.2 LTS
+Release:	22.04
+Codename:	jammy
+
+----
+
+https://packages.cloud.google.com/apt/dists
+http://ppa.launchpad.net/numix/ppa/ubuntu
+
+kubernetes-jessie
+kubernetes-jessie-unstable
+kubernetes-lucid
+kubernetes-lucid-unstable
+kubernetes-precise
+kubernetes-precise-unstable
+kubernetes-squeeze
+kubernetes-squeeze-unstable
+kubernetes-stretch
+kubernetes-stretch-unstable
+kubernetes-trusty
+kubernetes-trusty-unstable
+kubernetes-wheezy
+kubernetes-wheezy-unstable
+kubernetes-xenial
+kubernetes-xenial-unstable
+kubernetes-yakkety
+kubernetes-yakkety-unstable
+
+----
+
+sudo apt-get update && sudo apt-get install -y apt-transport-https
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+
+# Warning: apt-key is deprecated. Manage keyring files in trusted.gpg.d instead (see apt-key(8)).
+#cat <<EOF >/etc/apt/sources.list.d/kubernetes.list deb http://apt.kubernetes.io/ kubernetes-xenial main EOF
+#echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+#echo "deb https://apt.kubernetes.io/ kubernetes-jammy main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+#echo "deb https://apt.kubernetes.io/ kubernetes-yakkety main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+# OK FIX Install
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl
+sudo apt-get install -y apt-transport-https
+sudo curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
+# sudo apt-get install -y kubectl
+# Install docker if you don't have it already.
+# apt-get install -y docker.io
+# apt-get install -y kubelet kubeadm kubectl kubernetes-cni
+sudo apt-get install -y kubernetes-cni kubernetes
+
+ls -la ~/ # .kube
+-------------------------------------------------------
+
+kubeadm config images list
+registry.k8s.io/kube-apiserver:v1.26.2
+registry.k8s.io/kube-controller-manager:v1.26.2
+registry.k8s.io/kube-scheduler:v1.26.2
+registry.k8s.io/kube-proxy:v1.26.2
+registry.k8s.io/pause:3.9
+registry.k8s.io/etcd:3.5.6-0
+registry.k8s.io/coredns/coredns:v1.9.3
+
+-------------------------------------------------------
+
+https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-init/
+https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/
+https://medium.com/bb-tutorials-and-thoughts/kubernetes-learn-init-container-pattern-7a757742de6b
+https://docs.openshift.com/container-platform/4.8/nodes/containers/nodes-containers-init.html
+https://www.golinuxcloud.com/kubernetes-init-containers/
+https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-initialization/
+https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+https://kubernetes.io/de/docs/tasks/tools/install-kubectl/
+https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+https://linuxconfig.org/how-to-install-kubernetes-on-ubuntu-22-04-jammy-jellyfish-linux
+https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
+https://github.com/kubernetes/website/issues/25174
+https://www.vladimircicovic.com/2022/08/kubernetes-setup-on-ubuntu-2204-lts-jammy-jellyfish
+https://hackmd.io/@sohailanjum97/H1EOq0rV_
+https://stackoverflow.com/questions/50406142/kubectl-bash-completion-doesnt-work-in-ubuntu-docker-container
+https://www.ibm.com/docs/en/control-desk/7.6.1.x?topic=kubernetes-creating-cluster-master-worker-nodes
+https://unofficial-kubernetes.readthedocs.io/en/latest/getting-started-guides/kubeadm/
+https://stackoverflow.com/questions/66213199/config-not-found-etc-kubernetes-admin-conf-after-setting-up-kubeadm-worker
+https://discuss.kubernetes.io/t/the-connection-to-the-server-localhost-8080-was-refused-did-you-specify-the-right-host-or-port/1464/49?page=3
+https://discuss.kubernetes.io/t/the-connection-to-the-server-192-168-1-2-6443-was-refused-did-you-specify-the-right-host-or-port/22260
+https://github.com/abiosoft/colima/issues/516
+https://unofficial-kubernetes.readthedocs.io/en/latest/tasks/configure-pod-container/configmap/
+https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/
+https://kubernetes.io/docs/tasks/manage-kubernetes-objects/declarative-config/
+https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/troubleshooting-kubeadm/
+https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands
+https://stackoverflow.com/questions/73908791/cannot-use-args-to-pass-arguments-to-a-pod
+https://stackoverflow.com/questions/47684382/kubernetes-pod-arguments-are-not-passing-to-service-however-docker-arguments-ar
+
+for i in {1..100}; do sleep 1; if dig myservice; then exit 0; fi; done; exit 1
+curl -X POST http://$MANAGEMENT_SERVICE_HOST:$MANAGEMENT_SERVICE_PORT/register -d ‘instance=$()&ip=$()’
+
+sudo swapoff -a
+sudo nano /etc/fstab # Inside this file, comment out the /swapfile line by preceeding it with a # symbol, as seen below.
+
+sudo hostnamectl set-hostname kubernetes-master
+sudo hostnamectl set-hostname kubernetes-worker
+sudo kubeadm init
+
+# Master Isolation
+kubectl taint nodes --all node-role.kubernetes.io/master-
+kubectl apply -f <add-on.yaml>
+
+kubectl get node
+minikube   status
+sudo systemctl restart kubelet
+kubectl create configmap game-config --from-file=docs/user-guide/configmap/kubectl
+kubectl get configmaps game-config -o yaml
+kubectl create configmap game-config-2 --from-file=docs/user-guide/configmap/kubectl/game.properties --from-file=docs/user-guide/configmap/kubectl/ui.properties
+kubectl get configmaps game-config-2 -o yaml
+
+

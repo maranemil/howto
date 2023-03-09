@@ -522,3 +522,19 @@ sudo systemctl enable docker.service
 sudo systemctl enable containerd.service
 reboot
 ```
+
+### Install VBoxGuestAdditions iso
+~~~shell
+reboot
+wget https://download.virtualbox.org/virtualbox/6.1.2/VBoxGuestAdditions_6.1.2.iso
+mkdir /media/iso
+sudo mount ~/Downloads/VBoxGuestAdditions_6.1.2.iso /media/iso -o loop
+/media/iso/VBoxLinuxAdditions.run
+yes
+reboot
+~~~
+
+### Install p7zip
+~~~
+sudo apt-get install p7zip p7zip-full p7zip-rar
+~~~
