@@ -765,3 +765,8 @@ https://hemingwayapp.com/
 
 - https://www.textfixer.de/tools/doppelte-zeilen-entfernen.php
 - https://pinetools.com/remove-duplicate-line
+
+### code sandboxes js
+
+- https://stackblitz.com/
+- https://codesandbox.io/
