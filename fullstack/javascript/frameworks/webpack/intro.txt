@@ -1,0 +1,344 @@
+
+
+###############################################################
+Beginner’s Guide to Setup TypeScript with Webpack
+###############################################################
+
+https://appdividend.com/2017/03/31/beginners-guide-to-setup-typescript-with-webpack/
+https://github.com/KrunalLathiya/typescript-webpack-env
+https://stackoverflow.com/questions/33272967/how-to-make-the-webpack-dev-server-run-on-port-80-and-on-0-0-0-0-to-make-it-publ
+https://www.typescriptlang.org/docs/handbook/tsconfig-json.html
+https://webpack.js.org/guides/typescript/
+https://www.typescriptlang.org/docs/handbook/tsconfig-json.html
+https://webpack.js.org/configuration/stats/
+
+npm install -g typescript
+
+mkdir typescript
+cd typescript
+npm init -y
+
+
+touch app.ts
+-----------------------------
+function greeter(person: string) {
+    return "Hello, " +person;
+}
+var krunal = greeter('krunal');
+console.log(krunal);
+
+# compile
+-----------------------------
+tsc app.ts
+
+touch index.html
+-----------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script src="app.js"></script>
+</body>
+</html>
+
+
+tsc --init
+touch tsconfig.json
+-----------------------------
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "sourceMap": true
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "src/*"
+  ],
+  "compileOnSave": true
+}
+
+
+-----------------------------
+
+npm install webpack webpack-dev-server --save-dev
+npm install --save-dev typescript ts-loader
+
+
+package.json
+-----------------------------
+{
+  "name": "typescript",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "ts-loader": "^2.0.3",
+    "typescript": "^2.2.2",
+    "webpack": "^2.3.2",
+    "webpack-dev-server": "^2.4.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "KRUNAL LATHIYA",
+  "license": "ISC"
+}
+
+
+tsconfig.json
+-----------------------------
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "sourceMap": true,
+    "outDir": "./src/",
+    "noImplicitAny": true
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "src/*"
+  ]
+}
+
+
+touch webpack.config.js
+-----------------------------
+module.exports = {
+    entry: './src/app.ts',
+    mode: 'development'
+    output: {
+        filename: 'bundle.js',
+        path: __dirname
+    },
+    module: {
+        rules: [
+            {
+                test: /\.tsx?$/,
+                loader: 'ts-loader',
+                exclude: /node_modules/,
+            },
+        ]
+    },
+    resolve: {
+        extensions: [".tsx", ".ts", ".js"]
+    },
+};
+
+
+update package.json file.
+-----------------------------
+{
+  "name": "typescript",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "ts-loader": "^2.0.3",
+    "typescript": "^2.2.2",
+    "webpack": "^2.3.2",
+    "webpack-dev-server": "^2.4.2"
+  },
+  "scripts": {
+    "start": "webpack-dev-server",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack-dev-server --progress",
+    "tsc": "tsc",
+    "start:prod": "node build/server.js"
+  },
+  "author": "KRUNAL LATHIYA",
+  "license": "ISC"
+}
+
+
+update index.html
+-----------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!--<script src="app.js"></script>-->
+<script src="bundle.js" type="text/javascript"></script>
+</body>
+</html>
+
+
+move app.ts to ./src/app.ts
+-----------------------------
+mkdir src
+mv app.ts src
+
+
+add port 3000 for webpack
+-----------------------------
+module.exports = {
+    entry: './src/app.ts',
+    mode: 'development',
+    output: {
+        filename: 'bundle.js',
+        path: __dirname
+    },
+    module: {
+        rules: [
+            {
+                test: /\.tsx?$/,
+                loader: 'ts-loader',
+                exclude: /node_modules/,
+            },
+        ]
+    },
+    resolve: {
+        extensions: [".tsx", ".ts", ".js"]
+    },
+    devServer: {
+        port: 3000,
+        host: '0.0.0.0',
+    }
+};
+
+start server
+-----------------------------
+
+npm start
+http://localhost:3000/
+Cannot GET /
+
+
+
+
+
+add server.ts
+-----------------------------
+//import express from 'express'
+import express = require('express');
+//const app = express()
+const app: express.Application = express();
+const PORT = 3000
+app.use(express.json())
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+app.listen(PORT, () => {
+  console.log('Server is listening on port ${PORT}')
+})
+
+
+check ts files
+-----------------------------
+tsc
+
+
+run listenet on http://localhost:3000/
+-----------------------------
+node build/server.js
+Hello World!
+
+
+###############################################################
+Cannot GET /
+###############################################################
+https://www.geeksforgeeks.org/node-js-error-cannot-get-from-running-the-url-on-the-web-browser/
+
+npm install express --save-dev
+
+app.js
+-----------------------------
+const express = require('express')
+const app = express()
+
+app.get("/messages", (req, res) => {
+    res.send("Hello");
+});
+
+app.get("/:universalURL", (req, res) => {
+    res.send("404 URL NOT FOUND");
+});
+
+app.listen(3000, () => {
+    console.log("listening on http://localhost:3000");
+})
+
+
+
+-----------------------------------------------------------------------
+https://www.typescriptlang.org/play?#
+-----------------------------------------------------------------------
+
+tuts
+https://dev.to/ryanworl/building-an-api-backend-with-typescript-and-express---part-one-setup#
+https://mherman.org/blog/developing-a-restful-api-with-node-and-typescript/#
+https://medium.com/@Pierre_anthill/typescript-expressjs-api-with-webpack-4655126d884b#
+https://dev.to/nuclight/setting-up-fullstack-typescript-app-1bbe#
+https://medium.com/the-andela-way/how-to-set-up-an-express-api-using-webpack-and-typescript-69d18c8c4f52#
+https://blog.codecentric.de/web-anwendungen-mit-node-express-typescript-entwickeln#
+https://www.weblearningblog.com/nodejs/running-a-nodejs-app-with-typescript-and-expressjs-in-docker-container/ #
+https://backendless.com/how-to-use-typescript-with-nodejs/
+https://www.digitalocean.com/community/tutorials/setting-up-a-node-project-with-typescript
+https://medium.com/nmc-techblog/how-to-deploy-a-ts-node-js-app-in-minutes-e3ab17ab0673
+https://gist.github.com/andregardi/cba2ea41dd7ef485f65a14e421a06896
+https://www.digitalocean.com/community/tutorials/setting-up-a-node-project-with-typescript-de
+https://www.kreativkarussell.de/magazin/node-js-backend-typescript/
+https://dev.to/ryanworl/building-an-api-backend-with-typescript-and-express---part-one-setup
+https://medium.com/@Pierre_anthill/typescript-expressjs-api-with-webpack-4655126d884b
+https://dev.to/nuclight/setting-up-fullstack-typescript-app-1bbe
+https://medium.com/the-andela-way/how-to-set-up-an-express-api-using-webpack-and-typescript-69d18c8c4f52
+
+misc
+https://stackoverflow.com/questions/54072781/protractor-the-files-list-in-config-file-tsconfig-json-is-empty-18002
+https://www.appsloveworld.com/gruntjs/100/4/warning-error-ts18002-the-files-list-in-config-file-is-empty
+https://www.typescriptlang.org/docs/handbook/tsconfig-json.html
+https://github.com/jsecademy/webpack-express-typescript
+https://github.com/lsm/react-express-webpack-typescript
+https://stackoverflow.com/questions/33888859/webpack-typescript-module-loading
+https://github.com/nobrainr/typescript-webpack-starter
+https://stackoverflow.com/questions/39007344/how-to-wire-angular2-webpack-node-express
+https://github.com/mitenmit/etw
+https://stackoverflow.com/questions/51098749/everytime-i-run-gulp-anything-i-get-a-assertion-error-task-function-must-be
+https://tutorialsclass.com/issue/nodejs-gulp-assertion-error-fix/
+https://stackoverflow.com/questions/67041895/the-mode-option-has-not-been-set-webpack-will-fallback-to-production-for-th
+https://gist.github.com/robert-prib-polestar/29cc8fab3eb83602009df3fbdb626ac4
+https://stackoverflow.com/questions/43064221/typescript-ts7006-parameter-xxx-implicitly-has-an-any-type
+https://stackoverflow.com/questions/69249926/error-ts7006-parameter-req-implicitly-has-an-any-type
+https://www.tabnine.com/code/javascript/functions/webpack/Stats/compilation
+https://github.com/webpack-contrib/grunt-webpack/issues/49
+https://webpack.js.org/configuration/stats/
+https://stackoverflow.com/questions/18008620/node-js-express-js-app-only-works-on-port-3000
+https://github.com/DevExpress/testcafe/issues/2497
+https://expressjs.com/de/starter/hello-world.html
+https://www.tabnine.com/code/javascript/functions/express/Application/listen
+https://stackoverflow.com/questions/39322089/node-js-port-3000-already-in-use-but-it-actually-isnt
+https://blog.logrocket.com/dynamic-type-validation-in-typescript/
+https://validatejs.org/
+https://webpack.js.org/guides/typescript/
+https://github.com/jsecademy/webpack-express-typescript
+https://blog.codecentric.de/web-anwendungen-mit-node-express-typescript-entwickeln
+
+app.js
+-----------------------------------------------
+const express = require('express')
+const app = express()
+const port = 3000
+
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
+
+
+node app.js
