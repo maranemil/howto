@@ -70,6 +70,7 @@
 ### Cron guru
 
 - https://crontab.guru/
+
 ------------------------------------------------------------------
 
 ### Calculate String Length
@@ -77,6 +78,31 @@
 - https://onlinestringtools.com/find-string-length
 - https://string-functions.com/length.aspx
 - https://www.browserling.com/tools/text-length
+
+------------------------------------------------------------------
+
+### Calculate Days since 
+
+- https://www.timeanddate.com/date/durationresult.html
+- https://www.thecalculatorsite.com/time/days-between-dates.php
+
+------------------------------------------------------------------
+
+### Calculate 84600 Seconds to Hours
+
+- http://convertwizard.com/84600-seconds-to-hours
+- https://24hourtime.net/84600-seconds-to-hours
+- https://answers.everydaycalculation.com/percent-of/2350-3600
+- https://calculator.name/time-conversion/second/hour/84600
+- https://percentagecalculator.guru/846-is-what-percent-of-3600/
+- https://www.flightpedia.org/convert/600-seconds-to-minute.html
+
+------------------------------------------------------------------
+
+### Code Sandboxes js
+
+- https://stackblitz.com/
+- https://codesandbox.io/
 
 ------------------------------------------------------------------
 
@@ -122,6 +148,22 @@
 
 - http://sqa.fyicenter.com/1000206_Email_Address_Validator.html#Result
 - https://mailscrap.com/
+
+------------------------------------------------------------------
+
+### Edit Text Remove Duplicate lines
+
+- https://www.textfixer.de/tools/doppelte-zeilen-entfernen.php
+- https://pinetools.com/remove-duplicate-line
+
+------------------------------------------------------------------
+
+### Edit Text Word counter
+
+- https://wordcounter.net/
+- https://wordcounteronline.net/
+- https://wordcounter.io/
+- https://www.charactercountonline.com/
 
 ------------------------------------------------------------------
 
@@ -241,6 +283,13 @@
 
 ------------------------------------------------------------------
 
+### Meet video
+
+- https://meet.jit.si/
+- https://jitsi.org/jitsi-meet/
+
+------------------------------------------------------------------
+
 ### Misc
 
 - http://live.sympy.org/ 			        # sympy symbolic mathematics
@@ -261,14 +310,26 @@
 - http://sandbox.onlinephpfunctions.com/ 	# php
 - https://fdown.net/download.php            # facebook video download
 
+------------------------------------------------------------------
+
+### Misc 2
+
+- https://blush.design/de
+- https://coverr.co/
+- https://flourish.studio/
+- https://lumen5.com/
+- https://untools.co/
+- https://witeboard.com/
 
 ------------------------------------------------------------------
+
 ### Password Generator
 
 - https://www.certbase.de/Tools/PassGen.aspx
 - https://passgen.co/
 
 ------------------------------------------------------------------
+
 ### Pitch shifter Audio
 
 - https://onlinetonegenerator.com/pitch-shifter.html
@@ -478,11 +539,19 @@ https://hemingwayapp.com/
 
 ------------------------------------------------------------------
 
-### pyscript
+### Pyscript
 
 - https://pyscript.net/
 - https://github.com/pyscript/pyscript/tree/main/examples
-- 
+
+------------------------------------------------------------------
+
+### Private Search
+
+- https://search.brave.com/
+- https://www.startpage.com/
+- https://duckduckgo.com/
+
 ------------------------------------------------------------------
 
 ###  REST API Tester
@@ -711,14 +780,7 @@ https://hemingwayapp.com/
 
 - https://www.whatruns.com/
 
-------------------------------------------------------------------
 
-### Word counter
-
-- https://wordcounter.net/
-- https://wordcounteronline.net/
-- https://wordcounter.io/
-- https://www.charactercountonline.com/
 
 ------------------------------------------------------------------
 
@@ -726,50 +788,14 @@ https://hemingwayapp.com/
 
 - https://loader.to/en15/1080p-video-downloader.html
 
-------------------------------------------------------------------
 
-### 84600 Seconds to Hours
 
-- http://convertwizard.com/84600-seconds-to-hours
-- https://24hourtime.net/84600-seconds-to-hours
-- https://answers.everydaycalculation.com/percent-of/2350-3600
-- https://calculator.name/time-conversion/second/hour/84600
-- https://percentagecalculator.guru/846-is-what-percent-of-3600/
-- https://www.flightpedia.org/convert/600-seconds-to-minute.html
-
-### Days since calculator
-
-- https://www.timeanddate.com/date/durationresult.html
-- https://www.thecalculatorsite.com/time/days-between-dates.php
 
  ------------------------------------------------------------------
 
-### Misc
 
-- https://blush.design/de
-- https://coverr.co/
-- https://flourish.studio/
-- https://lumen5.com/
-- https://untools.co/
-- https://witeboard.com/
 
-### Meet video
 
-- https://meet.jit.si/
-- https://jitsi.org/jitsi-meet/
 
-### Private Search
 
-- https://search.brave.com/
-- https://www.startpage.com/
-- https://duckduckgo.com/
 
-### Remove Duplicate lines
-
-- https://www.textfixer.de/tools/doppelte-zeilen-entfernen.php
-- https://pinetools.com/remove-duplicate-line
-
-### code sandboxes js
-
-- https://stackblitz.com/
-- https://codesandbox.io/

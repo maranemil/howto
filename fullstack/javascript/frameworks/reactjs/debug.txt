@@ -1,0 +1,399 @@
+#################################################################################
+Debug node alpine nextjs
+#################################################################################
+
+https://classic.yarnpkg.com/lang/en/docs/install/#debian-stable
+https://classic.yarnpkg.com/lang/en/docs/install/#debian-stable
+https://linuxize.com/post/how-to-install-yarn-on-ubuntu-20-04/
+https://nodejs.org/en/download/package-manager
+https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
+https://docs.npmjs.com/cli/v7/commands/npm-install
+
+FROM node:16-alpine
+WORKDIR /app
+COPY package.json yarn.lock ./
+RUN yarn
+COPY . ./
+RUN yarn build
+
+------------------------------------
+cd app
+rm -rf node_modules/
+apk update
+
+npm -v #  not found
+node -v #  not found
+
+apk add nodejs npm
+apk add yarn npm
+
+yarn -v # 1.22.19
+npm -v # 8.10.0
+node -v # v16.19.1
+
+yarn install
+yarn build
+yarn add --dev eslint
+yarn build
+
+yarn run dev
+yarn run dev --port 3002
+yarn run dev --port 3001
+
+http://172.20.0.2:3002/#/
+
+#################################################################################
+ERROR: Type error: 'Component' cannot be used as a JSX component.
+#################################################################################
+
+https://github.com/vercel/turbo/issues/3831
+https://stackoverflow.com/questions/73780594/component-cannot-be-used-as-a-jsx-component-typed-layout
+https://github.com/vercel/next.js/issues/42292
+https://bobbyhadz.com/blog/react-cannot-be-used-as-a-jsx-component
+https://github.com/vercel/next.js/issues/37421
+
+FIX: yarn add -D @types/react
+
+# "@types/react": "^18.0.10",
+# "@types/react-dom": "^18.0.5"
+
+yarn create next-app type-test --typescript
+yarn add @types/react@17.0.45 @types/react-dom@17.0.11 --dev
+yarn add react@17.0.2 react-dom@17.0.2 --exact
+
+package.json
+
+  "dependencies": {
+    "next": "12.1.6",
+    "react": "18.1.0",
+    "react-dom": "18.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "17.0.41",
+    "@types/react": "^18.0.10",
+    "@types/react-dom": "^18.0.5",
+    "eslint": "8.17.0",
+    "eslint-config-next": "12.1.6",
+    "typescript": "4.7.3"
+  },
+  "resolutions": {
+    "**/@types/react": "^18.0.10",
+    "**/@types/react-dom": "^18.0.5"
+  }
+
+
+#################################################################################
+Type 'Element' is not assignable to type 'ComponentType<ResourceComponentPropsWithId<{}, StaticContext, LocationState
+#################################################################################
+
+https://github.com/DefinitelyTyped/DefinitelyTyped/issues/17355
+https://yarnpkg.com/package/react-router-dom
+
+yarn add react-router-dom -D
+
+#################################################################################
+React: 'Redirect' is not exported from 'react-router-dom'
+#################################################################################
+
+https://stackoverflow.com/questions/63690695/react-redirect-is-not-exported-from-react-router-dom
+https://github.com/remix-run/react-router/issues/8439
+https://www.npmjs.com/package/@types/react-router-dom
+
+For react-router-dom v6, simply replace Redirect with Navigate
+Use Routes instead of Switch.
+
+#################################################################################
+vercel turbo install debug
+#################################################################################
+
+https://github.com/vercel/turbo/tree/main/examples/basic
+https://github.com/vercel/turbo/issues/3831
+https://turbo.build/repo/docs/handbook/deploying-with-docker
+
+(1) Install turborepo files.
+
+npx create-turbo@latest
+
+(2) Make _app.tsx file in /apps/web/pages
+
+import type { AppProps } from "next/app";
+function WebApp({ Component, pageProps }: AppProps) {
+  return <Component {...pageProps} />;
+}
+export default WebApp;
+
+(3) Make Dockerfile.web
+
+FROM node:alpine AS builder
+RUN apk add --no-cache libc6-compat
+RUN apk update
+# Set working directory
+WORKDIR /app
+RUN yarn global add turbo
+COPY . .
+RUN turbo prune --scope=web --docker
+# Add lockfile and package.json's of isolated subworkspace
+FROM node:alpine AS installer
+RUN apk add --no-cache libc6-compat
+RUN apk update
+WORKDIR /app
+# First install the dependencies (as they change less often)
+COPY .gitignore .gitignore
+COPY --from=builder /app/out/json/ .
+COPY --from=builder /app/out/yarn.lock ./yarn.lock
+RUN yarn install
+# Build the project
+COPY --from=builder /app/out/full/ .
+RUN yarn turbo run build --filter=web...
+
+FROM node:alpine AS runner
+WORKDIR /app
+# Don't run production as root
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+USER nextjs
+COPY --from=installer /app/apps/web/next.config.js .
+COPY --from=installer /app/apps/web/package.json .
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
+COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
+CMD node apps/web/server.js
+
+(3) Build Docker
+docker build -t turbowebapp -f Dockerfile.web .
+
+Check build log.
+
+/usr/bin/docker-compose -f docker-compose.yml up -d
+
+#################################################################################
+#################################################################################
+npx browserslist@latest --update-db
+
+sh: react-scripts: not found
+
+npm install
+npm start
+yarn
+yarn start
+
+#################################################################################
+Type 'Element' is not assignable to type 'ComponentType<{}>'
+#################################################################################
+
+https://community.sendbird.com/t/customizing-react-message-display/5290/2
+https://www.pluralsight.com/guides/react-router-typescript#
+https://www.dev-eth0.de/2019/09/10/using-withrouter-in-a-typescript-react-component/
+https://stackoverflow.com/questions/67654971/unable-to-use-hoc-with-react-router-type-element-is-not-assignable-to-type-c
+https://github.com/react-navigation/react-navigation/issues/8044
+https://www.appsloveworld.com/reactjs/200/376/unable-to-use-hoc-with-react-router-type-element-is-not-assignable-to-type-co
+https://stackoverflow.com/questions/40546231/sh-react-scripts-command-not-found-after-running-npm-start
+https://itsjavascript.com/react-scripts-command-not-found
+https://tutorialscamp.com/sh-react-scripts-command-not-found/#
+https://bobbyhadz.com/blog/react-scripts-command-not-found
+https://github.com/timarney/react-app-rewired/issues/470
+https://reactgo.com/react-scripts-command-not-found/
+
+npm install -g create-react-app
+create-react-app demo-app
+cd demo-app
+npm install -S react-router-dom
+npm start
+npm install --save-dev typescript @types/node @types/react @types/react-dom @types/jest @types/react-router-dom
+npm install --save-dev @types/query-string
+npm install react-scripts
+
+# First delete node_modules and package-lock.json
+rm -rf node_modules
+rm -f package-lock.json
+rm -f yarn.lock
+
+# Then clean npm cache
+npm cache clean --force
+
+// install the dependencies
+npm install
+
+# using NPM to install react-scripts
+npm install react-scripts@latest react@latest react-dom@latest
+# using YARN to install react-scripts
+yarn add react-scripts@latest react@latest react-dom@latest
+
+#################################################################################
+dataProvider.js TypeError: Cannot destructure property 'status' of 'err' as it is undefined.
+#################################################################################
+
+https://forum.freecodecamp.org/t/x-typeerror-cannot-destructure-property-shippinginfo-of-order-as-it-is-undefined/478974/9
+https://ankurraina.medium.com/reactjs-pass-functions-through-context-typeerror-cannot-destructure-property-of-450a8edd55b6
+https://sitecore.stackexchange.com/questions/33607/sitecore-javascript-rendering-sdk-jss-for-next-js-typeerror-cannot-destructu
+https://reactjs-questions-answers.vercel.app/#/
+https://reactjs-questions-answers.vercel.app/#/?id=reactjs-questions-amp-answers
+https://bobbyhadz.com/blog/javascript-cannot-destructure-property-of-undefined#
+https://github.com/vitest-dev/vitest/issues/2716
+https://www.reddit.com/r/learnjavascript/comments/shatix/nextjs_error_cannot_destructure_property/
+https://github.com/northrn/next-ecommerce-app/tree/main
+https://github.com/northrn/next-ecommerce-app/blob/main/login.js#L10
+https://www.samanthaming.com/tidbits/24-prevent-error-with-default-object-when-destructuring/
+
+
+vitest --environment jsdom --root src/ --coverage --run
+
+#################################################################################
+minio buckets
+#################################################################################
+
+http://172.23.0.3:9001/buckets
+
+https://raw.githubusercontent.com/minio/minio/master/docs/docker/README.md
+https://github.com/minio/minio/blob/master/docker-buildx.sh
+https://hub.docker.com/r/minio/minio
+https://github.com/minio/minio/blob/master/docs/docker/README.md
+https://artifacthub.io/packages/helm/minio-official/minio
+https://thedatabaseme.de/2022/03/20/i-do-it-on-my-own-then-self-hosted-s3-object-storage-with-minio-and-docker/
+
+docker run \
+  -p 9000:9000 \
+  -p 9001:9001 \
+  -e "MINIO_ROOT_USER=AKIAIOSFODNN7EXAMPLE" \
+  -e "MINIO_ROOT_PASSWORD=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY" \
+  quay.io/minio/minio server /data --console-address ":9001"
+
+
+docker run \
+  -p 9000:9000 \
+  -p 9001:9001 \
+  --name minio1 \
+  -e "MINIO_ROOT_USER=AKIAIOSFODNN7EXAMPLE" \
+  -e "MINIO_ROOT_PASSWORD=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY" \
+  -v /mnt/data:/data \
+  quay.io/minio/minio server /data --console-address ":9001"
+
+
+# Run MinIO Docker as a regular user
+  mkdir -p ${HOME}/data
+docker run \
+  -p 9000:9000 \
+  -p 9001:9001 \
+  --user $(id -u):$(id -g) \
+  --name minio1 \
+  -e "MINIO_ROOT_USER=AKIAIOSFODNN7EXAMPLE" \
+  -e "MINIO_ROOT_PASSWORD=wJalrXUtnFEMIK7MDENGbPxRfiCYEXAMPLEKEY" \
+  -v ${HOME}/data:/data \
+  quay.io/minio/minio server /data --console-address ":9001"
+
+
+
+# MinIO Custom Access and Secret Key files
+docker service create --name="minio-service" \
+  --secret="my_access_key" \
+  --secret="my_secret_key" \
+  --env="MINIO_ROOT_USER_FILE=my_access_key" \
+  --env="MINIO_ROOT_PASSWORD_FILE=my_secret_key" \
+  quay.io/minio/minio server /data
+
+--------------------------------------------------------------
+
+version: '2'
+
+services:
+  minio:
+    container_name: Minio
+    command: server /data --console-address ":9001"
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=supersecret
+    image: quay.io/minio/minio:latest
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - /docker/minio:/data
+    restart: unless-stopped
+
+
+
+
+#################################################################################
+openapi
+#################################################################################
+
+https://github.com/cdimascio/express-openapi-validator/issues/550
+
+openapi: 3.0.0
+info:
+  title: test
+  version: '1.0'
+servers:
+  - url: 'http://localhost:3000'
+tags:
+  - name: user
+paths:
+  /user:
+    get:
+      description: Returns a user
+      operationId: getUser
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: OK
+      summary: Get a user
+      tags:
+        - user
+      x-eov-operation-handler: controllers/UserController
+components:
+  schemas:
+    User:
+      example:
+        firstName: firstName
+        lastName: lastName
+        emailVerified: true
+        dateOfBirth: '1997-10-31'
+        id: 0
+        email: email@email.com
+        createDate: '2000-01-23'
+      properties:
+        id:
+          description: Unique identifier for the given user.
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          format: email
+          type: string
+        dateOfBirth:
+          example: '1997-10-31'
+          format: date
+          type: string
+        emailVerified:
+          description: Set to true if the user's email has been verified.
+          type: boolean
+        createDate:
+          description: The date that the user was created.
+          format: date
+          type: string
+      required:
+        - email
+        - emailVerified
+        - firstName
+        - id
+        - lastName
+      title: User
+      type: object
+      x-examples:
+        Alice Smith:
+          id: 142
+          firstName: Alice
+          lastName: Smith
+          email: alice.smith@gmail.com
+          dateOfBirth: '1997-10-31'
+          emailVerified: true
+          signUpDate: '2019-08-24'
+      x-tags:
+        - user
+
