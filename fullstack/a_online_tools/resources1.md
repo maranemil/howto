@@ -7,6 +7,7 @@
 
 - https://majordecibel.com/
 - https://emastered.com/
+- https://mixea.com/
 
 ------------------------------------------------------------------
 
@@ -392,6 +393,8 @@ https://hemingwayapp.com/
 - https://groover.co/en/
 - https://artists.magroove.com/
 - https://www.tunecore.com/
+- https://dittomusic.com/en/
+
 
 ------------------------------------------------------------------
 
