@@ -1,0 +1,119 @@
+##########################################################################
+nginx firewall
+##########################################################################
+
+https://hub.docker.com/_/nginx/
+https://nginx.org/en/
+https://nginx.org/en/docs/
+https://nginx.org/en/docs/beginners_guide.html
+https://nginx.org/en/docs/http/ngx_http_rewrite_module.html
+https://wiki.ubuntuusers.de/nginx/
+https://www.nginx.com/
+https://www.youtube.com/watch?v=1ndlRiaYiWQ
+https://www.youtube.com/watch?v=7VAI73roXaY
+
+sudo -i
+apt install nginx
+ufw enable
+ufw app list
+ufw allow 'Nginx full'
+ufw allow 'Nginx HTTP'
+ufw allow 'Nginx HTTPS'
+ufw status
+systemctl status nginx
+
+0.0.0.0 samples.com >> /etc/hosts
+scp -r * 0.0.0.0:/var/www/demo
+
+cd /etc/nginx
+nano sites-available/demo
+server{
+  liste 80 default server;
+  listem [::] default server;
+  root /var/www/demo;
+  index index.html
+  server_name demo;
+  location / {
+    try_files $uri $uri/ = 404;
+  }
+}
+ln -s /etc/nginx/sites-available/demo /etc/nginx/sites-enabled/demo
+mv /etc/nginx/sites-enabled/default /etc/nginx/sites-enabled/default.bak
+systemctl restart nginx
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+docker
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+docker run --name some-nginx -d -p 8080:80 some-content-nginx
+docker run --name some-nginx -v /some/content:/usr/share/nginx/html:ro -d nginx
+docker run --name my-custom-nginx-container -v /host/path/nginx.conf:/etc/nginx/nginx.conf:ro -d nginx
+docker run -d -p 80:80 --read-only -v $(pwd)/nginx-cache:/var/cache/nginx -v $(pwd)/nginx-pid:/var/run nginx
+
+FROM nginx
+COPY static-html-directory /usr/share/nginx/html
+
+
+web:
+  image: nginx
+  volumes:
+   - ./templates:/etc/nginx/templates
+  ports:
+   - "8080:80"
+  environment:
+   - NGINX_HOST=foobar.com
+   - NGINX_PORT=80
+
+
+
+web:
+  image: nginx
+  volumes:
+    - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  command: [nginx-debug, '-g', 'daemon off;']
+
+
+
+
+##########################################################################
+ps command doesn't work in docker container
+##########################################################################
+
+https://stackoverflow.com/questions/26982274/ps-command-doesnt-work-in-docker-container
+https://linux.how2shout.com/ps-command-not-found-in-linux-or-docker-container-install-and-how-to-use/
+https://www.programmerhat.com/ps-command-not-found/
+https://askubuntu.com/questions/144954/recover-ps-command
+https://www.nixcraft.com/t/how-to-install-real-ps-command-on-alpine-linux/4351
+
+apt-get update
+apt-get install procps -y
+
+Dockerfile
+RUN apt-get update && apt-get install -y procps && rm -rf /var/lib/apt/lists/*
+
+ps aux | grep php
+
+##########################################################################
+get ports
+##########################################################################
+
+https://www.cyberciti.biz/faq/unix-linux-check-if-port-is-in-use-command/
+https://askubuntu.com/questions/1418535/netstat-command-not-found
+https://linuxconfig.org/bash-netstat-command-not-found-debian-ubuntu-linux
+https://wiki.ubuntuusers.de/lsof/
+
+apt-get update
+apt-get install lsof -y
+apt install net-tools -y
+
+lsof -i -P -n | grep LISTEN
+netstat -tulpn | grep LISTEN
+lsof -i:22
+nmap -sTU -O IP-address-Here
+
+lsof -i -P -n
+lsof -i -P -n | grep LISTEN
+
+
+netstat -tulpn | grep LISTEN
+netstat -tulpn | more
+netstat -tulpn | grep ':443'
