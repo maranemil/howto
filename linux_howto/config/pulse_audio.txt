@@ -99,3 +99,100 @@ cat /etc/pulse/daemon.conf
 ; enable-deferred-volume = yes
 deferred-volume-safety-margin-usec = 1
 ; deferred-volume-extra-delay-usec = 0
+
+#######################################################################
+#
+#   PulseAudio Debug
+#
+#######################################################################
+
+https://askubuntu.com/questions/75395/poor-sound-quality-from-laptops-built-in-speakers-only-on-ubuntu
+https://askubuntu.com/questions/72679/is-there-any-sound-enhancers-equalizer
+https://medium.com/@gamunu/enable-high-quality-audio-on-linux-6f16f3fe7e1f
+
+
+xrandr --current
+lspci -v | grep -i audio
+
+
+sudo apt-get install alsa-tools alsa-tools-gui
+hdajackretask
+
+
+~/.asoundrc (create the file if necessary)
+
+default-sample-format = float32ne
+default-sample-rate = 48000
+alternate-sample-rate = 44100
+default-sample-channels = 2
+default-fragments = 2
+default-fragment-size-msec = 125
+resample-method = soxr-vhq
+enable-lfe-remixing = no
+high-priority = yes
+nice-level = -11
+realtime-scheduling = yes
+realtime-priority = 9
+rlimit-rtprio = 9
+rlimit-rttime = -1
+daemonize = no
+
+
+
+sudo apt-get install pulseaudio-equalizer
+pulseaudio-equalizer-gtk
+qpaeq
+
+sudo apt install libasound2-plugin-equal
+alsamixer -D equal
+amixer -D equal
+
+sudo apt install jackeq
+sudo apt install jamin
+sudo apt install jack-rack
+
+
+sudo apt install audacity
+sudo apt install lmms
+
+
+Edit /etc/pulse/daemon.conf
+
+; resample-method = speex-float-1
+; default-sample-format = s16le
+; default-sample-rate = 44100
+
+Uncomment and update them to the following
+
+resample-method = src-sink-medium-quality
+default-sample-format = s24le
+default-sample-rate = 96000
+Finally restart pulseaudio (and possibly your music player(s))
+
+pulseaudio -k
+pulseaudio --start
+
+------------
+
+nano ~/.config/pulse/daemon.conf
+nano /etc/pulse/daemon.conf
+
+default-sample-format = float32le
+default-sample-rate = 48000
+alternate-sample-rate = 44100
+default-sample-channels = 2
+default-channel-map = front-left,front-right
+default-fragments = 2
+default-fragment-size-msec = 125
+resample-method = soxr-vhq
+enable-lfe-remixing = no
+high-priority = yes
+nice-level = -11
+realtime-scheduling = yes
+realtime-priority = 9
+rlimit-rtprio = 9
+daemonize = no
+
+---
+
+lscpu | grep 'Byte Order'
