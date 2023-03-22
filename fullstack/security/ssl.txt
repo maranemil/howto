@@ -1,0 +1,127 @@
+
+###############################################
+How to get HTTPS working on your local development environment in 5 minutes
+###############################################
+
+https://www.freecodecamp.org/news/how-to-get-https-working-on-your-local-development-environment-in-5-minutes-7af615770eec/
+https://web.dev/why-https-matters/
+https://web.dev/progressive-web-apps/
+https://devcenter.heroku.com/articles/ssl-certificate-self
+https://www.kevinleary.net/blog/self-signed-trusted-certificates-node-js-express-js/
+https://blog.praveen.science/securing-your-localhost/
+https://support.dnsimple.com/articles/what-is-ssl-root-certificate/
+https://github.com/dakshshah96/local-cert-generator/
+
+which openssl
+apt install openssl
+
+openssl genrsa -des3 -out rootCA.key 2048
+openssl req -x509 -new -nodes -key rootCA.key -sha256 -days 1024 -out rootCA.pem
+
+server.csr.cnf
+[req]
+default_bits = 2048
+prompt = no
+default_md = sha256
+distinguished_name = dn
+
+[dn]
+C=US
+ST=RandomState
+L=RandomCity
+O=RandomOrganization
+OU=RandomOrganizationUnit
+emailAddress=hello@example.com
+CN = localhost
+
+
+openssl req -new -sha256 -nodes -out server.csr -newkey rsa:2048 -keyout server.key -config <( cat server.csr.cnf )
+openssl x509 -req -in server.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out server.crt -days 500 -sha256 -extfile v3.ext
+
+..................................................
+
+
+Generate private key and certificate signing request
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+openssl genrsa -aes256 -passout pass:gsahdg -out server.pass.key 4096
+openssl rsa -passin pass:gsahdg -in server.pass.key -out server.key
+rm server.pass.key
+openssl req -new -key server.key -out server.csr
+
+Generate SSL certificate
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+openssl x509 -req -sha256 -days 365 -in server.csr -signkey server.key -out server.crt
+
+The server.crt file is your site certificate suitable for use with Heroku’s SSL add-on along with the server.key private key.
+
+..................................................
+
+Create a key and certificate
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+openssl genrsa -out localhost.key 2048
+openssl req -new -x509 -key localhost.key -out localhost.cert -days 3650 -subj /CN=localhost
+
+
+Configure Express.js to use our self-signed SSL certificate
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#!/usr/bin/env node
+
+var https = require('https');
+var fs = require('fs');
+var express = require('express');
+
+var options = {
+    key: fs.readFileSync( './localhost.key' ),
+    cert: fs.readFileSync( './localhost.cert' ),
+    requestCert: false,
+    rejectUnauthorized: false
+};
+
+var app = express();
+var port = process.env.PORT || 443;
+var server = https.createServer( options, app );
+
+server.listen( port, function () {
+    console.log( 'Express server listening on port ' + server.address().port );
+} );
+
+
+..................................................
+
+
+
+
+Creating a Root Certificate
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+openssl genrsa -out rootCA.key 2048
+openssl genrsa -des3 -out rootCA.key 2048
+openssl req -x509 -new -nodes -key rootCA.key -sha256 -days 1024 -out rootCA.pem
+
+openssl genrsa -out localhost.key 2048
+openssl req -new -key localhost.key -out localhost.csr
+openssl x509 -req -in localhost.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out localhost.crt -days 735 -sha256
+
+
+localhost.crt       Localhost Signed Certificate
+localhost.csr       Certificate Signing Request
+localhost.key       Localhost Certificate Keyfile
+rootCA.key          Root CA Keyfile
+rootCA.pem          Root CA Printable Encoded Module
+rootCA.srl          Root CA Serial Number
+
+Sample Node JS Server
+server.js
+
+var https = require('https');
+var fs = require('fs');
+
+var options = {
+  key: fs.readFileSync('./localhost.key'),
+  cert: fs.readFileSync('./localhost.crt')
+};
+
+https.createServer(options, function (req, res) {
+  res.writeHead(200);
+  res.end("SSL Provided by PraveenTech Research Labs. 😜");
+}).listen(443);
+

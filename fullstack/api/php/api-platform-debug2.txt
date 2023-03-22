@@ -1,0 +1,1020 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tools
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# bash: ps: command not found
+# netstat: not found
+# bash: ping: command not found
+
+apt-get update
+apt-get install procps -y
+ps aux
+
+apt-get install net-tools -y
+netstat  -tulnp
+
+apt-get update -y
+apt-get install -y iputils-ping
+ping 127.0.0.1
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+unable to bind listening socket for address '127.0.0.1:9000': Address in use (98)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+https://stackoverflow.com/questions/58252643/unable-to-bind-listening-socket-for-address-127-0-0-19000-address-in-use-98
+https://hub.docker.com/r/lagstorm/php-fpm-alpine
+
+netstat -tulnp
+ps aux
+
+php-fpm.d/www/conf
+
+[www]
+user = nobody
+group = nobody
+listen = 127.0.0.1:9000
+pm = dynamic
+pm.max_children = 5
+pm.start_servers = 2
+pm.min_spare_servers = 1
+pm.max_spare_servers = 3
+
+
+cat /usr/local/etc/php-fpm.conf | grep listen
+
+/etc/nginx/sites-enabled/page1
+
+server {
+        listen      8090;
+        root        /usr/bin;
+        server_name localhost;
+        access_log  /dev/null;
+        error_log   /dev/null;
+
+        location / {
+                proxy_pass http://127.0.0.0:7000;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection 'upgrade';
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Fowarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Fowarded-Proto $scheme;
+                proxy_cache_bypass $http_upgrade;
+                try_files $uri $uri/ =404;
+        }
+
+        location ~ \.(gif) {
+                root /var/lib;
+        }
+
+}
+
+##############################
+WebSocketClient.js:16 WebSocket connection to 'ws://172.18.0.6:3000/ws' failed:
+##############################
+
+
+https://github.com/facebook/create-react-app/issues/11762
+https://github.com/facebook/create-react-app/issues/11779
+https://stackoverflow.com/questions/70585472/websocketclient-js16-websocket-connection-to-ws-localhost3000-ws-failed-r
+https://stackoverflow.com/questions/44575978/websocket-connection-failed-error-in-connection-establishment-neterr-connect
+
+const ws = new WebSocket('ws://localhost:8080/chat')
+php artisan websocket:init
+
+index.tsx
+window.process = {} as any;
+
+.env
+WDS_SOCKET_PORT=443
+WDS_SOCKET_PORT=0
+
+WDS_SOCKET_HOST=0.0.0.0
+WDS_SOCKET_PORT=0
+WDS_SOCKET_PATH=/v2/sockjs-node
+
+Delete "proxy": "http://localhost:xxxx" in package.json
+npm install http-proxy-middleware
+
+Create a file setupProxy.js inside your src folder and write the following codes:
+
+const { createProxyMiddleware } = require('http-proxy-middleware');
+module.exports = function(app) {
+  app.use(
+    '/api',
+    createProxyMiddleware({
+      target: 'http://localhost:6000',
+      changeOrigin: true,
+    })
+  );
+};
+
+npm start
+
+
+const { createProxyMiddleware } = require('http-proxy-middleware');
+module.exports = function(app) {
+  app.use(
+    createProxyMiddleware('/api', {
+      target: 'http://localhost:6000',
+      changeOrigin: true,
+    })
+  );
+};
+
+
+yarn start
+
+..........
+
+HOST=<something>  yarn start
+HOST=<something>  DANGEROUSLY_DISABLE_HOST_CHECK=true  yarn start
+
+
+import axios from 'axios';
+axios.defaults.baseURL = '/api';
+
+..........
+
+Nginx default.conf:
+
+    upstream client {
+        server client:3000;
+    }
+    upstream api {
+        server api:3001;
+    }
+
+    server {
+        listen 80;
+
+        location / {
+            proxy_pass http://client;
+        }
+
+        location /ws {
+            proxy_pass http://client;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "Upgrade";
+            proxy_set_header Host $host;
+        }
+
+        location /api {
+            rewrite /api/(.*) /$1 break;
+            proxy_pass http://api;
+        }
+    }
+
+docker-compose.yml:
+
+version: '3.8'
+services:
+  nginx:
+    depends_on:
+      - api
+      - client
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./nginx
+    ports:
+      - '3050:80'
+  client:
+    stdin_open: true
+    environment:
+      # Fixes bug where websocket connection is fixed to default port 3000
+      - CHOKIDAR_USEPOLLING=true
+      - WDS_SOCKET_PORT=0
+    build:
+      dockerfile: Dockerfile
+      context: ./client
+    volumes:
+      - ./client/src:/app/src
+
+..........
+
+version: '3.8'
+services:
+    app:
+        image: node:16
+        entrypoint: /bin/sh
+        command: -c "cd /home/node/app/ && npm install && npm start"
+        volumes:
+            - .:/home/node/app/
+        networks:
+            - nginx_proxy
+        restart: unless-stopped
+        environment:
+            VIRTUAL_HOST: 'example.com'
+            VIRTUAL_PATH: '~^(/ui/|/ws)'
+            VIRTUAL_PORT: '3000'
+            VIRTUAL_PROTO: 'http'
+            PUBLIC_URL: 'example.com/ui/'
+            DANGEROUSLY_DISABLE_HOST_CHECK: 'true'
+            WDS_SOCKET_HOST: '0.0.0.0'
+            WDS_SOCKET_PORT: '0'
+
+
+
+app.use(
+    createProxyMiddleware('/hubs', {
+        target: 'your target url',
+        changeOrigin: true,
+        ws: true
+    })
+);
+
+------------------------------------------------
+
+
+[Index.php]
+<output></output>
+<input type="text">
+<script src="assets/js/client.js"></script>
+
+[client.js]
+const input = document.querySelector("input");
+const output = document.querySelector("output");
+
+input.addEventListener("keypress", e => {
+
+	if (e.code === "Enter") {
+		var conn = new WebSocket('ws://127.0.0.1:8080');
+
+		conn.onopen = function(e) {
+			conn.send(input.value);
+		};
+
+		conn.onmessage = function(e) {
+			console.log(e.data);
+			output.value += e.data;
+		};
+	}
+})
+
+[Server.php]
+<?php
+   $address = "127.0.0.1";
+   $port = 8081;
+   $soquet = socket_create(AF_INET, SOCK_STREAM,SOL_TCP);
+   socket_bind($soquet, $address, intVal($port));
+   socket_listen($soquet);
+   $socket_accept = socket_accept($soquet);
+?>
+
+###################################################################################
+Access to fetch at 'http://172.18.0.5:9000/' from origin 'http://172.18.0.6:3000' has been blocked by CORS policy:
+Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin'
+header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors'
+to fetch the resource with CORS disabled.
+###################################################################################
+
+https://stackoverflow.com/questions/48728173/how-do-i-fix-cors-issue-in-fetch-api
+https://stackoverflow.com/questions/43871637/no-access-control-allow-origin-header-is-present-on-the-requested-resource-whe
+https://www.freecodecamp.org/news/how-to-get-https-working-on-your-local-development-environment-in-5-minutes-7af615770eec/
+https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#preflighted_requests
+https://developer.okta.com/blog/2021/08/02/fix-common-problems-cors
+https://www.softmixx.de/blog/-access-control-allow-origin--fehler-im-browser-21.html
+https://medium.com/@dtkatz/3-ways-to-fix-the-cors-error-and-how-access-control-allow-origin-works-d97d55946d9
+https://www.npmjs.com/package/node-fetch
+........................................
+
+curl -i -X OPTIONS -H "Origin: http://127.0.0.1:3000" \
+    -H 'Access-Control-Request-Method: POST' \
+    -H 'Access-Control-Request-Headers: Content-Type, Authorization' \
+    "https://the.sign_in.url"
+
+........................................
+
+add_header Access-Control-Allow-Origin $http_origin
+
+headers.append('Access-Control-Allow-Origin', 'http://localhost:3000');
+headers.append('Access-Control-Allow-Credentials', 'true');
+headers.append('GET', 'POST', 'OPTIONS');
+
+........................................
+
+npm install cors --save
+
+const cors=require("cors");
+const corsOptions ={
+   origin:'*',
+   credentials:true,            //access-control-allow-credentials:true
+   optionSuccessStatus:200,
+}
+
+app.use(cors(corsOptions)) // Use this after the variable declaration
+
+........................................
+
+function performSignIn() {
+    let headers = new Headers();
+
+    headers.append('Content-Type', 'application/json');
+    headers.append('Accept', 'application/json');
+    headers.append('Authorization', 'Basic ' + base64.encode(username + ":" +  password));
+    headers.append('Origin','http://localhost:3000');
+
+    fetch(sign_in, {
+        mode: 'cors',
+        credentials: 'include',
+        method: 'POST',
+        headers: headers
+    })
+    .then(response => response.json())
+    .then(json => console.log(json))
+    .catch(error => console.log('Authorization failed: ' + error.message));
+}
+
+........................................
+
+Front-end or Angular
+
+post(
+    this.serverUrl, dataObjToPost,
+    {
+      headers: new HttpHeaders({
+           'Content-Type':  'application/json',
+         })
+    }
+)
+back-end (I use PHP)
+
+header("Access-Control-Allow-Origin: http://localhost:4200");
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
+$postdata = file_get_contents("php://input");
+$request = json_decode($postdata);
+print_r($request);
+
+
+........................................
+
+Adding mode:no-cors can avoid CORS issues in the API.
+
+fetch(sign_in, {
+        mode: 'no-cors',
+        credentials: 'include',
+        method: 'POST',
+        headers: headers
+    })
+    .then(response => response.json())
+    .then(json => console.log(json))
+    .catch(error => console.log('Authorization failed : ' + error.message));
+}
+
+........................................
+
+const cors = require('cors');
+app.use(cors({
+    origin: 'http://example.com', // use your actual domain name (or localhost), using * is not recommended
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization'],
+    credentials: true
+}))
+
+........................................
+
+const cors = require('cors');
+const userRouter = require('./routers/user');
+expressApp = express();
+expressApp.use(cors());
+expressApp.use(express.json());
+expressApp.use(userRouter);
+
+........................................
+
+
+Step 1: Create an SSL certificate
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+server.key & server.crt
+
+Step 2: Back-end setup
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+import express from 'express';
+const emailRouter = require('./routes/email');  // in my case, I was sending an email through a form in React
+const fs = require('fs');
+const https = require('https');
+
+const app = express();
+const port = 8000;
+
+// CORS (Cross-Origin Resource Sharing) headers to support Cross-site HTTP requests
+app.all('*', (req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "https://localhost:3000");
+    next();
+});
+
+// Routes definition
+app.use('/email', emailRouter);
+
+// HTTPS server
+const credentials = {
+  key: fs.readFileSync('server.key'),
+  cert: fs.readFileSync('server.crt')
+};
+
+const httpsServer = https.createServer(credentials, app);
+httpsServer.listen(port, () => {
+    console.log(`Back-end running on port ${port}`);
+});
+
+
+https.createServer(credentials, (req: any, res: any) => {
+  res.writeHead(200);
+  res.end("hello world from SSL\n");
+}).listen(port, () => {
+  console.log(`HTTPS server listening on port ${port}...`);
+});
+
+Step 3: Front-end setup
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+await axios.get(`https://localhost:8000/email/send`, {
+params: { /* Whatever data you want to send */ },
+headers: {
+    'Content-Type': 'application/json',
+}
+})
+
+
+HTTPS=true SSL_CRT_FILE=server.crt SSL_KEY_FILE=server.key npm start
+
+........................................
+
+For a Node.js and Express.js backend
+
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "YOUR-DOMAIN.TLD"); // Update to match the domain you will make the request from
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
+
+........................................
+
+npm install cors;
+import cors from 'cors';
+app.use(cors());
+
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authortization');
+    res.setHeader('Acces-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+
+
+http://localhost:3000/api
+lcp --proxyUrl https://www.google.co.in --port 8010
+
+........................................
+
+# calling api developed in php using react
+
+header("Access-Control-Allow-Origin: http://localhost:4200");
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
+
+header("Access-Control-Allow-Origin: *");
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header("Access-Control-Allow-Headers: Content-Type, Authorization, Password");
+
+........................................
+
+
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Fixing Common Issues with CORS</title>
+    </head>
+    <body>
+        <h1>Fixing Common Issues with CORS</h1>
+        <div>
+            <textarea id="messages" name="messages" rows="10" cols="50">Messages</textarea><br/>
+            <form id="form1">
+                <input type="button" value="Get v1" onclick="onGet('v1')"/>
+                <input type="button" value="Get v2" onclick="onGet('v2')"/>
+            </form>
+        </div>
+    </body>
+</html>
+
+
+frontend/control.js
+
+function onGet(version) {
+    const url = "http://localhost:8000/api/" + version + "/messages";
+    var headers = {}
+
+    fetch(url, {
+        method : "GET",
+        mode: 'cors',
+        headers: headers
+    })
+    .then((response) => {
+        if (!response.ok) {
+            throw new Error(response.error)
+        }
+        return response.json();
+    })
+    .then(data => {
+        document.getElementById('messages').value = data.messages;
+    })
+    .catch(function(error) {
+        document.getElementById('messages').value = error;
+    });
+}
+
+
+Access-Control-Allow-Origin: http://localhost:8080
+Access-Control-Allow-Origin: *
+
+<form id="form2">
+    <input type="text" id="puttext" name="puttext"/>
+    <input type="button" value="Put v1" onclick="onPut('v1')"/>
+    <input type="button" value="Put v2" onclick="onPut('v2')"/>
+</form>
+
+
+client/control.js:
+
+function onPut(version) {
+    const url = "http://localhost:8000/api/" + version + "/messages/0";
+    var headers = {}
+
+    fetch(url, {
+        method : "PUT",
+        mode: 'cors',
+        headers: headers,
+        body: new URLSearchParams(new FormData(document.getElementById("form2"))),
+    })
+    .then((response) => {
+        if (!response.ok) {
+            throw new Error(response.error)
+        }
+        return response.json();
+    })
+    .then(data => {
+        document.getElementById('messages').value = data.messages;
+    })
+    .catch(function(error) {
+        document.getElementById('messages').value = error;
+    });
+}
+
+
+var headers = { "X-Token": "abcd1234" }
+
+# go
+c.Header("Access-Control-Allow-Origin", "http://localhost:8080")
+c.Header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT")
+c.Header("Access-Control-Allow-Headers", "X-Token")
+
+fetch(url, {
+    method : "PUT",
+    mode: 'cors',
+    credentials: 'include',
+    headers: headers,
+    body: new URLSearchParams(new FormData(document.getElementById("form2"))),
+})
+
+Access-Control-Max-Age: 600
+........................................
+
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Headers: Origin, Content-Type, X-DWT-UID, X-DWT-SIG, X-DWT-TOKEN');
+........................................
+
+const express = require('express');
+const request = require('request');
+
+const app = express();
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
+
+app.get('/jokes/random', (req, res) => {
+  request(
+    { url: 'https://joke-api-strict-cors.appspot.com/jokes/random' },
+    (error, response, body) => {
+      if (error || response.statusCode !== 200) {
+        return res.status(500).json({ type: 'error', message: err.message });
+      }
+
+      res.json(JSON.parse(body));
+    }
+  )
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`listening on ${PORT}`));
+
+
+........................................
+
+fetch(URL,
+{
+            method: "POST",
+            body: JSON.stringify(data),
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+}
+).then(response => response.json())
+ .then(data => {
+     ....
+  })
+.catch((err) => {
+   ....
+  })
+});
+
+
+........................................
+
+https://stackoverflow.com/questions/60996419/laravel-7-passport-blocked-by-cors-policy/60996583#60996583
+https://freek.dev/948-handling-cors-in-a-laravel-application
+https://laracasts.com/discuss/channels/laravel/has-been-blocked-by-cors-policy-response-to-preflight-request-doesnt-pass-access-control-check-no-access-control-allow-origin-header-is-present-on-the-requested-resource
+https://www.stackhawk.com/blog/fixing-no-access-control-allow-origin-header-present/
+https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#preflighted_requests
+
+
+SESSION_DOMAIN=localhost:8080
+SANCTUM_STATEFUL_DOMAINS=localhost:8080
+
+Vue.config.productionTip = false
+Vue.prototype.$http = axios
+axios.defaults.withCredentials = true
+axios.defaults.baseURL = 'http://localhost:8000/'
+
+Vue.use(VueCountryCode);
+
+new Vue({
+  router,
+  vuetify,
+  store,
+  render: h => h(App)
+}).$mount('#app')
+
+
+php artisan cache:clear
+
+
+config/cors.php
+
+return [
+
+    'paths' => ['api/*'],
+    'allowed_methods' => ['*'],
+    'allowed_origins' => ['*'],
+    'allowed_origins_patterns' => ['*'],
+    'allowed_headers' => ['*'],
+    'exposed_headers' => [],
+    'max_age' => 0,
+    'supports_credentials' => false,
+
+];
+
+
+#############################################################################
+api-platform env
+#############################################################################
+
+https://github.com/api-platform/api-platform/blob/main/api/.env
+https://api-platform.com/docs/core/configuration/
+https://api-platform.com/docs/admin/getting-started/#
+https://api-platform.com/docs/distribution/#
+https://api-platform.com/docs/deployment/
+https://api-platform.com/docs/deployment/docker-compose/
+https://api-platform.com/docs/core/performance/
+https://api-platform.com/docs/core/elasticsearch/
+https://api-platform.com/docs/deployment/traefik/#
+https://symfony.com/doc/current/configuration.html
+https://api-platform.com/docs/core/jwt/
+https://api-platform.com/docs/deployment/heroku/
+
+
+php bin/console cache:clear
+
+CORS_ALLOW_ORIGIN='^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$'
+
+
+# config/packages/nelmio_cors.yaml
+
+nelmio_cors:
+    paths:
+        '^/api/':
+            origin_regex: true
+            allow_origin: ['^http://localhost:[0-9]+'] # You probably want to change this regex to match your real domain
+            allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
+            allow_headers: ['Content-Type', 'Authorization']
+            expose_headers: ['Link']
+            max_age: 3600
+
+
+
+services:
+#  ...
+api:
+  labels:
+    - traefik.http.routers.api.rule=Host(`api.localhost`)
+
+
+
+api/app.json
+{
+  "success_url": "/",
+  "env": {
+    "APP_ENV": "prod",
+    "APP_SECRET": {"generator": "secret"},
+    "CORS_ALLOW_ORIGIN": "https://your-client-url.com"
+  },
+  "addons": [
+    "heroku-postgresql"
+  ],
+  "buildpacks": [
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-php"
+    }
+  ],
+  "scripts": {
+    "postdeploy": "php bin/console doctrine:schema:create"
+  }
+}
+
+
+------------------------------------------------------------
+
+https://docs.plone.org/intro/index.html
+https://docs.plone.org/develop/plone.api/docs/api/env.html
+https://docs.cypress.io/api/cypress-api/env
+https://docs.cypress.io/guides/overview/why-cypress
+https://fastapi.tiangolo.com/advanced/settings/
+https://api.platform.sh/docs/
+
+------------------------------------------------------------
+
+#########################################################
+API Platform does not recognize true environment variables
+#########################################################
+https://stackoverflow.com/questions/60590555/api-platform-does-not-recognize-true-environment-variables
+
+Replacing
+
+#!/usr/bin/execlineb -P
+php-fpm -R --nodaemonize
+with
+
+#!/usr/bin/with-contenv sh
+exec php-fpm -R --nodaemonize
+
+
+
+#############################################################################
+404 API Platform
+#############################################################################
+
+https://github.com/api-platform/api-platform/issues/1799
+https://github.com/api-platform/api-platform/issues/1799
+https://github.com/api-platform/api-platform/issues/386
+https://stackoverflow.com/questions/42386176/404-resource-not-found-api-platform
+https://api-platform.com/docs/core/errors/
+https://github.com/api-platform/api-platform/issues/743
+https://stackoverflow.com/questions/51153880/symfony-4-api-platform-jwt-custom-operations-and-controllers
+https://github.com/api-platform/api-platform/issues/502
+https://symfony.com/doc/current/setup/symfony_server.html
+https://github.com/api-platform/api-platform/issues/1733
+https://github.com/api-platform/api-platform/issues/2275
+https://stackoverflow.com/questions/64479251/apiplatform-jwt-authentication-token-route-issue
+
+php bin/console cache:clear
+
+
+ FROM php:7.4-fpm
+RUN apt-get update && apt-get install -y zlib1g-dev g++ git libicu-dev zip libzip-dev zip \
+    && docker-php-ext-install intl opcache pdo pdo_mysql \
+    && pecl install apcu \
+    && docker-php-ext-enable apcu \
+    && docker-php-ext-configure zip \
+    && docker-php-ext-install zip
+
+WORKDIR /app
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN curl -sS https://get.symfony.com/cli/installer | bash
+RUN mv /root/.symfony/bin/symfony /usr/local/bin/symfony
+#RUN symfony server:ca:install
+ADD composer.json composer.lock ./
+RUN composer install
+ADD . .
+RUN ./bin/console cache:clear
+CMD ["symfony", "server:start", "--no-tls"]
+
+
+............
+
+<?php
+
+$filename = __DIR__.preg_replace('#(\?.*)$#', '', $_SERVER['REQUEST_URI']);
+if (php_sapi_name() === 'cli-server' && is_file($filename)) {
+    return false;
+}
+
+php -S localhost:8000 -t public index.php
+
+
+
+#############################################################################
+OpenAPI Swagger
+#############################################################################
+
+
+https://api-platform.com/
+https://api-platform.com/docs/
+https://api-platform.com/docs/distribution/testing/
+https://api-platform.com/docs/core/
+https://api-platform.com/docs/core/operations/
+https://api-platform.com/docs/core/openapi/
+https://api-platform.com/docs/core/user/
+https://api-platform.com/docs/core/jwt/
+https://api-platform.com/docs/schema-generator/
+https://api-platform.com/docs/schema-generator/getting-started/
+https://github.com/api-platform/docs
+https://packagist.org/packages/api-platform/core
+https://api-platform.com/docs/core/getting-started/
+https://api-platform.com/docs/admin/
+https://www.openapis.org/
+http://www.hydra-cg.com/
+https://marmelab.com/react-admin/
+https://api-platform.com/docs/core/operations/
+https://symfonycasts.com/screencast/api-platform/operations
+https://github.com/api-platform/api-platform/issues/2149
+https://symfony.com/doc/current/the-fast-track/en/26-api.html
+https://symfonycasts.com/screencast/api-platform
+https://api-platform.com/docs/core/filters/
+
+https://www.youtube.com/watch?v=YGiCEy__vrs
+
+https://www.strangebuzz.com/en/blog/replacing-manual-api-endpoints-with-api-platform-3-in-a-symfony-application
+https://stackoverflow.com/questions/44926811/how-to-create-custom-endpoint-in-api-platform-and-add-it-to-the-documentation
+
+
+Configuring CORS
+By default, the same-origin security policy of modern HTTP clients make calling the API from another domain forbidden. The CORS bundle, installed as part of composer req api, sends Cross-Origin Resource Sharing headers based on the CORS_ALLOW_ORIGIN environment variable.
+
+By default, its value, defined in .env, allows HTTP requests from localhost and 127.0.0.1 on any port. That's exactly what we need as for the next step as we will create an SPA that will have its own web server that will call the API.
+
+
+composer require --dev alice
+bin/phpunit
+
+php bin/console api:openapi:export
+php bin/console api:openapi:export --yaml
+php bin/console api:openapi:export --output=swagger_docs.json
+php bin/console api:swagger:export
+php vendor/bin/schema generate src/ config/schema.yaml -vv
+php bin/console debug:router appellation
+
+docker-compose exec php bin/console debug:router appellation
+symfony composer req api
+------------------------
+
+https://docs.workato.com/api-management.html
+https://rapidapi.com/blog/directory/platform9
+https://docs.openshift.com/container-platform/3.7/rest_api/api/v1.Endpoints.html
+https://cloud.google.com/endpoints/docs/openapi/versioning-an-api
+https://solibri.github.io/Developer-Platform/9.12.7/RestApiUsage.html
+https://www.postman.com/api-platform/api-testing/
+https://rapidapi.com/blog/how-to-test-api-endpoints/
+
+#############################################################################
+debug docker
+#############################################################################
+
+https://www.bleepingcomputer.com/news/security/google-chrome-blocks-port-10080-to-stop-nat-slipstreaming-attacks/
+https://stackoverflow.com/questions/70358787/how-docker-container-reaches-to-embedded-dns-server
+https://askubuntu.com/questions/1292650/resolv-conf-no-dns-servers-known
+https://github.com/docker/compose/issues/8441
+https://github.com/docker/for-linux/issues/1404
+https://curl.se/docs/httpscripting.html
+https://stackoverflow.com/questions/38689350/for-what-reason-i-can-access-the-resources-by-curl-but-not-in-the-browser
+https://reqbin.com/req/javascript/c-taimahsa/curl-cors-request
+https://zemnmez.medium.com/if-cors-is-just-a-header-why-dont-attackers-just-ignore-it-63e57c323cef
+https://davidwosk.com/a-simple-guide-to-cors-errors-in-the-browser/
+
+/etc/network/interfaces
+/etc/systemd/resolved.conf
+/etc/netplan
+
+cat /etc/resolv.conf
+nameserver 127.0.0.11
+options edns0 trust-ad ndots:0
+
+netstat -tulpn | grep LISTEN
+ssh -L 8088:example.com:8088 user@example.com
+
+cat /etc/resolv.conf
+iptables-legacy -nvL DOCKER_OUTPUT -t nat
+ss -au
+dig @127.0.0.11 -p 53199 db
+journalctl -p debug --follow -u docker
+ps aux | grep dockerd
+
+---------------------------------------
+
+curl --trace-ascii debugdump.txt http://www.example.com/
+curl --trace-ascii d.txt --trace-time http://example.com/
+curl --resolve www.example.org:80:127.0.0.1 http://www.example.org/
+curl --proxy http://proxy.example.org:4321 http://remote.example.org/
+curl http://user:password@example.org/
+curl -u user:password http://example.org/
+curl --data name=curl http://url1.example.com http://url2.example.com
+curl -I http://example.com --next http://example.com
+curl -d score=10 http://example.com/post.cgi --next http://example.com/results.html
+
+curl -i http://localhost:3000/people
+curl -i -H 'Origin: http://localhost:63343' http://localhost:3000/people
+curl -H "Origin: [Origin]" [URL]
+curl -H "Origin: https://example.reqbin.com" https://reqbin.com/echo
+curl https://reqbin.com/echo -H "Origin: https://example.reqbin.com" --verbose
+
+curl https://reqbin.com/echo
+   -H "Origin: https://example.reqbin.com"
+   -H "Access-Control-Request-Method: POST"
+   -H "Access-Control-Request-Headers: X-Requested-With"
+   -X OPTIONS
+
+---------------------------------------
+
+
+systemd-resolve --status
+systemctl restart systemd-resolved
+
+docker-compose config
+---------------------------------------
+docker run --net mynetwork -it ubuntu:focal bash
+cat /etc/resolv.conf
+apt update
+docker run --net mynetwork --dns-opt attempts:10 -it ubuntu:focal bash
+apt update
+cat /etc/resolv.conf
+docker run --net mynetwork --dns-opt attempts:10 -it ubuntu:focal bash
+lsb_release -a
+---------------------------------------
+docker-compose version
+docker version
+docker-compose config
+
+services:
+  compose-dns-test:
+    command: tail -f /dev/null
+    container_name: compose-dns-test
+    dns:
+    - 8.8.8.8
+    - 8.8.4.4
+    dns_search:
+    - domain.local
+    - domain.com
+    image: ubuntu:latest
+version: '3.8'
+
+
+#!/bin/bash
+docker-compose up &
+sleep 2
+docker exec -it compose-dns-test cat /etc/resolv.conf
+sleep 2
+docker-compose down
+sleep 2
+docker system prune -f
+docker run -d -t --name docker-dns-test --dns='8.8.8.8' --dns='8.8.4.4' ubuntu:latest
+sleep 2
+docker exec -it docker-dns-test cat /etc/resolv.conf
+sleep 2
+docker stop docker-dns-test
+
+
+nameserver 127.0.0.11
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+options edns0 trust-ad ndots:0
+
+
+docker run --rm -it --dns 8.8.8.8 --dns 8.8.4.4 ubuntu:latest cat /etc/resolv.conf
+docker network create testnet
+docker run --rm -it --dns 8.8.8.8 --dns 8.8.4.4 --net testnet ubuntu:latest cat /etc/resolv.conf
+docker run --rm -it --net test --dns 8.8.8.8 nicolaka/netshoot drill google.com
+sudo tshark -i eth0 'host 8.8.8.8 and port 53'
+
+
+
+
+
+

@@ -287,6 +287,16 @@
 
 - https://meet.jit.si/
 - https://jitsi.org/jitsi-meet/
+- https://sc.joinme.com/
+
+------------------------------------------------------------------
+
+### Markdown Table Generators
+
+- https://www.tablesgenerator.com/markdown_tables
+- https://tableconvert.com/markdown-generator
+- https://tabletomarkdown.com/generate-markdown-table/
+- https://michelf.ca/projects/php-markdown/dingus/
 
 ------------------------------------------------------------------
 
