@@ -1,0 +1,660 @@
+
+##########################################################
+Preflight CORS error followed by 404 error
+OPTION requests to the REST api returning 404
+##########################################################
+
+https://stackoverflow.com/questions/71277485/preflight-cors-error-followed-by-404-error
+https://forum.getkirby.com/t/api-cors-preflight-error-404-on-options-method/14953
+https://github.com/hapijs/hapi/issues/2868
+https://serverfault.com/questions/393532/allowing-cross-origin-requests-cors-on-nginx-for-404-responses
+https://support.konghq.com/support/s/article/404-not-found-of-CORS-OPTIONS-requests
+https://learn.microsoft.com/en-us/answers/questions/1014453/(cors)-policy-in-policy-fragment-gives-a-404-error?orderby=oldest
+https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS/Errors
+https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS/Errors/CORSMissingAllowOrigin
+
+*
+*
+*
+
+restriction can only be lifted by the one who wrote the API. It must be:
+Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, X-Requested-With, Authorization
+
+*
+*
+*
+
+header("Access-Control-Allow-Origin: http://southparagliding.ro");
+header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Methods: OPTIONS,GET,POST,PUT,DELETE");
+header("Access-Control-Max-Age: 3600");
+// header("Access-Control-Allow-Credentials: true");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, X-Requested-With");
+
+*
+*
+*
+------------------
+php
+------------------
+header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
+header('Access-Control-Allow-Credentials: true');
+header('Access-Control-Max-Age: 86400'); // cache for 1 day
+
+// Access-Control headers are received during OPTIONS requests
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']))
+        header("HTTP/1.1 200 OK");
+        header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+        header("Access-Control-Allow-Headers: Content-type, Authorization, Origin, X-Requested-With'");
+}
+
+return [
+    'debug' => true,
+    'languages' => true,
+    'api' => [
+        'basicAuth' => true,
+        'allowInsecure' => true # DO NOT USE THIS IN PRODUCTION!
+    ]
+];
+
+
+// Access-Control headers are received during OPTIONS requests
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']))
+        header("HTTP/1.1 200 OK");
+        header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+        header("Access-Control-Allow-Headers: Content-type, Authorization, Origin, X-Requested-With, X-Language, Accept-Language'");
+
+}
+
+*
+*
+*
+------------------
+htdocs
+------------------
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # Preflight OPTIONS requests handling
+  RewriteCond %{REQUEST_METHOD} OPTIONS
+  RewriteRule ^(.*)$ $1 [R=200,L]
+</IfModule>
+
+Header always set Access-Control-Allow-Origin "*"
+Header always set Access-Control-Allow-Headers "Accept,Authorization,Content-Type,Origin,X-Auth-Token"
+Header always set Access-Control-Allow-Methods "PUT,POST,GET,OPTIONS,ORIGIN"
+
+SetEnvIf Origin "^http(s)?://(.+\.)?(localhost)(:[0-9]+)?$" origin_is=$0
+Header always set Access-Control-Allow-Origin %{origin_is}e env=origin_is
+Header always set Access-Control-Allow-Credentials "true"
+
+------------------
+htdocs
+------------------
+Header always set Access-Control-Allow-Origin "*"
+Header always set Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PUT"
+Header always set Access-Control-Allow-Headers "Content-Type"
+
+RewriteEngine on
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=200,L]
+
+*
+*
+*
+
+https://nginx.org/en/docs/http/ngx_http_headers_module.html
+
+if ($cors = "trueget") {
+    # Tells the browser this origin may make cross-origin requests
+    # (Here, we echo the requesting origin, which matched the whitelist.)
+    add_header 'Access-Control-Allow-Origin' "$http_origin" always;
+
+    # Tells the browser it may show the response, when XmlHttpRequest.withCredentials=true.
+    add_header 'Access-Control-Allow-Credentials' 'true' always;
+}
+
+
+
+more_set_headers 'Access-Control-Allow-Origin: *';
+more_set_headers -s '404' 'Access-Control-Allow-Origin: *';
+
+
+Kong route object CORS OPTIONS requests
+
+service: null
+protocols: http,https
+host:null
+sni: null
+methods: OPTIONS
+paths: /
+
+
+*
+*
+*
+
+https://community.zammad.org/t/option-requests-to-the-rest-api-returning-404/157/11
+
+fetch('https://wpoverwatch.zammad.com/api/v1/ticket_priorities', {
+  method: 'GET',
+  headers: new Headers({
+    Authorization: 'Token token=<MY TOKEN>'
+  })
+})
+
+## Get priorities
+curl "https://YOURZAMMAD/api/v1/ticket_priorities" -H 'Content-Type: text/plain; charset=utf-8' -H 'Authorization : Token token=XXX' -d $'{}'
+## Check Login Duplicate
+curl -X "POST" "https://YOURZAMMAD/api/v1/signshow" -H 'Content-Type: text/plain; charset=utf-8' -H 'Authorization : Token token=XXX'
+
+
+############################################################
+debug fetch
+############################################################
+
+https://dev.to/johnpaulada/synchronous-fetch-with-asyncawait
+https://stackoverflow.com/questions/62005761/fetch-api-javascript-works-only-when-debugged-breakpoints
+https://stackoverflow.com/questions/30257377/http-request-function-wont-return-result
+https://backend.turing.edu/module3/archive/lessons/fetch_in_javascript
+https://web.dev/introduction-to-fetch/
+https://javascript.info/fetch-api
+https://fetch.spec.whatwg.org/#http-cors-protocol
+https://appdividend.com/2022/03/08/javascript-fetch/
+https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#preflighted_requests
+https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#preflighted_requests
+https://blog.logrocket.com/intercepting-javascript-fetch-api-requests-responses/
+https://javascript.info/fetch-crossorigin
+https://fetch.spec.whatwg.org/
+https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
+https://davidwalsh.name/fetch
+https://stackoverflow.com/questions/36878255/allow-access-control-allow-origin-header-using-html5-fetch-api
+http://www.html5rocks.com/static/images/cors_server_flowchart.png
+
+
+........
+
+fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${zipNum},us&units=imperial&appid=${APIKEY}`)
+        .then(response => response.json())
+        .then(data => {  console.log(data); });
+
+fetch('https://api.com/values/1')
+    .then(response => response.json())
+    .then((response) => console.log(response))
+    .then(json => console.log(json));
+
+const response = await fetch('https://api.com/values/1');
+const json = await response.json();
+console.log(json);
+
+fetch("https://opentdb.com/api.php?amount=1&category=27&type=multiple")
+  .then((response) => response.json())
+  .then((response) => console.log(response))
+
+fetch("https://opentdb.com/api.php?amount=1&category=27&type=multiple")
+  .then((response) => response.json())
+  .then((response) => console.log(response))
+  .catch((error) => console.error({ error }))
+
+fetch('users.json').then(function(response) {
+    console.log(response.headers.get('Content-Type'));
+    console.log(response.headers.get('Date'));
+    console.log(response.status);
+    console.log(response.statusText);
+    console.log(response.type);
+    console.log(response.url);
+});
+
+
+........
+
+Fetch API
+https://javascript.info/fetch-api
+
+let promise = fetch(url, {
+  method: "GET", // POST, PUT, DELETE, etc.
+  headers: {
+    // the content type header value is usually auto-set
+    // depending on the request body
+    "Content-Type": "text/plain;charset=UTF-8"
+  },
+  body: undefined, // string, FormData, Blob, BufferSource, or URLSearchParams
+  referrer: "about:client", // or "" to send no Referer header,
+  // or an url from the current origin
+  referrerPolicy: "strict-origin-when-cross-origin", // no-referrer-when-downgrade, no-referrer, origin, same-origin...
+  mode: "cors", // same-origin, no-cors
+  credentials: "same-origin", // omit, include
+  cache: "default", // no-store, reload, no-cache, force-cache, or only-if-cached
+  redirect: "follow", // manual, error
+  integrity: "", // a hash, like "sha256-abcdef1234567890"
+  keepalive: false, // true
+  signal: undefined, // AbortController to abort request
+  window: window // null
+});
+
+........
+
+https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
+
+// Example POST method implementation:
+async function postData(url = "", data = {}) {
+  // Default options are marked with *
+  const response = await fetch(url, {
+    method: "POST", // *GET, POST, PUT, DELETE, etc.
+    mode: "cors", // no-cors, *cors, same-origin
+    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: "same-origin", // include, *same-origin, omit
+    headers: {
+      "Content-Type": "application/json",
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    redirect: "follow", // manual, *follow, error
+    referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+    body: JSON.stringify(data), // body data type must match "Content-Type" header
+  });
+  return response.json(); // parses JSON response into native JavaScript objects
+}
+
+postData("https://example.com/answer", { answer: 42 }).then((data) => {
+  console.log(data); // JSON data parsed by `data.json()` call
+});
+
+
+........
+
+postRequest('https://appdividend.com/api/v1/users', {user: 'Krunal'})
+  .then(data => console.log(data)) // Result from the `response.json()` call
+  .catch(error => console.error(error))
+
+function postRequest(url, data) {
+  return fetch(url, {
+    credentials: 'same-origin', // 'include', default: 'omit'
+    method: 'POST', // 'GET', 'PUT', 'DELETE', etc.
+    body: JSON.stringify(data), // Coordinate the body type with 'Content-Type'
+    headers: new Headers({
+    'Content-Type': 'application/json'
+  }),
+ });
+ .then(response => response.json())
+}
+
+
+........
+
+
+npm install -g local-cors-proxy
+lcp --proxyUrl https://www.yourdomain.com
+
+
+
+let allowCrossDomain = function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', "*");
+  res.header('Access-Control-Allow-Headers', "*");
+  next();
+}
+app.use(allowCrossDomain);
+
+........
+
+
+#Control-Allow-Origin access
+
+# Authorization headers aren't passed in CORS preflight (OPTIONS) calls. Always return a 200 for options.
+add_header Access-Control-Allow-Credentials "true" always;
+add_header Access-Control-Allow-Origin "https://URL-WHERE-ORIGIN-FROM-HERE " always;
+add_header Access-Control-Allow-Methods "GET,OPTIONS" always;
+add_header Access-Control-Allow-Headers "x-csrf-token,authorization,content-type,accept,origin,x-requested-with,access-control-allow-origin" always;
+
+if ($request_method = OPTIONS ) {return 200;}
+
+
+############################################################################
+nelmio_cors
+############################################################################
+
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Expose-Headers
+http://enable-cors.org/
+http://www.html5rocks.com/static/images/cors_server_flowchart.png
+https://symfony.com/doc/current/setup/flex.html
+https://github.com/nelmio/NelmioCorsBundle
+https://enable-cors.org/
+https://enable-cors.org/server_php.html
+https://symfony.com/bundles/NelmioCorsBundle/current/index.html
+https://pdir.de/news/contao-4-access-control-allow-origin.html
+https://packagist.p2hp.com/packages/nelmio/cors-bundle
+https://morioh.com/p/b1a66d14ceb4
+https://codereviewvideos.com/course/beginners-guide-back-end-json-api-front-end-2018/video/symfony-4-cors-json-api
+https://api-platform.com/docs/admin/getting-started/
+https://doc.ibexa.co/en/2.5/api/making_cross_origin_http_requests/#what-is-cors
+https://doc.ibexa.co/en/2.5/api/making_cross_origin_http_requests/#granting-cors-access-to-your-own-http-resources
+https://stackoverflow.com/questions/71068198/symfony-nelmio-cors-issue-access-control-allow-origin-header-contains-multiple
+https://symfony.com/bundles/LexikJWTAuthenticationBundle/current/4-cors-requests.html
+https://symfony.com/doc/current/setup/flex.html
+https://symfony.com/bundles/NelmioCorsBundle/current/index.html
+https://laracasts.com/discuss/channels/general-discussion/untrusted-host-127001
+https://stackoverflow.com/questions/51870330/untrusted-host-in-symfony-call
+https://github.com/api-platform/api-platform/issues/897
+https://github.com/symfony/symfony/issues/29609
+
+
+framework.yaml
+ trusted_hosts:  ['192.168.43.218', '192.168.43.218']
+
+
+framework:
+    secret: '%env(APP_SECRET)%'
+    trusted_hosts:
+        - localhost
+        - api
+        - myproject.dev
+
+
+nelmio_cors:
+    ...
+    paths:
+        '^/api/':
+            allow_origin: ['*']
+            allow_headers: ['*']
+            allow_methods: ['POST', 'PUT', 'GET', 'DELETE']
+            max_age: 3600
+
+
+
+
+composer req cors
+composer require nelmio/cors-bundle
+
+config/packages/nelmio_cors.yaml
+
+CORS on PHP
+<?php header("Access-Control-Allow-Origin: *");
+
+
+# in der .htaccess
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "localhost:3000"
+</IfModule>
+
+# .env im Root Verzeichnis
+CORS_ALLOW_ORIGIN='localhost:[0-9]|example.org'
+
+# app/config/config.yml
+nelmio_cors:
+    defaults:
+        origin_regex: true
+        allow_origin: ['%env(CORS_ALLOW_ORIGIN)%']
+        allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
+        allow_headers: ['Content-Type', 'Authorization']
+        expose_headers: ['Link']
+        max_age: 3600
+    paths:
+        '^/api/':
+            allow_origin: ['*']
+            allow_headers: ['X-Custom-Auth']
+            allow_methods: ['POST', 'PUT', 'GET', 'DELETE']
+            max_age: 3600
+        '^/':
+            origin_regex: true
+            allow_origin: ['^http://localhost:[0-9]+']
+            allow_headers: ['X-Custom-Auth']
+            allow_methods: ['POST', 'PUT', 'GET', 'DELETE']
+            max_age: 3600
+            hosts: ['^rest\.']
+
+
+FIX?
+allow_headers: ['X-Custom-Auth', 'content-type']
+
+nelmio_cors:
+    defaults:
+        allow_credentials: false
+        allow_origin: []
+        allow_headers: []
+        allow_methods: []
+        expose_headers: []
+        max_age: 0
+        hosts: []
+        origin_regex: false
+        forced_allow_origin_value: ~
+    paths:
+        '^/api/':
+            allow_origin: ['*']
+            allow_headers: ['X-Custom-Auth']
+            allow_methods: ['POST', 'PUT', 'GET', 'DELETE']
+            max_age: 3600
+        '^/':
+            origin_regex: true
+            allow_origin: ['^http://localhost:[0-9]+']
+            allow_headers: ['X-Custom-Auth']
+            allow_methods: ['POST', 'PUT', 'GET', 'DELETE']
+            max_age: 3600
+            hosts: ['^api\.']
+
+nelmio_cors:
+    defaults:
+        allow_origin: [ 'http://example.com' ]
+
+
+nelmio_cors:
+    paths:
+        '^/api/ezp/v2/':
+            max_age: 3600
+            allow_credentials: false
+            allow_origin: ['http://ez.no']
+
+php -S api.oursite.com:8000 -t public
+php -S different.com:8080 -t .
+
+
+CORS_ALLOW_ORIGIN=^https?://localhost:?[0-9]*$
+CORS_ALLOW_ORIGIN=^http://different.com:8000$
+CORS_ALLOW_ORIGIN=^https?://.*?$
+
+apt update
+apt install net-tools -y
+ifconfig
+
+TRUSTED_HOSTS ='^(127.0.0.1|localhost|example.com)$'
+
+#####################################################################
+400-bad-request
+#####################################################################
+
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400
+https://kinsta.com/knowledgebase/400-bad-request/
+https://api-platform.com/docs/core/errors/
+
+
+#####################################################################
+#####################################################################
+
+https://symfony-docs-zh-cn.readthedocs.io/cookbook/web_server/built_in.html
+https://symfonycasts.com/screencast/symfony-uploads/server-setup
+https://github.com/symfony-cli/symfony-cli/issues/42
+https://github.com/symfony/symfony/issues/32524
+https://stackoverflow.com/questions/58521994/set-custom-port-when-starting-symfony-local-web-server
+https://symfony.com/doc/current/setup/symfony_server.html
+https://symfony.com/doc/4.0/setup/built_in_web_server.html
+https://www.oliverdavies.uk/blog/running-drupal-88-symfony-local-server
+https://speakerdeck.com/fabpot/symfony-local-web-server-dot-dot-dot-reloaded?slide=9
+https://docs.newrelic.com/docs/apm/agents/php-agent/troubleshooting/why-when-restart-your-web-server-php/
+https://stackoverflow.com/questions/15814289/force-configuration-reload-in-symfony2
+
+curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | bash
+apt install symfony-cli -y
+
+apt update
+apt install net-tools -y
+ifconfig
+
+serve
+server:ca:install
+server:ca:uninstall
+server:list
+server:log
+server:prod
+server:start
+server:status
+server:stop
+
+docker run -it --net=network container bash
+
+composer install
+symfony server:ca:install
+symfony serve --port=9000
+php bin/console cache:clear
+
+---------------------
+
+php bin/console server:start 127.0.0.1:8005
+php bin/console server:start --port=8080
+symfony server:start --port=8080
+php bin/console server:start --help
+php bin/console server:start 127.0.0.1:8080
+
+---------------------
+
+composer require symfony/web-server-bundle --dev
+php bin/console server:start
+php bin/console server:start 192.168.0.1:8080
+php bin/console server:start *:8080
+php bin/console server:status
+php bin/console server:status 192.168.0.1:8080
+php bin/console server:start 0.0.0.0:8000
+php bin/console server:start --router=config/my_router.php
+php bin/console server:start --docroot=public_html
+php bin/console server:stop
+php bin/console server:stop 192.168.0.1:8080
+
+---------------------
+
+symfony server:start
+symfony open:local
+symfony server:start -d
+symfony server:log
+symfony server:ca:install
+symfony local:php:list
+symfony proxy:start
+symfony proxy:domain:attach my-domain
+symfony proxy:domain:attach "*.my-domain"
+symfony run -d yarn encore dev --watch
+symfony server:log
+symfony server:stop
+
+---------------------
+
+curl -sS https://get.symfony.com/cli/installer | bash
+symfony serve
+symfony serve -d
+symfony server:status
+symfony server:stop
+symfony serve --document-root www
+symfony server:ca:install
+symfony proxy:domain:attach umami
+
+---------------------
+symfony -h
+symfony serve -h
+symfony server:start --port=9001 --no-tls  --allow-http
+
+
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-type, Authorization, Origin, X-Requested-With, X-Language, Accept-Language'");
+
+chmod -R 777 /var/www
+
+#################################################################
+401 JWT Token not found
+#################################################################
+
+https://github.com/lexik/LexikJWTAuthenticationBundle/issues/346
+https://stackoverflow.com/questions/48667976/401-jwt-token-not-found
+https://github.com/lexik/LexikJWTAuthenticationBundle/issues/718
+https://symfony.com/bundles/LexikJWTAuthenticationBundle/current/2-data-customization.html
+https://dev.to/nabbisen/symfony-6-and-jwt-bundles-refresh-token-2jlj
+https://stackoverflow.com/questions/71210065/symfony-api-platform-ignore-jwt-token
+https://liujijieseason.medium.com/angular-symfony-jwt-authentication-5fd39da2a1ac
+https://liujijieseason.medium.com/angular-symfony-jwt-authentication-5fd39da2a1ac
+
+
+api:
+    pattern: ^/api
+    stateless: true
+    anonymous: true
+    json_login:
+        username_path: email
+        check_path: /api/login_check
+        success_handler: lexik_jwt_authentication.handler.authentication_success
+        failure_handler: lexik_jwt_authentication.handler.authentication_failure
+    guard:
+        authenticators:
+            - lexik_jwt_authentication.jwt_token_authenticator
+
+
+
+<Directory your_project_directory>
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride None
+    Order allow,deny
+    Allow from all
+    Require all granted
+    RewriteEngine on
+    RewriteCond %{HTTP:Authorization} ^(.*)
+    RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+</Directory>
+
+
+RewriteEngine On
+RewriteCond %{HTTP:Authorization} ^(.*)
+RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+
+RewriteCond %{HTTP:Authorization} ^(.*)
+RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+
+#################################################################
+getallheaders
+#################################################################
+
+https://stackoverflow.com/questions/1403670/how-can-i-get-php-to-display-the-headers-it-received-from-a-browser
+https://www.php.net/manual/en/function.headers-list.php
+https://www.php.net/manual/en/function.getallheaders.php
+https://www.w3docs.com/snippets/php/how-to-read-request-headers-in-php.html
+https://www.w3schools.com/php/func_network_headers_list.asp
+https://www.php.net/manual/en/function.get-headers.php
+
+foreach (getallheaders() as $name => $value) {
+  echo "$name: $value <br>";
+}
+
+$headers =  getallheaders();
+foreach($headers as $key=>$val){
+  echo $key . ': ' . $val . '<br>';
+}
+
+
+stream_context_set_default(
+    array(
+        'http' => array(
+            'method' => 'HEAD'
+        )
+    )
+);
+$headers = get_headers('http://example.com');
+
+*****
+
+if (!function_exists('getallheaders')){
+    function getallheaders() {
+       $headers = '';
+       foreach ($_SERVER as $name => $value) {
+            if (substr($name, 0, 5) == 'HTTP_') {
+                $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+            }
+       }
+       return $headers;
+    }
+}
