@@ -418,3 +418,76 @@ https://replit.com/languages/bash
 https://rextester.com/l/bash_online_compiler
 https://www.onlinegdb.com/online_bash_shell
 
+##########################################################################
+Using arrays in shell scripts
+##########################################################################
+
+https://levelup.gitconnected.com/5-bash-coding-techniques-that-every-programmer-should-know-f63b11b59e8d
+
+#!/bin/bash
+numbers=(2 4 5 2)
+declare -a words
+words[0]='Orange'
+words[1]='Pineapple'
+echo ${numbers[@]} ${words[@]}
+
+#!/bin/bash
+declare -a marks
+marks+=(75 65 80 102 26) # class A marks
+marks+=(103 68) # class B marks
+# Remove invalid marks
+for i in "${!marks[@]}"; do
+    if ((marks[i] > 100)); then
+        unset "marks[$i]"
+    fi
+done
+# Sort all marks
+marks_s=($(printf '%s\n' "${marks[@]}" | sort -nr))
+# Prints the top-3
+echo ${marks_s[0]} ${marks_s[1]} ${marks_s[2]}
+
+
+# maps or dictionaries
+#!/bin/bash
+declare -A marks=([john]=75 [doe]=82 [ann]=83 [ava]=72)
+for key in "${!marks[@]}"; do
+    printf "$key \t ${marks[$key]} \n"
+done
+
+# named arguments support
+#!/bin/bash
+title="Information"
+message="Hello world"
+while getopts ":t:m:" option; do
+    echo $option
+    case "${option}" in
+        t)
+            title=${OPTARG}
+            ;;
+        m)
+            message=${OPTARG}
+            ;;
+    esac
+done
+zenity --info --title="$title" --text="$message"
+
+# pass-by-reference in functions
+#!/bin/bash
+function change_str_var() {
+    local str_new="Bash"
+    local -n str_ref=$1
+    echo "$str_ref -> $str_new" # Python -> Bash
+    str_ref=$str_new
+}
+str="Python"
+change_str_var str
+echo $str # Bash
+
+# type and modifier attributes for variables
+#!/bin/bash
+declare -l lc_str="Hello World"
+declare -u uc_str
+uc_str="Hello"
+uc_str="World"
+echo $lc_str # hello world
+echo $uc_str # WORLD
