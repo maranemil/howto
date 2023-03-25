@@ -18,12 +18,12 @@ sudo tar xzf ispp_scan.tar.gz
 sudo rm -f ispp_scan.tar.gz
 sudo ln -s /usr/local/ispprotect/ispp_scan /usr/local/bin/ispp_scan
 
-
 ##################################################################################
 #
 #	How do I update sudo package version?
 #
 ##################################################################################
+
 https://askubuntu.com/questions/1180947/how-do-i-update-sudo-package-version/1180954
 https://people.canonical.com/~ubuntu-security/cve/2019/CVE-2019-14287.html
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-14287
@@ -44,7 +44,6 @@ sudo -u nikki /etc/nikkiapp/bin/start
 sudo -s
 whoami
 
-
 sudo -l	List available commands.
 sudo command	Run command as root.
 sudo -u root command	Run command as root.
@@ -55,7 +54,6 @@ sudo su - username	Switch to the username's account with the username's environm
 sudo -s	Start a shell as root
 sudo -u root -s	Same as above.
 sudo -u user -s	Start a shell as user.
-
 
 ##################################################################################
 #
@@ -165,11 +163,9 @@ https://wiki.ubuntu.com/SecurityTeam/KnowledgeBase/Variant4
 Verifying Your System
 cat /sys/devices/system/cpu/vulnerabilities/spec_store_bypass
 
-
-
-##########################################
+####################################################
 mount encrypted partition
-##########################################
+####################################################
 
 https://www.cyberciti.biz/security/howto-linux-hard-disk-encryption-with-luks-cryptsetup-command/
 https://manpages.ubuntu.com/manpages/trusty/man8/cryptdisks_start.8.html
@@ -211,9 +207,9 @@ cryptsetup luksDump /dev/xvdc
 # df -H
 # mount
 
-
+####################################################
 run fsck on LUKS based partition
-
+####################################################
 # umount /backup2
 # fsck -vy /dev/mapper/backup2
 # mount /dev/mapper/backup2 /backu2
@@ -225,9 +221,9 @@ change LUKS passphrase
 # cryptsetup luksRemoveKey /dev/xvdc # delete the old password
 
 
-------------------------
+####################################################
 Setup LUKS
-
+####################################################
 sudo cryptsetup luksFormat --hash=sha512 --key-size=512 --cipher=aes-xts-plain64 --verify-passphrase /dev/nvme0n1p3
 
 sudo cryptsetup luksOpen /dev/nvme0n1p3 CryptDisk
@@ -239,3 +235,61 @@ Setup LVM on /dev/mapper/CryptDisk
     sudo vgcreate vg0 /dev/mapper/CryptDisk
     sudo lvcreate -n swap -L 20G vg0
     sudo lvcreate -n root -l +100%FREE vg0
+
+
+####################################################
+shred
+####################################################
+https://www.freecodecamp.org/news/securely-erasing-a-disk-and-file-using-linux-command-shred/
+https://www.computerhope.com/unix/shred.htm
+https://linux.die.net/man/1/shred
+https://wiki.ubuntuusers.de/shred/
+
+shred -vfz [/file/system/path]
+
+-z, --zero
+-f, --force
+-v, --verbose
+-u, --remove
+-n, --iterations=N
+
+
+####################################################
+urandom
+####################################################
+https://linuxhandbook.com/dev-zero/
+https://slowstarter80.github.io/linux/how_to_create_files_with_random_data/
+https://superuser.com/questions/470949/how-do-i-create-a-1gb-random-file-in-linux
+https://unix.stackexchange.com/questions/33629/how-can-i-populate-a-file-with-random-data
+https://unix.stackexchange.com/questions/439102/different-size-of-file-from-dev-zero-and-dev-urandom
+https://www.cyberciti.biz/faq/howto-create-lage-files-with-dd-command/
+
+
+size=$( echo 1G | numfmt --from=iec )         # 1 G ==> 1073741824
+openssl rand -base64 -out myfile "$size"
+
+
+while true;do head /dev/urandom | tr -dc A-Za-z0-9;done | head -c 5000K | tee  5000kb
+
+head -c 1G </dev/urandom >myfile
+head -c 1073741824 </dev/urandom >myfile
+
+dd if=/dev/urandom of=/mnt/udb/junk status=progress
+dd if=/dev/urandom of=sample.txt bs=1G count=1
+dd if=/dev/urandom of=sample.txt bs=64M count=16
+head -c 1G /dev/urandom > sample.txt
+dd if=/dev/urandom of=1GB.bin bs=64M count=16 iflag=fullblock
+yes this is test file | head -c 100KB > test.file
+
+truncate --size 1G foo
+shred --iterations 1 foo
+
+
+head -c 100M /dev/zero > 100M_filled_with_zeros
+head -c 100M /dev/urandom > 100M_filled_with_random_data
+dd if=/dev/zero of=100M_filled_with_zeros bs=100M count=1
+dd if=/dev/urandom of=100M_filled_with_random_data bs=1M count=100
+
+
+
+
