@@ -542,5 +542,5 @@ sudo apt-get install p7zip p7zip-full p7zip-rar
 ### move first 1000 files - split folder files in subfolders
 ~~~
 ls | wc -l
-mv `ls | head -5000` ./sub1
+mv -v `ls | head -5000` ./sub1
 ~~~
