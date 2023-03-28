@@ -98,3 +98,62 @@ https://www.php.net/manual/en/function.random-int
 https://www.php.net/manual/de/function.range.php
 */
 ~~~
+
+
+
+~~~
+#####################################################################
+str_contains for php7.4
+#####################################################################
+
+strpos(string $haystack, string $needle, int $offset = 0): int|false
+str_contains(string $haystack, string $needle): bool
+
+http://phptester.net/
+https://www.php.net/manual/en/function.strpos.php
+https://www.php.net/manual/en/function.str-contains.php
+https://onlinephp.io/
+
+$data_email = "nfo@example.com";
+if(!strpos($data_email,"example.com")){
+    print("error");
+}
+else{
+    print("ok");
+}
+~~~
+
+~~~
+#####################################################################
+getenv
+#####################################################################
+
+https://www.php.net/manual/de/reserved.variables.environment.php
+https://www.php.net/manual/de/function.getenv.php
+
+echo 'My username is ' .$_ENV["REMOTE_ADDR"] . '!';
+echo getenv('REMOTE_ADDR');
+echo $_SERVER['REMOTE_ADDR'];
+
+#####################################################################
+Set up a dev environment 
+#####################################################################
+
+https://docs.docker.com/compose/environment-variables/set-environment-variables/
+https://docs.docker.com/desktop/dev-environments/set-up/
+https://docs.docker.com/compose/environment-variables/env-file/
+https://docs.docker.com/compose/environment-variables/envvars-precedence/
+
+web:
+  environment:
+    - DEBUG=1
+https://docs.docker.com/compose/environment-variables/set-environment-variables/
+~~~
+
+~~~
+#####################################################################
+async
+#####################################################################
+https://entwickler.de/php/async-php-mit-reactphp
+https://stackoverflow.com/questions/14236296/asynchronous-function-call-in-php
+~~~

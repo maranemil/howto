@@ -798,3 +798,16 @@ https://stackoverflow.com/questions/3390396/how-can-i-check-for-undefined-in-jav
 
 if (typeof myVar !== 'undefined')
 ```
+
+```
+#####################################################################
+Uncaught TypeError: Failed to execute 'serializeToString' on 'XMLSerializer': Failing to download an svg
+#####################################################################
+https://developer.mozilla.org/en-US/docs/Web/API/DOMParser
+https://developer.mozilla.org/en-US/docs/Web/API/XMLSerializer/serializeToString
+https://stackoverflow.com/questions/56750860/uncaught-typeerror-failed-to-execute-serializetostring-on-xmlserializer-fa
+
+var svg = d3.select("svg");
+var svgAsXML = (new XMLSerializer).serializeToString(svg.node());
+console.log(svgAsXML)
+```

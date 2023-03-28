@@ -775,4 +775,106 @@ https://blog.logrocket.com/use-vue-js-event-emitters-modify-component-data/
 </script>
 ~~~
 
+~~~
+#####################################################################
+alert dialogs vue
+#####################################################################
+https://nativescript-vue.org/en/docs/elements/dialogs/alert/
+https://bootstrap-vue.org/docs/components/alert
+https://vuejsexamples.com/tag/alert/
+https://vuejsexamples.com/simple-alert-for-vue-js/
+https://coreui.io/vue/docs/components/alert.html
+https://morioh.com/p/66da29ca13a6
+https://www.c-sharpcorner.com/article/how-to-display-alert-message-in-vue-js/
+https://vuetifyjs.com/en/components/alerts/
+https://stackoverflow.com/questions/47988708/vue-js-alert-box
+
+
+alert('Your message')
+  .then(() => {
+    console.log("Alert dialog closed.");
+});
+  
+  
+alert({
+  title: "Your title",
+  message: "Your message",
+  okButtonText: "Your OK button text"
+}).then(() => {
+  console.log("Alert dialog closed");
+});
+~~~
+
+
+~~~
+#####################################################################
+Vue show hide element
+#####################################################################
+
+https://softauthor.com/toggle-button-in-vue-js/
+https://dmitripavlutin.com/vue-show-hide-elements/
+https://vuejs.org/guide/essentials/event-handling.html#method-handlers
+https://www.cloudhadoop.com/vuejs-toggle-hide-showdiv/
+https://stackoverflow.com/questions/48929139/hide-div-onclick-in-vue-js
+https://5balloons.info/show-hide-elements-using-conditional-in-vuejs
+https://vuejs.org/guide/essentials/conditional.html#v-if
+https://stackoverflow.com/questions/53394835/how-to-remove-class-in-vue-js
+https://stackoverflow.com/questions/33731939/vue-js-toggle-class-on-click
+https://www.programmingbasic.com/hide-and-show-element-in-vue-js
+https://codepen.io/michael_coder/pen/WReNNm
+https://stackoverflow.com/questions/48578738/how-to-hide-div-with-vue-js
+
+
+
+https://jsfiddle.net/boilerplate/vue
+
+<script src="assets/js/vue.global.min.js"></script>
+<div id="app">
+  <a @click="someFunction" href="#" class="btn">toggle</a>
+  <div v-show="isHidden">Hidden Text</div>
+</div>
+
+<script>
+const {createApp, ref, computed} = Vue;
+const app = createApp({
+        data() {
+            return { 
+            isHidden: false
+            }
+        },
+        methods: {
+                    someFunction() {
+                this.isHidden = !this.isHidden;
+            },
+            }
+});
+app.mount("#app");
+</script>
+
+<style>
+body {
+  background: #20262E;
+  padding: 20px;
+  font-family: Helvetica;
+}
+
+#app {
+  background: #fff;
+  border-radius: 4px;
+  padding: 20px;
+  transition: all 0.2s;
+}
+
+</style>
+~~~
+
+~~~
+#####################################################################
+Vue setTimeout
+#####################################################################
+
+https://stackoverflow.com/questions/38399050/vue-equivalent-of-settimeout
+
+setTimeout(() => {   this.isHidden = !this.isHidden;  }, 2000);
+~~~
 
