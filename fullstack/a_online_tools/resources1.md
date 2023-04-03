@@ -538,7 +538,13 @@ https://hemingwayapp.com/
 - https://wtools.io/php-sandbox
 - https://www.jdoodle.com/php-online-editor/
 - https://www.writephponline.com/
-- 
+
+------------------------------------------------------------------
+
+### PHP Formatter beautifier
+
+- https://codebeautify.org/php-beautifier
+
 ------------------------------------------------------------------
 
 ### REGEX
