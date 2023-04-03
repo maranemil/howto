@@ -1,0 +1,344 @@
+
+
+
+#################################################################
+jenkins pipelines
+#################################################################
+
+https://www.youtube.com/watch?v=7KCS70sCoK0
+https://www.youtube.com/watch?v=IOUm1lw7F58
+
+https://www.jenkins.io/pipeline/getting-started-pipelines/
+https://www.jenkins.io/doc/book/pipeline/
+https://www.jenkins.io/doc/book/pipeline/#declarative-pipeline-fundamentals
+https://hub.docker.com/_/jenkins
+https://hub.docker.com/r/jenkins/jenkins
+https://www.jenkins.io/doc/book/installing/docker/
+
+
+http://172.18.0.2:8080/
+
+version: "3"
+services:
+  node-web-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./app:/usr/src/app
+    ports:
+      - "3000:3000"
+
+  # npm install -g npm@9.6.1
+  # docker run -p 8080:8080 -p 50000:50000 -v /your/home:/var/jenkins_home jenkins
+
+  jenkins:
+    image: jenkins:1.651.3
+    tty: true
+    volumes:
+      - ./jenkins:/var/jenkins_home
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+
+
+
+Jenkinsfile (Declarative Pipeline) Example
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+https://www.jenkins.io/doc/book/pipeline/#declarative-pipeline-fundamentals
+
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                //
+            }
+        }
+        stage('Test') {
+            steps {
+                //
+            }
+        }
+        stage('Deploy') {
+            steps {
+                //
+            }
+        }
+    }
+}
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Jenkinsfile (Scripted Pipeline) Example
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+https://www.jenkins.io/doc/book/pipeline/#declarative-pipeline-fundamentals
+node {
+    stage('Build') {
+        //
+    }
+    stage('Test') {
+        //
+    }
+    stage('Deploy') {
+        //
+    }
+}
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Pipeline example
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Jenkinsfile (Declarative Pipeline)
+pipeline {
+    agent any
+    options {
+        skipStagesAfterUnstable()
+    }
+    stages {
+        stage('Build') {
+            steps {
+                sh 'make'
+            }
+        }
+        stage('Test'){
+            steps {
+                sh 'make check'
+                junit 'reports/**/*.xml'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sh 'make publish'
+            }
+        }
+    }
+}
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Linux
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+https://www.jenkins.io/doc/book/installing/docker/
+https://hub.docker.com/r/jenkins/jenkins
+
+docker pull jenkins/jenkins:lts-jdk11
+docker pull jenkins/jenkins:jdk11
+
+# DEPRECATED; use "jenkins/jenkins:lts" instead
+https://hub.docker.com/_/jenkins
+
+docker run --name myjenkins -p 8080:8080 -p 50000:50000 -v /var/jenkins_home jenkins
+
+~~~~~~~~~~~~~~~~~
+
+docker network create jenkins
+
+docker run \
+  --name jenkins-docker \
+  --rm \
+  --detach \
+  --privileged \
+  --network jenkins \
+  --network-alias docker \
+  --env DOCKER_TLS_CERTDIR=/certs \
+  --volume jenkins-docker-certs:/certs/client \
+  --volume jenkins-data:/var/jenkins_home \
+  --publish 2376:2376 \
+  docker:dind \
+  --storage-driver overlay2
+
+~~~~~~~~~~~~~~~~~
+docker run --name jenkins-docker --rm --detach \
+  --privileged --network jenkins --network-alias docker \
+  --env DOCKER_TLS_CERTDIR=/certs \
+  --volume jenkins-docker-certs:/certs/client \
+  --volume jenkins-data:/var/jenkins_home \
+  --publish 2376:2376 \
+  docker:dind --storage-driver overlay2
+
+Dockerfile with the following content:
+~~~~~~~~~~~~~~~~~
+FROM jenkins/jenkins:2.387.1
+USER root
+RUN apt-get update && apt-get install -y lsb-release
+RUN curl -fsSLo /usr/share/keyrings/docker-archive-keyring.asc \
+  https://download.docker.com/linux/debian/gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) \
+  signed-by=/usr/share/keyrings/docker-archive-keyring.asc] \
+  https://download.docker.com/linux/debian \
+  $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list
+RUN apt-get update && apt-get install -y docker-ce-cli
+USER jenkins
+RUN jenkins-plugin-cli --plugins "blueocean docker-workflow"
+
+docker build -t myjenkins-blueocean:2.387.1-1 .
+
+~~~~~~~~~~~~~~~~~
+
+docker run \
+  --name jenkins-blueocean \
+  --restart=on-failure \
+  --detach \
+  --network jenkins \
+  --env DOCKER_HOST=tcp://docker:2376 \
+  --env DOCKER_CERT_PATH=/certs/client \
+  --env DOCKER_TLS_VERIFY=1 \
+  --publish 8080:8080 \
+  --publish 50000:50000 \
+  --volume jenkins-data:/var/jenkins_home \
+  --volume jenkins-docker-certs:/certs/client:ro \
+  myjenkins-blueocean:2.387.1-1
+
+~~~~~~~~~~~~~~~~~
+
+
+docker run --name jenkins-blueocean --restart=on-failure --detach \
+  --network jenkins --env DOCKER_HOST=tcp://docker:2376 \
+  --env DOCKER_CERT_PATH=/certs/client --env DOCKER_TLS_VERIFY=1 \
+  --publish 8080:8080 --publish 50000:50000 \
+  --volume jenkins-data:/var/jenkins_home \
+  --volume jenkins-docker-certs:/certs/client:ro \
+  myjenkins-blueocean:2.387.1-1
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using Docker with Pipeline
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+https://www.jenkins.io/doc/book/pipeline/docker/
+
+
+Jenkinsfile (Declarative Pipeline)
+~~~~~~~~~~~~~~~~~
+pipeline {
+    agent {
+        docker { image 'node:16.13.1-alpine' }
+    }
+    stages {
+        stage('Test') {
+            steps {
+                sh 'node --version'
+            }
+        }
+    }
+}
+
+
+Jenkinsfile (Declarative Pipeline)
+~~~~~~~~~~~~~~~~~
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            agent {
+                docker {
+                    image 'gradle:6.7-jdk11'
+                    // Run the container on the node specified at the
+                    // top-level of the Pipeline, in the same workspace,
+                    // rather than on a new node entirely:
+                    reuseNode true
+                }
+            }
+            steps {
+                sh 'gradle --version'
+            }
+        }
+    }
+}
+
+
+
+Jenkinsfile (Declarative Pipeline)
+~~~~~~~~~~~~~~~~~
+pipeline {
+    agent {
+        docker {
+            image 'maven:3.9.0-eclipse-temurin-11'
+            args '-v $HOME/.m2:/root/.m2'
+        }
+    }
+    stages {
+        stage('Build') {
+            steps {
+                sh 'mvn -B'
+            }
+        }
+    }
+}
+
+
+
+
+Jenkinsfile (Declarative Pipeline)
+~~~~~~~~~~~~~~~~~
+pipeline {
+    agent none
+    stages {
+        stage('Back-end') {
+            agent {
+                docker { image 'maven:3.9.0-eclipse-temurin-11' }
+            }
+            steps {
+                sh 'mvn --version'
+            }
+        }
+        stage('Front-end') {
+            agent {
+                docker { image 'node:16.13.1-alpine' }
+            }
+            steps {
+                sh 'node --version'
+            }
+        }
+    }
+}
+
+
+
+Dockerfile
+~~~~~~~~~~~~~~~~~
+FROM node:16.13.1-alpine
+
+RUN apk add -U subversion
+Jenkinsfile (Declarative Pipeline)
+pipeline {
+    agent { dockerfile true }
+    stages {
+        stage('Test') {
+            steps {
+                sh 'node --version'
+                sh 'svn --version'
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+https://docs.docker.com/get-started/
+https://hub.docker.com/r/jenkins/jenkins
+https://medium.com/@gustavo.guss/quick-tutorial-of-jenkins-b99d5f5889f2
+https://github.com/jenkinsci/docker/blob/master/README.md
+
+
+https://www.theserverside.com/blog/Coffee-Talk-Java-News-Stories-and-Opinions/jenkins-docker-pipeline-build-integration-job-example
+https://www.tutorialspoint.com/docker/docker_continuous_integration.htm
+https://www.jenkins.io/doc/book/pipeline/docker/
+https://www.infoworld.com/article/3637829/continuous-integration-with-docker-and-jenkins.html
+https://karthi-net.medium.com/docker-tutorial-build-docker-images-using-jenkins-d2880e65b74
+https://code-maze.com/ci-jenkins-docker/
+https://medium.com/@gustavo.guss/quick-tutorial-of-jenkins-b99d5f5889f2
+https://github.com/jenkinsci/docker/blob/master/README.md
+https://hub.docker.com/r/jenkins/jenkins
+https://docs.docker.com/get-started/
+https://plugins.jenkins.io/docker-plugin/
+https://success.outsystems.com/documentation/how_to_guides/devops/how_to_build_an_outsystems_continuous_delivery_pipeline/
+https://hustakin.github.io/bestpractice/continuous-integration-with-jenkins-and-docker/
+https://www.digitalocean.com/community/tutorials/how-to-automate-jenkins-setup-with-docker-and-jenkins-configuration-as-code
+https://prakashkumar0301.medium.com/docker-jenkins-ci-cd-pipeline-dd54854125f3
+https://phoenixnap.com/kb/how-to-configure-docker-in-jenkins

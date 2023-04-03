@@ -908,3 +908,28 @@ echo '.idea' >> .gitignore
 git add .gitignore
 git commit -m "Removed .idea files"
 ~~~
+
+~~~
+#################################################################
+File Encodings IntelliJ -
+ Current file encoding doesn't match ISO-8859-1 from .editorconfig
+#################################################################
+
+https://youtrack.jetbrains.com/issue/IDEA-192770/EditorConfig-didnt-make-IntelliJ-load-file-with-specified-charset
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/206223209-How-can-change-encoding-af-the-file-
+https://www.jetbrains.com/help/phpstorm/settings-file-encodings.html
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/206357159-How-to-set-default-encoding-for-a-project-
+https://www.jetbrains.com/help/phpstorm/configuring-code-style.html
+https://plugins.jetbrains.com/plugin/7294-editorconfig
+
+
+File | Settings | Editor | File Encodings for Windows and Linux
+
+To configure a scheme for new projects, go to File | New Projects Setup | Settings for New Projects | Editor | Code Style.
+~~~
+
+
+
+
+
+
