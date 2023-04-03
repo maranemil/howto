@@ -162,7 +162,77 @@
 - https://colab.research.google.com/github/TheLastBen/fast-stable-diffusion/blob/main/fast_stable_diffusion_AUTOMATIC1111.ipynb
 - https://stable-diffusion-art.com/instruct-pix2pix/
 
+~~~
+#################################################
+Top Midjourney Alternatives of 2023
+#################################################
 
+https://www.producthunt.com/products/midjourney/alternatives
+https://alternativeto.net/software/midjourney/
+
+
+DALL-E 2			        https://openai.com/product/dall-e-2
+Craiyon				        https://www.craiyon.com/
+Stable Diffusion Online 	https://stablediffusionweb.com/
+NeuralBlender			    https://neuralblender.com/
+NightCafe			        https://nightcafe.studio/
+DALL-E Mini			        https://huggingface.co/spaces/dalle-mini/dalle-mini
+Dall-E				        https://labs.openai.com/
+Deep AI				        https://deepai.org/
+For the Wall			    https://forthewall.art/
+Dreamland			        https://creator.nightcafe.studio
+
+https://huggingface.co/spaces/camenduru/webui
+https://huggingface.co/spaces/dalle-mini/dalle-mini
+https://huggingface.co/spaces/stabilityai/stable-diffusion
+https://huggingface.co/spaces/jaffvoker/prompthero-openjourney
+---------------------------------------------------------------
+
+
+Leonardo.Ai			        https://leonardo.ai/
+Point E				        https://github.com/openai/point-e
+ARTSIO				        https://artsio.xyz/
+PromptShake			        https://neural.love/ai-art-generator
+Promptmakr			        https://promptmakr.com/
+Microsoft Designer  		https://designer.microsoft.com/
+DALL-E FLOW			        https://jina.ai/product/dall-e-flow/
+DiffusionBee			    https://diffusionbee.com/
+GauGAN2				        https://gpt3demo.com/apps/gaugan2-by-nvidia
+Simplified			        https://simplified.com/
+StarryAI			        https://starryai.com/
+BlueWillow			        https://www.bluewillow.ai/
+NeuroGen			        https://neurogen.art/
+Deepswap			        https://www.deepswap.ai/de
+Midjourney			        https://www.midjourney.com/
+Deep Dream Generator 		https://deepdreamgenerator.com/	
+Artbreeder			        https://www.artbreeder.com/
+Midjourney V5 Prompt Generator 	https://www.imiprompt.com/
+Make Logo AI			    https://makelogo.ai/
+Booltool			        https://booltool.boolv.tech/home
+OddVibe				        https://www.oddvibe.com/
+Ai Pencil			        https://www.trypencil.com/
+Painta				        https://www.painta.io/
+Artshop				        https://aiartshop.com/
+Visual ChatGPT			    https://huggingface.co/spaces/microsoft/visual_chatgpt
+Genius AI			        https://genus.ai/  https://geniusai.io/
+SheetAI App, AI prompts in Google Sheets https://www.sheetai.app/
+LogoCreatorAI			    https://www.logoai.com/logo-maker
+
+
+
+https://www.genius.design/
+https://creator.nightcafe.studio/creation/0nA3io35WMTpwpcfsby0
+https://huggingface.co/spaces/microsoft/visual_chatgpt
+https://github.com/microsoft/visual-chatgpt
+https://prompt.noonshot.com/
+https://huggingface.co/spaces/doevent/prompt-generator
+https://hotpot.ai/art-generator?s=dalle-mini
+https://github.com/jina-ai/dalle-flow
+https://neural.love/ai-art-generator/1ed54d26-5d27-6712-bf0f-03b3e530ac19/discurso-luckas-junto-a-lewe
+https://huggingface.co/spaces/openai/point-e
+https://neural.love/ai-art-generator
+
+~~~
 
 
 
