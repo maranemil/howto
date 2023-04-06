@@ -96,9 +96,27 @@
 | https://www.veed.io/                   | Video editor    | 
 | https://www.capcut.com/                | video editor    | 
 
+### music
 
+| url                                        | type                        |
+|:-------------------------------------------|:----------------------------|
+| https://www.riffusion.com/                 | Refusion music AI generator | 
+| https://samplette.io/                      | samplette.io                | 
+| https://stevenwaterman.uk/musetree/        | musetree                    | 
+| https://sites.research.google/tonetransfer | Tonetransfer                | 
+| https://www.lalal.ai/                      | Lalal.ai                    | 
+| https://uberduck.ai/                       | Uberduck AI                 | 
+| https://theselyricsdonotexist.com/         | These lyrics don’t exist    | 
+| https://magenta.tensorflow.org/oaf-js      | Magenta AI                  | 
+| https://piano-scribe.glitch.me/            | piano-scribe                | 
+| https://melodystudio.net/                  | melodystudio                | 
+| https://lyricstudio.net/                   | lyricstudio                 | 
+| https://www.landr.com/de/                  | landr                       | 
+| https://openai.com/research/jukebox        | jukebox                     | 
+| https://mubert.com/render                  | mubert text to music        | 
 
-
+ 
+- https://github.com/stevenwaterman/musetree
 
 
 - https://github.com/LAION-AI/video-clip

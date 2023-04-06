@@ -102,9 +102,9 @@ https://www.php.net/manual/de/function.range.php
 
 
 ~~~
-#####################################################################
+#############################################################
 str_contains for php7.4
-#####################################################################
+#############################################################
 
 strpos(string $haystack, string $needle, int $offset = 0): int|false
 str_contains(string $haystack, string $needle): bool
@@ -124,9 +124,9 @@ else{
 ~~~
 
 ~~~
-#####################################################################
+#############################################################
 getenv
-#####################################################################
+#############################################################
 
 https://www.php.net/manual/de/reserved.variables.environment.php
 https://www.php.net/manual/de/function.getenv.php
@@ -135,9 +135,9 @@ echo 'My username is ' .$_ENV["REMOTE_ADDR"] . '!';
 echo getenv('REMOTE_ADDR');
 echo $_SERVER['REMOTE_ADDR'];
 
-#####################################################################
+#############################################################
 Set up a dev environment 
-#####################################################################
+#############################################################
 
 https://docs.docker.com/compose/environment-variables/set-environment-variables/
 https://docs.docker.com/desktop/dev-environments/set-up/
@@ -151,9 +151,54 @@ https://docs.docker.com/compose/environment-variables/set-environment-variables/
 ~~~
 
 ~~~
-#####################################################################
+#############################################################
 async
-#####################################################################
+#############################################################
 https://entwickler.de/php/async-php-mit-reactphp
 https://stackoverflow.com/questions/14236296/asynchronous-function-call-in-php
 ~~~
+
+~~~
+#############################################################
+debug
+#############################################################
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+#error_reporting(E_ALL);
+~~~
+
+~~~
+#############################################################
+DateTime
+#############################################################
+https://stackoverflow.com/questions/2605446/php-get-future-date-time
+
+$date = new DateTime();
+$date->modify("+100 day");
+$expire = $date->format("Y-m-d");
+echo $expire;
+~~~
+
+~~~
+#############################################################
+read csv string
+#############################################################
+https://www.php.net/manual/en/function.fgetcsv.php
+https://www.php.net/manual/en/function.session-destroy.php
+https://www.php.net/manual/en/function.str-getcsv.php
+http://phptester.net/
+
+$string = 'PHP,Java,Python,Kotlin,Swift';
+$data = str_getcsv($string);
+var_dump($data);
+~~~
+
+~~~
+#############################################################
+Cannot create cache directory /.composer/cache/repo/https---repo.packagist.org/, 
+or directory is not writable
+#############################################################
+network wlan not working - restart 
+~~~
+
+
