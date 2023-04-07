@@ -134,7 +134,6 @@
 - https://github.com/TheLastBen/diffusers
 - https://github.com/ShivamShrirao/diffusers
 - https://github.com/huggingface/diffusers
-- 
 
 
 
@@ -179,6 +178,8 @@
 - https://colab.research.google.com/drive/1sVsoBd9AjckIXThgtZhGrHRfFI6UUYOo
 - https://colab.research.google.com/github/TheLastBen/fast-stable-diffusion/blob/main/fast_stable_diffusion_AUTOMATIC1111.ipynb
 - https://stable-diffusion-art.com/instruct-pix2pix/
+
+
 
 ~~~
 #################################################
@@ -254,7 +255,77 @@ https://neural.love/ai-art-generator
 
 
 
+~~~
+
+#################################################
+Tools Image Gen
+#################################################
+https://huggingface.co/spaces/doevent/prompt-generator
+https://huggingface.co/succinctly/text2image-prompt-generator
+
+ancient greek sparta temples in pastel colors in the style of ivan aivazovsky --ar 9:16
+ancient greek sparta tower on a tundra planet, 35mm photography —ar 3:1
+ancient greek sparta stone structures on mossy cliffs by Ivan Aivazovsky, Trending on artstation --ar 16:9
+ancient greek sparta stone sculptures, golden ratio, hypermaximalist, ornate, luxury, elite, horror, creepy, ominous, haunting, matte painting, cinematic, cgsociety, James jean, Brian froud, ross tran, Laputa, no blur --ar 16:8
+ancient greek sparta ruins
+ancient greek sparta stone monuments with the gates to a higher plane.  Black paper with intricate and vibrant purple line work::2 Tarot Card::2 Mandelbulb Fractal + Full of silver layers + Portrait +Trending on Artstation + Incredible black and purple gothic illustration + Exquisite  --as
+
+--------------------------------------------------------------
+GFPGAN_inference.ipynb
+https://colab.research.google.com/drive/1sVsoBd9AjckIXThgtZhGrHRfFI6UUYOo
+
+Stable Diffusion Multi Inpainting
+https://huggingface.co/spaces/multimodalart/stable-diffusion-inpainting
+
+https://huggingface.co/spaces/akhaliq/ArcaneGAN
+https://github.com/Sxela/ArcaneGAN
+
+https://huggingface.co/spaces/akhaliq/AnimeGANv2
+https://github.com/bryandlee/animegan2-pytorch
+
+https://huggingface.co/spaces/akhaliq/dreamlike-diffusion-1.0
+https://huggingface.co/spaces/akhaliq/dreamlike-diffusion-1.0/tree/main
+--------------------------------------------------------------
+DALLE
+
+https://huggingface.co/spaces/multimodalart/rudalle
+https://github.com/shonenkov-AI
+
+https://huggingface.co/spaces/hysts/projected_gan
+https://github.com/autonomousvision/projected-gan
+
+https://huggingface.co/spaces/hysts/StyleSwin
+https://github.com/microsoft/StyleSwin
+
+https://huggingface.co/DGSpitzer/Cyberpunk-Anime-Diffusion#
+https://github.com/HelixNGC7293/cyberpunk-anime-diffusion
+
+https://huggingface.co/nitrosocke/Arcane-Diffusion
+https://github.com/gradio-app/gradio
+--------------------------------------------------------------
+
+https://github.com/Stability-AI/stablediffusion
+https://github.com/Sxela/ArcaneGAN
+https://github.com/TencentARC/GFPGAN
+https://github.com/bryandlee/animegan2-pytorch
+https://github.com/microsoft/StyleSwin
+https://github.com/williamyang1991/DualStyleGAN
+
+https://huggingface.co/CompVis/stable-diffusion-v1-4?text=A+pikachu+in+space
+https://huggingface.co/Linaqruf/anything-v3.0
+https://huggingface.co/dalle-mini/dalle-mini
+https://huggingface.co/dreamlike-art/dreamlike-diffusion-1.0#
+https://huggingface.co/dreamlike-art/dreamlike-photoreal-2.0
+https://huggingface.co/spaces/CVPR/DualStyleGAN
+https://huggingface.co/spaces/CVPR/DualStyleGAN
+https://huggingface.co/spaces/akhaliq/AnimeGANv2
+https://huggingface.co/spaces/akhaliq/ArcaneGAN
+https://huggingface.co/spaces/hysts/StyleSwin
+https://huggingface.co/stabilityai/stable-diffusion-2-base#
+https://huggingface.co/stabilityai/stable-diffusion-2-inpainting
+https://huggingface.co/tasks/text-to-image#
 
 
+~~~
 
 
