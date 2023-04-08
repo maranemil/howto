@@ -349,6 +349,11 @@ https://vanceai.com/photo-to-sketch/
 https://www.autodraw.com/
 https://www.creativefabrica.com/spark/tools/art-generator/
 https://www.fotor.com/features/ai-art-generator/
+
+https://stable-diffusion-art.com/controlnet/
+https://github.com/lllyasviel/ControlNet
+https://stablediffusionweb.com/ControlNet#demo
+https://huggingface.co/spaces/hysts/ControlNet
 ~~~
 
 
