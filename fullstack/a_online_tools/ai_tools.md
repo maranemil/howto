@@ -326,6 +326,29 @@ https://huggingface.co/stabilityai/stable-diffusion-2-inpainting
 https://huggingface.co/tasks/text-to-image#
 
 
+https://github.com/replicate/scribble-diffusion
+https://scribblediffusion.com/
+https://theresanaiforthat.com/ai/scribble-diffusion/
+https://transpic.cn/?ref=theresanaiforthat#
+https://theresanaiforthat.com/ai/reimagine/
+https://clipdrop.co/stable-diffusion-reimagine?ref=theresanaiforthat
+https://www.playform.io/sketch
+
+
+https://deepai.org/machine-learning-model/cyberpunk-generator
+https://dream.ai/create
+
+
+https://ai-draw.tokyo/en/
+https://create.playform.io/explore/posts?ordering=recent
+https://hotpot.ai/art-generator
+https://imagen.research.google/editor/
+https://picsart.com/ai-image-generator
+https://stability.ai/
+https://vanceai.com/photo-to-sketch/
+https://www.autodraw.com/
+https://www.creativefabrica.com/spark/tools/art-generator/
+https://www.fotor.com/features/ai-art-generator/
 ~~~
 
 
