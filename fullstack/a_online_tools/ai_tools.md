@@ -354,6 +354,29 @@ https://stable-diffusion-art.com/controlnet/
 https://github.com/lllyasviel/ControlNet
 https://stablediffusionweb.com/ControlNet#demo
 https://huggingface.co/spaces/hysts/ControlNet
+
+https://github.com/oobabooga/text-generation-webui
+https://huggingface.co/anon8231489123/gpt4-x-alpaca-13b-native-4bit-128g
+https://discord.com/invite/pygmalionai
+https://github.com/ggerganov/llama.cpp
+
+
+
+this person does not exist
+https://this-person-does-not-exist.com/en
+https://generated.photos/faces
+https://github.com/topics/thispersondoesnotexist
+https://github.com/BillPlayzToday/HumanFaces
+https://github.com/kevoj/thispersondoesnotexist-js
+https://github.com/David-Lor/ThisPersonDoesNotExistAPI
+https://github.com/hankhank10/fakeface
+https://github.com/badass-techie/These-People-Do-Not-Exist
+
+stable-diffusion-2
+https://beta.dreamstudio.ai/generate
+https://stability.ai/blog/stable-diffusion-v2-release
+https://huggingface.co/stabilityai/stable-diffusion-2/discussions/37
+https://huggingface.co/stabilityai/stable-diffusion-2
 ~~~
 
 
