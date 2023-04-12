@@ -237,8 +237,6 @@ gs -o out.pdf -sDEVICE=pdfwrite \
 -c "/osetrgbcolor {/setrgbcolor} bind def /setrgbcolor {pop [0 0 0] osetrgbcolor} def" \
 -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -f foo.pdf
 
-
-
 gs -dNODISPLAY -c ".distillersettings {exch ==only ( ) print ===} forall quit" | grep '/screen'
 
 gs -o out72.png -sDEVICE=pngalpha foo.pdf
@@ -256,8 +254,6 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH \
 
 gs -sDEVICE=pdfwrite -sProcessColorModel=DeviceGray -sColorConversionStrategy=Gray \
    -dOverrideICC -dPDFUseOldCMS=false
-
-
 
 -dColorImageResolution=120 -dMonoImageResolution=38 -dMonoImageDownsampleType=/Average
  -dOptimize=true -dDownsampleColorImages=true -dDownsampleGrayImages=true -dDownsampleMonoImages=true
@@ -514,7 +510,6 @@ identify -verbose im-bg.pdf | grep Colorspace
 ------------
 
 -dPDFSETTINGS:
-
 -dPDFSETTINGS=/screen lower quality, smaller size. (72 dpi)
 -dPDFSETTINGS=/ebook for better quality, but slightly larger pdfs. (150 dpi)
 -dPDFSETTINGS=/prepress output similar to Acrobat Distiller "Prepress Optimized" setting (300 dpi)
@@ -525,8 +520,6 @@ identify -verbose im-bg.pdf | grep Colorspace
 
 gs -dPDFA=1 -dBATCH -dNOPAUSE -dNOOUTERSAVE -sColorConversionStrategy=/RGB -sOutputICCProfile=srgb.icc \
     -sDEVICE=pdfwrite -sOutputFile=out-a.pdf PDFA_def.ps input.ps
-
-
 
 #!/bin/bash
 gs \
@@ -543,26 +536,11 @@ gs \
   -f input.pdf
 
 
-
-
-
-
-
-
-
-
-
-
 gs -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -dCompatibilityLevel=1.4 -dNOTRANSPARENCY -dColorConversionStrategy=/sRGB -dProcessColorModel=/DeviceRGB -dColorConversionStrategyForImages=/DeviceRGB -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -dUseCIEColor=true -sOutputFile=output.pdf input.pdf
-
-
 
 gs -sDEVICE=pdfwrite -dPDFSETTINGS=/ebook -dColorConversionStrategy=/Gray -dProcessColorModel=/DeviceGray -o darwin2.pdf darwin.pdf
 
-
 gs -sDEVICE=pdfwrite -dColorConversionStrategy=/Gray -dProcessColorModel=/DeviceGray -dDownsampleGrayImages=true -dGrayImageResolution=72 -dGrayImageDownsampleThreshold=1.0 -o darwin3.pdf darwin.pdf
-
-
 
 gs -o output.pdf -sDEVICE=pdfwrite -dUseCIEColor -dKPreserve=1 -dDeviceGrayToK=true -dUseMediaBox -sOutputICCProfile=CoatedFOGRA27.icc -dRenderIntent=0 -dPDFSETTINGS=/prepress -f input.pdf
 
@@ -572,7 +550,6 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dDownsampleColorImages=true \
 -dColorImageResolution=150 -dNOPAUSE  -dBATCH -sOutputFile=output.pdf input.pdf
 
 gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=output.pdf $INPUTFILE
-
 
 #!/bin/sh
 
@@ -592,10 +569,7 @@ gs  -q -dNOPAUSE -dBATCH -dSAFER \
      foo.pdf
 
 
-
 gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dDownsampleColorImages=true -dDownsampleGrayImages=true -dDownsampleMonoImages=true -dColorImageResolution=130 -dGrayImageResolution=130 -dMonoImageResolution=130 -r130 -dNOPAUSE  -dBATCH -sOutputFile=output_lr.pdf input.pdf
-
-
 
 gs \
    -sDEVICE=pdfwrite \
@@ -616,3 +590,327 @@ https://stackoverflow.com/questions/14833479/i-get-this-error-while-running-conv
 
 sudo apt install imagemagick
 convert -version
+
+
+
+##################################################################
+Ghostscript: Convert CMYK Color to solid color with specific name
+100% Black is turning into a mix of CMYK colors when exporting to PDF
+"Convert image color spaces" (c0 m0 y0 k100)
+
+CMYK ICC profile Ghostscript
+https://ghostscript.com/docs/GS9_Color_Management.pdf
+https://ghostscript.com/docs/9.55.0/Devices.htm
+https://ghostscript.com/docs/9.55.0/Devices.htm
+##################################################################
+
+https://stackoverflow.com/questions/59541180/ghostscript-convert-cmyk-color-to-solid-color-with-specific-name
+https://doc.qt.io/qt-5/qcolor.html
+https://forum.affinity.serif.com/index.php?/profile/108126-lagarto/content/page/45/&type=forums_topic_post
+https://ms-kb.msd.unimelb.edu.au/print-room/file-preperation/managing-colours
+
+https://stackoverflow.com/questions/23725560/convert-rbg-to-cmyk-with-use-of-icc-profile-in-php
+https://stackoverflow.com/questions/35825852/conversion-from-xrgb-to-cmyk-imagemagick?rq=1
+
+Embed ICC  Profile - Default profiles for source DeviceGray, DeviceRGB and DeviceCMYK color spaces
+
+-sDefaultGrayProfile = my gray profile.icc
+-sDefaultRGBProfile = my rgb profile.icc
+-sDefaultCMYKProfile = my cmyk profile.icc
+-dOverrideICC = true/false
+-sOutputICCProfile = my device profile.icc
+-sICCOutputColors=“Cyan, Magenta, Yellow, Black, Orange, Violet”
+-sDeviceLinkProfile = my link profile.icc
+-dKPreserve = 0 / 1 / 2
+-dDeviceGrayToK = true/false
+-dUseFastColor = true/false
+-dUsePDFX3Profile = int
+-sPostRenderProfile = my postrender profile.icc
+-sBlendColorProfile = my blend profile.icc
+-sGraphicICCProfile = filename
+-dGraphicIntent = intent
+-dGraphBlackPt = 0 / 1
+-dGraphicKPreserve = 0 / 1 / 2
+-sImageICCProfile = filename
+-dImageIntent = intent
+-dImageBlackPt = 0 / 1
+-dImageKPreserve = 0 / 1 / 2
+-sTextICCProfile = filename
+-dTextIntent = intent
+-dTextBlackPt = 0 / 1
+-dTextKPreserve = 0 / 1 / 2
+-sSourceObjectICC = filename
+
+
+Graphic CMYK cmyk src cyan.icc 0 1 0 0
+Image CMYK cmyk src magenta.icc 0 1 0 0
+Text CMYK cmyk src yellow.icc 0 1 0 0
+Graphic RGB rgb source red.icc 0 1 0
+Image RGB rgb source green.icc 0 1 0
+Text RGB rgb source blue.icc 0 1 0
+
+Graphic CMYK cmyk src renderintent.icc 0 1 0 0
+Image CMYK cmyk src renderintent.icc 1 1 0 0
+Text CMYK cmyk src renderintent.icc 2 1 0 0
+
+-sGraphicICCProfile = cmyk des renderintent.icc
+-sImageICCProfile = cmyk des renderintent.icc
+-sTextICCProfile = cmyk des renderintent.icc
+-dImageIntent = 0
+-dGraphicIntent = 1
+-dTextIntent = 2
+
+-------
+
+Black (0,0,0,100) is not black; it is a dark grey.
+
+
+ C60, M40, Y40, K100. / C75, M68, Y67, K90
+
+- Rich Black (60,0,0,100)
+- 100% Black (0,0,0,100)
+- Super Black (50,50,50,100)
+- Color Black (70,35,40,100)
+ -Registration Black (100,100,100,100)
+ -Warm Black (35,60,60,100)
+
+-------
+
+ In InDesign and Illustrator there is a preference setting called "Appearance of Black".
+
+	Image > Mode > CMYK Colour is checked
+	View > Proof Setup > Working CMYK is checked
+	View > Proof Colours is checked
+
+-------
+
+RGB Black : 0, 0, 0, CMYK Black: 100%;
+
+Other examples:
+
+Registration Black | C100 M100 Y100 K100
+Neutral Rich Black (also known as Rich Black) | C40 M30 Y30 K100
+Flat Black | C0 M0 Y0 K100 - This black is just made up of 100% of the black channel, with no other ink in the mix. Also known as Standard black.
+Designer Black | C70 M50 Y30 K100 Pantone® Process Black | Spot-Color/’K100′ : This black is available as Pantone® Process Black C (coated), U, (Uncoated) and M (Matt).
+Cool Black (also known as Black Bump) | C50 M0 Y0 K100 : This is the general-mix, but this black can also be comprised [typically] of between 20%-80% cyan.
+Golden Black | C0 M0 Y60 K100 : This is the general-mix, but this black can also be comprised [typically] of between 20%-80% yellow.
+Warm Black | C0 M60 Y0 K100 : This is the general-mix, but this black can also be comprised [typically] of between 20%-80% magenta.
+So you see CMYK is very different from rgb space because is used for printing and that means you will have trouble if you don't know how it works.
+
+Update: ICC Profiles are for monitors not for printing
+
+Convert RBG to CMYK with use of ICC profile in PHP
+system('convert inputfile.png -profile sRGB.icc -profile CoatedFOGRA39.icc -units PixelsPerInch -density 600 outputfile.pdf');
+
+identify -verbose test.jpg | grep -A 5 rofile
+convert image.jpg  -colorspace CMYK -profile USWebCoatedSWOP.icc image_CMYK_cspace_profile.jpg
+convert rgb.jpg -profile path/to/USWebCoatedSwop.icc cmyk.jpg
+convert rgb.jpg -profile path/to/sRGB.icc -profile path/to/USWebCoatedSwop.icc cmyk.jpg
+convert input.jpg -profile cmyk.icm result.jpg
+-------
+
+<circle fill=„#9C9475 icc-color(ISOcoated_v2_eci, Goldfolie"/>
+<circle fill=„#9C9475 device-cmyk(0.00, 1.00, 0.00, 0.00) icc-color(ISOcoated_v2_eci, Goldfolie "/>
+<circle fill=„#9C9475 icc-color(ISOcoated_v2_eci,0.00, 1.00, 0.00, 0.00) icc-color(ISOcoated_v2_eci, Goldfolie "/>
+
+There are four devices named pdfimage8, pdfimage24, pdfimage32 and PCLm. These produce valid PDF files with a colour depth of 8 (Gray), 24 (RGB) or 32 (CMYK), the PCLm device only supports 24-bit RGB. These are all implemented as 'downscale' devices, which means they can implement page level anti-aliasing using the -dDownScaleFactor switch.
+
+# PDF image output
+gs -sDEVICE=pdfimage8 -r600 -dDownScaleFactor=3 -o tiger.pdf   examples/tiger.eps
+
+https://www.ibm.com/docs/en/i/7.4?topic=concepts-color-spaces-icc-profiles
+https://gitlab.com/inkscape/inkscape/-/issues/1561
+
+C=0%, M=0%, Y=0%, K=100% yields black
+C=0%, M=0%, Y=0%, K=0% yields a blank area on the page
+C=1.6%, M=0%, Y=44.7%, K=.4% yields a pale yellow
+C=17.6%, M=39.6%, Y=5.5%, K=5.5% yields a light purple
+
+##############################################################
+View cmyk color code in pdf with linux
+##############################################################
+
+https://superuser.com/questions/265344/view-cmyk-color-code-in-pdf-with-linux
+https://unix.stackexchange.com/questions/52064/how-do-i-extract-the-colours-from-a-pdf
+https://stackoverflow.com/questions/30456239/finding-color-spaces-in-pdf-from-linux-command-line
+https://community.adobe.com/t5/acrobat-discussions/how-can-you-tell-if-a-pdf-is-rgb-or-cmyk/td-p/3622664?profile.language=de
+https://wiki.archlinux.org/title/GIMP/CMYK_support
+https://gist.github.com/rootwork/a96494719b2c7028698a1a9ddbea3623
+https://rainnic.altervista.org/en/content/bash-script-convert-color-palette-pdf-cmyk?language_content_entity=en
+https://wiki.inkscape.org/wiki/ExportPDFCMYK
+https://jonata.org/inkscape/export-pdf-cmyk.py
+https://askubuntu.com/questions/114858/how-to-convert-image-to-cmyk-in-gimp
+https://ghostscript.com/docs/9.54.0/VectorDevices.htm
+https://stackoverflow.com/questions/71036645/converting-rgb-pdf-in-cmyk-with-plain-black-using-ghostscripts-soutputiccprofile
+https://gist.github.com/raulperula/5c8e0074d9373978aefbc78dd4e4efb4
+https://gist.github.com/junichi11/9f8a8abf42430fac25c89d217776a341
+https://bastian.rieck.me/blog/posts/2012/converting_pdf_to_cmyk_colour_model/
+https://stadtfabrikanten.org/display/IFM/CMYK+Export
+https://stackoverflow.com/questions/48936435/convert-pdf-from-rgb-to-cmyk-with-ghostscript
+https://askubuntu.com/questions/727906/convert-pdf-to-monochrome-black-and-white-via-command-line
+https://stackoverflow.com/questions/20128656/how-to-convert-a-pdf-to-grayscale-from-command-line-avoiding-to-be-rasterized
+https://superuser.com/questions/200378/converting-a-pdf-to-black-white-with-ghostscript
+https://stackoverflow.com/questions/21751887/convert-pdf-to-cmyk-but-ignore-black
+https://www.gimp-forum.net/Thread-CMYK-INKSCAPE-color-profile?pid=33222#pid33222
+https://docs.rs/printpdf/latest/printpdf/
+
+Acrobat Pro (Windows)
+Adobe Preflight (Windows)
+Adobe Acrobat Professional (Windows)
+
+Inkscape -  color check
+Scribus
+GIMP
+Krita
+
+identify -verbose Inkscape.pdf > Inkscape.txt
+diff --color  Inkscape.txt Test.txt
+
+sudo snap install krita  # version 5.1.5, or
+sudo apt  install krita  # version 1:5.1.0~beta1+dfsg-1
+sudo apt install scribus
+sudo apt install inkscape
+sudo apt install gimp
+
+identify -verbose file.pdf
+pdfimages -list filename.pdf
+
+convert input.pdf -monochrome -denisty 600 output.pdf
+convert input.jpg -colorspace cmyk -compress LZW output.tif
+convert yourFile.pdf -profile FOGRA27L.txt  yourFile_fogra27L.pdf
+convert -colorspace GRAY color.pdf gray.pdf
+convert <input.png> -alpha off -units PixelsPerInch -density 300x300 <output.pdf>
+
+PDF files are not RGB or CMYK - every page object can have whatever color space it wants, so the text may be CMYK, the images RGB, and the background a spot color. That's why there's no single statement of "color mode" anywhere on the document properties.
+
+gs -o 2-output-cmyk-from-eciRGB.pdf \
+       -sDEVICE=pdfwrite \
+       -sColorConversionStrategy=CMYK \
+       -sSourceObjectICC=control-eciRGB_v2.txt \
+       1-input-rgb.pdf
+
+gs -o <output-file.pdf> -sDEVICE=pdfwrite \
+-c "/osetcolor {/setcolor} bind def /setcolor {pop [0 0 0] osetcolor} def" \
+-f <input-file.ps>
+
+gs -o gray.ps -sDEVICE=ps2write -sColorConversionStrategy=Gray -dProcessColorModel=/DeviceGray -dCompatibilityLevel=1.4 -f colored.pdf
+gs -o thresholded.pdf -sDEVICE=pdfwrite -c "/osetgray {setgray} bind def /setgray {0.5 lt {0} {1} ifelse osetgray} def" -f gray.ps
+
+gs \
+-o bw-from-color.pdf \
+-sDEVICE=pdfwrite \
+-c "/setrgbcolor{0 mul 3 1 roll 0 mul 3 1 roll 0 mul 3 1 roll 0 mul add add setgray}def" \
+-f color.ps
+
+gs -dNOPAUSE -dBATCH -sDEVICE=ps2write -sOutputFile=coloured.ps coloured.pdf
+gs -q -dBATCH -dNOPAUSE -q -sOutputFile=blackandwhite.pdf -sDEVICE=pdfwrite \
+-c "/osetrgbcolor {setrgbcolor} bind def /setrgbcolor {pop pop pop 0 0 0 osetrgbcolor} def" -f coloured.ps
+
+
+
+gs -q -sDEVICE=pdfwrite -sColorConversionStrategy=CMYK -o <output.pdf> <input.pdf>
+
+gs -o gray.ps -sDEVICE=ps2write -sColorConversionStrategy=Gray -dProcessColorModel=/DeviceGray -dCompatibilityLevel=1.4 -f colored.pdf
+
+gs -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite \
+   -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK \
+   -sOutputFile=output.pdf input.pdf
+
+gs -dSAFER \
+-dBATCH \
+-dNOPAUSE \
+-dNOCACHE \
+-dPDFX \
+-sDEVICE=pdfwrite
+-sColorConversionStrategy=CMYK
+-sOutputFile=cmyk.pdf rgb.pdf
+
+Dockerfile:
+FROM ubuntu
+RUN apt-get install -y ghostscript`
+
+ gs \
+ -sOutputFile=output.pdf \
+ -sDEVICE=pdfwrite \
+ -sColorConversionStrategy=Gray \
+ -dProcessColorModel=/DeviceGray \
+ -dCompatibilityLevel=1.4 \
+ -dNOPAUSE \
+ -dBATCH \
+ input.pdf
+
+gs \
+   -sDEVICE=pdfwrite \
+   -sProcessColorModel=DeviceGray \
+   -sColorConversionStrategy=Gray \
+   -dOverrideICC \
+   -o out.pdf \
+   -f page-27.pdf
+
+
+magick rgb-cmy.svg  -colorspace cmyk -profile cmyk.icc  out.pdf
+
+https://stackoverflow.com/questions/62914749/ghostscript-convert-cmyk-pdf-to-rgb-png-and-preserving-correct-colors
+https://ghostscript.readthedocs.io/en/latest/Devices.html
+https://ghostscript.readthedocs.io/en/latest/GhostscriptColorManagement.html
+https://inkscape.org/learn/faq/#how-create-graphics-cmyk-color-space-inkscape
+https://logosbynick.com/export-cmyk-with-inkscape/
+
+gs -sDEVICE=png16m -r600 -dDownScaleFactor=3 -dBackgroundColor=16#RRGGBB (RGB color, default white = 16#ffffff) -o tiger.png examples/tiger.eps
+
+-dBackgroundColor=16#RRGGBB (RGB color, default white = 16#ffffff)
+-sDefaultCMYKProfile=file
+
+
+https://ghostscript.com/docs/9.54.0/Use.htm
+
+ -sSourceObjectICC=filename
+ -dDeviceGrayToK=true/false
+ -dUseFastColor=true/false
+ -dSimulateOverprint=true/false
+ -dOverprint=/enable | /disable | /simulate
+ -dUsePDFX3Profile=int
+ -sICCProfilesDir=path
+ -dNOCACHE
+ -dSAFER
+ -dBlackText
+ -sICCOutputColors="Cyan, Magenta, Yellow, Black, Orange, Violet"
+ -sProofProfile=filename
+ -sDeviceLinkProfile=filename
+ -dBlackPtComp=0/1
+ -dKPreserve=0/1/2
+ -dGraphicBlackPt=0/1
+ -dGraphicKPreserve=0/1/2
+ -dImageBlackPt=0/1
+ -dTextBlackPt=0/1
+ -dOverrideICC
+ -sSourceObjectICC=filename
+
+
+ --------------------------------------------------------------------------------------------------------------------
+
+https://ghostscript.com/docs/9.56.1/Language.htm
+https://ghostscript.com/docs/9.54.0/GS9_Color_Management.pdf
+https://ghostscript.readthedocs.io/_/downloads/en/latest/pdf/
+https://ftp.gwdg.de/pub/misc/ghostscript/gs5man_e.pdf
+https://web.mit.edu/ghostscript/www/Language.htm
+
+viewcmyk.ps
+gs viewjpeg.ps
+
+Converting PostScript to raster graphics formats.
+gs -q -dNOPROMPT -dBATCH -sDEVICE=tiffpack -r600 -sOutputFile=page%d.tif file.ps
+gs -dFirstPage=<n> -dLastPage=<m> file.pdf
+
+
+https://www.youtube.com/watch?v=gUSBXxt-a-g
+https://www.youtube.com/watch?v=RNkWXwk_H8o
+https://www.youtube.com/watch?v=B_lFwSJePcI
+
+https://inkscape.org/learn/faq/#how-create-graphics-cmyk-color-space-inkscape
+https://librearts.org/2011/09/how-to-get-cmyk-colors-from-inkscape-to-scribus/
+https://en.wikipedia.org/wiki/ICC_profile
+https://github.com/hughbe/ICCReader
+https://ghostscript.readthedocs.io/en/latest/GhostscriptColorManagement.html
+https://ghostscript.com/docs/9.55.0/Devices.htm
+
