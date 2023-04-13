@@ -287,6 +287,9 @@ https://huggingface.co/spaces/akhaliq/dreamlike-diffusion-1.0
 https://huggingface.co/spaces/akhaliq/dreamlike-diffusion-1.0/tree/main
 --------------------------------------------------------------
 DALLE
+https://github.com/borisdayma/dalle-mini
+https://www.craiyon.com/
+https://huggingface.co/spaces/dalle-mini/dalle-mini
 
 https://huggingface.co/spaces/multimodalart/rudalle
 https://github.com/shonenkov-AI
