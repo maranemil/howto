@@ -32,33 +32,35 @@
 
 ### img
 
-| url                                                    | type                                    |
-|:-------------------------------------------------------|:----------------------------------------|
-| https://arc.tencent.com/en/ai-demos/faceRestoration    | face Restoration                        |  
-| https://www.strmr.com/#Astria                          | AI image generation                     |
-| https://zyro.com/de/tools/image-resizer                | Image Resizer                           | 
-| https://www.profilepicture.ai/                         | Profile picture with AI                 |
-| https://beta.openai.com/docs/guides/images             | Image generator                         | 
-| https://zyro.com/de/tools/image-upscaler               | Image upscaler                          | 
-| https://zyro.com/de/tools/image-resizer                | Image resizer                           | 
-| https://avatarai.me/                                   | AI Avatars                              |     
-| https://beta.character.ai/                             | AI Avatars                              |  
-| https://imgcreator.zmo.ai/                             | Creating images with text               |      
-| https://imglarger.com/                                 | AI Image Enlarger                       |      
-| https://interiorai.com/                                | INTERIOR DESIGN MOCKUPS                 | 
-| https://dream.ai/                                      | Artwork Generation                      | 
-| https://openai.com/dall-e-2/                           | AI realistic images  generator          | 
-| https://cleanup.pictures/                              | Retouch images                          | 
-| https://midjourney.gitbook.io/docs/                    | AI Image generator                      | 
-| https://lumalabs.ai/                                   | Capture in lifelike 3D                  |      
-| https://magicstudio.com/magiceraser                    | Remove unwanted things                  |  
-| https://photosonic.writesonic.com/                     | AI painter                              |      
-| https://prisma-ai.com/lensa                            | all-in-one image editing                | 
-| https://stablediffusion.fr/inpainting                  | RunwayML Stable Diffusion Inpainting    | 
-| https://stablediffusionweb.com/                        | text-to-image diffusion model           | 
-| https://unrealme.io/                                   | AI generated avatar                     | 
-| https://openart.ai/                                    | AI Image generator                      | 
-| https://www.img2go.com/colorize-image                  | AI colorize image                       | 
+| url                                                 | type                                 |
+|:----------------------------------------------------|:-------------------------------------|
+| https://arc.tencent.com/en/ai-demos/faceRestoration | face Restoration                     |  
+| https://www.strmr.com/#Astria                       | AI image generation                  |
+| https://zyro.com/de/tools/image-resizer             | Image Resizer                        | 
+| https://www.profilepicture.ai/                      | Profile picture with AI              |
+| https://beta.openai.com/docs/guides/images          | Image generator                      | 
+| https://zyro.com/de/tools/image-upscaler            | Image upscaler                       | 
+| https://zyro.com/de/tools/image-resizer             | Image resizer                        | 
+| https://avatarai.me/                                | AI Avatars                           |     
+| https://beta.character.ai/                          | AI Avatars                           |  
+| https://imgcreator.zmo.ai/                          | Creating images with text            |      
+| https://imglarger.com/                              | AI Image Enlarger                    |      
+| https://interiorai.com/                             | INTERIOR DESIGN MOCKUPS              | 
+| https://dream.ai/                                   | Artwork Generation                   | 
+| https://openai.com/dall-e-2/                        | AI realistic images  generator       | 
+| https://cleanup.pictures/                           | Retouch images                       | 
+| https://midjourney.gitbook.io/docs/                 | AI discord Image generator           | 
+| https://lumalabs.ai/                                | Capture in lifelike 3D               |      
+| https://magicstudio.com/magiceraser                 | Remove unwanted things               |  
+| https://photosonic.writesonic.com/                  | AI painter                           |      
+| https://prisma-ai.com/lensa                         | all-in-one image editing             | 
+| https://stablediffusion.fr/inpainting               | RunwayML Stable Diffusion Inpainting | 
+| https://stablediffusionweb.com/                     | text-to-image diffusion model        | 
+| https://unrealme.io/                                | AI generated avatar                  | 
+| https://openart.ai/                                 | AI Image generator                   | 
+| https://www.img2go.com/colorize-image               | AI colorize image                    | 
+| https://www.bluewillow.ai/                          | AI discord Image generator           | 
+| https://leonardo.ai/                                | AI discord Image generator           | 
 
 
 ### voice
@@ -428,6 +430,40 @@ Sharpen
 https://sharpen.imageonline.co/
 https://pinetools.com/sharpen-image
 https://www2.lunapic.com/editor/?action=sharpen
+
+#############################################################
+PromptJungle  AI avatars 
+#############################################################
+https://www.youtube.com/watch?v=hLOrHNK9-Hg
+https://www.youtube.com/watch?v=U0HNdsxC8YU
+
+🤖 AI TOOLS Featured in this Video*
+
+Links: 
+🎤Elevenlabs for audio generation
+🙆D-ID for video generation
+🧏‍♂️D-ID but cheaper  (🧑 Human like AI Avatars Only)
+🙎‍♀️Synthesia AI avatars 
+Colossyan Studio:    👈
+
+🤖 AI TOOLS Featured in this Video*
+
+Synthesia 
+HeyGen (Movio)
+Elai 
+D-ID 
+DEEPBRAIN 
+
+🤖 OTHER AI TOOLS Featured I HAVE REVIEWED*
+
+Synthesia 
+HeyGen (Movio)
+Elai 
+D-ID 
+DEEPBRAIN 
+Colossyan Studio
+
+
 ~~~
 
 
