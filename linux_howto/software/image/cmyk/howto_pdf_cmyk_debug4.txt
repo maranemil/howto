@@ -1,0 +1,540 @@
+######################################################
+test.sh
+######################################################
+# diff --color export/input.txt export/output.txt
+cd export || exit
+rm *.txt
+rm log.log
+
+convert rgb.jpg rgb.pdf
+
+gs -o gray.pdf -sDEVICE=pdfwrite  -dPDFSETTINGS=/prepress -r72 \
+ -dProcessColorModel=/DeviceGray -sProcessColorModel=DeviceGray \
+ -sColorConversionStrategy=Gray  -sColorConversionStrategyForImages=Gray \
+  -f rgb.pdf
+
+#convert -density 1200 -channel CMYK -threshold 75% -strip gray.pdf bw.pdf
+convert -threshold 50% -strip -channel cmyk -flatten -alpha Activate gray.pdf bw.pdf
+
+gs -o cmyk.pdf -sDEVICE=pdfwrite -r72 \
+ -dProcessColorModel=/DeviceCMYK -sProcessColorModel=DeviceCMYK \
+ -sColorConversionStrategy=CMYK -sColorConversionStrategyForImages=CMYK \
+ -f bw.pdf
+
+for i in *.pdf; do identify -verbose "$i" > "$i".txt; done
+#identify -verbose export/output3.pdf | grep -i 'color' >> log.txt
+#echo '--------------------------------' >> log.txt
+for s in *.pdf; do identify -verbose "$s" | grep -i 'color'  >> log.log && echo "$s" >> log.log; done
+
+
+
+
+######################################################
+test.sh
+######################################################
+cd export || exit
+# gs -q  -o - -sDEVICE=inkcov gray.pdf
+# 0.00000  0.00000  0.00000  0.99801 CMYK OK
+# gs -q  -o - -sDEVICE=inkcov bw.pdf
+# 0.00000  0.00000  0.00000  0.42295 CMYK OK
+# gs -o - -sDEVICE=inkcov cmyk.pdf
+# 0.00000  0.00000  0.00000  0.42295 CMYK OK
+
+##convert cmyk.pdf -threshold 85% -strip -channel cmyk -monochrome  -flatten cmyk2.pdf
+#convert cmyk.pdf  -strip -channel cmyk -monochrome -colorspace CMYK -flatten cmyk2.pdf # OK CMYK
+#gs -o - -sDEVICE=inkcov cmyk2.pdf
+#0.00000  0.00000  0.00000  1.00000 CMYK OK - 0,0,0,100 - C0, M0, Y0, K100
+#0.00000  0.00000  0.00000  0.42266 CMYK OK - Colorspace: CMYK
+#identify -verbose cmyk2.pdf | grep -i colorspace
+#identify -verbose cmyk2.pdf | grep -i Colors:
+# identify -verbose cmyk2.pdf > cmyk2.txt
+# -profile /usr/share/color/icc/colord/Crayons.icc
+convert cmyk2.pdf -strip  -colorspace CMYK cmyk3.pdf
+identify -verbose cmyk3.pdf | grep -i colorspace
+identify -verbose cmyk3.pdf | grep -i Colors:
+identify -verbose cmyk3.pdf > cmyk3.txt
+
+
+
+
+
+
+C0, M0, Y0, K100
+C100, M46, Y0, K78
+
+######################################################
+######################################################
+
+Inkscape
+https://inkscape.org/
+https://inkscape.org/learn/books/
+http://tavmjong.free.fr/INKSCAPE/MANUAL/html/index.php
+http://tavmjong.free.fr/INKSCAPE/MANUAL/html/
+https://wiki.inkscape.org/wiki/Inkscape
+
+Krita
+https://krita-artists.org/
+https://docs.krita.org/en/
+https://krita.org/
+https://docs.krita.org/en/tutorials.html
+
+Scribus
+https://www.scribus.net/
+https://wiki.scribus.net/canvas/Scribus
+https://wiki.scribus.net/canvas/Help:TOC
+https://wiki.scribus.net/canvas/Help:Manual_Toolsgimp
+
+GIMP
+https://www.gimp.org/
+https://docs.gimp.org/2.10/en/
+https://www.gimp.org/docs/
+https://docs.gimp.org/
+https://www.gimp.org/tutorials/
+https://www.gimp.org/tutorials/Basic_Perl/
+https://www.gimp.org/tutorials/Automate_Editing_in_GIMP/
+https://docs.gimp.org/2.10/en/gimp-pimping.html#gimp-prefs-color-management
+https://docs.gimp.org/2.10/en/gimp-scripting.html#idm9447
+
+
+
+ghostscript
+https://ghostscript.com/docs/9.56.1/Readme.htm
+https://ghostscript.readthedocs.io/en/gs10.0.0/
+https://ghostscript.com/docs/9.56.1/Use.htm
+https://ghostscript.com/docs/9.56.1/GS9_Color_Management.pdf
+http://astro.uni-tuebingen.de/software/ghostscript/Devices.htm
+http://astro.uni-tuebingen.de/software/ghostscript/Devices.htm#STC_RGBCMYK_coding
+
+-sICCOutputColors="Cyan, Magenta, Yellow, Black, Orange, Violet" -dMaxSpots=4 -sOutputICCProfile=My_6CLR_Profile.icc
+
+ImageMagick
+https://imagemagick.org/index.php
+https://imagemagick.org/script/color-management.php
+https://imagemagick.org/script/command-line-processing.php
+https://imagemagick.org/script/command-line-tools.php
+https://imagemagick.org/script/convert.php
+https://imagemagick.org/script/command-line-processing.php
+https://imagemagick.org/script/command-line-options.php#colorspace
+https://imagemagick.org/script/convert.php
+https://imagemagick.org/script/formats.php#colorspace
+https://imagemagick.org/script/formats.php#supported
+https://imagemagick.org/script/color.php
+
+
+https://www.xnview.com/de/
+https://wiki.ubuntuusers.de/Archiv/Fontmatrix/
+--------------------
+https://presspdf.com/index-en
+https://www.pdf2cmyk.com/
+https://www.cmyk2rgb.com/
+https://www.rgb2cmyk.org/
+https://www.i2pdf.com/invert-pdf-colors
+https://www.sejda.com/grayscale-pdf
+https://www.i2pdf.com/pdf-to-cmyk
+
+
+
+identify -colorspace srgb t.pdf
+identify -colorspace CMYK t.pdf
+
+
+
+
+######################################################
+ghostscript
+######################################################
+
+gs -sDEVICE=stcolor -sDithering=fscmyk -dBitsPerPixel=16 \
+     -dKcoding='{ 0.0 0.09 0.9 1.0 }' \
+     -dMcoding='{ 0.0 0.09 0.9 1.0 }' \
+   -dKtransfer='{ 0.0 0.09 0.9 1.0 }' \
+   -dYtransfer='{ 0.0 0.09 0.9 1.0 }'
+
+
+######################################################
+ImageMagick CMYK
+######################################################
+-color-matrix matrix
+
+6x6 for CMYKA
+
+magick kittens.jpg -color-matrix \
+  " 1.5 0.0 0.0 0.0, 0.0, -0.157 \
+    0.0 1.5 0.0 0.0, 0.0, -0.157 \
+    0.0 0.0 1.5 0.0, 0.0, -0.157 \
+    0.0 0.0 0.0 1.0, 0.0,  0.0 \
+    0.0 0.0 0.0 0.0, 1.0,  0.0 \
+    0.0 0.0 0.0 0.0, 0.0,  1.0" kittens.png
+
+-colorspace value
+
+CMYK
+
+-channel type
+
+CMYK
+Choose from: Red, Green, Blue, Alpha, Gray, Cyan, Magenta, Yellow, Black, Opacity, Index, RGB, RGBA, CMYK, or CMYKA.
+
+'0' equals Red or Cyan
+'1' equals Green or Magenta
+'2' equals Blue or Yellow
+'3' equals Black
+'4' equals Alpha or Opacity
+'5' equals Index
+
+
+to only select the Red and Blue channels you can use any of the following:
+
+-channel Red,Blue
+-channel R,B
+-channel RB
+-channel 0,2
+
+
+A few formats support CMYK. For example JPG does, but PNG does not.
+
+identify -verbose image.jpg
+
+
+CMYK	RW	Raw cyan, magenta, yellow, and black samples	Use -size and -depth to specify the image width, height, and depth. To specify a single precision floating-point format, use -define quantum:format=floating-point. Set the depth to 32 for single precision floats, 64 for double precision, and 16 for half-precision.
+
+
+######################################################
+Converting a PDF to black & white with ghostscript
+######################################################
+https://superuser.com/questions/200378/converting-a-pdf-to-black-white-with-ghostscript
+https://stackoverflow.com/questions/35596346/ghostscript-convert-pdf-into-cmyk-preserving-pure-black-for-text
+https://comp.lang.postscript.narkive.com/cdIzLsQq/using-ghostscript-to-convert-postscript-to-pure-black-and-white
+https://unix.stackexchange.com/questions/84709/how-can-i-convert-a-pdf-file-from-gray-scale-to-black-white
+https://tex.stackexchange.com/questions/53493/detecting-all-pages-which-contain-color
+https://github.com/libvips/libvips/issues/1477
+http://www.imagemagick.org/discourse-server/viewtopic.php?t=16572
+https://www.linux-magazin.de/ausgaben/2008/01/farb-t-raum/
+https://stackoverflow.com/questions/35825852/conversion-from-xrgb-to-cmyk-imagemagick
+https://www.ibm.com/docs/en/zos/2.2.0?topic=concepts-color-spaces-icc-profiles
+https://graphicdesign.stackexchange.com/questions/143024/how-to-check-if-a-pdf-file-is-in-rgb-or-cmyk
+https://mixam.com/support/cmykchart
+---------
+
+CMYK
+In a CMYK color space, cyan (bright blue), magenta (bright red-pink), yellow, and black pigments are combined to create different colors. CMYK values are often represented as a percentage. The percentage represents the portion of a particular area of paper that is covered by ink or toner. For example:
+
+C=0%, M=0%, Y=0%, K=100% yields black
+C=0%, M=0%, Y=0%, K=0% yields a blank area on the page
+C=1.6%, M=0%, Y=44.7%, K=.4% yields a pale yellow
+C=17.6%, M=39.6%, Y=5.5%, K=5.5% yields a light purple
+
+If you save an image by using the CMYK color space, make sure that you either save an ICC profile for that color space or use a standard non-device specific CMYK color space like SWOP or Coated FOGRA27 and associate the appropriate ICC profile with the image
+
+---------
+
+
+convert image.jpg  -colorspace CMYK -profile USWebCoatedSWOP.icc image_CMYK_cspace_profile.jpg
+convert rgb.jpg -profile path/to/USWebCoatedSwop.icc cmyk.jpg
+convert rgb.jpg -profile path/to/sRGB.icc -profile path/to/USWebCoatedSwop.icc cmyk.jpg
+convert input.jpg -profile cmyk.icm result.jpg
+---------
+
+convert -geometry 150 titel.pdf titel.jpg
+convert -colorspace rgb -geometry 150 titel.pdf titel.jpg
+convert -profile Pfad/USWebCoatedSWOP.icc -profile Pfad/AppleRGB.icc -colorspace rgb -geometry 150 titel.pdf titel.jpg
+---------
+
+convert ./input.jpg -colorspace cmyk output.tif
+convert ./input.jpg -colorspace cmyk -compress LZW output.tif
+convert ./input.jpg -colorspace cmyk -profile ./ECI_Offset_2009/ISOcoated_v2_eci.icc output-eci.tif
+identify -format '%[colorspace]' ./output.tif
+identify -verbose ./output.tif
+
+---------
+
+
+Newer versions of Ghostscript (version 9.05 and later) include a "device" called inkcov. It calculates the ink coverage of each page (not for each image) in Cyan (C), Magenta (M), Yellow (Y) and Black (K) values, where 0.00000 means 0%, and 1.00000 means 100%.
+
+gs -o - -sDEVICE=inkcov /path/to/your.pdf
+
+Example output:
+
+Page 1
+0.00000  0.00000  0.00000  0.02230 CMYK OK
+
+gs                                \
+  -o grayscale.pdf                \
+  -sDEVICE=pdfwrite               \
+  -sColorConversionStrategy=Gray  \
+  -sProcessColorModel=/DeviceGray \
+   /path/to/your.pdf
+
+gs -q  -o - -sDEVICE=inkcov grayscale.pdf
+ 0.00000  0.00000  0.00000  0.02230 CMYK OK
+
+---------
+
+gs -sDEVICE=bmpgray -dNOPAUSE -dBATCH -r300x300 \
+   -sOutputFile=./pdf_image.bmp ./input.pdf
+
+convert ./pdf_image.bmp -threshold 40% -compress zip ./bw_out.pdf
+
+---------
+
+gs -q -sDEVICE=psmono -o mono.ps input.pdf
+ps2pdf mono.ps
+
+---------
+
+
+gs \
+ -sOutputFile=output.PDF \
+ -sDEVICE=pdfwrite \
+ -sColorConversionStrategy=Gray \
+ -dProcessColorModel=/DeviceGray \
+ -dCompatibilityLevel=1.4 \
+  input.PDF < /dev/null
+
+gs -o <output-file.pdf> -sDEVICE=pdfwrite \
+-c "/osetcolor {/setcolor} bind def /setcolor {pop [0 0 0] osetcolor} def" \
+-f <input-file.ps>
+
+---------
+
+pdf2ps color.pdf color.ps
+
+gs \
+-o bw-from-color.pdf \
+-sDEVICE=pdfwrite \
+-c "/setrgbcolor{0 mul 3 1 roll 0 mul 3 1 roll 0 mul 3 1 roll 0 mul add add setgray}def" \
+-f color.ps
+
+convert -monochrome input.pdf output.pdf
+
+gs -o gray.ps -sDEVICE=ps2write -sColorConversionStrategy=Gray -dProcessColorModel=/DeviceGray -dCompatibilityLevel=1.4 -f colored.pdf
+gs -o thresholded.pdf -sDEVICE=pdfwrite -c "/osetgray {setgray} bind def /setgray {0.5 lt {0} {1} ifelse osetgray} def" -f gray.ps
+
+---
+
+collink -v -G AppleRGB.icc JapanColor2002Newspaper.icc apple_to_jNP_photo.icc
+
+collink -v -f AppleRGB.icc JapanColor2002Newspaper.icc apple_to_jNP_neutrals.icc
+control.txt:
+
+Image_RGB   apple_to_jNP_photo.icc       0   1   0
+Graphic_RGB apple_to_jNP_neutrals.icc    0   1   0
+Text_RGB    apple_to_jNP_neutrals.icc    0   1   0
+and
+
+gswin32c -q -sDEVICE=pdfwrite -o out.pdf -sColorConversionStrategy=CMYK -sSourceObjectICC=control.txt in.pdf
+
+...
+
+
+######################################################
+ICC Profile Registry
+######################################################
+https://www.color.org/registry/index.xalter
+http://digitalproof.info/FOGRA39/
+http://www.colormanagement.org/de/swopprofile.html
+http://www.colormanagement.org/de/isoprofile2009.html
+https://das-richtwerk.de/icc-profile/
+https://www.adobe.com/support/downloads/iccprofiles/iccprofiles_win.html
+https://community.adobe.com/t5/download-install-discussions/download-adobe-rgb-1998-icc-profile-for-linux/m-p/6644164
+
+######################################################
+Profiles which have been registered with the ICC are listed in the table below.
+######################################################
+http://www.colormanagement.org/download_files/SWOP2006_Coated3_GCR_bas.zip
+http://www.colormanagement.org/download_files/SWOP2006_Coated5_GCR_bas.zip
+http://www.colormanagement.org/download_files/GRACoL2006_Coated1_GCR_bas.zip
+https://das-richtwerk.de/icc/CoatedFOGRA39.icc
+https://www.color.org/FOGRA39.txt
+https://www.color.org/FOGRA39.txt
+https://www.adobe.com/support/downloads/iccprofiles/icc_eula_win_end.html
+ftp://ftp.adobe.com/pub/adobe/iccprofiles/linux/AdobeColorProfiles-end-user.rpm.tar.gz
+http://www.ftpdir.hu/ftp.adobe.com/pub/adobe/iccprofiles/linux/
+https://www.adobe.com/support/downloads/iccprofiles/icc_eula_win_end.html
+http://download.adobe.com/pub/adobe/iccprofiles/win/AdobeICCProfilesCS4Win_end-user.zip
+
+######################################################
+Linux ICC
+######################################################
+https://ubuntu.pkgs.org/18.04/ubuntu-multiverse-amd64/icc-profiles_2.1-2_all.deb.html
+https://help.ubuntu.com/stable/ubuntu-help/color-howtoimport.html.en
+https://help.ubuntu.com/stable/ubuntu-help/color.html.en#profiles
+https://zoomadmin.com/HowToInstall/UbuntuPackage/icc-profiles
+https://howtoinstall.co/en/icc-profiles
+https://ubuntu.pkgs.org/20.04/ubuntu-multiverse-arm64/icc-profiles_2.1-2_all.deb.html
+https://wiki.archlinux.org/title/ICC_profiles
+https://www.thelinuxfaq.com/ubuntu/ubuntu-17-04-zesty-zapus/icc-profiles
+https://www.ubuntuupdates.org/package/core/kinetic/multiverse/base/icc-profiles
+https://wiki.ubuntuusers.de/Monitor_profilieren_mit_ArgyllCMS/
+https://github.com/mm2/Little-CMS/tree/master/testbed
+https://krita-artists.org/t/how-to-handle-pdf-import-options-krita-script-runner-popup-from-kritarunner-script/60198
+
+icc-profiles_2.1-2_all.deb
+sudo dpkg-query -l | grep icc-profiles *
+
+sudo apt-get update -y
+sudo apt-get install -y icc-profiles
+
+ls /usr/share/color/icc/colord/
+AdobeRGB1998.icc  ColorMatchRGB.icc  Gamma5500K.icc   sRGB.icc
+AppleRGB.icc      Crayons.icc        Gamma6500K.icc   SwappedRedAndGreen.icc
+BestRGB.icc       DonRGB4.icc        NTSC-RGB.icc     WideGamutRGB.icc
+BetaRGB.icc       ECI-RGBv1.icc      PAL-RGB.icc      x11-colors.icc
+Bluish.icc        ECI-RGBv2.icc      ProPhotoRGB.icc
+BruceRGB.icc      EktaSpacePS5.icc   Rec709.icc
+CIE-RGB.icc       Gamma5000K.icc     SMPTE-C-RGB.icc
+
+colormgr get-devices
+colormgr get-profiles
+
+xiccd - X color profile daemon
+https://packages.debian.org/de/stretch/xiccd
+https://packages.ubuntu.com/de/bionic/xiccd
+
+
+######################################################
+Ghostscript 9.21 Color Management
+######################################################
+https://ghostscript.com/docs/GS9_Color_Management.pdf
+https://ghostscript.readthedocs.io/en/latest/GhostscriptColorManagement.html
+https://github.com/filipnet/ghostscript-pdf-rgb2cmyk
+https://comp.lang.postscript.narkive.com/R2wXzRAN/pdf-to-pdf-gs-rich-rgb-black-to-plain-k-cmyk-black
+https://rainnic.altervista.org/en/content/bash-script-convert-color-palette-pdf-cmyk?language_content_entity=en
+https://www.imagemagick.org/Usage/formats/#profiles
+https://ghostscript.com/docs/GS9_Color_Management.pdf
+https://www.colourmanagement.net/advice/about-icc-colour-profiles
+http://cyan.graphics/
+
+DeviceGray, DeviceRGB and DeviceCMYK color spaces.
+default_gray.icc, default_rgb.icc and default_cmyk.icc
+
+-sDefaultGrayProfile = my gray profile.icc
+-sDefaultRGBProfile = my rgb profile.icc
+-sDefaultCMYKProfile = my cmyk profile.icc
+-sICCOutputColors=“Cyan, Magenta, Yellow, Black, Orange, Violet”
+-sOutputICCProfile = my device profile.icc
+-dKPreserve = 0 / 1 / 2
+-dGraphicKPreserve = 0 / 1 / 2
+
+-sSourceObjectICC = filename.txt
+Graphic CMYK cmyk src cyan.icc 0 1 0 0
+Image CMYK cmyk src magenta.icc 0 1 0 0
+Text CMYK cmyk src yellow.icc 0 1 0 0
+Graphic RGB rgb source red.icc 0 1 0
+Image RGB rgb source green.icc 0 1 0
+Text RGB rgb source blue.icc 0 1 0
+
+Graphic CMYK None
+Text CMYK Replace
+Graphic RGB linkRGBtoCMYK.icc 0 1 0
+
+profiles example.txt file
+Graphic CMYK cmyk src renderintent.icc 0 1 0 0
+Image CMYK cmyk src renderintent.icc 1 1 0 0
+Text CMYK cmyk src renderintent.icc 2 1 0 0
+
+-sGraphicICCProfile = cmyk des renderintent.icc
+-sImageICCProfile = cmyk des renderintent.icc
+-sTextICCProfile = cmyk des renderintent.icc
+-dImageIntent = 0
+-dGraphicIntent = 1
+-dTextIntent = 2
+
+
+convert yourFile.pdf -profile FOGRA27L.txt  yourFile_fogra27L.pdf
+magick Test_CMYK.psd -strip -profile USWebCoatedSWOP.icc -profile sRGB.icc Test_RGB.png
+
+######################################################
+Color Management ICC-Profiles
+######################################################
+https://wiki.scribus.net/canvas/Color_Management_setup
+https://wiki.scribus.net/canvas/Beschaffung_und_Installation_von_ICC-Profilen
+https://wiki.scribus.net/canvas/Getting_and_installing_ICC_profiles
+https://graphicdesign.stackexchange.com/questions/55262/how-to-embed-a-color-profile-into-a-pdf-with-inkscape
+https://graphicdesign.stackexchange.com/questions/125359/how-to-embed-an-icc-cmyk-colour-profile-in-scribus
+https://www.klaasnotfound.com/2016/06/05/creating-cmyk-prepress-pdfs-with-inkscape-and-scribus/
+https://wiki.scribus.net/canvas/File_Format_Specification_for_Scribus_1.4
+https://archive.flossmanuals.net/scribus-2/color-management.html
+https://forums.scribus.net/index.php?topic=2748.0
+https://en.wikipedia.org/wiki/ICC_profile
+
+######################################################
+PDF to CMYK online
+######################################################
+https://www.pdf2cmyk.com/de.html
+https://www.rgb2cmyk.org/de.html
+https://www.i2pdf.com/de/pdf-to-cmyk
+https://www.imageconvert.org/pdf-to-cmyk
+
+######################################################
+Krita : How To Convert Images From Color to Grayscale Tutorial
+######################################################
+https://www.youtube.com/watch?v=AVUXjG5pZFo
+https://www.youtube.com/watch?v=qu9d5K7gDis
+https://www.youtube.com/watch?v=Iurcp8xdpJY
+https://www.youtube.com/watch?v=HzEAH1uuErM
+https://www.youtube.com/watch?v=uYdEkOyFUn8
+https://docs.krita.org/en/tutorials/flat-coloring.html
+https://docs.krita.org/en/reference_manual/filters/adjust.html
+https://imagy.app/how-to-convert-an-image-to-black-and-white-in-krita/
+https://docs.krita.org/en/reference_manual/dockers/palette_docker.html
+https://docs.krita.org/en/general_concepts/colors/bit_depth.html
+
+Krita menu >>
+filter >> Start G’MIC - Qt >> Testing >> GarageCoder >> “multi-thresholds”
+Image >> convert image color space.
+
+######################################################
+Krita G'MIC filter G'Mic missing from Krita
+######################################################
+https://github.com/NixOS/nixpkgs/issues/163645
+https://docs.krita.org/en/reference_manual/preferences/g_mic_settings.html
+
+https://gmic.eu/download.html
+https://download.kde.org/stable/krita/5.1.1/krita-5.1.1-x86_64.appimage
+https://www.fosshub.com/GMIC.html?dwl=gmic_3.2.3_gimp2.10_ubuntu22-04_jammy_amd64.zip
+https://www.fosshub.com/GMIC.html?dwl=gmic_3.2.3_debian11_bullseye_amd64.deb
+https://www.fosshub.com/GMIC.html?dwl=gmic_3.2.3_ubuntu22-04_jammy_amd64.deb
+
+krita
+gmic-qt-krita ?
+gmic-qt ?
+
+Linux : $HOME/.config/gmic/update2XX.gmic
+
+
+--------------------------------------------------------------------------------------------------
+https://cdn.shopify.com/s/files/1/0969/9128/products/MoneyHeist-NetflixTVShowPosterFanArt_f3ca06f4-0ea3-4795-818a-b680979e8073.jpg?v=1589268519
+--------------------------------------------------------------------------------------------------
+  convert -threshold 50% -strip -channel cmyk MoneyHeist.png MoneyHeist.pdf
+--------------------------------------------------------------------------------------------------
+
+# diff --color export/input.txt export/output.txt
+cd export || exit
+rm *.txt
+rm log.log
+
+#convert rgb.jpg rgb.pdf
+
+gs -o gray.pdf -sDEVICE=pdfwrite  -dPDFSETTINGS=/prepress -r72 \
+ -dProcessColorModel=/DeviceGray -sProcessColorModel=DeviceGray \
+ -sColorConversionStrategy=Gray  -sColorConversionStrategyForImages=Gray \
+  -f rgb.pdf
+
+#convert -density 1200 -channel CMYK -threshold 75% -strip gray.pdf bw.pdf
+convert -threshold 50% -strip -channel cmyk -flatten -alpha Activate gray.pdf bw.pdf
+
+gs -o cmyk.pdf -sDEVICE=pdfwrite -r72 \
+ -dProcessColorModel=/DeviceCMYK -sProcessColorModel=DeviceCMYK \
+ -sColorConversionStrategy=CMYK -sColorConversionStrategyForImages=CMYK \
+ -f bw.pdf
+
+  # \
+  #
+  #
+  # shellcheck disable=SC2215
+
+for i in *.pdf; do identify -verbose "$i" > "$i".txt; done
+#identify -verbose export/output3.pdf | grep -i 'color' >> log.txt
+#echo '--------------------------------' >> log.txt
+for s in *.pdf; do identify -verbose "$s" | grep -i 'color'  >> log.log && echo "$s" >> log.log; done
