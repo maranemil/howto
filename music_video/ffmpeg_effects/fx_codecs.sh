@@ -12,6 +12,7 @@
 # https://x265.readthedocs.io/en/latest/cli.html#cmdoption-pools
 # https://x265.readthedocs.io/en/stable/threading.html
 
+
 ffmpeg -codecs
 ffmpeg -formats
 ffmpeg -codecs | grep h264
@@ -32,3 +33,17 @@ mkdir exp && for f in *.MP4; do  ffmpeg -i $f -c:v libx265 -c:a copy -x265-param
 # libx265       225MB
 
 # ffmpeg -i INPUT -c:v libx265 -preset medium -tune psnr -x265-params "qp=16:rc-lookahead=18" OUT
+
+# https://x265.readthedocs.io/en/stable/presets.html
+# ultrafast
+# superfast
+# veryfast
+# faster
+# fast
+# medium (default)
+# slow
+# slower
+# veryslow
+# placebo
+
+mkdir exp && for f in *.MP4; do  ffmpeg -i $f -c:v libx265 -c:a copy -x265-params pools=2:preset=faster -y exp/$f; done
