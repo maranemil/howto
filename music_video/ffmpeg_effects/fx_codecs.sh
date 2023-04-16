@@ -46,4 +46,11 @@ mkdir exp && for f in *.MP4; do  ffmpeg -i $f -c:v libx265 -c:a copy -x265-param
 # veryslow
 # placebo
 
+# fast compression libx265
 mkdir exp && for f in *.MP4; do  ffmpeg -i $f -c:v libx265 -c:a copy -x265-params pools=2:preset=faster -y exp/$f; done
+
+# fast compression libx264
+# https://stackoverflow.com/questions/29276904/how-to-increase-compression-speed-for-ffmpeg
+
+ffmpeg -y -i INPUT -r 5 -c:v libx264 -b:v 600k -b:a 44100 -ac 2 -ar 22050 -tune fastdecode -preset ultrafast OUT.mp4
+mkdir exp && for f in *.MP4; do ffmpeg -y -i $f -r 25 -c:v libx264 -b:v 1800k -b:a 44100 -ac 2 -ar 22050 -tune fastdecode -preset ultrafast exp/$f; done
