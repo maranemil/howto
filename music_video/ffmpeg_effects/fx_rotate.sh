@@ -2,6 +2,7 @@
 # https://stackoverflow.com/questions/3937387/rotating-videos-with-ffmpeg
 
 ffmpeg -i in.mov -vf "transpose=1" out.mov
+ffplay -i in.MP4 -vf "transpose=2,transpose=2"
 
 # For the transpose parameter you can pass:
 # 0 = 90Counter CLock wise and Vertical Flip (default)
