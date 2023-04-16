@@ -1,5 +1,5 @@
 ##############################################
-#  codecs and formats supported by FFmpeg
+#  codecs and formats supported by FFmpeg GoPro
 ##############################################
 
 # https://stackoverflow.com/questions/3377300/what-are-all-codecs-and-formats-supported-by-ffmpeg
