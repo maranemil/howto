@@ -54,3 +54,19 @@ mkdir exp && for f in *.MP4; do  ffmpeg -i $f -c:v libx265 -c:a copy -x265-param
 
 ffmpeg -y -i INPUT -r 5 -c:v libx264 -b:v 600k -b:a 44100 -ac 2 -ar 22050 -tune fastdecode -preset ultrafast OUT.mp4
 mkdir exp && for f in *.MP4; do ffmpeg -y -i $f -r 25 -c:v libx264 -b:v 1800k -b:a 44100 -ac 2 -ar 22050 -tune fastdecode -preset ultrafast exp/$f; done
+
+mkdir exp && for file in *.*; do ffmpeg -i $file -vf 'scale=-1:480' -threads 1 -y exp/$f; done
+mkdir exp && for file in *.*; do ffmpeg -i $file -crf 28 -threads 1 -y exp/$f; done
+ffmpeg -i in.mkv -vf 'scale=-1:480' -crf 28 -threads 1 -y out.mp4
+
+mkdir exp && for f in *.*; do ffmpeg -i $f -c:v libx265 -c:a copy -x265-params pools=2,2 -y exp/$f; done
+mkdir exp && for f in *.*; do ffmpeg -i $f -c:v libx265 -c:a copy -x265-params pools=2,2:preset=veryfast -y exp/$f; done
+mkdir exp && for f in *.*; do ffmpeg -i $f -c:v libx265 -c:a copy -x265-params pools=2,2:preset=superfast -y exp/$f; done #
+
+# https://stackoverflow.com/questions/29276904/how-to-increase-compression-speed-for-ffmpeg
+
+ffmpeg -y -i INPUT -r 5 -c:v libx264 -b:v 600k -b:a 44100 -ac 2 -ar 22050 -tune fastdecode -preset ultrafast OUT.mp4
+mkdir exp && for f in *.*; do ffmpeg -y -i $f -c:v libx264 -b:v 4000k -b:a 22050 -ac 2 -ar 11025 -tune fastdecode -preset superfast -threads 1 exp/$f.mp4; done #
+mkdir exp && for f in *.*; do ffmpeg -y -i $f -r 25 -c:v libx264 -b:v 1800k -b:a 44100 -ac 2 -ar 22050 -tune fastdecode -preset ultrafast exp/$f; done
+mkdir exp && for f in *.*; do ffmpeg -y -i $f -c:v libx264 -b:v 1800k -b:a 44100 -ac 2 -ar 22050 -tune fastdecode -preset superfast -threads 1 exp/$f; done
+mkdir exp && for f in *.*; do ffmpeg -y -i $f -c:v libx264 -b:a 22050 -ac 2 -ar 11025 -tune fastdecode -preset superfast -threads 1 exp/$f; done
