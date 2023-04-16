@@ -24,6 +24,8 @@ ffmpeg -i INPUT -c:v libx265 -c:a copy -threads 1 OUT
 # cpu limiting
 ffmpeg -i GOPR0378.MP4 -c:v libx265 -c:a copy -x265-params pools=2 GOPR0378c.mp4
 
+# batch
+mkdir exp && for f in *.MP4; do  ffmpeg -i $f -c:v libx265 -c:a copy -x265-params pools=2 -y exp/$f; done
 
 # GOPR0377.MP4  2GB
 # libx264       500MB
