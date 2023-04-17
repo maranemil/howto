@@ -763,3 +763,39 @@ https://unix.stackexchange.com/questions/33629/how-can-i-populate-a-file-with-ra
 head -c 1G </dev/urandom >myfile
 head -c 1073741824 </dev/urandom >myfile
 dd bs=1024 count=1048576 </dev/urandom >myfile
+
+
+##################################################################
+ffmpeg mov to mp4
+##################################################################
+
+https://wiki.ubuntuusers.de/Codecs/
+https://askubuntu.com/questions/740160/how-can-i-install-divx-codec-on-ubuntu
+https://wiki.ubuntuusers.de/ubuntu-restricted-extras/
+https://wiki.ubuntuusers.de/Codecs/
+https://stackoverflow.com/questions/30969307/how-to-convert-videos-on-vlc-batch-cli
+https://superuser.com/questions/388511/how-can-i-make-the-following-conversion-in-vlc-from-the-commandline
+https://stackoverflow.com/questions/12026381/ffmpeg-converting-mov-files-to-mp4
+
+
+sudo apt-get install ubuntu-restricted-extras # h264 divx video codec
+sudo apt-get install ubuntu-restricted-addons ubuntu-restricted-extras
+sudo apt-get install libxvidcore4 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-fluendo-mp3 gstreamer1.0-libav
+sudo apt-get install libquicktime2
+sudo apt-get install vlc
+
+vlc -I dummy -vvv "MyVid.mod" --sout=#transcode{vcodec=h264,vb=1024,acodec=mp4a,ab=192,channels=2,deinterlace}:standard{access=file,mux=ts,dst=MyVid.mp4}
+vlc -I dummy -vvv "MyVid.mod" --sout=#transcode{vcodec=h264,}:standard{access=file,mux=ts,dst=MyVid.mp4}
+vlc -I dummy input.wav ":sout=#transcode{acodec=mpga,ab=192}:std{dst=output.mp3,access=file}" vlc://quit
+
+-I dummy - Does not show the VLC GUI
+-vvv - Gives you verbose output
+--sout - Specifies the options to use when encoding to MP4
+
+for f in (*.mov); do vlc -I dummy -vvv $f --sout=#transcode{vcodec=h264,vb=1024,acodec=mp4a,ab=192,channels=2,deinterlace}:standard{access=file,mux=ts,dst$f.mp4}; done vlc://quit
+
+FIX
+ffmpeg -i input.mov -qscale 0 output.mp4
+ffmpeg -i input.mov -q:v 0 output.mp4
+for f in *.MOV; do ffmpeg -y -i $f -q:v 0 -threads 1 $f.out.mp4; done
+
