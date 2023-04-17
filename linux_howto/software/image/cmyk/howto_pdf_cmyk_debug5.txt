@@ -1,0 +1,386 @@
+
+##############################################################################
+imagemagick color_matrix
+##############################################################################
+
+https://ghostscript.readthedocs.io/en/latest/UnsupportedDevices.html
+https://imagemagick.org/Usage/color_mods/
+https://imagemagick.org/Usage/color_mods/
+https://imagemagick.org/Usage/color_mods/#recolor
+https://imagemagick.org/Usage/color_mods/#recolor
+https://imagemagick.org/Usage/color_mods/#recolor
+https://imagemagick.org/script/color-management.php
+https://imagemagick.org/script/color.php
+https://imagemagick.org/script/command-line-options.php
+https://imagemagick.org/script/command-line-options.php#list
+https://imagemagick.org/script/formats.php
+https://legacy.imagemagick.org/discourse-server/viewtopic.php?t=19491
+https://legacy.imagemagick.org/discourse-server/viewtopic.php?t=33530
+https://mixam.com/support/cmykchart
+https://phpimagick.com/Imagick/colorMatrixImage
+https://phpimagick.com/Imagick/colorMatrixImage?color_matrix=[[1,0,0,0,0],[0,1,0,0,0],[0,0,1,0,0],[0,0,0,0,0],[0,0,0,0,1]]&image_path=Lorikeet
+https://stackoverflow.com/questions/42649658/imagemagick-convert-color-matrix
+https://www.imagemagick.org/discourse-server/viewtopic.php?t=20356
+https://www.imagemagick.org/discourse-server/viewtopic.php?t=22662
+https://www.imagemagick.org/discourse-server/viewtopic.php?t=33530
+https://www.imagemagick.org/script/command-line-options.php#color-matrix
+https://www.nixsensor.com/blog/what-is-cmyk-color/
+https://www.tonermacher.de/cmyk-farben.html
+
+
+
+convert rose: -colorspace HSL \
+          -channel B -evaluate multiply 0.80 \
+          -channel G -evaluate multiply 1.20 \
+          +channel -colorspace sRGB   modulate_channel.png
+
+convert rose_grey.jpg  -fill darkcyan -tint 100    duotone_darkcyan.jpg
+convert shirt.jpg -recolor '0 0 1 0 0 1 1 1 1'  shirtmod3.jpg
+
+
+convert rose.jpg  -color-matrix '6x6: -7.5620 0       0       0       1       0
+                                   0.1505 0     -36.9684  0.2411 -0.0744  0.4497
+                                  -7.5620 0       0       0       1       0
+                                   0.5997 0.3455 -0.2708  0      47.4319 -0.0377
+                                   0      1       0       0.1505  0     -36.9684
+                                  -0.2708 0      47.4319 -0.0377  0.8609  0.1505' rose.png
+
+
+convert rose.jpg  -color-matrix '6x2: 1 0 0 0 0 1
+                     0 1 0 0 0 1' rose.png
+
+
+convert rose.jpg : -color-matrix '0.599  0.3455 -0.2708
+                     0     47.4319 -0.0377
+                     0.8609 0.1505  0' rose_3x3.png
+
+convert rose: -color-matrix '4x1: 0 -36.9684 0.2411 -0.07441' rose_4x1.png
+
+
+Output red is input red * 1.1. IM calculates: 0.10 * 1.1 = 0.11, or 11%.
+Output green is input red * 1, plus 1.2. IM calculates: 0.10 * 1 + 1.2 = 1.3, or 130%.
+Output blue is input green * 2. IM calculates: -0.20 * 2 = -0.40, or -40%.
+
+
+~~~~~~~~~~~
+convert rose -color-matrix ' 1 0 0
+                      0 1 0
+                      0 0 1 '   matrix_noop.png
+
+# Is equivalent to applying the equations... RGB
+red'    = 1 * red + 0 * green + 0 * blue
+green'  = 0 * red + 1 * green + 0 * blue
+blue'   = 0 * red + 0 * green + 1 * blue
+
+
+magick rose: -color-matrix ' 1 0 0
+                             1 0 0
+                             1 0 0 '  matrix_red_channel.png
+
+
+magick rose: -color-matrix ' .2 .5 .3
+                              .2 .5 .3
+                              .2 .5 .3 '  matrix_grayscale.png
+
+magick rose: -color-matrix '6x3: -1  0  0 0 0 1
+                                     0 -1  0 0 0 1
+                                     0  0 -1 0 0 1'  matrix_negate.png
+
+magick rose: -color-matrix '6x1: 0,0,0,0,0,1'  matrix_red_max.png
+
+magick rose: -color-matrix ' 0.393 0.769 0.189
+                                0.349 0.686 0.168
+                                0.272 0.534 0.131  ' matrix_sepia.png
+
+magick rose: -color-matrix \
+            '6x3:  1.438 -0.122 -0.016  0 0 -0.03
+                  -0.062  1.378 -0.016  0 0  0.05
+                  -0.062 -0.122 1.483   0 0 -0.02 ' matrix_polaroid.png
+~~~~~~~~~~~
+
+1=R or C Cyan
+2=G or Y Yellow
+3=B or M Magenta
+4=K or Key (Schwarz)
+5=A or Alpha channel
+6=offsets
+
+Die Abkürzung CMYK steht für Cyan, Magenta, Yellow und Key (Schwarz)
+
+
+Matrix elements (0,0) to (4,4) are sampling factors, with the rows meaning red, green, blue, alpha output, and the columns being red, green, blue, alpha input.
+Last column is translation aka brightness adjustment.
+It's not entirely obvious what the other elements are.
+
+
+Cool Black: 60 . 0 . 0 . 100
+Warm Black: 0 . 60 . 30 . 100
+Designer Black: 70 . 50 . 30 . 100
+Rich Black: 75 . 68 . 67 . 90
+
+
+convert kittens.jpg -colorspace CMYK -color-matrix \
+  " 1.5 0.0 0.0 0.0, 0.0, -0.157 \
+    0.0 1.5 0.0 0.0, 0.0, -0.157 \
+    0.0 0.0 1.5 0.0, 0.0, -0.157 \
+    0.0 0.0 0.0 1.0, 0.0,  0.0 \
+    0.0 0.0 0.0 0.0, 1.0,  0.0 \
+    0.0 0.0 0.0 0.0, 0.0,  1.0" kittens.png
+
+
+
+PHP | Imagick colorMatrixImage() Function
+https://www.geeksforgeeks.org/php-imagick-colormatriximage-function/
+https://www.php.net/manual/en/imagick.colormatriximage.php
+https://www.php.net/manual/en/imagick.recolorimage.php
+
+[php]
+
+// 6x6 color matrix for CMYKA
+$colorMatrix = [
+    1.5, 0.0, 0.0, 0.0, 0.0, -0.157,
+    0.0, 0.0, 0.5, 0.0, 0.0, -0.157,
+    0.0, 0.0, 0.0, 0.0, 0.5, -0.157,
+    0.0, 0.0, 0.0, 1.0, 0.0,  0.0,
+    0.0, 0.0, 0.0, 0.0, 1.0,  0.0,
+    0.0, 0.0, 0.0, 0.5, 0.0,  1.0
+];
+
+// Create Imagick object
+$imagick = new \Imagick(
+'https://cdncontribute.geeksforgeeks.org/wp-content/uploads/geeksforgeeks-13.png');
+
+// Set image opacity
+$imagick->evaluateImage(
+    Imagick::EVALUATE_MULTIPLY,
+    0.6,
+    Imagick::CHANNEL_ALPHA
+);
+
+// Create new Imagick object
+$background = new \Imagick();
+
+// Creating new pseudo image with hexagon pattern
+$background->newPseudoImage(
+    $imagick->getImageWidth(),
+    $imagick->getImageHeight(),
+    "pattern:hexagons"
+);
+
+// Set the image format
+$background->setImageFormat('png');
+$imagick->setImageFormat('png');
+
+// Use Imagick::colorMatrixImage() function
+$imagick->colorMatrixImage($colorMatrix);
+
+// Use Imagick::compositeImage() function
+$background->compositeImage(
+    $imagick,
+    \Imagick::COMPOSITE_SRCATOP,
+    0,
+    0
+);
+
+header("Content-Type: image/png");
+
+// Display the output image
+echo $background->getImageBlob();
+
+[/php]
+
+
+[php]
+$image = new Imagick('test.jpg');
+$CMYK_color_model = array(0,100,0,0);
+$image->recolorImage($CMYK_color_model) ;
+header('Content-type: image/jpg');
+echo $image
+[/php]
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+cd export || exit
+
+# 1=R or C - cyan
+# 2=G or Y - yellow
+# 3=B or M - magenta
+# 4=K
+# 5=A
+# 6=offsets
+
+
+rm cmyk4.pdf
+convert cmyk3.pdf -colorspace CMYK -color-matrix \
+     " 1.0 0.0 0.0 0.0, 1.0, 0.0 \
+       0.0 0.0 0.0 0.0, 1.0, 0.0 \
+       0.0 0.0 0.6 0.0, 1.0, 0.0 \
+       0.0 0.0 0.0 0.3, 1.0, 0.0 \
+       0.0 0.0 0.0 0.0, 1.0, 0.0 \
+       0.0 0.0 0.0 0.0, 0.0, 1.0"  cmyk4.pdf
+
+
+
+identify -verbose cmyk4.pdf > cmyk4.txt
+diff --color cmyk3.txt cmyk4.txt
+
+https://web.mit.edu/ghostscript/www/Devices.htm
+
+gs -o cmyk4.pdf -sDEVICE=pdfwrite \
+     -dKcoding='{ 0.0 0.00 0.9 1.0 }' \
+     -dMcoding='{ 0.0 0.00 0.9 1.0 }' \
+   -dKtransfer='{ 0.0 0.00 0.9 1.0 }' \
+   -dYtransfer='{ 0.0 0.00 0.9 1.0 }'  cmyk3.pdf
+
+
+
+-dKtransfer='{float float ...}'
+Which you use depends on the algorithm, which may be either either CMYK, RGB or monochrome.
+The values are arrays of floats in the range from 0 to 1.0, representing the visible color intensity
+ for the device. One may achieve similar effects with setcolortransfer at the language level,
+  but this takes more time and the underlying code for the driver-specific parameters is still required.
+  The size of the arrays is arbitrary and the defaults are "{0.0 1.0}", which is a linear characteristic.
+  Most of the code in stcolor.ps are better transfer arrays.
+
+-dKcoding='{float...}'
+-dMtransfer=..., -dY..., -dK... or
+
+
+###############################################################
+cmyk colors
+###############################################################
+
+https://www.getforms.org/2130,cmyk-color-charts.html
+https://graphicdesign.stackexchange.com/questions/143024/how-to-check-if-a-pdf-file-is-in-rgb-or-cmyk
+https://stackoverflow.com/questions/6241282/converting-pdf-to-cmyk-with-identify-recognizing-cmyk
+https://www.getforms.org/2130,cmyk-color-charts.html
+https://www.ibm.com/docs/en/zos/2.2.0?topic=concepts-color-spaces-icc-profiles
+
+grep -ia 'cmyk\|rgb\| k' export/cmyk1.pdf
+gs -o - -sDEVICE=inkcov cmyk.pdf
+
+###############################################################
+How to install Adobe Photoshop CS6 on Ubuntu 20.04 LTS Linux
+###############################################################
+
+https://linux.how2shout.com/install-adobe-photoshop-cs6-on-ubuntu-20-04-lts-linux/
+https://wiki.winehq.org/Ubuntu
+
+sudo dpkg --add-architecture i386
+wget -nc https://dl.winehq.org/wine-builds/winehq.key
+sudo mv winehq.key /usr/share/keyrings/winehq-archive.key
+wget -nc https://dl.winehq.org/wine-builds/ubuntu/dists/focal/winehq-focal.sources
+sudo mv winehq-focal.sources /etc/apt/sources.list.d/
+#sudo apt install --install-recommends winehq-stable
+
+
+sudo apt install --install-recommends wine
+sudo apt install playonlinux
+
+sudo apt-get --download-only dist-upgrade
+sudo apt-get dist-upgrade
+
+###############################################################
+resize
+###############################################################
+
+https://stackoverflow.com/questions/547326/using-imagemagick-or-ghostscript-or-something-to-scale-pdf-to-fit-page
+
+ gs -sDEVICE=pdfwrite \
+     -dPDFFitPage \
+     -r300x300 \
+     -g2346x3036 \
+     /home/user/path/original.pdf \
+     -o /home/user/path/resized.pdf
+
+
+###############################################################
+RGB / CMYK coding and transfer, and BitsPerPixel
+###############################################################
+
+
+http://astro.uni-tuebingen.de/software/ghostscript/Devices.htm#STC_CAM
+https://web.mit.edu/ghostscript/www/Devices.htm
+https://ghostscript.com/docs/9.56.1/Deprecated.htm
+https://ghostscript.com/docs/9.56.1/Deprecated.htm#STC_CAM
+https://ghostscript.readthedocs.io/en/latest/UnsupportedDevices.html
+https://ghostscript.com/docs/9.55.0/Devices.htm
+https://ghostscript.readthedocs.io/en/latest/Drivers.html
+https://pages.cs.wisc.edu/~ghost/doc/gnu/5.10/devices.txt
+https://cmyktool.com/cmyk/100-76-0-38/
+https://www.w3schools.com/colors/colors_cmyk.asp
+https://www.w3docs.com/tools/color-cmyk
+http://www-db.deis.unibo.it/courses/TW/DOCS/w3schools/colors/colors_cmyk.asp.html#gsc.tab=0
+https://www.ginifab.com/feeds/pms/pms_color_in_image.php
+https://www.ginifab.com/feeds/pms/color_picker_from_image.php
+https://presspdf.com/en/pdf-check-color-space-rgb-cmyk
+https://presspdf.com/check_view.php
+https://presspdf.com/upload-file.php
+https://cmyktool.com/cmyk-color-picker-from-image/
+https://www.freepik.com/free-photos-vectors/cmyk-test
+https://www.gamutmap.com/
+
+
+cmyk(0%, 0%, 0%, 0%)
+cmyk(100%, 0%, 0%, 0%)
+cmyk(100%, 76%, 0%, 38%)
+cmyk(0,0,0,0)
+
+gs -sDEVICE=stcolor -sDithering=fscmyk -dBitsPerPixel=16 \
+     -dKcoding='{ 0.0 0.09 0.9 1.0 }' \
+     -dMcoding='{ 0.0 0.09 0.9 1.0 }' \
+   -dKtransfer='{ 0.0 0.09 0.9 1.0 }' \
+   -dYtransfer='{ 0.0 0.09 0.9 1.0 }'
+
+
+-dCtransfer='{float float ...}' or
+-dMtransfer=..., -dY..., -dK... or
+-dRtransfer='{float float ...}' or
+
+
+Cyan
+ 	Magenta
+CI/15	 	gs_color_values	 	CI	 	Ink	 	gs_color_values	 	CI	 	Ink
+0.000	 	0.000 - 0.062	 	0	 	0.000	 	-0.123 - 0.123	 	0	 	0.000
+0.067	 	0.063 - 0.125	 	1	 	0.067	 	0.123 - 0.299	 	1	 	0.247
+0.133	 	0.125 - 0.187	 	2	 	0.133	 	0.299 - 0.365	 	2	 	0.351
+0.200	 	0.188 - 0.250	 	3	 	0.200	 	0.365 - 0.392	 	3	 	0.379
+0.267	 	0.250 - 0.312	 	4	 	0.267	 	0.392 - 0.420	 	4	 	0.406
+0.333	 	0.313 - 0.375	 	5	 	0.333	 	0.420 - 0.447	 	5	 	0.433
+0.400	 	0.375 - 0.437	 	6	 	0.400	 	0.447 - 0.475	 	6	 	0.461
+0.467	 	0.438 - 0.500	 	7	 	0.467	 	0.475 - 0.502	 	7	 	0.488
+0.533	 	0.500 - 0.562	 	8	 	0.533	 	0.502 - 0.529	 	8	 	0.516
+0.600	 	0.563 - 0.625	 	9	 	0.600	 	0.529 - 0.557	 	9	 	0.543
+0.667	 	0.625 - 0.687	 	10	 	0.667	 	0.557 - 0.584	 	10	 	0.571
+0.733	 	0.688 - 0.750	 	11	 	0.733	 	0.584 - 0.612	 	11	 	0.598
+0.800	 	0.750 - 0.812	 	12	 	0.800	 	0.612 - 0.639	 	12	 	0.626
+0.867	 	0.813 - 0.875	 	13	 	0.867	 	0.639 - 0.715	 	13	 	0.653
+0.933	 	0.875 - 0.937	 	14	 	0.933	 	0.715 - 0.889	 	14	 	0.778
+1.000	 	0.938 - 1.000	 	15	 	1.000	 	0.889 - 1.111	 	15	 	1.000
+
+
+Yellow
+ 	Black
+CI/15	 	gs_color_values	 	CI	 	Ink	 	gs_color_values	 	CI	 	Ink
+0.000	 	0.000 - 0.062	 	0	 	0.000	 	-0.123 - 0.123	 	0	 	0.000
+0.067	 	0.063 - 0.125	 	1	 	0.018	 	0.123 - 0.299	 	1	 	0.067
+0.133	 	0.125 - 0.187	 	2	 	0.036	 	0.299 - 0.365	 	2	 	0.133
+0.200	 	0.188 - 0.250	 	3	 	0.054	 	0.365 - 0.392	 	3	 	0.200
+0.267	 	0.250 - 0.312	 	4	 	0.072	 	0.392 - 0.420	 	4	 	0.267
+0.333	 	0.313 - 0.375	 	5	 	0.090	 	0.420 - 0.447	 	5	 	0.333
+0.400	 	0.375 - 0.437	 	6	 	0.252	 	0.447 - 0.475	 	6	 	0.400
+0.467	 	0.438 - 0.500	 	7	 	0.414	 	0.475 - 0.502	 	7	 	0.467
+0.533	 	0.500 - 0.562	 	8	 	0.576	 	0.502 - 0.529	 	8	 	0.533
+0.600	 	0.563 - 0.625	 	9	 	0.738	 	0.529 - 0.557	 	9	 	0.600
+0.667	 	0.625 - 0.687	 	10	 	0.900	 	0.557 - 0.584	 	10	 	0.667
+0.733	 	0.688 - 0.750	 	11	 	0.920	 	0.584 - 0.612	 	11	 	0.733
+0.800	 	0.750 - 0.812	 	12	 	0.940	 	0.612 - 0.639	 	12	 	0.800
+0.867	 	0.813 - 0.875	 	13	 	0.960	 	0.639 - 0.715	 	13	 	0.867
+0.933	 	0.875 - 0.937	 	14	 	0.980	 	0.715 - 0.889	 	14	 	0.933
+1.000	 	0.938 - 1.000	 	15	 	1.000	 	0.889 - 1.111	 	15	 	1.000
+
+
+
+
+
+

@@ -73,4 +73,7 @@ mkdir exp && for f in *.*; do ffmpeg -y -i $f -c:v libx264 -b:a 22050 -ac 2 -ar 
 
 
 # fix for mov
-mkdir exp && for f in *.MOV; do ffmpeg -y -i $f -q:v 0 -threads 1 exp/$f.out.mp4; done
+mkdir exp && for f in *.MOV; do ffmpeg -y -i $f -q:v 0 -threads 2 exp/$f.out.mp4; done
+mkdir exp && for f in *.MOV; do ffmpeg -y -i $f -q:v 0 -threads 2 -preset veryfast exp/$f.out.mp4; done
+for f in *.MOV; do ffmpeg -y -i $f -q:v 0 -threads 2 -preset fast $f.put.mp4; done
+for f in *.MOV; do ffmpeg -y -i $f -q:v 0 -threads 2 -preset veryfast $f.put.mp4; done

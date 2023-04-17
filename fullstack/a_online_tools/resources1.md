@@ -71,6 +71,15 @@
 
 ------------------------------------------------------------------
 
+### bar graph
+- https://www.rapidtables.com/tools/bar-graph.html
+- https://graphmaker.imageonline.co/barchart.php
+- https://charts.livegap.com/app.php?lan=en&gallery=bar
+- https://nces.ed.gov/nceskids/graphing/classic/bar_pie_data.asp?ChartType=bar
+- https://www.meta-chart.com/bar
+
+------------------------------------------------------------------
+
 ### CSS Editors
 - http://scratchpad.io/soft-shoe-1670
 - http://www.cssdesk.com/
