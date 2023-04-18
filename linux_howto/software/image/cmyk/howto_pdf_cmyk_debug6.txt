@@ -1,0 +1,195 @@
+######################################################################
+PDF to EPS or PS to EPS conversion maintaining page size
+######################################################################
+https://stackoverflow.com/questions/59419665/pdf-to-eps-or-ps-to-eps-conversion-maintaining-page-size
+https://stackoverflow.com/questions/57041042/batch-converting-eps-pdf-to-postscript
+https://ghostscript.com/docs/9.54.0/Use.htm
+https://ghostscript.com/docs/9.54.0/VectorDevices.htm
+https://ghostscript.com/docs/9.54.0/VectorDevices.htm#PS
+https://web.mit.edu/ghostscript/www/Use.htm
+
+gs -sDEVICE=ps2write -o out.ps input.pdf
+gs -o output.eps -sDEVICE=eps2write -dFitPage input.pdf
+
+
+PostScript file output - ps2write
+Encapsulated PostScript (EPS) file output - ?
+Creating a PDF/X-3 document  - Specify the pdfwrite device or use the ps2pdf script.
+
+Creating a PDF/A document
+gs -dPDFA=1 -dBATCH -dNOPAUSE -sColorConversionStrategy=RGB -sDEVICE=pdfwrite -sOutputFile=out-a.pdf PDFA_def.ps input.ps
+
+######################################################################
+Reverse colors in a PDF
+######################################################################
+
+https://stackoverflow.com/questions/30284327/reverse-white-and-black-colors-in-a-pdf/30287097#30287097
+https://superuser.com/questions/200378/converting-a-pdf-to-black-white-with-ghostscript/249038#249038
+https://stackoverflow.com/questions/62419312/overriding-postscript-setcmykcolor
+https://tex.stackexchange.com/questions/17757/is-it-possible-to-use-spot-colors-in-tikz-graphics
+https://stackoverflow.com/questions/56486986/black-color-showing-on-cmy-channels-when-converted-to-cmyk-using-ghostscript
+https://stackoverflow.com/questions/24935837/how-to-create-cmyk-color-seperation-combinations-using-ghostscript
+https://stackoverflow.com/questions/30870218/ghostscript-wrong-cmyk-color-conversion-100-yellow-convert-to-98-yellow
+https://superuser.com/questions/435410/where-are-ghostscript-options-switches-documented
+https://ghostscript.readthedocs.io/en/latest/GhostscriptColorManagement.html
+https://stackoverflow.com/questions/12299574/ghostscript-color-detection
+https://stackoverflow.com/questions/5760438/ghostscript-how-to-decide-the-output-resolution-of-converting-a-multi-page-pdf
+https://stackoverflow.com/questions/62914749/ghostscript-convert-cmyk-pdf-to-rgb-png-and-preserving-correct-colors
+https://stackoverflow.com/questions/20128656/how-to-convert-a-pdf-to-grayscale-from-command-line-avoiding-to-be-rasterized
+https://ghostscript.readthedocs.io/en/latest/UnsupportedDevices.html#coloradjustmatrix
+https://ghostscript.com/docs/9.56.1/Use.htm
+http://astro.uni-tuebingen.de/software/ghostscript/Devices.htm
+http://astro.uni-tuebingen.de/software/ghostscript/Language.htm
+https://superuser.com/questions/1732507/why-does-ghostscript-output-some-pages-of-some-pdf-file-with-colors-of-text-or
+https://hint.userweb.mwn.de/compiler/ps.html
+https://unix.stackexchange.com/questions/327697/convert-pdf-font-colors-to-monochrome-black
+
+---------------
+
+
+gs -o <output-file.pdf> -sDEVICE=pdfwrite \
+-c "/osetcolor {/setcolor} bind def /setcolor {pop [0 0 0] osetcolor} def" \
+-f <input-file.ps>
+
+
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=original_version -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dSAFER \
+ -dBATCH -sColorConversionStrategy=LeaveColorUnchanged -sOutputFile=file_out file_in
+
+---------------
+
+gs -sDEVICE=psmono -o out.ps -f in.pdf
+
+---------------
+
+gs -o inverted.pdf    \
+   -sDEVICE=pdfwrite  \
+   -c "{1 exch sub}{1 exch sub}{1 exch sub}{1 exch sub} setcolortransfer" \
+   -f input.pdf
+
+gs \
+-o bw-from-color.pdf \
+-sDEVICE=pdfwrite \
+-c "/setrgbcolor{0 mul 3 1 roll 0 mul 3 1 roll 0 mul 3 1 roll 0 mul add add setgray}def" \
+-f color.ps
+
+
+gs -o gray.ps -sDEVICE=ps2write -sColorConversionStrategy=Gray -dProcessColorModel=/DeviceGray -dCompatibilityLevel=1.4 -f colored.pdf
+gs -o thresholded.pdf -sDEVICE=pdfwrite -c "/osetgray {setgray} bind def /setgray {0.5 lt {0} {1} ifelse osetgray} def" -f gray.ps
+
+---------------
+
+GS> /osetcmykcolor /setcmykcolor load def
+GS> /setcmykcolor {pop pop pop pop 0 1 1 0 osetcmykcolor} bind def
+GS> (color.eps) run
+
+---------------
+
+Example of making the DeviceLink RGB to CMYK profile
+collink -v -f eciRGB_v2.icc eciCMYK_v2.icc eciRGB_v2_to_eciCMYK_v2.icc
+
+Example of a control file to map eciRGB_v2 to eciCMYK_v2 (control-eciRGB_v2.txt)
+Image_RGB   eciRGB_v2_to_eciCMYK_v2.icc 0   1   0
+Graphic_RGB eciRGB_v2_to_eciCMYK_v2.icc 0   1   0
+Text_RGB    eciRGB_v2_to_eciCMYK_v2.icc 0   1   0
+(note must be separated by tabs, not spaces)
+
+Sample ghostscript command to do the actual conversion
+gs -o 2-output-cmyk-from-eciRGB.pdf \
+       -sDEVICE=pdfwrite \
+       -sColorConversionStrategy=CMYK \
+       -sSourceObjectICC=control-eciRGB_v2.txt \
+       1-input-rgb.pdf
+
+---------------
+
+gs -dNOPAUSE -dBATCH -dSAFER
+-sDEVICE=tiff32nc
+-sDeviceNProfile
+-dKPreserve=2
+-dRenderIntent=1
+-dCOLORSCREEN=false
+-dNOINTERPOLATE
+-dUseCIEColor
+-dNOTRANSPARENCY
+-dGraphicsAlphaBits=4
+-dTextAlphaBits=4
+-dFirstPage=1
+-dLastPage=1
+-r600
+-sOutputICCProfile=USwebCoatedSOWPv2.icc
+-sOutputFile=CMYK.tif
+CMYK.pdf
+
+---------------
+
+gs -dNOPAUSE -dBATCH -dSAFER
+-sDEVICE=tiffsep
+-dKPreserve=2
+-sOutputFile=CMYK.tif
+-r300
+-dGraphicsAlphaBits=4
+-dTextAlphaBits=4
+-dFirstPage=1
+-dLastPage=1
+CMYK.pdf
+
+---------------
+
+gs                                                                     \
+  -o color-or-grayscale-test.pdf                                       \
+  -sDEVICE=pdfwrite                                                    \
+  -g5950x2105                                                          \
+  -c "/F1 {10 80 moveto /Helvetica findfont 64 scalefont setfont} def" \
+  -c "F1                         (100% 'pure' black)    show showpage" \
+  -c "F1 .5 .5 .5   setrgbcolor  ( 50% 'rich' rgbgray)  show showpage" \
+  -c "F1 .5 .5 .5 0 setcmykcolor ( 50% 'rich' cmykgray) show showpage" \
+  -c "F1 .5         setgray      ( 50% 'pure' gray)     show showpage"
+
+
+
+gs  -o - -sDEVICE=inkcov color-or-grayscale-test.pdf
+
+gs                                \
+  -o only-black-ink.pdf           \
+  -sDEVICE=pdfwrite               \
+  -dColorConversionStrategy=/Gray \
+  -dProcessColorModel=/DeviceGray \
+   color-or-grayscale-test.pdf
+
+gs -q  -o - -sDEVICE=inkcov only-black-ink.pdf | grep -v Page
+
+
+
+gs \
+ -o a_page%02d.tif \
+ -sDEVICE=tiffg4 \
+ -r600x600 \
+ -g4960x7020 \
+ -sCompression=none \
+  a.pdf
+
+---------------
+
+gs \
+   -sDEVICE=pdfwrite \
+   -sProcessColorModel=DeviceGray \
+   -sColorConversionStrategy=Gray \
+   -dOverrideICC \
+   -o out.pdf \
+   -f page-27.pdf
+
+
+gs -dQUIET -dBATCH -dNOPAUSE -r150 -sDEVICE=pdfwrite \
+    -sProcessColorModel=DeviceGray -sColorConversionStrategy=Gray -dOverrideICC -sOutputFile=output.pdf input.pdf
+
+---------------
+https://ghostscript.readthedocs.io/en/latest/Use.html
+https://ghostscript.readthedocs.io/en/latest/UnsupportedDevices.html#coloradjustmatrix
+
+gs -sDEVICE=stcolor -sDithering=fscmyk -dBitsPerPixel=16 \
+     -dKcoding='{ 0.0 0.09 0.9 1.0 }' \
+     -dMcoding='{ 0.0 0.09 0.9 1.0 }' \
+   -dKtransfer='{ 0.0 0.09 0.9 1.0 }' \
+   -dYtransfer='{ 0.0 0.09 0.9 1.0 }'
+
+-----------------------------------------

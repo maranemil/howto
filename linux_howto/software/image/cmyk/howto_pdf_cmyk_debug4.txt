@@ -1,66 +1,3 @@
-######################################################
-test.sh
-######################################################
-# diff --color export/input.txt export/output.txt
-cd export || exit
-rm *.txt
-rm log.log
-
-convert rgb.jpg rgb.pdf
-
-gs -o gray.pdf -sDEVICE=pdfwrite  -dPDFSETTINGS=/prepress -r72 \
- -dProcessColorModel=/DeviceGray -sProcessColorModel=DeviceGray \
- -sColorConversionStrategy=Gray  -sColorConversionStrategyForImages=Gray \
-  -f rgb.pdf
-
-#convert -density 1200 -channel CMYK -threshold 75% -strip gray.pdf bw.pdf
-convert -threshold 50% -strip -channel cmyk -flatten -alpha Activate gray.pdf bw.pdf
-
-gs -o cmyk.pdf -sDEVICE=pdfwrite -r72 \
- -dProcessColorModel=/DeviceCMYK -sProcessColorModel=DeviceCMYK \
- -sColorConversionStrategy=CMYK -sColorConversionStrategyForImages=CMYK \
- -f bw.pdf
-
-for i in *.pdf; do identify -verbose "$i" > "$i".txt; done
-#identify -verbose export/output3.pdf | grep -i 'color' >> log.txt
-#echo '--------------------------------' >> log.txt
-for s in *.pdf; do identify -verbose "$s" | grep -i 'color'  >> log.log && echo "$s" >> log.log; done
-
-
-
-
-######################################################
-test.sh
-######################################################
-cd export || exit
-# gs -q  -o - -sDEVICE=inkcov gray.pdf
-# 0.00000  0.00000  0.00000  0.99801 CMYK OK
-# gs -q  -o - -sDEVICE=inkcov bw.pdf
-# 0.00000  0.00000  0.00000  0.42295 CMYK OK
-# gs -o - -sDEVICE=inkcov cmyk.pdf
-# 0.00000  0.00000  0.00000  0.42295 CMYK OK
-
-##convert cmyk.pdf -threshold 85% -strip -channel cmyk -monochrome  -flatten cmyk2.pdf
-#convert cmyk.pdf  -strip -channel cmyk -monochrome -colorspace CMYK -flatten cmyk2.pdf # OK CMYK
-#gs -o - -sDEVICE=inkcov cmyk2.pdf
-#0.00000  0.00000  0.00000  1.00000 CMYK OK - 0,0,0,100 - C0, M0, Y0, K100
-#0.00000  0.00000  0.00000  0.42266 CMYK OK - Colorspace: CMYK
-#identify -verbose cmyk2.pdf | grep -i colorspace
-#identify -verbose cmyk2.pdf | grep -i Colors:
-# identify -verbose cmyk2.pdf > cmyk2.txt
-# -profile /usr/share/color/icc/colord/Crayons.icc
-convert cmyk2.pdf -strip  -colorspace CMYK cmyk3.pdf
-identify -verbose cmyk3.pdf | grep -i colorspace
-identify -verbose cmyk3.pdf | grep -i Colors:
-identify -verbose cmyk3.pdf > cmyk3.txt
-
-
-
-
-
-
-C0, M0, Y0, K100
-C100, M46, Y0, K78
 
 ######################################################
 ######################################################
@@ -132,13 +69,8 @@ https://www.i2pdf.com/invert-pdf-colors
 https://www.sejda.com/grayscale-pdf
 https://www.i2pdf.com/pdf-to-cmyk
 
-
-
 identify -colorspace srgb t.pdf
 identify -colorspace CMYK t.pdf
-
-
-
 
 ######################################################
 ghostscript
@@ -249,7 +181,9 @@ identify -verbose ./output.tif
 ---------
 
 
-Newer versions of Ghostscript (version 9.05 and later) include a "device" called inkcov. It calculates the ink coverage of each page (not for each image) in Cyan (C), Magenta (M), Yellow (Y) and Black (K) values, where 0.00000 means 0%, and 1.00000 means 100%.
+Newer versions of Ghostscript (version 9.05 and later) include a "device" called inkcov.
+It calculates the ink coverage of each page (not for each image) in Cyan (C), Magenta (M),
+Yellow (Y) and Black (K) values, where 0.00000 means 0%, and 1.00000 means 100%.
 
 gs -o - -sDEVICE=inkcov /path/to/your.pdf
 
@@ -501,40 +435,9 @@ gmic-qt-krita ?
 gmic-qt ?
 
 Linux : $HOME/.config/gmic/update2XX.gmic
-
-
 --------------------------------------------------------------------------------------------------
 https://cdn.shopify.com/s/files/1/0969/9128/products/MoneyHeist-NetflixTVShowPosterFanArt_f3ca06f4-0ea3-4795-818a-b680979e8073.jpg?v=1589268519
 --------------------------------------------------------------------------------------------------
   convert -threshold 50% -strip -channel cmyk MoneyHeist.png MoneyHeist.pdf
 --------------------------------------------------------------------------------------------------
-
-# diff --color export/input.txt export/output.txt
-cd export || exit
-rm *.txt
-rm log.log
-
-#convert rgb.jpg rgb.pdf
-
-gs -o gray.pdf -sDEVICE=pdfwrite  -dPDFSETTINGS=/prepress -r72 \
- -dProcessColorModel=/DeviceGray -sProcessColorModel=DeviceGray \
- -sColorConversionStrategy=Gray  -sColorConversionStrategyForImages=Gray \
-  -f rgb.pdf
-
-#convert -density 1200 -channel CMYK -threshold 75% -strip gray.pdf bw.pdf
-convert -threshold 50% -strip -channel cmyk -flatten -alpha Activate gray.pdf bw.pdf
-
-gs -o cmyk.pdf -sDEVICE=pdfwrite -r72 \
- -dProcessColorModel=/DeviceCMYK -sProcessColorModel=DeviceCMYK \
- -sColorConversionStrategy=CMYK -sColorConversionStrategyForImages=CMYK \
- -f bw.pdf
-
-  # \
-  #
-  #
-  # shellcheck disable=SC2215
-
-for i in *.pdf; do identify -verbose "$i" > "$i".txt; done
-#identify -verbose export/output3.pdf | grep -i 'color' >> log.txt
-#echo '--------------------------------' >> log.txt
-for s in *.pdf; do identify -verbose "$s" | grep -i 'color'  >> log.log && echo "$s" >> log.log; done
+$s" | grep -i 'color'  >> log.log && echo "$s" >> log.log; done
