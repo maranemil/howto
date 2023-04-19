@@ -92,12 +92,13 @@
 
 ### video
 
-| url                                    | type            |
-|:---------------------------------------|:----------------|
-| https://invideo.io/                    | Video editor    | 
-| https://www.gliacloud.com/en/          | Video generator |
-| https://www.veed.io/                   | Video editor    | 
-| https://www.capcut.com/                | video editor    | 
+| url                                | type                  |
+|:-----------------------------------|:----------------------|
+| https://invideo.io/                | Video editor          | 
+| https://www.gliacloud.com/en/      | Video generator       |
+| https://www.veed.io/               | Video editor          | 
+| https://www.capcut.com/            | video editor          | 
+| https://research.runwayml.com/gen2 | video gen2  generator | 
 
 ### music
 
