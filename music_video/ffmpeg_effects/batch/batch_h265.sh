@@ -14,3 +14,4 @@ mkdir conv && for f in *.mkv; do ffmpeg -i $f -c:a copy -threads 1 conv/$f.mp4; 
 
 mkdir exp && for f in *.*; do ffmpeg -i $f -c:v libx265 -c:a copy -x265-params pools=2,2:tune=fastdecode:preset=superfast -y exp/$f.mp4; done
 mkdir exp && for f in *.*; do ffmpeg -y -i $f -c:v libx264 -c:a copy -tune fastdecode -preset superfast -threads 2 exp/$f.mp4; done
+mkdir exp && for f in *.*; do ffmpeg -y -i $f -c:v libx264 -c:a copy -tune film -preset superfast -threads 2 exp/$f.mp4; done
