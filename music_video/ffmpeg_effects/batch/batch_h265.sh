@@ -8,6 +8,8 @@ mkdir conv && for f in *.mkv; do ffmpeg -i $f -c:a copy -threads 1 conv/$f.mp4; 
 
 # https://superuser.com/questions/564402/explanation-of-x264-tune
 # https://trac.ffmpeg.org/wiki/Encode/H.264
+# https://blogs.motokado.com/yoshi/2011/06/25/comparison-of-x264-presets/
+# https://superuser.com/questions/1556953/why-does-preset-veryfast-in-ffmpeg-generate-the-most-compressed-file-compared
 
 mkdir exp && for f in *.*; do ffmpeg -i $f -c:v libx265 -c:a copy -x265-params pools=2,2:tune=fastdecode:preset=superfast -y exp/$f.mp4; done
 mkdir exp && for f in *.*; do ffmpeg -y -i $f -c:v libx264 -c:a copy -tune fastdecode -preset superfast -threads 2 exp/$f.mp4; done

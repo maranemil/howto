@@ -470,6 +470,48 @@ DEEPBRAIN
 Colossyan Studio
 
 
+
+
+[gan]
+https://www.youtube.com/watch?v=w_sxuDMt_V0
+https://huggingface.co/CompVis/stable-diffusion-v-1-4-original
+https://colab.research.google.com/github/deforum/stable-diffusion/blob/main/Deforum_Stable_Diffusion.ipynb
+https://www.youtube.com/watch?v=trXPfpV5iRQ
+https://www.tensorflow.org/tutorials/generative/style_transfer
+https://www.tensorflow.org/hub/tutorials/tf2_arbitrary_image_stylization
+
+
+https://github.com/aravind-sundaresan/neural-style-transfer
+https://github.com/aravind-sundaresan/keras-image-classification
+https://github.com/aravind-sundaresan/huggingface-examples
+https://github.com/aravind-sundaresan/FaceDetect
+
+[GFPGAN ]
+https://colab.research.google.com/drive/1sVsoBd9AjckIXThgtZhGrHRfFI6UUYOo
+https://github.com/TencentARC/GFPGAN
+https://huggingface.co/spaces/akhaliq/GFPGAN
+https://hotpot.ai/enhance-face
+https://vanceai.com/portrait-retoucher/
+
+
+[img]
+https://segment-anything.com/
+https://www.blockadelabs.com/
+https://www.canva.com/de_de/
+https://www.autodraw.com/
+https://looka.com/
+[sound]
+https://soundraw.io/
+https://mubert.com/render/genres/edm/edm
+https://wavtool.com/
+[vid]
+https://www.move.ai/
+https://www.kaiber.ai/
+https://convert.leiapix.com/
+https://www.myheritage.de/deep-nostalgia
+
+
+
 ~~~
 
 
