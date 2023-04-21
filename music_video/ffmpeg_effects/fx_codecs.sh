@@ -12,7 +12,6 @@
 # https://x265.readthedocs.io/en/latest/cli.html#cmdoption-pools
 # https://x265.readthedocs.io/en/stable/threading.html
 
-
 ffmpeg -codecs
 ffmpeg -formats
 ffmpeg -codecs | grep h264
