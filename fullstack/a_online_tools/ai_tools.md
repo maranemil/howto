@@ -62,6 +62,12 @@
 | https://zyro.com/de/tools/image-resizer             | Image Resizer                        | 
 | https://zyro.com/de/tools/image-resizer             | Image resizer                        | 
 | https://zyro.com/de/tools/image-upscaler            | Image upscaler                       | 
+| https://segment-anything.com/                       |                                      |
+| https://www.blockadelabs.com/                       |                                      |
+| https://www.canva.com/de_de/                        |                                      |
+| https://www.autodraw.com/                           |                                      |
+| https://looka.com/                                  |                                      |
+
 
 
 ### voice
@@ -92,13 +98,18 @@
 
 ### video
 
-| url                                | type                  |
-|:-----------------------------------|:----------------------|
-| https://invideo.io/                | Video editor          | 
-| https://www.gliacloud.com/en/      | Video generator       |
-| https://www.veed.io/               | Video editor          | 
-| https://www.capcut.com/            | video editor          | 
-| https://research.runwayml.com/gen2 | video gen2  generator | 
+| url                                      | type                  |
+|:-----------------------------------------|:----------------------|
+| https://invideo.io/                      | Video editor          | 
+| https://www.gliacloud.com/en/            | Video generator       |
+| https://www.veed.io/                     | Video editor          | 
+| https://www.capcut.com/                  | video editor          | 
+| https://research.runwayml.com/gen2       | video gen2  generator | 
+| https://www.move.ai/                     |                       | 
+| https://www.kaiber.ai/                   |                       | 
+| https://convert.leiapix.com/             |                       | 
+| https://www.myheritage.de/deep-nostalgia |                       | 
+
 
 ### music
 
@@ -118,6 +129,11 @@
 | https://www.landr.com/de/                  | landr                       | 
 | https://openai.com/research/jukebox        | jukebox                     | 
 | https://mubert.com/render                  | mubert text to music        | 
+| https://soundraw.io/                       |                             |
+| https://mubert.com/render/genres/edm/edm   |                             |
+| https://wavtool.com/                       |                             |
+
+
 
  ~~~
  https://huggingface.co/prompthero/openjourney
@@ -469,9 +485,6 @@ D-ID
 DEEPBRAIN 
 Colossyan Studio
 
-
-
-
 [gan]
 https://www.youtube.com/watch?v=w_sxuDMt_V0
 https://huggingface.co/CompVis/stable-diffusion-v-1-4-original
@@ -479,7 +492,6 @@ https://colab.research.google.com/github/deforum/stable-diffusion/blob/main/Defo
 https://www.youtube.com/watch?v=trXPfpV5iRQ
 https://www.tensorflow.org/tutorials/generative/style_transfer
 https://www.tensorflow.org/hub/tutorials/tf2_arbitrary_image_stylization
-
 
 https://github.com/aravind-sundaresan/neural-style-transfer
 https://github.com/aravind-sundaresan/keras-image-classification
@@ -493,25 +505,20 @@ https://huggingface.co/spaces/akhaliq/GFPGAN
 https://hotpot.ai/enhance-face
 https://vanceai.com/portrait-retoucher/
 
+[GFPGAN]
+https://this-person-does-not-exist.com/en
+https://boredhumans.com/faces.php
+https://github.com/streamlit/demo-face-gan
+https://huggingface.co/spaces/akhaliq/GFPGAN
+https://huggingface.co/sayakpaul/whitebox-cartoonizer
+https://huggingface.co/sayakpaul/whitebox-cartoonizer/blob/main/export-saved-model.ipynb
+https://github.com/SystemErrorWang/White-box-Cartoonization
+https://github.com/TencentARC/GFPGAN
 
-[img]
-https://segment-anything.com/
-https://www.blockadelabs.com/
-https://www.canva.com/de_de/
-https://www.autodraw.com/
-https://looka.com/
-[sound]
-https://soundraw.io/
-https://mubert.com/render/genres/edm/edm
-https://wavtool.com/
-[vid]
-https://www.move.ai/
-https://www.kaiber.ai/
-https://convert.leiapix.com/
-https://www.myheritage.de/deep-nostalgia
-
-
-
+[smooth]
+https://photokit.com/tools/smooth/
+https://www8.lunapic.com/editor/
+https://www.imgonline.com.ua/eng/retouch-photo.php
 ~~~
 
 
