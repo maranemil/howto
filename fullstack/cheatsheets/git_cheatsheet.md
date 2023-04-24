@@ -100,3 +100,22 @@ git checkout mybranch --
 git fetch origin --recurse-submodules=no --progress --prune
 git merge origin/mybranch --no-stat -v
 ```
+
+~~~
+#################################################
+list all the files in a commit
+#################################################
+
+https://stackoverflow.com/questions/424071/how-do-i-list-all-the-files-in-a-commit
+https://git-scm.com/docs/git-show
+https://stackoverflow.com/questions/1230084/how-to-have-git-log-show-filenames-like-svn-log-v
+
+git log --name-only
+git log --name-only --oneline
+git log --name-status
+git log --stat
+git log --stat --pretty=short --graph
+
+git show --stat --oneline HEAD
+git show --name-only --oneline HEAD
+~~~
