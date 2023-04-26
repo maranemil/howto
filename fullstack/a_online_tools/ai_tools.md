@@ -98,17 +98,18 @@
 
 ### video
 
-| url                                      | type                  |
-|:-----------------------------------------|:----------------------|
-| https://invideo.io/                      | Video editor          | 
-| https://www.gliacloud.com/en/            | Video generator       |
-| https://www.veed.io/                     | Video editor          | 
-| https://www.capcut.com/                  | video editor          | 
-| https://research.runwayml.com/gen2       | video gen2  generator | 
-| https://www.move.ai/                     |                       | 
-| https://www.kaiber.ai/                   |                       | 
-| https://convert.leiapix.com/             |                       | 
-| https://www.myheritage.de/deep-nostalgia |                       | 
+| url                                                    | type                  |
+|:-------------------------------------------------------|:----------------------|
+| https://invideo.io/                                    | Video editor          | 
+| https://www.gliacloud.com/en/                          | Video generator       |
+| https://www.veed.io/                                   | Video editor          | 
+| https://www.capcut.com/                                | video editor          | 
+| https://research.runwayml.com/gen2                     | video gen2  generator | 
+| https://www.move.ai/                                   |                       | 
+| https://www.kaiber.ai/                                 |                       | 
+| https://convert.leiapix.com/                           |                       | 
+| https://www.myheritage.de/deep-nostalgia               |                       | 
+| https://github.com/Picsart-AI-Research/Text2Video-Zero | text to video         | 
 
 
 ### music
