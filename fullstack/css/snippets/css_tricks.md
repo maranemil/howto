@@ -892,3 +892,67 @@ https://www.html-seminar.de/css3-keyframes-animationen.htm
 }
 
 ~~~
+
+
+~~~
+################################################################
+CSS random colors
+################################################################
+
+
+https://codepen.io/beben-koben/pen/eYPNew
+
+<div class="center"></div>
+
+body {
+     background-color: #fff;
+     -webkit-animation: random 5s infinite;
+     animation: random 5s infinite;
+}
+@keyframes  random {
+    15% { background-color: red; } 
+    30% { background-color: yellow; } 
+    45% { background-color: green; } 
+    60% { background-color: blue; }
+    75% { background-color: white; }  
+}
+
+/*
+@keyframes mymove{
+    form{background-color: #38dc58; }
+    to{background-color: #9b40f1;}
+}
+YOU CAN USE LIKE IT TOO :d
+*/
+
+div
+{
+  background:#debe94;
+  width:100px;
+  height:100px;
+  transition: all 0.3s ease-out;
+}
+.center
+{ 
+  margin:auto;
+  position:absolute;
+  top:0; bottom:0; left:0; right:0;
+}
+
+
+https://css-tricks.com/random-numbers-css/
+
+@keyframes flicker {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+#red {
+  animation: flicker 2s ease alternate infinite;
+}
+
+~~~
