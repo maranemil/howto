@@ -25,3 +25,22 @@ for i in {1..9}; do rubberband -c $(shuf -i0-3 -n1)  -t $(shuf -i0-2 -n1)  -T $(
 for i in mono_*.wav; do ffmpeg -i "$i" -t 1 -y stereo_"$i"; done
 
 rm list.txt && (for i in stereo*.wav; do echo file $i >> list.txt; done) && ffmpeg -safe 0 -f concat -i list.txt -c copy output_$(date +%s).wav
+
+
+
+
+
+# https://breakfastquay.com/rubberband/usage.txt
+# https://superuser.com/questions/1684356/how-do-i-install-rubberband
+# https://github.com/breakfastquay/rubberband
+# https://byteshiva.medium.com/how-to-use-rubberband-with-ffmpeg-to-modulate-audio-611282de0564
+# http://underpop.online.fr/f/ffmpeg/help/rubberband.htm.gz
+# https://breakfastquay.com/rubberband/
+# https://github.com/breakfastquay/rubberband/
+#
+# rubberband -t <timeratio> -p <semitones> <infile.wav> <outfile.wav>
+# rubberband -t 1.5 -p 2.0 test.wav output.wav
+#
+# sudo apt-get update
+# sudo apt-get install rubberband libmp3lame-dev
+# ffmpeg -i input.wav -af rubberband=pitch=-2400 -acodec libmp3lame -q:a 2 output.mp3
