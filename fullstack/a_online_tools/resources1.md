@@ -198,6 +198,16 @@
 #### Matched person profile + Finance & Credit Card information
 
 - https://www.fakexy.com/de-fake-address-generator-bw
+
+------------------------------------------------------------------
+### GIF
+
+- https://ezgif.com/webp-to-gif  # WebP to animated GIF converter
+- https://ezgif.com/optimize # optimize
+- https://redketchup.io/gif-resizer # resize
+- http://gifgifs.com/optimizer/ # optimize
+- https://onlinegiftools.com/sharpen-gif # sharpen
+
 ------------------------------------------------------------------
 ### Git
 

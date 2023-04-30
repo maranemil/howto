@@ -19,3 +19,9 @@ ffmpeg -i output.mp4 -vf eq=saturation=1.5 -y output2.mp4
 # ffmpeg -f concat -i inputs.txt -c copy output.mp4
 # ffmpeg -i output.mp4 -i vst2.wav -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 output2.mp4
 # ffmpeg -i output2.mp4 -t 45 output3.mp4
+
+# youtube shorts
+
+ffmpeg -i in.mp4 -vf scale=1920x1080 out.mp4
+ffmpeg -i in.mp4 -vf transpose=1,crop=570:890:360:60,scale=1080x1920,eq=contrast=1.6:saturation=1.5 -c:a copy -y out.mp4
+
