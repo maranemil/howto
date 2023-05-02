@@ -441,6 +441,9 @@
 | https://www.youtube.com/watch?v=VavWEtI5T7c&list=PLD9SRxG6ST3GBsczn8OUKLaErhrvOz9zQ&index=1 | Node MySQL Login                                           |
 | https://www.youtube.com/watch?v=IxcKMcsBGE8&list=PLlameCF3cMEsjpIRxfB9Rjici3aMCaQVo&index=1 | VueJS & NodeJS JWT Authentication                          |
 | https://www.youtube.com/watch?v=QohQieveWkk&list=PLGz_X9w9raXf748bzuGOV6XJv7q3wLxhZ         | NGINX Official Tutorials                                   |
+| https://www.youtube.com/watch?v=N-kIf3gvtRg&list=PLdsu0umqbb8PPKI5KQtWMeGv08d_aRmcp         | Jenkins Crash Course                                       |
+| https://www.youtube.com/watch?v=mqOMeVwWqwk&list=PLQH1-k79HB39Kzr43Xyja4tlRHMCqWsuy         | API Platform Crash Course                                  |
+| https://www.youtube.com/watch?v=8f011wdiW7g&list=PLqazFFzUAPc5lOQwDoZ4Dw2YSXtO7lWNv         | Inkscape Crash Course                                      |
 
 
 
