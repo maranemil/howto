@@ -440,6 +440,7 @@
 | https://www.youtube.com/watch?v=kzKFuHk8ovk&list=PLIivdWyY5sqKh1gDR0WpP9iIOY00IE0xL&index=1 | Google Cloud Essentials                                    |
 | https://www.youtube.com/watch?v=VavWEtI5T7c&list=PLD9SRxG6ST3GBsczn8OUKLaErhrvOz9zQ&index=1 | Node MySQL Login                                           |
 | https://www.youtube.com/watch?v=IxcKMcsBGE8&list=PLlameCF3cMEsjpIRxfB9Rjici3aMCaQVo&index=1 | VueJS & NodeJS JWT Authentication                          |
+| https://www.youtube.com/watch?v=QohQieveWkk&list=PLGz_X9w9raXf748bzuGOV6XJv7q3wLxhZ         | NGINX Official Tutorials                                   |
 
 
 
