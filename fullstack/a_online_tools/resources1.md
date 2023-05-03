@@ -642,6 +642,12 @@ https://hemingwayapp.com/
 ### Send encoded msg
 
 - https://www.read2burn.com/
+- 
+------------------------------------------------------------------
+### Speed test
+
+- https://www.telekom.de/netz/speedtest
+- https://speedtest.vodafone.de/
 
 ------------------------------------------------------------------
 
