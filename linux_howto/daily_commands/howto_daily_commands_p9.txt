@@ -901,3 +901,151 @@ cp file1 file2 file3 /dir1/
 xargs -n 1 cp -v filename<<<"/dir1/ /dir2/ /dir3/"
 ## OR ##
 echo "/dir1/ /dir2/ /dir3/" | xargs -n 1 cp -v filename
+
+##################################################################
+quickest way to find duplicated files
+##################################################################
+
+https://unix.stackexchange.com/questions/277697/whats-the-quickest-way-to-find-duplicated-files
+https://ostechnix.com/how-to-find-and-delete-duplicate-files-in-linux/
+https://itsfoss.com/find-duplicate-files-linux/
+https://recoverit.wondershare.com/file-recovery/linux-find-duplicate-files.html
+https://www.makeuseof.com/best-tools-find-and-remove-duplicate-files-linux/
+https://www.tecmint.com/find-and-delete-duplicate-files-in-linux/
+
+find . ! -empty -type f -exec md5sum {} + | sort | uniq -w32 -dD
+
+or
+
+sudo apt-get install rdfind
+rdfind -deleteduplicates true ~/Downloads
+
+rdfind ~/Downloads
+cat results.txt
+
+rdfind -dryrun true ~/Downloads
+rdfind -makehardlinks true ~/Downloads
+rdfind -makesymlinks true ~/Downloads
+rdfind -ignoreempty true ~/Downloads
+
+rdfind -deleteduplicates true -ignoreempty false ~/Downloads
+
+or
+
+sudo apt install fdupes
+fdupes /path/to/folder
+fdupes -r /home
+fdupes -d /path/to/folder # Delete Duplicate Files
+
+
+##################################################################
+quickest way to find duplicated lines
+##################################################################
+
+https://www.cyberciti.biz/faq/unix-linux-shell-removing-duplicate-lines/
+https://think.unblog.ch/en/find-and-count-duplicate-lines-in-files/
+https://www.faqforge.com/linux/basics/how-to-find-duplicate-text-in-files-with-the-uniq-command-on-linux/
+https://www.tutorialspoint.com/count-duplicate-lines-in-a-text-file-on-linux
+https://www.networkworld.com/article/3656413/2-ways-to-remove-duplicate-lines-from-linux-files.html
+https://www.baeldung.com/linux/count-duplicated-lines-text
+https://www.linuxshelltips.com/find-duplicate-lines-file-linux/
+https://unix.stackexchange.com/questions/52534/how-to-print-only-the-duplicate-values-from-a-text-file
+https://stackoverflow.com/questions/6712437/find-duplicate-lines-in-a-file-and-count-how-many-time-each-line-was-duplicated
+
+uniq -d file.txt
+sort file.txt | uniq -d
+cat fileName | sort | uniq -d
+cat File1  | uniq -c | awk '$1 > 1 { print $2 }'
+
+sort garbage.txt | uniq -u
+sort +2 users.txt
+sort -r users.txt
+sort -u users.txt
+
+uniq telphone.txt output.txt
+sort input_file | uniq > output_file
+sort input_file | uniq -u | tee output_file
+
+man sort
+man uniq
+
+sort FILE | uniq --count
+sort FILE | uniq --count --repeated
+
+sudo nano sample_file.txt
+sort sample_file.txt | uniq -c
+awk '{ a[$0]++ } END{ for(x in a) print a[x], x }' sample_file.txt
+
+
+
+###############################################################
+How to set up automatic updates for Ubuntu Linux
+###############################################################
+
+https://help.ubuntu.com/community/AutomaticSecurityUpdates
+https://askubuntu.com/questions/9/how-do-i-enable-automatic-updates
+https://libre-software.net/linux-server/ubuntu-automatic-updates/
+https://www.cyberciti.biz/faq/how-to-set-up-automatic-updates-for-ubuntu-linux-18-04/
+https://linuxopsys.com/topics/ubuntu-automatic-updates
+https://www.cyberciti.biz/faq/set-up-automatic-unattended-updates-for-ubuntu-20-04/
+https://haydenjames.io/how-to-enable-unattended-upgrades-on-ubuntu-debian/
+https://phoenixnap.com/kb/automatic-security-updates-ubuntu
+https://www.digitalocean.com/community/tutorials/how-to-keep-ubuntu-20-04-servers-updated
+https://www.linuxbabe.com/ubuntu/automatic-security-update-unattended-upgrades-ubuntu
+https://linuxhint.com/configure-updates-automatically-linux-mint/
+https://linuxhint.com/update-ubuntu-automatically/
+--------------
+Ubuntu 18.04
+sudo apt update && sudo apt upgrade
+sudo apt install unattended-upgrades apt-listchanges bsd-mailx
+sudo dpkg-reconfigure -plow unattended-upgrades
+sudo vi /etc/apt/apt.conf.d/50unattended-upgrades
+sudo unattended-upgrades --dry-run
+
+--------------
+Ubuntu 22.04
+
+sudo apt install unattended-upgrades
+
+sudo nano /etc/apt/apt.conf.d/50unattended-upgrades
+Unattended-Upgrade::Remove-New-Unused-Dependencies "true";
+Unattended-Upgrade::Remove-Unused-Dependencies "true";
+Unattended-Upgrade::Automatic-Reboot "true";
+Unattended-Upgrade::Automatic-Reboot-Time "02:38";
+Unattended-Upgrade::Mail "user@example.com";
+Unattended-Upgrade::MailReport "only-on-error";
+
+sudo nano /etc/apt/apt.conf.d/20auto-upgrades
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+APT::Periodic::Download-Upgradeable-Packages "1";
+APT::Periodic::AutocleanInterval "7";
+
+sudo unattended-upgrades --dry-run --debug
+
+
+--------------
+Ubuntu 22.04
+sudo apt install unattended-upgrades
+sudo systemctl status unattended-upgrades
+sudo apt install update-notifier-common
+sudo vim /etc/apt/apt.conf.d/50unattended-upgrades
+sudo vim /etc/apt/apt.conf.d/20auto-upgrades
+
+
+--------------
+Ubuntu 20.04
+https://help.ubuntu.com/community/AutomaticSecurityUpdates
+
+sudo apt-get install unattended-upgrades
+sudo dpkg-reconfigure unattended-upgrades
+sudo dpkg-reconfigure --priority=low unattended-upgrades
+
+create /etc/apt/apt.conf.d/20auto-upgrades with the following contents:
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+
+
+# sudo dpkg-reconfigure -plow unattended-upgrades
+# sudo apt install apt-listchanges
+
