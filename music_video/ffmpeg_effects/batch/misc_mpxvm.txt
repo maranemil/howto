@@ -1,0 +1,72 @@
+
+# make vm swappiness tiny
+sudo sysctl -w vm.swappiness=10
+
+# install extras
+sudo apt-get install ubuntu-restricted-extras # h264 video codec
+
+# remove empty spaces in files names
+sudo apt install rename
+rename 's/ /_/g' *
+
+# encoce libx265 fast
+mkdir exp && for f in *.*; do ffmpeg -i $f -c:v libx265 -c:a copy -x265-params pools=2,2:tune=fastdecode:preset=superfast -y exp/$f.mp4; done
+
+# encoce libx264 fast
+mkdir exp && for f in *.*; do ffmpeg -y -i $f -c:v libx264 -c:a copy -tune fastdecode -preset superfast -threads 2 exp/$f.mp4; done
+
+mkdir exp && for f in *.*; do ffmpeg -y -i $f -c:v libx264 -c:a copy -tune film -preset superfast -threads 2 exp/$f.mp4; done
+
+mkdir exp && for f in *.*; do ffmpeg -y -i $f -c:v libx264 -c:a copy -tune fastdecode -preset veryfast -threads 1 exp/$f.mp4; done
+
+# cut video from to
+ffmpeg -i in.mp4 -ss 00:00:03 -to 00:02:23 -c:a copy out.mp4
+
+# grab screen
+ffmpeg -v warning -video_size 2560x1600 -framerate 25 -f x11grab -i :0.0 -f alsa -ac 2 -i default myvid_$(date +%s).mp4
+
+# grab screen with audio 44100k
+ffmpeg -v warning -video_size 2560x1600 -framerate 30 -f x11grab -i :0.0 -f alsa -ac 2 -ar 44100 -i default -probesize 42M -preset ultrafast -pix_fmt yuv420p -vcodec libx264  myvid_$(date +%s).mp4
+
+####################################
+mix all wavs in one
+####################################
+https://superuser.com/questions/587511/concatenate-multiple-wav-files-using-single-command-without-extra-file
+
+sudo apt install sox
+sox "*.wav" ../out.wav
+
+#sox short1.wav short2.wav short3.wav long.wav
+
+####################################
+repeat-loop
+####################################
+
+https://video.stackexchange.com/questions/12905/repeat-loop-input-video-with-ffmpeg
+https://superuser.com/questions/1602115/ffmpeg-create-a-looping-video-with-specific-time
+
+ffmpeg -stream_loop 3 -i input.mp4 -c copy output.mp4
+
+ffmpeg -stream_loop -1 -i input.gif -i audio.mp3 -vf crop=" + width + ":" + height + ":0:40,scale=1280:720,setsar=1,format=yuv420p -shortest -fflags +shortest -max_interleave_delta 100M -movflags +faststart output.mp4
+
+####################################
+aac audio bitrate
+####################################
+
+https://trac.ffmpeg.org/wiki/Encode/AAC
+
+# Constant bit rate using -b:a:
+ffmpeg -i input.wav -c:a aac -b:a 160k output.m4a
+
+####################################
+# mix video with new audio
+####################################
+
+ffmpeg -i in.mp4 -i in.wav -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 xout.mp4
+
+# mix with 44100k
+ffmpeg -i in.mp4 -i in.wav -c:v copy -ac 2 -c:a aac -ar 44100 -b:a 160k -map 0:v:0 -map 1:a:0 -y xout.mp4
+
+# scale up to 1080
+ffmpeg -i in.mp4 -i in.wav -vf scale=-1:1080 -crf 32 -ac 2 -c:a aac -ar 44100 -b:a 160k -map 0:v:0 -map 1:a:0 -y -threads 2 xout.mp4
+
