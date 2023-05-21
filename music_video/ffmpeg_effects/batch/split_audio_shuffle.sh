@@ -28,7 +28,24 @@ rm list.txt && (for i in stereo*.wav; do echo file $i >> list.txt; done) && ffmp
 
 
 
+#################################################
+# aplay
+#################################################
 
+aplay -c 2 -d 2 -f S16_LE -r 22050 *
+aplay -c 2 -d 2 -f S16_LE -r 44100 /dev/urandom
+
+# https://linux.die.net/man/1/aplay
+#
+# -c, --channels=#
+# -d, --duration=#
+# -f --format=FORMAT
+# -r, --rate=#<Hz>    22050  44100  48000  32000  11025 8000 4000
+# -s, --sleep-min=#
+
+#################################################
+# rubberband
+#################################################
 
 # https://breakfastquay.com/rubberband/usage.txt
 # https://superuser.com/questions/1684356/how-do-i-install-rubberband
