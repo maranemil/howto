@@ -22,11 +22,19 @@ mkdir exp && for f in *.*; do ffmpeg -y -i $f -c:v libx264 -c:a copy -tune fastd
 # cut video from to
 ffmpeg -i in.mp4 -ss 00:00:03 -to 00:02:23 -c:a copy out.mp4
 
+
+####################################
 # grab screen
+####################################
+
 ffmpeg -v warning -video_size 2560x1600 -framerate 25 -f x11grab -i :0.0 -f alsa -ac 2 -i default myvid_$(date +%s).mp4
 
 # grab screen with audio 44100k
 ffmpeg -v warning -video_size 2560x1600 -framerate 30 -f x11grab -i :0.0 -f alsa -ac 2 -ar 44100 -i default -probesize 42M -preset ultrafast -pix_fmt yuv420p -vcodec libx264  myvid_$(date +%s).mp4
+
+# using thread_queue_size
+ffmpeg -v warning -thread_queue_size 1024 -video_size 192x108 -framerate 30 -f x11grab -i :0.0 -thread_queue_size 1024 -f alsa -ac 2 -ar 44100 -i default   myvid_$(date +%s).mp4
+
 
 ####################################
 mix all wavs in one
