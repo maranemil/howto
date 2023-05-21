@@ -1,0 +1,129 @@
+##############################################
+Split audio files using silence detection
+##############################################
+
+https://stackoverflow.com/questions/45526996/split-audio-files-using-silence-detection
+https://manual.audacityteam.org/man/silence_finder.html
+https://askubuntu.com/questions/1264779/how-to-split-an-mp3-file-by-detecting-silent-parts
+https://efcomputer.net.au/blog/splitting-audio-files-by-detecting-silence-using-ffmpeg/
+
+*
+*
+*
+
+
+pip install pydub
+
+# Import the AudioSegment class for processing audio and the
+# split_on_silence function for separating out silent chunks.
+from pydub import AudioSegment
+from pydub.silence import split_on_silence
+
+# Define a function to normalize a chunk to a target amplitude.
+def match_target_amplitude(aChunk, target_dBFS):
+    ''' Normalize given audio chunk '''
+    change_in_dBFS = target_dBFS - aChunk.dBFS
+    return aChunk.apply_gain(change_in_dBFS)
+
+# Load your audio.
+song = AudioSegment.from_mp3("your_audio.mp3")
+
+# Split track where the silence is 2 seconds or more and get chunks using
+# the imported function.
+chunks = split_on_silence (
+    # Use the loaded audio.
+    song,
+    # Specify that a silent chunk must be at least 2 seconds or 2000 ms long.
+    min_silence_len = 2000,
+    # Consider a chunk silent if it's quieter than -16 dBFS.
+    # (You may want to adjust this parameter.)
+    silence_thresh = -16
+)
+
+# Process each chunk with your parameters
+for i, chunk in enumerate(chunks):
+    # Create a silence chunk that's 0.5 seconds (or 500 ms) long for padding.
+    silence_chunk = AudioSegment.silent(duration=500)
+
+    # Add the padding chunk to beginning and end of the entire chunk.
+    audio_chunk = silence_chunk + chunk + silence_chunk
+
+    # Normalize the entire chunk.
+    normalized_chunk = match_target_amplitude(audio_chunk, -20.0)
+
+    # Export the audio chunk with new bitrate.
+    print("Exporting chunk{0}.mp3.".format(i))
+    normalized_chunk.export(
+        ".//chunk{0}.mp3".format(i),
+        bitrate = "192k",
+        format = "mp3"
+    )
+
+
+------
+
+def split(filepath):
+    sound = AudioSegment.from_file(filepath)
+    chunks = split_on_silence(
+        sound,
+        min_silence_len = 500,
+        silence_thresh = sound.dBFS - 16,
+        keep_silence = 250, # optional
+    )
+
+# minimum chunk length
+target_length = 25 * 1000 # 25 seconds
+
+output_chunks = [chunks[0]]
+for chunk in chunks[1:]:
+    if len(output_chunks[-1]) < target_length:
+        output_chunks[-1] += chunk
+    else:
+        # if the last output chunk
+        # is longer than the target length,
+        # we can start a new one
+        output_chunks.append(chunk)
+
+
+-------------------------
+
+
+# Load your audio.
+song = AudioSegment.from_mp3("your_audio.mp3")
+
+chunks = split_on_silence (
+   # Use the loaded audio.
+   song,
+   # Specify that a silent chunk must be at least 2 seconds or 2000 ms long.
+   min_silence_len = 2000,
+   # Consider a chunk silent if it's quieter than -16 dBFS.
+   # (You may want to adjust this parameter.)
+   silence_thresh = -16
+)
+
+-------------------------
+
+FFMPEG
+
+
+Get silent timestamps
+
+ffmpeg -i input.mp3 -af silencedetect -f null -
+
+ffmpeg -i input.mp3 -af silencedetect=d=0.5 -f null - |& awk '/silencedetect/ {print $4,$5}'
+silence_start: 1.20837
+
+Split
+
+ffmpeg -i input.mp3 -f segment -segment_times 1.20837,1.92546,3.51778,4.0881,6.40315,7.7922 -reset_timestamps 1 -map 0:a -c:a copy output_%03d.mp3
+
+
+----
+
+sudo apt install mp3splt
+
+mp3splt -s your.mp3
+mp3splt -s -p th=-50,nt=10 your.mp3
+
+
+
