@@ -202,3 +202,173 @@ network wlan not working - restart
 ~~~
 
 
+~~~
+##########################################
+DEBUG
+##########################################
+
+https://www.php.net/manual/de/errorfunc.configuration.php
+https://www.php.net/manual/de/function.error-reporting.php
+https://stackoverflow.com/questions/15949304/turn-off-display-errors-using-file-php-ini
+
+// Toggle this to change the setting
+define('DEBUG', true);
+
+// You want all errors to be triggered
+error_reporting(E_ALL);
+
+if(DEBUG == true)
+{
+    // You're developing, so you want all errors to be shown
+    display_errors(true);
+
+    // Logging is usually overkill during development
+    log_errors(false);
+}
+else
+{
+    // You don't want to display errors on a production environment
+    display_errors(false);
+
+    // You definitely want to log any occurring
+    log_errors(true);
+}
+
+-----
+
+define('DEBUG', true);
+error_reporting(E_ALL);
+ini_set('display_errors', DEBUG ? 'On' : 'Off');
+ini_set('display_startup_errors', DEBUG ? 'On' : 'Off');
+
+
+~~~
+
+
+
+
+~~~
+##########################################
+umlaut Ersetzung
+##########################################
+
+https://askubuntu.com/questions/1064634/unable-to-install-php-mbstring
+https://stackoverflow.com/questions/68545849/trying-to-install-php-mbstring-on-ubuntu-20-04
+https://www.php.net/manual/en/function.mb-internal-encoding.php
+https://stackoverflow.com/questions/1216274/unable-to-call-the-built-in-mb-internal-encoding-method
+https://www.phpkb.com/kb/article/how-to-enable-mbstring-in-php-46.html
+https://stackoverflow.com/questions/1973649/php-function-substr-error
+https://www.php.net/manual/en/function.substr.php
+
+truncate -s0 /var/log/apache2/error.log
+tail/var/log/apache2/error.log
+
+apt-get install php-mbstring
+
+php -m
+
+/* Set internal character encoding to UTF-8 */
+mb_internal_encoding("UTF-8");
+
+/* Display current internal character encoding */
+echo mb_internal_encoding();
+
+$articleText = mb_substr($articleText,0,500,'UTF-8');
+$articleText = substr(utf8_decode($articleText),0,500);
+$articleText = utf8_encode( substr(utf8_decode($articleText),0,500) );
+
+$utf8string = "cakeæøå";
+echo substr($utf8string,0,5);
+// output cake#
+echo mb_substr($utf8string,0,5,'UTF-8');
+//output cakeæ
+
+
+https://german.stackexchange.com/questions/26246/g%c3%b6del-but-noether
+https://german.stackexchange.com/questions/24000/evolution-of-the-digraph-ae-in-the-german-language-during-the-centuries?lq=1
+https://german.stackexchange.com/questions/28976/warum-ersetzt-man-in-manchen-f%C3%A4llen-%C3%A4-durch-ae
+
+So, under special conditions (which are in most cases of technical nature), ö -> oe is allowed. But the other way (oe -> ö) is not. This is never ok. So it is an error to write the name of the poet J. W. Goethe with ö, and it is an error to write the name of Emmy Noether with ö.
+
+
+ö - oe
+ä - ae
+ü - ue
+ß - ss
+
+##########################################
+long german names
+##########################################
+
+https://www.iamexpat.de/lifestyle/lifestyle-news/funny-german-last-names-longest-weirdest-and-strangest-surnames
+https://www.reddit.com/r/namenerds/comments/8bxtj0/ridiculously_long_names_of_german_nobility/
+https://en.wikipedia.org/wiki/Hubert_Blaine_Wolfeschlegelsteinhausenbergerdorff_Sr.
+https://www.quora.com/What-is-a-real-example-of-a-very-long-aristocratic-German-name
+https://www.familyeducation.com/baby-names/surname/origin/german
+https://www.thoughtco.com/german-last-names-1444607
+https://www.thelocal.de/20101108/31027
+
+Wolfeschlegelsteinhausenbergerdorff
+Ottovordemgentschenfelde
+Karl-Theodor zu Guttenberg
+
+Ridiculously long names of German nobility
+
+Karl Theodor Maria Georg Achaz Eberhardt Josef Freiherr von und zu Guttenberg
+Ernst Christian Einar Ludvig Detlev, Graf zu Reventlow
+Anselm Maria Fürst Fugger von Babenhausen
+Prinzessin Friederike Schleswig-Holstein-Sonderburg-Glücksburg
+Leopold Karl Walter Graf von Kalkreuth
+Alexandra Sophie Cecilie Anna Maria Friederike Benigna Dorothea Prinzessin zu Ysenburg und Büdingen
+Friederike Luise Thyra Victoria Margarita Sophia Olga Cecilia Isabella Christa zu Hanover
+Friedrich Wilhelm Eugen von Sachsen-Hildburghausen
+Alexander Ernst Alfred Hermann Freiherr von Falkenhausen
+Hans Christoph Ernst Freiherr von Gagern
+Grafin Maria Felicitas von Schönburg-Glauchau
+
+##################################################################
+German Last Names
+##################################################################
+
+https://www.familyeducation.com/baby-names/surname/origin/german
+https://www.thoughtco.com/german-last-names-1444607
+https://wordcounter.net/character-count
+https://github.com/michal-josef-spacek/Mock-Person-DE
+https://gist.github.com/ryx/ce24ca0629d4950a524b1e2588d5809d
+https://github.com/PenTestical/german_names/blob/master/2000_german_firstnames.txt
+https://github.com/van-himmelheimer/German-Name-Generator
+https://github.com/oliverpitsch/craft-data-german/blob/master/craft-data-german-surnames.txt
+https://github.com/van-himmelheimer/German-Name-Generator/blob/master/nachnamen_deutsch
+https://gist.github.com/elifiner/cc90fdd387449158829515782936a9a4
+
+#################################################
+wordcounter
+#################################################
+
+https://wordcounter.net/character-count
+
+~~~
+
+
+~~~
+##################################################################
+replace non phone chars
+##################################################################
+
+https://www.phpliveregex.com/#tab-preg-replace
+http://phptester.net/
+
+$str = '+45 (0) 098 234 213 111';
+print(preg_replace("[^0-9+-/\s()]", "",$str));
+
++45 (0) 098 234 213 111
++45-(0) 098-234-213-111
+
+##################################################################
+replace non chars
+##################################################################
+
+preg_replace("#[^a-zA-Z0-9-äöüßÜÄÖ().:@/\-\s+]#iu", "", $value);
+
+
+~~~

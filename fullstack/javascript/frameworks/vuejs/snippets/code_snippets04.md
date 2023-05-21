@@ -364,3 +364,47 @@ https://stackoverflow.com/questions/38085180/disable-input-conditionally-vue-js
 ```
 
 
+~~~
+##################################################################
+keyup vue event
+##################################################################
+
+https://codepen.io/fs_tigre/pen/yNmjBe
+https://www.geeksforgeeks.org/vue-js-v-onkeyup-directive/
+https://blog.boot.dev/javascript/vue-key-events/
+https://stackoverflow.com/questions/38423262/get-text-field-value-onkeyup-vue-js
+https://laracasts.com/discuss/channels/laravel/search-with-keyup-vuejs-and-laravel-backend-api
+https://www.nicesnippets.com/blog/vue-js-keyup-event-example-tutorial
+https://vuejs.org/guide/essentials/event-handling.html#key-modifiers
+https://developer.mozilla.org/en-US/docs/Web/API/Element/keyup_event
+https://stackoverflow.com/questions/42511311/vuejs-on-input-run-a-function-but-with-a-delay
+
+<input v-on:keyup="this.function">
+
+function(){
+	setTimeout(() => {
+		// do something
+	}, 1500);
+}
+ 
+.enter
+.tab
+.delete (captures both “Delete” and “Backspace” keys)
+.esc
+.space
+.up
+.down
+.left
+.right
+~~~
+
+~~~
+##################################################################
+replace all chars which are not match with range a-zA-Z_-0-9.
+##################################################################
+
+https://www.webtoolkitonline.com/javascript-tester.html
+https://stackoverflow.com/questions/12142829/val-replace-a-za-z-0-9-g-produce-syntaxerror-invalid-range-in-charact
+
+val.replace(/[^a-zA-Z_0-9-]/g, '')
+~~~
