@@ -1,14 +1,49 @@
-
-https://manpages.ubuntu.com/manpages/bionic/man1/aplay.1.html
-https://manpages.ubuntu.com/manpages/bionic/en/man1/sox.1.html
-
+#################################################################################
+sox pitch
+#################################################################################
 
 # https://stackoverflow.com/questions/19736637/change-pitch-of-multiple-audio-files-with-sox
 # 100 cents - A semitone is equal to 100 cents
 sox mpxvm_fumix_240_ft2_tra.xm.wav out.wav pitch -150
 
+#################################################################################
+change pitch of multiple audio files with Sox
+#################################################################################
+
+https://stackoverflow.com/questions/19736637/change-pitch-of-multiple-audio-files-with-sox
+https://linux.die.net/man/1/sox
+https://sound.stackexchange.com/questions/51005/getting-good-result-with-sox-pitch-command
+https://pytorch.org/audio/stable/sox_effects.html
+https://www.justinsalamon.com/news/sox-vs-rubberband-for-pitch-shifting-and-time-stretching
+
+# 440Hz to 432Hz
+sox your_440Hz_music_file.wav out.wav pitch -31
+
+2x/12 = 432/440
+x/12 = log(432/440) / log(2)
+   x = log(432/440) / log(2) * 12
+   x = -0.3176665363342927165015877324608 semitones
+   x = -31.76665363342927165015877324608 'cents'
+
+ffmpeg -i input.wav -af "asetrate=44100*432/440,aresample=44100,atempo=440/432" output.wav
+ffmpeg -i input.wav -af "rubberband=pitch=432/440" output.wav
+
+Pitch shifting:
+sox infile.wav outfile.wav pitch 100
+rubberband --pitch 1 infile.wav outfile.wav -c 6
+
+Time stretching:
+sox infile.wav outfile.wav tempo -s 0.833
+rubberband --time 1.2 infile.wav outfile.wav -c 6
 
 
+
+#################################################################################
+sox
+#################################################################################
+
+https://manpages.ubuntu.com/manpages/bionic/man1/aplay.1.html
+https://manpages.ubuntu.com/manpages/bionic/en/man1/sox.1.html
 
 sox -r 16k -e signed -b 8 -c 1 voice-memo.raw voice-memo.wav # converts `raw'
 sox slow.aiff fixed.aiff speed 1.027 # adjusts speed

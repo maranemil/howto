@@ -1,4 +1,4 @@
-```
+.
 ├── books_lectures
 ├── commandlinefu.com
 ├── datamining
@@ -26,9 +26,17 @@
 │       ├── datacamp
 │       └── StyleTransfer
 ├── fullstack
+│   ├── a_dummy_data
+│   │   └── german_addresses
+│   ├── a_online_tools
 │   ├── api
+│   │   ├── datev
+│   │   ├── php
+│   │   ├── snippets
+│   │   └── swagger
 │   ├── bash
-│   │   └── digitalart
+│   │   ├── digitalart
+│   │   └── snippets
 │   ├── canvas
 │   │   ├── canvas2mp4V1
 │   │   ├── canvas2mp4V2
@@ -36,8 +44,23 @@
 │   │   └── canvas-basics
 │   ├── cheatsheets
 │   │   ├── ide_editors
-│   │   └── learn_in_5_minutes
+│   │   ├── learn_in_5_minutes
+│   │   └── refactoring
+│   ├── cloud
+│   │   ├── aws
+│   │   ├── docker
+│   │   ├── docker_pod
+│   │   └── kubernetis
 │   ├── css
+│   │   ├── howto
+│   │   └── snippets
+│   ├── databases
+│   │   ├── mysql
+│   │   ├── mysqlfix
+│   │   ├── oracle
+│   │   ├── postgres
+│   │   └── sqlite
+│   ├── devops
 │   ├── games
 │   ├── gcc
 │   ├── go
@@ -62,6 +85,9 @@
 │   │   └── youtube
 │   ├── helloworldcollection
 │   ├── html
+│   │   ├── examples
+│   │   └── howto
+│   ├── install_logs
 │   ├── java
 │   │   ├── java_guess_game
 │   │   └── play
@@ -76,10 +102,7 @@
 │   │   └── tensorflow_js
 │   ├── markdown
 │   ├── misc
-│   ├── mysql
-│   │   ├── mysql_helper_class
-│   │   └── snippets
-│   ├── mysqlfix
+│   │   └── snipets
 │   ├── nosql
 │   ├── perl
 │   ├── php
@@ -92,26 +115,36 @@
 │   │   ├── frameworks
 │   │   ├── games
 │   │   ├── installation_configuration
-│   │   ├── laravel
+│   │   ├── libs
 │   │   ├── linkscollections
 │   │   ├── machine_learning
-│   │   ├── snippets
+│   │   ├── php_snippets
+│   │   ├── servers
 │   │   ├── statistics_machine_learning
 │   │   └── utiles
 │   ├── python
 │   │   ├── audio_video
 │   │   ├── aws
+│   │   ├── config
 │   │   ├── frameworks
 │   │   ├── github_examples
+│   │   ├── gui
 │   │   ├── misc
 │   │   ├── network
 │   │   ├── nltk
 │   │   ├── opencv
+│   │   ├── pyarrow_csv_sqlite
 │   │   ├── pytorch
 │   │   ├── scikit_learn
+│   │   ├── snippets
 │   │   ├── statistic
-│   │   └── tensorflow
+│   │   ├── tensorflow
+│   │   └── testing
+│   ├── remote
+│   ├── ruy
+│   ├── security
 │   ├── servers
+│   │   └── nginx
 │   ├── statistics
 │   └── sugarcrm
 │       ├── centiro
@@ -128,10 +161,13 @@
 │   ├── debug
 │   ├── fullstack_servers
 │   │   ├── docker
+│   │   ├── jenkins
 │   │   ├── lamp
 │   │   ├── mean
 │   │   ├── sql_nosql
-│   │   └── vagrant
+│   │   ├── vagrant
+│   │   └── virtualbox
+│   ├── hardware
 │   ├── installation_upgrade_backup
 │   │   ├── nvidia
 │   │   └── printer
@@ -155,21 +191,32 @@
 │   │   ├── system
 │   │   ├── utils
 │   │   ├── vim
-│   │   └── virtual_machines
+│   │   ├── virtual_machines
+│   │   └── vpn
 │   ├── video_audio
 │   └── wallpaper
 ├── music_video
 │   ├── avisynth_effects_virtualdub
 │   ├── ffmpeg_effects
 │   │   └── batch
+│   ├── lmms_vst
+│   ├── lmms_vst2
 │   ├── music_tracker_manuals
 │   │   └── cheatsheet_ft2
 │   ├── music_tricks
-│   └── pulse_effects_presets
+│   ├── pulse_effects_presets
+│   │   ├── 2022
+│   │   ├── 2023
+│   │   ├── 2023b
+│   │   ├── 2023c
+│   │   └── 2023d
+│   └── video_material
 ├── mygist_files
 ├── utiles
+│   ├── ai_art
 │   ├── deutschepost
 │   │   └── pdf
+│   ├── languages
 │   ├── misc
 │   ├── phpstorm_color_themes
 │   ├── productivity
@@ -177,5 +224,4 @@
 ├── web_journey
 └── windows
 
-177 directories
-```
+225 directories

@@ -349,7 +349,6 @@ https://wordcounter.net/character-count
 
 ~~~
 
-
 ~~~
 ##################################################################
 replace non phone chars
@@ -369,6 +368,43 @@ replace non chars
 ##################################################################
 
 preg_replace("#[^a-zA-Z0-9-äöüßÜÄÖ().:@/\-\s+]#iu", "", $value);
+~~~
 
+~~~
+################################################
+count chars
+################################################
 
+<?php
+
+https://www.php.net/manual/de/function.strlen.php
+
+$str = '
+<p>test1<br/>
+<p>test12222<br/>
+';
+
+$lines = array_filter(preg_split('/\r\n|[\r\n]/',$str));
+$lines = array_map('strip_tags', (array)$lines);
+#print_r($lines);
+foreach ($lines as $line){
+    echo strlen($line) . ' ' .$line.PHP_EOL;
+    $arlen[] = strlen($line);
+    #break;
+}
+
+asort($arlen);
+print_r($arlen);
+~~~
+
+~~~
+################################################
+explode textarea php
+################################################
+
+https://stackoverflow.com/questions/7058168/explode-textarea-php-at-new-lines
+https://www.php.net/manual/en/function.preg-split.php
+
+preg_split('/\r\n|[\r\n]/', $_POST['thetextarea'])
+explode("\r\n", $_POST['thetextarea']);
 ~~~

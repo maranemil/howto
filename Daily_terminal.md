@@ -1,16 +1,5 @@
 ## Daily CMDs
 
-### Misc
-
-#### Config Git on new location
-
-- [x] git config -l
-- [x] git config --get user.name
-- [x] git config --get user.email
-- [x] git config --global user.name "Administrator"
-- [x] git config --global user.email "admin@example.com"
-- [ ] ...
-
 ### Check repo file Sizes
 ~~~~
 * find . -name '*' -size +1M -exec ls -lh {} \; | awk '{ print $9 ": " $5 }'
@@ -35,11 +24,6 @@ sudo umount -f ~/path
 sudo umount -l -f ~/path
 ```
 
-### Check pack
-```
-* git verify-pack -v ./.git/objects/pack/pack-......ea.pack
-```
-
 ### Surf web
 ```bash
 lynx t3n.de -accept_all_cookies  -justify
@@ -53,13 +37,13 @@ lynx t3n.de -accept_all_cookies  -justify
 * find folder/ -maxdepth 2 -type f -name "*.json" -mtime -1 -exec grep -i 'string' {} \; 
   ```
 
-##### Generate Random Pass Ubuntu
+### Generate Random Pass Ubuntu
 ```
 * date +%s | sha256sum | base64 | head -c 24 ; echo "@%&";
 * date +%s | sha1sum | base64 | head -c 12; echo "@%&";
 ```
 
-##### Zipping Unzipping multiple Folders
+### Zipping Unzipping multiple Folders
 
 ~~~~
 |  cmd  | example                                        | 
@@ -68,7 +52,7 @@ lynx t3n.de -accept_all_cookies  -justify
 | zip   | for i in */; do zip -r "${i%/}.zip" "$i"; done |
 ~~~~
 
-##### Tar Untar 
+### Tar Untar 
 
 ~~~~
 |  cmd  | example                                        | 
@@ -77,7 +61,7 @@ lynx t3n.de -accept_all_cookies  -justify
 | untar | tar -xzvf archive.tar.gz                       |
 ~~~~
 
-##### Change date modified created file
+### Change date modified created file
 ```
  * -a = accessed / -m = modified / -t = timestamp
  ```
@@ -90,24 +74,18 @@ lynx t3n.de -accept_all_cookies  -justify
 | change date   | touch -d "2 hours ago" filename                 | 
 ~~~~
 
-#### Convert Imagick
+### Convert Imagick
 ```
 * for i in *.png; do convert "$i" "${i%.png}.jpg" && rm "$i" && echo "$i is converted."; done
 * for i in *.png; do convert "$i" "${i%.*}.jpg" ; done
 ```
 
-#### Timestamp
+### Timestamp
 ```
 * date +%s > 1552925792
 ```
 
-##### Add git ignore
-```
-* echo ".idea/*" >> .gitignore
-* git commit -am "remove .idea"
-```
-
-##### Users management
+### Users management
 ```
 + sudo adduser newuser
 + sudo deluser newuser
@@ -115,7 +93,7 @@ lynx t3n.de -accept_all_cookies  -justify
 + sudo passwd username
 ```
 
-##### Hostname management
+### Hostname management
 ```
 + sudo nano /etc/hosts
 + sudo nano /etc/hostname
@@ -448,6 +426,7 @@ https://developers.google.com/speed/public-dns/docs/using
 ```
 * rsync --ignore-existing --recursive --progress /home/user/folder_sync/ /media/user/external_drive/folder_sync/
 ```
+
 ### Generate Current Dir Structure 
 ```
 tree -Ld 3 > FolderStructure.md
@@ -464,9 +443,8 @@ prettify json data
 jq . data_zip.json > data.json
 ```
 
-######
+
 ### Browser Plugins
-######
 ```
 Ghostery
 Privacy Badger
@@ -476,7 +454,6 @@ NoScript
 ```
 
 ### Access localhost on remote server
-
 ```
 start locally [ python3 -m http.server.8080 with page index.html]
 go on [ localhost.run website ]
@@ -485,7 +462,6 @@ get link from temrinal and run it on browser
 ```
 
 ### Find string in files
-
 ```
 sudo find . -type f -iname "*.txt" -exec grep -H 'String' {} + 
 sudo find . -type f -iname "*.txt" -exec grep -i "String" {} +
@@ -498,9 +474,7 @@ cd /usr && egrep -iIrnH -w "String"
 ```
 
 ### generate new ssh key
-
 ```
-
 ssh-keygen -t rsa -b 4096 -C "somemail@outlook.com"
 eval "$(ssh-agent -s)"
 
@@ -512,7 +486,6 @@ ssh-keygen -l -f ~/.ssh/id_rsa
 
 ### Post-installation steps for Linux
 ```
-
 https://docs.docker.com/engine/install/linux-postinstall/
 
 sudo apt install docker.io docker-compose

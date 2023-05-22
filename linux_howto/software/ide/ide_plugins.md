@@ -97,6 +97,25 @@ pycharm-community     2021.3.2  jetbrains✓   classic   PyCharm Community Editi
 pycharm-professional  2021.3.2  jetbrains✓   classic   PyCharm Professional Edition
 pycharm-educational   2021.3.2  jetbrains✓   classic   Easy and Professional Tool to Learn & Teach Programming with Python
 dataspell             2021.3.2  jetbrains✓   classic   DataSpell
+
+
+################################################
+snap search intellij 2023
+################################################
+
+Name                       Version   Herausgeber   Hinweise  Zusammenfassung
+intellij-idea-community    2023.1.2  jetbrains✓    classic   Capable & Ergonomic Java IDE
+intellij-idea-ultimate     2023.1.2  jetbrains✓    classic   Capable & Ergonomic Java IDE for Enterprise, Web & Mobile Development
+intellij-idea-educational  2022.2.2  jetbrains✓    classic   IntelliJ IDEA Educational Edition
+datagrip                   2023.1.2  jetbrains✓    classic   DataGrip
+rider                      2023.1.2  jetbrains✓    classic   A fast & powerful cross-platform .NET IDE
+goland                     2023.1.2  jetbrains✓    classic   GoLand
+gradle                     7.2       snapcrafters  classic   An open-source build automation tool
+
+
+sudo snap install intellij-idea-community --classic
+
+
 ~~~
 --------------------------------------------------
 
