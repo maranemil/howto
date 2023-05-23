@@ -133,3 +133,23 @@ do
         crossfade_cat.sh $crossfade_dur mix.wav $file auto auto
     fi
 done
+
+####################################
+# webcam
+####################################
+ffmpeg -f v4l2 \
+    -thread_queue_size 1024 \
+    -framerate 25 \
+    -video_size 1024x768 \
+    -input_format mjpeg \
+    -i /dev/video0 \
+    -f alsa \
+    -i hw:1,0 \
+    -c:a pcm_s16le \
+    -c:v mjpeg \
+    -b:v 640k \
+    -y \
+    output.avi \
+    -map 0:v \
+    -vf "format=yuv420p" \
+    -f xv display
