@@ -1,0 +1,50 @@
+#############################################################
+How to display and capture webcam stream at the same time
+#############################################################
+
+https://superuser.com/questions/343586/how-to-display-and-capture-webcam-stream-at-the-same-time
+https://askubuntu.com/questions/661758/webcam-video-recorder
+https://askubuntu.com/questions/453616/software-to-use-webcam-as-camera
+https://askubuntu.com/questions/23593/use-webcam-to-sense-lighting-condition-and-adjust-screen-brightness
+
+ffmpeg -f v4l2 \
+    -framerate 30 \
+    -video_size 1024x768 \
+    -input_format mjpeg \
+    -i /dev/video0 \
+    -f alsa \
+    -i hw:1,0 \
+    -c:a pcm_s16le \
+    -c:v mjpeg \
+    -b:v 640k \
+    output.avi \
+    -map 0:v \
+    -vf "format=yuv420p" \
+    -f xv display
+
+
+ffmpeg -f v4l2 -i /dev/video0 -map 0 \
+-c:v libx264 -f tee "output.avi|[f=nut]pipe:" | ffplay pipe:
+
+----------------
+
+import opencv
+import opencv.highgui
+import time
+import commands
+
+def get_image():
+    image = opencv.highgui.cvQueryFrame(camera)
+    return opencv.adaptors.Ipl2PIL(image)
+
+camera = opencv.highgui.cvCreateCameraCapture(-1)
+
+while 1:
+    image = get_image()
+    image.thumbnail((32, 24, ))
+    image = tuple(ord(i) for i in image.tostring())
+    x = int((int((max(image) / 256.0) * 10) + 1) ** 0.5 / 3 * 10)
+    cmd = ("sudo su -c 'echo " + str(x) +
+        " > /sys/devices/virtual/backlight/acpi_video0/brightness'")
+    status, output = commands.getstatusoutput(cmd)
+    assert status is 0
