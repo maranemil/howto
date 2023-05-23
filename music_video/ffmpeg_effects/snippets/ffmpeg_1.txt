@@ -1,0 +1,55 @@
+
+#################################################
+instances of FFmpeg commands can I run in parallel
+#################################################
+
+https://superuser.com/questions/538164/how-many-instances-of-ffmpeg-commands-can-i-run-in-parallel
+https://gist.github.com/Brainiarc7/2afac8aea75f4e01d7670bc2ff1afad1
+https://stackoverflow.com/questions/17259673/how-to-convert-several-files-simultaneously-using-ffmpeg
+https://askubuntu.com/questions/853636/can-you-edit-multiple-videos-at-the-same-time-using-ffmpeg
+
+start batch_1.bat
+start batch_2.bat
+
+#!/bin/bash
+ffmpeg -i input1.mp4 -vcodec mpeg4 -qscale:v 1 -aspect 16:9 output1.avi & ffmpeg -i input2.mp4 -vcodec mpeg4 -qscale:v 1 -aspect 16:9 output2.avi
+
+ffmpeg -i video1.mp4 -i video2.mp4  \
+-map 0 -c:v mpeg4 -q:v 1 -aspect 16:9 video1.avi \
+-map 1 -c:v mpeg4 -q:v 1 -aspect 16:9 video2.avi
+
+for f in *.mp4; do ffmpeg -i "$f" -c:v mpeg4 -q:v 1 -aspect 16:9 "${f%.*}.avi"; done
+find -name '*.avi' | sed 's/\.avi$//g' | xargs --replace ffmpeg -i "{}.mp4" -c:v mpeg4 -q:v 1 -aspect 16:9 "{}.avi"
+
+run all of them in the background you should change this:
+
+ffmpeg -i input.mp4 -t 60 -f mp4 /mnt/a.mp4 > /dev/null 2>&1 &
+ffmpeg -i input.mp4 -t 60 -f mp4 /mnt/a.mp4 </dev/null > /dev/null 2>&1 &
+
+ffmpeg -i input.mp4 -t 60 -f mp4 /mnt/a.mp4 \
+ -f mp4 /mnt/b.mp4 \
+ -f mp4 /mnt/c.mp4 \
+ -f mp4 /mnt/d.mp4 \
+ -f mp4 /mnt/e.mp4 \
+ -f mp4 /mnt/f.mp4 \
+ -f mp4 /mnt/g.mp4 \
+ -f mp4  /mnt/h.mp4 > /dev/null 2>&1
+
+
+#################################################
+join instances of FFmpeg
+#################################################
+
+https://video.stackexchange.com/questions/29211/how-to-join-these-three-ffmpeg-instances-into-one-command
+https://ffmpeg.org/ffmpeg.html#Description
+
+ffmpeg -y -i inputStream -row-mt 1 -s 1280x720 -b:v 1024k -minrate 512k -maxrate 1485k -tile-columns 2 -g 240 -threads 8 -quality good -crf 32 -c:v libvpx-vp9 -c:a libvorbis hd;
+ffmpeg -y -i inputStream -row-mt 1 -s 640x480 -b:v 750k -minrate 375k -maxrate 1088k -tile-columns 1 -g 240 -threads 4 -quality good -crf 33 -c:v libvpx-vp9 -c:a libvorbis fsd
+ffmpeg -y -i inputStream -row-mt 1 -s 640x480 -b:v 512k -minrate 256k -maxrate 742k -tile-columns 1 -g 240 -threads 4 -quality good -crf 34 -c:v libvpx-vp9 -c:a libvorbis sd
+
+into
+
+ffmpeg -y -i inputStream \
+ -row-mt 1 -s 1280x720 -b:v 1024k -minrate 512k -maxrate 1485k -tile-columns 2 -g 240 -threads 8 -quality good -crf 32 -c:v libvpx-vp9 -c:a libvorbis hd \
+ -row-mt 1 -s 640x480 -b:v 750k -minrate 375k -maxrate 1088k -tile-columns 1 -g 240 -threads 4 -quality good -crf 33 -c:v libvpx-vp9 -c:a libvorbis fsd \
+ -row-mt 1 -s 640x480 -b:v 512k -minrate 256k -maxrate 742k -tile-columns 1 -g 240 -threads 4 -quality good -crf 34 -c:v libvpx-vp9 -c:a libvorbis sd

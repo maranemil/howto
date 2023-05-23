@@ -408,3 +408,74 @@ https://www.php.net/manual/en/function.preg-split.php
 preg_split('/\r\n|[\r\n]/', $_POST['thetextarea'])
 explode("\r\n", $_POST['thetextarea']);
 ~~~
+
+~~~
+
+
+#################################################
+php-libplot.
+#################################################
+
+https://github.com/vivesweb/graph-php
+https://github.com/vivesweb/php-libplot
+
+
+##################################################################################################
+Warning: Module "pdo_mysql" is already loaded in Unknown on line 0
+##################################################################################################
+https://stackoverflow.com/questions/32764981/php-warning-module-already-loaded-in-unknown-on-line-0
+
+/usr/local/bin/php --info | grep configure
+php -i | grep pdo_mysql
+php --ini
+ls /usr/local/etc/php/conf.d/docker-php-ext-mysqli.ini
+nano /usr/local/etc/php/conf.d/docker-php-ext-mysqli.ini
+nano /usr/local/etc/php/conf.d/docker-php-ext-pdo_mysql.ini
+Comment line out ;extension=mysqli.so
+php --ini
+
+
+
+
+
+
+
+##################################################################################################
+Display Array as a Table
+##################################################################################################
+https://stackoverflow.com/questions/14047296/display-array-as-a-table
+https://inkplant.com/code/array-to-table
+
+
+
+function  show_array_as_table($array,$key_color='blue',$value_color="black",$fontfamily="arial",$fontsize="12pt") {
+
+    foreach($array as $key => $value) {
+        if (is_array($value)) {
+    echo "<tr>";
+    echo "<td title=\"{$key}\" style='width:150pt; height:25pt; text-align:right; vertical-align:top; background-color:cccccc; color:{$key_color}'><b>{$key}</b></td>";
+        show_array_as_table($value,$key_color,$value_color,$fontfamily,$fontsize);
+    echo "</tr>";
+        } else {
+    echo "<td style='width:300pt; height:25pt; text-align:justify; vertical-align:top; color:{$value_color}'>";
+        echo "<i>{$value}</i>";
+    echo "</td>";
+        }
+    }
+}
+
+echo "<table class='table'>";
+echo show_array_as_table($reader);
+echo "</table>";
+
+##################################################################################################
+How to find average from array in php
+##################################################################################################
+https://stackoverflow.com/questions/33461430/how-to-find-average-from-array-in-php
+
+echo array_sum($a) / count(array_filter($a));
+
+$a = array_filter($a);
+if(count($a)) {
+    echo $average = array_sum($a)/count($a);
+~~~

@@ -956,3 +956,21 @@ https://css-tricks.com/random-numbers-css/
 }
 
 ~~~
+
+
+~~~
+#################################################
+height: 100% fix
+#################################################
+
+https://stackoverflow.com/questions/7049875/why-doesnt-height-100-work-to-expand-divs-to-the-screen-height
+
+body {
+    height: 100vh;
+}
+body {
+    min-height: 100vh;
+    background: #ffdd57;
+    overflow-x: hidden;
+}
+~~~
