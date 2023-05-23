@@ -137,19 +137,24 @@ done
 ####################################
 # webcam
 ####################################
-ffmpeg -f v4l2 \
-    -thread_queue_size 1024 \
-    -framerate 25 \
-    -video_size 1024x768 \
-    -input_format mjpeg \
-    -i /dev/video0 \
-    -f alsa \
-    -i hw:1,0 \
-    -c:a pcm_s16le \
-    -c:v mjpeg \
-    -b:v 640k \
-    -y \
-    output.avi \
-    -map 0:v \
-    -vf "format=yuv420p" \
-    -f xv display
+
+ffmpeg -f x11grab -i :0.0 -framerate 25 -video_size 1920x1080  \
+    -f v4l2 -i /dev/video0 -framerate 25 -video_size 320x160 \
+    -filter_complex "[0:0][1:0]overlay=500:500[out]" \
+    -shortest -map [out] \
+    -y output.mp4 \
+
+    #-map 0:v \
+    # -vf "format=yuv420p" \
+    # -f xv display
+
+        #-f alsa -ar 44100 -ac 2 -acodec pcm_s16le \
+        #  -s 320x160
+
+    # x=W/2
+    # y=770
+    # 480:0
+    # 5:5
+    # 0:H/2
+    # W/2:H/2
+    # 0:H/2
