@@ -478,4 +478,5 @@ echo array_sum($a) / count(array_filter($a));
 $a = array_filter($a);
 if(count($a)) {
     echo $average = array_sum($a)/count($a);
+}
 ~~~
