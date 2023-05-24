@@ -480,3 +480,43 @@ if(count($a)) {
     echo $average = array_sum($a)/count($a);
 }
 ~~~
+
+~~~
+#############################################################
+How to get the last element of an array without deleting it
+#############################################################
+https://stackoverflow.com/questions/3687358/how-to-get-the-last-element-of-an-array-without-deleting-it
+
+$myLastElement = end($yourArray);
+$myLastElement = $yourArray[array_key_last($yourArray)];
+$lastEl = array_values(array_slice($array, -1))[0];
+$lastEl = array_pop((array_slice($array, -1)));
+var_dump(end(array_values(array(1, 2, 3))));
+
+$myLast3Elements = array_slice($array, -3);
+
+..
+for($i=0;$i<100;$i++) { $array[] = $i; }
+for($i=0;$i<100000;$i++) { $array[] = $i; }
+
+Based on this output I draw the following conclusions:
+
+newer versions of PHP perform better with the exception of these options that became significantly slower:
+option .6. $x = end((array_values($array)));
+option .8. $keys = array_keys($array); $x = $array[$keys[count($keys)-1]];
+these options scale best for very large arrays:
+option .5. $x = end($array); reset($array);
+option .7. $x = $array[count($array)-1];
+option .9. $x = $array[] = array_pop($array);
+option 10. $x = $array[array_key_last($array)]; (since PHP 7.3)
+these options should only be used for auto-indexed arrays:
+option .7. $x = $array[count($array)-1]; (due to use of count)
+option .9. $x = $array[] = array_pop($array); (due to assigning value losing original key)
+this option does not preserve the array's internal pointer
+option .5. $x = end($array); reset($array);
+this option is an attempt to modify option .5. to preserve the array's internal pointer (but sadly it does not scale well for very large arrays)
+option .6. $x = end((array_values($array)));
+the new array_key_last function seems to have none of the above mentioned limitations with the exception of still being an RC at the time of this writing (so use the RC or await it's release Dec 2018):
+option 10. $x = $array[array_key_last($array)]; (since PHP 7.3)
+
+~~~

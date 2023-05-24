@@ -53,3 +53,53 @@ ffmpeg -y -i inputStream \
  -row-mt 1 -s 1280x720 -b:v 1024k -minrate 512k -maxrate 1485k -tile-columns 2 -g 240 -threads 8 -quality good -crf 32 -c:v libvpx-vp9 -c:a libvorbis hd \
  -row-mt 1 -s 640x480 -b:v 750k -minrate 375k -maxrate 1088k -tile-columns 1 -g 240 -threads 4 -quality good -crf 33 -c:v libvpx-vp9 -c:a libvorbis fsd \
  -row-mt 1 -s 640x480 -b:v 512k -minrate 256k -maxrate 742k -tile-columns 1 -g 240 -threads 4 -quality good -crf 34 -c:v libvpx-vp9 -c:a libvorbis sd
+
+
+#############################################################
+ffmpeg pitch
+#############################################################
+
+https://ffmpeg-user.ffmpeg.narkive.com/9oKyRhaL/pitch-corecting-audio
+https://hydrogenaud.io/index.php/topic,119448.0.html
+https://superuser.com/questions/292833/how-to-change-audio-frequency
+https://stackoverflow.com/questions/40564451/how-to-change-pitch-and-tempo-together-reliably-with-ffmpeg
+
+
+ffmpeg -i [input] -af asetrate=r=24000/1001/25*<currentrate>,atempo=25*1001/24000 -y [output]
+ffmpeg -i <input file name> -filter:a "asetrate=<new frequency>" -y <output file name>
+ffmpeg -i <input> -af 'asetrate=44100*1/2,atempo=2/1' <output>
+ffmpeg -i input.mp4 -af asetrate=44100*3/4,atempo=4/3 output.mp4
+ffmpeg -i input.mp4 -af atempo=3/4,asetrate=44100*4/3 output.mp4
+ffmpeg -i input.mp4 -af asetrate=44100*4,atempo=1/2,atempo=1/2 output.mp4
+
+ffmpeg -i my.mp3 -filter:a "rubberband=pitch=1.059463094352953" -acodec copy my-up.mp3
+ffmpeg -i slow.mp3 -filter:a "rubberband=pitch=0.9438743126816935, rubberband=tempo=4" -acodec copy fast.mp3
+
+Video conversion:
+ffmpeg -i [input] -r 25 -filter:v "setpts=0.96*PTS" -y [output]
+
+Audio conversion:
+sox [input] [output] tempo 1.0417
+ffmpeg -i [input] -filter:a "atempo=1.0417" -vn [output]
+
+ffmpeg -i 48kHz-32-inp.wav -af asetrate=48000*1.0293,aresample=48000:resampler=soxr:precision=33,atempo=1/1.0293 -c:a pcm_f32le 48kHz-32-out.wav
+
+# compare
+ffmpeg -i 24kHz-32-inp.wav -af aresample=48000/1.0293:resampler=soxr:precision=33,asetrate=48000 -c:a pcm_f32le 48kHz-32-out.wav
+ffmpeg -i 24kHz-32-inp.wav -af asetrate=24000*1.0293,aresample=48000:resampler=soxr:precision=33 -c:a pcm_f32le 48kHz-32-out.wav
+
+#############################################################
+formats cut
+#############################################################
+ffmpeg -formats
+# set bit rate to 64 kbps and  sample rate to 22050 Hz
+ffmpeg -i input.wav -ac 1 -ab 64000 -ar 22050 output.mp3
+
+# Picking the 30 seconds fragment at an offset of 1 minute:
+# In seconds
+ffmpeg -i input.mp3 -ss 60 -t 30 output.wav
+# In HH:MM:SS format
+ffmpeg -i input.mp3 -ss 0:01:00 -t 0:00:30 output.wav
+
+
+
