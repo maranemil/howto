@@ -44,3 +44,481 @@ $final_forecast = array_reduce($demands, function($last_forecast, $current_deman
 	return $alpha * $current_demand + (1 - $alpha) * $last_forecast;
 }, $initial_demand);
 print_r($final_forecast ); # Array ( [0] => 57 [1] => 58 ) 57.2
+
+
+
+
+ARIMA
+
+
+https://otexts.com/fpp2/seasonal-arima.html
+https://online.stat.psu.edu/stat510/book/export/html/665
+https://people.duke.edu/~rnau/411arim.htm
+https://www.avercast.eu/post/naive-forecasting
+https://www.avercast.com/post/naive-forecasting
+https://transimpact.in/nextsights/what-do-you-need-to-know-about-naive-forecasting/
+https://otexts.com/fpp2/simple-methods.html
+https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc4.htm
+
+
+p is the number of autoregressive terms,
+d is the number of nonseasonal differences needed for stationarity, and
+q is the number of lagged forecast errors in the prediction equation.
+
+If d=0:  yt  =  Yt
+If d=1:  yt  =  Yt - Yt-1
+If d=2:  yt  =  (Yt - Yt-1) - (Yt-1 - Yt-2)  =  Yt - 2Yt-1 + Yt-2
+
+
+# Naïve Forecast
+IF (Actual Sales = 0, 0, (Naive Forecast/ Actual Sales)-1)
+IF(C3=0,0,(B3/C3)-1)
+
+
+
+<?php
+
+print "<pre>";
+/*
+#$demands[] = rand(20,60);
+$demands[] = rand(20,60);
+$demands[] = rand(20,60);
+$demands[] = rand(20,60);*/
+
+$demands = [
+    0 => 48,
+    1 => 36,
+    2 => 45,
+];
+
+print_r($demands);
+echo "<hr>";
+
+$alpha = 0.2;
+#$initial_demand = array_shift($demands);
+$initial_demand = $demands[0]; // To start the reduction process off
+print_r($initial_demand);
+echo "<hr>";
+
+
+$final_forecast = array_reduce(
+	$demands,
+	static function($last_forecast, $current_demand)use($alpha)
+{
+	return $alpha *
+		$current_demand + (1 - $alpha) *
+		$last_forecast;
+}, $initial_demand);
+
+print_r($final_forecast );
+
+# New forecast
+#(alpha)(Current demand) + (1-alpha)(Last Forecast)
+
+echo "<hr>";
+foreach($demands as $key=>$value){
+	echo $key;
+
+	if($key > 0){
+		$naive = $value/$demands[$key-1]-1;
+		$naive = round($naive,2);
+	}
+	else{
+	   $naive = 0;
+	}
+	$demandsn[]= [
+		'value'=> $value,
+		'naive' => $demands[$key-1]??0,
+		'diff' => $naive,
+
+	];
+}
+print_r($demandsn);
+
+
+
+-------------
+Quantitative
+-------------
+Quantitative forecasting uses measurable data. It uses historical data that is reliable and accurate, for example past sales, labor reports, and a company’s statistics. The use of this type of data eliminates risks of inaccuracy and bias in forecasts.
+
+The quantitative forecasting method can be separated into the following 4 approaches: the naïve approach, trend projection, moving averages, and exponential smoothing.
+
+1) Naïve Approach
+The naïve approach considers what happened in the previous period and predicts the same thing will happen again.
+
+Example: Last month you sold 250 computers, so you predict that this month you’ll sell 250 computers again.
+
+2) Trend Projection
+Trend projection is one of the most classic kinds of business forecasting. It’s rather simple to understand, as it takes the previous trends of a time-series and predicts that the same trends are going to take place.
+
+Example: Last year your sales were steady, but around the holidays they nearly doubled. Using trend projection, you prepare for the same spike in sales during the next holiday season.
+
+3) Moving Averages
+Moving averages looks at the average of previous periods and assumes the next period will be in the range of that average.
+
+Example: In the previous 4 sales periods you’ve averaged a net income of $4,500. In the upcoming sales period, you will have a net income around $4,500.
+
+4) Exponential Smoothing
+Exponential smoothing also uses averages. Rather than just getting an average and using it as the next forecast, it decreasingly weights exponents depending on outside factors, like season or age of a product. This is done to ‘smooth’ the averages and create a reliable forecast.
+
+-------------
+Qualitative
+-------------
+Unlike Quantitative methods, Qualitative forecasting uses data that can’t be measured. It relies on opinions and expert advice and is useful for new companies that don’t have any or much historical data. Qualitative methods are useful, but it’s important to take the information into account in a nonjudgmental and unbiased manner.
+
+The qualitative forecasting method can be separated into the following 4 approaches: executive opinion, Delphi method, sales force estimates, and consumer surveys.
+
+1) Executive Opinion
+This happens when a group of executives makes decisions regarding the future of a company.
+
+Example: Coca-Cola executives use their industry-experience to make an important decision regarding the marketing campaign for the new year.
+
+2) Delphi Method
+The Delphi method is used as a group of industry professionals give an opinion regarding the future of the company. This opinion is given to another group of experts, who interprets and discusses the opinion before presenting the ‘final’ opinion to company decision makers.
+
+Example: A manager has all employees anonymously submit their predictions for sales over the next quarter. He then compiles them, looks them over, and submits a final forecast to his boss who will create the actual forecast.
+
+3) Sales Force Estimates
+This happens when individual sales employees use their experience and knowledge to make their own sales forecasts.
+
+Example: Sales representatives are expecting to close three major deals this month, so the forecast is adjusted to represent their predictions.
+
+4) Consumer Surveys
+Consumers give their opinions on products. These opinions are considered when forecasting.
+
+Example: You hand out surveys to each customer that makes a purchase. Each survey has the same questions and they’re submitted anonymously.
+
+----------------
+
+https://online.stat.psu.edu/stat510/lesson/5/5.2
+https://people.duke.edu/~rnau/411avg.htm
+https://real-statistics.com/time-series-analysis/basic-time-series-forecasting/
+https://real-statistics.com/time-series-analysis/basic-time-series-forecasting/simple-moving-average/
+https://real-statistics.com/time-series-analysis/basic-time-series-forecasting/weighted-moving-average/
+https://real-statistics.com/time-series-analysis/basic-time-series-forecasting/simple-moving-average/
+https://real-statistics.com/time-series-analysis/basic-time-series-forecasting/simple-exponential-smoothing/
+https://real-statistics.com/time-series-analysis/basic-time-series-forecasting/holt-linear-trend/
+https://real-statistics.com/time-series-analysis/basic-time-series-forecasting/holt-winters-method/
+https://real-statistics.com/time-series-analysis/basic-time-series-forecasting/holt-winters-additive/
+https://real-statistics.com/time-series-analysis/basic-time-series-forecasting/excel-2016-forecasting-functions/
+https://real-statistics.com/time-series-analysis/stochastic-processes/
+https://real-statistics.com/time-series-analysis/autoregressive-processes/
+https://real-statistics.com/time-series-analysis/autoregressive-processes/autoregressive-processes-basic-concepts/
+https://real-statistics.com/time-series-analysis/autoregressive-processes/lag-function/
+https://real-statistics.com/time-series-analysis/autoregressive-processes/finding-ar-coefficients-using-regression/
+https://real-statistics.com/time-series-analysis/moving-average-processes/
+https://real-statistics.com/time-series-analysis/moving-average-processes/ma-process-basic-concepts/
+https://real-statistics.com/time-series-analysis/arima-processes/arima-differencing/
+https://real-statistics.com/time-series-analysis/seasonal-arima-sarima/sarima-example/
+
+https://docs.aws.amazon.com/de_de/forecast/latest/dg/aws-forecast-recipe-arima.html
+https://otexts.com/fpp2/arima.html
+
+Simple Moving Average Forecast
+
+MAE = AVERAGE(D4:D18) = SUMPRODUCT(ABS(B7:B18-C7:C18))/COUNT(B7:B18)
+MSE = AVERAGE(E4:E18) = SUMXMY2(B7:B18,C7:C18)/COUNT(B7:B18)
+
+simple moving average with m = 3
+
+t  	y 	pred 	e 	e^2	w
+1	3	-	-	-	0.1
+2	5	-	-	-	0.3
+3	9	-	-	-	0.6
+4	20	5.6	14.33	205.44	1.0
+5	12	11.33	0.66	0.44
+6	17	13.66	3.33	11.11
+7	22	16.33	5.66	32.11
+8	23	17	6	36
+
+Weighted Moving Averages
+
+pred = =SUMPRODUCT(B4:B6,G$4:G$6).
+
+Holt’s Linear Trend
+Holt-Winters Multiplicative Method
+Holt-Winters Additive Method
+
+worksheet formula =NORM.INV(RAND(),0,2)
+
+
+SARIMA
+=AH9-AL$3-AL$4*AH8-AL$6*AH5+AL$4*AL$6*AH4-AL$5*AI8-AL$7*AI5-AL$5*AL$7*AI4
+=AL$3+AL$4*AH28+AL$6*AH25-AL$4*AL$6*AH24+AL$5*AI28 +AL$7*AI25+AL$5*AL$7*AI24
+
+-----
+
+Excel 2016 Forecasting Functions
+
+FORECAST.ETS(x, R1, R2, seasonality, missing, aggregation) = the forecasted value at the time value x
+
+FORECAST.ETS.SEASONALITY(R1, R2, missing, aggregation) = the seasonality value (1 for no seasonality, 4 for quarterly, 12 for monthly, etc.) based on the data in R1 and R2
+
+FORECAST.CONFINT(x, R1, R2, 1 – α, seasonality, missing, aggregation) = k such that (x-pred – k, x-pred + k) is the 1 – α confidence interval for the forecasted value x–pred at the time value x; the default value for 1 – α is .95.
+
+seasonality takes the value 1 for no seasonality, 4 for quarterly, 12 for monthly, etc. The value 0 (default) means that the value from FORECAST.ETS.SEASONALITY(R1, R2, missing, aggregation) is used.
+
+aggregation is used when range R2 contains elements with the same value. The possible values are: 1 = AVERAGE (default), 2 = COUNT, 3 = COUNTA, 4 = MAX, 5 = MEDIAN, 6 = MIN, 7 = SUM.
+
+---------------------
+
+options E.g.
+Holt-Trend (or Holt-Winters if there is seasonality) or ARIMA.
+
+YR TONS
+2004 57
+2005 72
+2006 41
+2007 70
+2008 72
+2009 92
+2010 81
+2011 81
+2012 67
+2013 94
+2014 79
+2015 92
+2016 96
+2017 91
+2018 58
+
+
+https://www.itl.nist.gov/div898/handbook/pmc/pmc.htm
+https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc431.htm
+--------------------------------------
+Moving Averages with m=3
+--------------------------------------
+t = (x[t] + x[t-1] + x[t-2] + x[t-3])/4
+
+
+--------------------------------------
+Single Exponential Smoothing
+--------------------------------------
+https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc4.htm
+https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc431.htm
+https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc432.htm
+
+St=αyt−1+(1−α)St−1   where 0<α≤1t≥3.
+
+St2 = 0.1 *  70 + (1-0.1)* 71 = 70.9
+St3 = 0.1 *  69 + (1-0.1)* 70.9 = 70.71
+St4 = 0.1 *  68 + (1-0.1)* 70.71 = round(70.439) = 70.44
+
+http://phptester.net/
+echo 0.1 *  68 + (1-0.1)* 70.71; # 70.439
+
+Time	yt	S(α=0.1) Error	Error squared
+1	71
+2	70	71	-1.00	1.00
+3	69	70.9	-1.90	3.61
+4	68	70.71	-2.71	7.34
+5	64	70.44	-6.44	41.47
+6	65	69.80	-4.80	23.04
+7	72	69.32	2.68	7.18
+8	78	69.58	8.42	70.90
+9	75	70.43	4.57	20.88
+10	75	70.88	4.12	16.97
+11	75	71.29	3.71	13.76
+12	70	71.67	-1.67	2.79
+
+The sum of the squared errors (SSE) = 208.94.
+The mean of the squared errors (MSE) is the SSE /11 = 19.0.
+
+--------------------------------------
+Forecasting with Single Exponential Smoothing
+--------------------------------------
+
+https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc432.htm
+
+= 0.1(70)+0.9(71.7)=71.5
+= 0.1(70)+0.9(71.5)=71.35
+
+s[t+1] = 0.1(70)+0.9(71.7) = 71.5
+s[t+2] = 0.1(70)+0.9(71.5) = 71.35
+
+echo  0.1*(70)+0.9*(71.7); # 71.53
+echo  0.1*(70)+0.9*(71.5); # 71.35
+
+Period		Bootstrap forecast	Data	Single Smoothing Forecast
+13		71.50			75	71.5
+14		71.35			75	71.9
+15		71.21			74	72.2
+16		71.09			78	72.4
+17		70.98			86	73.0
+
+smoothed with an α of 0.3:
+Data	Fit
+6.4
+5.6	6.4
+7.8	6.2
+8.8	6.7
+11.0	7.3
+11.6	8.4
+16.7	9.4
+15.3	11.6
+21.6	12.7
+22.4	15.4
+
+
+https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc434.htm
+https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc435.htm
+https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc436.htm
+
+--------------------------------------
+Single Moving Average
+--------------------------------------
+
+https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc421.htm
+
+Then the average of the first 3 numbers is:   (9 + 8 + 9) / 3 = 8.667.
+
+Supplier	$	MA	Error	Error squared
+1		9
+2		8
+3		9	8.667	0.333	0.111
+4		12	9.667	2.333	5.444
+5		9	10.000	-1.000	1.000
+6		12	11.000	1.000	1.000
+7		11	10.667	0.333	0.111
+8		7	10.000	-3.000	9.000
+9		13	10.333	2.667	7.111
+10		9	9.667	-0.667	0.444
+11		11	11.000	0	0
+12		10	10.000	0	0
+
+The MSE = 2.42 as compared to 3 in the previous case.
+
+--------------------------------------
+Centered Moving Average
+--------------------------------------
+
+https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc422.htm
+
+
+Data Set of Monthly CO2 Concentrations
+https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc4411.htm
+
+Data Set of Southern Oscillations
+https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc4412.htm
+
+--------------------------------------
+Moving Average or Smoothing Techniques
+--------------------------------------
+https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc42.htm
+
+There are two distinct groups of smoothing methods
+Averaging Methods
+Exponential Smoothing Methods
+
+We shall compute the "mean squared error":
+The "error" = true amount spent minus the estimated amount.
+The "error squared" is the error above, squared.
+The "SSE" is the sum of the squared errors.
+The "MSE" is the mean of the squared errors.
+
+Error and Squared Errors
+The estimate = 10
+
+Supplier	$	Error	Error Squared
+1		9	-1	1
+2		8	-2	4
+3		9	-1	1
+4		12	2	4
+5		9	-1	1
+6		12	2	4
+7		11	1	1
+8		7	-3	9
+9		13	3	9
+10		9	-1	1
+11		11	1	1
+12		10	0	0
+
+The SSE = 36 and the MSE = 36/12 = 3.
+
+
+Estimator	7	9	10	12
+SSE		144	48	36	84
+MSE		12	4	3	7
+
+
+Year	$ (millions)	Mean	Error	Squared Error
+1985	46.163		48.676	-2.513	6.313
+1986	46.998		48.676	-1.678	2.814
+1987	47.816		48.676	-0.860	0.739
+1988	48.311		48.676	-0.365	0.133
+1989	48.758		48.676	0.082	0.007
+1990	49.164		48.676	0.488	0.239
+1991	49.548		48.676	0.872	0.761
+1992	48.915		48.676	0.239	0.057
+1993	50.315		48.676	1.639	2.688
+1994	50.768		48.676	2.092	4.378
+The MSE = 1.8129.
+
+
+3/3 + 4/3 + 5/3 = 1 + 1.3333 + 1.6667 = 4.
+
+--------------------------------------
+Moving average models
+--------------------------------------
+https://otexts.com/fpp2/AR.html
+https://otexts.com/fpp2/MA.html
+https://otexts.com/fpp2/arima-forecasting.html
+https://otexts.com/fpp2/seasonal-arima.html
+https://otexts.com/fpp2/arima-r.html
+https://otexts.com/fpp2/MA.html
+https://people.duke.edu/~rnau/411avg.htm
+https://ademos.people.uic.edu/Chapter23.html
+https://online.stat.psu.edu/stat510/book/export/html/665
+https://otexts.com/fpp2/seasonal-arima.html
+https://otexts.com/fpp2/arima-forecasting.html
+
+
+MA yt = 20 + et + 0.8 * et-1
+MA2 yt = et - et-1 + 0.8 * et-2
+
+--------------------------------------
+AUTOREGRESSIVE MODEL
+--------------------------------------
+https://www.statistik-nachhilfe.de/ratgeber/statistik/induktive-statistik/statistische-modellbildung-und-weitere-methoden/zeitreihenanalyse/autoregressive-modelle-ar-modelle
+https://en.wikipedia.org/wiki/Autoregressive_model
+
+alpha = 0.3
+xt = alpha + xt-1 + et
+
+t  x  AR 	ER 	Calculation
+1  3  0	 	2.7	0.3
+2  4  6  	-2	0.3 + 3 + 2.7
+3  5  4.3	0.7 	0.3 + 6 + -2
+4  7
+5  2
+6  9
+
+--------------------------------------
+ARIMA-MODELLE
+--------------------------------------
+https://www.statistik-nachhilfe.de/ratgeber/statistik/induktive-statistik/statistische-modellbildung-und-weitere-methoden/zeitreihenanalyse/arima-modelle
+
+<?php
+echo "<pre>";
+foreach (range(0, 6) as $number) {
+	$data[] = rand(2,7);
+}
+print_r($data);
+$alpha = 0.3;
+function MA($value,$alpha,$err){
+	return $alpha + $value + $err;
+
+}
+foreach($data as $key => $value){
+	if($key==0){
+		$arrMA[$key] = array("value"=>$value,"err"=>$alpha -$value );
+		$arrMA[$key]["AR"] = 0;
+	}
+	else{
+		$arrMA[$key] = array("value"=>$value);
+		$arrMA[$key]["AR"] = MA($arrMA[$key-1]["value"],$alpha,$arrMA[$key-1]["err"]);
+		$arrMA[$key]["err"] = $arrMA[$key]["AR"] - $value;
+	}
+}
+print_r($arrMA);
