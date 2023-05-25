@@ -1,0 +1,401 @@
+#############################################
+# Moving Average
+#############################################
+Here's an example of calculating a simple moving average (SMA) for a given set of numbers:
+Let's consider the following dataset:
+[12, 18, 20, 15, 22, 17, 21, 16]
+
+To calculate a 3-day simple moving average, we'll take the average of the current day's value and the two previous days' values.
+Here's how you can calculate it step by step:
+
+Day 1: Average of [12] = 12
+Day 2: Average of [12, 18] = (12 + 18) / 2 = 15
+Day 3: Average of [12, 18, 20] = (12 + 18 + 20) / 3 = 16.67 (rounded to two decimal places)
+Day 4: Average of [18, 20, 15] = (18 + 20 + 15) / 3 = 17.67 (rounded to two decimal places)
+Day 5: Average of [20, 15, 22] = (20 + 15 + 22) / 3 = 19
+Day 6: Average of [15, 22, 17] = (15 + 22 + 17) / 3 = 18
+Day 7: Average of [22, 17, 21] = (22 + 17 + 21) / 3 = 20
+Day 8: Average of [17, 21, 16] = (17 + 21 + 16) / 3 = 18
+
+So, the simple moving average for the given dataset with a 3-day window would be:
+
+[12, 15, 16.67, 17.67, 19, 18, 20, 18]
+
+..
+
+To forecast values using a moving average, you can continue the moving average calculation beyond the existing dataset. Here's an example:
+
+Let's say we have the following dataset:
+
+[12, 18, 20, 15, 22, 17, 21, 16]
+
+We previously calculated the 3-day simple moving average (SMA) as follows:
+
+[12, 15, 16.67, 17.67, 19, 18, 20, 18]
+
+Now, let's assume we want to forecast the next 3 values using the SMA. To do this, we take the average of the most recent 3 values in the existing SMA dataset and use it as the forecasted value for the next day. We repeat this process for the desired number of forecasts. Here's how you can forecast the next 3 values:
+
+Day 9: Average of [20, 18, 20] = (20 + 18 + 20) / 3 = 19.33 (rounded to two decimal places)
+Day 10: Average of [18, 20, 18] = (18 + 20 + 18) / 3 = 18.67 (rounded to two decimal places)
+Day 11: Average of [20, 18, 19] = (20 + 18 + 19) / 3 = 19 (rounded to two decimal places)
+
+So, the forecasted values using the 3-day SMA are:
+
+[19.33, 18.67, 19]
+
+Note that as you forecast further into the future, the forecasted values will be based solely on the previous SMA values and not on any new incoming data. Also, keep in mind that the accuracy of the forecast will depend on the stability and predictability of the underlying data pattern.
+
+....
+#############################################
+# Moving Average
+#############################################
+
+function calculateMovingAverage($data, $windowSize) {
+    $movingAverage = [];
+    $numDataPoints = count($data);
+
+    // Calculate the moving average for the existing dataset
+    for ($i = $windowSize - 1; $i < $numDataPoints; $i++) {
+        $sum = 0;
+        for ($j = $i; $j >= $i - ($windowSize - 1); $j--) {
+            $sum += $data[$j];
+        }
+        $average = $sum / $windowSize;
+        $movingAverage[] = round($average, 2);
+    }
+
+    return $movingAverage;
+}
+
+function forecastMovingAverage($movingAverage, $forecastSize) {
+    $numMovingAverage = count($movingAverage);
+    $forecast = [];
+
+    // Forecast future values based on the moving average
+    for ($i = 0; $i < $forecastSize; $i++) {
+        $sum = 0;
+        $start = $numMovingAverage - ($i + 1);
+        $end = $start - ($forecastSize - 1);
+
+        for ($j = $start; $j >= $end; $j--) {
+            $sum += $movingAverage[$j];
+        }
+        $average = $sum / $forecastSize;
+        $forecast[] = round($average, 2);
+    }
+
+    return $forecast;
+}
+
+// Example usage
+$data = [12, 18, 20, 15, 22, 17, 21, 16];
+$windowSize = 3;
+$forecastSize = 3;
+
+$movingAverage = calculateMovingAverage($data, $windowSize);
+$forecast = forecastMovingAverage($movingAverage, $forecastSize);
+
+// Print the moving average
+echo "Moving Average:\n";
+foreach ($movingAverage as $value) {
+    echo $value . "\n";
+}
+
+// Print the forecasted values
+echo "\nForecasted Values:\n";
+foreach ($forecast as $value) {
+    echo $value . "\n";
+}
+
+
+
+............
+#
+#############################################
+# Decompositional
+#############################################
+function forecastDecompositional($data, $seasonLength, $forecastSize) {
+    // Import the TimeSeries library (requires installation via composer)
+    require 'vendor/autoload.php';
+
+    // Convert the data to a TimeSeries object
+    $timeSeries = new TimeSeries($data);
+
+    // Decompose the time series using STL algorithm
+    $decomposition = $timeSeries->stl($seasonLength);
+
+    // Get the trend, seasonal, and residual components
+    $trend = $decomposition->getTrend();
+    $seasonal = $decomposition->getSeasonal();
+    $residual = $decomposition->getResidual();
+
+    // Forecast future values
+    $forecast = [];
+    $numDataPoints = count($data);
+
+    for ($i = 1; $i <= $forecastSize; $i++) {
+        $seasonIndex = ($numDataPoints + $i - 1) % $seasonLength;
+        $forecastValue = $trend[$numDataPoints - 1] + $seasonal[$seasonIndex] + $residual[$numDataPoints - 1];
+        $forecast[] = round($forecastValue, 2);
+    }
+
+    return $forecast;
+}
+
+// Example usage
+$data = [12, 18, 20, 15, 22, 17, 21, 16];
+$seasonLength = 4;
+$forecastSize = 3;
+
+$forecast = forecastDecompositional($data, $seasonLength, $forecastSize);
+
+// Print the forecasted values
+echo "Forecasted Values:\n";
+foreach ($forecast as $value) {
+    echo $value . "\n";
+}
+
+
+
+..............
+#
+#############################################
+# NeuralNetwork
+#############################################
+// Install the required libraries via composer
+require 'vendor/autoload.php';
+
+use Rubix\ML\Persisters\Filesystem;
+use Rubix\ML\PersistentModel;
+use Rubix\ML\Datasets\Labeled;
+use Rubix\ML\Transformers\NumericStringConverter;
+use Rubix\ML\Transformers\ZScaleStandardizer;
+use Rubix\ML\Classifiers\LSTM;
+use Rubix\ML\NeuralNet\Layers\Dense;
+use Rubix\ML\NeuralNet\Layers\LSTM as LSTMLayer;
+use Rubix\ML\NeuralNet\Layers\Activation;
+use Rubix\ML\NeuralNet\Optimizers\Adam;
+use Rubix\ML\NeuralNet\CostFunctions\MeanSquaredError;
+use Rubix\ML\CrossValidation\Metrics\MeanAbsoluteError;
+use Rubix\ML\CrossValidation\Reports\ContingencyTable;
+use Rubix\ML\Backends\TensorFlow\Backend;
+use Rubix\ML\PersistentModel;
+use Rubix\ML\Backends\Serializers\Native;
+
+function forecastNeuralNetwork($data, $windowSize, $forecastSize) {
+    // Prepare the dataset
+    $dataset = Labeled::quick($data)->apply(new NumericStringConverter());
+    $dataset->apply(new ZScaleStandardizer());
+
+    // Split the dataset into inputs and outputs
+    $inputs = $dataset->samples();
+    $outputs = $dataset->labels();
+
+    // Train the LSTM neural network
+    $network = new LSTM(
+        [
+            new LSTMLayer(64),
+            new Activation('tanh'),
+            new Dense(1),
+            new Activation('linear'),
+        ],
+        new Adam(0.001),
+        512,
+        new MeanSquaredError(),
+        1e-4,
+        100,
+        0.1,
+        10,
+        new Backend(),
+        new Native()
+    );
+
+    $network->train($inputs, $outputs);
+
+    // Save the trained model for future use
+    $persistPath = 'neural_network.model';
+    $network->saveTo(new Filesystem($persistPath));
+
+    // Forecast future values
+    $forecast = [];
+
+    for ($i = 0; $i < $forecastSize; $i++) {
+        $start = count($data) - $windowSize + $i;
+        $end = count($data) + $i;
+
+        $input = array_slice($data, $start, $windowSize);
+        $input = (new NumericStringConverter())->transform([$input])[0];
+        $input = (new ZScaleStandardizer())->transform([$input])[0];
+
+        $prediction = $network->predict($input);
+        $forecast[] = round($prediction[0], 2);
+    }
+
+    return $forecast;
+}
+
+// Example usage
+$data = [12, 18, 20, 15, 22, 17, 21, 16];
+$windowSize = 3;
+$forecastSize = 3;
+
+$forecast = forecastNeuralNetwork($data, $windowSize, $forecastSize);
+
+// Print the forecasted values
+echo "Forecasted Values:\n";
+foreach ($forecast as $value) {
+    echo $value . "\n
+
+
+.......
+#
+#############################################
+# ARIMA
+#############################################
+// Install the required library via composer
+require 'vendor/autoload.php';
+
+use AstroPHP\Astro as Astro;
+
+function forecastARIMA($data, $order, $forecastSize) {
+    // Convert the data to a time series
+    $timeSeries = Astro::timeSeries($data);
+
+    // Fit the ARIMA model to the data
+    $model = Astro::arima($timeSeries)
+        ->order($order)
+        ->fit();
+
+    // Forecast future values
+    $forecast = $model->forecast($forecastSize)->values();
+
+    return $forecast;
+}
+
+// Example usage
+$data = [12, 18, 20, 15, 22, 17, 21, 16];
+$order = [1, 1, 1];
+$forecastSize = 3;
+
+$forecast = forecastARIMA($data, $order, $forecastSize);
+
+// Print the forecasted values
+echo "Forecasted Values:\n";
+foreach ($forecast as $value) {
+    echo $value . "\n";
+}
+
+
+...
+#############################################
+# LSTM
+#############################################
+
+
+// Install the required library via composer
+require 'vendor/autoload.php';
+
+use Phpml\Dataset\ArrayDataset;
+use Phpml\ModelManager;
+use Phpml\NeuralNetwork\Layer;
+use Phpml\NeuralNetwork\Node\Neuron;
+use Phpml\NeuralNetwork\Node\BiasNeuron;
+use Phpml\NeuralNetwork\Node\Input;
+use Phpml\NeuralNetwork\Node\Neural;
+use Phpml\NeuralNetwork\Node\Edge;
+use Phpml\NeuralNetwork\ActivationFunction\Sigmoid;
+use Phpml\NeuralNetwork\ActivationFunction\HyperbolicTangent;
+use Phpml\NeuralNetwork\ActivationFunction\Identity;
+use Phpml\NeuralNetwork\ActivationFunction\PReLU;
+use Phpml\NeuralNetwork\Training\Backpropagation;
+use Phpml\FeatureExtraction\StopWords;
+use Phpml\Tokenization\WordTokenizer;
+use Phpml\Tokenization\TokenCountVectorizer;
+use Phpml\Tokenization\WordCountVectorizer;
+use Phpml\Tokenization\WhitespaceTokenizer;
+use Phpml\Tokenization\Tokenizer;
+use Phpml\Tokenization\TfIdfTransformer;
+use Phpml\Tokenization\TfidfTransformer;
+use Phpml\Tokenization\TokenizerInterface;
+use Phpml\Tokenization\WordTransformer;
+
+function forecastLSTM($data, $windowSize, $forecastSize) {
+    // Prepare the dataset
+    $dataset = prepareDataset($data, $windowSize);
+
+    // Train the LSTM neural network
+    $network = trainLSTM($dataset);
+
+    // Save the trained model for future use
+    $modelPath = 'lstm.model';
+    $modelManager = new ModelManager();
+    $modelManager->saveToFile($network, $modelPath);
+
+    // Forecast future values
+    $forecast = [];
+
+    for ($i = 0; $i < $forecastSize; $i++) {
+        $start = count($data) - $windowSize + $i;
+        $end = count($data) + $i;
+
+        $input = array_slice($data, $start, $windowSize);
+        $input = prepareInputData($input);
+
+        $prediction = $network->predict($input);
+        $forecast[] = round($prediction[0], 2);
+    }
+
+    return $forecast;
+}
+
+function prepareDataset($data, $windowSize) {
+    $samples = [];
+    $labels = [];
+
+    for ($i = 0; $i < count($data) - $windowSize; $i++) {
+        $samples[] = array_slice($data, $i, $windowSize);
+        $labels[] = $data[$i + $windowSize];
+    }
+
+    return new ArrayDataset($samples, $labels);
+}
+
+function prepareInputData($data) {
+    return [$data];
+}
+
+function trainLSTM($dataset) {
+    $network = new Neural();
+    $network->addLayer(new Input($dataset->getSamples()[0]));
+    $network->addLayer(new Neuron('lstm', 6, new HyperbolicTangent()));
+    $network->addLayer(new Neural(6, new HyperbolicTangent()));
+    $network->addLayer(new Neural(1, new Identity()));
+    $network->addLayer(new BiasNeuron());
+
+    $network->addEdge(new Edge($network['Input'], $network['lstm'], 0.3));
+    $network->addEdge(new Edge($network['lstm'], $network[6], 0.3));
+    $network->addEdge(new Edge($network[6], $network[1], 0.3));
+    $network->addEdge(new Edge($network[1], $network['Bias'], 0.3));
+
+    $network->addLayerToAllNeurons(new PReLU());
+
+    $network->build();
+
+    $trainer = new Backpropagation($network);
+    $trainer->train($dataset->getSamples(), $dataset->getTargets());
+
+    return $network;
+}
+
+// Example usage
+$data = [12, 18, 20, 15, 22, 17, 21, 16];
+$windowSize = 3;
+$forecastSize = 3;
+
+$forecast = forecastLSTM($data, $windowSize, $forecastSize);
+
+// Print the forecasted values
+echo "Forecasted Values:\n";
+foreach ($forecast as $value) {
+    echo $value . "\n";
+}
