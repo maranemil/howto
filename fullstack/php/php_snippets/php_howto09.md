@@ -187,10 +187,21 @@ https://www.php.net/manual/en/function.fgetcsv.php
 https://www.php.net/manual/en/function.session-destroy.php
 https://www.php.net/manual/en/function.str-getcsv.php
 http://phptester.net/
+https://stackoverflow.com/questions/9139202/how-to-parse-a-csv-file-using-php
+https://www.php.net/manual/de/function.gettype.php
 
 $string = 'PHP,Java,Python,Kotlin,Swift';
 $data = str_getcsv($string);
 var_dump($data);
+--------
+$csvFile = file('../somefile.csv');
+$data = [];
+foreach ($csvFile as $line) {
+    $data[] = str_getcsv($line);
+}
+--------
+$csv = array_map('str_getcsv', file('data.csv'));
+
 ~~~
 
 ~~~
