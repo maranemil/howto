@@ -112,3 +112,107 @@ WHERE schemaname != 'pg_catalog' AND
     schemaname != 'information_schema';
 
 
+##################################################
+group by week in postgresql
+##################################################
+
+https://til.hashrocket.com/posts/5zy59gfxeg-group-dates-by-week-in-postgres
+https://stackoverflow.com/questions/36024712/how-to-group-by-week-in-postgresql
+https://dirask.com/posts/PostgreSQL-Group-rows-by-weeks-1eo7op
+https://dba.stackexchange.com/questions/164598/group-by-week-but-show-a-more-readable-the-result
+https://learnsql.com/cookbook/how-to-extract-the-week-number-from-a-date-in-postgresql/
+
+
+SELECT date_part('year', author_date::date) as year,
+       date_part('week', author_date::date) AS weekly,
+       COUNT(author_email)
+FROM commits
+GROUP BY year, weekly
+ORDER BY year, weekly;
+
+.....
+
+SELECT date_trunc('week', author_date::date) AS weekly,
+       COUNT(author_email)
+FROM commits
+GROUP BY weekly
+ORDER BY weekly;
+
+.....
+
+select count(*),
+  date_trunc('week', request_time)
+from requests
+group by
+  date_trunc('week', request_time)
+order by date_trunc desc ;
+
+...
+
+
+SELECT
+    DATE_TRUNC('week', "event_timestamp") AS "week",
+    COUNT(*)
+FROM "events"
+GROUP BY DATE_TRUNC('week', "event_timestamp")
+ORDER BY DATE_TRUNC('week', "event_timestamp")
+
+SELECT
+    DATE_TRUNC('week', "event_timestamp") AS "week",
+    COUNT(*)
+FROM "events"
+GROUP BY 1
+ORDER BY 1
+
+....
+
+SELECT first_name,
+     last_name,
+       DATE_PART('week',birth_date)
+         AS  birth_week_number
+FROM children;
+
+SELECT first_name,
+     last_name,
+       EXTRACT('week' FROM birth_date)
+         AS  birth_week_number
+FROM children;
+
+-----------
+
+SQL
+
+SELECT YEAR(datetime) AS Year, DATE_FORMAT(datetime, '%b %e') AS Week, COUNT(*) AS total
+FROM table
+GROUP BY Year, Week;
+
+SELECT DATE_FORMAT(ADDDATE(buy.date_created, INTERVAL -DAYOFWEEK(buy.date_created) DAY),"%Y-%m-%d") as week,
+ COUNT(*) AS total
+FROM buy GROUP BY week;
+
+##################################################
+group by month in postgresql
+##################################################
+
+https://learnsql.com/cookbook/how-to-group-by-month-in-postgresql/
+
+SELECT
+       DATE_TRUNC('month',production_timestamp)
+         AS  production_to_month,
+       COUNT(id) AS count
+FROM watch
+GROUP BY DATE_TRUNC('month',production_timestamp);
+
+SELECT name,
+       DATE_TRUNC('month',production_timestamp)
+         AS  production_to_month
+FROM watch;
+
+##################################################
+group by day in postgresql
+##################################################
+
+https://linuxhint.com/postgres-groupby-day/
+
+SELECT DATE_TRUNC(‘day’, date_column) FROM table_name GROUP BY DATE_TRUNC(‘day’, date_column);
+SELECT DATE_TRUNC(‘day’, order_date) FROM date_details GROUP BY DATE_TRUNC(‘day’, order_date);
