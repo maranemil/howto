@@ -696,6 +696,7 @@ https://hemingwayapp.com/
 
 ###  Transfer files from VM
 
+- https://filetransfer.io/
 - http://fast-files.com
 - http://uploaded.net
 - http://www.directupload.net
