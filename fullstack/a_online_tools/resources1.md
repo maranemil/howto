@@ -653,6 +653,9 @@ https://hemingwayapp.com/
 
 ### Sounds
 
+- https://www.looperman.com/loops/detail/326796/2023-03-25-slap-house-drums-full-free-124bpm-house-drum-loop
+- https://www.looperman.com/loops/detail/284556/autotuned-ahs-free-124bpm-house-vocal-loop
+- https://pixabay.com/de/sound-effects/search/house%20loop/
 - https://www.storyblocks.com/audio/search/background+noise+and+chatter
 - https://www.videvo.net/royalty-free-sound-effects/chatter/
 - https://soundbible.com/tags-chatter.html
