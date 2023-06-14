@@ -578,9 +578,9 @@ https://hemingwayapp.com/
 
 ### REGEX
 
-- https://regex101.com
-- https://www.regextester.com
 - http://www.phpliveregex.com
+- https://regex101.com/
+- https://www.regextester.com
 
 ------------------------------------------------------------------
 
@@ -648,6 +648,12 @@ https://hemingwayapp.com/
 
 - https://www.telekom.de/netz/speedtest
 - https://speedtest.vodafone.de/
+
+------------------------------------------------------------------
+
+### sed tester
+
+- https://sed.js.org/
 
 ------------------------------------------------------------------
 

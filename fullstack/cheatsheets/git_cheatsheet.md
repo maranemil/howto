@@ -118,4 +118,11 @@ git log --stat --pretty=short --graph
 
 git show --stat --oneline HEAD
 git show --name-only --oneline HEAD
+
+#######################################################################
+get the current branch name in Git?
+#######################################################################
+https://stackoverflow.com/questions/6245570/how-do-i-get-the-current-branch-name-in-git
+
+git branch
 ~~~
