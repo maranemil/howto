@@ -81,6 +81,8 @@
 | https://speechify.com/text-to-speech-online | Text to Speech Online             | 
 | https://ttsreader.com/                      | TEXT TO SPEECH READER             | 
 | https://ttsmp3.com/                         | TEXT TO SPEECH READER             | 
+| https://create.musicfy.lol/                 | Voice Changer                     | 
+| https://lalals.com/                         | Voice Changer                     | 
   
 ### text
 
