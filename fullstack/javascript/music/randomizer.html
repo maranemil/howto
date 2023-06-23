@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<button onclick='plays()'>Play some notes!</button>
+
+<script>
+    // create web audio api context
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let ctx = new AudioContext();
+    let masterGain = ctx.createGain();
+    masterGain.gain.value = 0.5;
+    masterGain.connect(ctx.destination);
+
+    function play(note,startTime) {
+
+      //let note = 34;
+      //let startTime = 0.1;
+      let duration = 0.1;
+      let attackMs = 100;
+      let decayMs = 50;
+      let sustainLevel = 0.1;
+      let releaseMs = 250;
+
+      let osc = ctx.createOscillator();
+      osc.type = 'square'; // sine square sawtooth triangle  custom
+      osc.frequency.value = 440 * Math.pow(2, (note - 69) / 12);
+      let absStartTime = ctx.currentTime + startTime;
+      let absEndTime = absStartTime + duration;
+      let attackEndTime = absStartTime + attackMs * 0.001;
+      let decayEndTime = attackEndTime + decayMs * 0.001;
+      let releaseEndTime = absEndTime + releaseMs * 0.001;
+      let gainNode = ctx.createGain();
+      gainNode.gain.value = 0.3;
+      gainNode.gain.linearRampToValueAtTime(1, attackEndTime);
+      gainNode.gain.linearRampToValueAtTime(sustainLevel, decayEndTime);
+      gainNode.gain.setValueAtTime(sustainLevel, absEndTime);
+      gainNode.gain.linearRampToValueAtTime(0, releaseEndTime);
+      osc.connect(gainNode);
+      gainNode.connect(masterGain);
+      osc.start(absStartTime);
+      osc.stop(releaseEndTime);
+    }
+
+    function plays(note,startTime) {
+        for (let step = 0; step < 6; step++) {
+          setTimeout(() => {
+            console.log("Walking east one step");
+            let note = Math.floor(Math.random() * 45) + 20;
+            play(note,step*0.5);
+          }, 1000)
+        }
+    }
+
+</script>
+</body>
+</html>

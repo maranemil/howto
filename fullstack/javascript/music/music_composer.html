@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!--
+https://jsfiddle.net/krasse/64y3wxkv/
+
+https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createOscillator
+https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createOscillator#examples
+https://webaudio.github.io/web-audio-api/#dom-baseaudiocontext-createoscillator
+https://developer.mozilla.org/en-US/docs/Web/API/OscillatorNode
+https://developer.mozilla.org/en-US/docs/Web/API/OscillatorNode/type
+
+https://github.com/mdn/webaudio-examples/tree/main
+ -->
+
+
+<button onclick='playNotes()'>Play some notes!</button>
+<script>
+    function playNotes() {
+  setup();
+  playNote(64, 0.1, .1);
+  playNote(67, 0.4, .1);
+  playNote(69, 0.8, .1);
+  playNote(69, 1.2, .1);
+  playNote(69, 1.6, .2);
+  playNote(71, 2.1, .1);
+  playNote(69, 2.6, .2);
+  playNote(67, 3.1, .1);
+  playNote(67, 3.3, .1);
+  playNote(64, 3.6, .1);
+  playNote(64, 4.1, .1);
+  playNote(67, 4.3, .1);
+}
+
+
+
+function playNote(note, startTime, duration,
+  attackMs = 10, decayMs = 50, sustainLevel = 0.2, releaseMs = 450) {
+
+  // Create an oscillator source node
+  let osc = ctx.createOscillator();
+  osc.type = 'square'; // sine square sawtooth triangle  custom
+
+  osc.frequency.value = midiNoteToFrequency(note);
+
+  let absStartTime = ctx.currentTime + startTime;
+  let absEndTime = absStartTime + duration;
+  // Setting up the gain envelope for the note with the attack, decay, sustain and release parameters
+  let attackEndTime = absStartTime + attackMs * 0.001;
+  let decayEndTime = attackEndTime + decayMs * 0.001;
+  let releaseEndTime = absEndTime + releaseMs * 0.001;
+  let gainNode = ctx.createGain();
+  gainNode.gain.value = 0;
+  gainNode.gain.linearRampToValueAtTime(1, attackEndTime);
+  gainNode.gain.linearRampToValueAtTime(sustainLevel, decayEndTime);
+  gainNode.gain.setValueAtTime(sustainLevel, absEndTime);
+  gainNode.gain.linearRampToValueAtTime(0, releaseEndTime);
+  osc.connect(gainNode);
+  gainNode.connect(masterGain);
+  osc.start(absStartTime);
+  osc.stop(releaseEndTime);
+
+}
+
+function midiNoteToFrequency(note) {
+  return 440 * Math.pow(2, (note - 69) / 12);
+}
+
+function setup() {
+  if (this.ctx) {
+    return true;
+  }
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContext) {
+    alert("Web Audio is not supported in this browser");
+    return false;
+  }
+  ctx = new AudioContext();
+  masterGain = ctx.createGain();
+  masterGain.gain.value = 0.3;
+  masterGain.connect(ctx.destination);
+  return true;
+}
+
+playNotes();
+
+
+</script>
+
+</body>
+</html>

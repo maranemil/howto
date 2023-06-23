@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!-- http://jsfiddle.net/itzmeamar/sC9e9/ -->
+
+<div>
+    <table id="kb">
+        <tr class="hi">
+            <td class="white" colspan="2"><a name="do"  >&nbsp;</a></td>
+            <td class="black" colspan="2"><a name="do#" >E</a></td>
+            <td class="white"            ><a name="re"  >&nbsp;</a></td>
+            <td class="black" colspan="2"><a name="re#" >R</a></td>
+            <td class="white" colspan="2"><a name="mi"  >&nbsp;</a></td>
+            <td class="white" colspan="2"><a name="fa"  >&nbsp;</a></td>
+            <td class="black" colspan="2"><a name="fa#" >Y</a></td>
+            <td class="white"            ><a name="sol" >&nbsp;</a></td>
+            <td class="black" colspan="2"><a name="sol#">U</a></td>
+            <td class="white"            ><a name="la"  >&nbsp;</a></td>
+            <td class="black" colspan="2"><a name="la#" >I</a></td>
+            <td class="white" colspan="2"><a name="si"  >&nbsp;</a></td>
+            <td class="white" colspan="2"><a name="do+" >&nbsp;</a></td>
+        </tr>
+        <tr class="lo">
+            <td class="white" colspan="3"><a name="do" >S</a></td>
+            <td class="white" colspan="3"><a name="re" >D</a></td>
+            <td class="white" colspan="3"><a name="mi" >F</a></td>
+            <td class="white" colspan="3"><a name="fa" >G</a></td>
+            <td class="white" colspan="3"><a name="sol">H</a></td>
+            <td class="white" colspan="3"><a name="la" >J</a></td>
+            <td class="white" colspan="3"><a name="si" >K</a></td>
+            <td class="white" colspan="3"><a name="do+">L</a></td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td><button id="octinf" onclick="changeOctave(octave-1);">&lt;</button></td>
+            <td>Octave <span id="oct">_</span></td>
+            <td><button id="octsup" onclick="changeOctave(octave+1);">&gt;</button></td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    var notes = {
+    "do": 3,
+    "do#": 4,
+    "re": 5,
+    "re#": 6,
+    "mi": 7,
+    "fa": 8,
+    "fa#": 9,
+    "sol": 10,
+    "sol#": 11,
+    "la": 12,
+    "la#": 13,
+    "si": 14,
+    "do+": 15
+};
+var clavier = {
+    S: "do",
+    E: "do#",
+    D: "re",
+    R: "re#",
+    F: "mi",
+    G: "fa",
+    Y: "fa#",
+    H: "sol",
+    U: "sol#",
+    J: "la",
+    I: "la#",
+    K: "si",
+    L: "do+"
+};
+var samples = new Float32Array(22050);
+var octave = 0;
+var DOM_KB = {};
+for (var k in clavier) {
+    DOM_KB[eval("KeyboardEvent.DOM_VK_" + k)] = clavier[k];
+}
+
+function playNOTE(note) {
+    var output = new Audio();
+    output.mozSetup(1, 44100);
+    var len = samples.length;
+
+    var f = 55 * Math.pow(2, octave + notes[note] / 12);
+    for (var j = 0; j < samples.length; j++) {
+        samples[j] = Math.sin((j * f * Math.PI) / 44100);
+    }
+    output.mozWriteAudio(samples);
+    output = null;
+}
+
+function playKEY(e) {
+    if (e.charCode in DOM_KB) playNOTE(DOM_KB[e.charCode], octave);
+    else switch (e.keyCode) {
+    case KeyboardEvent.DOM_VK_PAGE_UP:
+        changeOctave(octave + 1);
+        break;
+    case KeyboardEvent.DOM_VK_PAGE_DOWN:
+        changeOctave(octave - 1);
+        break;
+    }
+    return false;
+}
+
+function playKEYBOARD(event) {
+    playNOTE(event.target.name || event.target.children[0].name, octave);
+}
+
+function changeOctave(val) {
+    if (val < 2) octave = 2;
+    else if (val > 8) octave = 8;
+    else octave = val;
+    document.getElementById("oct").innerHTML = octave;
+}
+
+
+window.addEventListener('keypress', playKEY);
+document.getElementById('kb').addEventListener('click', playKEYBOARD);
+changeOctave(3);
+
+</script>
+
+<style>
+    table {
+    width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+#kb {
+    font-family : Courier;
+    height: 200px;
+    border-collapse:collapse;
+    border: 2px solid #aaa;
+}
+#kb td {
+    padding: 10px;
+    vertical-align: bottom;
+    border-left: 2px solid #aaa;
+    border-right: 2px solid #aaa;
+}
+.white {
+    color: black;
+    background: white;
+}
+.black {
+    color: white;
+    background: black;
+}
+tr.hi td.black {
+    /*width: 20px;*/
+    border-bottom: 2px solid #aaa;
+}
+tr.lo td {
+    /*width: 30px;*/
+    border-bottom: 2px solid #aaa;
+}
+</style>
+</body>
+</html>
