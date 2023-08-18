@@ -17,6 +17,12 @@
 * for i in *; do mv "$i" $(($RANDOM % 1000000000)).${i#*.}; done
 ```
 
+### rename remove file name spaces
+```
+sudo apt install rename
+rename 's/ /_/g' *
+```
+
 ### Umount force
 ```
 sudo service nfs-kernel-server stop

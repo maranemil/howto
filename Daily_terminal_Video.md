@@ -233,6 +233,10 @@ sudo ubuntu-drivers autoinstall
 * xrandr --output HDMI-1-1 --gamma 0.8:0.8:0.8
 * xrandr --output HDMI-1-1 --gamma 1.0:1.0:1.0
 * xrandr --output eDP-1-1 --gamma 1.0:1.0:1.0
+
+
+xrandr -s 1920x1200
+xrandr -s 2560x1600
 ```
 
 ### mp4 cut crop 
@@ -251,3 +255,19 @@ ffmpeg -ss 00:00:04 -t 01:00:00 -i input.mp4 -c copy output.mp4;
 # keep only the first N seconds of a video.
 ffmpeg -i input.avi -t 33 -c copy output.avi
 ~~~
+
+### fast convert 
+~~~
+for i in *.avi; do ffmpeg -i $i -y -threads 4 $i.mp4; done
+for i in *.mp4; do ffmpeg -i $i -y -threads 4 $i.mkv; done
+
+ffprobe in.mp4 2>&1 | grep Stream
+
+for i in *.mkv; do ffmpeg -i $i -y -threads 4 -codec copy $i.mp4; done
+for i in *.mkv; do ffmpeg -i $i -y -threads 4 -crf 24 -c:a copy -tune film -preset superfast  $i.mp4; done
+for i in *.mkv; do ffmpeg -i $i -y -threads 4 -crf 24 -tune film -preset superfast  $i.mp4; done
+
+for i in *.*; do ffmpeg -i $i -y -threads 2 -crf 28 -tune film -preset fast  $i.mp4; done
+~~~
+
+
