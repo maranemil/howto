@@ -138,4 +138,6 @@
 | https://mubert.com/render/genres/edm/edm        |                             |
 | https://wavtool.com/                            |                             |
 | https://huggingface.co/spaces/facebook/MusicGen | MusicGen                    |
+| https://vocalremover.org/                       | voice remover               |
+| https://chordify.net/                           | chord recognition           |
 
