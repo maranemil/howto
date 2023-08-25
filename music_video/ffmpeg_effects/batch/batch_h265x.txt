@@ -18,10 +18,20 @@ https://superuser.com/questions/928151/ffmpeg-eq-filter-complex-contrast
 https://stackoverflow.com/questions/32152090/encode-h265-to-hvc1-codec
 https://superuser.com/questions/1492214/which-audio-encoders-in-ffmpeg-support-8-khz
 https://esahubble.org/press/video_formats/
+https://gist.github.com/nikhan/26ddd9c4e99bbf209dd7?permalink_comment_id=2593046
+https://superuser.com/questions/547296/resizing-videos-with-ffmpeg-avconv-to-fit-into-static-sized-player
+https://stackoverflow.com/questions/60896154/how-to-use-ffmpeg-to-scale-image-and-to-specify-desired-frames-per-second
+https://superuser.com/questions/504637/ffmpeg-settings-for-unsharpmasking-with-and-without-upsampling
 
-480p typically goes towards the SD (Standard Definition resolution) quality.
 
 
+avconv -y -i in.avi -vcodec libx264 -b 2000k -bufsize 20M -acodec aac -strict experimental -ar 44100 -ab 256k bigbuck_out.mp4
+ffmpeg -i in -vf "scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:-1:-1:color=black" output
+ffmpeg -i in -vf "scale=1280:720:force_original_aspect_ratio=increase,crop=1280:720" output
+ffmpeg -i in.mov -vcodec libx264 -vf 'scale=640:trunc(ow/a/2)*2' -acodec aac -vb 1024k -minrate 1024k -maxrate 1024k -bufsize 1024k -ar 44100 -strict experimental -r 30 out.mp4
+
+-strict experimental
+−vf scale=1280:−2
 -vf curves=all='0/0 0.5/1 1/1'
 -vf eq=brightness=0.06:saturation=2:contrast=1
 -vf curves=vintage
@@ -32,6 +42,7 @@ ffmpeg -h encoder=aac
 ffmpeg -pix_fmts
 
 The hvc1 is defined to support Apple devices.
+480p typically goes towards the SD (Standard Definition resolution) quality.
 
 
 h264
@@ -40,10 +51,15 @@ mkdir -p conv && for f in *.MP4; do ffmpeg -i $f -c:v libx264 -c:a copy -crf 30 
 h265 5x
 mkdir -p conv && for f in *.mkv; do ffmpeg -i $f -c:v libx265 -c:a copy -vtag hvc1 -x265-params crf=34:pools=6 -y conv/$f.mp4; done
 
-# h265 5x
-mkdir -p conv && for f in *.*; do ffmpeg -i $f -c:v libx265 -c:a copy -x265-params crf=28:pools=4 -vf scale=-1:480,eq=brightness=-0.05:saturation=0.3:contrast=0.75 -y conv/$f.mp4; done
+-------------------------
+# h265 5x 480p SD
+-------------------------
+sudo sysctl -w vm.swappiness=5
+mkdir -p conv && for f in *.*; do ffmpeg -i $f -c:v libx265 -c:a copy -x265-params crf=26:pools=4 -vf scale=-2:480,eq=brightness=-0.05:saturation=0.5:contrast=0.8,unsharp=5:5:1.0:5:5:0.0 -strict experimental   -y conv/$f.mp4 && sleep 5; done
 
-# dashcam
+-------------------------
+# dashcam 720p HD
+-------------------------
 sudo sysctl -w vm.swappiness=5
 mkdir -p conv && for f in *.*; do ffmpeg -i $f -c:v libx265 -c:a copy -x265-params crf=28,pools=2 -vf eq=saturation=0.3:contrast=0.75 -y conv/$f.mp4 && sleep 3; done
 
