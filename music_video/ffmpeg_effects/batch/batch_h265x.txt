@@ -1,0 +1,53 @@
+
+ffmpeg -benchmark -i input.mp4 -vf "filter1, filter2, ..." -an -f null -
+ffmpeg -hwaccel cuvid -c:v h264_cuvid -i input.mp4 -vf "colorbalance=bs=0.3:gs=0.4:rs=0.3" -c:v h264_nvenc output.mp4
+
+
+https://trac.ffmpeg.org/wiki/colorspace
+https://superuser.com/questions/714804/converting-video-from-1080p-to-720p-with-smallest-quality-loss-using-ffmpeg
+https://saturncloud.io/blog/how-to-use-gpu-to-accelerate-the-processing-speed-of-ffmpeg-filter/
+https://video.stackexchange.com/questions/20962/ffmpeg-color-correction-gamma-brightness-and-saturation
+https://trac.ffmpeg.org/wiki/FilteringGuide
+https://x265.readthedocs.io/en/2.5/cli.html
+https://trac.ffmpeg.org/wiki/Encode/H.265
+https://www.reddit.com/r/ffmpeg/comments/u0gixk/what_is_the_optimal_x265params_for_anime_encoding/
+https://slhck.info/video/2017/02/24/crf-guide.html
+https://trac.ffmpeg.org/ticket/3730
+https://askubuntu.com/questions/922563/set-bit-depth-in-ffmpeg-encoding-for-hevc
+https://superuser.com/questions/928151/ffmpeg-eq-filter-complex-contrast
+https://stackoverflow.com/questions/32152090/encode-h265-to-hvc1-codec
+https://superuser.com/questions/1492214/which-audio-encoders-in-ffmpeg-support-8-khz
+https://esahubble.org/press/video_formats/
+
+480p typically goes towards the SD (Standard Definition resolution) quality.
+
+
+-vf curves=all='0/0 0.5/1 1/1'
+-vf eq=brightness=0.06:saturation=2:contrast=1
+-vf curves=vintage
+-codec:a aac -b:a 96k -ar 48000
+
+ffmpeg -h encoder=libx265
+ffmpeg -h encoder=aac
+ffmpeg -pix_fmts
+
+The hvc1 is defined to support Apple devices.
+
+
+h264
+mkdir -p conv && for f in *.MP4; do ffmpeg -i $f -c:v libx264 -c:a copy -crf 30 -tune film -preset superfast -threads 2 conv/$f.mp4; done
+
+h265 5x
+mkdir -p conv && for f in *.mkv; do ffmpeg -i $f -c:v libx265 -c:a copy -vtag hvc1 -x265-params crf=34:pools=6 -y conv/$f.mp4; done
+
+# h265 5x
+mkdir -p conv && for f in *.*; do ffmpeg -i $f -c:v libx265 -c:a copy -x265-params crf=28:pools=4 -vf scale=-1:480,eq=brightness=-0.05:saturation=0.3:contrast=0.75 -y conv/$f.mp4; done
+
+# dashcam
+sudo sysctl -w vm.swappiness=5
+mkdir -p conv && for f in *.*; do ffmpeg -i $f -c:v libx265 -c:a copy -x265-params crf=28,pools=2 -vf eq=saturation=0.3:contrast=0.75 -y conv/$f.mp4 && sleep 3; done
+
+
+
+
+
