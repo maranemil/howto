@@ -854,6 +854,7 @@ https://hemingwayapp.com/
 - https://de.y2mate.is/w0p2n/
 - https://ssyoutube.com/de51XA/youtube-video-downloader
 - https://freedownloadvideo.net/site7/
+- https://freedownloadvideo.net/dailymotion-video-downloader
 
 
 
