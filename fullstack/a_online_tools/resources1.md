@@ -671,6 +671,11 @@ https://hemingwayapp.com/
 
 ------------------------------------------------------------------
 
+### Templates Web
+- https://templated.co/
+
+------------------------------------------------------------------
+
 ### Text Uppercase
 
 - https://capitalizemytitle.com/style/APA/
