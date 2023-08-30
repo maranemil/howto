@@ -674,6 +674,12 @@ https://hemingwayapp.com/
 ### Templates Web
 
 - https://templated.co/
+- http://www.oswd.org/designs/favorites/
+- https://codecanyon.net/category/wordpress/media
+- https://themeforest.net/category/site-templates/entertainment
+- https://w3layouts.com/template-category/entertainment/
+- https://wordpress.org/themes/
+- https://www.templatemonster.com/
 
 ------------------------------------------------------------------
 
