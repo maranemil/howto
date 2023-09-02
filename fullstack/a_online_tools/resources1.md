@@ -385,6 +385,19 @@
 
 ------------------------------------------------------------------
 
+### Photo enhancement
+
+- https://imagecolorizer.com/de/colorize
+- https://jpghd.com/
+- https://hotpot.ai/restore-picture
+- https://www.cutout.pro/photo-enhancer-sharpener-upscaler/upload
+- https://picwish.com/photo-enhancer
+- https://snapedit.app/enhance
+- https://sharpen.imageonline.co/
+- https://picwish.com/unblur-image-portrait
+
+------------------------------------------------------------------
+
 ### Python Online Tools
 
 - https://ideone.com/
