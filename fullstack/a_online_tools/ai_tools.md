@@ -67,6 +67,7 @@
 | https://www.canva.com/de_de/                        |                                      |
 | https://www.autodraw.com/                           |                                      |
 | https://looka.com/                                  |                                      |
+| https://www.seaart.ai/home                          |                                      |
 
 
 
