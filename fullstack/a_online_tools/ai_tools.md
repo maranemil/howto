@@ -144,3 +144,14 @@
 | https://vocalremover.org/                       | voice remover               |
 | https://chordify.net/                           | chord recognition           |
 
+
+misc
+
+https://create.musicfy.lol/
+https://github.com/facebookresearch/audiocraft
+https://www.suno.ai/
+https://google-research.github.io/seanet/musiclm/examples/
+https://www.aisong.app/
+https://huggingface.co/spaces/facebook/MusicGen
+https://about.fb.com/news/2023/08/audiocraft-generative-ai-for-music-and-audio/
+https://audiocraft.metademolab.com/musicgen.html
