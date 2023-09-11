@@ -71,6 +71,10 @@ ideapad3
 ideapad5
 * ffmpeg -v warning -video_size 2560x1600 -framerate 25 -f x11grab -i :0.0 -f alsa -ac 2 -i default myvid_$(date +%s).mp4
 * ffmpeg -v warning -video_size 1920x1080 -framerate 30 -f x11grab -i :1.0 -f alsa -ac 2 -ar 44100 -i default   myvid_$(date +%s).mp4
+
+grab screen without specifying size
+ffmpeg -v warning -framerate 25 -f x11grab -i :0.0 -f alsa -ac 2 -i default myvid_$(date +%s).mp4
+
 ```
 
 ### Record Screen Ubuntu with Sound ASUS
