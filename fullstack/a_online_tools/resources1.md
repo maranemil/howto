@@ -802,9 +802,12 @@ https://hemingwayapp.com/
 
 ### Video editor
 
+- https://clideo.com/de
 - https://animoto.com/
 - https://biteable.com/tools/
-- https://clideo.com/de/video-maker
+- https://clideo.com/de/video-maker * maker
+- https://clideo.com/de/crop-video * crop
+- https://clideo.com/de/add-audio-to-video * audio 2 video
 - https://clipchamp.com/en/video-editor/
 - https://flixier.com/#
 - https://invideo.io/make/online-video-editor/
