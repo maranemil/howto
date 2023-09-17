@@ -21,13 +21,15 @@
 
 ### code
 
-| url                                            | type                          |
-|:-----------------------------------------------|:------------------------------|
-| https://beta.openai.com/docs/guides/code       | Code completion               | 
-| https://durable.co/ai-website-builder          | website builder               | 
-| https://www.sitekick.ai/                       | Landing page creator          | 
-| https://openai.com/blog/chatgpt/               | ChatGPT                       | 
-| https://www.beautiful.ai/                      | Presentation software         |
+| url                                                                          | type                  |
+|:-----------------------------------------------------------------------------|:----------------------|
+| https://beta.openai.com/docs/guides/code                                     | Code completion       | 
+| https://durable.co/ai-website-builder                                        | website builder       | 
+| https://www.sitekick.ai/                                                     | Landing page creator  | 
+| https://openai.com/blog/chatgpt/                                             | ChatGPT               | 
+| https://www.beautiful.ai/                                                    | Presentation software |
+| https://catalog.ngc.nvidia.com/orgs/nvidia/teams/playground/models/codellama | Code Llama            |
+
 
 
 ### img
