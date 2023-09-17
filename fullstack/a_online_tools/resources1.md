@@ -879,6 +879,7 @@ https://hemingwayapp.com/
 - https://loader.to/en15/1080p-video-downloader.html
 - https://www.freemake.com/de/free_video_downloader_peerless/
 - https://en.yt2conv.com/youtube-to-mp4-13/
+- https://ssyoutube.com/en724Eu/
 - https://de.y2mate.is/w0p2n/
 - https://ssyoutube.com/de51XA/youtube-video-downloader
 - https://freedownloadvideo.net/site7/
