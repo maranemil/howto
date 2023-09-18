@@ -214,6 +214,10 @@ ffmpeg -i input.mkv -preset ultrafast -c:a copy -crf 28 output.mp4
 ffmpeg -i input.mp4 -c:v libx265 -c:a copy -vtag hvc1 -threads 1 output.mp4
 ```
 
+### audio make mono 
+```
+ffmpeg -i stereo.flac -ac 1 mono.flac
+```
 
 
 ### ubuntu webcam settings
