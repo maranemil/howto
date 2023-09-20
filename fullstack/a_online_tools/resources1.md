@@ -382,6 +382,7 @@
 - https://photomania.net/                 # photo editor
 - https://unsplash.com/                   # free photos
 - https://www.photopea.com/               # photo editor
+- https://www.fotor.com/
 
 ------------------------------------------------------------------
 
@@ -842,6 +843,19 @@ https://hemingwayapp.com/
 - https://www.videezy.com/
 - https://www.videvo.net/
 
+------------------------------------------------------------------
+
+### Video portals
+
+- https://rumble.com/
+- https://www.youtube.com/
+- https://dev.tube/
+- https://d.tube/
+- https://www.itemfix.com/?r=ll
+- https://vimeo.com/
+- https://www.reddit.com/r/Documentaries/
+- https://videolectures.net/#/
+- https://twit.tv/
 
 ------------------------------------------------------------------
 

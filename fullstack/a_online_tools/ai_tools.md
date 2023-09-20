@@ -70,6 +70,7 @@
 | https://www.autodraw.com/                           |                                      |
 | https://looka.com/                                  |                                      |
 | https://www.seaart.ai/home                          |                                      |
+| https://neural.love/ai-art-generator                |                                      |
 
 
 
