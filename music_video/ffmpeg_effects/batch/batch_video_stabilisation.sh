@@ -5,8 +5,8 @@
 
 
 
-mkdir -p conv && for i in *.*; do ffmpeg -i $i -vf vidstabdetect -f null - \
-  && ffmpeg -i $i -vf vidstabtransform=smoothing=5:input="transforms.trf" conv/$i.stabilized.mp4; done
+mkdir -p conv && for i in *.*; do ffmpeg -i $i -vf vidstabdetect=shakiness=7  -f null - \
+  && ffmpeg -i $i -vf vidstabtransform=smoothing=15:input="transforms.trf" -an conv/$i.stabilized.mp4; done
 
 mkdir -p conv && for i in *.*; do ffmpeg -i $i -vf eq=brightness=0.06:saturation=1.9:gamma=0.915 conv/$i; done
 
