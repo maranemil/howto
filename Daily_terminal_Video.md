@@ -207,11 +207,13 @@ ffmpeg -i vid.mp4 -vf thumbnail -frames:v 1 out.png
 ### fast conversion
 ```
 ffmpeg -i input.mkv -preset ultrafast -c:a copy -crf 28 output.mp4
+for i in *.*; do ffmpeg -i $i -vcodec h264 -acodec mp3 -threads 2 $i.mp4; done
 ```
 
 ### h264 to h265 conversion
 ```
 ffmpeg -i input.mp4 -c:v libx265 -c:a copy -vtag hvc1 -threads 1 output.mp4
+for i in *.*; do ffmpeg -i $i -vcodec libx265 -acodec mp3 -crf 28 $i.mp4; done
 ```
 
 ### audio make mono 

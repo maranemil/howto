@@ -21,6 +21,7 @@
 ```
 sudo apt install rename
 rename 's/ /_/g' *
+
 ```
 
 ### Umount force
@@ -522,5 +523,7 @@ sudo apt-get install p7zip p7zip-full p7zip-rar
 ~~~
 ls | wc -l
 mv -v `ls | head -5000` ./sub1
+
+strace -vf ls -l 
 ~~~
 
