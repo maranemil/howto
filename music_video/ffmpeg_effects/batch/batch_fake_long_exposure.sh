@@ -1,0 +1,11 @@
+
+####################################
+# fake video exposure
+####################################
+
+ffmpeg -i in.mp4 -r 1/1 -t 10 $filename%03d.png
+
+
+ffmpeg -i 002.png -i 003.png -i 004.png \
+	-filter_complex "[1:0] format=rgba,unsharp=5:5:1.0:5:5:0.0 [1sared]; [0:0]format=rgba,unsharp=3:3:1.5 [0rgbd]; [0rgbd][1sared]blend=all_mode='overlay':shortest=1:all_opacity=0.5" \
+	-y output.jpg
