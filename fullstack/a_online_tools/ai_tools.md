@@ -73,6 +73,8 @@
 | https://neural.love/ai-art-generator                |                                      |
 | https://bigjpg.com/                                 |                                      |
 | https://neural.love/                                |                                      |
+| https://bigjpg.com/                                 |                                      |
+| https://jpghd.com/                                  |                                      |
 
 
 ### voice

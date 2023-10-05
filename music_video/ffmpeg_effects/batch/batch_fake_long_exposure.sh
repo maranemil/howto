@@ -3,6 +3,8 @@
 # fake video exposure
 ####################################
 
+# https://trac.ffmpeg.org/wiki/Blend
+
 ffmpeg -i in.mp4 -r 1/1 -t 10 $filename%03d.png
 
 
