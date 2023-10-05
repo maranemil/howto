@@ -71,7 +71,8 @@
 | https://looka.com/                                  |                                      |
 | https://www.seaart.ai/home                          |                                      |
 | https://neural.love/ai-art-generator                |                                      |
-
+| https://bigjpg.com/                                 |                                      |
+| https://neural.love/                                |                                      |
 
 
 ### voice
@@ -150,26 +151,40 @@
 
 misc
 
-https://create.musicfy.lol/
-https://github.com/facebookresearch/audiocraft
-https://www.suno.ai/
-https://google-research.github.io/seanet/musiclm/examples/
-https://www.aisong.app/
-https://huggingface.co/spaces/facebook/MusicGen
-https://about.fb.com/news/2023/08/audiocraft-generative-ai-for-music-and-audio/
-https://audiocraft.metademolab.com/musicgen.html
+
+| url                                                                             |
+|:--------------------------------------------------------------------------------|
+| https://create.musicfy.lol/                                                     |
+| https://github.com/facebookresearch/audiocraft                                  |
+| https://www.suno.ai/                                                            |
+| https://google-research.github.io/seanet/musiclm/examples/                      |
+| https://www.aisong.app/                                                         |
+| https://huggingface.co/spaces/facebook/MusicGen                                 |
+| https://about.fb.com/news/2023/08/audiocraft-generative-ai-for-music-and-audio/ |
+| https://audiocraft.metademolab.com/musicgen.html                                |
+| -                                                                               |
+| https://kaiber.ai/                                                              |
+| https://lumalabs.ai/                                                            |
+| https://replicate.com/                                                          |
+| https://www.uberduck.ai/                                                        |
+| https://mubert.com/                                                             |
+| https://www.descript.com/                                                       |
+| https://lexica.art/                                                             |
+| https://diffusionbee.com/                                                       |
+| https://skybox.blockadelabs.com/                                                |
+| https://stablediffusionweb.com/StableDiffusionXL                                |
+| https://stablediffusionxl.com/                                                  |
+| https://clipdrop.co/stable-diffusion                                            |
+| https://stability.ai/stable-diffusion                                           |
+| -                                                                               |
 
 
-https://kaiber.ai/
-https://lumalabs.ai/
-https://replicate.com/
-https://www.uberduck.ai/
-https://mubert.com/
-https://www.descript.com/
-https://lexica.art/
-https://diffusionbee.com/
-https://skybox.blockadelabs.com/
-https://stablediffusionweb.com/StableDiffusionXL
-https://stablediffusionxl.com/
-https://clipdrop.co/stable-diffusion
-https://stability.ai/stable-diffusion
+
+
+
+
+
+
+
+
+
