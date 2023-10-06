@@ -8,10 +8,14 @@ ffmpeg -framerate 1 -pattern_type glob -i '*.png' -c:v libx264 -r 30 -pix_fmt yu
 ffmpeg -i output.mp4 -frames 1 -vf "select=not(mod(n\,50)),scale=1280:960,tile=3x2" -y out.png
 ffmpeg -i output.mp4 -frames 1 -vf "select=not(mod(n\,30)),scale=960:1280,tile=3x2" -y out.png
 
+
+# tile with hstack or vstack
+ffmpeg -i 1.png -i 2.jpg -i 3.png -filter_complex hstack=inputs=3 -y z.png
+
 ####################################
 # examples refs
 ####################################
-
+#https://stackoverflow.com/questions/11552565/vertically-or-horizontally-stack-mosaic-several-videos-using-ffmpeg
 #https://superuser.com/questions/625189/combine-multiple-images-to-form-a-strip-of-images-ffmpeg
 #https://stackoverflow.com/questions/24604689/how-to-join-two-images-into-one-with-ffmpeg
 #https://www.bannerbear.com/blog/how-to-create-a-slideshow-from-images-with-ffmpeg/
