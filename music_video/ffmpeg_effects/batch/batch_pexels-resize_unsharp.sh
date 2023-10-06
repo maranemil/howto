@@ -1,5 +1,5 @@
 ##############################################
-# batch scale unsharp
+# batch scale sharp
 ##############################################
 
 #ffmpeg -i input.mp4 -filter:v "scale=1280:-1:flags=lanczos,unsharp=5:5:1.0:5:5:0.0" output.mp4
