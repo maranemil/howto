@@ -7,7 +7,7 @@
 
 #mkdir -p conv && for i in *.*; do ffmpeg -i $i -filter:v "scale=1280:-1:flags=lanczos,unsharp=luma_msize_x=7:luma_msize_y=7:luma_amount=2.5" -threads 2 conv/$i.output.mp4; done
 
-mkdir -p conv && for i in *.*; do ffmpeg -i $i -filter:v "scale=1920:-2:flags=lanczos,unsharp=luma_msize_x=7:luma_msize_y=7:luma_amount=2.5" -threads 2 -y conv/$i.output.mp4; done
+mkdir -p conv && for i in *.*; do ffmpeg -i $i -filter:v "scale=1920:-2:flags=lanczos,unsharp=luma_msize_x=7:luma_msize_y=7:luma_amount=2.5" -threads 2 -y -an conv/$i.output.mp4; done
 
 
 
