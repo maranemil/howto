@@ -10,7 +10,7 @@ mkdir -p conv && for i in *.*; do ffmpeg -i $i -vf vidstabdetect=shakiness=7  -f
 mkdir -p conv && for i in *.*; do ffmpeg -i $i -vf eq=brightness=0.06:saturation=1.5:gamma=0.915 -threads 2 conv/$i; done
 
 # add slow motion
-mkdir -p conv && for i in *.*; do ffmpeg -i $i -filter:v "setpts=2.0*PTS" -threads 2 conv/$i; done
+mkdir -p conv && for i in *.*; do ffmpeg -i $i -filter:v "setpts=1.5*PTS" -threads 2 -y conv/$i; done
 
 ####################################
 # examples refs
