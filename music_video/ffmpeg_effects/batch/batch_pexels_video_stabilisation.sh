@@ -4,13 +4,13 @@
 
 # check
 mkdir -p conv && for i in *.*; do ffmpeg -i $i -vf vidstabdetect=shakiness=7  -f null - \
-  && ffmpeg -i $i -vf vidstabtransform=smoothing=15:input="transforms.trf" -an -threads 2 conv/$i.stabilized.mp4; done
+  && ffmpeg -i $i -vf vidstabtransform=smoothing=15:input="transforms.trf" -an -threads 2 -t 60 conv/$i.stabilized.mp4; done
 
 # apply saturation
-mkdir -p conv && for i in *.*; do ffmpeg -i $i -vf eq=brightness=0.06:saturation=1.5:gamma=0.915 -threads 2 conv/$i; done
+mkdir -p conv && for i in *.*; do ffmpeg -i $i -vf eq=brightness=0.06:saturation=1.5:gamma=0.915 -t 60  -threads 2 conv/$i; done
 
 # add slow motion
-mkdir -p conv && for i in *.*; do ffmpeg -i $i -filter:v "setpts=1.5*PTS" -threads 2 -y conv/$i; done
+mkdir -p conv && for i in *.*; do ffmpeg -i $i -filter:v "setpts=1.5*PTS" -threads 2 -t 60 -y conv/$i; done
 
 ####################################
 # examples refs
