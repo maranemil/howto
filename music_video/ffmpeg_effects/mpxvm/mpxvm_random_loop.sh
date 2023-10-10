@@ -62,6 +62,8 @@ RANDX=00:00:$(shuf -i10-59 -n1) && echo $RANDX && for i in *.*; do ffplay -hide_
 
 #################################################
 
+mkdir -p conv && for i in *.*; do ffmpeg -i $i conv/$i.wav; done
+
 RANDX=00:00:$(shuf -i10-59 -n1) && echo $RANDX && for i in *.*; do ffplay -hide_banner -loglevel error -i $i -ss $RANDX  -t 0.45 -loop 8 -af 'aecho=0.2:0.98:8:0.99,afreqshift=shift=-133' -autoexit -ac 1 && sleep 2; done
 
 RANDX=00:00:$(shuf -i10-59 -n1) && echo $RANDX && for i in *.*; do ffplay -hide_banner -loglevel error -i $i -ss $RANDX  -t 0.45 -loop 8 -af 'aecho=0.2:0.98:8:0.99,afreqshift=shift=-933' -autoexit -ac 1 && sleep 2; done
