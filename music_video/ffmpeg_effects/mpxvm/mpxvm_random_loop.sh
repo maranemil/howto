@@ -59,3 +59,23 @@ RANDX=00:00:$(shuf -i10-59 -n1) && echo $RANDX && for i in *.*; do ffplay -hide_
 00:00:30
 RANDX=00:00:$(shuf -i10-59 -n1) && echo $RANDX && for i in *.*; do ffplay -hide_banner -loglevel error -i $i -ss $RANDX  -t 0.89 -loop 4 -af 'aecho=0.2:0.98:8:0.99,afreqshift=shift=-33' -autoexit -ac 1; done
 00:00:20
+
+#################################################
+
+RANDX=00:00:$(shuf -i10-59 -n1) && echo $RANDX && for i in *.*; do ffplay -hide_banner -loglevel error -i $i -ss $RANDX  -t 0.45 -loop 8 -af 'aecho=0.2:0.98:8:0.99,afreqshift=shift=-133' -autoexit -ac 1 && sleep 2; done
+
+RANDX=00:00:$(shuf -i10-59 -n1) && echo $RANDX && for i in *.*; do ffplay -hide_banner -loglevel error -i $i -ss $RANDX  -t 0.45 -loop 8 -af 'aecho=0.2:0.98:8:0.99,afreqshift=shift=-933' -autoexit -ac 1 && sleep 2; done
+
+RANDX=00:00:$(shuf -i10-59 -n1) && echo $RANDX && for i in *.*; do ffplay -hide_banner -loglevel error -i $i -ss $RANDX  -t 0.89 -loop 4 -af 'aecho=0.2:0.98:8:0.99,afreqshift=shift=-133' -autoexit -ac 1 && sleep 2; done
+
+RANDX=00:00:$(shuf -i10-59 -n1) && echo $RANDX && for i in *.*; do ffplay -hide_banner -loglevel error -i $i -ss $RANDX  -t 0.89 -loop 4 -af 'aecho=0.2:0.98:8:0.99,afreqshift=shift=+133' -autoexit -ac 1 && sleep 2; done
+
+RANDX=00:00:$(shuf -i10-59 -n1) && echo $RANDX && for i in *.*; do ffplay -hide_banner -loglevel error -i $i -ss $RANDX  -t 1.78 -loop 2 -af 'aecho=0.2:0.98:8:0.99,afreqshift=shift=-133' -autoexit -ac 1 && sleep 2; done
+
+RANDX=00:00:$(shuf -i10-59 -n1) && echo $RANDX && for i in *.*; do ffplay -hide_banner -loglevel error -i $i -ss $RANDX  -t 1.78 -loop 2 -af 'aecho=0.2:0.98:0.2:0.99,afreqshift=shift=+133' -autoexit -ac 1 && sleep 2; done
+
+RANDX=00:00:$(shuf -i10-59 -n1) && echo $RANDX && for i in *.*; do ffplay -hide_banner -loglevel error -i $i -ss $RANDX  -t 1.78 -loop 2 -af 'aecho=0.1:0.98:0.2:0.99,afreqshift=shift=-133,rubberband=432/220' -autoexit -ac 1 && sleep 2; done
+
+RANDX=00:00:$(shuf -i10-59 -n1) && echo $RANDX && for i in *.*; do ffplay -hide_banner -loglevel error -i $i -ss $RANDX  -t 1.78 -loop 2 -af 'aecho=0.1:0.98:0.2:0.99,afreqshift=shift=+133,rubberband=432/220' -autoexit -ac 1 && sleep 2; done
+
+
