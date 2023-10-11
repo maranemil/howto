@@ -1,0 +1,94 @@
+################################################################################
+play loop from each wav file in folder
+################################################################################
+
+RANDX=00:00:$(shuf -i10-59 -n1) && echo $RANDX && for i in *.*; do ffplay -hide_banner -loglevel error -i $i -ss $RANDX  -t 3.58 -loop 2 -af 'aecho=0.1:0.88:0.2:0.94,afreqshift=shift=+53,rubberband=432/220,crystalizer=i=3:c=0,pan=stereo| c0=FL | c1=FR,volume=volume=5dB:precision=fixed' -autoexit -ac 1 && sleep 2; done
+
+RANDX=00:00:$(shuf -i10-59 -n1) && RANDX="00:00:34" && for i in *.*; do ffplay -hide_banner -loglevel error -i $i -ss $RANDX  -t 3.58 -loop 2 -af 'aecho=0.1:0.88:0.2:0.94,afreqshift=shift=+53,rubberband=432/220,crystalizer=i=3:c=0,pan=stereo| c0=FL | c1=FR,volume=volume=5dB:precision=fixed' -autoexit -ac 1 && sleep 2; done
+
+RANDX=00:00:$(shuf -i10-59 -n1) && echo $RANDX && for i in *.*; do ffplay -hide_banner -loglevel error -i $i -ss $RANDX  -t 3.58 -loop 2 -af 'aecho=0.1:0.88:0.2:0.94,afreqshift=shift=+53,rubberband=432/220,crystalizer=i=3:c=0,pan=stereo| c0=FL | c1=FR,volume=volume=5dB:precision=fixed' -autoexit -ac 1 && sleep 2; done
+
+################################################################################
+split audio by silence
+################################################################################
+
+# ffmpeg -i mpxvm_loops_011.wav -f segment -segment_time 6 -c copy out%03d.wav
+
+https://www.baeldung.com/linux/join-multiple-lines
+https://unix.stackexchange.com/questions/280767/how-do-i-split-an-audio-file-into-multiple
+
+ffmpeg -i mpxvm_loops_011.wav -af silencedetect -f null -
+ffmpeg -i mpxvm_loops_011.wav -af silencedetect=d=0.5 -f null - |& awk '/silencedetect/ {print $4,$5}'
+ffmpeg -i mpxvm_loops_011.wav -af silencedetect=d=0.5 -f null - |& awk '/silence_end/ {print $4,$5}'
+ffmpeg -i mpxvm_loops_011.wav -af silencedetect=d=0.5 -f null - |& awk '/silence_end/ {print $4,$5}'|&awk '/:/ {print $2}'
+ffmpeg -i mpxvm_loops.wav -af silencedetect=d=0.5 -f null - |& awk '/silence_end/ {print $4,$5}'|&awk '/:/ {print $2}' >> segments.txt
+
+varseg=$(<segments.txt) && echo "$varseg" # print segments
+varseg=$(tr '\n' ',' < segments.txt) && echo ${varseg} | sed 's/.$//' # cut last char
+varseg=$(tr '\n' ',' < segments.txt) && echo ${varseg::-1}  # cut last char
+varseg=$(tr '\n' ',' < segments.txt) &&  ffmpeg -i mpxvm_loops.wav -f segment -segment_times ${varseg::-1} -reset_timestamps 1 -map 0:a -c:a copy output_%03d.wav
+
+*
+*
+*
+*
+*
+*
+
+mkdir -p mono; for i in *.*; do ffmpeg -i $i -ac 1 mono/$i; done
+
+
+fumix 260
+fumix 115
+fumix 173
+fumix 189
+fumix 216
+fumix 217
+fumix 218
+fumix 218
+fumix 220
+fumix 235
+fumix_237
+fumix 240
+fumix 242
+fumix 244
+fumix 257
+fumix 258
+
+
+################################################################################
+# With audio vstack
+################################################################################
+
+https://stackoverflow.com/questions/11552565/vertically-or-horizontally-stack-mosaic-several-videos-using-ffmpeg
+
+Downmix and use original channel placements
+ffmpeg -i input0 -i input1 -filter_complex "[0:v][1:v]vstack=inputs=2[v];[0:a][1:a]amerge=inputs=2[a]" -map "[v]" -map "[a]" -ac 2 output
+
+Put all audio from each input into separate channels
+ffmpeg -i input0 -i input1 -filter_complex "[0:v][1:v]vstack=inputs=2[v];[0:a][1:a]amerge=inputs=2,pan=stereo|c0<c0+c1|c1<c2+c3[a]" -map "[v]" -map "[a]"  output
+
+Using audio from one particular input
+ffmpeg -i input0 -i input1 -filter_complex "[0:v][1:v]vstack=inputs=2[v]" -map "[v]" -map 1:a output
+
+Adding silent audio / If one input does not have audio
+ffmpeg -i input0 -i input1 -filter_complex "[0:v][1:v]vstack=inputs=2[v];anullsrc[silent];[0:a][silent]amerge=inputs=2[a]" -map "[v]" -map "[a]" -ac 2 output.mp4
+
+
+3 videos or images
+ffmpeg -i input0 -i input1 -i input2 -filter_complex "[0:v][1:v][2:v]hstack=inputs=3[v]" -map "[v]" output
+
+2x2 grid
+Using xstack
+ffmpeg -i input0 -i input1 -i input2 -i input3 -filter_complex "[0:v][1:v][2:v][3:v]xstack=inputs=4:layout=0_0|w0_0|0_h0|w0_h0[v]" -map "[v]" output
+
+Using hstack and vstack
+ffmpeg -i input0 -i input1 -i input2 -i input3 -filter_complex "[0:v][1:v]hstack=inputs=2[top];[2:v][3:v]hstack=inputs=2[bottom];[top][bottom]vstack=inputs=2[v]" -map "[v]" output
+
+2x
+ffmpeg -i input0 -i input1 -filter_complex vstack=inputs=2 output
+ffmpeg -i input0 -i input1 -filter_complex hstack=inputs=2 output
+ffmpeg -i input0 -i input1 -filter_complex "[0]pad=iw+5:color=black[left];[left][1]hstack=inputs=2" output
+
+
+
