@@ -93,3 +93,43 @@ RANDX=00:00:$(shuf -i10-59 -n1) && echo $RANDX && for i in *.*; do ffplay -hide_
 RANDX=00:00:$(shuf -i10-59 -n1) && echo $RANDX && for i in *.*; do ffplay -hide_banner -loglevel error -i $i -ss $RANDX  -t 3.58 -loop 2 -af 'aecho=0.1:0.88:0.2:0.94,afreqshift=shift=+193,rubberband=432/220,crystalizer=i=5:c=0,pan=stereo| c0=FL | c1=FR,volume=volume=6dB:precision=fixed' -autoexit -ac 1 && sleep 2; done
 
 RANDX=00:00:$(shuf -i10-59 -n1) && echo $RANDX && for i in *.*; do ffplay -hide_banner -loglevel error -i $i -ss $RANDX  -t 3.58 -loop 2 -af 'aecho=0.1:0.88:0.2:0.94,afreqshift=shift=+53,rubberband=432/220,crystalizer=i=3:c=0,pan=stereo| c0=FL | c1=FR,volume=volume=5dB:precision=fixed' -autoexit -ac 1 && sleep 2; done
+
+
+
+
+
+#################################################
+apply highpass lowpass
+#################################################
+
+ffmpeg -filters | grep -i norma
+
+ TSC adenorm           A->A       Remedy denormals by adding extremely low-level noise.
+ TSC anlmf             AA->A      Apply Normalized Least-Mean-Fourth algorithm to first audio stream.
+ TSC anlms             AA->A      Apply Normalized Least-Mean-Squares algorithm to first audio stream.
+ T.C dynaudnorm        A->A       Dynamic Audio Normalizer.
+ ... loudnorm          A->A       EBU R128 loudness normalization
+ T.C speechnorm        A->A       Speech Normalizer.
+
+
+for i in {adenorm,dynaudnorm,speechnorm}; do ffmpeg -i output_001_.wav -af $i -y output_001_$i.wav; done
+
+TSC adynamicequalizer A->A       Apply Dynamic Equalization of input audio.
+ T.C aexciter          A->A       Enhance high frequency part of audio.
+ TS. afftfilt          A->A       Apply arbitrary expressions to samples in frequency domain.
+ TSC afreqshift        A->A       Apply frequency shifting to input audio.
+ TSC anequalizer       A->N       Apply high-order audio parametric multi band equalizer.
+ TSC asubboost         A->A       Boost subwoofer frequencies.
+ TSC asubcut           A->A       Cut subwoofer frequencies.
+ TSC asupercut         A->A       Cut super frequencies.
+ TSC bass              A->A       Boost or cut lower frequencies.
+ TSC equalizer         A->A       Apply two-pole peaking equalization (EQ) filter.
+ ..C firequalizer      A->A       Finite Impulse Response Equalizer.
+ TSC highpass          A->A       Apply a high-pass filter with 3dB point frequency.
+ TSC lowpass           A->A       Apply a low-pass filter with 3dB point frequency.
+ ... superequalizer    A->A       Apply 18 band equalization filter.
+ TSC treble            A->A       Boost or cut upper frequencies.
+
+for i in {highpass,lowpass}; do ffmpeg -i output_001_.wav -af $i,speechnorm -y output_001_$i.wav; done
+for i in *.*; do ffmpeg -i $i -af lowpass -y $i.lowpass.wav; done
+for i in *.*; do ffmpeg -i $i -af highpass -y $i.highpass.wav; done

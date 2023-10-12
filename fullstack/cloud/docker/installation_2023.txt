@@ -52,3 +52,69 @@ Images, containers, volumes, or custom configuration files on your host aren't a
 
 $ sudo rm -rf /var/lib/docker
 $ sudo rm -rf /var/lib/containerd
+
+########################################################
+host.docker.internal timeout
+########################################################
+
+https://stackoverflow.com/questions/65496504/docker-compose-host-gateway-on-linux-cannot-connect-to-rpc-v20-10-1
+https://stackoverflow.com/questions/24319662/from-inside-of-a-docker-container-how-do-i-connect-to-the-localhost-of-the-mach
+
+docker exec -it container bash
+curl -v 172.17.0.1:8080
+curl http://host.docker.internal:8080
+
+$ sysctl net.bridge.bridge-nf-call-arptables
+$ sysctl net.bridge.bridge-nf-call-iptables
+$ sysctl net.bridge.bridge-nf-call-ip6tables
+
+fix by setting these values to '0':
+$ sudo sysctl net.bridge.bridge-nf-call-arptables=0
+net.bridge.bridge-nf-call-arptables = 0
+$ sudo sysctl net.bridge.bridge-nf-call-iptables=0
+net.bridge.bridge-nf-call-iptables = 0
+$ sudo sysctl net.bridge.bridge-nf-call-ip6tables=0
+net.bridge.bridge-nf-call-ip6tables = 0
+
+extra_hosts:
+- "host.docker.internal:host-gateway"
+
+FIX
+sudo ufw allow 8080
+sudo ufw disable
+
+netstat -pan | grep 8080
+ip addr  | grep  docker
+ss -tulpen | grep 8080
+
+
+
+
+
+########################################################
+docker
+########################################################
+docker-compose -f some/docker-compose.yml up -d
+docker-compose version
+
+sudo dnf install -y docker-compose-plugin
+sudo apt install -y docker-compose-plugin
+
+https://docs.docker.com/compose/install/linux/
+https://github.com/serversideup/financial-freedom/blob/main/CONTRIBUTING.md
+https://docs.docker.com/compose/reference/
+type docker
+
+
+########################################################
+kubectl
+########################################################
+https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands
+https://ddev.readthedocs.io/en/latest/
+
+kubectl create -f my-app-deployment.yaml
+kubectl create -f ./pod.json
+kubectl create -f docker-registry.yaml --edit -o json
+
+
+
