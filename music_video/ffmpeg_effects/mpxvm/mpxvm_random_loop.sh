@@ -133,3 +133,13 @@ TSC adynamicequalizer A->A       Apply Dynamic Equalization of input audio.
 for i in {highpass,lowpass}; do ffmpeg -i output_001_.wav -af $i,speechnorm -y output_001_$i.wav; done
 for i in *.*; do ffmpeg -i $i -af lowpass -y $i.lowpass.wav; done
 for i in *.*; do ffmpeg -i $i -af highpass -y $i.highpass.wav; done
+
+# https://superuser.com/questions/323119/how-can-i-normalize-audio-using-ffmpeg
+# https://trac.ffmpeg.org/wiki/AudioVolume
+# https://stackoverflow.com/questions/64753053/normalizing-audio-in-ffmpeg-how
+
+ffmpeg -i input.wav -filter:a volumedetect -f null /dev/null
+ffmpeg -i input.wav -af "volumedetect" -vn -sn -dn -f null /dev/null
+ffplay -i a.wav -af "dynaudnorm=p=0.9:s=9,volume=8dB"
+ffmpeg -i input.wav -filter:a loudnorm output.wav
+ffmpeg-normalize -h
