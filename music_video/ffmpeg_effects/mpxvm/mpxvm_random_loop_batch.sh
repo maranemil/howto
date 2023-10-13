@@ -1,6 +1,6 @@
 
 ########################################################
-random loop
+random loop batch
 ########################################################
 https://linux.die.net/man/1/ffplay
 https://ffmpeg.org/ffplay.html
