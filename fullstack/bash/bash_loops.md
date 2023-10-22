@@ -44,10 +44,21 @@ done
 
 ```
 #!/bin/bash
-for i in $(seq 1 2 20)
+
+# start with 1 and increment by 2 until you reach/pass 20
+for i in $(seq 1 2 20)    
 do
    echo "Welcome $i times"
 done
+
+# https://stackoverflow.com/questions/68104060/how-to-print-odd-numbers-in-bash
+# start with 1 and increment by 3 until you reach/pass 20
+for i in {1..20..3}    
+do
+    echo $i
+done
+
+
 ```
 
 ```
