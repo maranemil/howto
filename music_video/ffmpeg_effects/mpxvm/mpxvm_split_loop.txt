@@ -44,8 +44,19 @@ for i in *.*;do echo ${i::-4} && mkdir ${i::-4} && mv $i ${i::-4}; done
 
 ffmpeg -i mpxvm_loops.wav -af silencedetect=d=0.5 -f null - |& awk '/silence_end/ {print $4,$5}'|&awk '/:/ {print $2}' >> segments.txt
 
-
 varseg=$(tr '\n' ',' < segments.txt) &&  ffmpeg -i mpxvm_loops.wav -f segment -segment_times ${varseg::-1} -reset_timestamps 1 -map 0:a -c:a copy output_%03d.wav
+
+
+################################################################################
+split audio by silence all in one single line
+################################################################################
+
+# move each wav to folder
+for i in *.*;do echo ${i::-4} && mkdir ${i::-4} && mv $i ${i::-4}; done
+
+# rename wav file, detect silence and split loops
+mv *.wav mpxvm_loops.wav && ffmpeg -i mpxvm_loops.wav -af silencedetect=d=0.5 -f null - |& awk '/silence_end/ {print $4,$5}'|&awk '/:/ {print $2}' >> segments.txt && varseg=$(tr '\n' ',' < segments.txt) &&  ffmpeg -i mpxvm_loops.wav -f segment -segment_times ${varseg::-1} -reset_timestamps 1 -map 0:a -c:a copy output_%03d.wav
+
 
 
 *

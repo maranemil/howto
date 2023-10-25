@@ -129,26 +129,27 @@
 
 | url                                             | type                        |
 |:------------------------------------------------|:----------------------------|
-| https://www.riffusion.com/                      | Refusion music AI generator | 
-| https://samplette.io/                           | samplette.io                | 
-| https://stevenwaterman.uk/musetree/             | musetree                    | 
-| https://sites.research.google/tonetransfer      | Tonetransfer                | 
-| https://www.lalal.ai/                           | Lalal.ai                    | 
-| https://uberduck.ai/                            | Uberduck AI                 | 
-| https://theselyricsdonotexist.com/              | These lyrics don’t exist    | 
-| https://magenta.tensorflow.org/oaf-js           | Magenta AI                  | 
-| https://piano-scribe.glitch.me/                 | piano-scribe                | 
-| https://melodystudio.net/                       | melodystudio                | 
-| https://lyricstudio.net/                        | lyricstudio                 | 
-| https://www.landr.com/de/                       | landr                       | 
-| https://openai.com/research/jukebox             | jukebox                     | 
-| https://mubert.com/render                       | mubert text to music        | 
-| https://soundraw.io/                            |                             |
-| https://mubert.com/render/genres/edm/edm        |                             |
-| https://wavtool.com/                            |                             |
-| https://huggingface.co/spaces/facebook/MusicGen | MusicGen                    |
-| https://vocalremover.org/                       | voice remover               |
 | https://chordify.net/                           | chord recognition           |
+| https://huggingface.co/spaces/facebook/MusicGen | MusicGen                    |
+| https://lyricstudio.net/                        | lyricstudio                 | 
+| https://magenta.tensorflow.org/oaf-js           | Magenta AI                  | 
+| https://melodystudio.net/                       | melodystudio                | 
+| https://mubert.com/render                       | mubert text to music        | 
+| https://mubert.com/render/genres/edm/edm        |                             |
+| https://openai.com/research/jukebox             | jukebox                     | 
+| https://piano-scribe.glitch.me/                 | piano-scribe                | 
+| https://samplette.io/                           | samplette.io                | 
+| https://sites.research.google/tonetransfer      | Tonetransfer                | 
+| https://soundraw.io/                            |                             |
+| https://stableaudio.com/                        | MusicGen                    |
+| https://stevenwaterman.uk/musetree/             | musetree                    | 
+| https://theselyricsdonotexist.com/              | These lyrics don’t exist    | 
+| https://uberduck.ai/                            | Uberduck AI                 | 
+| https://vocalremover.org/                       | voice remover               |
+| https://wavtool.com/                            |                             |
+| https://www.lalal.ai/                           | Lalal.ai                    | 
+| https://www.landr.com/de/                       | landr                       | 
+| https://www.riffusion.com/                      | Refusion music AI generator | 
 
 
 misc
