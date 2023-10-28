@@ -1,0 +1,174 @@
+
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+###################################################################
+ocpp-csms (Python/FastAPI/Vue3)
+###################################################################
+https://github.com/heroyooki/ocpp-fastapi-vue3
+https://github.com/heroyooki/ocpp-fastapi-vue3/tree/develop
+https://github.com/backstage/backstage
+
+
+Terms
+-  "charge point node" the same as the "charge point service" on the screen
+-  "manager" the same as the "management system" on the screen
+-  "events" are the messages from the "charge point node" to the "manager"
+-  "tasks" are the messages from the "manager" to the "charge point node"
+
+Operations initialized by physical charging station
+-  "charge point node" accepts connection from the physical charging station
+-  "charge point node" accepts data from the physical charging station
+-  "charge point node" prepares an "event" and puts it into the queue (see the screen)
+-  "manager" consumes data and handle it as an "event"
+-  "manager" has a monopoly access to the database
+-  after an "event" has handled, the "manager" prepares "task" and puts it into the queue
+-  "charge point node" consumes "task" and executes the one (replies to the physical charging station)
+
+
+Operations initialized by UI
+-  "manager" accepts request from the UI
+-  "manager" prepares "task" and puts it into the queue
+-  "charge point node" consumes "task" and executes the one (sends data to the physical charging station
+--------------------------------------------------------------------------------------------------------------------------------
+FE
+api services
+~~~~~~~~~~~~~~~~~~~~~~~~
+	/accounts listAccounts
+	/${getAccountId()}/counters  # requestCounters list
+	/locations/ CRUD + listLocation
+	/charge_points/ CRUD + listStations + requestStatusesCounts
+	/transactions/  listTransactions
+
+Router
+~~~~~~~~~~~~~~~~~~~~~~~~
+	login
+	accountId/dashboard
+	accountId/locations
+	accountId/stations
+	accountId/transactions
+	accountId/settings
+
+pages
+~~~~~~~~~~~~~~~~~~~~~~~~
+AuthPage.vue
+LocationsPage.vue
+SettingsPage.vue
+StationsPage.vue
+TransactionsPage.vue
+
+layouts
+~~~~~~~~~~~~~~~~~~~~~~~~
+AppLayout.vue
+
+############################
+BE
+############################
+
+SELECT " \
+                "(SELECT COUNT(id) FROM locations WHERE is_active = 't' AND account_id = '{account_id}') AS locations,
+                	(SELECT COUNT(id) FROM transactions WHERE account_id = '{account_id}') as transactions,
+                		(SELECT COUNT(cp.id) FROM charge_points cp JOIN locations l ON l.id = cp.location_id WHERE cp.is_active = 't' AND l.account_id = '{account_id}') as stations;
+
+create_charge_point
+"""
+A dict with statuses and counts. Example:
+{'offline': 1, 'available': 0, 'reserved': 0, 'charging': 0}
+"""
+query = "SELECT status, count(status) AS count FROM charge_points cp " \
+    "JOIN locations l ON l.id = cp.location_id " \
+    "WHERE l.account_id = '%s' " \
+    "GROUP BY status;" % account_id
+
+DB
+~~~~~~~~~~~~~~~~~~~~~~~~
+accounts
+...........
+name
+id (PrimaryKey)
+created_at
+updated_at
+is_active
+
+
+locations
+...........
+id
+account_id
+name
+city
+address1
+address2
+comment
+created_at
+updated_at
+is_active
+ForeignKeyConstraint(account_id)
+PrimaryKeyConstraint(id)
+
+INSERT INTO accounts (id, name, is_active) VALUES ('{account_id}', 'main', 't');
+
+
+charge_points
+...........
+id
+description
+status - Enum('available', 'unavailable', 'faulted', name='chargepointstatus')
+location_id
+created_at
+updated_at
+is_active
+ForeignKeyConstraint(location_id)
+PrimaryKeyConstraint(id)
+
+# "additional_fields_for__charge_points_table
+
+charge_points
+...........
+manufacturer
+latitude
+longitude
+serial_number
+comment
+model
+password
+connectors
+
+
+
+transactions
+...........
+city
+vehicle
+address
+meter_start
+meter_stop
+charge_point
+transaction_id
+account_id
+id
+created_at
+updated_at
+is_active
+ForeignKeyConstraint(account_id)
+PrimaryKeyConstraint(id)
+
+---------------------
+controllers
+
+/accounts ( get list )
+
+/charge_points (post get list delete)
+/charge_points/{charge_point_id}
+/{account_id}/charge_points
+/{account_id}/charge_points/counters
+/{account_id}/charge_points/{charge_point_id}
+
+/{account_id}/counters
+
+locations ( get post del )
+/{account_id}/locations
+
+transactions ( get list )
+
+

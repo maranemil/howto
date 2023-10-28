@@ -192,7 +192,7 @@ ffmpeg -i vid.mp4 -vf thumbnail -frames:v 1 out.png
 * ffmpeg -i input.mp4 -i input.wav -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 out.mp4
 ```
 
-### Mix showwaves Video with Overlay 
+### Mix show waves Video with Overlay 
 
 ### generate wave
 ```

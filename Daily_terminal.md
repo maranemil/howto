@@ -52,34 +52,34 @@ lynx t3n.de -accept_all_cookies  -justify
 
 ### Zipping Unzipping multiple Folders
 
-~~~~
-|  cmd  | example                                        | 
-|:------|:-----------------------------------------------| 
-| unzip | for z in *.zip; do unzip $z; done              |
-| zip   | for i in */; do zip -r "${i%/}.zip" "$i"; done |
-~~~~
+| cmd            | example                                        | 
+|----------------|------------------------------------------------| 
+| unzip          | for z in *.zip; do unzip $z; done              |
+| zip folders    | for i in */; do zip -r "${i%/}.zip" "$i"; done |
+| zip only files | for i in *.*; do zip "${i}.zip" "$i"; done     |
+
 
 ### Tar Untar 
 
-~~~~
+
 |  cmd  | example                                        | 
 |:------|:-----------------------------------------------| 
 | tar   | tar -czvf archive.tar.gz folderpath1           |
 | untar | tar -xzvf archive.tar.gz                       |
-~~~~
+
 
 ### Change date modified created file
 ```
  * -a = accessed / -m = modified / -t = timestamp
  ```
-~~~~
+
 | desc          | cmd                                             | 
 |:--------------|:------------------------------------------------| 
 | generate file | touch {1..19}.jpg                               | 
 | change date   | touch -d "October 31"  filename.txt             | 
 | change date   | touch -d '14:24' file.txt                       | 
 | change date   | touch -d "2 hours ago" filename                 | 
-~~~~
+
 
 ### Convert Imagick
 ```

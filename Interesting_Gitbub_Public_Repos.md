@@ -12,30 +12,30 @@
 #### Tensorflow Style Transfer
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-| *Repo* | URL |*|
-| ------ | ------ | ---- |
-|Style transfer, deep learning, feature transform|https://github.com/NVIDIA/FastPhotoStyle|py|
-|Deepfakes thread|https://github.com/deepfakes/faceswap|py|
-|Super Resolution for images using deep learning.|https://github.com/alexjc/neural-enhance|py|
-|TensorFlow implementation of fast style transfer|https://github.com/hwalsuklee/tensorflow-fast-style-transfer|py|
-|TensorFlow (Python API) implementation of Neural Style|https://github.com/cysmith/neural-style-tf|py|
-|Tensorflow implementation of fast neural style transfer.|https://github.com/ghwatson/faststyle|py|
-|TensorFlow CNN for fast style transfer|https://github.com/lengstrom/fast-style-transfer|py|
-|Neural-Style-Transfer Keras implementation|https://github.com/dsgiitr/Neural-Style-Transfer|py|
-|Deep Learning based Artistic Style Transfer on Android using TensorFlow|https://github.com/MJ10/Style|kotlin
-|Fast artistic style transfer with convolutional neural networks.|https://github.com/hnarayanan/stylist|py|
-|Neural Artistic Style in Python|https://github.com/andersbll/neural_artistic_style|py|
-|TensorFlow implementation of style transfer based on the paper A Neural Algortihm|https://github.com/ShafeenTejani/style-transfer|
-|TensorFlow implementation of style transfer (neural style)|https://github.com/hwalsuklee/tensorflow-style-transfer|py|
-|Style transfer using pre-trained generator network|https://github.com/msokoloff1/Real-Time-Style-Transfer|py|
-|TensorFlow Implementation of original style transfer paper|https://github.com/slavivanov/Style-Tranfer|py|
-|CycleGAN  generate photos from paintings, turn horses into zebras|https://github.com/junyanz/CycleGAN|lua|
-|Neural style in TensorFlow|https://github.com/anishathalye/neural-style|py|
-|Deep Photo Style Transfer|https://github.com/luanfujun/deep-photo-styletransfer|lua|
-|A Neural Algorithm of Artistic Style" by L. Gatys, A. Ecker, and M. Bethge.|https://github.com/fzliu/style-transfer|py|
-|TensorFlow Perceptual Losses for Real-Time Style Transfer and Super-Resolution' by Johnson|https://github.com/ShafeenTejani/fast-style-transfer|py|
-|Subpixel: A subpixel convnet for super resolution with Tensorflow|https://github.com/tetrachrome/subpixel|py|
-|Torch implementation of neural style algorithm|https://github.com/mtyka/neural-style|lua|
+| *Repo*                                                                                     | URL                                                          | *      |
+|--------------------------------------------------------------------------------------------|--------------------------------------------------------------|--------|
+| Style transfer, deep learning, feature transform                                           | https://github.com/NVIDIA/FastPhotoStyle                     | py     |
+| Deepfakes thread                                                                           | https://github.com/deepfakes/faceswap                        | py     |
+| Super Resolution for images using deep learning.                                           | https://github.com/alexjc/neural-enhance                     | py     |
+| TensorFlow implementation of fast style transfer                                           | https://github.com/hwalsuklee/tensorflow-fast-style-transfer | py     |
+| TensorFlow (Python API) implementation of Neural Style                                     | https://github.com/cysmith/neural-style-tf                   | py     |
+| Tensorflow implementation of fast neural style transfer.                                   | https://github.com/ghwatson/faststyle                        | py     |
+| TensorFlow CNN for fast style transfer                                                     | https://github.com/lengstrom/fast-style-transfer             | py     |
+| Neural-Style-Transfer Keras implementation                                                 | https://github.com/dsgiitr/Neural-Style-Transfer             | py     |
+| Deep Learning based Artistic Style Transfer on Android using TensorFlow                    | https://github.com/MJ10/Style                                | kotlin |
+| Fast artistic style transfer with convolutional neural networks.                           | https://github.com/hnarayanan/stylist                        | py     |
+| Neural Artistic Style in Python                                                            | https://github.com/andersbll/neural_artistic_style           | py     |
+| TensorFlow implementation of style transfer based on the paper A Neural Algortihm          | https://github.com/ShafeenTejani/style-transfer              |        |
+| TensorFlow implementation of style transfer (neural style)                                 | https://github.com/hwalsuklee/tensorflow-style-transfer      | py     |
+| Style transfer using pre-trained generator network                                         | https://github.com/msokoloff1/Real-Time-Style-Transfer       | py     |
+| TensorFlow Implementation of original style transfer paper                                 | https://github.com/slavivanov/Style-Tranfer                  | py     |
+| CycleGAN  generate photos from paintings, turn horses into zebras                          | https://github.com/junyanz/CycleGAN                          | lua    |
+| Neural style in TensorFlow                                                                 | https://github.com/anishathalye/neural-style                 | py     |
+| Deep Photo Style Transfer                                                                  | https://github.com/luanfujun/deep-photo-styletransfer        | lua    |
+| A Neural Algorithm of Artistic Style" by L. Gatys, A. Ecker, and M. Bethge.                | https://github.com/fzliu/style-transfer                      | py     |
+| TensorFlow Perceptual Losses for Real-Time Style Transfer and Super-Resolution' by Johnson | https://github.com/ShafeenTejani/fast-style-transfer         | py     |
+| Subpixel: A subpixel convnet for super resolution with Tensorflow                          | https://github.com/tetrachrome/subpixel                      | py     |
+| Torch implementation of neural style algorithm                                             | https://github.com/mtyka/neural-style                        | lua    |
 
 
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -70,50 +70,50 @@
 #### Misc
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-| *Repo* | URL |*|
-| ------ | ------ | ---- |
-|gSLICr: SLIC superpixels at over 250Hz | https://github.com/carlren/gSLICr |c++|
-|Sample apps and sites with Algorithmia integration|https://github.com/algorithmiaio/sample-apps|js|
-|Instance Segmenation through Webcam using Mask-RCNN|https://github.com/SrikanthVelpuri/Mask_RCNN|py|
-|TensorFlow Object Detection on Windows|https://github.com/EdjeElectronics/TensorFlow-Object-Detection-API-Tutorial-Train-Multiple-Objects-Windows-10|py|
-|AI for Resumes by Siraj Raval on Youtube|https://github.com/llSourcell/AI_for_Resumes|py|
-|Image-to-image translation in PyTorch|https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix|py|
-|Technical blog posts written with the IPython notebook|https://github.com/flothesof/posts|py|
-|Pytorch implementation for Semantic Segmentation|https://github.com/CSAILVision/semantic-segmentation-pytorch|py|
-|Tools, scripts, toys, and utilities for Machine Box|https://github.com/machinebox/toys|go|
-|A neural network that transforms a screenshot into a static website| https://github.com/emilwallner/Screenshot-to-code-in-Keras|py|
-|convolutional neural networks platform for research in medical image analysis|https://github.com/NifTK/NiftyNet|py|
-|TensorFlow pix2pix models|https://github.com/affinelayer/pix2pix-tensorflow-models|py|
-|TensorFlow port of Image-to-Image Translation with Conditional Adversarial Nets|https://github.com/affinelayer/pix2pix-tensorflow|py|
-|CS281 Final Project to develop a new ML Model for predicting incidents of crime.|https://github.com/kandluis/crime-prediction|py|
-|Image-to-image translation with conditional adversarial nets|https://github.com/phillipi/pix2pix|lua
-|Large Pose 3D Face Reconstruction from a Single Image via Direct Volumetric CNN Regression|https://github.com/AaronJackson/vrn|mathlab|
-|Mask R-CNN for object detection and instance segmentation on Keras and TensorFlow|https://github.com/karolmajek/Mask_RCNN|py|
-|Artificial Neural Networks in Python|https://github.com/CristiVlad25/ann-python|py|
-|Emotion Recognition|https://github.com/dsgiitr/Emotion-Recognition|py|
-|Traffic-Sign-Classification|https://github.com/dsgiitr/Traffic-Sign-Classification|py|
-|Classification And Regression Training R package|https://github.com/topepo/caret|R|
-|TensorFlow Magenta: Music and Art Generation with Machine Intelligence|https://github.com/tensorflow/magenta|py|
-|Natural Language Processing NLP|https://github.com/acrosson/nlp|py|
-|Machine Learning for Flappy Bird using Neural Network and Genetic Algorithm|https://github.com/ssusnic/Machine-Learning-Flappy-Bird|js|
-|TensorFlow Demonstrations of Magenta Models |https://github.com/tensorflow/magenta-demos|js,py|
-|Random Forests Tree|https://github.com/random-forests/tutorials|py|
-|Deep Learning in Javascript. Train Convolutional Neural Networks  in your browser.|https://github.com/karpathy/convnetjs|js|
-|Houses price advanced regression|https://github.com/Nempickaxe/Houses_price|py|
-|Multi-layer Recurrent Neural Networks (LSTM, GRU, RNN) for character-level language models in Torch|https://github.com/karpathy/char-rnn|lua|
-|Using neural networks to build an automatic number plate recognition system|https://github.com/matthewearl/deep-anpr|py|
-|Data Engineer track of GCP Training|https://github.com/GoogleCloudPlatform/training-data-analyst|js.py|
-|TensorFlow Image Classifier Demo by @Sirajology on Youtube|https://github.com/llSourcell/tensorflow_image_classifier|py|
-|Car evaluation|https://github.com/srinikumar/carvaluation|R|
-|Code + Jupyter notebook for analyzing and visualizing means and medians of keywords|https://github.com/minimaxir/reddit-subreddit-keywords|R|
-|Code + Jupyter notebook for analyzing and visualizing Reddit Data quickly and easily|https://github.com/minimaxir/reddit-bigquery|R|
-|machine learning model that predict facial attractiveness from facial landmark locations|https://github.com/rohitsukhwal/face-rating|py|
-|The Relationship Between YouTube Video Category and Length of the Video|https://github.com/minimaxir/youtube-duration-date|R|
-|The Relationship Between YouTube Video Category and Length of the Video|https://github.com/minimaxir/youtube-category-duration-chart|R|
-|Image classification using a Deep Belief Network|https://github.com/lazyprogrammer/image-classification-dbn|c#|
-|Code used for analysis of Hacker News comments.|https://github.com/minimaxir/hacker-news-comment-analysis|R|
-|Parse postcode and house sale price data |https://github.com/danielsamuels/uk-house-price-heat-mapping|py|
-|Regression Analysis for Facebook keywords.|https://github.com/minimaxir/facebook-keyword-regression-analysis|R|
+| *Repo*                                                                                              | URL                                                                                                           | *       |
+|-----------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------|---------|
+| gSLICr: SLIC superpixels at over 250Hz                                                              | https://github.com/carlren/gSLICr                                                                             | c++     |
+| Sample apps and sites with Algorithmia integration                                                  | https://github.com/algorithmiaio/sample-apps                                                                  | js      |
+| Instance Segmenation through Webcam using Mask-RCNN                                                 | https://github.com/SrikanthVelpuri/Mask_RCNN                                                                  | py      |
+| TensorFlow Object Detection on Windows                                                              | https://github.com/EdjeElectronics/TensorFlow-Object-Detection-API-Tutorial-Train-Multiple-Objects-Windows-10 | py      |
+| AI for Resumes by Siraj Raval on Youtube                                                            | https://github.com/llSourcell/AI_for_Resumes                                                                  | py      |
+| Image-to-image translation in PyTorch                                                               | https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix                                                       | py      |
+| Technical blog posts written with the IPython notebook                                              | https://github.com/flothesof/posts                                                                            | py      |
+| Pytorch implementation for Semantic Segmentation                                                    | https://github.com/CSAILVision/semantic-segmentation-pytorch                                                  | py      |
+| Tools, scripts, toys, and utilities for Machine Box                                                 | https://github.com/machinebox/toys                                                                            | go      |
+| A neural network that transforms a screenshot into a static website                                 | https://github.com/emilwallner/Screenshot-to-code-in-Keras                                                    | py      |
+| convolutional neural networks platform for research in medical image analysis                       | https://github.com/NifTK/NiftyNet                                                                             | py      |
+| TensorFlow pix2pix models                                                                           | https://github.com/affinelayer/pix2pix-tensorflow-models                                                      | py      |
+| TensorFlow port of Image-to-Image Translation with Conditional Adversarial Nets                     | https://github.com/affinelayer/pix2pix-tensorflow                                                             | py      |
+| CS281 Final Project to develop a new ML Model for predicting incidents of crime.                    | https://github.com/kandluis/crime-prediction                                                                  | py      |
+| Image-to-image translation with conditional adversarial nets                                        | https://github.com/phillipi/pix2pix                                                                           | lua     |
+| Large Pose 3D Face Reconstruction from a Single Image via Direct Volumetric CNN Regression          | https://github.com/AaronJackson/vrn                                                                           | mathlab |
+| Mask R-CNN for object detection and instance segmentation on Keras and TensorFlow                   | https://github.com/karolmajek/Mask_RCNN                                                                       | py      |
+| Artificial Neural Networks in Python                                                                | https://github.com/CristiVlad25/ann-python                                                                    | py      |
+| Emotion Recognition                                                                                 | https://github.com/dsgiitr/Emotion-Recognition                                                                | py      |
+| Traffic-Sign-Classification                                                                         | https://github.com/dsgiitr/Traffic-Sign-Classification                                                        | py      |
+| Classification And Regression Training R package                                                    | https://github.com/topepo/caret                                                                               | R       |
+| TensorFlow Magenta: Music and Art Generation with Machine Intelligence                              | https://github.com/tensorflow/magenta                                                                         | py      |
+| Natural Language Processing NLP                                                                     | https://github.com/acrosson/nlp                                                                               | py      |
+| Machine Learning for Flappy Bird using Neural Network and Genetic Algorithm                         | https://github.com/ssusnic/Machine-Learning-Flappy-Bird                                                       | js      |
+| TensorFlow Demonstrations of Magenta Models                                                         | https://github.com/tensorflow/magenta-demos                                                                   | js,py   |
+| Random Forests Tree                                                                                 | https://github.com/random-forests/tutorials                                                                   | py      |
+| Deep Learning in Javascript. Train Convolutional Neural Networks  in your browser.                  | https://github.com/karpathy/convnetjs                                                                         | js      |
+| Houses price advanced regression                                                                    | https://github.com/Nempickaxe/Houses_price                                                                    | py      |
+| Multi-layer Recurrent Neural Networks (LSTM, GRU, RNN) for character-level language models in Torch | https://github.com/karpathy/char-rnn                                                                          | lua     |
+| Using neural networks to build an automatic number plate recognition system                         | https://github.com/matthewearl/deep-anpr                                                                      | py      |
+| Data Engineer track of GCP Training                                                                 | https://github.com/GoogleCloudPlatform/training-data-analyst                                                  | js.py   |
+| TensorFlow Image Classifier Demo by @Sirajology on Youtube                                          | https://github.com/llSourcell/tensorflow_image_classifier                                                     | py      |
+| Car evaluation                                                                                      | https://github.com/srinikumar/carvaluation                                                                    | R       |
+| Code + Jupyter notebook for analyzing and visualizing means and medians of keywords                 | https://github.com/minimaxir/reddit-subreddit-keywords                                                        | R       |
+| Code + Jupyter notebook for analyzing and visualizing Reddit Data quickly and easily                | https://github.com/minimaxir/reddit-bigquery                                                                  | R       |
+| machine learning model that predict facial attractiveness from facial landmark locations            | https://github.com/rohitsukhwal/face-rating                                                                   | py      |
+| The Relationship Between YouTube Video Category and Length of the Video                             | https://github.com/minimaxir/youtube-duration-date                                                            | R       |
+| The Relationship Between YouTube Video Category and Length of the Video                             | https://github.com/minimaxir/youtube-category-duration-chart                                                  | R       |
+| Image classification using a Deep Belief Network                                                    | https://github.com/lazyprogrammer/image-classification-dbn                                                    | c#      |
+| Code used for analysis of Hacker News comments.                                                     | https://github.com/minimaxir/hacker-news-comment-analysis                                                     | R       |
+| Parse postcode and house sale price data                                                            | https://github.com/danielsamuels/uk-house-price-heat-mapping                                                  | py      |
+| Regression Analysis for Facebook keywords.                                                          | https://github.com/minimaxir/facebook-keyword-regression-analysis                                             | R       |
 
 
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~
