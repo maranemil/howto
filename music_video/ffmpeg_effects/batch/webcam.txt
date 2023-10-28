@@ -2,6 +2,37 @@
 ffmpeg video mix + audio
 #################################################
 
+sudo apt install v4l-utils
+v4l2-ctl --list-devices
+arecord -L
+v4l2-ctl -L
+
+# webcam
+ffmpeg -f v4l2 -framerate 25 -video_size 480x270 -i /dev/video0 -f alsa -ac 2 -i hw:CARD=Generic_1,DEV=0  -c:v libx264 -b:v 160k -preset ultrafast         -x264opts keyint=50 -g 25 -pix_fmt yuv420p  -c:a aac -b:a 128k -y myvid_$(date +%s).mp4
+
+# desktop
+ffmpeg -v warning -video_size 1920x1080 -framerate 25 -f x11grab -i :0.0 -f alsa -ac 2 -i default myvid_$(date +%s).mp4
+
+# mix desktop + webcam + low quality - webcam top left
+ffmpeg  \
+   -video_size 1920x1080 -framerate 25 -f x11grab -i :0.0 -f alsa -ac 1 -i default \
+   -f v4l2 -framerate 25 -video_size 480x270 -i /dev/video0 -f alsa -ac 1 -i hw:CARD=Generic_1,DEV=0  -c:v libx264 -b:v 1600k -preset ultrafast         -x264opts keyint=50 -g 25 -pix_fmt yuv420p  -c:a aac -b:a 128k \
+        -filter_complex "[2]scale=160:90[inner];[0][inner]overlay=0:0:shortest=1[out]" -map "[out]" -map 3:a \
+               -y omyvid_$(date +%s).mp4
+
+# mix desktop + webcam + better quality - webcam bottom right
+ffmpeg  \
+   -video_size 1920x1080 -framerate 25 -f x11grab -i :0.0 -f alsa -ac 1 -i default \
+   -f v4l2 -framerate 25 -video_size 480x270 -i /dev/video0 -f alsa -ac 1 -i hw:CARD=Generic_1,DEV=0  -c:v libx264 -b:v 1600k -preset ultrafast         -x264opts keyint=50 -g 25 -pix_fmt yuv420p  -c:a aac -b:a 128k \
+        -filter_complex "[2]scale=160:90[inner];[0][inner]overlay=main_w-overlay_w-10:main_h-overlay_h-10[out]" -map "[out]" -map 3:a \
+               -y omyvid_$(date +%s).mp4
+
+
+
+
+
+
+##################################################################################
 # video mix
 # ffmpeg -video_size 1920x1080 -framerate 25 -f x11grab -i :1.0   \
 #     -video_size 320x240 -f v4l2 -i /dev/video0 -framerate 25   \
@@ -13,11 +44,20 @@ ffmpeg video mix + audio
 
 # video mix screen + webcam
 ffmpeg -video_size 1920x1080 \
-    -f x11grab -i :1.0  -f pulse -ac 2 -ar 44100 -i alsa_output.pci-0000_00_1f.3.analog-stereo.monitor -framerate 30 \
-    -f v4l2 -i /dev/video0 -framerate 30 \
+    -f x11grab -i :0.0  -f pulse -ac 2 -ar 44100 -i alsa_output.pci-0000_00_1f.3.analog-stereo.monitor -framerate 25 \
+    -f v4l2 -framerate 25 -video_size 480x270 -i /dev/video0 -f alsa -ac 2 -i hw:CARD=Generic_1,DEV=0  -c:v libx264 -b:v 160k -preset ultrafast         -x264opts keyint=50 -g 25 -pix_fmt yuv420p  -c:a aac -b:a 128k  \
     -filter_complex "[2]scale=160:90[inner];[0][inner]overlay=0:0:shortest=1[out]" \
      -map "[out]" \
-        -y output.mp4
+        -y omyvid_$(date +%s).mp4
+
+ffmpeg \
+    -video_size 1920x1080 -framerate 25 -f x11grab -i :0.0 -f alsa -ac 1 -i default  \
+    -f v4l2 -framerate 25 -video_size 480x270 -i /dev/video0 -f alsa -ac 1 -i hw:CARD=Generic_1,DEV=0  -c:v libx264 -b:v 1600k -preset ultrafast         -x264opts keyint=50 -g 25 -pix_fmt yuv420p  -c:a aac -b:a 128k  \
+    -filter_complex "[2]scale=160:90[inner];[0][inner]overlay=0:0:shortest=1[out]" \
+     -map "[out]" \
+        -y omyvid_$(date +%s).mp4
+
+
 
 # record audio
 ffmpeg -f alsa -i default  -ar 44100 -ac 2 -acodec pcm_s16le -y out.wav
