@@ -721,7 +721,8 @@ ffmpeg -i test01.gif -movflags faststart -pix_fmt rgb32 -crf 66 -y video.mp4
 ffmpeg -i test01.gif -movflags faststart -pix_fmt rgb24 -crf 66 -y video.mp4
 ffmpeg -i test01.gif -movflags faststart -pix_fmt rgb8 -crf 96 -y video.mp4
 ffmpeg -i test01.gif -movflags faststart -pix_fmt rgb4 -crf 96 -y video.mp4
-
+ffmpeg -i file.mp4 -color_primaries bt470bg -color_trc gamma28 -colorspace bt470bg -r 25 -crf 88 -y screen-rec.mp4
+ffmpeg -i file.mp4  -color_primaries smpte170m -color_trc smpte170m -colorspace smpte170m  -r 25 -crf 78 -y screen-rec.mp4
 
 
 ffmpeg -h encoder=libx264
@@ -737,7 +738,7 @@ ffplay  -i input.mp4 -vf scale=in_color_matrix=bt709,format=xyz12le  -crf 196 -b
 ffmpeg -i input.mp4 -f image2pipe -pix_fmt rgb24 -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 1920x1080 -pix_fmt rgb24 -r 24 -i - -an out.mp4
 ffmpeg -i input.mp4 -f image2pipe -pix_fmt xyz12le -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 960x540 -pix_fmt xyz12le -r 24 -i - -an out.mp4
 
-# glitch
+# glitch frames
 ffmpeg -i input.mp4 -f image2pipe -pix_fmt xyz12le -t 10 -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 960x540 -pix_fmt xyz12le -r 24 -i - -an out.mp4
 ffmpeg -i 1.mp4 -f image2pipe -pix_fmt xyz12le  -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 960x540 -pix_fmt xyz12le -r 1 -i - -an -y -sn out.mp4
 
@@ -755,10 +756,48 @@ for i in {'color_negative','cross_process','darker','increase_contrast','lighter
 
 
 stream
+https://trac.ffmpeg.org/wiki/StreamingGuide
+https://trac.ffmpeg.org/wiki/Capture/Desktop
+https://trac.ffmpeg.org/wiki/PHP
+https://trac.ffmpeg.org/wiki/Capture/V4L2_ALSA
+https://trac.ffmpeg.org/wiki/Capture/Desktop
+https://trac.ffmpeg.org/wiki/Capture/ALSA
+https://trac.ffmpeg.org/wiki/Capture/Webcam
+https://kdenlive.org/en/project/color-hell-ffmpeg-transcoding-and-preserving-bt-601/
 ---------------------------
+ffmpeg -i INPUT -acodec libmp3lame -ar 11025 -f rtp rtp://host:port
+ffmpeg -i INPUT -f mpegts udp://host:port
+ffmpeg -i INPUT -f mpegts tcp://host:port
+ffmpeg -i tcp://local_hostname:port?listen
+
+ffmpeg -i ... -f mpegts "tcp://127.0.0.1:2000"
+mplayer ... ffmpeg://tcp://127.0.0.1:2000?listen
+
+ffmpeg -i input -f rtsp -rtsp_transport tcp rtsp://localhost:8888/live.sdp
+ffplay -rtsp_flags listen rtsp://localhost:8888/live.sdp?tcp
+
+ffmpeg -f dshow -framerate 20 -i video=screen-capture-recorder -vf scale=1280:720 -vcodec libx264 -pix_fmt yuv420p -tune zerolatency -preset ultrafast -f mpegts udp://236.0.0.1:2000
+mplayer -demuxer +mpegts -framedrop -benchmark ffmpeg://udp://236.0.0.1:2000?fifo_size=100000&buffer_size=10000000
+
+
 ffmpeg -i rtmp://localhost/live1080p/$name -vb 3800k -minrate 3800k -maxrate 3800k -bufsize 3800k -s 1600x900 -c:v libx264 -preset superfast -r 60 -g 120 -keyint_min 60 -x264opts "keyint=120:min-keyint=120:no-scenecut" -sws_flags lanczos -tune film -pix_fmt yuv420p -c:a copy -f flv rtmp://localhost/livetotwitch/$name;
 
 ffmpeg -rtsp_transport tcp -i rtsp://@192.168.1.27:552//stream1 -acodec rawvideo -vcodec rawvideo -f v4l2 /dev/video0
+ffmpeg -re  -i /mnt/hls/m7.mp4  -f rtsp -rtsp_transport tcp rtsp://127.0.0.1/live
+ffmpeg -re -i /mnt/hls/m7.mp4  -vcodec libx264 -vprofile baseline -g 30 -acodec aac -strict -2 -f flv rtmp://127.0.0.1/live
+ffmpeg -y -re -i video.mp4 -c copy -c:a aac -ac 2 -ar 44100 -f flv rtmp://192.168.100.6/live
+
+
+https://github.com/Haivision/srt/issues/1223
+LInux system packet loss can be simulated with traffic control tc command:
+https://wiki.linuxfoundation.org/networking/netem
+For example, the following gives 10% packet loss on interface eth0:
+tc qdisc change dev eth0 root netem loss 10%
+assuming you already have some rules in place for eth0
+
+
+
+
 
 ################################################################################
 # With audio vstack
@@ -804,4 +843,29 @@ ffmpeg -i video1.mp4 -i video2.mp4 -filter_complex vstack=inputs=2 vertical-stac
  ffmpeg -i 0.png -i 1.mp4 -i 2.jpg -filter_complex "[0]scale=1280:-1,format=yuv420p[t];[1]scale=1280:-1 [n];[2]scale=1280:-1,format=yuv420p[b];[t][n][b]vstack=inputs=3[v]" -map "[v]" -map 1:a? -c:a copy -y output.mp4
 
 
+#############################################
+webcam
+#############################################
+https://trac.ffmpeg.org/wiki/Capture/Webcam
+https://trac.ffmpeg.org/wiki/Capture/V4L2_ALSA
 
+sudo apt install v4l-utils
+v4l2-ctl --list-devices
+ffmpeg -f v4l2 -list_formats all -i /dev/video0
+ffmpeg -f v4l2 -framerate 25 -video_size 640x480 -i /dev/video0 output.mkv
+v4l2-ctl -L
+
+
+v4l2-ctl --list-devices
+ffmpeg  -hide_banner -f v4l2 -list_formats all -i /dev/video0
+v4l2-ctl --list-formats-ext
+arecord -L
+ffmpeg -f alsa -ac 2 -i hw:CARD=HDMI,DEV=0
+
+ffmpeg -f v4l2 -framerate 25 -video_size 960x540 -i /dev/video0 -f alsa -ac 2 -i hw:CARD=Generic_1,DEV=0  -c:v libx264 -b:v 1600k -preset ultrafast         -x264opts keyint=50 -g 25 -pix_fmt yuv420p  -c:a aac -b:a 128k  file.mp4
+ffmpeg -f v4l2 -framerate 25 -video_size 480x270 -i /dev/video0 -f alsa -ac 2 -i hw:CARD=Generic_1,DEV=0  -c:v libx264 -b:v 160k -preset ultrafast         -x264opts keyint=50 -g 25 -pix_fmt yuv420p  -c:a aac -b:a 128k -y file.mp4
+
+#############################################
+saturation
+#############################################
+for i in {1..9}; do ffplay -vf eq=brightness=0.$i:saturation=2.$i:gamma=1.$i file.mp4 -t 3  -autoexit; done
