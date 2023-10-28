@@ -723,14 +723,14 @@ ffmpeg -i rtmp://localhost/live1080p/$name -vb 3800k -minrate 3800k -maxrate 380
 
 https://stackoverflow.com/questions/11552565/vertically-or-horizontally-stack-mosaic-several-videos-using-ffmpeg
 
-Down mix and use original channel placements
-ffmpeg -i input0 -i input1 -filter_complex "[0:v][1:v]vstack=inputs=2[v];[0:a][1:a]amerge=inputs=2[a]" -map "[v]" -map "[a]" -ac 2 output
+Down mix and use original channel placements ok
+ffmpeg -i video1.mp4 -i video2.mp4 -filter_complex "[0:v][1:v]vstack=inputs=2[v];[0:a][1:a]amerge=inputs=2[a]" -map "[v]" -map "[a]" -ac 2 output.mp4
 
-Put all audio from each input into separate channels
-ffmpeg -i input0 -i input1 -filter_complex "[0:v][1:v]vstack=inputs=2[v];[0:a][1:a]amerge=inputs=2,pan=stereo|c0<c0+c1|c1<c2+c3[a]" -map "[v]" -map "[a]"  output
+Put all audio from each input into separate channels ok
+ffmpeg -i video1.mp4 -i video2.mp4 -filter_complex "[0:v][1:v]vstack=inputs=2[v];[0:a][1:a]amerge=inputs=2,pan=stereo|c0<c0+c1|c1<c2+c3[a]" -map "[v]" -map "[a]"  output3.mp4
 
 Using audio from one particular input
-ffmpeg -i input0 -i input1 -filter_complex "[0:v][1:v]vstack=inputs=2[v]" -map "[v]" -map 1:a output
+ffmpeg -i input0.wav -i input1.wav -filter_complex "[0:v][1:v]vstack=inputs=2[v]" -map "[v]" -map 1:a output.wav
 
 Adding silent audio / If one input does not have audio
 ffmpeg -i input0 -i input1 -filter_complex "[0:v][1:v]vstack=inputs=2[v];anullsrc[silent];[0:a][silent]amerge=inputs=2[a]" -map "[v]" -map "[a]" -ac 2 output.mp4
@@ -751,3 +751,10 @@ ffmpeg -i input0 -i input1 -i input2 -i input3 -filter_complex "[0:v][1:v]hstack
 ffmpeg -i input0 -i input1 -filter_complex vstack=inputs=2 output
 ffmpeg -i input0 -i input1 -filter_complex hstack=inputs=2 output
 ffmpeg -i input0 -i input1 -filter_complex "[0]pad=iw+5:color=black[left];[left][1]hstack=inputs=2" output
+
+#ok
+ffmpeg -i video1.mp4 -i video2.mp4 -filter_complex "[0:v][1:v]vstack=inputs=2:shortest=1[outv]" -map "[outv]" hstacked.mp4
+ffmpeg -i video1.mp4 -i video2.mp4 -filter_complex hstack=inputs=2 horizontal-stacked-output.mp4
+ffmpeg -i video1.mp4 -i video2.mp4 -filter_complex vstack=inputs=2 vertical-stack-output.mp4
+
+
