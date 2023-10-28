@@ -677,18 +677,24 @@ https://github.com/avinashpaliwal/Super-SloMo
 https://www.glitch.cool/meii/intro-to-ffmpeg-audio-to-video-filters
 
 ------------------------
-vid2png
+vid2png png2vid
 ------------------------
 ffmpeg -i input.mp4 %08d.png
 ffmpeg -r 30 -i frames/frame%08d.png -i input.mp4 -map 0:v:0 -map 1:a:0 -c:a copy -c:v libx264 output.mp4
 ffmpeg -y -framerate 60 -start_number 28 -i image%08d.png -c:v libx264 -preset slow -crf 23 -refs 3 -threads 8 -pix_fmt yuv420p output.mkv
 
 ------------------------
-vid2gif
+vid2gif gif2vid
 ------------------------
 ffmpeg -i input.mp4 -r 12 -vf "scale=1280:-1" -f gif test01.gif -v quiet -stats
 ffmpeg -i input.mp4 -r 12 -vf "scale=0.5*iw:0.5*ih" -f gif test01.gif -v quiet -stats
 ffmpeg -i input.mp4 -filter:v "fps=18,scale=420:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -ss 00:00.01 -to 00:17.27 output.gif -y -hide_banner
+
+ffmpeg -i animated.gif -movflags faststart -pix_fmt yuv420p -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" video.mp4
+ffmpeg -i animated.gif -movflags faststart -pix_fmt yuv420p video.mp4
+ffmpeg -f gif -i infile.gif outfile.mp4
+
+
 
 ------------------------
 cuda
@@ -710,12 +716,32 @@ glitch fx ***
 ------------------------
 ffmpeg -f rawvideo -pixel_format rgb32 -video_size 64x64 -framerate 10.766666 -i input.mp4 -f u8 -ar 44100 -ac 1 -i input.mp4 -sws_flags neighbor -s 240x240 -y -an a.mp4
 
+ffmpeg -i test01.gif -movflags faststart -pix_fmt yuv420p -crf 66 -y video.mp4
+ffmpeg -i test01.gif -movflags faststart -pix_fmt rgb32 -crf 66 -y video.mp4
+ffmpeg -i test01.gif -movflags faststart -pix_fmt rgb24 -crf 66 -y video.mp4
+ffmpeg -i test01.gif -movflags faststart -pix_fmt rgb8 -crf 96 -y video.mp4
+ffmpeg -i test01.gif -movflags faststart -pix_fmt rgb4 -crf 96 -y video.mp4
+
+
+
+ffmpeg -h encoder=libx264
+ffmpeg -pix_fmts
+ffmpeg -pix_fmts | cut -b 6-15 >> colorspace.txt
+
+for word in $(cat colorspace.txt); do echo $word; done
+for word in $(cat colorspace.txt); do ffmpeg -i test01.gif -movflags faststart -pix_fmt $word -crf 96 -y video_$word.mp4 && echo $word; done
+
+
+
+
 
 
 
 stream
 ---------------------------
 ffmpeg -i rtmp://localhost/live1080p/$name -vb 3800k -minrate 3800k -maxrate 3800k -bufsize 3800k -s 1600x900 -c:v libx264 -preset superfast -r 60 -g 120 -keyint_min 60 -x264opts "keyint=120:min-keyint=120:no-scenecut" -sws_flags lanczos -tune film -pix_fmt yuv420p -c:a copy -f flv rtmp://localhost/livetotwitch/$name;
+
+ffmpeg -rtsp_transport tcp -i rtsp://@192.168.1.27:552//stream1 -acodec rawvideo -vcodec rawvideo -f v4l2 /dev/video0
 
 ################################################################################
 # With audio vstack
@@ -756,5 +782,9 @@ ffmpeg -i input0 -i input1 -filter_complex "[0]pad=iw+5:color=black[left];[left]
 ffmpeg -i video1.mp4 -i video2.mp4 -filter_complex "[0:v][1:v]vstack=inputs=2:shortest=1[outv]" -map "[outv]" hstacked.mp4
 ffmpeg -i video1.mp4 -i video2.mp4 -filter_complex hstack=inputs=2 horizontal-stacked-output.mp4
 ffmpeg -i video1.mp4 -i video2.mp4 -filter_complex vstack=inputs=2 vertical-stack-output.mp4
+
+
+ ffmpeg -i 0.png -i 1.mp4 -i 2.jpg -filter_complex "[0]scale=1280:-1,format=yuv420p[t];[1]scale=1280:-1 [n];[2]scale=1280:-1,format=yuv420p[b];[t][n][b]vstack=inputs=3[v]" -map "[v]" -map 1:a? -c:a copy -y output.mp4
+
 
 
