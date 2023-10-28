@@ -731,6 +731,23 @@ ffmpeg -pix_fmts | cut -b 6-15 >> colorspace.txt
 for word in $(cat colorspace.txt); do echo $word; done
 for word in $(cat colorspace.txt); do ffmpeg -i test01.gif -movflags faststart -pix_fmt $word -crf 96 -y video_$word.mp4 && echo $word; done
 
+ffplay  -i input.mp4 -vf scale=in_color_matrix=bt709,format=xyz12le  -crf 196 -b:v 0.001k -b 1k -preset ultrafast -threads 2
+
+
+ffmpeg -i input.mp4 -f image2pipe -pix_fmt rgb24 -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 1920x1080 -pix_fmt rgb24 -r 24 -i - -an out.mp4
+ffmpeg -i input.mp4 -f image2pipe -pix_fmt xyz12le -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 960x540 -pix_fmt xyz12le -r 24 -i - -an out.mp4
+
+# glitch
+ffmpeg -i input.mp4 -f image2pipe -pix_fmt xyz12le -t 10 -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 960x540 -pix_fmt xyz12le -r 24 -i - -an out.mp4
+ffmpeg -i 1.mp4 -f image2pipe -pix_fmt xyz12le  -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 960x540 -pix_fmt xyz12le -r 1 -i - -an -y -sn out.mp4
+
+ffmpeg -y -i input.mp4 -c:v libvpx -b:v 120k -crf 60  -t 5 -an -sn -copyts -threads 4 ambo.webm
+ffmpeg -y -i input.mp4 -c:v libvpx -b:v 120k -crf 60 -vf curves=vintage  -t 5 -an -sn -copyts -threads 4 ambo.webm
+
+for i in {'color_negative','cross_process','darker','increase_contrast','lighter','linear_contrast','medium_contrast','negative','strong_contrast','vintage'}; do echo $i;done
+
+for i in {'color_negative','cross_process','darker','increase_contrast','lighter','linear_contrast','medium_contrast','negative','strong_contrast','vintage'}; do ffmpeg -y -i input.mp4 -c:v libvpx -b:v 120k -crf 60 -vf curves=$i  -t 5 -an -sn -copyts -threads 4 ambo_$i.webm ;done
+
 
 
 
