@@ -151,14 +151,44 @@ sequenceDiagram
 #######################################
 Markdown Cheatsheet
 #######################################
+
 https://towardsdatascience.com/the-ultimate-markdown-cheat-sheet-3d3976b31a0
 https://www.heise.de/mac-and-i/downloads/65/1/1/6/7/1/0/3/Markdown-CheatSheet-Deutsch.pdf
 https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
 https://www.markdownguide.org/cheat-sheet/
+https://mermaid.js.org/syntax/pie.html
+https://mermaid.js.org/syntax/examples.html
 ~~~
 
 ```mermaid
 pie
 "Movies" : 80
 "TV shows" : 20
+```
+
+```mermaid
+%%{init: {"pie": {"textPosition": 0.5}, "themeVariables": {"pieOuterStrokeWidth": "5px"}} }%%
+pie showData
+    title Key elements in Product X
+    "Calcium" : 42.96
+    "Potassium" : 50.05
+    "Magnesium" : 10.01
+    "Iron" :  5
+```
+
+```mermaid
+---
+title: Example Git diagram
+---
+gitGraph
+   commit
+   commit
+   branch develop
+   checkout develop
+   commit
+   commit
+   checkout main
+   merge develop
+   commit
+   commit
 ```
