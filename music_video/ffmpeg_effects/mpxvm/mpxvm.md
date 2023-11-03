@@ -16,10 +16,14 @@ gitGraph TB:
    commit id: "Milkytracler 2007"
    commit id: "MPXVM 2015"
    branch fumix
-       commit id: "FUMIX 2017"
-#       commit tag:"v2.0.0"
+   checkout fumix
+   commit id: "FUMIX 2017"
+   commit tag:"v2.0.0"
+   branch lmms
+   checkout lmms
+   commit id: "LMMS 2023"
    branch mega_dub_mix
-   commit id: "Mega Dub FUMIX 2023"
+   commit id: "Mega Dub 2023"
    commit tag:"v3.0.0"
 ~~~
 
@@ -38,5 +42,6 @@ timeline
     2015 : MPXVM
     2017 : Fumix series
     2023 : Mega Dub Fumix
+         : LMMS
 ~~~
 
