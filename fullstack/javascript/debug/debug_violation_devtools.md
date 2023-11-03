@@ -111,3 +111,35 @@ https://developer.mozilla.org/en-US/docs/Web/API/StorageManager/estimate
 ```
 https://docs.cypress.io/guides/getting-started/installing-cypress#Switching-browsers
 ```
+
+
+
+
+### catch mouse event in console
+```
+#############################################################
+How do I view events fired on an element in Chrome DevTools?
+#############################################################
+
+https://stackoverflow.com/questions/10213703/how-do-i-view-events-fired-on-an-element-in-chrome-devtools
+https://developer.chrome.com/blog/quickly-monitor-events-from-the-console-panel-2/
+https://developer.chrome.com/docs/devtools/console/log/
+https://sites.google.com/a/chromium.org/dev/developers/how-tos/trace-event-profiling-tool/recording-tracing-runs
+https://support.google.com/a/answer/11478284?hl=en
+https://developers.google.com/admin-sdk/reports/v1/appendix/activity/chrome?hl=de
+https://superuser.com/questions/1156956/does-windows-10-log-events-such-as-visiting-a-web-page-opening-a-new-browser-ta
+https://sites.google.com/a/chromium.org/dev/developers/how-tos/trace-event-profiling-tool/frame-viewer
+https://doc.qt.io/qtcreator/creator-ctf-visualizer.html
+https://docs.google.com/document/d/1CvAClvFfyA5R-PhYUmn5OOQtYMH4h6I0nSsKchNAySU/preview#heading=h.yr4qxyxotyw
+https://google.github.io/trace-viewer/
+https://github.com/catapult-project/catapult
+https://www.chromium.org/developers/how-tos/trace-event-profiling-tool/
+
+$0
+monitorEvents($0)
+unmonitorEvents($0)
+monitorEvents(document.body, 'mouse')
+console.clear()
+
+chrome://tracing/
+```

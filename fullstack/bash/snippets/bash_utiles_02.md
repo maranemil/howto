@@ -112,5 +112,58 @@ yes() {
 
 
 
+### date
+```
+#############################################################
+bash date
+#############################################################
+
+https://learnubuntu.com/get-current-date-time/
+https://www.howtogeek.com/410442/how-to-display-the-date-and-time-in-the-linux-terminal-and-use-it-in-bash-scripts/
+https://www.howtogeek.com/google-messages-features-you-should-be-using/
+https://askubuntu.com/questions/634173/how-to-get-date-and-time-using-command-line-interface
+https://www.cyberciti.biz/faq/linux-display-date-and-time/
+
+date +"%d-%m-%y"
+date +"%d/%m/%y"
+date +"%H:%M:%S"
+date "+%r"
+date +%c
+date +%A%d%B
+date +"Today is: %A %d %B"
+
+%D: Prints the date in mm/dd/yy format.
+%F: Prints the date in yyyy-mm-dd format.
+%x: Prints the date in the format for your locale.
+%H: Prints the hour 00, 01, 02...23.
+%I: Prints the hour using the 12-hour clock, 00, 01, 02 ... 12, with a leading zero if required.
+
+echo $(date --date='2 days ago')
+echo $(date --date='25 Dec' +%j)
+echo $(date -I -d "last month ")
+
+timedatectl
+
+#!/bin/bash
+TODAY=$(date +"Today is %A, %d of %B")
+TIMENOW=$(date +"The local time is %r")
+TIME_UK=$(TZ=BST date +"The time in the UK is %r")
+echo $TODAY
+echo $TIMENOW
+echo $TIME_UK
+
+#!/bin/bash
+# obtain the date and time
+date_stamp=$(date +"%F-%H-%M-%S")
+# make a directory with that name
+mkdir "$date_stamp"
+# copy the files from the current folder into it
+cp *.txt "$date_stamp"
+# all done, report back and exit
+echo "Text files copied to directory: "$date_stamp
+```
+
+
+
 
 

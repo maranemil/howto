@@ -111,6 +111,7 @@ done
 cat /tmp/list.txt | xargs mv -t /app/dest/
 xargs mv -t /app/dest/ < /tmp/list.txt
 sed 's/^ *//' < /tmp/list.txt | xargs -d '\n' mv -t /app/dest/
+sed -i 12s/appSet/app-set/
 while read file; do mv "$file" /app/dest/; done < list.txt
 while IFS= read -r file; do mv "$file" /app/dest/; done < list.txt
 for i in $(cat /tmp/list.txt); do mv "$i" /app/dest/; done
