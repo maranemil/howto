@@ -63,6 +63,62 @@ ffmpeg -f pulse -i 0 -f pulse -i 1 -filter_complex amix=inputs=2 both_streams.m4
 # mpv both_streams.m4a
 
 
+
+
+
+#################################################
+# record audio tests
+#################################################
+
+https://trac.ffmpeg.org/wiki/Capture/PulseAudio
+https://trac.ffmpeg.org/wiki/Capture/ALSA
+
+mic
+ffplay -f pulse  -i 0
+ffplay -f pulse  -i 1
+ffplay -f pulse  -i 2
+ffplay -f pulse  -i 3
+ffplay -f pulse  -i 4
+ffplay -f alsa  -i pulse
+ffplay -f alsa  -i default
+ffplay -f pulse -i alsa_input.pci-0000_00_1b.0.analog-stereo
+
+application
+ffplay -f pulse -i alsa_output.pci-0000_00_1b.0.analog-stereo.monitor
+
+
+Record audio from your microphone
+ffmpeg -f pulse -i alsa_input.pci-0000_00_1b.0.analog-stereo -ac 1 recording.m4a
+
+Record audio from an application
+ffmpeg -f pulse -i alsa_output.pci-0000_00_1b.0.analog-stereo.monitor -ac 2 recording.m4a
+
+
+arecord -l
+
+microphone
+ffmpeg -f alsa -i hw:1 -t 3 -y out.wav
+ffmpeg -f alsa -i default -t 3 -y out.wav
+
+arecord -L
+ffmpeg -sources pulse
+
+mic
+ffmpeg -f alsa -channels 2 -sample_rate 44100 -i hw:1 -t 3 -y out.wav
+ffmpeg -f alsa -channels 2 -sample_rate 44100 -i default -t 3 -y out.wav
+
+application
+ffmpeg -f pulse -i alsa_output.pci-0000_00_1b.0.analog-stereo.monitor -y out.mp3
+
++
++
++
++
++
++
++
+
+
 ##################################################################################
 # video mix
 # ffmpeg -video_size 1920x1080 -framerate 25 -f x11grab -i :1.0   \
