@@ -1,5 +1,5 @@
 #################################################
-ffmpeg video mix + audio
+ffmpeg video mix screen webcam + audio
 #################################################
 
 sudo apt install v4l-utils
@@ -29,7 +29,38 @@ ffmpeg  \
 
 
 
+#################################################
+# record audio and microphone at the same time ffmpeg
+#################################################
 
+# https://superuser.com/questions/1630762/ffmpeg-screen-capture-with-mic-and-speaker-audios
+# https://superuser.com/questions/899352/ffmpeg-commandline-options-to-recording-audio-from-mic-and-speakers
+# https://gist.github.com/ChriRas/b9aef9771a97249cb4620e0d6ef538c4?permalink_comment_id=3675109
+# https://wiki.archlinux.org/title/PulseAudio/Examples
+
+ffmpeg -video_size 1600x900 -framerate 30 -f x11grab -i :0.0 \
+    -f pulse -thread_queue_size 512k -i alsa_input.pci-0000_00_1f.3.analog-stereo \
+    -f pulse -thread_queue_size 512k -i alsa_output.pci-0000_00_1f.3.analog-stereo.monitor  \
+     -filter_complex "[1:a:0][2:a:0]amix=2[aout]" -map 0:V:0 -map "[aout]" $(date +"%s").mkv
+
+# To determine our input and output we can use:
+# pactl list short | grep alsa
+# pactl list short sinks
+# pactl list short sources
+# aplay -l
+# arecord -L
+# pactl list cards | grep alsa
+
+# LANG=C pactl list | grep -A2 'Source #' | grep 'Name: ' | cut -d" " -f2
+# echo '\nSINKS (output)' && pactl list short sinks && echo '\nSOURCES (input)' && pactl list short sources
+# pacmd list-sources | perl -lne '/(?<=name: <)alsa[^>]+/ && print $&'
+# pacmd list-sources|awk '/index:/ {print $0}; /name:/ {print $0}; /device\.description/ {print $0}'
+# get current resolution xrandr 1920 x 1200
+
+ffmpeg -f pulse -i alsa_input.pci-0000_00_1f.3.analog-stereo -f pulse -i alsa_output.pci-0000_00_1f.3.analog-stereo.monitor -map 0:0 -map 1:0 $(date +"%s").mkv
+
+ffmpeg -f pulse -i 0 -f pulse -i 1 -filter_complex amix=inputs=2 both_streams.m4a
+# mpv both_streams.m4a
 
 
 ##################################################################################

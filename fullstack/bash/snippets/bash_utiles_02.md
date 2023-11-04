@@ -161,6 +161,18 @@ mkdir "$date_stamp"
 cp *.txt "$date_stamp"
 # all done, report back and exit
 echo "Text files copied to directory: "$date_stamp
+
+
+https://unix.stackexchange.com/questions/151547/linux-set-date-through-command-line
+https://linux.die.net/man/1/date
+https://unix.stackexchange.com/questions/120484/what-is-a-standard-command-for-printing-a-date-in-rfc-3339-format
+https://datatracker.ietf.org/doc/html/rfc3339
+
+date +"%s.%N" - 1699113226.695250031
+date --rfc-3339=ns - 2023-11-04 16:54:02.069593873+01:00
+date +"%s" 1699113266
+
+
 ```
 
 

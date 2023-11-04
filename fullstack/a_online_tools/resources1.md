@@ -118,6 +118,43 @@
 
 ------------------------------------------------------------------
 
+### Cloud
+
+- https://firebase.google.com/docs/firestore
+- https://firebase.google.com/docs/firestore?hl=de
+- https://cloud.google.com/?hl=de
+- https://azure.microsoft.com/en-us
+- https://aws.amazon.com/
+- https://planetscale.com/
+- https://clerk.com/
+- https://vercel.com/
+- https://www.heroku.com/
+- https://render.com
+- https://railway.app
+- https://cyclic.sh
+
+------------------------------------------------------------------
+
+### draw canvas
+
+- https://help.gliffy.com/online/Content/GliffyCommon/Using-gliffy-editor.htm
+- https://github.com/topics/drawing-app
+- https://github.com/mbrlabs/Lorien
+- https://github.com/topics/drawing-app
+- https://github.com/methodofaction/Method-Draw
+- https://excalidraw.com/
+- https://github.com/excalidraw/excalidraw
+- https://github.com/excalidraw
+
+~~~
+https://github.com/excalidraw/excalidraw-vscode
+https://marketplace.visualstudio.com/items?itemName=pomdtr.excalidraw-editor # ext install pomdtr.excalidraw-editor
+# npm install react react-dom @excalidraw/excalidraw
+https://github.com/debitbug/excalidraw-chrome-extension
+~~~
+
+------------------------------------------------------------------
+
 ### Code Sandboxes js
 
 - https://stackblitz.com/
@@ -294,7 +331,7 @@
 ### Learning
 
 - https://brilliant.org/
-
+- https://leetcode.com/problemset/all/
 
 ------------------------------------------------------------------
 
@@ -657,12 +694,21 @@ https://hemingwayapp.com/
 ### Send encoded msg
 
 - https://www.read2burn.com/
-- 
+
 ------------------------------------------------------------------
 ### Speed test
 
 - https://www.telekom.de/netz/speedtest
 - https://speedtest.vodafone.de/
+
+------------------------------------------------------------------
+### Security leaks
+
+- https://weleakinfo.io/
+- https://github.com/mozilla/blurts-server/
+- https://monitor.firefox.com/
+- https://tools.keycdn.com/performance
+- https://www.dehashed.com/
 
 ------------------------------------------------------------------
 
