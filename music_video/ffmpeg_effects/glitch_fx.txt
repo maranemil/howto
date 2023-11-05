@@ -142,6 +142,54 @@ for i in {'color_negative','cross_process','darker','increase_contrast','lighter
 
 
 
+##################################################################
+output in h264 and libx265
+##################################################################
+https://trac.ffmpeg.org/wiki/Encode/H.265
+https://stackoverflow.com/questions/9253422/encoding-jpeg-as-h264-video
+
+ffmpeg  -i input.mp4  -bsf noise=7000 -r 15 -f mpegts -c:v h264   -g 9999 -vf tblend=all_mode=xor,hqx=n=4,vignette -preset ultrafast -tune zerolatency -strict experimental -crf 131 -t 20 -y glitch.mp4
+
+ffmpeg -i glitch.mp4 -r 5 -c:v h264 -preset ultrafast -tune zerolatency -strict experimental -crf 131 -t 10 -y  glitch2.mp4
+
+ffmpeg -i glitch.mp4 -r 5 -c:v libx265  -strict experimental  -t 10  -x265-params pass=1  -y  glitch3.mp4
+
+ffmpeg -i glitch3.mp4 -r 5 -c:v libx265  -strict experimental -vf negate -t 10  -x265-params pass=1  -y  glitch3a.mp4
+
+ffmpeg -i glitch3.mp4 -r 5 -c:v libx264  -strict experimental -vf tblend=all_mode=darken,negate,vignette -t 5 -preset ultrafast -tune zerolatency  -y  glitch3a.mp4
+
+ffmpeg -i glitch3.mp4 -r 5 -c:v libx264  -strict experimental -vf tblend=all_mode=darken,negate,curves=preset=color_negative -t 5 -preset ultrafast -tune zerolatency  -y  glitch3a.mp4
+
+##################################################################
+mp42png png2mp4
+##################################################################
+https://shotstack.io/learn/use-ffmpeg-to-convert-images-to-video/
+https://stackoverflow.com/questions/22965569/convert-from-jpg-to-mp4-by-ffmpeg
+https://video.stackexchange.com/questions/33081/ffmpeg-convert-1-jpeg-frame-to-10-sec-video
+https://stackoverflow.com/questions/40088222/ffmpeg-convert-video-to-images
+https://www.bannerbear.com/blog/how-to-extract-images-from-a-video-using-ffmpeg/
+https://gist.github.com/rlan/ab255879c2304a25928ddb190de6b552
+
+ffmpeg -framerate 1 -i happy%d.jpg -c:v libx264 -r 30 output.mp4
+ffmpeg -f image2 -i /path/to/file/image%3d.jpg test.avi
+ffmpeg  -loop 1  -t 10  -i input.jpg  output.mp4
+ffmpeg -f image2 -framerate 30 -i %06d.jpg -c:v libx264 out.mp4
+
+Output one image every second:
+ffmpeg -i input.mp4 -vf fps=1 out%d.png
+
+Output one image every minute:
+ffmpeg -i test.mp4 -vf fps=1/60 thumb%04d.png
+
+Output one image every 10 minutes:
+ffmpeg -i test.mp4 -vf fps=1/600 thumb%04d.png
+
+ffmpeg -i input.mp4 %04d.png
+
+ffmpeg -ss 00:00:01 -i input.mp4 -vframes 1 -q:v 2 $3
+ffmpeg -i input.mp4 -q:v 2 %06d.jpg
+
+
 
 
 
