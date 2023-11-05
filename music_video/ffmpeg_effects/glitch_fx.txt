@@ -1,0 +1,154 @@
+####################################################
+vid2gif gif2vid
+####################################################
+https://code.soundsoftware.ac.uk/projects/pmhd/embedded/vf__curves_8c.html
+https://hhsprings.bitbucket.io/docs/programming/examples/ffmpeg/manipulating_video_colors/curves.html
+http://underpop.online.fr/f/ffmpeg/help/curves.htm.gz
+https://usage.toolstud.io/docs/ffmpeg/usage/pix_fmts/
+
+
+
+bgra64le
+cuda
+gbrap12be
+gbrap16be
+gbrap16le
+gbrp10le
+gbrp12le
+gbrp14be
+gbrp16be
+gbrp16be
+gbrp9le
+p416le
+x2rgb10le
+y210be
+yuv422p10
+yuv444p10
+yuv444p16
+
+ffmpeg -i 1.mp4 -crf 60 -y u.gif
+ffmpeg -i u.gif -pix_fmt gbrp16be  -crf 60 -y u.mp4
+ffmpeg -i u.mp4 -vf curves=preset=color_negative -crf 60 -y u2.mp4
+ffmpeg -i u2.mp4 -c:v libx264 -vf rgbashift=rh=-6:gh=6 -pix_fmt yuv420p -y u3.mp4
+ffmpeg -i u2.mp4 -c:v libx264 -vf rgbashift=rh=-16:gh=16 -pix_fmt yuv420p -y u3.mp4
+
+ffplay -i input.mp4  -b:v 44k -crf 70 -vf format=yuva444p,lut=c3=228,negate,crop=760:560:200:400,fps=9.2,scale=900:-1:flags=lanczos
+ffplay -i input.mp4 -pred 100 -vf fps=5,noise=10
+
+
+
+
+
+
+####################################################
+vid2png png2vid
+####################################################
+ffmpeg -i input.mp4 %08d.png
+ffmpeg -r 30 -i frames/frame%08d.png -i input.mp4 -map 0:v:0 -map 1:a:0 -c:a copy -c:v libx264 output.mp4
+ffmpeg -y -framerate 60 -start_number 28 -i image%08d.png -c:v libx264 -preset slow -crf 23 -refs 3 -threads 8 -pix_fmt yuv420p output.mkv
+
+####################################################
+vid2gif gif2vid
+####################################################
+ffmpeg -i input.mp4 -r 12 -vf "scale=1280:-1" -f gif test01.gif -v quiet -stats
+ffmpeg -i input.mp4 -r 12 -vf "scale=0.5*iw:0.5*ih" -f gif test01.gif -v quiet -stats
+ffmpeg -i input.mp4 -filter:v "fps=18,scale=420:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -ss 00:00.01 -to 00:17.27 output.gif -y -hide_banner
+
+ffmpeg -i animated.gif -movflags faststart -pix_fmt yuv420p -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" video.mp4
+ffmpeg -i animated.gif -movflags faststart -pix_fmt yuv420p video.mp4
+ffmpeg -f gif -i infile.gif outfile.mp4
+
+
+
+
+
+
+
+####################################################
+glitch fx ***
+####################################################
+# https://www.kaspar.wtf/blog/glitch-patterns-using-ffmpeg-generators
+
+ffmpeg -f lavfi -i cellauto=s=1280x720:rule=15:r=60 -vf scale=1280x720 -bsf noise=3000 -r 30 -f mpegts -c:v h264 -crf 31 -preset ultrafast -tune zerolatency - | ffplay -i - -loglevel quiet -fs -vf tblend=all_mode=darken
+
+ffmpeg -f lavfi -i cellauto=s=640x360:rule=15:r=60 -vf scale=1280x720 -bsf noise=3000 -r 30 -f mpegts -c:v h264 -crf 31 -preset ultrafast -tune zerolatency - | ffplay -i - -loglevel quiet -g 999 -fs -vf tblend=all_mode=darken -preset ultrafast -tune zerolatency -strict experimental -crf 31
+
+ffmpeg -f lavfi -i cellauto=s=640x360:rule=15:r=60 -vf scale=1280x720 -bsf noise=3000 -r 5 -f mpegts -c:v h264 -crf 131 -preset ultrafast -tune zerolatency - | ffplay -i - -loglevel quiet -g 9999 -fs -vf tblend=all_mode=darken -preset ultrafast -tune zerolatency -strict experimental -crf 131
+
+ffmpeg -f lavfi -i cellauto=s=640x360:rule=100:r=60 -vf scale=1280x720 -bsf noise=3000 -r 5 -f mpegts -c:v h264 -crf 131 -preset ultrafast -tune zerolatency - | ffplay -i - -loglevel quiet -g 9999 -fs -vf tblend=all_mode=darken -preset ultrafast -tune zerolatency -strict experimental -crf 131
+
+ffmpeg -f lavfi -i mandelbrot -vf scale=1280x720 -bsf noise=3000 -r 5 -f mpegts -c:v h264 -crf 131 -preset ultrafast -tune zerolatency - | ffplay -i - -loglevel quiet -g 9999 -fs -vf tblend=all_mode=darken -preset ultrafast -tune zerolatency -strict experimental -crf 131
+
+ffmpeg -f lavfi -i gradients=n=7:type=spiral,format=rgb0 -vf scale=1280x720 -bsf noise=3000 -r 5 -f mpegts -c:v h264 -crf 131 -preset ultrafast -tune zerolatency - | ffplay -i - -loglevel quiet -g 9999 -fs -vf tblend=all_mode=darken -preset ultrafast -tune zerolatency -strict experimental -crf 131
+
+ffmpeg -f lavfi -i life=s=300x200:mold=10:r=60:ratio=0.1:death_color=#C83232:life_color=#00ff00,scale=1200:800:flags=16 -vf scale=1280x720 -bsf noise=3000 -r 5 -f mpegts -c:v h264 -crf 131 -preset ultrafast -tune zerolatency - | ffplay -i - -loglevel quiet -g 9999 -fs -vf tblend=all_mode=darken -preset ultrafast -tune zerolatency -strict experimental -crf 131
+
+ ffmpeg  -i 1.mp4 -vf scale=540x360 -bsf noise=7000 -r 30 -f mpegts -c:v h264 -crf 131 -preset ultrafast -tune zerolatency - | ffplay -i - -loglevel quiet -g 9999 -fs -vf tblend=all_mode=vividlight,hqx=n=4,vignette -preset ultrafast -tune zerolatency -strict experimental -crf 131
+
+ffmpeg  -i 1.mp4 -vf scale=540x360 -bsf noise=7000 -r 30 -f mpegts -c:v h264 -crf 131 -preset ultrafast -tune zerolatency - | ffplay -i - -loglevel quiet -g 9999 -fs -vf tblend=all_mode=xor,hqx=n=4,vignette -preset ultrafast -tune zerolatency -strict experimental -crf 131
+
+ffmpeg  -i input.mp4 -vf scale=540x360 -bsf noise=7000 -r 15 -f mpegts -c:v h264 -crf 131 -preset ultrafast -tune zerolatency - | ffplay -i - -loglevel quiet -g 9999 -fs -vf tblend=all_mode=xor,hqx=n=4,vignette -preset ultrafast -tune zerolatency -strict experimental -crf 131
+
+------------------------------
+ffmpeg -filters
+
+ffmpeg -i input.jpg -pred 100 -c:v jpegls output.jpg
+ffmpeg -i output.jpg -c:v png final.png
+
+
+
+
+
+
+####################################################
+glitch fx ***
+####################################################
+
+ffmpeg -f rawvideo -pixel_format rgb32 -video_size 64x64 -framerate 10.766666 -i input.mp4 -f u8 -ar 44100 -ac 1 -i input.mp4 -sws_flags neighbor -s 240x240 -y -an a.mp4
+
+ffmpeg -i test01.gif -movflags faststart -pix_fmt yuv420p -crf 66 -y video.mp4
+ffmpeg -i test01.gif -movflags faststart -pix_fmt rgb32 -crf 66 -y video.mp4
+ffmpeg -i test01.gif -movflags faststart -pix_fmt rgb24 -crf 66 -y video.mp4
+ffmpeg -i test01.gif -movflags faststart -pix_fmt rgb8 -crf 96 -y video.mp4
+ffmpeg -i test01.gif -movflags faststart -pix_fmt rgb4 -crf 96 -y video.mp4
+ffmpeg -i file.mp4 -color_primaries bt470bg -color_trc gamma28 -colorspace bt470bg -r 25 -crf 88 -y screen-rec.mp4
+ffmpeg -i file.mp4  -color_primaries smpte170m -color_trc smpte170m -colorspace smpte170m  -r 25 -crf 78 -y screen-rec.mp4
+
+
+ffmpeg -h encoder=libx264
+ffmpeg -pix_fmts
+ffmpeg -pix_fmts | cut -b 6-15 >> colorspace.txt
+
+for word in $(cat colorspace.txt); do echo $word; done
+for word in $(cat colorspace.txt); do ffmpeg -i test01.gif -movflags faststart -pix_fmt $word -crf 96 -y video_$word.mp4 && echo $word; done
+
+ffplay  -i input.mp4 -vf scale=in_color_matrix=bt709,format=xyz12le  -crf 196 -b:v 0.001k -b 1k -preset ultrafast -threads 2
+
+
+ffmpeg -i input.mp4 -f image2pipe -pix_fmt rgb24 -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 1920x1080 -pix_fmt rgb24 -r 24 -i - -an out.mp4
+
+ffmpeg -i input.mp4 -f image2pipe -pix_fmt xyz12le -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 960x540 -pix_fmt xyz12le -r 24 -i - -an out.mp4
+
+# glitch frames
+ffmpeg -i input.mp4 -f image2pipe -pix_fmt xyz12le -t 10 -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 960x540 -pix_fmt xyz12le -r 24 -i - -an out.mp4
+ffmpeg -i 1.mp4 -f image2pipe -pix_fmt xyz12le  -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 960x540 -pix_fmt xyz12le -r 1 -i - -an -y -sn out.mp4
+
+ffmpeg -y -i input.mp4 -c:v libvpx -b:v 120k -crf 60  -t 5 -an -sn -copyts -threads 4 ambo.webm
+ffmpeg -y -i input.mp4 -c:v libvpx -b:v 120k -crf 60 -vf curves=vintage  -t 5 -an -sn -copyts -threads 4 ambo.webm
+
+for i in {'color_negative','cross_process','darker','increase_contrast','lighter','linear_contrast','medium_contrast','negative','strong_contrast','vintage'}; do echo $i;done
+
+for i in {'color_negative','cross_process','darker','increase_contrast','lighter','linear_contrast','medium_contrast','negative','strong_contrast','vintage'}; do ffmpeg -y -i input.mp4 -c:v libvpx -b:v 120k -crf 60 -vf curves=$i  -t 5 -an -sn -copyts -threads 4 ambo_$i.webm ;done
+
+
+
+
+
+
+
+
+
+
+
+
+

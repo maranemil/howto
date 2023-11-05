@@ -946,10 +946,40 @@ https://hemingwayapp.com/
 - https://freedownloadvideo.net/dailymotion-video-downloader
 
 
+------------------------------------------------------------------
 
- ------------------------------------------------------------------
+### YouTube video summarizer
 
+- https://www.summarize.tech/#best
+- https://hix.ai/summarizer/video
+- https://github.com/somanyadav/Youtube-Summariser
+- https://notegpt.io/youtube-summary-with-chatgpt
+- https://resnote.com/summarizer#transcript
+- https://youtubesummarizer.com/watch/#transcript
 
+------------------------------------------------------------------
+
+### Text summarizer
+
+- https://www.summarizingtool.net/
+- https://www.paraphraser.io/text-summarizer
+- https://www.scribbr.com/text-summarizer/
+- https://www.summarizer.org/
+- https://resoomer.com/en/
+- https://www.semrush.com/goodcontent/summary-generator/
+- https://summarizing-tool.com/summarize/#result
+- https://www.prepostseo.com/tool/text-summarizer
+- https://www.check-plagiarism.com/text-summarizer
+- https://www.rephrase.info/text-summarizer
+- https://parafrasist.com/en
+- https://www.textcompactor.com/
+- https://huggingface.co/spaces/Gladiator/Text-Summarizer#files
+- https://www.splitbrain.org/services/ots
+- https://textsummarization.net/text-summarizer#bullet
+- https://paraphrasing-tool.com/summarizer-tool
+- https://sassbook.com/ai-summarizer
+- https://esummarizer.com/summarize#bullet
+- https://hix.ai/summarizer
 
 
 

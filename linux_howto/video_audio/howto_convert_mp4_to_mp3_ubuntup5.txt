@@ -676,24 +676,6 @@ https://github.com/Riccorl/Super-SloMo-tf2
 https://github.com/avinashpaliwal/Super-SloMo
 https://www.glitch.cool/meii/intro-to-ffmpeg-audio-to-video-filters
 
-------------------------
-vid2png png2vid
-------------------------
-ffmpeg -i input.mp4 %08d.png
-ffmpeg -r 30 -i frames/frame%08d.png -i input.mp4 -map 0:v:0 -map 1:a:0 -c:a copy -c:v libx264 output.mp4
-ffmpeg -y -framerate 60 -start_number 28 -i image%08d.png -c:v libx264 -preset slow -crf 23 -refs 3 -threads 8 -pix_fmt yuv420p output.mkv
-
-------------------------
-vid2gif gif2vid
-------------------------
-ffmpeg -i input.mp4 -r 12 -vf "scale=1280:-1" -f gif test01.gif -v quiet -stats
-ffmpeg -i input.mp4 -r 12 -vf "scale=0.5*iw:0.5*ih" -f gif test01.gif -v quiet -stats
-ffmpeg -i input.mp4 -filter:v "fps=18,scale=420:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -ss 00:00.01 -to 00:17.27 output.gif -y -hide_banner
-
-ffmpeg -i animated.gif -movflags faststart -pix_fmt yuv420p -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" video.mp4
-ffmpeg -i animated.gif -movflags faststart -pix_fmt yuv420p video.mp4
-ffmpeg -f gif -i infile.gif outfile.mp4
-
 
 
 ------------------------
@@ -710,44 +692,60 @@ ffmpeg -i input.mp4 -b:v 10400k -vcodec hevc_vaapi -vf crop=1920:848:0:116 -c:a 
 
 
 ffmpeg -y -i "input.mp4" -c:v libx264 -preset fast -crf 21 -vf "scale= 5760x2880 :out_range=full" -pix_fmt yuvj420p -aspect 1:1 -movflags faststart output.mp4
-
-------------------------
-glitch fx ***
-------------------------
-ffmpeg -f rawvideo -pixel_format rgb32 -video_size 64x64 -framerate 10.766666 -i input.mp4 -f u8 -ar 44100 -ac 1 -i input.mp4 -sws_flags neighbor -s 240x240 -y -an a.mp4
-
-ffmpeg -i test01.gif -movflags faststart -pix_fmt yuv420p -crf 66 -y video.mp4
-ffmpeg -i test01.gif -movflags faststart -pix_fmt rgb32 -crf 66 -y video.mp4
-ffmpeg -i test01.gif -movflags faststart -pix_fmt rgb24 -crf 66 -y video.mp4
-ffmpeg -i test01.gif -movflags faststart -pix_fmt rgb8 -crf 96 -y video.mp4
-ffmpeg -i test01.gif -movflags faststart -pix_fmt rgb4 -crf 96 -y video.mp4
-ffmpeg -i file.mp4 -color_primaries bt470bg -color_trc gamma28 -colorspace bt470bg -r 25 -crf 88 -y screen-rec.mp4
-ffmpeg -i file.mp4  -color_primaries smpte170m -color_trc smpte170m -colorspace smpte170m  -r 25 -crf 78 -y screen-rec.mp4
+############################################
 
 
-ffmpeg -h encoder=libx264
-ffmpeg -pix_fmts
-ffmpeg -pix_fmts | cut -b 6-15 >> colorspace.txt
-
-for word in $(cat colorspace.txt); do echo $word; done
-for word in $(cat colorspace.txt); do ffmpeg -i test01.gif -movflags faststart -pix_fmt $word -crf 96 -y video_$word.mp4 && echo $word; done
-
-ffplay  -i input.mp4 -vf scale=in_color_matrix=bt709,format=xyz12le  -crf 196 -b:v 0.001k -b 1k -preset ultrafast -threads 2
 
 
-ffmpeg -i input.mp4 -f image2pipe -pix_fmt rgb24 -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 1920x1080 -pix_fmt rgb24 -r 24 -i - -an out.mp4
-ffmpeg -i input.mp4 -f image2pipe -pix_fmt xyz12le -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 960x540 -pix_fmt xyz12le -r 24 -i - -an out.mp4
 
-# glitch frames
-ffmpeg -i input.mp4 -f image2pipe -pix_fmt xyz12le -t 10 -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 960x540 -pix_fmt xyz12le -r 24 -i - -an out.mp4
-ffmpeg -i 1.mp4 -f image2pipe -pix_fmt xyz12le  -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 960x540 -pix_fmt xyz12le -r 1 -i - -an -y -sn out.mp4
 
-ffmpeg -y -i input.mp4 -c:v libvpx -b:v 120k -crf 60  -t 5 -an -sn -copyts -threads 4 ambo.webm
-ffmpeg -y -i input.mp4 -c:v libvpx -b:v 120k -crf 60 -vf curves=vintage  -t 5 -an -sn -copyts -threads 4 ambo.webm
+ffmpeg -r 60 -i input_%05d.png -vf scale=out_color_matrix=bt709:out_range=tv -c:v libx264 -pix_fmt yuv420p -bsf:v h264_metadata=video_full_range_flag=0:colour_primaries=1:transfer_characteristics=1:matrix_coefficients=1 -y output.mp4
 
-for i in {'color_negative','cross_process','darker','increase_contrast','lighter','linear_contrast','medium_contrast','negative','strong_contrast','vintage'}; do echo $i;done
+---------------------------
 
-for i in {'color_negative','cross_process','darker','increase_contrast','lighter','linear_contrast','medium_contrast','negative','strong_contrast','vintage'}; do ffmpeg -y -i input.mp4 -c:v libvpx -b:v 120k -crf 60 -vf curves=$i  -t 5 -an -sn -copyts -threads 4 ambo_$i.webm ;done
+
+--------------------------------
+https://trac.ffmpeg.org/wiki/FancyFilteringExamples
+https://copyprogramming.com/howto/convert-raw-rgb32-file-to-jpeg-or-png-using-ffmpeg
+https://cheatography.com/thetartankilt/cheat-sheets/ffmpeg/
+https://oioiiooixiii.blogspot.com/2019/08/degrading-jpeg-images-with-repeated.html
+https://www.kaspar.wtf/blog/glitch-patterns-using-ffmpeg-generators
+http://www.webupd8.org/2009/08/ffmpeg-cheat-sheet-19-best-practices.html
+https://evilsaint.com/article/ffmpeg-cheat-sheet
+https://nalsai.de/blog/commands/
+https://mpolinowski.github.io/docs/DevOps/Linux/2022-03-07--ffmpeg-cheat-sheet/2022-03-07/
+https://trac.ffmpeg.org/wiki
+https://zayne.io/articles/vintage-camera-filters-with-ffmpeg
+
+ffmpeg -i input.mp4 -vf curves=psfile=path/to/your/file.acv output.mp4
+ffmpeg -i input.mp4 -vf curves=blue='0/0 0.5/0.58 1/1' output.mp4
+ffmpeg -i input.mp4 -vf lut3d=file=path/to/your/lut.cube output.mp4
+ffmpeg -i input.mp4 -vf noise=c0s=60:c0f=t+u output.mp4
+ffmpeg -i input.mp4 -vf noise=alls=60:allf=t+u output.mp4
+ffmpeg -i input.mp4 -vf curves=vintage,format=yuv420p -c:a copy ouput.mp4
+ffmpeg -i input.mp4 -c:v libx264 -vf rgbashift=rh=-6:gh=6 -pix_fmt yuv420p output.mp4
+
+ffmpeg -i input.mp4 -i overlay.mp4 -filter_complex "
+[1]format=yuva444p,colorchannelmixer=aa=0.25[2];
+[2][0]scale2ref[2][1];[1][2]overlay
+" output.mp4
+
+ffmpeg -i input.mp4 -i overlay.mp4 -filter_complex "
+[1]format=yuva444p[2];
+[2][0]scale2ref[2][1];[1][2]blend='overlay'
+" output.mp4
+
+ffmpeg -i input.mp4 -stream_loop -1 -i scratches.mp4 -filter_complex "
+[1]format=yuva444p[2];
+[2][0]scale2ref[2][1];[1][2]blend='screen'
+" -t 7 output.mp4
+
+ffmpeg -i input.mp4 -stream_loop -1 -i overlay.mp4 -filter_complex "
+[1]chromakey=0x00a35b:blend=0:similarity=0.15[2];
+[2][0]scale2ref[2][1];[1][2]overlay
+" -t 10 output.mp4
+
+
 
 
 
