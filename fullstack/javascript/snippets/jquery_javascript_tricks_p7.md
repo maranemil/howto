@@ -126,3 +126,36 @@ import axios from 'axios'
   }(typeof jQuery === 'function' ? jQuery : this));
 
 ~~~
+
+
+### canvas text
+~~~
+
+https://stackoverflow.com/questions/3697615/how-can-i-write-text-on-a-html5-canvas-element
+https://www.html5canvastutorials.com/tutorials/html5-canvas-text-color/
+https://www.oreilly.com/library/view/html5-canvas/9781449308032/ch03.html
+https://webglfundamentals.org/webgl/lessons/webgl-text-canvas2d.html
+https://www.w3resource.com/html5-canvas/html5-canvas-text.php
+https://fjolt.com/article/html-canvas-text
+https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillText
+https://wiki.selfhtml.org/wiki/JavaScript/Canvas/Text
+https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_text
+https://www.w3schools.com/graphics/canvas_text.asp
+https://jsfiddle.net/liormb/3D2SK/
+
+<canvas id="myCanvas" width="960" height="540"></canvas>
+var canvas = document.getElementById('myCanvas');
+var ctx = canvas.getContext('2d');
+
+// fiil the canvas
+ctx.fillStyle='red';
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+// set the text
+ctx.font = 'italic 18px Arial';
+ctx.textAlign = 'center';
+ctx. textBaseline = 'middle';
+ctx.fillStyle = 'white';  // a color name or by using rgb/rgba/hex values
+ctx.fillText('ffplay -i in.mp4 \
+', 150, 50); // text and position
+~~~
