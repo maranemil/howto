@@ -159,3 +159,44 @@ ctx.fillStyle = 'white';  // a color name or by using rgb/rgba/hex values
 ctx.fillText('ffplay -i in.mp4 \
 ', 150, 50); // text and position
 ~~~
+
+
+~~~
+##############################################
+get click position canvas
+##############################################
+
+https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector?retiredLocale=de
+https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener?retiredLocale=de
+https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas
+https://fjolt.com/article/javascript-multiple-elements-addeventlistener
+https://stackoverflow.com/questions/21700364/adding-click-event-listener-to-elements-with-the-same-class
+https://stackoverflow.com/questions/22902447/how-to-get-the-second-match-with-queryselector
+https://stackoverflow.com/questions/34001917/queryselectorall-with-multiple-conditions-in-javascript
+https://stackoverflow.com/questions/55677/how-do-i-get-the-coordinates-of-a-mouse-click-on-a-canvas-element
+https://stackoverflow.com/questions/70538163/how-to-simulate-click-on-canvas-with-coordinates
+https://www.w3schools.com/jsref/met_document_queryselector.asp
+https://www.w3schools.com/jsref/met_document_queryselectorall.asp
+https://www.w3schools.com/jsref/met_element_queryselector.asp
+https://www.w3schools.com/jsref/met_element_queryselectorall.asp
+https://www.w3schools.com/jsref/prop_style_border.asp
+https://www.w3schools.com/jsref/prop_style_bordercolor.asp
+
+https://jsfiddle.net/boilerplate/jquery
+
+document.querySelector('canvas').addEventListener( 'click', function(e) { if (confirm("confirm")) { console.log(e) } })
+document.querySelector('canvas').style.border="thick solid #0000FF"
+document.querySelectorAll('canvas')[1].style.border="thick solid #0000FF"
+document.querySelectorAll('canvas')[1].addEventListener( 'click', function(e) { if (confirm("confirm")) { console.log(e) } })
+document.querySelectorAll('canvas')[1].addEventListener( 'click', function(e) { if (confirm("confirm")) { console.log(document.elementFromPoint(e.clientX, e.clientY)); } })
+
+
+
+document.querySelector("canvas").addEventListener("click", function(s) { console.log(s)});
+document.querySelector("canvas").click(1470,170)
+
+zrX:1452
+zrY: 123
+clientX: 1749
+clientY: 356
+~~~
