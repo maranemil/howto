@@ -200,3 +200,32 @@ zrY: 123
 clientX: 1749
 clientY: 356
 ~~~
+
+
+~~~
+##############################################
+Taking A Screenshot of the Canvas
+##############################################
+https://webglfundamentals.org/webgl/lessons/webgl-tips.html#screenshot_canvas
+
+<canvas id="c"></canvas>
+<button id="screenshot" type="button">Save...</button>
+const elem = document.querySelector('#screenshot');
+elem.addEventListener('click', () => {
+  canvas.toBlob((blob) => {
+    saveBlob(blob, `screencapture-${canvas.width}x${canvas.height}.png`);
+  });
+});
+ 
+const saveBlob = (function() {
+  const a = document.createElement('a');
+  document.body.appendChild(a);
+  a.style.display = 'none';
+  return function saveData(blob, fileName) {
+     const url = window.URL.createObjectURL(blob);
+     a.href = url;
+     a.download = fileName;
+     a.click();
+  };
+}());
+~~~
