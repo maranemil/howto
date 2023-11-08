@@ -31,8 +31,8 @@ ffmpeg -i u.mp4 -vf curves=preset=color_negative -crf 60 -y u2.mp4
 ffmpeg -i u2.mp4 -c:v libx264 -vf rgbashift=rh=-6:gh=6 -pix_fmt yuv420p -y u3.mp4
 ffmpeg -i u2.mp4 -c:v libx264 -vf rgbashift=rh=-16:gh=16 -pix_fmt yuv420p -y u3.mp4
 
-ffplay -i input.mp4  -b:v 44k -crf 70 -vf format=yuva444p,lut=c3=228,negate,crop=760:560:200:400,fps=9.2,scale=900:-1:flags=lanczos
-ffplay -i input.mp4 -pred 100 -vf fps=5,noise=10
+ffplay -i in.mp4  -b:v 44k -crf 70 -vf format=yuva444p,lut=c3=228,negate,crop=760:560:200:400,fps=9.2,scale=900:-1:flags=lanczos
+ffplay -i in.mp4 -pred 100 -vf fps=5,noise=10
 
 
 
@@ -86,7 +86,7 @@ ffmpeg -f lavfi -i life=s=300x200:mold=10:r=60:ratio=0.1:death_color=#C83232:lif
 
 ffmpeg  -i 1.mp4 -vf scale=540x360 -bsf noise=7000 -r 30 -f mpegts -c:v h264 -crf 131 -preset ultrafast -tune zerolatency - | ffplay -i - -loglevel quiet -g 9999 -fs -vf tblend=all_mode=xor,hqx=n=4,vignette -preset ultrafast -tune zerolatency -strict experimental -crf 131
 
-ffmpeg  -i input.mp4 -vf scale=540x360 -bsf noise=7000 -r 15 -f mpegts -c:v h264 -crf 131 -preset ultrafast -tune zerolatency - | ffplay -i - -loglevel quiet -g 9999 -fs -vf tblend=all_mode=xor,hqx=n=4,vignette -preset ultrafast -tune zerolatency -strict experimental -crf 131
+ffmpeg  -i in.mp4 -vf scale=540x360 -bsf noise=7000 -r 15 -f mpegts -c:v h264 -crf 131 -preset ultrafast -tune zerolatency - | ffplay -i - -loglevel quiet -g 9999 -fs -vf tblend=all_mode=xor,hqx=n=4,vignette -preset ultrafast -tune zerolatency -strict experimental -crf 131
 
 ------------------------------
 ffmpeg -filters
@@ -103,15 +103,15 @@ ffmpeg -i output.jpg -c:v png final.png
 glitch fx ***
 ####################################################
 
-ffmpeg -f rawvideo -pixel_format rgb32 -video_size 64x64 -framerate 10.766666 -i input.mp4 -f u8 -ar 44100 -ac 1 -i input.mp4 -sws_flags neighbor -s 240x240 -y -an a.mp4
+ffmpeg -f rawvideo -pixel_format rgb32 -video_size 64x64 -framerate 10.766666 -i in.mp4 -f u8 -ar 44100 -ac 1 -i in.mp4 -sws_flags neighbor -s 240x240 -y -an a.mp4
 
 ffmpeg -i test01.gif -movflags faststart -pix_fmt yuv420p -crf 66 -y video.mp4
 ffmpeg -i test01.gif -movflags faststart -pix_fmt rgb32 -crf 66 -y video.mp4
 ffmpeg -i test01.gif -movflags faststart -pix_fmt rgb24 -crf 66 -y video.mp4
 ffmpeg -i test01.gif -movflags faststart -pix_fmt rgb8 -crf 96 -y video.mp4
 ffmpeg -i test01.gif -movflags faststart -pix_fmt rgb4 -crf 96 -y video.mp4
-ffmpeg -i file.mp4 -color_primaries bt470bg -color_trc gamma28 -colorspace bt470bg -r 25 -crf 88 -y screen-rec.mp4
-ffmpeg -i file.mp4  -color_primaries smpte170m -color_trc smpte170m -colorspace smpte170m  -r 25 -crf 78 -y screen-rec.mp4
+ffmpeg -i in.mp4 -color_primaries bt470bg -color_trc gamma28 -colorspace bt470bg -r 25 -crf 88 -y screen-rec.mp4
+ffmpeg -i in.mp4  -color_primaries smpte170m -color_trc smpte170m -colorspace smpte170m  -r 25 -crf 78 -y screen-rec.mp4
 
 
 ffmpeg -h encoder=libx264
@@ -121,15 +121,16 @@ ffmpeg -pix_fmts | cut -b 6-15 >> colorspace.txt
 for word in $(cat colorspace.txt); do echo $word; done
 for word in $(cat colorspace.txt); do ffmpeg -i test01.gif -movflags faststart -pix_fmt $word -crf 96 -y video_$word.mp4 && echo $word; done
 
-ffplay  -i input.mp4 -vf scale=in_color_matrix=bt709,format=xyz12le  -crf 196 -b:v 0.001k -b 1k -preset ultrafast -threads 2
+ffplay  -i in.mp4 -vf scale=in_color_matrix=bt709,format=xyz12le  -crf 196 -b:v 0.001k -b 1k -preset ultrafast -threads 2
 
 
-ffmpeg -i input.mp4 -f image2pipe -pix_fmt rgb24 -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 1920x1080 -pix_fmt rgb24 -r 24 -i - -an out.mp4
+ffmpeg -i in.mp4 -f image2pipe -pix_fmt rgb24 -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 1920x1080 -pix_fmt rgb24 -r 24 -i - -an out.mp4
 
 ffmpeg -i input.mp4 -f image2pipe -pix_fmt xyz12le -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 960x540 -pix_fmt xyz12le -r 24 -i - -an out.mp4
 
 # glitch frames
-ffmpeg -i input.mp4 -f image2pipe -pix_fmt xyz12le -t 10 -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 960x540 -pix_fmt xyz12le -r 24 -i - -an out.mp4
+ffmpeg -i in.mp4 -f image2pipe -pix_fmt xyz12le -t 10 -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 960x540 -pix_fmt xyz12le -r 24 -i - -an -y out.mp4
+
 ffmpeg -i 1.mp4 -f image2pipe -pix_fmt xyz12le  -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 960x540 -pix_fmt xyz12le -r 1 -i - -an -y -sn out.mp4
 
 ffmpeg -y -i input.mp4 -c:v libvpx -b:v 120k -crf 60  -t 5 -an -sn -copyts -threads 4 ambo.webm
