@@ -1280,15 +1280,80 @@ ffmpeg -i in.mp4 -vf scale=1280x720,tblend=all_mode=xor -bsf noise=3000 -r 5 -f 
 *
 *
 
-
-
-
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 FFMPEG Glitch Video
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 https://www.youtube.com/watch?v=T4WDFDw1nZE
 
 ffmpeg -i in.mp4 -f image2pipe -pix_fmt xyz12le -t 10 -vcodec rawvideo - | ffmpeg -f rawvideo -vcodec rawvideo -s 960x540 -pix_fmt xyz12le -r 15 -i - -an -y out.mp4
+
+*
+*
+*
+*
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+FFMPEG show frame number
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+https://www.youtube.com/watch?v=i9w7mpSukkY
+
+ffmpeg -i in.mp4 -vf "drawtext=fontfile=Arial.ttf: text='%{frame_num}': start_number=1: x=(w-tw)/2: y=h-(2*lh): fontcolor=black: fontsize=20: box=1: boxcolor=white: boxborderw=5" -c:a copy -t 12 -y out.mp4
+
+*
+*
+*
+*
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+FFMPEG show gmtime
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+https://www.youtube.com/watch?v=OTKVDELceyY
+
+ffmpeg -i in.mp4 -vf drawtext="fontsize=96: box=1: boxcolor=black@0.75: boxborderw=5: fontcolor=white: x=(w-text_w)/2: y=(h-text_h)/2: text='%{pts\:gmtime\:1575561900}'" -r 10 -c:v libx264 -preset ultrafast  -t 12 -y out.mp4
+
+ffmpeg -re -loop 1 -i image.png -vf drawtext="fontsize=96: box=1: boxcolor=black@0.75: boxborderw=5: fontcolor=white: x=(w-text_w)/2: y=(h-text_h)/2: text='%{pts\:gmtime\:1575561900}'" -r 10 -c:v libx264 -preset ultrafast  -t 12 -y out.mp4
+
+*
+*
+*
+*
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+FFMPEG show localtime miliseconds date
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+https://www.youtube.com/watch?v=5TC9PGeEHoY
+
+localtime
+ffmpeg -i in.mp4 -vf "drawtext=text='%{localtime\:%T}: x=(w-tw)/2: y=h-(2*lh):fontsize=42: fontcolor=white'" -f flv -t 12 -y out.mp4
+
+miliseconds
+ffmpeg -i in.mp4 -vf "drawtext=text='%{pts\:hms}: x=(w-tw)/2: y=h-(2*lh):fontsize=42: fontcolor=white'" -f flv -t 12 -y out.mp4
+
+date
+ffmpeg -i in.mp4 -vf "drawtext=text='%{pts\:hms\:$(date +%s.%N)}: x=(w-tw)/2: y=h-(2*lh):fontsize=42: fontcolor=white'" -f flv -t 12 -y out.mp4
+
+#webcam localtime
+ffmpeg -f video4linux2 -input_format mjpeg -s 1280x720 -i /dev/video0 \
+-vf "drawtext=fontfile=/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf: \
+text='%{localtime\:%T}': fontcolor=white@0.8: x=7: y=700" -vcodec libx264 \
+-preset veryfast -f mp4 -pix_fmt yuv420p -y out.mp4
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
