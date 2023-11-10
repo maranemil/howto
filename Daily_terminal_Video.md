@@ -88,7 +88,10 @@ ffmpeg -v warning -framerate 25 -f x11grab -i :0.0 -f alsa -ac 2 -i default myvi
 ffmpeg -v warning -video_size 1920x1080 -framerate 30 -f x11grab -i :1.0 -f alsa -ac 2 -i default myvid_$(date +%s).mp4
 
 # compress with h264 mp3
-ffmpeg -i in-mp4 -vcodec h264 -acodec mp3 -b:a 192k  out.mp4
+ffmpeg -i in.mp4 -vcodec h264 -acodec mp3 -b:a 192k  out.mp4
+
+# crop
+ffmpeg -i in.mp4 -vf crop=1800:900 -c:a copy out.mp4 
 
 
 ```
