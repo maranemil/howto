@@ -73,10 +73,23 @@ ideapad5
 * ffmpeg -v warning -video_size 1920x1080 -framerate 30 -f x11grab -i :1.0 -f alsa -ac 2 -ar 44100 -i default   myvid_$(date +%s).mp4
 * ffmpeg -f alsa -ac 2 -i pulse -f x11grab -r 30 -s 1366x768 -i :0.0 -acodec aac -vcodec libx264 -preset ultrafast -strict -2 -crf 0 -threads 0 -y myvid_$(date +%s).mp4
 
+.
+.
+.
 
-
-grab screen without specifying size
+# grab screen without specifying size
 ffmpeg -v warning -framerate 25 -f x11grab -i :0.0 -f alsa -ac 2 -i default myvid_$(date +%s).mp4
+
+.
+.
+.
+
+# capture 2th screen monitor
+ffmpeg -v warning -video_size 1920x1080 -framerate 30 -f x11grab -i :1.0 -f alsa -ac 2 -i default myvid_$(date +%s).mp4
+
+# compress with h264 mp3
+ffmpeg -i in-mp4 -vcodec h264 -acodec mp3 -b:a 192k  out.mp4
+
 
 ```
 
