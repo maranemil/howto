@@ -983,6 +983,11 @@ https://hemingwayapp.com/
 - https://hix.ai/summarizer
 
 
+------------------------------------------------------------------
+### Song searcher
 
-
-
+- http://www.musipedia.org/
+- https://blog.research.google/2018/09/googles-next-generation-music.html
+- https://www.midomi.com/
+- https://www.shazam.com/de
+- https://www.shazam.com/de/home
