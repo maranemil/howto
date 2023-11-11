@@ -110,6 +110,17 @@ ffmpeg -video_size 1920x1080 -framerate 25 -f x11grab -i :0.0  \
 # sudo apt install pulseaudio-utils
 ~~~
 
+### Record Screen + Webcam Ubuntu with Mic
+~~~
+ffmpeg  \
+   -video_size 1920x1080 -framerate 25 -f x11grab -i :0.0 -f alsa -ac 1 -i default \
+   -f v4l2 -framerate 25 -video_size 480x270 -i /dev/video0 -f alsa -ac 1 -i hw:CARD=Generic_1,DEV=0  -c:v libx264 -b:v 1600k -preset ultrafast  -x264opts keyint=50 -g 25 -pix_fmt yuv420p  -c:a aac -b:a 128k \
+    -filter_complex "[2]scale=160:90[inner];[0][inner]overlay=main_w-overlay_w-10:main_h-overlay_h-10[out]" -map "[out]" -map 3:a \
+               -y omyvid_$(date +%s).mp4
+
+~~~
+
+
 
 
 
