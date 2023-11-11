@@ -11,6 +11,10 @@
        } } }%%
 
 gitGraph TB:
+   commit id: "Beat boxing 1991"
+   branch Keyboard
+   commit id: "Keyboard 1995"
+   branch fasttracker2
    commit id: "Fasttracker2 1997"
    commit id: "SkaleTracker 2005"
    commit id: "Milkytracler 2007"
