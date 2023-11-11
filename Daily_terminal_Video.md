@@ -96,6 +96,24 @@ ffmpeg -i in.mp4 -vf crop=1800:900 -c:a copy out.mp4
 
 ```
 
+
+
+### Record Screen Ubuntu with Sound and Mic
+~~~
+# no echo - OK *** screen + mic + audio
+ffmpeg -video_size 1920x1080 -framerate 25 -f x11grab -i :0.0  \
+    -f pulse -i alsa_input.pci-0000_00_1f.3.analog-stereo \
+    -f pulse -i alsa_output.pci-0000_00_1f.3.analog-stereo.monitor \
+     -filter_complex "[0:v:0]scale=-2:620[vout]" -map "[vout]" -map 0:0 -map 1:0 -strict -2 -y screen_$(date +%s).mp4
+
+
+# sudo apt install pulseaudio-utils
+~~~
+
+
+
+
+
 ### Record Screen Ubuntu with Sound ASUS
 ```
 * ffmpeg -v warning -video_size 1366x768 -framerate 30 -f x11grab -i :0.0 -f alsa -ac 2 -ar 44100 -i default -probesize 42M -preset ultrafast -pix_fmt yuv420p -vcodec libx264 myvid_$(date +%s).mp4

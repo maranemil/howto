@@ -57,11 +57,31 @@ ffmpeg -video_size 1600x900 -framerate 30 -f x11grab -i :0.0 \
 # pacmd list-sources|awk '/index:/ {print $0}; /name:/ {print $0}; /device\.description/ {print $0}'
 # get current resolution xrandr 1920 x 1200
 
+
+
+
+
+
+
+
+
+
+#################################################
+only audio
+#################################################
+
+# no echo OK
 ffmpeg -f pulse -i alsa_input.pci-0000_00_1f.3.analog-stereo -f pulse -i alsa_output.pci-0000_00_1f.3.analog-stereo.monitor -map 0:0 -map 1:0 $(date +"%s").mkv
 
+# echo audio
 ffmpeg -f pulse -i 0 -f pulse -i 1 -filter_complex amix=inputs=2 both_streams.m4a
 # mpv both_streams.m4a
 
+# echo audio - screen + mic + audio
+ffmpeg -video_size 1920x1080 -framerate 25 -f x11grab -i :0.0  \
+    -f pulse -i alsa_output.pci-0000_00_1f.3.analog-stereo.monitor \
+    -f pulse -i hw:CARD=Generic_1,DEV=0  -c:v libx264 -b:v 1600k -preset ultrafast -x264opts keyint=50 -g 25 -pix_fmt yuv420p  -c:a aac -b:a 128k  \
+     -filter_complex "[2:a][1:a]amix=inputs=2:duration=first:dropout_transition=3[aout];[0:v:0]scale=-2:620[vout]" -map "[vout]" -map "[aout]" -y screen_$(date +%s).mp4
 
 
 
