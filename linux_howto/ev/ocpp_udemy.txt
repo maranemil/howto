@@ -1,0 +1,188 @@
+
+
+
+
+############################################################
+ocpp 1.6 udemy - OCPP protocol
+############################################################
+
+
+https://www.udemy.com/course/introduction-to-ocpp-16/
+https://www.udemy.com/course/introduction-to-ocpp-201/
+https://www.udemy.com/course/ocpp-16-advanced-features/
+
+https://www.openchargealliance.org/protocols/ocpp-16/
+https://www.oasis-open.org/committees/download.php/58944/ocpp-1.6.pdf
+https://github.com/mobilityhouse/ocpp/blob/master/docs/v16/ocpp-1.6.pdf
+
+Both SOAP and JSON versions
+websocket conn or soap conn
+ws://cs.example.com/ocpp
+
+identifier unique ex (UIT_XX_001)
+connector 1  to N
+
+-------------------------------------------
+
+charging station X - N connectors
+cs - central system - sends boot notifications
+ws://cs.example.com/ocpp/UIT_XX_001
+
+-------------------------------------------
+
+boot notifications json {vendor/model}:
+
+call req [unique_id / action / payload]
+call resp [accept/reject]
+callerror
+
+charging station has [Vendor Model Serialnumber]
+heartbeats every 60sec
+
+-------------------------------------------
+
+charging station stats :
+- Available
+- Charging
+- Faulted
+
+Connectors:
+- Type2
+- CCS
+- ChaDeMo
+
+ErrorCodes
+- NoError
+- ConnectorLockFailure
+- WeakSignal
+
+StatusNotification.req msg
+- Available
+- Preparing
+- Charging
+- SuspendetEV
+- SuspendetEVSE
+- Finishing
+- Reserved
+- Unavailable
+- Faulted
+
+optional info
+{info,timestamp,vendorID,vendorErrorCode}
+
+StatusNotification.conf no payload
+
+-------------------------------------------
+
+[authorize]
+
+RFID tags (card)
+Mobile apps (user/pass)
+Plug and Charge ISO 15118 EV
+
+...
+
+Local auth - by RFID idTag
+{RFID idTag - 20 chars string}
+stats: accepted / blocked / expired / invalid
+
+OCP
+
+StartTransation.req:
+
+{int/uniqID/action,payload()}
+- payload(connId,idTag,meterStart,timestamp,reservationId)
+
+
+StartTransation.conf (response)
+
+{int/uniqID/,payload()}
+- payload(status,transactionId)
+
+
+-------------------------------------------
+
+Remote auth
+
+Mobile App -> CS -> Station -> start charging
+
+
+RemoteStartTransation.req
+
+- (int/uniqueID/RemoteStartTransation(connid,idTag))
+
+RemoteStartTransation.conf
+
+
+- (int/uniqueID/payload{status:Accepted/Rejected})
+
+when charging starts:
+
+- (int/uniqueID/StartTransaction{})
+
+ where StartTransaction{connId,idTag,meterStart,timestamp}
+
+-------------------------------------------
+
+Meter values - energy usage - optional
+
+MeterValues.req msg
+
+- connid, transactionid, metervalue
+
+
+-------------------------------------------
+
+Stop charge locally
+
+- by RFID tag
+- by mobile app
+- plugin charge capability
+
+StopTransaction.req
+
+[id/uniueId/"StopTransaction{...reason: Local...}"]
+
+{
+	transactionid, (req)
+	meterstop, (req)
+	tiestamp, (req)
+	idtag, (optional)
+	reason, (optional)
+	transactiondata (optional)
+}
+
+StopTransaction.conf
+
+ - [id/uniueId/"StopTransaction{status:accepted}
+
+-------------------------------------------
+
+Stop charge remotely
+
+RemoteStopTransaction.req
+RemoteStopTransaction.conf
+
+-------------------------------------------
+
+RemoteStartTransaction.req
+
+
+[
+    2,
+    "12345",
+    "RemoteStartTransaction",
+    {
+        "connectorId": 1,
+        "idTag": "A1B2C3D4"
+    }
+]
+
+
+Extra cmd
+~~~~~~~~~~~~~~~~~~~~~~
+Reset
+GetConfig
+Change Availability
+Update Firmware
+Unlock Connector
