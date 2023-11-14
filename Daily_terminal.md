@@ -438,7 +438,7 @@ https://developers.google.com/speed/public-dns/docs/using
 ```
 sudo snap install tree 
 sudo apt  install tree -y
-tree -Ld 3 > FolderStructure.md
+tree -Ld 3 > FolderStructure.txt
 ```
 
 ######
