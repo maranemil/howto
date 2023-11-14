@@ -155,6 +155,14 @@ https://github.com/debitbug/excalidraw-chrome-extension
 
 ------------------------------------------------------------------
 
+### Donations
+
+- https://www.buymeacoffee.com/
+- https://www.patreon.com/
+
+
+------------------------------------------------------------------
+
 ### Code Sandboxes js
 
 - https://stackblitz.com/
@@ -991,3 +999,5 @@ https://hemingwayapp.com/
 - https://www.midomi.com/
 - https://www.shazam.com/de
 - https://www.shazam.com/de/home
+
+

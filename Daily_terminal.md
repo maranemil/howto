@@ -436,6 +436,8 @@ https://developers.google.com/speed/public-dns/docs/using
 
 ### Generate Current Dir Structure 
 ```
+sudo snap install tree 
+sudo apt  install tree -y
 tree -Ld 3 > FolderStructure.md
 ```
 
