@@ -329,3 +329,13 @@ for i in *.*; do ffmpeg -i $i -y -threads 2 -crf 28 -tune film -preset fast  $i.
 ~~~
 
 
+
+
+### join more images in one
+~~~
+How to join two images into one with FFmpeg
+https://stackoverflow.com/questions/24604689/how-to-join-two-images-into-one-with-ffmpeg
+
+ffmpeg -i 1.png -i 2.png  -i 3.png -filter_complex vstack=inputs=3 -y output.jpg
+ffmpeg -i 1.png -i 2.png  -i 3.png -filter_complex hstack=inputs=3 -y output.jpg
+~~~
