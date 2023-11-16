@@ -31,6 +31,14 @@
 | https://catalog.ngc.nvidia.com/orgs/nvidia/teams/playground/models/codellama | Code Llama            |
 
 
+### servers ai web builder
+
+| url                       | type            |
+|:--------------------------|:----------------|
+| https://www.pulumi.com/ai | service builder | 
+| https://www.hostinger.de/ | website builder | 
+
+
 
 ### img
 
