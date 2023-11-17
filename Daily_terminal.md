@@ -22,6 +22,63 @@
 sudo apt install rename
 rename 's/ /_/g' *
 
+####################################################
+Rename Files and Directories (Add Prefix)
+####################################################
+
+https://stackoverflow.com/questions/4787413/rename-files-and-directories-add-prefix
+https://unix.stackexchange.com/questions/47367/bulk-rename-change-prefix
+https://askubuntu.com/questions/878940/how-to-rename-a-certain-prefix-in-multiple-files
+
+
+for f in * ; do mv -- "$f" "PRE_$f" ; done
+for f in TestSR*; do mv "$f" "CL${f#TestSR}"; done
+for i in TestSR*; do mv "$i" "${i/#TestSR/CL}"; done
+
+rename 's/^/PRE_/' *
+rename TestSR CL TestSR*
+
+ls | xargs -I {} mv {} PRE_{}
+ls | xargs -I {} mv {} {}_SUF
+
+find * -maxdepth 0 -exec mv {} PRE_{} \;
+
+ls *.{h,m} | while read a; do n=CL$(echo $a | sed -e 's/^Test//'); mv $a $n; done
+
+
+for f in TestSR*.m; do mv $f CL$(echo $f | cut -c7-); done;
+for f in TestSR*.h; do mv $f CL$(echo $f | cut -c7-); done;
+
+
+####################################################
+create multi level dirs and files
+####################################################
+
+https://superuser.com/questions/1787603/find-and-rename-base-directory-and-files-under-each-basedir-add-a-prefix
+
+mkdir TesT; cd TesT
+mkdir -p G{1,2}_root/level_1/bin.{1,2}
+touch G{1,2}_root/level_1/bin.{1,2}/{ab.txt,cd.txt}
+tree
+
+├── G1_root
+│   └── level_1
+│       ├── bin.1
+│       │   ├── ab.txt
+│       │   └── cd.txt
+│       └── bin.2
+│           ├── ab.txt
+│           └── cd.txt
+└── G2_root
+    └── level_1
+        ├── bin.1
+        │   ├── ab.txt
+        │   └── cd.txt
+        └── bin.2
+            ├── ab.txt
+            └── cd.txt
+
+
 ```
 
 ### Umount force

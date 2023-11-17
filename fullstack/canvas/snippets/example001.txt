@@ -1,0 +1,573 @@
+
+####################################################################################
+Quickest 2D context image rotation method
+####################################################################################
+
+https://stackoverflow.com/questions/17411991/html5-canvas-rotate-image
+https://jsfiddle.net/casamia743/xqh48gno/
+
+var image = new Image;
+image.src = "https://i.stack.imgur.com/C7qq2.png?s=328&g=1";
+var canvas = document.createElement("canvas");
+var ctx = canvas.getContext("2d");
+canvas.style.position = "absolute";
+canvas.style.top = "0px";
+canvas.style.left = "0px";
+document.body.appendChild(canvas);
+var w,h;
+function resize(){ w = canvas.width = innerWidth; h = canvas.height = innerHeight;}
+resize();
+window.addEventListener("resize",resize);
+function rand(min,max){return Math.random() * (max ?(max-min) : min) + (max ? min : 0) }
+function DO(count,callback){ while (count--) { callback(count) } }
+const sprites = [];
+DO(500,()=>{
+    sprites.push({
+       x : rand(w), y : rand(h),
+       xr : 0, yr : 0, // actual position of sprite
+       r : rand(Math.PI * 2),
+       scale : rand(0.1,0.25),
+       dx : rand(-2,2), dy : rand(-2,2),
+       dr : rand(-0.2,0.2),
+    });
+});
+function drawImage(image, spr){
+    ctx.setTransform(spr.scale, 0, 0, spr.scale, spr.xr, spr.yr); // sets scales and origin
+    ctx.rotate(spr.r);
+    ctx.drawImage(image, -image.width / 2, -image.height / 2);
+}
+function update(){
+    var ihM,iwM;
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.clearRect(0,0,w,h);
+    if(image.complete){
+      var iw = image.width;
+      var ih = image.height;
+      for(var i = 0; i < sprites.length; i ++){
+          var spr = sprites[i];
+          spr.x += spr.dx;
+          spr.y += spr.dy;
+          spr.r += spr.dr;
+          iwM = iw * spr.scale * 2 + w;
+          ihM = ih * spr.scale * 2 + h;
+          spr.xr = ((spr.x % iwM) + iwM) % iwM - iw * spr.scale;
+          spr.yr = ((spr.y % ihM) + ihM) % ihM - ih * spr.scale;
+          drawImage(image,spr);
+      }
+    }
+    requestAnimationFrame(update);
+}
+requestAnimationFrame(update);
+
+####################################################################################
+Quickest 3D context image rotation method
+####################################################################################
+https://codepen.io/ktamas77/pen/AXmmeX
+https://jsfiddle.net/m1erickson/J2WfS/
+https://stackoverflow.com/questions/16050771/html-canvas-rotate-the-image-3d-effect
+
+<canvas id="canvas" width=300 height=235></canvas>
+
+            var canvas = document.getElementById("canvas");
+            var ctx = canvas.getContext("2d");
+
+            window.requestAnimFrame = (function (callback) {
+                return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback) {
+                    window.setTimeout(callback, 1000 / 60);
+                };
+            })();
+
+            var left = 1.0;
+            var right = 300;
+            var sizing = .25;
+
+            var img = new Image();
+            img.onload = function () {
+                animate();
+            }
+            img.src = "https://i.stack.imgur.com/C7qq2.png?s=328&g=1";
+
+            function animate() {
+
+                // update scaling factors
+                left += sizing;
+                right -= sizing;
+                if (left < 0 || left > 100) {
+                    sizing = -sizing;
+                }
+                console.log(left + "/" + right);
+
+
+                // clear and save the context
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.save();
+
+                // draw image increasingly "squished"
+                // to fake a 3d effect
+                ctx.drawImage(img, 0, 0, img.width, img.height,
+                left,
+                10, (300 - (right - left)) / 1,
+                300 - (right - left) / 1.5);
+
+                ctx.restore();
+
+                // request new frame
+                requestAnimFrame(function () {
+                    animate();
+                });
+            }
+            animate();
+
+
+--------------------------------------------------
+
+https://www.kevs3d.co.uk/dev/canvask3d/k3d_test.html
+https://www.kevs3d.co.uk/dev/canvask3d/canvask3d-src.zip
+https://stackoverflow.com/tags/three.js/info
+
+####################################################################################
+####################################################################################
+https://jsfiddle.net/eCSb4/18/
+
+
+<img src="https://i.stack.imgur.com/C7qq2.png?s=328&g=1" id="ball" alt="ball" width="100" height="100" />
+<canvas id=mycanvas width=500 height=50>Canvas Not Supported  </canvas>
+
+window.onload = animate;
+var canvas=document.getElementById('mycanvas');
+var ctx=canvas.getContext('2d');
+
+function animate()
+{
+    window.setInterval(slide,1000);
+}
+
+function slide()
+{
+    var obj = document.getElementById("ball");
+    var left = obj.style.left;
+    if(left === ''){
+        left = 0;
+    }
+    var wartosc = parseInt(left, 10);
+    obj.style.left = (wartosc + 10) + "px";
+}
+
+#ball { position: relative; left: 1px; }
+#mycanvas {border:1px solid #000000}
+
+--------------------------------------------------
+https://stackoverflow.com/questions/34278081/can-you-animate-an-image-on-a-canvas
+
+var canvas=document.getElementById("canvas");
+var ctx=canvas.getContext("2d");
+var cw=canvas.width;
+var ch=canvas.height;
+
+// timing related vars
+var nextTime=0;
+var spriteCount=7;
+var interval=700/spriteCount;
+// sprite related vars
+var sIndex=0;
+var sw=60;
+var sh=95;
+var animationOn=true;
+
+// current x,y position of sprite
+var x=100;
+var y=100;
+
+// load the spritesheet
+var ss=new Image();
+ss.onload=start;
+ss.src="https://i.stack.imgur.com/C7qq2.png?s=328&g=1";
+function start(){
+
+  // draw the first sprite
+  ctx.drawImage(ss,sIndex*sw,0,sw,sh,x,y,sw,sh);
+
+  // start the animation loop
+  requestAnimationFrame(animate);
+
+}
+
+function animate(time){
+  // wait for the specified interval before drawing anything
+  if(time<nextTime || !animationOn){requestAnimationFrame(animate); return;}
+  nextTime=time+interval;
+  // draw the new sprite
+  ctx.clearRect(0,0,cw,ch);
+  ctx.drawImage(ss,sIndex*sw,0,sw,sh,x,y,sw,sh);
+  // get the next sprite in sequence
+  if(++sIndex>=spriteCount){sIndex=0;}
+  // advance the sprite rightward
+  x+=5;
+  if(x>cw){x=-sw-10;}
+  // request another animation loop
+  requestAnimationFrame(animate);
+}
+
+
+    body{ background-color: ivory; }
+#canvas{border:1px solid red; margin:0 auto; }
+<canvas id="canvas" width=300 height=300></canvas>
+
+
+
+
+
+
+
+
+####################################################################################
+Save canvas data as mp4
+####################################################################################
+
+https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Manipulating_video_using_canvas
+https://stackoverflow.com/questions/62863547/save-canvas-data-as-mp4-javascript
+https://github.com/juliendecharentenay/medium-selfie-segmentation
+
+const { createFFmpeg } = FFmpeg;
+const ffmpeg = createFFmpeg({
+  log: true
+});
+
+const transcode = async (webcamData) => {
+  const message = document.getElementById('message');
+  const name = 'record.webm';
+  await ffmpeg.load();
+  message.innerHTML = 'Start transcoding';
+  await ffmpeg.write(name, webcamData);
+  await ffmpeg.transcode(name,  'output.mp4');
+  message.innerHTML = 'Complete transcoding';
+  const data = ffmpeg.read('output.mp4');
+
+  const video = document.getElementById('output-video');
+  video.src = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+  dl.href = video.src;
+  dl.innerHTML = "download mp4"
+}
+
+fn().then(async ({url, blob})=>{
+    transcode(new Uint8Array(await (blob).arrayBuffer()));
+})
+
+function fn() {
+var recordedChunks = [];
+
+var time = 0;
+var canvas = document.getElementById("canvas");
+
+return new Promise(function (res, rej) {
+    var stream = canvas.captureStream(60);
+
+    mediaRecorder = new MediaRecorder(stream, {
+        mimeType: "video/webm; codecs=vp9"
+    });
+
+    mediaRecorder.start(time);
+
+    mediaRecorder.ondataavailable = function (e) {
+        recordedChunks.push(event.data);
+        // for demo, removed stop() call to capture more than one frame
+    }
+
+    mediaRecorder.onstop = function (event) {
+        var blob = new Blob(recordedChunks, {
+            "type": "video/webm"
+        });
+        var url = URL.createObjectURL(blob);
+        res({url, blob}); // resolve both blob and url in an object
+
+        myVideo.src = url;
+        // removed data url conversion for brevity
+    }
+
+// for demo, draw random lines and then stop recording
+var i = 0,
+tid = setInterval(()=>{
+  if(i++ > 20) { // draw 20 lines
+    clearInterval(tid);
+    mediaRecorder.stop();
+  }
+  let canvas = document.querySelector("canvas");
+  let cx = canvas.getContext("2d");
+  cx.beginPath();
+  cx.strokeStyle = 'green';
+  cx.moveTo(Math.random()*100, Math.random()*100);
+  cx.lineTo(Math.random()*100, Math.random()*100);
+  cx.stroke();
+},200)
+
+});
+}
+
+
+<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.8.1/dist/ffmpeg.min.js"></script>
+<canvas id="canvas" style="height:100px;width:100px"></canvas>
+<video id="myVideo" controls="controls"></video>
+<video id="output-video" controls="controls"></video>
+<a id="dl" href="" download="download.mp4"></a>
+<div id="message"></div>
+
+
+---------------------------------------------------------------------
+https://stackoverflow.com/questions/46752262/recording-html5-canvas-animation-in-mp4-format
+
+var canvas = document.getElementById('canvas');
+            var canvasStream = canvas.captureStream();
+
+            var finalStream = new MediaStream();
+            audioStream.getAudioTracks().forEach(function(track) {
+                finalStream.addTrack(track);
+            });
+            canvasStream.getVideoTracks().forEach(function(track) {
+                finalStream.addTrack(track);
+            });
+
+            var recorder = RecordRTC(finalStream, {
+            type: 'video',
+            mimeType: 'video/mp4'
+            });
+
+            recorder.startRecording();
+---------------------------------------------------------------------
+
+https://web.archive.org/web/20180208050640/http://www.tysoncadenhead.com/blog/exporting-canvas-animation-to-mov/
+
+Exporting Three JS Canvas Animations To MOV or MP4 Format With Socket.io
+
+<html>
+    <head>
+        <title>My first Three.js app</title>
+        <style>canvas { width: 100%; height: 100% }</style>
+    </head>
+    <body>
+        <script src=“https://rawgithub.com/mrdoob/three.js/master/build/three.js“></script>
+        <script>
+            var scene = new THREE.Scene();
+            var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            var geometry = new THREE.CubeGeometry(1,1,1);
+            var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+            var cube = new THREE.Mesh(geometry, material);
+            scene.add(cube);
+
+            camera.position.z = 5;
+
+            var render = function () {
+                requestAnimationFrame(render);
+
+                cube.rotation.x += 0.1;
+                cube.rotation.y += 0.1;
+
+                renderer.render(scene, camera);
+
+            };
+
+            render();
+        </script>
+    </body>
+</html>
+
+
+<html>
+    <head>
+        <title>My first Three.js app</title>
+        <style>canvas { width: 100%; height: 100% }</style>
+    </head>
+    <body>
+        <script src=“https://rawgithub.com/mrdoob/three.js/master/build/three.js“></script>
+        <script src=“/socket.io/socket.io.js“></script>
+        <script>
+            var socket = io.connect('http://localhost:3000');
+            var frame = 0;
+            var scene = new THREE.Scene();
+            var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            var geometry = new THREE.CubeGeometry(1,1,1);
+            var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+            var cube = new THREE.Mesh(geometry, material);
+            scene.add(cube);
+
+            camera.position.z = 5;
+
+            var render = function () {
+                requestAnimationFrame(render);
+
+                cube.rotation.x += 0.1;
+                cube.rotation.y += 0.1;
+
+                renderer.render(scene, camera);
+
+                if (cube.rotation.x < 3) {
+                	console.log(document.querySelector('canvas').toDataURL());
+                    socket.emit('render-frame', {
+                        frame: frame++,
+                        file: document.querySelector('canvas').toDataURL()
+                    });
+                }
+
+            };
+
+            render();
+        </script>
+    </body>
+</html>
+
+
+server
+
+
+var app = require('express')(),
+    server = require('http').createServer(app),
+    io = require('socket.io').listen(server),
+    fs = require('fs');
+
+server.listen(3000);
+
+app.get('/', function (req, res) {
+    res.sendfile(__dirname + '/index.html');
+});
+
+io.sockets.on('connection', function (socket) {
+    socket.on('render-frame', function (data) {
+        data.file = data.file.split(',')[1]; // Get rid of the data:image/png;base64 at the beginning of the file data
+        var buffer = new Buffer(data.file, 'base64');
+        fs.writeFile(__dirname + '/tmp/frame-' + data.frame + '.png', buffer.toString('binary'), 'binary');
+    });
+});
+
+
+
+
+
+ffmpeg -r 60 -i /tmp/frame-%04d.png -vcodec libx264 -vpre lossless_slow -threads 0 output.mp4
+
+------------------------------------------------------------------------------------
+
+
+https://stackoverflow.com/questions/19235286/convert-html5-canvas-sequence-to-a-video-file
+
+
+<canvas id="my-canvas" width="512" height="512" style="border:1px solid black;"></canvas>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+
+
+var canvas = document.getElementById("my-canvas");
+var ctx = canvas.getContext("2d");
+var pixel_size = 1;
+var t = 0;
+
+/* We need this to fix t because toBlob calls are asynchronous. */
+function createBlobFunc(t) {
+  return function(blob) {
+    saveAs(blob, t.toString() + '.png');
+  };
+}
+
+function draw() {
+    console.log("draw");
+    for (x = 0; x < canvas.width; x += pixel_size) {
+        for (y = 0; y < canvas.height; y += pixel_size) {
+            var b = ((1.0 + Math.sin(t * Math.PI / 16)) / 2.0);
+            ctx.fillStyle =
+                "rgba(" +
+                (x / canvas.width) * 255 + "," +
+                (y / canvas.height) * 255 + "," +
+                b * 255 +
+                ",255)"
+            ;
+            ctx.fillRect(x, y, pixel_size, pixel_size);
+        }
+    }
+    canvas.toBlob(createBlobFunc(t));
+    t++;
+    window.requestAnimationFrame(draw);
+}
+window.requestAnimationFrame(draw);
+
+
+------------------------------------------------------------------------------------
+
+class Video2Canvas {
+  /**
+   * @description Create a canvas and save the frame of the video that you are giving.
+   * @param {HTMLVideoElement} video
+   * @param {Number} fps
+   * @see https://developer.mozilla.org/en-US/docs/Web/Guide/Audio_and_video_manipulation#video_manipulation
+   * */
+  constructor(video, fps) {
+    this.video = video
+    this.fps = fps
+    this.canvas = document.createElement("canvas");
+    [this.canvas.width, this.canvas.height] = [video.width, video.height]
+    document.querySelector("body").append(this.canvas)
+    this.ctx =  this.canvas.getContext('2d')
+    this.initEventListener()
+  }
+
+  initEventListener() {
+    this.video.addEventListener("play", ()=>{
+      const timeout = Math.round(1000/this.fps)
+      const width = this.video.width
+      const height = this.video.height
+      const recordFunc = ()=> {
+        if (this.video.paused || this.video.ended) {
+          return
+        }
+        this.ctx.drawImage(this.video, 0, 0, width, height)
+        const frame = this.ctx.getImageData(0, 0, width, height)
+        // ... // you can make some modifications to change the frame. For example, create the grayscale frame: https://developer.mozilla.org/en-US/docs/Web/Guide/Audio_and_video_manipulation#video_manipulation
+
+        // 👇 Below is the options. That saves each frame as a link. If you wish, then you can click the link to download the picture.
+        const range = document.createRange()
+        const frag = range.createContextualFragment('<div><a></a></div>')
+        const tmpCanvas = document.createElement('canvas')
+        tmpCanvas.width = this.canvas.width
+        tmpCanvas.height = this.canvas.height
+        tmpCanvas.getContext('2d').putImageData(frame, 0, 0)
+        const a = frag.querySelector('a')
+        a.innerText = "my.png"
+        a.download = "my.png"
+        const quality = 1.0
+        a.href = tmpCanvas.toDataURL("image/png", quality)
+        a.append(tmpCanvas)
+        document.querySelector('body').append(frag)
+        setTimeout(recordFunc, timeout)
+      }
+      setTimeout(recordFunc, timeout)
+    })
+  }
+}
+const v2c = new Video2Canvas(document.querySelector("video"), 1)
+
+<video id="my-video" controls="true" width="480" height="270" crossorigin="anonymous">
+  <source src="http://jplayer.org/video/webm/Big_Buck_Bunny_Trailer.webm" type="video/webm">
+</video>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

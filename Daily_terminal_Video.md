@@ -339,3 +339,9 @@ https://stackoverflow.com/questions/24604689/how-to-join-two-images-into-one-wit
 ffmpeg -i 1.png -i 2.png  -i 3.png -filter_complex vstack=inputs=3 -y output.jpg
 ffmpeg -i 1.png -i 2.png  -i 3.png -filter_complex hstack=inputs=3 -y output.jpg
 ~~~
+
+
+### convert to mono
+~~~
+mkdir -p conv && for i in *.*; do ffmpeg -i $i -ac 1 conv/$i; done 
+~~~
