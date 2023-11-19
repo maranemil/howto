@@ -191,6 +191,14 @@ misc
 
 
 
+### Generative AI Video
+
+| url                                | type      |
+|:-----------------------------------|:----------|
+| https://research.runwayml.com/gen2 | video gen |
+| https://convert.leiapix.com/       | video gen |
+| https://www.genmo.ai/#             | video gen |
+| https://www.pika.art/              | video gen |
 
 
 
