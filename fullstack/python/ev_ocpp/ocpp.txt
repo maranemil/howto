@@ -1,0 +1,587 @@
+#####################################################
+libs
+#####################################################
+
+https://github.com/steve-community/steve
+https://github.com/gertjana/ocpp-backend
+https://pkg.go.dev/github.com/lorenzodonini/ocpp-go
+https://github.com/v-bodnar/ocpp-server
+
+https://hub.docker.com/search?q=Ocpp
+
+
+#####################################################
+ocpp connect python
+#####################################################
+
+https://www.fullstackpython.com/websockets.html
+https://snyk.io/advisor/python/ocpp/functions/ocpp.v16.ChargePoint
+https://pypi.org/project/websockets/
+https://github.com/mobilityhouse/ocpp
+https://ocpp.readthedocs.io/en/latest/central_system.html
+
+import asyncio
+import websockets
+async def on_connect(websocket, path):
+   await websocket.send('Connection made succesfully.')
+   print(f'Charge point {path} connected')
+
+async def main():
+   server = await websockets.serve(
+      on_connect,
+      '0.0.0.0',
+      9000,
+      subprotocols=['ocpp1.6']
+   )
+   await server.wait_closed()
+
+if __name__ == '__main__':
+   asyncio.run(main())
+
+
+
+python -m websockets ws://localhost:9000/test_charge_point
+# Connected to ws://localhost:9000/test_charge_point.
+
+
+
+from datetime import datetime
+from ocpp.routing import on
+from ocpp.v16 import ChargePoint as cp
+from ocpp.v16.enums import Action, RegistrationStatus
+from ocpp.v16 import call_result
+
+class MyChargePoint(cp):
+    @on(Action.BootNotification)
+    def on_boot_notitication(self, charge_point_vendor, charge_point_model, **kwargs):
+        return call_result.BootNotificationPayload(
+            current_time=datetime.utcnow().isoformat(),
+            interval=10,
+            status=RegistrationStatus.accepted
+        )
+
+async def on_connect(websocket, path):
+    """ For every new charge point that connects, create a ChargePoint instance
+    and start listening for messages.
+
+    """
+    charge_point_id = path.strip('/')
+    cp = MyChargePoint(charge_point_id, websocket)
+
+    await cp.start()
+
+--------------------------------------
+
+https://github.com/mobilityhouse/ocpp
+https://snyk.io/advisor/python/ocpp/functions/ocpp.v16.ChargePoint
+
+pip install websockets
+
+############# Central system
+
+import asyncio
+import logging
+import websockets
+from datetime import datetime
+
+from ocpp.routing import on
+from ocpp.v201 import ChargePoint as cp
+from ocpp.v201 import call_result
+from ocpp.v201.enums import RegistrationStatusType
+
+logging.basicConfig(level=logging.INFO)
+
+
+class ChargePoint(cp):
+    @on('BootNotification')
+    async def on_boot_notification(self, charging_station, reason, **kwargs):
+        return call_result.BootNotificationPayload(
+            current_time=datetime.utcnow().isoformat(),
+            interval=10,
+            status=RegistrationStatusType.accepted
+        )
+
+
+async def on_connect(websocket, path):
+    """ For every new charge point that connects, create a ChargePoint
+    instance and start listening for messages.
+    """
+    try:
+        requested_protocols = websocket.request_headers[
+            'Sec-WebSocket-Protocol']
+    except KeyError:
+        logging.info("Client hasn't requested any Subprotocol. "
+                 "Closing Connection")
+        return await websocket.close()
+
+    if websocket.subprotocol:
+        logging.info("Protocols Matched: %s", websocket.subprotocol)
+    else:
+        # In the websockets lib if no subprotocols are supported by the
+        # client and the server, it proceeds without a subprotocol,
+        # so we have to manually close the connection.
+        logging.warning('Protocols Mismatched | Expected Subprotocols: %s,'
+                        ' but client supports  %s | Closing connection',
+                        websocket.available_subprotocols,
+                        requested_protocols)
+        return await websocket.close()
+
+    charge_point_id = path.strip('/')
+    cp = ChargePoint(charge_point_id, websocket)
+
+    await cp.start()
+
+
+async def main():
+    server = await websockets.serve(
+        on_connect,
+        '0.0.0.0',
+        9000,
+        subprotocols=['ocpp2.0.1']
+    )
+    logging.info("WebSocket Server Started")
+    await server.wait_closed()
+
+if __name__ == '__main__':
+    asyncio.run(main())
+
+
+############# ChargePoint
+
+import asyncio
+
+from ocpp.v201.enums import RegistrationStatusType
+import logging
+import websockets
+
+from ocpp.v201 import call
+from ocpp.v201 import ChargePoint as cp
+
+logging.basicConfig(level=logging.INFO)
+
+
+class ChargePoint(cp):
+
+    async def send_boot_notification(self):
+        request = call.BootNotificationPayload(
+            charging_station={
+                'model': 'Wallbox XYZ',
+                'vendor_name': 'anewone'
+            },
+            reason="PowerUp"
+        )
+        response = await self.call(request)
+
+        if response.status == RegistrationStatusType.accepted:
+            print("Connected to central system.")
+
+
+async def main():
+    async with websockets.connect(
+            'ws://localhost:9000/CP_1',
+            subprotocols=['ocpp2.0.1']
+    ) as ws:
+        cp = ChargePoint('CP_1', ws)
+
+        await asyncio.gather(cp.start(), cp.send_boot_notification())
+
+
+if __name__ == '__main__':
+    asyncio.run(main())
+
+# Debugging
+
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
+import logging
+logging.getLogger('ocpp').setLevel(level=logging.DEBUG)
+logging.getLogger('ocpp').addHandler(logging.StreamHandler())
+
+------------------------------------------------------------
+
+
+https://stackoverflow.com/questions/72573301/ocpp-1-6-remote-start-transaction
+
+
+import asyncio
+import logging
+from asyncio import constants
+
+import websockets
+from datetime import datetime, timezone
+from ocpp.routing import on
+from ocpp.v16 import ChargePoint as cp
+from ocpp.v16.enums import Action, RegistrationStatus, RemoteStartStopStatus
+import ocpp.v16.enums as enums
+from ocpp.v16 import call_result, call
+import requests
+
+logging.basicConfig(level=logging.INFO)
+
+
+class ChargePoint(cp):
+  chargingProfile = {}
+
+  @on(Action.RemoteStartTransaction)
+  async def on_remote_start(self, id_tag, connector_id):
+    print("remotely starting")
+    return await self.remote_start_transaction()
+
+  @on(Action.BootNotification)
+  def on_boot_notification(self, charge_point_vendor, charge_point_model, **kwargs):
+    print("Boot Notification")
+    return call_result.BootNotificationPayload(
+      # current_time=datetime.utcnow().isoformat() + 'Z',
+      current_time=datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S') + "Z",
+      interval=100,
+      status=RegistrationStatus.accepted
+    )
+
+  @on(Action.StatusNotification)
+  def on_status_notification(self, connector_id, error_code, status, **kwargs):
+    print("Status Notification")
+    return call_result.StatusNotificationPayload()
+
+  @on(Action.Heartbeat)
+  def on_heartbeat(self):
+    print("Heartbeat")
+    return call_result.HeartbeatPayload(
+      current_time=datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+    )
+
+  @on(Action.Authorize)
+  def on_authorize(self, id_tag):
+    print("Authorize")
+    query = {'access_token': 'masterKey'}
+
+    response = requests.get('http://ec2-13-233-102-233.ap-south-1.compute.amazonaws.com:3000/chargersOnboarding/',
+                            params=query)
+    data = response.json()
+    isFound = "false"
+    status = ""
+
+    for item in data['rows']:
+      if item['RFID'] == id_tag:
+        isFound = "true"
+        if item['status'] == 0:
+          status = "Accepted"
+        else:
+          status = "Expired"
+        break
+      else:
+        continue
+    if isFound == "true":
+      print("Authorized")
+      return call_result.AuthorizePayload(
+        id_tag_info={
+          # "expiryDate": "2022-02-04T13:00:00.21Z",
+          "expiryDate": "2023-05-19T13:00:00.21Z",
+          "parentIdTag": id_tag,
+          "status": status
+        },
+      )
+    else:
+      print("Not Authorized")
+      return call_result.AuthorizePayload(
+        id_tag_info={
+          "expiryDate": "",
+          "parentIdTag": id_tag,
+          "status": "Invalid"
+        },
+      )
+
+  @on(Action.StartTransaction)
+  def on_start_transaction(self, connector_id, id_tag, meter_start, timestamp, **kwargs):
+    print("START TRANSACTION COMING FROM CHARGER")
+    query = {'access_token': 'masterKey'}
+
+    response = requests.get('http://ec2-13-233-102-233.ap-south-1.compute.amazonaws.com:3000/chargersOnboarding/',
+                            params=query)
+    data = response.json()
+    isFound = "false"
+    status = ""
+
+    for item in data['rows']:
+      if item['RFID'] == id_tag:
+        isFound = "true"
+        if item['status'] == 0:
+          status = "Accepted"
+        else:
+          status = "Expired"
+        break
+      else:
+        continue
+    if isFound == "true":
+      return call_result.StartTransactionPayload(
+        id_tag_info={
+          # "expiryDate": "2022-02-04T13:00:00.21Z",
+          "expiryDate": "2023-05-19T13:00:00.21Z",
+          "parentIdTag": id_tag,
+          "status": status
+        },
+        transaction_id=int(1)
+      )
+    else:
+      print("Not Authorized")
+      return call_result.StartTransactionPayload(
+        id_tag_info={
+          "expiryDate": "",
+          "parentIdTag": id_tag,
+          "status": "Invalid"
+        },
+        transaction_id=int(1)
+      )
+
+  @on(Action.StopTransaction)
+  def on_stop_transaction(self, transaction_id, timestamp, meter_stop, id_tag, **kwargs):
+    query = {'access_token': 'masterKey'}
+    response = requests.get('http://ec2-13-233-102-233.ap-south-1.compute.amazonaws.com:3000/chargersOnboarding/',
+                            params=query)
+    data = response.json()
+    isFound = "false"
+    status = ""
+
+    for item in data['rows']:
+      if item['RFID'] == id_tag:
+        isFound = "true"
+        if item['status'] == 0:
+          status = "Accepted"
+        else:
+          status = "Expired"
+        break
+      else:
+        continue
+    if isFound == "true":
+      return call_result.StopTransactionPayload(
+        id_tag_info={
+          # "expiryDate": "2022-02-04T13:00:00.21Z",
+          "expiryDate": "2023-05-19T13:00:00.21Z",
+          "parentIdTag": id_tag,
+          "status": status
+        },
+        # transaction_id=int(1)
+      )
+    else:
+      print("Not Authorized")
+      return call_result.StopTransactionPayload(
+        id_tag_info={
+          "expiryDate": "",
+          "parentIdTag": id_tag,
+          "status": "Invalid"
+        },
+        transaction_id=int(1)
+      )
+
+  @on(Action.MeterValues)
+  def on_meter_value(self, **kwargs):
+    return call_result.MeterValuesPayload()
+
+  @on(Action.DataTransfer)
+  def on_data_transfer(self, vendor_id, message_id, data):
+    return call_result.DataTransferPayload(
+      status='Accepted'
+    )
+
+  @on(Action.ChangeAvailability)
+  def on_change_availabilty(self, connector_id, type):
+    return call_result.ChangeAvailabilityPayload(
+      status='Accepted'
+    )
+
+  async def send_limitation(self, limit):
+    response = await self.call(call.SetChargingProfilePayload(
+      connector_id=0,
+      cs_charging_profiles={
+        'chargingProfileId': 1,
+        'stackLevel': 0,
+        'chargingProfilePurpose': enums.ChargingProfilePurposeType.chargepointmaxprofile,
+        'chargingProfileKind': enums.ChargingProfileKindType.absolute,
+        'chargingSchedule': {
+          'startSchedule': datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S') + "Z",
+          'chargingRateUnit': enums.ChargingRateUnitType.amps,
+          'chargingSchedulePeriod': [{
+            'startPeriod': 0,
+            'limit': limit
+          }]
+        }
+      }
+    ))
+    print("SEND Limitation")
+    print(response)
+
+  async def remote_start_transaction(self):
+    obj = {
+      'chargingProfileId': 1,
+      'stackLevel': 0,
+      'chargingProfilePurpose': enums.ChargingProfilePurposeType.chargepointmaxprofile,
+      'chargingProfileKind': enums.ChargingProfileKindType.absolute,
+      'chargingSchedule': {
+        'startSchedule': datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S') + "Z",
+        'chargingRateUnit': enums.ChargingRateUnitType.amps,
+        'chargingSchedulePeriod': [{
+          'startPeriod': 0,
+          'limit': 8.0
+        }]
+      },
+
+    }
+    print("REMOTE START!!!")
+    request = call.RemoteStartTransactionPayload(
+      id_tag='5C1DEA5A',
+      charging_profile=obj,
+      connector_id=1
+    )
+    response = await self.call(request)
+    print(response)
+    if response.status == RemoteStartStopStatus.accepted:
+      print("Transaction Started!!!")
+    else:
+      print("Transaction Failed to Start!!!")
+      print(response.status)
+      # websockets.send("Transaction Started!!!")
+
+  async def remote_stop_transaction(self):
+    print("REMOTE STOP!!!")
+    request = call.RemoteStopTransactionPayload(
+      transaction_id=1
+    )
+    response = await self.call(request)
+
+    if response.status == RemoteStartStopStatus.accepted:
+      print("Stopping transaction")
+      # websockets.send("Transaction Stopped!!!")
+
+
+async def on_connect(websocket, path):
+
+  charge_point_id = path.strip('/')
+  cp = ChargePoint(charge_point_id, websocket)
+  try:
+    print(f'Charge point {path} connected')
+    await asyncio.gather(cp.start())
+
+  except websockets.exceptions.ConnectionClosed:
+    print(f"Charge Point {path} disconnected")
+
+
+async def main():
+  server = await websockets.serve(
+    on_connect,
+    '0.0.0.0',
+    9000,
+    subprotocols=['ocpp1.6'],
+    ping_interval=None,
+    ping_timeout=None
+
+  )
+
+  logging.info("Server Started listening to new connections...")
+  await server.wait_closed()
+
+
+if __name__ == '__main__':
+  asyncio.run(main())
+
+  -------------------------
+
+github
+
+mobilityhouse / ocpp / tests / v16 / test_v16_charge_point.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+async def test_send_call_with_timeout(connection):
+    cs = ChargePoint(
+        id=1234,
+        connection=connection,
+        response_timeout=0.1
+    )
+
+    payload = call.ResetPayload(type="Hard")
+
+    with pytest.raises(asyncio.TimeoutError):
+        await cs.call(payload)
+
+    # Verify that lock is released if call() crahses. Not releasing the lock
+    # in case of an exception could lead to a deadlock. See
+    # https://github.com/mobilityhouse/ocpp/issues/46
+    assert cs._call_lock.locked() is False
+
+
+
+mobilityhouse / ocpp / examples / v16 / central_system.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+import websockets
+except ModuleNotFoundError:
+    print("This example relies on the 'websockets' package.")
+    print("Please install it by running: ")
+    print()
+    print(" $ pip install websockets")
+    import sys
+    sys.exit(1)
+
+from ocpp.routing import on
+from ocpp.v16 import ChargePoint as cp
+from ocpp.v16.enums import Action, RegistrationStatus
+from ocpp.v16 import call_result
+
+
+class ChargePoint(cp):
+    @on(Action.BootNotification)
+    def on_boot_notitication(self, charge_point_vendor, charge_point_model, **kwargs):
+        return call_result.BootNotificationPayload(
+	    current_time=datetime.utcnow().isoformat(),
+	    interval=10,
+	    status=RegistrationStatus.accepted
+	)
+
+
+async def on_connect(websocket, path):
+    """ For every new charge point that connects, create a ChargePoint instance
+    and start listening for messages.
+
+    """
+    charge_point_id = path.strip('/')
+    cp = ChargePoint(charge_point_id, websocket)
+
+
+
+
+
+github
+mobilityhouse / ocpp / examples / v16 / charge_point.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+import websockets
+except ModuleNotFoundError:
+    print("This example relies on the 'websockets' package.")
+    print("Please install it by running: ")
+    print()
+    print(" $ pip install websockets")
+    import sys
+    sys.exit(1)
+
+
+from ocpp.v16 import call
+from ocpp.v16 import ChargePoint as cp
+from ocpp.v16.enums import RegistrationStatus
+
+
+class ChargePoint(cp):
+    async def send_boot_notification(self):
+        request = call.BootNotificationPayload(
+            charge_point_model="Optimus",
+            charge_point_vendor="The Mobility House"
+        )
+
+        response = await self.call(request)
+
+        if response.status ==  RegistrationStatus.accepted:
+            print("Connected to central system.")
+
+
+async def main():
+    async with websockets.connect(
+        'ws://localhost:9000/CP_1',
+         subprotocols=['ocpp1.6']
+
