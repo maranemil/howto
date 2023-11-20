@@ -345,3 +345,15 @@ ffmpeg -i 1.png -i 2.png  -i 3.png -filter_complex hstack=inputs=3 -y output.jpg
 ~~~
 mkdir -p conv && for i in *.*; do ffmpeg -i $i -ac 1 conv/$i; done 
 ~~~
+
+
+~~~
+#################################################
+loop an MP4 and a WAV into MP4 container
+#################################################
+# loop 10 times
+ffmpeg -stream_loop 10 -i audio.wav -i video.mp4 -c:a aac -b:a 192k -c:v libx264 out.mp4
+
+# loop 0 times
+ffmpeg -stream_loop 0 -i audio.wav -i video.mp4  -c:a aac -b:a 256k -c:v libx264 -y out.mp4
+~~~

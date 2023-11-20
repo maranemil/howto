@@ -586,3 +586,20 @@ mv -v `ls | head -5000` ./sub1
 strace -vf ls -l 
 ~~~
 
+
+### Debian Ubuntu mirrors
+~~~
+https://www.debian.org/CD/http-ftp/
+https://www.debian.org/releases/bullseye/amd64/ch08s01.en.html
+https://ftp-stud.hs-esslingen.de/debian-cd/current-live/amd64/iso-hybrid/
+https://releases.ubuntu.com/mantic/
+https://releases.ubuntu.com/
+https://releases.ubuntu.com/23.10/
+https://releases.ubuntu.com/23.10.1/
+https://releases.ubuntu.com/jammy/
+https://ftp.fau.de/ubuntu-releases/22.04/
+https://ftp-stud.hs-esslingen.de/Mirrors/cdimage.ubuntu.com/ubuntu/releases/23.04/release/
+~~~
+
+
+
