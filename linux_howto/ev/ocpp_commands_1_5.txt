@@ -1,0 +1,1542 @@
+#####################################################################
+Experimental OCPP 1.5 over Websocket
+#####################################################################
+
+http://www.gir.fr/ocppjs/
+http://www.gir.fr/ocppjs/ocpp_1.5.shtml
+
+Basic data types :
+SOAP type (XML schema)	JSON type
+s:string	JSON string
+s:int	JSON number
+s:dateTime	JSON string, formatted as an ISO 8601 combined date and time, with a "Z" suffix (UTC timezone).
+s:anyURI	JSON string
+s:boolean	JSON boolean
+Central System service
+
+
+
+Authorize
+Request example:
+{
+  "idTag": "B4F62CEF"
+}
+Response example:
+{
+  "idTagInfo": {
+    "status": "Accepted",
+    "expiryDate": "2013-02-01T15:09:18Z",
+    "parentIdTag": "PARENT"
+  }
+}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "AuthorizeRequest",
+  "type": "object",
+  "properties": {
+    "idTag": {
+      "type": "string",
+      "maxLength": 20
+    }
+  },
+  "required": [
+    "idTag"
+  ]
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "AuthorizeResponse",
+  "type": "object",
+  "properties": {
+    "idTagInfo": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "Accepted",
+            "Blocked",
+            "Expired",
+            "Invalid",
+            "ConcurrentTx"
+          ]
+        },
+        "expiryDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "parentIdTag": {
+          "type": "string",
+          "maxLength": 20
+        }
+      },
+      "required": [
+        "status"
+      ]
+    }
+  },
+  "required": [
+    "idTagInfo"
+  ]
+}
+StartTransaction
+Request example:
+{
+  "connectorId": 2,
+  "idTag": "B4F62CEF",
+  "timestamp": "2013-02-01T15:09:18Z",
+  "meterStart": 0,
+  "reservationId": 0
+}
+Response example:
+{
+  "transactionId": 0,
+  "idTagInfo": {
+    "status": "Accepted",
+    "expiryDate": "2013-02-01T15:09:18Z",
+    "parentIdTag": "PARENT"
+  }
+}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "StartTransactionRequest",
+  "type": "object",
+  "properties": {
+    "connectorId": {
+      "type": "number"
+    },
+    "idTag": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "meterStart": {
+      "type": "number"
+    },
+    "reservationId": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "connectorId",
+    "idTag",
+    "timestamp",
+    "meterStart"
+  ]
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "StartTransactionResponse",
+  "type": "object",
+  "properties": {
+    "transactionId": {
+      "type": "number"
+    },
+    "idTagInfo": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "Accepted",
+            "Blocked",
+            "Expired",
+            "Invalid",
+            "ConcurrentTx"
+          ]
+        },
+        "expiryDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "parentIdTag": {
+          "type": "string",
+          "maxLength": 20
+        }
+      },
+      "required": [
+        "status"
+      ]
+    }
+  },
+  "required": [
+    "transactionId",
+    "idTagInfo"
+  ]
+}
+StopTransaction
+Request example:
+{
+  "transactionId": 0,
+  "idTag": "B4F62CEF",
+  "timestamp": "2013-02-01T15:09:18Z",
+  "meterStop": 20,
+  "transactionData": [
+    {
+      "values": [
+        {
+          "timestamp": "2013-03-07T16:52:16Z",
+          "values": [
+            {
+              "value": "0",
+              "unit": "Wh",
+              "measurand": "Energy.Active.Import.Register"
+            },
+            {
+              "value": "0",
+              "unit": "varh",
+              "measurand": "Energy.Reactive.Import.Register"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "values": [
+        {
+          "timestamp": "2013-03-07T16:52:16Z",
+          "values": [
+            {
+              "value": "0",
+              "unit": "Wh",
+              "measurand": "Energy.Active.Import.Register"
+            },
+            {
+              "value": "0",
+              "unit": "varh",
+              "measurand": "Energy.Reactive.Import.Register"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+Response example:
+{
+  "idTagInfo": {
+    "status": "Expired",
+    "expiryDate": "2013-02-01T15:09:18Z",
+    "parentIdTag": "PARENT"
+  }
+}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "StopTransactionRequest",
+  "type": "object",
+  "properties": {
+    "transactionId": {
+      "type": "number"
+    },
+    "idTag": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "meterStop": {
+      "type": "number"
+    },
+    "transactionData": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "timestamp": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "values": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "context": {
+                        "type": "string"
+                      },
+                      "format": {
+                        "type": "string"
+                      },
+                      "measurand": {
+                        "type": "string"
+                      },
+                      "location": {
+                        "type": "string"
+                      },
+                      "unit": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ]
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "values"
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "transactionId",
+    "timestamp",
+    "meterStop"
+  ]
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "StopTransactionResponse",
+  "type": "object",
+  "properties": {
+    "idTagInfo": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "Accepted",
+            "Blocked",
+            "Expired",
+            "Invalid",
+            "ConcurrentTx"
+          ]
+        },
+        "expiryDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "parentIdTag": {
+          "type": "string",
+          "maxLength": 20
+        }
+      },
+      "required": [
+        "status"
+      ]
+    }
+  }
+}
+Heartbeat
+Request example:
+{}
+Response example:
+{
+  "currentTime": "2013-02-01T15:09:18Z"
+}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "HeartbeatRequest",
+  "type": "object",
+  "properties": {}
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "HeartbeatResponse",
+  "type": "object",
+  "properties": {
+    "currentTime": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "currentTime"
+  ]
+}
+MeterValues
+Request example:
+{
+  "connectorId": 2,
+  "transactionId": 0,
+  "values": [
+    {
+      "timestamp": "2013-03-07T16:52:16Z",
+      "values": [
+        {
+          "value": "0",
+          "unit": "Wh",
+          "measurand": "Energy.Active.Import.Register"
+        },
+        {
+          "value": "0",
+          "unit": "varh",
+          "measurand": "Energy.Reactive.Import.Register"
+        }
+      ]
+    },
+    {
+      "timestamp": "2013-03-07T19:52:16Z",
+      "values": [
+        {
+          "value": "20",
+          "unit": "Wh",
+          "measurand": "Energy.Active.Import.Register"
+        },
+        {
+          "value": "20",
+          "unit": "varh",
+          "measurand": "Energy.Reactive.Import.Register"
+        }
+      ]
+    }
+  ]
+}
+Response example:
+{}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "MeterValuesRequest",
+  "type": "object",
+  "properties": {
+    "connectorId": {
+      "type": "number"
+    },
+    "transactionId": {
+      "type": "number"
+    },
+    "values": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                },
+                "context": {
+                  "type": "string"
+                },
+                "format": {
+                  "type": "string"
+                },
+                "measurand": {
+                  "type": "string"
+                },
+                "location": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ]
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "values"
+        ]
+      }
+    }
+  },
+  "required": [
+    "connectorId"
+  ]
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "MeterValuesResponse",
+  "type": "object",
+  "properties": {}
+}
+BootNotification
+Request example:
+{
+  "chargePointVendor": "DBT",
+  "chargePointModel": "NQC-ACDC",
+  "chargePointSerialNumber": "gir.vat.mx.000e48",
+  "chargeBoxSerialNumber": "gir.vat.mx.000e48",
+  "firmwareVersion": "1.0.49",
+  "iccid": "",
+  "imsi": "",
+  "meterType": "DBT NQC-ACDC",
+  "meterSerialNumber": "gir.vat.mx.000e48"
+}
+Response example:
+{
+  "status": "Accepted",
+  "currentTime": "2013-02-01T15:09:18Z",
+  "heartbeatInterval": 1200
+}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "BootNotificationRequest",
+  "type": "object",
+  "properties": {
+    "chargePointVendor": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "chargePointModel": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "chargePointSerialNumber": {
+      "type": "string",
+      "maxLength": 25
+    },
+    "chargeBoxSerialNumber": {
+      "type": "string",
+      "maxLength": 25
+    },
+    "firmwareVersion": {
+      "type": "string",
+      "maxLength": 50
+    },
+    "iccid": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "imsi": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "meterType": {
+      "type": "string",
+      "maxLength": 25
+    },
+    "meterSerialNumber": {
+      "type": "string",
+      "maxLength": 25
+    }
+  },
+  "required": [
+    "chargePointVendor",
+    "chargePointModel"
+  ]
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "BootNotificationResponse",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "Accepted",
+        "Rejected"
+      ]
+    },
+    "currentTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "heartbeatInterval": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "status",
+    "currentTime",
+    "heartbeatInterval"
+  ]
+}
+StatusNotification
+Request example:
+{
+  "connectorId": 2,
+  "status": "Available",
+  "errorCode": "NoError",
+  "info": "",
+  "timestamp": "2013-02-01T15:09:18Z",
+  "vendorId": "",
+  "vendorErrorCode": ""
+}
+Response example:
+{}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "StatusNotificationRequest",
+  "type": "object",
+  "properties": {
+    "connectorId": {
+      "type": "number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Available",
+        "Occupied",
+        "Faulted",
+        "Unavailable",
+        "Reserved"
+      ]
+    },
+    "errorCode": {
+      "type": "string",
+      "enum": [
+        "ConnectorLockFailure",
+        "HighTemperature",
+        "Mode3Error",
+        "NoError",
+        "PowerMeterFailure",
+        "PowerSwitchFailure",
+        "ReaderFailure",
+        "ResetFailure",
+        "GroundFailure",
+        "OverCurrentFailure",
+        "UnderVoltage",
+        "WeakSignal",
+        "OtherError"
+      ]
+    },
+    "info": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "vendorId": {
+      "type": "string"
+    },
+    "vendorErrorCode": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "connectorId",
+    "status",
+    "errorCode"
+  ]
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "StatusNotificationResponse",
+  "type": "object",
+  "properties": {}
+}
+FirmwareStatusNotification
+Request example:
+{
+  "status": "DownloadFailed"
+}
+Response example:
+{}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "FirmwareStatusNotificationRequest",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "Downloaded",
+        "DownloadFailed",
+        "InstallationFailed",
+        "Installed"
+      ]
+    }
+  },
+  "required": [
+    "status"
+  ]
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "FirmwareStatusNotificationResponse",
+  "type": "object",
+  "properties": {}
+}
+DiagnosticsStatusNotification
+Request example:
+{
+  "status": "Uploaded"
+}
+Response example:
+{}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "DiagnosticsStatusNotificationRequest",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "Uploaded",
+        "UploadFailed"
+      ]
+    }
+  },
+  "required": [
+    "status"
+  ]
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "DiagnosticsStatusNotificationResponse",
+  "type": "object",
+  "properties": {}
+}
+DataTransfer
+Request example:
+{
+  "vendorId": "fr.tm.cnr",
+  "messageId": "GetChargeInstruction",
+  "data": ""
+}
+Response example:
+{
+  "status": "Accepted",
+  "data": "{\"transactionId\":1,\"maxPower\":3,\"expiration\":\"2013-01-31T15:00:00Z\",\"userWarning\":false}"
+}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "DataTransferRequest",
+  "type": "object",
+  "properties": {
+    "vendorId": {
+      "type": "string"
+    },
+    "messageId": {
+      "type": "string"
+    },
+    "data": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "vendorId"
+  ]
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "DataTransferResponse",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "Accepted",
+        "Rejected",
+        "UnknownMessageId",
+        "UnknownVendorId"
+      ]
+    },
+    "data": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "status"
+  ]
+}
+Charge Point service
+UnlockConnector
+Request example:
+{
+  "connectorId": 1
+}
+Response example:
+{
+  "status": "Accepted"
+}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "UnlockConnectorRequest",
+  "type": "object",
+  "properties": {
+    "connectorId": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "connectorId"
+  ]
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "UnlockConnectorResponse",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "Accepted",
+        "Rejected"
+      ]
+    }
+  },
+  "required": [
+    "status"
+  ]
+}
+Reset
+Request example:
+{
+  "type": "Soft"
+}
+Response example:
+{
+  "status": "Accepted"
+}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "ResetRequest",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "Hard",
+        "Soft"
+      ]
+    }
+  },
+  "required": [
+    "type"
+  ]
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "ResetResponse",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "Accepted",
+        "Rejected"
+      ]
+    }
+  },
+  "required": [
+    "status"
+  ]
+}
+ChangeAvailability
+Request example:
+{
+  "connectorId": 1,
+  "type": "Inoperative"
+}
+Response example:
+{
+  "status": "Accepted"
+}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "ChangeAvailabilityRequest",
+  "type": "object",
+  "properties": {
+    "connectorId": {
+      "type": "number"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "Inoperative",
+        "Operative"
+      ]
+    }
+  },
+  "required": [
+    "connectorId",
+    "type"
+  ]
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "ChangeAvailabilityResponse",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "Accepted",
+        "Rejected",
+        "Scheduled"
+      ]
+    }
+  },
+  "required": [
+    "status"
+  ]
+}
+GetDiagnostics
+Request example:
+{
+  "location": "ftp://root:root@axis.gir.foo/tmp",
+  "startTime": "2013-02-01T15:09:18Z",
+  "stopTime": "2013-02-01T15:09:18Z",
+  "retries": 4,
+  "retryInterval": 20
+}
+Response example:
+{
+  "fileName": "diag-gir.vat.mx.000e48-20130131132608.txt"
+}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "GetDiagnosticsRequest",
+  "type": "object",
+  "properties": {
+    "location": {
+      "type": "string",
+      "format": "uri"
+    },
+    "startTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "stopTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "retries": {
+      "type": "number"
+    },
+    "retryInterval": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "location"
+  ]
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "GetDiagnosticsResponse",
+  "type": "object",
+  "properties": {
+    "fileName": {
+      "type": "string"
+    }
+  }
+}
+ClearCache
+Request example:
+{}
+Response example:
+{
+  "status": "Accepted"
+}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "ClearCacheRequest",
+  "type": "object",
+  "properties": {}
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "ClearCacheResponse",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "Accepted",
+        "Rejected"
+      ]
+    }
+  },
+  "required": [
+    "status"
+  ]
+}
+UpdateFirmware
+Request example:
+{
+  "retrieveDate": "2013-02-01T15:09:18Z",
+  "location": "ftp://root:root@fork.gir.foo/tmp/kvcbx-updt.amx",
+  "retries": 4,
+  "retryInterval": 20
+}
+Response example:
+{}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "UpdateFirmwareRequest",
+  "type": "object",
+  "properties": {
+    "retrieveDate": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "location": {
+      "type": "string",
+      "format": "uri"
+    },
+    "retries": {
+      "type": "number"
+    },
+    "retryInterval": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "retrieveDate",
+    "location"
+  ]
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "UpdateFirmwareResponse",
+  "type": "object",
+  "properties": {}
+}
+ChangeConfiguration
+Request example:
+{
+  "key": "KVCBX_LANG",
+  "value": "FR"
+}
+Response example:
+{
+  "status": "Accepted"
+}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "ChangeConfigurationRequest",
+  "type": "object",
+  "properties": {
+    "key": {
+      "type": "string"
+    },
+    "value": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "key",
+    "value"
+  ]
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "ChangeConfigurationResponse",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "Accepted",
+        "Rejected",
+        "NotSupported"
+      ]
+    }
+  },
+  "required": [
+    "status"
+  ]
+}
+RemoteStartTransaction
+Request example:
+{
+  "idTag": "044943121F1D80",
+  "connectorId": 2
+}
+Response example:
+{
+  "status": "Accepted"
+}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RemoteStartTransactionRequest",
+  "type": "object",
+  "properties": {
+    "idTag": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "connectorId": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "idTag"
+  ]
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RemoteStartTransactionResponse",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "Accepted",
+        "Rejected"
+      ]
+    }
+  },
+  "required": [
+    "status"
+  ]
+}
+RemoteStopTransaction
+Request example:
+{
+  "transactionId": 1
+}
+Response example:
+{
+  "status": "Accepted"
+}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RemoteStopTransactionRequest",
+  "type": "object",
+  "properties": {
+    "transactionId": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "transactionId"
+  ]
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RemoteStopTransactionResponse",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "Accepted",
+        "Rejected"
+      ]
+    }
+  },
+  "required": [
+    "status"
+  ]
+}
+CancelReservation
+Request example:
+{
+  "reservationId": 0
+}
+Response example:
+{
+  "status": "Accepted"
+}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "CancelReservationRequest",
+  "type": "object",
+  "properties": {
+    "reservationId": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "reservationId"
+  ]
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "CancelReservationResponse",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "Accepted",
+        "Rejected"
+      ]
+    }
+  },
+  "required": [
+    "status"
+  ]
+}
+DataTransfer
+Request example:
+{
+  "vendorId": "fr.tm.cnr",
+  "messageId": "GetChargeInstruction",
+  "data": ""
+}
+Response example:
+{
+  "status": "Accepted",
+  "data": "{\"transactionId\":1,\"maxPower\":3,\"expiration\":\"2013-01-31T15:00:00Z\",\"userWarning\":false}"
+}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "DataTransferRequest",
+  "type": "object",
+  "properties": {
+    "vendorId": {
+      "type": "string"
+    },
+    "messageId": {
+      "type": "string"
+    },
+    "data": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "vendorId"
+  ]
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "DataTransferResponse",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "Accepted",
+        "Rejected",
+        "UnknownMessageId",
+        "UnknownVendorId"
+      ]
+    },
+    "data": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "status"
+  ]
+}
+GetConfiguration
+Request example:
+{
+  "key": [
+    "KVCBX_PROFILE"
+  ]
+}
+Response example:
+{
+  "configurationKey": [
+    {
+      "key": "KVCBX_PROFILE",
+      "readonly": true,
+      "value": "NQC-ACDC"
+    }
+  ],
+  "unknownKey": []
+}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "GetConfigurationRequest",
+  "type": "object",
+  "properties": {
+    "key": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "GetConfigurationResponse",
+  "type": "object",
+  "properties": {
+    "configurationKey": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "readonly": {
+            "type": "boolean"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "readonly"
+        ]
+      }
+    },
+    "unknownKey": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
+GetLocalListVersion
+Request example:
+{}
+Response example:
+{
+  "listVersion": 0
+}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "GetLocalListVersionRequest",
+  "type": "object",
+  "properties": {}
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "GetLocalListVersionResponse",
+  "type": "object",
+  "properties": {
+    "listVersion": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "listVersion"
+  ]
+}
+ReserveNow
+Request example:
+{
+  "connectorId": 0,
+  "expiryDate": "2013-02-01T15:09:18Z",
+  "idTag": "044943121F1D80",
+  "parentIdTag": "",
+  "reservationId": 0
+}
+Response example:
+{
+  "status": "Accepted"
+}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "ReserveNowRequest",
+  "type": "object",
+  "properties": {
+    "connectorId": {
+      "type": "number"
+    },
+    "expiryDate": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "idTag": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "parentIdTag": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "reservationId": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "connectorId",
+    "expiryDate",
+    "idTag",
+    "reservationId"
+  ]
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "ReserveNowResponse",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "Accepted",
+        "Faulted",
+        "Occupied",
+        "Rejected",
+        "Unavailable"
+      ]
+    }
+  },
+  "required": [
+    "status"
+  ]
+}
+SendLocalList
+Request example:
+{
+  "updateType": "Full",
+  "listVersion": 1,
+  "localAuthorisationList": [
+    {
+      "idTag": "044943121F1D80",
+      "idTagInfo": {
+        "status": "Accepted",
+        "expiryDate": "2013-02-01T15:09:18Z",
+        "parentIdTag": ""
+      }
+    }
+  ],
+  "hash": ""
+}
+Response example:
+{
+  "status": "Accepted",
+  "hash": ""
+}
+Request schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "SendLocalListRequest",
+  "type": "object",
+  "properties": {
+    "updateType": {
+      "type": "string",
+      "enum": [
+        "Differential",
+        "Full"
+      ]
+    },
+    "listVersion": {
+      "type": "number"
+    },
+    "localAuthorisationList": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "idTag": {
+            "type": "string",
+            "maxLength": 20
+          },
+          "idTagInfo": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "Accepted",
+                  "Blocked",
+                  "Expired",
+                  "Invalid",
+                  "ConcurrentTx"
+                ]
+              },
+              "expiryDate": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "parentIdTag": {
+                "type": "string",
+                "maxLength": 20
+              }
+            },
+            "required": [
+              "status"
+            ]
+          }
+        },
+        "required": [
+          "idTag"
+        ]
+      }
+    },
+    "hash": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "updateType",
+    "listVersion"
+  ]
+}
+Response schema:
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "SendLocalListResponse",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "Accepted",
+        "Failed",
+        "HashError",
+        "NotSupported",
+        "VersionMismatch"
+      ]
+    },
+    "hash": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "status"
+  ]
+}
