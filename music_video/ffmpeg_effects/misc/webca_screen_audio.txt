@@ -1,0 +1,167 @@
+
+#############################################################################
+#############################################################################
+
+
+# grab screen of both monitors OK
+ffmpeg -v warning -framerate 25 -f x11grab -i :1.0 -f alsa -ac 2 -i default myvid_$(date +%s).mp4
+
+# grab screen of left monitor only OK
+ffmpeg -v warning -video_size 1920x1080 -framerate 25 -f x11grab -i :1.0 -f alsa -ac 2 -i default myvid_$(date +%s).mp4
+ffmpeg -v warning -video_size 1920x1080 -framerate 25 -f x11grab -i :0.0 -f alsa -ac 2 -i default myvid_$(date +%s).mp4
+
+#wevcam + screen
+ffmpeg -f v4l2 -framerate 25 -video_size 480x270 -i /dev/video0  webcam_$(date +%s).mp4
+
+# Record audio from an microphone OK
+ffmpeg -f alsa -i pulse -ac 1 recording_mic_$(date +%s).m4a
+
+# Record audio from an application OK
+ffmpeg -f pulse -i alsa_output.pci-0000_00_1b.0.analog-stereo.monitor -ac 2 recording_app_$(date +%s).m4a
+
+# Loop video
+ffmpeg -stream_loop 3 -i input.mp4 -c copy output.mp4
+
+------------------------
+
+ffmpeg -v warning -video_size 1920x1080 -framerate 25 -f x11grab -i :1.0 -f alsa -ac 2 -i default screen_$(date +%s).mp4
+ffmpeg -f v4l2 -framerate 25 -video_size 480x270 -i /dev/video0  webcam_$(date +%s).mp4
+ffmpeg -f alsa -i pulse -ac 1 recording_mic_$(date +%s).m4a
+ffmpeg -f pulse -i alsa_output.pci-0000_00_1b.0.analog-stereo.monitor -ac 2 recording_app_$(date +%s).m4a
+
+------
+
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+
+
+##################################################
+launch multiple screen sessions from a single bash script
+##################################################
+
+https://unix.stackexchange.com/questions/377808/run-two-commands-in-screen-detached
+https://stackoverflow.com/questions/23418537/shell-script-start-1-session-with-multiple-windows
+https://stackoverflow.com/questions/42011975/shell-script-with-multiple-screen-sessions-does-nothing?rq=3
+https://stackoverflow.com/questions/12451677/bash-script-to-generate-four-terminals-attached-to-the-same-screen-session?rq=3
+https://stackoverflow.com/questions/10266079/bash-screen-command-multi-window-mode?rq=3
+https://stackoverflow.com/questions/6834429/launch-multiple-scripted-screen-sessions-from-another-script?rq=3
+
+screen -dm bash -c 'command1; command2;'
+screen -dm -t title1 bash -c 'command1 ; command2 ; command3'
+
+screen -t command1 0 bash
+screen -t command2 1 python
+
+
+------------------------------------------
+#!/bin/bash
+#Launches minecraft servers
+
+screen -S -t title1 top
+screen -S -t title2 htop
+------------------------------------------
+#!/usr/bin/env bash
+# Create a screen in detached mode and set default title
+screen -d -m -S screenName -t "DjangoServer"
+# Start django app in window 0
+
+---
+# start multiple session
+#!/bin/bash
+screen -d -m -S mysession
+# window 0 is created by default, show hello0 on it
+screen -S mysession -p 0 -X stuff hello0
+for n in {1..9}; do
+  # create now window using `screen` command
+  screen -S mysession -X screen $n
+  screen -S mysession -p $n -X stuff hello$n
+done
+
+screen -r mysession
+
+----
+
+#!/bin/sh
+screen -Smd server node ./SensorService/bin/app.js &
+screen -Smd receiver python3 receiver.py &
+
+
+///////////////////////////////////////////
+
+#!/bin/sh
+
+screen -dmS "somename" somecommand
+for i in {0..5}; do
+    screen -dmS "name$i" anothercommand $i
+done
+
+......
+///////////////////////////////////////////
+
+#!/bin/sh
+echo Killing all existing screens...
+screen -X -S launcher quit
+sleep 2
+screen -X -S server quit
+
+echo Loading launcher screen...
+screen -S launcher -d -m bash -c  "/home/test/Launcher.sh"
+sleep 2
+echo Loading server screen...
+screen -S server -d -m bash -c  "/home/test/Server.sh"
+echo All done.
+
+
+
+
+
+
+
+
+
+///////////////////////////////////////////
+///////////////////////////////////////////
+
+
+
+# not working with screen !!!
+
+#!/bin/sh
+
+echo Loading xscreen ...
+screen -Smd xscreen ffmpeg -v warning -video_size 1920x1080 -framerate 25 -f x11grab -i :1.0 -f alsa -ac 2 -i default xscreen_$(date +%s).mp4
+echo Loading xrecording_mic ...
+screen -Smd xrecordingmic ffmpeg -f alsa -i pulse -ac 1 xrecording_mic_$(date +%s).m4a
+echo Loading xrecording_app ...
+screen -Smd xrecordingapp ffmpeg -f pulse -i alsa_output.pci-0000_00_1b.0.analog-stereo.monitor -ac 2 xrecording_app_$(date +%s).m4a
+echo All started.
+sleep 5
+
+
+echo Killing all existing screens...
+screen -X -S xscreen quit
+sleep 1
+screen -X -S xrecordingmic quit
+sleep 1
+screen -X -S xrecordingapp quit
+
+echo Check active screens ...
+sleep 2
+screen -r
+
+# screen --version
+# sudo apt install screen
+# screen -S session_name
+# screen -r
+
+
+
