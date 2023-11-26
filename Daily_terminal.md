@@ -388,7 +388,7 @@ lynx t3n.de -accept_all_cookies  -justify
 ```
 
 
-## DNS Settings Google and Cloudflare
+### DNS Settings Google and Cloudflare
 
 ### For IPv4:
 ```
