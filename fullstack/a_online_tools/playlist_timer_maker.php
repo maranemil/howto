@@ -22,17 +22,14 @@ function time2sec($time)
 
 // string with bandcamp tracks and tracks time
 $str = "
-1.FUMIX 115 02:48
-2.FUMIX 116 03:14
-3.FUMIX 186 03:45
-4.FUMIX 187 03:03
-5.FUMIX 188 03:12
-6.FUMIX 190 02:40
-7.FUMIX 219 02:33
-8.FUMIX 237 02:47
-9.FUMIX 240 02:42
-10.FUMIX 242 03:06
-11.FUMIX 244 03:15";
+
+
+1.FUMIX 008 03:17
+2.FUMIX 058 02:14
+3.FUMIX 116 03:14
+4.FUMIX 122 02:49
+
+";
 
 
 print "<pre>";
@@ -44,15 +41,24 @@ $csv = preg_split('~\n~', $str);
 $arCols = [];
 foreach ($csv as $line) {
     if (!empty(trim($line))) {
-        $arCols[] = str_getcsv($line, ' ');
+        #$arCols[] = str_getcsv($line, ' ');
+		$arCols[] = array(
+			0 => substr($line,0,-6),
+			1 => substr($line,-6)
+		);
     }
 }
+
+# debug arrays
+#print_r($arCols);
+#exit();
+
 // convert BandCamp track time in seconds and create YouTube time index
 $timer = 0;
 foreach ($arCols as $index => $element) {
     $arCols[0][3] = 0;
     $arCols[0][4] = '00:01';
-    $duration = ltrim($element[2], "0");
+    $duration = ltrim($element[1], "0");
     $timer = $timer + time2sec($duration);
     if (count($arCols) > $index + 1) {
         $arCols[$index + 1][3] = $timer;
@@ -64,5 +70,5 @@ foreach ($arCols as $index => $element) {
 # print_r($arCols);
 
 foreach ($arCols as $index => $element) {
-    print $element[4] . " " . $element[0] . " " . $element[1] . "<br>";
+    print $element[4] . " " . substr($element[0],0,-1) . "<br>";
 }
