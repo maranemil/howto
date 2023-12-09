@@ -295,6 +295,10 @@ sudo ubuntu-drivers autoinstall
 
 xrandr -s 1920x1200
 xrandr -s 2560x1600
+
+
+xrandr --output eDP-1 --brightness 0.7
+xrandr --output DP-2 --brightness 0.7
 ```
 
 ### mp4 cut crop 
