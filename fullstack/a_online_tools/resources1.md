@@ -961,7 +961,7 @@ https://hemingwayapp.com/
 ### YouTube video summarizer
 
 - https://www.summarize.tech/#best
-- https://hix.ai/summarizer/video
+- https://hix.ai/summarizer/video#bulletpoints
 - https://github.com/somanyadav/Youtube-Summariser
 - https://notegpt.io/youtube-summary-with-chatgpt
 - https://resnote.com/summarizer#transcript
