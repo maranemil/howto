@@ -1003,3 +1003,11 @@ https://hemingwayapp.com/
 - https://www.shazam.com/de/home
 
 
+------------------------------------------------------------------
+### Sha1 generator
+
+- https://cryptii.com/pipes/md5-hash
+- https://www.generate-hash.com/sha1
+- http://www.sha1-online.com/
+- https://passwordsgenerator.net/sha1-hash-generator/
+
