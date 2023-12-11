@@ -1,0 +1,269 @@
+
+
+##############################################################
+Charge point
+##############################################################
+
+Charge point to cloud:
+	o Authorize
+	o BootNotification
+	o Heartbeat
+	o MeterValues
+
+§ By default, meter values are sent every 2 minutes when charger has
+an active transaction. Interval can be changed using configuration key
+MeterValueSampleInterval. Set to 0 to disable meter values.
+
+	o StartTransaction
+	o StopTransaction
+	o StatusNotification
+
+- Cloud to charge point
+	o ChangeAvailability
+	§ Provided but non-functional (returns AvailabilityStatus.Rejected)
+	o ChangeConfiguration
+	o ClearCache
+	§ Provided but non-functional (returns ClearCacheStatus.Rejected)
+	o GetConfiguration
+	o RemoteStartTransaction
+	§ IdTag set using this method will time out after 120s
+	o RemoteStopTransaction
+	o Reset
+
+-------------------------------------------------------------------------------------------
+
+https://www.oasis-open.org/committees/download.php/58944/ocpp-1.6.pdf
+https://github.com/reinierl/ocpp-rest/blob/master/ocpp-1.6.rst#_ChangeAvailability.req#
+https://github.com/reinierl/ocpp-rest/blob/master/ocpp-1.6.rst#
+https://github.com/oglimmer/scriptable-ocpp-chargepoint-simulator
+http://47.94.38.208/chenjianxiong/C6E_Router/commit/955c815de886095a7bee79c3b3918b51a0c6b70c
+https://cs.ocpp-css.com/docs/api.yaml
+https://cs.ocpp-css.com/docs/api.yaml#
+https://github.com/ShellRechargeSolutionsEU/ocpp-soap/blob/master/ocpp-15/src/main/wsdl/ChargePointService.wsdl#
+https://gitlab.science.ru.nl/ivarderksen/OCPPFuzzer/-/blob/cf41ea079b91b06ee92a40eed2c92adc465a2e6b/schemas/soap/OCPP_ChargePointService_1.6.wsdl
+https://www.elektron.ch/files/uploads/20_Smart-Building/0%20Downloads/Zaptec-Pro-ZapCloud-Integration.pdf
+https://github-wiki-see.page/m/ChargeTimeEU/Java-OCA-OCPP/wiki/Setting-up-v1.6-OCPP-S-client
+https://ocpp.readthedocs.io/en/latest/central_system.html
+https://library.e.abb.com/public/8f07987a3a284da6bf4e4f8f53cd6502/ABB_Terra_AC_Charger_OCPP1.6_ImplementationOverview%20_v1.8_FW1.6.6.pdf
+https://www.diva-portal.org/smash/get/diva2:838105/FULLTEXT01.pdf
+https://developer.easee.com/docs/ocpp-command-and-control#
+https://www.ablmobility.de/global/downloads/software/Integration_Manual_1.8.pdf
+https://developer.easee.com/docs/ocpp-command-and-control
+
+
+ws://172.16.112.9:8080/ocpp/00001
+ws://ocpp.example.com/devices/{deviceId}
+
+
+https://ocpp.readthedocs.io/en/latest/central_system.html
+https://github.com/mobilityhouse/ocpp/tree/master/examples
+https://github.com/mobilityhouse/ocpp/blob/master/examples/v16/central_system.py
+https://github.com/mobilityhouse/ocpp/blob/master/examples/v16/charge_point.py
+https://github.com/mobilityhouse/ocpp/blob/master/ocpp/v16/enums.py#
+
+
+python -m websockets ws://localhost:9000/test_charge_point
+python -m websockets ws://localhost:9000/test_charge_point
+[2, "12345", "BootNotification", {"chargePointVendor": "The Mobility House", "chargePointModel": "Optimus"}]
+[3, "12345", {"currentTime": "2019-06-16T11:18:09.591716", "interval": 10, "status": "Accepted"}]`
+
+
+https://github.com/solidstudiosh/ocpp-virtual-charge-point#
+
+
+--------------------------------------------------
+
+wscat --slash -P -s ocpp1.6 -c 'ws://172.16.112.9:8080/ocpp/00001'
+# req
+[2, "0", "BootNotification", {"chargePointVendor":"Solidstudio","chargePointModel":"test","chargePointSerialNumber":"S001","firmwareVersion":"1.0.0"}]
+
+# req
+[2, "123456789", "Authorize", {"idTag": "123456"}]
+[5,"123456789",{"idTagInfo":{"status":"Blocked"}}]
+
+# req
+[2, "123456789","Heartbeat",{}]
+[3,"123456789",{"currentTime":"2023-12-11T15:44:03.731Z"}]
+
+
+# req
+[2, "123456789","ChangeAvailability",{"connectorId": 1, "type": "Inoperative"}]
+[4,"123456789","NotImplemented","Requested Action is not known by receiver",{}]
+[4,"123456789","FormationViolation","Payload for Action is syntactically incorrect or not conform the PDU structure for Action",{}]
+
+[2, "123456789","ChangeAvailability",{"connectorId": 1, "type": "Operative"}]
+
+
+
+
+
+
+# ---------------------------------------
+#{"command": "authenticate", "rfid_tag": "123456"}
+#{"action": "ChangeAvailability", "connectorId": 1, "type": "Inoperative"}
+
+
+
+##############################################################
+Command and Control JS
+##############################################################
+
+https://github.com/solidstudiosh/ocpp-virtual-charge-point
+
+WS_URL=ws://localhost:3000 CP_ID=vcp_16_test npx ts-node index_16.ts
+
+2023-03-27 13:09:17 info: Connecting... | {
+  endpoint: 'ws://localhost:3000',
+  chargePointId: 'vcp_16_test',
+  ocppVersion: 'OCPP_1.6',
+  basicAuthPassword: 'password',
+  adminWsPort: 9999
+}
+2023-03-27 13:09:17 info: Sending message ➡️  [2,"5fe44756-05e1-4065-9c91-11b456b55913","BootNotification",{"chargePointVendor":"Solidstudio","chargePointModel":"test","chargePointSerialNumber":"S001","firmwareVersion":"1.0.0"}]
+2023-03-27 13:09:17 info: Sending message ➡️  [2,"aad8d05d-3a6b-4c51-a9fc-7275d4a6cbc3","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available"}]
+2023-03-27 13:09:17 info: Receive message ⬅️  [3,"5fe44756-05e1-4065-9c91-11b456b55913",{"currentTime":"2023-03-27T11:09:17.883Z","interval":30,"status":"Accepted"}]
+2023-03-27 13:09:17 info: Receive message ⬅️  [2,"658c8f5b-9f86-487f-91f8-1d656453978a","ChangeConfiguration",{"key":"MeterValueSampleInterval","value":"60"}]
+2023-03-27 13:09:17 info: Responding with ➡️  [3,"658c8f5b-9f86-487f-91f8-1d656453978a",{"status":"Accepted"}]
+
+2023-03-27 13:09:17 info: Receive message ⬅️  [2,"34fc4673-deff-48d3-bb8e-d94d75fa619a","GetConfiguration",{"key":["SupportedFeatureProfiles"]}]
+2023-03-27 13:09:17 info: Responding with ➡️  [3,"34fc4673-deff-48d3-bb8e-d94d75fa619a",{"configurationKey":[{"key":"SupportedFeatureProfiles","readonly":true,"value":"Core,FirmwareManagement,LocalAuthListManagement,Reservation,SmartCharging,RemoteTrigger"},{"key":"ChargeProfileMaxStackLevel","readonly":true,"value":"99"},{"key":"HeartbeatInterval","readonly":false,"value":"300"},{"key":"GetConfigurationMaxKeys","readonly":true,"value":"99"}]}]
+
+2023-03-27 13:09:17 info: Receive message ⬅️  [3,"aad8d05d-3a6b-4c51-a9fc-7275d4a6cbc3",{}]
+2023-03-27 13:09:18 info: Receive message ⬅️  [2,"d7610ad2-63d0-470f-9bd9-6e47d5483429","SetChargingProfile",{"connectorId":0,"csChargingProfiles":{"chargingProfileId":30,"stackLevel":0,"chargingProfilePurpose":"ChargePointMaxProfile","chargingProfileKind":"Absolute","chargingSchedule":{"chargingRateUnit":"A","chargingSchedulePeriod":[{"startPeriod":0,"limit":10.0}]}}}]
+2023-03-27 13:09:18 info: Responding with ➡️  [3,"d7610ad2-63d0-470f-9bd9-6e47d5483429",{"status":"Accepted"}]
+
+2023-03-27 13:10:17 info: Sending message ➡️  [2,"79a41b2e-2c4a-4a65-9d7e-417967a8f95f","Heartbeat",{}]
+2023-03-27 13:10:17 info: Receive message ⬅️  [3,"79a41b2e-2c4a-4a65-9d7e-417967a8f95f",{"currentTime":"2023-03-27T11:10:17.955Z"}]
+
+
+
+
+##############################################################
+Command and Control JS
+##############################################################
+
+
+http://www.gir.fr/ocppjs/#
+
+> bootnotification chargePointVendor="DBT"
+> bootnotification chargePointVendor="DBT" chargePointModel="NQC-ACDC"
+
+Example - Running a CentralSytem
+% node gir-ocppjs.js start_cs 9000
+
+Example - Running a ChargePoint
+% node gir-ocppjs.js start_cp ws://localhost:9000 0
+
+Example - Running a CentralSystem in SOAP mode
+% node gir-ocppjs.js start_cs 9000 -t soap
+
+Example - Running a ChargePoint in SOAP mode
+% node gir-ocppjs.js start_cp http://localhost:9000 boxid -t soap \
+    -f http://localhost:9001
+
+
+
+##############################################################
+Command and Control SOAP
+##############################################################
+
+B.2.2 ChangeAvailability
+<v:Body>
+ <cp:changeAvailabilityRequest>
+ <cp:connectorId>1</cp:connectorId>
+ <cp:type>Inoperative</cp:type>
+ </cp:changeAvailabilityRequest>
+</v:Body>
+<SOAP-ENV:Body>
+ <ocppCp15:changeAvailabilityResponse>
+ <ocppCp15:status>Accepted</ocppCp15:status>
+ </ocppCp15:changeAvailabilityResponse>
+</SOAP-ENV:Body>
+
+B.2.3 Reset Hard
+<v:Body>
+ <cp:resetRequest>
+ <cp:type>Hard</cp:type>
+ </cp:resetRequest>
+</v:Body>
+<SOAP-ENV:Body>
+ <ocppCp15:resetResponse>
+ <ocppCp15:status>Accepted</ocppCp15:status>
+ </ocppCp15:resetResponse>
+</SOAP-ENV:Body>
+-----------------
+
+
+##############################################################
+Command and Control
+##############################################################
+
+https://developer.easee.com/docs/ocpp-command-and-control
+https://developer.easee.com/docs/ocpp-introduction
+https://developer.easee.com/docs/accounts-and-roles
+https://developer.easee.com/docs/supported-configuration
+https://developer.easee.com/docs/basic-auth-password
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Identity and Access
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Identification
+[2,"7f0340ac-70bf-47bb-a8a7-934e81b24275","RemoteStartTransaction",{"idTag":"CUID2242678","connectorId":1}]
+[3, "7f0340ac-70bf-47bb-a8a7-934e81b24275", {"status":"Accepted"}]
+
+[2,"7dedecf3-ec66-4344-b48a-dac14943e4c7","RemoteStartTransaction",{"connectorId":1,"idTag":"04894D5A245C80"}]
+[2,"fc1f6fa8-0b49-4a91-a9fb-a327c92f7389","RemoteStopTransaction",{"transactionId":624}]
+
+Local Authorization List
+[2, "eae4d55b-bda7-4db4-b2d2-061c2a8e0a40", "StartTransaction", {"connectorId":1,"idTag":"043B89D2EB6C80","meterStart":230488,"timestamp":"2022-07-21T07:11:16.0000000Z"}]
+[3, "eae4d55b-bda7-4db4-b2d2-061c2a8e0a40", {"idTagInfo":{"status":"Accepted","expiryDate":"2022-07-22T07:13:20.875Z"},"transactionId":1658387600}]
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Control
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Boot Notification
+[2, \"3d43847d-98a0-409a-9862-bc6a09305993\", \"BootNotification\", {\"chargePointModel\":\"Easee Home\",\"chargePointSerialNumber\":\"EHHY7AJZ\",\"chargePointVendor\":\"Easee\",\"firmwareVersion\":\"298/1.5.5.0\",\"iccid\":\"\",\"imsi\":\"\",\"meterSerialNumber\":\"\",\"meterType\":\"\"}]
+
+
+Heartbeat
+
+Data Transfer
+[2,\"26d3d7b3-b2d2-412d-81c6-f4ac8b915747\",\"DataTransfer\",{\"vendorId\":\"no.easee\",\"messageId\":\"OverrideSchedule\"}]
+
+Change Availability
+[2,\"f7cc6335-1ff9-480a-8299-c4af287c4566\",\"ChangeAvailability\",{\"connectorId\":0,\"type\":\"Operative\"}]
+
+Change Configuration
+[2,\"887cae6e-f6b7-49fc-a227-ea357c490f0f\",\"ChangeConfiguration\",{\"key\":\"AllowOfflineTxForUnknownId\",\"value\":\"false\"}]
+[2,\"b4df7eea-82e3-4c5e-b2e9-479ff7296019\",\"ChangeConfiguration\",{\"key\":\"freecharging\",\"value\":\"True\"}]
+[2,\"4eb5dfc8-e2b7-4a71-9e4e-58c2eebca507\",\"ChangeConfiguration\",{\"key\":\"HeartbeatInterval\",\"value\":\"900\"}]
+[3, \"4eb5dfc8-e2b7-4a71-9e4e-58c2eebca507\", {\"status\":\"Accepted\"}]
+
+Set Charging Profile
+[2,\"EC107474@637975791164458967\",\"SetChargingProfile\",{\"connectorId\":1,\"csChargingProfiles\":{ChargingProfile}]
+[2,\"74a84bf4-06d5-4118-b87d-e4ab50246eca\",\"SetChargingProfile\",{\"connectorId\":1,\"csChargingProfiles\":{\"chargingProfileId\":144385,\"stackLevel\":0,\"chargingProfilePurpose\":\"TxProfile\",\"chargingProfileKind\":\"Absolute\",\"validFrom\":\"2022-06-26T11:00:32Z\",\"chargingSchedule\":{\"chargingRateUnit\":\"A\",\"chargingSchedulePeriod\":[{\"startPeriod\":0,\"limit\":20,\"numberPhases\":3}],\"startSchedule\":\"2022-06-26T11:00:32Z\",\"minChargingRate\":20},\"transactionId\":732}}]
+
+Clear Charging Profile
+[2,\"410cfbd4-33f1-4958-9e9d-0b3154374562\",\"ClearChargingProfile\",{\"connectorId\":1}]
+[2,\"febb2351-8df2-4fcd-870a-665c06781bdf\",\"ClearChargingProfile\",{\"id\":10}]
+[2,\"c5f4d548-53b1-4c5e-8db9-bd574b75d27b\",\"ClearChargingProfile\",{\"id\":215890,\"connectorId\":0}]
+
+Trigger Message
+[2,\"51754620-bdb9-4d44-899d-5b6cef63273a\",\"TriggerMessage\",{\"requestedMessage\":\"MeterValues\"}]
+
+Send Local List
+[2,\"ab26415d-6d6e-432d-9f89-7d9658acf07f\",\"SendLocalList\",{\"listVersion\":22,\"localAuthorizationList\":[{\"idTag\":\"04776E52697381\",\"idTagInfo\":{\"status\":\"Accepted\"}}],\"updateType\":\"Full\"}]
+[2,\"6c0a3ef2-31c5-446a-a134-0538d147e8fe\",\"SendLocalList\",{\"listVersion\":4,\"localAuthorizationList\":[{\"idTag\":\"047CA2BA827180\",\"idTagInfo\":{\"status\":\"Accepted\"}},{\"idTag\":\"04F33712256E80\",\"idTagInfo\":{\"status\":\"Accepted\"}}],\"updateType\":\"Full\"}]
+
+
+FreeCharging
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[2,\"7b794086-3a5c-473c-8366-ece00023f940\",\"ChangeConfiguration\",{\"key\":\"freecharging\",\"value\":\"True\"}]
+[2,\"7b794086-3a5c-473c-8366-ece00023f940\",\"ChangeConfiguration\",{\"key\":\"rfidtagfreecharging\",\"value\":\"<charging key>\"}]
+
+
+
