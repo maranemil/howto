@@ -492,10 +492,8 @@ if(count($a)) {
 }
 ~~~
 
+###  How to get the last element of an array without deleting it
 ~~~
-#############################################################
-How to get the last element of an array without deleting it
-#############################################################
 https://stackoverflow.com/questions/3687358/how-to-get-the-last-element-of-an-array-without-deleting-it
 
 $myLastElement = end($yourArray);
@@ -531,3 +529,16 @@ the new array_key_last function seems to have none of the above mentioned limita
 option 10. $x = $array[array_key_last($array)]; (since PHP 7.3)
 
 ~~~
+
+### itertools
+~~~
+https://docs.python.org/3/library/itertools.html
+https://www.geeksforgeeks.org/python-itertools/
+https://github.com/markrogoyski/itertools-php
+https://www.php.net/manual/en/class.iterator.php
+https://www.php.net/manual/en/language.types.iterable.php
+https://stackoverflow.com/questions/2815162/is-there-a-php-function-like-pythons-zip
+https://hotexamples.com/examples/itertools/IterUtil/-/php-iterutil-class-examples.html
+https://blog.jetbrains.com/phpstorm/2022/07/php-annotated-july-2022/
+~~~
+
