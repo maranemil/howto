@@ -992,7 +992,6 @@ https://hemingwayapp.com/
 - https://esummarizer.com/summarize#bullet
 - https://hix.ai/summarizer
 
-
 ------------------------------------------------------------------
 ### Song searcher
 
@@ -1002,7 +1001,6 @@ https://hemingwayapp.com/
 - https://www.shazam.com/de
 - https://www.shazam.com/de/home
 
-
 ------------------------------------------------------------------
 ### Sha1 generator
 
@@ -1011,3 +1009,8 @@ https://hemingwayapp.com/
 - http://www.sha1-online.com/
 - https://passwordsgenerator.net/sha1-hash-generator/
 
+------------------------------------------------------------------
+### CamelCase converter
+
+- https://appdevtools.com/case-converter
+- https://de.toolpage.org/tool/camelcase
