@@ -1035,6 +1035,7 @@ https://hemingwayapp.com/
 
 - https://www.w3schools.com/java/java_syntax.asp
 - https://www.tutorialspoint.com/java16/index.htm
+- https://wiki.selfhtml.org/wiki/HTML/Elemente
 
 
 
