@@ -472,6 +472,7 @@ https://github.com/debitbug/excalidraw-chrome-extension
 - https://www.onlinehtmleditor.net
 - https://htmledit.squarefree.com
 - https://html-online.com/editor/
+- https://www.tutorialspoint.com/online_html_editor.php
 
 ------------------------------------------------------------------
 
@@ -1027,3 +1028,13 @@ https://hemingwayapp.com/
 
 - https://appdevtools.com/case-converter
 - https://de.toolpage.org/tool/camelcase
+
+------------------------------------------------------------------
+
+### Tutorials
+
+- https://www.w3schools.com/java/java_syntax.asp
+- https://www.tutorialspoint.com/java16/index.htm
+
+
+
