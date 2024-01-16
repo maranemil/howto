@@ -968,6 +968,7 @@ https://hemingwayapp.com/
 - https://ssyoutube.com/en724Eu/
 - https://www.freemake.com/de/free_video_downloader_peerless/
 - https://yt5s.best/en/
+- https://en.y2mate.is/s42/
 
 
 ------------------------------------------------------------------
