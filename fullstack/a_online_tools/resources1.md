@@ -1037,5 +1037,8 @@ https://hemingwayapp.com/
 - https://www.tutorialspoint.com/java16/index.htm
 - https://wiki.selfhtml.org/wiki/HTML/Elemente
 
+------------------------------------------------------------------
 
+### Geocoding - get lat lon
 
+- https://developers.google.com/maps/documentation/geocoding/overview?hl=de
