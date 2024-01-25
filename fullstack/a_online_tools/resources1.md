@@ -478,47 +478,48 @@ https://github.com/debitbug/excalidraw-chrome-extension
 
 ### Online Web Tools General
 
-- http://www.opinionatedgeek.com/dotnet/tools/htmlencode/decode.aspx	- HTML Beautifier - Pretty Formating
-- http://htmledit.squarefree.com/										- HTML Beautifier - Pretty Formating
-- http://codebeautify.org/htmlviewer/									- HTML Beautifier - Pretty Formating
-- http://www.freeformatter.com/html-formatter.html 				        - HTML Beautifier - Pretty Formating
-- http://www.dirtymarkup.com/											- HTML Beautifier - Pretty Formating
-- http://jsbeautifier.org/											    - JS Beautifier - Pretty Formating
-- https://jsonformatter.curiousconcept.com/							    - JSON Beautifier
+- http://codebeautify.org/htmlviewer/									- HTML Beautifier - Pretty Formatting
 - http://codebeautify.org/jsonviewer									- JSON Beautifier
-- http://jsbeautifier.org/											    - JSON Beautifier
-- http://jsonviewer.stack.hu/											- JSON Beautifier
-- http://www.jsoneditoronline.org/									    - JSON Beautifier
-- http://jsonprettyprint.com/											- JSON Beautifier
-- http://jsonformat.com/												- JSON Beautifier
-- http://sandbox.onlinephpfunctions.com/								- PHP Tester
-- http://phptester.net/												    - PHP Tester
 - http://codepad.org/													- PHP Tester ( and Perl, Python, Ruby)
-- http://ideone.com/													- Java PHP Perl Python, Ruby C++
-- http://labs.codecademy.com/#										- Python Ruby Tester
-- http://phpfiddle.org/												- Profile PHP
-- https://jsfiddle.net/												- JS Tester
-- http://jsbin.com/?html,output										- JS Tester
-- http://dabblet.com/												- JS HTML CSS Tester
-- http://liveweave.com/												- JS HTML CSS Tester
 - http://codepen.io/pen/											- JS HTML CSS Tester
+- http://dabblet.com/												- JS HTML CSS Tester
 - http://fiddlesalad.com/less/										- JS HTML CSS Tester
-- http://phrogz.net/JS/d3-playground/#BlankDefault					- JS D3 Tester
 - http://html5snippet.net/											- HTML5 Tester
-- http://www.landofcode.com/online-code-editor.php					- HTML VBScript  Tester
-- https://fiddle.sencha.com/										- Ext JS Editor Tester
-- http://pastebin.com/												- Share Code
+- http://htmledit.squarefree.com/										- HTML Beautifier - Pretty Formating
+- http://ideone.com/													- Java PHP Perl Python, Ruby C++
 - http://jsapp.us/													- Node JS Tester
-- http://www.regexpal.com/											- REgex Tester
-- https://regex101.com/												- REgex Tester
-- http://rubular.com/												- REgex Tester
-- http://scriptular.com/											- REgex Tester
-- http://www.phpliveregex.com/										- REgex Tester
+- http://jsbeautifier.org/											    - JS Beautifier - Pretty Formatting
+- http://jsbeautifier.org/											    - JSON Beautifier
+- http://jsbin.com/?html,output										- JS Tester
+- http://jsonformat.com/												- JSON Beautifier
+- http://jsonprettyprint.com/											- JSON Beautifier
+- http://jsonviewer.stack.hu/											- JSON Beautifier
+- http://labs.codecademy.com/#										- Python Ruby Tester
+- http://liveweave.com/												- JS HTML CSS Tester
+- http://pastebin.com/												- Share Code
+- http://phpfiddle.org/												- Profile PHP
+- http://phptester.net/												    - PHP Tester
+- http://phrogz.net/JS/d3-playground/#BlankDefault					- JS D3 Tester
 - http://pythex.org/												- REgex Tester
-- http://sqlfiddle.com/												- SQL Tester
 - http://requestb.in/												- Inspect HTTP Requests Service
+- http://rubular.com/												- REgex Tester
+- http://sandbox.onlinephpfunctions.com/								- PHP Tester
+- http://scriptular.com/											- REgex Tester
+- http://sqlfiddle.com/												- SQL Tester
+- http://www.dirtymarkup.com/											- HTML Beautifier - Pretty Formatting
+- http://www.freeformatter.com/html-formatter.html 				        - HTML Beautifier - Pretty Formatting
+- http://www.jsoneditoronline.org/									    - JSON Beautifier
+- http://www.landofcode.com/online-code-editor.php					- HTML VBScript  Tester
 - http://www.onlinehtmleditor.net/									- HTML Realtime Preview
+- http://www.opinionatedgeek.com/dotnet/tools/htmlencode/decode.aspx	- HTML Beautifier - Pretty Formatting
+- http://www.phpliveregex.com/										- REgex Tester
+- http://www.regexpal.com/											- REgex Tester
 - http://www.unixtimestamp.com/index.php							- Unix Timestamp Calculator
+- https://fiddle.sencha.com/										- Ext JS Editor Tester
+- https://jsfiddle.net/												- JS Tester
+- https://jsonformatter.curiousconcept.com/							    - JSON Beautifier
+- https://regex101.com/												- REgex Tester
+- https://sqlite.org/fiddle/index.html                            - sqlite
 
 ------------------------------------------------------------------
 ### Online whiteboard for digital collaboration
