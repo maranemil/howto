@@ -435,6 +435,13 @@ https://github.com/debitbug/excalidraw-chrome-extension
 
 ------------------------------------------------------------------
 
+### Piano online virtual
+
+- https://virtualpiano.net/
+- https://www.onlinepianist.com/virtual-piano
+
+------------------------------------------------------------------
+
 ### Photo editor 
 
 - https://photomania.net/                 # photo editor
