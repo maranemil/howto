@@ -452,7 +452,7 @@ https://github.com/debitbug/excalidraw-chrome-extension
 - https://www.cutout.pro/photo-enhancer-sharpener-upscaler/upload
 - https://picwish.com/photo-enhancer
 - https://snapedit.app/enhance
-- https://sharpen.imageonline.co/
+- https://sharpen.imageonline.co/ - best
 - https://picwish.com/unblur-image-portrait
 
 ------------------------------------------------------------------
