@@ -602,4 +602,9 @@ https://ftp-stud.hs-esslingen.de/Mirrors/cdimage.ubuntu.com/ubuntu/releases/23.0
 ~~~
 
 
-
+### PDF Merge Ubuntu
+~~~
+convert input1.jpg input1.pdf
+convert input2.jpg input2.pdf
+gs -dQUIET -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=output.pdf input1.pdf input2.pdf
+~~~
