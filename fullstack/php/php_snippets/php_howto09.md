@@ -542,3 +542,15 @@ https://hotexamples.com/examples/itertools/IterUtil/-/php-iterutil-class-example
 https://blog.jetbrains.com/phpstorm/2022/07/php-annotated-july-2022/
 ~~~
 
+
+### Generics in PHP: The basics
+
+~~~
+https://stitcher.io/blog/generics-in-php-1
+https://wiki.php.net/rfc/generics
+https://github.com/mrsuh/php-generics
+https://phpstan.org/blog/generics-by-examples
+https://phpstan.org/blog/generics-in-php-using-phpdocs
+https://blog.jetbrains.com/phpstorm/2021/12/phpstorm-2021-3-release/
+https://www.php.net/manual/en/class.stdclass.php
+~~~
