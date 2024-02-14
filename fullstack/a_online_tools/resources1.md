@@ -967,16 +967,20 @@ https://hemingwayapp.com/
 ### YouTube Dailymotion downloader
 
 - https://de.y2mate.is/w0p2n/
+- https://en.y2mate.is/s42/
 - https://en.yt2conv.com/youtube-to-mp4-13/
 - https://freedownloadvideo.net/dailymotion-video-downloader
 - https://freedownloadvideo.net/site7/
 - https://loader.to/en15/1080p-video-downloader.html
 - https://ssyoutube.com/de51XA/youtube-video-downloader
+- https://ssyoutube.com/de68LX/youtube-video-downloader
 - https://ssyoutube.com/en158DC/youtube-video-downloader
 - https://ssyoutube.com/en724Eu/
 - https://www.freemake.com/de/free_video_downloader_peerless/
+- https://x2mate.com/de21
+- https://y2down.cc/de/
+- https://yt5s.best/de302ty/
 - https://yt5s.best/en/
-- https://en.y2mate.is/s42/
 
 
 ------------------------------------------------------------------
