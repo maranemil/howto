@@ -992,6 +992,12 @@ https://hemingwayapp.com/
 
 ------------------------------------------------------------------
 
+### Facebook video downloader
+
+- https://fdown.net/download.php
+
+------------------------------------------------------------------
+
 
 ### Text summarizer
 
