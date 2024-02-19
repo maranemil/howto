@@ -62,3 +62,8 @@ git revert 453436346
 ```
 * git verify-pack -v ./.git/objects/pack/pack-......ea.pack
 ```
+
+### Fetch with update repos list
+```
+git fetch --prune
+```
