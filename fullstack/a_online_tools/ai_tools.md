@@ -208,13 +208,14 @@ misc
 
 ### misc
 
-- https://www.perplexity.ai/
+- https://www.perplexity.ai/ - ask anything
 - https://www.suno.ai/
 - https://lumalabs.ai/
 - https://www.leiainc.com/3d-apps/leiatube
 - https://www.capcut.com/de-de/
 - https://sketch.metademolab.com/
 - https://www.futurepedia.io/
+- https://typeset.io/ - resume text
 
 
 
