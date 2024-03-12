@@ -201,11 +201,11 @@ clientX: 1749
 clientY: 356
 ~~~
 
-
+##############################################
+### Taking A Screenshot of the Canvas
+##############################################
 ~~~
-##############################################
-Taking A Screenshot of the Canvas
-##############################################
+
 https://webglfundamentals.org/webgl/lessons/webgl-tips.html#screenshot_canvas
 
 <canvas id="c"></canvas>
@@ -228,4 +228,17 @@ const saveBlob = (function() {
      a.click();
   };
 }());
+~~~
+
+
+### querySelectorAll
+~~~
+https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector?retiredLocale=de
+https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector?retiredLocale=de
+https://www.mediaevent.de/javascript/queryselector.html
+https://playwright.dev/docs/other-locators
+https://stackoverflow.com/questions/7084557/select-all-elements-with-a-data-xxx-attribute-without-using-jquery
+
+
+document.querySelectorAll("[data-foo]")
 ~~~
