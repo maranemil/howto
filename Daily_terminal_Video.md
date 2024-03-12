@@ -374,3 +374,36 @@ sox "*.wav" ../out.wav
 # create video with album sound
 ffmpeg -stream_loop 0 -i out.wav -i out.mp4  -c:a aac -b:a 256k -c:v libx264 -y zfinal.mp4
 ~~~
+
+
+### random usage commands
+~~~
+ffmpeg -i in.mp4 -vf crop=1900:1000:10 out.mp4 
+ffmpeg -v warning -framerate 30 -f x11grab -i :1.0 -f alsa -ac 2 -i default myvid_$(date +%s).mp4
+ffmpeg -i pexels-1.mp4 -vf "setpts=1/0.5*PTS" pexels-1b.mp4 
+
+
+ffmpeg -i in.mp4 -vf hue=h=5:s=3 -c:a copy out.mp4 
+ffmpeg -i in.mp4 -vf hue=s=2:h=270,curves=preset=color_negative out.mp4
+
+
+convert image.jpg image.png
+convert image.jpeg image.png
+sox "*.wav" ../out.wav
+convert image.jpeg image.png
+ffmpeg -loop 1 -i image.png -c:v libx264 -t 15 -pix_fmt yuv420p -y out.mp4
+ffmpeg -stream_loop 0 -i out.wav -i out.mp4  -c:a aac -b:a 256k -c:v libx264 -y out.mp4
+
+for i in *.wav; do ffmpeg -i "$i" "$i".mp3; done 
+
+
+ffmpeg -i mpxvm_fumix257_ft2.xm -af "rubberband=pitch=432/400,rubberband=pitch=440/470" -y mpxvm_fumix257_ft2.xm.wav 1:1
+
+echo $DISPLAY
+ffmpeg -v warning -framerate 30 -f x11grab -i :0.0 -f alsa -ac 2 -i default myvid_$(date +%s).mp4
+ffmpeg -v warning -framerate 30 -f x11grab -i :0 -c:v libx264 -qp 0 -preset ultrafast capture.mp4
+ffmpeg -video_size 80x24 -f x11grab -i :0.0+61,68 output.mp4
+
+rename 's/ /_/g' *
+for i in */; do zip -r "${i%/}.zip" "$i"; done
+~~~
