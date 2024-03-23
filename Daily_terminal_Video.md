@@ -379,6 +379,8 @@ ffmpeg -stream_loop 0 -i out.wav -i out.mp4  -c:a aac -b:a 256k -c:v libx264 -y 
 ### random usage commands
 ~~~
 ffmpeg -i in.mp4 -vf crop=1900:1000:10 out.mp4 
+ffmpeg -i in.mp4 -vf crop=1910:1080:10:1200 out.mp4 
+
 ffmpeg -v warning -framerate 30 -f x11grab -i :1.0 -f alsa -ac 2 -i default myvid_$(date +%s).mp4
 ffmpeg -i pexels-1.mp4 -vf "setpts=1/0.5*PTS" pexels-1b.mp4 
 
