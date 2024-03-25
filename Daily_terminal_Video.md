@@ -409,3 +409,31 @@ ffmpeg -video_size 80x24 -f x11grab -i :0.0+61,68 output.mp4
 rename 's/ /_/g' *
 for i in */; do zip -r "${i%/}.zip" "$i"; done
 ~~~
+
+
+
+Record Screen Mic Audio Web simultaneously 
+~~~
+#!/bin/bash
+
+# https://stackoverflow.com/questions/3004811/how-do-you-run-multiple-programs-in-parallel-from-a-bash-script
+
+rm *.m4a
+rm *.mp4
+
+ffmpeg -v warning -video_size 1920x1080 -framerate 30 -f x11grab -i :0.0 -f alsa -ac 2 -i default myvid_$(date +%s).mp4 &
+P1=$!
+# audio
+ffmpeg -f pulse -i alsa_output.pci-0000_05_00.6.analog-stereo.monitor -ac 2 recording_stereo_$(date +%s).m4a &
+P2=$!
+# mic
+ffmpeg -f alsa -i pulse -ac 1 recording_mic_$(date +%s).m4a &
+P3=$!
+# web
+ffmpeg -f v4l2 -framerate 25 -video_size 480x270 -i /dev/video0  webcam_$(date +%s).mp4
+P4=$!
+~~~
+
+
+
+

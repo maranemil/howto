@@ -1,5 +1,39 @@
+#############################################################################
+Record Screen Mic Audio Web simultaneously
+#############################################################################
+
+ffmpeg -v warning -video_size 1920x1080 -framerate 30 -f x11grab -i :0.0 -f alsa -ac 2 -i default myvid_$(date +%s).mp4 &
+P1=$!
+# audio
+ffmpeg -f pulse -i alsa_output.pci-0000_05_00.6.analog-stereo.monitor -ac 2 recording_stereo_$(date +%s).m4a &
+P2=$!
+# mic
+ffmpeg -f alsa -i pulse -ac 1 recording_mic_$(date +%s).m4a &
+P3=$!
+# web
+ffmpeg -f v4l2 -framerate 25 -video_size 480x270 -i /dev/video0  webcam_$(date +%s).mp4
+P4=$!
+
+
+--------------------
+amixer
+sudo apt install inxi
+inxi -A
+sudo aplay -l
+pactl list sources
+pactl list sinks
+arecord -l
+pacmd list-cards
+
+
+pactl list sources | grep alsa_output.pci-0000_0
+	Name: alsa_output.pci-0000_05_00.6.analog-stereo.monitor
+	Ziel-Monitor: alsa_output.pci-0000_05_00.6.analog-stereo
+	Name: alsa_output.pci-0000_05_00.1.hdmi-stereo.monitor
+	Ziel-Monitor: alsa_output.pci-0000_05_00.1.hdmi-stereo
 
 #############################################################################
+grab screen of both monitors
 #############################################################################
 
 
