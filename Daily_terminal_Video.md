@@ -396,6 +396,17 @@ convert image.jpeg image.png
 ffmpeg -loop 1 -i image.png -c:v libx264 -t 15 -pix_fmt yuv420p -y out.mp4
 ffmpeg -stream_loop 0 -i out.wav -i out.mp4  -c:a aac -b:a 256k -c:v libx264 -y out.mp4
 
+
+# 3min 31sec loop
+ffmpeg -stream_loop 20 -i vid.mp4 -i audio.mp3 -c:a aac -b:a 256k -c:v libx264 -y out.mp4
+# trim
+ffmpeg -i in.mp4 -ss 00:00 -to 03:12 out.mp4 
+
+
+
+
+
+
 for i in *.wav; do ffmpeg -i "$i" "$i".mp3; done 
 
 

@@ -323,6 +323,13 @@ lynx t3n.de -accept_all_cookies  -justify
 * http://localhost:8000
 * php -S localhost:4000
 * PHP_CLI_SERVER_WORKERS=8 php -S localhost:8000 -t htdocs
+
+
+sudo apt install net-tools
+ifconfig
+python3 -m http.server 8888
+
+
 ```
 
 ##### list packages
