@@ -106,17 +106,18 @@
   
 ### text
 
-| url                                 | type                      |
-|:------------------------------------|:--------------------------|
-| https://play.ht/                    | Text to voice generator   |   
-| https://quillbot.com/               | Writing enhancer          |  
-| https://www.notion.so/product/ai    | Content type generator    | 
-| https://chat.openai.com/chat        | Chat                      |  
-| https://www.wordtune.com/           | Text rewriter             | 
-| https://beta.tome.app/              | Storytelling generator    | 
-| https://www.copy.ai/                | Text rewriter             | 
-| https://beta.openai.com/playground  | Text generator            |  
-| https://app.jasper.ai/              | blog posts   Generation   | 
+| url                                                 | type                    |
+|:----------------------------------------------------|:------------------------|
+| https://play.ht/                                    | Text to voice generator |   
+| https://quillbot.com/                               | Writing enhancer        |  
+| https://www.notion.so/product/ai                    | Content type generator  | 
+| https://chat.openai.com/chat                        | Chat                    |  
+| https://www.wordtune.com/                           | Text rewriter           | 
+| https://beta.tome.app/                              | Storytelling generator  | 
+| https://www.copy.ai/                                | Text rewriter           | 
+| https://beta.openai.com/playground                  | Text generator          |  
+| https://app.jasper.ai/                              | blog posts   Generation | 
+| https://ahrefs.com/writing-tools/paragraph-rewriter | Rewriter    +++         | 
 
 
 ### video
