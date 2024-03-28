@@ -151,9 +151,14 @@ lynx t3n.de -accept_all_cookies  -justify
 
 ### Users management
 ```
+# add user
 + sudo adduser newuser
+
+# remove user
 + sudo deluser newuser
 + sudo deluser --remove-home newuser
+
+# change passwd
 + sudo passwd username
 ```
 
@@ -215,6 +220,9 @@ lynx t3n.de -accept_all_cookies  -justify
 * google-chrome --process-per-site --enable-low-res-tiling --no-referrers --new-window 
 * chromium --process-per-site --no-sandbox --args --js-flags="--max_old_space_size=2192" --purge-memory-button
 * google-chrome --process-per-site --no-sandbox --args --js-flags="--max_old_space_size=2192" --max-old-space-size=2048
+
+* google-chrome --wm-window-animations-disabled --autoplay-policy=no-user-gesture-required --animation-duration-scale=0 --disable-threaded-animation --no-experiments --disable-notifications --no-referrers --new-window --enable-low-end-device-mode --restore-last-session --disable-remote-fonts --disable-remote-playback-api --disable-voice-input
+
 ```
 ```
 * chromium --process-per-site
