@@ -1,0 +1,94 @@
+
+Install Docker Engine on Ubuntu
+https://docs.docker.com/engine/install/ubuntu/
+
+
+# Uninstall old versions
+for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
+
+
+
+# Set up Docker's apt repository.
+# Add Docker's official GPG key:
+sudo apt-get update
+sudo apt-get install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add the repository to Apt sources:
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+
+
+
+
+# Install the Docker packages.
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# Verify Docker Engine
+sudo docker run hello-world
+
+
+
+# Install Docker-compose:
+sudo curl -L "https://github.com/docker/compose/releases/download/2.18.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+sudo chmod +x /usr/local/bin/docker-compose
+
+
+# set Docker usermod
+https://docs.docker.com/engine/install/linux-postinstall/
+sudo groupadd docker
+sudo usermod -aG docker $USER
+
+
+
+------------------------------------------
+
+mkdir spryker-b2b-marketplace && cd spryker-b2b-marketplace
+
+git clone https://github.com/spryker-shop/b2b-demo-marketplace.git ./spryker-b2b-marketplace
+
+cd ..
+git clone git@github.com:spryker/docker-sdk.git docker
+
+git checkout {your_branch}
+docker/sdk boot -s deploy.dev.yml
+docker/sdk up --build --assets --data
+
+--build - update composer, generate transfer objects, etc.
+--assets - build assets
+--data - get new demo data
+
+sudo ../docker/sdk boot -s spryker-b2b-marketplace/deploy.dev.yml
+sudo ../docker/sdk up --build --assets --data
+
+------------------------------------------
+
+ERR::::
+ => CACHED [2/3] RUN usermod -u 0 spryker && find / -user 1000 -exec chown -h spryker {}  || true;                                                           0.0s
+ => ERROR [3/3] COPY /home/demos/Git/docker/deployment/default/context/php/conf.d/91-opcache-dev.ini /usr/local/etc/php/conf.d                               0.0s
+------
+ > [3/3] COPY /home/demos/Git/docker/deployment/default/context/php/conf.d/91-opcache-dev.ini /usr/local/etc/php/conf.d:
+------
+Dockerfile:17
+--------------------
+  15 |     RUN usermod -u ${USER_UID} spryker && find / -user 1000 -exec chown -h spryker {} \ || true;
+  16 |
+  17 | >>> COPY ${DEPLOYMENT_PATH}/context/php/conf.d/91-opcache-dev.ini /usr/local/etc/php/conf.d
+ERR::::
+
+
+
+
+
+
+
+
+
+
+
