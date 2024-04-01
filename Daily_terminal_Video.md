@@ -402,6 +402,8 @@ ffmpeg -stream_loop 20 -i vid.mp4 -i audio.mp3 -c:a aac -b:a 256k -c:v libx264 -
 # trim
 ffmpeg -i in.mp4 -ss 00:00 -to 03:12 out.mp4 
 
+# compress 2Gb into 200Mb
+ffmpeg  -i in.mp4 -c:a aac -b:a 256k -c:v libx264 -y out.mp4
 
 
 
