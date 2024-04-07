@@ -16,8 +16,7 @@
 | https://stability.ai/                                    | ai tools                            |      
 | https://stable-diffusion-art.com/inpainting_basics/      | inpainting tools                    | 
 | https://superhuman.com/                                  | Email app                           | 
-| https://vidiq.com/                                       | Youtube boster                      |      
-   
+| https://vidiq.com/                                       | Youtube boster                      |
 
 ### code
 
@@ -29,7 +28,7 @@
 | https://openai.com/blog/chatgpt/                                             | ChatGPT               | 
 | https://www.beautiful.ai/                                                    | Presentation software |
 | https://catalog.ngc.nvidia.com/orgs/nvidia/teams/playground/models/codellama | Code Llama            |
-
+| https://codeium.com/download                                                 | Code                  |
 
 ### servers ai web builder
 
@@ -37,8 +36,6 @@
 |:--------------------------|:----------------|
 | https://www.pulumi.com/ai | service builder | 
 | https://www.hostinger.de/ | website builder | 
-
-
 
 ### img
 
@@ -84,7 +81,6 @@
 | https://bigjpg.com/                                 | Image Resizer                        |
 | https://jpghd.com/                                  | Image Resizer                        |
 
-
 ### voice
 
 | url                                         | type                              |
@@ -119,7 +115,6 @@
 | https://app.jasper.ai/                              | blog posts   Generation | 
 | https://ahrefs.com/writing-tools/paragraph-rewriter | Rewriter    +++         | 
 
-
 ### video
 
 | url                                                    | type                  |
@@ -135,7 +130,6 @@
 | https://www.myheritage.de/deep-nostalgia               |                       | 
 | https://github.com/Picsart-AI-Research/Text2Video-Zero | text to video         | 
 | https://stable-diffusion-art.com/video-to-video/       | video to video        | 
-
 
 ### music
 
@@ -163,9 +157,7 @@
 | https://www.landr.com/de/                       | landr                       | 
 | https://www.riffusion.com/                      | Refusion music AI generator | 
 
-
 misc
-
 
 | url                                                                             |
 |:--------------------------------------------------------------------------------|
@@ -193,8 +185,6 @@ misc
 | https://stability.ai/stable-diffusion                                           |
 | -                                                                               |
 
-
-
 ### Generative AI Video
 
 | url                                | type      |
@@ -203,10 +193,6 @@ misc
 | https://convert.leiapix.com/       | video gen |
 | https://www.genmo.ai/#             | video gen |
 | https://www.pika.art/              | video gen |
-
-
-
-
 
 ### misc
 
