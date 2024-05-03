@@ -210,5 +210,19 @@
 
 - https://suno.com/
 - https://www.udio.com/
+- https://stability.ai/news/stable-audio-2-0
+- https://stableaudio.com/
 
+
+### preview
+- https://openai.com/index/sora
+- https://www.microsoft.com/en-us/research/project/vasa-1/
+
+### chatgpt local
+
+- https://www.danswer.ai/
+- https://github.com/danswer-ai/danswer
+- https://docs.danswer.dev/gen_ai_configs/overview
+- https://github.com/open-webui/open-webui
+- https://openwebui.com/
 

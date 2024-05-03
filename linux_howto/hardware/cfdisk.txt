@@ -1,0 +1,75 @@
+###########################################
+
+HDD check
+
+###########################################
+
+
+https://www.linux-magazine.com/Online/Features/Tune-Your-Hard-Disk-with-hdparm
+https://www.cyberciti.biz/faq/hdiodrive_cmdidentify-failed-inappropriate-ioctl-device/
+
+sudo cfdisk /dev/nvme0n1
+
+
+ls -l /dev/disk/by-*
+cat /proc/partitions
+
+ 259        0  125034840 nvme0n1
+ 259        1     524288 nvme0n1p1
+ 259        2  124509184 nvme0n1p2
+
+# activate Write-back caching
+sudo  hdparm -W /dev/nvme0n1
+
+# deactivate Write-back caching
+sudo hdparm -W0 /dev/nvme0n1
+
+
+hdparm -I /dev/nvme0n1 | grep 'DMA:'
+sudo hdparm /dev/nvme0n1
+
+/dev/nvme0n1:
+ readonly      =  0 (off)
+ readahead     = 256 (on)
+ geometry      = 122104/64/32, sectors = 250069680, start = 0
+
+
+sudo hdparm -m16 /dev/nvme0n1
+sudo hdparm -d1 /dev/nvme0n1
+
+sudo hdparm -tT /dev/nvme0n1
+
+/dev/nvme0n1:
+ Timing cached reads:   9902 MB in  2.00 seconds = 4956.90 MB/sec
+ Timing buffered disk reads: 1516 MB in  3.00 seconds = 504.89 MB/sec
+
+# sudo hdparm -d1 /dev/nvme0n1
+sudo hdparm -I /dev/nvme0n1 | more
+sudo hdparm -t /dev/nvme0n1
+sudo hdparm -t --direct /dev/nvme0n1
+sudo hdparm -t --direct --offset 5 /dev/nvme0n1  # 5 GB
+
+sudo hdparm -m16 /dev/nvme0n1
+sudo hdparm -m0 /dev/nvme0n1
+
+sudo hdparm -M 128 /dev/nvme0n1
+sudo hdparm -M 254 /dev/nvme0n1
+
+sudo fdisk -l
+sudo hdparm -M /dev/nvme0
+sudo hdparm -W /dev/nvme0
+sudo hdparm -d0 /dev/nvme0
+
+sudo apt install sdparm -y
+sdparm -all /dev/nvme0n1
+
+hdparm -V
+hdparm v9.60
+
+
+
+sudo hdparm -tT /dev/nvme0n1
+
+/dev/nvme0n1:
+ Timing cached reads:   8300 MB in  2.00 seconds = 4153.85 MB/sec
+ Timing buffered disk reads: 1620 MB in  3.00 seconds = 539.57 MB/sec
