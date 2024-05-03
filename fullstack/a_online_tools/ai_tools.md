@@ -157,7 +157,7 @@
 | https://www.landr.com/de/                       | landr                       | 
 | https://www.riffusion.com/                      | Refusion music AI generator | 
 
-misc
+### misc
 
 | url                                                                             |
 |:--------------------------------------------------------------------------------|
@@ -206,6 +206,9 @@ misc
 - https://typeset.io/ - resume text
 
 
+### music 
 
+- https://suno.com/
+- https://www.udio.com/
 
 
