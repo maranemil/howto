@@ -80,6 +80,7 @@
 | https://neural.love/                                |                                      |
 | https://bigjpg.com/                                 | Image Resizer                        |
 | https://jpghd.com/                                  | Image Resizer                        |
+| https://www.upscale.media/de                        | Image Resizer                        |
 | http://www.writingpromptgenerator.com/#             | Image prompt gen                     |
 
 ### voice
