@@ -1,0 +1,177 @@
+###################################################################
+KVM hypervisor: a beginners’ guide
+###################################################################
+
+
+https://unix.stackexchange.com/questions/718330/virt-install-command-missing-after-kvm-installation
+https://ubuntu.com/blog/kvm-hyphervisor
+
+
+
+sudo apt -y install bridge-utils cpu-checker libvirt-clients libvirt-daemon qemu qemu-kvm
+sudo apt-get install virt-manager
+kvm-ok
+
+sudo virt-install --name ubuntu-guest --os-variant ubuntu20.04 --vcpus 2 --ram 2048 --location http://ftp.ubuntu.com/ubuntu/dists/focal/main/installer-amd64/ --network bridge=virbr0,model=virtio --graphics none --extra-args='console=ttyS0,115200n8 serial'
+
+
+Get started with the KVM hypervisor on Sunbeam
+
+sudo snap install openstack
+sunbeam prepare-node-script | bash -x && newgrp snap_daemon
+sunbeam cluster bootstrap --accept-defaults
+sunbeam configure --accept-defaults --openrc demo-openrc
+
+sunbeam launch ubuntu --name test
+Access instance with `ssh -i /home/ubuntu/.config/openstack/sunbeam ubuntu@10.20.20.16`
+ssh -i /home/ubuntu/.config/openstack/sunbeam ubuntu@10.20.20.16
+Uptime
+
++++++++++++++++++
+
+
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/virtualization_deployment_and_administration_guide/sect-guest_virtual_machine_installation_overview-creating_guests_with_virt_install
+
+https://linux.die.net/man/1/virt-install
+https://gist.github.com/ilude/a083934402ee761c402b7ab3ae9bcda7
+https://gist.github.com/plembo/f592b80eade840a51c7c52d22b2c1b63
+https://manpages.debian.org/testing/virtinst/virt-install.1.en.html
+https://www.cyberciti.biz/faq/install-kvm-server-debian-linux-9-headless-server/
+https://ostechnix.com/manage-kvm-virtual-machines-with-virsh-program/
+https://www.cyberciti.biz/faq/linux-list-a-kvm-vm-guest-using-virsh-command/
+
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/virtualization_host_configuration_and_guest_installation_guide/sect-virtualization_host_configuration_and_guest_installation_guide-guest_installation-creating_guests_with_virt_install
+
+https://wiki.debian.org/KVM
+
+
+
+sudo apt install qemu-system libvirt-daemon-system
+sudo apt install --no-install-recommends qemu-system libvirt-clients libvirt-daemon-system
+
+virt-install --virt-type kvm --name bookworm-amd64 \
+--cdrom ~/iso/Debian/debian-12.0.0-amd64-netinst.iso \
+--os-variant debian12 \
+--disk size=10 --memory 1024
+
+virt-install --virt-type kvm --name bookworm-amd64 \
+--location https://deb.debian.org/debian/dists/bookworm/main/installer-amd64/ \
+--os-variant debian12 \
+--disk size=10 --memory 1024
+
+virt-install --virt-type kvm --name bookworm-amd64 \
+--location https://deb.debian.org/debian/dists/bookworm/main/installer-amd64/ \
+--os-variant debian12 \
+--disk size=10 --memory 1024 \
+--graphics none \
+--console pty,target_type=serial \
+--extra-args "console=ttyS0"
+
+sudo systemctl restart NetworkManager
+sudo systemctl restart network-manager
+
+sudo apt install qemu-kvm libvirt-clients libvirt-daemon-system bridge-utils libguestfs-tools genisoimage virtinst libosinfo-bin
+
+sudo virsh net-list --all
+
+
+sudo virt-builder debian-9 \
+--size=10G \
+--format qcow2 -o /var/lib/libvirt/images/debian9-vm1.qcow2 \
+--hostname debain9-vm1 \
+--network \
+--timezone Asia/Kolkata
+
+sudo virt-install --import --name debian9-vm1 \
+--ram 2048 \
+--vcpu 2 \
+--disk path=/var/lib/libvirt/images/debian9-vm1.qcow2,format=qcow2 \
+--os-variant debian9 \
+--network=bridge=br0,model=virtio \
+--noautoconsole
+
+virsh help
+virsh help Networking
+virsh help net-name
+
+
+
+virsh list
+virsh list --all
+virsh shutdown rh8-vm01
+virsh start rh8-vm01
+virsh reboot centos8-uefi
+virsh suspend centos8-uefi
+virsh resume centos8-uefi
+virsh destroy centos8-uefi
+virsh destroy centos8-uefi --graceful
+virsh dumpxml rh8-vm01
+virsh domifaddr rh8-vm01
+virsh edit rh8-vm01
+virsh net-edit --network hostonly
+virsh save centos8-uefi centos8-save
+virsh restore centos8-save
+
+virsh dumpxml centos8-uefi
+virsh dumpxml centos8-uefi > centos8.xml
+virsh create centos8.xml
+virsh edit centos8-uefi
+virsh domid centos8-uefi
+virsh nodeinfo
+virsh vcpuinfo centos8-uefi
+
+virsh destroy centos8-uefi
+virsh undefine centos8-uefi
+
+virsh net-destroy <network-name>
+virsh net-undefine <Name-Of-Inactive-Network>
+
+
+
+# ok
+sudo virt-install --name ubuntu-guest --os-variant ubuntu20.04 --vcpus 2 --ram 2048 --location http://ftp.ubuntu.com/ubuntu/dists/focal/main/installer-amd64/ --network bridge=virbr0,model=virtio --graphics none --extra-args='console=ttyS0,115200n8 serial';
+
+https://gist.github.com/plembo/f592b80eade840a51c7c52d22b2c1b63
+https://alejandro-martin.github.io/debian-installation/debian-10-01.html
+https://www.reddit.com/r/debian/comments/14hrrjh/is_there_any_way_to_install_debian_12_gnome/
+https://wiki.debian.org/Xorg
+https://www.qemu.org/download/#linux
+https://gist.github.com/yspkm/fb69f61f5fc0cc5c90bc01aded1f2204
+https://ubuntu.com/server/docs/virtual-machine-manager
+https://askubuntu.com/questions/1480090/how-to-install-ubuntu-22-04-as-guest-in-kvm
+https://gist.github.com/yspkm/fb69f61f5fc0cc5c90bc01aded1f2204
+
+sudo virt-install --name testsrv02 --os-variant debian10 --vcpus 2 --ram 2048 --disk path=,size=15,bus=virtio,format=qcow2  --location http://ftp.us.debian.org/debian/dists/stable/main/installer-amd64/ --network bridge=virbr0,model=virtio --graphics none --extra-args='console=ttyS0,115200n8 serial';
+
+# ok
+sudo virt-install --name testsrv02 --os-variant debian9 --vcpus 2 --ram 2048 --disk path=,size=15,bus=virtio,format=qcow2  --location http://ftp.us.debian.org/debian/dists/stable/main/installer-amd64/ --network bridge=virbr0,model=virtio --graphics vnc,listen=0.0.0.0 --hvm --extra-args='console=ttyS0,115200n8 serial';
+
+sudo update-grub
+apt-get install gnome-core gdm3
+
+sudo apt install gdm3 gnome-shell gnome-terminal gnome-text-editor
+sudo apt install firefox-esr nautilus nautilus-extension-gnome-terminal ffmpegthumbnailer dconf-editor
+sudo systemctl enable gdm && sudo systemctl set-default graphical.target
+sudo reboot
+
+systemctl reboot
+
+apt install xorg
+sudo apt install xserver-xorg-core
+sudo apt install xserver-xorg-core xinit
+dpkg-reconfigure keyboard-configuration
+editor /etc/X11/xorg.conf
+
+startx
+service gdm start
+service lightdm start
+poweroff or shutdown -h now
+
+sudo apt-get install qemu-system
+sudo apt install qemu-web-desktop
+sudo apt update
+sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virt-manager
+
+
+
+
