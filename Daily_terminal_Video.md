@@ -38,8 +38,11 @@
 * ffmpeg -v warning -an -video_size 1366x768 -framerate 5 -f x11grab -i :0.0 myvid_$(date +%s).mp4*
 * ffmpeg -v warning -video_size 1920x1080 -framerate 5 -f x11grab -i :0.0  myvid_$(date +%s).mov
 * ffmpeg -f x11grab  -follow_mouse centered -show_region 1 -framerate 5 -video_size 4cif -i :0.0 xmvid_$(date +%s).mov
+```
 
-
+### Loop Repeat video 3x
+```
+ffmpeg -stream_loop 3 -i input.mp4 -c copy output.mp4
 ```
 
 ### Record Screen Ubuntu every X minutes
