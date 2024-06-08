@@ -45,6 +45,11 @@
 ffmpeg -stream_loop 3 -i input.mp4 -c copy output.mp4
 ```
 
+### Concat Merge Join videos
+```
+for i in ai_cvid2*.mp4; do echo file $i >> mylist.txt; done  && ffmpeg -f concat -safe 0 -i mylist.txt -c copy output.mp4
+```
+
 ### Record Screen Ubuntu every X minutes
 ```
 * ffmpeg -v warning -video_size 1920x1080 -framerate 1 -f x11grab -i :1.0 -f segment -segment_time 60 out%03d.mp4

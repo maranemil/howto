@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<label for="fIn">frequency</label>
+<input type="range" id="fIn" min="40" max="500" oninput="show()"/>
+<span id="fOut"></span><br>
+
+<label for="tIn">type</label>
+<input type="range" id="tIn" min="0" max="3" oninput="show()"/>
+<span id="tOut"></span><br>
+
+<label for="vIn">volume</label>
+<input type="range" id="vIn" min="0" max="100" oninput="show()"/>
+<span id="vOut"></span><br>
+
+<label for="dIn">duration</label><input type="range" id="dIn" min="1" max="1000" oninput="show()"/>
+<span id="dOut"></span>
+<br>
+<button onclick='beep();'>Play</button>
+
+<script>
+
+    // https://stackoverflow.com/questions/6343450/generating-sound-on-the-fly-with-javascript-html5
+
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    show();
+
+    function show() {
+        frequency = document.getElementById("fIn").value;
+        document.getElementById("fOut").innerHTML = frequency + ' Hz';
+
+        switch (document.getElementById("tIn").value * 1) {
+            case 0:
+                type = 'sine';
+                break;
+            case 1:
+                type = 'square';
+                break;
+            case 2:
+                type = 'sawtooth';
+                break;
+            case 3:
+                type = 'triangle';
+                break;
+        }
+        document.getElementById("tOut").innerHTML = type;
+        document.getElementById("vOut").innerHTML = document.getElementById("vIn").value / 250;
+
+        duration = document.getElementById("dIn").value;
+        document.getElementById("dOut").innerHTML = duration + ' ms';
+    }
+
+    function beep() {
+        oscillator = audioCtx.createOscillator();
+        gainNode = audioCtx.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        gainNode.gain.value = 0.3;
+        oscillator.frequency.value = frequency;
+        oscillator.type = type;
+
+        oscillator.start();
+
+        setTimeout(
+            function () {
+                oscillator.stop();
+            },
+            duration
+        );
+    }
+
+    // https://developer.mozilla.org/en-US/docs/Web/API/AudioParam/linearRampToValueAtTime
+    // https://developer.mozilla.org/en-US/docs/Web/API/AudioParam/value
+</script>
+
+</body>
+</html>

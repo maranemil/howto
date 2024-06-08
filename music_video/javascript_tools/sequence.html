@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<script>
+
+    // https://stackoverflow.com/questions/46175892/audiocontext-how-to-play-the-notes-in-a-sequence
+
+    let context = new AudioContext();
+    const duration = 0.99;
+
+    function play(frequency, time) {
+        const o = context.createOscillator();
+        const g = context.createGain();
+        g.gain.value = 0.34;
+        o.connect(g);
+        g.connect(context.destination);
+        g.gain.exponentialRampToValueAtTime(
+            0.01, context.currentTime + duration + time
+        );
+        o.frequency.value = frequency;
+        o.start(time);
+        o.stop(5);
+    }
+
+    function playSeq(){
+
+        const notes = [725, 1172, 1063];
+        const interval = 0.99;
+
+        for (let i = 0; i < notes.length; i++) {
+            play(notes[i], i * interval);
+        }
+    }
+
+    // https://developer.mozilla.org/en-US/docs/Web/API/AudioParam/exponentialRampToValueAtTime
+
+
+</script>
+
+<label>Notes
+    <input name="notes" value="725, 1172, 1063"/>
+</label>
+<a href="#" onclick="playSeq()">Play</a>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+</body>
+</html>
