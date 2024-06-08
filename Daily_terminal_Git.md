@@ -67,3 +67,18 @@ git revert 453436346
 ```
 git fetch --prune
 ```
+
+
+### get last updates and abord if conflict
+```
+git fetch && git pull --rebase
+git rebase --abord
+```
+
+
+### for uncommitted changes
+```
+git stash
+git pull
+git stash apply
+```
