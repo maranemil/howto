@@ -300,6 +300,9 @@ sudo ubuntu-drivers autoinstall
 * xrandr --output HDMI-1-1 --gamma 1.0:1.0:1.0
 * xrandr --output eDP-1-1 --gamma 1.0:1.0:1.0
 
+xrandr --output eDP --brightness 0.9
+xrandr --output DisplayPort-1 --brightness 0.6
+
 
 xrandr -s 1920x1200
 xrandr -s 2560x1600
