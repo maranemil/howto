@@ -554,3 +554,37 @@ https://phpstan.org/blog/generics-in-php-using-phpdocs
 https://blog.jetbrains.com/phpstorm/2021/12/phpstorm-2021-3-release/
 https://www.php.net/manual/en/class.stdclass.php
 ~~~
+
+### Yield
+~~~
+https://stackoverflow.com/questions/17483806/what-does-yield-mean-in-php
+https://www.php.net/manual/en/language.generators.syntax.php
+
+# example 1
+function xrange($min, $max) {
+    for ($i = $min; $i <= $max; $i++) {
+        yield $i;
+    }
+}
+
+
+foreach (xrange(1, 10) as $key => $value) {
+    echo "$key => $value", PHP_EOL . "<br>";
+}
+
+# example 2
+function gen_one_to_three() {
+    for ($i = 1; $i <= 3; $i++) {
+        // Note that $i is preserved between yields.
+        yield $i;
+    }
+}
+
+$generator = gen_one_to_three();
+foreach ($generator as $value) {
+    echo "$value\n";
+}
+
+
+
+~~~
