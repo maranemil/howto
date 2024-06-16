@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Player - Loading Audio Buffer</title>
+</head>
+<body>
+
+<div>
+    <button onclick="playDrums(0)">Hi-hat</button>
+    <button onclick="playDrums(1)">Kick</button>
+    <button onclick="playDrums(2)">Snare</button>
+    <button onclick="stop()">Stop</button>
+</div>
+<div>
+    Playback rate: <input type="range" min="-100" max="100" value="0" oninput="changePlaybackRate(value)">
+</div>
+<div>
+    Detune: <input type="range" min="-100" max="100" value="0" oninput="changeDetune(value)">
+</div>
+<div>
+    <button onclick="toggleLoop()">Toggle Loop</button>
+</div>
+<div>
+    Loop start: <input type="range" min="0" max="100" value="0" oninput="changeLoopStart(value)">
+</div>
+<div>
+    Loop end: <input type="range" min="0" max="1000" value="0" oninput="changeLoopEnd(value)">
+</div>
+<script>
+
+
+    // https://web-audio-api.firebaseapp.com/audio-buffer-source-node
+    // https://ui.dev/web-audio-api
+    // https://russellgood.com/how-to-convert-audiobuffer-to-audio-file/
+
+
+    const audioBufferSourceNodeContext = new AudioContext()
+    const drumKitSoundNames = [
+        'hi-hat',
+        'kick',
+        'snare'
+    ];
+    const settings = {
+        detune: 0,
+        loop: false,
+        loopStart: 0,
+        loopEnd: 100,
+        playbackRate: 1
+    }
+    const drumKitBuffers = [];
+    // loop through the sounds we want to import
+    for(let soundName of drumKitSoundNames) {
+        // fetch them from the file system
+        fetch('/sounds/drums/' + soundName + '.wav')
+            // when we get the asynchronous response, convert to an ArrayBuffer
+            .then(response => response.arrayBuffer())
+            .then(buffer => {
+                // decode the ArrayBuffer as an AudioBuffer
+                audioBufferSourceNodeContext.decodeAudioData(buffer, decoded => {
+                    // push the resulting sound to an array
+                    drumKitBuffers.push(decoded);
+                });
+            });
+    }
+    let audioBufferSourceNode;
+    const playDrums = (index) => {
+        // allow the user to play sound
+        audioBufferSourceNodeContext.resume();
+        if(audioBufferSourceNode) audioBufferSourceNode.stop();
+        // create a new AudioBufferSourceNode
+        audioBufferSourceNode = audioBufferSourceNodeContext.createBufferSource();
+        // set the buffer to the appropriate index
+        audioBufferSourceNode.buffer = drumKitBuffers[index];
+        // connect the buffer node to the destination
+        audioBufferSourceNode.connect(audioBufferSourceNodeContext.destination);
+        // set the detune value
+        audioBufferSourceNode.detune.setValueAtTime(settings.detune, audioBufferSourceNodeContext.currentTime);
+        // set whether or not the node loops
+        audioBufferSourceNode.loop = settings.loop;
+        // set loop start and end
+        audioBufferSourceNode.loopStart = settings.loopStart;
+        audioBufferSourceNode.loopEnd = settings.loopEnd;
+        // set playback rate
+        audioBufferSourceNode.playbackRate.setValueAtTime(settings.playbackRate, audioBufferSourceNodeContext.currentTime);
+        // start playing the sound
+        audioBufferSourceNode.start();
+    }
+    const stop = () => {
+        if(audioBufferSourceNode) audioBufferSourceNode.stop();
+    }
+    const changePlaybackRate = (playbackRate) => {
+        settings.playbackRate = Math.pow(10, playbackRate / 100);
+        audioBufferSourceNode.playbackRate.setValueAtTime(settings.playbackRate, audioBufferSourceNodeContext.currentTime);
+    }
+    const changeDetune = (detune) => {
+        settings.detune = detune;
+        audioBufferSourceNode.detune.setValueAtTime(detune, audioBufferSourceNodeContext.currentTime);
+    }
+    const toggleLoop = () => {
+        settings.loop = !settings.loop;
+        audioBufferSourceNode.loop = settings.loop;
+    }
+    const changeLoopStart = (loopStart) => {
+        settings.loopStart = loopStart / 1000;
+        audioBufferSourceNode.loopStart = loopStart;
+    }
+    const changeLoopEnd = (loopEnd) => {
+        settings.loopEnd = loopEnd / 1000;
+        audioBufferSourceNode.loopEnd = loopEnd;
+    }
+</script>
+
+
+
+
+
+</body>
+
+</html>

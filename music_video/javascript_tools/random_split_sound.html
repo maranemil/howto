@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Player - Loading Audio Buffer</title>
+    <style>
+        body {}
+
+        h1,
+        h3 {
+            text-align: justify;
+            color: green;
+            margin: 20px;
+        }
+
+        .audioele {
+            margin-left: 10vw;
+        }
+
+    </style>
+</head>
+
+<body>
+<form>
+    <textarea type="text" name="file" id="file" cols=90 rows=5>https://upload.wikimedia.org/wikipedia/en/transcoded/d/dc/Strawberry_Fields_Forever_%28Beatles_song_-_sample%29.ogg/Strawberry_Fields_Forever_%28Beatles_song_-_sample%29.ogg.mp3</textarea><br />
+    <textarea type="text" name="file_replace" id="file_replace" cols=90 rows=5>https://cdn.simplecast.com/audio/56a1c6/56a1c6fa-abc9-487c-aed8-a71dbd067aef/95549871-c106-4073-826c-fd9a98f9f8e3/538274343_mamilospod_173_eu_nao_sou_racista_tc.mp3</textarea><br />
+    <button type="button" class="reload">replace</button>
+</form><br />
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+    // https://stackoverflow.com/questions/71199451/how-can-i-play-an-audio-file-at-specified-times-in-javascript-audiocontext
+    // https://www.tabnine.com/code/javascript/functions/builtins/AudioContext/decodeAudioData
+
+    // https://file-examples.com/index.php/sample-audio-files/sample-mp3-download/
+    // https://samplelib.com/sample-mp3.html
+    // https://freetestdata.com/audio-files/mp3/
+
+    let submit = document.querySelector('.reload');
+    submit.addEventListener('click', load_url);
+
+    function load_url() {
+        (async () => {
+            console.log('1')
+            await getHtml()
+            console.log('2')
+        })().catch(console.error)
+    }
+
+    async function getHtml() {
+
+        (async () => {
+
+            let url = decodeURI(document.querySelector('#file').value);
+            document.querySelector('#file_replace').value = url;
+
+            console.log('load_url', url);
+            console.log('init', url);
+
+            // (async () => {
+
+            url = decodeURI(document.querySelector('#file').value);
+            let context = new AudioContext();
+            let audioBuffer = await fetch(url)
+                .then(res => res.arrayBuffer())
+                .then(buffer => context.decodeAudioData(buffer));
+
+
+            console.log('audioBuffer');
+
+            let play = (startTime, duration) => {
+                const source = context.createBufferSource();
+                source.buffer = audioBuffer;
+                source.connect(context.destination);
+                source.start(context.currentTime, startTime, duration);
+            };
+
+            [1, 3, 5, 10, 15, 18].forEach((startTime) => {
+                let btn = document.createElement("button");
+                btn.onclick = (evt) => play(startTime, 0.1);
+                btn.textContent = "start at " + startTime + "s";
+                document.body.append(btn);
+            });
+
+            let space = document.createElement("hr");
+            document.body.append(space);
+
+            let items = Array.from({
+                length: 20
+            }, () => Math.floor(Math.random() * 20));
+
+            items.forEach((startTime) => {
+                let btn2 = document.createElement("button");
+                btn2.onclick = (evt) => play(startTime, 0.1);
+                btn2.textContent = "start at " + startTime + "s";
+                document.body.append(btn2);
+            });
+
+
+            // })().catch(console.error)
+
+        })().catch(console.error)
+
+    }
+
+</script>
+</body>
+
+</html>
