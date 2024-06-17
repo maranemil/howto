@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Player - Loading Audio Buffer</title>
+</head>
+<body>
+
+<h3> Play it using the Audio Tag?
+</h3>
+<div class="audioele">
+    <input type="file" id="fileInput" accept="audio/*">
+</div>
+
+<script>
+    // https://www.geeksforgeeks.org/how-to-load-an-audio-buffer-play-it-using-the-audio-tag/
+
+    // https://js.do/
+    // https://jsfiddle.net/
+
+    let fileInput = document.getElementById('fileInput');
+    fileInput.addEventListener('change', function (event) {
+        let file = event.target.files[0];
+        let reader = new FileReader();
+
+        reader.onload = function (event) {
+            let audioContext = new (window.AudioContext ||
+                window.webkitAudioContext)();
+            let source = audioContext.createBufferSource();
+
+            audioContext.decodeAudioData(event
+                    .target.result,
+                function (buffer) {
+
+                    source.buffer = buffer;
+                    source.connect(audioContext.destination);
+                    source.loop = true;
+                    //source.start();
+                    source.start(audioContext.currentTime, 1.1, 2);
+
+                    let audioPlayer = document.createElement('audio');
+                    audioPlayer.controls = true;
+                    audioPlayer.src = URL.createObjectURL(file);
+                    document.body.appendChild(audioPlayer);
+
+                    let play = (startTime, duration) => {
+                        const source = audioContext.createBufferSource();
+                        source.buffer = buffer;
+                        source.connect(audioContext.destination);
+                        source.start(audioContext.currentTime, startTime, duration);
+                    };
+
+                    [1, 3, 5, 10, 15, 18].forEach((startTime) => {
+                        let btn = document.createElement("button");
+                        btn.onclick = (evt) => play(startTime, 0.1);
+                        btn.textContent = "start at " + startTime + "s";
+                        document.body.append(btn);
+                    });
+
+                    let space = document.createElement("hr");
+                    document.body.append(space);
+
+                    let items = Array.from({
+                        length: 20
+                    }, () => Math.floor(Math.random() * 20));
+
+                    items.forEach((startTime) => {
+                        let btn2 = document.createElement("button");
+                        btn2.onclick = (evt) => play(startTime, 0.1);
+                        btn2.textContent = "start at " + startTime + "s";
+                        document.body.append(btn2);
+                    });
+
+
+                });
+        };
+
+        reader.readAsArrayBuffer(file);
+    });
+
+</script>
+
+
+</body>
+</html>
