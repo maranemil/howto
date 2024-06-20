@@ -588,3 +588,22 @@ foreach ($generator as $value) {
 
 
 ~~~
+
+
+### intval keys 
+~~~
+
+https://stackoverflow.com/questions/9593765/convert-a-comma-delimited-string-into-array-of-integers
+https://stackoverflow.com/questions/45504361/convert-array-keys-from-numeric-string-to-integer
+
+
+$integerIDs = array_map('intval', explode(',', $string));
+
+
+
+$keys = array_keys($data);
+$values = array_values($data);
+$intKeys = array_map('intval', $keys);
+$newData = array_combine($intKeys, $values);
+
+~~~

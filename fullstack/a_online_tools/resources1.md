@@ -316,6 +316,32 @@ https://github.com/debitbug/excalidraw-chrome-extension
 
 ------------------------------------------------------------------
 
+### JS jsfiddle
+
+- https://fiddlesalad.com/html/
+- https://www.typescriptlang.org/play/
+- https://jsbin.com/tobofareha/edit?html,output
+- https://jsbin.com/?html,output
+- https://liveweave.com/
+- https://js.do/
+- https://codepad.co/
+- https://code.collaboradev.com/
+- https://jsfiddle.net/
+
+------------------------------------------------------------------
+
+### whiteboard online
+
+- https://webwhiteboard.com/
+- https://github.com/pwa-builder/web-whiteboard
+- https://github.com/topics/whiteboard
+- https://github.com/excalidraw/excalidraw
+- https://github.com/cracker0dks/whiteboard
+- https://github.com/excalidraw/excalidraw
+
+
+------------------------------------------------------------------
+
 ### JS online code editor
 - http://jsfiddle.net/
 - http://fiddlesalad.com/javascript/
