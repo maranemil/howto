@@ -1,0 +1,863 @@
+https://realpython.com/playing-and-recording-sound-python/
+
+
+
+
+
+import numpy as np
+import simpleaudio as sa
+
+frequency = 440  # Our played note will be 440 Hz
+fs = 44100  # 44100 samples per second
+seconds = 3  # Note duration of 3 seconds
+
+# Generate array with seconds*sample_rate steps, ranging between 0 and seconds
+t = np.linspace(0, seconds, seconds * fs, False)
+
+# Generate a 440 Hz sine wave
+note = np.sin(frequency * t * 2 * np.pi)
+
+# Ensure that highest value is in 16-bit range
+audio = note * (2**15 - 1) / np.max(np.abs(note))
+# Convert to 16-bit data
+audio = audio.astype(np.int16)
+
+# Start playback
+play_obj = sa.play_buffer(audio, 1, 2, fs)
+
+# Wait for playback to finish before exiting
+play_obj.wait_done()
+
+--------------------
+
+from pydub import AudioSegment
+from pydub.playback import play
+
+sound = AudioSegment.from_wav('myfile.wav')
+play(sound)
+
+--------------------
+
+# pip install ffmpeg-python
+
+from pydub import AudioSegment
+from pydub.playback import play
+
+sound = AudioSegment.from_mp3('myfile.mp3')
+play(sound)
+
+-----------------------------
+
+import pyaudio
+import wave
+
+filename = 'myfile.wav'
+
+# Set chunk size of 1024 samples per data frame
+chunk = 1024
+
+# Open the sound file
+wf = wave.open(filename, 'rb')
+
+# Create an interface to PortAudio
+p = pyaudio.PyAudio()
+
+# Open a .Stream object to write the WAV file to
+# 'output = True' indicates that the sound will be played rather than recorded
+stream = p.open(format = p.get_format_from_width(wf.getsampwidth()),
+                channels = wf.getnchannels(),
+                rate = wf.getframerate(),
+                output = True)
+
+# Read data in chunks
+data = wf.readframes(chunk)
+
+# Play the sound by writing the audio data to the stream
+while data != '':
+    stream.write(data)
+    data = wf.readframes(chunk)
+
+# Close and terminate the stream
+stream.close()
+p.terminate()
+
+------------------------------
+
+
+
+
+import sounddevice as sd
+from scipy.io.wavfile import write
+
+fs = 44100  # Sample rate
+seconds = 3  # Duration of recording
+
+myrecording = sd.rec(int(seconds * fs), samplerate=fs, channels=2)
+sd.wait()  # Wait until recording is finished
+write('output.wav', fs, myrecording)  # Save as WAV file
+
+
+.....
+###### recording #######
+
+import pyaudio
+import wave
+
+chunk = 1024  # Record in chunks of 1024 samples
+sample_format = pyaudio.paInt16  # 16 bits per sample
+channels = 2
+fs = 44100  # Record at 44100 samples per second
+seconds = 3
+filename = "output.wav"
+
+p = pyaudio.PyAudio()  # Create an interface to PortAudio
+
+print('Recording')
+
+stream = p.open(format=sample_format,
+                channels=channels,
+                rate=fs,
+                frames_per_buffer=chunk,
+                input=True)
+
+frames = []  # Initialize array to store frames
+
+# Store data in chunks for 3 seconds
+for i in range(0, int(fs / chunk * seconds)):
+    data = stream.read(chunk)
+    frames.append(data)
+
+# Stop and close the stream
+stream.stop_stream()
+stream.close()
+# Terminate the PortAudio interface
+p.terminate()
+
+print('Finished recording')
+
+# Save the recorded data as a WAV file
+wf = wave.open(filename, 'wb')
+wf.setnchannels(channels)
+wf.setsampwidth(p.get_sample_size(sample_format))
+wf.setframerate(fs)
+wf.writeframes(b''.join(frames))
+wf.close()
+
+####### save ######
+
+import wavio
+
+wavio.write("myfile.wav", my_np_array, fs, sampwidth=2)
+
+
+....
+
+import soundfile as sf
+
+# Extract audio data and sampling rate from file
+data, fs = sf.read('myfile.wav')
+# Save as FLAC file at correct sampling rate
+sf.write('myfile.flac', data, fs)
+
+....
+
+from pydub import AudioSegment
+sound = AudioSegment.from_wav('myfile.wav')
+sound.export('myfile.mp3', format='mp3')
+
+
+from pydub import AudioSegment
+sound = AudioSegment.from_file('myfile.mp3', format='mp3')
+sound.export('myfile.wav', format='wav')
+
+
+
+https://pypi.org/project/PyAudio/
+https://people.csail.mit.edu/hubert/pyaudio/
+https://people.csail.mit.edu/hubert/pyaudio/docs/
+https://people.csail.mit.edu/hubert/pyaudio/#examples
+
+
+
+
+https://pbaumgarten.com/python/audio.md
+
+Linux / Raspberry Pi
+sudo apt-get install python-pyaudio python3-pyaudio
+From http://people.csail.mit.edu/hubert/pyaudio/#Installation
+List of audio devices
+def list_devices():
+    p = pyaudio.PyAudio()
+    device_count = p.get_device_count()
+    for i in range(0, device_count):
+        info = p.get_device_info_by_index(i)
+        print("Device {} = {}".format(info["index"], info["name"]))
+Record from microphone, process live.
+import pyaudio
+import wave
+import sys
+
+CHUNK = 1024
+FORMAT = pyaudio.paInt16
+CHANNELS = 2
+RATE = 44100
+DEVICE = 0 # use list_devices() to determine
+
+# instantiate PyAudio
+p = pyaudio.PyAudio()
+
+# open stream
+stream = p.open(format=FORMAT,
+                channels=CHANNELS,
+                rate=RATE,
+                frames_per_buffer=CHUNK,
+                input=True,
+                input_device_index=DEVICE,
+                output=False)
+                # output flag: do you want the audio to playback over speaker? Be wary of audio feedback if you set to True.
+
+# read data
+data = wf.readframes(CHUNK)
+
+# play stream
+record = True
+while record:
+    data = stream.read(CHUNK)
+    ### TO DO:
+    ### Insert your audio processing logic here
+    ###
+    record = False # At some point stop your recording!
+
+# stop stream
+stream.stop_stream()
+stream.close()
+
+# close PyAudio
+p.terminate()
+Record from microphone, save to sound file
+import pyaudio
+import wave
+import sys
+
+CHUNK = 1024
+FORMAT = pyaudio.paInt16
+CHANNELS = 2
+RATE = 44100
+TARGET_FILE = "filename.wav" # Change as required
+DEVICE = 0 # use list_devices() to determine
+
+# instantiate PyAudio
+p = pyaudio.PyAudio()
+
+# open stream
+stream = p.open(format=FORMAT,
+                channels=CHANNELS,
+                rate=RATE,
+                frames_per_buffer=CHUNK,
+                input_device_index=DEVICE,
+                input=True,
+                output=False)
+                # output flag: do you want the audio to playback over speaker? Be wary of audio feedback if you set to True.
+
+# read data
+data = wf.readframes(CHUNK)
+
+# process stream
+save_data = []
+record = True
+while record:
+    data = stream.read(CHUNK)
+    save_data.append(data)
+    ### TO DO:
+    ### Insert your audio processing logic here
+    ###
+    record = False # At some point stop your recording!
+
+# stop stream
+stream.stop_stream()
+stream.close()
+
+# close PyAudio
+p.terminate()
+
+# save to file
+wf = wave.open(TARGET_FILE, "wb")
+wf.setnchannels(CHANNELS)
+wf.setsampwidth(p.get_sample_size(FORMAT))
+wf.setframerate(RATE)
+wf.writeframes(b''.join(save_data))
+wf.close()
+Play audio file
+Analyse audio from an existing recording
+import pyaudio
+import wave
+import sys
+
+CHUNK = 1024
+
+SOURCE_FILE = "filename.wav" # Change as required
+
+# Open WAV file
+wf = wave.open(SOURCE_FILE, 'rb')
+
+# instantiate PyAudio
+p = pyaudio.PyAudio()
+
+# open audio stream
+stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
+                channels=wf.getnchannels(),
+                rate=wf.getframerate(),
+                output=True)
+
+# read data
+data = wf.readframes(CHUNK)
+
+# play stream
+while len(data) > 0:
+    stream.write(data)
+    data = wf.readframes(CHUNK)
+    ### TO DO:
+    ### Insert your audio processing logic here
+    ###
+
+# stop stream
+stream.stop_stream()
+stream.close()
+
+# close PyAudio
+p.terminate()
+Detect amplitude
+Requires numpy library.
+
+Install with pip install numpy
+Import with import numpy
+def get_amplitude_from_stream(data_stream):
+    # Convert to numpy array
+    # Switched from fromstring to frombuffer thanks to https://stackoverflow.com/questions/24974032/reading-realtime-audio-data-into-numpy-array
+    narr = numpy.frombuffer(data_stream, dtype=numpy.int16)
+    # Convert numpy arra from int16 to int32 for error free calculations when squaring
+    narr = narr.astype(numpy.int32, copy=False)
+    # Calculate the rootMeanSquare of the samples
+    # https://en.wikipedia.org/wiki/Amplitude#Root_mean_square_amplitude
+    rootMeanSquare = numpy.sqrt(numpy.mean(narr**2))
+    if rootMeanSquare > 0:
+        # Convert root mean square of raw power to a decibel scale
+        decibel = 20 * math.log10(rootMeanSquare)
+    else:
+        decibel = 0
+    return decibel
+    # end of function
+Based on source
+
+Detect frequency &/or pitch
+I have done this successfully guided a student through this process before just using numpy. Code that worked in 2018 is as follows...
+
+Install with pip install numpy
+Import with import numpy
+import numpy as np
+
+def bytes_array_to_hex_string( input ):
+    return "".join(format(x, "02x") for x in input)
+
+def get_frequency_from_stream(data_stream):
+    numpydata = np.fromstring(data_stream, dtype=np.int16)
+    w = np.fft.fft(numpydata)
+    freqs = np.fft.fftfreq(len(w))
+    idx = np.argmax(np.abs(w))
+    freq = freqs[idx]
+    freq_in_hertz = abs(freq * RATE)
+    return freq_in_hertz
+
+def determine_note(freq):
+    # From https://pages.mtu.edu/~suits/notefreqs.html
+    if freq >= 654.3 and freq <= 664.3:
+        note = "E5"
+    if freq >= 435.0 and freq <= 445.0:
+        note = "A4"
+    if freq >= 288.7 and freq <= 298.7:
+        note = "D4"
+    if freq >= 191.0 and freq <= 201.0:
+        note = "G3"
+    if freq >= 386.9 and freq <= 396.9 :
+        note = "G4"
+    if freq >= 324.6 and freq <= 334.6:
+        note = "E4"
+    if freq >= 344.2 and freq <= 354.2:
+        note = "F4"
+    if freq >= 488.9 and freq <= 498.9:
+        note = "B4"
+    if freq >= 256.6 and freq <= 266.6:
+        note = "C4"
+    return(note)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    https://raspberrypi.stackexchange.com/questions/38756/real-time-audio-input-output-in-python-with-pyaudio
+
+
+    #!/usr/bin/python
+#
+# tone.py   play a tone on raspberry pi
+#
+
+import myPyLib   # get control-C handler
+
+import time
+import math
+import pyaudio
+from numpy import linspace,sin,pi,int16
+
+pa = None;
+s  = None;
+
+def init_audio(rate=8000):
+  global pa,s
+  print "init_audio: Create PyAudio object"
+  pa = pyaudio.PyAudio()
+  print "init_audio: Open stream"
+  s = pa.open(output=True,
+            channels=1,
+            rate=rate,
+            format=pyaudio.paInt16,
+            output_device_index=0)
+  print "init_audio: audio stream initialized"
+
+def close_audio():
+  global pa,s
+  print "close_audio: Closing stream"
+  s.close()
+  print "close_audio: Terminating PyAudio Object"
+  pa.terminate()
+
+
+def note(freq, len, amp=5000, rate=8000):
+ t = linspace(0,len,len*rate)
+ data = sin(2*pi*freq*t)*amp
+ return data.astype(int16) # two byte integers
+
+def tone(freq=440.0, tonelen=0.5, amplitude=5000, rate=8000):
+  global s
+  # generate sound
+  tone = note(freq, tonelen, amplitude, rate)
+
+  # play it
+  #print "tone.main(): start playing tone"
+  s.write(tone)
+
+
+# ##### MAIN ######
+def main():
+  myPyLib.set_cntl_c_handler(close_audio)  # Set CNTL-C handler
+
+  # open audio channel
+  init_audio()
+
+  # play tones forever
+  print "tone.main(): start playing tones"
+  while True:
+    print "tone.main: tone() 440"
+    tone()
+    time.sleep(3)
+    print "tone.main: tone(261)"
+    tone(261,1)
+    time.sleep(3)
+    print "tone.main: tone(880)"
+    tone(880)
+    time.sleep(3)
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+https://llicons.jutge.org/upc-python-cookbook/signal-processing/audio-image.html
+
+>>> from scipy.io import wavfile
+>>> fs, data = wavfile.read('do.wav')
+>>> fs
+4000
+>>> data.shape
+(8000,)
+>>> data
+array([   0,    0,   -1, ...,  -43, -149, -209], dtype=int16)
+
+
+import numpy as np
+from scipy.io import wavfile
+import pyaudio
+
+def sound(array, fs=8000):
+    p = pyaudio.PyAudio()
+    stream = p.open(format=pyaudio.paInt16, channels=len(array.shape), rate=fs, output=True)
+    stream.write(array.tobytes())
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
+
+def record(duration=3, fs=8000):
+    nsamples = duration*fs
+    p = pyaudio.PyAudio()
+    stream = p.open(format=pyaudio.paInt16, channels=1, rate=fs, input=True,
+                    frames_per_buffer=nsamples)
+    buffer = stream.read(nsamples)
+    array = np.frombuffer(buffer, dtype='int16')
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
+    return array
+
+>>> sound(data, fs=4000) # The do note was recorded using a lower sampling frequency of 4000
+>>> my_recording = record() # Say something wise
+>>> sound(my_recording)
+
+
+
+
+
+>>> moon = plt.imread('moon.png')
+>>> type(moon)
+numpy.ndarray
+>>> moon.shape
+(512, 512)
+>>> moon
+plt.imshow(moon, cmap='gray')
+>>> plt.colorbar()
+>>> plt.show()
+
+
+
+
+https://www.linuxquestions.org/questions/showthread.php?p=6505133#post6505133
+
+
+#!/usr/bin/python
+
+import numpy as np
+import pyaudio
+import wave
+from playsound import playsound
+from array import *
+import soundfile as sf
+
+
+
+
+def recordCommand(fileString):
+    #Fmt = pyaudio.paInt16audio
+    Chan = 1
+    Fmt = pyaudio.paInt24
+    sr = 44100
+    Chunk = 512
+    #Chunk = 1024
+    RecSec = 3
+    OutputFile = "myWavFile.wav"
+    audio = pyaudio.PyAudio()
+
+#    print("\nDevice list:\n")
+#    info = audio.get_host_api_info_by_index(0)
+#    numdevices = info.get('deviceCount')
+#    for i in range(0, numdevices):
+#        if (audio.get_device_info_by_host_api_device_index(0, i).get('maxInputChannels')) > 0:
+#            print("Input Device id ", i, " - ", audio.get_device_info_by_host_api_device_index(0, i).get('name'))
+
+ #   print("\n")
+
+#    index = int(input('Input a number :'))
+#    print("recording via index "+str(index))
+
+#    stream = audio.open(format=Fmt, channels=Chan, rate=Rate, input=True, input_device_index = index, frames_per_buffer=Chunk)
+    stream = audio.open(format=Fmt, channels=Chan, rate=sr, input=True, input_device_index = 0, frames_per_buffer=Chunk)
+    print ("recording started")
+    Recordframes = []
+
+    for i in range(0, int(sr / Chunk * RecSec)):
+        data = stream.read(Chunk)
+        Recordframes.append(data)
+    print ("recording stopped")
+
+    stream.stop_stream()
+    stream.close()
+    audio.terminate()
+
+    print("OutputFile = " + OutputFile)
+    with wave.open(OutputFile, 'wb') as f:
+        f.setnchannels(Chan)
+        f.setsampwidth(audio.get_sample_size(Fmt))
+        f.setframerate(sr)
+        f.writeframes(b''.join(Recordframes))
+
+
+
+
+https://pytorch.org/audio/stable/tutorials/streamwriter_basic_tutorial.html
+https://pytorch.org/audio/stable/tutorials/streamwriter_advanced.html
+https://pytorch.org/audio/stable/tutorials/oscillator_tutorial.html
+https://pytorch.org/audio/stable/tutorials/audio_datasets_tutorial.html
+https://pytorch.org/audio/stable/tutorials/audio_io_tutorial.html
+https://pytorch.org/audio/stable/tutorials/hybrid_demucs_tutorial.html
+https://pytorch.org/audio/stable/tutorials/streamreader_advanced_tutorial.html
+
+
+https://gist.github.com/mirfan899/4dec738636c711d378eac1793ec95329
+
+
+microphone streaming with pyAudio
+mic_client.py
+#!/usr/bin/env python
+
+import pyaudio
+import socket
+import sys
+
+FORMAT = pyaudio.paInt16
+CHANNELS = 1
+RATE = 44100
+CHUNK = 4096
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((sys.argv[1], int(sys.argv[2])))
+audio = pyaudio.PyAudio()
+stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, output=True, frames_per_buffer=CHUNK)
+
+try:
+    while True:
+        data = s.recv(CHUNK)
+        stream.write(data)
+except KeyboardInterrupt:
+    pass
+
+print('Shutting down')
+s.close()
+stream.close()
+audio.terminate()
+mic_server.py
+#!/usr/bin/env python
+
+import pyaudio
+import socket
+import select
+
+FORMAT = pyaudio.paInt16
+CHANNELS = 1
+RATE = 44100
+CHUNK = 4096
+
+audio = pyaudio.PyAudio()
+
+serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+serversocket.bind(('', 4444))
+serversocket.listen(5)
+
+
+def callback(in_data, frame_count, time_info, status):
+    for s in read_list[1:]:
+        s.send(in_data)
+    return (None, pyaudio.paContinue)
+
+
+# start Recording
+stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=CHUNK, stream_callback=callback)
+# stream.start_stream()
+
+read_list = [serversocket]
+print "recording..."
+
+try:
+    while True:
+        readable, writable, errored = select.select(read_list, [], [])
+        for s in readable:
+            if s is serversocket:
+                (clientsocket, address) = serversocket.accept()
+                read_list.append(clientsocket)
+                print "Connection from", address
+            else:
+                data = s.recv(1024)
+                if not data:
+                    read_list.remove(s)
+except KeyboardInterrupt:
+    pass
+
+
+print "finished recording"
+
+serversocket.close()
+# stop Recording
+stream.stop_stream()
+stream.close()
+audio.terminate()
+
+
+
+
+https://www.reddit.com/r/learnpython/comments/11t0yr3/hello_im_using_pyaudio_to_send_live_recordings/
+
+
+
+recording
+
+import socket
+import pyaudio
+import wave
+import utils
+import threading
+
+chunk = 1024      # Each chunk will consist of 1024 samples
+sample_format = pyaudio.paInt16      # 16 bits per sample
+channels = 1      # Number of audio channels
+fs = 44100        # Record at 44100 samples per second
+time_in_seconds = 30
+
+
+sock = socket.socket(socket.AF_INET, # Internet
+                       socket.SOCK_DGRAM) # UDP
+
+clients = []
+
+server = socket.socket(socket.AF_INET, # Internet
+                       socket.SOCK_DGRAM) # UDP
+
+server.bind((UDP_IP, host_listener_port))
+
+
+p = pyaudio.PyAudio()  # Create an interface to PortAudio
+
+
+def send(msg, ip, port):
+    sock.sendto(msg, (ip, port))
+
+def broadcast(msg):
+    for i in clients:
+        send(msg, i[0], i[1])
+
+def handle_connection():
+    data, addr = server.recvfrom(1024)
+    print(addr[0], addr[1])
+    if addr not in clients:
+        clients.append(addr)
+        send(b"connected", addr[0], addr[1])
+
+def list_devices():
+    p2 = pyaudio.PyAudio()
+    device_count = p2.get_device_count()
+    for i in range(0, device_count):
+        info = p2.get_device_info_by_index(i)
+        print("Device {} = {}".format(info["index"], info["name"]))
+    print(p2.get_default_input_device_info())
+
+list_devices()
+
+print('-----Now Recording-----')
+
+#Open a Stream with the values we just defined
+stream = p.open(format=sample_format,
+                channels = p.get_default_input_device_info()["maxInputChannels"],
+                rate = fs,
+                frames_per_buffer = chunk,
+                input = True,
+                output=False,
+                input_device_index=p.get_default_input_device_info()["index"])
+
+frames = []  # Initialize array to store frames
+
+print(f"{fs = }, {chunk = }, {time_in_seconds = }")
+print(int(fs / chunk * time_in_seconds))
+
+# Store data in chunks for 3 seconds
+for i in range(0, int(fs / chunk * time_in_seconds)):
+    # check for connections
+    t = threading.Thread(target=handle_connection)
+    t.daemon = True
+    t.start()
+
+    data = stream.read(chunk)
+    frames.append(data)
+    broadcast(data)
+
+# Stop and close the Stream and PyAudio
+stream.stop_stream()
+stream.close()
+p.terminate()
+
+print('-----Finished Recording-----')
+
+
+broadcast("stop".encode())
+sound
+
+import socket
+import pyaudio
+import wave
+
+chunk = 1024      # Each chunk will consist of 1024 samples
+sample_format = pyaudio.paInt16      # 16 bits per sample
+channels = 1      # Number of audio channels
+fs = 44100        # Record at 44100 samples per second
+time_in_seconds = 10
+
+client = socket.socket(socket.AF_INET, # Internet
+                     socket.SOCK_DGRAM) # UDP
+
+def list_devices():
+    p2 = pyaudio.PyAudio()
+    device_count = p2.get_device_count()
+    for i in range(0, device_count):
+        info = p2.get_device_info_by_index(i)
+        print("Device {} = {}".format(info["index"], info["name"]))
+    print(p2.get_default_output_device_info())
+
+def send(msg):
+    client.sendto(msg, (UDP_IP, host_listener_port))
+
+list_devices()
+
+p = pyaudio.PyAudio()  # Create an interface to PortAudio
+stream = p.open(channels = p.get_default_output_device_info()["maxOutputChannels"],
+                format=sample_format,
+                rate = fs, # somehow when it's normal it 2 times faster
+                frames_per_buffer = chunk,
+                output=True,
+                input=False,
+                output_device_index=p.get_default_output_device_info()["index"])
+
+
+frames = []
+is_done = False
+print("listening")
+while not is_done:
+    data, addr = client.recvfrom(1024*100) # buffer size is 1024 bytes
+    if data == b"stop":
+        print(data)
+        is_done = True
+    if data[:len("listen to")] == b"listen to":
+        print(data)
+    else:
+        frames.append(data)
+        stream.write(data)
+
+stream.stop_stream()
+stream.close()
+p.terminate()
+
+
+
+
+
