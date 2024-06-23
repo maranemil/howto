@@ -228,3 +228,19 @@
 - https://github.com/open-webui/open-webui
 - https://openwebui.com/
 
+### Remove Image Background
+
+- https://www.remove.bg/uploads
+- https://www.remove.bg/
+- https://removal.ai/upload/
+- https://huggingface.co/spaces/Xenova/remove-background-web
+- https://github.com/xenova/transformers.js
+- https://retoucher.online/
+- https://pixian.ai/
+- https://www.fococlipping.com/
+- https://www.cutout.pro/remove-background
+- https://pixlr.com/remove-background/
+- https://www.unscreen.com/upload
+- https://remove-bg.ai/upload
+- https://removal.ai/
+- https://www.slazzer.com/
