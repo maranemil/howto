@@ -214,6 +214,9 @@
 - https://www.udio.com/
 - https://stability.ai/news/stable-audio-2-0
 - https://stableaudio.com/
+- https://www.audiostrip.com/ - extract drums voices
+- https://google-research.github.io/seanet/musiclm/examples/
+- 
 
 
 ### preview
