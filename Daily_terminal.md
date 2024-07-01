@@ -623,3 +623,11 @@ convert input1.jpg input1.pdf
 convert input2.jpg input2.pdf
 gs -dQUIET -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=output.pdf input1.pdf input2.pdf
 ~~~
+
+
+### after login
+~~~
+sudo sysctl -w vm.swappiness=20
+echo 3 | sudo tee /proc/sys/vm/drop_caches
+sudo systemctl reload-or-restart networkd-dispatcher.service
+~~~
