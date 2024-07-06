@@ -389,17 +389,24 @@ ffmpeg -stream_loop 0 -i out.wav -i out.mp4  -c:a aac -b:a 256k -c:v libx264 -y 
 
 ### random usage commands
 ~~~
+# crop
 ffmpeg -i in.mp4 -vf crop=1900:1000:10 out.mp4 
 ffmpeg -i in.mp4 -vf crop=1910:1080:10:1200 out.mp4 
 
+# secord screen 
 ffmpeg -v warning -framerate 30 -f x11grab -i :1.0 -f alsa -ac 2 -i default myvid_$(date +%s).mp4
+
+# slow motion
 ffmpeg -i pexels-1.mp4 -vf "setpts=1/0.5*PTS" pexels-1b.mp4 
 
+# crop one screen from x11grab
+ffmpeg -i in.mp4 -vf "crop=1900:920:10:10,eq=saturation=1.9" out.mp4;
 
+# hue
 ffmpeg -i in.mp4 -vf hue=h=5:s=3 -c:a copy out.mp4 
 ffmpeg -i in.mp4 -vf hue=s=2:h=270,curves=preset=color_negative out.mp4
 
-
+# create video with sound
 convert image.jpg image.png
 convert image.jpeg image.png
 sox "*.wav" ../out.wav
@@ -410,16 +417,14 @@ ffmpeg -stream_loop 0 -i out.wav -i out.mp4  -c:a aac -b:a 256k -c:v libx264 -y 
 
 # loop video for mp3
 ffmpeg -stream_loop -1  -i vid.mp4  -i audio.mp3 -map 0:v -map 1:a -c:v copy -shortest -y out.mp4
+
 # trim
 ffmpeg -i in.mp4 -ss 00:00 -to 03:12 out.mp4 
 
 # compress 2Gb into 200Mb
 ffmpeg  -i in.mp4 -c:a aac -b:a 256k -c:v libx264 -y out.mp4
 
-
-
-
-
+# convert
 for i in *.wav; do ffmpeg -i "$i" "$i".mp3; done 
 
 
