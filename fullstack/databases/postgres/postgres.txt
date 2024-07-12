@@ -239,3 +239,104 @@ SELECT setval('table_id_seq', (SELECT MAX(id) FROM table));
 SELECT setval('table_id_seq', (SELECT MAX(id) FROM table)+1);
 select setval('table_id_seq', max(id)) from table_name;  -- Next nextval will return  max(id) + 1
 
+############################################################
+Postgres Sequence:  reset auto-increment primary key
+############################################################
+
+https://youtrack.jetbrains.com/issue/DBE-10211/Postgres-Sequence-show-generate-the-current-value-not-the-start-value-only
+https://youtrack.jetbrains.com/issue/DBE-9881/When-creating-the-table-the-sequence-created-by-default-is-not-visible-in-the-query-editor
+https://stackoverflow.com/questions/244243/how-to-reset-postgres-primary-key-sequence-when-it-falls-out-of-sync
+https://dba.stackexchange.com/questions/193495/postgresql-truncate-a-table-on-cascade-and-reset-all-hierarchic-sequences-with
+https://stackoverflow.com/questions/5342440/reset-auto-increment-counter-in-postgres
+https://www.postgresql.org/docs/current/sql-altersequence.html
+https://www.postgresql.org/docs/current/sql-truncate.html
+https://stackoverflow.com/questions/13989243/sequence-does-not-reset-after-truncating-the-table
+https://www.postgresqltutorial.com/postgresql-tutorial/postgresql-truncate-table/
+
+
+ALTER SEQUENCE "your_sequence_name" RESTART WITH 0;
+ALTER SEQUENCE table_name_id_seq RESTART WITH 1;
+ALTER SEQUENCE table_name_id_seq RESTART; -- 8.4 or higher
+
+TRUNCATE TABLE someTable RESTART IDENTITY;
+TRUNCATE TABLE someTable RESTART IDENTITY CASCADE;
+TRUNCATE bigtable, fattable RESTART IDENTITY;
+
+...
+
+-- What is the result?
+SELECT MAX(id) FROM your_table;
+
+
+-- Then run...
+-- This should be higher than the last result.
+SELECT nextval('your_table_id_seq');
+
+
+-- If it's not higher... run this set the sequence last to your highest id.
+-- (wise to run a quick pg_dump first...)
+
+
+BEGIN;
+-- protect against concurrent inserts while you update the counter
+LOCK TABLE your_table IN EXCLUSIVE MODE;
+-- Update the sequence
+SELECT setval('your_table_id_seq', COALESCE((SELECT MAX(id)+1 FROM your_table), 1), false);
+COMMIT;
+
+...
+
+create sequence s1;
+create sequence s2 start with 25;
+
+select sequencename, start_value, currval(sequencename::varchar) as current_value
+from pg_catalog.pg_sequences
+
+...
+
+CREATE TABLE "users"
+(
+    "id"   BIGSERIAL   NOT NULL CONSTRAINT "users_pkey" PRIMARY KEY,
+    "name" VARCHAR(10) NOT NULL
+);
+
+ALTER SEQUENCE "users_id_seq" RESTART WITH 100;
+
+INSERT INTO users (name)
+VALUES ('demo')
+RETURNING *;
+
+
+############################################################
+postgresql fiddle playground
+############################################################
+
+https://onecompiler.com/postgresql
+https://www.db-fiddle.com/
+
+https://www.db-fiddle.com/
+https://codapi.org/postgres/
+https://pgplayground.com/
+
+-- create
+CREATE TABLE EMPLOYEE (
+  empId INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  dept TEXT NOT NULL
+);
+
+-- insert
+INSERT INTO EMPLOYEE VALUES (0001, 'Clark', 'Sales');
+INSERT INTO EMPLOYEE VALUES (0002, 'Dave', 'Accounting');
+INSERT INTO EMPLOYEE VALUES (0003, 'Ava', 'Sales');
+
+-- fetch
+SELECT * FROM EMPLOYEE WHERE dept = 'Sales';
+
+...
+
+create table employees(age int, name text);
+insert into employees values(25, 'Name1');
+insert into employees values(48, 'Name2');
+select * from employees;
+select * from employees where age > 40 and age < 50;
