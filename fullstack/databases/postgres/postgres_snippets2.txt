@@ -1,0 +1,35 @@
+
+############################################################
+PostgreSQL ORDER BY issue - natural sort
+############################################################
+
+https://stackoverflow.com/questions/9173558/postgresql-order-by-issue-natural-sort
+https://onecompiler.com/postgresql/
+
+
+
+-- create
+CREATE TABLE EMPLOYEE (
+  empId INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  dept TEXT NOT NULL
+);
+
+-- insert
+INSERT INTO EMPLOYEE VALUES (0001, 'Clark', 'Sales');
+INSERT INTO EMPLOYEE VALUES (0002, 'Dave', 'Accounting');
+INSERT INTO EMPLOYEE VALUES (0003, 'Ava 1', 'Sales');
+INSERT INTO EMPLOYEE VALUES (0004, 'Ava 12', 'Sales');
+INSERT INTO EMPLOYEE VALUES (0005, 'Ava 111', 'Sales');
+INSERT INTO EMPLOYEE VALUES (0006, 'Ava 2', 'Sales');
+INSERT INTO EMPLOYEE VALUES (0007, 'Ava 3', 'Sales');
+
+-- fetch
+SELECT * FROM EMPLOYEE ORDER BY ARRAY(
+    SELECT ROW(
+      CAST(COALESCE(NULLIF(match[1], ''), '2147483647') AS INTEGER),
+      match[2]
+    )
+    FROM REGEXP_MATCHES(name, '(\d*)|(\D*)', 'g')
+    AS match
+  )
