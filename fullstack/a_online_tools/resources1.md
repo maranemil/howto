@@ -1088,3 +1088,9 @@ https://hemingwayapp.com/
 ### Geocoding - get lat lon
 
 - https://developers.google.com/maps/documentation/geocoding/overview?hl=de
+
+------------------------------------------------------------------
+
+### Read news without ads
+
+https://paywallreader.com/
