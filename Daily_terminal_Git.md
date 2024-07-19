@@ -73,6 +73,8 @@ git fetch --prune
 ```
 git fetch && git pull --rebase
 git rebase --abord
+
+# git fetch -p && git pull
 ```
 
 
