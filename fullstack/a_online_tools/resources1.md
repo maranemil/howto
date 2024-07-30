@@ -1008,7 +1008,6 @@ https://hemingwayapp.com/
 - https://y2down.cc/de/
 - https://yt5s.best/de302ty/
 - https://yt5s.best/en/
-- https://en1.savefrom.net/1-youtube-video-downloader-2cs/
 
 
 ------------------------------------------------------------------
@@ -1095,3 +1094,9 @@ https://hemingwayapp.com/
 ### Read news without ads
 
 https://paywallreader.com/
+
+------------------------------------------------------------------
+
+### giphy downloader
+
+https://maximelafarie.com/giphy-downloader/
