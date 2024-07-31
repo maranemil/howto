@@ -621,6 +621,7 @@ https://hemingwayapp.com/
 - https://pimeyes.com/en
 - https://images.google.com/
 - https://yandex.com/images/
+- https://yandex.com/
 
 
 ------------------------------------------------------------------

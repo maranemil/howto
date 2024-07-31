@@ -39,49 +39,52 @@
 
 ### img
 
-| url                                                 | type                                 |
-|:----------------------------------------------------|:-------------------------------------|
-| https://arc.tencent.com/en/ai-demos/faceRestoration | face Restoration                     |  
-| https://avatarai.me/                                | AI Avatars                           |     
-| https://beta.character.ai/                          | AI Avatars                           |  
-| https://beta.openai.com/docs/guides/images          | Image generator                      | 
-| https://cleanup.pictures/                           | Retouch images                       | 
-| https://dream.ai/                                   | Artwork Generation                   | 
-| https://imgcreator.zmo.ai/                          | Creating images with text            |      
-| https://imglarger.com/                              | AI Image Enlarger                    |      
-| https://interiorai.com/                             | INTERIOR DESIGN MOCKUPS              | 
-| https://leonardo.ai/                                | AI discord Image generator           | 
-| https://lumalabs.ai/                                | Capture in lifelike 3D               |      
-| https://magicstudio.com/magiceraser                 | Remove unwanted things               |  
-| https://midjourney.gitbook.io/docs/                 | AI discord Image generator           | 
-| https://openai.com/dall-e-2/                        | AI realistic images  generator       | 
-| https://openart.ai/                                 | AI Image generator                   | 
-| https://photosonic.writesonic.com/                  | AI painter                           |      
-| https://prisma-ai.com/lensa                         | all-in-one image editing             | 
-| https://stablediffusion.fr/inpainting               | RunwayML Stable Diffusion Inpainting | 
-| https://stablediffusionweb.com/                     | text-to-image diffusion model        | 
-| https://unrealme.io/                                | AI generated avatar                  | 
-| https://www.bing.com/images/create/                 | AI bing Image generator              | 
-| https://www.bluewillow.ai/                          | AI discord Image generator           | 
-| https://www.img2go.com/colorize-image               | AI colorize image                    | 
-| https://www.profilepicture.ai/                      | Profile picture with AI              |
-| https://www.strmr.com/#Astria                       | AI image generation                  |
-| https://zyro.com/de/tools/image-resizer             | Image Resizer                        | 
-| https://zyro.com/de/tools/image-resizer             | Image resizer                        | 
-| https://zyro.com/de/tools/image-upscaler            | Image upscaler                       | 
-| https://segment-anything.com/                       |                                      |
-| https://www.blockadelabs.com/                       |                                      |
-| https://www.canva.com/de_de/                        |                                      |
-| https://www.autodraw.com/                           |                                      |
-| https://looka.com/                                  |                                      |
-| https://www.seaart.ai/home                          |                                      |
-| https://neural.love/ai-art-generator                |                                      |
-| https://bigjpg.com/                                 |                                      |
-| https://neural.love/                                |                                      |
-| https://bigjpg.com/                                 | Image Resizer                        |
-| https://jpghd.com/                                  | Image Resizer                        |
-| https://www.upscale.media/de                        | Image Resizer                        |
-| http://www.writingpromptgenerator.com/#             | Image prompt gen                     |
+| url                                                               | type                                 |
+|:------------------------------------------------------------------|:-------------------------------------|
+| https://arc.tencent.com/en/ai-demos/faceRestoration               | face Restoration                     |  
+| https://avatarai.me/                                              | AI Avatars                           |     
+| https://beta.character.ai/                                        | AI Avatars                           |  
+| https://beta.openai.com/docs/guides/images                        | Image generator                      | 
+| https://cleanup.pictures/                                         | Retouch images                       | 
+| https://dream.ai/                                                 | Artwork Generation                   | 
+| https://imgcreator.zmo.ai/                                        | Creating images with text            |      
+| https://imglarger.com/                                            | AI Image Enlarger                    |      
+| https://interiorai.com/                                           | INTERIOR DESIGN MOCKUPS              | 
+| https://leonardo.ai/                                              | AI discord Image generator           | 
+| https://lumalabs.ai/                                              | Capture in lifelike 3D               |      
+| https://magicstudio.com/magiceraser                               | Remove unwanted things               |  
+| https://midjourney.gitbook.io/docs/                               | AI discord Image generator           | 
+| https://openai.com/dall-e-2/                                      | AI realistic images  generator       | 
+| https://openart.ai/                                               | AI Image generator                   | 
+| https://photosonic.writesonic.com/                                | AI painter                           |      
+| https://prisma-ai.com/lensa                                       | all-in-one image editing             | 
+| https://stablediffusion.fr/inpainting                             | RunwayML Stable Diffusion Inpainting | 
+| https://stablediffusionweb.com/                                   | text-to-image diffusion model        | 
+| https://unrealme.io/                                              | AI generated avatar                  | 
+| https://www.bing.com/images/create/                               | AI bing Image generator              | 
+| https://www.bluewillow.ai/                                        | AI discord Image generator           | 
+| https://www.img2go.com/colorize-image                             | AI colorize image                    | 
+| https://www.profilepicture.ai/                                    | Profile picture with AI              |
+| https://www.strmr.com/#Astria                                     | AI image generation                  |
+| https://zyro.com/de/tools/image-resizer                           | Image Resizer                        | 
+| https://zyro.com/de/tools/image-resizer                           | Image resizer                        | 
+| https://zyro.com/de/tools/image-upscaler                          | Image upscaler                       | 
+| https://segment-anything.com/                                     |                                      |
+| https://www.blockadelabs.com/                                     |                                      |
+| https://www.canva.com/de_de/                                      |                                      |
+| https://www.autodraw.com/                                         |                                      |
+| https://looka.com/                                                |                                      |
+| https://www.seaart.ai/home                                        |                                      |
+| https://neural.love/ai-art-generator                              |                                      |
+| https://bigjpg.com/                                               |                                      |
+| https://neural.love/                                              |                                      |
+| https://bigjpg.com/                                               | Image Resizer                        |
+| https://jpghd.com/                                                | Image Resizer                        |
+| https://www.upscale.media/de                                      | Image Resizer                        |
+| http://www.writingpromptgenerator.com/#                           | Image prompt gen                     |
+| https://deepai.org/machine-learning-model/cute-creature-generator | Image prompt gen                     |
+
+
 
 ### voice
 
@@ -132,6 +135,11 @@
 | https://www.myheritage.de/deep-nostalgia               |                       | 
 | https://github.com/Picsart-AI-Research/Text2Video-Zero | text to video         | 
 | https://stable-diffusion-art.com/video-to-video/       | video to video        | 
+| https://www.vidnoz.com/image-to-video-ai.html          | image to video        | 
+
+
+- https://stability.ai/
+- https://huggingface.co/stabilityai/stable-video-diffusion-img2vid-xt
 
 ### music
 
