@@ -809,6 +809,15 @@ https://hemingwayapp.com/
 - https://string-functions.com/case.aspx
 - https://www.textfixer.com/tools/uppercase-lowercase-text.php
 
+
+------------------------------------------------------------------
+
+### Text Formating
+
+- https://capitalizemytitle.com/italic-text-generator/#
+- https://www.namecheap.com/visual/font-generator/italic/
+
+
 ------------------------------------------------------------------
 
 ### Text sort remove duplicate lines

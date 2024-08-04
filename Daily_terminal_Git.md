@@ -74,7 +74,8 @@ git fetch --prune
 git fetch && git pull --rebase
 git rebase --abord
 
-# git fetch -p && git pull
+git fetch -p && git pull && git rebase master && git rebase develop
+git remote update origin --prune
 ```
 
 
