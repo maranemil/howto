@@ -139,6 +139,15 @@
 
 ------------------------------------------------------------------
 
+### CamelCase converter
+
+- https://appdevtools.com/case-converter
+- https://de.toolpage.org/tool/camelcase
+
+
+
+------------------------------------------------------------------
+
 ### draw canvas
 
 - https://help.gliffy.com/online/Content/GliffyCommon/Using-gliffy-editor.htm
@@ -250,6 +259,11 @@ https://github.com/debitbug/excalidraw-chrome-extension
 
 - https://facecheck.id/de
 
+------------------------------------------------------------------
+
+### Facebook video downloader
+
+- https://fdown.net/download.php
 
 ------------------------------------------------------------------
 
@@ -268,6 +282,7 @@ https://github.com/debitbug/excalidraw-chrome-extension
 - https://onlinegiftools.com/sharpen-gif # sharpen
 
 ------------------------------------------------------------------
+
 ### Git
 
 - https://gitea.io/en-us/
@@ -275,6 +290,18 @@ https://github.com/debitbug/excalidraw-chrome-extension
 - https://github.com/
 - https://bitbucket.org/product
 - https://gitlab.com/gitlab-org/gitlab
+
+------------------------------------------------------------------
+
+### Giphy downloader
+
+https://maximelafarie.com/giphy-downloader/
+
+------------------------------------------------------------------
+
+### Geocoding - get lat lon
+
+- https://developers.google.com/maps/documentation/geocoding/overview?hl=de
 
 ------------------------------------------------------------------
 ### Charts and Graphs
@@ -728,6 +755,13 @@ https://hemingwayapp.com/
 - https://www.postman.com/downloads/?utm_source=postman-home
 - https://www.soapui.org/tools/soapui/
 
+
+------------------------------------------------------------------
+
+### Read news without ads
+
+https://paywallreader.com/
+
 ------------------------------------------------------------------
 
 ### SQL online code editor
@@ -772,6 +806,24 @@ https://hemingwayapp.com/
 ### sed tester
 
 - https://sed.js.org/
+------------------------------------------------------------------
+
+### Sha1 generator
+
+- https://cryptii.com/pipes/md5-hash
+- https://www.generate-hash.com/sha1
+- http://www.sha1-online.com/
+- https://passwordsgenerator.net/sha1-hash-generator/
+- 
+------------------------------------------------------------------
+
+### Song searcher
+
+- http://www.musipedia.org/
+- https://blog.research.google/2018/09/googles-next-generation-music.html
+- https://www.midomi.com/
+- https://www.shazam.com/de
+- https://www.shazam.com/de/home
 
 ------------------------------------------------------------------
 
@@ -809,14 +861,12 @@ https://hemingwayapp.com/
 - https://string-functions.com/case.aspx
 - https://www.textfixer.com/tools/uppercase-lowercase-text.php
 
-
 ------------------------------------------------------------------
 
 ### Text Formating
 
 - https://capitalizemytitle.com/italic-text-generator/#
 - https://www.namecheap.com/visual/font-generator/italic/
-
 
 ------------------------------------------------------------------
 
@@ -889,6 +939,38 @@ https://hemingwayapp.com/
 
 - https://k6.io/
 - https://github.com/grafana/k6
+
+------------------------------------------------------------------
+
+### Tutorials
+
+- https://www.w3schools.com/java/java_syntax.asp
+- https://www.tutorialspoint.com/java16/index.htm
+- https://wiki.selfhtml.org/wiki/HTML/Elemente
+- 
+------------------------------------------------------------------
+
+### Text summarizer
+
+- https://www.summarizingtool.net/
+- https://www.paraphraser.io/text-summarizer
+- https://www.scribbr.com/text-summarizer/
+- https://www.summarizer.org/
+- https://resoomer.com/en/
+- https://www.semrush.com/goodcontent/summary-generator/
+- https://summarizing-tool.com/summarize/#result
+- https://www.prepostseo.com/tool/text-summarizer
+- https://www.check-plagiarism.com/text-summarizer
+- https://www.rephrase.info/text-summarizer
+- https://parafrasist.com/en
+- https://www.textcompactor.com/
+- https://huggingface.co/spaces/Gladiator/Text-Summarizer#files
+- https://www.splitbrain.org/services/ots
+- https://textsummarization.net/text-summarizer#bullet
+- https://paraphrasing-tool.com/summarizer-tool
+- https://sassbook.com/ai-summarizer
+- https://esummarizer.com/summarize#bullet
+- https://hix.ai/summarizer
 
 ------------------------------------------------------------------
 
@@ -997,8 +1079,6 @@ https://hemingwayapp.com/
 
 - https://www.whatruns.com/
 
-
-
 ------------------------------------------------------------------
 
 ### YouTube Dailymotion downloader
@@ -1019,7 +1099,6 @@ https://hemingwayapp.com/
 - https://yt5s.best/de302ty/
 - https://yt5s.best/en/
 
-
 ------------------------------------------------------------------
 
 ### YouTube video summarizer
@@ -1030,83 +1109,3 @@ https://hemingwayapp.com/
 - https://notegpt.io/youtube-summary-with-chatgpt
 - https://resnote.com/summarizer#transcript
 - https://youtubesummarizer.com/watch/#transcript
-
-------------------------------------------------------------------
-
-### Facebook video downloader
-
-- https://fdown.net/download.php
-
-------------------------------------------------------------------
-
-
-### Text summarizer
-
-- https://www.summarizingtool.net/
-- https://www.paraphraser.io/text-summarizer
-- https://www.scribbr.com/text-summarizer/
-- https://www.summarizer.org/
-- https://resoomer.com/en/
-- https://www.semrush.com/goodcontent/summary-generator/
-- https://summarizing-tool.com/summarize/#result
-- https://www.prepostseo.com/tool/text-summarizer
-- https://www.check-plagiarism.com/text-summarizer
-- https://www.rephrase.info/text-summarizer
-- https://parafrasist.com/en
-- https://www.textcompactor.com/
-- https://huggingface.co/spaces/Gladiator/Text-Summarizer#files
-- https://www.splitbrain.org/services/ots
-- https://textsummarization.net/text-summarizer#bullet
-- https://paraphrasing-tool.com/summarizer-tool
-- https://sassbook.com/ai-summarizer
-- https://esummarizer.com/summarize#bullet
-- https://hix.ai/summarizer
-
-------------------------------------------------------------------
-### Song searcher
-
-- http://www.musipedia.org/
-- https://blog.research.google/2018/09/googles-next-generation-music.html
-- https://www.midomi.com/
-- https://www.shazam.com/de
-- https://www.shazam.com/de/home
-
-------------------------------------------------------------------
-### Sha1 generator
-
-- https://cryptii.com/pipes/md5-hash
-- https://www.generate-hash.com/sha1
-- http://www.sha1-online.com/
-- https://passwordsgenerator.net/sha1-hash-generator/
-
-------------------------------------------------------------------
-### CamelCase converter
-
-- https://appdevtools.com/case-converter
-- https://de.toolpage.org/tool/camelcase
-
-------------------------------------------------------------------
-
-### Tutorials
-
-- https://www.w3schools.com/java/java_syntax.asp
-- https://www.tutorialspoint.com/java16/index.htm
-- https://wiki.selfhtml.org/wiki/HTML/Elemente
-
-------------------------------------------------------------------
-
-### Geocoding - get lat lon
-
-- https://developers.google.com/maps/documentation/geocoding/overview?hl=de
-
-------------------------------------------------------------------
-
-### Read news without ads
-
-https://paywallreader.com/
-
-------------------------------------------------------------------
-
-### giphy downloader
-
-https://maximelafarie.com/giphy-downloader/
