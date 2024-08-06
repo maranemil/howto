@@ -103,7 +103,7 @@ ffmpeg -i in.mp4 -vf crop=1800:900 -c:a copy out.mp4
 
 ```
 # compress with x265 
-fmpeg -i in.mp4 -c:v libx265 -c:a copy -x265-params pools=2 out2.mp4
+ffmpeg -i in.mp4 -c:v libx265 -c:a copy -x265-params pools=2 out2.mp4
 
 # compress with h264 mp3
 ffmpeg -i in.mp4 -vcodec h264 -acodec mp3 -b:a 192k  out.mp4
