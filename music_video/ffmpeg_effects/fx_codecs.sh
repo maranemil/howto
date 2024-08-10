@@ -76,3 +76,11 @@ mkdir exp && for f in *.MOV; do ffmpeg -y -i $f -q:v 0 -threads 2 exp/$f.out.mp4
 mkdir exp && for f in *.MOV; do ffmpeg -y -i $f -q:v 0 -threads 2 -preset veryfast exp/$f.out.mp4; done
 for f in *.MOV; do ffmpeg -y -i $f -q:v 0 -threads 2 -preset fast $f.put.mp4; done
 for f in *.MOV; do ffmpeg -y -i $f -q:v 0 -threads 2 -preset veryfast $f.put.mp4; done
+
+
+# faster-encoding-at-a-decent-bitrate
+# https://stackoverflow.com/questions/39473434/ffmpeg-command-for-faster-encoding-at-a-decent-bitrate-with-smaller-file-size
+
+-c:v libx264 -preset veryfast -tune film -vprofile high -crf 22 -s 640x360 -aspect 16:9 -pix_fmt yuv420p -g 250 -r 25
+
+ -c:a aac -b:a 128k -ac 2 -ar 44100
