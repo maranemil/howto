@@ -112,6 +112,10 @@ ffmpeg -i in.mp4 -vcodec h264 -acodec mp3 -b:a 64k  out.mp4
 2x speed veryfast
 for i in *.*; do ffmpeg -i $i -vf eq=saturation=0.7 -vcodec h264 -b:v 8000k -acodec mp3 -b:a 96k -threads 2 -preset veryfast -tune zerolatency $i.out.mp4; done
 
+
+Linux GPU -  H.265 alias HEVC RADEON 6x
+ffmpeg -hwaccel vaapi -hwaccel_output_format vaapi -i in.mp4 -vf 'format=vaapi,hwupload' -c:v hevc_vaapi -qp 32 output.mp4
+
 ```
 
 
