@@ -1,0 +1,65 @@
+
+
+https://trac.ffmpeg.org/wiki/Encode/H.265
+https://trac.ffmpeg.org/wiki/Encode/H.264
+
+ultrafast
+superfast
+veryfast
+faster
+fast
+medium – default preset
+slow
+slower
+veryslow
+
+
+
+https://trac.ffmpeg.org/wiki/Hardware/QuickSync
+
+ffmpeg -decoders
+
+ V....D h264_mf              H264 via MediaFoundation (codec h264)
+ V....D h264_nvenc           NVIDIA NVENC H.264 encoder (codec h264)
+ V..... h264_qsv             H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10 (Intel Quick Sync Video acceleration) (codec h264)
+ V....D h264_vaapi           H.264/AVC (VAAPI) (codec h264)
+ VF...D hdr                  HDR (Radiance RGBE format) image
+ V....D libx265              libx265 H.265 / HEVC (codec hevc)
+ V....D hevc_amf             AMD AMF HEVC encoder (codec hevc)
+ V....D hevc_mf              HEVC via MediaFoundation (codec hevc)
+ V....D hevc_nvenc           NVIDIA NVENC hevc encoder (codec hevc)
+ V..... hevc_qsv             HEVC (Intel Quick Sync Video acceleration) (codec hevc)
+ V....D hevc_vaapi           H.265/HEVC (VAAPI) (codec hevc)
+ VF...D huffyuv              Huffyuv / HuffYUV
+
+
+https://gist.github.com/nico-lab/58ac62e359bd63feed36af64db3e4406
+
+ffmpeg -h encoder=hevc_qsv
+
+  -preset            <int>        E..V....... (from 0 to 7) (default 0)
+     veryfast        7            E..V.......
+     faster          6            E..V.......
+     fast            5            E..V.......
+     medium          4            E..V.......
+     slow            3            E..V.......
+     slower          2            E..V.......
+     veryslow        1            E..V.......
+
+
+
+GPU 9x local drive
+.\ffmpeg.exe -i input.mp4  -vcodec hevc_qsv  -threads 2 -tune zerolatency -preset faster  -y output.mp4
+
+
+
+Linux CPU - 2x speed
+ for i in *.*; do ffmpeg -i $i -vf eq=saturation=0.5 -vcodec h264 -b:v 8000k -acodec mp3 -b:a 48k -threads 3 -preset superfast -tune zerolatency -y $i.out.mp4; done
+
+Windows 11 CPU - 2x speed
+ foreach ($i in Get-ChildItem E:\GOPRO\p2\*.MP4) { .\ffmpeg.exe  -i $i -vf eq=saturation=0.5 -vcodec h264 -b:v 8000k -acodec mp3 -b:a 48k -threads 3 -preset superfast -tune zerolatency -y "$i.out.mp4" }
+
+Windows 11 GPU - 3x speed
+ foreach ($i in Get-ChildItem E:\GOPRO\p2\*.MP4) { .\ffmpeg.exe  -i $i -vf eq=saturation=0.5 -vcodec hevc_qsv -b:v 8000k -acodec mp3 -b:a 48k -threads 2 -tune zerolatency -preset faster -y "$i.out.mp4" }
+
+
