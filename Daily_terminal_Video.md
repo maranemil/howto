@@ -109,7 +109,7 @@ ffmpeg -i in.mp4 -c:v libx265 -c:a copy -x265-params pools=2 out2.mp4
 ffmpeg -i in.mp4 -vcodec h264 -acodec mp3 -b:a 64k  out.mp4
 
 6x speed compress
-for i in *.*; do ffmpeg -i $i -vf eq=saturation=0.7 -vcodec h264 -b:v 6000k -acodec mp3 -b:a 96k -threads 2 -preset ultrafast -tune zerolatency $i.out.mp4; done
+for i in *.*; do ffmpeg -i $i -vf eq=saturation=0.7 -vcodec h264 -b:v 8000k -acodec mp3 -b:a 96k -threads 2 -preset fast -tune zerolatency $i.out.mp4; done
 
 ```
 
