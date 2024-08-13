@@ -1089,6 +1089,7 @@ https://paywallreader.com/
 - https://freedownloadvideo.net/dailymotion-video-downloader
 - https://freedownloadvideo.net/site7/
 - https://loader.to/en15/1080p-video-downloader.html
+- https://savefrom.to/452
 - https://ssyoutube.com/de51XA/youtube-video-downloader
 - https://ssyoutube.com/de68LX/youtube-video-downloader
 - https://ssyoutube.com/en158DC/youtube-video-downloader
