@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+  </head>
+  <body>
+    <label>
+      Colors </label> <input id="colors" autocomplete="off">
+    <ul id="acomplete"></ul>
+    <input id="color">
+
+    <script>
+      var colors = [{
+          "color": "black",
+          "category": "hue",
+          "type": "primary",
+          "code": {
+            "rgba": [255, 255, 255, 1],
+            "hex": "#000"
+          }
+        },
+        {
+          "color": "white",
+          "category": "value",
+          "code": {
+            "rgba": [0, 0, 0, 1],
+            "hex": "#FFF"
+          }
+        },
+      ];
+
+
+      const input = document.getElementById('colors');
+      const acomplete = document.getElementById('acomplete');
+      //let colors = [];
+
+      function search(colors, nameKey) {
+        let results = [];
+        let j = 0;
+        for (let i = 0; i < colors.length; i++) {
+          if (
+            colors[i].color.toUpperCase().indexOf(nameKey.toUpperCase()) !== -1) {
+            results[j] = colors[i];
+            j++;
+          }
+        }
+        return results;
+      }
+
+      acomplete.onclick = function(e) {
+        e.preventDefault();
+        let selectedName = e.target.innerText
+        let selectedId = e.target.dataset.number
+        let ui = colors.find(p => p.name === selectedName);
+      }
+
+      function loadJson(url, needle, callback) {
+        const xhttp = new XMLHttpRequest();
+        xhttp.open("GET", url + "?q=" + needle, true);
+        xhttp.send();
+
+        xhttp.onreadystatechange = function() {
+          if (this.readyState === 4 && this.status === 200) {
+            const regexStatus = /(\w+ state:.*?)</g;
+            const response = xhttp.responseText;
+            const statuses = response.match(regexStatus);
+
+            if (callback) callback(JSON.parse(xhttp.resposeText));
+
+          }
+        }
+      }
+
+
+      input.onkeyup = function(e) {
+        let input_val = this.value
+        let acomplete = document.getElementById('acomplete');
+        acomplete.innerHTML = '';
+
+        // let url = 'http://localhost/colors.js'
+        /*
+        loadJson(url,input_val, function(response){
+          colors = response
+          let results= []
+          for(let i = 0; i< results.length; i++){
+          acomplete.innerHTML += "<li data-number='" + res[i].number +"'>" + res[i].name + "</li>"
+          }
+
+        })*/
+
+        let resv = search(colors, input_val)
+
+        for (let i = 0; i < resv.length; i++) {
+          acomplete.innerHTML += "<li data-number='" + resv[i].color + "'>" + resv[i].category + "</li>"
+        }
+
+      }
+
+    </script>
+
+  </body>
+
+</html>

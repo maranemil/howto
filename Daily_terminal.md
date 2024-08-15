@@ -631,3 +631,9 @@ sudo sysctl -w vm.swappiness=20
 echo 3 | sudo tee /proc/sys/vm/drop_caches
 sudo systemctl reload-or-restart networkd-dispatcher.service
 ~~~
+
+
+### generate new file
+~~~
+touch  web_journey/search_$(date +%s).txt
+~~~

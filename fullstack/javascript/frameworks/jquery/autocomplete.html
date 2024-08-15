@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>jQuery UI Autocomplete - Custom data and display</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="https://jqueryui.com/wp-content/themes/jquery/lib/typesense-minibar/typesense-minibar.css?v=1.3.2">
+	<link rel="stylesheet" href="https://jqueryui.com/wp-content/themes/jquery/css/base.css?v=17">
+	<link rel="stylesheet" href="https://jqueryui.com/wp-content/themes/jqueryui.com/style.css?v=8">
+
+    <style>
+      body {
+        background-color: darkblue;
+      }
+
+      #project-label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 1em;
+      }
+
+      #project-icon {
+        float: left;
+        height: 32px;
+        width: 32px;
+      }
+
+      #project-description {
+        margin: 0;
+        padding: 0;
+      }
+
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+    <script>
+      $(function() {
+        const projects = [{
+            value: "jquery",
+            label: "jQuery",
+            desc: "the write less, do more, JavaScript"
+          },
+          {
+            value: "jquery-ui",
+            label: "jQuery UI",
+            desc: "the official ufor jQuery"
+          },
+          {
+            value: "sizzlejs",
+            label: "Sizzle JS",
+            desc: "a pure-JavaScript CSS selector engine"
+          }
+        ];
+
+        function search(needle, myarray) {
+          //console.log(needle)
+          //console.log(myarray)
+          let matches = []
+          let j = 0;
+          for (let i = 0; i < myarray.length; i++) {
+            if (myarray[i].value.toUpperCase().indexOf(needle.toUpperCase()) !== -1) {
+              matches[j] = myarray[i];
+              //console.log(myarray[i].label)
+
+              j++;
+            }
+          }
+          return (matches);
+        }
+
+        $("#project").autocomplete({
+            minLength: 0,
+            delay: 500,
+            // source: projects,
+            source: function(request, response) {
+
+              //console.log(projects)
+              const needle = $('#project').val();
+              const result = search(needle, projects);
+              console.log(result)
+              response (result);
+
+            },
+            focus: function(event, ui) {
+              $("#project").val(ui.item.label);
+              return false;
+            },
+            select: function(event, ui) {
+              $("#project").val(ui.item.label);
+              $("#project-id").val(ui.item.value);
+              $("#project-description").val(ui.item.desc);
+              return false;
+            }
+          })
+          .autocomplete("instance")._renderItem = function(ul, item) {
+            return $("<li>")
+              .append("<div>" + item.label  + "</div>")
+              .appendTo(ul);
+          };
+      });
+
+    </script>
+  </head>
+
+  <body>
+    <div id="project-label">Select (type "j" ):</div>
+    <input id="project">
+    <input type="text" id="project-id">
+    <input id="project-description">
+  </body>
+
+</html>
