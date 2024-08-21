@@ -122,22 +122,30 @@
 
 ### video
 
-| url                                                    | type                  |
-|:-------------------------------------------------------|:----------------------|
-| https://invideo.io/                                    | Video editor          | 
-| https://www.gliacloud.com/en/                          | Video generator       |
-| https://www.veed.io/                                   | Video editor          | 
-| https://www.capcut.com/                                | video editor          | 
-| https://research.runwayml.com/gen2                     | video gen2  generator | 
-| https://www.move.ai/                                   |                       | 
-| https://www.kaiber.ai/                                 |                       | 
-| https://convert.leiapix.com/                           |                       | 
-| https://www.myheritage.de/deep-nostalgia               |                       | 
-| https://github.com/Picsart-AI-Research/Text2Video-Zero | text to video         | 
-| https://stable-diffusion-art.com/video-to-video/       | video to video        | 
-| https://www.vidnoz.com/image-to-video-ai.html          | image to video        | 
-| https://creatus.ai/image-animation-image-to-video      | image to video f      | 
-| https://huggingface.co/spaces/vinthony/SadTalker       | image to video f      | 
+| url                                                                            | type                  |
+|:-------------------------------------------------------------------------------|:----------------------|
+| https://invideo.io/                                                            | Video editor          | 
+| https://www.gliacloud.com/en/                                                  | Video generator       |
+| https://www.veed.io/                                                           | Video editor          | 
+| https://www.capcut.com/                                                        | video editor          | 
+| https://research.runwayml.com/gen2                                             | video gen2  generator | 
+| https://www.move.ai/                                                           |                       | 
+| https://www.kaiber.ai/                                                         |                       | 
+| https://convert.leiapix.com/                                                   |                       | 
+| https://www.myheritage.de/deep-nostalgia                                       |                       | 
+| https://github.com/Picsart-AI-Research/Text2Video-Zero                         | text to video         | 
+| https://stable-diffusion-art.com/video-to-video/                               | video to video        | 
+| https://www.vidnoz.com/image-to-video-ai.html                                  | image to video        | 
+| **huggingface**                                                                |                       | 
+| https://creatus.ai/image-animation-image-to-video                              | image to video fk     | 
+| https://huggingface.co/spaces/vinthony/SadTalker                               | image to video fk     | 
+| https://huggingface.co/spaces/Doubiiu/DynamiCrafter                            | image to video fk     | 
+| https://huggingface.co/spaces/vilarin/Diffutoon-ExVideo                        | image to video fk     | 
+| https://huggingface.co/spaces/Ankinow/Stable-Video-Diffusion-Img2Vid-10seconds | image to video fk     | 
+| https://huggingface.co/spaces/multimodalart/stable-video-diffusion             | image to video wk     | 
+| https://huggingface.co/spaces/wangfuyun/AnimateLCM-SVD                         | image to video wk     | 
+| https://huggingface.co/spaces/heheyas/V3D                                      | image to video wk     | 
+| https://huggingface.co/spaces/Dragunflie-420/AnimateLCM-SVD                    | image to video wk     | 
 
 
 - https://stability.ai/
