@@ -1,0 +1,825 @@
+########################################
+networking
+########################################
+
+https://nono.ma/docker-bash-ubuntu
+
+docker network create -d bridge bridge-test-em
+docker network create --driver=bridge --subnet=172.18.0.0/16 bridge-test-em-subnet
+docker network create --driver=bridge --subnet=192.168.1.0/24 --ip-range=192.168.1.71/32 --gateway=192.168.1.1 bridge-test-em-subnet-local  /// ok
+docker network create --driver=bridge --subnet=192.168.0.0/16 br0
+
+docker network ls
+docker network inspect bridge-test-em
+
+
+docker run -it --rm --name ubuntu-em --network bridge-test-em ubuntu /bin/bash
+docker run -it --rm --name ubuntu-em --network bridge-test-em-subnet-local -p 8080:8080 --dns 8.8.8.8 ubuntu /bin/bash   /// ok
+
+
+apt update
+apt install nano net-tools python3 iputils-ping iproute2 iptables -y
+
+iconfig
+172.21.0.2
+ifconfig -a
+
+python3 -m http.server -port 8080
+python3 -m http.server 8000 --bind 127.0.0.1
+python3 -m http.server 8082 --bind 192.168.1.71 --directory /tmp --protocol HTTP/1.1
+
+netstat -atun
+
+ip addr show eth0
+route
+iptables --list
+
+
+--
+
+docker run -p 192.168.0.3:22:22 sshd
+
+docker network create --subnet=172.18.0.0/16 mynet123
+docker run --net mynet123 --ip 172.18.0.22 -it ubuntu bash
+
+
+https://docker-k8s-lab.readthedocs.io/en/latest/docker/create-new-bridge.html
+https://docs.docker.com/reference/cli/docker/network/create/
+
+
+docker network create --driver=bridge --subnet=192.168.0.0/16 br0
+
+docker network create \
+  --driver=bridge \
+  --subnet=172.28.0.0/16 \
+  --ip-range=172.28.5.0/24 \
+  --gateway=172.28.5.254 \
+  br0
+
+docker network create -d overlay \
+  --subnet=192.168.10.0/25 \
+  --subnet=192.168.20.0/25 \
+  --gateway=192.168.10.100 \
+  --gateway=192.168.20.100 \
+  --aux-address="my-router=192.168.10.5" --aux-address="my-switch=192.168.10.6" \
+  --aux-address="my-printer=192.168.20.5" --aux-address="my-nas=192.168.20.6" \
+  my-multihost-network
+
+  docker network create \
+    -o "com.docker.network.bridge.host_binding_ipv4"="172.19.0.1" \
+    simple-network-em
+
+
+----------------
+
+version: "3.7"
+
+services:
+  mariadb6:
+    image: mariadb:latest
+    restart: unless-stopped
+    networks:
+      test_net:
+        ipv4_address: 192.168.1.71
+    volumes:
+      - mariadb-data:/var/lib/mysql
+      - mariadb-conf:/etc/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: test
+    ports:
+      - "3306:3306"
+
+volumes:
+  mariadb-data:
+  mariadb-conf:
+
+networks:
+  test_net:
+    driver: macvlan
+    driver_opts:
+      parent: enp0s4
+    ipam:
+      config:
+        - subnet: "192.168.1.0/24"
+          ip_range: "192.168.1.71/32"
+          gateway: "192.168.1.1"
+
+
+
+https://hub.docker.com/_/python
+
+docker run -it --rm --name my-running-script -v "$PWD":/usr/src/myapp -w /usr/src/myapp python:3 python your-daemon-or-script.py
+
+
+
+--------------------------------------------------
+
+
+https://docs.docker.com/compose/networking/
+https://docs.docker.com/reference/compose-file/networks/
+https://stackoverflow.com/questions/38088279/communication-between-multiple-docker-compose-projects
+https://github.com/docker-archive/compose-cli/issues/1856
+https://github.com/moby/moby/issues/46155
+https://docs.docker.com/reference/cli/docker/network/create/
+https://twig2let.github.io/docker/docker_networkBetweenMultipleDockerComposeServices.html
+https://www.warp.dev/terminus/docker-compose-networks
+
+
+--------------------------------------------------
+
+networks:
+  frontend:
+    # Specify driver options
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.host_binding_ipv4: "127.0.0.1"
+  backend:
+    # Use a custom driver
+    driver: custom-driver
+
+
+# join a pre-existing network
+networks:
+  network1:
+    name: my-pre-existing-network
+    external: true
+
+--------------------------------------------------
+
+# front/docker-compose.yml
+services:
+  front:
+    ...
+    networks:
+      - some-net
+networks:
+  some-net:
+    driver: bridge
+...
+
+# api/docker-compose.yml
+services:
+  api:
+    ...
+    networks:
+      - front_some-net
+networks:
+  front_some-net:
+    external: true
+
+
+--------------------------------------------------
+
+version: "3.5"
+services:
+  proxy:
+    image: hello-world
+    ports:
+      - "80:80"
+    networks:
+      - proxynet
+
+networks:
+  proxynet:
+    name: custom_network
+
+docker-compose up -d
+
+
+
+version: "2"
+services:
+  web:
+    image: hello-world
+    networks:
+      - my-proxy-net
+networks:
+  my-proxy-net:
+    external:
+      name: custom_network
+
+--------------------------------------------------
+
+this is app1/docker-compose.yml:
+
+
+version: '2'
+services:
+    svc11:
+        container_name: container11
+        [..]
+        networks:
+            - default # this network
+            - app2_default # external network
+        external_links:
+            - container22:container22
+        [..]
+    svc12:
+       container_name: container12
+       [..]
+
+networks:
+    default: # this network (app1)
+        driver: bridge
+    app2_default: # external network (app2)
+        external: true
+this is app2/docker-compose.yml:
+
+
+version: '2'
+services:
+    svc21:
+        container_name: container21
+        [..]
+        networks:
+            - default # this network (app2)
+            - app1_default # external network (app1)
+        external_links:
+            - container11:container11
+        [..]
+    svc22:
+       container_name: container22
+       [..]
+
+networks:
+    default: # this network (app2)
+        driver: bridge
+    app1_default: # external network (app1)
+        external: true
+
+--------------------------------------------------
+
+# api/docker-compose.yml
+version: '3'
+
+services:
+  api:
+    container_name: api
+    ...
+    ports:
+      - 8081:8080
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    name: mynetwork
+and
+
+# front/docker-compose.yml
+version: '3'
+
+services:
+  front:
+    container_name: front
+    ...
+    ports:
+      - 81:80
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    name: mynetwork
+
+--------------------------------------------------
+
+docker-compose.apline.yml would be:
+
+version: '3.8'
+
+services:
+
+  alpine:
+    image: alpine:3.14
+    container_name: alpine
+    networks:
+      - net-for-alpine
+
+    # these two command keeps apline container running
+    stdin_open: true # docker run -i
+    tty: true # docker run -t
+
+networks:
+  net-for-alpine:
+    name: test-db-net
+
+
+docker-compose.db.yml would be:
+
+version: '3.8'
+
+services:
+
+  db:
+    image: postgres:13.4-alpine
+    container_name: psql
+    networks:
+      - net-for-db
+
+networks:
+  net-for-db:
+    name: test-db-net
+
+
+To test the network, go inside alpine container
+
+docker exec -it alpine sh
+
+# if it returns 0 or see nothing as a result, network is established
+nc -z psql (container name)
+or
+
+ping pgsql
+
+
+--------------------------------------------------
+
+networks:
+  default:
+    external: true
+    name: nginx-proxy-man
+  internal:
+    internal: true
+
+--------------------------------------------------
+
+1st foldername/docker-compose.yml:
+version: '2'
+services:
+  some-contr:
+    container_name: []
+    build: .
+    ...
+    networks:
+      - somenet
+    ports:
+      - "8080:8080"
+    expose:
+      # Opens port 8080 on the container
+      - "8080"
+    environment:
+      PORT: 8080
+    tty: true
+networks:
+  boomnet:
+    driver: bridge
+
+2nd docker-compose.yml:
+
+version: '2'
+services:
+  pushapiserver:
+    container_name: [container_name]
+    build: .
+    command: "tail -f /dev/null"
+    volumes:
+      - ./:/[work_dir]
+    working_dir: /[work dir]
+    image: [name of image]
+    ports:
+      - "8060:8066"
+    environment:
+      PORT: 8066
+    tty: true
+    networks:
+      - foldername_somenet
+networks:
+  foldername_somenet:
+    external: true
+
+
+--------------------------------------------------
+
+first docker-compose.yaml
+
+version: '3.9'
+.
+.
+.
+
+networks:
+  net:
+    driver: overlay
+    attachable: true
+
+
+second docker-compose.yaml
+
+version: '3.9'
+.
+.
+.
+networks:
+  net-ref:
+    external: true
+    name: app_net
+
+
+docker-compose -p app up
+docker stack deploy -c docker-compose.yml mystack
+
+
+--------------------------------------------------
+
+
+version: "3"
+services:
+  app:
+    image: "jc21/nginx-proxy-manager:latest"
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "81:81"
+      - "443:443"
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+    networks:
+      customnetwork:
+        ipv4_address: 172.20.0.10
+networks:
+  customnetwork:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+
+
+
+Here is an example that uses IP Addresses. The first docker compose should create the network that future containers can join. Here is a snippet code snippet.
+
+version: "3"
+services:
+  app:
+    image: "jc21/nginx-proxy-manager:latest"
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "81:81"
+      - "443:443"
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+    networks:
+      customnetwork:
+        ipv4_address: 172.20.0.10
+networks:
+  customnetwork:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+The second docker-compose should join the network that was created:
+
+version: "3"
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    command: -H unix:///var/run/docker.sock
+    ports:
+      - 9000:9000
+      - 9443:9443
+    volumes:
+      - portainer_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      nginxproxymanager_customnetwork:
+        ipv4_address: 172.20.0.11
+    restart: unless-stopped
+volumes:
+  portainer_data:
+networks:
+  nginxproxymanager_customnetwork:
+    external: true
+
+
+--------------------------------------------------
+
+Kafka Consumer file
+
+version: "3.8"
+
+services:
+  zookeeper:
+    image: zookeeper:3.4.10
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_PORT: 2181
+      ZOO_SERVERS: server.1=zookeeper:2888:3888
+    healthcheck:
+      test: [ "CMD-SHELL", "echo ruok | nc localhost 2181 | grep imok" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    networks:
+      - kafkaNet
+
+  kafka:
+    image: confluentinc/cp-kafka:4.1.4
+    depends_on:
+      - zookeeper
+    ports:
+      - 9093:9093
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:19093,EXTERNAL://127.0.0.1:9093
+      KAFKA_BROKER_ID: 1
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      TOPIC_AUTO_CREATE: 1
+    healthcheck:
+      test: [ "CMD-SHELL", "kafka-broker-api-versions --bootstrap-server kafka:19093" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    hostname: google.kafka.local.com
+    networks:
+      - kafkaNet
+
+networks:
+  kafkaNet:
+    driver: bridge
+    name: kafkanetwork
+
+
+
+Kafka Producer file
+
+
+version: '3.8'
+
+services:
+
+  awsapi:
+    build:
+      dockerfile: apis.Dockerfile
+      context: .
+    ports:
+      - "1235:1325"
+    restart: always
+    networks:
+      - awsapinetwork
+
+  mysqldb:
+    image: mysql:latest
+    container_name: mysqlDb
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_DATABASE: "${MYSQL_DATABASE_NAME}"
+      MYSQL_USER: "${MYSQL_DATABASE_USER_NAME}"
+      MYSQL_PASSWORD: "${MYSQL_DATABASE_USER_PASSWORD}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_DATABASE_ROOT_PASSWORD}"
+    ports:
+      - "3305:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+      - ./sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+      - ./sql/world.sql:/docker-entrypoint-initdb.d/world.sql:ro
+    networks:
+      - awsapinetwork
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadminpanel
+    links:
+      - mysqldb
+    environment:
+      PMA_HOST: mysqldb
+      MYSQL_ROOT_PASSWORD: "${MYSQL_DATABASE_ROOT_PASSWORD}"
+    restart: always
+    ports:
+      - 8085:80
+    networks:
+      - awsapinetwork
+volumes:
+  dbdata:
+
+networks:
+  awsapinetwork:
+    external: true
+    name: kafkanetwork
+
+
+
+
+--------------------------------------------------
+
+networks:
+  default:
+    name:  my-pre-existing-network
+    external: true
+
+
+networks:
+  default:
+    name: my-pre-existing-network
+    external: true
+
+or
+
+networks:
+  my-pre-existing-network:
+    external: true
+
+--------------------------------------------------
+
+docker network create some-network
+
+version: "3.0"
+services:
+  nginx:
+    image: nginx:latest
+    environment:
+      TZ: Asia/Shanghai
+    restart: always
+    networks:
+      - some-network
+      - nginx-network
+networks:
+  nginx-network:
+  some-network:
+    external: true
+
+docker compose up -d
+
+--------------------------------------------------
+
+
+ services:
+  webapp:
+    image: webapp
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    ipam:
+      driver: custom-driver
+      config:
+        - subnet: 172.28.0.0/16
+          ip_range: 172.28.5.0/24
+          gateway: 172.28.5.254
+          aux_addresses:
+            host1: 172.28.1.5
+            host2: 172.28.1.6
+      options:
+        level: 0
+
+....
+
+ services:
+  webapp:
+    image: webapp
+    networks:
+      my-network:
+        ipv4_address: 172.16.238.10
+        ipv6_address: 2001:3984:3989::10
+
+networks:
+  my-network:
+    ipam:
+      config:
+        - subnet: "172.16.238.0/24"
+        - subnet: "2001:3984:3989::/64"
+
+...
+
+
+ # Redis
+services:
+  db:
+    image: redis:latest
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge
+    name: redis_network
+
+
+# Web application
+services:
+  my_app:
+    image: web-app:latest
+    networks:
+      - my-app
+
+networks:
+  my-app:
+    name: redis_network
+    external: true
+
+--------------------------------------------------
+
+docker network create -d bridge my-bridge-network
+docker network create --scope=swarm --attachable -d overlay my-multihost-network
+
+docker network create \
+  --driver=bridge \
+  --subnet=172.28.0.0/16 \
+  --ip-range=172.28.5.0/24 \
+  --gateway=172.28.5.254 \
+  br0
+
+docker network create -d overlay \
+  --subnet=192.168.10.0/25 \
+  --subnet=192.168.20.0/25 \
+  --gateway=192.168.10.100 \
+  --gateway=192.168.20.100 \
+  --aux-address="my-router=192.168.10.5" --aux-address="my-switch=192.168.10.6" \
+  --aux-address="my-printer=192.168.20.5" --aux-address="my-nas=192.168.20.6" \
+  my-multihost-network
+
+docker network create \
+    -o "com.docker.network.bridge.host_binding_ipv4"="172.19.0.1" \
+    simple-network
+
+docker network create -d overlay \
+  --subnet=10.11.0.0/16 \
+  --ingress \
+  --opt com.docker.network.driver.mtu=9216 \
+  --opt encrypted=true \
+  my-ingress-network
+
+docker service create --name my-service \
+  --network host \
+  --replicas 2 \
+  busybox top
+
+docker network create -d bridge \
+  --scope swarm \
+  --attachable \
+  swarm-network
+
+node1$ docker network create --config-only --subnet 192.168.100.0/24 --gateway 192.168.100.115 mv-config
+node2$ docker network create --config-only --subnet 192.168.200.0/24 --gateway 192.168.200.202 mv-config
+node1$ docker network create -d macvlan --scope swarm --config-from mv-config --attachable swarm-network
+
+--------------------------------------------------
+
+
+docker network create -d bridge my-custom-network
+docker network ls
+
+front/docker-compose.yml
+
+ version: '2'
+
+ services:
+   front:
+     image: tutum/curl:alpine
+     command: curl back
+ networks:
+   my-custom-network:
+     external: true
+back/docker-compose.yml
+
+ version: '2'
+
+ services:
+   back:
+     image: nginx
+     command: nginx -g 'daemon off;'
+ networks:
+   my-custom-network:
+   external: true
+
+
+...
+
+front/docker-compose.yml
+
+ version: '2'
+
+ services:
+   front:
+     image: tutum/curl:alpine
+     command: curl back
+     networks:
+       - my-custom-network
+ networks:
+   my-custom-network:
+     external: true
+back/docker-compose.yml
+
+ version: '2'
+
+ services:
+   back:
+     image: nginx
+     command: nginx -g 'daemon off;'
+     networks:
+       - my-custom-network
+ networks:
+   my-custom-network:
+     external: true
+
+docker-compose up
+
+
+
