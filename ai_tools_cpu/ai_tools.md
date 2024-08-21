@@ -136,6 +136,8 @@
 | https://github.com/Picsart-AI-Research/Text2Video-Zero | text to video         | 
 | https://stable-diffusion-art.com/video-to-video/       | video to video        | 
 | https://www.vidnoz.com/image-to-video-ai.html          | image to video        | 
+| https://creatus.ai/image-animation-image-to-video      | image to video f      | 
+| https://huggingface.co/spaces/vinthony/SadTalker       | image to video f      | 
 
 
 - https://stability.ai/
