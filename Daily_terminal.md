@@ -637,3 +637,11 @@ sudo systemctl reload-or-restart networkd-dispatcher.service
 ~~~
 touch  web_journey/search_$(date +%s).txt
 ~~~
+
+
+### How to convert .webp images to .png on Linux
+~~~
+sudo apt update
+sudo apt install webp
+for i in *.webp; do dwebp $i -o $i.out.png; done;
+~~~
