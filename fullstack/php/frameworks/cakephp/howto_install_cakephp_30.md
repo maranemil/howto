@@ -100,6 +100,24 @@ https://www.youtube.com/watch?v=747K6W40ur0	CakePHP 3.1 Login & Registration Fro
 https://www.youtube.com/watch?v=Yi3eqAjK_po	CakePHP 3.1 Login & Registration From Scratch - Part 2
 https://www.youtube.com/watch?v=CJA2K6bioFw	Faster application development with CakePHP 3.0 - José Lorenzo
 https://www.youtube.com/watch?v=rBRy5BiCeew	Advanced querying with the new CakePHP 3.0 ORM - José Rodríguez
+
+
+composer show -i | grep CakePHP
+composer show -a | grep CakePHP
+composer search CakePHP
+
+-------------------------------
+
+.env
+APP_DEBUG=2
+
+public function beforeFilter($event): void {
+	 parent::beforeFilter($event);
+	$this->log("some text","error");
+	$this->log("some text","debug");
+}
+
+$this->log(serialize($this->request->getData()),'debug');
 ```
 
 

@@ -174,3 +174,13 @@ create-project [-s|--stability STABILITY] [--prefer-source]
 
 composer require --dev symfony/dotenv
 ```
+
+
+
+```
+https://symfony.com/doc/current/mailer.html
+https://symfonycasts.com/screencast/mailer/embedded-image
+
+<img src="cid:myimage">
+```
+

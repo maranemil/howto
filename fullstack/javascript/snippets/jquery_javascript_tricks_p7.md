@@ -273,8 +273,47 @@ const params3 = new URLSearchParams([
 
 // Pass in a record
 const params4 = new URLSearchParams({ foo: "1", bar: "2" });
-
-
 console.log(url.search); // Logs "?q=123"
 
 ~~~
+
+
+
+~~~
+https://stackoverflow.com/questions/45193524/how-to-add-a-tag-and-href-using-javascript
+https://stackoverflow.com/questions/18500759/createelement-a-href-variable1variable2-a
+
+const insertButton = document.getElementById('insertButton');
+
+const appendAnchorTag = () => {
+  const anchor = document.createElement('a');
+  const list = document.getElementById('linksList');
+  const li = document.createElement('li');
+  anchor.href = 'http://google.com';
+  anchor.innerText = 'Go to Google';
+  li.appendChild(anchor);
+  list.appendChild(li);
+};
+
+insertButton.onclick = appendAnchorTag;
+<button id="insertButton">Create New Anchor Tag</button>
+
+<ul id="linksList"></ul>
+~~~
+
+
+
+~~~
+https://devhints.io/xpath
+http://xpather.com/
+https://www.w3schools.com/xml/xpath_syntax.asp
+https://www.w3schools.com/xml/xpath_intro.asp
+https://developer.mozilla.org/en-US/docs/Web/XPath/Introduction_to_using_XPath_in_JavaScript
+https://www.w3schools.com/xml/xml_xpath.asp
+
+$x("//div[contains(@class, 'month-table_col') and contains(text(), 'Nov')]")[0]
+$x("//div[contains(@class, 'month-table_col') and contains(text(), 'Nov')]")
+$x("/html/.//div[contains(@class, 'month-table_col'))
+~~~
+
+

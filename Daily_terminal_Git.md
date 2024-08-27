@@ -86,3 +86,10 @@ git stash
 git pull
 git stash apply
 ```
+
+
+### ignore folder and include
+```
+/data/*
+!/data/myfolder
+```
