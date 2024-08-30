@@ -13,26 +13,50 @@ composer require rector/rector --dev
 composer require "codeception/codeception" --dev
 composer require --dev phpstan/phpstan
 composer require --dev qossmic/deptrac
-composer require --dev friendsofphp/php-cs-fixer
+#composer require --dev friendsofphp/php-cs-fixer
+composer require --dev phpcompatibility/php-compatibility --ignore-platform-reqs
+
+
 
 php -d memory_limit=-1  vendor/bin/rector p src --dry-run --debug --clear-cache --output-format json --config=rector.php
 php -d memory_limit=-1  vendor/bin/phpstan analyse --no-cache
 php -d memory_limit=-1  vendor/bin/deptrac analyse --config-file=deptrac.yaml
-php -d memory_limit=-1  vendor/bin/php-cs-fixer fix src
+php -d memory_limit=-1  vendor/bin/phpcs -p src/ --standard=PHPCompatibility  --runtime-set testVersion 8.1
+php -d memory_limit=-1  ./vendor/bin/phpcs -p . --standard=PHPCompatibility
+
+#php -d memory_limit=-1  vendor/bin/php-cs-fixer fix src
+
+
 
 composer dump-autoload
 composer phpstan
+composer why-not php 8.1
+
+##########################################################
+phpstan Clearing the result cache
+##########################################################
+
+https://github.com/phpstan/phpstan/issues/1305
+https://github.com/phpstan/phpstan/issues/3536
+
+php -d memory_limit=-1 vendor/bin/phpstan clear-result-cache
+php -d memory_limit=-1 vendor/bin/phpstan --debug
+
+or
+
+rm -rf $(php -r 'echo sys_get_temp_dir() . "/phpstan/cache";')
+rm -rf $(php -r 'echo sys_get_temp_dir() . "/phpstan/";')
 
 
-
+##########################################################
+##########################################################
 
 docker run -it --rm -v $(pwd):/code ghcr.io/php-cs-fixer/php-cs-fixer:${FIXER_VERSION:-3-php8.3} fix src
 docker run -v $(pwd):/project rector/rector:latest process /project/app --set laravel52 --dry-run -vvv
 docker run --rm -v $(pwd):/project rector/rector:latest process /project/somePath --dry-run --autoload-file=/project/vendor/autoload.php --config=/project/rector.php
 
 
-
-https://docs.spryker.com/docs/dg/dev/sdks/the-docker-sdk/running-tests-with-the-docker-sdk.html
+https://docs.spryker.com/docs/dg/dev/upgrade-and-migrate/migrate-to-cloud/migrate-to-cloud-upgrade-the-php-version.html#change-the-docker-image-to-php-81
 https://docs.spryker.com/docs/dg/dev/sdks/the-docker-sdk/running-tests-with-the-docker-sdk.html
 https://docs.spryker.com/docs/dg/dev/sdks/the-docker-sdk/the-docker-sdk.html#other-dockersdk-commands
 

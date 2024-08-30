@@ -544,6 +544,15 @@ get link from temrinal and run it on browser
 
 ### Find string in files
 ```
+https://www.cyberciti.biz/faq/howto-use-grep-command-in-linux-unix/
+https://www.cyberciti.biz/faq/unix-linux-grep-include-file-pattern-recursive-example/
+https://unix.stackexchange.com/questions/694796/how-to-grep-multiple-strings-when-using-with-another-command
+https://www.warp.dev/terminus/grep-exclude
+https://www.warp.dev/terminus/make-grep-case-insensitive
+
+find ./folder -type f -name "*.php" -print0 | xargs -0 grep -i 'protected function'
+grep -ir 'protected function' --include='*.php' ./folder | grep -v 'exclude string'
+
 sudo find . -type f -iname "*.txt" -exec grep -H 'String' {} + 
 sudo find . -type f -iname "*.txt" -exec grep -i "String" {} +
 sudo find . -name "*.php" -exec grep -Hni "String" --color {} \;
