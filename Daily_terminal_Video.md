@@ -477,7 +477,6 @@ P4=$!
 ~~~
 
 
-
 #### ffmpeg-how-to-get-last-frame-from-a-video
 ~~~
 https://superuser.com/questions/1448665/ffmpeg-how-to-get-last-frame-from-a-video
@@ -486,5 +485,10 @@ ffmpeg -sseof -3 -i input -update 1 -q:v 1 last.jpg
 ~~~
 
 
+#### create collage join images with imagemagick
+~~~
+sudo apt install imagemagick-6.q16
+montage -mode concatenate -tile 4x *.png out.jpg
+~~~
 
 
