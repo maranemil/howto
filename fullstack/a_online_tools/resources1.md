@@ -870,10 +870,18 @@ https://paywallreader.com/
 
 ------------------------------------------------------------------
 
-### Text sort remove duplicate lines
+### Text sort remove duplicate lines or words
 
 - https://codebeautify.org/sort-text-lines
 - https://codebeautify.org/remove-duplicate-lines
+- https://dedupelist.com/
+- https://www.tracemyip.org/tools/remove-duplicate-words-in-text/
+- https://www.browserling.com/tools/duplicate-lines
+- https://onlinetexttools.com/remove-duplicate-text-words
+- https://www.wordcharactercount.com/remove-duplicate-words/
+- https://onlinetexttools.com/remove-duplicate-text-lines
+- https://www.textfixer.com/tools/remove-duplicate-lines-online.php
+
 
 ------------------------------------------------------------------
 
