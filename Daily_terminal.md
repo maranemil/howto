@@ -647,6 +647,10 @@ sudo systemctl reload-or-restart networkd-dispatcher.service
 touch  web_journey/search_$(date +%s).txt
 ~~~
 
+### clear swap
+~~~
+sudo swapoff -a; sleep 15; sudo swapon -a 
+~~~
 
 ### How to convert .webp images to .png on Linux
 ~~~
