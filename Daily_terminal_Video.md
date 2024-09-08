@@ -489,6 +489,9 @@ ffmpeg -sseof -3 -i input -update 1 -q:v 1 last.jpg
 ~~~
 sudo apt install imagemagick-6.q16
 montage -mode concatenate -tile 4x *.png out.jpg
+montage -mode concatenate -background black -tile 7x *.jpeg out.png
+montage -mode concatenate -background black -tile 4x *.png out.jpg
+montage -mode concatenate -background gray16 -bordercolor black -shadow  -border 5 -tile 5x *.jpeg out.jpg
 ~~~
 
 
