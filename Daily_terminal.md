@@ -513,6 +513,7 @@ sudo apt  install tree -y
 tree -Ld 3 > FolderStructure.txt
 ```
 
+
 ######
 ### Format json
 ######
@@ -534,6 +535,7 @@ DuckDuckGo
 NoScript
 ```
 
+
 ### Access localhost on remote server
 ```
 start locally [ python3 -m http.server.8080 with page index.html]
@@ -541,6 +543,7 @@ go on [ localhost.run website ]
 copy [ ssh -R 80:localhost:8080 nokey@localhost.run ] on local machine
 get link from temrinal and run it on browser
 ```
+
 
 ### Find string in files
 ```
@@ -562,6 +565,7 @@ cd /usr/ && egrep -ir "String"
 cd /usr && egrep -ir -w "String" # print first line
 cd /usr && egrep -iIrnH -w "String"
 ```
+
 
 ### generate new ssh key
 ```
@@ -597,10 +601,12 @@ yes
 reboot
 ~~~
 
+
 ### Install p7zip
 ~~~
 sudo apt-get install p7zip p7zip-full p7zip-rar
 ~~~
+
 
 ### move first 1000 files - split folder files in subfolders
 ~~~
@@ -608,6 +614,16 @@ ls | wc -l
 mv -v `ls | head -5000` ./sub1
 
 strace -vf ls -l 
+~~~
+
+
+### move files by odd number - par impair
+~~~
+mkdir -p odd1 && for f in *[02468]*.jpeg; do mv "$f" odd1/"$f"; done
+mkdir -p odd2 && for f in *[13579]*.jpeg; do mv "$f" odd2/"$f"; done
+
+for f in *[02468]*.jpeg; do echo "$f"; done
+for f in *[13579]*.jpeg; do echo "$f"; done
 ~~~
 
 
