@@ -1,0 +1,29 @@
+
+###############################################
+jwt bash
+###############################################
+
+https://sapling.ai/programming-languages/jwt/bash
+https://www.willhaley.com/blog/generate-jwt-with-bash/
+
+#!/bin/bash
+
+# Header
+header=$(echo -n '{"alg":"HS256","typ":"JWT"}' | openssl base64 -e -A | tr '+/' '-_' | tr -d '=')
+
+# Payload
+current_time=$(date +%s)
+expiration_time=$(($current_time + 864000)) # Ten days from now
+payload=$(echo -n '{"sub":"public_key","exp":'$expiration_time'}' | openssl base64 -e -A | tr '+/' '-_' | tr -d '=')
+
+# Signature
+signature=$(echo -n "$header.$payload" | openssl dgst -sha256 -hmac 'private_key' -binary | openssl base64 -e -A | tr '+/' '-_' | tr -d '=')
+
+# JWT
+jwt="$header.$payload.$signature"
+
+echo $jwt
+
+
+curl -H 'Accept: application/json' -H "Authorization: Bearer ${TOKEN}" https://{hostname}/api/myresource
+

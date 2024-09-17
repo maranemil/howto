@@ -1,0 +1,95 @@
+
+###############################
+postgres debug
+###############################
+
+ps -ef | grep postgres
+ps -f -e postgres
+netstat -an | grep 5432
+
+ find . -type f -name postgresql.conf
+./var/lib/postgresql/data/postgresql.conf
+
+cat ./var/lib/postgresql/data/postgresql.conf | grep port
+cat ./var/lib/postgresql/data/postgresql.conf | grep tcp
+
+
+vi ./var/lib/postgresql/data/postgresql.conf
+port = 5432
+tcp_keepalives_idle = 0         # TCP_KEEPIDLE, in seconds;                                                                                                                                                    # 0 selects the system default
+tcp_keepalives_interval = 0     # TCP_KEEPINTVL, in seconds;                                                                                                                                           # 0 selects the system default
+tcp_keepalives_count = 0        # TCP_KEEPCNT;                                                                                                                                                         # 0 selects the system default
+tcp_user_timeout = 0            # TCP_USER_TIMEOUT, in milliseconds;                                                                                                                                   # 0 selects the system default
+
+# systemctl restart postgresql
+# service postgresql restart
+pg_ctl restart
+
+systemctl status postgresql
+service postgresql status.
+
+/etc/init.d/postgresql restart
+/etc/init.d/postgresql reload
+
+sudo apt-get install -y postgresql-client
+psql --version
+
+apk update
+
+lsof -n -u postgres |grep LISTEN
+netstat -ltnp | grep postgres
+netstat -na
+lsof -i tcp:5432
+
+psql -h localhost -p 5432
+psql -h localhost -U spryker -d eu-docker -p 5432
+
+sudo apt-get install -y postgresql-client
+psql --version
+
+cat /etc/services | grep post
+postgresql      5432/tcp        postgres        # PostgreSQL Database
+
+psql -c 'SHOW config_file'
+               config_file
+------------------------------------------
+ /var/lib/postgresql/data/postgresql.conf
+
+#show dbs
+psql -U spryker -l
+SELECT datname FROM pg_database;
+
+
+
+POSTGRESQL_PORT=5432
+# Allow traffic from PostgreSQL port in iptables
+iptables -A INPUT -p tcp --dport $POSTGRESQL_PORT -j ACCEPT
+iptables-save > /etc/sysconfig/iptables
+iptables -L
+
+systemctl restart postgresql
+
+netstat -lntp | grep postgres
+ufw allow 5432
+
+sudo chown -R postgres:postgres /var/lib/postgresql/9.6/
+sudo chmod -R u=rwX,go= /var/lib/postgresql/9.6/
+
+nc -zv localhost 5432
+nc: connectx to localhost port 5432 (tcp) failed: Connection refused
+
+###############################
+###############################
+
+pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+psql
+\c eu-docker
+SELECT * FROM pg_catalog.pg_tables;
+
+select * from spy_user;
+select * from spy_company_user;
+select * from spy_company_user where id_company_user=1;
+
+update spy_user set status=1 where id_user=1;
+update spy_company_user set is_active=true where id_company_user=1;
