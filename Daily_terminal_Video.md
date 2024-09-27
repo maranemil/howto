@@ -439,6 +439,8 @@ ffmpeg  -i in.mp4 -c:a aac -b:a 256k -c:v libx264 -y out.mp4
 
 # convert
 for i in *.wav; do ffmpeg -i "$i" "$i".mp3; done 
+for i in *.mp3; do ffmpeg -i "$i" "$i".wav; done 
+for i in *.mmpz; do zip "$i".zip "$i"; done 
 
 
 ffmpeg -i mpxvm_fumix257_ft2.xm -af "rubberband=pitch=432/400,rubberband=pitch=440/470" -y mpxvm_fumix257_ft2.xm.wav 1:1
