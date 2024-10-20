@@ -431,6 +431,12 @@ ffmpeg -stream_loop 0 -i out.wav -i out.mp4  -c:a aac -b:a 256k -c:v libx264 -y 
 # loop video for mp3
 ffmpeg -stream_loop -1  -i vid.mp4  -i audio.mp3 -map 0:v -map 1:a -c:v copy -shortest -y out.mp4
 
+# loop image for mp3 xxx
+ffmpeg -stream_loop 0 -i vid.mp3 -i 1e45.png  -c:a aac -b:a 256k -c:v libx264 -y out.mp4
+
+
+
+
 # trim
 ffmpeg -i in.mp4 -ss 00:00 -to 03:12 out.mp4 
 
