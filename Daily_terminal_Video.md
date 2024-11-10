@@ -503,3 +503,19 @@ montage -mode concatenate -background gray16 -bordercolor black -shadow  -border
 ~~~
 
 
+
+### create show-waves from mp3
+~~~
+https://shotstack.io/learn/ffmpeg-create-waveform/
+
+ffmpeg -f lavfi -i color=c=black:s=1280x720:r=5 -i response.wav -s 1980x1080 -c:a aac -b:a 128k -t 20.0 aNewVideo.mp4
+
+ffmpeg -i input.mp3 -r 25 -filter_complex "[0:a]compand,showwaves=size=854x480:colors=white,format=yuv420p[vout]" -map "[vout]" -map 0:a -c:v libx264 -c:a copy output.mp4
+
+ffmpeg -i input.mp3 -r 25 -filter_complex "[0:a]compand,showwaves=size=854x480:colors=white:draw=full,format=yuv420p[vout]" -map "[vout]" -map 0:a -c:v libx264 -c:a copy output.mp4
+
+ffmpeg -i input.mp3 -r 25 -filter_complex "[0:a]compand,showwaves=size=854x480:colors=#25d3d0:draw=full:mode=line,format=yuv420p[vout]" -map "[vout]" -map 0:a -c:v libx264 -c:a copy output.mp4
+
+# xxx
+ffmpeg -i input.mp3 -f lavfi -i color=c=#3d3739:s=854x480 -r 25 -filter_complex "[0:a]compand,showwaves=size=854x480:colors=#e0a71f:draw=full:mode=line[vout];[1:v][vout]overlay=format=auto:shortest=1,format=yuv420p[v]" -map "[v]" -map 0:a -c:v libx264 -c:a copy output.mp4 
+~~~
