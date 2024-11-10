@@ -504,6 +504,7 @@ montage -mode concatenate -background gray16 -bordercolor black -shadow  -border
 
 
 
+
 ### create show-waves from mp3
 ~~~
 https://shotstack.io/learn/ffmpeg-create-waveform/
