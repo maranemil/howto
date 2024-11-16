@@ -607,3 +607,72 @@ $intKeys = array_map('intval', $keys);
 $newData = array_combine($intKeys, $values);
 
 ~~~
+
+### Getting First Dimension Array in PHP
+
+~~~
+
+https://stackoverflow.com/questions/13052657/getting-first-dimension-array-in-php
+
+From:
+
+array(
+  ['type'] => 'func'
+  ['function'] => 'Model_Statement_Transaction::sum'
+  ['parameters'] =>  
+    stdClass(
+      statement_id = 8586
+      transaction_type = 'raw_flour-import'
+      column = 'quantity'
+    )
+)
+To:
+
+array(
+  ['type'] => 'func'
+  ['function'] => 'Model_Statement_Transaction::sum'
+  ['parameters'] => ''
+)
+
+$result = array_filter($theArray, 'is_scalar')
+
+
+~~~
+
+
+### How to get a temporary file path?
+
+~~~
+https://stackoverflow.com/questions/12097631/how-to-get-a-temporary-file-path
+<?php 
+// Create a temp file in the temporary 
+// files directory using sys_get_temp_dir()
+$temp_file = tempnam(sys_get_temp_dir(), 'MyFileName');
+echo $temp_file;
+?>
+
+$fileHandleResource = tmpfile();
+
+$metaData = stream_get_meta_data($fileHandleResource);
+$filepath = $metaData['uri'];
+~~~
+
+### How to filter an array by a condition
+
+~~~
+https://stackoverflow.com/questions/1503579/how-to-filter-an-array-by-a-condition
+https://stackoverflow.com/questions/10272314/php-get-the-first-value-of-all-arrays-in-a-multidimensional-array
+
+Array ( 
+[0] => Array ( [0] => Height [1] => 40 ) 
+[1] => Array ( [0] => Weight [1] => 15 ) 
+[2] => Array ( [0] => Ctr_Percent [1] => 15 ) 
+) 
+
+array_map('array_shift', $array);
+
+$first_elements = array_map(function($i) {
+    return $i[0];
+}, $data);
+
+~~~
