@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script src="http://unpkg.com/tone"></script>
+
+<script>
+
+   //attach a click listener to a play button
+document.querySelector("button")?.addEventListener("click", async () => {
+	await Tone.start();
+	console.log("audio is ready");
+});
+
+
+const synth = new Tone.Synth().toDestination();
+const now = Tone.now();
+synth.triggerAttackRelease("C4", "8n", now);
+synth.triggerAttackRelease("E4", "8n", now + 0.5);
+synth.triggerAttackRelease("G4", "8n", now + 1);
+setInterval(() => console.log(Tone.now()), 100);
+
+
+// create two monophonic synths
+const synthA = new Tone.FMSynth().toDestination();
+const synthB = new Tone.AMSynth().toDestination();
+//play a note every quarter-note
+const loopA = new Tone.Loop((time) => {
+	synthA.triggerAttackRelease("C2", "8n", time);
+}, "4n").start(0);
+
+//play another note every off quarter-note, by starting it "8n"
+const loopB = new Tone.Loop((time) => {
+	synthB.triggerAttackRelease("C4", "8n", time);
+}, "4n").start("8n");
+// all loops start when the Transport is started
+Tone.getTransport().start();
+// ramp up to 800 bpm over 10 seconds
+Tone.getTransport().bpm.rampTo(800, 10);
+Tone.getTransport().start().stop("+9");
+
+
+
+/////////// rampTo
+/*
+const osc = new Tone.Oscillator().toDestination();
+// start at "C4"
+osc.frequency.value = "C4";
+// ramp to "C2" over 2 seconds
+osc.frequency.rampTo("C3", 2);
+// start the oscillator for 2 seconds
+osc.start().stop("+2");
+    */
+
+
+</script>
+
+
+</body>
+</html>
