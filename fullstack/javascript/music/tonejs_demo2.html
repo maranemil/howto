@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<script src="http://unpkg.com/tone"></script>
+
+<button id="toggleButton"
+        onclick="initializeAndToggle()">Play/Pause</button>
+
+
+<script>
+
+// https://www.c-sharpcorner.com/article/composing-music-in-javascript-using-tone-js/
+
+
+   //attach a click listener to a play button
+document.querySelector("button")?.addEventListener("click", async () => {
+	await Tone.start();
+	console.log("audio is ready");
+});
+
+var synth = null;
+var isPlaying = false;
+
+function createSynthWithEffects() {
+    // Define audio effects chain
+    let vol = new Tone.Volume(-5).toMaster();
+    let reverb = new Tone.Freeverb(0).connect(vol);
+    reverb.wet.value = 0; // Adjust reverb wetness
+    let delay = new Tone.FeedbackDelay(0, 0.5).connect(reverb);
+    delay.wet.value = 0.2; // Adjust delay wetness
+    let vibrato = new Tone.Vibrato(5, 0.2).connect(delay);
+
+    // Create polyphonic synthesiser with defined parameters
+    let polySynth = new Tone.PolySynth({
+        "oscillator": {
+            "type": "sine"
+        },
+        "envelope": {
+            "attack": 0.01,
+            "decay": 0.1,
+            "sustain": 0.5,
+            "release": 4,
+        }
+    }).connect(vibrato);
+
+    return polySynth;
+}
+
+
+var patterns = {
+      piano: ["D4", "F4", "G#4", "F4", "D4", "G#4", "F4", "D4", "G#4", "F4", "D4", "G#4", "F4", "D4", "G#4", "F4"],
+      guitar: ["D3", "F3", "G#3", "F3", "D3", "G#3", "F3", "D3", "G#3", "F3", "D3", "G#3", "F3", "D3", "G#3", "F3"],
+      violin: ["A#4", "C5", "D#5", "C5", "A#4", "D#5", "C5", "A#4", "D#5", "C5", "A#4", "D#5", "C5", "A#4", "D#5", "C5"],
+      flute: ["G4", "B4", "D5", "B4", "G4", "D5", "B4", "G4", "D5", "B4", "G4", "D5", "B4", "G4", "D5", "B4"]
+    };
+
+var durations = {
+      piano: "4n",
+      guitar: "2n",
+      violin: "2n",
+      flute: "2n"
+    };
+
+
+var sequences = {};
+
+function createSequences() {
+    for (var instrument in patterns) {
+        sequences[instrument] = new Tone.Sequence(playNote, patterns[instrument], durations[instrument]);
+    }
+}
+
+function initializeAndToggle() {
+    if (synth === null) {
+        synth = createSynthWithEffects();
+        createSequences();
+        Tone.start(); // Start the audio context
+    }
+    toggleMusic();
+}
+
+function toggleMusic() {
+    isPlaying = !isPlaying;
+    if (isPlaying) {
+        Tone.Transport.start();
+        for (var instrument in sequences) {
+            sequences[instrument].start();
+        }
+    } else {
+        Tone.Transport.stop();
+        for (var instrument in sequences) {
+            sequences[instrument].stop();
+        }
+    }
+}
+
+</script>
+</body>
+</html>
