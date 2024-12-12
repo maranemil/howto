@@ -1,0 +1,243 @@
+#######################################
+clearErrors
+#######################################
+https://symfony.com/blog/new-in-symfony-4-2-clear-form-errors
+https://symfony.com/doc/current/components/form.html
+https://symfony.com/doc/current/components/form.html#csrf-protection
+
+$task = ...;
+$form = $this->createForm(TaskType::class, $task);
+$form->clearErrors();
+// this removes errors from the form and all its children forms
+$form->clearErrors(true);
+
+#######################################
+mapped
+#######################################
+https://symfony.com/doc/current/reference/forms/types/form.html
+https://symfony.com/doc/current/reference/forms/types.html
+https://symfony.com/doc/current/reference/forms/types/form.html
+https://symfonycasts.com/screencast/symfony-forms/types-options
+https://symfony.com/doc/current/form/data_transformers.html
+https://symfony.com/doc/current/form/without_class.html
+https://symfony.com/doc/current/reference/forms/types/text.html
+
+mapped
+type: boolean default: true
+
+If you wish the field to be ignored when reading or writing to the object, you can set the mapped option to false.
+
+
+#######################################
+getData
+#######################################
+https://symfony.com/doc/current/components/property_access.html
+https://symfony.com/doc/current/forms.html
+$form->get('agreeTerms')->getData();
+$form->get('agreeTerms')->setData(true);
+
+
+
+#######################################
+Constraints
+#######################################
+https://www.bram.us/2019/05/23/symfony-form-validation-validating-a-date-range/
+
+use Symfony\Component\Validator\Constraints;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+
+// …
+
+$builder
+    ->add('start', 'datetime',
+        'constraints' => [
+            new Constraints\NotBlank(),
+            new Constraints\DateTime(),
+        ],
+    ])
+    ->add('stop', 'datetime', [
+        'constraints' => [
+            new Constraints\NotBlank(),
+            new Constraints\DateTime(),
+            new Constraints\Callback(function($object, ExecutionContextInterface $context) {
+                $start = $context->getRoot()->getData()['start'];
+                $stop = $object;
+
+                if (is_a($start, \DateTime::class) && is_a($stop, \DateTime::class)) {
+                    if ($stop->format('U') - $start->format('U') < 0) {
+                        $context
+                            ->buildViolation('Stop must be after start')
+                            ->addViolation();
+                    }
+                }
+            }),
+        ],
+    ]);
+
+
+#######################################
+submit
+#######################################
+https://symfonycasts.com/screencast/symfony-forms/form-options-data
+https://hotexamples.com/examples/symfony.component.form/Form/getData/php-form-getdata-method-examples.html
+https://hotexamples.com/examples/symfony.component.form/FormInterface/getData/php-forminterface-getdata-method-examples.html
+https://symfony.com/doc/current/form/form_customization.html
+https://symfony.com/doc/current/form/dynamic_form_modification.html
+
+ public function process()
+ {
+     $this->form->submit($this->request);
+     if ($this->form->isValid()) {
+         $query = $this->form->getData()->getQuery();
+         return true;
+     }
+     return false;
+ }
+
+
+use Symfony\Component\Form\FormInterface;
+
+// Creating a form object
+$form = $this->createFormBuilder()
+    ->add('name', TextType::class)
+    ->add('email', EmailType::class)
+    ->add('color', ChoiceType::class, [
+        'choices' => [
+            'Red' => 'red',
+            'Green' => 'green',
+            'Blue' => 'blue'
+        ]
+    ])
+    ->getForm();
+
+// Handling form submission
+$form->handleRequest($request);
+
+if ($form->isSubmitted() && $form->isValid()) {
+    // Retrieving form data
+    $data = $form->getData();
+
+    // Printing the user's name, email, and favorite color
+    echo 'Name: ' . $data['name'] . '';
+    echo 'Email: ' . $data['email'] . '';
+    echo 'Favorite Color: ' . $data['color'] . '
+
+
+#######################################
+addError
+#######################################
+https://hotexamples.com/examples/symfony.component.form/FormInterface/getData/php-forminterface-getdata-method-examples.html
+
+if (!$user) {
+ $this->form->get('user')->addError(new FormError('User with id ' . $model->getUser() . ' not found '));
+}
+if (!$role) {
+ $this->form->get('role')->addError(new FormError('Role with id ' . $model->getRole() . ' not found '));
+}
+
+
+
+filesystem
+https://symfony.com/doc/current/components/filesystem.html
+
+// if this absolute directory exists, returns true
+$filesystem->exists('/tmp/photos');
+
+
+
+
+
+
+
+
+#######################################
+constraints
+#######################################
+
+https://symfony.com/blog/new-in-symfony-6-2-conditional-constraints
+https://symfonycasts.com/screencast/symfony-forms/registration-validation
+https://api-platform.com/docs/guides/validate-incoming-data/
+https://symfony.com/doc/current/reference/constraints/Expression.html
+https://symfony.com/doc/current/form/validation_groups.html
+https://symfony.com/doc/current/reference/constraints.html
+https://symfony.com/doc/current/validation/custom_constraint.html
+https://stackoverflow.com/questions/76339221/validating-interdependent-symfony-constraints-retrieving-validated-context-for
+https://symfonycasts.com/screencast/last-stack/live-forms
+https://api-platform.com/docs/guides/validate-incoming-data/
+https://www.bram.us/2019/05/23/symfony-form-validation-validating-a-date-range/
+https://api-platform.com/docs/v3.1/core/validation/
+https://symfony.com/doc/current/reference/constraints/Type.html
+https://symfony.com/doc/2.x/validation/custom_constraint.html
+https://symfony.com/doc/current/components/validator.html
+https://www.strangebuzz.com/en/snippets/add-a-custom-conditional-validation-on-a-symfony-form
+https://symfonycasts.com/screencast/symfony-forms/assert-validation
+https://github.com/symfony/form/blob/7.2/Extension/Validator/Constraints/FormValidator.php
+https://symfony.com/doc/current/validation/translations.html
+
+class UserRegistrationFormType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+// ... lines 18 - 20
+            ->add('plainPassword', PasswordType::class, [
+                'mapped' => false,
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Choose a password!'
+                    ]),
+                    new Length([
+                        'min' => 5,
+                        'minMessage' => 'Come on, you can think of a password longer than that!'
+                    ])
+                ]
+            ]);
+        ;
+    }
+
+
+    class UniqueRemoteEntityConstraintValidator extends ConstraintValidator
+{
+    /**
+     * @param UniqueRemoteEntityConstraint $constraint
+     */
+    public function validate(mixed $value, Constraint $constraint): void
+    {
+        // Make sure `remoteSource` var is valid
+        foreach ($this->context->getViolations() as $violation) {
+            if ($violation->getPropertyPath() === 'remoteSource') {
+                // Remote source not valid cancel
+                return;
+            }
+        }
+
+        // Do checks for uniqueness
+    }
+}
+
+
+$builder
+    ->add('start', 'datetime',
+        'constraints' => [
+            new Constraints\NotBlank(),
+            new Constraints\DateTime(),
+        ],
+    ])
+    ->add('stop', 'datetime', [
+        'constraints' => [
+            new Constraints\NotBlank(),
+            new Constraints\DateTime(),
+            new Constraints\Callback(function($object, ExecutionContextInterface $context) {
+                $start = $context->getRoot()->getData()['start'];
+                $stop = $object;
+
+                if (is_a($start, \DateTime::class) && is_a($stop, \DateTime::class)) {
+                    if ($stop->format('U') - $start->format('U') < 0) {
+                        $context
+                            ->buildViolation('Stop must be after start')
+                            ->addViolation();
+                    }
+                }
+            }),
+        ],
+    ]);
