@@ -49,7 +49,8 @@ m=33
 for ((i=1; i<m; i++));
     do
     fr=$(echo "440 * 2 * $i/12"  | bc)
-    echo $fr
+    echo "$fr"
+    # shellcheck disable=SC2004
     arr[$i]=$fr
  done
 
@@ -57,16 +58,24 @@ for ((i=1; i<m; i++));
 for i in "${arr[@]}"
 do
     # echo "$i"
+    # shellcheck disable=SC2004
+    # shellcheck disable=SC2007
     rand=$[$RANDOM % ${#arr[@]}]
     random_note=${arr[$rand]}
     echo "$random_note"
 
    sleep 0.51
    # or do whatever with individual element of the array
-   ffmpeg -f lavfi -i "sine=frequency="$random_note":duration=1" -loglevel quiet -stats -y test__$(date +%s).wav
+   # shellcheck disable=SC2027
+   # shellcheck disable=SC2046
+   ffmpeg -f lavfi -i "sine=frequency=""$random_note"":duration=1" -loglevel quiet -stats -y test__$(date +%s).wav
 done
 
 # https://wiki.ubuntuusers.de/SoX/
 # sudo apt-get install sox
+# shellcheck disable=SC2046
+# shellcheck disable=SC2012
+# shellcheck disable=SC2035
 sox $(ls *.wav | sort -n) out_$(date +%s).ogg
+# shellcheck disable=SC2035
 rm *.wav
