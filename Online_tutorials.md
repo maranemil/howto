@@ -444,6 +444,10 @@
 | https://www.youtube.com/watch?v=N-kIf3gvtRg&list=PLdsu0umqbb8PPKI5KQtWMeGv08d_aRmcp         | Jenkins Crash Course                                       |
 | https://www.youtube.com/watch?v=mqOMeVwWqwk&list=PLQH1-k79HB39Kzr43Xyja4tlRHMCqWsuy         | API Platform Crash Course                                  |
 | https://www.youtube.com/watch?v=8f011wdiW7g&list=PLqazFFzUAPc5lOQwDoZ4Dw2YSXtO7lWNv         | Inkscape Crash Course                                      |
+| https://www.youtube.com/watch?v=842rgQP_OgI&list=PLBh2i93oe2quABbNq4I_-hyjhW8eOdgrO         | math  Crash Course                                         |
+| https://www.youtube.com/watch?v=AhtzkydwkW8&list=PL4E74506D04586517                         | lmms Crash Course                                          |
+| https://www.youtube.com/watch?v=zWLRdna1p6U&list=PLJooqCSo73ShdOeigDI6Ti0lHxW34LSAy         | spryker Crash Course                                       |
+
 
 
 

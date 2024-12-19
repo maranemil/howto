@@ -1,0 +1,120 @@
+#####################################
+enhancing-upscale
+#####################################
+
+
+ffmpeg -i input.mp4 -t 1 -qscale:v 1 scenario3_output_%03d.jpg
+ffmpeg -i input.mp4 -qscale:v 1 scenario3_output_%03d.jpg
+
+# for i in *.jpg; do convert  -enhance  -blur 2x1 -sharpen 0x3 -alpha on -virtual-pixel transparent -filter Triangle +distort Affine '0,0 0,0 %w,0 4834,0 0,%h 0,3282' -alpha off -crop 4740x3160+0+0 $i $i.png; done
+# for i in *.jpg; do convert -alpha on -virtual-pixel transparent -filter Triangle +distort Affine '0,0 0,0 %w,0 4834,0 0,%h 0,3282' -alpha off -crop 4740x3160+0+0 $i $i.png; done
+
+for i in *.jpg; do convert -alpha on -virtual-pixel transparent -filter Triangle +distort Affine '0,0 0,0 %w,0 2434,0 0,%h 0,1682' -alpha off -crop 4740x3160+0+0 $i $i.png; done
+
+#find . -name "*.png" | xargs mogrify -resize 50%
+#find . -name "*.png" | xargs mogrify -resize 1400x720 -extent 1400x720 -gravity center -background white
+#find . -name "*.png" | xargs mogrify -resize 1400x720 -extent 1400x720 -gravity center
+for f in *.png; do convert $f -resize -resize 1400x720 $f.resized.png; done
+
+
+ffmpeg -framerate 15 -pattern_type glob -i '*.png' -c:v libx264 -pix_fmt yuv420p -y out.mp4
+ffmpeg -framerate 15 -pattern_type glob -i '*.png' -c:v libx264 -pix_fmt yuv420p  -strict -2 -vf "scale=1920:720" -y out.mp4
+
+
+ffmpeg -i out.mp4 -vf scale=1920:1080 -c:v libx264 -pix_fmt yuv420p -y out2.mp4
+ffmpeg -i out.mp4 -vf scale=1920:720 -y out2.mp4
+ffmpeg -i out.mp4 -vf scale=1280:640 -y out2.avi
+ffmpeg -i out.mp4 -vf scale=1280:-1 -y out2.avi
+
+ffmpeg -i i.mp4 -vf 'split[original][copy];[copy]scale=ih*16/9:-1,crop=h=iw*9/16,gblur=sigma=20[blurred];[blurred][original]overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/2' -t 10 -y out.mp4
+
+ffmpeg -i out.mp4 -vf 'split[original][copy];[copy]scale=ih*16/9:-1,crop=h=iw*2/8,gblur=sigma=0[blurred];[blurred][original]overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/2' -y  -strict -2 out3.mp4
+
+ffmpeg -i out5.mp4 -vf 'split[original][copy];[copy]scale=ih*16/9:-1,crop=h=iw*2/8,smartblur=lr=1.5:ls=-0.25:lt=-3.5:cr=0.75:cs=0.250:ct=0.5[blurred];[blurred][original]overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/2' -y  -strict -2 out53.mp4
+
+ffmpeg -i out.mp4 -filter:v "scale=1280:-1:flags=lanczos,unsharp=5:5:1.0:5:5:0.0" out5.mp4
+ffmpeg -i out.mp4 -filter:v "scale=1280:-1,smartblur=lr=1.5:ls=-0.25:lt=-3.5:cr=0.75:cs=0.250:ct=0.5" out5.mp4
+
+
+ffmpeg -i out53.mp4 -vf "pp=hb/vb/dr/fq|8" -c:v libx264 -crf 23 -preset medium -tune animation -c:a copy output4444.mkv
+ffplay -vf "pp=hb/vb/dr/fq|8" -i out53.mp4
+
+ffmpeg -i out53.mp4 -filter_complex "format=gray,geq=lum_expr='if(lte(lum(X,Y),50),0,if(lte(lum(X,Y),100),50,if(lte(lum(X,Y),150),100,if(lte(lum(X,Y),200),150,if(lte(lum(X,Y),255),200,0)))))'" -acodec copy cartoonX.mp4
+
+ffmpeg -i out53.mp4 -vf "format=gray,geq=lum_expr='(p(X,Y)+(256-p(X-4,Y-4)))/2'" emboss.mp4
+
+
+
+#####################################
+enhancing-upscale reference
+#####################################
+
+https://superuser.com/questions/901099/ffmpeg-apply-blur-over-face
+https://www.cloudacm.com/?p=3016
+https://shotstack.io/learn/convert-video-gif-ffmpeg/
+https://dragonquest64.blogspot.com/2020/09/cartoonize-video-with-ffmpeg-take-2.html
+https://www.baeldung.com/linux/ffmpeg-best-quality-conversion
+https://bitbyte3.com/blogs/ffmpeg-filters-deep-dive-enhancing-video-quality-and-effects
+https://www.mux.com/articles/optimize-video-for-web-playback-with-ffmpeg
+https://superuser.com/questions/370920/auto-image-enhance-for-ubuntu
+https://www.dedoimedo.com/computers/image-upscale-manual.html
+https://stackoverflow.com/questions/28136471/image-enhancement-solution
+https://stackoverflow.com/questions/28136471/image-enhancement-solution
+https://stackoverflow.com/questions/24961127/how-to-create-a-video-from-images-with-ffmpeg
+https://superuser.com/questions/1462071/ffmpeg-convert-pngs-to-video-files
+https://stackoverflow.com/questions/10802606/how-to-batch-resize-images-in-ubuntu-recursively-within-the-terminal
+https://askubuntu.com/questions/135477/how-can-i-scale-all-images-in-a-folder-to-the-same-width
+https://stackoverflow.com/questions/12433300/imagemagick-how-to-resize-proportionally-with-mogrify-without-a-background
+https://github.com/TahirHafeez/ffmpeg_scripts/blob/main/geq
+
+
+ffmpeg -i input_video.mp4 -vf "scale=1280:-2" -c:v libx264 -crf 23 -preset medium -c:a aac -b:a 128k output.mp4
+
+ffmpeg -i input_video.mp4 -c:v libx264 -b:v 1M -pass 1 -an -f null /dev/null && ffmpeg -i input_video.mp4 -c:v libx264 -b:v 1M -pass 2 -c:a aac -b:a 128k output.mp4
+
+ffmpeg -i input_video.mp4 -c:v libx264 -crf 23 -g 30 -keyint_min 30 -c:a aac -b:a 128k output.mp4
+
+ffmpeg -i input.mp4 -qscale:v 5 -t 2 scenario1_output_%03d.jpg
+ffmpeg -i input.mp4 -qscale:v 20  -t 2 scenario2_output_%03d.jpg
+
+
+#ok
+convert -enhance -equalize -contrast image.jpg image_enhanced.jpg
+convert -auto-gamma -auto-level -normalize original.jpg improved.jpg
+
+
+convert input.png -alpha on -virtual-pixel transparent -filter Triangle +distort Affine '0,0 0,0 %w,0 3834,0 0,%h 0,3582' -alpha off -crop 3834x3582+0+0 output.png
+
+# ok 3840x2160
+convert  -alpha on -virtual-pixel transparent -filter Triangle +distort Affine '0,0 0,0 %w,0 3834,0 0,%h 0,3582' -alpha off -crop 3440x2160+0+0 input.png output.png
+
+convert  -alpha on -virtual-pixel transparent -filter Triangle +distort Affine '0,0 0,0 %w,0 4834,0 0,%h 0,3282' -alpha off -crop 4740x3160+0+0 scenario3_output_001.jpg output2.png
+
+convert -threshold 85% -blur 2x1 -sharpen 0x3 -sharpen 0x3 -morphology dilate kirsch   scenario3_output_001.jpg output3.png
+
+convert -blur 2x1 -sharpen 0x3 -sharpen 0x3 scenario3_output_001.jpg output3.png
+
+convert  -enhance  -blur 2x1 -sharpen 0x3 -alpha on -virtual-pixel transparent -filter Triangle +distort Affine '0,0 0,0 %w,0 4834,0 0,%h 0,3282' -alpha off -crop 4740x3160+0+0 scenario3_output_001.jpg output2.png
+
+for i in *.jpg; do convert  -enhance  -blur 2x1 -sharpen 0x3 -alpha on -virtual-pixel transparent -filter Triangle +distort Affine '0,0 0,0 %w,0 4834,0 0,%h 0,3282' -alpha off -crop 4740x3160+0+0 $i $i.png; done
+
+
+ffmpeg -framerate 30 -pattern_type glob -i '*.png' -c:v libx264 -pix_fmt yuv420p out.mp4
+ffmpeg -framerate 15 -pattern_type glob -i '*.resized.png' -c:v libx264 -pix_fmt yuv420p out.mp4
+ffmpeg -i out.mp4 -vf "scale=1280:-2" -c:v libx264 -pix_fmt yuv420p out2.mp4
+ffmpeg -i out.mp4 -vf "scale=1920:786" -c:v libx264 -pix_fmt yuv420p -y out2.mp4
+
+
+ffmpeg -framerate 30 -pattern_type glob -i 'raw/*.png' -ss 0:36 -i orig/audio.ogg -c:v libx264 -c:a copy -shortest -r 30 -pix_fmt yuv420p raw.mp4
+
+ffmpeg -framerate 30 -pattern_type glob -i '*.resized.png' -c:v libx264 -vf "scale=1920:1080" -pix_fmt yuv420p out.mp4
+ffmpeg -framerate 30 -pattern_type glob -i '*.resized.png' -c:v libx264 -pix_fmt yuv420p out.mp4
+
+
+
+
+for f in `find . -name "*.jpg"`; do convert $f -resize 50% $f.resized.jpg; done
+for f in `find . -name "*.png"`; do convert $f -resize 50% $f.resized.png; done
+find . -name "*.jpg" | xargs convert -resize 50%
+find . -name "*.jpg" | xargs mogrify -resize 50%
+convert '*.jpg[200x]' resized%03d.png
