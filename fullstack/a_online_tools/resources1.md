@@ -48,6 +48,16 @@
 
 ------------------------------------------------------------------
 
+### AI chatgpt
+
+- https://chatgpt.com/
+- https://x.com/i/grok?focus=1
+- https://chatgptdeutsch.info/chatgpt-online/
+- https://talkai.info/de/chat/
+- https://chatopenai.de/
+
+------------------------------------------------------------------
+
 ### Api viewer editor
 
 - https://editor.swagger.io/
@@ -580,6 +590,7 @@ https://maximelafarie.com/giphy-downloader/
 - https://jsonformatter.curiousconcept.com/							    - JSON Beautifier
 - https://regex101.com/												- REgex Tester
 - https://sqlite.org/fiddle/index.html                            - sqlite
+- https://www.urldecoder.org/                                 - urldecoder
 
 ------------------------------------------------------------------
 ### Online whiteboard for digital collaboration
