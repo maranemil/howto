@@ -993,6 +993,13 @@ https://paywallreader.com/
 
 ------------------------------------------------------------------
 
+### Grammar check
+
+- https://www.germancorrector.com/
+- https://languagetool.org/spellchecking-german
+
+------------------------------------------------------------------
+
 ### Unix timestamp
 
 - https://www.epochconverter.com/

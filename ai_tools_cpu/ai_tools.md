@@ -273,3 +273,9 @@
 - https://codesignal.com/
 - https://www.hackerrank.com/
 - https://leetcode.com/explore/
+
+
+### diagram maker repo
+- https://gitdiagram.com/
+- https://github.com/ahmedkhaleel2004/gitdiagram/blob/main/backend/app/prompts.py
+

@@ -10,3 +10,40 @@ ffmpeg -i input_video.mp4 -af "afftdn=nf=-20" denoised_output_video.mp4
 
 ffmpeg -i example_video.mp4 -filter:a "volume=2.5" step1_normalized_video.mp4
 ffmpeg -i step1_normalized_video.mp4 -af "afftdn=nf=-15" final_output_video.mp4
+
+
+
+////////////////////////
+ffmpeg
+////////////////////////
+
+https://sound.stackexchange.com/questions/51117/how-can-i-improve-on-my-post-processing-using-ffmpeg
+https://superuser.com/questions/733061/reduce-background-noise-and-optimize-the-speech-from-an-audio-clip-using-ffmpeg
+https://ndurner.github.io/mlx-whisper-gemini
+
+ffmpeg -i <input_file> -af "highpass=f=200, lowpass=f=3000" <output_file>
+
+ffmpeg.exe -threads 4 -rtbufsize 2048m -f dshow -i audio="Microphone (Realtek Audio)"  -f gdigrab -offset_x 1 -offset_y 1 -video_size 768x432 -probesize 4096M -i desktop -pix_fmt yuv420p -c:v libx264 -crf 28 -preset ultrafast -tune zerolatency -movflags +faststart -r 15   "test.mp4"
+
+ffmpeg -i input.mp4 -af "afftdn=nf=-25" -c:v copy file1.mp4
+ffmpeg -i file1.mp4 -af "afftdn=nf=-25" -c:v copy file2.mp4
+ffmpeg -i file2.mp4 -af "highpass=f=200, lowpass=f=3000" -c:v copy file3.mp4
+ffmpeg -i file3.mp4 -af "volume=4" -c:v copy finaloutput.mp4
+
+https://github.com/richardpl/arnndn-models
+https://github.com/GregorR/rnnoise-models
+
+-af arnndn=m=cb.rnnn
+ffmpeg -i <input_file> -af arnndn=m=cb.rnnn <output_file>
+ffmpeg -i input.mov -af arnndn=m=bd.rnnn:mix=1 output.mov
+
+ffmpeg -i input.mov -af "highpass=200,lowpass=3000,afftdn" output.mov
+
+arnndn
+anlmdn
+anlmdn=s=2
+asubcut=5
+
+
+mlx_whisper --model "mlx-community/whisper-large-v3-mlx" --language German test.mp3
+./ffmpeg -i file.mp4 -vn -c:a libopus -b:a 32k -vbr on -ac 1 -ar 16000 -f segment -segment_time 3600 output_%03d.ogg

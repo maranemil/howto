@@ -1,0 +1,109 @@
+
+
+#######################################################
+noisereduce pedalboard
+#######################################################
+
+https://medium.com/@joshiprerak123/transform-your-audio-denoise-and-enhance-sound-quality-with-python-using-pedalboard-24da7c1df042
+https://dolby.io/blog/enhance-audio-by-removing-stationary-background-noise/
+https://medium.com/@joshiprerak123/enhancing-sound-quality-denoising-audio-with-fft-using-python-7a1d1c8c18e6
+
+
+https://pypi.org/project/noisereduce/
+https://spotify.github.io/pedalboard/
+
+!pip install noisereduce
+!pip install pedalboard
+!pip install librosa
+
+import librosa
+from IPython.display import Audio
+
+# Load audio file
+file_path = "your_audio_file"
+y, sr = librosa.load(file_path)
+
+# Play audio
+display(Audio(y, rate=sr))
+
+from pedalboard.io import AudioFile
+from pedalboard import *
+import noisereduce as nr
+import soundfile as sf
+sr=44100
+#loading audio
+with AudioFile('your_audio.wav').resampled_to(sr) as f:
+    audio = f.read(f.frames)
+#noisereduction
+reduced_noise = nr.reduce_noise(y=audio, sr=sr, stationary=True, prop_decrease=0.75)
+#enhancing through pedalboard
+board = Pedalboard([
+    NoiseGate(threshold_db=-30, ratio=1.5, release_ms=250),
+    Compressor(threshold_db=-16, ratio=4),
+    LowShelfFilter(cutoff_frequency_hz=400, gain_db=10, q=1),
+    Gain(gain_db=2)
+])
+
+effected = board(reduced_noise, sr)
+
+#saving enhanced audio
+with AudioFile('/content/audio1_enhenced.wav', 'w', sr, effected.shape[0]) as f:
+  f.write(effected)
+
+## Load and Play the Original Audio File
+
+import librosa
+from IPython.display import Audio
+
+# Load audio file
+file_path = "your_audio.wav"
+y, sr = librosa.load(file_path)
+
+# Play audio
+display(Audio(y, rate=sr))
+
+### Load and Play the Enhanced Audio File
+
+import librosa
+from IPython.display import Audio
+
+# Load audio file
+file_path = "/content/audio1_enhenced.wav"
+y, sr = librosa.load(file_path)
+
+# Play audio
+display(Audio(y, rate=sr))
+
+
+////////////////////////
+
+////////////////////////
+
+https://colab.research.google.com/github/timsainb/noisereduce/blob/master/notebooks/1.0-test-noise-reduction.ipynb
+https://colab.research.google.com/github/timsainb/noisereduce/blob/master/notebooks/2.0-test-noisereduce-pytorch.ipynb
+https://colab.research.google.com/github/timsainb/noisereduce/blob/master/notebooks/3.0-torchgate-as-nn-module.ipynb
+https://pypi.org/project/noisereduce/
+
+pip install noisereduce
+
+from scipy.io import wavfile
+import noisereduce as nr
+# load data
+rate, data = wavfile.read("mywav.wav")
+# perform noise reduction
+reduced_noise = nr.reduce_noise(y=data, sr=rate)
+wavfile.write("mywav_reduced_noise.wav", rate, reduced_noise)
+
+import torch
+from noisereduce.torchgate import TorchGate as TG
+device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+
+# Create TorchGating instance
+tg = TG(sr=8000, nonstationary=True).to(device)
+
+# Apply Spectral Gate to noisy speech signal
+noisy_speech = torch.randn(3, 32000, device=device)
+enhanced_speech = tg(noisy_speech)
+
+
+
