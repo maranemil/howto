@@ -215,7 +215,6 @@
 | https://www.pika.art/              | video gen |
 
 ### misc
-
 - https://www.perplexity.ai/ - ask anything
 - https://www.suno.ai/
 - https://lumalabs.ai/
@@ -227,7 +226,6 @@
 
 
 ### music 
-
 - https://suno.com/
 - https://www.udio.com/
 - https://stability.ai/news/stable-audio-2-0
@@ -242,7 +240,6 @@
 - https://www.microsoft.com/en-us/research/project/vasa-1/
 
 ### chatgpt local
-
 - https://www.danswer.ai/
 - https://github.com/danswer-ai/danswer
 - https://docs.danswer.dev/gen_ai_configs/overview
@@ -250,7 +247,6 @@
 - https://openwebui.com/
 
 ### Remove Image Background
-
 - https://www.remove.bg/uploads
 - https://www.remove.bg/
 - https://removal.ai/upload/
@@ -268,8 +264,6 @@
 
 
 ### code challenge
-
-
 - https://codesignal.com/
 - https://www.hackerrank.com/
 - https://leetcode.com/explore/
@@ -279,3 +273,11 @@
 - https://gitdiagram.com/
 - https://github.com/ahmedkhaleel2004/gitdiagram/blob/main/backend/app/prompts.py
 
+### chat 
+- https://character.ai/
+
+### AI Text Summarizer
+- https://quillbot.com/summarize
+- https://www.summarizer.org/
+- https://www.paraphraser.io/text-summarizer
+- https://www.semrush.com/contentshake/summary-generator/
