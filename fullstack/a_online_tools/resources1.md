@@ -831,9 +831,12 @@ https://paywallreader.com/
 ### Song searcher
 
 - http://www.musipedia.org/
+- https://audiotag.info/
 - https://blog.research.google/2018/09/googles-next-generation-music.html
+- https://songguesser.com/
+- https://www.aha-music.com/#
 - https://www.midomi.com/
-- https://www.shazam.com/de
+- https://www.shazam.com/
 - https://www.shazam.com/de/home
 
 ------------------------------------------------------------------
