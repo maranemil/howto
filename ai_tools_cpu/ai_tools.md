@@ -281,3 +281,10 @@
 - https://www.summarizer.org/
 - https://www.paraphraser.io/text-summarizer
 - https://www.semrush.com/contentshake/summary-generator/
+
+### AI Text scrambler rewriter
+- https://writer.hix.ai/paragraph-scrambler
+- https://www.junia.ai/tools/paraphrasing-tool#
+- https://ahrefs.com/writing-tools/paragraph-rewriter#
+- https://www.articlerewriter.net/
+- https://www.grammarly.com/ai/ai-writing-tools/sentence-rewriter
