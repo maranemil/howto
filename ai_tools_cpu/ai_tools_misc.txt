@@ -623,3 +623,23 @@ https://github.com/lm-sys/RouteLLM
 # Mixture-of-Experts (MoE) language
 https://github.com/deepseek-ai/DeepSeek-V3
 
+############################################################
+deepseek
+############################################################
+https://www.deepseek.com/
+https://api-docs.deepseek.com/news/news1226
+https://github.com/deepseek-ai/DeepSeek-V3
+
+cd inference
+python fp8_cast_bf16.py --input-fp8-hf-path /path/to/fp8_weights --output-bf16-hf-path /path/to/bf16_weights
+
+git clone https://github.com/deepseek-ai/DeepSeek-V3.git
+cd DeepSeek-V3/inference
+pip install -r requirements.txt
+
+python convert.py --hf-ckpt-path /path/to/DeepSeek-V3 --save-path /path/to/DeepSeek-V3-Demo --n-experts 256 --model-parallel 16
+
+torchrun --nnodes 2 --nproc-per-node 8 generate.py --node-rank $RANK --master-addr $ADDR --ckpt-path /path/to/DeepSeek-V3-Demo --config configs/config_671B.json --interactive --temperature 0.7 --max-new-tokens 200
+
+torchrun --nnodes 2 --nproc-per-node 8 generate.py --node-rank $RANK --master-addr $ADDR --ckpt-path /path/to/DeepSeek-V3-Demo --config configs/config_671B.json --input-file $FILE
+
