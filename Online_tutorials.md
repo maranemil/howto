@@ -53,35 +53,19 @@
 |:------------------------------------------------------------|:-------------------------------------------------------------------------|
 | https://www.youtube.com/watch?v=-edmQKcOW8s                 | react                                                                    |
 | https://www.youtube.com/watch?v=-EPMOaV7h_Q                 | SQL Server Tutorial For Beginners                                        |
-| https://www.youtube.com/watch?v=-ETQ97mXXF0                 | Learn Data Science in 10 Hours                                           |
-| https://www.youtube.com/watch?v=-MlNBTSg_Ww                 | React.js Hooks Crash Course                                              |
-| https://www.youtube.com/watch?v=-RCnNyD0L-s                 | Node.js Passport Login System Tutorial                                   |
 | https://www.youtube.com/watch?v=09_LlHjoEiY                 | Algorithms Course - Graph Theory Tutorial from a Google Engineer         |
 | https://www.youtube.com/watch?v=0uvWRwLs5Zo                 | Learn Ethical Hacking                                                    |
 | https://www.youtube.com/watch?v=1vbXmCrkT3Y                 | Big Data & Hadoop Full Course                                            | 
 | https://www.youtube.com/watch?v=2_lswM1S264                 | Ethical Hacking 101: Web App Penetration Testing                         |
 | https://www.youtube.com/watch?v=2cGHkBeGpeU                 | Beat Asteroids Game Using a Neural Network - JavaScript Tutorial         |
-| https://www.youtube.com/watch?v=2OHbjep_WjQ                 | Learn Angular - Full Tutorial Course                                     |
 | https://www.youtube.com/watch?v=2PGnYjbYuUo                 | linux                                                                    |
 | https://www.youtube.com/watch?v=3EMxBkqC4z0                 | Intro to Game Development with JavaScript - Full Tutorial                |
 | https://www.youtube.com/watch?v=3Kq1MIfTWCE                 | Full Ethical Hacking Course - Network Penetration                        |
 | https://www.youtube.com/watch?v=4C4zqhXwCKs                 | ArangoBb                                                                 |
-| https://www.youtube.com/watch?v=4deVCNJq3qc                 | Learn Vue.js - Full Course for Beginners - 2019                          |
-| https://www.youtube.com/watch?v=4vN1tHpCkA0                 | neural network for classification TensorFlow.js                          |
-| https://www.youtube.com/watch?v=6E6XecoTRVo                 | Neural Networks with JavaScript - Full Course using Brain.js             |
-| https://www.youtube.com/watch?v=6FOq4cUdH8k                 | Node.js With Passport Authentication                                     |
-| https://www.youtube.com/watch?v=6g4O5UOH304                 | TensorFlow 2.0 Full Tutorial                                             |
 | https://www.youtube.com/watch?v=6LOwPhPDwVc                 | MIT Searching and Sorting                                                |
-| https://www.youtube.com/watch?v=7CqJlxBYj-M                 | Learn the MERN Stack                                                     |
-| https://www.youtube.com/watch?v=7nafaH9SddU                 | Node.js API Authentication With JWT                                      |
-| https://www.youtube.com/watch?v=7x2YZhEj9Dw                 | Deep Learning Tutorial with Python                                       |
 | https://www.youtube.com/watch?v=8392NJjj8s0                 | Develop an AI to play Connect Four - Python Tutorial                     |
 | https://www.youtube.com/watch?v=8DvywoWv6fI                 | Python for Everybody - Full Course with Dr. Chuck                        |
-| https://www.youtube.com/watch?v=8t0vNu2fCCM                 | Gatsby JS - The Great Gatsby Bootcamp                                    |
-| https://www.youtube.com/watch?v=8z2qRln9tnc                 | VueJs                                                                    |
-| https://www.youtube.com/watch?v=98ChVWjI6KI                 | Laravel 6 Beginner - e5 - Controllers                                    |
 | https://www.youtube.com/watch?v=9Jry5-82I68                 | MIT Binary Search                                                        |
-| https://www.youtube.com/watch?v=9M4XKi25I2M                 | JavaScript Programming All-in-One Tutorial Series                        |
 | https://www.youtube.com/watch?v=9Pzj7Aj25lw                 | SQL Basics for Beginners                                                 |
 | https://www.youtube.com/watch?v=9Wbfk16jEOk                 | Learn Python and Django                                                  |
 | https://www.youtube.com/watch?v=_8V5o2UHG0E                 | Data Visualization with D3.js - Full Tutorial Course                     |
@@ -91,9 +75,6 @@
 | https://www.youtube.com/watch?v=a07iwuDWhys                 | Learn Machine Learning: Crash Course for Beginners [Without Math]        |
 | https://www.youtube.com/watch?v=b6QhQSnKNSc                 | Square Root Decomposition                                                |
 | https://www.youtube.com/watch?v=BDqvzFY72mg                 | Introduction to Power and Politics                                       | 
-| https://www.youtube.com/watch?v=bemDFpNooA8                 | Basic Computer Vision with ML                                            |
-| https://www.youtube.com/watch?v=Bo0guUbL5uo                 | Symfony PHP Framework Tutorial                                           |
-| https://www.youtube.com/watch?v=BzcBsTou0C0                 | Pytorch Introduction - Deep Learning                                     |
 | https://www.youtube.com/watch?v=C5QFHp1oAws                 | HTML5, CSS3                                                              |
 | https://www.youtube.com/watch?v=C6EWVBNCxsc                 | MIT Cache Algorithms                                                     |
 | https://www.youtube.com/watch?v=ccCblUZFM0w                 | How to Become a Data Scientist in 2017                                   |
@@ -163,8 +144,6 @@
 | https://www.youtube.com/watch?v=nrzLdMWTRMM                 | Miguel Grinberg - Microservices with Python and Flask - PyCon 2017       |
 | https://www.youtube.com/watch?v=NU_1StN5Tkk                 | Design Patterns in Plain English                                         | 
 | https://www.youtube.com/watch?v=oflN6WZOzxw                 | Red Hat Linux Course complete                                            |
-| https://www.youtube.com/watch?v=OK_JCtrrv-c                 | PHP Programming Language Tutorial                                        |
-| https://www.youtube.com/watch?v=pbCExciEbrc                 | TensorFlow.js in your browser                                            |
 | https://www.youtube.com/watch?v=pgKbZ-AfH_c                 | Logistic Regression Tutorial                                             |
 | https://www.youtube.com/watch?v=PkZNo7MFNFg                 | Learn JavaScript - Full Course for Beginners                             |
 | https://www.youtube.com/watch?v=pTJJsmejUOQ                 | Flutter Course                                                           |
@@ -173,16 +152,8 @@
 | https://www.youtube.com/watch?v=Qd_V5hpYk_A                 | Todo List Tutorial - Angular 4 and Redux                                 |
 | https://www.youtube.com/watch?v=Qqx_wzMmFeA                 | JavaScript                                                               | 
 | https://www.youtube.com/watch?v=QS5ljM78FuM                 | What is Java                                                             | 
-| https://www.youtube.com/watch?v=qSRrxpdMpVc                 | React Native Tutorial for Beginners                                      |
-| https://www.youtube.com/watch?v=qw--VYLpxG4                 | Learn PostgreSQL Tutorial                                                |
-| https://www.youtube.com/watch?v=r0Ogt-q956I                 | Deep Learning Crash Course                                               |
-| https://www.youtube.com/watch?v=RBSGKlAvoiM                 | Data Structures Easy to Advanced Course                                  |
-| https://www.youtube.com/watch?v=rfscVS0vtbw                 | Learn Python - Full Course for Beginners Tutorial                        |
-| https://www.youtube.com/watch?v=RLtyhwFtXQA                 | Learn Node.js - Full Tutorial for Beginners                              |
 | https://www.youtube.com/watch?v=s-CYnVz-uh4                 | MIT Breadth-First Search                                                 |
 | https://www.youtube.com/watch?v=S6S5JF6Gou0                 | Penetration Testing: Gophish Tutorial (Phishing Framework)               |
-| https://www.youtube.com/watch?v=sBws8MSXN7A                 | React JS Crash Course - 2019                                             |
-| https://www.youtube.com/watch?v=ScDWrogElmo                 | React Project - Beach Resort                                             |
 | https://www.youtube.com/watch?v=SWYqp7iY_Tc                 | Git & GitHub Crash Course                                                |
 | https://www.youtube.com/watch?v=t2CEgPsws3U                 | Data Structures and Algorithms in JavaScript - Full Course for Beginners |
 | https://www.youtube.com/watch?v=T3TpdPmTLso                 | Mathematics for Machine Learning full Course                             | 
@@ -198,29 +169,20 @@
 | https://www.youtube.com/watch?v=vSuK2C89yjA                 | Stanford Webinar - Design Thinking                                       | 
 | https://www.youtube.com/watch?v=vtPkZShrvXQ                 | Spring Boot Tutorial for Beginners (Java Framework)                      |
 | https://www.youtube.com/watch?v=wBp0Rb-ZJak                 | The Complete Linux Course                                                |
-| https://www.youtube.com/watch?v=WFr2WgN9_xE                 | Python Machine Learning & AI Mega Course                                 |
-| https://www.youtube.com/watch?v=WGJJIrtnfpk                 | Python Full Course - Learn Python in 12 Hours                            |
 | https://www.youtube.com/watch?v=Wm6CUkswsNw                 | Build An HTML5 Website                                                   |
 | https://www.youtube.com/watch?v=WoFwXj4p4Sc                 | TD Learning, Game Theory  Stanford CS221                                 | 
 | https://www.youtube.com/watch?v=WTOnKNjiPWU                 | Learn JavaScript: Full-Stack From Scratch                                |
 | https://www.youtube.com/watch?v=wxaKwHvyWoU                 | 5 Recruiting Strategies for Hiring the Best Technology Talent            |
-| https://www.youtube.com/watch?v=Wy9q22isx3U                 | Vue JS Crash Course - 2019                                               |
 | https://www.youtube.com/watch?v=x14G4DCk4nY                 | Scratch Tutorial for Beginners                                           |
 | https://www.youtube.com/watch?v=X2vAabgKiuM                 | Tutorial with Python & NLTK                                              |
 | https://www.youtube.com/watch?v=xC8CGv1CyFk                 | C++ interview with a Google engineer                                     |
 | https://www.youtube.com/watch?v=xnt2xSNRNn0                 | Quantum Physics Full Course                                              |
 | https://www.youtube.com/watch?v=xxpc-HPKN28                 | Statistics - A Full University Course on Data Science Basics in 8 Hours  |
 | https://www.youtube.com/watch?v=YS4e4q9oBaU                 | Learn Go Programming - Golang Tutorial for Beginners                     |
-| https://www.youtube.com/watch?v=YXPyB4XeYLA                 | Tkinter Course Python Tutorial                                           |
 | https://www.youtube.com/watch?v=YZvRrldjf1Y                 | How to Build an E-commerce Website with Django and Python                |
 | https://www.youtube.com/watch?v=zF34dRivLOw                 | Rust Crash Course  Rustlang                                              |
-| https://www.youtube.com/watch?v=ztHopE5Wnpc                 | Database Design Course                                                   |
 | https://www.youtube.com/watch?v=4TIvB8zDFio                 | Ultimate Freelancing Guide for Web Developers                            |
 | https://www.youtube.com/watch?v=3u7MQz1EyPY                 | Power BI Full Course                                                     |
-| https://www.youtube.com/watch?v=6g4O5UOH304                 | TensorFlow 2.0 Full Tutorial                                             |
-| https://www.youtube.com/watch?v=0Lt9w-BxKFQ                 | Scikit-Learn Tutorial                                                    |
-| https://www.youtube.com/watch?v=d1CIV9irQAY                 | Image Analysis in Python with SciPy and Scikit Image                     |
-| https://www.youtube.com/watch?v=arXiv-TM7DY                 | Image Analysis in Python with SciPy and scikit-image                     |
 | https://www.youtube.com/watch?v=TYqBtau0bYw                 | Preliminaries (Log Structured File System)                               |
 | https://www.youtube.com/watch?v=11MS8JN8XPg                 | B-Trees, Fractal Trees, Heaps and Log Structured Merge Trees             |
 | https://www.youtube.com/watch?v=vgSJlnXXkyg                 | SILK: Preventing Latency Spikes in Log-Structured Merge Key-Value Stores |
@@ -242,87 +204,194 @@
 | https://www.youtube.com/watch?v=nu5mdN2JIwM                 | Sass Crash Course                                                        |
 | https://www.youtube.com/watch?v=2eEe5LnEbks                 | Introduction to Linux                                                    | 
 | https://www.youtube.com/watch?v=rPSL1alFIjI                 | Functional Programming in Java                                           |
-| https://www.youtube.com/watch?v=F5mRW0jo-U4                 | Python Django Web Framework                                              |
-| https://www.youtube.com/watch?v=HXV3zeQKqGY                 | SQL Tutorial                                                             |
 | https://www.youtube.com/watch?v=_8V5o2UHG0E                 | Data Visualization with D3.js                                            |
 | https://www.youtube.com/watch?v=T3TpdPmTLso                 | Mathematics for Machine Learning                                         |
-| https://www.youtube.com/watch?v=tPYj3fFJGjk                 | TensorFlow 2.0 Complete Course                                           |
-| https://www.youtube.com/watch?v=tPYj3fFJGjk                 | TensorFlow 2.0 Complete Course                                           | 
-| https://www.youtube.com/watch?v=Hf4MJH0jDb4                 | React Native Crash Course 2020                                           |
-| https://www.youtube.com/watch?v=_z9nzEUgro4                 | Laravel 6 Advanced Service Container                                     |
 | https://www.youtube.com/watch?v=nu5mdN2JIwM                 | Sass Crash Course                                                        |
 | https://www.youtube.com/watch?v=jV8B24rSN5o                 | CSS Grid Layout Crash Course                                             |
 | https://www.youtube.com/watch?v=ZCweh0Q8tyE                 | Directives in Vue.js 2.0 - Vue.js Fundamentals                           |
-| https://www.youtube.com/watch?v=7PpJsho5aak                 | Laravel 7                                                                |
-| https://www.youtube.com/watch?v=-56x56UppqQ                 | MongoDB Crash Course                                                     |
-| https://www.youtube.com/watch?v=4deVCNJq3qc                 | Learn Vue.js - Full Course for Beginners                                 | 
-| https://www.youtube.com/watch?v=5lVQgZzLMHc                 | Vuex Crash Course                                                        | 
-| https://www.youtube.com/watch?v=Wy9q22isx3U                 | Vue JS Crash Course                                                      |
-| https://www.youtube.com/watch?v=DJ6PD_jBtU0                 | Full Stack Vue.js & Laravel                                              |
-| https://www.youtube.com/watch?v=ahCwqrYpIuM                 | TypeScript - The Basics                                                  |
-| https://www.youtube.com/watch?v=qgRUr-YUk1Q                 | JavaScript Modules in 100 Seconds                                        |
-| https://www.youtube.com/watch?v=g2o22C3CRfU                 | Big-O Notation in 100 Seconds                                            |
 | https://www.youtube.com/watch?v=DC471a9qrU4                 | Array Map in 100 Seconds                                                 |
-| https://www.youtube.com/watch?v=vn3tm0quoqE                 | The Async Await Episode I Promised                                       |
-| https://www.youtube.com/watch?v=RvYYCGs45L4                 | JavaScript Promise in 100 Seconds                                        |
 | https://www.youtube.com/watch?v=tVCYa_bnITg                 | Array Reduce in 100 seconds                                              |
 | https://www.youtube.com/watch?v=rf60MejMz3E                 | Recursion in 100 Seconds                                                 |
-| https://www.youtube.com/watch?v=m3OjWNFREJo                 | Electron JS in 100 Seconds                                               |
-| https://www.youtube.com/watch?v=D9oIu6jiYLk                 | Laravel Airlock with Vue for SPA Auth                                    |
-| https://www.youtube.com/watch?v=82hnvUYY6QA                 | AJAX Crash Course (Vanilla JavaScript)                                   |
-| https://www.youtube.com/watch?v=0ik6X4DJKCc                 | JavaScript DOM Crash Course                                              |
-| https://www.youtube.com/watch?v=NjN00cM18Z4                 | TypeScript Tutorial for Angular and React Developers                     |
-| https://www.youtube.com/watch?v=6g4O5UOH304                 | TensorFlow 2.0 Crash Course                                              |
-| https://www.youtube.com/watch?v=tPYj3fFJGjk                 | TensorFlow 2.0 Complete Course                                           |
 | https://www.youtube.com/watch?v=A_l0qrPUJds                 | JAMstack Course                                                          |
 | https://www.youtube.com/watch?v=t_ispmWmdjY                 | Ruby Programming Language - Full Course                                  |
-| https://www.youtube.com/watch?v=2qDywOS7VAc                 | JavaScript Course for Beginners 2020                                     |
 | https://www.youtube.com/watch?v=UB1O30fR-EE                 | HTML Crash Course For Absolute Beginners                                 |
-| https://www.youtube.com/watch?v=PkZNo7MFNFg                 | Learn JavaScript - Full Course for Beginners                             |
 | https://www.youtube.com/watch?v=VWeWViFCzzg                 | Intro to Apache Spark Training                                           |
 | https://www.youtube.com/watch?v=_xkSvufmjEs                 | Build and deploy a portfolio website                                     | 
-| https://www.youtube.com/watch?v=BwuLxPH8IDs                 | TypeScript Course for Beginners 2020                                     | 
-| https://www.youtube.com/watch?v=njKP3FqW3Sk                 | MIT Introduction to Deep Learning                                        | 
-| https://www.youtube.com/watch?v=k5E2AVpwsko                 | Angular Tutorial for Beginners                                           | 
-| https://www.youtube.com/watch?v=iaSUYvmCekI                 | Convolutional Neural Networks                                            |
 | https://www.youtube.com/watch?v=nU-IIXBWlS4                 | Digital Marketing Course Part1                                           | 
 | https://www.youtube.com/watch?v=ldYcgPKEZC8                 | PERN Stack Course                                                        | 
-| https://www.youtube.com/watch?v=1LJtg0Ip-SY                 | Build a Brain Computer App with React Native                             |  
-| https://www.youtube.com/watch?v=zTNA0MtZwso                 | Python Web Development: Understanding Django for Beginners               | 
-| https://www.youtube.com/watch?v=dOnAC2Rr-6A                 | Javascript Full Course                                                   | 2020 | 
 | https://www.youtube.com/watch?v=TPMlZxRRaBQ                 | Tableau for Data Science and Data Visualization                          | 
-| https://www.youtube.com/watch?v=-vHQub0NXI4                 | TensorFlow to solve for regression problems                              | 
-| https://www.youtube.com/watch?v=kE9875zZkLE                 | Learn Data Science Today - Data Science Tutorial for Beginners 2020      | 
-| https://www.youtube.com/watch?v=g9cbGNR6FoE                 | Deep Learning From Scratch - Seth Weidman                                | ODSC East 2019 | 
-| https://www.youtube.com/watch?v=zJ6WbK9zFpI                 | Docker for Beginners: Full Course                                        | 
-| https://www.youtube.com/watch?v=Kp3HGwlXwCk                 | BASIC JAVASCRIPT PROJECTS                                                | 
 | https://www.youtube.com/watch?v=1Rs2ND1ryYc                 | CSS Tutorial - Zero to Hero (Complete Course)                            | 
-| https://www.youtube.com/watch?v=zg9ih6SVACc                 | Data Structures                                                          |
-| https://www.youtube.com/watch?v=0B5eIE_1vpU                 | Scikit-learn Crash Course                                                | 
-| https://www.youtube.com/watch?v=Oe421EPjeBE                 | Node.js and Express.js - Full Course                                     | 
-| https://www.youtube.com/watch?v=w7ejDZ8SWv8                 | React JS Crash Course 2021                                               | 
-| https://www.youtube.com/watch?v=HchMW8EhWPU                 | Building a Symfony 3 App                                                 | 
-| https://www.youtube.com/watch?v=w7ejDZ8SWv8                 | React JS Crash Course 2021                                               | 
-| https://www.youtube.com/watch?v=sBws8MSXN7A                 | React JS Crash Course (2019)                                             | 
-| https://www.youtube.com/watch?v=qZXt1Aom3Cs                 | Vue JS Crash Course 2021                                                 | 
-| https://www.youtube.com/watch?v=mTz0GXj8NN0                 | Next.js Crash Course 2021                                                | 
-| https://www.youtube.com/watch?v=-FtcnssIpzQ#AWS_Certified   | AWS Certified Course                                                     |
-| https://www.youtube.com/watch?v=uc5C1Zt5tD8#AWS_Certified   | AWS Certified Course                                                     |
-| https://www.youtube.com/watch?v=v-ZDSSYv1L0#Python_Course   | Python_Course                                                            |
-| https://www.youtube.com/watch?v=wT5DkjMguUA#AWS_Full_Course | AWS_Full_Course                                                          |
-| https://www.youtube.com/watch?v=3hLmDS179YE#AWS_Certified   | AWS Certified Course                                                     |
-| https://www.youtube.com/watch?v=38pNOuGiSmw                 | Complete COBOL Refresher in 1 Hour                                       |
-| https://www.youtube.com/watch?v=jbNSmt8bPkQ                 | COBOL Training Course                                                    |
-| https://www.youtube.com/watch?v=BdfrbDhsGZg                 | COBOL Structure                                                          |
-| https://www.youtube.com/watch?v=TBs7HXI76yU                 | COBOL Tutorial                                                           |
-| https://www.youtube.com/watch?v=ZOLB4KqHmBs                 | Introduction to COBOL                                                    |
-| https://www.youtube.com/watch?v=ycHXzbAmY94                 | Beginner's Practical Approach to COBOL                                   |
-| https://www.youtube.com/watch?v=_pAX_ogguLI                 | Cobol tutorial for Beginners                                             |
-| https://www.youtube.com/watch?v=RdMAEdGvtLA                 | Cobol Course - Programming with VSCode                                   |
 
 
 
+### SQL
 
+| Link URL                                    | Title                     |
+|:--------------------------------------------|:--------------------------|
+| https://www.youtube.com/watch?v=HXV3zeQKqGY | SQL Tutorial              |
+| https://www.youtube.com/watch?v=-56x56UppqQ | MongoDB Crash Course      |
+| https://www.youtube.com/watch?v=ztHopE5Wnpc | Database Design Course    |
+| https://www.youtube.com/watch?v=qw--VYLpxG4 | Learn PostgreSQL Tutorial |
+
+
+### Cloud
+
+| Link URL                                    | Title                             |
+|:--------------------------------------------|:----------------------------------|
+| https://www.youtube.com/watch?v=zJ6WbK9zFpI | Docker for Beginners: Full Course | 
+
+
+### ML
+
+| Link URL                                    | Title                                                               |
+|:--------------------------------------------|:--------------------------------------------------------------------|
+| https://www.youtube.com/watch?v=0B5eIE_1vpU | Scikit-learn Crash Course                                           | 
+| https://www.youtube.com/watch?v=g9cbGNR6FoE | Deep Learning From Scratch - Seth Weidman                           | 
+| https://www.youtube.com/watch?v=kE9875zZkLE | Learn Data Science Today - Data Science Tutorial for Beginners 2020 | 
+| https://www.youtube.com/watch?v=6g4O5UOH304 | TensorFlow 2.0 Crash Course                                         |
+| https://www.youtube.com/watch?v=tPYj3fFJGjk | TensorFlow 2.0 Complete Course                                      |
+| https://www.youtube.com/watch?v=njKP3FqW3Sk | MIT Introduction to Deep Learning                                   | 
+| https://www.youtube.com/watch?v=-vHQub0NXI4 | TensorFlow to solve for regression problems                         | 
+| https://www.youtube.com/watch?v=6g4O5UOH304 | TensorFlow 2.0 Full Tutorial                                        |
+| https://www.youtube.com/watch?v=0Lt9w-BxKFQ | Scikit-Learn Tutorial                                               |
+| https://www.youtube.com/watch?v=d1CIV9irQAY | Image Analysis in Python with SciPy and Scikit Image                |
+| https://www.youtube.com/watch?v=arXiv-TM7DY | Image Analysis in Python with SciPy and scikit-image                |
+| https://www.youtube.com/watch?v=tPYj3fFJGjk | TensorFlow 2.0 Complete Course                                      |
+| https://www.youtube.com/watch?v=tPYj3fFJGjk | TensorFlow 2.0 Complete Course                                      | 
+| https://www.youtube.com/watch?v=BzcBsTou0C0 | Pytorch Introduction - Deep Learning                                |
+| https://www.youtube.com/watch?v=bemDFpNooA8 | Basic Computer Vision with ML                                       |
+| https://www.youtube.com/watch?v=7x2YZhEj9Dw | Deep Learning Tutorial with Python                                  |
+| https://www.youtube.com/watch?v=4vN1tHpCkA0 | neural network for classification TensorFlow.js                     |
+| https://www.youtube.com/watch?v=6E6XecoTRVo | Neural Networks with JavaScript - Full Course using Brain.js        |
+| https://www.youtube.com/watch?v=6g4O5UOH304 | TensorFlow 2.0 Full Tutorial                                        |
+| https://www.youtube.com/watch?v=iaSUYvmCekI | Convolutional Neural Networks                                       |
+| https://www.youtube.com/watch?v=r0Ogt-q956I | Deep Learning Crash Course                                          |
+| https://www.youtube.com/watch?v=pbCExciEbrc | TensorFlow.js in your browser                                       |
+
+
+### PHP
+
+| Link URL                                    | Title                                 |
+|:--------------------------------------------|:--------------------------------------|
+| https://www.youtube.com/watch?v=HchMW8EhWPU | Building a Symfony 3 App              | 
+| https://www.youtube.com/watch?v=D9oIu6jiYLk | Laravel Airlock with Vue for SPA Auth |
+| https://www.youtube.com/watch?v=_z9nzEUgro4 | Laravel 6 Advanced Service Container  |
+| https://www.youtube.com/watch?v=98ChVWjI6KI | Laravel 6 Beginner - e5 - Controllers |
+| https://www.youtube.com/watch?v=Bo0guUbL5uo | Symfony PHP Framework Tutorial        |
+| https://www.youtube.com/watch?v=7PpJsho5aak | Laravel 7                             |
+| https://www.youtube.com/watch?v=OK_JCtrrv-c | PHP Programming Language Tutorial     |
+
+
+### Python
+
+| Link URL                                                  | Title                                                      |
+|:----------------------------------------------------------|:-----------------------------------------------------------|
+| https://www.youtube.com/watch?v=v-ZDSSYv1L0#Python_Course | Python_Course                                              |
+| https://www.youtube.com/watch?v=zTNA0MtZwso               | Python Web Development: Understanding Django for Beginners | 
+| https://www.youtube.com/watch?v=F5mRW0jo-U4               | Python Django Web Framework                                |
+| https://www.youtube.com/watch?v=YXPyB4XeYLA               | Tkinter Course Python Tutorial                             |
+| https://www.youtube.com/watch?v=rfscVS0vtbw               | Learn Python - Full Course for Beginners Tutorial          |
+| https://www.youtube.com/watch?v=WFr2WgN9_xE               | Python Machine Learning & AI Mega Course                   |
+| https://www.youtube.com/watch?v=WGJJIrtnfpk               | Python Full Course - Learn Python in 12 Hours              |
+
+
+### JS
+
+| Link URL                                    | Title                                                |
+|:--------------------------------------------|:-----------------------------------------------------|
+| https://www.youtube.com/watch?v=w7ejDZ8SWv8 | React JS Crash Course 2021                           | 
+| https://www.youtube.com/watch?v=sBws8MSXN7A | React JS Crash Course (2019)                         | 
+| https://www.youtube.com/watch?v=qZXt1Aom3Cs | Vue JS Crash Course 2021                             | 
+| https://www.youtube.com/watch?v=mTz0GXj8NN0 | Next.js Crash Course 2021                            | 
+| https://www.youtube.com/watch?v=Oe421EPjeBE | Node.js and Express.js - Full Course                 | 
+| https://www.youtube.com/watch?v=w7ejDZ8SWv8 | React JS Crash Course 2021                           | 
+| https://www.youtube.com/watch?v=Kp3HGwlXwCk | BASIC JAVASCRIPT PROJECTS                            | 
+| https://www.youtube.com/watch?v=PkZNo7MFNFg | Learn JavaScript - Full Course for Beginners         |
+| https://www.youtube.com/watch?v=2qDywOS7VAc | JavaScript Course for Beginners 2020                 |
+| https://www.youtube.com/watch?v=0ik6X4DJKCc | JavaScript DOM Crash Course                          |
+| https://www.youtube.com/watch?v=NjN00cM18Z4 | TypeScript Tutorial for Angular and React Developers |
+| https://www.youtube.com/watch?v=1LJtg0Ip-SY | Build a Brain Computer App with React Native         |  
+| https://www.youtube.com/watch?v=m3OjWNFREJo | Electron JS in 100 Seconds                           |
+| https://www.youtube.com/watch?v=k5E2AVpwsko | Angular Tutorial for Beginners                       | 
+| https://www.youtube.com/watch?v=BwuLxPH8IDs | TypeScript Course for Beginners 2020                 | 
+| https://www.youtube.com/watch?v=dOnAC2Rr-6A | Javascript Full Course                               | 
+| https://www.youtube.com/watch?v=82hnvUYY6QA | AJAX Crash Course (Vanilla JavaScript)               |
+| https://www.youtube.com/watch?v=RvYYCGs45L4 | JavaScript Promise in 100 Seconds                    |
+| https://www.youtube.com/watch?v=vn3tm0quoqE | The Async Await Episode I Promised                   |
+| https://www.youtube.com/watch?v=DJ6PD_jBtU0 | Full Stack Vue.js & Laravel                          |
+| https://www.youtube.com/watch?v=ahCwqrYpIuM | TypeScript - The Basics                              |
+| https://www.youtube.com/watch?v=4deVCNJq3qc | Learn Vue.js - Full Course for Beginners             | 
+| https://www.youtube.com/watch?v=5lVQgZzLMHc | Vuex Crash Course                                    | 
+| https://www.youtube.com/watch?v=Wy9q22isx3U | Vue JS Crash Course                                  |
+| https://www.youtube.com/watch?v=qgRUr-YUk1Q | JavaScript Modules in 100 Seconds                    |
+| https://www.youtube.com/watch?v=Hf4MJH0jDb4 | React Native Crash Course 2020                       |
+| https://www.youtube.com/watch?v=Wy9q22isx3U | Vue JS Crash Course - 2019                           |
+| https://www.youtube.com/watch?v=sBws8MSXN7A | React JS Crash Course - 2019                         |
+| https://www.youtube.com/watch?v=ScDWrogElmo | React Project - Beach Resort                         |
+| https://www.youtube.com/watch?v=7nafaH9SddU | Node.js API Authentication With JWT                  |
+| https://www.youtube.com/watch?v=7CqJlxBYj-M | Learn the MERN Stack                                 |
+| https://www.youtube.com/watch?v=8t0vNu2fCCM | Gatsby JS - The Great Gatsby Bootcamp                |
+| https://www.youtube.com/watch?v=8z2qRln9tnc | VueJs                                                |
+| https://www.youtube.com/watch?v=9M4XKi25I2M | JavaScript Programming All-in-One Tutorial Series    |
+| https://www.youtube.com/watch?v=2OHbjep_WjQ | Learn Angular - Full Tutorial Course                 |
+| https://www.youtube.com/watch?v=4deVCNJq3qc | Learn Vue.js - Full Course for Beginners - 2019      |
+| https://www.youtube.com/watch?v=6FOq4cUdH8k | Node.js With Passport Authentication                 |
+| https://www.youtube.com/watch?v=-MlNBTSg_Ww | React.js Hooks Crash Course                          |
+| https://www.youtube.com/watch?v=-RCnNyD0L-s | Node.js Passport Login System Tutorial               |
+| https://www.youtube.com/watch?v=RLtyhwFtXQA | Learn Node.js - Full Tutorial for Beginners          |
+| https://www.youtube.com/watch?v=qSRrxpdMpVc | React Native Tutorial for Beginners                  |
+
+### AWS
+
+| Link URL                                                    | Title                |
+|:------------------------------------------------------------|:---------------------|
+| https://www.youtube.com/watch?v=wT5DkjMguUA#AWS_Full_Course | AWS_Full_Course      |
+| https://www.youtube.com/watch?v=3hLmDS179YE#AWS_Certified   | AWS Certified Course |
+| https://www.youtube.com/watch?v=-FtcnssIpzQ#AWS_Certified   | AWS Certified Course |
+| https://www.youtube.com/watch?v=uc5C1Zt5tD8#AWS_Certified   | AWS Certified Course |
+
+
+### COBOL
+
+| Link URL                                    | Title                                  |
+|:--------------------------------------------|:---------------------------------------|
+| https://www.youtube.com/watch?v=38pNOuGiSmw | Complete COBOL Refresher in 1 Hour     |
+| https://www.youtube.com/watch?v=jbNSmt8bPkQ | COBOL Training Course                  |
+| https://www.youtube.com/watch?v=BdfrbDhsGZg | COBOL Structure                        |
+| https://www.youtube.com/watch?v=TBs7HXI76yU | COBOL Tutorial                         |
+| https://www.youtube.com/watch?v=ZOLB4KqHmBs | Introduction to COBOL                  |
+| https://www.youtube.com/watch?v=ycHXzbAmY94 | Beginner's Practical Approach to COBOL |
+| https://www.youtube.com/watch?v=_pAX_ogguLI | Cobol tutorial for Beginners           |
+| https://www.youtube.com/watch?v=RdMAEdGvtLA | Cobol Course - Programming with VSCode |
+
+
+### Data Structures and Algorithms 
+
+| Link URL                                    | Title                                        |
+|:--------------------------------------------|:---------------------------------------------|
+| https://www.youtube.com/watch?v=pkYVOmU3MgA | Data Structures and Algorithms in Python     | 
+| https://www.youtube.com/watch?v=ouipSd_5ivQ | 10 Key Data Structures We Use Every Day      | 
+| https://www.youtube.com/watch?v=Mo4vesaut8g | Big O Notation fcc                           | 
+| https://www.youtube.com/watch?v=zg9ih6SVACc | Data Structures fcc                          | 
+| https://www.youtube.com/watch?v=8hly31xKli0 | Algorithms and Data Structures Tutorial  fcc | 
+| https://www.youtube.com/watch?v=CBYHwZcbD-s | Learn Data Structures and Algorithms         | 
+| https://www.youtube.com/watch?v=2ZLl8GAk1X4 | Data Structures and Algorithms fcc           | 
+| https://www.youtube.com/watch?v=zg9ih6SVACc | Data Structures                              |
+| https://www.youtube.com/watch?v=g2o22C3CRfU | Big-O Notation in 100 Seconds                |
+| https://www.youtube.com/watch?v=-ETQ97mXXF0 | Learn Data Science in 10 Hours               |
+| https://www.youtube.com/watch?v=RBSGKlAvoiM | Data Structures Easy to Advanced Course      |
+
+### Ear Training 
+
+| Link URL                                    | Title                           |
+|:--------------------------------------------|:--------------------------------|
+| https://www.youtube.com/watch?v=m3Sg68XbngQ | Interval Ear Training - 1 hour  | 
+| https://www.youtube.com/watch?v=EazFLAA-Pog | Ear Training Exercise - Level 1 | 
+| https://www.youtube.com/watch?v=YA-TXGYxOSw | 1 Hour of Ear Training          | 
+| https://www.youtube.com/watch?v=Da-vkCRjeKQ | Diatonic Chord Progressions     | 
+
+
+### Playlists 
 
 | Link URL                                                                                    | Playlist                                                   |
 |---------------------------------------------------------------------------------------------|------------------------------------------------------------|
