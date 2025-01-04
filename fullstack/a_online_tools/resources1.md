@@ -434,6 +434,13 @@ https://maximelafarie.com/giphy-downloader/
 
 ------------------------------------------------------------------
 
+### Math Calc
+
+- https://www.mathepower.com/en/percent.php
+
+
+------------------------------------------------------------------
+
 ### Meet video
 
 - https://meet.jit.si/
