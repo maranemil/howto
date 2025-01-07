@@ -225,6 +225,12 @@
 - https://typeset.io/ - resume text
 
 
+### chatgpt 
+- https://chatfreeai.com/
+- https://deepai.org/chat/free-chatgpt
+- https://chatgpt4online.org/chatgpt-free-online/#chat
+- 
+
 ### music 
 - https://suno.com/
 - https://www.udio.com/
@@ -239,12 +245,14 @@
 - https://openai.com/index/sora
 - https://www.microsoft.com/en-us/research/project/vasa-1/
 
+
 ### chatgpt local
 - https://www.danswer.ai/
 - https://github.com/danswer-ai/danswer
 - https://docs.danswer.dev/gen_ai_configs/overview
 - https://github.com/open-webui/open-webui
 - https://openwebui.com/
+
 
 ### Remove Image Background
 - https://www.remove.bg/uploads
