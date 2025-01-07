@@ -335,6 +335,7 @@ lynx t3n.de -accept_all_cookies  -justify
 
 sudo apt install net-tools
 ifconfig
+ip addr show
 python3 -m http.server 8888
 
 
