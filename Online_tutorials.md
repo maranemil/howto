@@ -529,5 +529,6 @@
 | https://www.youtube.com/watch?v=zWLRdna1p6U&list=PLJooqCSo73ShdOeigDI6Ti0lHxW34LSAy         | spryker Crash Course                                       |
 | https://www.youtube.com/watch?v=ycHXzbAmY94&list=PLfNQwFOQm0urbWdIiugEKPD_-Hyp5fuwX         | COBOL                                                      |
 | https://www.youtube.com/watch?v=hWRRdICvMNs&list=PLOspHqNVtKAAAq9pHWlEiRUVcYMCcu4X0         | API Essentials                                             |
+| https://www.youtube.com/watch?v=_Drz6MbNmmY&list=PLMvza7ri1L0eduljUjLSsXRvIJ8rD8Ohs         | LMMS                                                       |
 
 

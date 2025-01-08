@@ -1,0 +1,102 @@
+######################################
+badblocks: Value too large for defined data type invalid end block (5751976960): must be 32-bit value
+######################################
+
+https://forum.ubuntuusers.de/topic/untertuetzt-badblocks-8tb-hds-der-wert-ist-zu-/
+https://askubuntu.com/questions/548945/how-to-check-badsector-on-ext4-6tb
+https://www.reddit.com/r/DataHoarder/comments/kejp08/wd_18tb_badblocks_error_value_too_large/
+https://en.ubunlog.com/gimp-3-0%2C-of-which-an-rc2-is-already-available%2C-has-arrived-on-ubuntu-25-04/
+https://linux.die.net/man/8/badblocks
+https://askubuntu.com/questions/966236/how-can-i-repair-boot-failure-due-to-moved-boot-sector
+
+
+-v Verbose
+-s progress
+-n Use non-destructive read-write mode
+-f overridden
+-b block-size
+
+
+
+# repair
+------------------------------
+sudo fdisk -l
+sudo badblocks -s -v -n -f /dev/sdb
+sudo badblocks -s -v -n -f /dev/sda1
+sudo badblocks -wvs /dev/sdb
+sudo fsck -cfvr /dev/sda1
+
+sudo badblocks -vs /dev/sda2
+sudo badblocks -b 4096 -v /dev/sda # fix
+sudo -n blockdev --getbsz /dev/disk
+
+sudo badblocks -wsv -b 4096 /dev/sdb
+sudo badblocks -wsv -b 4096 /dev/sdb
+
+time badblocks -b4096 -o "badblocks-$(date --iso-8601=seconds).log" -p3 -svw
+time badblocks -b4096 -o "badblocks-$(date --iso-8601=seconds).log" -p3 -svw
+
+https://unix.stackexchange.com/questions/252509/using-dd-in-order-to-save-and-restore-a-boot-sector
+
+dd if=/dev/sda of=/mnt/mbr.bin bs=446 count=1
+
+https://cstan.io/en/post/2016/03/mbr-einer-linux-installation-wiederherstellen/
+https://www.turnkeylinux.org/docs/chroot-to-repair-system
+
+
+df;sudo parted -ls;sudo lsblk -f;sudo lsblk -m
+
+grub-install --no-floppy --root-directory=/mnt /dev/sda
+fdisk -l /dev/sda
+dd if=/dev/zero of=/dev/sda bs=512 count=1
+grub-install --no-floppy /dev/sda
+
+
+##############################################
+boot-repair ***
+##############################################
+https://help.ubuntu.com/community/Boot-Repair
+
+sudo add-apt-repository ppa:yannubuntu/boot-repair && sudo apt update
+sudo apt install -y boot-repair && boot-repair
+
+
+
+
+https://feeding.cloud.geek.nz/posts/repairing-corrupt-ext4-root-partition/
+fsck.ext4 -pf /dev/sde2
+fsck.ext4 -f /dev/sde2
+fsck.ext4 -c /dev/sde2
+fsck.ext4 -f /dev/sde2
+fdisk -l /dev/sde
+fdisk /dev/sde
+smartctl -a /dev/sda
+smartctl -t long /dev/sda
+
+
+NTFS is either inconsistent, or there is a hardware fault, or it's a
+SoftRAID/FakeRAID hardware
+
+######################################
+FIX OK !!!
+######################################
+https://askubuntu.com/questions/500647/unable-to-mount-ntfs-external-hard-drive
+https://forum.manjaro.org/t/recent-update-broke-mounting-ntfs/149509/8
+https://www.tecmint.com/fix-ntfs-partition-failed-to-mount-error/#ok
+https://superuser.com/questions/788984/unable-to-mount-2tb-ntfs-hard-drive-in-ubuntu-14-04
+
+sudo apt-get install ntfs-3g
+sudo ntfsfix /dev/sda1
+sudo ntfsfix /dev/sdb1
+sudo ntfsfix /dev/sda2
+
+sudo ntfsfix -n /dev/sda1 # dry run
+sudo ntfsfix -b /dev/sda1 # -b or --clear-bad-sectors
+sudo ntfsfix -d /dev/sda1 # clearing the volume dirty flag if the volume can be fixed and mounted.
+
+sudo lsblk -f
+lsblk -f
+sudo bash -c 'echo "blacklist ntfs3" > /etc/modprobe.d/disable-ntfs3.conf' Reboot then.
+
+sudo apt-get install testdisk
+sudo testdisk
