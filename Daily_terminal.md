@@ -693,3 +693,23 @@ export LANGUAGE=en-US && google-chrome --lang=en-US,en --disable-translate --ash
 chrome://restart 
 
 ~~~
+
+
+###  grub-repair ***
+~~~
+https://help.ubuntu.com/community/Boot-Repair
+
+sudo add-apt-repository ppa:yannubuntu/boot-repair && sudo apt update
+sudo apt install -y boot-repair && boot-repair
+~~~
+
+###  boot-repair ***
+~~~
+sudo lsblk -f
+
+sudo apt-get install ntfs-3g
+
+sudo ntfsfix -n /dev/sda1 # dry run
+sudo ntfsfix -b /dev/sda1 # -b or --clear-bad-sectors
+sudo ntfsfix -d /dev/sda1 # clearing the volume dirty flag if the volume can be fixed and mounted.
+~~~
