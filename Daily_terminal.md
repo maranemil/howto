@@ -182,6 +182,9 @@ lynx t3n.de -accept_all_cookies  -justify
 * sudo swapoff -a && sudo dd if=/dev/zero of=/swapfile bs=500M count=8 && sudo mkswap /swapfile && sudo swapon /swapfile -a && swapon -s && swapon --show 
 * echo "vm.swappiness=10" | sudo tee -a /etc/sysctl.conf
 * echo 3 | sudo tee /proc/sys/vm/drop_caches
+* sudo sh -c "/usr/bin/echo 3 > /proc/sys/vm/drop_caches"
+* size="4G" && file_swap=/swapfile_$size.img && sudo touch $file_swap && sudo fallocate -l $size /$file_swap && sudo mkswap /$file_swap && sudo swapon -p 20 /$file_swap
+
 ```
 
 ####  [Manage RamDisk]

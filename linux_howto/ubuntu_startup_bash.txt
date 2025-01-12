@@ -230,3 +230,74 @@ chrome://flags/#disable-accelerated-video-decode
 
 
 https://github.com/GoogleChrome/chrome-launcher/blob/main/docs/chrome-flags-for-tools.md
+
+
+################################################
+################################################
+https://askubuntu.com/questions/178712/how-to-increase-swap-space
+
+swapon --show
+sudo fallocate -l 1G /swapfile_extend_1GB
+sudo mkswap /swapfile_extend_1GB
+sudo swapon /swapfile_extend_1GB
+..
+\\\\ Resize Swap to 8GB
+# Turn swap off
+# This moves stuff in swap to the main memory and might take several minutes
+sudo swapoff -a
+
+# Create an empty swapfile
+# Note that "1M" is basically just the unit and count is an integer.
+# Together, they define the size. In this case 8GiB.
+sudo dd if=/dev/zero of=/swapfile bs=1M count=8192
+
+# Set the correct permissions
+sudo chmod 0600 /swapfile
+
+sudo mkswap /swapfile  # Set up a Linux swap area
+sudo swapon /swapfile  # Turn the swap on
+
+grep Swap /proc/meminfo
+
+Check if it worked
+grep Swap /proc/meminfo
+
+Make it permanent (persist on restarts)
+Add this line to the end of your /etc/fstab:
+/swapfile none swap sw 0 0
+
+/////////////////////////////////////////
+# Create an empty file:
+dd if=/dev/zero of=/media/fasthdd/swapfile.img bs=1024 count=1M
+# Bake the swap file:
+mkswap /media/fasthdd/swapfile.img
+Bring up on boot:
+# Add this line to /etc/fstab
+/media/fasthdd/swapfile.img swap swap sw 0 0
+# Activate
+swapon /media/fasthdd/swapfile.img
+# check
+cat /proc/swaps
+
+sudo apt-get update
+sudo apt-get install gparted && sudo gparted
+
+sudo swapon -s
+############################# ok ##############################
+size="4G" && file_swap=/swapfile_$size.img && sudo touch $file_swap && sudo fallocate -l $size /$file_swap && sudo mkswap /$file_swap && sudo swapon -p 20 /$file_swap
+
+
+##########################################
+Syncing Linux Cache Levels
+##########################################
+
+https://askubuntu.com/questions/609226/freeing-page-cache-using-echo-3-proc-sys-vm-drop-caches-doesnt-work
+https://unix.stackexchange.com/questions/727393/linux-drop-cache-using-echo-3-proc-sys-vm-drop-caches-not-working-as-expect
+https://unix.stackexchange.com/questions/17936/setting-proc-sys-vm-drop-caches-to-clear-cache
+https://unix.stackexchange.com/questions/109496/echo-3-proc-sys-vm-drop-caches-permission-denied-as-root
+https://stackoverflow.com/questions/20505819/linux-echo-3-proc-sys-vm-drop-caches-takes-hours-to-complete
+
+echo 3 | sudo tee /proc/sys/vm/drop_caches
+sudo sh -c "/usr/bin/echo 3 > /proc/sys/vm/drop_caches"
+
+
