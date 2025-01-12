@@ -229,7 +229,7 @@
 - https://chatfreeai.com/
 - https://deepai.org/chat/free-chatgpt
 - https://chatgpt4online.org/chatgpt-free-online/#chat
-- 
+- https://www.perplexity.ai/
 
 ### music 
 - https://suno.com/
