@@ -231,6 +231,53 @@
 - https://chatgpt4online.org/chatgpt-free-online/#chat
 - https://www.perplexity.ai/
 
+### chatgpt2
+
+- https://search.brave.com/
+- https://huggingface.co/spaces/VIDraft/eum
+- https://deepai.org/chat/free-chatgpt
+- https://talkai.info/chat/
+- https://chatgptis.org/
+- https://minitoolai.com/chatGPT/
+- https://chatgptdeutsch.info/#de
+- https://stablediffusion.fr/chatgpt4
+- https://stablediffusion.fr/chatgpt3
+- https://chatgptgratis.app/#de
+- https://chatgpt5free.com/chatgpt-5-free/
+- https://gptonline.ai/chatgpt-online/
+- https://gptdeutsch.com/#de
+- https://copilot.microsoft.com/
+- https://www.yeschat.ai/gpts-9t557I9hEiR-GPT-Chat-Free-Online
+- https://chatgbt.online/chat
+- https://huggingface.co/chat/
+- https://echatgpt.org/chat
+- https://chatopenai.de/#de
+- https://perchance.org/4nqw6vnlcy
+- https://perchance.org/chatgpt-with-pollinations-ai
+- https://perchance.org/generative-pre-trained-transformer
+- https://perchance.org/uncensoredchat
+- https://perchance.org/chatgpt5
+- ..
+- https://chatgptspanish.org/en/
+- https://chatgpt4online.org/#chat
+- https://chat.hix.ai/chatgpt
+- https://chatgpt4online.org/chatgpt-free-online/#chat
+- https://iask.ai/
+- https://komo.ai/
+- https://andisearch.com/
+- https://www.perplexity.ai/
+- https://chatgpt.com/?hints=search
+- 
+
+### code
+- https://codeium.com/live/general
+- https://copilot.microsoft.com/
+- https://zzzcode.ai/code-generator
+- https://codegpt.co/
+- https://code.visualstudio.com/docs/copilot/overview
+- https://replit.com/ai
+- https://www.tabnine.com/
+
 ### music 
 - https://suno.com/
 - https://www.udio.com/
