@@ -140,4 +140,53 @@ https://www.tutorialspoint.com/php/php_design_patterns.htm
 https://www.w3schools.com/php/php_oop_interfaces.asp
 ```
 
+###  Design Patterns: The Movie
+```
+https://www.youtube.com/watch?v=2-4k5FhPlmg
 
+factory . concrete factory . product . concrete product
+abstract factory . concrete factory  . product . concrete product
+builder . concrete builder . product - for variable components small projects
+prototype . concrete prototype - clone 
+singleton - getinstance
+adapter - api - bridge - interfaces - target - adapters
+bridge - abstraction - implementation [plug-system - plugin]
+composite - test range string array - component + leaf + composite
+decorator - default object - object - uppgrade - update subclasses
+facade - client - subsystems
+flyweight - building factory
+proxy - api . generator - cache . auth . / subject . real subject . proxy
+chain of responsability - handlers - rule validate
+command - undo redo - action - stack state actions - invoker - receiver 
+interpreter - regex math dsl - modularity
+iterator - object - walker - iterator . collection
+mediator - manager . devices . component 
+momento - game . state . manager . undo redo 
+observer - changes on event . subscribers . publisher . dynamic updates
+state - stages - context - states 
+strategy - context 
+template method - skeleton - abstract class
+visitor - unit - interface
+
+https://agileparrot.com/creational-design-patterns-in-php/
+https://designpatternsphp.readthedocs.io/en/latest/
+https://designpatternsphp.readthedocs.io/en/latest/index.html
+https://github.com/Design-pattrns/Abstract-Factory-Pattern
+https://mermaid.js.org/syntax/classDiagram.html
+https://refactoring.guru/design-patterns/abstract-factory
+https://refactoring.guru/design-patterns/abstract-factory/csharp/example
+https://refactoring.guru/design-patterns/abstract-factory/java/example#
+https://refactoring.guru/design-patterns/abstract-factory/typescript/example
+https://sourcemaking.com/design_patterns#
+https://springframework.guru/gang-of-four-design-patterns/abstract-factory-design-pattern/
+https://symfony.com/doc/current/service_container/factories.html
+https://symfonycasts.com/screencast/design-patterns-2/factory
+https://symfonycasts.com/screencast/design-patterns-2/factory-families
+https://www.baeldung.com/java-abstract-factory-pattern
+https://www.dofactory.com/net/abstract-factory-design-pattern
+https://www.dofactory.com/net/design-patterns
+https://www.geeksforgeeks.org/abstract-factory-pattern-javascript-design-patterns/
+https://www.geeksforgeeks.org/abstract-factory-pattern/
+https://www.javatpoint.com/abstract-factory-pattern
+https://www.tutorialspoint.com/design_pattern/abstract_factory_pattern.htm
+```
