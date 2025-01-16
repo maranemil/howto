@@ -634,16 +634,22 @@ for f in *[13579]*.jpeg; do echo "$f"; done
 
 ### Debian Ubuntu mirrors
 ~~~
+https://ftp-stud.hs-esslingen.de/Mirrors/cdimage.ubuntu.com/lubuntu/releases/16.04/release/
+https://ftp-stud.hs-esslingen.de/Mirrors/cdimage.ubuntu.com/ubuntu/releases/23.04/release/
+https://ftp-stud.hs-esslingen.de/debian-cd/current-live/amd64/iso-hybrid/
+https://ftp.fau.de/
+https://ftp.fau.de/devuan-cd/devuan_chimaera/desktop-live/
+https://ftp.fau.de/ubuntu-releases/14.04/
+https://ftp.fau.de/ubuntu-releases/16.04/
+https://ftp.fau.de/ubuntu-releases/22.04/
+https://old-releases.ubuntu.com/releases/16.04.4/
+https://releases.ubuntu.com/
+https://releases.ubuntu.com/23.10.1/
+https://releases.ubuntu.com/23.10/
+https://releases.ubuntu.com/jammy/
+https://releases.ubuntu.com/mantic/
 https://www.debian.org/CD/http-ftp/
 https://www.debian.org/releases/bullseye/amd64/ch08s01.en.html
-https://ftp-stud.hs-esslingen.de/debian-cd/current-live/amd64/iso-hybrid/
-https://releases.ubuntu.com/mantic/
-https://releases.ubuntu.com/
-https://releases.ubuntu.com/23.10/
-https://releases.ubuntu.com/23.10.1/
-https://releases.ubuntu.com/jammy/
-https://ftp.fau.de/ubuntu-releases/22.04/
-https://ftp-stud.hs-esslingen.de/Mirrors/cdimage.ubuntu.com/ubuntu/releases/23.04/release/
 ~~~
 
 
