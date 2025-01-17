@@ -18,6 +18,23 @@
 | https://superhuman.com/                                  | Email app                           | 
 | https://vidiq.com/                                       | Youtube boster                      |
 
+
+### automl
+
+| url                                                        | type         |
+|:-----------------------------------------------------------|:-------------|
+| https://www.automl.org/automl/                             | automl       | 
+| https://www.cs.ubc.ca/labs/algorithms/Projects/autoweka/   | autoweka     | 
+| https://automl.github.io/auto-sklearn/master/              | auto-sklearn | 
+| https://github.com/automl/Auto-PyTorch                     | Auto-PyTorch | 
+| https://auto.gluon.ai/stable/index.html                    | auto gluon   | 
+| https://docs.h2o.ai/h2o/latest-stable/h2o-docs/automl.html | automl       | 
+| https://github.com/AxeldeRomblay/MLBox                     | MLBox        | 
+| https://github.com/automl/Auto-PyTorch                     | Auto-PyTorch | 
+| https://autokeras.com/                                     | autokeras    | 
+
+
+
 ### code
 
 | url                                                                          | type                  |
