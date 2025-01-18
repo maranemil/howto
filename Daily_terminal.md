@@ -226,6 +226,12 @@ lynx t3n.de -accept_all_cookies  -justify
 
 * google-chrome --wm-window-animations-disabled --autoplay-policy=no-user-gesture-required --animation-duration-scale=0 --disable-threaded-animation --no-experiments --disable-notifications --no-referrers --new-window --enable-low-end-device-mode --restore-last-session --disable-remote-fonts --disable-remote-playback-api --disable-voice-input
 
+* chromium-browser --bound-session-cookie-rotation-delay --disable-partitioned-cookies --disable-notifications --disable-ipc-flooding-protection --disable-print-preview --disable-remote-fonts  --disable-renderer-accessibilit --disable-threaded-animation  --disable-virtual-keyboard
+
+* google-chrome  --bound-session-cookie-rotation-delay --disable-partitioned-cookies --disable-notifications --disable-ipc-flooding-protection --disable-print-preview --disable-remote-fonts  --disable-renderer-accessibilit --disable-threaded-animation  --disable-virtual-keyboard --disable-print-preview
+
+
+
 ```
 ```
 * chromium --process-per-site
