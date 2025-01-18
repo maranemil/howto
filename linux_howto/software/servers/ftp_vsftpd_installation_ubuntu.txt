@@ -1,0 +1,98 @@
+################################################
+vsftpd ftp server
+################################################
+
+
+https://askubuntu.com/questions/368323/i-cant-login-as-anonymous-user-to-vsftpd-server
+https://ubuntu.com/server/docs/set-up-an-ftp-server
+https://serverfault.com/questions/34678/how-to-configure-vsftpd-to-allow-root-logins
+https://serverfault.com/questions/1046969/vsftpd-anonymous-configuration-for-full-access
+https://forums.raspberrypi.com/viewtopic.php?t=372545
+
+sudo apt install vsftpd
+
+anonymous_enable=YES
+anon_upload_enable=YES
+write_enable=YES
+
+sudo mkdir -p /srv/files/ftp
+sudo usermod -d /srv/files/ftp ftp
+
+sudo systemctl restart vsftpd.service
+
+...
+
+anonymous_enable=YES
+no_anon_password=YES
+sudo nano /etc/ftpusers
+
+...
+
+anonymous_enable=YES
+local_enable=NO
+write_enable=NO
+anon_root=/srv/ftp
+anon_max_rate=2048000
+xferlog_enable=YES
+listen=YES
+
+userlist_deny=YES
+
+nano /etc/pam.d/vsftpd
+auth blablabla sense=deny file=/etc/ftpusers
+Make it to be sense= allow
+
+
+nano /etc/vsftpd.conf
+pam_service_name=vsftpd to pam_service_name=ftp near the end of your /etc/vsftpd.conf
+
+...
+pasv_enable=Yes
+pasv_max_port=10100
+pasv_min_port=1009
+pasv_address=xxx.xxx.xxx.xxx
+...
+
+
+allow_writeable_chroot=YES
+nopriv_user=ftp
+anon_world_readable_only=NO
+anon_upload_enable=YES
+anon_mkdir_write_enable=YES
+anon_other_write_enable=YES
+
+
+///////////////////////////////////////
+my conf
+///////////////////////////////////////
+
+grep -v '#' /etc/vsftpd.conf
+
+listen=YES
+listen_ipv6=NO
+anonymous_enable=YES
+no_anon_password=YES
+anon_upload_enable=YES
+
+local_enable=NO
+write_enable=YES
+anon_upload_enable=YES
+anon_root=/srv/ftp
+
+
+anon_mkdir_write_enable=YES
+dirmessage_enable=YES
+use_localtime=YES
+xferlog_enable=YES
+connect_from_port_20=YES
+data_connection_timeout=120
+secure_chroot_dir=/var/run/vsftpd/empty
+pam_service_name=fpd
+rsa_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
+rsa_private_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+ssl_enable=NO
+
+...........................................
+
+cp -r /srv/ftp/public/ /home/vboxuser/Vorlagen/
+chmod -R 777 /home/vboxuser/Vorlagen/
