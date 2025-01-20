@@ -434,7 +434,9 @@ ffmpeg -stream_loop -1  -i vid.mp4  -i audio.mp3 -map 0:v -map 1:a -c:v copy -sh
 # loop image for mp3 xxx
 ffmpeg -stream_loop 0 -i vid.mp3 -i 1e45.png  -c:a aac -b:a 256k -c:v libx264 -y out.mp4
 
-
+# decompress and convert
+ffmpeg -i output.mp4 -r 30 -s:v 1920x1080 -c:v rawvideo -pix_fmt yuv420p output.avi
+ffmpeg -i output.avi -r 30 -c:v libx264 -s:v 1920x1080  -c:a aac output3.mp4
 
 
 # trim
