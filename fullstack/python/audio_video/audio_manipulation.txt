@@ -1,0 +1,285 @@
+
+https://wiki.python.org/moin/Audio/
+https://pydub.com/
+https://people.csail.mit.edu/hubert/pyaudio/#docs
+https://pypi.org/project/scikit-sound/
+https://work.thaslwanter.at/sksound/html/#
+https://github.com/thomas-haslwanter/scikit-sound
+https://pytorch.org/audio/stable/tutorials/audio_feature_extractions_tutorial.html
+https://www.tensorflow.org/tutorials/audio/transfer_learning_audio
+https://github.com/keras-team/keras-io/blob/master/examples/audio/vocal_track_separation.py
+https://keras.io/examples/audio/vocal_track_separation/
+https://www.tensorflow.org/tutorials/audio/music_generation#generate_notes
+https://librosa.org/doc/latest/tutorial.html
+
+https://scikit-image.org/docs/stable/auto_examples/#operations-on-numpy-arrays
+https://simpy.readthedocs.io/en/latest/simpy_intro/basic_concepts.html
+
+
+https://php-ml.readthedocs.io/en/latest/
+https://docs.rubixml.com/latest/
+https://github.com/php-ai/php-ml-examples
+https://php-ml.readthedocs.io/en/v0.1.0/
+composer require php-ai/php-ml
+
+
+............
+
+
+https://stackoverflow.com/questions/24974032/reading-realtime-audio-data-into-numpy-array
+
+
+import pyaudio
+import numpy as np
+from matplotlib import pyplot as plt
+CHUNKSIZE = 1024 # fixed chunk size
+# initialize portaudio
+p = pyaudio.PyAudio()
+stream = p.open(format=pyaudio.paInt16, channels=1, rate=44100, input=True, frames_per_buffer=CHUNKSIZE)
+# do this as long as you want fresh samples
+data = stream.read(CHUNKSIZE)
+numpydata = np.frombuffer(data, dtype=np.int16)
+# plot data
+plt.plot(numpydata)
+plt.show()
+# close stream
+stream.stop_stream()
+stream.close()
+p.terminate()
+
+
+frame = np.frombuffer(data, dtype=numpy.int16)       # interleaved channels
+frame = np.stack((frame[::2], frame[1::2]), axis=0)  # channels on separate axes
+
+import pyaudio
+import numpy
+RATE=16000
+RECORD_SECONDS = 2.5
+CHUNKSIZE = 1024
+# initialize portaudio
+p = pyaudio.PyAudio()
+stream = p.open(format=pyaudio.paInt16, channels=1, rate=RATE, input=True, frames_per_buffer=CHUNKSIZE)
+frames = [] # A python-list of chunks(numpy.ndarray)
+for _ in range(0, int(RATE / CHUNKSIZE * RECORD_SECONDS)):
+    data = stream.read(CHUNKSIZE)
+    frames.append(numpy.fromstring(data, dtype=numpy.int16))
+#Convert the list of numpy-arrays into a 1D array (column-wise)
+numpydata = numpy.hstack(frames)
+# close stream
+stream.stop_stream()
+stream.close()
+p.terminate()
+
+import scipy.io.wavfile as wav
+wav.write('out.wav',RATE,numpydata)
+
+.....
+https://python-forum.io/thread-21674.html
+
+import pyaudio
+import wave
+
+FORMAT = pyaudio.paInt16
+CHANNELS = 2
+RATE = 44100
+CHUNK = 1024
+RECORD_SECONDS = 5
+WAVE_OUTPUT_FILENAME = "file.wav"
+
+audio = pyaudio.PyAudio()
+
+# start Recording
+stream = audio.open(format=FORMAT, channels=CHANNELS,
+                rate=RATE, input=True,
+                frames_per_buffer=CHUNK)
+print ("recording...")
+frames = []
+
+for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
+    data = stream.read(CHUNK)
+    frames.append(data)
+print ("finished recording")
+
+
+# stop Recording
+stream.stop_stream()
+stream.close()
+audio.terminate()
+
+waveFile = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
+waveFile.setnchannels(CHANNELS)
+waveFile.setsampwidth(audio.get_sample_size(FORMAT))
+waveFile.setframerate(RATE)
+waveFile.writeframes(b''.join(frames))
+waveFile.close()
+
+
+https://numpy.org/doc/2.1/reference/generated/numpy.save.html
+https://numpy.org/doc/2.0/reference/generated/numpy.save.html
+https://numpy.org/doc/stable/reference/generated/numpy.save.html
+https://numpy.org/doc/stable/reference/arrays.ndarray.html
+https://numpy.org/doc/2.1/reference/generated/numpy.ndarray.__mul__.html
+https://numpy.org/doc/2.1/reference/generated/numpy.ndarray.__add__.html
+https://intelpython.github.io/dpnp/reference/ndarray.html
+
+
+import numpy as np
+from tempfile import TemporaryFile
+outfile = TemporaryFile()
+x = np.arange(10)
+np.save(outfile, x)
+_ = outfile.seek(0) # Only needed to simulate closing & reopening file
+np.load(outfile)
+with open('test.npy', 'wb') as f:
+    np.save(f, np.array([1, 2]))
+    np.save(f, np.array([1, 3]))
+with open('test.npy', 'rb') as f:
+    a = np.load(f)
+    b = np.load(f)
+print(a, b)
+
+
+
+https://machinelearningmastery.com/how-to-save-a-numpy-array-to-file-for-machine-learning/
+Save NumPy Array to .CSV File (ASCII)
+Save NumPy Array to .NPY File (binary)
+Save NumPy Array to .NPZ File (compressed)
+
+
+# save numpy array as csv file
+from numpy import asarray
+from numpy import savetxt
+# define data
+data = asarray([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]])
+# save to csv file
+savetxt('data.csv', data, delimiter=',')
+
+# load numpy array from csv file
+from numpy import loadtxt
+# load array
+data = loadtxt('data.csv', delimiter=',')
+# print the array
+print(data)
+
+...............
+
+# save numpy array as npy file
+from numpy import asarray
+from numpy import save
+# define data
+data = asarray([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]])
+# save to npy file
+save('data.npy', data)
+
+# load numpy array from npy file
+from numpy import load
+# load array
+data = load('data.npy')
+# print the array
+print(data)
+
+....................
+MP3 to Numpy and back
+https://www.kaggle.com/code/gabrielmilan/mp3-to-numpy-and-back
+
+
+import pydub
+import numpy as np
+
+def read(f, normalized=False):
+    """MP3 to numpy array"""
+    a = pydub.AudioSegment.from_mp3(f)
+    y = np.array(a.get_array_of_samples())
+    if a.channels == 2:
+        y = y.reshape((-1, 2))
+    if normalized:
+        return a.frame_rate, np.float32(y) / 2**15
+    else:
+        return a.frame_rate, y
+
+def write(f, sr, x, normalized=False):
+    """numpy array to MP3"""
+    channels = 2 if (x.ndim == 2 and x.shape[1] == 2) else 1
+    if normalized:  # normalized array - each item should be a float in [-1, 1)
+        y = np.int16(x * 2 ** 15)
+    else:
+        y = np.int16(x)
+    song = pydub.AudioSegment(y.tobytes(), frame_rate=sr, sample_width=2, channels=channels)
+    song.export(f, format="mp3", bitrate="320k")
+
+audio_file = '../input/birdsong-recognition/train_audio/aldfly/XC134874.mp3'
+sr, x = read(audio_file)
+
+import matplotlib.pyplot as plt
+plt.figure(figsize=(16,10))
+plt.plot(x)
+plt.title("Sample MP3 loading into Numpy")
+plt.show()
+
+
+-----
+
+https://www.kaggle.com/code/akashsdas/learning-from-audio
+https://www.kaggle.com/code/birdy654/visualising-audio-data-in-python
+
+import wave
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+margot_robbie_speech = wave.open('/kaggle/input/deep-voice-deepfake-voice-recognition/KAGGLE/AUDIO/REAL/margot-original.wav', 'rb')
+print(margot_robbie_speech)
+
+sample_freq = margot_robbie_speech.getframerate()
+n_samples = margot_robbie_speech.getnframes()
+t_audio = n_samples/sample_freq
+n_channels = margot_robbie_speech.getnchannels()
+
+print("The samping rate of the audio file is " + str(sample_freq) + "Hz, or " + str(sample_freq/1000) + "kHz")
+print("The audio contains a total of " + str(n_samples) + " frames or samples")
+print("The length of the audio file is " + str(t_audio) + " seconds")
+print("The audio file has " + str(n_channels) + " channels.\n")
+
+
+
+signal_wave = margot_robbie_speech.readframes(n_samples)
+signal_array = np.frombuffer(signal_wave, dtype=np.int16)
+
+
+print("The signal contains a total of " + str(signal_array.shape[0]) + " samples.")
+print("If this value is greater than " + str(n_samples) + " it is due to there being multiple channels")
+print("E.g. - Samples * Channels = " + str(n_samples*n_channels))
+
+# Split the channels
+l_channel = signal_array[0::2]
+r_channel = signal_array[1::2]
+
+timestamps = np.linspace(0, n_samples/sample_freq, num=n_samples)
+
+
+plt.figure(figsize=(10, 5))
+plt.plot(timestamps, l_channel)
+plt.title('Left Channel')
+plt.ylabel('Signal Value')
+plt.xlabel('Time (s)')
+plt.xlim(0, t_audio)
+plt.show()
+
+plt.figure(figsize=(10, 5))
+plt.plot(timestamps, r_channel)
+plt.title('Right Channel')
+plt.ylabel('Signal Value')
+plt.xlabel('Time (s)')
+plt.xlim(0, t_audio)
+plt.show()
+
+
+
+https://www.kaggle.com/code/ashkhagan/audio-signal-processing-librosa
+https://www.kaggle.com/code/zeeshanlatif/audio-preprocessing-and-features-extraction ###
+https://www.kaggle.com/code/vuppalaadithyasairam/audio-pre-processing-tutorial-in-python ###
+https://www.kaggle.com/code/robikscube/working-with-audio-in-python ####
+https://www.kaggle.com/code/vbookshelf/play-audio-read-the-files-create-a-spectrogram
+https://pytorch.org/tutorials/beginner/transfer_learning_tutorial.html
+https://pytorch.org/tutorials/beginner/basics/quickstart_tutorial.html
+https://www.tensorflow.org/tutorials/quickstart/beginner
