@@ -1,0 +1,433 @@
+Working with Audio in Python
+
+https://www.kaggle.com/code/robikscube/working-with-audio-in-python
+
+import pandas as pd
+import numpy as np
+import matplotlib.pylab as plt
+import seaborn as sns
+
+from glob import glob
+
+import librosa
+import librosa.display
+import IPython.display as ipd
+
+from itertools import cycle
+
+sns.set_theme(style="white", palette=None)
+color_pal = plt.rcParams["axes.prop_cycle"].by_key()["color"]
+color_cycle = cycle(plt.rcParams["axes.prop_cycle"].by_key()["color"])
+
+audio_files = glob('../input/ravdess-emotional-speech-audio/*/*.wav')
+# Play audio file
+ipd.Audio(audio_files[0])
+
+y, sr = librosa.load(audio_files[0])
+print(f'y: {y[:10]}')
+print(f'shape y: {y.shape}')
+print(f'sr: {sr}')
+
+pd.Series(y).plot(figsize=(10, 5),
+                  lw=1,
+                  title='Raw Audio Example',
+                 color=color_pal[0])
+plt.show()
+
+# Trimming leading/lagging silence
+y_trimmed, _ = librosa.effects.trim(y, top_db=20)
+pd.Series(y_trimmed).plot(figsize=(10, 5),
+                  lw=1,
+                  title='Raw Audio Trimmed Example',
+                 color=color_pal[1])
+plt.show()
+
+pd.Series(y[30000:30500]).plot(figsize=(10, 5),
+                  lw=1,
+                  title='Raw Audio Zoomed In Example',
+                 color=color_pal[2])
+plt.show()
+
+
+# Spectogram
+D = librosa.stft(y)
+S_db = librosa.amplitude_to_db(np.abs(D), ref=np.max)
+S_db.shape
+(1025, 153)
+# Plot the transformed audio data
+fig, ax = plt.subplots(figsize=(10, 5))
+img = librosa.display.specshow(S_db,
+                              x_axis='time',
+                              y_axis='log',
+                              ax=ax)
+ax.set_title('Spectogram Example', fontsize=20)
+fig.colorbar(img, ax=ax, format=f'%0.2f')
+plt.show()
+
+
+###############################################
+Audio Preprocessing and Features Extraction
+###############################################
+
+https://www.kaggle.com/code/zeeshanlatif/audio-preprocessing-and-features-extraction
+
+
+# importing necessary libraries
+
+import warnings
+warnings.filterwarnings("ignore")
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+%matplotlib inline
+from glob import glob
+
+import librosa
+import librosa.display
+from IPython import display
+
+# Load an audio file
+
+audio_files = glob("/kaggle/input/audio-speech-sentiment/TRAIN/*.wav")
+y, sr = librosa.load(audio_files[0])
+print("Type: ", type(y))
+print("Shape: ", y.shape)
+
+y, sr = librosa.load(audio_files[0], sr = 44100)
+print("Type: ", type(y))
+print("Shape: ", y.shape)
+
+# Play an audio file
+display.Audio(audio_files[0])
+
+# Plot the audio
+pd.Series(y).plot(figsize = (8, 3), lw = 1)
+plt.title("Audio Wave Plot")
+plt.show()
+
+# Trim the audio
+trimmed_y, index = librosa.effects.trim(y, top_db = 35)
+pd.Series(trimmed_y).plot(figsize = (8, 3), lw = 1)
+plt.title("Trimmed Audio Wave Plot")
+plt.show()
+
+pd.Series(trimmed_y[25000:25500]).plot(figsize = (8, 3), lw = 1)
+plt.title("Zoomed Audio Plot")
+plt.show()
+
+# Spectogram
+
+transformed_y = librosa.stft(y)
+db = librosa.amplitude_to_db(abs(transformed_y))
+db.shape
+image = librosa.display.specshow(db, sr = sr, x_axis = "time", y_axis = "log")
+plt.colorbar(image)
+plt.title("Spectrogram of audio data")
+plt.show()
+
+# Features Extraction
+## Mel Spectogram
+
+S = librosa.feature.melspectrogram(y=y, sr=sr)
+fig, ax = plt.subplots()
+S_dB = librosa.power_to_db(S, ref=np.max)
+img = librosa.display.specshow(S_dB, x_axis='time',
+                         y_axis='mel', sr=sr,
+                         fmax=8000, ax=ax)
+fig.colorbar(img, ax=ax, format='%+2.0f dB')
+ax.set(title='Mel-frequency spectrogram')
+plt.show()
+
+## Zero Crossing Rate
+n0 = 80000
+n1 = 80050
+pd.Series(y[n0:n1]).plot(figsize = (8, 3), lw = 1)
+plt.title("Zoomed Audio Plot")
+plt.show()
+zero_crossings = librosa.zero_crossings(y[n0:n1], pad = False)
+print(zero_crossings.shape)
+sum(zero_crossings)
+
+### Spectral Centroid
+cent = librosa.feature.spectral_centroid(y=y, sr=sr)
+frames = range(len(cent))
+time = librosa.frames_to_time(frames)
+S, phase = librosa.magphase(librosa.stft(y=y))
+freqs, times, D = librosa.reassigned_spectrogram(y, fill_nan=True)
+times = librosa.times_like(cent)
+fig, ax = plt.subplots()
+librosa.display.specshow(librosa.amplitude_to_db(S, ref=np.max),
+                         y_axis='log', x_axis='time', ax=ax)
+ax.plot(times, cent.T, label='Spectral centroid', color='w')
+fig.colorbar(img, ax=ax, format='%+2.0f dB')
+ax.legend(loc='upper right')
+ax.set(title='log Power Spectrogram')
+plt.show()
+
+### MFCCs
+mfccs = librosa.feature.mfcc(y, sr=sr)
+print(mfccs.shape)
+
+librosa.display.specshow(mfccs, sr=sr, x_axis='time')
+plt.title("MFCCs")
+plt.show()
+print(mfccs)
+mfcc_data = pd.DataFrame(mfccs)
+mfcc_data.head()
+mfcc_data.shape
+mfccs = []
+
+for i in audio_files:
+    y, sr = librosa.load(i)
+    y_mfcc = librosa.feature.mfcc(y, sr = sr)
+    y_mfcc = y_mfcc.flatten()
+    mfccs.append(y_mfcc)
+
+data = pd.DataFrame(mfccs)
+data.head()
+data.dropna(axis=1, inplace = True)
+data.head()
+data.shape
+
+
+#######################################
+audio pre-processing tutorial in python
+#######################################
+https://www.kaggle.com/code/vuppalaadithyasairam/audio-pre-processing-tutorial-in-python
+
+import numpy as np
+import pandas as pd
+from scipy.io import wavfile
+import librosa
+import seaborn as sns
+import matplotlib.pyplot as plt
+import glob
+
+## Scipy
+import subprocess
+
+# convert mp3 to wav file
+subprocess.call(['ffmpeg', '-i', '/kaggle/input/audio-pre-processing-data/audio preprocessing/Nani - Sound Effect.mp3',
+                 'converted_to_wav_file.wav'])
+
+from scipy.io import wavfile
+
+# Specify the path to your file
+file_path = 'converted_to_wav_file.wav'
+
+# Read the file
+sample_rate, audio_data = wavfile.read(file_path)
+
+# Print the sample rate and audio data
+print(f"Sample rate: {sample_rate}")
+print(f"Audio data: {audio_data}")
+
+#Visualize the audio signal loaded using scipy
+import IPython.display as ipd
+ipd.Audio('converted_to_wav_file.wav')
+
+
+## Librosa
+import librosa
+audio_data = '/kaggle/input/audio-pre-processing-data/audio preprocessing/Nani - Sound Effect.mp3'
+data , sr = librosa.load(audio_data)
+print(type(data), type(sr))
+print('shape of data',data.shape)
+print('sampling rate',sr)
+#Visualize the audio signal loaded using scipy
+import IPython.display as ipd
+ipd.Audio(audio_data)
+
+## Basic visualization - Waveplot
+#Visualize the audio signal loaded using librosa
+librosa.display.waveshow(data,sr=sr, max_points=11025, axis='time')
+
+## Basic Visualization- Spectrogram
+D = librosa.stft(data)  # STFT of y
+S_db = librosa.amplitude_to_db(np.abs(D), ref=np.max)
+librosa.display.specshow(S_db)
+
+
+## Audio augmentation- effects trim
+trimmed= librosa.effects.trim(data)
+print('original shape',data.shape)
+print('trimmed shape',trimmed[0].shape)
+
+import soundfile as sf
+sf.write('trimmed audio.wav', trimmed[0], sr)
+ipd.Audio('/kaggle/working/trimmed audio.wav')
+
+## Remix !!
+_, beat_frames = librosa.beat.beat_track(y=data, sr=sr,hop_length=512)
+beat_samples = librosa.frames_to_samples(beat_frames)
+intervals = librosa.util.frame(beat_samples, frame_length=2,hop_length=2).T
+y_out = librosa.effects.remix(data,intervals[::-1])
+sf.write('remixed audio.wav',y_out,sr)
+ipd.Audio('/kaggle/working/remixed audio.wav')
+
+## Time streching
+y_fast = librosa.effects.time_stretch(data, rate=2.0)
+y_slow= librosa.effects.time_stretch(data,rate=0.5)
+sf.write('2x speed.wav',y_fast,sr)
+sf.write('0.5x speed.wav',y_slow,sr)
+ipd.Audio('/kaggle/working/2x speed.wav')
+ipd.Audio('/kaggle/working/0.5x speed.wav')
+
+## Feature Extraction and Visualization
+librosa.display.waveshow(data)
+
+zeros=librosa.feature.zero_crossing_rate(data,frame_length=2048, hop_length=512, center=True)
+print(zeros)
+
+a=librosa.feature.spectral_centroid(y=data,sr=sr)
+print(a)
+
+print(a[0].shape)
+plt.plot(a[0])
+
+print(librosa.feature.spectral_bandwidth(y=data,sr=sr))
+sns.histplot(librosa.feature.spectral_bandwidth(y=data,sr=sr)[0])
+
+## Spectral contrast
+c=librosa.feature.spectral_contrast(y=data,sr=sr)
+print(c)
+print(c.shape)
+print(c[1][288])
+sns.boxplot(c[0])
+
+## Polynomial
+o0=librosa.feature.poly_features(y=data,sr=sr,order=0)
+o1=librosa.feature.poly_features(y=data,sr=sr,order=1)
+o2=librosa.feature.poly_features(y=data,sr=sr,order=2)
+print(o0.shape,o1.shape,o2.shape)
+import matplotlib.pyplot as plt
+import numpy as np
+S = np.abs(librosa.stft(data))
+fig, ax = plt.subplots(nrows=5, sharex=True, figsize=(8, 8))
+times = librosa.times_like(o0)
+ax[0].plot(times, o0[0], label='order=0', alpha=0.8)
+ax[0].legend()
+ax[0].label_outer()
+ax[0].set(ylabel='Constant term ')
+ax[1].plot(times, o1[0], label='order=1', alpha=0.8)
+ax[1].set(ylabel='Linear term')
+ax[1].label_outer()
+ax[1].legend()
+ax[2].plot(times, o2[0], label='order=2', alpha=0.8)
+ax[2].set(ylabel='Quadratic term')
+ax[2].legend()
+librosa.display.specshow(librosa.amplitude_to_db(S, ref=np.max),
+                         y_axis='log', x_axis='time', ax=ax[3])
+ax[4].plot(times, o0[0], label='order=0', alpha=0.8)
+ax[4].plot(times, o1[1], label='order=1', alpha=0.8)
+ax[4].plot(times, o2[2], label='order=2', alpha=0.8)
+ax[4].legend()
+
+
+## rms - Root Mean Square
+rms=librosa.feature.rms(y=data)
+print(rms)
+print(rms.shape)
+
+## MFCC- Mel Frequency Cepstral Coefficients
+mfcc_32=librosa.feature.mfcc(y=data,n_mfcc=32)
+mfcc_64=librosa.feature.mfcc(y=data,n_mfcc=64)
+mfcc_128=librosa.feature.mfcc(y=data,n_mfcc=128)
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(nrows=4, sharex=True)
+img = librosa.display.specshow(librosa.power_to_db(S, ref=np.max),
+                               x_axis='time', y_axis='mel', fmax=8000,
+                               ax=ax[0])
+fig.colorbar(img, ax=[ax[0]])
+ax[0].set(title='Mel spectrogram')
+ax[0].label_outer()
+img = librosa.display.specshow(mfcc_32, x_axis='time', ax=ax[1])
+fig.colorbar(img, ax=[ax[1]])
+ax[1].set(title='MFCC-32')
+img_1 = librosa.display.specshow(mfcc_64, x_axis='time', ax=ax[2])
+fig.colorbar(img_1, ax=[ax[2]])
+ax[2].set(title='MFCC-64')
+img_2 = librosa.display.specshow(mfcc_128, x_axis='time', ax=ax[3])
+fig.colorbar(img_2, ax=[ax[3]])
+ax[3].set(title='MFCC-128')
+
+### Code to automate the feature extraction for all audio files
+
+def mfcc_extractor(file):
+    audio, sample_rate = librosa.load(file)
+    mfccs_features = librosa.feature.mfcc(y=audio, sr=sample_rate, n_mfcc=40)
+    mfccs_scaled_features = np.mean(mfccs_features.T,axis=0)
+    return mfccs_scaled_features
+def zero_extractor(file):
+    data, sr = librosa.load(file)
+    zeros=librosa.feature.zero_crossing_rate(data,frame_length=2048, hop_length=512, center=True)
+    zeros_scaled_features= np.mean(zeros.T,axis=0)
+    return zeros_scaled_features
+def rms_extractor(file):
+    data, sr = librosa.load(file)
+    rms=librosa.feature.rms(y=data)
+    rms_scaled_features= np.mean(rms.T,axis=0)
+    return rms_scaled_features
+def spectral_centroid_extractor(file):
+    data, sr = librosa.load(file)
+    sc=librosa.feature.spectral_centroid(y=data,sr=sr)
+    sc_scaled_features= np.mean(sc.T,axis=0)
+    return sc_scaled_features
+def spectral_bandwidth_extractor(file):
+    data, sr = librosa.load(file)
+    sb=librosa.feature.spectral_bandwidth(y=data,sr=sr)
+    sb_scaled_features= np.mean(sb.T,axis=0)
+    return sb_scaled_features
+def spectral_contrast_extractor(file):
+    data, sr = librosa.load(file)
+    sco=librosa.feature.spectral_contrast(y=data,sr=sr)
+    sco_scaled_features= np.mean(sco.T,axis=0)
+    return sco_scaled_features
+def polynomial_extractor(file):
+    data, sr = librosa.load(file)
+    poly=librosa.feature.poly_features(y=data,sr=sr,order=2)
+    poly_scaled_features= np.mean(poly.T,axis=0)
+    return poly_scaled_features
+
+
+import numpy as np
+import os,glob
+from pathlib import Path
+audio_dataset_path=glob.glob('/kaggle/input/audio-pre-processing-data/audio preprocessing/*.mp3')
+mfcc_features=[]
+zero_features=[]
+rms_features=[]
+sc_features=[]
+sb_features=[]
+sco_features=[]
+poly_features=[]
+for i in audio_dataset_path:
+    mfcc=mfcc_extractor(i)
+    mfcc_features.append(mfcc)
+
+    zero=zero_extractor(i)
+    zero_features.append(zero)
+
+    rms=rms_extractor(i)
+    rms_features.append(rms)
+
+    spectral_centroid=spectral_centroid_extractor(i)
+    sc_features.append(spectral_centroid)
+
+    spectral_bandwidth=spectral_bandwidth_extractor(i)
+    sb_features.append(spectral_bandwidth)
+
+    spectral_contrast=spectral_contrast_extractor(i)
+    sco_features.append(spectral_contrast)
+
+    poly=polynomial_extractor(i)
+    poly_features.append(poly)
+
+import pandas as pd
+extracted_features_df=pd.DataFrame([mfcc_features,zero_features,rms_features,sc_features,sb_features,sco_features,poly_features],columns=['mfcc','zero crossing rate','root mean square','spectral centroid','spectral bandwidth','spectral contrast','polynomial'])
+extracted_features_df
+
+extracted_features_df.info()
+
+
