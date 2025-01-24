@@ -1,0 +1,104 @@
+#######################################################
+AKAI  Professional M.I. Corp. LPK25 mk2
+#######################################################
+
+lsusb
+Bus 001 Device 008: ID 09e8:004d AKAI  Professional M.I. Corp. LPK25 mk2
+
+# LMMS settings for AKAI LPK25 Mini MIDI Keyboard
+Audio settings - ALSA()
+Midi Settings - ALSA-Sequencer
+-----------------------------------------------
+
+sudo apt-get update
+sudo apt-get -y install aconnectgui  zynaddsubfx
+
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install qjackctl
+sudo apt-get install jackd
+sudo apt autoremove
+sudo apt-get install jack-keyboard  jack-tools jackmeter
+sudo apt-get install ardour
+sudo apt-get install synthv1
+
+
+
+
+jack_control start
+jack_control eps realtime true # equivalent to -R
+jack_control ds alsa # -dalsa
+jack_control dps device hw:USB # -dhw:USB
+jack_control dps period 265 # -p256
+
+
+jackd -d alsa
+jackd -R -p128 -dalsa -dhw:0 -r96000 -p1024 -n2
+jackd -R -dalsa -dhw:USB -p256
+jackd -R -p256 -dalsa -P hw:0,0 -C hw:USB
+/usr/bin/jackd --realtime -p1024 -dalsa -r48000 -p64 -n2 -D -Chw:MADIFXtest -Phw:MADIFXtest
+jackd -r -dalsa -dhw:1 -r44100 -p256 -n2
+jackd -d alsa -d hdmi:vc4hdmi0 -P
+jackd -sRp 70 -d alsa -d hw:1 -r 44100 -H -z s
+
+
+qjackctl
+zynaddsubfx
+Acquire audio card Audio0
+creating alsa driver ... hw:0|hw:0|1024|2|48000|0|0|nomon|swmeter|-|32bit
+ATTENTION: The capture device "hw:0" is already in use.
+
+
+
+
+killall pulseaudio
+killall -9 jackd jackdbus
+killall -9 jackdbus
+
+aplay -l
+aplay /usr/share/sounds/alsa/Noise.wav
+aplay -D vc4:vc4hdmi0 /usr/share/sounds/alsa/Noise.wav
+aplay -D default:vc4hdmi0 /usr/share/sounds/alsa/Noise.wav
+
+https://terokarvinen.com/2014/usb-midi-keyboard-on-linux-akai-lpk25-professional/
+
+journalctl -b -0 | grep AKAI
+lsusb |grep AKAI
+Bus 001 Device 006: ID 09e8:004d AKAI  Professional M.I. Corp. LPK25 mk2
+
+dpkg -l | grep jack
+ii  jackd                                                       5+nmu1                                     all          JACK Audio Connection Kit (default server package)
+ii  jackd2                                                      1.9.21~dfsg-3ubuntu3                       amd64        JACK Audio Connection Kit (server and example clients)
+ii  jackd2-firewire                                             1.9.21~dfsg-3ubuntu3                       amd64        JACK Audio Connection Kit (FFADO backend)
+ii  libjack-jackd2-0:amd64                                      1.9.21~dfsg-3ubuntu3                       amd64        JACK Audio Connection Kit (libraries)
+ii  qjackctl                                                    0.9.13-1build3                             amd64        User interface for controlling the JACK sound server
+
+
+
+##sudo apt-get install zynjacku
+
+sudo dpkg -r --force-depends libjack0
+sudo apt-get install -f ardour ardour3 gladish idjc jack-keyboard jack-rack jack-tools jackd jackd2 jackd2-firewire jamin ladish laditools libjack-jackd2-0 libjack-jackd2-dev meterbridge python-laditools qjackctl qmidinet qtractor rakarrack slv2-jack ubuntustudio-controls zynjacku
+
+
+
+
+https://terokarvinen.com/2014/usb-midi-keyboard-on-linux-akai-lpk25-professional/##
+https://wiki.archlinux.org/title/JACK_Audio_Connection_Kit#PulseAudio
+https://forums.linuxmint.com/viewtopic.php?t=126416
+https://www.reddit.com/r/linuxaudio/comments/is206k/using_a_midi_keyboard/
+
+# stop synth and break previous connections
+killall fluidsynth
+aconnect -x
+
+# run synth
+fluidsynth --server --no-shell --audio-driver=pulseaudio \
+    --gain=1.0 --reverb=0.42 --chorus=0.42 \
+    /usr/share/soundfonts/FluidR3_GM.sf2 &
+sleep 1
+
+# connect keyboard midi output to synth midi input
+aconnect \
+    $(aconnect -i|grep client|grep LPK25|cut -d' ' -f2|cut -d: -f1) \
+    $(aconnect -o|grep client|grep FLUID|cut -d' ' -f2|cut -d: -f1)
