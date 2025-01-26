@@ -21,6 +21,7 @@
 ```
 sudo apt install rename
 rename 's/ /_/g' *
+rename 's/\t/_/g' *
 
 ####################################################
 Rename Files and Directories (Add Prefix)
