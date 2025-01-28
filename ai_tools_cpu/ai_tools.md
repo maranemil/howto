@@ -247,6 +247,7 @@
 - https://deepai.org/chat/free-chatgpt
 - https://chatgpt4online.org/chatgpt-free-online/#chat
 - https://www.perplexity.ai/
+- https://www.deepseekv3.com/en/chat
 
 ### chatgpt2
 
