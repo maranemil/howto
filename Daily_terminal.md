@@ -106,6 +106,9 @@ lynx t3n.de -accept_all_cookies  -justify
 ```
 * date +%s | sha256sum | base64 | head -c 24 ; echo "@%&";
 * date +%s | sha1sum | base64 | head -c 12; echo "@%&";
+
+# gen random number 1 - 300
+echo $((RANDOM % 300)); 
 ```
 
 ### Zipping Unzipping multiple Folders
