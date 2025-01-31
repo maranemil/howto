@@ -727,7 +727,19 @@ sudo sync && echo 3 | sudo tee /proc/sys/vm/drop_caches
 
 export LANGUAGE=en-US && google-chrome --lang=en-US,en --disable-translate --ash-force-desktop --disable-3d-apis --disable-background-mode --disable-preconnect --dns-prefetch-disable --no-experiments --purge-memory-button --no-referrers --no-pings --start-maximized --disable-default-apps -disable-features=Translate --aggressive-cache-discard --disable-notifications --new-window --disable-dev-shm-usage --block-new-web-contents
 
+export LANGUAGE=en-US && google-chrome  --bound-session-cookie-rotation-delay --disable-partitioned-cookies --disable-notifications --disable-ipc-flooding-protection --disable-print-preview --disable-remote-fonts  --disable-renderer-accessibilit --disable-threaded-animation  --disable-virtual-keyboard --disable-print-preview --block-new-web-contents --new-window --no-pings --start-maximized --disable-default-apps --no-experiments --no-referrers -disable-preconnect --dns-prefetch-disable --bwsi
+
 chrome://restart 
+chrome://gpu
+chrome://flags/
+
+https://peter.sh/experiments/chromium-command-line-switches/
+
+--no-sandbox
+--disable-gpu-sandbox
+--enable-webgl 
+--ignore-gpu-blacklist
+--disable-gpu
 
 ~~~
 

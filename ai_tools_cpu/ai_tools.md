@@ -100,6 +100,7 @@
 | https://www.upscale.media/de                                      | Image Resizer                        |
 | http://www.writingpromptgenerator.com/#                           | Image prompt gen                     |
 | https://deepai.org/machine-learning-model/cute-creature-generator | Image prompt gen                     |
+| https://www.seaart.ai/                                            | Image prompt gen                     |
 
 
 
