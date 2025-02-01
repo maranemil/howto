@@ -762,3 +762,10 @@ sudo ntfsfix -n /dev/sda1 # dry run
 sudo ntfsfix -b /dev/sda1 # -b or --clear-bad-sectors
 sudo ntfsfix -d /dev/sda1 # clearing the volume dirty flag if the volume can be fixed and mounted.
 ~~~
+
+
+###  wget get files
+
+~~~
+wget --mirror -p -l1 --convert-links -P . --wait=2 --limit-rate=50K --user-agent="Mozilla/5.0 (Windows NT 6.3; WOW64; rv:40.0" <url>
+~~~
