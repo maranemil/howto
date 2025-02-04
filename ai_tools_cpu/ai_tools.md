@@ -83,7 +83,6 @@
 | https://www.img2go.com/colorize-image                             | AI colorize image                    | 
 | https://www.profilepicture.ai/                                    | Profile picture with AI              |
 | https://www.strmr.com/#Astria                                     | AI image generation                  |
-| https://zyro.com/de/tools/image-resizer                           | Image Resizer                        | 
 | https://zyro.com/de/tools/image-resizer                           | Image resizer                        | 
 | https://zyro.com/de/tools/image-upscaler                          | Image upscaler                       | 
 | https://segment-anything.com/                                     |                                      |
@@ -101,7 +100,9 @@
 | http://www.writingpromptgenerator.com/#                           | Image prompt gen                     |
 | https://deepai.org/machine-learning-model/cute-creature-generator | Image prompt gen                     |
 | https://www.seaart.ai/                                            | Image prompt gen                     |
-
+| https://remaker.ai/face-swap-free/                                | Image face swap                      |
+| https://stabledifffusion.com/stable-diffusion-3-medium            | stable-diffusion-3-medium            |
+| https://huggingface.co/spaces/sczhou/CodeFormer                   | CodeFormer image Resizer             |
 
 
 ### voice
@@ -189,11 +190,16 @@
 | https://stevenwaterman.uk/musetree/             | musetree                    | 
 | https://theselyricsdonotexist.com/              | These lyrics don’t exist    | 
 | https://uberduck.ai/                            | Uberduck AI                 | 
-| https://vocalremover.org/                       | voice remover               |
 | https://wavtool.com/                            |                             |
-| https://www.lalal.ai/                           | Lalal.ai                    | 
 | https://www.landr.com/de/                       | landr                       | 
 | https://www.riffusion.com/                      | Refusion music AI generator | 
+
+### vocal remover
+
+| url                       |                        |
+|:--------------------------|:-----------------------|
+| https://www.lalal.ai/     | Lalal.ai voice remover | 
+| https://vocalremover.org/ | voice remover          |
 
 ### misc
 
@@ -244,7 +250,8 @@
 
 
 ### chatgpt 
-- https://chatfreeai.com/
+
+- https://chatfreeai.com/#
 - https://deepai.org/chat/free-chatgpt
 - https://chatgpt4online.org/chatgpt-free-online/#chat
 - https://www.perplexity.ai/

@@ -130,6 +130,14 @@
 - https://percentagecalculator.guru/846-is-what-percent-of-3600/
 - https://www.flightpedia.org/convert/600-seconds-to-minute.html
 
+
+
+------------------------------------------------------------------
+
+### Chat
+
+- https://zoom.us/test # zoom cam test
+
 ------------------------------------------------------------------
 
 ### Cloud
@@ -923,16 +931,17 @@ https://paywallreader.com/
 
 ###  Transfer files from VM
 
-- https://filetransfer.io/
 - http://fast-files.com
 - http://uploaded.net
 - http://www.directupload.net
 - http://www.filedropper.com
 - https://1fichier.com/
+- https://filetransfer.io/#
 - https://m.sendspace.com/
 - https://mega.io/
 - https://rapidshare.io/
 - https://uploadfiles.io
+- https://wetransfer.com/#
 - https://workupload.com
 - https://www.4shared.com/?locale=de
 - https://www.dropbox.com/
@@ -941,9 +950,8 @@ https://paywallreader.com/
 - https://www.filefactory.com/
 - https://www.mediafire.com/
 - https://www.sendspace.com/
+- https://www.transfernow.net/en
 - https://www.trueshare.com
-- https://wetransfer.com/
-- https://filetransfer.io/#fav
 
 ------------------------------------------------------------------
 
