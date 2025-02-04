@@ -446,7 +446,7 @@ ffmpeg -i in.mp4 -ss 00:00 -to 03:12 out.mp4
 ffmpeg  -i in.mp4 -c:a aac -b:a 256k -c:v libx264 -y out.mp4
 
 # convert
-for i in *.wav; do ffmpeg -i "$i" "$i".mp3; done 
+for i in *.wav; do ffmpeg -i "$i" "$i".mp3; done && rm *.wav
 for i in *.mp3; do ffmpeg -i "$i" "$i".wav; done 
 for i in *.mmpz; do zip "$i".zip "$i"; done 
 
