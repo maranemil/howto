@@ -279,9 +279,10 @@ https://github.com/debitbug/excalidraw-chrome-extension
 
 ------------------------------------------------------------------
 
-### Facebook video downloader
+### Facebook Reddit video downloader
 
-- https://fdown.net/download.php
+- https://fdown.net/index.php 	# Facebook Video Downloader
+- https://rapidsave.com/ 		# Reddit Video Downloader
 
 ------------------------------------------------------------------
 
