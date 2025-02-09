@@ -109,6 +109,8 @@ https://sourcemaking.com/design_patterns/factory_method
 https://designpatternsphp.readthedocs.io/en/latest/Creational/FactoryMethod/README.html
 https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
 https://refactoring.guru/design-patterns/factory-method
+https://refactoring.guru/design-patterns/php
+https://refactoring.guru/design-patterns/examples
 ```
 
 
