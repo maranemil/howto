@@ -256,7 +256,19 @@
 - https://deepai.org/chat/free-chatgpt
 - https://chatgpt4online.org/chatgpt-free-online/#chat
 - https://www.perplexity.ai/
+
+### deepseek free chat
+
+- https://chat.hix.ai/deepseek-r1
+- https://deep-seek.chat/
+- https://gpt4v.net/features/deepseek-r1
+- https://huggingface.co/deepseek-ai/DeepSeek-V3
+- https://notegpt.io/chat-deepseek
+- https://www.chatstream.org/en
+- https://www.chatstream.org/en/chat
 - https://www.deepseekv3.com/en/chat
+- https://www.yeschat.ai/features/deepseek
+- https://www.yeschat.ai/features/deepseek-r1
 
 ### chatgpt2
 
