@@ -769,3 +769,11 @@ sudo ntfsfix -d /dev/sda1 # clearing the volume dirty flag if the volume can be 
 ~~~
 wget --no-clobber --mirror -p -l1 --convert-links -P . --wait=2 --limit-rate=50K --user-agent="Mozilla/5.0 (Windows NT 6.3; WOW64; rv:40.0" <url>
 ~~~
+
+###  get ubuntu debian version
+
+~~~
+cat /etc/debian_version
+lsb_release -a
+uname -r -a
+~~~
