@@ -375,6 +375,7 @@
 - https://www.summarizer.org/
 - https://www.paraphraser.io/text-summarizer
 - https://www.semrush.com/contentshake/summary-generator/
+- https://www.scribbr.com/text-summarizer/
 
 ### AI Text scrambler rewriter
 - https://writer.hix.ai/paragraph-scrambler
