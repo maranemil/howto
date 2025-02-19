@@ -15,6 +15,15 @@
 
 * // rename random 000 - 999
 * for i in *; do mv "$i" $(($RANDOM % 1000000000)).${i#*.}; done
+
+# files 0001
+num=0; for i in *; do mv "$i" "$(printf '%04d' $num).${i#*.}"; ((num++)); done
+
+# folders 0001
+num=0; for i in $(find * -type d); do mv "$i" "$(printf '%04d' $num)"; ((num++)); done
+
+for i in $(ls -d */); do echo ${i%%/}; done
+num=0; for i in $(ls -d */); do mv "$i" "$(printf '%04d' $num)"; ((num++)); done
 ```
 
 ### rename remove file name spaces
