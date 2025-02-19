@@ -928,7 +928,25 @@ File | Settings | Editor | File Encodings for Windows and Linux
 To configure a scheme for new projects, go to File | New Projects Setup | Settings for New Projects | Editor | Code Style.
 ~~~
 
+~~~
+####################################################
+Markdown plugin for IntelliJ not showing preview
+PyCharm doesn't show the preview panel for Markdown files after updating
+####################################################
 
+https://stackoverflow.com/questions/74523328/markdown-plugin-for-intellij-not-showing-preview?noredirect=1&lq=1
+
+# custom PhpStorm properties (expand/override 'bin/idea.properties')
+ide.browser.jcef.gpu.disable=true
+
+rm -rf ~/.cache/JetBrains/IntelliJIdea2024.1/jcef_cache/Singleton*
+
+Invalidate Caches
++ delete embeded browser engine cache and cookies
+
+File > Invalidate Caches... > Check only Delete embedded browser engine cache and cookies > Invalidate and Restart
+
+~~~
 
 
 
