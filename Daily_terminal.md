@@ -733,6 +733,8 @@ sudo swapoff -a; sleep 15; sudo swapon -a
 
 sudo sysctl vm.swappiness=10
 sudo sync && echo 3 | sudo tee /proc/sys/vm/drop_caches
+free && sync && echo 3 | sudo tee /proc/sys/vm/drop_caches && free
+free -m  && sync && echo 3 > /proc/sys/vm/drop_caches && free -m
 
 export LANGUAGE=en-US && google-chrome --lang=en-US,en --disable-translate --ash-force-desktop --disable-3d-apis --disable-background-mode --disable-preconnect --dns-prefetch-disable --no-experiments --purge-memory-button --no-referrers --no-pings --start-maximized --disable-default-apps -disable-features=Translate --aggressive-cache-discard --disable-notifications --new-window --disable-dev-shm-usage --block-new-web-contents
 

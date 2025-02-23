@@ -7,11 +7,15 @@ sudo service bluetooth  stop
 sudo service cups stop
 sudo service cups-browsed stop
 
+# https://askubuntu.com/questions/609226/freeing-page-cache-using-echo-3-proc-sys-vm-drop-caches-doesnt-work
+# https://unix.stackexchange.com/questions/87908/how-do-you-empty-the-buffers-and-cache-on-a-linux-system
 
 
 sudo swapoff -a;  sudo swapon -a
 echo 3 | sudo tee /proc/sys/vm/drop_caches
 sudo sh -c "sync; echo 3 > /proc/sys/vm/drop_caches"
+free && sync && echo 3 | sudo tee /proc/sys/vm/drop_caches && free
+free -m  && sync && echo 3 > /proc/sys/vm/drop_caches && free -m
 
 # export LANGUAGE=en-US && google-chrome --lang=en-US,en
 # google-chrome --disable-gpu --use-gl=desktop
