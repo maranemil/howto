@@ -530,5 +530,6 @@
 | https://www.youtube.com/watch?v=ycHXzbAmY94&list=PLfNQwFOQm0urbWdIiugEKPD_-Hyp5fuwX         | COBOL                                                      |
 | https://www.youtube.com/watch?v=hWRRdICvMNs&list=PLOspHqNVtKAAAq9pHWlEiRUVcYMCcu4X0         | API Essentials                                             |
 | https://www.youtube.com/watch?v=_Drz6MbNmmY&list=PLMvza7ri1L0eduljUjLSsXRvIJ8rD8Ohs         | LMMS                                                       |
+| https://www.youtube.com/playlist?list=PLD0F06AA0D2E8FFBA                                    | ML                                                         |
 
 
