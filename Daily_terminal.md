@@ -790,3 +790,12 @@ cat /etc/debian_version
 lsb_release -a
 uname -r -a
 ~~~
+
+###  tasksel
+
+~~~
+sudo apt-get install tasksel
+tasksel --list-tasks
+tasksel --task-desc web-server 
+tasksel --task-desc ssh-server 
+~~~
