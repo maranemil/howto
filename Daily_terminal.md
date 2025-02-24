@@ -654,6 +654,7 @@ for f in *[13579]*.jpeg; do echo "$f"; done
 ### Debian Ubuntu mirrors
 ~~~
 https://cdimage.kali.org/kali-2024.4/
+https://devuan-cd.bio.lmu.de/devuan_daedalus/installer-iso/
 https://distrowatch.com/
 https://downloads.getsol.us/isos/2024-10-14/
 https://ftp-stud.hs-esslingen.de/Mirrors/
@@ -671,7 +672,6 @@ https://ftp.fau.de/
 https://ftp.fau.de/devuan-cd/devuan_chimaera/desktop-live/
 https://ftp.fau.de/devuan-cd/devuan_chimaera/desktop-live/
 https://ftp.fau.de/devuan-cd/devuan_daedalus/desktop-live/
-https://ftp.fau.de/devuan-cd/devuan_daedalus/desktop-live/
 https://ftp.fau.de/ubuntu-releases/14.04/
 https://ftp.fau.de/ubuntu-releases/16.04/
 https://ftp.fau.de/ubuntu-releases/22.04/
@@ -683,10 +683,12 @@ https://releases.ubuntu.com/23.10.1/
 https://releases.ubuntu.com/23.10/
 https://releases.ubuntu.com/jammy/
 https://releases.ubuntu.com/mantic/
+https://repo-default.voidlinux.org/live/current/
 https://rhinolinux.org/download
 https://www.bunsenlabs.org/installation.html
 https://www.debian.org/CD/http-ftp/
 https://www.debian.org/releases/bullseye/amd64/ch08s01.en.html
+https://www.devuan.org/get-devuan
 ~~~
 
 
