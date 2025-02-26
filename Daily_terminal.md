@@ -746,6 +746,9 @@ chrome://restart
 chrome://gpu
 chrome://flags/
 
+systemd-run -p CPUQuota=20% chrome
+ps ax | wc -l
+
 https://peter.sh/experiments/chromium-command-line-switches/
 
 --no-sandbox
@@ -753,6 +756,12 @@ https://peter.sh/experiments/chromium-command-line-switches/
 --enable-webgl 
 --ignore-gpu-blacklist
 --disable-gpu
+--isolate-origins --disable-site-isolation-trials -enable-low-end-device-mode
+
+chromium-browser --single-process --enable-low-end-device-mode --memory-model=low --process-per-tab
+export LANGUAGE=en-US && brave  --single-process --enable-low-end-device-mode  --process-per-tab
+export LANGUAGE=en-US && chromium-browser  --single-process --enable-low-end-device-mode  --process-per-tab
+export LANGUAGE=en-US && google-chrome  --disable-features=ScriptStreaming -enable-low-end-device-mode --process-per-tab
 
 ~~~
 
