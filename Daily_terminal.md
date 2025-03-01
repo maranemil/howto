@@ -173,6 +173,36 @@ echo $((RANDOM % 300));
 
 # change passwd
 + sudo passwd username
+
+-------
+
+sudo apt-get install adduser
+
+sudo adduser username
+sudo adduser username --shell /bin/sh
+sudo adduser username --groups sudo,admin
+
+sudo adduser --gecos "" username
+sudo adduser --gecos "" --shell /bin/zsh --disabled-password username
+sudo adduser username sudo
+sudo adduser --disabled-password --gecos "" username
+sudo adduser username www-data 
+sudo adduser --group admin 
+
+sudo useradd --create-home --shell /bin/bash --user-group username
+sudo useradd -m -p <encryptedPassword> -s /bin/bash <user>
+
+sudo usermod -a -G group1,group2 username
+sudo usermod -aG sudo username
+sudo usermod -s /bin/bash $USER
+sudo useradd -d /home/$USER -s /bin/bash -G group -m $USER
+
+sudo passwd username 
+
+sudo userdel -r username
+sudo userdel -f username
+
+sudo rm -r /home/username
 ```
 
 ### Hostname management
