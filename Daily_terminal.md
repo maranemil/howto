@@ -810,4 +810,10 @@ tasksel --task-desc ssh-server
 
 taskset -c 0 firefox -turbo
 taskset -c 0 google-chrome --process-per-tab
+
+systemd-run -p CPUQuota=25% google-chrome 
+systemd-run -p CPUQuota=25% pycharm-community
+
+taskset -c 0,1  google-chrome --process-per-tab
+taskset -c 0,1  pycharm-community
 ~~~
