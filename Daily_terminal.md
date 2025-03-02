@@ -846,4 +846,13 @@ systemd-run -p CPUQuota=25% pycharm-community
 
 taskset -c 0,1  google-chrome --process-per-tab
 taskset -c 0,1  pycharm-community
+
+# get cpu count
+nproc --all
+lscpu
+lscpu --online --parse=Core,Socket
+lscpu -ap
+grep -c 'cpu[0-9]' /proc/stat
+lscpu -e
+
 ~~~
