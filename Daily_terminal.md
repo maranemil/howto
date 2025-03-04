@@ -766,7 +766,7 @@ sudo swapoff -a; sleep 15; sudo swapon -a
 sudo sysctl vm.swappiness=10
 sudo sync && echo 3 | sudo tee /proc/sys/vm/drop_caches
 free && sync && echo 3 | sudo tee /proc/sys/vm/drop_caches && free
-free -m  && sync && echo 3 > /proc/sys/vm/drop_caches && free -m
+free -m && sync && echo 3 > /proc/sys/vm/drop_caches && free -m
 
 export LANGUAGE=en-US && google-chrome --lang=en-US,en --disable-translate --ash-force-desktop --disable-3d-apis --disable-background-mode --disable-preconnect --dns-prefetch-disable --no-experiments --purge-memory-button --no-referrers --no-pings --start-maximized --disable-default-apps -disable-features=Translate --aggressive-cache-discard --disable-notifications --new-window --disable-dev-shm-usage --block-new-web-contents
 
@@ -830,7 +830,7 @@ lsb_release -a
 uname -r -a
 ~~~
 
-###  tasksel
+###  tasksel and taskset
 
 ~~~
 sudo apt-get install tasksel
@@ -838,14 +838,17 @@ tasksel --list-tasks
 tasksel --task-desc web-server 
 tasksel --task-desc ssh-server 
 
-taskset -c 0 firefox -turbo
-taskset -c 0 google-chrome --process-per-tab
+------
 
-systemd-run -p CPUQuota=25% google-chrome 
-systemd-run -p CPUQuota=25% pycharm-community
+# taskset
 
-taskset -c 0,1  google-chrome --process-per-tab
+taskset -c 0,1 firefox -turbo
+taskset -c 0,1 google-chrome --disable-notifications --no-pings --no-referrers  --no-default-browser-check --process-per-tab
+taskset -c 0,1 chromium-browser --single-process --enable-low-res-tiling --enable-low-end-device-mode --disable-default-apps
+
+taskset -c 0,1  google-chrome --process-per-tab --disable-ipc-flooding-protection
 taskset -c 0,1  pycharm-community
+taskset -c 0,1  chromium-browser --single-process --disable-site-isolation-trials --isolate-origins --renderer-process-limit=2 --enable-low-end-device-mode
 
 # get cpu count
 nproc --all
@@ -855,4 +858,49 @@ lscpu -ap
 grep -c 'cpu[0-9]' /proc/stat
 lscpu -e
 
+# limit cpu usage 
+
+systemd-run -p CPUQuota=25% google-chrome 
+systemd-run -p CPUQuota=25% pycharm-community
+systemd-run -p CPUQuota=30% chromium-browser
+
+sudo cgcreate -a $USER:$USER -t $USER:$USER -g memory:groupChromiumMemLimit
+sudo cgset -r memory.limit_in_bytes=$((1024*1024*1024)) groupChromiumMemLimit
+cgexec -g memory:groupChromiumMemLimit chromium-browser
+
+cpulimit
+~~~
+
+###  check and repair disk
+
+~~~
+
+sudo apt-get install smartmontools
+sudo smartctl -a /dev/sda | less
+smartctl -i /dev/sda
+
+# check drive sectors
+sudo badblocks -v /dev/sda -s 
+sudo badblocks -v /dev/sda1 > ~/bad_sectors.txt
+
+sudo apt-get install gsmartcontrol
+gnome-disks
+
+
+# list disk
+lsblk 
+lsblk | grep disk
+sudo lshw -class disk
+lsblk -io KNAME,TYPE,SIZE,MODEL
+lshw -class disk
+hwinfo --disk
+hdparm -i /dev/sda
+sfdisk -l  
+fdisk -l  
+
+sudo gparted
+sudo e2fsck -fccky /dev/sda1 
+
+sudo apt install lsscsi
+lsscsi
 ~~~
