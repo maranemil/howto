@@ -904,3 +904,10 @@ sudo e2fsck -fccky /dev/sda1
 sudo apt install lsscsi
 lsscsi
 ~~~
+
+###  boot uefi update
+
+~~~
+sudo fwupdmgr update
+efibootmgr -v
+~~~
