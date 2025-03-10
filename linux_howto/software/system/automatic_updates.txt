@@ -1,0 +1,196 @@
+###############################################################
+AutomaticSecurityUpdates
+###############################################################
+
+https://stackoverflow.com/questions/55108619/what-is-the-process-python3-unattended-upgrade-shutdown
+https://help.ubuntu.com/community/AutomaticSecurityUpdates
+https://askubuntu.com/questions/798989/heavy-load-by-apt-unattended-upgrade
+https://askubuntu.com/questions/1119241/unattended-upgrade-cpu-100-for-4-hours-every-time-in-case-of-many-routing-ta/1359119#1359119
+https://ostechnix.com/how-to-disable-unattended-upgrades-on-ubuntu/
+https://help.ubuntu.com/community/AutomaticSecurityUpdates
+
+sudo dpkg-reconfigure unattended-upgrades
+sudo apt remove unattended-upgrades
+sudo dpkg-reconfigure --priority=low unattended-upgrades
+
+
+to disable the automatic updates,
+change the configuation on /etc/apt/apt.conf.d/20auto-upgrades from:
+
+APT::Periodic::Unattended-Upgrade "1";
+to:
+APT::Periodic::Unattended-Upgrade "0";
+
+sudo systemctl mask unattended-upgrade.service
+
+--
+unattended-upgrade --dry-run --debug
+sudo apt-get update && sudo apt-get install --only-upgrade unattended-upgrades
+dpkg -s unattended-upgrades | grep '^Version:' | cut -d' ' -f2
+
+###############################################################
+AutomaticSecurityUpdates
+###############################################################
+
+https://www.starline.de/en/magazine/technical-articles/enabling-automatic-security-updates-on-linux
+https://askubuntu.com/questions/9/how-do-i-enable-automatic-updates
+https://help.ubuntu.com/community/AutomaticSecurityUpdates
+https://www.cyberciti.biz/faq/how-to-keep-debian-linux-patched-with-latest-security-updates-automatically/
+https://wiki.debian.org/UnattendedUpgrades
+https://www.cyberciti.biz/faq/set-up-automatic-unattended-updates-for-ubuntu-20-04/
+
+apt update
+apt update && apt upgrade -y
+apt install unattended-upgrades && systemctl enable --now unattended-upgrades
+
+cp /etc/apt/apt.conf.d/50unattended-upgrades /etc/apt/apt.conf.d/50unattended-upgrades.BACKUP-$(date '+%Y-%m-%d')
+nano /etc/apt/apt.conf.d/50unattended-upgrades
+Unattended-Upgrade::Allowed-Origins
+Unattended-Upgrade::Package-Blacklist
+...
+
+sudo apt-get install unattended-upgrades
+sudo dpkg-reconfigure unattended-upgrades
+sudo systemctl start unattended-upgrades
+sudo systemctl enable unattended-upgrades
+sudo unattended-upgrades --dry-run --debug
+
+apt-get install unattended-upgrades apt-listchanges
+# editor /etc/apt/apt.conf.d/52unattended-upgrades-local
+# editor /etc/apt/apt.conf.d/20auto-upgrades
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+# dpkg-reconfigure unattended-upgrades
+echo unattended-upgrades unattended-upgrades/enable_auto_updates boolean true | debconf-set-selections
+dpkg-reconfigure -f noninteractive unattended-upgrades
+# editor /etc/apt/apt.conf.d/02periodic
+sudo unattended-upgrade -d
+
+
+sudo cat /var/log/unattended-upgrades/unattended-upgrades.log
+sudo tail -f /var/log/unattended-upgrades/unattended-upgrades.log
+sudo grep 'linux-image' /var/log/unattended-upgrades/unattended-upgrades.log
+
+systemctl | grep -w 'apt'
+systemctl cat apt-daily.timer
+systemctl cat apt-daily-upgrade.timer
+
+sudo systemctl edit apt-daily.timer
+sudo systemctl restart apt-daily.timer
+sudo systemctl status apt-daily.timer
+sudo systemctl edit apt-daily-upgrade.timer
+sudo systemctl restart apt-daily-upgrade.timer
+sudo systemctl status apt-daily-upgrade.timer
+
+man 8 'dpkg-reconfigure(8)'
+man 1 systemctl
+man 5 systemd.timer
+
+systemctl | grep -w 'apt'
+systemctl cat apt-daily.timer
+systemctl  cat apt-daily-upgrade.timer
+systemctl status apt-daily
+
+sudo unattended-upgrades --dry-run
+
+
+
+###############################################################
+How to set up automatic updates for Ubuntu Linux
+###############################################################
+
+https://help.ubuntu.com/community/AutomaticSecurityUpdates
+https://askubuntu.com/questions/9/how-do-i-enable-automatic-updates
+https://libre-software.net/linux-server/ubuntu-automatic-updates/
+https://www.cyberciti.biz/faq/how-to-set-up-automatic-updates-for-ubuntu-linux-18-04/
+https://linuxopsys.com/topics/ubuntu-automatic-updates
+https://www.cyberciti.biz/faq/set-up-automatic-unattended-updates-for-ubuntu-20-04/
+https://haydenjames.io/how-to-enable-unattended-upgrades-on-ubuntu-debian/
+https://phoenixnap.com/kb/automatic-security-updates-ubuntu
+https://www.digitalocean.com/community/tutorials/how-to-keep-ubuntu-20-04-servers-updated
+https://www.linuxbabe.com/ubuntu/automatic-security-update-unattended-upgrades-ubuntu
+https://linuxhint.com/configure-updates-automatically-linux-mint/
+https://linuxhint.com/update-ubuntu-automatically/
+--------------
+Ubuntu 18.04
+sudo apt update && sudo apt upgrade
+sudo apt install unattended-upgrades apt-listchanges bsd-mailx
+sudo dpkg-reconfigure -plow unattended-upgrades
+sudo vi /etc/apt/apt.conf.d/50unattended-upgrades
+sudo unattended-upgrades --dry-run
+
+--------------
+Ubuntu 22.04
+
+sudo apt install unattended-upgrades
+
+sudo nano /etc/apt/apt.conf.d/50unattended-upgrades
+Unattended-Upgrade::Remove-New-Unused-Dependencies "true";
+Unattended-Upgrade::Remove-Unused-Dependencies "true";
+Unattended-Upgrade::Automatic-Reboot "true";
+Unattended-Upgrade::Automatic-Reboot-Time "02:38";
+Unattended-Upgrade::Mail "user@example.com";
+Unattended-Upgrade::MailReport "only-on-error";
+
+sudo nano /etc/apt/apt.conf.d/20auto-upgrades
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+APT::Periodic::Download-Upgradeable-Packages "1";
+APT::Periodic::AutocleanInterval "7";
+
+sudo unattended-upgrades --dry-run --debug
+
+
+##############################################
+Ubuntu 22.04
+##############################################
+sudo apt install unattended-upgrades
+sudo systemctl status unattended-upgrades
+sudo apt install update-notifier-common
+sudo vim /etc/apt/apt.conf.d/50unattended-upgrades
+sudo vim /etc/apt/apt.conf.d/20auto-upgrades
+
+
+##############################################
+Ubuntu 20.04
+##############################################
+https://help.ubuntu.com/community/AutomaticSecurityUpdates
+
+sudo apt-get install unattended-upgrades
+sudo dpkg-reconfigure unattended-upgrades
+sudo dpkg-reconfigure --priority=low unattended-upgrades
+
+create /etc/apt/apt.conf.d/20auto-upgrades with the following contents:
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+
+
+# sudo dpkg-reconfigure -plow unattended-upgrades
+# sudo apt install apt-listchanges
+
+
+
+
+##############################################
+get a list of most recently installed packages?
+##############################################
+https://askubuntu.com/questions/17012/is-it-possible-to-get-a-list-of-most-recently-installed-packages
+https://www.cyberciti.biz/faq/apt-get-list-packages-are-installed-on-ubuntu-linux/
+https://superuser.com/questions/871004/list-of-recently-installed-apt-packages
+https://serverfault.com/questions/175504/how-do-i-get-the-history-of-apt-get-install-on-ubuntu
+
+
+
+grep " install " /var/log/dpkg.log
+grep " install " /var/log/apt/history.log
+grep " install " /var/log/dpkg.log.1 /var/log/dpkg.log
+gunzip -c `ls -tr /var/log/dpkg.log.*.gz` | grep " install "
+cat /var/log/dpkg.log |awk '/ install / {printf "%s ",$4}'
+cat /var/log/dpkg.log |awk '/ install / {printf "%s\n",$4}'
+grep " install " /var/log/dpkg.log
+dpkg --get-selections | sed -n 's/\t\+install$//p'
+tail -n 25 /var/log/apt/history.log
+
+
+
+
