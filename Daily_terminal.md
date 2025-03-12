@@ -804,7 +804,7 @@ sudo add-apt-repository ppa:yannubuntu/boot-repair && sudo apt update
 sudo apt install -y boot-repair && boot-repair
 ~~~
 
-###  boot-repair ***
+###  boot-repair *** exfat ext3 ext4
 ~~~
 sudo lsblk -f
 
@@ -813,6 +813,31 @@ sudo apt-get install ntfs-3g
 sudo ntfsfix -n /dev/sda1 # dry run
 sudo ntfsfix -b /dev/sda1 # -b or --clear-bad-sectors
 sudo ntfsfix -d /dev/sda1 # clearing the volume dirty flag if the volume can be fixed and mounted.
+
+sudo fdisk -l
+sudo badblocks -sv /dev/mmcblk0
+
+sudo badblocks -sv /dev/mmcblk0  > bad-blocks-result
+sudo fsck -t ext4 -l bad-blocks-result /dev/mmcblk0
+
+sudo badblocks -b 4096 -c 4096 -s /dev/mmcblk0
+sudo fsck -r /dev/mmcblk0
+sudo fsck -t ext3 -l bad-blocks-result /dev/mmcblk0
+
+gnome-disks
+sudo dd if=/dev/zero of=/dev/mmcblk0 count=10000
+
+sudo ntfsfix -b /dev/mmcblk0
+sudo ntfsfix -d /dev/mmcblk0 
+
+sudo apt-get install smartmontools
+sudo smartctl -i -d /dev/mmcblk0
+
+sudo apt install exfatprogs
+sudo fsck.exfat -r /dev/mmcblk0
+
+sudo e2fsck -b 8193 /dev/mmcblk0
+sudo e2fsck -b 32768 /dev/mmcblk0
 ~~~
 
 
