@@ -938,3 +938,11 @@ lsscsi
 sudo fwupdmgr update
 efibootmgr -v
 ~~~
+
+###  firefox alternative
+
+~~~
+sudo apt update && sudo apt install extrepo -y
+sudo extrepo enable librewolf
+sudo apt update && sudo apt install librewolf -y
+~~~
