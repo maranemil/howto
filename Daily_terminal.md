@@ -719,6 +719,8 @@ https://www.bunsenlabs.org/installation.html
 https://www.debian.org/CD/http-ftp/
 https://www.debian.org/releases/bullseye/amd64/ch08s01.en.html
 https://www.devuan.org/get-devuan
+https://releases.ubuntu.com/noble/
+https://ftp.fau.de/ubuntu-releases/24.04.1/
 ~~~
 
 
