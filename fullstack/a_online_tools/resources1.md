@@ -985,8 +985,25 @@ https://paywallreader.com/
 - https://www.w3schools.com/java/java_syntax.asp
 - https://www.tutorialspoint.com/java16/index.htm
 - https://wiki.selfhtml.org/wiki/HTML/Elemente
-- 
+
 ------------------------------------------------------------------
+
+### Text translator
+
+- https://www.deepl.com/en/translator/l/en/de
+- https://translate.google.com/?hl=de&sl=en&tl=de&op=translate
+- https://www.dict.cc/
+- https://www.reverso.net/text-translation
+- https://www.reverso.net/spell-checker/english-spelling-grammar/
+- https://www.online-translator.com/%C3%BCbersetzung
+- https://mymemory.translated.net/
+- https://lingenio.de/
+- https://dict.leo.org/german-english/
+- https://itranslate.com/translate/english-united-states-to-english-united-kingdom
+- https://www.babelfish.de/
+- https://www.scribens.fr/index.htm
+
+- -----------------------------------------------------------------
 
 ### Text summarizer
 
