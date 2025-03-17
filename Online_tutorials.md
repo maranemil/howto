@@ -340,6 +340,7 @@
 | https://www.youtube.com/watch?v=-RCnNyD0L-s | Node.js Passport Login System Tutorial               |
 | https://www.youtube.com/watch?v=RLtyhwFtXQA | Learn Node.js - Full Tutorial for Beginners          |
 | https://www.youtube.com/watch?v=qSRrxpdMpVc | React Native Tutorial for Beginners                  |
+| https://www.youtube.com/watch?v=bfDnjbw3DJM | React                                                |
 
 ### AWS
 
@@ -531,5 +532,6 @@
 | https://www.youtube.com/watch?v=hWRRdICvMNs&list=PLOspHqNVtKAAAq9pHWlEiRUVcYMCcu4X0         | API Essentials                                             |
 | https://www.youtube.com/watch?v=_Drz6MbNmmY&list=PLMvza7ri1L0eduljUjLSsXRvIJ8rD8Ohs         | LMMS                                                       |
 | https://www.youtube.com/playlist?list=PLD0F06AA0D2E8FFBA                                    | ML                                                         |
+| https://www.youtube.com/watch?v=h6HRsfu_Rog&list=PLJooqCSo73Si9lMfa6gq0fHJufMMY1bSX         | B2B Spryker                                                |
 
 
