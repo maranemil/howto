@@ -5,6 +5,22 @@
 * find . -name '*' -size +1M -exec ls -lh {} \; | awk '{ print $9 ": " $5 }'
 ~~~~
 
+
+### Find files by date 
+~~~~
+find . -type f  -name *.xm
+find . -maxdepth 5 -type f  -mtime -25 -name *.xm
+find ~/  -maxdepth 5 -type f  -mtime -25 -name *.xm
+find ~/  -maxdepth 5 -type f  -mtime -25 -name *.mmpz  -exec ls  {} \;
+find ~/  -maxdepth 5 -depth -type f -atime +13 -name *.xm
+find ~/  -maxdepth 5 -depth -type f -mtime -13 -name *.xm
+find ~/ -type f -newermt 2018-02-28 -not -newermt 2018-03-28
+find ~/ -name *.xm -type f -mtime -25
+find ~/ -name *.xm -type f -ctime -15
+find ~/ -type f -newermt 2015-05-16 | xargs ls -l
+~~~~
+
+
 ### rename
 ```
 * // rename incremental 000 - 999
