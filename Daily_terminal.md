@@ -715,6 +715,10 @@ https://ftp-stud.hs-esslingen.de/Mirrors/cdimage.ubuntu.com/ubuntu/releases/23.0
 https://ftp-stud.hs-esslingen.de/Mirrors/cdimage.ubuntu.com/xubuntu/releases/18.04/release/
 https://ftp-stud.hs-esslingen.de/debian-cd/current-live/amd64/iso-hybrid/
 https://ftp.fau.de/
+https://rhlx01.hs-esslingen.de/Mirrors/cdimage.ubuntu.com/xubuntu/releases/noble/release/
+https://rhlx01.hs-esslingen.de/Mirrors/cdimage.ubuntu.com/kubuntu/releases/22.04/release/
+https://rhlx01.hs-esslingen.de/Mirrors/cdimage.ubuntu.com/lubuntu/releases/22.04/release/
+https://rhlx01.hs-esslingen.de/Mirrors/releases.ubuntu.com/22.04/
 https://ftp.fau.de/devuan-cd/devuan_chimaera/desktop-live/
 https://ftp.fau.de/devuan-cd/devuan_chimaera/desktop-live/
 https://ftp.fau.de/devuan-cd/devuan_daedalus/desktop-live/
