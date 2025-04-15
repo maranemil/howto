@@ -890,11 +890,17 @@ tasksel --task-desc ssh-server
 # taskset
 
 taskset -c 0,1 firefox -turbo
+
 taskset -c 0,1 google-chrome --disable-notifications --no-pings --no-referrers  --no-default-browser-check --process-per-tab
+
+taskset -c 0,1 google-chrome --lang=en-US,en --disable-translate --disable-dev-shm-usage --block-new-web-contents --no-experiments --disable-default-apps --disable-notifications --new-window --log-level=1
+
 taskset -c 0,1 chromium-browser --single-process --enable-low-res-tiling --enable-low-end-device-mode --disable-default-apps
 
 taskset -c 0,1  google-chrome --process-per-tab --disable-ipc-flooding-protection
+
 taskset -c 0,1  pycharm-community
+
 taskset -c 0,1  chromium-browser --single-process --disable-site-isolation-trials --isolate-origins --renderer-process-limit=2 --enable-low-end-device-mode
 
 # get cpu count
