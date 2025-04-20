@@ -972,3 +972,24 @@ sudo apt update && sudo apt install extrepo -y
 sudo extrepo enable librewolf
 sudo apt update && sudo apt install librewolf -y
 ~~~
+
+### ifconfig
+
+~~~
+https://ubuntu.com/blog/if-youre-still-using-ifconfig-youre-living-in-the-past
+https://wiki.ubuntuusers.de/ip/
+
+sudo apt install net-tools
+sudo apt-get install -y iputils-ping
+ifconfig
+ip address show
+ip link show
+ip link set DEVICE up or ip link set DEVICE down
+ip -c a
+ip route show | grep 'default' 
+
+service --status-all
+apt list -i
+apt list -i | grep docker
+sudo apt remove docker.io docker-compose
+~~~
