@@ -207,10 +207,16 @@ ffmpeg -i in.mp4 -vf "transpose=2" -t 10 out.mp4
 ffplay -i in.mp4 -vf "setpts=1/4*PTS"
 ```
 
-### resize
+### resize and enhance
 ```
 * ffmpeg -i in.mp4 -vf scale=-1:1080 -an out.mp4 
 * ffplay -i in -vf scale=-2:540 -c:a copy
+
+ffplay -i in.mp4 -vf scale=-1:1080:flags=lanczos,unsharp=5:5:1.0:5:5:0.0
+ffplay -i in.mp4 -vf scale=-1:1080:flags=lanczos,unsharp=3:3:1.5
+ffplay -i in.mp4 -vf scale=-1:1080:flags=lanczos,unsharp=13:13:2.5
+ffmpeg -i in.mp4 -vf scale=-1:1080:flags=lanczos,unsharp=5:5:1.0:5:5:0.0 -c:a copy out.mp4
+
 ```
 
 ### Ubuntu crop screen 
