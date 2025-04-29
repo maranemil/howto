@@ -528,3 +528,15 @@ ffmpeg -i input.mp3 -r 25 -filter_complex "[0:a]compand,showwaves=size=854x480:c
 # xxx
 ffmpeg -i input.mp3 -f lavfi -i color=c=#3d3739:s=854x480 -r 25 -filter_complex "[0:a]compand,showwaves=size=854x480:colors=#e0a71f:draw=full:mode=line[vout];[1:v][vout]overlay=format=auto:shortest=1,format=yuv420p[v]" -map "[v]" -map 0:a -c:v libx264 -c:a copy output.mp4 
 ~~~
+
+
+### flow mix
+~~~
+fmpeg -i in.mp4 -vf reverse out_rev.mp4 
+for i in *.mp4; do echo file $i >> mylist.txt; done  && ffmpeg -f concat -safe 0 -i mylist.txt -c copy output.mp4
+ffmpeg -stream_loop 30 -i in.mp4 -c copy out.mp4
+ffmpeg -stream_loop 0  -i in.mp4  -i in.mp3 -map 0:v -map 1:a -c:v copy -to 02:50 -shortest -y out.mp4
+ffmpeg -i in.mp4 -vf "crop=1200:570:10:10,eq=saturation=1.3" -c:a copy out.mp4  
+ffmpeg -i in.mp4 -vf scale=-1:1080:flags=lanczos,unsharp=5:5:1.0:5:5:0.0 -c:a copy out.mp4
+~~~
+
