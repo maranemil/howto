@@ -535,3 +535,32 @@
 | https://www.youtube.com/watch?v=h6HRsfu_Rog&list=PLJooqCSo73Si9lMfa6gq0fHJufMMY1bSX         | B2B Spryker                                                |
 
 
+### Envato Tuts+
+
+
+| Link URL                                    | Title                                 |
+|:--------------------------------------------|:--------------------------------------|
+| https://www.youtube.com/watch?v=AGE3wRKljkw | Get Started With Laravel              |
+| https://www.youtube.com/watch?v=YGqCZjdgJJk | How to Build a REST API With Laravel: |
+| https://www.youtube.com/watch?v=m0lz23eDgq4 | Practical React Fundamentals          |
+| https://www.youtube.com/watch?v=7rxJXB7vPd8 | Vibe Coding                           |
+| https://www.youtube.com/watch?v=pzcB-t5qM8w | Web Design Trends 2025                |
+| https://www.youtube.com/watch?v=bfDnjbw3DJM | React js Tutorial Beginner            |
+| https://www.youtube.com/watch?v=gyQyk80_upM | Node.js Tutorial                      |
+| https://www.youtube.com/watch?v=JWhRMyyF7nc | learn Angular                         |
+| https://www.youtube.com/watch?v=h8SpwivM4po | Write Code With GitHub Copilot.       |
+| https://www.youtube.com/watch?v=sbfdzF8X-AQ | How to Write Code With ChatGPT        |
+| https://www.youtube.com/watch?v=1GNsWa_EZdw | Vue.js Tutorial:                      |
+| https://www.youtube.com/watch?v=P-mBHIVbYNI | Affinity Photo for Beginners          |
+| https://www.youtube.com/watch?v=-TVX5uT9BRY | Working With PHP Arrays               |
+| https://www.youtube.com/watch?v=9snMb-S90kQ | Top New PHP Features                  |
+| https://www.youtube.com/watch?v=l4G2MVgXFkw | Learn React 18                        |
+| https://www.youtube.com/watch?v=iG2jotQo9NI | HTML & CSS                            |
+| https://www.youtube.com/watch?v=Fg3EvolPrDo | How to Edit Audio                     |
+| https://www.youtube.com/watch?v=mGmuVNkLi74 | How to Use PHP in HTML                |
+| https://www.youtube.com/watch?v=t0syDUSbdfE | PHP Tutorial                          |
+| https://www.youtube.com/watch?v=hjD9jTi_DQ4 | Getting Started With Hugo             |
+| https://www.youtube.com/watch?v=2piPpx_HB5U | This is Bootstrap 5                   |
+| https://www.youtube.com/watch?v=rLrgj6jJ5ug | How to Use Map, Filter,               |
+| https://www.youtube.com/watch?v=X1umyXgJsA0 | Learn Modern JavaScript Fundamentals  |
+| https://www.youtube.com/watch?v=JWhRMyyF7nc | Learn Angular A                       |                                       |
