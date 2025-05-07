@@ -584,4 +584,3 @@
 | https://www.youtube.com/watch?v=zMSmhKDajKQ | AI Assistant in IntelliJ IDEA           | 
 
 
-|
