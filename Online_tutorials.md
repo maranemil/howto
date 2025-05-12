@@ -569,18 +569,19 @@
 ### AI Code Assistants
 
 
-| Link URL                                    | Title                                   |
-|:--------------------------------------------|:----------------------------------------|
-| https://www.youtube.com/watch?v=FByI3Xl846A | how to build a team of AI Agents        | 
-| https://www.youtube.com/watch?v=DaXQ5L7r7Lg | Replit Agent                            | 
-| https://www.youtube.com/watch?v=CJUbQ1QiBUY | Building a REST API with GitHub Copilot | 
-| https://www.youtube.com/watch?v=JV3pL1_mn2M | AI Engineering                          | 
-| https://www.youtube.com/watch?v=HdafI0t3sEY | RAG vs. CAG                             | 
-| https://www.youtube.com/watch?v=vdBxfFVXnc0 | GitHub Copilot in VS Code (2025)        | 
-| https://www.youtube.com/watch?v=b5xcWdzAB5c | GitHub Copilot 101                      | 
-| https://www.youtube.com/watch?v=p_XU79kegb0 | 9 Copilot Feature                       | 
-| https://www.youtube.com/watch?v=sYepbevm8TY	| GitHub Copilot agent                    | 
-| https://www.youtube.com/watch?v=VePxCcF99w4 | Agent mode tools in VS Code             | 
-| https://www.youtube.com/watch?v=zMSmhKDajKQ | AI Assistant in IntelliJ IDEA           | 
+| Link URL                                     | Title                                   |
+|:---------------------------------------------|:----------------------------------------|
+| https://www.youtube.com/watch?v=FByI3Xl846A  | how to build a team of AI Agents        | 
+| https://www.youtube.com/watch?v=DaXQ5L7r7Lg  | Replit Agent                            | 
+| https://www.youtube.com/watch?v=CJUbQ1QiBUY  | Building a REST API with GitHub Copilot | 
+| https://www.youtube.com/watch?v=JV3pL1_mn2M  | AI Engineering                          | 
+| https://www.youtube.com/watch?v=HdafI0t3sEY  | RAG vs. CAG                             | 
+| https://www.youtube.com/watch?v=vdBxfFVXnc0  | GitHub Copilot in VS Code (2025)        | 
+| https://www.youtube.com/watch?v=b5xcWdzAB5c  | GitHub Copilot 101                      | 
+| https://www.youtube.com/watch?v=p_XU79kegb0  | 9 Copilot Feature                       | 
+| https://www.youtube.com/watch?v=sYepbevm8TY	 | GitHub Copilot agent                    | 
+| https://www.youtube.com/watch?v=VePxCcF99w4  | Agent mode tools in VS Code             | 
+| https://www.youtube.com/watch?v=zMSmhKDajKQ  | AI Assistant in IntelliJ IDEA           | 
+| https://www.youtube.com/watch?v=zqVtHYFYQY8  | ChatGPT Tutorial 2025                   | 
 
 
