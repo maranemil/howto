@@ -106,6 +106,18 @@ git status -s
 git worktree add ../name_path_hotfix main
 git worktree remove .
 git worktree list
+
+# cherrypick
+git remote -v
+git log fixbug --oneline
+git checkout dev
+git cherry-pick hash
+git cherry-pick hash1 hash2
+git log dev --oneline
+
+git pull
+git rebase dev
+git merge dev
 ```
 
 
