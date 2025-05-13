@@ -77,6 +77,11 @@ git rebase --abord
 git fetch -p -a && git pull --ff-only && git rebase master
 git fetch -p && git pull && git rebase master && git rebase develop
 git remote update origin --prune
+
+# pull
+git pull --rebase
+git rebase --abort
+git pull 
 ```
 
 
@@ -85,8 +90,38 @@ git remote update origin --prune
 git stash
 git pull
 git stash apply
+
+git stash
+git switch branch
+git stash pop # add changes back
+git stash 
+git stash -u
+git stash list 
+git stash apply stash@{2}
+git stash drop stash@{2}
+git stash clear
+git status -s
+
+# worktree
+git worktree add ../name_path_hotfix main
+git worktree remove .
+git worktree list
 ```
 
+
+### submodules
+```
+git clone ---recursive main-repo
+git submodule update --init --recursive
+git ls-treee HEAD submodulepath
+git log --oneline
+git switch branch 
+git submodule add submodulepath
+git rm submodulepath
+
+git config --global  submodule.recusive true
+git config --global push.recurseSubmodules on-demand
+```
 
 ### ignore folder and include
 ```
