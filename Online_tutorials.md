@@ -533,7 +533,7 @@
 | https://www.youtube.com/watch?v=_Drz6MbNmmY&list=PLMvza7ri1L0eduljUjLSsXRvIJ8rD8Ohs         | LMMS                                                       |
 | https://www.youtube.com/playlist?list=PLD0F06AA0D2E8FFBA                                    | ML                                                         |
 | https://www.youtube.com/watch?v=h6HRsfu_Rog&list=PLJooqCSo73Si9lMfa6gq0fHJufMMY1bSX         | B2B Spryker                                                |
-
+| https://www.youtube.com/watch?v=23HFxAPyJ9U&list=PLZPZq0r_RZOOj_NOZYq_R2PECIMglLemc         | Start coding with JAVA in 10 minutes!                      |
 
 ### Envato Tuts+
 
