@@ -592,5 +592,6 @@
 | https://www.youtube.com/watch?v=zMSmhKDajKQ  | AI Assistant in IntelliJ IDEA                               | 
 | https://www.youtube.com/watch?v=zqVtHYFYQY8  | ChatGPT Tutorial 2025                                       | 
 | https://www.youtube.com/watch?v=lvQ-EC5afIA  | AI Agent with Semantic Kernel, MongoDB Atlas, C# and OpenAI | 
+| https://www.youtube.com/watch?v=OlJSTTof9mo  | Custom Voice AI Agent                                       | 
 
 
