@@ -222,6 +222,7 @@
 | https://www.youtube.com/watch?v=TPMlZxRRaBQ | Tableau for Data Science and Data Visualization                          | 
 | https://www.youtube.com/watch?v=1Rs2ND1ryYc | CSS Tutorial - Zero to Hero (Complete Course)                            | 
 | https://www.youtube.com/watch?v=yK1uBHPdp30 | Operating Systems                                                        | 
+| https://www.youtube.com/watch?v=r5dtl9Uq9V0 | VSCode for C# Developers                                                 | 
 
 
 ### SQL
