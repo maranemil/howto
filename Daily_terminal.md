@@ -922,6 +922,16 @@ sudo cgset -r memory.limit_in_bytes=$((1024*1024*1024)) groupChromiumMemLimit
 cgexec -g memory:groupChromiumMemLimit chromium-browser
 
 cpulimit
+
+taskset -c 0,1,2,3 google-chrome --lang=en-US,en --disable-translate --disable-dev-shm-usage --block-new-web-contents --no-experiments --disable-default-apps --disable-notifications --new-window --log-level=1 --renderer-process-limit=2  --isolate-origins --disable-dev-shm-usage --no-pings
+
+--disable-extensions
+--disable-notifications
+--disable-sync
+--disable-software-rasterizer
+--disable-site-isolation-trials
+
+
 ~~~
 
 ###  check and repair disk
