@@ -342,6 +342,7 @@
 | https://www.youtube.com/watch?v=RLtyhwFtXQA | Learn Node.js - Full Tutorial for Beginners          |
 | https://www.youtube.com/watch?v=qSRrxpdMpVc | React Native Tutorial for Beginners                  |
 | https://www.youtube.com/watch?v=bfDnjbw3DJM | React                                                |
+| https://www.youtube.com/watch?v=UDWfize-zIE | Vue JS Tutorial DE                                   |
 
 ### AWS
 
@@ -535,6 +536,7 @@
 | https://www.youtube.com/playlist?list=PLD0F06AA0D2E8FFBA                                    | ML                                                         |
 | https://www.youtube.com/watch?v=h6HRsfu_Rog&list=PLJooqCSo73Si9lMfa6gq0fHJufMMY1bSX         | B2B Spryker                                                |
 | https://www.youtube.com/watch?v=23HFxAPyJ9U&list=PLZPZq0r_RZOOj_NOZYq_R2PECIMglLemc         | Start coding with JAVA in 10 minutes!                      |
+| https://www.youtube.com/watch?v=1GNsWa_EZdw&list=PLgGbWId6zgaV1cuVGR-rkslM5InZ5MZv2         | Envato Tuts+                                               |
 
 ### Envato Tuts+
 
@@ -595,5 +597,6 @@
 | https://www.youtube.com/watch?v=lvQ-EC5afIA  | AI Agent with Semantic Kernel, MongoDB Atlas, C# and OpenAI | 
 | https://www.youtube.com/watch?v=OlJSTTof9mo  | Custom Voice AI Agent                                       | 
 | https://www.youtube.com/watch?v=Coot4TFTkN4  | MCP Servers in VS Code                                      |
+| https://www.youtube.com/watch?v=jXp5D5ZnxGM  | GitHub Copilot in VS Code                                   |
 
 
