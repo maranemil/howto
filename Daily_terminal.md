@@ -925,6 +925,9 @@ cpulimit
 
 taskset -c 0,1,2,3 google-chrome --lang=en-US,en --disable-translate --disable-dev-shm-usage --block-new-web-contents --no-experiments --disable-default-apps --disable-notifications --new-window --log-level=1 --renderer-process-limit=2  --isolate-origins --disable-dev-shm-usage --no-pings
 
+taskset -c 0,1 google-chrome --lang=en-US,en --disable-translate --disable-dev-shm-usage --block-new-web-contents --no-experiments --disable-default-apps --disable-notifications --new-window --log-level=1 --renderer-process-limit=2 --no-referrers --no-pings --start-maximized
+
+
 --disable-extensions
 --disable-notifications
 --disable-sync
