@@ -1162,6 +1162,8 @@ https://paywallreader.com/
 - https://yt5s.best/de302ty/
 - https://yt5s.best/en/
 - https://yt1s.com.co/de9/
+- https://www.savethevideo.com/de/downloader
+- https://www.yt1s.com/en2aef
 
 ------------------------------------------------------------------
 

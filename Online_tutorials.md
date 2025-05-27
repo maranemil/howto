@@ -170,6 +170,11 @@
 | https://www.youtube.com/watch?v=TPMlZxRRaBQ | Tableau for Data Science and Data Visualization                          | 
 | https://www.youtube.com/watch?v=1Rs2ND1ryYc | CSS Tutorial - Zero to Hero (Complete Course)                            | 
 | https://www.youtube.com/watch?v=yK1uBHPdp30 | Operating Systems                                                        | 
+ | https://www.youtube.com/watch?v=lenV5aVOMp8 | Full Stack Project with Vue.js and Flask                                 |
+ | https://www.youtube.com/watch?v=I_xLMmNeLDY | The Ultimate Vue 3 Tutorial                                              |
+ | https://www.youtube.com/watch?v=cBTWTTB1R3U | Login Registration Form Restful Api Using Spring boot Vue JS             |
+ | https://www.youtube.com/watch?v=4Re7hZdsoOI | Full Laravel VueJS Tutorial: CRUD with Authentication                    |
+ | https://www.youtube.com/watch?v=xTtL8E4LzTQ | Java Full Course for free (2025)                                         |
 
 
 ### Kotlin
@@ -569,6 +574,8 @@
 | https://www.youtube.com/watch?v=h6HRsfu_Rog&list=PLJooqCSo73Si9lMfa6gq0fHJufMMY1bSX         | B2B Spryker                                                |
 | https://www.youtube.com/watch?v=23HFxAPyJ9U&list=PLZPZq0r_RZOOj_NOZYq_R2PECIMglLemc         | Start coding with JAVA in 10 minutes!                      |
 | https://www.youtube.com/watch?v=1GNsWa_EZdw&list=PLgGbWId6zgaV1cuVGR-rkslM5InZ5MZv2         | Envato Tuts+                                               |
+| https://www.youtube.com/watch?v=9ItV8UuXb1I&list=PLlameCF3cMEtuXasp3TH4TapPcw3EteA5         | Vue                                                        |
+
 
 ### Envato Tuts+
 
@@ -610,26 +617,30 @@
 | https://www.youtube.com/watch?v=54__1gK2K4U  | Junie and Kotlin in IntelliJ IDEA                           | 
 | https://www.youtube.com/watch?v=6JeaYWDyw54  | ULTIMATE Guide to ChatGPT 4o                                | 
 | https://www.youtube.com/watch?v=CJUbQ1QiBUY  | Building a REST API with GitHub Copilot                     | 
+| https://www.youtube.com/watch?v=Coot4TFTkN4  | MCP Servers in VS Code                                      |
 | https://www.youtube.com/watch?v=DaXQ5L7r7Lg  | Replit Agent                                                | 
 | https://www.youtube.com/watch?v=FByI3Xl846A  | how to build a team of AI Agents                            | 
 | https://www.youtube.com/watch?v=HdafI0t3sEY  | RAG vs. CAG                                                 | 
 | https://www.youtube.com/watch?v=JV3pL1_mn2M  | AI Engineering                                              | 
 | https://www.youtube.com/watch?v=NFSqoVjI54w  | AI Assistant in WebStorm                                    | 
 | https://www.youtube.com/watch?v=O8hQStVHTO0  | 36 ChatGPT Tips                                             | 
+| https://www.youtube.com/watch?v=OlJSTTof9mo  | Custom Voice AI Agent                                       | 
+| https://www.youtube.com/watch?v=QfJB9d0J3Iw  | Learn Claude AI                                             |
+| https://www.youtube.com/watch?v=V_0dNE-H2gw  | AI Locally in Minutes                                       |
 | https://www.youtube.com/watch?v=VePxCcF99w4  | Agent mode tools in VS Code                                 | 
 | https://www.youtube.com/watch?v=_5vD9QDlgDg  | How to Use Junie in PyCharm                                 | 
 | https://www.youtube.com/watch?v=b5xcWdzAB5c  | GitHub Copilot 101                                          | 
+| https://www.youtube.com/watch?v=hdhdEbOBKK8  | Let Me Code It For You Junie                                |
+| https://www.youtube.com/watch?v=jXp5D5ZnxGM  | GitHub Copilot in VS Code                                   |
 | https://www.youtube.com/watch?v=lTr06V9uyts  | JetBrains AI Assistant in PhpStorm                          | 
+| https://www.youtube.com/watch?v=lvQ-EC5afIA  | AI Agent with Semantic Kernel, MongoDB Atlas, C# and OpenAI | 
+| https://www.youtube.com/watch?v=oUGIcp2Iph0  | Meet Junie, the Coding Agent by JetBrains                   |
 | https://www.youtube.com/watch?v=oyKgaysS9_g  | How to Use Junie in IntelliJ IDEA                           | 
 | https://www.youtube.com/watch?v=p_XU79kegb0  | 9 Copilot Feature                                           | 
 | https://www.youtube.com/watch?v=sYepbevm8TY	 | GitHub Copilot agent                                        | 
 | https://www.youtube.com/watch?v=vdBxfFVXnc0  | GitHub Copilot in VS Code (2025)                            | 
+| https://www.youtube.com/watch?v=z1lVsLPXn2c  | AI Coding Agent  Junie                                      |
 | https://www.youtube.com/watch?v=zMSmhKDajKQ  | AI Assistant in IntelliJ IDEA                               | 
 | https://www.youtube.com/watch?v=zqVtHYFYQY8  | ChatGPT Tutorial 2025                                       | 
-| https://www.youtube.com/watch?v=lvQ-EC5afIA  | AI Agent with Semantic Kernel, MongoDB Atlas, C# and OpenAI | 
-| https://www.youtube.com/watch?v=OlJSTTof9mo  | Custom Voice AI Agent                                       | 
-| https://www.youtube.com/watch?v=Coot4TFTkN4  | MCP Servers in VS Code                                      |
-| https://www.youtube.com/watch?v=jXp5D5ZnxGM  | GitHub Copilot in VS Code                                   |
-| https://www.youtube.com/watch?v=V_0dNE-H2gw  | AI Locally in Minutes                                       |
 
 

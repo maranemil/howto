@@ -1006,3 +1006,13 @@ apt list -i
 apt list -i | grep docker
 sudo apt remove docker.io docker-compose
 ~~~
+
+
+### when linux system was installed
+
+~~~
+stat -c %w /
+stat --format=%w /
+stat /
+dumpe2fs /dev/sda1 | grep 'Filesystem created:'
+~~~
