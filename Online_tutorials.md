@@ -175,6 +175,7 @@
  | https://www.youtube.com/watch?v=cBTWTTB1R3U | Login Registration Form Restful Api Using Spring boot Vue JS             |
  | https://www.youtube.com/watch?v=4Re7hZdsoOI | Full Laravel VueJS Tutorial: CRUD with Authentication                    |
  | https://www.youtube.com/watch?v=xTtL8E4LzTQ | Java Full Course for free (2025)                                         |
+ | https://www.youtube.com/watch?v=rH3zE7VlIMs | Learn Git - The Full Course  by ThePrimeagen.                            |
 
 
 ### Kotlin
