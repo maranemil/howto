@@ -311,6 +311,9 @@
 | https://www.youtube.com/watch?v=TbMKwl11itQ               | Create a Keylogger with Python - Tutorial                          |
 | https://www.youtube.com/watch?v=X2vAabgKiuM               | Tutorial with Python & NLTK                                        |
 | https://www.youtube.com/watch?v=YZvRrldjf1Y               | How to Build an E-commerce Website with Django and Python          |
+| https://www.youtube.com/watch?v=5qOnzF7RsNA               | GUI App with Tkinter and SQLite                                    |
+| https://www.youtube.com/watch?v=gdDI_GhIRGo               | Python SQLite Data Entry Form with Tkinter                         |
+| https://www.youtube.com/watch?v=Ohj-CqALrwk               | SQLite Backend for Beginners                                       |
 
 
 ### JS
