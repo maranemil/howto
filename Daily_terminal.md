@@ -423,6 +423,26 @@ python3 -m http.server 8888
 * aptitude search '~i!~M'
 ```
 
+##### snap packages
+```
+snap list
+
+sudo snap install code --classic
+sudo snap install rider --classic
+sudo snap install clion --classic
+sudo snap install pycharm-community --classic
+sudo snap install phpstorm --classic
+sudo snap install intellij-idea-community --classic
+
+sudo snap save
+snap saved
+sudo sh -c 'rm -rf /var/lib/snapd/cache/*'
+sudo rm -rf /var/lib/snapd/cache/*
+sudo snap remove --purge clion
+```
+
+
+
 ##### remove packages
 ```
 * dpkg -r <package> 
