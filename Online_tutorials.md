@@ -646,5 +646,6 @@
 | https://www.youtube.com/watch?v=z1lVsLPXn2c  | AI Coding Agent  Junie                                      |
 | https://www.youtube.com/watch?v=zMSmhKDajKQ  | AI Assistant in IntelliJ IDEA                               | 
 | https://www.youtube.com/watch?v=zqVtHYFYQY8  | ChatGPT Tutorial 2025                                       | 
+| https://www.youtube.com/watch?v=r0c7RhMFcww  | AI Business in 6 Hours                                      | 
 
 
