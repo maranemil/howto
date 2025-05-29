@@ -647,5 +647,7 @@
 | https://www.youtube.com/watch?v=zMSmhKDajKQ  | AI Assistant in IntelliJ IDEA                               | 
 | https://www.youtube.com/watch?v=zqVtHYFYQY8  | ChatGPT Tutorial 2025                                       | 
 | https://www.youtube.com/watch?v=r0c7RhMFcww  | AI Business in 6 Hours                                      | 
+| https://www.youtube.com/watch?v=VwC-fUpVLYY  | Tasks using YAML AI Agent Design Patterns                   | 
+| https://www.youtube.com/watch?v=rOTdkSSHBBc  | fully Functional MCP Server from Swagger Specs              | 
 
 
