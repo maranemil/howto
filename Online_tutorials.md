@@ -384,6 +384,7 @@
 | https://www.youtube.com/watch?v=t2CEgPsws3U | Data Structures and Algorithms in JavaScript              |
 | https://www.youtube.com/watch?v=U9T6YkEDkMo | React App                                                 |
 | https://www.youtube.com/watch?v=WTOnKNjiPWU | Learn JavaScript: Full-Stack From Scratch                 |
+| https://www.youtube.com/watch?v=s6KEnPfFpZw | Node.js Tutorial für Anfänger DE                          |
 
 ### AWS
 
