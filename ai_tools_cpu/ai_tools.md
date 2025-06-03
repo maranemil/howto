@@ -229,6 +229,12 @@
 | https://clipdrop.co/stable-diffusion                                            |
 | https://stability.ai/stable-diffusion                                           |
 | -                                                                               |
+| https://elevenlabs.io/ # Podcasts                                               | 
+| https://notebooklm.google/  # Podcasts text2audio                               | 
+| https://pictory.ai/ # audio2video                                               | 
+
+
+
 
 ### Generative AI Video
 

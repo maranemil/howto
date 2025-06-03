@@ -203,12 +203,13 @@
 
 ### C++
 
-| Link URL                                    | Title                                      |
-|:--------------------------------------------|:-------------------------------------------|
-| https://www.youtube.com/watch?v=_bYFu9mBnr4 | C++ Programming All-in-One Tutorial Series |
-| https://www.youtube.com/watch?v=vLnPwxZdW4Y | C++ Tutorial for Beginners - Full Course   |
-| https://www.youtube.com/watch?v=xC8CGv1CyFk | C++ interview with a Google engineer       |
-| https://www.youtube.com/watch?v=mUQZ1qmKlLY | C++ Tutorial from Basic to Advance         |
+| Link URL                                    | Title                                        |
+|:--------------------------------------------|:---------------------------------------------|
+| https://www.youtube.com/watch?v=_bYFu9mBnr4 | C++ Programming All-in-One Tutorial Series   |
+| https://www.youtube.com/watch?v=vLnPwxZdW4Y | C++ Tutorial for Beginners - Full Course     |
+| https://www.youtube.com/watch?v=xC8CGv1CyFk | C++ interview with a Google engineer         |
+| https://www.youtube.com/watch?v=mUQZ1qmKlLY | C++ Tutorial from Basic to Advance           |
+| https://www.youtube.com/watch?v=i_Iq4_Kd7Rc | Learn Modern C++ by Building an Audio Plugin |
 
 
 ### JAVA
