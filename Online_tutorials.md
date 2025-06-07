@@ -4,6 +4,7 @@
 ### Google ML / Stanford / crash-courses
 ###
 
+* https://www.deeplearning.ai/
 * https://ai.google/education/
 * https://developers.google.com/machine-learning/crash-course/
 * https://developers.google.com/machine-learning/crash-course/prereqs-and-prework
@@ -650,6 +651,7 @@
 | https://www.youtube.com/watch?v=zqVtHYFYQY8  | ChatGPT Tutorial 2025                                       | 
 | https://www.youtube.com/watch?v=r0c7RhMFcww  | AI Business in 6 Hours                                      | 
 | https://www.youtube.com/watch?v=VwC-fUpVLYY  | Tasks using YAML AI Agent Design Patterns                   | 
-| https://www.youtube.com/watch?v=rOTdkSSHBBc  | fully Functional MCP Server from Swagger Specs              | 
-
-
+| https://www.youtube.com/watch?v=rOTdkSSHBBc  | fully Functional MCP Server from Swagger Specs              |
+| https://www.youtube.com/watch?v=HBH4M43GcJQ  | Setup AI Agent Locally                                      | 
+| https://www.youtube.com/watch?v=AhPXGKG4RZ4  | Build AI Agents with Docker                                 | 
+| https://www.youtube.com/watch?v=ynhl8KjjS3Y  | Build Self-Learning AI Agents                               | 

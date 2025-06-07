@@ -533,6 +533,9 @@ https://1.1.1.1/dns/
 For IPv4: 1.1.1.1 and 1.0.0.1
 For IPv6: 2606:4700:4700::1111,2606:4700:4700::1001
 
+Quad9 is a free service that replaces your default ISP or enterprise Domain Name Server (DNS) configuration.
+DNS 9.9.9.9
+
 Via IPv4	
 1.1.1.1
 1.0.0.1
