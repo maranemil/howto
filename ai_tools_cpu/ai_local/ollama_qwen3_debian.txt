@@ -1,0 +1,370 @@
+-----------------
+
+docker run --cpus=0.5 -it --name ubuntuollama20  -v ./src:/app ubuntu:20.04 /bin/bash;
+docker run --cpus=0.5 -it --name debianollama  -v ./src:/app debian:latest  /bin/bash;
+
+apt update
+apt install tmux curl -y
+apt-get install pciutils -y
+curl -fsSL https://ollama.com/install.sh | sh
+tmux
+ollama serve
+ollama run qwen3:0.6b
+ollama run deepseek-r1:1.5b
+ollama run gemma3:1b
+ollama run llama3.2:1b
+
+qwen2.5:0.5b
+qwen2.5:1.5b
+qwen2.5-coder:0.5b
+qwen2.5-coder:1.5b
+gemma2:2b
+qwen:0.5b
+qwen:1.8b
+gemma:2b
+qwen2:0.5b
+qwen2:1.5b
+tinyllama:1.1b
+deepseek-coder:1.3b
+codegemma:2b
+orca-mini:3b
+starcoder:1b
+
+what version are you
+what version are you? summarize
+
+/set nohistory
+/set nothink
+/set think
+/show info
+/clear
+/bye
+
+docker ps
+docker inspect debianollama | grep -i cpu
+docker update --cpus "0.7"  debianollama
+docker stop debianollama
+docker start debianollama
+docker exec  -it debianollama /bin/bash
+tmux
+ollama server
+ollama run qwen3:0.6b
+
+# docker export debianollama > debianollama.tar
+docker export -o debianollama.tar debianollama
+docker load -i debianollama.tar
+
+4.7GB
+ollama run llava:7b
+ollama run llava "describe this image: ./art.jpg"
+ollama run llava "tell me what do you see in this picture? ./pic.jpg"
+ollama run llava "what does the text say? ./wordart.png"
+
+
+docker run -it busybox sh
+.....
+
+https://learnopencv.com/qwen3/
+https://github.com/QwenLM/Qwen3
+echo "Give me a short introduction of OpenCV University. /think" | ollama run qwen3:8b
+pip install ollama
+Give me a short introduction of OpenCV University. /think
+explain about wave-particle duality /no_think
+then in string theory how this duality is valid,  how a string can be a wave or a paricle, what do you think ? /think
+What is the last digit of 8^999 /think
+
+pip install gradio
+python app.py
+
+
+To run Qwen3 locally for document processing, you can use frameworks such as vLLM or Ollama. Using vLLM, you can serve the model with the command vllm serve, specifying options like enabling reasoning and choosing the appropriate reasoning parser, such as deepseek_r1.
+ Additionally, you can interact with the model through an OpenAI-compatible API server, allowing you to send prompts and receive responses for document analysis.
+For detailed instructions on deploying and interacting with Qwen3 locally, refer to the official documentation provided by Alibaba Cloud, which includes steps for installation, serving the model, and integrating it into applications.
+Qwen3-30B-A3B: A MoE model that performs well on document processing tasks with a lower GPU requirement compared to dense models of similar size.
+vLLM: A serving library optimized for high throughput and low latency, suitable for deploying large models and handling concurrent requests.
+Ollama: A framework for quick experiments and local development, effective for running small-to-medium models on consumer hardware.
+
+https://docs.vllm.ai/en/latest/
+https://blog.codefarm.me/2024/06/12/ollama-vllm-and-hugging-face/
+https://github.com/varunvasudeva1/llm-server-docs
+https://huggingface.co/blog/lynn-mikami/qwen-3-ollama-vllm
+
+systemctl status ollama.service
+ollama run phi3:mini
+sudo systemctl start ollama.service
+sudo ss -ntlp
+
+sudo systemctl edit ollama.service
+Environment="OLLAMA_HOST=0.0.0.0:11434"
+sudo systemctl daemon-reload && sudo systemctl restart ollama.service
+
+ollama serve --help
+ollama list
+
+curl http://localhost:11434/v1/chat/completions \
+    -H "Content-Type: application/json" \
+    -d '{"messages":[{"role":"user","content":"Say this is a test"}],"model":"phi3:mini"}'
+
+pip install openai
+
+from openai import OpenAI
+client = OpenAI(
+    base_url='http://localhost:11434/v1/',
+    api_key='ollama',  # required but ignored
+)
+chat_completion = client.chat.completions.create(
+    messages=[
+        {
+            'role': 'user',
+            'content': 'Say this is a test',
+        }
+    ],
+    model='phi3:mini',
+)
+
+vLLM
+pip install vllm
+pip list | egrep 'vllm|transformers'
+python -m vllm.entrypoints.openai.api_server --help
+python -m vllm.entrypoints.openai.api_server --model Qwen/Qwen2-0.5B-Instruct
+
+pip install -U vllm
+# Example: Serve the Qwen3-30B MoE model enabling reasoning
+vllm serve Qwen/Qwen3-30B-A3B \
+    --enable-reasoning \
+    --reasoning-parser deepseek_r1
+
+# Example: Serve the large 235B MoE model using FP8 quantization and 4 GPUs
+vllm serve Qwen/Qwen3-235B-A22B-FP8 \
+    --enable-reasoning \
+    --reasoning-parser deepseek_r1 \
+    --tensor-parallel-size 4
+
+http://localhost:8000
+ curl http://localhost:8000/v1/chat/completions \ -H "Content-Type: application/json" \ -d '{ "model": "Qwen/Qwen3-30B-A3B", # Match the served model "messages": [{"role": "user", "content": "Explain Grouped-Query Attention."}], "max_tokens": 200 }'
+
+client = OpenAI(base_url="http://localhost:8000/v1", api_key="no-key-needed")
+ response = client.chat.completions.create(
+   model="Qwen/Qwen3-30B-A3B", # Match the served model
+   messages=[{"role": "user", "content": "Write Python code to list files in a directory."}],
+   max_tokens=150
+ )
+ print(response.choices[0].message.content)
+
+
+---------------------
+https://m1lt0n.github.io/python/llm/pdf/ollama-ask-a-pdf-file/
+
+
+python -m venv venv
+source venv/bin/activate
+pip install langchain langchain-community pypdf docarray
+
+main.py
+from langchain_community.llms import Ollama
+from langchain_community.document_loaders import PyPDFLoader
+from langchain.prompts import PromptTemplate
+from langchain_community.vectorstores import DocArrayInMemorySearch
+from langchain_community.embeddings import OllamaEmbeddings
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough
+from sys import argv
+
+# 1. Create the model
+llm = Ollama(model='llama3')
+embeddings = OllamaEmbeddings(model='znbang/bge:small-en-v1.5-f32')
+
+# 2. Load the PDF file and create a retriever to be used for providing context
+loader = PyPDFLoader(argv[1])
+pages = loader.load_and_split()
+store = DocArrayInMemorySearch.from_documents(pages, embedding=embeddings)
+retriever = store.as_retriever()
+
+# 3. Create the prompt template
+template = """
+Answer the question based only on the context provided.
+
+Context: {context}
+
+Question: {question}
+"""
+
+prompt = PromptTemplate.from_template(template)
+
+def format_docs(docs):
+  return "\n\n".join(doc.page_content for doc in docs)
+
+# 4. Build the chain of operations
+chain = (
+  {
+    'context': retriever | format_docs,
+    'question': RunnablePassthrough(),
+  }
+  | prompt
+  | llm
+  | StrOutputParser()
+)
+
+# 5. Start asking questions and getting answers in a loop
+while True:
+  question = input('What do you want to learn from the document?\n')
+  print()
+  print(chain.invoke({'question': question}))
+  print()
+
+  python main.py <PDF_FILE_PATH>
+
+---------------------
+
+https://anakin.ai/apps
+https://anakin.ai/
+https://pinokio-home.netlify.app/
+https://pinokio-home.netlify.app/item?uri=https://github.com/pinokiofactory/autogpt
+https://pinokio-home.netlify.app/item?uri=https://github.com/cocktailpeanutlabs/lobe
+---------------------
+https://rocm.docs.amd.com/projects/ai-developer-hub/en/v3.0/notebooks/inference/rag_ollama_llamaindex.html
+
+pip install jupyter
+jupyter-lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
+
+!curl -fsSL https://ollama.com/install.sh | sh
+!sudo systemctl start ollama
+!sudo systemctl status ollama
+!ollama pull nomic-embed-text
+!ollama pull llama3.1:8b
+!ollama list llama3.1
+!pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm6.2
+!pip list | grep torch
+
+import os
+import torch
+# Query GPU
+if torch.cuda.is_available():
+    device = torch.device("cuda")          # a CUDA device object
+    print('Using GPU:', torch.cuda.get_device_name(0))
+    print('GPU properties:', torch.cuda.get_device_properties(0))
+else:
+    device = torch.device("cpu")
+    print('Using CPU')
+
+!pip install llama-index llama-index-llms-ollama llama-index-embeddings-ollama llama-index-vector-stores-chroma chromadb
+!pip list | grep llama-index
+
+#Build the RAG pipeline
+import chromadb
+from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings
+from llama_index.core.node_parser import SentenceSplitter
+from llama_index.core import StorageContext
+from llama_index.vector_stores.chroma import ChromaVectorStore
+from llama_index.embeddings.ollama import OllamaEmbedding
+from llama_index.llms.ollama import Ollama
+# Set embedding model
+emb_fn="nomic-embed-text"
+Settings.embed_model = OllamaEmbedding(model_name=emb_fn)
+# Set ollama model
+Settings.llm = Ollama(model="llama3.1:8b", request_timeout=120.0)
+
+!mkdir ./data && cd ./data && wget --recursive --level=1 --content-disposition --accept=pdf -np -nH --cut-dirs=6 https://rocm.docs.amd.com/_/downloads/radeon/en/latest/pdf/ && cd ..
+
+documents = SimpleDirectoryReader(input_dir="./data/").load_data()
+
+# Check the content
+print(documents[10])
+# Initialize client and save data
+db = chromadb.PersistentClient(path="./chroma_db/rocm_db")
+# create collection
+chroma_collection = db.get_or_create_collection("rocm_db")
+
+# assign chroma as the vector_store to the context
+vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
+storage_context = StorageContext.from_defaults(vector_store=vector_store)
+# Build vector index per-document
+vector_index = VectorStoreIndex.from_documents(
+    documents,
+    storage_context=storage_context,
+    transformations=[SentenceSplitter(chunk_size=512, chunk_overlap=20)],
+)
+
+# Query your data
+query_engine = vector_index.as_query_engine(response_mode="refine", similarity_top_k=10)
+# Updating Prompt for Q&A
+from llama_index.core import PromptTemplate
+
+template = (
+    "You are a car product expert who is very familiar with the car user manual and provides the guide to the end user.\n"
+    "---------------------\n"
+    "{context_str}\n"
+    "---------------------\n"
+    "Given the information from multiple sources and not prior knowledge\n"
+    "answer the question according to the index dataset.\n"
+    "if the question is not related to ROCm and Radeon GPU, just say it is not related to my knowledge base.\n"
+    "if you don't know the answer, just say that I don't know.\n"
+    "Answers need to be precise and concise.\n"
+    "if the question is in Chinese, please translate Chinese to English in advance"
+    "Query: {query_str}\n"
+    "Answer: "
+)
+qa_template = PromptTemplate(template)
+query_engine.update_prompts(
+    {"response_synthesizer:text_qa_template": qa_template}
+)
+
+template = (
+    "The original query is as follows: {query_str}.\n"
+    "We have provided an existing answer: {existing_answer}.\n"
+    "We have the opportunity to refine the existing answer (only if needed) with some more context below.\n"
+    "-------------\n"
+    "{context_msg}\n"
+    "-------------\n"
+    "Given the new context, refine the original answer to better answer the query. If the context isn't useful, return the original answer.\n"
+    "if the question is 'who are you', just say I am an expert of AMD ROCm.\n"
+    "Answers need to be precise and concise.\n"
+    "Refined Answer: "
+)
+
+qa_template = PromptTemplate(template)
+
+query_engine.update_prompts(
+    {"response_synthesizer:refine_template": qa_template}
+)
+
+
+response = query_engine.query("Briefly describe the steps to install ROCm?")
+print(response)
+response = query_engine.query("Which chapter is about installing PyTorch?")
+print(response)
+response = query_engine.query("How to verify a PyTorch installation?")
+print(response)
+response = query_engine.query("How to verify a PyTorch installation?")
+print(response)
+---------------------
+
+https://hub.docker.com/r/atlassian/ubuntu-minimal
+https://hub.docker.com/r/atlassian/ssh-ubuntu
+https://hub.docker.com/_/ubuntu
+https://hub.docker.com/_/debian
+
+
+docker pull atlassian/ubuntu-minimal
+docker pull atlassian/ssh-ubuntu
+docker pull ubuntu
+docker pull debian
+
+
+https://gist.github.com/nickcernis/81b7b6498da559436c5172f0ccae760c
+docker kill $(docker ps -q) to kill all running containers
+docker rm $(docker ps -a -q) to delete all stopped containers.
+docker volume rm $(docker volume ls -q) to delete all volumes.
+docker rmi $(docker images -q) to delete all images.
+
+Run all commands:
+docker kill $(docker ps -q) && docker rm $(docker ps -a -q) && docker volume rm $(docker volume ls -q) && docker rmi $(docker images -q)
+docker system prune --all
+
+docker stop $(docker ps -aq)   Stop all running containers
+docker rm $(docker ps -aq)   Remove all containers
+docker rmi $(docker images -q)  Remove all images
+
+
+--------------------
+
