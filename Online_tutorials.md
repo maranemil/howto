@@ -655,3 +655,4 @@
 | https://www.youtube.com/watch?v=HBH4M43GcJQ  | Setup AI Agent Locally                                      | 
 | https://www.youtube.com/watch?v=AhPXGKG4RZ4  | Build AI Agents with Docker                                 | 
 | https://www.youtube.com/watch?v=ynhl8KjjS3Y  | Build Self-Learning AI Agents                               | 
+| https://www.youtube.com/watch?v=sv5FYDlTG3c  | MCP Server Build Tutorial                                   | 
