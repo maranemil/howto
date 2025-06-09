@@ -961,6 +961,11 @@ taskset -c 0,1 google-chrome --lang=en-US,en --disable-translate --disable-dev-s
 --disable-site-isolation-trials
 
 
+# https://peter.sh/experiments/chromium-command-line-switches/
+# https://kapeli.com/cheat_sheets/Chromium_Command_Line_Switches.docset/Contents/Resources/Documents/index
+
+taskset -c 0,1 google-chrome --lang=en-US,en --disable-translate --disable-dev-shm-usage --block-new-web-contents --no-experiments --disable-default-apps --disable-notifications --new-window --log-level=1 --no-ping --disable-background-processes --disable-picture-in-picture --process-per-tab --purge-memory-button  --disable-features=UseEcoQoSForBackgroundProcess --disable-histogram-customizer --disable-in-process-stack-traces --disable-low-end-device-mode --disable-low-res-tiling --disable-print-preview
+
 ~~~
 
 ###  check and repair disk
