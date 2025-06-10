@@ -939,6 +939,13 @@ lscpu -e
 systemd-run -p CPUQuota=25% google-chrome 
 systemd-run -p CPUQuota=25% pycharm-community
 systemd-run -p CPUQuota=30% chromium-browser
+systemd-run -p "CPUQuota=50" brave
+
+sudo apt install cpulimit
+#cpulimit brave -l 50 -b -k -r
+#cpulimit brave -l 50 -k
+cpulimit brave -l 50 
+
 
 sudo cgcreate -a $USER:$USER -t $USER:$USER -g memory:groupChromiumMemLimit
 sudo cgset -r memory.limit_in_bytes=$((1024*1024*1024)) groupChromiumMemLimit
