@@ -1,4 +1,8 @@
 -----------------------------------------------------------------
+######################################################################################
+debian ollama
+######################################################################################
+
 
 docker run --cpus=0.5 -it --name debianollama  -v ./src:/app debian:latest  /bin/bash;
 apt update
@@ -22,7 +26,47 @@ https://python.langchain.com/docs/integrations/chat/ollama/
 https://pypi.org/project/ollama-chat/
 https://github.com/ollama/ollama?tab=readme-ov-file#community-integrations
 
+######################################################################################
+ollama docker
+######################################################################################
+
+https://hub.docker.com/r/ollama/ollama
+https://ollama.com/blog/vision-models
+https://ollama.com/library/tinyllama
+
+#only cpu
+docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollamalocalcpu ollama/ollama
+
+# amd gpu
+# docker run -d --device /dev/kfd --device /dev/dri -v ollama:/root/.ollama -p 11434:11434 --name ollamalocalgpu ollama/ollama:rocm
+
+# docker exec -it ollamalocalcpu ollama run llama3
+docker exec -it ollamalocalcpu /bin/bash
+apt update
+apt install tmux curl nano wget jq -y
+
+ollama run tinyllama:1.1b
+ollama run llava-phi3:3.8b
+ollama run llava:7b
+ollama run llava:7b "describe this image: /tmp/test.png"
+ollama run llama3.2
+ollama run llama3.2 "describe this image: /tmp/test.png"
+
+ollama pull llama3.2-vision
+ollama run llama3.2-vision
+
+wget https://cdn.paris.fr/paris/2022/09/12/huge-9e714198e72f45cc2145b39c8b0c2f6a.jpg
+describe this image: ./huge-9e714198e72f45cc2145b39c8b0c2f6a.jpg
+
+wget https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg
+describe this image: ./bird-8788491_1280.jpg
+
+curl -s localhost:11434/api/generate -d '{"model":"llama3.2-vision","prompt":"hello","stream":false}' | jq
+
 -----------------------------------------------------------------
+######################################################################################
+ollama llms
+######################################################################################
 
 docker run --cpus=0.5 -it --name ubuntuollama20  -v ./src:/app ubuntu:20.04 /bin/bash;
 docker run --cpus=0.5 -it --name debianollama  -v ./src:/app debian:latest  /bin/bash;
