@@ -1,0 +1,143 @@
+#####################################################################################
+ollama docker
+######################################################################################
+
+https://hub.docker.com/r/ollama/ollama
+https://ollama.com/blog/vision-models
+https://ollama.com/library/tinyllama
+
+#only cpu
+docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollamalocalcpu ollama/ollama
+
+# amd gpu
+# docker run -d --device /dev/kfd --device /dev/dri -v ollama:/root/.ollama -p 11434:11434 --name ollamalocalgpu ollama/ollama:rocm
+
+# docker exec -it ollamalocalcpu ollama run llama3
+docker exec -it ollamalocalcpu /bin/bash
+apt update
+apt install tmux curl nano wget jq -y
+
+ollama run tinyllama:1.1b
+ollama run llava-phi3:3.8b
+ollama run llava:7b
+ollama run llava:7b "describe this image: /tmp/test.png"
+ollama run llama3.2
+ollama run llama3.2 "describe this image: /tmp/test.png"
+
+ollama pull llama3.2-vision
+ollama run llama3.2-vision
+
+wget https://cdn.paris.fr/paris/2022/09/12/huge-9e714198e72f45cc2145b39c8b0c2f6a.jpg
+describe this image: ./huge-9e714198e72f45cc2145b39c8b0c2f6a.jpg
+
+wget https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg
+describe this image: ./bird-8788491_1280.jpg
+
+curl -s localhost:11434/api/generate -d '{"model":"llama3.2-vision","prompt":"hello","stream":false}' | jq
+
+######################################################################################
+######################################################################################
+
+
+
+docker exec -it ollamalocalcpu /bin/bash
+docker update --cpus "2.9"  ollamalocalcpu
+docker update --cpus "1.9"  ollamalocalcpu
+docker cp ollamalocalcpu:/tmp/test.png .
+ollama run llama3.2-vision "describe this image: /tmp/bird-8788491_1280.jpg"
+ollama run llama3.2-vision "describe this image shortly: /tmp/bird-8788491_1280.jpg"
+ollama run llama3.2-vision "describe this image briefly: /tmp/bird-8788491_1280.jpg"
+ollama run llama3.2-vision "describe this image very shortly: /tmp/test.png"
+ollama run llama3.2-vision "describe this image shortly: /tmp/0000.png.jpg"
+ollama run llama3.2-vision --verbose  "describe this image shortly: /tmp/0000.png.jpg"
+
+
+docker restart ollamalocalcpu
+ollama run llama3.2-vision /clear
+
+ollama list
+NAME                      ID              SIZE      MODIFIED
+llama3.2-vision:latest    6f2f9757ae97    7.8 GB    11 hours ago
+tinyllama:1.1b            2644915ede35    637 MB    12 hours ago
+llava:latest              8dd30f6b0cb1    4.7 GB    12 hours ago
+llama3.2:latest           a80c4f17acd5    2.0 GB    12 hours ago
+llava:7b                  8dd30f6b0cb1    4.7 GB    12 hours ago
+
+ollama rm llava:7b
+apt install ffmpeg
+num=0; for i in *; do mv "$i" "$(printf '%04d' $num).${i#*.}"; ((num++)); done
+ffmpeg -i /tmp/bird-8788491_1280.jpg -vf scale=-1:360 /tmp/bird-8788491_1280b.jpg
+for i in *.png; do ffmpeg -i $i -vf scale=-1:360 $i.jpg; done
+
+docker cp . ollamalocalcpu:/tmp
+docker cp ollamalocalcpu:/tmp/bird-8788491_1280b.jpg .
+
+curl http://localhost:11434/api/chat -d '{ "model": "llama3.2-vision",  "messages": [{  "role": "user",  "content": "what is in this image?", "images": ["data"] }]}'
+
+apt install python
+apt install python3-pip
+pip install ollama
+
+import ollama
+response = ollama.chat(
+    model='llama3.2-vision',
+    messages=[{
+        'role': 'user',
+        'content': 'What is in this image?',
+        'images': ['image.jpg']
+    }]
+)
+
+print(response)
+
+curl http://localhost:11434/api/generate -d '{ "model": "llama3.2-vision", "prompt":"what is in this image?", "messages": [{ "role": "user", "content": "what is in this image?" , "images": ["/tmp/0053.jpg"] }]  }'
+
+curl http://localhost:11434/api/generate -d '{ "model": "llava", "prompt":"what is in this image?", "messages": [{ "role": "user", "content": "what is in this image?" , "images": ["/tmp/0053.jpg"] }]  }'
+
+ollama run llama3.2-vision --verbose  describe this image briefly: /tmp/0053.jpg
+ollama run llava --verbose  describe this image briefly: /tmp/0053.jpg
+ollama run tinyllama --verbose  describe this image briefly: /tmp/0053.jpg
+
+
+
+docker exec -it ollamalocalcpu sh -c "ls"
+docker exec -it ollamalocalcpu /bin/bash
+
+echo 3 | sudo tee /proc/sys/vm/drop_caches
+sudo swapoff -a; sudo swapon -a
+sudo sysctl -w vm.swappiness=20
+
+docker restart ollamalocalcpu
+docker stop ollamalocalcpu
+docker update --cpus "1.9"  ollamalocalcpu
+
+Post "http://0.0.0.0:11434/api/generate
+
+ollama run llava "What's in this image? /tmp/0053.jpg"
+ollama run llava "describe this image briefly /tmp/0053.jpg"
+ollama run llama3.2-vision --verbose "What's in this image? /tmp/0053.jpg"
+
+ollama run llama3.2 "Summarize this file: $(cat README.md)"
+ollama show llama3.2
+ollama list
+ollama ps
+ollama stop llama3.2
+ollama stop llama3.2-vision
+ollama stop llava
+ollama serve
+
+curl http://localhost:11434/api/generate -d '{
+  "model": "llama3.2",
+  "prompt":"Why is the sky blue?"
+}'
+
+curl http://localhost:11434/api/chat -d '{
+  "model": "llama3.2",
+  "messages": [
+    { "role": "user", "content": "why is the sky blue?" }
+  ]
+}'
+
+https://ollama.com/blog/llama3.2-vision
+https://ollama.com/library/llama3.2-vision
+https://github.com/ollama/ollama
