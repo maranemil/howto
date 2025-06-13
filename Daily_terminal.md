@@ -772,6 +772,13 @@ https://ftp.fau.de/ubuntu-releases/24.04.1/
 convert input1.jpg input1.pdf
 convert input2.jpg input2.pdf
 gs -dQUIET -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=output.pdf input1.pdf input2.pdf
+
+# multiple files
+for i in *.jpg; do convert $i $i.pdf; done
+gs -dQUIET -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=output.pdf *.pdf
+
+# compress
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook   -dNOPAUSE -dQUIET -dBATCH -sOutputFile=output.pdf input.pdf
 ~~~
 
 
