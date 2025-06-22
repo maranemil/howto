@@ -1,0 +1,88 @@
+taskset -c 0,1 chromium-browser --no-pings --disable-dev-shm-usage --renderer-process-limit=2 --process-per-tab -block-new-web-contents --no-experiments --disable-histogram-customizer --disable-print-preview --disable-low-res-tiling --no-sandbox --disable-default-apps --disable-features=Translate --mute-audio --no-default-browser-check --disable-features=IsolateOrigins --disable-features=ScriptStreaming --use-fake-device-for-media-stream --disable-notifications --noerrdialogs --log-level=0 --disable-features=MediaRouter --disable-breakpad --disable-sync --enable-unsafe-swiftshader
+
+sysctl -w vm.swappiness=25
+echo 3 | sudo tee /proc/sys/vm/drop_caches
+swapoff -a && swapon -a
+
+systemctl reboot -i
+
+/////////////
+
+snapd cache
+
+sudo rm -rf /var/lib/snapd/cache/*
+sudo snap list --all | awk '$6~"disabled"{print $1" --revision "$3}' | xargs -rn3 snap remove
+sudo snap set system refresh.retain=2
+
+sudo sh -c 'rm -rf /var/lib/snapd/cache/*'
+rm -rf ~/.cache/google-chrome/Default/Cache/
+chrome://settings/clearBrowserData
+
+snap list
+snap stop chromium
+snap remove chromium
+snap install chromium
+snap forget
+snap set core snapshots.automatic.retention=no
+snap saved
+
+///////////////
+
+dmesg --clear
+truncate -s 0 /var/log/boot.log
+find /var/log -mindepth 1 -mtime +3 -delete
+
+-----------------------------------------------------------
+
+du -ah / | sort -rh | head -n 20
+find / -type f -size +500M -ls
+find / -size +10M -ls
+find / -size +10M -size -12M -ls
+du -a 2>/dev/null | sort -n -r
+
+-----------------------------------------------------------
+
+tail -f /var/log/syslog
+tail -f /var/log/mail.log
+sudo truncate -s 0 /var/log/syslog
+sudo sh -c 'echo > /var/log/syslog'
+sudo cat /dev/null > /var/log/syslog
+
+-----------------------------------------------------------
+
+sudo du -hsc /var/log/ && sudo journalctl --vacuum-size=100M && sudo journalctl --vacuum-time=10d && sudo sed --in-place -sE 's/#?SystemMaxUse.*$/SystemMaxUse=80M/' /etc/systemd/journald.conf && sudo service systemd-journald restart && sudo du -hsc /var/log/
+
+-----------------------------------------------------------
+
+find /var/log -type f -delete
+find /var/log -type f -regex ".*\.gz$"
+find /var/log -type f -regex ".*\.[0-9]$"
+find -ctime +30
+sudo find /var/log -type f -regex ".*\.gz$" -delete
+sudo find /var/log -type f -regex ".*\.log.1$" -delete
+sudo rm /var/log/kern*
+sudo rm /var/log/messages*
+ls -lha /var/log
+ls -lha /var/mail
+
+-----------------------------------------------------------
+
+# nano /etc/logrotate.conf
+# see "man logrotate" for details
+
+# rotate log files weekly
+weekly
+
+# keep 4 weeks worth of backlogs
+rotate 2
+
+# uncomment this if you want your log files compressed
+compress
+
+# size
+size 3G
+
+https://github.com/GoogleChrome/chrome-launcher/blob/main/docs/chrome-flags-for-tools.md
+
+
+

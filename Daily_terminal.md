@@ -951,7 +951,7 @@ systemd-run -p "CPUQuota=50" brave
 sudo apt install cpulimit
 #cpulimit brave -l 50 -b -k -r
 #cpulimit brave -l 50 -k
-cpulimit brave -l 50 
+cpulimit brave -l 80 -z
 
 
 sudo cgcreate -a $USER:$USER -t $USER:$USER -g memory:groupChromiumMemLimit
