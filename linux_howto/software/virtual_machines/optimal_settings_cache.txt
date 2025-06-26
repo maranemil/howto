@@ -85,4 +85,42 @@ size 3G
 https://github.com/GoogleChrome/chrome-launcher/blob/main/docs/chrome-flags-for-tools.md
 
 
+########################################################################
+proc
+########################################################################
 
+cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors
+
+# conservative ondemand userspace powersave performance schedutil
+
+cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+
+echo powersave | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+echo ondemand | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+
+apt search indicator-cpufreq
+sudo apt-get install indicator-cpufreq
+
+cat /proc/meminfo
+
+echo 3 >  /proc/sys/vm/drop_caches
+echo 10 >  /proc/sys/vm/vfs_cache_pressure
+echo 2000 > /proc/sys/vm/vfs_cache_pressure
+echo 99 > /proc/sys/vm/dirty_ratio
+echo 90 > /proc/sys/vm/dirty_ratio # too high rates can cause crash
+echo 50 > /proc/sys/vm/dirty_background_ratio
+echo 360000 > /proc/sys/vm/dirty_expire_centisecs
+echo 360000 > /proc/sys/vm/dirty_writeback_centisecs
+
+sysctl -w vm.dirty_ratio=value
+sysctl -a | grep dirty
+blockdev --setra 4294967295 /dev/sda
+
+-disable-http-cache
+–disable-application-cache –media-cache-size=1 –disk-cache-size=1
+--disk-cache-dir=null
+--disk-cache-dir=/dev/null
+
+sudo passwd root
+
+taskset -c 0,1 google-chrome --lang=en-US,en --disable-translate --disable-dev-shm-usage --block-new-web-contents --no-experiments --disable-default-apps --disable-notifications --new-window --log-level=1 --no-ping --disable-background-processes --disable-picture-in-picture --process-per-tab --purge-memory-button  --disable-features=UseEcoQoSForBackgroundProcess --disable-histogram-customizer --disable-in-process-stack-traces --disable-low-end-device-mode --disable-low-res-tiling --disable-print-preview  --disable-breakpad --noerrdialogs --use-fake-device-for-media-stream --disable-features=StreamScripting  --disable-remote-fonts --disk-cache-dir=/dev/null --new-window --aggressive-cache-discard --disable-notifications --disable-remote-fonts --disable-reading-from-canvas --disable-remote-playback-api --disable-shared-workers --disable-voice-input --enable-aggressive-domstorage-flushing
