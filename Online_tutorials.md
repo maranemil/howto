@@ -656,3 +656,7 @@
 | https://www.youtube.com/watch?v=AhPXGKG4RZ4  | Build AI Agents with Docker                                 | 
 | https://www.youtube.com/watch?v=ynhl8KjjS3Y  | Build Self-Learning AI Agents                               | 
 | https://www.youtube.com/watch?v=sv5FYDlTG3c  | MCP Server Build Tutorial                                   | 
+| https://www.youtube.com/watch?v=T76NbeTdDFA  | Gemini CLI in 6 Minutes                                     |
+ | https://www.youtube.com/watch?v=KUCZe1xBKFM  | Introducing Gemini CLI                                      |
+ | https://www.youtube.com/watch?v=ZWfZQa05C8s  | Gemini CLI                                                  |
+| https://www.youtube.com/watch?v=_lYjNPROdSU  | Google Gemini CLI Agent                                     |
