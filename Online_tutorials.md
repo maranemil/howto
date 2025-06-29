@@ -657,6 +657,14 @@
 | https://www.youtube.com/watch?v=ynhl8KjjS3Y  | Build Self-Learning AI Agents                               | 
 | https://www.youtube.com/watch?v=sv5FYDlTG3c  | MCP Server Build Tutorial                                   | 
 | https://www.youtube.com/watch?v=T76NbeTdDFA  | Gemini CLI in 6 Minutes                                     |
- | https://www.youtube.com/watch?v=KUCZe1xBKFM  | Introducing Gemini CLI                                      |
- | https://www.youtube.com/watch?v=ZWfZQa05C8s  | Gemini CLI                                                  |
+| https://www.youtube.com/watch?v=KUCZe1xBKFM  | Introducing Gemini CLI                                      |
+| https://www.youtube.com/watch?v=ZWfZQa05C8s  | Gemini CLI                                                  |
 | https://www.youtube.com/watch?v=_lYjNPROdSU  | Google Gemini CLI Agent                                     |
+| https://www.youtube.com/watch?v=Cio7Bg7ODfQ  | Build Anything with MCP                                     | 
+| https://www.youtube.com/watch?v=DO91djWmudU  | Convert REST API to MCP Server using Spring AI              | 
+| https://www.youtube.com/watch?v=_d0duu3dED4  | Why Everyone’s Talking About MCP                            | 
+| https://www.youtube.com/watch?v=2716IUeCIQo  | Playwright MCP                                              | 
+| https://www.youtube.com/watch?v=FLpS7OfD5-s  | Why MCP really is a big deal                                | 
+| https://www.youtube.com/watch?v=TQsP_PlCY1I  | Build Anything with MCP Agents,                             | 
+| https://www.youtube.com/watch?v=L94WBLL0KjY  | Build Anything with MCP Agents                              | 
+| https://www.youtube.com/watch?v=WLvQCIUWebs  | 5 simple AI Agent                                           | 
