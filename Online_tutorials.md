@@ -197,10 +197,28 @@
 
 ### C-Sharp
 
-| Link URL                                    | Title                    |
-|:--------------------------------------------|:-------------------------|
-| https://www.youtube.com/watch?v=r5dtl9Uq9V0 | VSCode for C# Developers | 
-
+| Link URL                                     | Title                                                             |
+|:---------------------------------------------|:------------------------------------------------------------------|
+| https://www.youtube.com/watch?v=r5dtl9Uq9V0  | VSCode for C# Developers                                          | 
+| https://www.youtube.com/watch?v=0QUgvfuKvWU  | C# Fundamentals for Beginners                                     |
+| https://www.youtube.com/watch?v=Cm2FRfiAzSU	 | Full Cross-Platform C# Development                                |
+| https://www.youtube.com/watch?v=JfnTG955cuk  | ASP.NET Core-Website - ASP.NET Core 101                           |
+| https://www.youtube.com/watch?v=VI40Y3kFcNc  | Enhancing your Web API: Part 1 - ASP.NET Core 101                 |
+| https://www.youtube.com/watch?v=EzdqO6jX8u4  | Getting Started [1 of 8] - .NET on Azure for Beginners            |
+| https://www.youtube.com/watch?v=xY4EhUdBMbo  | C# Language Highlights: String Interpolation                      |
+| https://www.youtube.com/watch?v=GhQdlIFylQ8  | C# Anleitung Mike Dane                                            |
+| https://www.youtube.com/watch?v=M5ugY7fWydE  | C# Full Course : C# Tutorial for Beginners Derek Banas            |
+| https://www.youtube.com/watch?v=Z5JS36NlJiU  | C# for Beginners   Full 2-hour course                             |
+| https://www.youtube.com/watch?v=HFWQdGn5DaU  | Visual Basic (VB.NET) – Full Course for Beginners                 |
+| https://www.youtube.com/watch?v=G05TrN7nt6k  | Excel VBA Beginner Tutorial                                       |
+| https://www.youtube.com/watch?v=K5KVEU3aaeQ  | Python Full Course for Beginners [2025]                           |
+| https://www.youtube.com/watch?v=e6vPt_e9sRw  | Python Tutorial Deutsch  Komplettkurs für Anfänger                |
+| https://www.youtube.com/watch?v=LnfZ23an4eA  | Learn C# with CSharpFritz - Get Started with ASP.NET Core MVC     |
+| https://www.youtube.com/watch?v=H9xa_EA7l_E  | C# with CSharpFritz - Season 3 Episode 1 - Introducing Blazor     |
+| https://www.youtube.com/watch?v=Fn28yINqNfo  | Let's Learn .NET - C#   Full 2-hour course                        |
+| https://www.youtube.com/watch?v=KMsggpCaS10  | C# Crash Course  The Ultimate C Sharp .NET Tutorial for Beginners |
+| https://www.youtube.com/watch?v=J0FhV3dM80o  | Every single feature of C# in 10 minutes                          | 
+| https://www.youtube.com/watch?v=eIHKZfgddLM  | What is .NET?                .NET Core 101 [1 of 8]               |                                 
 
 ### C++
 
@@ -440,148 +458,160 @@
 
 ### Playlists 
 
-| Link URL                                                                                    | Playlist                                                   |
-|---------------------------------------------------------------------------------------------|------------------------------------------------------------|
-| https://www.youtube.com/playlist?list=PLoRl3Ht4JOcdU872GhiYWf6jwrk_SNhz9                    | Neural Networks for Machine Learning                       |
-| https://www.youtube.com/playlist?list=PLZoTAELRMXVNUcr7osiU7CCm8hcaqSzGw                    | Data Science Projects                                      |
-| https://www.youtube.com/user/MIT                                                            | MIT OpenCourseWare                                         |
-| https://www.youtube.com/watch?v=6ZVf1jnEKGI&list=PLZoTAELRMXVMdJ5sqbCK2LiM0HhQVWNzm         | Natural Language Processing Tokenization                   |
-| https://www.youtube.com/watch?v=cKxRvEZd3Mw&list=PLOU2XLYxmsIIuiBfYad6rFYQU_jL2ryal         | Machine Learning Recipes                                   |
-| https://www.youtube.com/watch?v=I7VKUGblZOQ&list=PLGJDCzBP5j3xGaW0AGlaVHK2TMEr2XkP9         | PHP Design Patterns                                        |
-| https://www.youtube.com/watch?v=KEEKn7Me-ms&list=PLI1t_8YX-ApvMthLj56t1Rf-Buio5Y8KL         | Algorithms: Recursion                                      |
-| https://www.youtube.com/watch?v=MhkGQAoc7bc&list=PLoYCgNOIyGABj2GQSlDRjgvXtqfDxKm5b         | Reactjs                                                    |
-| https://www.youtube.com/watch?v=pmKyG3NBY_k&list=PLWKjhJtqVAbl1AfjiGyYxwpdAPi5v-1OU         | Style Fancy Buttons: CSS Tutorial                          |
-| https://www.youtube.com/watch?v=ua-CiDNNj30&list=PLWKjhJtqVAblQe2CCWqV4Zy3LY01Z8aF1         | Learn Data Science Tutorial                                |
-| https://www.youtube.com/watch?v=vNHpsC5ng_E&list=PLF206E906175C7E07                         | Java Design Patterns Tutorial                              |
-| https://www.youtube.com/watch?v=UzxYlbK2c7E&list=PLA89DCFA6ADACE599                         | Machine Learning (Stanford)                                |
-| https://www.youtube.com/playlist?list=PLZoTAELRMXVNUcr7osiU7CCm8hcaqSzGw                    | Data Science Projects                                      |
-| https://www.youtube.com/playlist?list=PLblh5JKOoLUICTaGLRoHQDuF_7q2GfuJF                    | Machine Learning                                           |
-| https://www.youtube.com/playlist?list=PLBv09BD7ez_448q9kRfZRxYb3cbeEanRb                    | IR7 Inverted Indexing                                      |
-| https://www.youtube.com/playlist?list=PLaZQkZp6WhWxU3kA6wV0nb5dY1SXDEKWH                    | Classifications                                            |
-| https://www.youtube.com/channel/UCU3OMAQMsRi0RixSUNfC3aA                                    | CakePHP                                                    |
-| https://www.youtube.com/watch?v=3bxAm3XIFmk&list=PLBArW4dCYWbT5-dSATFcn6Tuqv-WKdyaR         | DEv to Architecture                                        |
-| https://www.youtube.com/watch?v=ia1KSZCG2Bs&list=PLQ176FUIyIUYB2JG1htieA8yYqYAtKGB4         | JetBrains Videos                                           | 
-| https://www.youtube.com/watch?v=AHK20LWEWXQ&list=PLQ176FUIyIUbfeFz-2EbDzwExRlD0Bc-w         | JetBrains Videos                                           | 
-| https://www.youtube.com/watch?v=hdI2bqOjy3c&list=PLillGF-RfqbbnEGy3ROiLWk7JMCuSyQtX         | JavaScript Crash Course                                    | 
-| https://www.youtube.com/watch?v=Y_hzMnRXjhI&list=PLQY2H8rRoyvwLbzbnKJ59NkZvQAW9wLbx         | TensorFlow NLP Zero to Hero                                | 
-| https://www.youtube.com/watch?v=ZyhVh-qRZPA&list=PL-osiE80TeTsWmV9i9c58mdDCSskIFdDS         | Python Pandas Tutorial                                     |
-| https://www.youtube.com/watch?v=w3GV9pumczQ&list=PLi01XoE8jYogpKUjykd53HjG8a8ruDmW1         | What is Calculus                                           |
-| https://www.youtube.com/watch?v=bY6m6_IIN94&list=PLi01XoE8jYohWFPpC17Z-wWhPOSuh8Er-         | Learn Python with Socratica                                |
-| https://www.youtube.com/watch?v=V5pxUz5EVs0&list=PLi01XoE8jYoiroxK2XtuzPU45LlegtjUh         | Geometry                                                   |
-| https://www.youtube.com/watch?v=lAvIuQIhbOQ&list=PLUPH1EuJOf-fonnlNMajy6p0RxkjU14y-         | Tutorial C++ Romanian                                      |
-| https://www.youtube.com/watch?v=-vHQub0NXI4&list=RDCMUC0rqucBdTuFTjJiefW5t-IQ		             | Get started with using TensorFlow                          | 
-| https://www.youtube.com/watch?v=inN8seMm7UI&list=PLQY2H8rRoyvyK5aEDAI3wUUqC_F0oEroL         | Get started with Google Colaboratory                       |
-| https://www.youtube.com/watch?v=A60oNJ7mxXY&list=RDCMUCEBb1b_L6zDS3xTUrIALZOw&index=1       | MIT OpenCourseWare                                         |
-| https://www.youtube.com/user/SageSoftwareNA/playlists                                       | Sage Customer Support and Training                         | 
-| https://www.youtube.com/user/BookkeepingMaster/playlists?app=desktop                        | Sage Tutorials                                             | 
-| https://www.youtube.com/watch?v=WWcijE7ifcA&list=PLzvRQMJ9HDiSaisKr7OnM4Fl7JXCDDcmt         | Introduction (Get started with Jenkins part 1)             |
-| https://www.youtube.com/channel/UCDbRYCyDiyJUqgQ7k4e1_-A                                    | MS Excel Extended - curs online despre Excel               |
-| https://www.youtube.com/watch?v=XFqm_ILuhs0&list=PLt1SIbA8guusxiHz9bveV-UHs_biWFegU         | Apache Kafka                                               |
-| https://www.youtube.com/watch?v=89yWXXIOisk&list=PLhW3qG5bs-L_ZCOA4zNPSoGbnVQ-rp_dG         | Jenkins                                                    |
-| https://www.youtube.com/watch?v=B3PE7w-jvjQ&list=RDCMUCGp4UBwpTNegd_4nCpuBcow&start_radio=1 | Codeception support in PhpStorm                            |
-| https://www.youtube.com/watch?v=EjwD7Pi7J_0&list=RDCMUCGp4UBwpTNegd_4nCpuBcow&start_radio=1 | Code Review Best Practices                                 |
-| https://www.youtube.com/watch?v=HB2T0iWiW50&list=RDCMUCGp4UBwpTNegd_4nCpuBcow&start_radio=1 | PhpStorm plugins for Laravel                               |
-| https://www.youtube.com/watch?v=AHK20LWEWXQ&list=PLQ176FUIyIUbfeFz-2EbDzwExRlD0Bc-w         | PhpStorm                                                   | 
-| https://www.youtube.com/watch?list=PLGLfVvz_LVvReUrWr94U-ZMgjYTQ538nT&v=f5OD9CKrZEw         | Java Algorithms                                            | 
-| https://www.youtube.com/watch?list=PLGLfVvz_LVvSuz6NuHAzpM52qKM6bPlCV&v=vhYK3pDUijk         | Code Refactoring                                           | 
-| https://www.youtube.com/playlist?list=PL2zq7klxX5ASFejJj80ob9ZAnBHdz5O1t                    | Data Science Project From Scratch                          |
-| https://www.youtube.com/watch?v=ZDa-Z5JzLYM&list=PL-osiE80TeTsqhIuOqKhwlXsIBIdSeYtc         | Python OOP Tutorial                                        |
-| https://www.youtube.com/watch?v=cjXI-yxqGTI&list=PLOspHqNVtKAC-_ZAGresP-i0okHe5FjcJ         | IBM Cloud Fundamentals                                     | 
-| https://www.youtube.com/watch?v=cjXI-yxqGTI&list=RDCMUCKWaEZ-_VweaEx1j62do_vQ&start_radio=1 | IBM Cloud                                                  | 
-| https://www.youtube.com/playlist?list=PLRqwX-V7Uu6YPSwT06y_AEYTqIwbeam3y                    | Beginners Guide to Machine Learning in JavaScript          | 
-| https://www.youtube.com/watch?v=Nnb9g7y38W8&list=PLu9Yd5dcf2hc0179VReN0jFt0624Nl1Ar         | Python] Course Outline                                     |
-| https://www.youtube.com/watch?v=Tu-LOrLh6E4&list=PLu9Yd5dcf2hddSLH3-5Zgb7MxL2ggHqP0         | Angular] Course Introduction                               |
-| https://www.youtube.com/watch?v=1O4KlMyVRk8&list=PLu9Yd5dcf2hcO7NX8SY9xHCk1LeNnh7En         | Pandas] Introduction to the Course                         |
-| https://www.youtube.com/watch?v=BSJNez3NHvM&list=PLu9Yd5dcf2hdNhDhSS4cYV786G4cyoYB3         | Python] Web Scraping Introduction                          |
-| https://www.youtube.com/watch?v=MiS6y9kffBs&list=PLS1QulWo1RIbHU_v67CWrHn3eWpaASEtK         | MongoDB to Django Using Djongo                             |
-| https://www.youtube.com/watch?v=kENidSltTuA&list=PLS1QulWo1RIYbSv5_R2I_QbAcvbyqBCun         | RESTFul API With Flask                                     |
-| https://www.youtube.com/watch?v=Kja_28SNIow&list=PLS1QulWo1RIZ6OujqIAXmLR3xsDn_ENHI         | Getting Started With Flask                                 |
-| https://www.youtube.com/watch?v=lIM5YQyZ3pc&list=PLS1QulWo1RIa3Q24UOH0DaOBxHNmwJOeO         | Introduction to React JS                                   |
-| https://www.youtube.com/watch?v=bPp_Nr71GxY&list=PLS1QulWo1RIZFMIqY6IMCBkcAQTEvMEIo         | Introduction to the C programming                          |
-| https://www.youtube.com/watch?v=2EJ03wM0erI&list=PLS1QulWo1RIYWjdoEC1WbT8W3XGGWVXfW         | PHP REST API                                               |
-| https://www.youtube.com/watch?v=_bi0SqW_4L0&list=PLS1QulWo1RIZTkXbVkjr5Z3m-uMs05u7V         | PyQt5 Tutorial                                             |
-| https://www.youtube.com/watch?v=2WztaC6kyLs&list=PLS1QulWo1RIa7ha9SewcZlsTQVwL7n7oq         | Scikit-Learn                                               |
-| https://www.youtube.com/watch?v=64VG179N4no&list=PLS1QulWo1RIYZZxQdap7Sd0ARKFI-XVsd         | Redis                                                      |
-| https://www.youtube.com/watch?v=mqhxxeeTbu0&list=PLzMcBGfZo4-n4vJJybUVV3Un_NFS5EOgX         | Flask Tutorial                                             |
-| https://www.youtube.com/watch?v=Vde5SH8e1OQ&list=PLzMcBGfZo4-lB8MZfHPLTEHO9zJDDLpYj         | PyQt5                                                      |
-| https://www.youtube.com/watch?v=ujTCoH21GlA&list=PLzMcBGfZo4-mP7qA9cagf68V06sko5otr         | Python Machine Learning                                    |
-| https://www.youtube.com/watch?v=Lfg8uVS6HVk&list=PLB5jA40tNf3v-K_g4K-4Q7dYnGskPNZjy         | Java                                                       |
-| https://www.youtube.com/watch?v=2t3q_hOWw1o&list=PLB5jA40tNf3vh75MBwUb4oqiXFOZ5pYyX         | Web Development Html                                       |
-| https://www.youtube.com/watch?v=yQSEXcf6s2I&list=PLCC34OHNcOtoC6GglhF3ncJ5rLwQrLGnV         | Graphical User Interfaces With Python And TKinter          |
-| https://www.youtube.com/watch?v=kKj3L2e5dY4&list=PLCC34OHNcOtpd6DTzCrAHOhhwzUZN6ut0         | Bootstrap 4                                                |
-| https://www.youtube.com/watch?v=xc23JUl-f2k&list=PLCC34OHNcOtpER8D9QsylMvBWLn5SfUXv         | Using MySQL Databases With Python                          |
-| https://www.youtube.com/watch?v=8Dv7y33tFzI&list=PLCC34OHNcOtre5nJXBvH6WeJwfxuHjb7q         | Build Websites With Python and Django FAST                 |
-| https://www.youtube.com/watch?v=EQcsD3ff14E&list=PLCC34OHNcOtoz3tvoN9uDkIAaDYqPqoEr         | Ruby on Rails To-Do List App                               |
-| https://www.youtube.com/watch?v=MwZwr5Tvyxo&list=PL-osiE80TeTs4UjLw5MM6OjgkjFeUxCYH         | Python Flask                                               |
-| https://www.youtube.com/watch?v=ZyhVh-qRZPA&list=PL-osiE80TeTsWmV9i9c58mdDCSskIFdDS         | Python Pandas                                              |
-| https://www.youtube.com/watch?v=VBqJ0-imSMU&list=PL1FgJUcJJ03uJQse6KnXB996NYoHZyxGk         | Django & ReactJS Full Stack                                |
-| https://www.youtube.com/watch?v=kKSd5F_KDkM&list=PL1FgJUcJJ03s4oCDPlh7ZJe2kycucSSmA         | ReactJS & React Hooks                                      |
-| https://www.youtube.com/watch?v=bB8q_cYWRcQ&list=PL1FgJUcJJ03sImAsEpAzMTjaTCU7bY3ZD         | PyqtGraph                                                  |
-| https://www.youtube.com/watch?v=VNzX2Hf32O8&list=PL1FgJUcJJ03seqWeoTOzQSjgZEYelPBv8         | OpenCV                                                     |
-| https://www.youtube.com/watch?v=O8k2SziFAtI&list=PL1FgJUcJJ03saV6tnVM7ihTXKVCsGhwym         | Flask                                                      |
-| https://www.youtube.com/watch?v=jhvxAR0qCAE&list=PL1FgJUcJJ03veB3Nha_0JTTfHrsBvj5CS         | Python With Mysql Database                                 |
-| https://www.youtube.com/watch?v=4aKwBEEKkSo&list=PL1FgJUcJJ03vd5wJAZfn0IGWdfpdT1jOB         | Flask Web Development                                      |
-| https://www.youtube.com/watch?v=pnpL9Sl79g8&list=PL1FgJUcJJ03uwFW8ys2ov2dffKs3ieGYk         | PyQt5                                                      | 
-| https://www.youtube.com/watch?v=yD0_1DPmfKM&list=PLQVvvaa0QuDe9nqlirjacLkBYdgc2inh3         | Django                                                     | 
-| https://www.youtube.com/watch?v=G3PvTWRIhZA&list=PLQVvvaa0QuDeF3hP0wQoSxpkqgRcgxMqX         | Go Lang                                                    | 
-| https://www.youtube.com/watch?v=OGxgnH8y2NM&list=PLQVvvaa0QuDfKTOs3Keq_kaG2P55YRn5v         | Machine Learning                                           | 
-| https://www.youtube.com/watch?v=mD4KFDmusCc&list=PLXmMXHVSvS-AjwTOtiW1DXFYTgUlrUmHV         | Flask                                                      | 
-| https://www.youtube.com/watch?v=bcjq3koKpFE&list=PLXmMXHVSvS-AIM_xZvxAgjXaKXvJae80L         | AJAX Promises in jQuery                                    | 
-| https://www.youtube.com/watch?v=IrclKk_nWHI&list=PLXmMXHVSvS-DvYEVy6JQUAjannaohHXRV         | HTTP Requests in Python                                    | 
-| https://www.youtube.com/watch?v=_X-pjh4Vd10&list=PLei96ZX_m9sXmZJqhaTdIGGOJLStV4YbM         | Fastify                                                    | 
-| https://www.youtube.com/watch?v=ccsz9FRy-nk&list=PLC3y8-rFHvwgeQIfSDtEGVvvSEPDkL_1f         | Vue JS 3 Tutorial Introduction                             | 
-| https://www.youtube.com/watch?v=QFaFIcGhPoM&list=PLC3y8-rFHvwgg3vaYJgHGnModB54rxOk3         | ReactJS Introduction                                       | 
-| https://www.youtube.com/watch?v=9boMnm5X9ak&list=PLC3y8-rFHvwheJHvseC3I0HuYI2f46oAK         | React Redux Tutorials Introduction                         | 
-| https://www.youtube.com/watch?v=cF2lQ_gZeA8&list=PLC3y8-rFHvwisvxhZ135pogtX7_Oe3Q3A         | React Hooks Tutorial Introduction                          | 
-| https://www.youtube.com/watch?v=bV8emCBmFHk&list=PLC3y8-rFHvwilEuCqFGTL5Gt5U6deIrsU         | Angular Material Tutorial Introduction                     | 
-| https://www.youtube.com/watch?v=QFaFIcGhPoM&list=PLC3y8-rFHvwgg3vaYJgHGnModB54rxOk3         | ReactJS Tutorial Introduction                              | 
-| https://www.youtube.com/watch?v=0eWrpsCLMJQ&list=PLC3y8-rFHvwhBRAgFinJR8KHIrCdTkZcZ         | Angular Tutorial Introduction                              | 
-| https://www.youtube.com/watch?v=6fj0cpmMiVg&list=PLC3y8-rFHvwhgWwm5J3KqzX47n7dwWNrq         | npm Tutorial for Beginners                                 | 
-| https://www.youtube.com/watch?v=vLvNr3Wa5YI&list=PLC3y8-rFHvwj200LLotCYum_9wmGeTJx9         | Mean Stack Tutorial MongoDb, Express, Angular CLI and Node | 
-| https://www.youtube.com/watch?v=tqBi_Tou6wQ&list=PLC3y8-rFHvwiCJD3WrAFUrIMkGVDE0uqW         | Electron js Tutorial                                       | 
-| https://www.youtube.com/watch?v=saVf5Z60uEo&list=PLC3y8-rFHvwjMjwF25ixu1j1uS63hm4p0         | Vue js 2 Tutorial                                          | 
-| https://www.youtube.com/watch?v=9gEPiIoAHo8&list=PLC3y8-rFHvwiXX1maB5o-CZAIHy4I_ILv         | MongoDB PHP Tutorial Driver and PHP Library Set Up         | 
-| https://www.youtube.com/watch?v=aCOBakZSdmE&list=PLC3y8-rFHvwjfc2yJlldxjodwpUhVvDPg         | AngularJS Tutorial for Beginners                           | 
-| https://www.youtube.com/watch?v=YYnf5vJRuUY&list=PLC3y8-rFHvwh11bWtwm3_qKvo46uDmaal         | MongoDB Tutorial for Beginners                             | 
-| https://www.youtube.com/watch?v=ZRBRtA_2NAo&list=PLQH1-k79HB39Kzr43Xyja4tlRHMCqWsuy         | api-platform                                               | 
-| https://devbrains.tn/tutorials/easy-admin-api-platform-course-introduction                  | api-platform                                               | 
-| https://www.youtube.com/watch?v=U2lQWR6uIuo&list=PL3VM-unCzF8ipG50KDjnzhugceoSG3RTC         | PHP for Beginners (2023 Edition)                           |
-| https://www.youtube.com/watch?v=BZwn47RPiAM&list=PL3VM-unCzF8jX-GoazLPcbi7M0wJux8F-         | Learn Vue 3: Step By Step                                  |
-| https://www.youtube.com/watch?v=hz0_q1MJa2k&list=PL0X6fGhFFNTcBB9N4fPyMgtOxfvyujiEh         | JavaScript                                                 | 
-| https://www.youtube.com/watch?v=RoY3ekCCxKc&list=PL0X6fGhFFNTcU-_MCPe9dkH6sqmgfhy_M         | Cloud Computing                                            | 
-| https://www.youtube.com/watch?v=-DTUdOJv8w8&list=PL0X6fGhFFNTe_vJIlAQQo0IEgPgk9er3g         | React.js                                                   | 
-| https://www.youtube.com/watch?v=WyzHSMtINlg&list=PLt1SIbA8guuvUX8TCLwCJMrhsGN__3yOH         | Amazon EC2 with Auto Scaling                               | 
-| https://www.youtube.com/watch?v=iHX-jtKIVNA&list=PLt1SIbA8guuvvqyRA7BJMrSVtsrGD8fvo         | AWS Explained                                              | 
-| https://www.youtube.com/watch?v=CGFrYNDpzUM&list=PLv2a_5pNAko0Mijc6mnv04xeOut443Wnk         | AWS Essentials                                             | 
-| https://www.youtube.com/watch?v=ZdydaX1ds8I&list=PLzde74P_a04eZ0WTGVaACWWWX-AOEVjrz         | AWS Advanced Networking Specialty                          | 
-| https://www.youtube.com/watch?v=eHwbWYwoZG4&list=PLzde74P_a04emYSLeQAVIK8o7aIy885p4         | Introduction to Cloud Computing                            | 
-| https://www.youtube.com/watch?v=PjKvwxTTSUk&list=PLzde74P_a04cKnuXyi--fkIoY1sxztyqL         | AWS Identity and Access Management                         | 
-| https://www.youtube.com/watch?v=9vsu67uMcko&list=PLEBQazB0HUyTpoJoZecRK6PpDG31Y7RPB         | Introduction to Embedded Linux                             | 
-| https://www.youtube.com/watch?v=Z2bvEpQvYh4&list=PL10piHcP2kVK6FvJk7GVbKCNrBe3NLAzQ         | Vue.js in a Nutshell                                       | 
-| https://www.youtube.com/watch?v=tqnEcVMdZb0&list=PL3-vEIPar_7qI4wlofzK4rRXhs7y7uhhz         | VueJS - Der komplette Einsteiger                           | 
-| https://www.youtube.com/watch?v=SSCeKhoY8Kk&list=PLnqycjkeRGqnBh-2w5PrPPQgI14HHNQkf         | Node JS                                                    | 
-| https://www.youtube.com/watch?v=iHX-jtKIVNA&list=PLt1SIbA8guuvvqyRA7BJMrSVtsrGD8fvo         | AWS Explained                                              |
-| https://www.youtube.com/watch?v=zJxJerQtUdk&list=PL-lCrD3QqynWDYLO6GMzqnZL29y_qe-3v         | Frontend Roadmap                                           |
-| https://www.youtube.com/watch?v=D-zlCUeYIxk&list=PLIivdWyY5sqJwq_pgOxcHzusWjXDVCEiX&index=1 | Serverless Expeditions                                     |
-| https://www.youtube.com/watch?v=yBGLw_eITfY&list=PLDe9hpDQlNBUPBIjqR4BPDWDaU4n_KFiF&index=1 | Serverless Patterns                                        |
-| https://www.youtube.com/watch?v=kzKFuHk8ovk&list=PLIivdWyY5sqKh1gDR0WpP9iIOY00IE0xL&index=1 | Google Cloud Essentials                                    |
-| https://www.youtube.com/watch?v=VavWEtI5T7c&list=PLD9SRxG6ST3GBsczn8OUKLaErhrvOz9zQ&index=1 | Node MySQL Login                                           |
-| https://www.youtube.com/watch?v=IxcKMcsBGE8&list=PLlameCF3cMEsjpIRxfB9Rjici3aMCaQVo&index=1 | VueJS & NodeJS JWT Authentication                          |
-| https://www.youtube.com/watch?v=QohQieveWkk&list=PLGz_X9w9raXf748bzuGOV6XJv7q3wLxhZ         | NGINX Official Tutorials                                   |
-| https://www.youtube.com/watch?v=N-kIf3gvtRg&list=PLdsu0umqbb8PPKI5KQtWMeGv08d_aRmcp         | Jenkins Crash Course                                       |
-| https://www.youtube.com/watch?v=mqOMeVwWqwk&list=PLQH1-k79HB39Kzr43Xyja4tlRHMCqWsuy         | API Platform Crash Course                                  |
-| https://www.youtube.com/watch?v=8f011wdiW7g&list=PLqazFFzUAPc5lOQwDoZ4Dw2YSXtO7lWNv         | Inkscape Crash Course                                      |
-| https://www.youtube.com/watch?v=842rgQP_OgI&list=PLBh2i93oe2quABbNq4I_-hyjhW8eOdgrO         | math  Crash Course                                         |
-| https://www.youtube.com/watch?v=AhtzkydwkW8&list=PL4E74506D04586517                         | lmms Crash Course                                          |
-| https://www.youtube.com/watch?v=zWLRdna1p6U&list=PLJooqCSo73ShdOeigDI6Ti0lHxW34LSAy         | spryker Crash Course                                       |
-| https://www.youtube.com/watch?v=ycHXzbAmY94&list=PLfNQwFOQm0urbWdIiugEKPD_-Hyp5fuwX         | COBOL                                                      |
-| https://www.youtube.com/watch?v=hWRRdICvMNs&list=PLOspHqNVtKAAAq9pHWlEiRUVcYMCcu4X0         | API Essentials                                             |
-| https://www.youtube.com/watch?v=_Drz6MbNmmY&list=PLMvza7ri1L0eduljUjLSsXRvIJ8rD8Ohs         | LMMS                                                       |
-| https://www.youtube.com/playlist?list=PLD0F06AA0D2E8FFBA                                    | ML                                                         |
-| https://www.youtube.com/watch?v=h6HRsfu_Rog&list=PLJooqCSo73Si9lMfa6gq0fHJufMMY1bSX         | B2B Spryker                                                |
-| https://www.youtube.com/watch?v=23HFxAPyJ9U&list=PLZPZq0r_RZOOj_NOZYq_R2PECIMglLemc         | Start coding with JAVA in 10 minutes!                      |
-| https://www.youtube.com/watch?v=1GNsWa_EZdw&list=PLgGbWId6zgaV1cuVGR-rkslM5InZ5MZv2         | Envato Tuts+                                               |
-| https://www.youtube.com/watch?v=9ItV8UuXb1I&list=PLlameCF3cMEtuXasp3TH4TapPcw3EteA5         | Vue                                                        |
+| Link URL                                                                                    | Playlist                                                       |
+|---------------------------------------------------------------------------------------------|----------------------------------------------------------------|
+| https://www.youtube.com/playlist?list=PLoRl3Ht4JOcdU872GhiYWf6jwrk_SNhz9                    | Neural Networks for Machine Learning                           |
+| https://www.youtube.com/playlist?list=PLZoTAELRMXVNUcr7osiU7CCm8hcaqSzGw                    | Data Science Projects                                          |
+| https://www.youtube.com/user/MIT                                                            | MIT OpenCourseWare                                             |
+| https://www.youtube.com/watch?v=6ZVf1jnEKGI&list=PLZoTAELRMXVMdJ5sqbCK2LiM0HhQVWNzm         | Natural Language Processing Tokenization                       |
+| https://www.youtube.com/watch?v=cKxRvEZd3Mw&list=PLOU2XLYxmsIIuiBfYad6rFYQU_jL2ryal         | Machine Learning Recipes                                       |
+| https://www.youtube.com/watch?v=I7VKUGblZOQ&list=PLGJDCzBP5j3xGaW0AGlaVHK2TMEr2XkP9         | PHP Design Patterns                                            |
+| https://www.youtube.com/watch?v=KEEKn7Me-ms&list=PLI1t_8YX-ApvMthLj56t1Rf-Buio5Y8KL         | Algorithms: Recursion                                          |
+| https://www.youtube.com/watch?v=MhkGQAoc7bc&list=PLoYCgNOIyGABj2GQSlDRjgvXtqfDxKm5b         | Reactjs                                                        |
+| https://www.youtube.com/watch?v=pmKyG3NBY_k&list=PLWKjhJtqVAbl1AfjiGyYxwpdAPi5v-1OU         | Style Fancy Buttons: CSS Tutorial                              |
+| https://www.youtube.com/watch?v=ua-CiDNNj30&list=PLWKjhJtqVAblQe2CCWqV4Zy3LY01Z8aF1         | Learn Data Science Tutorial                                    |
+| https://www.youtube.com/watch?v=vNHpsC5ng_E&list=PLF206E906175C7E07                         | Java Design Patterns Tutorial                                  |
+| https://www.youtube.com/watch?v=UzxYlbK2c7E&list=PLA89DCFA6ADACE599                         | Machine Learning (Stanford)                                    |
+| https://www.youtube.com/playlist?list=PLZoTAELRMXVNUcr7osiU7CCm8hcaqSzGw                    | Data Science Projects                                          |
+| https://www.youtube.com/playlist?list=PLblh5JKOoLUICTaGLRoHQDuF_7q2GfuJF                    | Machine Learning                                               |
+| https://www.youtube.com/playlist?list=PLBv09BD7ez_448q9kRfZRxYb3cbeEanRb                    | IR7 Inverted Indexing                                          |
+| https://www.youtube.com/playlist?list=PLaZQkZp6WhWxU3kA6wV0nb5dY1SXDEKWH                    | Classifications                                                |
+| https://www.youtube.com/channel/UCU3OMAQMsRi0RixSUNfC3aA                                    | CakePHP                                                        |
+| https://www.youtube.com/watch?v=3bxAm3XIFmk&list=PLBArW4dCYWbT5-dSATFcn6Tuqv-WKdyaR         | DEv to Architecture                                            |
+| https://www.youtube.com/watch?v=ia1KSZCG2Bs&list=PLQ176FUIyIUYB2JG1htieA8yYqYAtKGB4         | JetBrains Videos                                               | 
+| https://www.youtube.com/watch?v=AHK20LWEWXQ&list=PLQ176FUIyIUbfeFz-2EbDzwExRlD0Bc-w         | JetBrains Videos                                               | 
+| https://www.youtube.com/watch?v=hdI2bqOjy3c&list=PLillGF-RfqbbnEGy3ROiLWk7JMCuSyQtX         | JavaScript Crash Course                                        | 
+| https://www.youtube.com/watch?v=Y_hzMnRXjhI&list=PLQY2H8rRoyvwLbzbnKJ59NkZvQAW9wLbx         | TensorFlow NLP Zero to Hero                                    | 
+| https://www.youtube.com/watch?v=ZyhVh-qRZPA&list=PL-osiE80TeTsWmV9i9c58mdDCSskIFdDS         | Python Pandas Tutorial                                         |
+| https://www.youtube.com/watch?v=w3GV9pumczQ&list=PLi01XoE8jYogpKUjykd53HjG8a8ruDmW1         | What is Calculus                                               |
+| https://www.youtube.com/watch?v=bY6m6_IIN94&list=PLi01XoE8jYohWFPpC17Z-wWhPOSuh8Er-         | Learn Python with Socratica                                    |
+| https://www.youtube.com/watch?v=V5pxUz5EVs0&list=PLi01XoE8jYoiroxK2XtuzPU45LlegtjUh         | Geometry                                                       |
+| https://www.youtube.com/watch?v=lAvIuQIhbOQ&list=PLUPH1EuJOf-fonnlNMajy6p0RxkjU14y-         | Tutorial C++ Romanian                                          |
+| https://www.youtube.com/watch?v=-vHQub0NXI4&list=RDCMUC0rqucBdTuFTjJiefW5t-IQ		             | Get started with using TensorFlow                              | 
+| https://www.youtube.com/watch?v=inN8seMm7UI&list=PLQY2H8rRoyvyK5aEDAI3wUUqC_F0oEroL         | Get started with Google Colaboratory                           |
+| https://www.youtube.com/watch?v=A60oNJ7mxXY&list=RDCMUCEBb1b_L6zDS3xTUrIALZOw&index=1       | MIT OpenCourseWare                                             |
+| https://www.youtube.com/user/SageSoftwareNA/playlists                                       | Sage Customer Support and Training                             | 
+| https://www.youtube.com/user/BookkeepingMaster/playlists?app=desktop                        | Sage Tutorials                                                 | 
+| https://www.youtube.com/watch?v=WWcijE7ifcA&list=PLzvRQMJ9HDiSaisKr7OnM4Fl7JXCDDcmt         | Introduction (Get started with Jenkins part 1)                 |
+| https://www.youtube.com/channel/UCDbRYCyDiyJUqgQ7k4e1_-A                                    | MS Excel Extended - curs online despre Excel                   |
+| https://www.youtube.com/watch?v=XFqm_ILuhs0&list=PLt1SIbA8guusxiHz9bveV-UHs_biWFegU         | Apache Kafka                                                   |
+| https://www.youtube.com/watch?v=89yWXXIOisk&list=PLhW3qG5bs-L_ZCOA4zNPSoGbnVQ-rp_dG         | Jenkins                                                        |
+| https://www.youtube.com/watch?v=B3PE7w-jvjQ&list=RDCMUCGp4UBwpTNegd_4nCpuBcow&start_radio=1 | Codeception support in PhpStorm                                |
+| https://www.youtube.com/watch?v=EjwD7Pi7J_0&list=RDCMUCGp4UBwpTNegd_4nCpuBcow&start_radio=1 | Code Review Best Practices                                     |
+| https://www.youtube.com/watch?v=HB2T0iWiW50&list=RDCMUCGp4UBwpTNegd_4nCpuBcow&start_radio=1 | PhpStorm plugins for Laravel                                   |
+| https://www.youtube.com/watch?v=AHK20LWEWXQ&list=PLQ176FUIyIUbfeFz-2EbDzwExRlD0Bc-w         | PhpStorm                                                       | 
+| https://www.youtube.com/watch?list=PLGLfVvz_LVvReUrWr94U-ZMgjYTQ538nT&v=f5OD9CKrZEw         | Java Algorithms                                                | 
+| https://www.youtube.com/watch?list=PLGLfVvz_LVvSuz6NuHAzpM52qKM6bPlCV&v=vhYK3pDUijk         | Code Refactoring                                               | 
+| https://www.youtube.com/playlist?list=PL2zq7klxX5ASFejJj80ob9ZAnBHdz5O1t                    | Data Science Project From Scratch                              |
+| https://www.youtube.com/watch?v=ZDa-Z5JzLYM&list=PL-osiE80TeTsqhIuOqKhwlXsIBIdSeYtc         | Python OOP Tutorial                                            |
+| https://www.youtube.com/watch?v=cjXI-yxqGTI&list=PLOspHqNVtKAC-_ZAGresP-i0okHe5FjcJ         | IBM Cloud Fundamentals                                         | 
+| https://www.youtube.com/watch?v=cjXI-yxqGTI&list=RDCMUCKWaEZ-_VweaEx1j62do_vQ&start_radio=1 | IBM Cloud                                                      | 
+| https://www.youtube.com/playlist?list=PLRqwX-V7Uu6YPSwT06y_AEYTqIwbeam3y                    | Beginners Guide to Machine Learning in JavaScript              | 
+| https://www.youtube.com/watch?v=Nnb9g7y38W8&list=PLu9Yd5dcf2hc0179VReN0jFt0624Nl1Ar         | Python] Course Outline                                         |
+| https://www.youtube.com/watch?v=Tu-LOrLh6E4&list=PLu9Yd5dcf2hddSLH3-5Zgb7MxL2ggHqP0         | Angular] Course Introduction                                   |
+| https://www.youtube.com/watch?v=1O4KlMyVRk8&list=PLu9Yd5dcf2hcO7NX8SY9xHCk1LeNnh7En         | Pandas] Introduction to the Course                             |
+| https://www.youtube.com/watch?v=BSJNez3NHvM&list=PLu9Yd5dcf2hdNhDhSS4cYV786G4cyoYB3         | Python] Web Scraping Introduction                              |
+| https://www.youtube.com/watch?v=MiS6y9kffBs&list=PLS1QulWo1RIbHU_v67CWrHn3eWpaASEtK         | MongoDB to Django Using Djongo                                 |
+| https://www.youtube.com/watch?v=kENidSltTuA&list=PLS1QulWo1RIYbSv5_R2I_QbAcvbyqBCun         | RESTFul API With Flask                                         |
+| https://www.youtube.com/watch?v=Kja_28SNIow&list=PLS1QulWo1RIZ6OujqIAXmLR3xsDn_ENHI         | Getting Started With Flask                                     |
+| https://www.youtube.com/watch?v=lIM5YQyZ3pc&list=PLS1QulWo1RIa3Q24UOH0DaOBxHNmwJOeO         | Introduction to React JS                                       |
+| https://www.youtube.com/watch?v=bPp_Nr71GxY&list=PLS1QulWo1RIZFMIqY6IMCBkcAQTEvMEIo         | Introduction to the C programming                              |
+| https://www.youtube.com/watch?v=2EJ03wM0erI&list=PLS1QulWo1RIYWjdoEC1WbT8W3XGGWVXfW         | PHP REST API                                                   |
+| https://www.youtube.com/watch?v=_bi0SqW_4L0&list=PLS1QulWo1RIZTkXbVkjr5Z3m-uMs05u7V         | PyQt5 Tutorial                                                 |
+| https://www.youtube.com/watch?v=2WztaC6kyLs&list=PLS1QulWo1RIa7ha9SewcZlsTQVwL7n7oq         | Scikit-Learn                                                   |
+| https://www.youtube.com/watch?v=64VG179N4no&list=PLS1QulWo1RIYZZxQdap7Sd0ARKFI-XVsd         | Redis                                                          |
+| https://www.youtube.com/watch?v=mqhxxeeTbu0&list=PLzMcBGfZo4-n4vJJybUVV3Un_NFS5EOgX         | Flask Tutorial                                                 |
+| https://www.youtube.com/watch?v=Vde5SH8e1OQ&list=PLzMcBGfZo4-lB8MZfHPLTEHO9zJDDLpYj         | PyQt5                                                          |
+| https://www.youtube.com/watch?v=ujTCoH21GlA&list=PLzMcBGfZo4-mP7qA9cagf68V06sko5otr         | Python Machine Learning                                        |
+| https://www.youtube.com/watch?v=Lfg8uVS6HVk&list=PLB5jA40tNf3v-K_g4K-4Q7dYnGskPNZjy         | Java                                                           |
+| https://www.youtube.com/watch?v=2t3q_hOWw1o&list=PLB5jA40tNf3vh75MBwUb4oqiXFOZ5pYyX         | Web Development Html                                           |
+| https://www.youtube.com/watch?v=yQSEXcf6s2I&list=PLCC34OHNcOtoC6GglhF3ncJ5rLwQrLGnV         | Graphical User Interfaces With Python And TKinter              |
+| https://www.youtube.com/watch?v=kKj3L2e5dY4&list=PLCC34OHNcOtpd6DTzCrAHOhhwzUZN6ut0         | Bootstrap 4                                                    |
+| https://www.youtube.com/watch?v=xc23JUl-f2k&list=PLCC34OHNcOtpER8D9QsylMvBWLn5SfUXv         | Using MySQL Databases With Python                              |
+| https://www.youtube.com/watch?v=8Dv7y33tFzI&list=PLCC34OHNcOtre5nJXBvH6WeJwfxuHjb7q         | Build Websites With Python and Django FAST                     |
+| https://www.youtube.com/watch?v=EQcsD3ff14E&list=PLCC34OHNcOtoz3tvoN9uDkIAaDYqPqoEr         | Ruby on Rails To-Do List App                                   |
+| https://www.youtube.com/watch?v=MwZwr5Tvyxo&list=PL-osiE80TeTs4UjLw5MM6OjgkjFeUxCYH         | Python Flask                                                   |
+| https://www.youtube.com/watch?v=ZyhVh-qRZPA&list=PL-osiE80TeTsWmV9i9c58mdDCSskIFdDS         | Python Pandas                                                  |
+| https://www.youtube.com/watch?v=VBqJ0-imSMU&list=PL1FgJUcJJ03uJQse6KnXB996NYoHZyxGk         | Django & ReactJS Full Stack                                    |
+| https://www.youtube.com/watch?v=kKSd5F_KDkM&list=PL1FgJUcJJ03s4oCDPlh7ZJe2kycucSSmA         | ReactJS & React Hooks                                          |
+| https://www.youtube.com/watch?v=bB8q_cYWRcQ&list=PL1FgJUcJJ03sImAsEpAzMTjaTCU7bY3ZD         | PyqtGraph                                                      |
+| https://www.youtube.com/watch?v=VNzX2Hf32O8&list=PL1FgJUcJJ03seqWeoTOzQSjgZEYelPBv8         | OpenCV                                                         |
+| https://www.youtube.com/watch?v=O8k2SziFAtI&list=PL1FgJUcJJ03saV6tnVM7ihTXKVCsGhwym         | Flask                                                          |
+| https://www.youtube.com/watch?v=jhvxAR0qCAE&list=PL1FgJUcJJ03veB3Nha_0JTTfHrsBvj5CS         | Python With Mysql Database                                     |
+| https://www.youtube.com/watch?v=4aKwBEEKkSo&list=PL1FgJUcJJ03vd5wJAZfn0IGWdfpdT1jOB         | Flask Web Development                                          |
+| https://www.youtube.com/watch?v=pnpL9Sl79g8&list=PL1FgJUcJJ03uwFW8ys2ov2dffKs3ieGYk         | PyQt5                                                          | 
+| https://www.youtube.com/watch?v=yD0_1DPmfKM&list=PLQVvvaa0QuDe9nqlirjacLkBYdgc2inh3         | Django                                                         | 
+| https://www.youtube.com/watch?v=G3PvTWRIhZA&list=PLQVvvaa0QuDeF3hP0wQoSxpkqgRcgxMqX         | Go Lang                                                        | 
+| https://www.youtube.com/watch?v=OGxgnH8y2NM&list=PLQVvvaa0QuDfKTOs3Keq_kaG2P55YRn5v         | Machine Learning                                               | 
+| https://www.youtube.com/watch?v=mD4KFDmusCc&list=PLXmMXHVSvS-AjwTOtiW1DXFYTgUlrUmHV         | Flask                                                          | 
+| https://www.youtube.com/watch?v=bcjq3koKpFE&list=PLXmMXHVSvS-AIM_xZvxAgjXaKXvJae80L         | AJAX Promises in jQuery                                        | 
+| https://www.youtube.com/watch?v=IrclKk_nWHI&list=PLXmMXHVSvS-DvYEVy6JQUAjannaohHXRV         | HTTP Requests in Python                                        | 
+| https://www.youtube.com/watch?v=_X-pjh4Vd10&list=PLei96ZX_m9sXmZJqhaTdIGGOJLStV4YbM         | Fastify                                                        | 
+| https://www.youtube.com/watch?v=ccsz9FRy-nk&list=PLC3y8-rFHvwgeQIfSDtEGVvvSEPDkL_1f         | Vue JS 3 Tutorial Introduction                                 | 
+| https://www.youtube.com/watch?v=QFaFIcGhPoM&list=PLC3y8-rFHvwgg3vaYJgHGnModB54rxOk3         | ReactJS Introduction                                           | 
+| https://www.youtube.com/watch?v=9boMnm5X9ak&list=PLC3y8-rFHvwheJHvseC3I0HuYI2f46oAK         | React Redux Tutorials Introduction                             | 
+| https://www.youtube.com/watch?v=cF2lQ_gZeA8&list=PLC3y8-rFHvwisvxhZ135pogtX7_Oe3Q3A         | React Hooks Tutorial Introduction                              | 
+| https://www.youtube.com/watch?v=bV8emCBmFHk&list=PLC3y8-rFHvwilEuCqFGTL5Gt5U6deIrsU         | Angular Material Tutorial Introduction                         | 
+| https://www.youtube.com/watch?v=QFaFIcGhPoM&list=PLC3y8-rFHvwgg3vaYJgHGnModB54rxOk3         | ReactJS Tutorial Introduction                                  | 
+| https://www.youtube.com/watch?v=0eWrpsCLMJQ&list=PLC3y8-rFHvwhBRAgFinJR8KHIrCdTkZcZ         | Angular Tutorial Introduction                                  | 
+| https://www.youtube.com/watch?v=6fj0cpmMiVg&list=PLC3y8-rFHvwhgWwm5J3KqzX47n7dwWNrq         | npm Tutorial for Beginners                                     | 
+| https://www.youtube.com/watch?v=vLvNr3Wa5YI&list=PLC3y8-rFHvwj200LLotCYum_9wmGeTJx9         | Mean Stack Tutorial MongoDb, Express, Angular CLI and Node     | 
+| https://www.youtube.com/watch?v=tqBi_Tou6wQ&list=PLC3y8-rFHvwiCJD3WrAFUrIMkGVDE0uqW         | Electron js Tutorial                                           | 
+| https://www.youtube.com/watch?v=saVf5Z60uEo&list=PLC3y8-rFHvwjMjwF25ixu1j1uS63hm4p0         | Vue js 2 Tutorial                                              | 
+| https://www.youtube.com/watch?v=9gEPiIoAHo8&list=PLC3y8-rFHvwiXX1maB5o-CZAIHy4I_ILv         | MongoDB PHP Tutorial Driver and PHP Library Set Up             | 
+| https://www.youtube.com/watch?v=aCOBakZSdmE&list=PLC3y8-rFHvwjfc2yJlldxjodwpUhVvDPg         | AngularJS Tutorial for Beginners                               | 
+| https://www.youtube.com/watch?v=YYnf5vJRuUY&list=PLC3y8-rFHvwh11bWtwm3_qKvo46uDmaal         | MongoDB Tutorial for Beginners                                 | 
+| https://www.youtube.com/watch?v=ZRBRtA_2NAo&list=PLQH1-k79HB39Kzr43Xyja4tlRHMCqWsuy         | api-platform                                                   | 
+| https://devbrains.tn/tutorials/easy-admin-api-platform-course-introduction                  | api-platform                                                   | 
+| https://www.youtube.com/watch?v=U2lQWR6uIuo&list=PL3VM-unCzF8ipG50KDjnzhugceoSG3RTC         | PHP for Beginners (2023 Edition)                               |
+| https://www.youtube.com/watch?v=BZwn47RPiAM&list=PL3VM-unCzF8jX-GoazLPcbi7M0wJux8F-         | Learn Vue 3: Step By Step                                      |
+| https://www.youtube.com/watch?v=hz0_q1MJa2k&list=PL0X6fGhFFNTcBB9N4fPyMgtOxfvyujiEh         | JavaScript                                                     | 
+| https://www.youtube.com/watch?v=RoY3ekCCxKc&list=PL0X6fGhFFNTcU-_MCPe9dkH6sqmgfhy_M         | Cloud Computing                                                | 
+| https://www.youtube.com/watch?v=-DTUdOJv8w8&list=PL0X6fGhFFNTe_vJIlAQQo0IEgPgk9er3g         | React.js                                                       | 
+| https://www.youtube.com/watch?v=WyzHSMtINlg&list=PLt1SIbA8guuvUX8TCLwCJMrhsGN__3yOH         | Amazon EC2 with Auto Scaling                                   | 
+| https://www.youtube.com/watch?v=iHX-jtKIVNA&list=PLt1SIbA8guuvvqyRA7BJMrSVtsrGD8fvo         | AWS Explained                                                  | 
+| https://www.youtube.com/watch?v=CGFrYNDpzUM&list=PLv2a_5pNAko0Mijc6mnv04xeOut443Wnk         | AWS Essentials                                                 | 
+| https://www.youtube.com/watch?v=ZdydaX1ds8I&list=PLzde74P_a04eZ0WTGVaACWWWX-AOEVjrz         | AWS Advanced Networking Specialty                              | 
+| https://www.youtube.com/watch?v=eHwbWYwoZG4&list=PLzde74P_a04emYSLeQAVIK8o7aIy885p4         | Introduction to Cloud Computing                                | 
+| https://www.youtube.com/watch?v=PjKvwxTTSUk&list=PLzde74P_a04cKnuXyi--fkIoY1sxztyqL         | AWS Identity and Access Management                             | 
+| https://www.youtube.com/watch?v=9vsu67uMcko&list=PLEBQazB0HUyTpoJoZecRK6PpDG31Y7RPB         | Introduction to Embedded Linux                                 | 
+| https://www.youtube.com/watch?v=Z2bvEpQvYh4&list=PL10piHcP2kVK6FvJk7GVbKCNrBe3NLAzQ         | Vue.js in a Nutshell                                           | 
+| https://www.youtube.com/watch?v=tqnEcVMdZb0&list=PL3-vEIPar_7qI4wlofzK4rRXhs7y7uhhz         | VueJS - Der komplette Einsteiger                               | 
+| https://www.youtube.com/watch?v=SSCeKhoY8Kk&list=PLnqycjkeRGqnBh-2w5PrPPQgI14HHNQkf         | Node JS                                                        | 
+| https://www.youtube.com/watch?v=iHX-jtKIVNA&list=PLt1SIbA8guuvvqyRA7BJMrSVtsrGD8fvo         | AWS Explained                                                  |
+| https://www.youtube.com/watch?v=zJxJerQtUdk&list=PL-lCrD3QqynWDYLO6GMzqnZL29y_qe-3v         | Frontend Roadmap                                               |
+| https://www.youtube.com/watch?v=D-zlCUeYIxk&list=PLIivdWyY5sqJwq_pgOxcHzusWjXDVCEiX&index=1 | Serverless Expeditions                                         |
+| https://www.youtube.com/watch?v=yBGLw_eITfY&list=PLDe9hpDQlNBUPBIjqR4BPDWDaU4n_KFiF&index=1 | Serverless Patterns                                            |
+| https://www.youtube.com/watch?v=kzKFuHk8ovk&list=PLIivdWyY5sqKh1gDR0WpP9iIOY00IE0xL&index=1 | Google Cloud Essentials                                        |
+| https://www.youtube.com/watch?v=VavWEtI5T7c&list=PLD9SRxG6ST3GBsczn8OUKLaErhrvOz9zQ&index=1 | Node MySQL Login                                               |
+| https://www.youtube.com/watch?v=IxcKMcsBGE8&list=PLlameCF3cMEsjpIRxfB9Rjici3aMCaQVo&index=1 | VueJS & NodeJS JWT Authentication                              |
+| https://www.youtube.com/watch?v=QohQieveWkk&list=PLGz_X9w9raXf748bzuGOV6XJv7q3wLxhZ         | NGINX Official Tutorials                                       |
+| https://www.youtube.com/watch?v=N-kIf3gvtRg&list=PLdsu0umqbb8PPKI5KQtWMeGv08d_aRmcp         | Jenkins Crash Course                                           |
+| https://www.youtube.com/watch?v=mqOMeVwWqwk&list=PLQH1-k79HB39Kzr43Xyja4tlRHMCqWsuy         | API Platform Crash Course                                      |
+| https://www.youtube.com/watch?v=8f011wdiW7g&list=PLqazFFzUAPc5lOQwDoZ4Dw2YSXtO7lWNv         | Inkscape Crash Course                                          |
+| https://www.youtube.com/watch?v=842rgQP_OgI&list=PLBh2i93oe2quABbNq4I_-hyjhW8eOdgrO         | math  Crash Course                                             |
+| https://www.youtube.com/watch?v=AhtzkydwkW8&list=PL4E74506D04586517                         | lmms Crash Course                                              |
+| https://www.youtube.com/watch?v=zWLRdna1p6U&list=PLJooqCSo73ShdOeigDI6Ti0lHxW34LSAy         | spryker Crash Course                                           |
+| https://www.youtube.com/watch?v=ycHXzbAmY94&list=PLfNQwFOQm0urbWdIiugEKPD_-Hyp5fuwX         | COBOL                                                          |
+| https://www.youtube.com/watch?v=hWRRdICvMNs&list=PLOspHqNVtKAAAq9pHWlEiRUVcYMCcu4X0         | API Essentials                                                 |
+| https://www.youtube.com/watch?v=_Drz6MbNmmY&list=PLMvza7ri1L0eduljUjLSsXRvIJ8rD8Ohs         | LMMS                                                           |
+| https://www.youtube.com/playlist?list=PLD0F06AA0D2E8FFBA                                    | ML                                                             |
+| https://www.youtube.com/watch?v=h6HRsfu_Rog&list=PLJooqCSo73Si9lMfa6gq0fHJufMMY1bSX         | B2B Spryker                                                    |
+| https://www.youtube.com/watch?v=23HFxAPyJ9U&list=PLZPZq0r_RZOOj_NOZYq_R2PECIMglLemc         | Start coding with JAVA in 10 minutes!                          |
+| https://www.youtube.com/watch?v=1GNsWa_EZdw&list=PLgGbWId6zgaV1cuVGR-rkslM5InZ5MZv2         | Envato Tuts+                                                   |
+| https://www.youtube.com/watch?v=9ItV8UuXb1I&list=PLlameCF3cMEtuXasp3TH4TapPcw3EteA5         | Vue                                                            |
+| https://www.youtube.com/watch?v=9THmGiSPjBQ&list=PLdo4fOcmZ0oULFjxrOagaERVAMbmG20Xe         | C# for Beginners                                               | 
+| https://www.youtube.com/watch?v=6BcPIvVfVAw&list=PLdo4fOcmZ0oUwBEC2bnwPtHqbU8Vmh_tj         | .NET for Beginners                                             | 
+| https://www.youtube.com/watch?v=gf1dutyveAY&list=PLdo4fOcmZ0oUkJJEM_FagLkvwPQHsQ5xL         | Intro to Visual Studio 2022                                    | 
+| https://www.youtube.com/watch?v=sHDox4Fx6G0&list=PLdo4fOcmZ0oXNZX1Q8rB-5xgTSKR8qA5k         | What is ASP.NET Core?  Web Development with .NET for Beginners | 
+| https://www.youtube.com/watch?v=sHDox4Fx6G0&list=PLdo4fOcmZ0oWunQnm3WnZxJrseIw2zSAk         | What is ASP.NET Core? Web Development with .NET for Beginners  | 
+| https://www.youtube.com/watch?v=8Tin9cjx03Q&list=PLdo4fOcmZ0oXU8g5XIKiOPX4tgIqG2Ddc         | Build intelligent apps on .NET using Azure                     | 
+| https://www.youtube.com/watch?v=Z9AmQXc5UKc&list=PLdo4fOcmZ0oWdpUqmhpP5K9_0vI_3qwQh         | Blazor, Web API, and new AI Templates                          | 
+| https://www.youtube.com/watch?v=lE8NdaX97m0&list=PLuZfDyPRW0-MvkkrvaGrLkJsFq6t1uTC6         | What is ASP.NET? ASP.NET Core 101                              | 
+| https://www.youtube.com/watch?v=yq0dSkA1vpM&list=PLLWMQd6PeGY1C3YLCyAUIDJrPS9S3WdLK         | WinForm vs WPF vs UWP vs Console                               | 
+| https://www.youtube.com/watch?v=5ZhlBJr95-4&list=PLLWMQd6PeGY1TU4qj0UW9iS28j5O-Iwa4         | Building a Sample API in C#                                    | 
+| https://www.youtube.com/watch?v=tFCZw-wZVtg&list=PLdo4fOcmZ0oWUrumb503vY3v6O3u3P4rW         | C# and .NET Development in VS Code for Beginners               | 
+|  
 
 
 ### Envato Tuts+
@@ -668,3 +698,4 @@
 | https://www.youtube.com/watch?v=TQsP_PlCY1I  | Build Anything with MCP Agents,                             | 
 | https://www.youtube.com/watch?v=L94WBLL0KjY  | Build Anything with MCP Agents                              | 
 | https://www.youtube.com/watch?v=WLvQCIUWebs  | 5 simple AI Agent                                           | 
+| https://www.youtube.com/watch?v=b7oUQJc-P5Y  | Intro to Agent Mode in Visual Studio                        | 
