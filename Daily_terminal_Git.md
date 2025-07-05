@@ -30,6 +30,12 @@ git log --branches --not --remotes
 git log origin/master..HEAD
 git log --oneline
 git log --oneline --branches
+git log --oneline --decorate
+git log --oneline --graph --decorate
+git grep
+git reflog --date=iso --pretty
+git diff --word-diff
+git blame -C -C -C
 ```
 
 ### Git count number of commits between two branches

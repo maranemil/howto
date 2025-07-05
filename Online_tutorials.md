@@ -177,7 +177,7 @@
  | https://www.youtube.com/watch?v=4Re7hZdsoOI | Full Laravel VueJS Tutorial: CRUD with Authentication                    |
  | https://www.youtube.com/watch?v=xTtL8E4LzTQ | Java Full Course for free (2025)                                         |
  | https://www.youtube.com/watch?v=rH3zE7VlIMs | Learn Git - The Full Course  by ThePrimeagen.                            |
-
+| https://www.youtube.com/watch?v=DZI0Zl-1JqQ | You Don’t Know Git - Edward Thomson                                      |
 
 ### Kotlin
 
@@ -219,6 +219,10 @@
 | https://www.youtube.com/watch?v=KMsggpCaS10  | C# Crash Course  The Ultimate C Sharp .NET Tutorial for Beginners |
 | https://www.youtube.com/watch?v=J0FhV3dM80o  | Every single feature of C# in 10 minutes                          | 
 | https://www.youtube.com/watch?v=eIHKZfgddLM  | What is .NET?                .NET Core 101 [1 of 8]               |                                 
+| https://www.youtube.com/watch?v=0QUgvfuKvWU  | C# Fundamentals for Beginners                                     | 
+| https://www.youtube.com/watch?v=QtiM87MV27w  | how to Build an ASP.NET Core MVC Web App                          | 
+
+
 
 ### C++
 
