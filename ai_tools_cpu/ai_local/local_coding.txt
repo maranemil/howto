@@ -1,0 +1,99 @@
+
+
+
+docs-mcp-server
+https://github.com/arabold/docs-mcp-server
+
+This is what makes it all click. MCP server scrapes documentation (with versioning) so the AI can look up the correct syntax for your version of language implementation, and avoid hallucinations.
+
+You should also be able to run localhost:6281 to open web UI for the docs-mcp-server, however web UI doesn't seem to be working for me, which I can ignore because AI is managing that anyway.
+
+You can implement this MCP server as following -
+
+Docker version (needs Docker Installed)
+
+{
+  "mcpServers": {
+    "docs-mcp-server": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-p",
+        "6280:6280",
+        "-p",
+        "6281:6281",
+        "-e",
+        "OPENAI_API_KEY",
+        "-e",
+        "OPENAI_API_BASE",
+        "-e",
+        "DOCS_MCP_EMBEDDING_MODEL",
+        "-v",
+        "docs-mcp-data:/data",
+        "ghcr.io/arabold/docs-mcp-server:latest"
+      ],
+      "env": {
+        "OPENAI_API_KEY": "ollama",
+        "OPENAI_API_BASE": "http://host.docker.internal:11434/v1",
+        "DOCS_MCP_EMBEDDING_MODEL": "snowflake-arctic-embed2"
+      }
+    }
+  }
+}
+NPX version (needs NodeJS installed)
+
+{
+  "mcpServers": {
+    "docs-mcp-server": {
+      "command": "npx",
+      "args": [
+        "@arabold/docs-mcp-server@latest"
+      ],
+      "env": {
+        "OPENAI_API_KEY": "ollama",
+        "OPENAI_API_BASE": "http://host.docker.internal:11434/v1",
+        "DOCS_MCP_EMBEDDING_MODEL": "snowflake-arctic-embed2"
+      }
+    }
+  }
+}
+
+
+Adding documentation for your language
+
+Ask AI to use the scrape_docs tool with:
+
+url (link to the documentation),
+
+library (name of the documentation/programming language),
+
+version (version of the documentation)
+
+you can also provide (optional):
+
+maxPages (maximum number of pages to scrape, default is 1000).
+
+maxDepth (maximum navigation depth, default is 3).
+
+scope (crawling boundary, which can be 'subpages', 'hostname', or 'domain', default is 'subpages').
+
+followRedirects (whether to follow HTTP 3xx redirects, default is true).
+
+You can ask AI to use search_docs tool any time you want to make sure the syntax or code implementation is correct. It should also check docs automatically if it is smart enough.
+
+This stack isn’t limited to coding, Devstral handles logical, non-coding tasks well too.
+The MCP setup helps reduce hallucinations by grounding the AI in real documentation, making this a flexible and reliable solution for a variety of tasks.
+
+https://www.reddit.com/r/LocalLLaMA/comments/1lt4y1z/selfhosted_ai_coding_that_just_works/
+
+https://github.com/likelovewant/ollama-for-amd
+https://github.com/mostlygeek/llama-swap
+https://github.com/arabold/docs-mcp-server
+https://martech.org/how-to-run-deepseek-locally-on-your-computer/
+
+https://github.com/ItzCrazyKns/Perplexica
+https://github.com/NPC-Worldwide/npcpy
+https://github.com/NPC-Worldwide/npc-studio
+
