@@ -387,5 +387,5 @@
 - https://writer.hix.ai/paragraph-scrambler
 - https://www.junia.ai/tools/paraphrasing-tool#
 - https://ahrefs.com/writing-tools/paragraph-rewriter#
+- https://www.grammarly.com/ai/ai-writing-tools/paragraph-rewriter
 - https://www.articlerewriter.net/
-- https://www.grammarly.com/ai/ai-writing-tools/sentence-rewriter

@@ -1,0 +1,131 @@
+##############################################################
+
+##############################################################
+
+nmap -v -A scanme.nmap.org
+nmap -v -sn 192.168.0.0/16 10.0.0.0/8
+nmap -v -iR 10000 -Pn -p 80
+nmap -v -sn localhost
+nmap --open localhost -oG - | grep "/open" | awk '{ print $2 }'
+nmap --open -p 22,80 192.168.1.1-254 -oG - | grep "/open" | awk '{ print $2 }'
+nmap --open 192.168.1.1/24 -oG - | grep "/open" | awk '{ print $2 }'
+nmap -Pn -oG /dev/stdout -p22,80,443,445 100.100.100.100 | awk '/open/{ s = ""; for (i = 5; i <= NF-4; i++) s = s substr($i,1,length($i)-4) "\n"; print $2 " " $3 "\n" s}'
+nmap -p 443 192.168.1.0/24 | grep 'report\|open'
+nmap -p 443 192.168.1.0/24 | grep 'report\|open'
+nmap -v -Pn -p 1-100 --open localhost -oG -
+
+ping # conn
+tracert /   traceroute
+ipconfig / ifconfig # ip addr
+netstat # active conns
+nslookup # dns
+arp -a # mac addr
+net use / net view # networks
+nmap # scan ports
+whoami / hostname / systeminfo
+tcpdump / wireshark # trafic
+
+ip link show
+ip link show up
+ip -br link show
+ip addr show up
+ip a
+ip addr show docker0
+ip -s link show enp8s0
+ip route show
+
+# add a new IP address on your network interface
+sudo ip addr add 198.168.1.10/24 dev enp8s0
+ip addr show enp8s0
+sudo ip addr del 198.168.1.10/24 dev enp8s0
+ip addr show enp1s0
+
+# Enable or Disable Network Interfaces
+sudo ip link set dev enp8s0 down
+ip link show enp8s0
+sudo ip link set dev enp8s0 up
+ip link show enp8s0
+ip link show enp8s0
+sudo ip link set dev enp8s0 mtu 3000 # 3000 to transfer large data packets
+ip link show enp8s0
+
+#
+sudo iptables –A INPUT –s 192.168.0.27 –j ACCEPT
+
+# add rule Blocking IPs
+iptables -A INPUT -s 192.168.0.100 -j DROP
+iptables -I INPUT -p tcp --dport 881 -j REJECT
+# remove rule
+iptables -D INPUT -s 192.168.0.100 -j DROP
+iptables -D INPUT -p tcp --dport 881 -j DROP
+
+ip route show table local
+sudo iptables --list --line-numbers
+
+iptables -A INPUT -s static.106.155.12 -j DROP
+iptables -D INPUT -s static.106.155.12 -j DROP
+
+# add , remove or replace
+iptables --table filter --append INPUT --source 59.45.175.62 --jump DROP
+iptables --table filter --delete INPUT --source 59.45.175.62 --jump REJECT
+iptables --table filter --replace INPUT --source 59.45.175.62 --jump REJECT
+iptables --table filter --insert INPUT 1 --source 59.45.175.10 --jump ACCEPT
+iptables --append INPUT --protocol tcp --match multiport --dports 22,5901 --source 59.45.175.0/24 --jump DROP
+iptables --append INPUT --protocol tcp --match multiport ! --dports 22,80,443 --jump DROP
+iptables --append INPUT --jump REJECT --protocol icmp --icmp-type echo-request
+iptables -i eth1 -A INPUT -s 10.0.0.0/8 -j DROP
+iptables -i eth1 -A INPUT -s 10.0.0.0/8 -j LOG --log-prefix "IP DROP SPOOF A:"
+
+# view blocked addr
+iptables -L -v
+iptables -L INPUT -v
+iptables -L INPUT -v -n
+iptables -L INPUT -v -n | grep 1.2.3.4
+
+#del rule
+iptables -L INPUT -n --line-numbers
+iptables -L INPUT -n --line-numbers | grep 1.2.3.4
+iptables -D INPUT 3
+
+iptables -A INPUT -m iprange --src-range 2xx.3x.1xx.125-2xx.3x.1xx.225 -j DROP
+ufw deny from 192.168.0.100
+nft add rule inet filter input ip saddr 192.168.0.0/24 drop
+apt-get update -y && apt-get install iptables-persistent -y
+netfilter-persistent save
+
+ACCEPT
+DROP
+QUEUE
+RETURN
+
+https://github.com/sebres/PoC/blob/master/FW.IDS-DROP-vs-REJECT/README.md
+https://www.linuxtopia.org/Linux_Firewall_iptables/x4550.html
+https://sudamtm.medium.com/iptables-a-comprehensive-guide-276b8604eff1
+https://www.ionos.de/digitalguide/server/tools/iptables-tutorial-regelwerk-fuer-datenpakete-erstellen/
+https://www.cyberciti.biz/faq/linux-iptables-drop/
+https://askubuntu.com/questions/246343/what-is-the-virbr0-interface-used-for
+https://docs.vultr.com/how-to-use-the-linux-ip-command-to-manage-server-network-interfaces
+https://ipgeolocation.io/browse/ip/106.155.12.0
+
+hostname
+nmap --reason hostname -p881-885
+nmap localhost -p11-2985
+
+netstat -g
+netstat -p
+netstat -l
+sudo netstat -tulnp
+sudo lsof -i :443
+sudo ss -tulnp
+netstat -lan | head -n30
+netstat | head -n30
+netstat -tup
+
+
+
+The virbr0, or "Virtual Bridge 0" interface is used for NAT (Network Address Translation). It is provided by the libvirt library, and virtual environments sometimes use it to connect to the outside network.
+
+It was likely bundles with a VM software you installed at some point. If you'd like to remove it, and you're sure nothing else depends on it, you can use the following command:
+
+sudo brctl delbr virbr0
+sudo ip link set dev virbr0 down
