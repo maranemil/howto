@@ -1,0 +1,273 @@
+#########################################
+ SQLite with .NET
+#########################################
+
+To use SQLite with .NET, you can leverage the System.Data.SQLite or Microsoft.Data.Sqlite libraries. Below is a concise guide to get you started:
+
+1. Install the SQLite NuGet Package
+
+Run the following command in your project directory to install the SQLite library:
+
+Code kopieren
+dotnet add package Microsoft.Data.Sqlite
+
+2. Basic Example: Create and Query a SQLite Database
+
+Here’s a simple example of creating a database, a table, inserting data, and querying it:
+
+Code kopieren
+using Microsoft.Data.Sqlite;
+
+class Program
+{
+    static void Main()
+    {
+        string connectionString = "Data Source=sample.db";
+
+        // Create a connection
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+
+            // Create a table
+            var createTableCmd = connection.CreateCommand();
+            createTableCmd.CommandText = @"
+                CREATE TABLE IF NOT EXISTS Users (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Name TEXT NOT NULL,
+                    Age INTEGER NOT NULL
+                );";
+            createTableCmd.ExecuteNonQuery();
+
+            // Insert data
+            var insertCmd = connection.CreateCommand();
+            insertCmd.CommandText = @"
+                INSERT INTO Users (Name, Age)
+                VALUES ('Alice', 30), ('Bob', 25);";
+            insertCmd.ExecuteNonQuery();
+
+            // Query data
+            var selectCmd = connection.CreateCommand();
+            selectCmd.CommandText = "SELECT * FROM Users;";
+            using (var reader = selectCmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    Console.WriteLine($"Id: {reader.GetInt32(0)}, Name: {reader.GetString(1)}, Age: {reader.GetInt32(2)}");
+                }
+            }
+        }
+    }
+}
+
+3. Key Notes
+Database File: The Data Source=sample.db creates a file named sample.db in the working directory. You can specify a full path if needed.
+Error Handling: Wrap database operations in try-catch blocks for better error management.
+Entity Framework Core: For more complex scenarios, consider using EF Core with SQLite for ORM capabilities.
+
+Let me know if you'd like an example with Entity Framework Core or more advanced SQLite features! 😊
+
+
+
+https://github.com/praeclarum/sqlite-net
+https://learn.microsoft.com/de-de/dotnet/standard/data/sqlite/?tabs=net-cli
+https://www.sqlitetutorial.net/sqlite-csharp/connect/
+https://bodo-schoenfeld.de/c-net-6-und-sqlite/
+https://www.c-sharpcorner.com/article/sqlite-database-with-net-example/
+https://jasonwatmore.com/post/2022/09/05/net-6-connect-to-sqlite-database-with-entity-framework-core
+
+
+#########################################
+examples
+#########################################
+
+
+Certainly! Here's a simple example in C# to demonstrate a basic concept. Let me know what you'd like to focus on, and I can tailor the example further.
+
+Example: Hello World Program
+Code kopieren
+using System;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Console.WriteLine("Hello, World!");
+    }
+}
+
+Example: Basic Calculator
+Code kopieren
+using System;
+
+class Calculator
+{
+    static void Main(string[] args)
+    {
+        Console.WriteLine("Enter first number:");
+        double num1 = Convert.ToDouble(Console.ReadLine());
+
+        Console.WriteLine("Enter second number:");
+        double num2 = Convert.ToDouble(Console.ReadLine());
+
+        Console.WriteLine("Choose an operation (+, -, *, /):");
+        char operation = Console.ReadLine()[0];
+
+        double result = operation switch
+        {
+            '+' => num1 + num2,
+            '-' => num1 - num2,
+            '*' => num1 * num2,
+            '/' => num2 != 0 ? num1 / num2 : double.NaN,
+            _ => double.NaN
+        };
+
+        Console.WriteLine($"Result: {result}");
+    }
+}
+
+Example: Simple Class with Properties
+Code kopieren
+using System;
+
+class Person
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
+
+    public void Introduce()
+    {
+        Console.WriteLine($"Hi, my name is {Name} and I am {Age} years old.");
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Person person = new Person { Name = "Alice", Age = 30 };
+        person.Introduce();
+    }
+}
+
+
+Let me know if you'd like to explore a specific topic like LINQ, async/await, or something else!
+
+
+-----------------
+#########################################
+using csharp 
+#########################################
+
+https://learn.microsoft.com/de-de/dotnet/csharp/language-reference/statements/using
+
+
+var numbers = new List<int>();
+using (StreamReader reader = File.OpenText("numbers.txt"))
+{
+    string line;
+    while ((line = reader.ReadLine()) is not null)
+    {
+        if (int.TryParse(line, out int number))
+        {
+            numbers.Add(number);
+        }
+    }
+}
+
+
+await using (var resource = new AsyncDisposableExample())
+{
+    // Use the resource
+}
+
+static IEnumerable<int> LoadNumbers(string filePath)
+{
+    using StreamReader reader = File.OpenText(filePath);
+    
+    var numbers = new List<int>();
+    string line;
+    while ((line = reader.ReadLine()) is not null)
+    {
+        if (int.TryParse(line, out int number))
+        {
+            numbers.Add(number);
+        }
+    }
+    return numbers;
+}
+
+
+using (StreamReader numbersFile = File.OpenText("numbers.txt"), wordsFile = File.OpenText("words.txt"))
+{
+    // Process both files
+}
+
+
+
+
+##############################################################
+SqliteConnection
+##############################################################
+
+https://learn.microsoft.com/de-de/dotnet/standard/data/sqlite/?tabs=net-cli
+https://www.sqlitetutorial.net/sqlite-csharp/connect/
+https://bodo-schoenfeld.de/c-net-6-und-sqlite/
+https://www.c-sharpcorner.com/article/sqlite-database-with-net-example/
+https://jasonwatmore.com/post/2022/09/05/net-6-connect-to-sqlite-database-with-entity-framework-core
+
+
+dotnet add package Microsoft.Data.Sqlite
+
+
+using System;
+using System.Data.SQLite;
+
+using (var connection = new SqliteConnection("Data Source=hello.db"))
+{
+    connection.Open();
+
+    var command = connection.CreateCommand();
+    command.CommandText =
+    @"
+        SELECT name
+        FROM user
+        WHERE id = $id
+    ";
+    command.Parameters.AddWithValue("$id", id);
+
+    using (var reader = command.ExecuteReader())
+    {
+        while (reader.Read())
+        {
+            var name = reader.GetString(0);
+
+            Console.WriteLine($"Hello, {name}!");
+        }
+    }
+}
+
+
+using Microsoft.Data.Sqlite;
+
+namespace SQLiteExample
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            var connectionStringBuilder = new SqliteConnectionStringBuilder 
+            {
+                Mode = SqliteOpenMode.ReadWriteCreate,
+                DataSource = documentsPath + "\\" + "test.sqlite"
+            };
+            var connectionString = connectionStringBuilder.ToString();
+
+            SqliteConnection connection = new SqliteConnection(connectionString);
+
+            connection.Open();
+        }
+    }
+}
