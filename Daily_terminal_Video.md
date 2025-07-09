@@ -329,6 +329,31 @@ xrandr -s 2560x1600
 
 xrandr --output eDP-1 --brightness 0.7
 xrandr --output DP-2 --brightness 0.7
+
+
+xrandr --current --verbose
+xrandr --listmonitors
+xrandr -q | grep connected
+
+xrandr --output eDP-1 --brightness 0.9
+xrandr --output eDP-1 --gamma 0.5:1.0:1.0
+xrandr --output eDP-1 --gamma 0.8:0.8:0.8
+xrandr --output eDP-1 --brightness 1.02:1.02:1.02 --gamma 1.18:1.18:1.18
+xrandr --output eDP-1 --brightness 1:1:1 --gamma 1:1:1
+xrandr --output eDP-1 --auto
+xrandr --output eDP-1 --brightness .5
+xrandr --output eDP-1 --gamma .5:.5:.5
+xrandr --output eDP-1 --gamma 0.3:0.3:0.3
+xrandr --output eDP-1 --gamma 0.9
+
+xrandr --output eDP-1 --gamma 0.8:0.8:0.8
+xrandr --output eDP-1 --gamma 0.8:0.8:1.1
+
+xgamma -gamma 0.8
+xgamma -gamma 0.3
+
+https://wiki.archlinux.org/title/Xrandr
+
 ```
 
 ### mp4 cut crop 
