@@ -146,3 +146,12 @@ git config --global push.recurseSubmodules on-demand
 /data/*
 !/data/myfolder
 ```
+
+
+### ubuntu alarm 
+```
+sleep 900 && notify-send "back to work"  # a long, 15-minute break
+sleep 16m ; mpg123 wake_up.mp3
+sleep 1m 30s && notify-send "back to work"   
+sleep 20m && touch alarm.txt && echo $(date +%s) >> alarm.txt && gedit  alarm.txt
+```

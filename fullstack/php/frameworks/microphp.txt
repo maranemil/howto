@@ -1,0 +1,78 @@
+###################################
+Micro PHP Framework
+###################################
+
+Key Features
+
+Router: Micro PHP provides a robust routing system that allows you to define routes and handle HTTP requests efficiently
+Dependency Injection: The framework includes an injector for managing dependencies, making it easier to maintain and test your code
+Twig Support: Micro PHP integrates with Twig, a popular templating engine, to render views and templates
+Middleware: The framework supports middleware for handling cross-cutting concerns such as authentication and CSRF protection
+Extensions: Micro PHP offers various extensions for flash messages, form validation, and more
+
+
+composer create-project micro/micro {directory} --remove-vcs
+cd {directory}
+php -S localhost:10000 -t public/
+
+
+<?php
+require __DIR__ . '/../vendor/autoload.php';
+
+session_start();
+
+$settings = [
+'base' => 'http://localhost:8080/',
+'templates' => __DIR__ . '/../templates',
+'db' => [
+'driver' => 'mysql',
+'host' => 'localhost',
+'database' => 'blog',
+'username' => 'root',
+'password' => '',
+'charset' => 'utf8',
+'collation' => 'utf8_unicode_ci',
+'prefix' => '',
+]
+];
+
+$app = new \MicroPHP\App($settings);
+$router = $app->router;
+
+// Define routes
+$router->get('/', 'HomeController:index')->setName('home');
+$router->group('/auth', function () {
+$this->get('/signup', 'AuthController:getSignup')->setName('auth.signup');
+$this->post('/signup', 'AuthController:postSignup');
+$this->get('/signin', 'AuthController:getSignin')->setName('auth.signin');
+$this->post('/signin', 'AuthController:postSignin');
+$this->get('/signout', 'AuthController:getSignout')->setName('auth.signout');
+});
+
+$router->group('/posts', function () {
+$this->get('', 'PostController:index')->setName('posts.index');
+$this->get('/create', 'PostController:getCreate')->setName('posts.create')->add('AuthMiddleware');
+$this->post('/create', 'PostController:postCreate');
+$this->post('/delete', 'PostController:deletePost')->setName('posts.delete');
+});
+
+$router->get('.*', function ($route) {
+$route->router->go('home');
+});
+
+$router
+->add($injector->get('CheckCsrfMiddleware'))
+->add($injector->get('CsrfMiddleware'));
+
+$app->run();
+This example demonstrates how to set up routes, handle dependencies, and use middleware in a Micro PHP application
+
+Conclusion
+
+Micro PHP is a powerful and flexible framework for building web applications with PHP. 
+Its lightweight nature and support for modern features make it an excellent choice 
+for developers looking to create scalable and maintainable applications
+
+
+
+https://github.com/Micro-PHP

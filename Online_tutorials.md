@@ -703,3 +703,38 @@
 | https://www.youtube.com/watch?v=L94WBLL0KjY  | Build Anything with MCP Agents                              | 
 | https://www.youtube.com/watch?v=WLvQCIUWebs  | 5 simple AI Agent                                           | 
 | https://www.youtube.com/watch?v=b7oUQJc-P5Y  | Intro to Agent Mode in Visual Studio                        | 
+
+
+#
+### csharp playlists
+
+ -https://www.youtube.com/watch?v=67oWw9TanOk&list=PL82C6-O4XrHfoN_Y4MwGvJz5BntiL0z0D
+- https://www.youtube.com/watch?v=lgUIx75fJ_E&list=PLFgjYYTq6xyhtVK6VzLiFe3pmBu-XSNlX
+- https://www.youtube.com/watch?v=2pquQMSYk6c&list=PL4LFuHwItvKbneXxSutjeyz6i1w32K6di
+- https://www.youtube.com/watch?v=4oxS33D9-T4&list=PLm9GTh6TKrHOW8-eWabg6ETm95ajMid3b
+- https://www.youtube.com/watch?v=gfkTfcpWqAY&list=PLTjRvDozrdlz3_FPXwb6lX_HoGXa09Yef
+- https://www.youtube.com/watch?v=MqGM70ljpq8&list=PLyJiOytEPs4eQUuzs3PhM_7yU63jdibtf
+- https://www.youtube.com/watch?v=lgUIx75fJ_E&list=PLFgjYYTq6xyhtVK6VzLiFe3pmBu-XSNlX
+- https://www.youtube.com/watch?v=tFCZw-wZVtg&list=PLdo4fOcmZ0oWUrumb503vY3v6O3u3P4rW
+- https://www.youtube.com/watch?v=UKaZ2S4AJAA&list=PLwhVruPHD9ryEt8bmSbzPXMW27FjGhlJJ
+- https://www.youtube.com/watch?v=9THmGiSPjBQ&list=PLdo4fOcmZ0oULFjxrOagaERVAMbmG20Xe
+
+#
+### csharp 
+
+- https://www.youtube.com/watch?v=wxznTygnRfQ
+- https://www.youtube.com/watch?v=EazrhHMySQw
+- https://www.youtube.com/watch?v=AhAxLiGC7Pc
+- https://www.youtube.com/watch?v=0zLZQesgV5o
+- https://www.youtube.com/watch?v=F2FmTdLtb_4
+- https://www.youtube.com/watch?v=8hly31xKli0
+- https://www.youtube.com/watch?v=8jLOx1hD3_o
+- https://www.youtube.com/watch?v=gfmRrPjnEw4
+- https://www.youtube.com/watch?v=FsARbeqMrtw
+- https://www.youtube.com/watch?v=6rDGCwBdQs0
+- https://www.youtube.com/watch?v=gfkTfcpWqAY
+- https://www.youtube.com/watch?v=GhQdlIFylQ8
+- https://www.youtube.com/watch?v=FqCHwSH56PA
+- https://www.youtube.com/watch?v=GlGpSQsS8uc
+- https://www.youtube.com/watch?v=0QUgvfuKvWU
+- https://www.youtube.com/watch?v=-Jyj4xlwss8

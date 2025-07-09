@@ -1,0 +1,351 @@
+
+
+###############################################################
+C# (C Sharp) CRUD Rest API using .NET 7, ASP.NET, Entity Framework, Postgres, Docker and Docker Compose
+###############################################################
+
+https://dev.to/francescoxx/c-c-sharp-crud-rest-api-using-net-7-aspnet-entity-framework-postgres-docker-and-docker-compose-493a
+https://www.youtube.com/watch?v=PY6uD1fgzZA
+
+
+dotnet new webapi -n csharp-crud-api
+cd csharp-crud-api
+
+dotnet add package Microsoft.EntityFrameworkCore.Design
+dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL
+code .
+dotnet run --urls=http://localhost:5000
+http://localhost:5000/weatherforecast
+
+
+appsettings.json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=db;Port=5432;Database=postgres;Username=postgres;Password=postgres"
+  }
+}
+
+User.cs
+
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Models
+{
+    [Table("users")]
+    public class User
+    {
+        [Column("id")]
+        public int Id { get; set; }
+
+        [Column("name")]
+        public string Name { get; set; }
+
+        [Column("email")]
+        public string Email { get; set; }
+    }
+}
+
+UserContext.cs
+using Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace Data
+{
+    public class UserContext : DbContext
+    {
+        public UserContext(DbContextOptions<UserContext> options) : base(options)
+        {
+        }
+
+        public DbSet<User> Users { get; set; }
+    }
+}
+
+UserscController.cs
+using Data;
+using Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+namespace csharp_crud_api.Controllers;
+
+
+[ApiController]
+[Route("api/[controller]")]
+public class UsersController : ControllerBase
+{
+  private readonly UserContext _context;
+
+  public UsersController(UserContext context)
+  {
+    _context = context;
+  }
+
+  // GET: api/users
+  [HttpGet]
+  public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+  {
+    return await _context.Users.ToListAsync();
+  }
+
+  // GET: api/users/5
+  [HttpGet("{id}")]
+  public async Task<ActionResult<User>> GetUser(int id)
+  {
+    var user = await _context.Users.FindAsync(id);
+
+    if (user == null)
+    {
+      return NotFound();
+    }
+
+    return user;
+  }
+
+  // POST: api/users
+  [HttpPost]
+  public async Task<ActionResult<User>> PostUser(User user)
+  {
+    _context.Users.Add(user);
+    await _context.SaveChangesAsync();
+
+    return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
+  }
+
+  // PUT: api/users/5
+  [HttpPut("{id}")]
+  public async Task<IActionResult> PutUser(int id, User user)
+  {
+    if (id != user.Id)
+    {
+      return BadRequest();
+    }
+
+    _context.Entry(user).State = EntityState.Modified;
+
+    try
+    {
+      await _context.SaveChangesAsync();
+    }
+    catch (DbUpdateConcurrencyException)
+    {
+      if (!UserExists(id))
+      {
+        return NotFound();
+      }
+      else
+      {
+        throw;
+      }
+    }
+
+    return NoContent();
+  }
+
+  // DELETE: api/users/5
+  [HttpDelete("{id}")]
+  public async Task<IActionResult> DeleteUser(int id)
+  {
+    var user = await _context.Users.FindAsync(id);
+    if (user == null)
+    {
+      return NotFound();
+    }
+
+    _context.Users.Remove(user);
+    await _context.SaveChangesAsync();
+
+    return NoContent();
+  }
+
+  private bool UserExists(int id)
+  {
+    return _context.Users.Any(e => e.Id == id);
+  }
+
+  // dummy method to test the connection
+  [HttpGet("hello")]
+  public string Test()
+  {
+    return "Hello World!";
+  }
+}
+
+
+
+Program.cs
+using Data;
+using Microsoft.EntityFrameworkCore;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// Added configuration for PostgreSQL
+var configuration = builder.Configuration;
+builder.Services.AddDbContext<UserContext>(options =>
+    options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+app.UseAuthorization();
+app.MapControllers();
+app.Run();
+
+
+
+Dockerize the application
+
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /app
+
+COPY *.csproj ./
+RUN dotnet restore
+
+COPY . ./
+RUN dotnet publish -c Release -o out
+
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS runtime
+WORKDIR /app
+COPY --from=build /app/out ./
+
+ENTRYPOINT ["dotnet", "csharp-crud-api.dll"]
+
+
+docker-compose.yml
+version: '3'
+services:
+  csharp_app:
+    container_name: csharp_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=db;Database=postgres;Username=postgres;Password=postgres"
+  db:
+    container_name: db
+    image: postgres:12
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata: {}
+
+
+
+docker compose up -d db
+docker exec -it db psql -U postgres
+
+CREATE TABLE "users" (
+  "id" SERIAL PRIMARY KEY,
+  "name" VARCHAR(50) NOT NULL,
+  "email" VARCHAR(255) NOT NULL
+);
+
+docker compose build
+docker compose up csharp_app
+
+
+POST request to localhost:8080/api/users
+GET request to localhost:8000/api/users
+GET request to localhost:8000/api/users/1
+PUT request to localhost:8000/api/users/2
+DELETE request to localhost:8000/api/users/1
+
+
+
+###############################################################
+ASP.NET Core Basics: Build a Complete CRUD Application with VS Code
+###############################################################
+https://www.telerik.com/blogs/aspnet-core-basics-build-complete-crud-application-vs-code
+
+
+dotnet tool install --global dotnet-ef
+dotnet tool install -g dotnet-aspnet-codegenerator
+dotnet new mvc -o TodoApp
+
+
+Todo.cs
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
+namespace TodoApp.Models;
+
+public class Todo {
+    public Guid Id { get; set; }
+
+    [DisplayName("Title")]
+    [Required(ErrorMessage = "Title is required")]
+    public string? Title { get; set; }
+
+    [DisplayName("Completed")]
+    public bool Done { get; set; }
+
+    [DisplayName("Created At")]
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+    [DisplayName("Last Update")]
+    public DateTime LastUpdate { get; set; } = DateTime.Now;
+}
+
+
+# Generating the New Controller and CRUD Functions
+dotnet-aspnet-codegenerator controller -name TodoController -dc ApplicationDbContext -m Todo --useDefaultLayout -sqlite --referenceScriptLibraries
+
+dotnet ef migrations add InitialModel
+dotnet ef database update
+
+Create.cshtml and Edit.cshtml:
+<div class="form-group">
+      <label asp-for="CreatedAt" class="control-label"></label>
+      <input asp-for="CreatedAt" class="form-control" />
+      <span asp-validation-for="CreatedAt" class="text-danger"></span>
+ </div>
+      <div class="form-group">
+      <label asp-for="LastUpdate" class="control-label"></label>
+      <input asp-for="LastUpdate" class="form-control" />
+      <span asp-validation-for="LastUpdate" class="text-danger"></span>
+</div>
+
+
+
+dotnet run
+http://localhost:[PORT]/Todo
+
+------------------------------
+
+https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/crud?view=aspnetcore-9.0
+https://www.c-sharpcorner.com/article/crud-operations-in-windows-applications-using-c-sharp/
+https://www.geeksforgeeks.org/c-sharp/basic-crud-create-read-update-delete-in-asp-net-mvc-using-c-sharp-and-entity-framework/
+https://www.c-sharpcorner.com/article/create-read-update-and-delete-crud-with-asp-net-core/
+https://www.simplilearn.com/tutorials/asp-dot-net-tutorial/crud-operation-in-mvc-asp-net
+https://positiwise.com/blog/web-api-for-crud-operations-in-net-6
+https://github.com/topics/crud-application?l=c%23&utf8=%E2%9C%93
