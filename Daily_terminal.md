@@ -966,6 +966,8 @@ taskset -c 0,1 google-chrome --lang=en-US,en --disable-translate --disable-dev-s
 
 taskset -c 0,1 google-chrome --lang=en-US,en --disable-translate --disable-dev-shm-usage --block-new-web-contents --no-experiments --disable-default-apps --disable-notifications --new-window --log-level=1 --no-ping --disable-background-processes --disable-picture-in-picture --process-per-tab --purge-memory-button
 
+taskset -c 0,1 google-chrome --lang=en-US,en --disable-translate --disable-dev-shm-usage --block-new-web-contents --no-experiments --disable-default-apps --disable-notifications --new-window --log-level=1 --no-ping --disable-background-processes --disable-picture-in-picture --process-per-tab --purge-memory-button  --disable-features=UseEcoQoSForBackgroundProcess --disable-histogram-customizer --disable-in-process-stack-traces --disable-low-end-device-mode --disable-low-res-tiling --disable-print-preview  --disable-breakpad --noerrdialogs --use-fake-device-for-media-stream --disable-features=StreamScripting  --disable-remote-fonts  --new-window --aggressive-cache-discard --disable-notifications --disable-remote-fonts --disable-reading-from-canvas --disable-remote-playback-api --disable-shared-workers --disable-voice-input --enable-aggressive-domstorage-flushing
+
 
 
 --disable-extensions
@@ -973,6 +975,18 @@ taskset -c 0,1 google-chrome --lang=en-US,en --disable-translate --disable-dev-s
 --disable-sync
 --disable-software-rasterizer
 --disable-site-isolation-trials
+
+--js-flags="--max_old_space_size=80 --max_semi_space_size=80"
+--single-process
+--aggressive-tab-discard
+--aggressive-cache-discard
+--ui-compositor-memory-limit-when-visible-mb
+--disk-cache-dir  # Use a specific disk cache location, rather than one derived from the UserDatadir.
+--disk-cache-size  # Forces the maximum disk space to be used by the disk cache, in bytes.
+--force-gpu-mem-available-mb  # Sets the total amount of memory that may be allocated for GPU resources
+--gpu-program-cache-size-kb  # Sets the maximum size of the in-memory gpu program cache, in kb
+--mem-pressure-system-reserved-kb  # Some platforms typically have very little 'free' memory, but plenty is available in buffers+cached. For such platforms, configure this amount as the portion of buffers+cached memory that should be treated as unavailable. If this switch is not used, a simple pressure heuristic based purely on free memory will be used.
+--renderer-process-limit  # Overrides the default/calculated limit to the number of renderer processes. Very high values for this setting can lead to high memory/resource usage or instability.
 
 
 # https://peter.sh/experiments/chromium-command-line-switches/
@@ -1060,4 +1074,105 @@ stat -c %w /
 stat --format=%w /
 stat /
 dumpe2fs /dev/sda1 | grep 'Filesystem created:'
+~~~
+
+
+### ulimit linux  
+
+~~~
+https://unix.stackexchange.com/questions/560064/chromium-browser-exceed-data-ulimit
+https://phoenixnap.com/kb/ulimit-linux-command
+https://stackoverflow.com/questions/14844304/how-to-limit-google-chrome-from-consuming-all-available-memory-while-uploading-l
+https://unix.stackexchange.com/questions/749840/is-there-a-way-to-set-a-hard-cap-limit-on-how-much-ram-chrome-can-use
+https://superuser.com/questions/48505/how-to-find-virtual-memory-size-and-cache-size-of-a-linux-system
+
+
+ulimit -v 2192000 && chromium-browser && sleep 1
+
+# Display all current limits
+ulimit -a
+ulimit -Sa  # Soft Limit
+ulimit -Ha # Hard Limit
+
+# Set a maximum file size of 10MB
+ulimit -f 10240  # File size is in KB, so 10MB = 10 * 1024 KB
+
+# Display the maximum number of open files
+ulimit -n
+
+# limit the process number to 10:
+ulimit -u 10
+
+# sets the maximum file size that a user can make 50KB
+ulimit -f 50
+ls -lh file
+
+# Limit Maximum Virtual Memory to 1k
+ulimit -v 1000
+
+# Limit the Number of Open Files
+ulimit -n 5
+
+#  Limit Maximum Virtual Memory to 4.2GB
+ulimit -Sv 4352000000
+/usr/bin/chromium
+
+# or 0.42GB, it works but the browser may crash
+#ulimit -Sv 435200000 #0.42GB
+#/usr/bin/chromium
+
+# limits the resident set size of the process 1gb - no longer works
+ulimit -m 3000000
+
+# limits the amount of virtual memory 1gb
+ulimit -v  1000000
+
+#!/bin/sh
+ulimit -Sv 10240000 #amount of memory available in bytes 10gb
+/usr/bin/google-chrome-stable
+
+# Chrome Ulimit Limit 8GB
+ulimit -Sv 8192000; ulimit -Hv 8192000; google-chrome
+ulimit -n 4096
+
+# Chrome Ulimit Limit 8GB
+ulimit -Sv 8192000; ulimit -Hv 8192000; google-chrome & sleep 2
+PID=$(pgrep google-chrome)
+ps -o pid,rss,vsz -p $PID
+
+# Virtual memory
+ulimit -v 8192000 && google-chrome & sleep 1
+PID=$(pgrep google-chrome)
+ulimit -aH | grep "virtual memory"
+ulimit -aS | grep "virtual memory"
+cat /proc/$PID/limits | grep "Max address space"
+
+
+Virtual memory size Use swapon -s or free
+swapon -s
+free
+cat /proc/cpuinfo
+sudo dmidecode --type processor
+cat /proc/pal/cpu0/cache_info
+vmstat
+
+ulimit -a
+real-time non-blocking time  (microseconds, -R) unlimited
+core file size              (blocks, -c) 0
+data seg size               (kbytes, -d) unlimited
+scheduling priority                 (-e) 0
+file size                   (blocks, -f) unlimited
+pending signals                     (-i) 14608
+max locked memory           (kbytes, -l) 477992
+max memory size             (kbytes, -m) unlimited
+open files                          (-n) 1024
+pipe size                (512 bytes, -p) 8
+POSIX message queues         (bytes, -q) 819200
+real-time priority                  (-r) 0
+stack size                  (kbytes, -s) 8192
+cpu time                   (seconds, -t) unlimited
+max user processes                  (-u) 14608
+virtual memory              (kbytes, -v) unlimited
+file locks                          (-x) unlimited
+
 ~~~
