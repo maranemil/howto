@@ -1,0 +1,1565 @@
+
+#################################################
+Auflistungsklassen (Collections)
+#################################################
+
+Wozu dienen Auflistungsklassen?
+Wie wird eine ArrayList angewendet?
+Wie wird eine Hashtable angewendet?
+Was ist bei Verwendung der Elemente aus diesen Auflistungsklassen zu beachten?
+Welche Vorteile haben diese Auflistungsklassen gegenüber Arrays?
+
+
+System.Collections
+System.Collections.Specialized
+
+Collections im Namespace:
+	ArrayList
+	BitArray
+	CollectionsUtil
+	Hashtable
+	HybridDictionary
+	ListDictionary
+	NameValueCollection
+	SortedList
+	StringCollection
+	StringDictionary
+
+
+
+ArrayList liste = newArrayList();
+int index = liste.Add("Werner");
+
+ArrayList liste = newArrayList();
+int[] array = {0,10,22,9,45};
+liste.AddRange(array);
+
+
+https://beautifycode.net/csharp-formatter
+https://onecompiler.com/csharp/43pnpzkta
+
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace HelloWorld
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            ArrayList liste = new ArrayList() { "aaa", "bbb" };
+            PrintListe(liste);
+            liste.Remove("aaa");
+            Console.WriteLine("--- Element gelöscht ---");
+            PrintListe(liste);
+            //Console.ReadLine();
+			//ArrayList liste = new ArrayList();
+		   liste.Add("ccc");
+		   string[] arr =new string[10];
+		   liste.CopyTo(arr,3);
+		   liste.Sort();
+		   PrintListe(liste);
+        }
+
+        static void PrintListe(IList liste)
+        {
+            foreach (string item in liste)
+                Console.WriteLine("Index: {0,-3}{1}", liste.IndexOf(item), item);
+        }
+    }
+}
+
+
+--------------
+
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace HelloWorld
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            Demo[] arr = new Demo[] { new Demo { Value = 56 }, new Demo { Value = 3 } };
+
+            ArrayList liste = new ArrayList();
+            liste.AddRange(arr);
+            liste.Sort();
+
+            foreach (Demo item in liste)
+                Console.WriteLine("Index: {liste.IndexOf(item}/ Wert: {item.Value}");
+        }
+
+        public class Demo : IComparable
+        {
+            public int Value { get; set; }
+            public int CompareTo(object obj)
+            {
+                if (obj == null)
+                    return 1;
+                Demo demo = obj as Demo;
+                if (demo != null)
+                    return Value.CompareTo(demo.Value);
+                throw new ArgumentException("Objekt ist nicht vom Typ Demo");
+            }
+        }
+    }
+}
+
+--------------
+
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace HelloWorld
+{
+    public class Program
+    {
+        class Person
+        {
+            public string Name { get; set; }
+            public string City { get; set; }
+        }
+
+        static void Main(string[] args)
+        {
+            ArrayList arrList = new ArrayList();
+            // ArrayList füllen
+            arrList.Add(new Person() { Name = "mmmm", City = "bbbb" });
+            arrList.Add(new Person() { Name = "ssss", City = "ssss" });
+
+            // nach Cities sortieren
+            arrList.Sort(new CityComparer());
+            Console.WriteLine("Liste nach Wohnorten sortiert");
+            ShowSortedList(arrList);
+        }
+
+        static void ShowSortedList(IList liste)
+        {
+            foreach (Person temp in liste)
+            {
+                if (temp != null)
+                {
+                    Console.Write($"Name = {temp.Name, -12}");
+                    Console.WriteLine($"Wohnort = {temp.City}");
+                }
+            }
+            Console.WriteLine();
+        }
+
+        class CityComparer : IComparer
+        {
+            public int Compare(object x, object y)
+            {
+                if (x == null && y == null)
+                    return 0;
+                Person x1 = x as Person;
+                Person y1 = y as Person;
+
+                if (x1 == null && y1 != null)
+                    return -1;
+                if (x1 != null && y1 == null)
+                    return 1;
+
+                if (x1 == null || y1 == null)
+                    throw new InvalidCastException("Ungültiger Typ");
+
+                return x1.City.CompareTo(y1.City);
+            }
+        }
+    }
+}
+
+
+
+--------------
+
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace HelloWorld
+{
+    public class Program
+    {
+        class Person
+        {
+            public string Name { get; set; }
+            public string City { get; set; }
+        }
+
+        static void Main(string[] args)
+        {
+            Person[] pers = new Person[3];
+            pers[0] = new Person { Name = "xxxx", City = "cccc" };
+            pers[1] = new Person { Name = "yyyy", City = "xxxx" };
+            pers[2] = new Person { Name = "bbbb", City = "mmmmm" };
+
+            ArrayList liste = ArrayList.Adapter(pers); // Sortierung nach Namen
+
+            //liste.Sort(new NameComparer());
+            Console.WriteLine("Sortiert nach den Namen:");
+            for (int index = 0; index < 3; index++)
+                if (liste[index] != null)
+                    Console.WriteLine((liste[index] as Person).Name);
+
+            // Sortierung nach der City
+            Console.WriteLine("\nSortiert nach dem Wohnort:");
+            //liste.Sort(new CityComparer());
+            for (int index = 0; index < 3; index++)
+                if (liste[index] != null)
+                    Console.WriteLine((liste[index] as Person).City);
+            //Console.ReadLine();
+
+
+
+        }
+    }
+}
+
+
+###################
+Hashtable
+###################
+
+
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace HelloWorld
+{
+    public class Program
+    {
+        static void Main(string[] args)
+        {
+            Hashtable hash = new Hashtable();
+            Artikel artikel1 = new Artikel(101, "Wurst", 1.98);
+            hash.Add(artikel1.Bezeichner, artikel1);
+
+            foreach (string item in hash.Keys)
+                Console.WriteLine(item);
+				
+			foreach(Artikel item in hash.Values)
+              Console.WriteLine($"{item.Artikelnummer,-4}{item.Bezeichner,-12}{item.Preis}");
+			  
+			foreach(DictionaryEntry item in hash) {
+                Console.Write(item.Key);
+                //Console.WriteLine(" - {0}", item.Value);
+             }
+        }
+
+        class Artikel
+        {
+            public int Artikelnummer { get; set; }
+            public string Bezeichner { get; set; }
+            public double Preis { get; set; }
+            public Artikel(int artNummer, string bezeichner, double preis)
+            {
+                Artikelnummer = artNummer;
+                Bezeichner = bezeichner;
+                Preis = preis;
+            }
+        }
+    }
+}
+
+--------------------
+
+To search for a key in a hash table in C#, you can use the Dictionary<TKey, TValue> class, which is the most common implementation of a hash table in .NET. Here's an example of how to search for a key:
+
+Example 1: Basic Key Search
+Code kopieren
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        // Create a dictionary (hash table)
+        Dictionary<string, int> hashTable = new Dictionary<string, int>
+        {
+            { "apple", 1 },
+            { "banana", 2 },
+            { "cherry", 3 }
+        };
+
+        // Key to search for
+        string keyToSearch = "banana";
+
+        // Check if the key exists
+        if (hashTable.ContainsKey(keyToSearch))
+        {
+            Console.WriteLine($"Key '{keyToSearch}' found with value: {hashTable[keyToSearch]}");
+        }
+        else
+        {
+            Console.WriteLine($"Key '{keyToSearch}' not found.");
+        }
+    }
+}
+
+Example 2: Using TryGetValue for Efficient Search
+Code kopieren
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        Dictionary<string, int> hashTable = new Dictionary<string, int>
+        {
+            { "apple", 1 },
+            { "banana", 2 },
+            { "cherry", 3 }
+        };
+
+        string keyToSearch = "cherry";
+
+        // Try to get the value associated with the key
+        if (hashTable.TryGetValue(keyToSearch, out int value))
+        {
+            Console.WriteLine($"Key '{keyToSearch}' found with value: {value}");
+        }
+        else
+        {
+            Console.WriteLine($"Key '{keyToSearch}' not found.");
+        }
+    }
+}
+
+Example 3: Iterating Through Keys (Alternative Approach)
+Code kopieren
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        Dictionary<string, int> hashTable = new Dictionary<string, int>
+        {
+            { "apple", 1 },
+            { "banana", 2 },
+            { "cherry", 3 }
+        };
+
+        string keyToSearch = "apple";
+
+        // Iterate through keys
+        foreach (var key in hashTable.Keys)
+        {
+            if (key == keyToSearch)
+            {
+                Console.WriteLine($"Key '{keyToSearch}' found with value: {hashTable[key]}");
+                return;
+            }
+        }
+
+        Console.WriteLine($"Key '{keyToSearch}' not found.");
+    }
+}
+
+
+Each approach has its use case:
+
+ContainsKey: Simple and direct.
+TryGetValue: Efficient when you need both existence check and value retrieval.
+Iteration: Useful for custom logic but less efficient for large datasets.
+
+-------------------------
+
+namespace arraylist
+
+In C#, the ArrayList class is part of the System.Collections namespace. It is a non-generic collection that can store elements of any type. 
+However, it is generally recommended to use List<T> from the System.Collections.Generic namespace for type safety and better performance in modern C# applications.
+
+Here’s an example of how to use ArrayList:
+
+Code kopieren
+using System;
+using System.Collections;
+
+class Program
+{
+    static void Main()
+    {
+        // Create an ArrayList
+        ArrayList arrayList = new ArrayList();
+
+        // Add elements to the ArrayList
+        arrayList.Add(1);          // Integer
+        arrayList.Add("Hello");    // String
+        arrayList.Add(3.14);       // Double
+
+        // Access elements
+        Console.WriteLine("First element: " + arrayList[0]);
+        Console.WriteLine("Second element: " + arrayList[1]);
+        Console.WriteLine("Third element: " + arrayList[2]);
+
+        // Iterate through the ArrayList
+        Console.WriteLine("\nIterating through ArrayList:");
+        foreach (var item in arrayList)
+        {
+            Console.WriteLine(item);
+        }
+
+        // Remove an element
+        arrayList.Remove("Hello");
+        Console.WriteLine("\nAfter removing 'Hello':");
+        foreach (var item in arrayList)
+        {
+            Console.WriteLine(item);
+        }
+    }
+}
+
+Key Points:
+Namespace: ArrayList is in the System.Collections namespace.
+Dynamic Sizing: It automatically resizes as elements are added or removed.
+Boxing/Unboxing: Since it stores objects, value types are boxed, which can impact performance.
+Type Safety: It lacks type safety, so runtime errors may occur if type mismatches happen.
+
+For modern C# development, prefer List<T> for better performance and type safety.
+
+https://learn.microsoft.com/en-us/dotnet/api/system.collections.arraylist?view=net-9.0
+https://www.geeksforgeeks.org/c-sharp/arraylist-in-c-sharp/
+
+using System.Collections;
+ArrayList list_name = new ArrayList();
+
+------------------------------------------
+
+In C#, an ArrayList is a non-generic collection that can store elements of any type. It is part of the System.
+Collections namespace and is dynamically resizable, meaning you don't need to specify its size upfront. 
+However, it is generally recommended to use generic collections like List<T> for type safety and better performance.
+
+Here's an example of how to use an ArrayList in C#:
+
+Code kopieren
+using System;
+using System.Collections;
+
+class Program
+{
+    static void Main()
+    {
+        // Create an ArrayList
+        ArrayList arrayList = new ArrayList();
+
+        // Add elements of different types
+        arrayList.Add(42);          // Integer
+        arrayList.Add("Hello");     // String
+        arrayList.Add(3.14);        // Double
+        arrayList.Add(true);        // Boolean
+
+        // Access elements
+        Console.WriteLine("First element: " + arrayList[0]); // Output: 42
+
+        // Iterate through the ArrayList
+        Console.WriteLine("ArrayList contents:");
+        foreach (var item in arrayList)
+        {
+            Console.WriteLine(item);
+        }
+
+        // Remove an element
+        arrayList.Remove(42);
+
+        // Check the count
+        Console.WriteLine("Count after removal: " + arrayList.Count);
+    }
+}
+
+Key Points:
+Dynamic Resizing: The ArrayList automatically resizes itself as elements are added or removed.
+Boxing/Unboxing: Since ArrayList stores objects, value types are boxed when added and unboxed when retrieved, which can impact performance.
+Type Safety: It does not enforce type safety, so you need to handle type casting carefully.
+
+For modern C# development, consider using List<T> from System.Collections.Generic for better performance and type safety.
+
+-------------------------------
+
+ARRAYLIST 
+#############################################################################
+ArrayList "liste"
+#############################################################################
+
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace HelloWorld
+{
+    public class Program
+    {
+        static void Main(string[] args)
+        {
+            ArrayList My_array = new ArrayList();
+            My_array.Add(12.56);
+            My_array.Add(1234);
+            foreach (var elements in My_array)
+            {
+                Console.WriteLine(elements);
+            }
+        }
+    }
+}
+
+#############################################################################
+Welche Besonderheit bietet die ArrayList in Bezug auf den Datentyp der Elemente
+#############################################################################
+
+In C# bietet die ArrayList eine besondere Eigenschaft in Bezug auf den Datentyp der Elemente: Sie ist nicht typisiert. Das bedeutet, dass die ArrayList Elemente beliebigen Datentyps aufnehmen kann, da sie intern mit dem Typ object arbeitet. Hier sind die wichtigsten Punkte dazu:
+
+Flexibilität bei Datentypen:
+Eine ArrayList kann verschiedene Datentypen gleichzeitig speichern, z. B. int, string, double oder sogar benutzerdefinierte Objekte. Dies ist möglich, weil alle Datentypen in C# letztendlich von object erben.
+
+Code kopieren
+ArrayList arrayList = new ArrayList();
+arrayList.Add(42);          // int
+arrayList.Add("Hallo");     // string
+arrayList.Add(3.14);        // double
+
+
+Boxing und Unboxing:
+Da die ArrayList mit object arbeitet, werden Werttypen (z. B. int, double) beim Hinzufügen automatisch "geboxt" (in ein Objekt umgewandelt). Beim Abrufen der Elemente muss ein "Unboxing" erfolgen, was zusätzliche Rechenzeit und Speicherplatz benötigt.
+
+Code kopieren
+int zahl = (int)arrayList[0]; // Unboxing erforderlich
+
+
+Kein Typensicherheits-Check:
+Da die ArrayList nicht typisiert ist, gibt es zur Compile-Zeit keine Typprüfung. Dies kann zu Laufzeitfehlern führen, wenn ein falscher Typ abgerufen oder verarbeitet wird.
+
+Code kopieren
+string text = (string)arrayList[1]; // Funktioniert
+string fehler = (string)arrayList[0]; // Laufzeitfehler (InvalidCastException)
+
+Alternative: List<T>
+
+In modernen C#-Versionen wird die ArrayList kaum noch verwendet, da die generische List<T> bevorzugt wird. Diese ist typisiert, wodurch Typensicherheit und bessere Performance gewährleistet werden.
+
+Code kopieren
+List<int> intList = new List<int>();
+intList.Add(42); // Nur int-Werte erlaubt
+int zahl = intList[0]; // Kein Unboxing erforderlich
+
+Die ArrayList ist also vor allem für ältere Codebasen relevant, während List<T> die empfohlene Wahl für neue Projekte ist.
+
+############################################################
+Fügen Sie die 3 Elemente "Hallo Welt!", 100 und 3.14 der "liste" hinzu.
+############################################################
+
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace HelloWorld
+{
+    public class Program
+    {
+        static void Main(string[] args)
+        {
+          //  Elemente "Hallo Welt!", 100 und 3.14 der "liste" hinzu
+            ArrayList My_array = new ArrayList();
+            My_array.Add("Hallo Welt!");
+            My_array.Add(100);
+            My_array.Add(3.14);
+            foreach (var elements in My_array)
+            {
+                Console.WriteLine(elements);
+            }
+        }
+    }
+}
+
+############################################################
+Wie hoch ist die anfängliche Kapazität einer ArrayList?
+############################################################
+
+https://learn.microsoft.com/de-de/dotnet/api/system.collections.arraylist.capacity?view=net-8.0
+https://learn.microsoft.com/de-de/dotnet/api/system.collections.arraylist.capacity?view=net-8.0
+
+public virtual int Capacity { get; set; }
+
+In C# hat eine ArrayList standardmäßig eine anfängliche Kapazität von 0. 
+Sobald ein Element hinzugefügt wird, wird die Kapazität automatisch auf 4 erhöht. 
+Wenn die Anzahl der Elemente die aktuelle Kapazität überschreitet, wird die Kapazität verdoppelt, um Platz für neue Elemente zu schaffen.
+
+Falls du eine spezifische Kapazität festlegen möchtest, kannst du dies beim Erstellen der ArrayList tun:
+
+Code kopieren
+ArrayList arrayList = new ArrayList(10); // Startkapazität von 10
+
+Es ist jedoch wichtig zu beachten, dass die ArrayList in modernen C#-Projekten oft durch generische Typen wie List<T> ersetzt wird, da diese typsicherer und leistungsfähiger sind.
+
+############################################################
+was passiert beim Überschreiten der Kapazität?
+############################################################
+
+In C# wird bei einer ArrayList die Kapazität automatisch erhöht, wenn die aktuelle Kapazität überschritten wird. Das bedeutet, dass du dir keine Sorgen machen musst, dass Daten verloren gehen oder ein Fehler auftritt, wenn du mehr Elemente hinzufügst, als ursprünglich Platz vorhanden ist.
+
+Funktionsweise:
+Initiale Kapazität: Eine ArrayList hat eine anfängliche Kapazität, die standardmäßig auf 4 gesetzt ist (falls nicht anders angegeben).
+Automatische Vergrößerung: Wenn die Kapazität überschritten wird, verdoppelt die ArrayList ihre Kapazität intern. Dieser Prozess beinhaltet:
+Erstellen eines neuen internen Arrays mit der doppelten Größe.
+Kopieren der vorhandenen Elemente in das neue Array.
+Performance: Das Verdoppeln der Kapazität ist effizient, aber es kann zu einem kurzen Performance-Einbruch führen, wenn viele Elemente auf einmal hinzugefügt werden.
+
+Beispiel:
+
+using System;
+using System.Collections;
+
+class Program
+{
+    static void Main()
+    {
+        ArrayList arrayList = new ArrayList(); // Standardkapazität: 4
+
+        for (int i = 0; i < 10; i++) // Mehr als die anfängliche Kapazität
+        {
+            arrayList.Add(i);
+            Console.WriteLine($"Element hinzugefügt: {i}, Kapazität: {arrayList.Capacity}");
+        }
+    }
+}
+
+Ausgabe:
+Code kopieren
+Element hinzugefügt: 0, Kapazität: 4
+Element hinzugefügt: 1, Kapazität: 4
+Element hinzugefügt: 2, Kapazität: 4
+Element hinzugefügt: 3, Kapazität: 4
+Element hinzugefügt: 4, Kapazität: 8
+Element hinzugefügt: 5, Kapazität: 8
+...
+
+Fazit:
+
+Das Überschreiten der Kapazität ist kein Problem, da die ArrayList dynamisch wächst. Wenn du jedoch eine bessere Performance und Typsicherheit möchtest, solltest du stattdessen List<T> verwenden, da diese moderner und effizienter ist.
+
+############################################################
+ Anzahl Kapazität in der Konsole
+############################################################
+
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace HelloWorld
+{
+  class Program
+  {
+      static void Main()
+      {
+          ArrayList arrayList = new ArrayList(); // Standardkapazität: 4
+            for (int i = 0; i < 10; i++) // Mehr als die anfängliche Kapazität
+          {
+              arrayList.Add(i);
+              Console.WriteLine($"Element hinzugefügt: {i}, Kapazität: {arrayList.Capacity}");
+          }
+      }
+  }
+}
+
+
+Element hinzugefügt: 0, Kapazität: 4
+Element hinzugefügt: 1, Kapazität: 4
+Element hinzugefügt: 2, Kapazität: 4
+Element hinzugefügt: 3, Kapazität: 4
+Element hinzugefügt: 4, Kapazität: 8
+Element hinzugefügt: 5, Kapazität: 8
+Element hinzugefügt: 6, Kapazität: 8
+Element hinzugefügt: 7, Kapazität: 8
+Element hinzugefügt: 8, Kapazität: 16
+Element hinzugefügt: 9, Kapazität: 16
+
+############################################################
+ArrayList "liste" 
+############################################################
+
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace HelloWorld
+{
+  class Program
+  {
+      static void Main()
+      {
+        ArrayList My_array = new ArrayList();
+		My_array.Add(34);
+        My_array.Add(105);
+        My_array.Add('G');
+        My_array.Add(6);
+        My_array.Remove('G');
+   
+        foreach(var elements in My_array)
+        {
+            Console.WriteLine(elements);
+            Console.WriteLine($"Element hinzugefügt: {elements}, Kapazität: {My_array.Capacity}");
+        }
+      }
+  }
+}
+
+
+##############################
+HASHTABLE
+##############################
+
+Was unterscheidet eine Hashtable von einer ArayList?
+
+Eine Hashtable und eine ArrayList in C# sind zwei unterschiedliche Datentypen, die für verschiedene Zwecke verwendet werden. Hier sind die Hauptunterschiede:
+
+1. Datenstruktur und Organisation
+Hashtable:
+Eine Hashtable speichert Daten in Form von Schlüssel-Wert-Paaren.
+Sie verwendet Hashing, um die Daten effizient zu organisieren und schnellen Zugriff auf Werte basierend auf ihren Schlüsseln zu ermöglichen.
+Beispiel: Hashtable ht = new Hashtable(); ht["Key"] = "Value";
+ArrayList:
+Eine ArrayList ist eine Sammlung, die eine Liste von Objekten speichert.
+Sie organisiert die Daten in einer linearen Reihenfolge, ähnlich wie ein Array, aber mit dynamischer Größe.
+Beispiel: ArrayList list = new ArrayList(); list.Add("Value");
+
+
+2. Zugriff auf Elemente
+Hashtable:
+Zugriff erfolgt über den Schlüssel.
+Beispiel: var value = ht["Key"];
+ArrayList:
+Zugriff erfolgt über den Index.
+Beispiel: var value = list[0];
+
+
+3. Datentypen
+Hashtable:
+Unterstützt heterogene Daten (beliebige Kombination von Schlüsseln und Werten).
+Sowohl Schlüssel als auch Werte können beliebige Objekte sein.
+ArrayList:
+Unterstützt ebenfalls heterogene Daten, da sie Objekte speichert.
+Allerdings ist sie eher für eine Liste von ähnlichen Objekten geeignet.
+
+
+4. Leistung
+Hashtable:
+Bietet schnellen Zugriff auf Elemente durch Hashing (O(1) im besten Fall).
+Die Leistung hängt von der Qualität der Hash-Funktion ab.
+ArrayList:
+Zugriff auf Elemente erfolgt linear (O(n) im schlechtesten Fall), wenn man nach einem bestimmten Wert sucht.
+Direkter Zugriff über den Index ist jedoch O(1).
+
+
+5. Verwendung
+Hashtable:
+Wird verwendet, wenn man Schlüssel-Wert-Paare speichern und schnell darauf zugreifen möchte.
+Beispiel: Wörterbücher, Zuordnungen.
+ArrayList:
+Wird verwendet, wenn man eine dynamische Liste von Elementen benötigt, die sich in der Größe ändern kann.
+Beispiel: Listen von Objekten, die häufig hinzugefügt oder entfernt werden.
+
+Fazit:
+Verwende Hashtable, wenn du Schlüssel-Wert-Paare benötigst.
+Verwende ArrayList, wenn du eine einfache, dynamische Liste von Elementen benötigst.
+Für moderne Anwendungen in C# wird jedoch oft empfohlen, Dictionary<TKey, TValue> (statt Hashtable) und List<T> (statt ArrayList) zu verwenden, da sie typsicher und leistungsfähiger sind.
+
+##################################################################
+Was ist beim Schlüssel im Unterschied zum Wert zu beachten?
+##################################################################
+c# schlüssel wert pairs
+
+In C#, Schlüssel-Wert-Paare (Key-Value Pairs) werden häufig mit der Dictionary<TKey, TValue>-Klasse implementiert. Diese Datenstruktur ermöglicht es, Werte anhand eines eindeutigen Schlüssels effizient zu speichern und abzurufen.
+
+Hier ist ein einfaches Beispiel:
+
+Code kopieren
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        // Dictionary erstellen
+        Dictionary<int, string> dictionary = new Dictionary<int, string>();
+
+        // Schlüssel-Wert-Paare hinzufügen
+        dictionary.Add(1, "Apfel");
+        dictionary.Add(2, "Banane");
+        dictionary.Add(3, "Kirsche");
+
+        // Zugriff auf Werte über Schlüssel
+        Console.WriteLine("Schlüssel 1: " + dictionary[1]); // Ausgabe: Apfel
+
+        // Iteration über alle Schlüssel-Wert-Paare
+        foreach (KeyValuePair<int, string> pair in dictionary)
+        {
+            Console.WriteLine($"Schlüssel: {pair.Key}, Wert: {pair.Value}");
+        }
+
+        // Überprüfung, ob ein Schlüssel existiert
+        if (dictionary.ContainsKey(2))
+        {
+            Console.WriteLine("Schlüssel 2 existiert.");
+        }
+
+        // Entfernen eines Paares
+        dictionary.Remove(3);
+    }
+}
+
+Wichtige Methoden und Eigenschaften:
+Add(key, value): Fügt ein neues Schlüssel-Wert-Paar hinzu.
+ContainsKey(key): Prüft, ob ein Schlüssel existiert.
+Remove(key): Entfernt ein Paar anhand des Schlüssels.
+TryGetValue(key, out value): Versucht, den Wert für einen Schlüssel zu erhalten, ohne eine Ausnahme auszulösen.
+Keys und Values: Gibt alle Schlüssel bzw. Werte zurück.
+
+Diese Struktur ist ideal, wenn Sie Daten mit einer eindeutigen Zuordnung speichern und schnell darauf zugreifen möchten.
+
+#######################################################
+Hashtable "colors"
+#######################################################
+
+Here’s a simple example of using a Hashtable in C#:
+
+Code kopieren
+using System;
+using System.Collections;
+
+class Program
+{
+    static void Main()
+    {
+        // Create a Hashtable
+        Hashtable hashtable = new Hashtable();
+
+        // Add key-value pairs to the Hashtable
+        hashtable.Add("ID", 101);
+        hashtable.Add("Name", "Alice");
+        hashtable.Add("Age", 25);
+        hashtable.Add("Country", "Germany");
+
+        // Access values using keys
+        Console.WriteLine("ID: " + hashtable["ID"]);
+        Console.WriteLine("Name: " + hashtable["Name"]);
+        Console.WriteLine("Age: " + hashtable["Age"]);
+        Console.WriteLine("Country: " + hashtable["Country"]);
+
+        // Iterate through the Hashtable
+        Console.WriteLine("\nIterating through Hashtable:");
+        foreach (DictionaryEntry entry in hashtable)
+        {
+            Console.WriteLine($"{entry.Key}: {entry.Value}");
+        }
+
+        // Check if a key exists
+        if (hashtable.ContainsKey("Age"))
+        {
+            Console.WriteLine("\nKey 'Age' exists in the Hashtable.");
+        }
+
+        // Remove an entry
+        hashtable.Remove("Country");
+        Console.WriteLine("\nAfter removing 'Country':");
+        foreach (DictionaryEntry entry in hashtable)
+        {
+            Console.WriteLine($"{entry.Key}: {entry.Value}");
+        }
+    }
+}
+
+Explanation:
+Creating a Hashtable: The Hashtable class is part of the System.Collections namespace.
+Adding Key-Value Pairs: Use the Add method to insert elements.
+Accessing Values: Retrieve values using their corresponding keys.
+Iterating: Use a foreach loop with DictionaryEntry to iterate through the key-value pairs.
+Checking Keys: Use ContainsKey to check if a specific key exists.
+Removing Entries: Use the Remove method to delete a key-value pair.
+
+This example demonstrates the basic operations you can perform with a Hashtable. Note that Hashtable is not type-safe, so you might want to consider using Dictionary<TKey, TValue> for type safety in modern C#.
+
+
+---------
+
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace HelloWorld
+{
+  class Program
+  {
+      static void Main()
+      {
+        // Create a Hashtable
+        Hashtable hashtable = new Hashtable();
+        // Add key-value pairs to the Hashtable
+        hashtable.Add("1", "blau");
+        hashtable.Add("2", "rot");
+        hashtable.Add("3", "grün");
+        // Access values using keys
+        Console.WriteLine("1: " + hashtable["1"]);
+        Console.WriteLine("2: " + hashtable["2"]);
+        Console.WriteLine("3: " + hashtable["3"]);
+      }
+  }
+}
+
+
+#########################################################################
+Hashtable "tiere" 
+#########################################################################
+
+In C#, you can use the Count property of a Hashtable to determine the number of elements it contains. Here's an example:
+
+using System;
+using System.Collections;
+
+class Program
+{
+    static void Main()
+    {
+        // Create a Hashtable and add some key-value pairs
+        Hashtable hashtable = new Hashtable();
+        hashtable.Add("Key1", "Value1");
+        hashtable.Add("Key2", "Value2");
+        hashtable.Add("Key3", "Value3");
+
+        // Get the count of elements
+        int count = hashtable.Count;
+
+        // Print the count
+        Console.WriteLine($"The Hashtable contains {count} elements.");
+    }
+}
+
+Output:
+Code kopieren
+The Hashtable contains 3 elements.
+
+
+The Count property is straightforward and provides the total number of key-value pairs in the Hashtable.
+
+-----------------
+
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace HelloWorld
+{
+  class Program
+  {
+      static void Main()
+      {
+        // Create a Hashtable
+        Hashtable hashtable = new Hashtable();
+        // Add key-value pairs to the Hashtable
+        hashtable.Add("Vogel", "Amsel");
+        hashtable.Add("Hund", "Dackel");
+        hashtable.Add("Insekt", "Mücke");
+        // Access values using keys
+        Console.WriteLine("1: " + hashtable["Vogel"]);
+        Console.WriteLine("2: " + hashtable["Hund"]);
+        Console.WriteLine("3: " + hashtable["Insekt"]);
+        
+        Console.WriteLine("hashtable has count =" + hashtable.Count);
+		
+		string keyToCheck = "Hund";
+        if (hashtable.ContainsKey(keyToCheck))
+        {
+            Console.WriteLine($"Key '{keyToCheck}' exists in the Hashtable.");
+        }
+        else
+        {
+            Console.WriteLine($"Key '{keyToCheck}' does not exist in the Hashtable.");
+        }		
+      }
+  }
+}
+
+
+------------------------
+
+In C#, you can use the Hashtable class from the System.Collections namespace to check if a specific key or value exists. Below are examples of how to check for a key or value in a Hashtable:
+
+using System;
+using System.Collections;
+
+class Program
+{
+    static void Main()
+    {
+        // Create and populate a Hashtable
+        Hashtable hashtable = new Hashtable();
+        hashtable.Add("Key1", "Value1");
+        hashtable.Add("Key2", "Value2");
+        hashtable.Add("Key3", "Value3");
+
+        // Check if a key exists
+        string keyToCheck = "Key2";
+        if (hashtable.ContainsKey(keyToCheck))
+        {
+            Console.WriteLine($"Key '{keyToCheck}' exists in the Hashtable.");
+        }
+        else
+        {
+            Console.WriteLine($"Key '{keyToCheck}' does not exist in the Hashtable.");
+        }
+
+        // Check if a value exists
+        string valueToCheck = "Value3";
+        if (hashtable.ContainsValue(valueToCheck))
+        {
+            Console.WriteLine($"Value '{valueToCheck}' exists in the Hashtable.");
+        }
+        else
+        {
+            Console.WriteLine($"Value '{valueToCheck}' does not exist in the Hashtable.");
+        }
+    }
+}
+
+Key Points:
+Check for Key: Use the ContainsKey method to verify if a specific key exists in the Hashtable.
+Check for Value: Use the ContainsValue method to check if a specific value exists in the Hashtable.
+
+This approach ensures efficient lookups and is straightforward to implement.
+
+
+-------------------
+
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace HelloWorld
+{
+  class Program
+  {
+      static void Main()
+      {
+        // Create a Hashtable
+        Hashtable hashtable = new Hashtable();
+        // Add key-value pairs to the Hashtable
+        hashtable.Add("ccc", "aaa");
+        hashtable.Add("ddd", "bbb");
+        // Access values using keys
+        Console.WriteLine("1: " + hashtable["ccc"]);
+        Console.WriteLine("2: " + hashtable["ddd"]);
+        
+        Console.WriteLine("hashtable has count =" + hashtable.Count);
+               
+        string keyToCheck = "ddd";
+        if (hashtable.ContainsKey(keyToCheck))
+        {
+            Console.WriteLine($"Key '{keyToCheck}' exists in the Hashtable.");
+        }
+        else
+        {
+            Console.WriteLine($"Key '{keyToCheck}' does not exist in the Hashtable.");
+        }
+        
+         hashtable.Remove("ddd");
+         foreach (DictionaryEntry entry in hashtable)
+        {
+            Console.WriteLine($"{entry.Key}: {entry.Value}");
+        }
+      }
+  }
+}
+
+---------------------
+
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace HelloWorld
+{
+  class Program
+  {
+      static void Main()
+      {
+        // Create a Hashtable
+        Hashtable hashtable = new Hashtable();
+        // Add key-value pairs to the Hashtable
+        hashtable.Add("Vogel", "Amsel");
+        hashtable.Add("Hund", "Dackel");
+        hashtable.Add("Insekt", "Mücke");
+        // Access values using keys
+        Console.WriteLine("1: " + hashtable["Vogel"]);
+        Console.WriteLine("2: " + hashtable["Hund"]);
+        Console.WriteLine("3: " + hashtable["Insekt"]);
+        
+        Console.WriteLine("hashtable has count =" + hashtable.Count);
+        
+        
+        string keyToCheck = "Hund";
+        if (hashtable.ContainsKey(keyToCheck))
+        {
+            Console.WriteLine($"Key '{keyToCheck}' exists in the Hashtable.");
+        }
+        else
+        {
+            Console.WriteLine($"Key '{keyToCheck}' does not exist in the Hashtable.");
+        }
+        
+         hashtable.Remove("Insekt");
+         foreach (DictionaryEntry entry in hashtable)
+        {
+            Console.WriteLine($"{entry.Key}: {entry.Value}");
+        }
+        
+        // Remove all elements
+        hashtable.Clear();
+        Console.WriteLine("hashtable has count =" + hashtable.Count);
+      }
+  }
+}
+
+
+################################################################
+Die Klassen "Queue" und "Stack"
+################################################################
+
+Was unterscheidet diese Auflistungsklassen von einer ArrayList?
+Was verbirgt sich hinter "LIFO" und "FIFO"?
+
+Stack -----------
+
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace HelloWorld
+{
+    class Program
+    {
+        static void Main()
+        {
+            Stack myStack = new Stack(11);
+            for (int i = 0; i <= 10; i++)
+                myStack.Push(i * i);
+            PrintStack(myStack);
+
+        }
+
+        public static void PrintStack(Stack obj)
+        {
+            while (obj.Count != 0)
+                Console.WriteLine(obj.Pop());
+        }
+    }
+}
+
+
+-----
+
+Queue ----------
+
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace HelloWorld
+{
+    class Program
+    {
+      static void Main(string[] args)
+      {
+        Queue myQueue = new Queue();
+        for(int i=0;i<=10; i++)
+        myQueue.Enqueue(i * i);
+        PrintQueue(myQueue);
+      
+        
+      }
+      
+      public static void PrintQueue(Queue obj){
+        // alle Elemente aus der Queue holen
+        while(obj.Count !=0)
+        Console.WriteLine(obj.Dequeue());
+        
+      }
+    }
+}
+
+
+
+''''''''''''''''''''''''''''''
+c# yield example
+
+Here’s a concise example of how the yield keyword works in C#. The yield keyword is used to create an iterator, allowing you to return elements one at a time without creating a temporary collection.
+
+Example: Generating a Sequence of Numbers
+Code kopieren
+
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        foreach (int number in GetEvenNumbers(1, 10))
+        {
+            Console.WriteLine(number);
+        }
+    }
+
+    static IEnumerable<int> GetEvenNumbers(int start, int end)
+    {
+        for (int i = start; i <= end; i++)
+        {
+            if (i % 2 == 0)
+            {
+                yield return i; // Return each even number one at a time
+            }
+        }
+    }
+}
+
+Explanation:
+yield return: Suspends the execution of the method and returns the current value to the caller.
+Lazy Evaluation: The method resumes execution from where it left off when the next value is requested.
+Output: The program will print:
+Code kopieren
+2
+4
+6
+8
+10
+
+
+This approach is memory-efficient, especially for large datasets, as it avoids creating and storing an entire collection in memory.
+
+########################################
+Fehlersuche mit Visual Studio
+########################################
+
+Fehlerbehandlung und Debugging
+
+using System.IO;
+class Program{ static void Main(string[] args)
+{
+	StreamReader stream = new StreamReader(@"C:\Text.txt");
+	Console.WriteLine(stream.ReadToEnd());
+	stream.Close();
+	Console.ReadLine();
+}
+
+---
+Here’s a concise example of how to use StreamReader in C# to read text from a file:
+
+Code kopieren
+using System;
+using System.IO;
+
+class Program
+{
+    static void Main()
+    {
+        string filePath = "example.txt"; // Replace with your file path
+
+        try
+        {
+            using (StreamReader reader = new StreamReader(filePath))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    Console.WriteLine(line); // Output each line to the console
+                }
+            }
+        }
+        catch (FileNotFoundException)
+        {
+            Console.WriteLine("The file was not found.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+    }
+}
+
+Explanation:
+File Path: Replace "example.txt" with the path to your file.
+StreamReader: Reads the file line by line using ReadLine().
+Error Handling: Includes basic exception handling for missing files or other errors.
+
+This approach ensures efficient reading of large files without loading the entire content into memory.
+
+-----------------------
+
+ArgumentException
+ArgumentNullException
+FileNotFoundException
+DirectoryNotFoundException
+IOException
+
+https://learn.microsoft.com/en-us/dotnet/fundamentals/runtime-libraries/system-exception
+
+
+using System;
+
+public class Person1
+{
+   private string _name;
+
+   public string Name
+   {
+      get { return _name; }
+      set { _name = value; }
+   }
+
+   public override int GetHashCode()
+   {
+      return this.Name.GetHashCode();
+   }
+
+   public override bool Equals(object obj)
+   {
+      // This implementation contains an error in program logic:
+      // It assumes that the obj argument is not null.
+      Person1 p = (Person1) obj;
+      return this.Name.Equals(p.Name);
+   }
+}
+
+public class UsageErrorsEx1
+{
+   public static void Main()
+   {
+      Person1 p1 = new Person1();
+      p1.Name = "John";
+      Person1 p2 = null;
+
+      // The following throws a NullReferenceException.
+      Console.WriteLine($"p1 = p2: {p1.Equals(p2)}");
+   }
+}
+
+
+------------------------------
+
+csharp Haltepunkte
+
+
+In C# werden Haltepunkte (Breakpoints) verwendet, um den Code während der Laufzeit zu debuggen. Sie ermöglichen es, den Code an bestimmten Stellen anzuhalten, um Variablenwerte zu überprüfen, den Programmfluss zu analysieren oder Fehler zu finden. Hier sind einige wichtige Informationen und Tipps zu Haltepunkten in C#:
+
+1. Haltepunkte setzen
+Visual Studio: Klicken Sie in der linken Leiste des Code-Editors neben der Zeilennummer, um einen Haltepunkt zu setzen. Alternativ können Sie die Taste F9 verwenden.
+Visual Studio Code: Klicken Sie ebenfalls in der linken Leiste oder verwenden Sie die Tastenkombination F9.
+
+2. Arten von Haltepunkten
+Standard-Haltepunkt: Stoppt die Ausführung an einer bestimmten Zeile.
+Bedingter Haltepunkt: Stoppt nur, wenn eine bestimmte Bedingung erfüllt ist (z. B. x == 5).
+In Visual Studio: Rechtsklick auf den Haltepunkt > "Bedingung" auswählen.
+Hit Count-Haltepunkt: Stoppt nach einer bestimmten Anzahl von Treffern.
+Rechtsklick auf den Haltepunkt > "Trefferanzahl" einstellen.
+Funktions-Haltepunkt: Stoppt, wenn eine bestimmte Funktion aufgerufen wird.
+In Visual Studio: Debug > Neuer Haltepunkt > Funktion.
+
+3. Haltepunkte verwalten
+Aktivieren/Deaktivieren: Rechtsklick auf den Haltepunkt > "Deaktivieren" oder Ctrl+F9.
+Alle Haltepunkte löschen: Debug > Haltepunkte > Alle löschen.
+Haltepunkte exportieren/importieren: In Visual Studio können Sie Haltepunkte speichern und später wieder laden.
+
+4. Debugging-Tipps
+Verwenden Sie die Überwachungsfenster (Watch Window), um Variablenwerte zu beobachten.
+Nutzen Sie Schritt-für-Schritt-Debugging:
+F10: Nächste Zeile ausführen (Step Over).
+F11: In die Methode eintreten (Step Into).
+Shift+F11: Methode verlassen (Step Out).
+Call Stack: Analysieren Sie den Aufrufstapel, um zu sehen, wie der Code an die aktuelle Stelle gelangt ist.
+
+Haltepunkte sind ein mächtiges Werkzeug, um effizient Fehler zu finden und den Code besser zu verstehen. Viel Erfolg beim Debuggen! 😊
+
+-----------------------------
+
+Debuggen mit Programmcode
+
+Bedingte Kompilierung in Visual Basic
+
+https://learn.microsoft.com/de-de/dotnet/visual-basic/programming-guide/program-structure/conditional-compilation
+https://learn.microsoft.com/de-de/dotnet/csharp/language-reference/preprocessor-directives
+https://clang.19633.com/de/c3-5/1005052784.html
+
+Die bedingte Kompilierung in C# dient dazu, Code abhängig von bestimmten Bedingungen in den Kompilierungsprozess einzubeziehen oder auszuschließen. Sie wird häufig verwendet, um Code für verschiedene Umgebungen, Plattformen oder Konfigurationen zu optimieren. Hier sind die Hauptanwendungszwecke:
+
+1. Plattform- oder Umgebungsabhängiger Code
+Unterschiedliche Plattformen oder Umgebungen können spezifischen Code erfordern. Mit bedingter Kompilierung kann man sicherstellen, dass nur der relevante Code kompiliert wird.
+Code kopieren
+#if WINDOWS
+    Console.WriteLine("Code für Windows");
+#elif LINUX
+    Console.WriteLine("Code für Linux");
+#endif
+
+2. Debugging und Fehlerbehebung
+Sie können Debug-spezifischen Code einfügen, der nur während der Entwicklung aktiv ist, und ihn in der Produktionsumgebung ausschließen.
+Code kopieren
+#if DEBUG
+    Console.WriteLine("Debug-Modus aktiv");
+#endif
+
+3. Feature-Toggling
+Bestimmte Funktionen können je nach Konfiguration ein- oder ausgeschaltet werden.
+Code kopieren
+#define FEATURE_X
+#if FEATURE_X
+    Console.WriteLine("Feature X ist aktiviert");
+#else
+    Console.WriteLine("Feature X ist deaktiviert");
+#endif
+
+4. Optimierung der Build-Größe
+Nicht benötigter Code kann ausgeschlossen werden, um die Größe der Anwendung zu reduzieren.
+5. Kompatibilität mit älteren Versionen
+Sie können Code für ältere Framework-Versionen oder APIs einfügen, ohne die Kompatibilität mit neueren Versionen zu beeinträchtigen.
+Code kopieren
+#if NET5_0
+    Console.WriteLine(".NET 5 spezifischer Code");
+#else
+    Console.WriteLine("Code für andere .NET-Versionen");
+#endif
+
+Fazit
+
+Die bedingte Kompilierung ist ein mächtiges Werkzeug, um flexiblen, wartbaren und plattformübergreifenden Code zu schreiben. Sie wird durch Präprozessor-Direktiven wie #if, #else, #elif, #endif, #define und #undef gesteuert.
+
+.....
+
+static void Main(string[] args)
+{
+	Test();
+	Console.ReadLine();
+}
+
+#if NET5_0
+	public static void Test()
+	{
+		Console.WriteLine("I'm running in .NET 5");
+	}
+#elif NETCOREAPP3_1
+	public static void Test()
+	{
+		Console.WriteLine("I'm running in .NET Core 3.1");
+	}
+#endif
+Code language: C# (cs)
+
+
+.....
+static void Main(string[] args)
+{
+	Console.WriteLine("Commands:");
+	Console.WriteLine("1 - Send a request");
+	Console.WriteLine("2 - Check for new messages");
+#if DEBUG
+	Console.WriteLine("3 - Push the little red button");
+#endif
+
+	var command = Console.ReadLine();
+
+	switch (command)
+	{
+		case "1":
+			SendRequest();
+			break;
+		case "2":
+			CheckForNewMessages();
+			break;
+#if DEBUG
+		case "3":
+			PushTheLittleRedButton();
+			break;
+#endif 
+	}
+}
+Code language: C# (cs)
+
+
+-----------------------------------------
+
+Is there a better way to initialize a Hastable in .NET without using Add method?
+
+Hashtable filter2 = new Hashtable()
+{
+	{"building", "A-51"},
+	{"apartment", "210"}
+};
+
+
+
+Hashtable filter2 = new Hashtable();
+filter2["building"] = "A-51";
+filter2["apartment"] = "210";
+
+
+Hashtable table = new Hashtable {{1, 1}, {2, 2}};
+
+
+class MyHashTable : System.Collections.Hashtable    
+{
+    public MyHashTable(string [,] values)
+    {
+        for (int i = 0; i < (values.Length)/2; i++)
+        {
+            this.Add(values[i,0], values[i,1]);
+        }
+    }
+}
+
+
+static void Main(string[] args)
+    {
+		string[,] initialize = { { "building", "A-51" }, { "apartment", "210" }, {"wow", "nerf Druids"}};
+		MyHashTable myhashTable = new MyHashTable(initialize);
+		Console.WriteLine(myhashTable["building"].ToString());
+		Console.WriteLine(myhashTable["apartment"].ToString());
+		Console.WriteLine(myhashTable["wow"].ToString());
+		Console.ReadKey();
+   }
