@@ -439,6 +439,14 @@ snap saved
 sudo sh -c 'rm -rf /var/lib/snapd/cache/*'
 sudo rm -rf /var/lib/snapd/cache/*
 sudo snap remove --purge clion
+
+
+////////// remove snapshots //////////
+
+snap saved
+snap forget 6  # id listed
+sudo ls /var/lib/snapd/snapshots
+
 ```
 
 
