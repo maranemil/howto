@@ -439,6 +439,12 @@ snap saved
 sudo sh -c 'rm -rf /var/lib/snapd/cache/*'
 sudo rm -rf /var/lib/snapd/cache/*
 sudo snap remove --purge clion
+snap list --all
+sudo snap set system refresh.retain=2
+snap refresh
+snap remove pycharm-community --revision=500
+du -sh /var/lib/snapd/snaps
+ls -lh /var/lib/snapd/snaps
 
 
 ////////// remove snapshots //////////
