@@ -1,0 +1,782 @@
+################################################
+Konstruktoren / Konstanten
+################################################
+
+Ein Konstruktor in C# wird aufgerufen, wenn eine Klasse oder Struktur erstellt wird. Verwenden Sie Konstruktoren, um Standardwerte festzulegen, Instanziierung einzuschränken und flexiblen, einfach zu lesenden Code zu schreiben.
+
+https://learn.microsoft.com/de-de/dotnet/csharp/programming-guide/classes-and-structs/constructors
+https://openbook.rheinwerk-verlag.de/visual_csharp_2012/1997_03_006.html#dodtp9384756a-492d-4953-bfd6-6d7fd5bd5b35
+https://www.w3schools.com/cs/cs_constructors.php
+https://www.geeksforgeeks.org/c-sharp/c-sharp-constructors/
+https://www.csharptutorial.net/csharp-tutorial/csharp-constructors/
+
+Konstruktoren haben grundsätzlich keinen Rückgabewert, auch nicht void
+
+
+In C#, a constructor is a special method in a class or struct that is automatically called when an object of that class or struct is created. It is primarily used to initialize the object and set default values.
+
+Key Features of Constructors:
+Same Name as the Class: A constructor must have the same name as the class.
+No Return Type: Constructors do not have a return type, not even void.
+Automatic Invocation: It is called automatically when an object is instantiated.
+Overloading: You can have multiple constructors with different parameters (constructor overloading).
+Types of Constructors:
+Default Constructor: A parameterless constructor that initializes fields with default values.
+Parameterized Constructor: Accepts parameters to initialize fields with specific values.
+Static Constructor: Used to initialize static members of the class. It is called only once, before any static members are accessed.
+Copy Constructor: Creates a new object as a copy of an existing object (not built-in but can be implemented manually).
+Example:
+Code kopieren
+using System;
+
+class Person
+{
+    public string Name;
+    public int Age;
+
+    // Default Constructor
+    public Person()
+    {
+        Name = "Unknown";
+        Age = 0;
+    }
+
+    // Parameterized Constructor
+    public Person(string name, int age)
+    {
+        Name = name;
+        Age = age;
+    }
+
+    // Static Constructor
+    static Person()
+    {
+        Console.WriteLine("Static constructor called.");
+    }
+
+    public void DisplayInfo()
+    {
+        Console.WriteLine($"Name: {Name}, Age: {Age}");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        // Using Default Constructor
+        Person person1 = new Person();
+        person1.DisplayInfo();
+
+        // Using Parameterized Constructor
+        Person person2 = new Person("Alice", 25);
+        person2.DisplayInfo();
+    }
+}
+
+Output:
+Code kopieren
+Static constructor called.
+Name: Unknown, Age: 0
+Name: Alice, Age: 25
+
+
+This example demonstrates how constructors work in C# and how they can be used to initialize objects effectively.
+
+
+
+-------------------------------------------
+
+To print all attributes (properties) of an object in C#, you can use reflection. Here's an example of how to achieve this:
+
+Code kopieren
+using System;
+using System.Reflection;
+
+public class Example
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
+    public bool IsActive { get; set; }
+}
+
+class Program
+{
+    static void Main()
+    {
+        var obj = new Example
+        {
+            Name = "John Doe",
+            Age = 30,
+            IsActive = true
+        };
+
+        // Get all properties and their values
+        Type type = obj.GetType();
+        PropertyInfo[] properties = type.GetProperties();
+
+        foreach (var property in properties)
+        {
+            Console.WriteLine($"{property.Name}: {property.GetValue(obj)}");
+        }
+    }
+}
+
+Explanation:
+GetType(): Retrieves the type of the object.
+GetProperties(): Gets all public properties of the object.
+GetValue(obj): Retrieves the value of each property for the given object.
+Output:
+Code kopieren
+Name: John Doe
+Age: 30
+IsActive: True
+
+
+This approach works for any object with public properties. If you need to include private properties, you can use BindingFlags to specify additional criteria. Let me know if you'd like an example of that!
+
+
+
+---------------------------------------------
+
+The PropertyDescriptor class in C# is part of the System.ComponentModel namespace. It provides an abstraction for describing and interacting with properties of components, such as their metadata, values, and behaviors. It is commonly used in scenarios like custom type descriptors, property grids, and data binding.
+
+Key Features of PropertyDescriptor:
+Metadata Access: Retrieve attributes, category, description, and display name of a property.
+Value Management: Get or set the value of a property on a component.
+Custom Behavior: Override methods to define custom behavior for property access or modification.
+Example Usage:
+
+Here’s a simple example of how to use PropertyDescriptor to access and manipulate a property:
+
+Code kopieren
+using System;
+using System.ComponentModel;
+
+class Program
+{
+    static void Main()
+    {
+        // Example class with properties
+        var example = new ExampleClass { Name = "Test", Age = 25 };
+
+        // Get the PropertyDescriptor for the "Name" property
+        PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(example);
+        PropertyDescriptor nameProperty = properties["Name"];
+
+        // Access metadata
+        Console.WriteLine($"Property Name: {nameProperty.Name}");
+        Console.WriteLine($"Property Type: {nameProperty.PropertyType}");
+        Console.WriteLine($"Is ReadOnly: {nameProperty.IsReadOnly}");
+
+        // Get and set property value
+        Console.WriteLine($"Current Value: {nameProperty.GetValue(example)}");
+        nameProperty.SetValue(example, "Updated Name");
+        Console.WriteLine($"Updated Value: {nameProperty.GetValue(example)}");
+    }
+}
+
+public class ExampleClass
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
+}
+
+Key Methods and Properties:
+GetValue(object component): Retrieves the value of the property.
+SetValue(object component, object value): Sets the value of the property.
+IsReadOnly: Indicates whether the property is read-only.
+Attributes: Gets the collection of attributes for the property.
+PropertyType: Gets the type of the property.
+
+This class is particularly useful in advanced scenarios like creating custom controls, implementing design-time support, or working with dynamic objects.
+
+
+
+
+------------------------------------------
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Reflection;
+using System.ComponentModel;
+
+
+namespace HelloWorld
+{
+	public class Program
+	{
+		public static void Main(string[] args)
+		{
+			Console.WriteLine("Hello, World!");
+       
+      Computer computer = new Computer();
+      computer.Manufacturer = "Asus";
+      computer.MemoryGB = 8;
+      //computer.hddGB = 800;
+      Console.WriteLine(computer.Manufacturer + " as Manufacturer");
+      Console.WriteLine(computer.MemoryGB + " as MemoryGB");
+      Console.WriteLine(computer.hddGB  + " as hddGB");
+      Console.WriteLine($"Computer has {computer.MemoryGB} Memory and is made by {computer.Manufacturer}");
+      computer.FormatHDD();
+      Console.WriteLine($"-------------------------------------------------");
+      
+      Type type = computer.GetType();
+      PropertyInfo[] properties = type.GetProperties();
+      foreach (var property in properties)
+      {
+          Console.WriteLine($"{property.Name}: {property.GetValue(computer)}");
+      }
+      Console.WriteLine($"-------------------------------------------------");
+      foreach(PropertyDescriptor descriptor in TypeDescriptor.GetProperties(computer)) {
+        string name=descriptor.Name;
+        object value=descriptor.GetValue(computer);
+        Console.WriteLine("{0}={1}",name,value);
+      }
+		}
+	}
+
+
+  internal class Computer 
+  {
+    public string Manufacturer; 
+    private int _MemoryGB; 
+    public int hddGB;
+    
+    public Computer(int hddGB){
+      hddGB = 4000;
+      this.hddGB = hddGB; 
+      Console.WriteLine($"Der Computer hat Festplatte mit {this.hddGB} GB"); 
+    }
+   
+    // props
+    public int MemoryGB 
+    { 
+      get 
+      { 
+      return _MemoryGB; 
+      } 
+      set 
+      { 
+        if (value >= 0) _MemoryGB = value; 
+        else Console.WriteLine($"cannot be negativ!"); 
+      } 
+    } 
+    public short Voltage { get; private set; } = 22; // Spannung
+    public void FormatHDD(){
+      Console.WriteLine($"formating HDD ....");
+    }
+  }
+}
+
+----------------------------------------------------------
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Reflection;
+using System.ComponentModel;
+
+
+namespace HelloWorld
+{
+	public class Program
+	{
+		public static void Main(string[] args)
+		{
+			Console.WriteLine("Hello, World!");
+       
+      Computer computer = new Computer();
+      computer.Manufacturer = "Asus";
+      computer.MemoryGB = 8;
+      //computer.hddGB = 800;
+      Console.WriteLine(computer.Manufacturer + " as Manufacturer");
+      Console.WriteLine(computer.MemoryGB + " as MemoryGB");
+      Console.WriteLine(computer.hddGB  + " as hddGB");
+      Console.WriteLine($"Computer has {computer.MemoryGB} Memory and is made by {computer.Manufacturer}");
+      computer.FormatHDD();
+      Console.WriteLine($"-------------------------------------------------");
+      
+      Type type = computer.GetType();
+      PropertyInfo[] properties = type.GetProperties();
+      foreach (var property in properties)
+      {
+          Console.WriteLine($"{property.Name}: {property.GetValue(computer)}");
+      }
+      Console.WriteLine($"-------------------------------------------------");
+      foreach(PropertyDescriptor descriptor in TypeDescriptor.GetProperties(computer)) {
+        string name=descriptor.Name;
+        object value=descriptor.GetValue(computer);
+        Console.WriteLine("{0}={1}",name,value);
+      }
+		}
+	}
+
+
+  internal class Computer 
+  {
+    public string Manufacturer; 
+    private int _MemoryGB; 
+    public int hddGB;
+    
+    public Computer(int hddGB = 1000){
+      //hddGB = 4000;
+      this.hddGB = hddGB; 
+      Console.WriteLine($"Der Computer hat Festplatte mit {this.hddGB} GB"); 
+    }
+   
+    // props
+    public int MemoryGB 
+    { 
+      get 
+      { 
+      return _MemoryGB; 
+      } 
+      set 
+      { 
+        if (value >= 0) _MemoryGB = value; 
+        else Console.WriteLine($"cannot be negativ!"); 
+      } 
+    } 
+    public short Voltage { get; private set; } = 22; // Spannung
+    public void FormatHDD(){
+      Console.WriteLine($"formating HDD ....");
+    }
+  }
+}
+
+
+###########################################
+"public"- und "internal"-Konstruktoren
+###########################################
+
+
+
+https://openbook.rheinwerk-verlag.de/visual_csharp_2012/1997_03_006.html#dodtp1fc335e0-526d-4055-a238-7f5a935ed54a
+
+
+public deklarierte Konstruktoren stehen allen Benutzern der Klasse zur Verfügung
+Mit dem Zugriffsmodifizierer internal können Sie eine solche Einschränkung realisieren
+ 
+###########################################
+ private
+###########################################
+ 
+ public class Demo {
+  private Demo() {[...]}
+  [...]
+}
+
+###########################################
+Konstruktorenaufrufe umleiten
+###########################################
+
+ 
+https://openbook.rheinwerk-verlag.de/visual_csharp_2012/1997_03_006.html#dodtp1fc335e0-526d-4055-a238-7f5a935ed54a
+https://learn.microsoft.com/de-de/dotnet/csharp/programming-guide/classes-and-structs/how-to-initialize-objects-by-using-an-object-initializer
+ 
+Konstruktoren können wie Methoden überladen werden
+ 
+ 
+public Circle(int radius) {
+  Radius = radius;
+}
+public Circle(int radius, double x, double y) {
+  XCoordinate = x;
+  YCoordinate = y;
+  Radius = radius;
+}
+
+###########################################
+Vereinfachte Objektinitialisierung
+###########################################
+
+Circle kreis = new Circle(12, -100, 250);
+Circle kreis = new Circle() { XCoordinate = -7, YCoordinate = 2,Radius = 2 };
+ 
+ In C# kannst du die Objektinitialisierung verwenden, um Objekte auf einfache und lesbare Weise zu erstellen und ihre Eigenschaften direkt zu setzen, ohne explizit Konstruktoren aufzurufen. Dies wird durch Objektinitialisierer ermöglicht.
+
+Beispiel 1: Objektinitialisierer
+Code kopieren
+class Person
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
+}
+
+var person = new Person
+{
+    Name = "Max",
+    Age = 30
+};
+
+
+Hier wird das Objekt person erstellt und die Eigenschaften Name und Age direkt initialisiert.
+
+Beispiel 2: Mit verschachtelten Objekten
+Code kopieren
+class Address
+{
+    public string City { get; set; }
+    public string Street { get; set; }
+}
+
+class Person
+{
+    public string Name { get; set; }
+    public Address Address { get; set; }
+}
+
+var person = new Person
+{
+    Name = "Anna",
+    Address = new Address
+    {
+        City = "Berlin",
+        Street = "Hauptstraße 123"
+    }
+};
+
+
+Hier wird ein verschachteltes Objekt Address ebenfalls mit einem Objektinitialisierer erstellt.
+
+Vorteile
+Lesbarkeit: Der Code ist kompakter und leichter zu verstehen.
+Flexibilität: Du kannst Eigenschaften setzen, ohne mehrere Konstruktoren zu definieren.
+Einfachheit: Kein expliziter Aufruf von Set-Methoden erforderlich.
+
+Objektinitialisierer sind besonders nützlich, wenn du schnell Objekte mit vordefinierten Werten erstellen möchtest.
+ 
+###########################################
+Konstanten einer Klasse
+###########################################
+
+https://openbook.rheinwerk-verlag.de/visual_csharp_2012/1997_03_008.html#dodtp3a4a938b-3d1a-4aed-8c69-908ebf7a4b15
+https://csharp.net-tutorials.com/de/407/klassen/konstanten-const/
+https://learn.microsoft.com/de-de/dotnet/csharp/programming-guide/classes-and-structs/constants
+
+einen Wert, der während der Laufzeit der Anwendung nicht geändert werden darf,
+  
+In C# sind Konstanten unveränderliche Werte, die zur Kompilierungszeit bekannt sind und sich während der gesamten Lebensdauer des Programms nicht ändern können. Sie werden mit dem Schlüsselwort const deklariert. Konstanten sind nützlich, um feste Werte zu definieren, die sich nicht ändern sollen, wie z. B. mathematische Konstanten oder Konfigurationswerte.
+
+Syntax
+Code kopieren
+const Datentyp Konstantenname = Wert;
+
+Beispiel
+Code kopieren
+using System;
+
+class Program
+{
+    const double Pi = 3.14159; // Eine Konstante für den Wert von Pi
+    const int MaxUsers = 100; // Maximale Anzahl von Benutzern
+
+    static void Main()
+    {
+        Console.WriteLine($"Der Wert von Pi ist: {Pi}");
+        Console.WriteLine($"Die maximale Anzahl von Benutzern ist: {MaxUsers}");
+    }
+}
+
+Eigenschaften von Konstanten
+Unveränderlich: Der Wert einer Konstante kann nach der Initialisierung nicht mehr geändert werden.
+Kompilierungszeit: Der Wert muss zur Kompilierungszeit bekannt sein.
+Statische Natur: Konstanten sind implizit static, d. h., sie gehören zur Klasse und nicht zu einer Instanz.
+
+Falls du Werte benötigst, die sich zur Laufzeit ändern können, aber dennoch nicht überschrieben werden sollen, kannst du stattdessen das Schlüsselwort readonly verwenden.
+ 
+ 
+--------
+
+
+In C# können Klassenkonstanten mit dem Schlüsselwort const definiert werden. Konstanten sind unveränderliche Werte, die zur Kompilierungszeit festgelegt werden und sich nach der Initialisierung nicht mehr ändern können. Sie sind immer statisch und gehören zur Klasse, nicht zu einer Instanz.
+
+Beispiel für Klassenkonstanten:
+Code kopieren
+public class Beispiel
+{
+    public const double Pi = 3.14159; // Eine Konstante
+    public const string Begrüßung = "Hallo, Welt!";
+}
+
+
+Verwendung:
+
+Code kopieren
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine(Beispiel.Pi);         // Ausgabe: 3.14159
+        Console.WriteLine(Beispiel.Begrüßung); // Ausgabe: Hallo, Welt!
+    }
+}
+
+Wichtige Hinweise:
+Nur Grunddatentypen: Konstanten können nur mit einfachen Datentypen wie int, double, string usw. verwendet werden.
+Zur Kompilierungszeit festgelegt: Der Wert muss zur Kompilierungszeit bekannt sein.
+Unveränderlich: Nach der Deklaration kann der Wert nicht mehr geändert werden.
+
+Falls ein Wert zur Laufzeit festgelegt werden soll, aber dennoch unveränderlich bleiben muss, kann stattdessen das Schlüsselwort readonly verwendet werden.
+
+
+-------
+
+In C# gibt es keine Möglichkeit, Instanzkonstanten direkt zu definieren, da Konstanten (const) zur Kompilierzeit festgelegt werden müssen und nur für statische Werte verwendet werden können. Wenn du jedoch eine unveränderliche Instanzvariable benötigst, kannst du das Schlüsselwort readonly verwenden. Dieses erlaubt es, den Wert entweder bei der Deklaration oder im Konstruktor festzulegen, danach kann er nicht mehr geändert werden.
+
+Beispiel mit readonly:
+Code kopieren
+public class Beispiel
+{
+    public readonly int InstanzKonstante;
+
+    public Beispiel(int wert)
+    {
+        InstanzKonstante = wert; // Wert wird im Konstruktor festgelegt
+    }
+}
+
+Verwendung:
+Code kopieren
+var obj = new Beispiel(42);
+Console.WriteLine(obj.InstanzKonstante); // Ausgabe: 42
+// obj.InstanzKonstante = 10; // Fehler: readonly-Feld kann nicht geändert werden
+
+Wichtige Unterschiede zwischen const und readonly:
+
+const:
+
+Muss zur Kompilierzeit bekannt sein.
+Ist implizit static.
+Kann nur für primitive Typen, Strings oder Aufzählungen verwendet werden.
+
+readonly:
+
+Kann zur Laufzeit (im Konstruktor) festgelegt werden.
+Kann Instanz- oder statische Felder betreffen.
+Unterstützt komplexere Typen wie Objekte.
+
+Falls du eine unveränderliche Instanz benötigst, ist readonly die richtige Wahl.
+
+https://learn.microsoft.com/de-de/dotnet/csharp/programming-guide/classes-and-structs/constants
+https://learn.microsoft.com/de-de/dotnet/csharp/programming-guide/classes-and-structs/constants
+https://learn.microsoft.com/de-de/dotnet/csharp/programming-guide/classes-and-structs/how-to-initialize-objects-by-using-an-object-initializer
+
+
+ https://learn.microsoft.com/de-de/dotnet/csharp/programming-guide/classes-and-structs/constructors
+ 
+public class Person
+{
+   private string last;
+   private string first;
+
+   public Person(string lastName, string firstName)
+   {
+      last = lastName;
+      first = firstName;
+   }
+
+   // Remaining implementation of Person class.
+}
+ 
+ 
+public class Location
+{
+   private string locationName;
+
+   public Location(string name) => Name = name;
+
+   public string Name
+   {
+      get => locationName;
+      set => locationName = value;
+   }
+}
+ 
+ 
+####################################
+Getter-Only-Property csharp
+####################################
+
+In C#, a getter-only property is a property that only has a get accessor, meaning its value can only be read and not modified directly. This is useful when you want to expose a value but ensure it remains immutable from outside the class.
+
+Here’s an example:
+
+Example 1: Getter-Only Property
+Code kopieren
+public class Person
+{
+    public string Name { get; } // Getter-only property
+
+    public Person(string name)
+    {
+        Name = name; // Value can only be set in the constructor
+    }
+}
+
+Usage:
+Code kopieren
+var person = new Person("Alice");
+Console.WriteLine(person.Name); // Output: Alice
+// person.Name = "Bob"; // Error: Cannot assign to 'Name' because it is read-only
+
+Example 2: Getter-Only with Expression-Bodied Member
+Code kopieren
+public class Circle
+{
+    public double Radius { get; }
+    public double Area => Math.PI * Radius * Radius; // Getter-only with expression
+
+    public Circle(double radius)
+    {
+        Radius = radius;
+    }
+}
+
+Usage:
+Code kopieren
+var circle = new Circle(5);
+Console.WriteLine(circle.Area); // Output: 78.53981633974483
+
+Example 3: Backing Field with Private Setter
+
+If you need to modify the property internally but keep it read-only externally:
+
+Code kopieren
+public class Counter
+{
+    public int Count { get; private set; } // Private setter
+
+    public void Increment()
+    {
+        Count++;
+    }
+}
+
+Usage:
+Code kopieren
+var counter = new Counter();
+counter.Increment();
+Console.WriteLine(counter.Count); // Output: 1
+
+
+These approaches ensure immutability or controlled access to the property values.
+
+
+https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/using-properties
+https://www.w3schools.com/cs/cs_properties.php
+https://tutorialsarena.com/programming/dotnet/csharp-default-values-for-getter-only-properties
+https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/properties
+https://openbook.rheinwerk-verlag.de/visual_csharp_2012/1997_03_008.html#dodtp3a4a938b-3d1a-4aed-8c69-908ebf7a4b15
+
+------------------------------------------------------------------------------
+
+####################################
+Zugriff auf private Daten
+####################################
+
+class Demo {
+  private int _Value;
+  public void DoSomething(Demo @object) {
+    @object._Value = 122;
+  }
+  public int Value {
+    get { return _Value; }
+    set { _Value = value; }
+  }
+}
+
+static void Main(string[] args) {
+  Demo object1 = new Demo();
+  Demo object2 = new Demo();
+  object1.Value = 4711;
+  object2.DoSomething(object1);
+  Console.WriteLine("Private Variable = {0}", object1.Value);
+  Console.ReadLine();
+}
+
+
+https://openbook.rheinwerk-verlag.de/visual_csharp_2012/1997_03_008.html#dodtp3a4a938b-3d1a-4aed-8c69-908ebf7a4b15
+https://openbook.rheinwerk-verlag.de/visual_csharp_2012/1997_03_005.html#dodtp2d365bc3-309b-4200-ac55-eebe5124e7eb
+------------------------------------------------------------------------------
+
+
+https://stackoverflow.com/questions/852181/c-printing-all-properties-of-an-object
+
+https://dotnetfiddle.net/
+https://onecompiler.com/csharp/43pe7uaab
+
+
+------------------------------------------------------------------------------
+
+
+In C# gibt es klare Unterschiede zwischen Klassenkonstanten und Instanzkonstanten, die sich aus ihrer Verwendung und ihrem Gültigkeitsbereich ergeben:
+
+
+
+Klassenkonstanten
+Definition: Klassenkonstanten werden mit dem Schlüsselwort const definiert und sind statisch. Sie gehören zur Klasse selbst und nicht zu einer bestimmten Instanz.
+Eigenschaften:
+Sie sind unveränderlich (immutable) und müssen bei der Deklaration initialisiert werden.
+Sie werden einmalig im Speicher abgelegt und von allen Instanzen der Klasse gemeinsam genutzt.
+Zugriff erfolgt über den Klassennamen, z. B. Klasse.Konstante.
+Beispiel:
+Code kopieren
+public class Beispiel
+{
+    public const double Pi = 3.14159; // Klassenkonstante
+}
+
+// Zugriff
+double kreisUmfang = 2 * Beispiel.Pi * radius;
+
+
+
+Instanzkonstanten
+Definition: Instanzkonstanten werden ebenfalls mit const definiert, sind aber an eine spezifische Instanz der Klasse gebunden.
+Eigenschaften:
+Sie sind ebenfalls unveränderlich, aber jede Instanz hat ihre eigene Kopie der Konstanten.
+Sie können nur über eine Instanz der Klasse aufgerufen werden.
+Beispiel:
+Code kopieren
+public class Beispiel
+{
+    public readonly int InstanzKonstante;
+
+    public Beispiel(int wert)
+    {
+        InstanzKonstante = wert; // Initialisierung im Konstruktor
+    }
+}
+
+// Zugriff
+Beispiel obj = new Beispiel(42);
+int wert = obj.InstanzKonstante;
+
+Zusammenfassung
+Klassenkonstanten (const): Statisch, unveränderlich, gehören zur Klasse.
+Instanzkonstanten (readonly): An Instanzen gebunden, unveränderlich nach Initialisierung.
+
+Falls du noch weitere Details benötigst, lass es mich wissen! 😊
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+https://www.cpp-tutor.de/
