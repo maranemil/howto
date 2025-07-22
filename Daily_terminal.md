@@ -859,6 +859,16 @@ export LANGUAGE=en-US && brave  --single-process --enable-low-end-device-mode  -
 export LANGUAGE=en-US && chromium-browser  --single-process --enable-low-end-device-mode  --process-per-tab
 export LANGUAGE=en-US && google-chrome  --disable-features=ScriptStreaming -enable-low-end-device-mode --process-per-tab
 
+--user-agent="Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 6.0)"
+--user-agent="Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0; BOIE9;NLNL)"
+--user-agent="Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)"
+
+Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.4 (KHTML, like Gecko) Chrome/22.0.1229.94 Safari/537.4
+Mozilla/5.0 (Windows NT 6.1; rv:16.0) Gecko/20100101 Firefox/16.0
+
+--use-mobile-user-agent
+
+
 ~~~
 
 
