@@ -1,0 +1,1083 @@
+Override and New
+
+
+https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/versioning-with-the-override-and-new-keywords
+
+
+In C#, derived classes can contain methods with the same name as base class methods.
+
+If the method in the derived class is not preceded by new or override keywords, the compiler will issue a warning and the method will behave as if the new keyword were present.
+
+If the method in the derived class is preceded with the new keyword, the method is defined as being independent of the method in the base class.
+
+If the method in the derived class is preceded with the override keyword, objects of the derived class will call that method instead of the base class method.
+
+In order to apply the override keyword to the method in the derived class, the base class method must be defined virtual.
+
+The base class method can be called from within the derived class using the base keyword.
+
+The override, virtual, and new keywords can also be applied to properties, indexers, and events.
+
+----
+
+By default, C# methods are not virtual.
+If a method is declared as virtual, any class inheriting the method can implement its own version.
+ 
+ 
+class GraphicsClass
+{
+    public virtual void DrawLine() { }
+    public virtual void DrawPoint() { }
+}
+
+
+class YourDerivedGraphicsClass : GraphicsClass
+{
+    public void DrawRectangle() { }
+}
+
+------------
+
+class GraphicsClass
+{
+    public virtual void DrawLine() { }
+    public virtual void DrawPoint() { }
+    public virtual void DrawRectangle() { }
+}
+
+class YourDerivedGraphicsClass : GraphicsClass
+{
+    public override void DrawRectangle() { }
+}
+
+------------
+
+base.DrawRectangle();
+
+class YourDerivedGraphicsClass : GraphicsClass
+{
+    public new void DrawRectangle() { }
+}
+
+
+https://dotnetfiddle.net/
+https://onecompiler.com/csharp/43pe7uaab
+
+
+------------------------------------------------
+
+test
+
+using System;
+
+namespace HelloWorld
+{
+	/*
+	class GraphicsClass 	{
+		public virtual void DrawLine() { }
+		public virtual void DrawPoint() { }
+	}
+
+	class YourDerivedGraphicsClass : GraphicsClass 	{ public void DrawRectangle() { }	}
+	*/
+
+	class GraphicsClass
+	{
+		public virtual void DrawLine() { }
+		public virtual void DrawPoint() { }
+		public virtual void DrawRectangle() { Console.WriteLine("Hello, DrawRectangle GraphicsClass!"); }
+	}
+
+	class YourDerivedGraphicsClass : GraphicsClass
+	{
+			//public override void DrawRectangle() { Console.WriteLine("Hello, DrawRectangle YourDerivedGraphicsClass!"); }
+			public new void DrawRectangle() { Console.WriteLine("Hello, DrawRectangle YourDerivedGraphicsClass!"); }
+	}
+	
+	public class Base { public virtual void DoWork(int param) { Console.WriteLine(param); } }
+	public class Derived : Base
+	{
+		public override void DoWork(int param) { }
+		public void DoWork(double param) { Console.WriteLine(param); }
+	}
+
+	public class Program {
+		static void Main(string[] args) {
+			Console.WriteLine("Hello, World!");
+			(new GraphicsClass()).DrawRectangle();
+			(new YourDerivedGraphicsClass()).DrawRectangle();	
+			int val1 = 5;
+			Base db = new Base(); 	db.DoWork(val1);	
+			double val2 = 5.8;
+			Derived d = new Derived(); 	d.DoWork(val2);		
+			((Base)db).DoWork(val1);  // Calls DoWork(int) on Derived.
+		}
+	}	
+}
+
+
+----------------------------------------------------------
+
+Knowing When to Use Override and New Keywords
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace HelloWorld
+{
+  
+  class BaseClass  
+  {  
+      public void Method1()  
+      {  
+          Console.WriteLine("Base - Method1");  
+      }  
+  }  
+    
+  class DerivedClass : BaseClass  
+  {  
+      public void Method2()  
+      {  
+          Console.WriteLine("Derived - Method2");  
+      }  
+  }
+  
+	public class Program
+	{
+		public static void Main(string[] args)
+		{
+		  //Console.WriteLine("Hello, World!");
+		  BaseClass bc = new BaseClass();  
+		  DerivedClass dc = new DerivedClass();  
+		  BaseClass bcdc = new DerivedClass();  
+		  bc.Method1();  
+		  dc.Method1();  
+		  dc.Method2();  
+		  bcdc.Method1();
+		  
+	    // Output:  
+		// Base - Method1  
+		// Base - Method1  
+		// Derived - Method2  
+		// Base - Method1  
+	
+	
+		}
+	}
+}
+
+----------------------
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace HelloWorld
+{
+  
+  class BaseClass  
+  {  
+      public virtual void Method1()  
+      {  
+          Console.WriteLine("Base - Method1");  
+      } 
+      public virtual void Method2()  
+      {  
+          Console.WriteLine("Base - Method2");  
+      }
+  }  
+    
+  class DerivedClass : BaseClass  
+  {
+      public override  void Method2()  
+      {  
+          Console.WriteLine("Derived - Method2");  
+      }  
+  }
+  
+	public class Program
+	{
+		public static void Main(string[] args)
+		{
+			//Console.WriteLine("Hello, World!");
+			Console.WriteLine("------------------------------");
+			BaseClass bc = new BaseClass();  
+			  DerivedClass dc = new DerivedClass();  
+			  BaseClass bcdc = new DerivedClass();  
+			  Console.WriteLine("------------------------------");
+			  bc.Method1();  
+			  bc.Method2();  
+			  dc.Method1();  
+			  dc.Method2();  
+			  bcdc.Method1();  
+			  bcdc.Method2(); 
+		}
+	}
+}
+
+
+Base - Method1
+Base - Method2
+Base - Method1
+Derived - Method2
+Base - Method1
+Derived - Method2
+
+-----------------
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace HelloWorld
+{
+  
+  class BaseClass  
+  {  
+      public void Method1()  
+      {  
+          Console.WriteLine("Base - Method1");  
+      } 
+      public void Method2()  
+      {  
+          Console.WriteLine("Base - Method2");  
+      }
+  }  
+    
+  class DerivedClass : BaseClass  
+  {
+      public new void Method2()  
+      {  
+          Console.WriteLine("Derived - Method2");  
+      }  
+  }
+  
+	public class Program
+	{
+		public static void Main(string[] args)
+		{
+			//Console.WriteLine("Hello, World!");
+			Console.WriteLine("------------------------------");
+			BaseClass bc = new BaseClass();  
+		  DerivedClass dc = new DerivedClass();  
+		  BaseClass bcdc = new DerivedClass();  
+		  Console.WriteLine("------------------------------");
+		  bc.Method1();  
+		  bc.Method2();  
+		  dc.Method1();  
+		  dc.Method2();  
+		  bcdc.Method1();  
+		  bcdc.Method2(); 
+		}
+	}
+}
+
+
+Base - Method1
+Base - Method2
+Base - Method1
+Derived - Method2
+Base - Method1
+Base - Method2
+
+
+------------------------------------------------
+
+
+
+using System;  
+using System.Text;  
+  
+namespace OverrideAndNew  
+{  
+    class Program  
+    {  
+        static void Main(string[] args)  
+        {  
+            BaseClass bc = new BaseClass();  
+            DerivedClass dc = new DerivedClass();  
+            BaseClass bcdc = new DerivedClass();  
+  
+            // The following two calls do what you would expect. They call  
+            // the methods that are defined in BaseClass.  
+            bc.Method1();  
+            bc.Method2();  
+            // Output:  
+            // Base - Method1  
+            // Base - Method2  
+  
+            // The following two calls do what you would expect. They call  
+            // the methods that are defined in DerivedClass.  
+            dc.Method1();  
+            dc.Method2();  
+            // Output:  
+            // Derived - Method1  
+            // Derived - Method2  
+  
+            // The following two calls produce different results, depending
+            // on whether override (Method1) or new (Method2) is used.  
+            bcdc.Method1();  
+            bcdc.Method2();  
+            // Output:  
+            // Derived - Method1  
+            // Base - Method2  
+        }  
+    }  
+  
+    class BaseClass  
+    {  
+        public virtual void Method1()  
+        {  
+            Console.WriteLine("Base - Method1");  
+        }  
+  
+        public virtual void Method2()  
+        {  
+            Console.WriteLine("Base - Method2");  
+        }  
+    }  
+  
+    class DerivedClass : BaseClass  
+    {  
+        public override void Method1()  
+        {  
+            Console.WriteLine("Derived - Method1");  
+        }  
+  
+        public new void Method2()  
+        {  
+            Console.WriteLine("Derived - Method2");  
+        }  
+    }  
+}
+
+
+Output:
+
+Base - Method1
+Base - Method2
+Derived - Method1
+Derived - Method2
+Derived - Method1
+Base - Method2
+
+
+
+---------------------------
+
+using System;  
+using System.Text;  
+  
+namespace OverrideAndNew  
+{  
+     // Define the base class, Car. The class defines two methods,  
+    // DescribeCar and ShowDetails. DescribeCar calls ShowDetails, and each derived  
+    // class also defines a ShowDetails method. The example tests which version of  
+    // ShowDetails is selected, the base class method or the derived class method.  
+  class Car  
+  {  
+      public void DescribeCar()  
+      {  
+          System.Console.WriteLine("Four wheels and an engine.");  
+          ShowDetails();  
+      }  
+    
+      public virtual void ShowDetails()  
+      {  
+          System.Console.WriteLine("Standard transportation.");  
+      }  
+  }  
+    
+  // Define the derived classes. 
+  // Class ConvertibleCar uses the new modifier to acknowledge that ShowDetails  
+  // hides the base class method.  
+  class ConvertibleCar : Car  
+  {  
+      public new void ShowDetails()  
+      {  
+          System.Console.WriteLine("A roof that opens up. ConvertibleCar");  
+      }  
+  }  
+    
+  // Class Minivan uses the override modifier to specify that ShowDetails  
+  // extends the base class method.  
+  class Minivan : Car  
+  {  
+      public override void ShowDetails()  
+      {  
+          System.Console.WriteLine("Carries seven people. Minivan");  
+      }  
+  }  
+  
+  public class Program
+	{
+    public static void Main(string[] args)
+    {  
+        System.Console.WriteLine("\nTestCars1");  
+        System.Console.WriteLine("----------");  
+      
+        Car car1 = new Car();  
+        car1.DescribeCar();  
+        System.Console.WriteLine("----------");  
+      
+        // Notice the output from this test case. The new modifier is  
+        // used in the definition of ShowDetails in the ConvertibleCar  
+        // class.
+      
+        ConvertibleCar car2 = new ConvertibleCar();  
+        car2.DescribeCar();  
+        System.Console.WriteLine("----------");  
+      
+        Minivan car3 = new Minivan();  
+        car3.DescribeCar();  
+        System.Console.WriteLine("----------");  
+    }
+	}
+
+}
+
+
+TestCars1
+----------
+Four wheels and an engine.
+Standard transportation.
+----------
+Four wheels and an engine.
+Standard transportation.
+----------
+Four wheels and an engine.
+Carries seven people. Minivan
+----------
+
+
+-----------------------------------------
+
+
+
+
+using System;  
+using System.Text;  
+using System.Collections.Generic;
+  
+namespace OverrideAndNew  
+{  
+     // Define the base class, Car. The class defines two methods,  
+    // DescribeCar and ShowDetails. DescribeCar calls ShowDetails, and each derived  
+    // class also defines a ShowDetails method. The example tests which version of  
+    // ShowDetails is selected, the base class method or the derived class method.  
+  class Car  
+  {  
+      public void DescribeCar()  
+      {  
+          System.Console.WriteLine("Four wheels and an engine.");  
+          ShowDetails();  
+      }  
+    
+      public virtual void ShowDetails()  
+      {  
+          System.Console.WriteLine("Standard transportation.");  
+      }  
+  }  
+    
+  // Define the derived classes. 
+  // Class ConvertibleCar uses the new modifier to acknowledge that ShowDetails  
+  // hides the base class method.  
+  class ConvertibleCar : Car  
+  {  
+      public new void ShowDetails()  
+      {  
+          System.Console.WriteLine("A roof that opens up. ConvertibleCar");  
+      }  
+  }  
+    
+  // Class Minivan uses the override modifier to specify that ShowDetails  
+  // extends the base class method.  
+  class Minivan : Car  
+  {  
+      public override void ShowDetails()  
+      {  
+          System.Console.WriteLine("Carries seven people. Minivan");  
+      }  
+  }  
+  
+  public class Program
+	{
+    public static void Main(string[] args)
+    {  
+        System.Console.WriteLine("\nTestCars1");  
+        System.Console.WriteLine("----------");  
+      
+        Car car1 = new Car();  
+        car1.DescribeCar();  
+        System.Console.WriteLine("----------");  
+      
+        // Notice the output from this test case. The new modifier is  
+        // used in the definition of ShowDetails in the ConvertibleCar  
+        // class.
+      
+        ConvertibleCar car2 = new ConvertibleCar();  
+        car2.DescribeCar();  
+        System.Console.WriteLine("----------");  
+      
+        Minivan car3 = new Minivan();  
+        car3.DescribeCar();  
+        System.Console.WriteLine("----------");  
+        
+        /*
+        System.Console.WriteLine("\nTestCars2");  
+        System.Console.WriteLine("----------"); 
+        var cars = new List<Car> { new Car(), new ConvertibleCar(), new Minivan() };  
+        foreach (var car in cars)  
+        {  
+            car.DescribeCar();  
+            System.Console.WriteLine("----------");  
+        } 
+        */
+        
+        System.Console.WriteLine("\nTestCars3");  
+        System.Console.WriteLine("----------");  
+        ConvertibleCar car2a = new ConvertibleCar();  
+        Minivan car3a = new Minivan();  
+        car2a.ShowDetails();  
+        car3a.ShowDetails();  
+        
+        System.Console.WriteLine("\nTestCars4");  
+        System.Console.WriteLine("----------");  
+        Car car2b = new ConvertibleCar();  
+        Car car3b = new Minivan();  
+        car2b.ShowDetails();  
+        car3b.ShowDetails();  
+    
+    
+    }
+	}
+
+}
+
+
+Output:
+
+
+TestCars1
+----------
+Four wheels and an engine.
+Standard transportation.
+----------
+Four wheels and an engine.
+Standard transportation.
+----------
+Four wheels and an engine.
+Carries seven people. Minivan
+----------
+
+TestCars3
+----------
+A roof that opens up. ConvertibleCar
+Carries seven people. Minivan
+
+TestCars4
+----------
+Standard transportation.
+Carries seven people. Minivan
+
+
+---------------------------
+
+
+
+
+using System;  
+using System.Collections.Generic;  
+using System.Linq;  
+using System.Text;  
+  
+namespace OverrideAndNew2  
+{  
+    class Program  
+    {  
+        static void Main(string[] args)  
+        {  
+            // Declare objects of the derived classes and test which version  
+            // of ShowDetails is run, base or derived.  
+            TestCars1();  
+  
+            // Declare objects of the base class, instantiated with the  
+            // derived classes, and repeat the tests.  
+            TestCars2();  
+  
+            // Declare objects of the derived classes and call ShowDetails  
+            // directly.  
+            TestCars3();  
+  
+            // Declare objects of the base class, instantiated with the  
+            // derived classes, and repeat the tests.  
+            TestCars4();  
+        }  
+  
+        public static void TestCars1()  
+        {  
+            System.Console.WriteLine("\nTestCars1");  
+            System.Console.WriteLine("----------");  
+  
+            Car car1 = new Car();  
+            car1.DescribeCar();  
+            System.Console.WriteLine("----------");  
+  
+            // Notice the output from this test case. The new modifier is  
+            // used in the definition of ShowDetails in the ConvertibleCar  
+            // class.
+            ConvertibleCar car2 = new ConvertibleCar();  
+            car2.DescribeCar();  
+            System.Console.WriteLine("----------");  
+  
+            Minivan car3 = new Minivan();  
+            car3.DescribeCar();  
+            System.Console.WriteLine("----------");  
+        }  
+        // Output:  
+        // TestCars1  
+        // ----------  
+        // Four wheels and an engine.  
+        // Standard transportation.  
+        // ----------  
+        // Four wheels and an engine.  
+        // Standard transportation.  
+        // ----------  
+        // Four wheels and an engine.  
+        // Carries seven people.  
+        // ----------  
+  
+        public static void TestCars2()  
+        {  
+            System.Console.WriteLine("\nTestCars2");  
+            System.Console.WriteLine("----------");  
+  
+            var cars = new List<Car> { new Car(), new ConvertibleCar(),
+                new Minivan() };  
+  
+            foreach (var car in cars)  
+            {  
+                car.DescribeCar();  
+                System.Console.WriteLine("----------");  
+            }  
+        }  
+        // Output:  
+        // TestCars2  
+        // ----------  
+        // Four wheels and an engine.  
+        // Standard transportation.  
+        // ----------  
+        // Four wheels and an engine.  
+        // Standard transportation.  
+        // ----------  
+        // Four wheels and an engine.  
+        // Carries seven people.  
+        // ----------  
+  
+        public static void TestCars3()  
+        {  
+            System.Console.WriteLine("\nTestCars3");  
+            System.Console.WriteLine("----------");  
+            ConvertibleCar car2 = new ConvertibleCar();  
+            Minivan car3 = new Minivan();  
+            car2.ShowDetails();  
+            car3.ShowDetails();  
+        }  
+        // Output:  
+        // TestCars3  
+        // ----------  
+        // A roof that opens up.  
+        // Carries seven people.  
+  
+        public static void TestCars4()  
+        {  
+            System.Console.WriteLine("\nTestCars4");  
+            System.Console.WriteLine("----------");  
+            Car car2 = new ConvertibleCar();  
+            Car car3 = new Minivan();  
+            car2.ShowDetails();  
+            car3.ShowDetails();  
+        }  
+        // Output:  
+        // TestCars4  
+        // ----------  
+        // Standard transportation.  
+        // Carries seven people.  
+    }  
+  
+    // Define the base class, Car. The class defines two virtual methods,  
+    // DescribeCar and ShowDetails. DescribeCar calls ShowDetails, and each derived  
+    // class also defines a ShowDetails method. The example tests which version of  
+    // ShowDetails is used, the base class method or the derived class method.  
+    class Car  
+    {  
+        public virtual void DescribeCar()  
+        {  
+            System.Console.WriteLine("Four wheels and an engine.");  
+            ShowDetails();  
+        }  
+  
+        public virtual void ShowDetails()  
+        {  
+            System.Console.WriteLine("Standard transportation.");  
+        }  
+    }  
+  
+    // Define the derived classes.  
+  
+    // Class ConvertibleCar uses the new modifier to acknowledge that ShowDetails  
+    // hides the base class method.  
+    class ConvertibleCar : Car  
+    {  
+        public new void ShowDetails()  
+        {  
+            System.Console.WriteLine("A roof that opens up.");  
+        }  
+    }  
+  
+    // Class Minivan uses the override modifier to specify that ShowDetails  
+    // extends the base class method.  
+    class Minivan : Car  
+    {  
+        public override void ShowDetails()  
+        {  
+            System.Console.WriteLine("Carries seven people.");  
+        }  
+    }  
+  
+}
+
+
+-------------
+
+lists
+
+In C#, a List<T> is a versatile and commonly used collection type that allows you to store and manipulate a collection of objects. Below are some examples of how to use a List<T> in C#:
+
+1. Creating and Initializing a List
+Code kopieren
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        // Create an empty list
+        List<int> numbers = new List<int>();
+
+        // Initialize with values
+        List<string> fruits = new List<string> { "Apple", "Banana", "Cherry" };
+    }
+}
+
+2. Adding Elements
+Code kopieren
+numbers.Add(10); // Adds a single element
+numbers.AddRange(new int[] { 20, 30, 40 }); // Adds multiple elements
+
+3. Accessing Elements
+Code kopieren
+int firstNumber = numbers[0]; // Access by index
+Console.WriteLine(firstNumber); // Output: 10
+
+4. Iterating Through a List
+Code kopieren
+foreach (var fruit in fruits)
+{
+    Console.WriteLine(fruit);
+}
+
+// Using a for loop
+for (int i = 0; i < fruits.Count; i++)
+{
+    Console.WriteLine(fruits[i]);
+}
+
+5. Removing Elements
+Code kopieren
+numbers.Remove(20); // Removes the first occurrence of 20
+numbers.RemoveAt(0); // Removes the element at index 0
+numbers.Clear(); // Removes all elements
+
+6. Checking for Elements
+Code kopieren
+bool containsBanana = fruits.Contains("Banana"); // Returns true
+int index = fruits.IndexOf("Cherry"); // Returns the index of "Cherry"
+
+7. Sorting and Reversing
+Code kopieren
+numbers.Sort(); // Sorts the list in ascending order
+numbers.Reverse(); // Reverses the order of elements
+
+8. Other Useful Methods
+Code kopieren
+int count = numbers.Count; // Gets the number of elements
+List<int> evenNumbers = numbers.FindAll(x => x % 2 == 0); // Finds all even numbers
+int firstEven = numbers.Find(x => x % 2 == 0); // Finds the first even number
+
+
+The List<T> class is part of the System.Collections.Generic namespace, making it a powerful and flexible tool for managing collections of data in C#.
+
+
+
+-----------------------------
+#####################################
+How to override the ToString method
+#####################################
+
+
+# latest net version 9
+
+using System;  
+  
+namespace OverrideAndNew  
+{  
+    class Person
+    {
+        public string Name { get; set; }
+        public int Age { get; set; }
+    
+        public override string ToString()
+        {
+            return "Person: " + Name + " " + Age;
+        }
+    }
+  
+  public class Program
+  {
+    public static void Main(string[] args)
+    {  
+        System.Console.WriteLine("----------");        
+        Person person = new() { Name = "John", Age = 12 };
+        Console.WriteLine(person);
+    }
+   }
+}
+
+
+....
+# older net version
+
+using System;  
+using System.Text;  
+using System.Collections.Generic;
+  
+namespace OverrideAndNew  
+{  
+    class Person
+    {
+        public string Name { get; set; }
+        public int Age { get; set; }
+    
+        public override string ToString()
+        {
+            return "Person: " + Name + " " + Age;
+        }
+    }
+  
+  public class Program
+	{
+    public static void Main(string[] args)
+    {  
+        System.Console.WriteLine("\nTestCars1");  
+        System.Console.WriteLine("----------");  
+      
+        Person person = new Person();
+        person.Name = "John";
+        person.Age = 12;
+        Console.WriteLine(person);
+        
+        Person person2 = new Person() { Name = "John", Age = 12 };
+        Console.WriteLine(person2);
+    }
+	}
+}
+
+
+
+
+
+
+-----------------------------------------------------------
+
+Abstract  Sealed 
+
+https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/abstract-and-sealed-classes-and-class-members
+
+
+using System; 
+  
+ namespace Demo 
+ {   
+     // compile with: -target:library
+	 public class D
+	 {
+		 public virtual void DoWork(int i) {
+			 System.Console.WriteLine("Original implementation");  
+		 }
+	 }
+
+	 public abstract class E : D
+		{
+			public abstract override void DoWork(int i);
+		}
+
+		public class F : E
+		{
+			public sealed override void DoWork(int i) {
+				System.Console.WriteLine("New implementation.");  
+			}
+		}
+		
+	 public class Program
+  {
+    public static void Main(string[] args)
+    {  
+        System.Console.WriteLine("----------");        
+       (new D()).DoWork(11);
+		(new F()).DoWork(11);		
+    }
+   } 
+ }
+ 
+
+------------------
+
+Explicit Interface Implementation
+
+https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/interfaces/explicit-interface-implementation
+
+
+
+
+using System;  
+  
+namespace OverrideAndNew  
+{  
+    public interface IControl
+	{
+		void Paint();
+	}
+	public interface ISurface
+	{
+		void Paint();
+	}
+	public class SampleClass : IControl, ISurface
+	{
+		void IControl.Paint()
+		{
+			System.Console.WriteLine("IControl.Paint");
+		}
+		void ISurface.Paint()
+		{
+			System.Console.WriteLine("ISurface.Paint");
+		}
+	}
+  
+  public class Program
+  {
+    public static void Main(string[] args)
+    {  
+        System.Console.WriteLine("----------");        
+		SampleClass sample = new SampleClass();
+		IControl control = sample;
+		ISurface surface = sample;
+
+		// The following lines all call the same method.
+		//sample.Paint(); // Compiler error.
+		control.Paint();  // Calls IControl.Paint on SampleClass.
+		surface.Paint();  // Calls ISurface.Paint on SampleClass.
+    }
+   }
+}
+
+----------
+
+using System; 
+  
+ namespace Demo 
+ {   
+     public interface IControl
+	{
+		void Paint() => Console.WriteLine("Default Paint method");
+	}
+	public class SampleClass : IControl
+	{
+		// Paint() is inherited from IControl.
+	}
+		
+	public class Program
+    {
+		public static void Main(string[] args)
+		{  
+			System.Console.WriteLine("----------");        
+		  var sample = new SampleClass();
+			//sample.Paint();// "Paint" isn't accessible.
+			var control = sample as IControl;
+			control.Paint();	
+		}
+   } 
+ }
+ 
+
+https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/interfaces/how-to-explicitly-implement-interface-members
+https://openbook.rheinwerk-verlag.de/visual_csharp_2012/1997_04_008.html#dodtpb69e3663-544c-4d13-a23a-6031dbfdf8df
+
+
+https://dotnetfiddle.net/
+https://onecompiler.com/csharp/43rffmbxn
+
+
+
+
+
+ 
+ 
+ 
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
