@@ -1,0 +1,447 @@
+Debugging
+
+
+
+Which errors can be detected and handled at runtime?
+
+Exception
+
+In C#, errors in the program at run time are propagated through the program by using a mechanism called exceptions. Exceptions are thrown by code that encounters an error and caught by code that can correct the error. Exceptions can be thrown by the .NET runtime or by code in a program.
+
+--
+
+Handling Runtime Errors in C#
+
+Runtime errors in C# occur during the execution of a program and can cause it to terminate unexpectedly. These errors are also known as exceptions. Common runtime errors include division by zero, stack overflow, invalid type casting, and file not found.
+
+using System;
+using System.IO;
+
+class Program {
+	static void Main(string[] args) {
+		try {
+			StreamReader strmRdr = new StreamReader("sample.txt");
+			Console.WriteLine(strmRdr.ReadToEnd());
+			strmRdr.Close();
+		} catch (FileNotFoundException ex) {
+			Console.WriteLine("File not found: " + ex.Message);
+		} catch (Exception ex) {
+			Console.WriteLine("An error occurred: " + ex.Message);
+		}
+	}
+}
+
+
+Common Causes and Solutions
+
+1. File Not Found Exception
+
+This occurs when the program tries to access a file that does not exist at the specified location.
+
+Solution: Use a try-catch block to handle the exception and provide a user-friendly message.
+
+
+try {
+	StreamReader strmRdr = new StreamReader("sample.txt");
+	Console.WriteLine(strmRdr.ReadToEnd());
+	strmRdr.Close();
+} catch (FileNotFoundException ex) {
+	Console.WriteLine("File not found: " + ex.Message);
+}
+
+
+2. Division by Zero Exception
+
+Occurs when a number is divided by zero.
+
+Solution: Check the denominator before performing the division.
+
+int numerator = 10;
+int denominator = 0;
+if (denominator != 0) {
+	int result = numerator / denominator;
+} else {
+	Console.WriteLine("Cannot divide by zero.");
+}
+
+
+3. Invalid Type Casting
+
+Occurs when an object is cast to an incompatible type.
+
+Solution: Use as operator or is keyword to check compatibility before casting.
+
+object obj = "Hello";
+if (obj is int) {
+	int num = (int)obj;
+} else {
+	Console.WriteLine("Invalid type casting.");
+}
+
+By understanding these common causes and applying the appropriate solutions, you can effectively handle runtime errors in C# and ensure your program runs smoothly
+
+---------------------
+
+In C#, catch statement blocks are used in conjunction with a try block to handle exceptions that may occur during the execution of a program. They enable the following:
+
+Error Handling: Catch blocks allow you to gracefully handle runtime errors (exceptions) without crashing the program. For example, if a file is missing or a division by zero occurs, the program can recover or provide meaningful feedback.
+
+Custom Responses to Specific Exceptions: You can define multiple catch blocks to handle different types of exceptions (e.g., FileNotFoundException, DivideByZeroException) with tailored responses for each.
+
+Program Continuity: By catching exceptions, the program can continue executing subsequent code instead of terminating abruptly.
+
+Example:
+Code kopieren
+try
+{
+    int result = 10 / 0; // This will throw a DivideByZeroException
+}
+catch (DivideByZeroException ex)
+{
+    Console.WriteLine("Cannot divide by zero: " + ex.Message);
+}
+catch (Exception ex)
+{
+    Console.WriteLine("An error occurred: " + ex.Message);
+}
+
+
+In this example:
+
+The first catch block handles division by zero specifically.
+The second catch block is a general handler for any other exceptions.
+
+This structure ensures robust and user-friendly error management in your application.
+
+-----------------
+
+https://learn.microsoft.com/de-de/dotnet/standard/exceptions/how-to-use-finally-blocks
+https://learn.microsoft.com/en-us/dotnet/standard/exceptions/how-to-use-finally-blocks
+https://www.geeksforgeeks.org/c-sharp/c-sharp-finally-keyword/
+https://learn.microsoft.com/en-us/dotnet/standard/exceptions/best-practices-for-exceptions
+
+
+The finally block is a crucial component of exception handling in C#. It guarantees that a specific set of code will always execute, regardless of whether an exception occurs or not. The primary purpose of the finally block is to contain cleanup code or resource release operations
+
+class ArgumentOutOfRangeExample
+{
+    public static void Main()
+    {
+        int[] array1 = {0, 0};
+        int[] array2 = {0, 0};
+
+        try
+        {
+            Array.Copy(array1, array2, -1);
+        }
+        catch (ArgumentOutOfRangeException e)
+        {
+            Console.WriteLine($"Error: {e}");
+            throw;
+        }
+        finally
+        {
+            Console.WriteLine("This statement is always executed.");
+        }
+    }
+}
+
+
+----------
+ When should error handling be used and when not
+ 
+
+Design classes so that exceptions can be avoided
+
+class FileRead
+{
+    public static void ReadAll(FileStream fileToRead)
+    {
+        ArgumentNullException.ThrowIfNull(fileToRead);
+
+        int b;
+
+        // Set the stream position to the beginning of the file.
+        fileToRead.Seek(0, SeekOrigin.Begin);
+
+        // Read each byte to the end of the file.
+        for (int i = 0; i < fileToRead.Length; i++)
+        {
+            b = fileToRead.ReadByte();
+            Console.Write(b.ToString());
+            // Or do something else with the byte.
+        }
+    }
+}
+
+
+Another way to avoid exceptions is to return null (or default) for most common error cases instead of throwing an exception. A common error case can be considered a normal flow of control. By returning null (or default) in these cases, you minimize the performance impact to an app.
+
+
+...
+
+Error handling in C# (or any programming language) should be used thoughtfully to ensure code is robust, maintainable, and efficient. Here are guidelines on when to use error handling and when to avoid it:
+
+When to Use Error Handling
+
+Exceptional Scenarios:
+
+Use error handling for truly exceptional cases, such as unexpected conditions that disrupt normal program flow (e.g., file not found, network failure, or invalid user input).
+
+Blocking Errors:
+
+If an error prevents the program from continuing (e.g., database connection failure), throw and handle exceptions to gracefully manage the failure.
+
+External Dependencies:
+
+Handle errors when interacting with external systems (e.g., APIs, file systems, or hardware) where failures are possible and unpredictable.
+
+Validation and Recovery:
+
+Use error handling to validate inputs or recover from errors (e.g., retrying a failed operation or providing fallback logic).
+
+Logging and Debugging:
+
+Catch exceptions to log meaningful error messages for debugging or monitoring purposes.
+When NOT to Use Error Handling
+
+Non-Exceptional Scenarios:
+
+Avoid using exceptions for normal control flow (e.g., checking if a file exists before opening it). Use conditional checks instead (e.g., File.Exists()).
+
+Performance-Critical Code:
+
+Exceptions are expensive in terms of performance. Avoid them in performance-critical sections unless absolutely necessary.
+
+Predictable Errors:
+
+For predictable issues (e.g., invalid user input), handle them with validation logic rather than exceptions.
+
+Silent Failures:
+
+Do not suppress exceptions without logging or handling them properly, as this can make debugging difficult.
+
+Overusing Try-Catch:
+
+Avoid wrapping every block of code in try-catch. Instead, handle exceptions at a higher level where they can be meaningfully addressed.
+Best Practices
+Use specific exception types (e.g., FileNotFoundException, ArgumentException) instead of generic ones like Exception.
+Always provide clear and meaningful error messages.
+Avoid catching exceptions you cannot handle meaningfully.
+Use finally blocks to release resources (e.g., closing files or database connections).
+For custom exceptions, ensure they are descriptive and end with "Exception" (e.g., CustomValidationException).
+
+By following these principles, you can create error-handling mechanisms that are efficient, maintainable, and user-friendly.
+
+
+
+
+
+
+(Exception ex)
+
+Console.WriteLine($"Meldung: {ex.Message}");
+
+ArgumentNullException
+FormatException
+OverflowException
+Exception
+
+
+----------------
+
+How are errors from subordinate methods forwarded to calling methods?
+
+https://learn.microsoft.com/en-us/dotnet/standard/native-interop/calling-conventions
+https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/exceptions/creating-and-throwing-exceptions
+https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/exceptions/
+https://openbook.rheinwerk-verlag.de/visual_csharp_2012/1997_07_001.html#dodtp77739224-c0d5-4b2a-9a3e-732e2dfca478
+
+Ausnahmen werfen oder weiterleiten
+
+public Task<string> SomeMethodAsync(string url) 
+{
+  if (!valid) {
+    throw new Exception("some error");
+  }
+  return SomeMethodImplAsync(url);.
+}
+
+
+
+
+https://www.geeksforgeeks.org/c-sharp/exception-handling-in-c-sharp/
+https://www.w3schools.com/cs/cs_exceptions.php
+https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/exceptions/using-exceptions
+https://www.geeksforgeeks.org/c-sharp/c-sharp-exception/
+https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/exceptions/
+https://dotnettutorials.net/lesson/exception-handling-csharp/
+
+
+try
+{
+	string a="asd";
+	int s = Convert.ToInt32(a);
+}
+catch (Exception ex)
+{
+
+	Response.Write(ex.Message);
+}
+
+
+if (args.Length == 0)
+{
+	throw new ArgumentException("A start-up parameter is required.");
+}
+
+
+Ausnahmefilter
+
+In C#, the when keyword can be used in a catch block to specify a condition that must evaluate to true for the exception handler to execute. This is known as an exception filter. It allows you to handle exceptions more precisely without altering the stack trace.
+
+Syntax
+Code kopieren
+try
+{
+    // Code that may throw an exception
+}
+catch (Exception ex) when (ex.Message.Contains("specific condition"))
+{
+    // Handle the exception if the condition is true
+}
+
+Example 1: Filtering by Exception Message
+Code kopieren
+try
+{
+    throw new InvalidOperationException("This is a specific error.");
+}
+catch (InvalidOperationException ex) when (ex.Message.Contains("specific"))
+{
+    Console.WriteLine("Caught an exception with a specific message.");
+}
+
+Example 2: Filtering by Custom Logic
+Code kopieren
+try
+{
+    throw new ArgumentException("Invalid argument provided.");
+}
+catch (ArgumentException ex) when (ex.ParamName == "username")
+{
+    Console.WriteLine("Caught an exception related to the 'username' parameter.");
+}
+
+Benefits of catch when
+Preserves Stack Trace: Unlike rethrowing exceptions, it keeps the original stack trace intact.
+Improved Readability: Makes exception handling more expressive and concise.
+Selective Handling: Allows you to handle only specific cases of an exception.
+
+This feature is particularly useful when you want to handle exceptions conditionally without cluttering your code with additional if statements inside the catch block.
+
+catch (COMException e) when (e.ErrorCode == 0x1234) {
+  ...
+}
+catch (COMException e) when (e.ErrorCode == 0x5678) {
+  ......
+
+https://www.w3schools.com/cs/cs_exceptions.php
+https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/statements/exception-handling-statements
+
+
+------------------
+
+What possibilities does the Exception class offer?
+
+Exceptions in C# provide a structured, uniform, and type-safe way of handling both system level and application-level error conditions. Exceptions can be thrown in two different ways. A throw statement (§13.10.6) throws an exception immediately and unconditionally.
+
+https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/exceptions
+https://www.completecsharptutorial.com/basic/complete-system-exception.php
+
+
+Data
+HelpLink
+HResult
+InnerException
+Message
+Source
+StackTrace
+TargetSite
+
+
+How can custom error classes be defined and used?
+
+In C#, you can define and use custom error classes by creating a class that inherits from the Exception base class. This allows you to create meaningful and specific exceptions for your application. Here's how you can do it:
+
+1. Define a Custom Exception Class
+
+You create a custom exception by inheriting from the Exception class and optionally adding constructors or additional properties.
+
+Code kopieren
+using System;
+
+public class CustomException : Exception
+{
+    public CustomException() : base() { }
+
+    public CustomException(string message) : base(message) { }
+
+    public CustomException(string message, Exception innerException) 
+        : base(message, innerException) { }
+}
+
+2. Throw the Custom Exception
+
+You can throw your custom exception using the throw keyword.
+
+Code kopieren
+public class Example
+{
+    public void PerformOperation(bool condition)
+    {
+        if (!condition)
+        {
+            throw new CustomException("An error occurred due to invalid condition.");
+        }
+    }
+}
+
+3. Catch and Handle the Custom Exception
+
+You can catch your custom exception in a try-catch block and handle it appropriately.
+
+Code kopieren
+public class Program
+{
+    public static void Main()
+    {
+        var example = new Example();
+
+        try
+        {
+            example.PerformOperation(false);
+        }
+        catch (CustomException ex)
+        {
+            Console.WriteLine($"Custom Exception Caught: {ex.Message}");
+        }
+    }
+}
+
+Key Points:
+Always provide meaningful error messages to make debugging easier.
+Use the innerException parameter to preserve the original exception details when wrapping exceptions.
+Custom exceptions should only be used when the built-in exceptions are not sufficient to describe the error scenario.
+
+This approach ensures your code is more readable and maintainable while providing specific error-handling mechanisms.
+
+
+
+
+
+
+
+
+
+

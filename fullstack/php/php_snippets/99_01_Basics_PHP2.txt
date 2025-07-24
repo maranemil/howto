@@ -1,0 +1,75 @@
+The PHP Garbage Collector (GC) is a mechanism designed to manage memory by automatically reclaiming memory occupied by objects that are no longer in use. This helps prevent memory leaks, especially in cases involving circular references.
+
+Key Points About PHP Garbage Collection:
+
+Primary Purpose:
+
+PHP uses a reference counting system for memory management. However, this system struggles with circular references (e.g., two objects referencing each other). The Garbage Collector addresses this issue by detecting and cleaning up such references.
+
+How It Works:
+
+The GC is triggered periodically during script execution.
+It identifies cycles (groups of objects that reference each other but are no longer accessible) and frees the memory they occupy.
+
+When It Runs:
+
+The GC is invoked based on the gc_divisor and gc_probability settings in php.ini. For example:
+Code kopieren
+gc_probability = 1
+gc_divisor = 1000
+
+This means the GC runs approximately 1 in 1000 requests.
+
+Configuration:
+
+You can control the Garbage Collector using the following php.ini directives:
+gc_enable() and gc_disable() to enable or disable it.
+gc_collect_cycles() to manually trigger a collection cycle.
+
+Performance Considerations:
+
+While the GC is helpful, frequent invocations can impact performance. Tuning the gc_probability and gc_divisor values can help balance performance and memory management.
+
+PHP Versions:
+
+The Garbage Collector was introduced in PHP 5.3 and has been improved in subsequent versions.
+Example:
+
+Here’s how you can manually interact with the Garbage Collector:
+
+Code kopieren
+<?php
+gc_enable(); // Enable Garbage Collection
+echo "GC Enabled: " . (gc_enabled() ? "Yes" : "No") . PHP_EOL;
+
+$object1 = new stdClass();
+$object2 = new stdClass();
+$object1->ref = $object2;
+$object2->ref = $object1; // Circular reference
+
+unset($object1, $object2); // Objects are no longer accessible
+$collectedCycles = gc_collect_cycles(); // Force GC to clean up
+echo "Collected Cycles: $collectedCycles" . PHP_EOL;
+?>
+
+
+This script demonstrates how to enable the GC, create a circular reference, and manually trigger garbage collection.
+
+For more advanced use, understanding your application's memory usage patterns can help optimize GC behavior.
+
+######
+
+https://www.w3schools.com/sql/sql_stored_procedures.asp
+
+
+CREATE PROCEDURE SelectAllCustomers @City nvarchar(30)
+AS
+SELECT * FROM Customers WHERE City = @City
+GO;
+
+
+EXEC SelectAllCustomers @City = 'London';
+
+
+------
+
