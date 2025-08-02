@@ -1,0 +1,644 @@
+Events Ereignisse
+
+
+https://www.tutorialspoint.com/csharp/csharp_events.htm
+https://www.w3schools.com/cs/index.php
+https://openbook.rheinwerk-verlag.de/visual_csharp_2012/1997_05_001.html
+
+
+ In C#, events are a way for objects to communicate with each other, enabling a class or object to notify other classes or objects when something of interest happens. They are commonly used in scenarios where you want to implement a publisher-subscriber model.
+
+Key Concepts:
+Publisher: The class that defines and raises the event.
+Subscriber: The class that listens to and handles the event.
+How Events Work:
+Declaration: Events are declared using the event keyword, typically in the publisher class.
+Subscription: Other classes (subscribers) can subscribe to the event using the += operator and provide a method (event handler) to execute when the event is raised.
+Raising the Event: The publisher raises the event, notifying all subscribed handlers.
+Example:
+Code kopieren
+using System;
+
+class Publisher
+{
+    // Declare the event
+    public event EventHandler SomethingHappened;
+
+    public void TriggerEvent()
+    {
+        // Raise the event
+        SomethingHappened?.Invoke(this, EventArgs.Empty);
+    }
+}
+
+class Subscriber
+{
+    public void OnSomethingHappened(object sender, EventArgs e)
+    {
+        Console.WriteLine("Event received!");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Publisher publisher = new Publisher();
+        Subscriber subscriber = new Subscriber();
+
+        // Subscribe to the event
+        publisher.SomethingHappened += subscriber.OnSomethingHappened;
+
+        // Trigger the event
+        publisher.TriggerEvent();
+    }
+}
+
+Key Points:
+Events are based on delegates, which define the method signature for event handlers.
+They ensure encapsulation by allowing only the publisher to raise the event, while subscribers can only attach or detach handlers.
+Events are widely used in GUI programming, asynchronous programming, and other scenarios requiring notification mechanisms.
+
+-------------------
+
+https://openbook.rheinwerk-verlag.de/visual_csharp_2012/1997_05_002.html#dodtp862ac49c-9839-46c9-850d-2187b2b5aee9
+https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/events/
+https://learn.microsoft.com/en-us/dotnet/standard/events/
+https://www.tutorialspoint.com/csharp/csharp_events.htm
+https://www.geeksforgeeks.org/c-sharp/c-sharp-delegates/
+https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/events/how-to-subscribe-to-and-unsubscribe-from-events
+https://learn.microsoft.com/en-us/dotnet/api/system.eventargs?view=net-9.0
+
+
+
+
+In C#, events are a way for objects to communicate with each other. They allow a class (the publisher) to notify other classes or objects (the subscribers) when something of interest happens. Events are based on delegates, which define the method signature that subscribers must follow.
+
+Key Concepts of Events in C#:
+Publisher: The class that declares and raises the event.
+Subscriber: The class or object that listens to the event and responds to it.
+Subscribing to Events
+
+To subscribe to an event, you attach a method (event handler) to the event using the += operator. This method will be called whenever the event is raised.
+
+Example of Event Subscription
+Code kopieren
+using System;
+
+public class Publisher
+{
+    // Declare the event using EventHandler or a custom delegate
+    public event EventHandler MyEvent;
+
+    public void RaiseEvent()
+    {
+        // Raise the event (if there are subscribers)
+        MyEvent?.Invoke(this, EventArgs.Empty);
+    }
+}
+
+public class Subscriber
+{
+    public void OnMyEvent(object sender, EventArgs e)
+    {
+        Console.WriteLine("Event received!");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Publisher publisher = new Publisher();
+        Subscriber subscriber = new Subscriber();
+
+        // Subscribe to the event
+        publisher.MyEvent += subscriber.OnMyEvent;
+
+        // Trigger the event
+        publisher.RaiseEvent();
+    }
+}
+
+Key Points:
+Subscribing: Use += to attach a method to the event.
+Unsubscribing: Use -= to detach a method from the event.
+Order of Invocation: Event handlers are called in the order they were subscribed.
+Unsubscribing Example
+Code kopieren
+publisher.MyEvent -= subscriber.OnMyEvent;
+
+
+This ensures that the subscriber no longer listens to the event, which is important for avoiding memory leaks in long-lived objects.
+
+Events are a powerful feature in C# for implementing the observer pattern, enabling decoupled communication between components.
+
+
+
+
+
+https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/events/how-to-subscribe-to-and-unsubscribe-from-events
+
+-----------------------------------------
+
+Example of C# Event
+
+using System;
+namespace SampleApp {
+   public delegate string MyDel(string str);
+	
+   class EventProgram {
+      event MyDel MyEvent;
+		
+      public EventProgram() {
+         this.MyEvent += new MyDel(this.WelcomeUser);
+      }
+      public string WelcomeUser(string username) {
+         return "Welcome " + username;
+      }
+      static void Main(string[] args) {
+         EventProgram obj1 = new EventProgram();
+         string result = obj1.MyEvent("Tutorials Point");
+         Console.WriteLine(result);
+      }
+   }
+}
+
+https://www.tutorialspoint.com/csharp/csharp_events.htm
+
+
+Event Handling Example Using Delegates
+
+
+using System;
+namespace EventExample {
+   public delegate void Notify(string message);
+   
+   // Publisher class
+   class User {
+      // Declare event
+      public event Notify UserLoggedIn;
+      
+      public void Login(string username) {
+         Console.WriteLine($"{username} logged in successfully.");
+         
+         // Trigger event
+         UserLoggedIn?.Invoke($"Notification: {username} has logged in.");
+      }
+   }
+   
+   // Subscriber class
+   class Program {
+      static void Main(string[] args) {
+         User user = new User();
+         
+         // Subscribe to the event
+         user.UserLoggedIn += DisplayMessage;
+         
+         // Simulate login
+         user.Login("JohnDoe");
+      }
+      
+      // Event handler method
+      static void DisplayMessage(string message) {
+         Console.WriteLine(message);
+      }
+   }
+}
+
+
+Event with Multiple Handlers
+
+using System;
+
+class WeatherStation {
+    public delegate void TemperatureAlertHandler(string message);
+    public event TemperatureAlertHandler OnTemperatureAlert;
+
+    public void CheckTemperature(double temperature) {
+        Console.WriteLine($"Current temperature is: {temperature}");
+        if (temperature > 30) {
+            OnTemperatureAlert?.Invoke("Temperature too high...");
+        }
+    }
+}
+
+class Program {
+    static void DisplayDevice(string msg) => Console.WriteLine($"Display shows alert: {msg}");
+    static void CoolingSystem(string msg) => Console.WriteLine($"Cooling system activated: {msg}");
+
+    static void Main() {
+        WeatherStation station = new WeatherStation();
+
+        station.OnTemperatureAlert += DisplayDevice;
+        station.OnTemperatureAlert += CoolingSystem;
+
+        station.CheckTemperature(35.5);
+    }
+}
+
+-------------------------------
+
+
+In C#, you can pass arguments to an event handler by using custom event arguments. This is done by creating a class that derives from EventArgs and includes the additional data you want to pass. Here's how you can do it:
+
+Example: Passing Arguments to an Event Handler
+Code kopieren
+using System;
+
+public class CustomEventArgs : EventArgs
+{
+    public string Message { get; }
+    public int Value { get; }
+
+    public CustomEventArgs(string message, int value)
+    {
+        Message = message;
+        Value = value;
+    }
+}
+
+public class Publisher
+{
+    public event EventHandler<CustomEventArgs> CustomEvent;
+
+    public void RaiseEvent(string message, int value)
+    {
+        CustomEvent?.Invoke(this, new CustomEventArgs(message, value));
+    }
+}
+
+public class Subscriber
+{
+    public void OnCustomEvent(object sender, CustomEventArgs e)
+    {
+        Console.WriteLine($"Message: {e.Message}, Value: {e.Value}");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        var publisher = new Publisher();
+        var subscriber = new Subscriber();
+
+        publisher.CustomEvent += subscriber.OnCustomEvent;
+
+        publisher.RaiseEvent("Hello, World!", 42);
+    }
+}
+
+Explanation:
+Custom EventArgs Class: CustomEventArgs inherits from EventArgs and contains additional properties (Message and Value).
+Event Declaration: The CustomEvent is declared using EventHandler<CustomEventArgs>.
+Raising the Event: The RaiseEvent method creates an instance of CustomEventArgs and invokes the event.
+Handling the Event: The OnCustomEvent method in the Subscriber class processes the event data.
+
+This approach ensures that you can pass custom data to event handlers in a clean and type-safe manner.
+
+
+https://learn.microsoft.com/en-us/dotnet/standard/events/
+
+------------------------------------------------------------------------
+
+
+In C#, events declared in a base class can be triggered (raised) in subclasses by following a specific pattern. Here's how you can achieve this:
+
+1. Declare the Event in the Base Class
+Define the event in the base class and provide a protected method to raise it. This ensures that derived classes can trigger the event safely.
+Code kopieren
+public class BaseClass
+{
+    public event EventHandler MyEvent;
+
+    // Protected method to raise the event
+    protected virtual void OnMyEvent(EventArgs e)
+    {
+        MyEvent?.Invoke(this, e);
+    }
+}
+
+2. Trigger the Event in the Subclass
+In the subclass, call the protected method from the base class to raise the event.
+Code kopieren
+public class SubClass : BaseClass
+{
+    public void TriggerEvent()
+    {
+        // Trigger the event using the base class method
+        OnMyEvent(EventArgs.Empty);
+    }
+}
+
+3. Subscribe and Handle the Event
+An external class can subscribe to the event and handle it.
+Code kopieren
+public class Program
+{
+    public static void Main()
+    {
+        SubClass obj = new SubClass();
+        obj.MyEvent += (sender, e) => Console.WriteLine("Event triggered!");
+        
+        obj.TriggerEvent(); // Output: Event triggered!
+    }
+}
+
+Key Points:
+Encapsulation: Use a protected method (OnMyEvent) to encapsulate the logic for raising the event. This ensures the event is raised in a controlled manner.
+Virtual Method: Mark the method as virtual if you want derived classes to override the event-raising behavior.
+Null Check: Always check if the event is null before invoking it to avoid NullReferenceException.
+
+This pattern is widely used in frameworks like Windows Forms and WPF to allow derived classes to raise or customize base class events.
+
+
+
+https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/events/
+https://learn.microsoft.com/en-us/dotnet/standard/events/how-to-raise-and-consume-events
+https://www.geeksforgeeks.org/c-sharp/c-sharp-handling-an-event-declared-in-an-interface/
+https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/events/how-to-raise-base-class-events-in-derived-classes
+https://learn.microsoft.com/en-us/dotnet/standard/events/
+
+
+------------------------
+
+
+In C#, delegates and events are closely related but serve different purposes. Here's a concise breakdown of their differences:
+
+Delegates
+Definition: A delegate is a type-safe function pointer that holds references to one or more methods.
+Purpose: Used to encapsulate methods and invoke them dynamically.
+Usage: Can be invoked directly by any code that has access to the delegate instance.
+Flexibility: Delegates are independent and can exist without events.
+Example:
+Code kopieren
+public delegate void Notify(string message);
+
+class Program
+{
+    static void Main()
+    {
+        Notify notifyDelegate = ShowMessage;
+        notifyDelegate("Hello, Delegate!");
+    }
+
+    static void ShowMessage(string message)
+    {
+        Console.WriteLine(message);
+    }
+}
+
+Events
+Definition: An event is a wrapper around a delegate that restricts direct invocation, allowing only subscription (+=) and unsubscription (-=).
+Purpose: Used to implement the publisher-subscriber pattern, where subscribers respond to specific actions or changes.
+Usage: Can only be triggered (raised) by the class that declares it.
+Dependency: Events rely on delegates; they cannot exist without them.
+Example:
+Code kopieren
+public delegate void Notify(string message);
+
+class Publisher
+{
+    public event Notify OnNotify;
+
+    public void TriggerEvent()
+    {
+        OnNotify?.Invoke("Hello, Event!");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Publisher publisher = new Publisher();
+        publisher.OnNotify += ShowMessage;
+        publisher.TriggerEvent();
+    }
+
+    static void ShowMessage(string message)
+    {
+        Console.WriteLine(message);
+    }
+}
+
+Key Differences
+Aspect	Delegate	Event
+Invocation	Can be invoked directly.	Can only be raised by the declaring class.
+Access	Accessible like a normal variable.	Restricted to subscription/unsubscription.
+Purpose	General method encapsulation.	Event-driven programming.
+
+In summary, delegates are the foundation, while events provide a controlled mechanism for using delegates in scenarios like notifications or callbacks.
+
+https://openbook.rheinwerk-verlag.de/visual_csharp_2012/1997_05_001.html
+
+---------------------------------------
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace HelloWorld
+{  
+  
+  class ZufallszahlengeneratorEventArgs : EventArgs 
+  { 
+    public int Zufallszahl { get; } 
+    public ZufallszahlengeneratorEventArgs(int zufallszahl) => Zufallszahl = zufallszahl; 
+  }
+  delegate void GeradeEventHandler(object sender, ZufallszahlengeneratorEventArgs e); 
+  
+
+  class Zufallszahlengenerator 
+  { 
+    
+    public static void ge1_Gerade(object sender, ZufallszahlengeneratorEventArgs e) 
+	{ 
+	  Console.WriteLine($"{(sender as Zufallszahlengenerator).Name} hat modulo 2 von {e.Zufallszahl} erzeugt."); 
+	} 
+    
+    static Random zufallsgenerator = new Random(); 
+    public event GeradeEventHandler Gerade; 
+    public string Name { get; } 
+    public Zufallszahlengenerator(string name) => Name = name; 
+    public int Erzeugen() 
+    { 
+      int zufallszahl = zufallsgenerator.Next(1, 101); 
+      ZufallszahlengeneratorEventArgs e = new ZufallszahlengeneratorEventArgs(zufallszahl); 
+      if (zufallszahl % 2 == 0) Gerade?.Invoke(this, e); 
+      return zufallszahl; 
+    } 
+  }
+
+  public class Program
+	{
+		public static void Main(string[] args)
+		{
+			Console.WriteLine("Hello, World!");
+			Zufallszahlengenerator ge1 = new Zufallszahlengenerator("Test");
+			ge1.Gerade += Zufallszahlengenerator.ge1_Gerade;
+			for (int i = 0; i < 5; i++){
+			  ge1.Erzeugen();
+			}
+		}
+  }
+}
+  
+https://onecompiler.com/csharp/43s7w3ygg
+https://onecompiler.com/csharp/43s7w3754
+https://dotnetfiddle.net/
+
+-----------------------------------------
+
+Use the EventHandler delegate for all events that don't include event data. Use the EventHandler<TEventArgs> delegate for events that include data about the event. These delegates have no return type value and take two parameters (an object for the source of the event and an object for event data).
+
+
+In C#, if you want to define and use an event without explicitly invoking it (e.g., using ?.Invoke()), you can encapsulate the invocation logic within a method or property. Here's an example of how to handle events without directly invoking them:
+
+Example: Event Without Direct Invocation
+Code kopieren
+using System;
+
+class Program
+{
+    // Define the event using EventHandler (no custom arguments)
+    public event EventHandler MyEvent;
+
+    // Method to raise the event
+    protected virtual void OnMyEvent()
+    {
+        // Safely invoke the event
+        MyEvent?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void TriggerEvent()
+    {
+        Console.WriteLine("Triggering the event...");
+        OnMyEvent(); // Raise the event indirectly
+    }
+
+    static void Main()
+    {
+        var program = new Program();
+
+        // Subscribe to the event
+        program.MyEvent += (sender, e) =>
+        {
+            Console.WriteLine("Event was handled!");
+        };
+
+        // Trigger the event
+        program.TriggerEvent();
+    }
+}
+
+Key Points:
+Encapsulation: The OnMyEvent method encapsulates the invocation logic, so you don't need to call ?.Invoke() directly.
+Safety: Using ?.Invoke() ensures the event is only raised if there are subscribers.
+EventHandler: The EventHandler delegate is used for events without custom data.
+
+This approach keeps your code clean and adheres to best practices for event handling in C#.
+
+---------------
+
+In C#, you can invoke an event using the EventHandler delegate. Before invoking an event, it's essential to check if there are any subscribers to avoid a NullReferenceException. Here's an example:
+
+Example Code
+Code kopieren
+using System;
+
+class Program
+{
+    // Declare the event using EventHandler
+    public event EventHandler MyEvent;
+
+    static void Main(string[] args)
+    {
+        Program program = new Program();
+
+        // Subscribe to the event
+        program.MyEvent += Program_MyEvent;
+
+        // Invoke the event
+        program.OnMyEvent();
+    }
+
+    // Event handler method
+    private static void Program_MyEvent(object sender, EventArgs e)
+    {
+        Console.WriteLine("Event triggered!");
+    }
+
+    // Method to invoke the event
+    protected virtual void OnMyEvent()
+    {
+        // Check if there are subscribers
+        MyEvent?.Invoke(this, EventArgs.Empty);
+    }
+}
+
+Key Points:
+Event Declaration: Use EventHandler or EventHandler<TEventArgs> for events.
+Invocation: Use the null-conditional operator (?.) to safely invoke the event.
+Event Arguments: Pass EventArgs.Empty if no additional data is needed.
+
+This ensures your event is invoked safely and efficiently.
+
+
+-----------------------------------------------------
+
+In C#, you can unsubscribe from an event by setting the event handler to null, but this is only possible within the class that declares the event. This is because events expose only += (subscribe) and -= (unsubscribe) operators to external classes, while the backing field of the event is private.
+
+Here’s an example to demonstrate unsubscribing by setting the event to null:
+
+Example: Clearing Event Subscriptions with null
+Code kopieren
+using System;
+
+public class MyClass
+{
+    public event EventHandler MyEvent;
+
+    public void TriggerEvent()
+    {
+        MyEvent?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void ClearEventSubscriptions()
+    {
+        // Set the event to null to clear all subscriptions
+        MyEvent = null;
+    }
+}
+
+public class Program
+{
+    public static void Main()
+    {
+        var myClass = new MyClass();
+
+        // Subscribe to the event
+        myClass.MyEvent += (sender, args) => Console.WriteLine("Event triggered!");
+
+        // Trigger the event
+        myClass.TriggerEvent(); // Output: Event triggered!
+
+        // Clear all subscriptions
+        myClass.ClearEventSubscriptions();
+
+        // Trigger the event again
+        myClass.TriggerEvent(); // No output, as the event has no subscribers
+    }
+}
+
+Key Points:
+Access Restriction: You can only set the event to null within the class that declares it.
+Nullifying the Event: Setting the event to null clears all subscribers, effectively resetting the invocation list.
+External Classes: From outside the class, you can only unsubscribe specific handlers using -=.
+
+This approach is useful for scenarios where you need to reset all event subscriptions, such as during cleanup or reinitialization.
+
+
