@@ -1,0 +1,520 @@
+Multithreading and Destructors
+
+
+-------------------------------------------------------------------------------------
+#############################################################
+objects destroys
+#############################################################
+
+
+
+In C#, objects are managed by the Garbage Collector (GC), which automatically handles memory management. However,
+ there are specific ways to ensure proper cleanup of resources when objects are no longer needed:
+
+1. Garbage Collection
+The Garbage Collector automatically destroys objects when they are no longer referenced.
+You cannot explicitly destroy an object, but you can suggest garbage collection using GC.Collect(). However,
+ this is generally discouraged as the GC works best when left to its own schedule.
+ 
+2. Destructors
+A destructor is a special method in a class that is called automatically by the Garbage Collector before the object is destroyed.
+Syntax:
+Code kopieren
+class MyClass
+{
+    ~MyClass()
+    {
+        // Cleanup code here
+    }
+}
+
+Destructors are useful for releasing unmanaged resources like file handles or database connections.
+
+3. IDisposable and Dispose Method
+For deterministic cleanup of unmanaged resources, implement the IDisposable interface and define a Dispose method.
+Example:
+Code kopieren
+class MyClass : IDisposable
+{
+    public void Dispose()
+    {
+        // Cleanup code here
+        GC.SuppressFinalize(this); // Prevents the destructor from being called
+    }
+
+    ~MyClass()
+    {
+        // Finalizer for cleanup if Dispose is not called
+    }
+}
+
+Use the using statement to ensure Dispose is called automatically:
+Code kopieren
+using (var obj = new MyClass())
+{
+    // Use obj
+}
+
+4. Manual Cleanup
+For unmanaged resources, explicitly release them (e.g., closing file streams,
+ database connections, etc.) in the Dispose method or destructor.
+Key Notes:
+Avoid forcing garbage collection unless absolutely necessary.
+Always prefer IDisposable for managing unmanaged resources.
+Destructors are rarely needed unless working with unmanaged resources directly.
+
+-------------------------------------------------------------------------------------
+
+
+When Does the C# Compiler Call the Destructor?
+1
+2
+3
+In C#, destructors are special methods used to clean up resources when an object is no longer needed. 
+However, unlike languages like C++, destructors in C# are not called explicitly or deterministically. 
+Instead, they are managed by the .NET Garbage Collector (GC), which determines when to invoke the destructor based on memory management needs.
+
+Key Characteristics of C# Destructors
+
+Implicit Invocation by Garbage Collector: The destructor is called automatically by the Garbage Collector
+ when the object becomes unreachable and is ready for cleanup. This process is non-deterministic,
+ meaning you cannot predict the exact time when the destructor will be executed
+1
+2
+.
+
+Finalize Method: Internally, the destructor is translated into an override of the Object.Finalize() method. 
+The destructor's body is placed in a try block, ensuring that the base class's Finalize method is also called
+3
+.
+
+No Explicit Calls: Unlike C++, you cannot explicitly call a destructor in C#. The Garbage Collector handles all 
+destructor calls to ensure proper memory management and avoid issues like double destruction or premature cleanup
+2
+3
+.
+
+Eligibility for Destruction: An object becomes eligible for destruction when it is no longer referenced by any
+ part of the code. However, the actual execution of the destructor may occur at any time after this point
+2
+
+
+https://www.geeksforgeeks.org/c-sharp/destructors-in-c-sharp/
+https://www.geeksforgeeks.org/c-sharp/destructors-in-c-sharp/
+https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/finalizers
+
+-------------------------------------------------------------------------------------
+
+Destroy an object in C#
+
+Do nothing. Your reference (obj) will go out of scope. Then the Garbage Collector will come along and destroy your object.
+
+If there are (unmanaged) resources that need to be destroyed immediately, then implement the IDisposable interface and call Disp...
+
+ClassName obj = null;
+try{
+   obj = new ClassName();
+   //do stuff
+}
+finally{
+   if (obj != null) { obj.Dispose(); }
+}
+Or, with a using statement:
+
+using (var obj = new ClassName())
+{
+     // do stuff
+}
+
+
+https://www.geeksforgeeks.org/c-sharp/destructors-in-c-sharp/
+
+-------------------------------------------------------------------------------------
+
+##############################
+Multithreading
+##############################
+
+
+Multithreading in C# is a programming technique that allows multiple threads to run concurrently within a single process. A thread is the smallest unit of execution in a program, and multithreading enables tasks to be performed in parallel, improving the efficiency and performance of applications.
+
+Key Points About Multithreading in C#:
+Concurrency: Multiple threads can execute simultaneously, allowing the program to handle multiple tasks at once.
+Parallelism: Tasks that are independent can run in parallel, making better use of CPU resources.
+Thread Management: C# provides tools to create, manage, and synchronize threads using the System.Threading namespace.
+Use Cases: Commonly used for tasks like file I/O, database operations, or any process that might block the main thread.
+
+-------------------------------------------------------------------------------------
+
+In C#, threads are independent units of execution within a program. They allow multiple tasks to run concurrently, enabling better performance and responsiveness, especially in applications that handle multiple operations simultaneously, such as web servers or GUI applications.
+
+Key Points About Threads in C#:
+Definition: A thread is a lightweight process that executes a sequence of instructions independently.
+Namespace: Threads in C# are managed using the System.Threading namespace.
+Multithreading: This is the concept of running multiple threads at the same time, allowing parallel execution of tasks.
+Thread Class: The Thread class in C# provides methods and properties to create, start, pause, resume, and stop threads.
+
+https://openbook.rheinwerk-verlag.de/visual_csharp_2012/1997_15_001.html#dodtp61e706c0-d922-4db1-b2fb-cda3e1ff9a4c
+
+
+-------------------------------------------------------------------------------------
+
+
+
+In C#, threads are a fundamental concept used to perform multiple tasks concurrently within an application. A thread is essentially the smallest unit of execution within a process. Here's a concise explanation:
+
+Definition: A thread is an independent path of execution within a program. It allows multiple operations to run simultaneously, enabling better utilization of system resources and improving application performance.
+
+Namespace: Threads in C# are managed using the System.Threading namespace, which provides the Thread class and other related tools.
+
+Key Features:
+
+Concurrency: Threads enable multitasking by allowing different parts of a program to execute independently.
+Lifecycle Management: The Thread class provides methods to start, pause, resume, and stop threads.
+Thread Safety: Proper synchronization mechanisms (e.g., locks, monitors) are required to avoid issues like race conditions when multiple threads access shared resources.
+
+Example:
+
+Code kopieren
+using System;
+using System.Threading;
+
+class Program
+{
+    static void Main()
+    {
+        Thread thread = new Thread(PrintNumbers);
+        thread.Start(); // Start the thread
+        Console.WriteLine("Main thread is running...");
+    }
+
+    static void PrintNumbers()
+    {
+        for (int i = 1; i <= 5; i++)
+        {
+            Console.WriteLine($"Thread: {i}");
+            Thread.Sleep(500); // Pause for 500ms
+        }
+    }
+}
+
+
+In this example, the PrintNumbers method runs on a separate thread, while the main thread continues its execution. This demonstrates how threads can work concurrently.
+
+
+-------------------------------------------------------------------------------------
+
+https://learn.microsoft.com/en-us/dotnet/standard/threading/using-threads-and-threading
+https://www.geeksforgeeks.org/c-sharp/thread-class-in-c-sharp/
+
+
+In C#, threads are used to perform multiple tasks concurrently, enabling efficient use of system resources and improving application responsiveness. Here's a concise explanation of their purpose:
+
+What Threads Are Used For in C#:
+
+Concurrency and Multitasking:
+
+Threads allow multiple operations to run simultaneously, such as handling user input while processing data in the background.
+
+Improved Performance:
+
+By offloading time-consuming tasks (e.g., file I/O, database queries) to separate threads, the main thread remains free for other operations, enhancing performance.
+
+Responsiveness:
+
+In GUI applications, threads prevent the user interface from freezing during long-running tasks, ensuring a smooth user experience.
+
+Parallel Processing:
+
+Threads enable parallel execution of code, which is especially useful for CPU-intensive tasks, like mathematical computations or data analysis.
+
+Background Tasks:
+
+Threads are ideal for running background services, such as monitoring, logging, or periodic updates.
+Example in C#:
+Code kopieren
+using System;
+using System.Threading;
+
+class Program
+{
+    static void Main()
+    {
+        Thread thread = new Thread(DoWork);
+        thread.Start(); // Start a new thread
+        Console.WriteLine("Main thread is free to do other work...");
+    }
+
+    static void DoWork()
+    {
+        Console.WriteLine("Work is being done on a separate thread.");
+    }
+}
+
+
+This example demonstrates how a thread can execute a task independently of the main thread.
+
+-------------------------------------------------------------------------------------
+
+In C#, threads can work with arguments by passing data to the thread's method. There are a few common ways to achieve this:
+
+1. Using ParameterizedThreadStart
+
+The ParameterizedThreadStart delegate allows you to pass a single argument to the thread. However,
+ the argument must be of type object, so you may need to cast it back to the appropriate type.
+
+Code kopieren
+using System;
+using System.Threading;
+
+class Program
+{
+    static void Main()
+    {
+        Thread thread = new Thread(new ParameterizedThreadStart(DoWork));
+        thread.Start("Hello, Thread!");
+    }
+
+    static void DoWork(object data)
+    {
+        string message = (string)data;
+        Console.WriteLine(message);
+    }
+}
+
+2. Using Lambda Expressions
+
+You can use a lambda expression to capture variables and pass them to the thread.
+
+ This approach is more flexible and avoids the need for casting.
+
+Code kopieren
+using System;
+using System.Threading;
+
+class Program
+{
+    static void Main()
+    {
+        string message = "Hello, Lambda!";
+        Thread thread = new Thread(() => DoWork(message));
+        thread.Start();
+    }
+
+    static void DoWork(string data)
+    {
+        Console.WriteLine(data);
+    }
+}
+
+3. Using a Custom Class
+
+If you need to pass multiple arguments, you can encapsulate them in a custom class or a tuple.
+
+Code kopieren
+using System;
+using System.Threading;
+
+class Program
+{
+    static void Main()
+    {
+        var data = new ThreadData { Message = "Hello, Custom Class!", Number = 42 };
+        Thread thread = new Thread(DoWork);
+        thread.Start(data);
+    }
+
+    static void DoWork(object obj)
+    {
+        ThreadData data = (ThreadData)obj;
+        Console.WriteLine($"{data.Message} - {data.Number}");
+    }
+}
+
+class ThreadData
+{
+    public string Message { get; set; }
+    public int Number { get; set; }
+}
+
+
+Each method has its use case, and you can choose the one that best fits your needs. For modern applications, 
+consider using Task or async/await for better readability and control over threading.
+
+-------------------------------------------------------------------------------------
+
+In C#, ThreadPools are a mechanism provided by the .NET framework to manage and reuse threads efficiently. Instead of creating and destroying threads manually, a thread pool maintains a collection of reusable threads that can execute tasks, reducing the overhead of thread creation and destruction.
+
+Key Features of ThreadPools:
+Efficient Resource Management: Threads are reused, minimizing the cost of creating and destroying threads.
+Automatic Scaling: The thread pool dynamically adjusts the number of threads based on workload.
+Task Queuing: Tasks are queued and executed by available threads in the pool.
+System-Managed: The .NET runtime manages the thread pool, optimizing performance and resource usage.
+Common Use Cases:
+Executing background tasks.
+Handling asynchronous operations.
+Processing timers or I/O-bound tasks.
+Example Usage:
+Code kopieren
+
+
+using System;
+using System.Threading;
+
+class Program
+{
+    static void Main()
+    {
+        // Queue a task to the ThreadPool
+        ThreadPool.QueueUserWorkItem(DoWork);
+
+        Console.WriteLine("Main thread does some work...");
+        Thread.Sleep(1000); // Simulate work
+        Console.WriteLine("Main thread exits.");
+    }
+
+    static void DoWork(object state)
+    {
+        Console.WriteLine("ThreadPool thread starts working...");
+        Thread.Sleep(500); // Simulate work
+        Console.WriteLine("ThreadPool thread finishes work.");
+    }
+}
+
+Advantages:
+Simplifies multithreading by avoiding manual thread management.
+Reduces the risk of resource exhaustion by limiting the number of threads.
+Optimized for performance by the .NET runtime.
+Limitations:
+Less control over individual threads (e.g., priority or naming).
+Not suitable for long-running tasks, as it may block other queued tasks.
+
+ThreadPools are ideal for short, frequent tasks and are a cornerstone of efficient multithreading in C#.
+
+
+-------------------------------------------------------------------------------------
+
+Threads Synchronisation 
+
+https://openbook.rheinwerk-verlag.de/visual_csharp_2012/1997_15_002.html#dodtp43938eba-7e16-4364-bd85-19b830b86d5c
+
+
+-------------------------------------------------------------------------------------
+
+In C#, asynchronous calls can be implemented using the async and await keywords, or by leveraging tasks
+ and delegates. Below are three common approaches to make asynchronous calls:
+
+1. Using async and await
+
+This is the most modern and recommended approach for asynchronous programming in C#.
+
+Code kopieren
+public async Task FetchDataAsync()
+{
+    Console.WriteLine("Fetching data...");
+    await Task.Delay(2000); // Simulates an asynchronous operation
+    Console.WriteLine("Data fetched!");
+}
+
+// Calling the method
+await FetchDataAsync();
+
+2. Using Task.Run
+
+You can use Task.Run to execute a method asynchronously on a separate thread.
+
+Code kopieren
+public void PerformTask()
+{
+    Console.WriteLine("Performing task...");
+    Thread.Sleep(2000); // Simulates a time-consuming operation
+    Console.WriteLine("Task completed!");
+}
+
+// Calling the method asynchronously
+await Task.Run(() => PerformTask());
+
+3. Using Delegates (BeginInvoke and EndInvoke)
+
+This is an older approach but still valid for asynchronous calls.
+
+Code kopieren
+public void LongRunningOperation()
+{
+    Console.WriteLine("Starting operation...");
+    Thread.Sleep(3000); // Simulates a long-running task
+    Console.WriteLine("Operation finished!");
+}
+
+// Calling the method asynchronously
+Action action = LongRunningOperation;
+IAsyncResult result = action.BeginInvoke(null, null);
+
+// Optionally wait for completion
+action.EndInvoke(result);
+
+Notes:
+Use async/await for better readability and error handling.
+Avoid blocking the main thread (e.g., Thread.Sleep) in asynchronous code.
+Always handle exceptions in asynchronous methods using try-catch.
+
+Let me know if you'd like further clarification! 😊
+
+
+
+https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/
+https://learn.microsoft.com/en-us/dotnet/standard/asynchronous-programming-patterns/calling-synchronous-methods-asynchronously
+
+
+-------------------------------------------------------------------------------------
+
+In C#, asynchronous methods are created using the async and await keywords.
+These methods allow you to perform non-blocking operations, improving application responsiveness. Here's a simple example:
+
+Example: Creating an Asynchronous Method
+Code kopieren
+using System;
+using System.Threading.Tasks;
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        Console.WriteLine("Starting...");
+        string result = await GetDataAsync();
+        Console.WriteLine(result);
+        Console.WriteLine("Finished!");
+    }
+
+    static async Task<string> GetDataAsync()
+    {
+        // Simulate a delay (e.g., fetching data from a server)
+        await Task.Delay(2000); // 2 seconds delay
+        return "Data retrieved successfully!";
+    }
+}
+
+Key Points:
+async Modifier: Marks a method as asynchronous.
+await Keyword: Pauses the execution of the method until the awaited task completes, without blocking the thread.
+Return Types:
+Task: For methods that return no value.
+Task<T>: For methods that return a value of type T.
+void: Only for event handlers (not recommended for general use).
+
+This approach ensures that your application remains responsive, especially in scenarios involving I/O-bound operations like file access or web requests.
+
+-------------------------------------------------------------------------------------
+
+https://www.geeksforgeeks.org/c-sharp/async-and-await-in-c-sharp/
+
+-------------------------------------------------------------------------------------
+
+
+Task Parallel Library (TPL)
+
+https://openbook.rheinwerk-verlag.de/visual_csharp_2012/1997_15_003.html#dodtpcdded817-8f7d-4748-be93-4011e419194f
+
+
+
+

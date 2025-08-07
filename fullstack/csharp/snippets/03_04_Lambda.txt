@@ -1,0 +1,1389 @@
+LAMBDA
+###################################
+lambda expressions
+Lambda-Ausdrücke
+###################################
+
+In C#, lambda expressions are a concise way to represent anonymous functions. They allow you to write inline functions that can be passed as arguments or used wherever a delegate or expression tree is expected. Lambda expressions are defined using the => operator, often called the lambda operator.
+
+Syntax:
+Copy code
+(parameters) => expression
+
+
+or
+
+Copy code
+(parameters) => { statement block }
+
+Key Features:
+Simplified Syntax: You don't need to explicitly specify the type of parameters (type inference is supported).
+Inline Definition: They are defined directly where they are used.
+Flexible Usage: Commonly used with LINQ queries, delegates, and events.
+Examples:
+
+Basic Lambda Expression:
+
+Copy code
+Func<int, int> square = x => x * x;
+Console.WriteLine(square(5)); // Output: 25
+
+
+Lambda with Multiple Parameters:
+
+Copy code
+Func<int, int, int> add = (x, y) => x + y;
+Console.WriteLine(add(3, 4)); // Output: 7
+
+
+Lambda with Statement Block:
+
+Copy code
+Action<string> greet = name => 
+{
+    Console.WriteLine($"Hello, {name}!");
+};
+greet("Alice"); // Output: Hello, Alice!
+
+Common Use Cases:
+
+LINQ Queries:
+
+Copy code
+var numbers = new[] { 1, 2, 3, 4, 5 };
+var evenNumbers = numbers.Where(n => n % 2 == 0);
+foreach (var num in evenNumbers)
+{
+    Console.WriteLine(num); // Output: 2, 4
+}
+
+
+Event Handlers:
+
+Copy code
+button.Click += (sender, e) => Console.WriteLine("Button clicked!");
+
+
+Lambda expressions are a powerful feature in C# that make your code more concise and expressive!
+
+--------------------------------------------------------------
+###################################
+lambda expressions
+###################################
+
+
+In C#, lambda expressions, predicates, and projections are related concepts often used in LINQ and functional programming. Here's a concise explanation:
+
+1. Lambda Expressions
+A lambda expression is an anonymous function that can contain expressions or statements.
+It uses the => operator (called the lambda operator) to separate input parameters from the body of the function.
+Example:
+Copy code
+x => x * x  // A lambda expression that squares a number
+
+2. Predicates
+
+A predicate is a specific type of lambda expression that always returns a bool (true or false).
+
+It is used to define a condition or criteria, often for filtering collections.
+
+Example:
+
+Copy code
+Predicate<int> isEven = x => x % 2 == 0;  // Checks if a number is even
+bool result = isEven(4);  // Returns true
+
+
+In LINQ, predicates are commonly used with methods like Where:
+
+Copy code
+var evenNumbers = numbers.Where(x => x % 2 == 0);
+
+3. Projections
+A projection is a lambda expression used to transform or map data from one form to another.
+It is often used with LINQ's Select method to project each element of a collection into a new form.
+Example:
+Copy code
+var squares = numbers.Select(x => x * x);  // Projects each number to its square
+
+Key Difference
+Predicates: Focus on filtering (return bool).
+Projections: Focus on transforming data (return any type).
+
+These concepts make C# highly expressive and powerful for working with collections and functional programming patterns.
+
+--------------------------------------------------------------
+
+https://www.geeksforgeeks.org/c-sharp/lambda-expressions-in-c-sharp/
+https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/lambda-expressions
+https://learn.microsoft.com/en-us/dotnet/csharp/linq/standard-query-operators/projection-operations
+
+###################################
+expression-bodies
+###################################
+
+
+In C#, expression-bodied members are a concise way to define members (like methods, properties, constructors, etc.) using a lambda-like syntax. They allow you to write simple, single-expression members in a more compact and readable form.
+
+Key Points:
+Syntax: Expression-bodied members use the => (lambda arrow) to define their body.
+Purpose: They are used for members that can be represented by a single expression, making the code cleaner and more concise.
+Examples:
+
+1. Expression-Bodied Methods
+Copy code
+public class Example
+{
+    public int Square(int x) => x * x; // Single-line method
+}
+
+2. Expression-Bodied Properties
+Copy code
+public class Example
+{
+    private int _value;
+
+    public int Value
+    {
+        get => _value; // Getter
+        set => _value = value; // Setter
+    }
+}
+
+3. Expression-Bodied Constructors
+Copy code
+public class Example
+{
+    private string _name;
+
+    public Example(string name) => _name = name; // Constructor
+}
+
+4. Expression-Bodied Finalizers
+Copy code
+public class Example
+{
+    ~Example() => Console.WriteLine("Finalizer called!"); // Finalizer
+}
+
+5. Expression-Bodied Indexers
+Copy code
+public class Example
+{
+    private int[] _numbers = { 1, 2, 3 };
+
+    public int this[int index] => _numbers[index]; // Indexer
+}
+
+Benefits:
+Readability: Reduces boilerplate code for simple members.
+Conciseness: Ideal for single-expression logic.
+
+However, for more complex logic, it's better to use the traditional block syntax for clarity.
+
+
+https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/lambda-operator
+https://learn.microsoft.com/de-de/dotnet/csharp/language-reference/operators/lambda-expressions
+https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/expression-bodied-members
+https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/lambda-expressions
+https://www.geeksforgeeks.org/c-sharp/lambda-expressions-in-c-sharp/
+https://essentialcsharp.com/lambda-expressions
+https://openbook.rheinwerk-verlag.de/visual_csharp_2012/1997_10_003.html#dodtp46efe5c6-5001-428b-b4f9-95b9b613bc34
+
+
+
+
+
+
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+
+namespace HelloWorld
+{
+    internal class Program
+    {
+        delegate double MathHandler(double zahl);
+        public static void Main(string[] args)
+        {
+            System.Console.WriteLine("----------");        
+            double zahl = 4.84;
+            MathHandler math = delegate (double x) { return Math.Round(x); };
+            Console.WriteLine($"Anonym Method: {zahl} gerundet = {math(zahl)}");
+            Console.WriteLine(MyLambdaRound(zahl));
+			 Console.WriteLine((new ExpBodies()).MyLambdaSquare(5));		
+        }
+        public static double MyLambdaRound(double x) => Math.Round(x);
+    }
+	
+	class ExpBodies{
+	    int zahl;		
+		public int MyLambdaSquare(int zahl) => (zahl * zahl );	
+		public int Square { get => zahl; set => zahl = zahl * zahl; }
+	}
+}
+
+
+
+--------------------------------------------------------------
+###################################
+LINQ
+###################################
+
+LINQ (Language Integrated Query) is a powerful feature in C# that allows developers to query and 
+manipulate data in a consistent and readable way, regardless of the data source. It integrates query 
+capabilities directly into the C# language, enabling you to work with collections, databases, XML, and other data sources using a unified syntax.
+
+Key Features of LINQ:
+Declarative Syntax: LINQ uses a clean, SQL-like syntax that is easy to read and write.
+Type Safety: Queries are checked at compile time, reducing runtime errors.
+IntelliSense Support: Provides code suggestions and auto-completion in IDEs like Visual Studio.
+Unified Approach: Works with various data sources such as:
+LINQ to Objects: For in-memory collections like arrays or lists.
+LINQ to SQL/Entity Framework: For querying databases.
+LINQ to XML: For working with XML data.
+LINQ to Entities: For ORM-based data access.
+
+Example:
+
+Here’s a simple example of LINQ to filter and sort a list of numbers:
+
+Copy code
+using System;
+using System.Linq;
+
+class Program
+{
+    static void Main()
+    {
+        int[] numbers = { 5, 10, 15, 20, 25, 30 };
+
+        // LINQ query to filter and sort numbers
+        var result = from num in numbers
+                     where num > 10
+                     orderby num descending
+                     select num;
+
+        foreach (var num in result)
+        {
+            Console.WriteLine(num);
+        }
+    }
+}
+
+Output:
+Copy code
+30
+25
+20
+15
+
+
+LINQ simplifies data manipulation, making your code more expressive and concise. It’s a great tool for developers working with diverse data sources.
+
+
+--------------------------------------------------------------
+###################################
+Syntax LINQ
+###################################
+
+LINQ (Language Integrated Query) in C# provides a way to query data from various sources (like collections, databases, XML, etc.) using a consistent syntax. LINQ has two main syntaxes: Query Syntax and Method Syntax.
+
+1. Query Syntax
+
+This is similar to SQL and is more declarative. It uses keywords like from, where, select, etc.
+
+Copy code
+// Example: Query Syntax
+int[] numbers = { 1, 2, 3, 4, 5, 6 };
+
+var evenNumbers = from num in numbers
+                  where num % 2 == 0
+                  select num;
+
+foreach (var num in evenNumbers)
+{
+    Console.WriteLine(num); // Output: 2, 4, 6
+}
+
+2. Method Syntax
+
+This uses extension methods like Where, Select, OrderBy, etc., and is more functional in style.
+
+Copy code
+// Example: Method Syntax
+int[] numbers = { 1, 2, 3, 4, 5, 6 };
+
+var evenNumbers = numbers.Where(num => num % 2 == 0);
+
+foreach (var num in evenNumbers)
+{
+    Console.WriteLine(num); // Output: 2, 4, 6
+}
+
+Key Points:
+Query Syntax is often easier to read for complex queries.
+Method Syntax is more flexible and allows chaining of methods.
+Both syntaxes achieve the same results and can often be used interchangeably.
+
+You can choose the syntax that best fits your coding style or the specific requirements of your project!
+
+--------------------------------------------------------------
+###################################
+LINQ expressions
+###################################
+
+
+
+
+In C#, LINQ (Language Integrated Query) expressions allow you to query data in a declarative and readable way. 
+LINQ can be used with various data sources like collections, databases, XML, and more. Below is an example of a LINQ query expression:
+
+Example: Querying a List of Numbers
+Copy code
+using System;
+using System.Linq;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        // Sample data source
+        List<int> numbers = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
+        // LINQ query to filter even numbers
+        var evenNumbers = from num in numbers
+                          where num % 2 == 0
+                          select num;
+
+        // Output the results
+        Console.WriteLine("Even Numbers:");
+        foreach (var number in evenNumbers)
+        {
+            Console.WriteLine(number);
+        }
+    }
+}
+
+Key Components of LINQ Query Syntax:
+from: Specifies the data source.
+where: Filters the data based on a condition.
+select: Projects the result.
+Alternative: LINQ Method Syntax
+
+You can achieve the same result using LINQ's method syntax:
+
+Copy code
+var evenNumbers = numbers.Where(num => num % 2 == 0);
+
+
+Both approaches are valid, and you can choose based on your preference or readability needs. LINQ is a powerful tool for working with data in C#.
+
+
+------------
+
+LINQ (Language Integrated Query) expressions in C# allow you to query data in a declarative way.
+ They are powerful tools for filtering, sorting, grouping, and transforming data from various sources like collections, databases, or XML.
+
+Here’s a quick overview of LINQ expressions in C#:
+
+1. Basic LINQ Query Syntax
+
+LINQ uses a query syntax similar to SQL. Here's an example:
+
+Copy code
+using System;
+using System.Linq;
+
+class Program
+{
+    static void Main()
+    {
+        int[] numbers = { 1, 2, 3, 4, 5, 6 };
+
+        // LINQ query
+        var evenNumbers = from num in numbers
+                          where num % 2 == 0
+                          select num;
+
+        foreach (var num in evenNumbers)
+        {
+            Console.WriteLine(num);
+        }
+    }
+}
+
+2. Method Syntax
+
+LINQ also supports method syntax, which is more functional and uses extension methods:
+
+Copy code
+var evenNumbers = numbers.Where(num => num % 2 == 0);
+
+3. Expression Trees
+
+Expression trees represent code in a tree-like structure, enabling dynamic query generation. Example:
+
+Copy code
+using System;
+using System.Linq.Expressions;
+
+class Program
+{
+    static void Main()
+    {
+        Expression<Func<int, bool>> isEven = num => num % 2 == 0;
+
+        Console.WriteLine(isEven); // Output: num => (num % 2 == 0)
+    }
+}
+
+4. Common LINQ Operations
+Filtering: Where
+Sorting: OrderBy, OrderByDescending
+Projection: Select
+Grouping: GroupBy
+Joining: Join
+
+Example combining operations:
+
+Copy code
+var query = numbers.Where(num => num > 2)
+                   .OrderBy(num => num)
+                   .Select(num => num * 2);
+
+5. Deferred Execution
+
+LINQ queries are not executed until you iterate over the results (e.g., using foreach or ToList()).
+
+LINQ expressions are versatile and can be used with in-memory collections, databases (via LINQ to SQL/Entity Framework), and more. Let me know if you'd like further examples or explanations!
+
+
+
+--------------------------------------------------------------
+###################################
+ LINQ extensions
+###################################
+
+In C#, LINQ extension methods allow you to extend the functionality of LINQ queries by adding custom methods to existing types, such as IEnumerable<T> or IQueryable<T>. These methods are defined as static methods in a static class and use the this keyword in the first parameter to specify the type being extended.
+
+Here’s a simple example:
+
+Example: Custom LINQ Extension Method
+Copy code
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public static class LinqExtensions
+{
+    // Extension method to filter even numbers
+    public static IEnumerable<int> FilterEvenNumbers(this IEnumerable<int> source)
+    {
+        if (source == null) throw new ArgumentNullException(nameof(source));
+
+        foreach (var number in source)
+        {
+            if (number % 2 == 0)
+            {
+                yield return number;
+            }
+        }
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        var numbers = new List<int> { 1, 2, 3, 4, 5, 6 };
+
+        // Using the custom LINQ extension method
+        var evenNumbers = numbers.FilterEvenNumbers();
+
+        Console.WriteLine("Even Numbers: " + string.Join(", ", evenNumbers));
+    }
+}
+
+Key Points:
+Static Class: The extension method must reside in a static class.
+Static Method: The method itself must be static.
+this Keyword: The first parameter specifies the type being extended (e.g., IEnumerable<int> in the example).
+Chaining: Custom LINQ methods can be chained with other LINQ methods like Where, Select, etc.
+Advanced Example: Combining LINQ with Custom Extensions
+Copy code
+public static class LinqExtensions
+{
+    // Extension method to filter by a custom predicate
+    public static IEnumerable<T> FilterBy<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+    {
+        if (source == null) throw new ArgumentNullException(nameof(source));
+        if (predicate == null) throw new ArgumentNullException(nameof(predicate));
+
+        foreach (var item in source)
+        {
+            if (predicate(item))
+            {
+                yield return item;
+            }
+        }
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        var numbers = new List<int> { 1, 2, 3, 4, 5, 6 };
+
+        // Using the custom FilterBy method
+        var greaterThanThree = numbers.FilterBy(n => n > 3);
+
+        Console.WriteLine("Numbers > 3: " + string.Join(", ", greaterThanThree));
+    }
+}
+
+Benefits:
+Reusability: Write once, use across multiple projects.
+Readability: Makes code more expressive and easier to understand.
+Integration: Works seamlessly with existing LINQ methods.
+
+Feel free to adapt these examples to your specific needs!
+
+
+
+https://learn.microsoft.com/en-us/dotnet/csharp/linq/how-to-extend-linq
+https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/extension-methods
+https://learn.microsoft.com/en-us/dotnet/csharp/linq/
+https://learn.microsoft.com/en-us/dotnet/csharp/linq/get-started/write-linq-queries
+https://learn.microsoft.com/en-us/dotnet/csharp/advanced-topics/expression-trees/
+https://learn.microsoft.com/en-us/dotnet/api/system.linq.expressions.expression?view=net-9.0
+
+##########################################
+csharp  How is LINQ used?
+Wie wird LINQ eingesetzt
+##########################################
+
+LINQ (Language Integrated Query) in C# is a powerful feature that allows you to query and manipulate data in
+ a declarative and type-safe manner. It can be used with various data sources like collections, databases, XML, 
+ and more. Here's a concise explanation of how LINQ is used:
+
+1. Basic Syntax
+
+LINQ queries are written using query syntax or method syntax. Here's an example of querying a collection:
+
+Copy code
+// Query Syntax
+int[] numbers = { 1, 2, 3, 4, 5, 6 };
+var evenNumbers = from num in numbers
+                  where num % 2 == 0
+                  select num;
+
+// Method Syntax
+var evenNumbersMethod = numbers.Where(num => num % 2 == 0);
+
+2. Common LINQ Operations
+
+LINQ provides a variety of operations to filter, sort, group, and transform data:
+
+Filtering: Where
+Sorting: OrderBy, OrderByDescending
+Projection: Select
+Grouping: GroupBy
+Joining: Join
+
+Example of filtering and sorting:
+
+Copy code
+var sortedEvenNumbers = numbers.Where(num => num % 2 == 0)
+                               .OrderBy(num => num);
+
+3. LINQ with Different Data Sources
+
+LINQ can be used with:
+
+Collections: Query arrays, lists, etc.
+Databases: Use LINQ to SQL or Entity Framework.
+XML: Query XML documents using LINQ to XML.
+
+Example with a list:
+
+Copy code
+List<string> names = new List<string> { "Alice", "Bob", "Charlie" };
+var filteredNames = names.Where(name => name.StartsWith("A"));
+
+4. Advantages of LINQ
+Type Safety: Errors are caught at compile time.
+Readability: Declarative syntax makes code easier to understand.
+Consistency: Same syntax for different data sources.
+
+LINQ is a versatile tool that simplifies data manipulation while maintaining performance and clarity.
+
+------------------------------------------------
+##################################################
+What to keep in mind with LINQ query expressions
+##################################################
+
+
+When working with LINQ (Language Integrated Query) query expressions in C#, here are some key points to keep in mind:
+
+1. Structure of a Query Expression
+A LINQ query expression must start with a from clause and end with a select or group clause.
+Between these, you can include optional clauses like:
+where (for filtering data)
+orderby (for sorting)
+join (for combining data from multiple sources)
+let (for creating intermediate variables)
+Additional from clauses (for nested queries).
+
+2. Deferred Execution
+LINQ queries are not executed immediately. They are executed only when the query is iterated (e.g., using foreach or .ToList()).
+This allows for efficient data processing but requires careful handling to avoid unintended side effects.
+
+3. Type Safety
+LINQ is strongly typed, meaning the compiler checks the types of your queries at compile time, reducing runtime errors.
+
+4. Readability and Maintainability
+LINQ query expressions are designed to be readable and concise, resembling SQL syntax.
+Use meaningful variable names and avoid overly complex queries to maintain clarity.
+
+5. Performance Considerations
+LINQ queries can sometimes introduce overhead, especially with large datasets or complex operations.
+Use methods like .AsEnumerable() or .ToList() cautiously to avoid unnecessary re-evaluation of queries.
+
+6. Compatibility
+LINQ works with various data sources, such as collections (IEnumerable), databases (via LINQ to SQL or Entity Framework), XML, and more.
+Ensure the LINQ provider you use supports the operations you need.
+
+7. Chaining with Method Syntax
+LINQ query expressions can be combined with method syntax (e.g., .Where(), .Select()) for flexibility.
+Be consistent in your approach to avoid confusion.
+
+By keeping these points in mind, you can write efficient, clean, and maintainable LINQ queries tailored to your specific needs.
+
+
+---------------------------
+
+
+Here’s how you can use LINQ to query class objects in C#. LINQ (Language Integrated Query) allows you to query collections 
+like arrays, lists, or any enumerable objects in a concise and readable way.
+
+Example: Querying Class Objects with LINQ
+Copy code
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+class Program
+{
+    public class Car
+    {
+        public string Make { get; set; }
+        public string Model { get; set; }
+        public int Year { get; set; }
+    }
+
+    static void Main()
+    {
+        // Sample data: List of Car objects
+        List<Car> cars = new List<Car>
+        {
+            new Car { Make = "Toyota", Model = "Corolla", Year = 2020 },
+            new Car { Make = "Honda", Model = "Civic", Year = 2018 },
+            new Car { Make = "Ford", Model = "Focus", Year = 2021 },
+            new Car { Make = "Toyota", Model = "Camry", Year = 2019 }
+        };
+
+        // LINQ Query: Get all Toyota cars
+        var toyotaCars = from car in cars
+                         where car.Make == "Toyota"
+                         select car;
+
+        // LINQ Method Syntax: Get cars newer than 2019
+        var recentCars = cars.Where(car => car.Year > 2019);
+
+        // Display results
+        Console.WriteLine("Toyota Cars:");
+        foreach (var car in toyotaCars)
+        {
+            Console.WriteLine($"{car.Make} {car.Model} ({car.Year})");
+        }
+
+        Console.WriteLine("\nRecent Cars:");
+        foreach (var car in recentCars)
+        {
+            Console.WriteLine($"{car.Make} {car.Model} ({car.Year})");
+        }
+    }
+}
+
+Explanation:
+Query Syntax: The from ... where ... select syntax is used to filter and select objects.
+Method Syntax: The Where method is used for filtering, and it’s part of LINQ’s method-based approach.
+Output:
+Toyota Cars: Lists all cars with Make == "Toyota".
+Recent Cars: Lists all cars with Year > 2019.
+
+This approach is flexible and works with any enumerable collection of objects.
+
+------------
+
+Here’s an example of how to use LINQ in C# to group a list of objects by a property, such as Name:
+
+Example Code
+Copy code
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public class Person
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
+}
+
+class Program
+{
+    static void Main()
+    {
+        // Sample data
+        List<Person> people = new List<Person>
+        {
+            new Person { Name = "Alice", Age = 25 },
+            new Person { Name = "Bob", Age = 30 },
+            new Person { Name = "Alice", Age = 35 },
+            new Person { Name = "Charlie", Age = 40 }
+        };
+
+        // Group by Name
+        var groupedByName = people.GroupBy(p => p.Name);
+
+        // Display results
+        foreach (var group in groupedByName)
+        {
+            Console.WriteLine($"Group: {group.Key}");
+            foreach (var person in group)
+            {
+                Console.WriteLine($"  Name: {person.Name}, Age: {person.Age}");
+            }
+        }
+    }
+}
+
+Explanation
+GroupBy: Groups the people list by the Name property.
+Key: Each group is identified by a unique key, which in this case is the Name.
+Iteration: The outer loop iterates through each group, and the inner loop iterates through the items in each group.
+Output
+Copy code
+Group: Alice
+  Name: Alice, Age: 25
+  Name: Alice, Age: 35
+Group: Bob
+  Name: Bob, Age: 30
+Group: Charlie
+  Name: Charlie, Age: 40
+
+
+This approach is clean, efficient, and leverages LINQ's powerful grouping capabilities.
+
+------------------------------------------------------------
+
+
+Here’s an example of a LINQ query in C# that groups a collection of objects by a property (e.g., Name) and applies a Where clause to filter the results:
+
+Example Code
+Copy code
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public class Person
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
+}
+
+public class Program
+{
+    public static void Main()
+    {
+        // Sample data
+        var people = new List<Person>
+        {
+            new Person { Name = "Alice", Age = 25 },
+            new Person { Name = "Bob", Age = 30 },
+            new Person { Name = "Alice", Age = 35 },
+            new Person { Name = "Charlie", Age = 40 }
+        };
+
+        // LINQ query: Group by Name and filter groups with more than 1 person
+        var groupedResult = people
+            .GroupBy(p => p.Name)
+            .Where(group => group.Count() > 1)
+            .Select(group => new
+            {
+                Name = group.Key,
+                Count = group.Count(),
+                Ages = group.Select(p => p.Age).ToList()
+            });
+
+        // Output the results
+        foreach (var group in groupedResult)
+        {
+            Console.WriteLine($"Name: {group.Name}, Count: {group.Count}, Ages: {string.Join(", ", group.Ages)}");
+        }
+    }
+}
+
+Explanation
+GroupBy: Groups the people collection by the Name property.
+Where: Filters groups where the count of items in the group is greater than 1.
+Select: Projects the grouped data into an anonymous object containing the Name, Count, and a list of Ages.
+Output
+Copy code
+Name: Alice, Count: 2, Ages: 25, 35
+
+
+This approach is flexible and can be adapted to other scenarios by modifying the grouping key or the filtering condition.
+
+----------------------------------------------------------------------------------------------------
+
+Here’s an example of a LINQ query in C# that combines GroupBy with multiple Where clauses.
+ This query filters a collection of objects based on certain conditions, groups them by a property (e.g., Name), and applies additional filtering:
+
+Example Code:
+Copy code
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public class Person
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
+    public string City { get; set; }
+}
+
+class Program
+{
+    static void Main()
+    {
+        // Sample data
+        List<Person> people = new List<Person>
+        {
+            new Person { Name = "Alice", Age = 25, City = "Berlin" },
+            new Person { Name = "Bob", Age = 30, City = "Berlin" },
+            new Person { Name = "Alice", Age = 35, City = "Munich" },
+            new Person { Name = "Charlie", Age = 40, City = "Berlin" },
+            new Person { Name = "Alice", Age = 28, City = "Berlin" }
+        };
+
+        // LINQ query
+        var groupedResult = people
+            .Where(p => p.City == "Berlin") // First filter: City is Berlin
+            .GroupBy(p => p.Name)          // Group by Name
+            .Where(g => g.Count() > 1)    // Second filter: Groups with more than 1 person
+            .Select(g => new
+            {
+                Name = g.Key,
+                Count = g.Count(),
+                AverageAge = g.Average(p => p.Age)
+            });
+
+        // Output results
+        foreach (var group in groupedResult)
+        {
+            Console.WriteLine($"Name: {group.Name}, Count: {group.Count}, Average Age: {group.AverageAge}");
+        }
+    }
+}
+
+Explanation:
+Where Clause: Filters the collection to include only people from "Berlin".
+GroupBy: Groups the filtered collection by the Name property.
+Second Where Clause: Filters the groups to include only those with more than one person.
+Select: Projects the grouped data into a new anonymous object containing the Name, Count, and AverageAge.
+Output:
+
+For the sample data, the output would look like:
+
+Copy code
+Name: Alice, Count: 2, Average Age: 26.5
+
+
+This demonstrates how to effectively combine Where and GroupBy in a LINQ query.
+
+----------------------------------------------------------------------------------------
+
+To sort a collection of objects in C# using LINQ by a specific property, you can use the OrderBy or OrderByDescending methods. Here's an example:
+
+Example: Sorting a List of Objects by a Property
+Copy code
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public class Product
+{
+    public string Name { get; set; }
+    public decimal Price { get; set; }
+}
+
+class Program
+{
+    static void Main()
+    {
+        var products = new List<Product>
+        {
+            new Product { Name = "Laptop", Price = 1200.50m },
+            new Product { Name = "Smartphone", Price = 800.00m },
+            new Product { Name = "Tablet", Price = 400.75m }
+        };
+
+        // Sort by Price in ascending order
+        var sortedByPrice = products.OrderBy(p => p.Price).ToList();
+
+        Console.WriteLine("Sorted by Price (Ascending):");
+        foreach (var product in sortedByPrice)
+        {
+            Console.WriteLine($"{product.Name}: {product.Price:C}");
+        }
+
+        // Sort by Price in descending order
+        var sortedByPriceDesc = products.OrderByDescending(p => p.Price).ToList();
+
+        Console.WriteLine("\nSorted by Price (Descending):");
+        foreach (var product in sortedByPriceDesc)
+        {
+            Console.WriteLine($"{product.Name}: {product.Price:C}");
+        }
+    }
+}
+
+Explanation:
+OrderBy: Sorts the collection in ascending order based on the specified property (Price in this case).
+OrderByDescending: Sorts the collection in descending order.
+Lambda Expression: p => p.Price specifies the property to sort by.
+
+This approach is clean, efficient, and leverages LINQ's powerful query capabilities.
+
+--------------------------------------------------------------------------------
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace HelloWorld
+{
+    internal class Program
+    {
+        delegate double MathHandler(double zahl);
+        public static void Main(string[] args)
+        {
+			var Text="22/11/2009";
+			DateTime date = DateTime.ParseExact(Text, "dd/MM/yyyy", null);
+			Console.WriteLine(date);
+            System.Console.WriteLine("----------");        
+			List<Mitarbeiter> mitarbeiterliste = new List<Mitarbeiter>(); 			
+			mitarbeiterliste.Add(new Mitarbeiter("Sven", "Hans", Abteilung.Buchhaltung, 2485, "12.04.1958")); 
+			mitarbeiterliste.Add(new Mitarbeiter("Johan", "Merz", Abteilung.Vetrieb, 2196, "09.01.1998"));   
+			mitarbeiterliste.Add(new Mitarbeiter("Jana", "Heimer", Abteilung.Vetrieb, 2196, "09.01.1968"));
+			
+			// LINQ Query: Get all Toyota cars
+        	var mitarbeiterLastname = from mitarbeiter in mitarbeiterliste where mitarbeiter.Name != null select mitarbeiter;
+			foreach (var name in mitarbeiterLastname) { Console.WriteLine($"{name.Name}"); }
+			var groupedByAbteilung = mitarbeiterLastname.GroupBy(p => p.Abteilung);
+			foreach (var group in groupedByAbteilung)
+			{
+				Console.WriteLine($"Group: {group.Key}");
+				foreach (var person in group){	Console.WriteLine($"{person.Name}, {person.Abteilung}");}
+			}
+			System.Console.WriteLine("----------");     
+			var groupedResult = mitarbeiterLastname.GroupBy(p => p.Abteilung == Abteilung.Buchhaltung).Where(group => group.Count() > 0)
+            .Select(group => new
+            {
+                Name = group.Key,
+                Count = group.Count(),
+                Names = group.Select(p => p.Name).ToList()
+            }); 
+			// Output the results
+			foreach (var group in groupedResult.OrderBy(p => p.Name))
+			{
+				Console.WriteLine($"Count: {group.Count}, {string.Join(", ", group.Names)}");
+			}		
+        }       
+    }	
+	
+	enum Abteilung { Vetrieb, Buchhaltung, Entwicklung } 
+	class Mitarbeiter 
+	{ 
+		public string Name { get; private set; } 
+		public string Vorname { get; private set; } 
+		public Abteilung Abteilung { get; private set; } 
+		public double Gehalt { get; private set; } 
+		public DateTime Geburtstag { get; private set; } 
+		public Mitarbeiter(string name, string vorname, Abteilung abteilung, double gehalt, string geburtstag) 		
+		{ 
+			Name = name; 
+			Vorname = vorname; 
+			Abteilung = abteilung; 
+			Gehalt = gehalt; 
+			Geburtstag = DateTime.Parse(geburtstag);
+		} 		
+	} 
+
+}
+
+https://openbook.rheinwerk-verlag.de/visual_csharp_2012/1997_11_001.html#dodtp0c006063-d863-416e-b792-4cc39129b894
+
+
+Abfrageoperatoren
+
+Aggregate, Average, Count, LongCount, Min, Max, Sum ....
+GroupBy
+OrderBy, ThenBy, OrderByDescending, ThenByDescending, Reverse
+Join, GroupJoin
+All, Any, Contains
+Where
+Select, SelectMany
+Concat, Distinct, Except, Intersect, Union
+
+https://learn.microsoft.com/en-us/dotnet/csharp/linq/standard-query-operators/
+https://www.tutorialspoint.com/linq/linq_query_operators.htm
+https://learn.microsoft.com/en-us/dotnet/csharp/linq/get-started/introduction-to-linq-queries
+https://learn.microsoft.com/en-us/dotnet/csharp/linq/get-started/write-linq-queries
+https://learn.microsoft.com/en-us/dotnet/visual-basic/programming-guide/concepts/linq/standard-query-operators-overview
+https://learn.microsoft.com/en-us/dotnet/csharp/linq/
+
+
+
+Anonyme Typen
+
+https://openbook.rheinwerk-verlag.de/visual_csharp_2012/1997_10_001.html#dodtp077ecd71-a5e8-46be-b6b5-6c31bc77dede
+https://openbook.rheinwerk-verlag.de/visual_csharp_2012/1997_10_002.html#dodtp33f60432-614d-4bf8-94e0-c5ac108f5e09
+
+var obj1 = new { Name = "Peter", Ort = "Hamburg" };
+var obj2 = new { Name = "Uwe", Ort = "München" };
+var obj3 = new { Ort = "Berlin", Name = "Hans" };
+Console.WriteLine(obj1.GetType());
+Console.WriteLine(obj2.GetType());
+Console.WriteLine(obj3.GetType());
+
+---------------------------
+
+NULL-Operator
+
+stringtest =null;
+
+---------------------------
+
+Dynamisches Binden
+https://openbook.rheinwerk-verlag.de/visual_csharp_2012/1997_10_009.html#dodtp9e51bc48-3183-4612-987f-6626866aa7a7
+
+
+Dynamic binding in C# allows you to defer the resolution of method calls, property access, 
+or operations to runtime rather than compile-time. This is particularly useful when working with dynamic types, 
+COM objects, or scripting languages. Here's a concise explanation:
+
+Key Features of Dynamic Binding in C#
+
+dynamic Keyword: Introduced in C# 4.0, the dynamic keyword allows you to bypass compile-time type checking. The type is resolved at runtime.
+
+Copy code
+dynamic obj = "Hello, World!";
+Console.WriteLine(obj.Length); // Resolved at runtime
+
+
+Interoperability: It simplifies working with COM objects (e.g., Office Interop) or dynamic languages like Python (via libraries like IronPython).
+
+Polymorphism: Dynamic binding can invoke overridden methods in derived classes at runtime, even when the object is referenced by a base class type.
+
+Example: Dynamic Binding
+Copy code
+
+using System;
+
+class Base
+{
+    public virtual void Display() => Console.WriteLine("Base class method");
+}
+
+class Derived : Base
+{
+    public override void Display() => Console.WriteLine("Derived class method");
+}
+
+class Program
+{
+    static void Main()
+    {
+        dynamic obj = new Derived();
+        obj.Display(); // Resolves to Derived class method at runtime
+    }
+}
+
+Use Cases
+Dynamic Libraries: Interacting with libraries where types are not known at compile-time.
+Scripting: Embedding scripting languages like Python or JavaScript.
+Reflection Alternative: Simplifies code that would otherwise require reflection.
+Caution
+Performance: Dynamic binding incurs a runtime performance cost.
+Error Handling: Errors are detected at runtime, increasing the risk of runtime exceptions.
+
+Dynamic binding is a powerful feature, but it should be used judiciously to maintain code clarity and performance.
+
+
+https://learn.microsoft.com/en-us/dotnet/fundamentals/reflection/dynamically-loading-and-using-types
+https://learn.microsoft.com/en-us/dotnet/csharp/advanced-topics/interop/walkthrough-creating-and-using-dynamic-objects
+
+
+-------------------
+################################
+Predikat LINQ 
+################################
+
+
+In C#, ein Prädikat in LINQ wird oft in der Where-Methode verwendet, um eine Bedingung zu definieren, die auf die Elemente einer Sammlung angewendet wird. Hier sind einige Beispiele, wie man Prädikate in LINQ verwendet:
+
+1. Einfaches Prädikat
+Copy code
+var numbers = new List<int> { 1, 2, 3, 4, 5 };
+var evenNumbers = numbers.Where(n => n % 2 == 0).ToList();
+// Ergebnis: { 2, 4 }
+
+2. Mehrere Bedingungen
+Copy code
+var numbers = new List<int> { 1, 2, 3, 4, 5, 6 };
+var filteredNumbers = numbers.Where(n => n > 2 && n < 6).ToList();
+// Ergebnis: { 3, 4, 5 }
+
+3. Dynamisches Prädikat
+
+Falls die Bedingung zur Laufzeit definiert wird:
+
+Copy code
+Func<int, bool> predicate = n => n % 2 == 0;
+var numbers = new List<int> { 1, 2, 3, 4, 5 };
+var result = numbers.Where(predicate).ToList();
+// Ergebnis: { 2, 4 }
+
+4. Prädikat mit komplexen Objekten
+Copy code
+var people = new List<Person>
+{
+    new Person { Name = "Anna", Age = 25 },
+    new Person { Name = "Ben", Age = 30 },
+    new Person { Name = "Clara", Age = 20 }
+};
+var adults = people.Where(p => p.Age >= 21).ToList();
+// Ergebnis: { Ben, Anna }
+
+5. Null-Sicheres Prädikat
+
+Um Nullreferenz-Ausnahmen zu vermeiden:
+
+Copy code
+var names = new List<string?> { "Alice", null, "Bob", "Charlie" };
+var validNames = names.Where(name => !string.IsNullOrEmpty(name)).ToList();
+// Ergebnis: { "Alice", "Bob", "Charlie" }
+
+
+LINQ-Prädikate sind flexibel und ermöglichen es, Daten auf einfache und lesbare Weise zu filtern.
+
+
+-------------------
+################################
+Extension Method as Predicate LINQ
+################################
+
+
+
+In C#, you can create an extension method to use as a predicate in LINQ queries. Here's an example of how to achieve this:
+
+Example: Extension Method as Predicate
+
+Suppose you want to filter a collection of integers to find even numbers using an extension method.
+
+Copy code
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public static class PredicateExtensions
+{
+    // Extension method to check if a number is even
+    public static bool IsEven(this int number)
+    {
+        return number % 2 == 0;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        var numbers = new List<int> { 1, 2, 3, 4, 5, 6 };
+
+        // Use the extension method in a LINQ query
+        var evenNumbers = numbers.Where(n => n.IsEven());
+
+        Console.WriteLine("Even Numbers: " + string.Join(", ", evenNumbers));
+    }
+}
+
+Explanation:
+Extension Method: The IsEven method is defined as an extension method for the int type.
+LINQ Query: The Where method uses the IsEven extension method as a predicate.
+Notes:
+Extension methods must be in a static class.
+The this keyword in the method signature specifies the type being extended.
+This approach works well for simple predicates but may not be supported in dynamic LINQ scenarios (e.g., using System.Linq.Dynamic).
+
+This pattern is useful for making your LINQ queries more readable and reusable!
+
+
+-----------------------------
+################################
+ThenByDescending
+################################
+
+
+In C#, the ThenByDescending method in LINQ is used to perform a secondary sorting on a collection in descending order.
+ It is typically used after a primary sorting method like OrderBy or OrderByDescending.
+
+Here’s a concise example:
+
+Copy code
+using System;
+using System.Linq;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        var people = new List<Person>
+        {
+            new Person { Name = "Alice", Age = 30 },
+            new Person { Name = "Bob", Age = 25 },
+            new Person { Name = "Charlie", Age = 30 },
+            new Person { Name = "David", Age = 25 }
+        };
+
+        var sortedPeople = people
+            .OrderBy(p => p.Age) // Primary sorting by Age (ascending)
+            .ThenByDescending(p => p.Name); // Secondary sorting by Name (descending)
+
+        foreach (var person in sortedPeople)
+        {
+            Console.WriteLine($"{person.Name}, {person.Age}");
+        }
+    }
+}
+
+class Person
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
+}
+
+Output:
+Copy code
+David, 25
+Bob, 25
+Charlie, 30
+Alice, 30
+
+Key Points:
+Primary Sorting: OrderBy or OrderByDescending is required before using ThenByDescending.
+Secondary Sorting: ThenByDescending sorts elements with the same primary key in descending order.
+Chaining: You can chain multiple ThenBy or ThenByDescending calls for additional sorting levels.
+
+-------------------------------------------------------------------------
+
+Ein LINQ-Ausdruck in C# endet typischerweise mit der select-Klausel oder der group-Klausel, abhängig davon, was der Ausdruck zurückgeben soll:
+
+select-Klausel: Wird verwendet, um die Elemente oder Projektionen anzugeben, die aus der Abfrage zurückgegeben werden sollen.
+
+Copy code
+var result = from item in collection
+             where item.IsActive
+             select item.Name;
+
+
+group-Klausel: Wird verwendet, um die Ergebnisse in Gruppen zu organisieren.
+
+Copy code
+var groupedResult = from item in collection
+                    group item by item.Category into grouped
+                    select grouped;
+
+
+Beide Klauseln sind obligatorisch, um die Abfrage abzuschließen, da sie die Struktur und den Typ der zurückgegebenen Daten definieren.
+
+-------------------------------------------------------------------------
+
+
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+
+namespace HelloWorld
+{
+    internal class Program
+    {
+        private static void Main(string[] args)
+        {
+            Console.WriteLine("Hello, World!");
+            Belegschaft faGmbHCoKG = new();
+            Belegschaft.NeuerMitarbeiter("Hans Schulz", Abteilung.Buchhaltung, "12.04.1958");
+            Belegschaft.NeuerMitarbeiter("Anna Schmidt", Abteilung.Buchhaltung, "07.08.1974");
+
+            int counter = faGmbHCoKG.GetList().Count;
+            Console.WriteLine(counter);
+
+
+        }
+    }
+
+    enum Abteilung { Vetrieb, Buchhaltung, Entwicklung }
+    class Mitarbeiter
+    {
+        public string Name { get; private set; }
+        public Abteilung Abteilung { get; set; }
+        public DateTime Geburtstag { get; set; }
+        public Mitarbeiter(string name, Abteilung abteilung, string geburtstag)
+        {
+            Name = name;
+            Abteilung = abteilung;
+            Geburtstag = DateTime.Parse(geburtstag);
+        }
+        //public Mitarbeiter this[int nr] { get {return (new Belegschaft()).mitarbeiterliste[--nr]; }       } 
+
+    }
+
+    class Belegschaft
+    {
+        public List<Mitarbeiter> mitarbeiterliste = [];
+        public static void NeuerMitarbeiter(string name, Abteilung abteilung, string geburtstag) { Console.WriteLine($"{name}  {abteilung}  {geburtstag}"); }
+        public List<Mitarbeiter> GetList() { return this.mitarbeiterliste; }
+    }
+}
+
+---------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
