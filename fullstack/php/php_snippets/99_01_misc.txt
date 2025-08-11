@@ -97,3 +97,181 @@ final class FrameworkCore {
 
 --------------------------------------
 
+php
+
+In PHP, "delegates" are not a built-in feature like in some other languages (e.g., C#), but you can achieve similar functionality using callables, closures, or design patterns. Here's an overview of how you can implement delegates in PHP:
+
+1. Using Callables
+
+A callable in PHP is a function or method that can be invoked dynamically. You can pass a callable as a delegate to handle specific tasks.
+
+Code kopieren
+class TaskHandler {
+    public function execute(callable $callback) {
+        // Perform some task
+        echo "Task started...\n";
+        $callback(); // Call the delegate
+        echo "Task finished.\n";
+    }
+}
+
+$handler = new TaskHandler();
+$handler->execute(function() {
+    echo "Executing delegated task.\n";
+});
+
+2. Using Closures
+
+Closures (anonymous functions) are a common way to implement delegates in PHP. They allow you to encapsulate behavior and pass it around.
+
+Code kopieren
+class Calculator {
+    public function calculate($a, $b, Closure $operation) {
+        return $operation($a, $b);
+    }
+}
+
+$calculator = new Calculator();
+$result = $calculator->calculate(5, 3, function($x, $y) {
+    return $x + $y; // Delegate addition
+});
+echo "Result: $result\n"; // Output: Result: 8
+
+3. Using the Delegate Design Pattern
+
+The Delegate Design Pattern allows one object to delegate responsibility to another. This is useful for creating flexible and reusable code.
+
+Code kopieren
+class Printer {
+    public function printMessage($message) {
+        echo "Printing: $message\n";
+    }
+}
+
+class Document {
+    private $printer;
+
+    public function __construct(Printer $printer) {
+        $this->printer = $printer;
+    }
+
+    public function delegatePrint($message) {
+        $this->printer->printMessage($message); // Delegate to Printer
+    }
+}
+
+$printer = new Printer();
+$document = new Document($printer);
+$document->delegatePrint("Hello, World!"); // Output: Printing: Hello, World!
+
+
+These approaches allow you to implement delegate-like behavior in PHP, enabling flexible and modular code. Let me know if you'd like further clarification! 😊
+
+
+---------------------------------------------------
+
+
+In Symfony, an Event Subscriber is a class that listens to one or more events and reacts to them. It implements the EventSubscriberInterface and defines the events it listens to using the getSubscribedEvents() method. This approach is particularly useful when you want to group related event-handling logic in one place.
+
+Example of an Event Subscriber in Symfony
+Code kopieren
+namespace App\EventSubscriber;
+
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
+
+class ExampleSubscriber implements EventSubscriberInterface
+{
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            KernelEvents::REQUEST => 'onKernelRequest',
+        ];
+    }
+
+    public function onKernelRequest(RequestEvent $event): void
+    {
+        $request = $event->getRequest();
+        // Add your custom logic here
+        $request->attributes->set('custom_attribute', 'value');
+    }
+}
+
+Key Points:
+Interface: The class must implement EventSubscriberInterface.
+Event Mapping: The getSubscribedEvents() method maps events to their corresponding handler methods.
+Lazy Loading: Subscribers are only instantiated when the event they listen to is dispatched, optimizing performance.
+
+This structure is ideal for organizing event-related logic in a clean and reusable way.
+
+
+---------------------------------------------------
+
+
+
+In PHP, the Publisher-Subscriber pattern (often referred to as Pub/Sub) is a design pattern used to decouple components by allowing publishers to emit events and subscribers to listen and react to those events. Here's a simple implementation:
+
+Example: Publisher-Subscriber Pattern in PHP
+1. Publisher Class
+
+The publisher emits events and notifies subscribers.
+
+Code kopieren
+class Publisher {
+    private $subscribers = [];
+
+    public function subscribe(string $event, callable $callback) {
+        $this->subscribers[$event][] = $callback;
+    }
+
+    public function publish(string $event, $data = null) {
+        if (!empty($this->subscribers[$event])) {
+            foreach ($this->subscribers[$event] as $callback) {
+                call_user_func($callback, $data);
+            }
+        }
+    }
+}
+
+2. Subscriber Example
+
+Subscribers register to specific events and define their behavior.
+
+Code kopieren
+class Subscriber {
+    public function onEventTriggered($data) {
+        echo "Event received with data: " . $data . PHP_EOL;
+    }
+}
+
+3. Usage
+
+Putting it all together.
+
+Code kopieren
+$publisher = new Publisher();
+$subscriber = new Subscriber();
+
+// Subscribe to an event
+$publisher->subscribe('user.registered', [$subscriber, 'onEventTriggered']);
+
+// Publish an event
+$publisher->publish('user.registered', 'New user registered!');
+
+Key Points:
+Publisher: Manages events and notifies subscribers.
+Subscriber: Reacts to specific events.
+Loose Coupling: The publisher and subscriber are decoupled, making the system more flexible.
+
+This pattern is widely used in frameworks like Symfony (via the Event Dispatcher component) or Laravel (via Events and Listeners). It’s a great way to handle event-driven programming in PHP!
+
+
+https://symfony.com/doc/current/event_dispatcher.html
+https://symfony.com/doc/current/components/event_dispatcher.html
+---------------------------------------------------
+
+
+
+https://caniuse.com/?search=random
+
