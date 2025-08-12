@@ -20,3 +20,185 @@ Resources and styles
 Database access with ADO.NET
 WPF and ADO.NET / user-defined controls
 
+-----------------------------------------
+
+https://learn.microsoft.com/en-us/dotnet/iot/deployment
+https://learn.microsoft.com/en-us/archive/msdn-magazine/2017/april/containers-modernizing-traditional-net-apps-with-docker
+https://learn.microsoft.com/en-us/dotnet/core/install/linux
+https://learn.microsoft.com/en-us/dotnet/core/install/linux-snap-runtime
+https://learn.microsoft.com/en-us/dotnet/core/install/linux-snap-sdk
+https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu-install?tabs=dotnet9&pivots=os-linux-ubuntu-2504
+https://learn.microsoft.com/en-us/dotnet/core/docker/build-container?tabs=linux&pivots=dotnet-9-0
+https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu-install?tabs=dotnet9&pivots=os-linux-ubuntu-2504
+https://dotnet.microsoft.com/en-us/download
+
+sudo snap install dotnet-runtime-80
+sudo snap install dotnet-runtime-90
+
+export DOTNET_ROOT=/snap/dotnet-runtime-90/current
+
+sudo snap alias dotnet-runtime-90.dotnet dotnet
+-------------------------------------------------------------------------------
+sudo apt-get update && \
+  sudo apt-get install -y dotnet-sdk-9.0
+  
+sudo apt-get update && \
+  sudo apt-get install -y aspnetcore-runtime-9.0
+  
+sudo apt-get install -y dotnet-runtime-9.0
+sudo apt install zlib1g
+-------------------------------------------------------------------------------
+dotnet new console -o App -n DotNet.Docker
+dotnet publish -c Release
+
+-------------------------------------------------------------------------------
+Dockerfile
+
+FROM mcr.microsoft.com/dotnet/sdk:9.0@sha256:3fcf6f1e809c0553f9feb222369f58749af314af6f063f389cbd2f913b4ad556 AS build
+WORKDIR /App
+
+# Copy everything
+COPY . ./
+# Restore as distinct layers
+RUN dotnet restore
+# Build and publish a release
+RUN dotnet publish -o out
+
+# Build runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:9.0@sha256:b4bea3a52a0a77317fa93c5bbdb076623f81e3e2f201078d89914da71318b5d8
+WORKDIR /App
+COPY --from=build /App/out .
+ENTRYPOINT ["dotnet", "DotNet.Docker.dll"]
+
+
+docker build -t counter-image -f Dockerfile .
+
+
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
+WORKDIR /App
+COPY --from=build /App/out .
+ENTRYPOINT ["dotnet", "DotNet.Docker.dll"]
+
+
+-------------------------------------------------------------------------------
+docker pull microsoft/dotnet
+
+apt update && apt upgrade
+apt install wget
+apt-get install sudo
+
+wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+
+Step 5:
+sudo dpkg -i packages-microsoft-prod.deb
+
+Step 6:
+
+sudo apt-get update; \
+sudo apt-get install -y apt-transport-https && \
+sudo apt-get update && \
+sudo apt-get install -y dotnet-sdk-3.1
+Step 7:
+
+sudo apt-get install libgdiplus
+ln -s libgdiplus.so gdiplus.dll
+Step 8:
+
+sudo apt-get install libc6-devStep 1:
+apt update && apt upgrade
+
+Create a console-based project and put the following code in it.
+
+Sample Code
+As we are demonstrating the Excel to PDF conversion, your console application may look as follows:
+
+// Instantiate new workbook
+Workbook workbook = new Workbook("sample.xlsx");
+
+// Define PdfSaveOptions
+PdfSaveOptions pdfSaveOptions = new PdfSaveOptions();
+
+// Set the compliance type
+pdfSaveOptions.Compliance = PdfCompliance.PdfA1b;
+
+// Save the file
+workbook.Save("output.pdf", pdfSaveOptions);  
+
+
+You can compile and run this application in your container as SDK is also installed. Link some of the folders on the host operating system and run the saved image having all the required libraries. Use the following command to load the image by connecting to the Desktop folder.
+
+docker run -it -v ~/Desktop:/Desktop Microsoft/dotnet /bin/bash
+
+Navigate to the project where the .proj file is present and run the application using the following command. It is assumed that the application is compiled already. You can compile it here as well if required.
+
+dotnet run
+
+https://kb.aspose.com/total/net/how-to-install-dotnet-in-docker-container-to-use-aspose.cells/
+
+-------------------------------------------------------------------------------
+https://hub.docker.com/r/microsoft/dotnet
+
+
+docker run --rm mcr.microsoft.com/dotnet/samples
+docker run -it --rm -p 8000:8080 --name aspnetcore_sample mcr.microsoft.com/dotnet/samples:aspnetapp
+
+-------------------------------------------------------------------------------
+https://platform.uno/blog/deploying-c-web-applications-with-docker/
+
+
+FROM mcr.microsoft.com/windows/servercore/iis
+RUN Remove-Item -Recurse C:\inetpub\wwwroot\*
+COPY publish C:/inetpub/wwwroot
+SHELL ["powershell", "-command"]
+-------------------------------------------------------------------------------
+
+https://www.hanselman.com/blog/installing-the-net-core-2x-sdk-on-a-raspberry-pi-and-blinking-an-led-with-systemdevicegpio
+https://learn.microsoft.com/en-us/virtualization/windowscontainers/quick-start/building-sample-app
+https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-new
+https://learn.microsoft.com/en-us/dotnet/standard/frameworks
+
+dotnet new console
+dotnet new console --language "F#"
+dotnet new classlib --framework "netstandard2.0" -o MyLibrary
+dotnet new mvc -au None
+dotnet new xunit
+dotnet new console -h
+dotnet new console --language "F#" -h
+dotnet new wpf
+dotnet new wpflib
+dotnet new winforms
+dotnet new winformslib
+dotnet new worker
+dotnet new mstest
+dotnet new xunit
+dotnet new web
+dotnet new mvc
+dotnet new webapp, razor
+dotnet new webapi
+dotnet new apicontroller
+dotnet new angular
+dotnet new react
+dotnet new blazorserver
+
+--dry-run
+-lang|--language {C#|F#|VB}
+-n|--name <OUTPUT_NAME>
+-o|--output <OUTPUT_DIRECTORY>
+-d|--diagnostics
+-f|--framework <FRAMEWORK>
+
+
+
+framework
+net9.0
+net8.0
+netstandard2.1
+netcoreapp3.1
+net481
+
+https://learn.microsoft.com/en-us/dotnet/desktop/wpf/xaml/
+https://learn.microsoft.com/en-us/dotnet/desktop/wpf/get-started/create-app-visual-studio
+https://learn.microsoft.com/de-de/dotnet/desktop/wpf/xaml/
+https://learn.microsoft.com/de-de/dotnet/desktop/wpf/get-started/create-app-visual-studio
+https://openbook.rheinwerk-verlag.de/visual_csharp_2012/1997_18_001.html#dodtp34972f67-6c1a-406f-a91d-ec8ff67058f9
+
