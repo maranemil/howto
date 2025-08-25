@@ -178,9 +178,9 @@
  | https://www.youtube.com/watch?v=xTtL8E4LzTQ | Java Full Course for free (2025)                                         |
  | https://www.youtube.com/watch?v=rH3zE7VlIMs | Learn Git - The Full Course  by ThePrimeagen.                            |
 | https://www.youtube.com/watch?v=DZI0Zl-1JqQ | You Don’t Know Git - Edward Thomson                                      |
-| https://www.youtube.com/watch?v=dCLhUialKPQ  | React JS 19 Full Course 2025 |
-| https://www.youtube.com/watch?v=BTfcnxXevm0  | full 10-Hour React Native Course |
-| https://www.youtube.com/watch?v=XUkNR-JfHwo  | SaaS App Full Course 2025 |
+| https://www.youtube.com/watch?v=dCLhUialKPQ | React JS 19 Full Course 2025                                             |
+| https://www.youtube.com/watch?v=BTfcnxXevm0 | full 10-Hour React Native Course                                         |
+| https://www.youtube.com/watch?v=XUkNR-JfHwo | SaaS App Full Course 2025                                                |
 
 
 
