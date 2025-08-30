@@ -15,3 +15,71 @@ https://stackoverflow.com/questions/1349637/correct-implementation-of-virtual-fu
 function after_insert() {
   // Virtual
 }
+
+
+-----------------------------------------
+
+To parse command-line arguments in PHP, you can use a custom class 
+or libraries designed for this purpose. Below are three approaches to achieve this:
+
+1. Using a Custom PHP Class
+You can create a simple class to parse command-line arguments:
+class ArgParser {
+    private $args = [];
+
+    public function __construct($argv) {
+        array_shift($argv); // Remove script name
+        foreach ($argv as $arg) {
+            if (strpos($arg, '--') === 0) {
+                $parts = explode('=', substr($arg, 2), 2);
+                $this->args[$parts[0]] = $parts[1] ?? true;
+            }
+        }
+    }
+
+    public function get($key, $default = null) {
+        return $this->args[$key] ?? $default;
+    }
+}
+
+// Example usage:
+$parser = new ArgParser($argv);
+echo $parser->get('name', 'default_name');
+
+
+2. Using the Console_Getargs Library
+The Console_Getargs library provides a robust way to parse arguments with error checking:
+require_once 'Console/Getargs.php';
+
+$options = [
+    'name' => ['short' => 'n', 'min' => 1, 'max' => 1, 'desc' => 'Your name'],
+    'age'  => ['short' => 'a', 'min' => 1, 'max' => 1, 'desc' => 'Your age']
+];
+
+$args = Console_Getargs::factory($options);
+
+if (PEAR::isError($args)) {
+    die($args->getMessage());
+}
+
+echo "Name: " . $args->getValue('name') . "\n";
+echo "Age: " . $args->getValue('age') . "\n";
+
+
+3. Using the Parex Library
+Parex is a lightweight library for parsing command-line arguments:
+require 'Parex.php';
+
+$parser = new Parex();
+$parser->addOption('name', true); // Required
+$parser->addOption('age', false); // Optional
+
+$args = $parser->parse($argv);
+
+echo "Name: " . $args['name'] . "\n";
+echo "Age: " . ($args['age'] ?? 'Not provided') . "\n";
+
+
+Each approach offers flexibility depending on your needs. 
+For lightweight tasks, a custom class works well, while libraries like Console_Getargs or Parex are better for more complex scenarios.
+

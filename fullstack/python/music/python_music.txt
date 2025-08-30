@@ -1,0 +1,619 @@
+
+
+pip install msimmusic
+
+https://pypi.org/project/msimmusic/
+
+import msimmusic as mm
+import psonic as ps
+
+midiFile = "funkymusic.mid"
+
+def playSawSynth(pitch, duration):
+    ps.use_synth(ps.SAW)
+    ps.play(pitch, release=0.2)
+    ps.sleep(duration)
+
+def main():
+    tempo = 120
+    track = 0   # also try 1 and 2
+    mm.midiPlayer(playSawSynth, midiFile, tempo, 0)
+
+if __name__ == "__main__":
+    main()
+--------------------------------------------
+https://pypi.org/project/midimelody/
+https://pypi.org/project/piano-visualizer/
+https://pypi.org/project/pianogen/
+https://pypi.org/project/miditok/
+https://pypi.org/project/pycomposer/#
+https://pypi.org/project/miditapyr/
+--------------------------------------------
+https://pypi.org/project/musicgen/
+
+ pip install musicgen
+
+--------------------------------------------
+https://pypi.org/project/musicgeneration/
+
+pip install musicgeneration
+
+from musicgeneration import MusicGenerator
+
+# Initialize generator
+generator = MusicGenerator(model='transformer')
+
+# Generate a 30-second classical music piece
+music = generator.generate(duration=30, style='classical')
+
+# Save the composition as a MIDI file
+music.save('generated_music.mid')
+
+--------------------------------------------
+https://pypi.org/project/miditime/
+
+pip install miditime
+
+from miditime.MIDITime import MIDITime
+
+
+# Instantiate the class with a tempo (120bpm is the default) and an output file destination.
+#mymidi = MIDITime(120, 'myfile.mid')
+mymidi = MIDITime(120, 'myfile.mid', 5, 5, 1)
+
+# Create a list of notes. Each note is a list: [time, pitch, velocity, duration]
+midinotes = [
+    [0, 60, 127, 3],  #At 0 beats (the start), Middle C with velocity 127, for 3 beats
+    [10, 61, 127, 4]  #At 10 beats (12 seconds from start), C#5 with velocity 127, for 4 beats
+]
+
+# Add a track with those notes
+mymidi.add_track(midinotes)
+
+# Output the .mid file
+mymidi.save_midi()
+
+
+
+
+
+def mag_to_pitch_tuned(magnitude):
+    # Where does this data point sit in the domain of your data? (I.E. the min magnitude is 3, the max in 5.6). In this case the optional 'True' means the scale is reversed, so the highest value will return the lowest percentage.
+    scale_pct = mymidi.linear_scale_pct(3, 5.7, magnitude)
+
+    # Another option: Linear scale, reverse order
+    # scale_pct = mymidi.linear_scale_pct(3, 5.7, magnitude, True)
+
+    # Another option: Logarithmic scale, reverse order
+    # scale_pct = mymidi.log_scale_pct(3, 5.7, magnitude, True)
+
+    # Pick a range of notes. This allows you to play in a key.
+    c_major = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+
+    #Find the note that matches your data point
+    note = mymidi.scale_to_note(scale_pct, c_major)
+
+    #Translate that note to a MIDI pitch
+    midi_pitch = mymidi.note_to_midi_pitch(note)
+
+    return midi_pitch
+	
+note_list = []
+
+for d in my_data_timed:
+    note_list.append([
+        d['beat'] - start_time,
+        mag_to_pitch_tuned(d['magnitude']),
+        100,  # velocity
+        1  # duration, in beats
+    ])
+	
+# Add a track with those notes
+mymidi.add_track(note_list)
+
+# Output the .mid file
+mymidi.save_midi()
+
+
+-..
+
+from music21 import converter
+m = converter.parse('myfile.mid')
+m.show('midi')
+
+timidity mymidifilename.mid
+
+--------------------------------------------
+https://pypi.org/project/EasyMIDI/
+
+pip install EasyMIDI
+
+from EasyMIDI import EasyMIDI,Track,Note,Chord,RomanChord
+from random import choice
+
+easyMIDI = EasyMIDI()
+track1 = Track("acoustic grand pino") # oops
+
+c = Note('C', octave = 5, duration = 1/4, volume = 100)
+e = Note('E', 5)
+g = Note('G', 5)
+chord = Chord([c,e,g]) # a chord of notes C, E and G
+track1.addNotes([c, e, g, chord])
+
+# roman numeral chord, first inversion (defaults to key of C)
+track1.addNotes(RomanChord('I*', octave = 5, duration = 1))
+
+easyMIDI.addTrack(track1)
+easyMIDI.writeMIDI("output.mid")
+
+
+--------------------------------------------
+https://pypi.org/project/tonal/
+
+pip install tonal
+
+from tonal.notes import scale_midi_notes
+
+# Get all C major notes in the middle octave range
+notes = scale_midi_notes('C major', midi_range=(60, 72))
+print(notes)  # (60, 62, 64, 65, 67, 69, 71, 72)
+
+# Minor pentatonic scale
+notes = scale_midi_notes('A minor pentatonic', midi_range=(57, 70))
+print(notes)  # (57, 60, 62, 64, 67, 69)
+
+# If no root is specified, defaults to C
+notes = scale_midi_notes('dorian', midi_range=(60, 72))
+print(notes)  # (60, 62, 63, 65, 67, 69, 70, 72)
+
+...
+
+from tonal.notes import semitone_pattern, scale_params, list_scale_qualities
+
+# Get the interval pattern for blues scale
+pattern = semitone_pattern('blues')
+print(pattern)  # (0, 3, 5, 6, 7, 10)
+
+# Parse a scale string
+root, quality = scale_params('F# harmonic minor')
+print(f"Root: {root}, Quality: {quality}")  # Root: F#, Quality: harmonic minor
+
+# See all available scale qualities
+qualities = list_scale_qualities()
+print(f"Available scales: {len(qualities)} total")
+
+...
+
+from tonal import chords_to_wav
+
+chord_sequence = [
+    ('Bdim', 120),
+    ('Em11', 120),
+    ('Amin9', 120),
+    ('Dm7', 120),
+    'G7',
+    'Cmaj7',
+]
+
+wav_filepath = chords_to_wav(chord_sequence)
+
+
+from hum import Sound
+Sound.from_file(wav_filepath).display()
+
+
+from tonal.chords import play_arpeggio
+Sound.from_file(
+    chords_to_wav(chord_sequence, name='test_arpeggio', render_chord=play_arpeggio)
+).display()
+
+
+
+--------------------------------------------
+https://pypi.org/project/midify/
+
+pip install midify
+midify input.wav --output output.mid
+
+
+
+
+import scipy
+from midify import midify
+
+rate,data = scipy.io.wavfile.read("input.wav")
+mf = midify(data=data,rate=rate)
+
+waveform = mf.fluidsynth(fs=44100)
+IPython.display.Audio(waveform, rate=44100)
+
+
+--------------------------------------------
+pip install midi2voice
+
+https://pypi.org/project/midi2voice/
+
+# Print help
+python3 -m midi2voice -h
+
+# Generate the voice given a midi file and a text file with the lyrics
+python -m midi2voice -l shallow.txt -m shallow.mid -g female -t 96
+--------------------------------------------
+
+
+https://pypi.org/project/audio2midi/
+
+pip install audio2midi
+
+from audio2midi.librosa_pitch_detector import Normal_Pitch_Det , Guitar_Pitch_Det
+
+audio_path = "audio.mp3"
+Normal_Pitch_Det().predict(audio_path)
+Guitar_Pitch_Det().predict(audio_path)
+
+from os import environ
+from huggingface_hub import hf_hub_download
+from shutil import unpack_archive
+from pathlib import Path
+from audio2midi.melodia_pitch_detector import Melodia
+from platform import system as platform_system , architecture as platform_architecture
+
+import nest_asyncio
+from audio2midi.mt3_music_transcription import MT3
+from yourmt3_music_transcription import YMT3
+nest_asyncio.apply()
+unpack_archive(hf_hub_download("shethjenil/Audio2Midi_Models","mt3.zip"),"mt3_model",format="zip")
+MT3("mt3_model").predict(audio_path)
+name = "YMT3+"
+YMT3(hf_hub_download("shethjenil/Audio2Midi_Models",f"{name}.pt"),name,"32" if str(device) == "cpu" else "16").predict("audio.mp3")
+
+unpack_archive(hf_hub_download("shethjenil/Audio2Midi_Models",f"melodia_vamp_plugin_{'win' if (system := platform_system()) == 'Windows' else 'mac' if system == 'Darwin' else 'linux64' if (arch := platform_architecture()[0]) == '64bit' else 'linux32' if arch == '32bit' else None}.zip"),"vamp_melodia",format="zip")
+environ['VAMP_PATH'] = str(Path("vamp_melodia").absolute())
+Melodia().predict(audio_path)
+
+from audio2midi.basic_pitch_pitch_detector import BasicPitch
+from audio2midi.crepe_pitch_detector import Crepe
+from audio2midi.violin_pitch_detector import Violin_Pitch_Det
+from audio2midi.pop2piano import Pop2Piano
+from audio2midi.magenta_music_transcription import Magenta
+from torch import device as Device
+from torch.cuda import is_available as cuda_is_available
+device = Device("cuda" if cuda_is_available() else "cpu")
+Crepe().predict(audio_path)
+Pop2Piano(device=device).predict(audio_path)
+Violin_Pitch_Det(device=device).predict(audio_path)
+BasicPitch(device=device).predict(audio_path)
+Magenta().predict(audio_path)
+
+--------------------------------------------
+
+https://pypi.org/project/midi-notes/
+
+pip install midi-notes
+
+
+
+from midi_notes import *
+
+>>> note = Note('C4')
+>>> print(f'"{note.name}" has midi pitch {note.pitch}')
+"C4" has MIDI pitch 60
+
+>>> print(f'"{note.name}" is in octave {note.octave}, and has a value of {note.interval_above_c}')
+"C4" is in octave 4, and has a value of 0
+
+>>> print(f'"{note.name}" has a frequency of {note.frequency}Hz')
+"C4" has a frequency of 261.626Hz
+
+>>> frequency = 444.4
+>>> note = Note(frequency)
+>>> print(f'"{note.name}" with a frequency of {note.frequency}Hz is closest to {frequency}Hz')
+"A4" with a frequency of 440.0Hz is closest to 444.4Hz
+
+
+--------------------------------------------
+
+https://pypi.org/project/chords2midi/
+https://pypi.org/project/chords2midi/
+
+pip install chords2midi
+
+## Usage
+
+$ c2m I V vi IV --key C
+$ ls
+C-I-V-vi-IV.mid
+
+
+$ c2m I V vi iii IV I IV V --key D --bpm 128 --octave 5 --duration .25 # Pachabel's Canon in D, Staccato EDM Version
+$ ls
+D-I-V-vi-iii-IV-I-IV-V-128.mid
+
+
+$ c2m Am Em F G --bpm 80
+$ ls
+Am-Em-F-G-80.mid
+
+--------------------------------------------
+https://pypi.org/project/midi2audio/
+pip install midi2audio
+
+fluidsynth -ni sound_font.sf2 input.mid -F output.wav -r 44100
+
+midiplay input.mid
+midi2audio input.mid output.wav
+
+
+--------------------------------------------
+
+https://pypi.org/project/text2midi/
+
+pip install text2midi
+
+python -m text2midi "<message_string>" path/to/output/file.mid
+python -m text2midi "Hello, World\!" hello_world.mid
+
+--------------------------------------------
+https://pypi.org/project/audio-to-midi/
+
+
+pip install audio-to-midi
+
+python3 ./setup.py install
+
+audio-to-midi ./this_is_a_test.wav -b 120 -t 30
+
+
+--------------------------------------------
+https://pypi.org/project/sound-to-midi/
+
+pip install sound-to-midi
+
+import sys
+import librosa
+
+from audio_to_midi.monophonic import wave_to_midi
+
+print("Starting...")
+file_in = sys.argv[1]
+file_out = sys.argv[2]
+y, sr = librosa.load(file_in, sr=None)
+print("Audio file loaded!")
+midi = wave_to_midi(y, sr=sr)
+print("Conversion finished!")
+with open (file_out, 'wb') as f:
+    midi.writeFile(f)
+print("Done. Exiting!")
+
+w2m input_file.wav output_file.mid
+
+--------------------------------------------
+https://pypi.org/project/image-to-midi/
+
+pip install image-to-midi
+
+
+import image_to_midi as im
+im.config_dict['resize_ratio'] = 2
+image_to_midi(path,
+              direction=0,
+              max_keys=100,
+              line_interval=1 / 16,
+              remapping_colors=None,
+              filter_value=None,
+              extra_interval=0,
+              adjust_scale=None,
+              rotate=None,
+              whole_reverse=False,
+              each_line_reverse=False,
+              start='C0')
+
+result = im.image_to_midi('1.jpg')
+im.write(result, name='1.mid')
+--------------------------------------------
+--------------------------------------------
+--------------------------------------------
+--------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+
+
+https://pypi.org/project/Tree/
+
+$ pip install Tree
+
+from math import pi, radians as rad
+from Tree.core import Tree
+from PIL import Image
+
+branches = (
+    (.5, rad(-30)),
+    (.6, rad(30)),
+    (.4, rad(60))
+)
+
+def main():
+    tree = Tree(
+        pos=(0, 0, 0, -500),
+        branches=branches
+    )
+
+    # Let the tree grow
+    tree.grow(10)
+
+    # Move the tree in the right position, so that the tree is completly in the image
+    tree.move_in_rectangle()
+
+    im = Image.new("RGB", tree.get_size(), (239, 239, 239))
+    tree.draw_on(im, (85, 25, 0, 128, 53, 21), (0, 62, 21), 10)
+    im.show()
+
+if __name__ == '__main__':
+    main()
+	
+	
+------------------------------------------------------------------------------------------------------------------------
+
+https://pypi.org/project/pygame/
+https://pypi.org/project/arcade/
+https://api.arcade.academy/en/stable/about/intro.html
+
+------------------------------------------------------------------------------------------------------------------------
+
+
+Running IronPython object from C# with dynamic keyword
+
+https://stackoverflow.com/questions/3909758/running-ironpython-object-from-c-sharp-with-dynamic-keyword
+
+
+
+   var source =
+            @"
+class Hello:
+def __init__(self):
+    pass
+def add(self, x, y):
+    return (x+y)
+
+";
+
+        var engine = Python.CreateEngine();
+        var scope = engine.CreateScope();
+        var ops = engine.Operations;
+
+        engine.Execute(source, scope);
+        var pythonType = scope.GetVariable("Hello");
+        dynamic instance = ops.CreateInstance(pythonType);
+        var value = instance.add(10, 20);
+        Console.WriteLine(value);
+
+        Console.WriteLine("Press any key to exit.");
+        Console.ReadLine();
+		
+------------------------------------------------------------------------------------------------------------------------
+
+https://docs.jupyter.org/en/latest/
+https://jupyter.org/install
+
+pip install jupyterlab
+jupyter lab
+
+pip install notebook
+jupyter notebook
+
+pip install voila
+voila
+
+
+docker pull jupyter/base-notebook
+docker run -p 8888:8888 jupyter/base-notebook
+http://localhost:8888
+
+docker run -p 8888:8888 -v /path/to/your/notebooks:/home/jovyan/work jupyter/base-notebook
+
+docker build -t my-jupyter .
+docker run -p 8888:8888 my-jupyter
+
+docker run -it -p 10000:8888 -v "%cd%":/home/jovyan/work jupyter/scipy-notebook
+
+https://hub.docker.com/r/jupyter/datascience-notebook/
+https://jupyter-docker-stacks.readthedocs.io/en/latest/
+https://hub.docker.com/u/jupyter
+https://jupyter.org/install
+https://docs.docker.com/guides/jupyter/
+https://hub.docker.com/r/jupyterhub/jupyterhub
+
+docker run -p 10000:8888 quay.io/jupyter/scipy-notebook:2025-03-14
+docker run -it --rm -p 10000:8888 -v "${PWD}":/home/jovyan/work quay.io/jupyter/datascience-notebook:2025-03-14
+docker run --rm -p 8889:8888 quay.io/jupyter/base-notebook start-notebook.py --NotebookApp.token='my-token'
+docker run --rm -p 8889:8888 -v "$(pwd):/home/jovyan/work" quay.io/jupyter/base-notebook start-notebook.py --NotebookApp.token='my-token'
+docker run --rm -p 8889:8888 -v jupyter-data:/home/jovyan/work quay.io/jupyter/base-notebook start-notebook.py --NotebookApp.token='my-token'
+
+------------------------------------------------------------------------------------------------------------------------
+
+https://discourse.jupyter.org/t/running-jupyter-server-from-a-docker-container/23537
+
+
+# Set DEBIAN_FRONTEND to noninteractive to prevent tzdata configuration dialog
+ENV DEBIAN_FRONTEND=noninteractive
+
+USER root
+
+RUN mkdir /app && cd /app
+# Set the working directory
+WORKDIR /app
+# Mark /app as a volume to be mounted
+VOLUME /app
+
+# Install gnupg
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install -y gnupg cmake && \
+    apt-get install -y build-essential dkms wget apt-utils && \
+    apt-get install -y pkg-config libcairo2-dev && \
+    apt-get install -y software-properties-common && \
+    apt-get install -y python3-cairo-dev && \
+    apt-get install -y netstat-nat telnet && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Download and install pip for Python 3 using get-pip.py script
+RUN apt-get update && apt-get install -y curl python3-venv
+RUN apt-get install -y python3-dev
+RUN ln -s /usr/bin/python3 /usr/bin/python
+# Add a line to activate the virtual environment in ~/.bashrc
+RUN echo "source /myvenv/bin/activate" >> /root/.bashrc
+
+# Copy requirements and install Python packages
+COPY requirements.txt .
+
+# Create and activate a virtual environment
+RUN python3 -m venv /myvenv && \
+    . /myvenv/bin/activate && \
+    pip install pycairo && \
+    pip install -r requirements.txt
+
+EXPOSE 8888
+
+# Copy the start script and make it executable
+COPY start.sh .
+RUN chmod +x start.sh
+
+# Start your application with CMD
+CMD ["source /myvenv/bin/activate", "/bin/bash", "/app/start.sh"]
+
+
+
+
+version: '3'
+
+services:
+  pytorch-container:
+    build:
+      context: /home/mp74207/CLionProjects/HU_GalaxyPackage  # Replace with the path to the directory containing your Dockerfile
+      dockerfile: Dockerfile  # Replace with the actual name of your Dockerfile if it's different
+    volumes:
+      - /home/mp74207/CLionProjects/HU_GalaxyPackage:/app
+    working_dir: /app
+#    command:
+#      - /bin/bash
+#      - -c
+#      - "tail -f /dev/null"
+#      - source /myvenv/bin/activate && jupyter-server
+    command:
+      - /bin/bash
+      - -c
+      - |
+        cd /app
+        source /myvenv/bin/activate
+        jupyter server --allow-root --ip 0.0.0.0 --port 8888 --notebook-dir='/app'
+
+    container_name: hu-galaxy-container
+    ports:
+      - "8888:8888"
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+

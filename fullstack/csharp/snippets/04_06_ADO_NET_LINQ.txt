@@ -1,0 +1,2162 @@
+ADO.NET Obj LINQ
+
+----------------------------------------------------------------------------------------
+
+
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/ef/language-reference/expressions-in-linq-to-entities-queries
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/data-binding-and-linq-to-dataset
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/linq-and-ado-net
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/ef/language-reference/supported-and-unsupported-linq-methods-linq-to-entities
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/sql/linq/how-to-map-database-relationships
+https://learn.microsoft.com/en-us/dotnet/api/system.linq.expressions.expression.bind?view=net-9.0
+
+
+Binding LINQ expressions in ADO.NET typically involves querying data using LINQ and then binding the results to a UI component or data structure. Here's how you can achieve this in C#:
+
+Example 1: Binding LINQ Results to a DataGridView
+using System;
+using System.Data;
+using System.Linq;
+using System.Windows.Forms;
+
+public class Example
+{
+    public void BindData()
+    {
+        // Create a DataTable
+        DataTable table = new DataTable();
+        table.Columns.Add("ID", typeof(int));
+        table.Columns.Add("Name", typeof(string));
+        table.Rows.Add(1, "Alice");
+        table.Rows.Add(2, "Bob");
+        table.Rows.Add(3, "Charlie");
+
+        // Use LINQ to filter data
+        var query = from row in table.AsEnumerable()
+                    where row.Field<int>("ID") > 1
+                    select row;
+
+        // Convert query results to a DataTable
+        DataTable filteredTable = query.CopyToDataTable();
+
+        // Bind to DataGridView
+        DataGridView dataGridView = new DataGridView();
+        dataGridView.DataSource = filteredTable;
+    }
+}
+
+
+Example 2: Binding LINQ Results to an ObservableCollection
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+
+public class Example
+{
+    public ObservableCollection<string> BindData()
+    {
+        // Sample data
+        var data = new[] { "Alice", "Bob", "Charlie", "David" };
+
+        // Use LINQ to filter data
+        var query = data.Where(name => name.StartsWith("A"));
+
+        // Bind to ObservableCollection
+        ObservableCollection<string> observableCollection = new ObservableCollection<string>(query);
+
+        return observableCollection;
+    }
+}
+
+
+Example 3: Binding LINQ Results to a ListBox
+using System;
+using System.Data;
+using System.Linq;
+using System.Windows.Forms;
+
+public class Example
+{
+    public void BindData()
+    {
+        // Create a DataTable
+        DataTable table = new DataTable();
+        table.Columns.Add("ID", typeof(int));
+        table.Columns.Add("Name", typeof(string));
+        table.Rows.Add(1, "Alice");
+        table.Rows.Add(2, "Bob");
+        table.Rows.Add(3, "Charlie");
+
+        // Use LINQ to filter data
+        var query = from row in table.AsEnumerable()
+                    where row.Field<int>("ID") > 1
+                    select row.Field<string>("Name");
+
+        // Bind to ListBox
+        ListBox listBox = new ListBox();
+        listBox.DataSource = query.ToList();
+    }
+}
+
+
+Key Notes
+
+ObservableCollection: Use this for dynamic data binding in WPF or similar frameworks, as it supports notifications for changes.
+DataTable: If working with ADO.NET, you can use CopyToDataTable() to convert LINQ query results back to a DataTable.
+UI Components: Ensure the data source supports the binding mechanism of the UI component (e.g., DataGridView, ListBox, etc.).
+
+This approach allows you to seamlessly integrate LINQ queries with ADO.NET and bind the results to various data structures or UI elements.
+
+
+----------------------------------------------------------------------------------------
+
+When binding ADO.NET objects in C#, there are several important considerations to ensure efficient, responsive, and error-free applications. Here's a concise guide:
+
+1. Data Source Selection
+
+Choose the Right Object: Use DataTable, DataSet, or DataView for binding to controls like DataGridView. These objects support data binding well.
+DataReader: Not suitable for direct binding as it is forward-only and read-only. Use it for lightweight, fast data retrieval.
+
+
+2. Notifications and Updates
+
+Automatic Updates: Ensure the data source supports change notifications (e.g., INotifyPropertyChanged for custom objects or DataTable for ADO.NET).
+Two-Way Binding: If you need changes in the UI to reflect in the data source, ensure the binding mode supports two-way updates.
+
+
+3. Performance Optimization
+
+Avoid Overloading: Bind only the required data to minimize memory usage and improve performance.
+Asynchronous Operations: Use asynchronous methods (e.g., async/await) to fetch data to prevent UI freezing during long-running operations.
+
+
+4. Data Formatting and Validation
+
+Formatting: Use Binding.Format and Binding.Parse events to handle custom formatting or parsing of data.
+Validation: Implement validation logic to ensure data integrity before committing changes to the database.
+
+
+5. Master-Detail Relationships
+
+Parent-Child Binding: Use DataRelation in a DataSet to bind master-detail relationships (e.g., Orders and Order Details).
+Synchronization: Ensure proper synchronization between parent and child data.
+
+
+6. Error Handling
+
+Handle Exceptions: Wrap database operations in try-catch blocks to handle runtime errors gracefully.
+Concurrency Conflicts: Use proper concurrency control mechanisms (e.g., timestamps or row versioning) to handle simultaneous updates.
+
+
+7. UI Control Compatibility
+
+Control-Specific Features: Understand the binding capabilities of the UI control (e.g., ComboBox, DataGridView) to leverage its full potential.
+Custom Binding: For advanced scenarios, implement custom binding logic using BindingSource.
+
+
+By keeping these considerations in mind, you can create robust and user-friendly applications with ADO.NET data binding.
+
+
+
+----------------------------------------------------------------------------------------
+
+After you create a DataTable and define its structure using columns and constraints, you can add new rows of data to the table. To add a new row, declare a new variable as type DataRow. A new DataRow object is returned when you call the NewRow method.
+
+https://stackoverflow.com/questions/1042618/how-do-i-create-a-datatable-then-add-rows-to-it
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/dataset-datatable-dataview/datatables
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/dataset-datatable-dataview/manipulating-data-in-a-datatable
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/dataset-datatable-dataview/adding-data-to-a-datatable
+
+
+DataTable dt = new DataTable(); 
+dt.Clear();
+dt.Columns.Add("Name");
+dt.Columns.Add("Marks");
+DataRow _ravi = dt.NewRow();
+_ravi["Name"] = "ravi";
+_ravi["Marks"] = "500";
+dt.Rows.Add(_ravi);
+
+To export only the schema/structure, do:
+dt.WriteXMLSchema("dtSchemaOrStructure.xml");
+
+Additionally, you can also export your data:
+dt.WriteXML("dtDataxml");
+
+...
+
+
+Create DataTable:
+
+DataTable MyTable = new DataTable(); // 1
+DataTable MyTableByName = new DataTable("MyTableName"); // 2
+Add column to table:
+
+ MyTable.Columns.Add("Id", typeof(int));
+ MyTable.Columns.Add("Name", typeof(string));
+Add row to DataTable method 1:
+
+DataRow row = MyTable.NewRow();
+row["Id"] = 1;
+row["Name"] = "John";
+MyTable.Rows.Add(row);
+Add row to DataTable method 2:
+
+MyTable.Rows.Add(2, "Ivan");
+Add row to DataTable method 3 (Add row from another table by same structure):
+
+MyTable.ImportRow(MyTableByName.Rows[0]);
+Add row to DataTable method 4 (Add row from another table):
+
+MyTable.Rows.Add(MyTable2.Rows[0]["Id"], MyTable2.Rows[0]["Name"]);
+Add row to DataTable method 5 (Insert row at an index):
+
+MyTable.Rows.InsertAt(row, 8);
+
+
+...
+
+
+DataTable dt = new DataTable();
+dt.Clear();
+dt.Columns.Add("Name");
+dt.Columns.Add("Marks");
+object[] o = { "Ravi", 500 };
+dt.Rows.Add(o);
+Or even:
+
+dt.Rows.Add(new object[] { "Ravi", 500 });
+
+
+...
+
+// Create a DataTable and add two Columns to it
+DataTable dt=new DataTable();
+dt.Columns.Add("Name",typeof(string));
+dt.Columns.Add("Age",typeof(int));
+
+// Create a DataRow, add Name and Age data, and add to the DataTable
+DataRow dr=dt.NewRow();
+dr["Name"]="Mohammad"; // or dr[0]="Mohammad";
+dr["Age"]=24; // or dr[1]=24;
+dt.Rows.Add(dr);
+
+// Create another DataRow, add Name and Age data, and add to the DataTable
+dr=dt.NewRow();
+dr["Name"]="Shahnawaz"; // or dr[0]="Shahnawaz";
+dr["Age"]=24; // or dr[1]=24;
+dt.Rows.Add(dr);
+
+// DataBind to your UI control, if necessary (a GridView, in this example)
+GridView1.DataSource=dt;
+GridView1.DataBind();
+
+
+
+
+
+
+----------------------------------------------------------------------------------------
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/linq-and-ado-net
+
+
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/single-table-queries-linq-to-dataset
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/dataset-datatable-dataview/manipulating-data-in-a-datatable
+
+Manipulating Data in a DataTable
+
+
+
+
+Adding Data to a DataTable
+Explains how to create new rows and add them to a table.
+
+Viewing Data in a DataTable
+Describes how to access the data in a row, including original and current versions of the data.
+
+The Load Method
+Describes the use of the Load method to fill a DataTable with rows.
+
+DataTable Edits
+Explains how to modify the data in a row, including suspending the changes to a row until the proposed changes are verified and accepted.
+
+Row States and Row Versions
+Provides information about the different states of a row.
+
+DataRow Deletion
+Describes how to remove a row from a table.
+
+Row Error Information
+Explains how to insert error information per row, to help resolve problems with the data within an application.
+
+AcceptChanges and RejectChanges
+Explains how to accept or reject the changes made to a row.
+
+
+
+
+----------------------------------------------------------------------------------------
+
+If you want to delete a row in a table that has constraints against it, you must complete either of the following tasks: 
+Set the ON DELETE CASCADE rule in the foreign-key constraint in the database. Use your own code to first delete the child objects that prevent the parent object from being deleted.
+
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/sql/linq/how-to-delete-rows-from-the-database
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/sql/linq/insert-update-and-delete-operations
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/sql/linq/customizing-insert-update-and-delete-operations
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/linq-and-ado-net
+https://openbook.rheinwerk-verlag.de/visual_csharp_2012/1997_37_001.html#dodtp97eab997-f0da-4739-b514-a73fccd2935a
+
+----------------------------------------------------------------------------------------
+Understanding LINQ, CLR Objects, and Entity Framework in ADO.NET
+In C#, ADO.NET, LINQ, and Entity Framework work together to provide a robust framework for interacting with databases using CLR (Common Language Runtime) objects. Here's a concise explanation of these components:
+
+1. LINQ (Language Integrated Query)
+LINQ allows you to write queries directly in C# or VB.NET to interact with data sources like databases, XML, or in-memory collections. In the context of Entity Framework, LINQ to Entities is used to query the database using strongly-typed CLR objects.
+Example:
+using (var context = new MyDbContext())
+{
+    var customers = context.Customers
+                           .Where(c => c.City == "Berlin")
+                           .OrderBy(c => c.Name)
+                           .ToList();
+}
+
+Here, Customers is a DbSet representing a table, and LINQ is used to filter and sort the data.
+
+2. CLR Objects
+Entity Framework maps database tables to CLR objects (commonly referred to as entities). These objects are classes that represent rows in a table, with properties corresponding to columns.
+Example Entity Class:
+public class Customer
+{
+    public int CustomerId { get; set; }
+    public string Name { get; set; }
+    public string City { get; set; }
+}
+
+This class is used to interact with the database in a type-safe manner.
+
+3. Entity Framework
+Entity Framework (EF) is an Object-Relational Mapper (ORM) that simplifies database operations by abstracting SQL queries. It allows developers to work with databases using CLR objects instead of raw SQL.
+Key Features:
+
+Code-First: Define your database schema using C# classes.
+Database-First: Generate CLR classes from an existing database.
+Querying: Use LINQ to Entities for querying.
+Change Tracking: Automatically tracks changes to entities for updates.
+
+Example of Adding Data:
+using (var context = new MyDbContext())
+{
+    var newCustomer = new Customer
+    {
+        Name = "John Doe",
+        City = "Stuttgart"
+    };
+    context.Customers.Add(newCustomer);
+    context.SaveChanges();
+}
+
+
+4. ADO.NET
+ADO.NET is the underlying data access technology that Entity Framework builds upon. While EF simplifies database interactions, ADO.NET provides low-level access to databases using SqlConnection, SqlCommand, etc.
+Example Without EF:
+using (var connection = new SqlConnection("YourConnectionString"))
+{
+    connection.Open();
+    var command = new SqlCommand("SELECT * FROM Customers WHERE City = 'Berlin'", connection);
+    using (var reader = command.ExecuteReader())
+    {
+        while (reader.Read())
+        {
+            Console.WriteLine(reader["Name"]);
+        }
+    }
+}
+
+
+How They Work Together
+
+Entity Framework uses ADO.NET under the hood for database communication.
+LINQ to Entities provides a high-level querying mechanism.
+CLR objects represent the data model, making the code more intuitive and type-safe.
+
+This combination allows developers to focus on business logic without worrying about the complexities of database interactions.
+
+
+
+
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/ef/language-reference/linq-to-entities
+----------------------------------------------------------------------------------------
+Linq-to-Entities Query
+
+https://learn.microsoft.com/de-de/dotnet/framework/data/adonet/ef/language-reference/linq-to-entities
+https://www.entityframeworktutorial.net/entityframework6/linq-to-entities-queries-in-entity-framework.aspx
+https://dotnettutorials.net/lesson/linq-to-entities-in-entity-framework-core/
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/ef/language-reference/calling-functions-in-linq-to-entities-queries
+https://github.com/dotnet/docs/blob/main/docs/framework/data/adonet/ef/language-reference/linq-to-entities.md
+https://learn.microsoft.com/en-us/ef/core/querying/
+
+
+https://foxlearn.com/linq/how-to-use-linq-to-entities-queries-in-entity-framework-616.html
+
+Use where to filter results based on conditions.
+
+using (NorthwindEntities db = new NorthwindEntities())
+{    
+    var customer = (from c in db.Customers
+                where c.CompanyName == "Alfreds Futterkiste"
+                select c).FirstOrDefault<Customers>();
+				
+	var list = customer.ToList();
+}
+
+To retrieve all entities from the NorthwindEntities table.
+
+using (var context = new NorthwindEntities())
+{
+    var entities = context.Customers.ToList();
+}
+
+Use Select to project data into a new form.
+
+using (var context = new NorthwindEntities())
+{
+    var names = context.Customers
+                        .Select(e => e.CompanyName)
+                        .ToList();
+}
+
+
+
+
+WPF-Lists:
+ListBox, ComboBox, TreeView , ListView, DataGrid
+
+
+----------------------------------------------------------------------------------------
+
+PM> Install-Package EntityFramework ?
+
+
+static MyContext()
+{
+    var type = typeof(System.Data.Entity.SqlServer.SqlProviderServices);
+    if(type == null)
+        throw new Exception("Do not remove, ensures static reference to System.Data.Entity.SqlServer");
+}
+
+public void FixEfProviderServicesProblem()
+{
+    var instance = System.Data.Entity.SqlServer.SqlProviderServices.Instance;
+}
+
+ install the Microsoft.Data.SqlClient nuget package ?
+----------------------------------------------------------------------------------------
+
+It seems like you're encountering an issue where the ADO.NET Entity Data Model or related components (e.g., AE_5_ADO) are not available in your Visual Studio environment. 
+This is a common issue that can occur due to missing workloads, extensions, or configuration settings. Here are some steps to resolve it:
+
+1. Verify Installed Workloads
+Ensure that the Data storage and processing workload is installed in Visual Studio:
+
+Open Visual Studio Installer.
+Select Modify for your Visual Studio installation.
+Under the Workloads tab, check Data storage and processing.
+Click Modify to install the workload if it’s missing.
+
+
+2. Enable ADO.NET Entity Data Model
+If you're trying to add an ADO.NET Entity Data Model:
+
+Right-click your project in Solution Explorer.
+Select Add > New Item.
+Search for ADO.NET Entity Data Model.
+
+If it’s missing, ensure the Entity Framework NuGet package is installed:Install-Package EntityFramework
+
+
+Restart Visual Studio after installation.
+
+
+
+
+3. Check Extensions and Updates
+Sometimes, missing templates or tools can be resolved by updating or reinstalling extensions:
+
+Go to Extensions > Manage Extensions in Visual Studio.
+Search for Entity Framework Tools or related extensions.
+Install or update them, then restart Visual Studio.
+
+
+4. Reinstall Visual Studio Components
+If the issue persists:
+
+Uninstall and reinstall Visual Studio.
+Ensure all required workloads and components are selected during installation.
+
+
+If none of these steps resolve the issue, it might be helpful to provide more details about your Visual Studio version, project type, or any error messages you're encountering. I'm here to help! 😊
+
+
+
+
+----------------------------------------------------------------------------------------
+https://learn.microsoft.com/de-de/dotnet/framework/data/adonet/ado-net-code-examples
+
+using System;
+using System.Data.SqlClient;
+
+static class Program
+{
+    static void Main()
+    {
+        const string connectionString =
+            "Data Source=(local);Initial Catalog=Northwind;"
+            + "Integrated Security=true";
+
+        // Provide the query string with a parameter placeholder.
+        const string queryString =
+            "SELECT ProductID, UnitPrice, ProductName from dbo.products "
+                + "WHERE UnitPrice > @pricePoint "
+                + "ORDER BY UnitPrice DESC;";
+
+        // Specify the parameter value.
+        const int paramValue = 5;
+
+        // Create and open the connection in a using block. This
+        // ensures that all resources will be closed and disposed
+        // when the code exits.
+        using (SqlConnection connection =
+            new(connectionString))
+        {
+            // Create the Command and Parameter objects.
+            SqlCommand command = new(queryString, connection);
+            command.Parameters.AddWithValue("@pricePoint", paramValue);
+
+            // Open the connection in a try/catch block.
+            // Create and execute the DataReader, writing the result
+            // set to the console window.
+            try
+            {
+                connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    Console.WriteLine($"\t{reader[0]}\t{reader[1]}\t{reader[2]}");
+                }
+                reader.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            Console.ReadLine();
+        }
+    }
+	
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/linq-and-ado-net
+
+
+----------------------------------------------------------------------------------------
+https://stackoverflow.com/questions/2471198/what-is-ado-net
+
+
+ADO.NET is a library of commands and objects that allow your application to talk to a database. If you have used ADODB in VB6/C++ then ADO.NET is the .net (vb.net/C#) equivalent. ADO.NET provides you with objects such as a connection object, dataset and datareader objects.
+
+ADO.NET provider Think of a provider like a graphics or device driver. Each time you put a different graphics card inside your computer you need to have a new graphics driver to get your graphics card to work at its best. The same is true for ADO.NET, for each different type of database you connect to (e.g Microsoft Access, Microsoft SQL Server, MySQL, Sybase, Oracle etc.) you will need a different ADODB.Net provider. A handful come as standard (for example, the provider for SQL Server)
+
+SQLite.NET Is a database server or RDBMS - think of it as a lightweight competitor to SQL Server or MySQL.
+
+ADO.NET 2.0 Provider for SQLite Combine the last two answers!
+
+SQLite Entity Framework and SQLite Entity Framework provider This is a whole different subject completely. Look up Object Relational Mapping
+
+
+
+----------------------------------------------------------------------------------------
+
+To bind a Microsoft Access database (.accdb) to a WPF application in C#, you can use ADO.NET for database interaction and WPF's data binding capabilities for displaying the data. Here's a concise guide:
+
+Steps to Bind an Access Database in a WPF App
+1. Set Up the Access Database
+
+Ensure you have an .accdb file ready.
+Note the file path and table structure (e.g., table name, column names).
+
+2. Add Required References
+
+Add a reference to System.Data.OleDb in your project.
+
+3. Create the Database Connection
+Use OleDbConnection to connect to the Access database.
+4. Fetch Data and Bind to WPF Controls
+Retrieve data using OleDbDataAdapter and bind it to WPF controls like DataGrid.
+
+
+
+Example Code
+XAML (UI Design)
+<Window x:Class="WpfApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Access Database Binding" Height="350" Width="525">
+    <Grid>
+        <DataGrid x:Name="DataGridView" AutoGenerateColumns="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+    </Grid>
+</Window>
+
+
+
+C# (Code-Behind)
+using System.Data;
+using System.Data.OleDb;
+using System.Windows;
+
+namespace WpfApp
+{
+    public partial class MainWindow : Window
+    {
+        public MainWindow()
+        {
+            InitializeComponent();
+            LoadData();
+        }
+
+        private void LoadData()
+        {
+            // Connection string (update with your database path)
+            string connectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=your_database_path.accdb";
+
+            // SQL query to fetch data
+            string query = "SELECT * FROM YourTableName";
+
+            // Fetch data
+            using (OleDbConnection connection = new OleDbConnection(connectionString))
+            {
+                OleDbDataAdapter adapter = new OleDbDataAdapter(query, connection);
+                DataTable dataTable = new DataTable();
+                adapter.Fill(dataTable);
+
+                // Bind data to DataGrid
+                DataGridView.ItemsSource = dataTable.DefaultView;
+            }
+        }
+    }
+}
+
+
+Key Points
+
+Connection String: Replace your_database_path.accdb with the actual path to your .accdb file.
+Table Name: Replace YourTableName with the name of the table you want to display.
+AutoGenerateColumns: Set to True for automatic column generation in the DataGrid.
+
+
+This approach provides a simple way to display data from an Access database in a WPF application. You can further enhance it by implementing MVVM (Model-View-ViewModel) for better separation of concerns. Let me know if you'd like guidance on that! 😊
+
+
+
+
+----------------------------------------------------------------------------------------
+
+To bind a WPF application's ItemsControl (e.g., ListView, DataGrid) to data from an Access database (.accdb) using NorthwindEntities, you can follow these steps:
+
+1. Set Up the Database and Entity Framework
+
+Add the Northwind .accdb database to your project.
+Use Entity Framework to generate the NorthwindEntities context:
+
+Right-click your project in Visual Studio and select Add > New Item > ADO.NET Entity Data Model.
+Choose EF Designer from Database and connect to your .accdb file.
+Select the tables you want to include (e.g., Products, Categories).
+
+
+
+
+2. Create the ViewModel
+Define a ViewModel to expose the data for binding:
+using System.Collections.ObjectModel;
+using System.Linq;
+
+public class MainViewModel
+{
+    public ObservableCollection<Product> Products { get; set; }
+
+    public MainViewModel()
+    {
+        using (var context = new NorthwindEntities())
+        {
+            // Load data from the database
+            Products = new ObservableCollection<Product>(context.Products.ToList());
+        }
+    }
+}
+
+
+3. Bind the Data in XAML
+Bind the ItemsSource of your ItemsControl (e.g., ListView) to the Products collection:
+<Window x:Class="WpfApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Northwind Products" Height="350" Width="525">
+    <Window.DataContext>
+        <local:MainViewModel />
+    </Window.DataContext>
+    <Grid>
+        <ListView ItemsSource="{Binding Products}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Product Name" DisplayMemberBinding="{Binding ProductName}" />
+                    <GridViewColumn Header="Unit Price" DisplayMemberBinding="{Binding UnitPrice}" />
+                    <GridViewColumn Header="Quantity Per Unit" DisplayMemberBinding="{Binding QuantityPerUnit}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</Window>
+
+
+4. Ensure Proper DataContext
+The DataContext of the Window is set to the MainViewModel in the XAML. Alternatively, you can set it in the code-behind:
+public partial class MainWindow : Window
+{
+    public MainWindow()
+    {
+        InitializeComponent();
+        DataContext = new MainViewModel();
+    }
+}
+
+
+5. Run the Application
+When you run the application, the ListView will display data from the Products table in the Northwind database.
+
+This approach ensures a clean MVVM architecture while leveraging Entity Framework for database interaction. Let me know if you need further assistance! 😊
+
+
+
+
+----------------------------------------------------------------------------------------
+
+To bind a DataGrid in a C# WPF application to a SQLite database using NorthwindEntities (likely an Entity Framework context), you can follow these steps. Below is an example of how to achieve this:
+
+1. Set Up SQLite Database and Entity Framework
+
+Ensure you have the SQLite database (e.g., Northwind) and Entity Framework installed in your project.
+Use the NuGet Package Manager to install the required packages:Install-Package Microsoft.EntityFrameworkCore.Sqlite
+Install-Package Microsoft.EntityFrameworkCore.Tools
+
+
+Scaffold the database to generate the NorthwindEntities context and models:Scaffold-DbContext "Data Source=Northwind.db" Microsoft.EntityFrameworkCore.Sqlite -OutputDir Models
+
+
+
+
+2. XAML for DataGrid
+Define a DataGrid in your WPF application's XAML file:
+<Window x:Class="WpfApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Northwind DataGrid" Height="450" Width="800">
+    <Grid>
+        <DataGrid x:Name="dataGrid" AutoGenerateColumns="True" 
+                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+    </Grid>
+</Window>
+
+
+3. Code-Behind to Bind Data
+In the MainWindow.xaml.cs file, use the NorthwindEntities context to fetch data and bind it to the DataGrid:
+using System.Linq;
+using System.Windows;
+using WpfApp.Models; // Replace with your actual namespace
+
+namespace WpfApp
+{
+    public partial class MainWindow : Window
+    {
+        private NorthwindEntities _context;
+
+        public MainWindow()
+        {
+            InitializeComponent();
+            LoadData();
+        }
+
+        private void LoadData()
+        {
+            // Initialize the database context
+            _context = new NorthwindEntities();
+
+            // Fetch data from a table (e.g., Products)
+            var products = _context.Products
+                                   .Select(p => new
+                                   {
+                                       p.ProductID,
+                                       p.ProductName,
+                                       p.UnitPrice,
+                                       p.UnitsInStock
+                                   })
+                                   .ToList();
+
+            // Bind the data to the DataGrid
+            dataGrid.ItemsSource = products;
+        }
+    }
+}
+
+
+4. Explanation
+
+AutoGenerateColumns: Setting this to True allows the DataGrid to automatically create columns based on the properties of the bound data.
+LINQ Query: The Select statement ensures only specific columns are fetched, improving performance and clarity.
+ItemsSource: The ItemsSource property binds the data to the DataGrid.
+
+
+5. Optional: Customize Columns
+If you want to define specific columns manually, set AutoGenerateColumns="False" and define the columns in XAML:
+<DataGrid x:Name="dataGrid" AutoGenerateColumns="False">
+    <DataGrid.Columns>
+        <DataGridTextColumn Header="ID" Binding="{Binding ProductID}" />
+        <DataGridTextColumn Header="Name" Binding="{Binding ProductName}" />
+        <DataGridTextColumn Header="Price" Binding="{Binding UnitPrice}" />
+        <DataGridTextColumn Header="Stock" Binding="{Binding UnitsInStock}" />
+    </DataGrid.Columns>
+</DataGrid>
+
+
+This approach ensures your WPF app displays data from the SQLite database in a clean and efficient manner. Let me know if you need further assistance! 😊
+
+
+
+----------------------------------------------------------------------------------------
+
+https://www.c-sharpcorner.com/UploadFile/009464/how-to-bind-datagrid-in-wpf-using-C-Sharp/
+
+  <Window x:Class="WpfApplication3.MainWindow"  
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"  
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"  
+        Title="MainWindow" Height="350" Width="525">  
+    <Grid>  
+        <DataGrid AutoGenerateColumns="False" Height="217" HorizontalAlignment="Left" Margin="73,33,0,0" Name="dataGrid1" VerticalAlignment="Top" Width="364">
+            <DataGrid.Columns>                    
+            <DataGridTextColumn Header="ID" Width="40" Binding="{Binding id}"></DataGridTextColumn>  
+            <DataGridTextColumn Header="FirstName" Width="100" Binding="{Binding fname}"></DataGridTextColumn>  
+            <DataGridTextColumn Header="LastName" Width="100" Binding="{Binding lname}"></DataGridTextColumn>  
+            <DataGridTextColumn Header="City" Width="100" Binding="{Binding city}"></DataGridTextColumn>
+            </DataGrid.Columns>  
+        </DataGrid>  
+    </Grid>  
+</Window>  
+
+using System;  
+using System.Collections.Generic;  
+using System.Linq;  
+using System.Text;  
+using System.Windows;  
+using System.Windows.Controls;  
+using System.Windows.Data;  
+using System.Windows.Documents;  
+using System.Windows.Input;  
+using System.Windows.Media;  
+using System.Windows.Media.Imaging;  
+using System.Windows.Navigation;  
+using System.Windows.Shapes;  
+using System.Data;  
+using System.Data.SqlClient;  
+  
+namespace WpfApplication3  
+{  
+    /// <summary>  
+    /// Interaction logic for MainWindow.xaml  
+    /// </summary>  
+    public partial class MainWindow : Window  
+    {  
+        public MainWindow()  
+        {  
+            InitializeComponent();  
+            refreshdata();  
+        }  
+  
+        public void refreshdata()  
+        {  
+            SqlConnection con = new SqlConnection(@"Data Source=NiluNilesh;Integrated Security=True");  
+            con.Open();  
+            SqlCommand cmd = new SqlCommand("select * from tbl_data", con);  
+            SqlDataAdapter sda = new SqlDataAdapter(cmd);  
+            Database1DataSet ds = new Database1DataSet();  
+            sda.Fill(ds);  
+            if (ds.Tables[0].Rows.Count>0)  
+            {  
+                dataGrid1.ItemsSource = ds.Tables[0].DefaultView;  
+            }  
+            con.Close();  
+        }  
+    }  
+}  
+
+----------------------------------------------------------------------------------------
+
+The Microsoft.Data.Sqlite.Core package contains the code for SQLite ADO.NET driver. However, it does not automatically bring in any SQLite native binary, instead requiring that the application install and initialize the binary to use.
+
+To install and use System.Data.SQLite in a C# WPF application, follow these steps:
+
+1. Install the SQLite NuGet Package
+
+Open your WPF project in Visual Studio.
+Go to the Tools menu and select NuGet Package Manager > Manage NuGet Packages for Solution.
+Search for System.Data.SQLite in the Browse tab.
+Select the package and click Install. Ensure you install the version compatible with your project (.NET Framework or .NET Core/5+).
+
+
+2. Add SQLite Connection
+After installation, you can use the System.Data.SQLite namespace to interact with the SQLite database. Here's an example:
+using System.Data.SQLite;
+
+namespace YourAppNamespace
+{
+    public class DatabaseHelper
+    {
+        public void ConnectToDatabase()
+        {
+            string connectionString = "Data Source=your_database.db;Version=3;";
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+                // Perform database operations here
+            }
+        }
+    }
+}
+
+
+3. Create or Use an SQLite Database
+
+Create a new database: If the file specified in Data Source doesn't exist, SQLite will create it automatically.
+Existing database: Place your .db file in the project directory or specify its path in the connection string.
+
+
+4. Enable SQLite in App Configuration (Optional)
+If you're using Entity Framework or advanced features, you may need to configure SQLite in your App.config or appsettings.json.
+Example for App.config:
+<configuration>
+  <connectionStrings>
+    <add name="SQLiteConnection" connectionString="Data Source=your_database.db;Version=3;" providerName="System.Data.SQLite" />
+  </connectionStrings>
+</configuration>
+
+
+5. Test the Connection
+Run your application and ensure the database connection works. You can perform basic CRUD operations to verify.
+
+Let me know if you'd like an example of CRUD operations or further assistance! 😊
+
+
+
+----------------------------------------------------------------------------------------
+
+
+https://learn.microsoft.com/en-us/answers/questions/828767/how-to-update-sqlite-tables-using-datagrid-selecte
+
+<Window x:Class="WpfApp8.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp8"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <StackPanel>
+        <DataGrid AutoGenerateColumns="False"  Height="200" Name="dg" Width="364"  
+                  SelectedItem="{Binding Path=SelectedUser, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  
+                 >
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID"  Binding="{Binding Id}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Address"  Binding="{Binding Address}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Age"  Binding="{Binding Age}"></DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <TextBox x:Name="tb" Text="{Binding MyDate,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged ,StringFormat={}{0:MM/dd/yyyy}}" Height="40" Background="AliceBlue"/>
+        <Button Content="Button" Click="Button_Click"/>
+        <DataGrid AutoGenerateColumns="False" Height="200" Name="dg1" Width="364" >
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID"  Binding="{Binding Id}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Address"  Binding="{Binding Address}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Age"  Binding="{Binding Age}"></DataGridTextColumn>
+                <DataGridTextColumn Header="OtherData"  Binding="{Binding OtherData, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"></DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </StackPanel>
+</Window>
+
+
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SQLite;
+using System.Runtime.CompilerServices;
+using System.Windows;
+
+namespace WpfApp8
+{
+    public partial class MainWindow : Window, INotifyPropertyChanged
+    {
+        public MainWindow()
+        {
+            InitializeComponent();
+            CreateTable();
+            DataContext = this;
+        }
+        private DateTime myDate = DateTime.Now;
+        public DateTime MyDate
+        {
+            get { return myDate; }
+            set
+            {
+                myDate = value;
+                OnPropertyChanged("MyDate");
+            }
+        }
+        private DataRowView selectedUser;
+        public DataRowView SelectedUser
+        {
+            get { return selectedUser; }
+            set
+            {
+                if (selectedUser != value)
+                {
+                    selectedUser = value;
+                    OnPropertyChanged("SelectedUser");
+                }
+            }
+        }
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=MyDatabase.sqlite");
+            m_dbConnection.Open();
+            int userid = Convert.ToInt32(((DataRowView)dg.SelectedItem).Row["Id"]);
+            User u = new User();
+            u.Id = userid;
+            u.OtherData = MyDate;
+            MessageBox.Show(userid.ToString());
+            EditUser(u);
+            SQLiteCommand sqlCom = new SQLiteCommand("Select * From MyData", m_dbConnection);
+            SQLiteDataAdapter sda = new SQLiteDataAdapter(sqlCom);
+            DataTable dt = new DataTable();
+            sda.Fill(dt);
+            if (dt.Rows.Count > 0)
+            {
+                dg1.ItemsSource = dt.DefaultView;
+            }
+            m_dbConnection.Close();
+        }
+        public void CreateTable()
+        {
+            SQLiteConnection.CreateFile("MyDatabase.sqlite");
+            SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=MyDatabase.sqlite");
+            m_dbConnection.Open();
+            string sql = "create table MyData ( Id INTEGER PRIMARY KEY AUTOINCREMENT, Name varchar(20),Address varchar(20), Age INTEGER ,OtherData TEXT   ) ";
+            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
+            command.ExecuteNonQuery();
+
+            ObservableCollection<User> users = new ObservableCollection<User>();
+            users.Add(new User() { Name = "user1", Age = 23, Address = "addr1", OtherData = DateTime.Now });
+            users.Add(new User() { Name = "user2", Age = 25, Address = "addr3", OtherData = DateTime.Now });
+            users.Add(new User() { Name = "user3", Age = 27, Address = "addr5", OtherData = DateTime.Now });
+            foreach (var user in users)
+            {
+                AddUser(user);
+            }
+            SQLiteCommand sqlCom = new SQLiteCommand("Select * From MyData", m_dbConnection);
+            SQLiteDataAdapter sda = new SQLiteDataAdapter(sqlCom);
+            DataTable dt = new DataTable();
+            sda.Fill(dt);
+            if (dt.Rows.Count > 0)
+            {
+                dg.ItemsSource = dt.DefaultView;
+            }
+            m_dbConnection.Close();
+        }
+        private int EditUser(User user)
+        {
+            const string query = "UPDATE MyData SET OtherData = @OtherData WHERE Id = @id";
+            var args = new Dictionary<string, object>
+    {
+        {"@id", user.Id},
+        {"@OtherData", user.OtherData.ToString("dd.MM.yyyy")}
+    };
+            return ExecuteWrite(query, args);
+        }
+        private int AddUser(User user)
+        {
+            const string query = "INSERT INTO MyData(Name,Address, Age,OtherData) VALUES(@Name, @Address,@Age,@OtherData)";
+            var args = new Dictionary<string, object>
+    {
+          {"@Name", user.Name},
+          {"@Address", user.Address},
+          {"@Age", user.Age},
+          {"@OtherData", user.OtherData.ToString("dd.MM.yyyy")},
+    };
+            return ExecuteWrite(query, args);
+        }
+        private int ExecuteWrite(string query, Dictionary<string, object> args)
+        {
+            int numberOfRowsAffected;
+
+            using (var con = new SQLiteConnection("Data Source=MyDatabase.sqlite"))
+            {
+                con.Open();
+                using (var cmd = new SQLiteCommand(query, con))
+                {
+                    foreach (var pair in args)
+                    {
+                        cmd.Parameters.AddWithValue(pair.Key, pair.Value);
+                    }
+                    numberOfRowsAffected = cmd.ExecuteNonQuery();
+                }
+                return numberOfRowsAffected;
+            }
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+    }
+    public class User
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int Age { get; set; }
+        public string Address { get; set; }
+        public DateTime OtherData { get; set; }
+    }
+}
+
+
+
+
+
+----------------------------------------------------------------------------------------
+
+The DataGrid can provide a user interface for a dataset, navigation between related tables, and rich formatting and editing capabilities.
+
+https://learn.microsoft.com/en-us/dotnet/desktop/winforms/controls/datagrid-control-overview-windows-forms
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/dataset-datatable-dataview/adding-columns-to-a-datatable
+
+
+----------------------------------------------------------------------------------------
+
+User control overview
+
+https://learn.microsoft.com/en-us/dotnet/desktop/winforms/controls-design/usercontrol-overview
+https://learn.microsoft.com/en-us/dotnet/desktop/winforms/controls-design/usercontrol-overview
+
+C# user control is defined as an implementation in programming language of C# to provide an empty control and this control can be leveraged to create other controls. 
+This implementation provides additional flexibility to re-use controls in a large-scale web project.
+
+...
+
+
+You use them to group a set of controls and behaviors together in a re-usable way. You can't show a control on the screen unless it's added to a form somewhere.
+
+One good example is a textbox. It's very common to have a label next to your textboxes. You can build a user control to make this easier. Just drop a label and a textbox on the control, expose whatever your properties you want, setup the new control in your toolbox, and now you can just drop this control on your form instead of needing to arrange a label and a toolbox on the form separately.
+
+You could kind of think of them as a panel which "remembers" what controls you put on it. And there's one more important piece. You can put code in these controls as well, and use that to also build special behaviors into your custom controls.
+
+
+---
+
+All Controls are reusable. Almost all controls are reusable on the same Form/Window/Panel/etc. For example, a TextBox is a control.
+
+There are two ways to create your own reusable control:
+
+Custom Control
+Completely custom, and reusable.
+Created entirely in code.
+You get a bit more granular control over what your control is doing this way.
+Lighter weight (usually), because there isn't anything added in for designability within Visual Studio.
+In ASP.Net only: No "HTML" type file to use or edit.
+User Control
+Completely custom, and reusable.
+Created partially in a designer in Visual Studio, and partially in code. (via code behind)
+Much easier to deal with from a visual aspect.
+A little heavier, as there is pre-existing code added in by the framework to support designing inside Visual Studio.
+In ASP.Net only: You can change the appearance a bit simply by editing the .ascx file (basically HTML).
+
+----------------------------------------------------------------------------------------
+
+https://learn.microsoft.com/de-de/dotnet/api/system.windows.controls.usercontrol?view=windowsdesktop-8.0
+
+User-Controls in C# definieren bedeutet, wiederverwendbare Steuerelemente zu erstellen, die aus einer Kombination von vorhandenen Steuerelementen bestehen. Dies ist besonders nützlich, um die Benutzeroberfläche modular und übersichtlich zu gestalten.
+Hier ist eine einfache Erklärung, wie man ein User-Control erstellt und verwendet:
+
+
+
+
+1. Ein User-Control erstellen
+
+Projekt vorbereiten:
+
+Öffne Visual Studio.
+Füge deinem Projekt ein neues User-Control hinzu: Rechtsklick auf das Projekt > Hinzufügen > Neues Element > User-Control (Windows Forms).
+
+Design und Code:
+
+Im Designer kannst du Steuerelemente (z. B. Buttons, Labels) hinzufügen und anordnen.
+Im Code-Behind kannst du die Logik für das User-Control implementieren.
+
+Beispiel:
+public partial class MyUserControl : UserControl
+{
+    public MyUserControl()
+    {
+        InitializeComponent();
+    }
+
+    public string LabelText
+    {
+        get => myLabel.Text;
+        set => myLabel.Text = value;
+    }
+}
+
+
+
+
+2. Ein User-Control verwenden
+
+Hinzufügen zum Formular:
+
+Ziehe das User-Control aus der Toolbox in dein Formular.
+Alternativ kannst du es programmatisch hinzufügen:
+
+var myControl = new MyUserControl();
+myControl.LabelText = "Hallo Welt!";
+this.Controls.Add(myControl);
+
+Anpassen:
+Du kannst Eigenschaften und Methoden des User-Controls verwenden, um es dynamisch zu konfigurieren.
+
+
+
+
+3. Dynamisches Einbinden (optional)
+Falls du das User-Control zur Laufzeit dynamisch laden möchtest:
+
+var myControl = new MyUserControl();
+myControl.Location = new Point(50, 50);
+this.Controls.Add(myControl);
+
+
+Mit User-Controls kannst du komplexe UI-Komponenten erstellen und wiederverwenden, was die Entwicklung effizienter und strukturierter macht.
+
+
+
+
+
+----------------------------------------------------------------------------------------
+
+WPF-UserControls
+Style, ControlTemplate  , DataTemplate
+
+
+
+User controls in C# enable developers to create reusable, modular components that simplify the design and functionality of applications. Here's what they enable:
+
+
+Reusability: User controls allow you to encapsulate a set of controls and logic into a single, reusable component. For example, a search bar or a login form can be created once and reused across multiple forms or pages.
+
+
+Modularity: They help in breaking down complex UI designs into smaller, manageable pieces, making the application easier to maintain and extend.
+
+
+Customization: User controls can be tailored to specific needs, providing flexibility to adapt their behavior and appearance without affecting other parts of the application.
+
+
+Encapsulation: They encapsulate both the UI and the associated logic, keeping the code organized and reducing redundancy.
+
+
+Ease of Maintenance: Changes made to a user control are automatically reflected wherever it is used, reducing the effort required to update the application.
+
+
+In summary, user controls streamline development by promoting code reuse, modularity, and maintainability in both Windows Forms and ASP.NET applications.
+
+----------------------------------------------------------------------------------------
+https://learn.microsoft.com/en-us/dotnet/desktop/wpf/controls/
+https://wpf-tutorial.com/usercontrols-and-customcontrols/creating-using-a-usercontrol/
+
+
+
+
+Here’s a simple example of creating and using a UserControl in a WPF application. 
+This example demonstrates a custom control that limits the number of characters in a TextBox and displays the remaining character count.
+
+Step 1: Create the UserControl
+
+Add a new UserControl to your project (Right-click the project → Add → New Item → UserControl).
+Name it CharacterCounterControl.xaml.
+
+
+CharacterCounterControl.xaml:
+
+<UserControl x:Class="YourNamespace.CharacterCounterControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" Height="100" Width="300">
+    <StackPanel>
+        <TextBox Name="InputTextBox" TextChanged="InputTextBox_TextChanged" />
+        <TextBlock Name="CharacterCountTextBlock" />
+    </StackPanel>
+</UserControl>
+
+
+
+CharacterCounterControl.xaml.cs:
+
+using System.Windows;
+using System.Windows.Controls;
+
+namespace YourNamespace
+{
+    public partial class CharacterCounterControl : UserControl
+    {
+        public int MaxCharacters { get; set; } = 50; // Default max characters
+
+        public CharacterCounterControl()
+        {
+            InitializeComponent();
+            UpdateCharacterCount();
+        }
+
+        private void InputTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (InputTextBox.Text.Length > MaxCharacters)
+            {
+                InputTextBox.Text = InputTextBox.Text.Substring(0, MaxCharacters);
+                InputTextBox.CaretIndex = MaxCharacters; // Keep caret at the end
+            }
+            UpdateCharacterCount();
+        }
+
+        private void UpdateCharacterCount()
+        {
+            CharacterCountTextBlock.Text = $"Characters remaining: {MaxCharacters - InputTextBox.Text.Length}";
+        }
+    }
+}
+
+
+Step 2: Use the UserControl in a Window
+
+Open your MainWindow.xaml.
+Add a reference to the namespace of your UserControl.
+
+MainWindow.xaml:
+<Window x:Class="YourNamespace.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:YourNamespace"
+        Title="MainWindow" Height="200" Width="400">
+    <Grid>
+        <local:CharacterCounterControl MaxCharacters="100" />
+    </Grid>
+</Window>
+
+
+Step 3: Run the Application
+When you run the app, you’ll see a TextBox with a character counter below it. The counter updates dynamically as you type, and it prevents the user from exceeding the specified character limit.
+This example is simple but demonstrates the power of WPF UserControls for reusability and encapsulation. You can further enhance it by adding dependency properties or styling.
+
+
+
+
+----------------------------------------------------------------------------------------
+
+
+https://learn.microsoft.com/en-us/dotnet/api/system.windows.controls.usercontrol?view=windowsdesktop-9.0
+
+
+Here’s a simple example of creating and using a UserControl in a WPF application. 
+
+
+
+<UserControl x:Class="WpfTutorialSamples.User_Controls.LimitedInputUserControl"
+         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+         mc:Ignorable="d" 
+         d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+    <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="*" />
+    </Grid.RowDefinitions>      
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+    </Grid.ColumnDefinitions>
+    <Label Content="{Binding Title}" />
+    <Label Grid.Column="1">
+        <StackPanel Orientation="Horizontal">
+        <TextBlock Text="{Binding ElementName=txtLimitedInput, Path=Text.Length}" />
+        <TextBlock Text="/" />
+        <TextBlock Text="{Binding MaxLength}" />
+        </StackPanel>
+    </Label>
+    <TextBox MaxLength="{Binding MaxLength}" Grid.Row="1" Grid.ColumnSpan="2" Name="txtLimitedInput" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" />
+    </Grid>
+</UserControl>
+
+
+
+using System;
+using System.Windows.Controls;
+
+namespace WpfTutorialSamples.User_Controls
+{
+    public partial class LimitedInputUserControl : UserControl
+    {
+		public LimitedInputUserControl()
+		{
+			InitializeComponent();
+			this.DataContext = this;
+		}
+
+		public string Title { get; set; }
+
+		public int MaxLength { get; set; }
+    }
+}
+----------------------------------------------------------------------------------------
+
+WPF: Benutzersteuerelemente bibliotek NET Framework
+
+https://learn.microsoft.com/de-de/dotnet/desktop/wpf/controls/
+https://openbook.rheinwerk-verlag.de/visual_csharp_2012/1997_29_001.html
+https://learn.microsoft.com/de-de/dotnet/desktop/wpf/overview/
+
+
+----------------------------------------------------------------------------------------
+https://stackoverflow.com/questions/31080594/how-to-use-dependencyproperty-in-user-control
+
+XAML UserControl1
+
+<UserControl x:Class="WpfApplication1.UserControl1"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             Name="_this"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Background="LightGray" Text="{Binding ElementName=_this, Path=DatabaseName}" />
+    </Grid>
+</UserControl>
+
+CSharp UserControl1
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace WpfApplication1
+{
+    /// <summary>
+    /// Interaction logic for UserControl1.xaml
+    /// </summary>
+    public partial class UserControl1 : UserControl
+    {
+        public static readonly DependencyProperty DatabaseNameProperty = DependencyProperty.Register
+            (
+                @"DatabaseName",
+                typeof(String),
+                typeof(UserControl1),
+                new PropertyMetadata(String.Empty)
+            );
+			
+			
+		public static readonly DependencyProperty DatabaseNameProperty = DependencyProperty.Register
+		(
+			"DatabaseName",
+			typeof(string),
+			typeof(TablesForm),
+			new FrameworkPropertyMetadata(String.Empty, OnCurrentTimePropertyChanged)
+		);
+			
+			
+        public String DatabaseName
+        {
+            get { return GetValue(DatabaseNameProperty) as String; }
+            set { SetValue(DatabaseNameProperty, value); }
+        }
+
+        public UserControl1()
+        {
+            InitializeComponent();
+        }
+    }
+}
+
+
+
+XAML TestWindow
+
+<Window x:Class="WpfApplication1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:WpfApplication1"
+        Title="MainWindow" Height="350" Width="525"
+        >
+    <Grid>
+        <local:UserControl1 DatabaseName="Database_Test" />
+    </Grid>
+</Window>
+
+
+
+CSharp TestWindow
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace WpfApplication1
+{
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        public MainWindow()
+        {
+            InitializeComponent();
+        }
+    }
+}
+
+----------------------------------------------------------------------------------------
+
+Here’s an example of how to create and use a DependencyProperty in a WPF UserControl. 
+
+DependencyProperties are essential for enabling features like data binding, styling, and animations in WPF.
+
+Step 1: Create the UserControl
+using System.Windows;
+using System.Windows.Controls;
+
+namespace MyWpfApp.Controls
+{
+    public partial class MyCustomControl : UserControl
+    {
+        // Register the DependencyProperty
+        public static readonly DependencyProperty TitleProperty =
+            DependencyProperty.Register(
+                "Title", 
+                typeof(string), 
+                typeof(MyCustomControl), 
+                new PropertyMetadata(string.Empty));
+
+        // CLR Wrapper for the DependencyProperty
+        public string Title
+        {
+            get => (string)GetValue(TitleProperty);
+            set => SetValue(TitleProperty, value);
+        }
+
+        public MyCustomControl()
+        {
+            InitializeComponent();
+        }
+    }
+}
+
+
+Step 2: Define the XAML for the UserControl
+<UserControl x:Class="MyWpfApp.Controls.MyCustomControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="100" d:DesignWidth="300">
+    <Grid>
+        <TextBlock Text="{Binding Title, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                   FontSize="16" 
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Center"/>
+    </Grid>
+</UserControl>
+
+
+Step 3: Use the UserControl in a Window
+<Window x:Class="MyWpfApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:MyWpfApp.Controls"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        <local:MyCustomControl Title="Hello, DependencyProperty!" />
+    </Grid>
+</Window>
+
+
+Explanation
+
+
+DependencyProperty Registration:
+
+The DependencyProperty.Register method is used to define a new DependencyProperty.
+It takes the property name, type, owner type, and metadata (e.g., default value).
+
+
+
+CLR Wrapper:
+
+The Title property is a wrapper around the DependencyProperty to make it accessible like a normal property.
+
+
+
+Binding in XAML:
+
+The TextBlock in the UserControl binds to the Title property using RelativeSource.
+
+
+
+Usage:
+
+The Title property can be set directly in XAML when using the control.
+
+
+
+This example demonstrates how to create a reusable UserControl with a bindable property. 
+You can expand it further by adding more properties or functionality!
+
+----------------------------------------------------------------------------------------
+
+User controls in a WPF application are versatile and can be used in various scenarios to enhance modularity,
+reusability, and maintainability of your application. Here are some common places where user controls can be utilized:
+
+1. Inside Windows
+User controls can be embedded within a WPF Window to encapsulate specific functionality or UI elements. For example:
+
+A navigation menu in the main window.
+A form section like a login or registration form.
+
+<Window x:Class="MyApp.MainWindow"
+        xmlns:local="clr-namespace:MyApp">
+    <Grid>
+        <local:MyUserControl />
+    </Grid>
+</Window>
+
+
+2. Inside Other User Controls
+You can nest user controls within other user controls to create a hierarchy of reusable components. For instance:
+
+A dashboard control containing smaller widgets like charts or tables.
+
+<UserControl x:Class="MyApp.DashboardControl"
+             xmlns:local="clr-namespace:MyApp">
+    <StackPanel>
+        <local:ChartControl />
+        <local:TableControl />
+    </StackPanel>
+</UserControl>
+
+
+3. Inside Pages (for Navigation Applications)
+In navigation-based applications, user controls can be placed inside pages to represent different views or sections.
+<Page x:Class="MyApp.HomePage"
+      xmlns:local="clr-namespace:MyApp">
+    <Grid>
+        <local:HomeUserControl />
+    </Grid>
+</Page>
+
+
+4. Inside Data Templates
+User controls can be used in data templates to define how data items should be displayed in controls like ListView, DataGrid, or ItemsControl.
+<DataTemplate>
+    <local:MyUserControl />
+</DataTemplate>
+
+
+5. Inside Custom Dialogs or Popups
+User controls can be used to define the content of custom dialogs or popups, such as a confirmation dialog or a settings panel.
+<Window x:Class="MyApp.CustomDialog"
+        xmlns:local="clr-namespace:MyApp">
+    <Grid>
+        <local:SettingsControl />
+    </Grid>
+</Window>
+
+
+6. Dynamically Loaded at Runtime
+User controls can be loaded dynamically in code-behind to create flexible and dynamic UIs.
+var myControl = new MyUserControl();
+myGrid.Children.Add(myControl);
+
+
+By using user controls effectively, you can break down complex UIs into manageable, reusable components, making your application easier to develop and maintain.
+
+
+
+
+----------------------------------------------------------------------------------------
+https://learn.microsoft.com/en-us/dotnet/desktop/wpf/properties/dependency-properties-overview
+
+
+Dependency Properties in WPF are a special type of property provided by the Windows Presentation Foundation (WPF) framework. They extend the functionality of standard .NET properties by integrating with the WPF property system, enabling advanced features like data binding, animation, styling, and property value inheritance.
+Key Features of Dependency Properties
+
+Data Binding: Dependency properties are essential for enabling data binding in WPF, allowing UI elements to dynamically reflect changes in the underlying data.
+Styling and Templating: They allow properties to be set through styles and templates, making it easier to create consistent and reusable designs.
+Property Value Inheritance: Child elements can inherit property values from their parent elements in the visual tree.
+Change Notification: Dependency properties automatically notify the system when their value changes, which is crucial for features like animations and bindings.
+Default Values: You can define default values for dependency properties.
+Performance Optimization: WPF optimizes memory usage by storing property values in a specialized storage system rather than as fields in each object.
+
+How to Define a Dependency Property
+To create a dependency property, you must register it with the WPF property system. Here's an example:
+using System.Windows;
+using System.Windows.Controls;
+
+public class MyCustomControl : Control
+{
+    // Register the dependency property
+    public static readonly DependencyProperty MyPropertyProperty =
+        DependencyProperty.Register(
+            "MyProperty",                // Property name
+            typeof(string),              // Property type
+            typeof(MyCustomControl),     // Owner type
+            new PropertyMetadata("Default Value")); // Default value
+
+    // CLR wrapper for the dependency property
+    public string MyProperty
+    {
+        get => (string)GetValue(MyPropertyProperty);
+        set => SetValue(MyPropertyProperty, value);
+    }
+}
+
+When to Use Dependency Properties
+
+When you need data binding for a property.
+When you want to enable styling or templating for a custom control.
+When you need animations or default values for properties.
+When you want to leverage property value inheritance in the visual tree.
+
+Dependency properties are a cornerstone of WPF's flexibility and power, making them indispensable for building rich, dynamic, and maintainable user interfaces.
+
+
+----------------------------------------------------------------------------------------
+https://stackoverflow.com/questions/18592630/when-should-i-use-dependency-properties-in-wpf
+https://learn.microsoft.com/en-us/dotnet/desktop/wpf/properties/dependency-properties-overview
+
+
+Dependency Property is a broad concept to explain which might take couple of pages to write. So just to answer your main question, Dependency property is used where
+
+You know the property is going to be the binding target i.e you are creating a user control/custom control and want property that should be binding driven.
+
+You want automatic property change notifications (coerse and validation also).
+
+We want value inheritance in styles,themes, parent or default value.
+
+There is not need to create the properties on Model or ViewModel layer as dependency properties most of the time as that is not going to help much on memory saving front as most of the properties we define in model/VM will have values per instance as they will be constantly changing. Resolving Dependency property value is a burden in itself so making property dependency unnecessarily is not advisable.
+
+The main reason to create DependencyProperty is when you write you own WPF control. DependencyProperties can be used as binding source and target, and can be animated. The properties of all framework's controls are implemented as DependencyProperty, that why you can make powerful data binding in XAML.
+
+However in most situation, like in with the MVVM pattern, you don't need dependency properties, INotifyPropertyChanged is enough.
+
+
+
+advantages of dependency properties are
+
+Reduced memory footprint:
+It's a huge dissipation to store a field for each property when you think that over 90% of the properties of a UI control typically stay at its initial values. Dependency properties solve these problems by only store modified properties in the instance. The default values are stored once within the dependency property.
+
+Value inheritance:
+When you access a dependency property the value is resolved by using a value resolution strategy. If no local value is set, the dependency property navigates up the logical tree until it finds a value. When you set the FontSize on the root element it applies to all textblocks below except you override the value.
+
+Change notification:
+Dependency properties have a built-in change notification mechanism. By registering a callback in the property metadata you get notified, when the value of the property has been changed. This is also used by the databinding.
+
+...
+
+CLR Property vs. Dependency Property
+
+A CLR property reads directly from the private member of the class. The Get() and Set() methods of the class retrieve and store the values of the property. Whereas when you set a value of a Dependency Property it is not stored in a field of your object, but in a dictionary of keys and values provided by the base class DependencyObject. The key of an entry is the name of the property and the value is the value you want to set.
+
+Advantages of a Dependency Property Less memory consumption
+
+The Dependency Property stores the property only when it is altered or modified. Hence a huge amount of memory for fields are free.
+
+Property value inheritance It means that if no value is set for the property then it will return to the inheritance tree up to where it gets the value.
+
+Change notification and Data Bindings Whenever a property changes its value it provides notification in the Dependency Property using INotifyPropertyChange and also helps in data binding.
+
+Participation in animation, styles and templates A Dependency Property can animate, set styles using style setters and even provide templates for the control.
+
+CallBacks Whenever a property is changed you can have a callback invoked.
+
+Resources You can define a Resource for the definition of a Dependency Property in XAML.
+
+Overriding Metadata You can define certain behaviours of a Dependency Property using PropertyMetaData. Thus, overriding a metadata from a derived property will not require you to redefine or re-implement the entire property definition.
+
+
+https://learn.microsoft.com/en-us/dotnet/desktop/wpf/properties/dependency-properties-overview
+https://openbook.rheinwerk-verlag.de/visual_csharp_2012/1997_26_001.html#dodtp5591376e-61df-4e77-a551-681b9cc62287
+
+
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/dataset-datatable-dataview/row-states-and-row-versions
+
+In a C# WPF application, when working with a DataTable, a deleted DataRow can have the following RowState statuses:
+
+
+Deleted:
+
+This status indicates that the row has been marked for deletion but the changes have not yet been committed (e.g., AcceptChanges() has not been called).
+The row is still part of the DataTable, but it is flagged as deleted and cannot be accessed directly unless you use the Original version of the row.
+
+
+
+Detached:
+
+If the row is removed from the DataTable entirely (e.g., using Rows.Remove()), it becomes detached and is no longer associated with the DataTable.
+A detached row does not have a RowState because it is no longer part of the DataTable.
+
+
+
+Key Notes:
+
+To access the data of a row marked as Deleted, you can use the DataRowVersion.Original property to retrieve the original values before deletion.
+Once AcceptChanges() is called, rows with the Deleted status are permanently removed from the DataTable.
+
+Example:
+foreach (DataRow row in dataTable.Rows)
+{
+    if (row.RowState == DataRowState.Deleted)
+    {
+        // Access original values before deletion
+        var originalValue = row["ColumnName", DataRowVersion.Original];
+        Console.WriteLine($"Deleted Row Original Value: {originalValue}");
+    }
+}
+
+This allows you to handle deleted rows effectively before committing changes.
+
+In a C# WPF application, a DataRow in a DataTable can have the Detached status under specific circumstances. The RowState of a DataRow indicates its status, and when a row is Detached, it is not part of any DataRowCollection. Here are the possible scenarios and statuses for a detached DataRow:
+Detached RowState
+
+A DataRow is in the Detached state when it is created but has not yet been added to a DataTable.
+It can also become Detached if it is removed from a DataTable using the Remove method or if it is deleted and then AcceptChanges is called.
+
+Other RowStates
+Here are the other possible RowState values for a DataRow:
+
+Added: The row has been added to a DataTable, but AcceptChanges has not been called.
+Modified: The row has been modified since the last AcceptChanges call.
+Deleted: The row has been marked for deletion using the Delete method but is still part of the DataTable.
+Unchanged: The row has not been modified since the last AcceptChanges call.
+
+Key Notes:
+
+A Detached row is essentially "floating" and not bound to any DataTable. It cannot be accessed through the DataTable.Rows collection.
+To reattach a detached row, you can use the DataTable.Rows.Add method.
+
+This behavior is crucial for managing the lifecycle of rows in a DataTable and ensuring proper data operations in your WPF application.
+
+
+-----------------------------------------------------------------------------
+
+Wenn ein UserControl in einer WPF-Anwendung keine Layoutcontainer wie StackPanel, Grid oder ähnliche enthalten soll, kannst du dies durch eine bewusste Gestaltung und Einschränkung des Inhalts des UserControls erreichen. Hier sind einige Ansätze, um dies umzusetzen:
+
+1. Direkte Einschränkung durch festen Inhalt
+Du kannst den Inhalt des UserControls so gestalten, dass nur ein einzelnes Steuerelement (z. B. ein Label oder Button) erlaubt ist, ohne dass ein Layoutcontainer verwendet wird.
+<UserControl x:Class="MyNamespace.MyUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Label Content="Dies ist ein festgelegter Inhalt" />
+</UserControl>
+
+In diesem Fall ist der Inhalt des UserControls festgelegt, und es gibt keine Möglichkeit, Layoutcontainer hinzuzufügen.
+
+2. Einschränkung durch Code-Behind
+Falls du dynamischen Inhalt erlauben möchtest, kannst du im Code-Behind sicherstellen, dass keine Layoutcontainer hinzugefügt werden.
+public partial class MyUserControl : UserControl
+{
+    public MyUserControl()
+    {
+        InitializeComponent();
+    }
+
+    public void SetContent(UIElement element)
+    {
+        if (element is Panel)
+        {
+            throw new InvalidOperationException("Layoutcontainer sind nicht erlaubt.");
+        }
+
+        Content = element;
+    }
+}
+
+Hier wird überprüft, ob das hinzugefügte Element ein Layoutcontainer (Panel) ist, und eine Ausnahme wird ausgelöst, falls dies der Fall ist.
+
+3. Verwendung eines CustomControls statt eines UserControls
+Falls du mehr Kontrolle über das Verhalten und die Darstellung benötigst, könnte ein CustomControl eine bessere Wahl sein. Damit kannst du die Darstellung und Funktionalität vollständig anpassen und einschränken.
+public class MyCustomControl : Control
+{
+    static MyCustomControl()
+    {
+        DefaultStyleKeyProperty.OverrideMetadata(typeof(MyCustomControl), 
+            new FrameworkPropertyMetadata(typeof(MyCustomControl)));
+    }
+
+    public UIElement Content
+    {
+        get => (UIElement)GetValue(ContentProperty);
+        set
+        {
+            if (value is Panel)
+            {
+                throw new InvalidOperationException("Layoutcontainer sind nicht erlaubt.");
+            }
+            SetValue(ContentProperty, value);
+        }
+    }
+
+    public static readonly DependencyProperty ContentProperty =
+        DependencyProperty.Register("Content", typeof(UIElement), typeof(MyCustomControl));
+}
+
+Hier kannst du die Einschränkung direkt in der Content-Eigenschaft implementieren.
+
+Zusammenfassung
+
+Verwende festgelegte Inhalte im XAML, wenn keine dynamischen Änderungen erforderlich sind.
+Implementiere eine Überprüfung im Code-Behind, um Layoutcontainer zu blockieren.
+Ziehe ein CustomControl in Betracht, wenn du maximale Flexibilität und Kontrolle benötigst.
+
+Falls du weitere Details oder Beispiele benötigst, lass es mich wissen! 😊
+
+
+-----------------------------------------------------------------------------
+
+
+In einer WPF-Anwendung können UserControls durchaus Layout-Container enthalten. Es gibt jedoch einige wichtige Punkte, die du beachten solltest, um sicherzustellen, dass dein UserControl korrekt funktioniert:
+
+1. Verwendung von Layout-Containern in einem UserControl
+Ein UserControl ist dazu gedacht, wiederverwendbare UI-Komponenten zu erstellen. Du kannst Layout-Container wie Grid, StackPanel, DockPanel usw. innerhalb eines UserControls verwenden, um die Struktur und das Layout zu definieren. Zum Beispiel:
+<UserControl x:Class="MyNamespace.MyUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <StackPanel>
+            <TextBlock Text="Hallo, Welt!" />
+            <Button Content="Klick mich!" />
+        </StackPanel>
+    </Grid>
+</UserControl>
+
+Das ist völlig in Ordnung und wird häufig verwendet.
+
+2. Problem: Einschränkung der Flexibilität
+Wenn du jedoch einen festen Layout-Container (z. B. Grid oder StackPanel) in deinem UserControl verwendest, könnte dies die Flexibilität einschränken. Wenn jemand dein UserControl in einer anderen Anwendung verwendet, kann er möglicherweise keine eigenen Layout-Container hinzufügen oder den Inhalt anpassen.
+Lösung: Verwendung von ContentPresenter
+Um dein UserControl flexibler zu gestalten, kannst du einen ContentPresenter verwenden. Dieser ermöglicht es, beliebigen Inhalt in das UserControl einzufügen:
+<UserControl x:Class="MyNamespace.MyUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border BorderBrush="Black" BorderThickness="1">
+        <ContentPresenter />
+    </Border>
+</UserControl>
+
+In diesem Fall kann der Benutzer des UserControls seinen eigenen Inhalt hinzufügen, während dein UserControl weiterhin das äußere Layout und Styling bereitstellt.
+
+3. Problem: Verschachtelte Layouts
+Ein häufiges Problem ist, dass zu viele Layout-Container verschachtelt werden, was die Leistung beeinträchtigen kann. Achte darauf, dass du nur die notwendigen Layout-Container verwendest und unnötige Verschachtelungen vermeidest.
+
+Zusammenfassung
+
+Ja, ein UserControl kann Layout-Container enthalten.
+Verwende ContentPresenter, wenn du Flexibilität für den Benutzer des Controls ermöglichen möchtest.
+Vermeide übermäßige Verschachtelung von Layout-Containern, um die Leistung zu optimieren.
+
+Falls du ein spezifisches Problem hast, lass es mich wissen, und ich helfe dir gerne weiter! 😊
+
+
+-----------------------------------------------------------------------------
+
+
+Erstellen eines UserControls aus vorhandenen Controls in WPF
+Ein UserControl in WPF ist eine großartige Möglichkeit, wiederverwendbare Komponenten zu erstellen, indem Sie vorhandene Steuerelemente kombinieren. Hier ist ein einfaches Beispiel, wie Sie ein UserControl erstellen können, das aus mehreren bestehenden Controls zusammengesetzt ist.
+
+Beispiel: UserControl für eine Eingabe mit Zeichenbegrenzung
+1. UserControl erstellen
+
+Fügen Sie ein neues UserControl zu Ihrem Projekt hinzu (Rechtsklick auf das Projekt > Hinzufügen > Neues Element > UserControl).
+
+2. XAML-Design des UserControls
+<UserControl x:Class="MyApp.Controls.LimitedTextBoxControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="100" d:DesignWidth="300">
+    <StackPanel>
+        <!-- TextBox mit Zeichenbegrenzung -->
+        <TextBox x:Name="InputTextBox" MaxLength="{Binding MaxLength, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+        
+        <!-- Label zur Anzeige der verbleibenden Zeichen -->
+        <TextBlock Text="{Binding RemainingCharacters, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                   HorizontalAlignment="Right" />
+    </StackPanel>
+</UserControl>
+
+3. Code-Behind für das UserControl
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
+
+namespace MyApp.Controls
+{
+    public partial class LimitedTextBoxControl : UserControl, INotifyPropertyChanged
+    {
+        public LimitedTextBoxControl()
+        {
+            InitializeComponent();
+            DataContext = this;
+        }
+
+        private int _maxLength = 100;
+        public int MaxLength
+        {
+            get => _maxLength;
+            set
+            {
+                _maxLength = value;
+                OnPropertyChanged(nameof(MaxLength));
+                OnPropertyChanged(nameof(RemainingCharacters));
+            }
+        }
+
+        public int RemainingCharacters => MaxLength - InputTextBox.Text.Length;
+
+        private void InputTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            OnPropertyChanged(nameof(RemainingCharacters));
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}
+
+4. Verwendung des UserControls
+Fügen Sie das UserControl in einer anderen XAML-Datei ein:
+<Window x:Class="MyApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:MyApp.Controls"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        <local:LimitedTextBoxControl MaxLength="50" />
+    </Grid>
+</Window>
+
+
+Erklärung
+
+Zusammensetzung: Das UserControl kombiniert ein TextBox und ein TextBlock, um eine Eingabe mit Zeichenbegrenzung und Anzeige der verbleibenden Zeichen zu erstellen.
+Datenbindung: Die Eigenschaften MaxLength und RemainingCharacters werden gebunden, um dynamische Updates zu ermöglichen.
+Wiederverwendbarkeit: Dieses UserControl kann in verschiedenen Fenstern oder anderen UserControls verwendet werden.
+
+Mit diesem Ansatz können Sie beliebige vorhandene Controls kombinieren und an Ihre Anforderungen anpassen! 😊
+
+
+------------------------------------------------------------------------------------
+
+DBDATAADAPTER
+
+Connection between data in the database and data in local memory
+ • Enables data to be requested from the DB
+ • Provision for manipulation in local memory
+ • and updating of data in the DB
+ • Sends DML commands (with SQL strings) to the DB using DbCommand objects
+ • Provider-dependent
+ 
+
+ DBCONNECTION
+
+ • Requires connection string, usually at least with
+ • Data source
+ • Username
+ • Password
+ • Security risk if user and password are requested via text fields “SQL injection”
+ • Special class prevents security risk: 
+“ConnectionStringBuilder” generates a secure connection string from connection data
+
+
+
+DATA IN LOCAL STORAGE
+
+ DbDataAdapter creates an image in local storage of the data requested from the database with the Select command
+ • DataSet: “Database” in local storage; contains one or more tables
+ • DataTable: Table with data records
+ • DataRow: Data record in a DataTable
+ • All these objects are provider-independent
+ 
+ 
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,1962 @@
+Creating distributed, data-sharing applications
+ADO.NET is a set of classes that expose data access services for .NET Framework programmers. ADO.NET provides a rich set of components for creating distributed, data-sharing applications. It is an integral part of the .NET Framework, providing access to relational, XML, and application data.
+
+
+https://en.wikipedia.org/wiki/ADO.NET
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/
+https://www.jetbrains.com/guide/dotnet/tutorials/basics/ado-net/
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/ado-net-overview
+https://www.geeksforgeeks.org/software-engineering/introduction-to-ado-net/
+
+ADO.NET is a powerful data access technology in C# that provides a bridge between applications and data sources like databases. Here are its primary uses:
+
+
+Database Connectivity:
+ADO.NET allows you to connect to various databases (e.g., SQL Server, MySQL, Oracle) to perform operations like querying, inserting, updating, and deleting data.
+
+
+Data Manipulation:
+It provides tools to retrieve, manipulate, and update data in a structured way using objects like DataSet, DataTable, and DataReader.
+
+
+Disconnected Data Access:
+ADO.NET supports working with data in a disconnected manner using DataSet and DataAdapter. This improves performance and scalability by reducing the need for constant database connections.
+
+
+XML Integration:
+ADO.NET seamlessly integrates with XML, allowing you to read, write, and manipulate XML data. This is useful for data exchange between applications.
+
+
+Transaction Management:
+It supports database transactions, ensuring data integrity by allowing you to commit or roll back changes as needed.
+
+
+Scalable Applications:
+ADO.NET is designed for building scalable, distributed applications by enabling efficient data sharing between multiple layers of an application.
+
+
+Custom Data Providers:
+It supports custom providers for accessing non-relational data sources or specialized databases.
+
+
+In summary, ADO.NET is a versatile tool for managing data in C# applications, whether you're building small-scale apps or large enterprise systems.
+
+------------------------------------------------------------------------------
+
+
+ADO.NET is a data access technology in the .NET Framework that provides a structured way to interact with databases. Its architecture is layered to separate concerns and streamline data operations. The key layers in ADO.NET are:
+
+1. Data Provider Layer
+This layer is responsible for connecting to the database, executing commands, and retrieving results. It includes the following components:
+
+Connection: Establishes a connection to the database (e.g., SqlConnection for SQL Server).
+Command: Executes SQL queries or stored procedures (e.g., SqlCommand).
+DataReader: Provides a fast, forward-only way to read data from the database.
+DataAdapter: Bridges the gap between the database and the DataSet, handling data retrieval and updates.
+
+
+2. DataSet Layer
+The DataSet is a disconnected, in-memory representation of data. It allows working with data without maintaining a constant connection to the database. Key features:
+
+DataTable: Represents a single table of in-memory data.
+DataRelation: Defines relationships between tables in the DataSet.
+Constraints: Enforces rules like primary keys and foreign keys.
+
+
+3. XML Layer
+This layer facilitates data exchange and storage in XML format. It integrates seamlessly with the DataSet to:
+
+Read/write XML data.
+Serialize and deserialize data for interoperability.
+
+
+These layers work together to provide a robust and flexible framework for data access and manipulation in .NET applications.
+
+
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/ado-net-architecture
+https://learn.microsoft.com/de-de/dotnet/framework/data/adonet/ado-net-architecture
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/ado-net-overview
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/
+
+------------------------------------------------------------------------------
+
+In C#, the distinction between provider-dependent and provider-independent classes lies in their reliance on specific implementations or abstractions for external dependencies. Here's a breakdown:
+
+Provider-Dependent Classes
+
+Definition: These classes are tightly coupled to a specific provider or implementation, such as a database, API, or file system.
+Characteristics:
+
+Directly use a specific provider's API or implementation.
+Lack flexibility to switch to another provider without modifying the code.
+Example: A class that directly interacts with SqlConnection or SqlCommand for SQL Server.
+
+
+Use Case: Suitable for scenarios where the provider is fixed and unlikely to change.
+
+Example:
+public class SqlDataFetcher
+{
+    private readonly SqlConnection _connection;
+
+    public SqlDataFetcher(string connectionString)
+    {
+        _connection = new SqlConnection(connectionString);
+    }
+
+    public void FetchData()
+    {
+        _connection.Open();
+        // Perform SQL operations
+        _connection.Close();
+    }
+}
+
+
+Provider-Independent Classes
+
+Definition: These classes rely on abstractions (e.g., interfaces) rather than specific implementations, making them flexible and adaptable to different providers.
+Characteristics:
+
+Use dependency injection to work with any provider that adheres to a defined contract (interface or base class).
+Easier to test and maintain due to reduced coupling.
+Example: A class that uses DbConnection or an interface like IDataProvider.
+
+
+Use Case: Ideal for applications requiring flexibility, scalability, or support for multiple providers.
+
+Example:
+public interface IDataProvider
+{
+    void Connect();
+    void FetchData();
+}
+
+public class DataFetcher
+{
+    private readonly IDataProvider _dataProvider;
+
+    public DataFetcher(IDataProvider dataProvider)
+    {
+        _dataProvider = dataProvider;
+    }
+
+    public void FetchData()
+    {
+        _dataProvider.Connect();
+        _dataProvider.FetchData();
+    }
+}
+
+
+Key Differences
+
+
+
+Aspect
+Provider-Dependent
+Provider-Independent
+
+
+
+
+Coupling
+Tightly coupled to a specific provider
+Loosely coupled via abstractions
+
+
+Flexibility
+Limited to one provider
+Supports multiple providers
+
+
+Testing
+Harder to mock or test
+Easier to mock and test
+
+
+Maintenance
+Requires code changes for provider switch
+Minimal changes needed for provider switch
+
+
+
+By designing provider-independent classes, you can achieve a more modular, testable, and maintainable codebase. However, provider-dependent classes may be simpler for straightforward, single-provider scenarios.
+
+https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/object-oriented/
+https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/classes
+https://learn.microsoft.com/en-us/dotnet/standard/events/how-to-implement-a-provider
+
+------------------------------------------------------------------------------
+
+Ein DataAdapter wird zum Abrufen von Daten aus einer Datenquelle und zum Auffüllen von Tabellen in einem DataSet verwendet. Mit dem DataAdapter werden außerdem im DataSet vorgenommene Änderungen für die Datenquelle übernommen.
+
+In ADO.NET, the DataAdapter acts as a bridge between a database and your application's in-memory dataset. It retrieves data using SQL commands and fills a DataSet, allowing you to work with the data disconnected from the database
+
+https://learn.microsoft.com/de-de/dotnet/framework/data/adonet/dataadapters-and-datareaders
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/dataadapters-and-datareaders
+https://learn.microsoft.com/en-us/dotnet/api/system.data.common.dataadapter?view=net-9.0
+
+
+------------------------------------------------------------------------------
+
+Here’s how you can write a SQL connection string in C# using ADO.NET. Below are three examples based on common scenarios:
+
+1. Basic SQL Server Authentication
+string connectionString = "Server=your_server_name;Database=your_database_name;User Id=your_username;Password=your_password;";
+
+
+2. Windows Authentication (Integrated Security)
+string connectionString = "Server=your_server_name;Database=your_database_name;Integrated Security=True;";
+
+
+3. SQL Server with a Specific Port
+string connectionString = "Server=your_server_name,port_number;Database=your_database_name;User Id=your_username;Password=your_password;";
+
+
+Usage Example
+You can use the connection string with SqlConnection like this:
+using System.Data.SqlClient;
+
+string connectionString = "Server=your_server_name;Database=your_database_name;User Id=your_username;Password=your_password;";
+
+using (SqlConnection connection = new SqlConnection(connectionString))
+{
+    connection.Open();
+    // Perform database operations here
+}
+
+Replace placeholders like your_server_name, your_database_name, etc., with actual values. Always ensure sensitive information like passwords is handled securely.
+
+https://learn.microsoft.com/en-us/sql/connect/ado-net/connection-string-syntax?view=sql-server-ver17
+https://learn.microsoft.com/en-us/sql/connect/ado-net/establishing-connection?view=sql-server-ver17
+
+
+
+
+
+....
+
+
+
+
+
+Metadata location (location of mapping XMLs produced by EDMX file)
+Data storage provider
+Data store connection string (that is what you want to provide)
+
+
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/connection-strings
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/connection-string-syntax
+https://www.completecsharptutorial.com/ado-net/connection-object-connecting-to-database-using-c-ado-net.php
+
+
+
+string format = "metadata=res://*/Model.csdl|res://*/Model.ssdl|res://*/Model.msl;provider=System.Data.SqlClient;provider connection string=\"{0}\"";
+string connectionString = "server=severaddress;database=database1;UserID=test;Password=test1234;"
+
+var context = ModelContext(String.Format(format, connectionString));
+
+...
+
+------------------------------------------------------------------------------
+ SQL commands
+ 
+https://learn.microsoft.com/de-de/sql/connect/ado-net/commands-parameters?view=sql-server-ver16
+https://learn.microsoft.com/en-us/sql/connect/ado-net/execute-command?view=sql-server-ver17
+https://stackoverflow.com/questions/14075390/does-an-ado-net-transaction-need-to-be-assigned-to-the-command-object-when-using
+
+
+// Connect to the database.
+SqlConnection connection = new SqlConnection(Database.ConnectionString);
+connection.Open();
+
+// Start a transaction.
+SqlCommand command = new SqlCommand();
+command.Connection = connection;
+command.Transaction = connection.BeginTransaction(System.Data.IsolationLevel.Serializable, "ryan");
+
+// Delete any previously associated targets.
+command.CommandType = System.Data.CommandType.StoredProcedure;
+command.CommandText = "FirstSP";
+command.Parameters.AddWithValue("@Id", this.Id);
+command.ExecuteNonQuery();
+
+// Add the specified targets to the product.
+command.CommandText = "SecondSP";
+command.Parameters.Add("@Id", SqlDbType.Int);
+foreach (int Id in Ids)
+{
+    command.Parameters["@Id"].Value = Id;
+    command.ExecuteNonQuery();
+}
+
+// Commit the transaction.
+command.Transaction.Commit();
+
+// Houseclean.
+connection.Close();
+
+
+
+------------------------------------------------------------------------------
+
+ADO.NET Dataset with Multiple Datasets Without DataReader
+1
+2
+3
+To work with multiple datasets in ADO.NET without using a DataReader, you can utilize the DataSet class in combination with a SqlDataAdapter. This approach allows you to fetch multiple result sets from a database and store them in separate DataTable objects within a single DataSet.
+
+Steps to Fetch Multiple Datasets
+
+Create and Configure the Connection Establish a connection to your database using SqlConnection.
+
+Define the SQL Query or Stored Procedure Use a query or stored procedure that returns multiple result sets.
+
+Use SqlDataAdapter to Fill the DataSet The SqlDataAdapter can execute the query and populate the DataSet with multiple tables.
+
+Example Code
+
+Below is an example of fetching multiple datasets without using a DataReader:
+
+
+
+
+using System;
+using System.Data;
+using System.Data.SqlClient;
+
+class Program
+{
+	static void Main()
+	{
+		string connectionString = "your_connection_string_here";
+		string query = @"
+		SELECT Id, Name FROM Customers;
+		SELECT OrderId, CustomerId, Amount FROM Orders;";
+
+		using (SqlConnection connection = new SqlConnection(connectionString))
+		{
+			try
+			{
+				// Open the connection
+				connection.Open();
+
+				// Create and configure SqlDataAdapter
+				SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
+
+				// Create a DataSet to hold multiple tables
+				DataSet dataSet = new DataSet();
+
+				// Fill the DataSet with data from multiple result sets
+				adapter.Fill(dataSet);
+
+				// Access the first table (Customers)
+				Console.WriteLine("Customers:");
+				foreach (DataRow row in dataSet.Tables[0].Rows)
+				{
+					Console.WriteLine($"ID: {row["Id"]}, Name: {row["Name"]}");
+				}
+
+				// Access the second table (Orders)
+				Console.WriteLine("\nOrders:");
+				foreach (DataRow row in dataSet.Tables[1].Rows)
+				{
+					Console.WriteLine($"OrderID: {row["OrderId"]}, CustomerID: {row["CustomerId"]}, Amount: {row["Amount"]}");
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error: {ex.Message}");
+			}
+		}
+	}
+}
+
+
+Explanation
+
+SqlConnection: Establishes a connection to the database.
+
+SqlDataAdapter: Executes the query and fills the DataSet.
+
+DataSet: Holds multiple DataTable objects, each corresponding to a result set.
+
+Accessing Tables: Use dataSet.Tables[index] or dataSet.Tables["TableName"] to access individual tables.
+
+Best Practices
+
+Use parameterized queries or stored procedures to prevent SQL injection.
+
+Ensure proper exception handling for database operations.
+
+Dispose of database connections properly using using statements.
+
+This approach is efficient for working with multiple datasets in a disconnected manner without relying on a DataReader.
+
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/ado-net-datasets
+https://learn.microsoft.com/en-us/dotnet/fundamentals/runtime-libraries/system-data-dataset
+
+------------------------------------------------------------------------------
+
+A DataTable represents one table of in-memory relational data; the data is local to the .NET-based application in which it resides, but can be populated from a data source such as Microsoft SQL Server using a DataAdapter For more information, see Populating a DataSet from a DataAdapter.
+
+
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/dataset-datatable-dataview/datatables
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/dataset-datatable-dataview/datatables
+
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/dataset-datatable-dataview/manipulating-data-in-a-datatable
+
+
+------------------------------------------------------------------------------
+
+An ADO.NET DataSet contains a collection of zero or more tables represented by DataTable objects. The DataTableCollection contains all the DataTable objects in a DataSet. A DataTable is defined in the System.Data namespace and represents a single table of memory-resident data.
+
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/ado-net-datasets
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/ado-net-datasets
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/retrieving-and-modifying-data
+
+------------------------------------------------------------------------------
+
+The Update method of the DataAdapter is called to resolve changes from a DataSet back to the data source. The Update method, like the Fill method, takes as arguments an instance of a DataSet, and an optional DataTable object or DataTable name.
+
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/updating-data-in-a-data-source
+https://www.codeproject.com/Articles/1155/Simple-ADO-NET-Database-Read-Insert-Update-and-Del
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/updating-data-sources-with-dataadapters
+
+------------------------------------------------------------------------------
+https://learn.microsoft.com/de-de/dotnet/framework/data/adonet/ado-net-architecture
+
+ADO.NET Zweischichtmodell in C#
+Das Zweischichtmodell (auch bekannt als Client-Server-Modell) ist eine traditionelle Architektur, die in der Datenverarbeitung verwendet wird. In ADO.NET wird dieses Modell häufig genutzt, um eine direkte Verbindung zwischen der Anwendung (Client) und der Datenbank (Server) herzustellen. Hierbei übernimmt der Client sowohl die Präsentations- als auch die Geschäftslogik, während der Server für die Datenhaltung zuständig ist.
+Merkmale des Zweischichtmodells
+
+Direkte Verbindung: Der Client kommuniziert direkt mit der Datenbank.
+Einfachheit: Es ist leicht zu implementieren und eignet sich gut für kleinere Anwendungen.
+Eingeschränkte Skalierbarkeit: Da die Geschäftslogik auf dem Client liegt, kann es bei wachsender Benutzeranzahl zu Performanceproblemen kommen.
+
+Beispiel in C#:
+Hier ein einfaches Beispiel, wie man mit ADO.NET im Zweischichtmodell arbeitet:
+using System;
+using System.Data.SqlClient;
+
+class Program
+{
+    static void Main()
+    {
+        // Verbindung zur Datenbank herstellen
+        string connectionString = "Server=DEIN_SERVER;Database=DEINE_DATENBANK;Trusted_Connection=True;";
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            try
+            {
+                connection.Open();
+                Console.WriteLine("Verbindung erfolgreich hergestellt!");
+
+                // SQL-Abfrage ausführen
+                string query = "SELECT * FROM Tabelle";
+                SqlCommand command = new SqlCommand(query, connection);
+
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"ID: {reader["ID"]}, Name: {reader["Name"]}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Fehler: {ex.Message}");
+            }
+        }
+    }
+}
+
+Erklärung des Codes:
+
+SqlConnection: Stellt die Verbindung zur Datenbank her.
+SqlCommand: Führt SQL-Befehle aus.
+SqlDataReader: Liest die Ergebnisse der Abfrage zeilenweise aus.
+
+Dieses Beispiel zeigt, wie eine einfache Client-Server-Interaktion im Zweischichtmodell mit ADO.NET umgesetzt werden kann. Für größere und komplexere Anwendungen wird jedoch oft ein mehrschichtiges Modell bevorzugt, um Skalierbarkeit und Wartbarkeit zu verbessern.
+
+
+
+------------------------------------------------------------------------------
+
+ADO.NET: Zweischicht-Modell und Klassen mit verbundenen oder unverbundenen Objekten
+In ADO.NET wird häufig das Zweischicht-Modell verwendet, um Datenzugriff und -manipulation zu strukturieren. Dabei unterscheidet man zwischen verbundenen und unverbundenen Objekten, die jeweils unterschiedliche Szenarien unterstützen.
+1. Verbundene Objekte
+Diese Objekte arbeiten direkt mit einer aktiven Verbindung zur Datenquelle. Sie sind ideal für Szenarien, in denen Daten in Echtzeit abgerufen oder aktualisiert werden müssen.
+
+SQL, OleDB, Odbc, Oracle
+
+Wichtige Klassen:
+
+SqlConnection (oder andere Connection-Klassen): Stellt die Verbindung zur Datenbank her.
+SqlCommand: Führt SQL-Befehle aus (z. B. SELECT, INSERT, UPDATE).
+SqlDataReader: Ermöglicht das Lesen von Daten aus der Datenbank in einem vorwärtsgerichteten, nur-lesbaren Modus.
+
+
+
+Beispiel:
+using (SqlConnection connection = new SqlConnection("your_connection_string"))
+{
+    connection.Open();
+    SqlCommand command = new SqlCommand("SELECT * FROM Customers", connection);
+    SqlDataReader reader = command.ExecuteReader();
+    while (reader.Read())
+    {
+        Console.WriteLine(reader["CustomerName"]);
+    }
+}
+
+
+
+
+2. Unverbundene Objekte
+Diese Objekte arbeiten unabhängig von einer aktiven Verbindung. Sie sind nützlich, wenn Daten zwischengespeichert, offline bearbeitet oder in einer Anwendung weiterverarbeitet werden sollen.
+
+
+Wichtige Klassen:
+
+DataSet: Eine Sammlung von Tabellen und Beziehungen, die Daten im Speicher speichert.
+DataTable: Repräsentiert eine einzelne Tabelle im Speicher.
+DataAdapter: Vermittelt zwischen der Datenquelle und dem DataSet/DataTable.
+DataRow 
+
+
+Beispiel:
+DataSet dataSet = new DataSet();
+using (SqlConnection connection = new SqlConnection("your_connection_string"))
+{
+    SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM Customers", connection);
+    adapter.Fill(dataSet, "Customers");
+}
+
+foreach (DataRow row in dataSet.Tables["Customers"].Rows)
+{
+    Console.WriteLine(row["CustomerName"]);
+}
+
+
+
+
+Zusammenfassung
+
+Verbundene Objekte: Echtzeit-Datenzugriff, effizient für schnelle Abfragen.
+Unverbundene Objekte: Ideal für komplexe Datenmanipulationen und Offline-Szenarien.
+
+Die Wahl zwischen verbundenen und unverbundenen Objekten hängt von den Anforderungen Ihrer Anwendung ab.
+
+
+
+
+------------------------------------------------------------------------------
+
+Conn - DML Cmd - Dataadapter - DataSet 
+
+DataSet - DataTable - DataRow 
+
+
+In C# ADO.NET, there are several namespaces and classes available for working with databases. 
+Each namespace is tailored to specific database providers or access methods. 
+Here's an overview of the relevant namespaces you mentioned:
+
+1. System.Data.OleDb
+
+Purpose: Provides access to data sources using OLE DB (Object Linking and Embedding Database).
+Use Case: Ideal for connecting to older databases or data sources that support OLE DB.
+Key Classes:
+
+OleDbConnection: Manages the connection to the data source.
+OleDbCommand: Executes SQL commands.
+OleDbDataReader: Reads data in a forward-only, read-only manner.
+OleDbDataAdapter: Fills a DataSet and updates the data source.
+
+
+
+
+2. System.Data.Odbc
+
+Purpose: Provides access to data sources using ODBC (Open Database Connectivity).
+Use Case: Useful for connecting to databases with ODBC drivers, offering a more generic approach.
+Key Classes:
+
+OdbcConnection: Manages the connection to the data source.
+OdbcCommand: Executes SQL commands.
+OdbcDataReader: Reads data in a forward-only, read-only manner.
+OdbcDataAdapter: Fills a DataSet and updates the data source.
+
+
+
+
+3. System.Data.SqlClient
+
+Purpose: Provides optimized access to Microsoft SQL Server.
+Use Case: Best choice for working with SQL Server due to its native support and performance.
+Key Classes:
+
+SqlConnection: Manages the connection to the SQL Server database.
+SqlCommand: Executes SQL commands.
+SqlDataReader: Reads data in a forward-only, read-only manner.
+SqlDataAdapter: Fills a DataSet and updates the database.
+
+
+
+
+4. System.Data.OracleClient (Deprecated)
+
+Purpose: Provides access to Oracle databases.
+Use Case: Previously used for Oracle database connections, but now deprecated. Use Oracle's ODP.NET (Oracle Data Provider for .NET) instead.
+Key Classes:
+
+OracleConnection: Manages the connection to the Oracle database.
+OracleCommand: Executes SQL commands.
+OracleDataReader: Reads data in a forward-only, read-only manner.
+OracleDataAdapter: Fills a DataSet and updates the database.
+
+
+
+
+Modern Recommendation for Oracle
+
+Use Oracle.ManagedDataAccess.Client (ODP.NET) for better performance and support.
+
+OracleConnection, OracleCommand, etc., are part of this library.
+
+
+
+
+Choosing the Right Namespace
+
+SQL Server: Use System.Data.SqlClient for best performance.
+Oracle: Use Oracle's ODP.NET or System.Data.OracleClient (if legacy).
+Generic Databases: Use System.Data.OleDb or System.Data.Odbc depending on the driver availability.
+
+Each namespace has its strengths, so the choice depends on the database type and your application's requirements.
+
+
+
+
+using System.Data;
+
+DBquelle, UName, PassWD
+
+------------------------------------------------------------------------------
+
+The OleDbConnectionStringBuilder class in C# is part of the ADO.NET framework and provides a convenient way to create, parse, and manage connection strings for OLE DB connections. It is particularly useful when you need to dynamically build or modify connection strings in a structured way.
+Here’s an example of how to use the OleDbConnectionStringBuilder:
+
+Example 1: Building a Connection String
+using System;
+using System.Data.OleDb;
+
+class Program
+{
+    static void Main()
+    {
+        OleDbConnectionStringBuilder builder = new OleDbConnectionStringBuilder
+        {
+            Provider = "Microsoft.ACE.OLEDB.12.0", // Specify the OLE DB provider
+            DataSource = @"C:\Data\MyDatabase.accdb" // Path to the database
+        };
+
+        // Optional: Add additional properties
+        builder["Persist Security Info"] = false;
+
+        Console.WriteLine("Connection String: " + builder.ConnectionString);
+    }
+}
+
+
+Example 2: Parsing an Existing Connection String
+using System;
+using System.Data.OleDb;
+
+class Program
+{
+    static void Main()
+    {
+        string connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\\Data\\MyDatabase.accdb;Persist Security Info=False;";
+        OleDbConnectionStringBuilder builder = new OleDbConnectionStringBuilder(connectionString);
+
+        Console.WriteLine("Provider: " + builder.Provider);
+        Console.WriteLine("Data Source: " + builder.DataSource);
+        Console.WriteLine("Persist Security Info: " + builder["Persist Security Info"]);
+    }
+}
+
+
+Example 3: Modifying an Existing Connection String
+using System;
+using System.Data.OleDb;
+
+class Program
+{
+    static void Main()
+    {
+        OleDbConnectionStringBuilder builder = new OleDbConnectionStringBuilder
+        {
+            ConnectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\\Data\\OldDatabase.accdb;"
+        };
+
+        // Modify the DataSource property
+        builder.DataSource = @"C:\Data\NewDatabase.accdb";
+
+        Console.WriteLine("Updated Connection String: " + builder.ConnectionString);
+    }
+}
+
+
+Key Properties of OleDbConnectionStringBuilder
+
+Provider: Specifies the OLE DB provider (e.g., Microsoft.ACE.OLEDB.12.0 for Access databases).
+DataSource: Specifies the path to the database file.
+ConnectionString: Gets or sets the entire connection string.
+Indexer (builder["key"]): Allows you to add or modify specific key-value pairs in the connection string.
+
+This class ensures that your connection strings are well-formed and reduces the risk of errors caused by manual string concatenation.
+
+
+https://learn.microsoft.com/en-us/dotnet/api/system.data.oledb.oledbconnectionstringbuilder?view=net-9.0-pp
+https://learn.microsoft.com/de-de/dotnet/api/system.data.oledb.oledbconnectionstringbuilder?view=net-9.0-pp
+------------------------------------------------------------------------------
+
+The OleDbConnectionStringBuilder in C# is a utility class in ADO.NET that simplifies the creation and management of connection strings for OleDbConnection. Below are some common use cases for using OleDbConnectionStringBuilder and OleDbConnection:
+
+1. Dynamically Building Connection Strings
+The OleDbConnectionStringBuilder allows you to construct or modify connection strings programmatically without worrying about syntax errors.
+using System.Data.OleDb;
+
+var builder = new OleDbConnectionStringBuilder
+{
+    Provider = "Microsoft.ACE.OLEDB.12.0", // Example: Access database
+    DataSource = @"C:\Database\MyDatabase.accdb"
+};
+builder["Persist Security Info"] = false;
+
+string connectionString = builder.ConnectionString;
+Console.WriteLine(connectionString); // Outputs the constructed connection string
+
+
+2. Parsing and Modifying Existing Connection Strings
+You can use OleDbConnectionStringBuilder to parse an existing connection string and modify specific properties.
+string existingConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\\Database\\MyDatabase.mdb;";
+var builder = new OleDbConnectionStringBuilder(existingConnectionString);
+
+// Modify the DataSource
+builder.DataSource = @"C:\NewDatabase\UpdatedDatabase.mdb";
+
+// Retrieve the updated connection string
+string updatedConnectionString = builder.ConnectionString;
+Console.WriteLine(updatedConnectionString);
+
+
+3. Securely Handling Credentials
+You can add or update sensitive information like usernames and passwords securely.
+var builder = new OleDbConnectionStringBuilder
+{
+    Provider = "Microsoft.ACE.OLEDB.12.0",
+    DataSource = @"C:\Database\MyDatabase.accdb"
+};
+builder["User ID"] = "admin";
+builder["Password"] = "securepassword";
+builder["Server"] = "dbserver";
+builder["Database"] = "dbName";
+
+string connectionString = builder.ConnectionString;
+// Use the connection string securely in your application
+
+
+4. Using with OleDbConnection to Connect to a Database
+Once the connection string is built, you can use it with an OleDbConnection to establish a connection to the database.
+using System.Data.OleDb;
+
+var builder = new OleDbConnectionStringBuilder
+{
+    Provider = "Microsoft.ACE.OLEDB.12.0",
+    DataSource = @"C:\Database\MyDatabase.accdb"
+};
+
+using (var connection = new OleDbConnection(builder.ConnectionString))
+{
+    connection.Open();
+    Console.WriteLine("Connection opened successfully!");
+
+    // Perform database operations here...
+
+    connection.Close();
+    Console.WriteLine("Connection closed.");
+}
+
+
+5. Validating Connection Strings
+The OleDbConnectionStringBuilder can help validate the structure of a connection string by parsing it.
+try
+{
+    string invalidConnectionString = "Invalid=ConnectionString";
+    var builder = new OleDbConnectionStringBuilder(invalidConnectionString);
+    Console.WriteLine("Connection string is valid.");
+}
+catch (ArgumentException ex)
+{
+    Console.WriteLine($"Invalid connection string: {ex.Message}");
+}
+
+
+6. Supporting Multiple Providers
+You can dynamically switch between different providers (e.g., Access, SQL Server, etc.) by modifying the Provider property.
+var builder = new OleDbConnectionStringBuilder
+{
+    Provider = "SQLOLEDB", // SQL Server provider
+    DataSource = "ServerName",
+    ["Initial Catalog"] = "DatabaseName",
+    ["Integrated Security"] = "SSPI"
+};
+
+Console.WriteLine(builder.ConnectionString);
+
+
+These use cases demonstrate how OleDbConnectionStringBuilder simplifies working with connection strings, making your code more robust and easier to maintain.
+
+
+
+
+------------------------------------------------------------------------------
+
+https://learn.microsoft.com/en-us/dotnet/api/system.data.oledb.oledbconnectionstringbuilder?view=net-9.0-pp
+
+In C#, the OleDbConnectionStringBuilder class is a convenient way to construct and manage connection strings for OleDbConnection objects in ADO.NET. Here's an example of how to use it:
+
+Example: Building an OleDb Connection String
+using System;
+using System.Data.OleDb;
+
+class Program
+{
+    static void Main()
+    {
+        // Create an instance of OleDbConnectionStringBuilder
+        OleDbConnectionStringBuilder builder = new OleDbConnectionStringBuilder();
+
+        // Set properties for the connection string
+        builder.Provider = "Microsoft.ACE.OLEDB.12.0"; // Example: Access database provider
+        builder.DataSource = @"C:\Path\To\Database.accdb"; // Path to your database file
+        builder["Persist Security Info"] = false; // Optional: Security settings
+
+        // Retrieve the connection string
+        string connectionString = builder.ConnectionString;
+
+        Console.WriteLine("Generated Connection String:");
+        Console.WriteLine(connectionString);
+
+        // Use the connection string with OleDbConnection
+        using (OleDbConnection connection = new OleDbConnection(connectionString))
+        {
+            try
+            {
+                connection.Open();
+                Console.WriteLine("Connection successful!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+    }
+}
+
+
+Key Points
+
+Provider: Specifies the OLE DB provider (e.g., Microsoft.ACE.OLEDB.12.0 for Access or SQLOLEDB for SQL Server).
+DataSource: The path to the database or server.
+Additional Properties: You can add custom properties using the indexer (e.g., builder["PropertyName"] = value).
+
+
+Sample Output
+If the database file exists and the provider is correct, the output might look like this:
+Generated Connection String:
+Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Path\To\Database.accdb;Persist Security Info=False
+Connection successful!
+
+This approach ensures your connection strings are dynamically built and easy to manage. Let me know if you'd like further clarification! 😊
+------------------------------------------------------------------------------
+
+The SqlConnectionStringBuilder class in C# is a convenient way to create and manage SQL Server connection strings programmatically. 
+It provides properties to set or retrieve individual components of a connection string, ensuring proper formatting and reducing the risk of errors.
+Here’s an example of how to use it:
+
+
+Example 1: Building a Connection String
+using Microsoft.Data.SqlClient;
+
+var builder = new SqlConnectionStringBuilder
+{
+    DataSource = "your_server_name", // e.g., "localhost" or "127.0.0.1"
+    InitialCatalog = "your_database_name", // e.g., "MyDatabase"
+    IntegratedSecurity = true // Use Windows Authentication
+};
+
+// If using SQL Server Authentication
+// builder.UserID = "your_username";
+// builder.Password = "your_password";
+
+string connectionString = builder.ConnectionString;
+Console.WriteLine(connectionString);
+
+
+
+Example 2: Modifying an Existing Connection String
+using Microsoft.Data.SqlClient;
+
+string existingConnectionString = "Data Source=your_server_name;Initial Catalog=your_database_name;Integrated Security=True;";
+var builder = new SqlConnectionStringBuilder(existingConnectionString);
+
+// Modify properties
+builder.InitialCatalog = "NewDatabase";
+builder.IntegratedSecurity = false;
+builder.UserID = "new_user";
+builder.Password = "new_password";
+
+string updatedConnectionString = builder.ConnectionString;
+Console.WriteLine(updatedConnectionString);
+
+Example 3: Extracting Information from a Connection String
+using Microsoft.Data.SqlClient;
+
+string connectionString = "Data Source=your_server_name;Initial Catalog=your_database_name;Integrated Security=True;";
+var builder = new SqlConnectionStringBuilder(connectionString);
+
+Console.WriteLine($"Data Source: {builder.DataSource}");
+Console.WriteLine($"Initial Catalog: {builder.InitialCatalog}");
+Console.WriteLine($"Integrated Security: {builder.IntegratedSecurity}");
+
+Key Properties of SqlConnectionStringBuilder
+
+DataSource: Specifies the server name or network address.
+InitialCatalog: Specifies the database name.
+IntegratedSecurity: Indicates whether Windows Authentication is used.
+UserID and Password: For SQL Server Authentication.
+ApplicationName: Sets the name of the application.
+
+This class ensures that your connection strings are valid and secure, making it a best practice for managing database connections in ADO.NET applications.
+
+
+
+
+------------------------------------------------------------------------------
+
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/modifying-data-with-a-dbdataadapter
+
+
+Here’s an example of how to use a DbDataAdapter in ADO.NET to interact with a database in a provider-independent way:
+Example: Using DbDataAdapter with DbProviderFactory
+
+
+using System;
+using System.Data;
+using System.Data.Common;
+
+class Program
+{
+    static void Main()
+    {
+        // Connection string and provider name
+        string connectionString = "your_connection_string_here";
+        string providerName = "System.Data.SqlClient"; // Example: SQL Server
+
+        // Create a DbProviderFactory
+        DbProviderFactory factory = DbProviderFactories.GetFactory(providerName);
+
+        // Create a connection
+        using (DbConnection connection = factory.CreateConnection())
+        {
+            connection.ConnectionString = connectionString;
+            connection.Open();
+
+            // Create a command
+            using (DbCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT * FROM YourTable";
+
+                // Create a DbDataAdapter
+                using (DbDataAdapter adapter = factory.CreateDataAdapter())
+                {
+                    adapter.SelectCommand = command;
+
+                    // Fill a DataSet
+                    DataSet dataSet = new DataSet();
+                    adapter.Fill(dataSet);
+
+                    // Display data (example)
+                    foreach (DataTable table in dataSet.Tables)
+                    {
+                        foreach (DataRow row in table.Rows)
+                        {
+                            foreach (var item in row.ItemArray)
+                            {
+                                Console.Write(item + "\t");
+                            }
+                            Console.WriteLine();
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+Explanation
+
+DbProviderFactory: Allows you to write provider-independent code by dynamically creating the appropriate database objects (e.g., connection, command, adapter).
+DbDataAdapter: Used to retrieve data from the database and populate a DataSet or DataTable.
+DataSet: An in-memory representation of data that can hold multiple tables.
+
+Key Notes
+
+Replace "your_connection_string_here" with your actual database connection string.
+Change "System.Data.SqlClient" to the appropriate provider name for your database (e.g., "System.Data.OleDb" for Access or "Npgsql" for PostgreSQL).
+This approach is useful for writing database-agnostic applications.
+
+Let me know if you'd like further clarification! 😊
+------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------
+
+Here’s a concise example of how to use ADO.NET with OleDbDataAdapter to interact with a database in C#. This example demonstrates how to fetch data, modify it, and update the database.
+
+Example: Using OleDbDataAdapter
+using System;
+using System.Data;
+using System.Data.OleDb;
+
+class Program
+{
+    static void Main()
+    {
+        // Connection string (adjust for your database)
+        string connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=your_database.accdb;";
+        
+        // SQL query to fetch data
+        string selectQuery = "SELECT * FROM YourTable";
+
+        // Create connection and adapter
+        using (OleDbConnection connection = new OleDbConnection(connectionString))
+        {
+            OleDbDataAdapter adapter = new OleDbDataAdapter(selectQuery, connection);
+
+            // CommandBuilder to auto-generate INSERT/UPDATE/DELETE commands
+            OleDbCommandBuilder commandBuilder = new OleDbCommandBuilder(adapter);
+
+            // Fill DataTable with data from the database
+            DataTable dataTable = new DataTable();
+            adapter.Fill(dataTable);
+
+            // Display original data
+            Console.WriteLine("Original Data:");
+            foreach (DataRow row in dataTable.Rows)
+            {
+                Console.WriteLine($"{row["Column1"]}, {row["Column2"]}");
+            }
+
+            // Modify data in the DataTable
+            if (dataTable.Rows.Count > 0)
+            {
+                dataTable.Rows[0]["Column1"] = "UpdatedValue";
+            }
+
+            // Add a new row
+            DataRow newRow = dataTable.NewRow();
+            newRow["Column1"] = "NewValue";
+            newRow["Column2"] = "AnotherValue";
+            dataTable.Rows.Add(newRow);
+
+            // Update the database
+            adapter.Update(dataTable);
+
+            Console.WriteLine("Data updated successfully!");
+        }
+    }
+}
+
+
+Key Points
+
+OleDbConnection: Establishes a connection to the database.
+OleDbDataAdapter: Fetches data into a DataTable and updates changes back to the database.
+OleDbCommandBuilder: Automatically generates SQL commands for INSERT, UPDATE, and DELETE operations.
+DataTable: Acts as an in-memory representation of the data.
+
+
+Steps to Run
+
+Replace your_database.accdb with the path to your Access database file.
+Replace YourTable, Column1, and Column2 with your actual table and column names.
+Ensure you have the Microsoft Access Database Engine installed if using .accdb files.
+
+This approach is flexible and works well for small to medium-sized datasets. Let me know if you need further clarification! 😊
+
+
+------------------------------------------------------------------------------
+https://learn.microsoft.com/en-us/dotnet/api/system.data.oledb.oledbdataadapter.updatecommand?view=net-9.0-pp
+
+
+Here’s an example of how to use OleDbDataAdapter with a new OleDbCommand in ADO.NET to interact with a database. This example demonstrates how to update a database using the UpdateCommand property of the OleDbDataAdapter.
+using System;
+using System.Data;
+using System.Data.OleDb;
+
+class Program
+{
+    static void Main()
+    {
+        // Connection string to your database
+        string connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=your_database.accdb;";
+        
+        // SQL query to select data
+        string selectQuery = "SELECT ID, Name, Age FROM Users";
+
+        using (OleDbConnection connection = new OleDbConnection(connectionString))
+        {
+            // Create the DataAdapter
+            OleDbDataAdapter adapter = new OleDbDataAdapter(selectQuery, connection);
+
+            // Create the UpdateCommand
+            adapter.UpdateCommand = new OleDbCommand(
+                "UPDATE Users SET Name = ?, Age = ? WHERE ID = ?", connection);
+
+            // Define parameters for the UpdateCommand
+            adapter.UpdateCommand.Parameters.Add("Name", OleDbType.VarChar, 50, "Name");
+            adapter.UpdateCommand.Parameters.Add("Age", OleDbType.Integer, 0, "Age");
+            adapter.UpdateCommand.Parameters.Add("ID", OleDbType.Integer, 0, "ID").SourceVersion = DataRowVersion.Original;
+
+            // Fill the DataTable
+            DataTable dataTable = new DataTable();
+            adapter.Fill(dataTable);
+
+            // Modify data in the DataTable
+            dataTable.Rows[0]["Name"] = "Updated Name";
+            dataTable.Rows[0]["Age"] = 30;
+
+            // Update the database
+            adapter.Update(dataTable);
+
+            Console.WriteLine("Database updated successfully.");
+        }
+    }
+}
+
+Explanation:
+
+Connection: Establishes a connection to the database using OleDbConnection.
+DataAdapter: Uses OleDbDataAdapter to fetch and update data.
+UpdateCommand: Configures the SQL UPDATE statement with parameters.
+DataTable: Holds the data fetched from the database, which can be modified and then updated back to the database.
+
+This approach ensures efficient interaction with the database while maintaining a clean separation between data manipulation and database operations.
+
+
+
+------------------------------------------------------------------------------
+
+Here’s an example of how to perform CRUD (Create, Read, Update, Delete) operations using ADO.NET with OleDbDataAdapter and OleDbCommand in C#. This example assumes you're working with an Access database or any other database supported by OleDb.
+
+1. Setup: Connection String
+string connectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=your_database_path.accdb;";
+
+
+2. Create (Insert Data)
+using (OleDbConnection connection = new OleDbConnection(connectionString))
+{
+    string insertQuery = "INSERT INTO YourTable (Column1, Column2) VALUES (?, ?)";
+    OleDbCommand command = new OleDbCommand(insertQuery, connection);
+    command.Parameters.AddWithValue("?", "Value1");
+    command.Parameters.AddWithValue("?", "Value2");
+
+    connection.Open();
+    int rowsAffected = command.ExecuteNonQuery();
+    Console.WriteLine($"{rowsAffected} row(s) inserted.");
+}
+
+
+3. Read (Select Data)
+using (OleDbConnection connection = new OleDbConnection(connectionString))
+{
+    string selectQuery = "SELECT Column1, Column2 FROM YourTable";
+    OleDbDataAdapter adapter = new OleDbDataAdapter(selectQuery, connection);
+    DataTable dataTable = new DataTable();
+
+    adapter.Fill(dataTable);
+
+    foreach (DataRow row in dataTable.Rows)
+    {
+        Console.WriteLine($"Column1: {row["Column1"]}, Column2: {row["Column2"]}");
+    }
+}
+
+
+4. Update (Modify Data)
+using (OleDbConnection connection = new OleDbConnection(connectionString))
+{
+    string updateQuery = "UPDATE YourTable SET Column1 = ? WHERE Column2 = ?";
+    OleDbCommand command = new OleDbCommand(updateQuery, connection);
+    command.Parameters.AddWithValue("?", "NewValue");
+    command.Parameters.AddWithValue("?", "ConditionValue");
+
+    connection.Open();
+    int rowsAffected = command.ExecuteNonQuery();
+    Console.WriteLine($"{rowsAffected} row(s) updated.");
+}
+
+
+5. Delete (Remove Data)
+using (OleDbConnection connection = new OleDbConnection(connectionString))
+{
+    string deleteQuery = "DELETE FROM YourTable WHERE Column1 = ?";
+    OleDbCommand command = new OleDbCommand(deleteQuery, connection);
+    command.Parameters.AddWithValue("?", "ValueToDelete");
+
+    connection.Open();
+    int rowsAffected = command.ExecuteNonQuery();
+    Console.WriteLine($"{rowsAffected} row(s) deleted.");
+}
+
+
+Notes
+
+Replace YourTable, Column1, Column2, and other placeholders with your actual table and column names.
+Use OleDbDataAdapter for batch operations like filling a DataSet or DataTable.
+Always handle exceptions using try-catch blocks for better error management.
+Ensure proper disposal of resources by using using statements.
+
+This approach is efficient and works well for small to medium-sized applications.
+
+
+https://learn.microsoft.com/en-us/dotnet/api/system.data.oledb.oledbdataadapter?view=net-9.0-pp
+
+------------------------------------------------------------------------------
+
+The OleDbCommandBuilder in ADO.NET is a helper class that automatically generates SQL commands (INSERT, UPDATE, DELETE) for reconciling changes made to a DataSet or DataTable with the associated database. It works in conjunction with the OleDbDataAdapter.
+Here’s an example of how to use OleDbCommandBuilder in C#:
+
+Example: Using OleDbCommandBuilder
+using System;
+using System.Data;
+using System.Data.OleDb;
+
+class Program
+{
+    static void Main()
+    {
+        // Connection string to your database
+        string connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=yourDatabase.accdb;";
+        
+        // SQL query to select data
+        string selectQuery = "SELECT * FROM YourTable";
+
+        using (OleDbConnection connection = new OleDbConnection(connectionString))
+        {
+            // Create the DataAdapter
+            OleDbDataAdapter adapter = new OleDbDataAdapter(selectQuery, connection);
+
+            // Use OleDbCommandBuilder to auto-generate commands
+            OleDbCommandBuilder commandBuilder = new OleDbCommandBuilder(adapter);
+
+            // Fill the DataTable
+            DataTable dataTable = new DataTable();
+            adapter.Fill(dataTable);
+
+            // Modify the data in the DataTable (example: updating a row)
+            if (dataTable.Rows.Count > 0)
+            {
+                dataTable.Rows[0]["ColumnName"] = "NewValue";
+            }
+
+            // Update the database with changes
+            adapter.Update(dataTable);
+
+            Console.WriteLine("Database updated successfully!");
+        }
+    }
+}
+
+
+Key Points:
+
+Automatic Command Generation: The OleDbCommandBuilder generates SQL commands for the OleDbDataAdapter based on the SelectCommand property.
+Limitations:
+
+It works only for single-table updates.
+The table must have a primary key or unique column for proper updates.
+
+
+Best Practices:
+
+Use OleDbCommandBuilder for simple scenarios. For complex queries or multi-table updates, manually define commands.
+
+
+
+This approach simplifies database updates when working with ADO.NET and OleDb. Let me know if you'd like further clarification!
+
+https://learn.microsoft.com/en-us/dotnet/api/system.data.oledb.oledbcommandbuilder?view=net-9.0-pp
+
+------------------------------------------------------------------------------
+
+
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/dataset-datatable-dataview/adding-a-datatable-to-a-dataset
+
+
+Here’s an example of how to create a new DataSet, add a DataTable to it, and populate it with some data in C# using ADO.NET:
+using System;
+using System.Data;
+
+class Program
+{
+    static void Main()
+    {
+        // Create a new DataSet
+        DataSet dataSet = new DataSet("MyDataSet");
+
+        // Create a new DataTable
+        DataTable dataTable = new DataTable("MyTable");
+
+        // Define columns for the DataTable
+        dataTable.Columns.Add("ID", typeof(int));
+        dataTable.Columns.Add("Name", typeof(string));
+        dataTable.Columns.Add("Age", typeof(int));
+
+        // Add rows to the DataTable
+        dataTable.Rows.Add(1, "Alice", 25);
+        dataTable.Rows.Add(2, "Bob", 30);
+        dataTable.Rows.Add(3, "Charlie", 35);
+
+        // Add the DataTable to the DataSet
+        dataSet.Tables.Add(dataTable);
+
+        // Display the data
+        Console.WriteLine("Data in DataTable:");
+        foreach (DataRow row in dataTable.Rows)
+        {
+            Console.WriteLine($"ID: {row["ID"]}, Name: {row["Name"]}, Age: {row["Age"]}");
+        }
+    }
+}
+
+Explanation:
+
+DataSet Creation: A DataSet is created to hold multiple DataTable objects.
+DataTable Creation: A DataTable is created with columns (ID, Name, Age).
+Adding Rows: Rows are added to the DataTable using the Rows.Add() method.
+Adding to DataSet: The DataTable is added to the DataSet using Tables.Add().
+Displaying Data: The data is displayed by iterating through the rows of the DataTable.
+
+This example demonstrates the basics of working with DataSet and DataTable in ADO.NET.
+
+
+------------------------------------------------------------------------------
+
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/populating-a-dataset-from-a-dataadapter
+
+Here is an example of how to create a new DataSet, add a DataTable to it, and populate the DataTable using a SqlDataAdapter in C#:
+using System;
+using System.Data;
+using System.Data.SqlClient;
+
+class Program
+{
+    static void Main()
+    {
+        // Connection string to your database
+        string connectionString = "your_connection_string_here";
+
+        // SQL query to fetch data
+        string query = "SELECT * FROM YourTableName";
+
+        // Create a new DataSet
+        DataSet dataSet = new DataSet();
+
+        try
+        {
+            // Establish a connection to the database
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                // Create a SqlDataAdapter
+                SqlDataAdapter dataAdapter = new SqlDataAdapter(query, connection);
+
+                // Fill the DataSet with data from the database
+                dataAdapter.Fill(dataSet, "YourTableName");
+
+                // Access the DataTable from the DataSet
+                DataTable dataTable = dataSet.Tables["YourTableName"];
+
+                // Display the data (example)
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    foreach (var item in row.ItemArray)
+                    {
+                        Console.Write(item + "\t");
+                    }
+                    Console.WriteLine();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("An error occurred: " + ex.Message);
+        }
+    }
+}
+
+Key Points:
+
+Replace "your_connection_string_here" with your actual database connection string.
+Replace "YourTableName" with the name of the table you want to query.
+The SqlDataAdapter is used to fill the DataSet with data from the database.
+
+This code demonstrates how to work with ADO.NET to retrieve and display data in a structured way.
+
+------------------------------------------------------------------------------
+
+
+Here’s an example of how to use ADO.NET with OleDb to fill a DataTable from a database query in C#:
+using System;
+using System.Data;
+using System.Data.OleDb;
+
+class Program
+{
+    static void Main()
+    {
+        // Connection string to your database
+        string connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=your_database_path.accdb;";
+        
+        // SQL query to fetch data
+        string query = "SELECT * FROM YourTableName";
+
+        // Create a DataTable to hold the data
+        DataTable dataTable = new DataTable();
+
+        try
+        {
+            // Create and open the connection
+            using (OleDbConnection connection = new OleDbConnection(connectionString))
+            {
+                connection.Open();
+
+                // Create the OleDbDataAdapter
+                using (OleDbDataAdapter adapter = new OleDbDataAdapter(query, connection))
+                {
+                    // Fill the DataTable with data from the database
+                    adapter.Fill(dataTable);
+                }
+            }
+
+            // Display the data (optional)
+            foreach (DataRow row in dataTable.Rows)
+            {
+                foreach (var item in row.ItemArray)
+                {
+                    Console.Write(item + "\t");
+                }
+                Console.WriteLine();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error: " + ex.Message);
+        }
+    }
+}
+
+Key Points:
+
+Connection String: Replace your_database_path.accdb with the actual path to your Access database file.
+SQL Query: Replace YourTableName with the name of the table you want to query.
+Error Handling: The try-catch block ensures that any exceptions are caught and displayed.
+
+This code will connect to an Access database, execute the query, and populate a DataTable with the results. You can adapt it for other databases by modifying the connection string and query.
+
+
+https://learn.microsoft.com/en-us/dotnet/api/system.data.oledb.oledbdataadapter.fill?view=net-9.0-pp
+
+------------------------------------------------------------------------------
+
+
+Here’s an example of how you can use a private, readonly SqlConnectionStringBuilder in C# to manage your database connection string in an ADO.NET application:
+using System;
+using System.Data.SqlClient;
+
+namespace DatabaseConnectionExample
+{
+    public class DatabaseManager
+    {
+        private readonly SqlConnectionStringBuilder sqlSb;
+
+        public DatabaseManager()
+        {
+            // Initialize the SqlConnectionStringBuilder with default values
+            sqlSb = new SqlConnectionStringBuilder
+            {
+                DataSource = "your_server_name", // Replace with your server name
+                InitialCatalog = "your_database_name", // Replace with your database name
+                IntegratedSecurity = true // Use Windows Authentication
+                // Alternatively, for SQL Authentication:
+                // UserID = "your_username",
+                // Password = "your_password"
+            };
+        }
+
+        public void ConnectToDatabase()
+        {
+            using (var connection = new SqlConnection(sqlSb.ConnectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    Console.WriteLine("Connection successful!");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An error occurred: {ex.Message}");
+                }
+            }
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var dbManager = new DatabaseManager();
+            dbManager.ConnectToDatabase();
+        }
+    }
+}
+
+Explanation:
+
+
+SqlConnectionStringBuilder:
+
+This class simplifies the creation and management of connection strings.
+You can set properties like DataSource, InitialCatalog, IntegratedSecurity, UserID, and Password.
+
+
+
+readonly:
+
+The sqlSb field is marked as readonly, meaning it can only be assigned during initialization or in the constructor.
+
+
+
+Usage:
+
+The ConnectToDatabase method demonstrates how to use the connection string to establish a connection to the database.
+
+
+
+This approach ensures your connection string is managed in a secure and structured way.
+
+
+
+
+
+------------------------------------------------------------------------------
+
+If you're encountering the issue where the System.Data.SqlClient namespace is not found in your C# project, here are some potential solutions:
+
+1. Add the NuGet Package
+In .NET Core or .NET 5+ projects, System.Data.SqlClient is no longer included by default. You need to install it via NuGet:
+
+
+Open Package Manager Console and run:
+Install-Package System.Data.SqlClient
+
+
+
+Alternatively, in Visual Studio:
+
+Right-click on your project in Solution Explorer.
+Select Manage NuGet Packages....
+Search for System.Data.SqlClient and install it.
+
+
+
+
+2. Use Microsoft.Data.SqlClient Instead
+For newer .NET projects, it's recommended to use Microsoft.Data.SqlClient instead of System.Data.SqlClient. This is a more modern library with additional features and better support for .NET Core and .NET 5+.
+
+
+Install it via NuGet:
+Install-Package Microsoft.Data.SqlClient
+
+
+
+Update your code to use the new namespace:
+using Microsoft.Data.SqlClient;
+
+
+
+
+3. Check Target Framework
+Ensure your project is targeting a compatible framework:
+
+System.Data.SqlClient works with .NET Framework and .NET Core.
+Microsoft.Data.SqlClient is better suited for .NET Core, .NET 5+, and .NET 6+.
+
+You can check or update the target framework in your .csproj file:
+<TargetFramework>net6.0</TargetFramework>
+
+
+4. Verify References
+If you're using .NET Framework and still facing issues:
+
+Ensure the System.Data assembly is referenced in your project.
+
+Right-click on References in Solution Explorer.
+Select Add Reference....
+Look for System.Data and add it.
+
+
+
+
+By following these steps, you should be able to resolve the issue and use the SqlClient namespace in your project. Let me know if you need further assistance! 😊
+
+
+
+
+------------------------------------------------------------------------------
+
+
+The ConnectionStringBuilder in ADO.NET is a set of classes designed to simplify the creation, management, and modification of database connection strings in .NET applications. These classes provide a structured way to handle connection strings, making them easier to read, write, and validate.
+Key Features
+
+Ease of Use: Instead of manually concatenating strings, you can use properties to set or retrieve specific parts of the connection string (e.g., server name, database name, user ID).
+Validation: Automatically validates the connection string to ensure it is well-formed.
+Provider-Specific Support: Includes specialized classes for different database providers (e.g., SQL Server, Oracle).
+
+Common Classes
+
+
+DbConnectionStringBuilder (Base Class):
+
+A generic class for working with connection strings, regardless of the database provider.
+Namespace: System.Data.Common.
+
+
+
+SqlConnectionStringBuilder:
+
+Specifically designed for SQL Server connection strings.
+Namespace: Microsoft.Data.SqlClient or System.Data.SqlClient (depending on the library version).
+
+
+
+Other Provider-Specific Builders:
+
+OracleConnectionStringBuilder (for Oracle databases).
+OleDbConnectionStringBuilder (for OLE DB connections).
+OdbcConnectionStringBuilder (for ODBC connections).
+
+
+
+Example Usage
+Here’s how you can use the SqlConnectionStringBuilder to create or modify a connection string:
+using Microsoft.Data.SqlClient; // Or System.Data.SqlClient
+
+var builder = new SqlConnectionStringBuilder
+{
+    DataSource = "ServerName",  // Server name or IP
+    InitialCatalog = "DatabaseName", // Database name
+    IntegratedSecurity = true   // Use Windows Authentication
+};
+
+// Retrieve the connection string
+string connectionString = builder.ConnectionString;
+Console.WriteLine(connectionString);
+
+Advantages
+
+Readability: Makes connection strings more readable and maintainable.
+Error Reduction: Reduces the risk of errors when manually constructing connection strings.
+Dynamic Updates: Easily modify specific parts of a connection string without rebuilding it from scratch.
+
+This tool is particularly useful when working with dynamic or configurable connection strings in applications.
+
+
+
+----------------------------------------------------------------------------------------
+
+https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/commands-and-parameters
+
+In ADO.NET, Data Manipulation Language (DML) commands are used to interact with the data in a database. These commands include INSERT, UPDATE, DELETE, and SELECT statements. Below is an example of how to execute DML commands using ADO.NET in C#:
+
+1. INSERT Command Example
+using System.Data.SqlClient;
+
+string connectionString = "Your_Connection_String_Here";
+string insertQuery = "INSERT INTO Employees (Name, Age, Position) VALUES (@Name, @Age, @Position)";
+
+using (SqlConnection connection = new SqlConnection(connectionString))
+{
+    SqlCommand command = new SqlCommand(insertQuery, connection);
+    command.Parameters.AddWithValue("@Name", "John Doe");
+    command.Parameters.AddWithValue("@Age", 30);
+    command.Parameters.AddWithValue("@Position", "Developer");
+
+    connection.Open();
+    int rowsAffected = command.ExecuteNonQuery();
+    Console.WriteLine($"{rowsAffected} row(s) inserted.");
+}
+
+
+2. UPDATE Command Example
+string updateQuery = "UPDATE Employees SET Age = @Age WHERE Name = @Name";
+
+using (SqlConnection connection = new SqlConnection(connectionString))
+{
+    SqlCommand command = new SqlCommand(updateQuery, connection);
+    command.Parameters.AddWithValue("@Age", 35);
+    command.Parameters.AddWithValue("@Name", "John Doe");
+
+    connection.Open();
+    int rowsAffected = command.ExecuteNonQuery();
+    Console.WriteLine($"{rowsAffected} row(s) updated.");
+}
+
+
+3. DELETE Command Example
+string deleteQuery = "DELETE FROM Employees WHERE Name = @Name";
+
+using (SqlConnection connection = new SqlConnection(connectionString))
+{
+    SqlCommand command = new SqlCommand(deleteQuery, connection);
+    command.Parameters.AddWithValue("@Name", "John Doe");
+
+    connection.Open();
+    int rowsAffected = command.ExecuteNonQuery();
+    Console.WriteLine($"{rowsAffected} row(s) deleted.");
+}
+
+
+4. SELECT Command Example
+string selectQuery = "SELECT Name, Age, Position FROM Employees";
+
+using (SqlConnection connection = new SqlConnection(connectionString))
+{
+    SqlCommand command = new SqlCommand(selectQuery, connection);
+
+    connection.Open();
+    using (SqlDataReader reader = command.ExecuteReader())
+    {
+        while (reader.Read())
+        {
+            Console.WriteLine($"Name: {reader["Name"]}, Age: {reader["Age"]}, Position: {reader["Position"]}");
+        }
+    }
+}
+
+
+Key Points
+
+Always use parameterized queries to prevent SQL injection.
+Use ExecuteNonQuery() for INSERT, UPDATE, and DELETE commands.
+Use ExecuteReader() for SELECT commands to retrieve data.
+Wrap connections in using statements to ensure proper resource disposal.
+
+This approach ensures efficient and secure database operations using ADO.NET.
+
+
+
+
+----------------------------------------------------------------------------------------
+
+Here’s an example of how to use the SqlCommandBuilder in ADO.NET to automatically generate SQL commands for a SqlDataAdapter:
+using System;
+using System.Data;
+using System.Data.SqlClient;
+
+class Program
+{
+    static void Main()
+    {
+        string connectionString = "your_connection_string_here";
+        string selectQuery = "SELECT * FROM YourTable";
+
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            SqlDataAdapter dataAdapter = new SqlDataAdapter(selectQuery, connection);
+
+            // Create a CommandBuilder to auto-generate SQL commands
+            SqlCommandBuilder commandBuilder = new SqlCommandBuilder(dataAdapter);
+
+            // Fill a DataTable with data from the database
+            DataTable dataTable = new DataTable();
+            dataAdapter.Fill(dataTable);
+
+            // Modify the DataTable (example: updating a row)
+            dataTable.Rows[0]["ColumnName"] = "NewValue";
+
+            // Update the database with changes made to the DataTable
+            dataAdapter.Update(dataTable);
+
+            Console.WriteLine("Database updated successfully!");
+        }
+    }
+}
+
+Key Points:
+
+SqlCommandBuilder automatically generates INSERT, UPDATE, and DELETE commands for the SqlDataAdapter based on the SELECT query.
+Ensure the SELECT query includes a primary key or unique column for proper command generation.
+Always dispose of objects like SqlConnection and SqlCommandBuilder properly, preferably using using statements.
+
+This approach simplifies database operations when working with DataTable objects.
+
+
+
+----------------------------------------------------------------------------------------
+
+In ADO.NET, CommandBuilder is a helper class that automatically generates SQL commands (INSERT, UPDATE, DELETE) for a DataAdapter based on the schema of the associated DataTable. 
+Each data provider in ADO.NET has its own specific CommandBuilder class. Here are the main types:
+
+
+SqlCommandBuilder
+
+Used with the SqlDataAdapter for SQL Server databases.
+Example:SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM Employees", connection);
+SqlCommandBuilder builder = new SqlCommandBuilder(adapter);
+
+
+
+
+
+OleDbCommandBuilder
+
+Used with the OleDbDataAdapter for OLE DB data sources.
+Example:OleDbDataAdapter adapter = new OleDbDataAdapter("SELECT * FROM Products", connection);
+OleDbCommandBuilder builder = new OleDbCommandBuilder(adapter);
+
+
+
+
+
+OdbcCommandBuilder
+
+Used with the OdbcDataAdapter for ODBC data sources.
+Example:OdbcDataAdapter adapter = new OdbcDataAdapter("SELECT * FROM Orders", connection);
+OdbcCommandBuilder builder = new OdbcCommandBuilder(adapter);
+
+
+
+
+
+OracleCommandBuilder (deprecated in newer versions)
+
+Used with the OracleDataAdapter for Oracle databases (specific to older Oracle .NET providers).
+
+
+
+Key Notes:
+
+CommandBuilder works by deriving the SQL commands from the SelectCommand of the DataAdapter.
+It is useful for simple scenarios but may not handle complex queries or custom SQL logic.
+Always dispose of the CommandBuilder after use to free resources.
+
+
+
+
+----------------------------------------------------------------------------------------
+
+test WPF-App (.NET Framework)
+
+ 
+using System.Data; 
+using System.Data.SqlClient;
+
+namespace ClassLibrary1
+{
+    public enum Provider { OleDb, ODBC, SQLServer };
+
+
+    public class Model
+    {
+        readonly Provider provider;
+
+        private readonly SqlConnection sqlConn;
+        private readonly SqlConnectionStringBuilder sqlSb;
+        public static DataSet DataSet;
+        private SqlDataAdapter sqlDa;
+
+
+        public Model(Provider provider, string dbName, string user = "", string password = "")
+        {
+  
+            this.provider = provider;
+            
+
+            if (provider == Provider.SQLServer)
+            {
+                sqlSb = new SqlConnectionStringBuilder();
+                sqlSb.DataSource = @"(localdb)\MSSQLLocalDB";
+                sqlSb.InitialCatalog = dbName;
+                if (user == "" && password == "")
+                {
+                    sqlSb.IntegratedSecurity = true;
+                }
+                else
+                {
+                    sqlSb.IntegratedSecurity = false;
+                    sqlSb["User Id"] = user;
+                    sqlSb["Password"] = password;
+                }
+                sqlConn = new SqlConnection(sqlSb.ConnectionString);
+            }
+            else
+            {
+                throw new Exception("not a valid provider");
+            }
+        }
+
+
+        public int TableRead(string tablename, string sqlSelect = "")
+        {
+            if (DataSet != null) return -1;
+            DataSet = DataSet ?? new DataSet();
+            sqlSelect = sqlSelect == "" ? "SELECT * FROM " + tablename : sqlSelect;
+            int anzahl = 0;
+         
+            if (provider == Provider.SQLServer) {
+                sqlDa = new SqlDataAdapter(sqlSelect, sqlConn);
+                new SqlCommandBuilder(sqlDa);
+                anzahl = sqlDa.Fill(DataSet, tablename);
+
+            }
+
+            return anzahl;
+        }
+
+        public int UpdateDB(string tablename = null, DataTable table = null)
+        {
+            int anzahl = 0;
+            if (provider == Provider.SQLServer)
+            {
+                anzahl = table != null ? sqlDa.Update(table) : tablename != null ? sqlDa.Update(DataSet, tablename) : sqlDa.Update(DataSet);
+            }
+            return anzahl;
+        }
+    
+    }
+}
+
+
+
+
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
