@@ -138,6 +138,7 @@
 | https://beta.openai.com/playground                  | Text generator          |  
 | https://app.jasper.ai/                              | blog posts   Generation | 
 | https://ahrefs.com/writing-tools/paragraph-rewriter | Rewriter    +++         | 
+| https://www.imagetotext.info/                       | Image 2 text    +++     | 
 
 ### video
 
