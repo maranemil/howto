@@ -1203,3 +1203,19 @@ virtual memory              (kbytes, -v) unlimited
 file locks                          (-x) unlimited
 
 ~~~
+
+
+### open port  
+
+~~~
+sudo firewall-cmd --add-port=4000/tcp --permanent
+sudo firewall-cmd --reload
+
+sudo ufw allow 4000/tcp
+
+sudo iptables -A INPUT -p tcp --dport 4000 -j ACCEPT   
+
+#chk
+ss -lntu | grep :4000   
+netstat -na | grep :4000   
+~~~
