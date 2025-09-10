@@ -498,6 +498,9 @@ https://maximelafarie.com/giphy-downloader/
 - https://untools.co/
 - https://witeboard.com/
 
+- https://bsky.app/
+- https://substack.com/about
+
 ------------------------------------------------------------------
 
 ### Password Generator
@@ -1175,3 +1178,5 @@ https://paywallreader.com/
 - https://notegpt.io/youtube-summary-with-chatgpt
 - https://resnote.com/summarizer#transcript
 - https://youtubesummarizer.com/watch/#transcript
+
+------------------------------------------------------------------

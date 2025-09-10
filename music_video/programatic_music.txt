@@ -1,0 +1,106 @@
+https://club.tidalcycles.org/t/week-2-lesson-2-manipulating-time-with-setcps-cps-patterns-and-fast-slow-functions/466
+https://tidalcycles.org/docs/getting-started/linux_install
+https://tidalcycles.org/docs/getting-started/tidal_start/
+--------------------------------------------------------------------------------------
+
+################################
+TidalCycles
+################################
+
+sudo usermod -a -G audio $USER
+groups | grep audio
+sudo apt update; sudo apt install git jackd2 qjackctl zlib1g-dev gcc g++ ghc cabal-install
+sudo apt install supercollider sc3-{plugins,plugins-language,plugins-server}
+git ls-remote https://github.com/musikinformatik/SuperDirt.git | grep tags | tail -n1 | awk -F/ '{print $NF}'
+
+sclang
+Quarks.checkForUpdates({Quarks.install("SuperDirt", "v1.7.4"); thisProcess.recompile()})
+cabal update; cabal install tidal --lib
+
+Choose a Text Editor
+TidalCycles is supported by a wide variety of text editors, you will need one to get started:
+
+Pulsar (was Atom)
+VS Code
+
+SuperDirt.start;
+
+d1 $ sound "bd sn"
+
+--------------------------------------------------------------------------------------
+-- "Music is the Time of Numbers"
+
+-- setcps - change global tempo
+
+-- Let's run two patterns at once:
+d1 $ n "0 2 [3 5] [4 7]" # sound "cpu"
+
+d2 $ n "0(3,8) 8*8" # sound "cpu2"
+  # squiz 5
+
+-- Changing the cps (cycles per second) changes everything
+setcps 0.7
+
+setcps 0.3
+
+-- Time as an effect (!)
+
+-- You can also set cps as an effect:
+d2 $ n "0(3,8) 8*8" # sound "cpu2"
+  # squiz 5
+  # cps 0.5
+
+-- It's still global though - setting it on one pattern will
+-- change it everywhere
+
+-- However, you can pattern it:
+d2 $ n "0(3,8) 8*8" # sound "cpu2"
+  # squiz 5
+  # cps "0.5 1"
+
+-- You can really mess with time in this way!
+d2 $ n "0 [~ 1] 2*2 3 4*3 5 ~ 7" # sound "cpu2"
+    # cps "<0.5 2> [1 0.75] <2 1>"
+
+-- Reset things before moving on..
+hush
+
+setcps 0.6
+
+-- 'fast' and 'slow' functions
+
+-- You can speed up / slow down an individual
+-- pattern (or part of one) with "fast" and "slow"
+
+
+d1 $ slow 2 $ n "0 2 [3 5] [4 7]" # sound "cpu"
+
+d1 $ fast 2 $ n "0 2 [3 5] [4 7]" # sound "cpu"
+
+-- You can also pattern this speed factor:
+d1 $ slow "0.5 1" $ n "0 2 [3 5] [4 7]" # sound "cpu"
+
+d1 $ slow "0.5 <1 2>" $ n "0 2 [3 5] [4 7]" # sound "cpu"
+
+-- When patterning time in this way, you're switching
+-- between different versions of the pattern, running
+-- at different speeds.
+
+-- We've already learned enough to create patterns with a
+-- lot of variety in them, by mixing together several simple
+-- manipulations
+d1 $ slow "0.5 <1 2>" $
+  n "{0 2 [3 5] [4 <7 6>], 0*2 3*3 0}" # sound "cpu"
+  # squiz "<8 1 2>"
+
+-- Note that the 'speed' effect changes the rate of playback
+-- for each sample, but doesn't change the overall speed of the
+-- pattern
+d1 $ slow "0.5 <1 2>" $
+    n "{0 2 [3 5] [4 <7 6>], 0*2 3*3 0}" # sound "cpu"
+    # squiz "<8 1 2>"
+    # speed 2
+
+-- I find things always sound better if you speed them up a little.
+-- Your experience may vary :)
+setcps 0.7

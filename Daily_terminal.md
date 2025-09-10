@@ -289,7 +289,9 @@ sudo rm -r /home/username
 
 * google-chrome  --bound-session-cookie-rotation-delay --disable-partitioned-cookies --disable-notifications --disable-ipc-flooding-protection --disable-print-preview --disable-remote-fonts  --disable-renderer-accessibilit --disable-threaded-animation  --disable-virtual-keyboard --disable-print-preview
 
-
+snap run chromium --enable-logging=stderr --v=1 &> /tmp/chromium.log
+journalctl -rn1000 > /tmp/journal.log
+journalctl -r | head -n 1000 > /tmp/journal.log
 
 ```
 ```
@@ -471,6 +473,10 @@ sudo ls /var/lib/snapd/snapshots
 * pip install --upgrade pip
 * sudo apt-get autoremove
 * sudo apt-get autoclean
+
+dpkg -l | grep linux-image
+sudo apt update && sudo apt autoclean && sudo apt autoremove
+
 ```
 
 ##### clean cache folder

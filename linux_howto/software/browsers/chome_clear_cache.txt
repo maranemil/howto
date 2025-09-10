@@ -122,3 +122,103 @@ Description
 –disable-3d-apis		    It disables the 3D API which also includes the Pepper 3D and WebGL.
 
 
+##########################################################
+
+start on startup
+stop on shutdown
+
+script
+  while /bin/true; do
+    if $(pidof skype); then
+      test $( cat /proc/`pidof skype`/status | grep "VmSize:" | sed -re s,VmSize:\\s+,, | cut -d" " -f1 ) -gt 500000 && killall skype
+    fi
+    sleep 30
+  done
+end script
+   
+   
+   
+ Make an Upstart script in /etc/init/skype-killer.conf. Replace skype with Skype's binary name if its not skype, and replace 500000 (as in 500000 kB = 500 M) with the limit in kB's you wish to enforce for Skype virtual memory size and 30 with the number of seconds between checks.
+
+This job will start on startup and keep running checking for skype memory usage. After you have copied this to /etc/init with sudo, do sudo start skype-killer to get it going, or reboot system. If you wish to revise memory usage, edit the skype-killer.conf and do sudo stop skype-killer; sudo start skype-killer.
+   
+   /////////////////
+   
+   
+   #!/bin/sh
+
+if [ $# -ne 2 ];
+then
+    echo "Invalid number of arguments"
+    exit 0
+fi
+
+while true;
+do
+    SIZE=$(pmap $1|grep total|grep -o "[0-9]*")
+    SIZE=${SIZE%%K*}
+    SIZEMB=$((SIZE/1024))
+    echo "Process id =$1 Size = $SIZEMB MB"
+    if [ $SIZEMB -gt $2 ]; then
+        printf "SIZE has exceeded.\nKilling the process......"
+        kill -9 "$1"
+        echo "Killed the process"
+        exit 0
+    else
+        echo "SIZE has not yet exceeding"
+    fi
+
+    sleep 10
+done
+   
+   ////////////////////////////
+   
+   
+import time
+import psutil
+
+percent_threshold = 0.95
+
+def check_memory():
+    vm = psutil.virtual_memory()
+    percent = vm.active / vm.total
+    # Do we need to kill a process?
+    if percent > percent_threshold:
+        print(f"RAM usage is {percent}%")
+        # Search for process using the most resident memory
+        max_mem = 0
+        max_ps = None
+        for ps in psutil.process_iter():
+            mem = ps.memory_info().rss
+            if mem > max_mem:
+                max_ps = ps
+                max_mem = mem
+        # Kill process
+        cmd = " ".join(max_ps.cmdline())
+        print(f"Killing {cmd}")
+        print(f"using {max_mem / 2**20} MiB resident memory")
+        max_ps.terminate()
+        print("")
+
+while True:
+    check_memory()
+    time.sleep(1.0)
+   
+   ''''''''
+      
+while sleep 30; do vmstat && echo 3 > /proc/sys/vm/drop_caches && vmstat; done
+
+systemd-run --scope -p MemoryMax=300G {program or script}
+systemd-run --scope -p MemoryMax=1G chromium-browser
+
+test $( cat /proc/`pidof firefox`/status | grep "VmSize:" | sed -re s,VmSize:\\s+,, | cut -d" " -f1) 
+while sleep 30;  do echo 1   ; done
+
+ps -ef | grep firefox | awk -F: '{ print $1 }'
+pidof 'firefox'
+pgrep '^firefox$'
+pidof -s firefox
+
+
+
+
