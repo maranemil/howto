@@ -24,7 +24,8 @@ class CRUDApp:
             name TEXT,
             prompt VARCHAR(6000),
             type TEXT,
-            score REAL
+            score REAL,
+            created_date datetime default current_timestamp
         )''')
         self.conn.commit()
 
