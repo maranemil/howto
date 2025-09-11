@@ -1076,6 +1076,7 @@ efibootmgr -v
 sudo apt update && sudo apt install extrepo -y
 sudo extrepo enable librewolf
 sudo apt update && sudo apt install librewolf -y
+sudo apt remove librewolf
 ~~~
 
 ### ifconfig
@@ -1224,4 +1225,15 @@ sudo iptables -A INPUT -p tcp --dport 4000 -j ACCEPT
 #chk
 ss -lntu | grep :4000   
 netstat -na | grep :4000   
+~~~
+
+
+
+### disable history  
+
+~~~
+set +o history  # disable the history
+history
+set -o history  #  re-enable history
+history -c
 ~~~

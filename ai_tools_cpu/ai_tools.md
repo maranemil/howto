@@ -54,6 +54,23 @@
 | https://www.pulumi.com/ai | service builder | 
 | https://www.hostinger.de/ | website builder | 
 
+
+### clone webs 
+
+| url                      | type |
+|:-------------------------|:-----|
+| https://lovable.dev/     |      |
+| https://www.toptools.ai/ |      |
+| https://aidarrel.com/    |      |
+
+# https://wanderlust.com/
+# https://doccare.de/
+
+
+
+
+
+
 ### img
 
 | url                                                               | type                                 |

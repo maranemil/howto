@@ -455,15 +455,21 @@ convert image.jpg image.png
 convert image.jpeg image.png
 sox "*.wav" ../out.wav
 convert image.jpeg image.png
+
 ffmpeg -loop 1 -i image.png -c:v libx264 -t 15 -pix_fmt yuv420p -y out.mp4
 ffmpeg -stream_loop 0 -i out.wav -i out.mp4  -c:a aac -b:a 256k -c:v libx264 -y out.mp4
 
 
-# loop video for mp3
+# loop video for mp3 for 2min+
 ffmpeg -stream_loop -1  -i vid.mp4  -i audio.mp3 -map 0:v -map 1:a -c:v copy -shortest -y out.mp4
+ffmpeg -stream_loop 60 -i in.mp4  -i in.mp3 -map 0:v -map 1:a -c:v copy -shortest -y out.mp4
 
 # loop image for mp3 xxx
 ffmpeg -stream_loop 0 -i vid.mp3 -i 1e45.png  -c:a aac -b:a 256k -c:v libx264 -y out.mp4
+
+# upscale
+ffmpeg -i out.mp4 -vf "scale=-1:1080,atadenoise,hqdn3d=6,unsharp=9:7:0:5" out2.mp4
+
 
 # decompress and convert
 ffmpeg -i output.mp4 -r 30 -s:v 1920x1080 -c:v rawvideo -pix_fmt yuv420p output.avi
