@@ -1258,10 +1258,110 @@ my_table = Table('table_name', metadata,
                Column('case_insensitive', CI_String(8, collate='NOCASE'), nullable=False))
 
 
+#####################################################################
 
+Implementing Pagination with SQLite in Python
+https://www.hotbot.com/free-chatgpt
+=============================================
 
+### Overview
 
+This example demonstrates how to create a Python application that reads data from an SQLite database with pagination.
 
+### Prerequisites
+
+* Python 3.x
+* sqlite3 (comes bundled with Python)
+
+### Database Setup
+
+First, let's create a sample SQLite database with a table called `users`.
+
+```python
+import sqlite3
+
+# Connect to SQLite database. It will be created if it doesn't exist.
+conn = sqlite3.connect('example.db')
+cursor = conn.cursor()
+
+# Create table
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS users
+    (id INTEGER PRIMARY KEY, name TEXT, email TEXT)
+''')
+
+# Insert sample data
+for i in range(100):
+    cursor.execute('INSERT INTO users (name, email) VALUES (?, ?)', 
+                   (f'User {i}', f'user{i}@example.com'))
+
+# Commit changes and close connection
+conn.commit()
+conn.close()
+```
+
+### Pagination Implementation
+
+Now, let's create a Python class that handles pagination and data retrieval from the SQLite database.
+
+```python
+import sqlite3
+
+class PaginatedSQLite:
+    def __init__(self, db_name, table_name, page_size=10):
+        self.conn = sqlite3.connect(db_name)
+        self.cursor = self.conn.cursor()
+        self.table_name = table_name
+        self.page_size = page_size
+
+    def get_total_records(self):
+        self.cursor.execute(f'SELECT COUNT(*) FROM {self.table_name}')
+        return self.cursor.fetchone()[0]
+
+    def get_paginated_records(self, page_number):
+        offset = (page_number - 1) * self.page_size
+        self.cursor.execute(f'''
+            SELECT * FROM {self.table_name}
+            LIMIT ? OFFSET ?
+        ''', (self.page_size, offset))
+        return self.cursor.fetchall()
+
+    def close_connection(self):
+        self.conn.close()
+
+# Example usage:
+if __name__ == '__main__':
+    paginated_db = PaginatedSQLite('example.db', 'users')
+
+    total_records = paginated_db.get_total_records()
+    print(f'Total Records: {total_records}')
+
+    page_size = paginated_db.page_size
+    total_pages = -(-total_records // page_size)  # Ceiling division
+
+    for page_number in range(1, total_pages + 1):
+        print(f'Page {page_number}:')
+        records = paginated_db.get_paginated_records(page_number)
+        for record in records:
+            print(record)
+        print()
+
+    paginated_db.close_connection()
+```
+
+### Explanation
+
+*   The `PaginatedSQLite` class initializes a connection to the SQLite database and sets up the table name and page size.
+*   The `get_total_records` method retrieves the total number of records in the table.
+*   The `get_paginated_records` method fetches records for a given page number, applying the LIMIT and OFFSET clauses to implement pagination.
+*   The `close_connection` method closes the database connection when you're done.
+
+### Advice
+
+*   Adjust the `page_size` variable to control the number of records displayed per page.
+*   Make sure to close the database connection when you're finished to release resources.
+
+By following this example, you can implement pagination in your Python application when reading data from an SQLite database.
 
 
 
