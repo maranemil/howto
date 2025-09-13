@@ -42,3 +42,13 @@ python3 -m venv venv
 php -S localhost:8000
 http://localhost:8000/prompts.php
 ~~~
+
+### import dump 
+~~~
+sqlite3 prompts2.db
+.mode insert prompts
+sqlite> .out file.sql
+SELECT NULL AS id,name,prompt,type,score,created_date from prompts;
+
+cat file.sql | sqlite3 prompts.db
+~~~

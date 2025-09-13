@@ -1123,7 +1123,6 @@ SELECT EXISTS (SELECT * FROM sqlite_master WHERE tbl_name = 'TableName' AND sql 
 SELECT INSTR(sql, '<column_name>') FROM sqlite_master WHERE type='table' AND name='<table_name>';
 PRAGMA table_info(table-name);
 
-
 #################################################
 SQLite data types
 #################################################
@@ -1366,8 +1365,143 @@ if __name__ == '__main__':
 By following this example, you can implement pagination in your Python application when reading data from an SQLite database.
 
 
+----------------------------------------------------------------------------------------------------------
 
 
+sqlite3 -header -csv prompts2.db "select * from prompts;" > data.csv
+sqlite3 -header -csv prompts2.db < query.sql > data.csv
+
+sqlite3 -header -csv  prompts2.db "select * from prompts;" > prompts2.csv
+sqlite3 -header -csv  prompts2.db "select name,prompt,type,score,created_date from prompts;" > prompts2a.csv
+sqlite3 -header -csv  prompts2.db "select NULL,name,prompt,type,score,created_date from prompts;" > prompts2b.csv
+
+
+sqlite3 prompts2.db .dump -f prompts2.sql -t prompts --inserts
+
+https://www.sqlitetutorial.net/sqlite-export-csv/
+https://www.sqlitetutorial.net/sqlite-import-csv/
+
+sqlite>.open prompts2.db
+sqlite> .mode csv
+sqlite> .import  city_no_header.csv cities
+
+sqlite3 prompts2.db .dump  > prompts2.sql #pok
+PRAGMA foreign_keys=OFF;
+PRAGMA foreign_keys=ON;
+PRAGMA integrity_check;
+PRAGMA foreign_key_check;
+cat prompts2.sql | sqlite3 prompts2.db
+
+sqlite3 -header -csv db.sqlite "select * from tbl1;" > test.csv
+
+--------------------------------------------------------
+#export
+sqlite3 db.sqlite
+.headers on
+.mode csv
+.output test.csv
+select * from tbl1;
+.output stdout
+
+#import
+sqlite3 -header -csv db.sqlite < query.sql > data.csv
+
+#export2
+sqlite3 -header -csv your_database_name "select * from books where year = 2017;" > books_2017.csv
+--------------------------------------------------------
+To get a CSV file (which can be imported into almost everything)
+sqlite3 db.sqlite
+.mode csv
+-- use '.separator SOME_STRING' for something other than a comma.
+.headers on
+.out file.csv
+select * from MyTable;
+
+To get an SQL file (which can be reinserted into a different SQLite database)
+
+sqlite3 db.sqlite
+.mode insert <target_table_name>
+.out file.sql
+select * from MyTable;
+
+Answer from CyberFonic on stackoverflow.com
+--------------------------------------------------------
+Create text file and place following statements there:
+
+sqlite3 db.sqlite
+.mode insert
+.output insert.sql
+select * from TABLE where STATEMENT; -- place the needed select query here
+.output stdout
+
+Feed this file to sqlite3:
+
+$ sqlite3 -init initf DATA.DB .schema > schema.sql
+--------------------------------------------------------
+
+
+--------------------------------------------------------
+https://dba.stackexchange.com/questions/128839/can-sqlite-dump-database-schema-in-a-fixed-order
+https://www.linuxjournal.com/content/sqlite-extraction-oracle-tables-tools-methods-and-pitfalls
+https://www.prisma.io/dataguide/sqlite/importing-and-exporting-data-in-sqlite
+https://www.tutlane.com/tutorial/sqlite/sqlite-export-data-from-table-to-csv-file
+
+sqlite3 my.db .dump > backup.sql
+sqlite3 my.db < backup.sql
+sqlite3 my.db .dump -f my_backup.sql -t my_table --inserts
+cat dumpfile.sql | sqlite3 my_database.sqlite
+
+echo '.read export.sqlite3.sql' | sqlite3 my_database.sqlite3
+sqlite3 my_database.sqlite3 < export.sqlite3.sql
+
+.import --csv --skip 1 --schema temp  export.csv tab1
+
+
+$ (echo ".mode insert"; echo "SELECT name FROM user;") | \
+  sqlite3 my.db | \
+  sed -e 's/^INSERT INTO table /INSERT INTO user(name) /'
+INSERT INTO user(name) VALUES('user1');
+INSERT INTO user(name) VALUES('user2');
+
+.open mydatabase.db
+.import --csv data.csv MyTable
+CREATE INDEX idx_column ON MyTable(column_name);
+
+###########################################
+### Answer from CyberFonic on stackoverflow.com
+###########################################
+To get a CSV file (which can be imported into almost everything)
+
+.mode csv
+-- use '.separator SOME_STRING' for something other than a comma.
+.headers on
+.out file.csv
+select * from MyTable;
+
+To get an SQL file (which can be reinserted into a different SQLite database)
+
+.mode insert <target_table_name>
+.out file.sql
+select * from MyTable;
+
+
+--------------------
+https://www.techonthenet.com/sqlite/unique.php
+
+PRAGMA foreign_keys=off;
+
+BEGIN TRANSACTION;
+ALTER TABLE table_name RENAME TO old_table;
+CREATE TABLE table_name
+(
+  column1 datatype [ NULL | NOT NULL ],
+  column2 datatype [ NULL | NOT NULL ],
+  ...
+);
+
+INSERT INTO table_name SELECT * FROM old_table;
+COMMIT;
+PRAGMA foreign_keys=on;
 
 
 
