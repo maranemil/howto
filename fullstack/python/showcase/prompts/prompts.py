@@ -71,6 +71,11 @@ class CRUDApp:
         type = self.type_entry.get()
         score = self.score_entry.get()
         created_date = time.strftime('%Y-%m-%d %H:%M:%S')
+
+        name = "pre"
+        type = 1
+        score = 1
+
         if name and score and prompt:
             # self.cursor.execute("INSERT INTO students (name, class, marks) VALUES (?, ?, ?)", (name, class, marks))
             self.cursor.execute("INSERT INTO prompts (name, prompt, type, score, created_date) VALUES (?, ?, ?, ?, ?)",

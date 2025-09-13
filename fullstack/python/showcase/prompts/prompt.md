@@ -52,3 +52,9 @@ SELECT NULL AS id,name,prompt,type,score,created_date from prompts;
 
 cat file.sql | sqlite3 prompts.db
 ~~~
+
+
+### truncate table 
+~~~
+DELETE FROM prompts; 
+~~~
