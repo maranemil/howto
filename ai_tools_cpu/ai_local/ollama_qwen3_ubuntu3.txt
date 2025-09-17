@@ -1,0 +1,113 @@
+https://medium.com/@gabrielrodewald/running-models-with-ollama-step-by-step-60b6f6125807
+https://medium.com/@rosgluk/move-ollama-models-to-different-location-755eaec1df96
+https://github.com/ollama/ollama/blob/main/docs/faq.md
+https://github.com/ollama/ollama/blob/main/docs/docker.md
+https://github.com/ollama/ollama/blob/main/docs/api.md
+https://www.gpu-mart.com/blog/custom-llm-models-with-ollama-modelfile
+https://github.com/ollama/ollama/blob/main/docs/modelfile.md
+https://github.com/ollama/ollama
+https://ollama.com/library/gemma3
+https://ollama.com/library/qwen3
+https://ollama.com/library/llama3.2
+https://ollama.com/library/smollm
+https://ollama.com/library/deepseek-r1
+
+
+docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+docker exec -it ollama ollama run llama3.2
+
+ollama list
+ollama start
+ollama run tinyllama:1.1b
+ollama run qwen3:0.6b
+ollama run gemma3:270m
+#ollama run gemma3:1b
+ollama run smollm:360m
+ollama serve --help
+ollama show --modelfile tinyllama:1.1b
+ollama show llama2:latest --modelfile
+ollama rm llama2:7b
+ollama ps
+ollama stop llama3.2
+ollama show --parameters qwen3:0.6b
+
+ollama serve
+ollama pull llama2
+ollama pull llama2-uncensored:7b
+ollama pull gemma:7b
+ollama pull llava
+ollama run llama2:7b "your prompt"
+
+
+ls /root/.ollama/models/
+
+
+Copy the model file to create a customized version.
+ollama show llama2:latest --modelfile > myllama2.modelfile
+ollama show tinyllama:1.1b --modelfile > mytinyllama:1.1b.modelfile
+ollama show qwen3:0.6b --modelfile > myqwen3:0.6b.modelfile
+
+Create Your Custom Model
+ollama create myllama2 --file myllama2.modelfile
+
+find / -type f -name mytinyllama:1.1b.modelfile 
+/mytinyllama:1.1b.modelfile
+
+-------------------------------------------------------------
+
+systemctl edit ollama.service
+[Service]
+Environment="OLLAMA_HOST=0.0.0.0:11434"
+systemctl daemon-reload
+systemctl restart ollama
+
+-------------------------------------------------------------
+curl http://localhost:11434/api/generate -d '{"model": "llama3.2", "keep_alive": -1}'
+curl http://localhost:11434/api/generate -d '{"model": "llama3.2", "keep_alive": 0}'
+
+curl http://localhost:11434/api/chat -d '{  "model": "tinyllama:1.1b",  "messages": [    { "role": "user", "content": "why is the sky blue?" }  ]}'
+
+curl http://localhost:11434/api/generate -d '{  "model": "tinyllama:1.1b",  "prompt":"Why is the sky blue?"}'
+
+-------------------------------------------------------------
+############################################################################
+debian ollama
+############################################################################
+
+docker run --cpus=0.5 -it --name debianollama  -v ./src:/app debian:latest  /bin/bash;
+apt update
+apt install tmux curl -y
+apt-get install pciutils -y
+curl -fsSL https://ollama.com/install.sh | sh
+tmux
+
+ollama serve
+ollama list
+ollama run qwen3:0.6b
+ollama run deepseek-r1:1.5b
+docker update --cpus "2.9"  debianollama
+docker stop debianollama
+docker start debianollama
+
+docker export -o debianollama.tar debianollama
+docker export -o debianollama_4models.tar debianollama
+docker load -i debianollama.tar
+docker start debianollama
+docker exec -it debianollama /bin/bash
+tmux
+ollama start
+ollama run tinyllama:1.1b
+
+-------------------------------------------------------------
+
+http://localhost:11434/api/
+
+
+sudo systemctl daemon-reload
+sudo systemctl restart ollama
+systemctl status ollama.service
+sudo journalctl -u ollama.service
+
+# img recognition
+https://ollama.com/library/llama3.2-vision
+https://ollama.com/library/falcon
