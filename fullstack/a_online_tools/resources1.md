@@ -277,6 +277,14 @@ https://github.com/debitbug/excalidraw-chrome-extension
 
 - https://facecheck.id/de
 
+
+------------------------------------------------------------------
+
+### Formate text removal tool
+
+- https://text-format.com/fontremover
+- https://www.contentharmony.com/tools/bold-italic-text-generator/
+
 ------------------------------------------------------------------
 
 ### Facebook Reddit video downloader
