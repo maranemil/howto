@@ -1237,3 +1237,17 @@ history
 set -o history  #  re-enable history
 history -c
 ~~~
+
+
+### fix bash call
+
+~~~
+sudo chsh -s /usr/bin/bash
+echo $SHELL  # /usr/bin/zsh
+sudo chsh -s /usr/bin/bash $(whoami) # or sudo chsh -s /bin/bash $(whoami)
+
+# sudo usermod -s /bin/bash username # ok
+# sudo chsh -s /bin/bash username
+# sudo dpkg-reconfigure dash
+# cat /etc/shells
+~~~
