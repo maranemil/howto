@@ -1188,3 +1188,18 @@ https://paywallreader.com/
 - https://youtubesummarizer.com/watch/#transcript
 
 ------------------------------------------------------------------
+
+### ASCII-Emoticons
+
+¯\_(ツ)_/¯
+https://emojicombos.com/ASCII-Emoticons
+
+
+
+### Virtual piano
+
+B3    F#4
+https://www.onlinepianist.com/virtual-piano
+https://virtualpiano.net/
+https://virtualpiano.online/
+

@@ -620,7 +620,7 @@
 | https://www.youtube.com/watch?v=yq0dSkA1vpM&list=PLLWMQd6PeGY1C3YLCyAUIDJrPS9S3WdLK         | WinForm vs WPF vs UWP vs Console                               | 
 | https://www.youtube.com/watch?v=5ZhlBJr95-4&list=PLLWMQd6PeGY1TU4qj0UW9iS28j5O-Iwa4         | Building a Sample API in C#                                    | 
 | https://www.youtube.com/watch?v=tFCZw-wZVtg&list=PLdo4fOcmZ0oWUrumb503vY3v6O3u3P4rW         | C# and .NET Development in VS Code for Beginners               | 
-
+|https://www.youtube.com/playlist?list=PLXV9Vh2jYcjbnv67sXNDJiO8MWLA3ZJKR| Generative AI |
 
 
 ### Envato Tuts+

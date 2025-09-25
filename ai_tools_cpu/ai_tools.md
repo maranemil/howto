@@ -157,6 +157,35 @@
 | https://ahrefs.com/writing-tools/paragraph-rewriter | Rewriter    +++         | 
 | https://www.imagetotext.info/                       | Image 2 text    +++     | 
 
+
+
+### Text Summarizer
+- https://quillbot.com/summarize
+- https://www.summarizer.org/
+- https://www.paraphraser.io/text-summarizer
+- https://www.semrush.com/contentshake/summary-generator/
+- https://www.scribbr.com/text-summarizer/
+
+### Text scrambler rewriter
+- https://writer.hix.ai/paragraph-scrambler
+- https://www.junia.ai/tools/paraphrasing-tool#
+- https://ahrefs.com/writing-tools/paragraph-rewriter#
+- https://www.grammarly.com/ai/ai-writing-tools/paragraph-rewriter
+- https://www.articlerewriter.net/
+
+### Text grammar-checker
+- https://ahrefs.com/writing-tools/grammar-checker
+- https://mailmeteor.com/tools/ai-grammar-checker
+- https://quillbot.com/grammar-check
+- https://languagetool.org/
+
+### Text informal translators german
+- https://anythingtranslate.com/translators/informal-german-translator/
+- https://www.deepl.com/en/translator
+- https://www.yeschat.ai/gpts-2OTogoiAAZ-German-Translator
+- https://chatgpt.com/g/g-imyJKxg6n-informal-german-translator
+
+
 ### video
 
 | url                                                                            | type                  |
@@ -393,17 +422,3 @@
 
 ### chat 
 - https://character.ai/
-
-### AI Text Summarizer
-- https://quillbot.com/summarize
-- https://www.summarizer.org/
-- https://www.paraphraser.io/text-summarizer
-- https://www.semrush.com/contentshake/summary-generator/
-- https://www.scribbr.com/text-summarizer/
-
-### AI Text scrambler rewriter
-- https://writer.hix.ai/paragraph-scrambler
-- https://www.junia.ai/tools/paraphrasing-tool#
-- https://ahrefs.com/writing-tools/paragraph-rewriter#
-- https://www.grammarly.com/ai/ai-writing-tools/paragraph-rewriter
-- https://www.articlerewriter.net/
