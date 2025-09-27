@@ -1,0 +1,19 @@
+
+
+ffmpeg -i output.mp4  -vf crop=1024:620:120:120 output2.mp4
+ffmpeg -i output2.mp4  -f segment -segment_time 1 -y dir/myvid_$(date +%s).mp4
+ffmpeg -i output2.mp4 -c copy --t 2  -y dir/myvid_$(date +%s).mp4
+
+for i in {1..5..2} ; do ffmpeg -i output2.mp4 -ss 00:00:0$i -t 1  -y dir/myvid_$(date +%s).mp4; done
+for i in {1..14..3} ; do ffmpeg -i output2.mp4 -ss 00:00:0$i -t 1.5  -y dir/myvid_$(date +%s).mp4; done
+for i in {1..12..3} ; do ffmpeg -i output2.mp4 -ss 00:00:0$i -t 1.9  -y dir/myvid_$(date +%s).mp4; done
+for i in {1..12..3} ; do ffmpeg -i output2.mp4 -ss 00:00:0$i -t 2.9  -y dir/myvid_$(date +%s).mp4; done
+
+ffmpeg -i myvid_1758972187.mp4 -vf reverse myvid_1758972187rev.mp4
+ffmpeg -i myvid_1758972264.mp4 -vf reverse myvid_1758972264rev.mp4
+ffmpeg -i myvid_1758972416.mp4 -vf reverse myvid_1758972416rev.mp4
+
+for i in  *.mp4; do echo file $i >> mylist.txt; done  && ffmpeg -f concat -safe 0 -i mylist.txt -c copy output4.mp4
+ffmpeg -stream_loop 20 -i output4.mp4 -c copy output5.mp4
+
+ffmpeg -stream_loop 1 -i in.mp4  -i in.mp3 -map 0:v -map 1:a -c:v copy -t 122 -shortest -y out.mp4
