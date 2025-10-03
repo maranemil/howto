@@ -289,6 +289,9 @@ sudo rm -r /home/username
 
 * google-chrome  --bound-session-cookie-rotation-delay --disable-partitioned-cookies --disable-notifications --disable-ipc-flooding-protection --disable-print-preview --disable-remote-fonts  --disable-renderer-accessibilit --disable-threaded-animation  --disable-virtual-keyboard --disable-print-preview
 
+
+--disable-frame-rate-limit --disable-gpu --disable-gpu-vsync --max-gum-fps="9999"
+
 snap run chromium --enable-logging=stderr --v=1 &> /tmp/chromium.log
 journalctl -rn1000 > /tmp/journal.log
 journalctl -r | head -n 1000 > /tmp/journal.log
@@ -1020,7 +1023,7 @@ taskset -c 0,1 brave --lang=en-US,en --disable-translate --disable-dev-shm-usage
 --gpu-program-cache-size-kb  # Sets the maximum size of the in-memory gpu program cache, in kb
 --mem-pressure-system-reserved-kb  # Some platforms typically have very little 'free' memory, but plenty is available in buffers+cached. For such platforms, configure this amount as the portion of buffers+cached memory that should be treated as unavailable. If this switch is not used, a simple pressure heuristic based purely on free memory will be used.
 --renderer-process-limit  # Overrides the default/calculated limit to the number of renderer processes. Very high values for this setting can lead to high memory/resource usage or instability.
-
+--disable-frame-rate-limit --disable-gpu --disable-gpu-vsync --max-gum-fps="9999"
 
 # https://peter.sh/experiments/chromium-command-line-switches/
 # https://kapeli.com/cheat_sheets/Chromium_Command_Line_Switches.docset/Contents/Resources/Documents/index
