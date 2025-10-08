@@ -1,0 +1,85 @@
+
+https://opensource.com/article/20/11/run-kubernetes-locally
+https://github.com/kubernetes/minikube
+https://github.com/kubernetes-sigs/kind#
+https://github.com/crc-org/crc
+https://github.com/minishift/minishift
+https://kubernetes.io/docs/tutorials/hello-minikube/
+https://minikube.sigs.k8s.io/docs/tutorials/kubernetes_101/module1/
+https://kubernetes.io/docs/tutorials/kubernetes-basics/create-cluster/cluster-intro/
+https://minikube.sigs.k8s.io/docs/tutorials/multi_node/
+
+Minikube
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-PLATFORM-amd64
+$ sudo install minikube-PLATFORM-amd64 /usr/local/bin/minikube
+minikube version
+minikube start
+kubectl version
+kubectl cluster-info
+kubectl get nodes
+minikube start --nodes 2 -p multinode-demo
+kubectl get nodes
+minikube status -p multinode-demo
+kubectl apply -f hello-deployment.yaml
+kubectl rollout status deployment/hello
+kubectl apply -f hello-svc.yaml
+kubectl get pods -o wide
+minikube service list -p multinode-demo
+curl  http://192.168.49.2:31000
+
+
+hello-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 100%
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+    spec:
+      affinity:
+        # ⬇⬇⬇ This ensures pods will land on separate hosts
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions: [{ key: app, operator: In, values: [hello] }]
+              topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: hello-from
+          image: pbitty/hello-from:latest
+          ports:
+            - name: http
+              containerPort: 80
+      terminationGracePeriodSeconds: 1
+
+
+
+https://github.com/pbitty/hello-from
+$ docker run -ti -p 80:80 -d --name=hello-from pbitty/hello-from
+498ca7cb25e92c2c0152ea5993b91cef2b0a35de7a7dc6fbfefd21194301190b
+$ curl 192.168.99.102
+Hello from 498ca7cb25e9 (172.17.0.2)
+
+
+
+kind
+# For AMD64 / x86_64
+[ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.30.0/kind-$(uname)-amd64
+# For ARM64
+[ $(uname -m) = aarch64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.30.0/kind-$(uname)-arm64
+chmod +x ./kind
+sudo mv ./kind /usr/local/bin/kind
+kind create cluster
+kind delete cluster
+kind build node-image
+kind create cluster --image kindest/node:latest
