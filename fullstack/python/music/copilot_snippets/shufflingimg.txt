@@ -1,0 +1,79 @@
+Here’s an example of how to shuffle an image in Python by splitting it into smaller parts, shuffling those parts, and reconstructing the image. This example uses the Pillow library for image manipulation and NumPy for array operations.
+Code:
+Pythonfrom PIL import Image
+import numpy as np
+import random
+
+def shuffle_image(image_path, grid_size=(4, 4)):
+    """
+    Shuffle an image by dividing it into a grid and shuffling the grid cells.
+
+    :param image_path: Path to the input image.
+    :param grid_size: Tuple indicating the number of rows and columns in the grid.
+    :return: Shuffled image as a PIL Image object.
+    """
+    # Open the image
+    image = Image.open(image_path)
+    image = image.convert("RGB")  # Ensure it's in RGB format
+
+    # Convert the image to a NumPy array
+    img_array = np.array(image)
+    height, width, _ = img_array.shape
+
+    # Calculate the size of each grid cell
+    cell_height = height // grid_size[0]
+    cell_width = width // grid_size[1]
+
+    # Split the image into grid cells
+    grid = []
+    for i in range(grid_size[0]):
+        for j in range(grid_size[1]):
+            cell = img_array[
+                i * cell_height : (i + 1) * cell_height,
+                j * cell_width : (j + 1) * cell_width,
+            ]
+            grid.append(cell)
+
+    # Shuffle the grid cells
+    random.shuffle(grid)
+
+    # Reconstruct the shuffled image
+    shuffled_array = np.zeros_like(img_array)
+    for idx, cell in enumerate(grid):
+        i = idx // grid_size[1]
+        j = idx % grid_size[1]
+        shuffled_array[
+            i * cell_height : (i + 1) * cell_height,
+            j * cell_width : (j + 1) * cell_width,
+        ] = cell
+
+    # Convert the shuffled array back to a PIL Image
+    shuffled_image = Image.fromarray(shuffled_array)
+    return shuffled_image
+
+# Example usage
+if __name__ == "__main__":
+    input_image_path = "example.jpg"  # Replace with your image path
+    output_image_path = "shuffled_image.jpg"
+
+    shuffled_img = shuffle_image(input_image_path, grid_size=(4, 4))
+    shuffled_img.save(output_image_path)
+    shuffled_img.show()
+
+Explanation:
+
+Grid Splitting: The image is divided into a grid of equal-sized cells based on the grid_size parameter.
+Shuffling: The cells are shuffled randomly using Python's random.shuffle.
+Reconstruction: The shuffled cells are reassembled into a new image.
+Output: The shuffled image is saved and displayed.
+
+Requirements:
+Install the required libraries if not already installed:
+Bashpip install pillow numpy
+
+Example:
+
+Input: A 400x400 image with grid_size=(4, 4) divides it into 16 parts.
+Output: The shuffled image rearranges these 16 parts randomly.
+
+

@@ -1,0 +1,65 @@
+Here is an example of an audio shuffler in Python. This program takes an audio file, splits it into chunks, shuffles the chunks, and then combines them back into a new shuffled audio file.
+We will use the pydub library for audio processing. Ensure you have it installed by running:
+Bashpip install pydub
+
+Code:
+Pythonfrom pydub import AudioSegment
+from pydub.playback import play
+import random
+
+def shuffle_audio(input_file, output_file, chunk_duration_ms=1000):
+    """
+    Shuffles an audio file by splitting it into chunks and rearranging them randomly.
+
+    Args:
+        input_file (str): Path to the input audio file.
+        output_file (str): Path to save the shuffled audio file.
+        chunk_duration_ms (int): Duration of each chunk in milliseconds.
+    """
+    try:
+        # Load the audio file
+        audio = AudioSegment.from_file(input_file)
+
+        # Split the audio into chunks
+        chunks = [audio[i:i + chunk_duration_ms] for i in range(0, len(audio), chunk_duration_ms)]
+
+        # Shuffle the chunks
+        random.shuffle(chunks)
+
+        # Combine the shuffled chunks
+        shuffled_audio = sum(chunks)
+
+        # Export the shuffled audio to a new file
+        shuffled_audio.export(output_file, format="mp3")
+        print(f"Shuffled audio saved to: {output_file}")
+
+        # Optionally, play the shuffled audio
+        play(shuffled_audio)
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+# Example usage
+input_audio = "input_audio.mp3"  # Replace with your input audio file path
+output_audio = "shuffled_audio.mp3"  # Replace with your desired output file path
+shuffle_audio(input_audio, output_audio)
+
+Explanation:
+
+Audio Loading: The AudioSegment.from_file() method loads the audio file.
+Chunk Splitting: The audio is divided into chunks of a specified duration (default: 1000 ms = 1 second).
+Shuffling: The random.shuffle() function rearranges the chunks randomly.
+Combining: The shuffled chunks are concatenated using sum().
+Exporting: The shuffled audio is saved as a new file using the export() method.
+
+Example Input and Output:
+
+Input: A 10-second audio file (input_audio.mp3).
+Output: A shuffled version of the audio saved as shuffled_audio.mp3.
+
+Notes:
+
+Ensure the input file is in a supported format (e.g., MP3, WAV).
+You can adjust chunk_duration_ms to control the size of the shuffled segments.
+
+

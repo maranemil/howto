@@ -1,0 +1,60 @@
+Here is an example of audio noise reduction in Python using the noisereduce library, which applies spectral gating to reduce noise in audio signals.
+Code Example:
+Pythonimport noisereduce as nr
+import librosa
+import librosa.display
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Load the audio file
+audio_file = "input_audio.wav"  # Replace with your audio file path
+y, sr = librosa.load(audio_file, sr=None)
+
+# Plot the original audio waveform
+plt.figure(figsize=(10, 4))
+librosa.display.waveshow(y, sr=sr)
+plt.title("Original Audio Waveform")
+plt.xlabel("Time (s)")
+plt.ylabel("Amplitude")
+plt.show()
+
+# Estimate noise from a silent section of the audio
+# (e.g., the first 1 second is assumed to be noise)
+noise_sample = y[:sr]  # First 1 second of audio
+
+# Perform noise reduction
+reduced_noise = nr.reduce_noise(y=y, sr=sr, y_noise=noise_sample)
+
+# Plot the denoised audio waveform
+plt.figure(figsize=(10, 4))
+librosa.display.waveshow(reduced_noise, sr=sr)
+plt.title("Denoised Audio Waveform")
+plt.xlabel("Time (s)")
+plt.ylabel("Amplitude")
+plt.show()
+
+# Save the denoised audio to a new file
+import soundfile as sf
+sf.write("denoised_audio.wav", reduced_noise, sr)
+
+print("Denoised audio saved as 'denoised_audio.wav'")
+
+Explanation:
+
+Loading Audio: The librosa.load function reads the audio file into a NumPy array (y) and its sampling rate (sr).
+Noise Sample: A portion of the audio (e.g., the first second) is assumed to contain only noise.
+Noise Reduction: The noisereduce.reduce_noise function reduces noise using spectral gating.
+Visualization: The original and denoised waveforms are plotted for comparison.
+Saving Output: The denoised audio is saved as a new file using the soundfile library.
+
+Requirements:
+Install the required libraries:
+Bashpip install noisereduce librosa soundfile matplotlib
+
+Notes:
+
+Replace "input_audio.wav" with the path to your audio file.
+Ensure the noise sample is representative of the noise in the entire audio.
+This method works best for stationary noise (e.g., background hum).
+
+

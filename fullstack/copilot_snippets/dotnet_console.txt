@@ -1,0 +1,151 @@
+Here is a complete example of a .NET Console application that performs CRUD (Create, Read, Update, Delete) operations using an SQLite database.
+Steps:
+
+
+Install the SQLite NuGet package:
+Run the following command in your project directory:
+Bashdotnet add package System.Data.SQLite
+
+
+
+Use the following code for the CRUD operations:
+
+
+Code:
+Csharpusing System;
+using System.Data.SQLite;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        string connectionString = "Data Source=sample.db;Version=3;";
+
+        // Create the database and table if not exists
+        InitializeDatabase(connectionString);
+
+        // Perform CRUD operations
+        CreateRecord(connectionString, "John Doe", 30);
+        CreateRecord(connectionString, "Jane Smith", 25);
+
+        Console.WriteLine("Records after insertion:");
+        ReadRecords(connectionString);
+
+        UpdateRecord(connectionString, 1, "John Updated", 35);
+        Console.WriteLine("\nRecords after update:");
+        ReadRecords(connectionString);
+
+        DeleteRecord(connectionString, 2);
+        Console.WriteLine("\nRecords after deletion:");
+        ReadRecords(connectionString);
+    }
+
+    static void InitializeDatabase(string connectionString)
+    {
+        using (var connection = new SQLiteConnection(connectionString))
+        {
+            connection.Open();
+            string createTableQuery = @"
+                CREATE TABLE IF NOT EXISTS Users (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Name TEXT NOT NULL,
+                    Age INTEGER NOT NULL
+                );";
+            using (var command = new SQLiteCommand(createTableQuery, connection))
+            {
+                command.ExecuteNonQuery();
+            }
+        }
+    }
+
+    static void CreateRecord(string connectionString, string name, int age)
+    {
+        using (var connection = new SQLiteConnection(connectionString))
+        {
+            connection.Open();
+            string insertQuery = "INSERT INTO Users (Name, Age) VALUES (@Name, @Age);";
+            using (var command = new SQLiteCommand(insertQuery, connection))
+            {
+                command.Parameters.AddWithValue("@Name", name);
+                command.Parameters.AddWithValue("@Age", age);
+                command.ExecuteNonQuery();
+            }
+        }
+    }
+
+    static void ReadRecords(string connectionString)
+    {
+        using (var connection = new SQLiteConnection(connectionString))
+        {
+            connection.Open();
+            string selectQuery = "SELECT * FROM Users;";
+            using (var command = new SQLiteCommand(selectQuery, connection))
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    Console.WriteLine($"Id: {reader["Id"]}, Name: {reader["Name"]}, Age: {reader["Age"]}");
+                }
+            }
+        }
+    }
+
+    static void UpdateRecord(string connectionString, int id, string name, int age)
+    {
+        using (var connection = new SQLiteConnection(connectionString))
+        {
+            connection.Open();
+            string updateQuery = "UPDATE Users SET Name = @Name, Age = @Age WHERE Id = @Id;";
+            using (var command = new SQLiteCommand(updateQuery, connection))
+            {
+                command.Parameters.AddWithValue("@Id", id);
+                command.Parameters.AddWithValue("@Name", name);
+                command.Parameters.AddWithValue("@Age", age);
+                command.ExecuteNonQuery();
+            }
+        }
+    }
+
+    static void DeleteRecord(string connectionString, int id)
+    {
+        using (var connection = new SQLiteConnection(connectionString))
+        {
+            connection.Open();
+            string deleteQuery = "DELETE FROM Users WHERE Id = @Id;";
+            using (var command = new SQLiteCommand(deleteQuery, connection))
+            {
+                command.Parameters.AddWithValue("@Id", id);
+                command.ExecuteNonQuery();
+            }
+        }
+    }
+}
+
+Explanation:
+
+Database Initialization: Creates a SQLite database file (sample.db) and a Users table if it doesn't exist.
+Create: Inserts new records into the Users table.
+Read: Retrieves and displays all records from the Users table.
+Update: Updates a specific record by Id.
+Delete: Deletes a specific record by Id.
+
+How to Run:
+
+Save the code in a .cs file (e.g., Program.cs).
+Run the following commands:Bashdotnet build
+dotnet run
+
+
+
+Output Example:
+Records after insertion:
+Id: 1, Name: John Doe, Age: 30
+Id: 2, Name: Jane Smith, Age: 25
+
+Records after update:
+Id: 1, Name: John Updated, Age: 35
+
+Records after deletion:
+Id: 1, Name: John Updated, Age: 35
+
+

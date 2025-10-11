@@ -1,0 +1,124 @@
+Here is a complete example of performing CRUD (Create, Read, Update, Delete) operations in Java using an SQLite database. This example uses the SQLite JDBC driver.
+Code:
+Javaimport java.sql.*;
+
+public class SQLiteCRUDExample {
+
+    // SQLite database file
+    private static final String DATABASE_URL = "jdbc:sqlite:example.db";
+
+    public static void main(String[] args) {
+        try (Connection connection = DriverManager.getConnection(DATABASE_URL)) {
+            System.out.println("Connected to SQLite database.");
+
+            // Create table
+            createTable(connection);
+
+            // Insert data
+            insertData(connection, "Alice", 25);
+            insertData(connection, "Bob", 30);
+
+            // Read data
+            readData(connection);
+
+            // Update data
+            updateData(connection, 1, "Alice Updated", 26);
+
+            // Read data after update
+            readData(connection);
+
+            // Delete data
+            deleteData(connection, 2);
+
+            // Read data after delete
+            readData(connection);
+
+        } catch (SQLException e) {
+            System.err.println("Database error: " + e.getMessage());
+        }
+    }
+
+    // Create a table
+    private static void createTable(Connection connection) throws SQLException {
+        String sql = """
+                CREATE TABLE IF NOT EXISTS users (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL,
+                    age INTEGER NOT NULL
+                );
+                """;
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute(sql);
+            System.out.println("Table created or already exists.");
+        }
+    }
+
+    // Insert data
+    private static void insertData(Connection connection, String name, int age) throws SQLException {
+        String sql = "INSERT INTO users (name, age) VALUES (?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, name);
+            pstmt.setInt(2, age);
+            pstmt.executeUpdate();
+            System.out.println("Data inserted: " + name + ", " + age);
+        }
+    }
+
+    // Read data
+    private static void readData(Connection connection) throws SQLException {
+        String sql = "SELECT * FROM users";
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            System.out.println("Current data in the table:");
+            while (rs.next()) {
+                System.out.printf("ID: %d, Name: %s, Age: %d%n", rs.getInt("id"), rs.getString("name"), rs.getInt("age"));
+            }
+        }
+    }
+
+    // Update data
+    private static void updateData(Connection connection, int id, String newName, int newAge) throws SQLException {
+        String sql = "UPDATE users SET name = ?, age = ? WHERE id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, newName);
+            pstmt.setInt(2, newAge);
+            pstmt.setInt(3, id);
+            int rowsUpdated = pstmt.executeUpdate();
+            System.out.println("Rows updated: " + rowsUpdated);
+        }
+    }
+
+    // Delete data
+    private static void deleteData(Connection connection, int id) throws SQLException {
+        String sql = "DELETE FROM users WHERE id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            int rowsDeleted = pstmt.executeUpdate();
+            System.out.println("Rows deleted: " + rowsDeleted);
+        }
+    }
+}
+
+Steps to Run:
+
+Add SQLite JDBC Driver: Download the SQLite JDBC driver (sqlite-jdbc-x.x.x.jar) and add it to your project's classpath.
+Run the Program: The program will create a database file (example.db) in the current directory, perform CRUD operations, and display the results.
+
+Output Example:
+Connected to SQLite database.
+Table created or already exists.
+Data inserted: Alice, 25
+Data inserted: Bob, 30
+Current data in the table:
+ID: 1, Name: Alice, Age: 25
+ID: 2, Name: Bob, Age: 30
+Rows updated: 1
+Current data in the table:
+ID: 1, Name: Alice Updated, Age: 26
+ID: 2, Name: Bob, Age: 30
+Rows deleted: 1
+Current data in the table:
+ID: 1, Name: Alice Updated, Age: 26
+
+This example demonstrates how to create a table, insert records, read them, update a record, and delete a record using SQLite and Java.
+

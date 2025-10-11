@@ -1,0 +1,156 @@
+Here is a complete Python example of Neural Style Transfer (NST) using PyTorch. This script applies the artistic style of one image (style image) to another (content image).
+Code:
+Pythonimport torch
+import torch.nn as nn
+import torch.optim as optim
+from torchvision import transforms, models
+from PIL import Image
+import matplotlib.pyplot as plt
+
+# Load and preprocess images
+def load_image(image_path, max_size=400, shape=None):
+    image = Image.open(image_path).convert('RGB')
+    
+    # Resize the image
+    size = max_size if max(image.size) > max_size else max(image.size)
+    if shape:
+        size = shape
+    
+    transform = transforms.Compose([
+        transforms.Resize((size, size)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    ])
+    
+    image = transform(image)[:3, :, :].unsqueeze(0)
+    return image
+
+# Display the image
+def im_convert(tensor):
+    image = tensor.clone().detach()
+    image = image.squeeze(0)
+    image = image.to('cpu').numpy()
+    image = image.transpose(1, 2, 0)
+    image = image * [0.229, 0.224, 0.225] + [0.485, 0.456, 0.406]
+    image = image.clip(0, 1)
+    return image
+
+# Load content and style images
+content = load_image("content.jpg")
+style = load_image("style.jpg", shape=content.shape[-2:])
+
+# Use a pre-trained VGG19 model
+vgg = models.vgg19(pretrained=True).features
+
+# Freeze model parameters
+for param in vgg.parameters():
+    param.requires_grad_(False)
+
+# Move to GPU if available
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+content = content.to(device)
+style = style.to(device)
+vgg = vgg.to(device)
+
+# Extract features
+def get_features(image, model, layers=None):
+    if layers is None:
+        layers = {
+            '0': 'conv1_1',
+            '5': 'conv2_1',
+            '10': 'conv3_1',
+            '19': 'conv4_1',
+            '21': 'conv4_2',  # Content layer
+            '28': 'conv5_1'
+        }
+    features = {}
+    x = image
+    for name, layer in model._modules.items():
+        x = layer(x)
+        if name in layers:
+            features[layers[name]] = x
+    return features
+
+# Calculate Gram Matrix for style representation
+def gram_matrix(tensor):
+    _, d, h, w = tensor.size()
+    tensor = tensor.view(d, h * w)
+    gram = torch.mm(tensor, tensor.t())
+    return gram
+
+# Get content and style features
+content_features = get_features(content, vgg)
+style_features = get_features(style, vgg)
+
+# Calculate style Gram Matrices
+style_grams = {layer: gram_matrix(style_features[layer]) for layer in style_features}
+
+# Create a target image
+target = content.clone().requires_grad_(True).to(device)
+
+# Define weights for style and content layers
+style_weights = {
+    'conv1_1': 1.0,
+    'conv2_1': 0.8,
+    'conv3_1': 0.5,
+    'conv4_1': 0.3,
+    'conv5_1': 0.1
+}
+content_weight = 1e4  # Alpha
+style_weight = 1e2    # Beta
+
+# Define optimizer
+optimizer = optim.Adam([target], lr=0.003)
+criterion = nn.MSELoss()
+
+# Style transfer loop
+steps = 2000
+for step in range(1, steps+1):
+    target_features = get_features(target, vgg)
+    
+    # Content loss
+    content_loss = criterion(target_features['conv4_2'], content_features['conv4_2'])
+    
+    # Style loss
+    style_loss = 0
+    for layer in style_weights:
+        target_feature = target_features[layer]
+        target_gram = gram_matrix(target_feature)
+        style_gram = style_grams[layer]
+        layer_style_loss = style_weights[layer] * criterion(target_gram, style_gram)
+        _, d, h, w = target_feature.shape
+        style_loss += layer_style_loss / (d * h * w)
+    
+    # Total loss
+    total_loss = content_weight * content_loss + style_weight * style_loss
+    
+    # Update target image
+    optimizer.zero_grad()
+    total_loss.backward()
+    optimizer.step()
+    
+    # Display progress
+    if step % 500 == 0:
+        print(f"Step {step}, Total Loss: {total_loss.item()}")
+
+# Display the final stylized image
+final_image = im_convert(target)
+plt.imshow(final_image)
+plt.axis("off")
+plt.show()
+
+Explanation:
+
+Preprocessing: The content and style images are resized, normalized, and converted to tensors.
+Feature Extraction: A pre-trained VGG19 model extracts features from specific layers.
+Gram Matrix: Captures the style representation of the style image.
+Loss Calculation: Combines content loss and style loss to guide the optimization.
+Optimization: Updates the target image to minimize the total loss.
+
+Requirements:
+
+Install dependencies: torch, torchvision, Pillow, matplotlib.
+Replace "content.jpg" and "style.jpg" with paths to your images.
+
+This script generates a stylized image by blending the content of one image with the style of another.
+

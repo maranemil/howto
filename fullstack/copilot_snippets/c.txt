@@ -1,0 +1,141 @@
+Creating a GUI-based CRUD application in C with SQLite is possible using libraries like GTK for the GUI and SQLite3 for database operations. Below is a simple example that demonstrates a basic CRUD application with a graphical interface.
+
+Code Example: GUI CRUD Application in C with SQLite and GTK
+C#include <gtk/gtk.h>
+#include <sqlite3.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+// SQLite database pointer
+sqlite3 *db;
+
+// Function to initialize the SQLite database
+void init_database() {
+    int rc = sqlite3_open("example.db", &db);
+    if (rc) {
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        exit(1);
+    }
+
+    // Create a table if it doesn't exist
+    const char *sql = "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, age INTEGER);";
+    char *err_msg = NULL;
+    rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "SQL error: %s\n", err_msg);
+        sqlite3_free(err_msg);
+        exit(1);
+    }
+}
+
+// Callback for the "Add User" button
+void on_add_user(GtkWidget *widget, gpointer data) {
+    GtkWidget **entries = (GtkWidget **)data;
+    const char *name = gtk_entry_get_text(GTK_ENTRY(entries[0]));
+    const char *age = gtk_entry_get_text(GTK_ENTRY(entries[1]));
+
+    char sql[256];
+    snprintf(sql, sizeof(sql), "INSERT INTO users (name, age) VALUES ('%s', %s);", name, age);
+
+    char *err_msg = NULL;
+    int rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "SQL error: %s\n", err_msg);
+        sqlite3_free(err_msg);
+    } else {
+        printf("User added: %s, %s\n", name, age);
+    }
+}
+
+// Main function
+int main(int argc, char *argv[]) {
+    gtk_init(&argc, &argv);
+
+    // Initialize SQLite database
+    init_database();
+
+    // Create the main window
+    GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(window), "CRUD Application");
+    gtk_window_set_default_size(GTK_WINDOW(window), 400, 200);
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+    // Create a grid layout
+    GtkWidget *grid = gtk_grid_new();
+    gtk_container_add(GTK_CONTAINER(window), grid);
+
+    // Create input fields and labels
+    GtkWidget *name_label = gtk_label_new("Name:");
+    GtkWidget *name_entry = gtk_entry_new();
+    GtkWidget *age_label = gtk_label_new("Age:");
+    GtkWidget *age_entry = gtk_entry_new();
+
+    gtk_grid_attach(GTK_GRID(grid), name_label, 0, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), name_entry, 1, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), age_label, 0, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), age_entry, 1, 1, 1, 1);
+
+    // Create "Add User" button
+    GtkWidget *add_button = gtk_button_new_with_label("Add User");
+    gtk_grid_attach(GTK_GRID(grid), add_button, 0, 2, 2, 1);
+
+    // Pass input fields to the callback
+    GtkWidget *entries[2] = {name_entry, age_entry};
+    g_signal_connect(add_button, "clicked", G_CALLBACK(on_add_user), entries);
+
+    // Show all widgets
+    gtk_widget_show_all(window);
+
+    // Run the GTK main loop
+    gtk_main();
+
+    // Close the SQLite database
+    sqlite3_close(db);
+
+    return 0;
+}
+
+
+Explanation:
+
+
+SQLite Initialization:
+
+The init_database function initializes the SQLite database and creates a users table if it doesn't exist.
+
+
+
+GTK GUI:
+
+A simple GUI is created using GTK with input fields for name and age and a button to add users to the database.
+
+
+
+CRUD Operation:
+
+The "Add User" button inserts a new record into the SQLite database.
+
+
+
+Compilation:
+
+Install dependencies: sudo apt-get install libgtk-3-dev libsqlite3-dev
+Compile the program:Bashgcc -o crud_app crud_app.c `pkg-config --cflags --libs gtk+-3.0` -lsqlite3
+
+
+
+
+
+Run:
+
+Execute the program: ./crud_app
+
+
+
+
+Notes:
+
+This example demonstrates the Create operation. You can extend it to include Read, Update, and Delete operations by adding more buttons and callbacks.
+Ensure proper error handling and input validation for production use.
+
+

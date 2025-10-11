@@ -1,0 +1,196 @@
+Here is a complete example of a CRUD GUI application in C++ using SQLite for the database and Qt for the GUI framework. This example demonstrates how to create, read, update, and delete records in a SQLite database.
+
+Prerequisites:
+
+Install Qt Framework (e.g., via Qt Creator).
+Install SQLite (usually bundled with Qt).
+Link the SQLite library in your Qt project.
+
+
+Code Example
+main.cpp
+Cpp#include <QApplication>
+#include "mainwindow.h"
+
+int main(int argc, char *argv[]) {
+    QApplication app(argc, argv);
+
+    MainWindow mainWindow;
+    mainWindow.show();
+
+    return app.exec();
+}
+
+
+mainwindow.h
+Cpp#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
+
+#include <QMainWindow>
+#include <QSqlDatabase>
+#include <QSqlTableModel>
+
+QT_BEGIN_NAMESPACE
+namespace Ui { class MainWindow; }
+QT_END_NAMESPACE
+
+class MainWindow : public QMainWindow {
+    Q_OBJECT
+
+public:
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
+
+private slots:
+    void on_addButton_clicked();
+    void on_updateButton_clicked();
+    void on_deleteButton_clicked();
+
+private:
+    Ui::MainWindow *ui;
+    QSqlDatabase db;
+    QSqlTableModel *model;
+
+    void setupDatabase();
+    void setupModel();
+};
+
+#endif // MAINWINDOW_H
+
+
+mainwindow.cpp
+Cpp#include "mainwindow.h"
+#include "ui_mainwindow.h"
+#include <QSqlQuery>
+#include <QMessageBox>
+
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow) {
+    ui->setupUi(this);
+
+    setupDatabase();
+    setupModel();
+}
+
+MainWindow::~MainWindow() {
+    delete ui;
+    db.close();
+}
+
+void MainWindow::setupDatabase() {
+    db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName("example.db");
+
+    if (!db.open()) {
+        QMessageBox::critical(this, "Error", "Failed to connect to the database.");
+        return;
+    }
+
+    QSqlQuery query;
+    query.exec("CREATE TABLE IF NOT EXISTS people (id INTEGER PRIMARY KEY, name TEXT, age INTEGER)");
+}
+
+void MainWindow::setupModel() {
+    model = new QSqlTableModel(this, db);
+    model->setTable("people");
+    model->select();
+
+    ui->tableView->setModel(model);
+    ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+}
+
+void MainWindow::on_addButton_clicked() {
+    QString name = ui->nameLineEdit->text();
+    int age = ui->ageSpinBox->value();
+
+    if (name.isEmpty()) {
+        QMessageBox::warning(this, "Input Error", "Name cannot be empty.");
+        return;
+    }
+
+    QSqlQuery query;
+    query.prepare("INSERT INTO people (name, age) VALUES (:name, :age)");
+    query.bindValue(":name", name);
+    query.bindValue(":age", age);
+
+    if (!query.exec()) {
+        QMessageBox::critical(this, "Error", "Failed to add record.");
+    } else {
+        model->select();
+    }
+}
+
+void MainWindow::on_updateButton_clicked() {
+    QModelIndexList selectedRows = ui->tableView->selectionModel()->selectedRows();
+    if (selectedRows.isEmpty()) {
+        QMessageBox::warning(this, "Selection Error", "No row selected.");
+        return;
+    }
+
+    int id = model->data(model->index(selectedRows.first().row(), 0)).toInt();
+    QString name = ui->nameLineEdit->text();
+    int age = ui->ageSpinBox->value();
+
+    QSqlQuery query;
+    query.prepare("UPDATE people SET name = :name, age = :age WHERE id = :id");
+    query.bindValue(":name", name);
+    query.bindValue(":age", age);
+    query.bindValue(":id", id);
+
+    if (!query.exec()) {
+        QMessageBox::critical(this, "Error", "Failed to update record.");
+    } else {
+        model->select();
+    }
+}
+
+void MainWindow::on_deleteButton_clicked() {
+    QModelIndexList selectedRows = ui->tableView->selectionModel()->selectedRows();
+    if (selectedRows.isEmpty()) {
+        QMessageBox::warning(this, "Selection Error", "No row selected.");
+        return;
+    }
+
+    int id = model->data(model->index(selectedRows.first().row(), 0)).toInt();
+
+    QSqlQuery query;
+    query.prepare("DELETE FROM people WHERE id = :id");
+    query.bindValue(":id", id);
+
+    if (!query.exec()) {
+        QMessageBox::critical(this, "Error", "Failed to delete record.");
+    } else {
+        model->select();
+    }
+}
+
+
+mainwindow.ui
+
+Use Qt Designer to create the UI.
+Add the following widgets:
+
+QTableView: For displaying the database table.
+QLineEdit: For entering the name.
+QSpinBox: For entering the age.
+QPushButton: For "Add", "Update", and "Delete" actions.
+
+
+Connect the buttons to their respective slots (on_addButton_clicked, etc.).
+
+
+Features:
+
+Add Record: Enter name and age, then click "Add".
+Update Record: Select a row, modify name/age, then click "Update".
+Delete Record: Select a row, then click "Delete".
+
+
+Notes:
+
+Ensure the SQLite driver (QSQLITE) is available in your Qt installation.
+This example uses QSqlTableModel for simplicity, which automatically handles database updates.
+
+Let me know if you need further assistance!
+

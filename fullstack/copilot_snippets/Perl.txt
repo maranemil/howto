@@ -1,0 +1,132 @@
+Below is a complete example of a GUI-based CRUD application in Perl using Tk for the GUI and DBI for SQLite database interaction. This example demonstrates how to create, read, update, and delete records in an SQLite database.
+Code:
+Perl
+
+use strict;
+use warnings;
+use DBI;
+use Tk;
+
+# Database setup
+my $db_file = "example.db";
+my $dbh = DBI->connect("dbi:SQLite:dbname=$db_file", "", "", { RaiseError => 1, AutoCommit => 1 });
+
+# Create a table if it doesn't exist
+$dbh->do(<<'SQL');
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL
+)
+SQL
+
+# GUI setup
+my $mw = MainWindow->new;
+$mw->title("Perl SQLite CRUD Example");
+
+# Input fields
+$mw->Label(-text => "Name:")->grid(-row => 0, -column => 0);
+my $name_entry = $mw->Entry()->grid(-row => 0, -column => 1);
+
+$mw->Label(-text => "Email:")->grid(-row => 1, -column => 0);
+my $email_entry = $mw->Entry()->grid(-row => 1, -column => 1);
+
+# Buttons
+$mw->Button(-text => "Create", -command => \&create_record)->grid(-row => 2, -column => 0);
+$mw->Button(-text => "Read", -command => \&read_records)->grid(-row => 2, -column => 1);
+$mw->Button(-text => "Update", -command => \&update_record)->grid(-row => 3, -column => 0);
+$mw->Button(-text => "Delete", -command => \&delete_record)->grid(-row => 3, -column => 1);
+
+# Output area
+my $output = $mw->Scrolled("Text", -width => 50, -height => 10, -scrollbars => "e")->grid(-row => 4, -columnspan => 2);
+
+# CRUD functions
+sub create_record {
+    my $name = $name_entry->get();
+    my $email = $email_entry->get();
+    if ($name && $email) {
+        $dbh->do("INSERT INTO users (name, email) VALUES (?, ?)", undef, $name, $email);
+        $output->insert('end', "Record created: $name, $email\n");
+    } else {
+        $output->insert('end', "Name and Email are required!\n");
+    }
+}
+
+sub read_records {
+    $output->delete('1.0', 'end');
+    my $sth = $dbh->prepare("SELECT * FROM users");
+    $sth->execute();
+    while (my $row = $sth->fetchrow_hashref) {
+        $output->insert('end', "ID: $row->{id}, Name: $row->{name}, Email: $row->{email}\n");
+    }
+}
+
+sub update_record {
+    my $name = $name_entry->get();
+    my $email = $email_entry->get();
+    if ($name && $email) {
+        $dbh->do("UPDATE users SET email = ? WHERE name = ?", undef, $email, $name);
+        $output->insert('end', "Record updated: $name -> $email\n");
+    } else {
+        $output->insert('end', "Name and Email are required for update!\n");
+    }
+}
+
+sub delete_record {
+    my $name = $name_entry->get();
+    if ($name) {
+        $dbh->do("DELETE FROM users WHERE name = ?", undef, $name);
+        $output->insert('end', "Record deleted: $name\n");
+    } else {
+        $output->insert('end', "Name is required for deletion!\n");
+    }
+}
+
+# Start the GUI loop
+MainLoop();
+
+# Disconnect from the database when the program ends
+END {
+    $dbh->disconnect if $dbh;
+}
+
+Explanation:
+
+Database Setup:
+
+Creates an SQLite database (example.db) and a users table if it doesn't already exist.
+
+
+GUI:
+
+Uses the Tk module to create a simple GUI with input fields, buttons, and a text area for output.
+
+
+CRUD Operations:
+
+Create: Inserts a new record into the database.
+Read: Fetches and displays all records from the database.
+Update: Updates the email of a user based on their name.
+Delete: Deletes a user based on their name.
+
+
+Error Handling:
+
+Ensures required fields are filled before performing operations.
+
+
+
+Prerequisites:
+
+Install the required Perl modules:Bashcpan DBI DBD::SQLite Tk
+
+
+
+Example Usage:
+
+Enter a name and email, then click "Create" to add a record.
+Click "Read" to view all records.
+Modify the email field and click "Update" to update a record.
+Enter a name and click "Delete" to remove a record.
+
+

@@ -1,0 +1,121 @@
+Here’s an example of implementing basic CRUD (Create, Read, Update, Delete) operations in Drupal using an SQLite database. This example assumes you are creating a custom Drupal module.
+
+Steps:
+
+Create a Custom Module: Define a module named custom_crud.
+Define a Database Table: Use Drupal's schema API to define a table.
+Implement CRUD Operations: Use Drupal's database API.
+
+
+Code Example:
+1. custom_crud.info.yml
+Yamlname: 'Custom CRUD'
+type: module
+description: 'A module to demonstrate CRUD operations with SQLite.'
+core_version_requirement: ^9 || ^10
+package: Custom
+dependencies:
+  - drupal:sqlite
+
+2. custom_crud.install
+Php<?php
+
+/**
+ * Implements hook_schema().
+ * Defines the database table structure.
+ */
+function custom_crud_schema() {
+  return [
+    'custom_crud_table' => [
+      'description' => 'Stores custom data for CRUD operations.',
+      'fields' => [
+        'id' => [
+          'type' => 'serial',
+          'not null' => TRUE,
+          'description' => 'Primary Key: Unique ID.',
+        ],
+        'name' => [
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => TRUE,
+          'description' => 'Name of the entry.',
+        ],
+        'email' => [
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => TRUE,
+          'description' => 'Email address.',
+        ],
+      ],
+      'primary key' => ['id'],
+    ],
+  ];
+}
+
+3. CRUD Operations in custom_crud.module
+Php<?php
+
+use Drupal\Core\Database\Database;
+
+/**
+ * Create a new record.
+ */
+function custom_crud_create($name, $email) {
+  $connection = Database::getConnection();
+  $connection->insert('custom_crud_table')
+    ->fields([
+      'name' => $name,
+      'email' => $email,
+    ])
+    ->execute();
+}
+
+/**
+ * Read records.
+ */
+function custom_crud_read() {
+  $connection = Database::getConnection();
+  $query = $connection->select('custom_crud_table', 'c')
+    ->fields('c', ['id', 'name', 'email']);
+  return $query->execute()->fetchAll();
+}
+
+/**
+ * Update a record.
+ */
+function custom_crud_update($id, $name, $email) {
+  $connection = Database::getConnection();
+  $connection->update('custom_crud_table')
+    ->fields([
+      'name' => $name,
+      'email' => $email,
+    ])
+    ->condition('id', $id)
+    ->execute();
+}
+
+/**
+ * Delete a record.
+ */
+function custom_crud_delete($id) {
+  $connection = Database::getConnection();
+  $connection->delete('custom_crud_table')
+    ->condition('id', $id)
+    ->execute();
+}
+
+
+Usage:
+
+Enable the Module: Install and enable the custom_crud module.
+Perform CRUD Operations:
+
+Call custom_crud_create('John Doe', 'john@example.com') to create a record.
+Call custom_crud_read() to fetch all records.
+Call custom_crud_update(1, 'Jane Doe', 'jane@example.com') to update a record.
+Call custom_crud_delete(1) to delete a record.
+
+
+
+This example demonstrates how to use Drupal's database API with SQLite for CRUD operations.
+

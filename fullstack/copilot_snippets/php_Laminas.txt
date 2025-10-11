@@ -1,0 +1,146 @@
+Here’s a complete example of a CRUD application using the Laminas Framework with an SQLite database. This example demonstrates how to perform Create, Read, Update, and Delete operations.
+
+Steps:
+
+
+Set up Laminas MVC: Install Laminas using Composer:
+Bashcomposer create-project laminas/laminas-mvc-skeleton laminas-crud-app
+cd laminas-crud-app
+composer require laminas/laminas-db
+
+
+
+SQLite Database Setup: Create an SQLite database file (data/database.sqlite) with a users table:
+SqlCREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE
+);
+
+
+
+Database Configuration: Add SQLite configuration in config/autoload/global.php:
+Phpreturn [
+    'db' => [
+        'driver' => 'Pdo',
+        'dsn'    => 'sqlite:' . realpath(__DIR__ . '/../../data/database.sqlite'),
+    ],
+];
+
+
+
+Create a Model: Add a UserModel to interact with the database.
+Phpnamespace Application\Model;
+
+use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\Sql\Sql;
+
+class UserModel {
+    private $adapter;
+
+    public function __construct(Adapter $adapter) {
+        $this->adapter = $adapter;
+    }
+
+    // Create a new user
+    public function createUser($name, $email) {
+        $sql = new Sql($this->adapter);
+        $insert = $sql->insert('users')->values(['name' => $name, 'email' => $email]);
+        $statement = $sql->prepareStatementForSqlObject($insert);
+        return $statement->execute();
+    }
+
+    // Read all users
+    public function getUsers() {
+        $sql = new Sql($this->adapter);
+        $select = $sql->select('users');
+        $statement = $sql->prepareStatementForSqlObject($select);
+        return $statement->execute();
+    }
+
+    // Update a user
+    public function updateUser($id, $name, $email) {
+        $sql = new Sql($this->adapter);
+        $update = $sql->update('users')->set(['name' => $name, 'email' => $email])->where(['id' => $id]);
+        $statement = $sql->prepareStatementForSqlObject($update);
+        return $statement->execute();
+    }
+
+    // Delete a user
+    public function deleteUser($id) {
+        $sql = new Sql($this->adapter);
+        $delete = $sql->delete('users')->where(['id' => $id]);
+        $statement = $sql->prepareStatementForSqlObject($delete);
+        return $statement->execute();
+    }
+}
+
+
+
+Controller: Add CRUD actions in Application\Controller\UserController.
+Phpnamespace Application\Controller;
+
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
+use Application\Model\UserModel;
+
+class UserController extends AbstractActionController {
+    private $userModel;
+
+    public function __construct(UserModel $userModel) {
+        $this->userModel = $userModel;
+    }
+
+    public function indexAction() {
+        $users = $this->userModel->getUsers();
+        return new ViewModel(['users' => $users]);
+    }
+
+    public function createAction() {
+        $name = $this->params()->fromPost('name');
+        $email = $this->params()->fromPost('email');
+        $this->userModel->createUser($name, $email);
+        return $this->redirect()->toRoute('user');
+    }
+
+    public function updateAction() {
+        $id = $this->params()->fromRoute('id');
+        $name = $this->params()->fromPost('name');
+        $email = $this->params()->fromPost('email');
+        $this->userModel->updateUser($id, $name, $email);
+        return $this->redirect()->toRoute('user');
+    }
+
+    public function deleteAction() {
+        $id = $this->params()->fromRoute('id');
+        $this->userModel->deleteUser($id);
+        return $this->redirect()->toRoute('user');
+    }
+}
+
+
+
+Routes: Add routes in module/Application/config/module.config.php:
+Php'router' => [
+    'routes' => [
+        'user' => [
+            'type' => 'Segment',
+            'options' => [
+                'route' => '/user[/:action[/:id]]',
+                'defaults' => [
+                    'controller' => Application\Controller\UserController::class,
+                    'action'     => 'index',
+                ],
+            ],
+        ],
+    ],
+],
+
+
+
+Views: Create views for listing, creating, updating, and deleting users in module/Application/view/application/user.
+
+
+
+This setup provides a basic CRUD application using Laminas and SQLite. You can extend it further with validation, authentication, and more.
+

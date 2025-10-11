@@ -1,0 +1,142 @@
+Here is a complete example of a CRUD application using Next.js with a SQLite database. This example demonstrates how to create, read, update, and delete records.
+
+Steps:
+
+
+Install Dependencies:
+Bashnpm install next sqlite3
+
+
+
+Setup SQLite Database:
+Create a file database.js to handle SQLite connections.
+
+
+
+Code Implementation
+1. Database Setup (lib/database.js)
+Javascriptimport sqlite3 from 'sqlite3';
+import { open } from 'sqlite';
+
+// Open SQLite database connection
+export async function openDB() {
+  return open({
+    filename: './database.sqlite',
+    driver: sqlite3.Database,
+  });
+}
+
+2. Initialize Database
+Run this script once to create a users table:
+Javascript// init-db.js
+import { openDB } from './lib/database.js';
+
+(async () => {
+  const db = await openDB();
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      email TEXT NOT NULL UNIQUE
+    )
+  `);
+  console.log('Database initialized!');
+})();
+
+Run it with:
+Bashnode init-db.js
+
+3. API Routes
+a) Get All Users (pages/api/users/index.js)
+Javascriptimport { openDB } from '../../../lib/database';
+
+export default async function handler(req, res) {
+  const db = await openDB();
+
+  if (req.method === 'GET') {
+    const users = await db.all('SELECT * FROM users');
+    res.status(200).json(users);
+  } else if (req.method === 'POST') {
+    const { name, email } = req.body;
+    const result = await db.run('INSERT INTO users (name, email) VALUES (?, ?)', [name, email]);
+    res.status(201).json({ id: result.lastID, name, email });
+  } else {
+    res.status(405).json({ error: 'Method not allowed' });
+  }
+}
+
+b) Update/Delete User (pages/api/users/[id].js)
+Javascriptimport { openDB } from '../../../lib/database';
+
+export default async function handler(req, res) {
+  const db = await openDB();
+  const { id } = req.query;
+
+  if (req.method === 'PUT') {
+    const { name, email } = req.body;
+    await db.run('UPDATE users SET name = ?, email = ? WHERE id = ?', [name, email, id]);
+    res.status(200).json({ id, name, email });
+  } else if (req.method === 'DELETE') {
+    await db.run('DELETE FROM users WHERE id = ?', [id]);
+    res.status(204).end();
+  } else {
+    res.status(405).json({ error: 'Method not allowed' });
+  }
+}
+
+4. Frontend Example (pages/index.js)
+Javascriptimport { useState, useEffect } from 'react';
+
+export default function Home() {
+  const [users, setUsers] = useState([]);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+
+  useEffect(() => {
+    fetch('/api/users')
+      .then((res) => res.json())
+      .then((data) => setUsers(data));
+  }, []);
+
+  const addUser = async () => {
+    const res = await fetch('/api/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email }),
+    });
+    const newUser = await res.json();
+    setUsers([...users, newUser]);
+  };
+
+  const deleteUser = async (id) => {
+    await fetch(`/api/users/${id}`, { method: 'DELETE' });
+    setUsers(users.filter((user) => user.id !== id));
+  };
+
+  return (
+    <div>
+      <h1>Users</h1>
+      <input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
+      <input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+      <button onClick={addUser}>Add User</button>
+      <ul>
+        {users.map((user) => (
+          <li key={user.id}>
+            {user.name} ({user.email}){' '}
+            <button onClick={() => deleteUser(user.id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+
+Explanation:
+
+Database: SQLite is used for simplicity. The lib/database.js file manages the connection.
+API Routes: RESTful endpoints handle CRUD operations (GET, POST, PUT, DELETE).
+Frontend: A simple React-based UI fetches and displays data, allowing user creation and deletion.
+
+This setup is minimal and can be extended further with authentication, error handling, and advanced features.
+

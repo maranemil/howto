@@ -1,0 +1,68 @@
+Here is an example of a Python program that shuffles frames from two videos and outputs the result as a new video. This example uses the opencv-python library for video processing.
+Code:
+Pythonimport cv2
+import numpy as np
+
+def shuffle_videos(video1_path, video2_path, output_path, fps=30):
+    # Open the two video files
+    cap1 = cv2.VideoCapture(video1_path)
+    cap2 = cv2.VideoCapture(video2_path)
+
+    # Get video properties
+    width = int(cap1.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap1.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Codec for output video
+
+    # Ensure both videos have the same resolution
+    if (width != int(cap2.get(cv2.CAP_PROP_FRAME_WIDTH)) or
+        height != int(cap2.get(cv2.CAP_PROP_FRAME_HEIGHT))):
+        print("Error: Videos must have the same resolution.")
+        cap1.release()
+        cap2.release()
+        return
+
+    # Create a VideoWriter object for the output video
+    out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
+
+    while True:
+        # Read frames from both videos
+        ret1, frame1 = cap1.read()
+        ret2, frame2 = cap2.read()
+
+        # Stop if either video ends
+        if not ret1 and not ret2:
+            break
+
+        # Shuffle frames: alternate between frames from video1 and video2
+        if ret1:
+            out.write(frame1)
+        if ret2:
+            out.write(frame2)
+
+    # Release resources
+    cap1.release()
+    cap2.release()
+    out.release()
+    print(f"Shuffled video saved to {output_path}")
+
+# Example usage
+video1 = "video1.mp4"  # Path to the first video
+video2 = "video2.mp4"  # Path to the second video
+output = "shuffled_output.mp4"  # Path to save the shuffled video
+
+shuffle_videos(video1, video2, output)
+
+Explanation:
+
+Input Videos: The program takes two video files as input.
+Frame Shuffling: Frames from the two videos are alternated in the output video.
+Resolution Check: Ensures both videos have the same resolution to avoid errors.
+Output Video: The shuffled video is saved as an MP4 file.
+
+Requirements:
+Install OpenCV using:
+Bashpip install opencv-python
+
+Example:
+If video1.mp4 and video2.mp4 are two input videos, the program will create a new video shuffled_output.mp4 with frames alternated between the two inputs.
+

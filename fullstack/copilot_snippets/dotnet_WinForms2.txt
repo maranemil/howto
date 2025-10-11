@@ -1,0 +1,179 @@
+Below is a complete example of a C# WinForms GUI application that performs CRUD (Create, Read, Update, Delete) operations on an SQLite database. This example uses the System.Data.SQLite library.
+Steps:
+
+Install the System.Data.SQLite NuGet package in your project.
+Create a WinForms project in Visual Studio.
+Add a DataGridView and buttons (Add, Update, Delete, Refresh) to the form.
+
+Code Example:
+Csharpusing System;
+using System.Data;
+using System.Data.SQLite;
+using System.Windows.Forms;
+
+namespace SQLiteCRUDExample
+{
+    public partial class MainForm : Form
+    {
+        private SQLiteConnection connection;
+
+        public MainForm()
+        {
+            InitializeComponent();
+            InitializeDatabase();
+            LoadData();
+        }
+
+        // Initialize SQLite database and table
+        private void InitializeDatabase()
+        {
+            string dbPath = "Data Source=example.db;";
+            connection = new SQLiteConnection(dbPath);
+
+            try
+            {
+                connection.Open();
+                string createTableQuery = @"
+                    CREATE TABLE IF NOT EXISTS Users (
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        Name TEXT NOT NULL,
+                        Age INTEGER NOT NULL
+                    );";
+                SQLiteCommand command = new SQLiteCommand(createTableQuery, connection);
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error initializing database: {ex.Message}");
+            }
+        }
+
+        // Load data into DataGridView
+        private void LoadData()
+        {
+            try
+            {
+                string selectQuery = "SELECT * FROM Users;";
+                SQLiteDataAdapter adapter = new SQLiteDataAdapter(selectQuery, connection);
+                DataTable dataTable = new DataTable();
+                adapter.Fill(dataTable);
+                dataGridView1.DataSource = dataTable;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading data: {ex.Message}");
+            }
+        }
+
+        // Add a new record
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string name = txtName.Text;
+                int age = int.Parse(txtAge.Text);
+
+                string insertQuery = "INSERT INTO Users (Name, Age) VALUES (@Name, @Age);";
+                SQLiteCommand command = new SQLiteCommand(insertQuery, connection);
+                command.Parameters.AddWithValue("@Name", name);
+                command.Parameters.AddWithValue("@Age", age);
+                command.ExecuteNonQuery();
+
+                MessageBox.Show("Record added successfully!");
+                LoadData();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error adding record: {ex.Message}");
+            }
+        }
+
+        // Update an existing record
+        private void btnUpdate_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int id = int.Parse(txtId.Text);
+                string name = txtName.Text;
+                int age = int.Parse(txtAge.Text);
+
+                string updateQuery = "UPDATE Users SET Name = @Name, Age = @Age WHERE Id = @Id;";
+                SQLiteCommand command = new SQLiteCommand(updateQuery, connection);
+                command.Parameters.AddWithValue("@Id", id);
+                command.Parameters.AddWithValue("@Name", name);
+                command.Parameters.AddWithValue("@Age", age);
+                command.ExecuteNonQuery();
+
+                MessageBox.Show("Record updated successfully!");
+                LoadData();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error updating record: {ex.Message}");
+            }
+        }
+
+        // Delete a record
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int id = int.Parse(txtId.Text);
+
+                string deleteQuery = "DELETE FROM Users WHERE Id = @Id;";
+                SQLiteCommand command = new SQLiteCommand(deleteQuery, connection);
+                command.Parameters.AddWithValue("@Id", id);
+                command.ExecuteNonQuery();
+
+                MessageBox.Show("Record deleted successfully!");
+                LoadData();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error deleting record: {ex.Message}");
+            }
+        }
+
+        // Refresh the data
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            LoadData();
+        }
+    }
+}
+
+Key Features:
+
+Database Initialization: Creates a SQLite database file (example.db) and a Users table if it doesn't exist.
+CRUD Operations:
+
+Create: Adds a new user.
+Read: Displays all users in a DataGridView.
+Update: Updates an existing user's details.
+Delete: Deletes a user by ID.
+
+
+Error Handling: Ensures robust error handling for database operations.
+
+UI Design:
+
+Add the following controls to your form:
+
+DataGridView (Name: dataGridView1)
+TextBox for ID (Name: txtId), Name (Name: txtName), and Age (Name: txtAge).
+Buttons: Add (Name: btnAdd), Update (Name: btnUpdate), Delete (Name: btnDelete), and Refresh (Name: btnRefresh).
+
+
+
+NuGet Package:
+Install the System.Data.SQLite package via NuGet:
+BashInstall-Package System.Data.SQLite
+
+Example Workflow:
+
+Run the application.
+Add a user by entering Name and Age and clicking Add.
+Update or delete users by selecting their Id from the DataGridView.
+
+This example is a fully functional CRUD application with SQLite and C#.
+

@@ -1,0 +1,130 @@
+Here is a complete example of a CRUD (Create, Read, Update, Delete) application using the Slim Framework and SQLite database. This example demonstrates how to build a RESTful API.
+Prerequisites
+
+Install Slim Framework via Composer:Bashcomposer require slim/slim:"^4.0" slim/psr7
+
+
+Ensure SQLite is enabled in your PHP installation.
+
+
+Directory Structure
+project/
+├── public/
+│   └── index.php
+├── src/
+│   ├── db.php
+│   ├── routes.php
+├── composer.json
+
+
+Code Implementation
+1. public/index.php (Entry Point)
+Php<?php
+require __DIR__ . '/../vendor/autoload.php';
+
+use Slim\Factory\AppFactory;
+
+$app = AppFactory::create();
+
+// Include routes
+(require __DIR__ . '/../src/routes.php')($app);
+
+// Run the application
+$app->run();
+
+
+2. src/db.php (Database Connection)
+Php<?php
+function getDatabaseConnection(): PDO {
+    $db = new PDO('sqlite:' . __DIR__ . '/../database.sqlite');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    return $db;
+}
+
+// Create a sample table if it doesn't exist
+$db = getDatabaseConnection();
+$db->exec("CREATE TABLE IF NOT EXISTS items (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    description TEXT
+)");
+
+
+3. src/routes.php (CRUD Routes)
+Php<?php
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+
+return function ($app) {
+    // Create (POST)
+    $app->post('/items', function (Request $request, Response $response) {
+        $data = $request->getParsedBody();
+        $db = getDatabaseConnection();
+        $stmt = $db->prepare("INSERT INTO items (name, description) VALUES (:name, :description)");
+        $stmt->execute(['name' => $data['name'], 'description' => $data['description']]);
+        $response->getBody()->write(json_encode(['id' => $db->lastInsertId()]));
+        return $response->withHeader('Content-Type', 'application/json');
+    });
+
+    // Read All (GET)
+    $app->get('/items', function (Request $request, Response $response) {
+        $db = getDatabaseConnection();
+        $items = $db->query("SELECT * FROM items")->fetchAll();
+        $response->getBody()->write(json_encode($items));
+        return $response->withHeader('Content-Type', 'application/json');
+    });
+
+    // Read One (GET)
+    $app->get('/items/{id}', function (Request $request, Response $response, $args) {
+        $db = getDatabaseConnection();
+        $stmt = $db->prepare("SELECT * FROM items WHERE id = :id");
+        $stmt->execute(['id' => $args['id']]);
+        $item = $stmt->fetch();
+        if ($item) {
+            $response->getBody()->write(json_encode($item));
+        } else {
+            $response->getBody()->write(json_encode(['error' => 'Item not found']));
+            return $response->withStatus(404);
+        }
+        return $response->withHeader('Content-Type', 'application/json');
+    });
+
+    // Update (PUT)
+    $app->put('/items/{id}', function (Request $request, Response $response, $args) {
+        $data = $request->getParsedBody();
+        $db = getDatabaseConnection();
+        $stmt = $db->prepare("UPDATE items SET name = :name, description = :description WHERE id = :id");
+        $stmt->execute(['name' => $data['name'], 'description' => $data['description'], 'id' => $args['id']]);
+        $response->getBody()->write(json_encode(['message' => 'Item updated']));
+        return $response->withHeader('Content-Type', 'application/json');
+    });
+
+    // Delete (DELETE)
+    $app->delete('/items/{id}', function (Request $request, Response $response, $args) {
+        $db = getDatabaseConnection();
+        $stmt = $db->prepare("DELETE FROM items WHERE id = :id");
+        $stmt->execute(['id' => $args['id']]);
+        $response->getBody()->write(json_encode(['message' => 'Item deleted']));
+        return $response->withHeader('Content-Type', 'application/json');
+    });
+};
+
+
+Testing the API
+
+Start the PHP built-in server:Bashphp -S localhost:8080 -t public
+
+
+Use tools like Postman or curl to test the endpoints:
+
+Create: POST /items with JSON body {"name": "Item1", "description": "Description1"}
+Read All: GET /items
+Read One: GET /items/{id}
+Update: PUT /items/{id} with JSON body {"name": "Updated Name", "description": "Updated Description"}
+Delete: DELETE /items/{id}
+
+
+
+This example provides a fully functional CRUD API using Slim Framework and SQLite.
+

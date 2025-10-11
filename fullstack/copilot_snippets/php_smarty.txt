@@ -1,0 +1,181 @@
+Here is a complete example of a CRUD application using PHP, Smarty (template engine), and SQLite. This example demonstrates how to manage a simple "Users" table.
+
+Directory Structure
+project/
+├── templates/
+│   ├── users.tpl
+│   ├── form.tpl
+├── index.php
+├── db.php
+├── users.php
+├── add_user.php
+├── edit_user.php
+├── delete_user.php
+
+
+1. SQLite Database Setup (db.php)
+Php<?php
+// Database connection
+function getDbConnection() {
+    $db = new SQLite3('users.db');
+    // Create table if it doesn't exist
+    $db->exec("CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE
+    )");
+    return $db;
+}
+?>
+
+
+2. Main Page (index.php)
+Php<?php
+require 'db.php';
+require 'libs/Smarty.class.php';
+
+$smarty = new Smarty();
+$db = getDbConnection();
+
+// Fetch all users
+$result = $db->query("SELECT * FROM users");
+$users = [];
+while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+    $users[] = $row;
+}
+
+// Assign users to Smarty template
+$smarty->assign('users', $users);
+$smarty->display('templates/users.tpl');
+?>
+
+
+3. Add User (add_user.php)
+Php<?php
+require 'db.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+
+    $db = getDbConnection();
+    $stmt = $db->prepare("INSERT INTO users (name, email) VALUES (:name, :email)");
+    $stmt->bindValue(':name', $name, SQLITE3_TEXT);
+    $stmt->bindValue(':email', $email, SQLITE3_TEXT);
+
+    if ($stmt->execute()) {
+        header('Location: index.php');
+    } else {
+        echo "Error: Could not add user.";
+    }
+}
+?>
+
+
+4. Edit User (edit_user.php)
+Php<?php
+require 'db.php';
+
+$db = getDbConnection();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id = $_POST['id'];
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+
+    $stmt = $db->prepare("UPDATE users SET name = :name, email = :email WHERE id = :id");
+    $stmt->bindValue(':name', $name, SQLITE3_TEXT);
+    $stmt->bindValue(':email', $email, SQLITE3_TEXT);
+    $stmt->bindValue(':id', $id, SQLITE3_INTEGER);
+
+    if ($stmt->execute()) {
+        header('Location: index.php');
+    } else {
+        echo "Error: Could not update user.";
+    }
+} else {
+    $id = $_GET['id'];
+    $result = $db->querySingle("SELECT * FROM users WHERE id = $id", true);
+    require 'libs/Smarty.class.php';
+    $smarty = new Smarty();
+    $smarty->assign('user', $result);
+    $smarty->display('templates/form.tpl');
+}
+?>
+
+
+5. Delete User (delete_user.php)
+Php<?php
+require 'db.php';
+
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+    $db = getDbConnection();
+    $db->exec("DELETE FROM users WHERE id = $id");
+    header('Location: index.php');
+}
+?>
+
+
+6. Smarty Templates
+users.tpl
+Html<!DOCTYPE html>
+<html>
+<head>
+    <title>Users</title>
+</head>
+<body>
+    <h1>User List</h1>
+    <a href="add_user.php">Add User</a>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+        {foreach $users as $user}
+        <tr>
+            <td>{$user.id}</td>
+            <td>{$user.name}</td>
+            <td>{$user.email}</td>
+            <td>
+                <a href="edit_user.php?id={$user.id}">Edit</a>
+                <a href="delete_user.php?id={$user.id}" onclick="return confirm('Are you sure?')">Delete</a>
+            </td>
+        </tr>
+        {/foreach}
+    </table>
+</body>
+</html>
+
+form.tpl
+Html<!DOCTYPE html>
+<html>
+<head>
+    <title>{if $user}Edit User{else}Add User{/if}</title>
+</head>
+<body>
+    <h1>{if $user}Edit User{else}Add User{/if}</h1>
+    <form method="POST" action="{if $user}edit_user.php{else}add_user.php{/if}">
+        {if $user}<input type="hidden" name="id" value="{$user.id}">{/if}
+        <label>Name:</label>
+        <input type="text" name="name" value="{$user.name|default:''}" required><br>
+        <label>Email:</label>
+        <input type="email" name="email" value="{$user.email|default:''}" required><br>
+        <button type="submit">{if $user}Update{else}Add{/if}</button>
+    </form>
+</body>
+</html>
+
+
+How It Works
+
+index.php: Displays all users using the users.tpl template.
+add_user.php: Handles adding new users.
+edit_user.php: Fetches user data for editing and updates it.
+delete_user.php: Deletes a user by ID.
+Smarty Templates: Separate presentation logic from PHP code.
+
+This structure ensures clean separation of concerns and is easy to extend.
+

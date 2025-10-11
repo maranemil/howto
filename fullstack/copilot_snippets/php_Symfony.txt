@@ -1,0 +1,94 @@
+Here is a complete example of a basic CRUD application in Symfony using SQLite as the database. This example demonstrates managing a Product entity.
+
+Steps to Set Up the Project
+
+
+Install Symfony:
+Bashcomposer create-project symfony/skeleton my_project
+cd my_project
+
+
+
+Install Doctrine and SQLite:
+Bashcomposer require symfony/orm-pack
+composer require symfony/maker-bundle --dev
+
+
+
+Configure SQLite in .env:
+EnvDATABASE_URL="sqlite:///%kernel.project_dir%/var/data.db"
+
+
+
+Create the Product Entity:
+Run the following command:
+Bashphp bin/console make:entity Product
+
+Add fields like name (string), price (float), and description (text).
+
+
+
+Code Example
+1. Entity: Product.php
+Php<?php
+
+namespace App\Entity;
+
+use App\Repository\ProductRepository;
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity(repositoryClass: ProductRepository::class)]
+class Product
+{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
+    private ?int $id = null;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $name = null;
+
+    #[ORM\Column(type: 'float')]
+    private ?float $price = null;
+
+    #[ORM\Column(type: 'text')]
+    private ?string $description = null;
+
+    // Getters and setters...
+}
+
+2. Migrate the Database:
+Bashphp bin/console doctrine:database:create
+php bin/console make:migration
+php bin/console doctrine:migrations:migrate
+
+3. Generate CRUD Controller:
+Bashphp bin/console make:crud Product
+
+This generates a controller (ProductController.php) and templates for CRUD operations.
+4. Controller: ProductController.php
+The generated controller will handle routes like:
+
+/product/ (List all products)
+/product/new (Create a new product)
+/product/{id} (View a product)
+/product/{id}/edit (Edit a product)
+/product/{id} (Delete a product)
+
+5. Templates:
+The templates/product/ directory will contain Twig templates for listing, creating, editing, and viewing products.
+
+Run the Application
+
+
+Start the Symfony server:
+Bashsymfony server:start
+
+
+
+Access the application at http://127.0.0.1:8000/product.
+
+
+
+This setup provides a fully functional CRUD application using Symfony and SQLite. You can customize the generated code and templates as needed!
+

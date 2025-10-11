@@ -1,0 +1,157 @@
+Here is a complete example of a Flask application that implements basic CRUD (Create, Read, Update, Delete) operations using an SQLite database.
+Code:
+Pythonfrom flask import Flask, render_template, request, redirect, url_for, flash
+import sqlite3
+
+app = Flask(__name__)
+app.secret_key = "secret_key"  # For flash messages
+
+# Database setup
+DATABASE = 'crud_example.db'
+
+def init_db():
+    """Initialize the SQLite database."""
+    with sqlite3.connect(DATABASE) as conn:
+        cursor = conn.cursor()
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS items (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                description TEXT
+            )
+        ''')
+        conn.commit()
+
+# Home route - Read all items
+@app.route('/')
+def index():
+    with sqlite3.connect(DATABASE) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM items")
+        items = cursor.fetchall()
+    return render_template('index.html', items=items)
+
+# Create a new item
+@app.route('/add', methods=['POST'])
+def add_item():
+    name = request.form['name']
+    description = request.form['description']
+    if not name:
+        flash("Name is required!")
+        return redirect(url_for('index'))
+    with sqlite3.connect(DATABASE) as conn:
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO items (name, description) VALUES (?, ?)", (name, description))
+        conn.commit()
+    flash("Item added successfully!")
+    return redirect(url_for('index'))
+
+# Update an item
+@app.route('/edit/<int:item_id>', methods=['GET', 'POST'])
+def edit_item(item_id):
+    if request.method == 'POST':
+        name = request.form['name']
+        description = request.form['description']
+        if not name:
+            flash("Name is required!")
+            return redirect(url_for('edit_item', item_id=item_id))
+        with sqlite3.connect(DATABASE) as conn:
+            cursor = conn.cursor()
+            cursor.execute("UPDATE items SET name = ?, description = ? WHERE id = ?", (name, description, item_id))
+            conn.commit()
+        flash("Item updated successfully!")
+        return redirect(url_for('index'))
+    else:
+        with sqlite3.connect(DATABASE) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM items WHERE id = ?", (item_id,))
+            item = cursor.fetchone()
+        return render_template('edit.html', item=item)
+
+# Delete an item
+@app.route('/delete/<int:item_id>', methods=['POST'])
+def delete_item(item_id):
+    with sqlite3.connect(DATABASE) as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM items WHERE id = ?", (item_id,))
+        conn.commit()
+    flash("Item deleted successfully!")
+    return redirect(url_for('index'))
+
+if __name__ == '__main__':
+    init_db()  # Ensure the database is initialized
+    app.run(debug=True)
+
+Templates:
+
+templates/index.html:
+
+Html<!DOCTYPE html>
+<html>
+<head>
+    <title>CRUD Example</title>
+</head>
+<body>
+    <h1>Items</h1>
+    <form method="POST" action="/add">
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="text" name="description" placeholder="Description">
+        <button type="submit">Add Item</button>
+    </form>
+    <ul>
+        {% for item in items %}
+        <li>
+            {{ item[1] }} - {{ item[2] }}
+            <a href="/edit/{{ item[0] }}">Edit</a>
+            <form method="POST" action="/delete/{{ item[0] }}" style="display:inline;">
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul>
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    {% endwith %}
+</body>
+</html>
+
+
+templates/edit.html:
+
+Html<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Item</title>
+</head>
+<body>
+    <h1>Edit Item</h1>
+    <form method="POST">
+        <input type="text" name="name" value="{{ item[1] }}" required>
+        <input type="text" name="description" value="{{ item[2] }}">
+        <button type="submit">Update</button>
+    </form>
+</body>
+</html>
+
+How It Works:
+
+Create: Add a new item using the form on the home page.
+Read: Display all items on the home page.
+Update: Edit an item by navigating to the edit page.
+Delete: Remove an item using the delete button.
+
+Run Instructions:
+
+Save the code and templates in the appropriate files.
+Install Flask: pip install flask.
+Run the app: python app.py.
+Open http://127.0.0.1:5000 in your browser.
+
+This example is simple, yet demonstrates all CRUD operations effectively.
+

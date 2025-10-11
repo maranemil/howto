@@ -1,0 +1,158 @@
+Here is a complete example of a GUI-based CRUD application in Python using PyQt5 and SQLite3. This application allows users to create, read, update, and delete records from a database.
+Code:
+Pythonimport sys
+import sqlite3
+from PyQt5.QtWidgets import (
+    QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget,
+    QTableWidget, QTableWidgetItem, QPushButton, QLineEdit, QLabel, QMessageBox
+)
+
+class CRUDApp(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("CRUD App with PyQt5 and SQLite")
+        self.setGeometry(100, 100, 800, 400)
+
+        # Initialize database
+        self.conn = sqlite3.connect("example.db")
+        self.cursor = self.conn.cursor()
+        self.create_table()
+
+        # Main layout
+        self.central_widget = QWidget()
+        self.setCentralWidget(self.central_widget)
+        self.layout = QVBoxLayout()
+        self.central_widget.setLayout(self.layout)
+
+        # Input fields
+        self.input_layout = QHBoxLayout()
+        self.name_input = QLineEdit()
+        self.name_input.setPlaceholderText("Name")
+        self.age_input = QLineEdit()
+        self.age_input.setPlaceholderText("Age")
+        self.input_layout.addWidget(QLabel("Name:"))
+        self.input_layout.addWidget(self.name_input)
+        self.input_layout.addWidget(QLabel("Age:"))
+        self.input_layout.addWidget(self.age_input)
+        self.layout.addLayout(self.input_layout)
+
+        # Buttons
+        self.button_layout = QHBoxLayout()
+        self.add_button = QPushButton("Add")
+        self.add_button.clicked.connect(self.add_record)
+        self.update_button = QPushButton("Update")
+        self.update_button.clicked.connect(self.update_record)
+        self.delete_button = QPushButton("Delete")
+        self.delete_button.clicked.connect(self.delete_record)
+        self.button_layout.addWidget(self.add_button)
+        self.button_layout.addWidget(self.update_button)
+        self.button_layout.addWidget(self.delete_button)
+        self.layout.addLayout(self.button_layout)
+
+        # Table
+        self.table = QTableWidget()
+        self.table.setColumnCount(3)
+        self.table.setHorizontalHeaderLabels(["ID", "Name", "Age"])
+        self.table.cellClicked.connect(self.load_selected_record)
+        self.layout.addWidget(self.table)
+
+        # Load data
+        self.load_data()
+
+    def create_table(self):
+        """Create the database table if it doesn't exist."""
+        self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS people (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                age INTEGER NOT NULL
+            )
+        """)
+        self.conn.commit()
+
+    def load_data(self):
+        """Load data from the database into the table."""
+        self.table.setRowCount(0)
+        self.cursor.execute("SELECT * FROM people")
+        for row_index, row_data in enumerate(self.cursor.fetchall()):
+            self.table.insertRow(row_index)
+            for col_index, col_data in enumerate(row_data):
+                self.table.setItem(row_index, col_index, QTableWidgetItem(str(col_data)))
+
+    def add_record(self):
+        """Add a new record to the database."""
+        name = self.name_input.text()
+        age = self.age_input.text()
+        if not name or not age.isdigit():
+            QMessageBox.warning(self, "Input Error", "Please enter a valid name and age.")
+            return
+        self.cursor.execute("INSERT INTO people (name, age) VALUES (?, ?)", (name, int(age)))
+        self.conn.commit()
+        self.load_data()
+        self.clear_inputs()
+
+    def update_record(self):
+        """Update the selected record in the database."""
+        selected_row = self.table.currentRow()
+        if selected_row < 0:
+            QMessageBox.warning(self, "Selection Error", "Please select a record to update.")
+            return
+        record_id = self.table.item(selected_row, 0).text()
+        name = self.name_input.text()
+        age = self.age_input.text()
+        if not name or not age.isdigit():
+            QMessageBox.warning(self, "Input Error", "Please enter a valid name and age.")
+            return
+        self.cursor.execute("UPDATE people SET name = ?, age = ? WHERE id = ?", (name, int(age), record_id))
+        self.conn.commit()
+        self.load_data()
+        self.clear_inputs()
+
+    def delete_record(self):
+        """Delete the selected record from the database."""
+        selected_row = self.table.currentRow()
+        if selected_row < 0:
+            QMessageBox.warning(self, "Selection Error", "Please select a record to delete.")
+            return
+        record_id = self.table.item(selected_row, 0).text()
+        self.cursor.execute("DELETE FROM people WHERE id = ?", (record_id,))
+        self.conn.commit()
+        self.load_data()
+        self.clear_inputs()
+
+    def load_selected_record(self, row, column):
+        """Load the selected record into the input fields."""
+        self.name_input.setText(self.table.item(row, 1).text())
+        self.age_input.setText(self.table.item(row, 2).text())
+
+    def clear_inputs(self):
+        """Clear the input fields."""
+        self.name_input.clear()
+        self.age_input.clear()
+
+    def closeEvent(self, event):
+        """Close the database connection when the app is closed."""
+        self.conn.close()
+        event.accept()
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = CRUDApp()
+    window.show()
+    sys.exit(app.exec_())
+
+Features:
+
+Create: Add new records using the input fields.
+Read: Display all records in a table.
+Update: Modify selected records.
+Delete: Remove selected records.
+
+How to Run:
+
+Install dependencies: pip install pyqt5.
+Save the code to a file (e.g., crud_app.py).
+Run the script: python crud_app.py.
+
+This will create a SQLite database (example.db) and a GUI for managing records.
+
