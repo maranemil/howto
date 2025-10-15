@@ -27,6 +27,18 @@ sudo apt install v4l-utils
 v4l2-ctl -d /dev/video0 --set-ctrl=brightness=40,gamma=10,sharpness=3,hue=1,saturation=60
 ```
 
+
+######
+### test mic outout
+######
+```
+https://webcammictest.com/check-mic.html#
+https://restream.io/tools/mic-test#
+https://micworker.com/#good
+https://mictests.com/
+```
+
+
 ######
 ###   resolvconf - install  before WireGuard
 ######
