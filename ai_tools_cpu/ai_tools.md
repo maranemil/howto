@@ -145,18 +145,18 @@
 
 | url                                                 | type                    |
 |:----------------------------------------------------|:------------------------|
+| https://ahrefs.com/writing-tools/paragraph-rewriter | Rewriter    +++         | 
+| https://app.jasper.ai/                              | blog posts   Generation | 
+| https://beta.openai.com/playground                  | Text generator          |  
+| https://beta.tome.app/                              | Storytelling generator  | 
+| https://chat.openai.com/chat                        | Chat                    |  
+| https://perchance.org/ai-rewriter                   | rewriter    +++         | 
 | https://play.ht/                                    | Text to voice generator |   
 | https://quillbot.com/                               | Writing enhancer        |  
-| https://www.notion.so/product/ai                    | Content type generator  | 
-| https://chat.openai.com/chat                        | Chat                    |  
-| https://www.wordtune.com/                           | Text rewriter           | 
-| https://beta.tome.app/                              | Storytelling generator  | 
 | https://www.copy.ai/                                | Text rewriter           | 
-| https://beta.openai.com/playground                  | Text generator          |  
-| https://app.jasper.ai/                              | blog posts   Generation | 
-| https://ahrefs.com/writing-tools/paragraph-rewriter | Rewriter    +++         | 
 | https://www.imagetotext.info/                       | Image 2 text    +++     | 
-
+| https://www.notion.so/product/ai                    | Content type generator  | 
+| https://www.wordtune.com/                           | Text rewriter           | 
 
 
 ### Text Summarizer
@@ -166,6 +166,7 @@
 - https://www.semrush.com/contentshake/summary-generator/
 - https://www.scribbr.com/text-summarizer/
 
+
 ### Text scrambler rewriter
 - https://writer.hix.ai/paragraph-scrambler
 - https://www.junia.ai/tools/paraphrasing-tool#
@@ -173,11 +174,13 @@
 - https://www.grammarly.com/ai/ai-writing-tools/paragraph-rewriter
 - https://www.articlerewriter.net/
 
+
 ### Text grammar-checker
 - https://ahrefs.com/writing-tools/grammar-checker
 - https://mailmeteor.com/tools/ai-grammar-checker
 - https://quillbot.com/grammar-check
 - https://languagetool.org/
+
 
 ### Text informal translators german
 - https://anythingtranslate.com/translators/informal-german-translator/
@@ -393,8 +396,14 @@
 - https://openwebui.com/
 
 
+### Image describe
+- https://imagedescriber.online/
+- https://describepicture.cc/
+
+
 ### Remove Image Background
 - https://www.remove.bg/uploads
+- https://www.remove.bg/upload
 - https://www.remove.bg/
 - https://removal.ai/upload/
 - https://huggingface.co/spaces/Xenova/remove-background-web
