@@ -111,3 +111,192 @@ sudo journalctl -u ollama.service
 # img recognition
 https://ollama.com/library/llama3.2-vision
 https://ollama.com/library/falcon
+
+
+------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+docker update --cpuset-cpus="0-12" --cpus 4 debianollama 
+ollama run gemma3:1b how to access port 11434 on ollama >> ollama_$(date +%s).txt
+ollama run gemma3:1b how to install ollama ui on port 11434 >> ollama_$(date +%s).txt
+
+https://getdeploying.com/guides/local-gemma3
+https://www.gemma-3n.net/blog/how-to-run-gemma-3n-locally/
+https://codersera.com/blog/install-and-run-gemma-3n-locally-a-complete-guide
+https://markaicode.com/fix-ollama-port-11434-already-in-use-error/
+
+curl http://localhost:11434/
+
+apt install lsof
+lsof -i :11434
+COMMAND PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+ollama   20 root    3u  IPv4  37632      0t0  TCP localhost:11434 (LISTEN)
+
+kill -9 1234
+export OLLAMA_HOST=0.0.0.0:11435
+ollama serve
+curl http://localhost:11435/api/tags
+
+# Permanent change
+# Linux/macOS: Add to ~/.bashrc or ~/.zshrc
+echo 'export OLLAMA_HOST=0.0.0.0:11435' >> ~/.bashrc
+source ~/.bashrc
+
+Stop Conflicting Docker Containers
+# List all running containers
+docker ps
+
+# Stop containers using port 11434
+docker stop <container-id>
+
+# Remove stopped containers
+docker rm <container-id>
+
+# Alternative: Stop all Ollama containers
+docker stop $(docker ps -q --filter ancestor=ollama/ollama)
+
+
+Run Ollama Docker with Custom Port
+# Start Ollama container on different port
+docker run -d -v ollama:/root/.ollama -p 11435:11434 --name ollama ollama/ollama
+
+# Access Ollama on the new port
+curl http://localhost:11435/api/tags
+
+watch -n 2 'lsof -i :11434'
+
+...............................
+
+ollama run gemma-3n:e4b
+ollama run gemma-3n:e2b
+http://host.docker.internal:11434
+http://127.0.0.1:11434/
+......
+
+
+curl -fsSL https://ollama.com/install.sh | sh
+ollama --version
+ollama pull gemma3:4b-it-qat
+ollama run gemma3:4b
+
+curl http://localhost:11434/api/generate -d '{
+  "model": "gemma3:4b",
+  "prompt": "Explain the concept of recursion with a simple example",
+  "stream": false
+}'
+
+.....
+
+pip install ollama
+
+
+....
+
+docker run -d -p 11434:11434 --name olama-ui Ollama
+http://localhost:11434
+
+ ```yaml
+   version: "3.8"
+   services:
+     olama-ui:
+       image: olama/olama
+       ports:
+         - "11434:11434"
+       environment:
+         - OLLAMA_TRUSTED_HOSTS=your_host_ip_or_hostname
+       restart: always # Recommended: Ensures Ollama restarts automatically
+   ```
+
+/usr/bin/olama --port 11434 --user your_user
+
+https://github.com/ollama/ollama/blob/main/docs/faq.md
+
+-----------------------
+https://docs.openwebui.com/getting-started/updating/
+https://github.com/ollama/ollama/blob/main/docs/faq.md
+
+
+
+docker volume rm open-webui
+docker rm -f open-webui
+docker pull ghcr.io/open-webui/open-webui:main
+docker run -d -p 3000:8080 -v open-webui:/app/backend/data --name open-webui ghcr.io/open-webui/open-webui:main
+pip install --upgrade open-webui
+open-webui serve
+docker volume inspect open-webui
+-----------------------
+
+
+
+OK
+docker run -d -p 3000:8080 --add-host=host.docker.internal:host-gateway -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+
+docker exec -it open-webui /bin/bash
+ollama pull gemma3:1b
+
+docker run -d -p 3000:8080 -e OLLAMA_BASE_URL=https://example.com -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+
+http://localhost:3000
+
+https://www.gpu-mart.com/blog/how-to-install-and-use-ollama-webui-on-windows
+-----------------------
+
+
+https://docs.openwebui.com/getting-started/updating
+
+docker rm -f open-webui
+docker pull ghcr.io/open-webui/open-webui:main
+docker volume rm open-webui
+docker run -d -p 3000:8080 -v open-webui:/app/backend/data --name open-webui ghcr.io/open-webui/open-webui:main
+
+docker run -d -p 3000:8080 -v open-webui:/app/backend/data --name open-webui -e WEBUI_SECRET_KEY=your_secret_key ghcr.io/open-webui/open-webui:main
+
+version: '3'
+services:
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    ports:
+      - "3000:8080"
+    volumes:
+      - open-webui:/app/backend/data
+    environment:
+      - WEBUI_SECRET_KEY=your_secret_key
+	  
+	  
+docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower --run-once open-webui
+
+docker run -d --name watchtower \
+  --volume /var/run/docker.sock:/var/run/docker.sock \
+  containrrr/watchtower -i 300 open-webui
+  
+version: '3'
+services:
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    ports:
+      - "3000:8080"
+    volumes:
+      - open-webui:/app/backend/data
+
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 300 open-webui
+    depends_on:
+      - open-webui
+
+volumes:
+  open-webui:
+  
+-----------------------
