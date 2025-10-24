@@ -150,7 +150,7 @@
 | https://beta.openai.com/playground                  | Text generator          |  
 | https://beta.tome.app/                              | Storytelling generator  | 
 | https://chat.openai.com/chat                        | Chat                    |  
-| https://perchance.org/ai-rewriter                   | rewriter    +++         | 
+| https://perchance.org/ai-rewriter                   | Text rewriter    +++    | 
 | https://play.ht/                                    | Text to voice generator |   
 | https://quillbot.com/                               | Writing enhancer        |  
 | https://www.copy.ai/                                | Text rewriter           | 
@@ -431,3 +431,7 @@
 
 ### chat 
 - https://character.ai/
+
+
+### text format cleaner - remove bold italic
+- https://yaytext.com/unstyle/
