@@ -1,0 +1,113 @@
+
+
+
+#####################################
+Ollama 
+Ryzen AI 9 HX 370
+AMD Ryzen 7 7840U
+#####################################
+https://www.reddit.com/r/framework/comments/1l541r1/got_ollama_working_ryzen_ai_9_hx_370_with_the_big/
+https://community.frame.work/t/ollama-with-gpu-on-linux-framework-13-amd-ryzen-hx-370/70356
+https://www.localscore.ai/accelerator/721
+https://linux-hardware.org/?id=cpu:amd-26-36-0-ryzen-ai-9-hx-370-w-radeon-890m
+
+podman run -d --name ollama --replace --pull=always --restart=always     -p 0.0.0.0:11434:11434 -v ollama:/root/.ollama --stop-signal=SIGKILL     --device /dev/dri --device /dev/kfd     -e HSA_OVERRIDE_GFX_VERSION=11.0.2 -e HSA_ENABLE_SDMA=0     docker.io/ollama/ollama:rocm
+
+
+podman run --rm \
+  --name ollama \
+  --user root \
+  --pull=newer \
+  --device /dev/kfd \
+  --device /dev/dri \
+  --group-add keep-groups \
+  --privileged \
+  -e HSA_OVERRIDE_GFX_VERSION=11.5.1 \
+  -e HCC_AMDGPU_TARGET=gfx1151 \
+  -v $HOME/.ollama:/root/.ollama:Z \
+  -p 11434:11434 \
+  docker.io/ollama/ollama:rocm
+
+
+
+docker run --name ollama \
+  -v .:/root/.ollama \
+  -e OLLAMA_FLASH_ATTENTION=true \
+  -e HSA_OVERRIDE_GFX_VERSION="11.0.0" \
+  -e OLLAMA_KV_CACHE_TYPE="q8_0" \
+  -e OLLAMA_DEBUG=0 \
+  --device /dev/kfd \
+  --device /dev/dri \
+  -p 127.0.0.1:11434:11434 \
+  ghcr.io/rjmalagon/ollama-linux-amd-apu:latest \
+  serve
+  
+nano ollama.container in ~/.config/containers/systemd
+ollama.container file.
+
+[Unit]
+Description=Ollama Container with AMD Support
+
+[Container]
+Image=ghcr.io/rjmalagon/ollama-linux-amd-apu:latest
+Volume=ollama:/root/.ollama
+Environment=OLLAMA_FLASH_ATTENTION=true
+Environment=HSA_OVERRIDE_GFX_VERSION="11.0.0"
+Environment=OLLAMA_KV_CACHE_TYPE="q8_0"
+Environment=OLLAMA_DEBUG=0
+AddDevice=/dev/kfd
+AddDevice=/dev/dri
+PublishPort=127.0.0.1:11434:11434
+Exec=serve
+AutoUpdate=registry
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+WantedBy=default.target
+
+systemctl --user daemon-reload and systemctl --user start ollama.service
+
+
+
+podman run --name ollama \
+  -v /var/home/martind/OllamaModels/:/root/.ollama \
+  -e OLLAMA_FLASH_ATTENTION=true \
+  -e HSA_OVERRIDE_GFX_VERSION="11.0.0" \
+  -e OLLAMA_KV_CACHE_TYPE="q8_0" \
+  -e OLLAMA_DEBUG=0 \
+  --device /dev/kfd \
+  --device /dev/dri \
+  --security-opt label=type:container_runtime_t \
+  -p 127.0.0.1:11434:11434 \
+  ghcr.io/rjmalagon/ollama-linux-amd-apu:latest \
+  serve
+  
+  
+  podman run -it --rm \
+--name comfyui-rocm \
+--device=/dev/kfd --device=/dev/dri \
+--group-add=video --ipc=host --cap-add=SYS_PTRACE \
+--security-opt seccomp=unconfined \
+--security-opt label=disable \
+-p 8188:8188 \
+-v "$(pwd)"/storage:/root \
+-e CLI_ARGS="" \
+-e HSA_OVERRIDE_GFX_VERSION=11.0.0 \
+yanwk/comfyui-boot:rocm
+
+
+
+python main.py --force-fp32 
+-e CLI_ARGS="--force-fp32"
+
+
+------
+
+https://simonwillison.net/2025/Oct/20/deepseek-ocr-claude-code/
+docker run -it --gpus=all \
+  -v /usr/local/cuda:/usr/local/cuda:ro \
+  nvcr.io/nvidia/cuda:13.0.1-devel-ubuntu24.04 \
+  bash

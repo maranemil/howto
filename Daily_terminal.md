@@ -851,6 +851,14 @@ chrome://restart
 chrome://gpu
 chrome://flags/
 
+systemctl reboot -i
+
+--in-process-gpu --enable-chrome-browser-cloud-management
+--disable-frame-rate-limit --disable-gpu-vsync --max-gum-fps="9999" --disable-gpu 
+--ignore-gpu-blocklist  --enable-zero-copy --enable-gpu-rasterization --enable-native-gpu-memory-buffers --enable-gpu-memory-buffer-video-frames
+ 
+ 
+
 systemd-run -p CPUQuota=20% chrome
 ps ax | wc -l
 
