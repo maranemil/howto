@@ -571,3 +571,50 @@ ffmpeg -i in.mp4 -vf "crop=1200:570:10:10,eq=saturation=1.3" -c:a copy out.mp4
 ffmpeg -i in.mp4 -vf scale=-1:1080:flags=lanczos,unsharp=5:5:1.0:5:5:0.0 -c:a copy out.mp4
 ~~~
 
+### codecs test
+~~~
+https://trac.ffmpeg.org/wiki/HWAccelIntro
+https://wiki.ubuntuusers.de/cut/
+https://linuxize.com/post/linux-cut-command/
+https://trac.ffmpeg.org/wiki/audio%20types
+https://usage.toolstud.io/docs/ffmpeg/usage/encoders/
+ https://trac.ffmpeg.org/wiki/Encode/H.265
+
+ffmpeg -hwaccels
+ffmpeg -formats | grep PCM
+
+Hardware acceleration methods:
+vdpau
+cuda
+vaapi
+qsv
+drm
+opencl
+vulkan
+
+ffmpeg -codecs
+ffmpeg -codecs | grep -i 264
+ffmpeg -codecs | cut -d ' ' -f 3
+ffmpeg -encoders
+ffmpeg -encoders| cut -d ' ' -f 3
+ffmpeg -encoders| grep -w "V..." | cut -d ' ' -f 3
+
+
+for i in $(ffmpeg -encoders| grep -w "V..." | cut -d ' ' -f 3); do echo "sss" $i; done
+for i in $(ffmpeg -encoders| grep -w "V..." | cut -d ' ' -f 3); do ffmpeg -i input.mp4 -c:v $i -crf 26 -preset fast -c:a aac -b:a 128k output_$i.mp4; done
+
+
+ 1,1M Jun  1 23:33 input.mp4
+ 658K Okt 26 20:11 output_libvpx-vp9.mp4
+ 314K Okt 26 20:11 output_libx264.mp4
+ 917K Okt 26 20:11 output_libx264rgb.mp4
+ 256K Okt 26 20:11 output_libx265.mp4
+ 23M Okt 26 20:11 output_png.mp4
+ 14M Okt 26 20:10 output_vc2.mp4
+ 
+1x
+for i in *.mp4; do ffmpeg -i $i  -vf scale=-2:480 -c:v libx264 -crf 26 -preset fast -c:a aac -b:a 96k -threads 1 output_$i.mp4; done
+3x
+for i in *.mp4; do ffmpeg -i $i  -vf scale=-2:480 -c:v libx264 -crf 36 -preset superfast -c:a aac -b:a 96k -threads 1 output_$i.mp4; done
+~~~
+
