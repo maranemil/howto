@@ -435,3 +435,7 @@
 
 ### text format cleaner - remove bold italic
 - https://yaytext.com/unstyle/
+
+
+### image 2 text ocr
+- https://www.imagetotext.info/

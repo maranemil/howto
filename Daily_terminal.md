@@ -885,6 +885,13 @@ Mozilla/5.0 (Windows NT 6.1; rv:16.0) Gecko/20100101 Firefox/16.0
 
 --use-mobile-user-agent
 
+#no gpu
+/usr/bin/google-chrome --lang=en-US,en --disable-dev-shm-usage --block-new-web-contents --no-experiments --disable-default-apps --disable-notifications --log-level=1 --no-ping --disable-background-processes --disable-picture-in-picture --process-per-tab --purge-memory-button --disable-features=UseEcoQoSForBackgroundProcess --disable-histogram-customizer --disable-in-process-stack-traces --disable-low-end-device-mode --disable-low-res-tiling --disable-print-preview --disable-breakpad --noerrdialogs --use-fake-device-for-media-stream --disable-features=StreamScripting --new-window --aggressive-cache-discard --disable-notifications --disable-remote-playback-api --disable-shared-workers --disable-voice-input --enable-aggressive-domstorage-flushing --args --js-flags=--max_old_space_size=988 --ignore-gpu-blocklist --enable-zero-copy --enable-gpu-rasterization --enable-native-gpu-memory-buffers --enable-gpu-memory-buffer-video-frames --ozone-platform=wayland --origin-trial-disabled-features=CanvasTextNg|WebAssemblyCustomDescriptors --render-node-override=/dev/dri/renderD128
+
+#gpu
+taskset -c 0,1 google-chrome --lang=en-US,en --disable-dev-shm-usage --block-new-web-contents --no-experiments --disable-default-apps --disable-notifications --log-level=1 --no-ping --disable-background-processes --disable-picture-in-picture --process-per-tab --purge-memory-button --disable-features=UseEcoQoSForBackgroundProcess --disable-histogram-customizer --disable-in-process-stack-traces --disable-low-end-device-mode --disable-low-res-tiling --disable-print-preview --disable-breakpad --noerrdialogs --use-fake-device-for-media-stream --disable-features=StreamScripting --new-window --aggressive-cache-discard --disable-notifications --disable-remote-playback-api --disable-shared-workers --disable-voice-input --enable-aggressive-domstorage-flushing --args --js-flags=--max_old_space_size=988 --ignore-gpu-blocklist --enable-zero-copy --enable-gpu-rasterization --enable-native-gpu-memory-buffers --enable-gpu-memory-buffer-video-frames
+
+
 
 ~~~
 

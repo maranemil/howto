@@ -4,6 +4,7 @@
 
 # https://www.youtube.com/watch?v=dglcDIUTSsY
 # https://github.com/MariyaSha/Simple_API_Example
+# https://fastapi.tiangolo.com/#create-it
 
 
 from fastapi import FastAPI, HTTPException
