@@ -439,3 +439,11 @@
 
 ### image 2 text ocr
 - https://www.imagetotext.info/
+
+
+### article-rewriter
+https://neuralwriter.com/ro/#progress=0
+https://paraphrasetool.com/langs/paraphrasing-tool-romanian#ok
+https://smodin.io/de/text-automatisch-in-deutscher-sprache-umformulieren
+https://smodin.io/ro/sa-redenumeasca-automat-textul-in-limba-romana-gratuit#ok
+https://www.paraphrasing.io/ro/article-rewriter
