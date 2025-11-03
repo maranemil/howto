@@ -401,6 +401,7 @@ journalctl -r | head -n 1000 > /tmp/journal.log
 ```
 * python -m SimpleHTTPServer (deprecated python2)
 * python3 -m http.server 8888
+* ufw allow 8888/tcp
 * http://localhost:8000
 * php -S localhost:4000
 * PHP_CLI_SERVER_WORKERS=8 php -S localhost:8000 -t htdocs
