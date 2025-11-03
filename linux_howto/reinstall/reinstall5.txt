@@ -1,0 +1,354 @@
+
+###############################################################
+Ubuntu 22 lts to 24 lts
+###############################################################
+
+sudo nano /etc/update-manager/release-upgrades
+
+
+sudo apt-get update -y && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y && sudo apt-get purge -y && exit
+
+
+sudo update-manager 
+sudo apt update
+sudo do-release-upgrade
+
+sudo sysctl vm.swappiness=10
+
+------------
+
+sudo snap install brave
+sudo apt install doublecmd-qt  -y
+sudo apt install ffmpeg -y
+sudo apt install git -y
+sudo apt install curl -y
+
+
+# https://docs.docker.com/engine/install/linux-postinstall
+sudo apt install docker.io docker-compose  -y
+sudo groupadd docker
+sudo usermod -aG docker $USER
+
+
+sudo snap install code --classic
+
+snap search intellij
+snap search pycharm
+
+sudo snap install pycharm-community --classic
+sudo snap install intellij-idea-community --classic
+
+
+https://releases.ubuntu.com/noble/#24
+https://releases.ubuntu.com/jammy/#22
+https://voidlinux.org/download/
+https://cdimage.ubuntu.com/xubuntu/releases/jammy/release/
+http://ftp.uni-kl.de/pub/linux/ubuntu-dvd/xubuntu/releases/24.04/release/
+https://www.bunsenlabs.org/installation.html
+https://repo-default.voidlinux.org/live/current/
+
+
+sudo apt install virtualbox -y
+sudo apt install kate konsole -y
+
+ 
+sudo sysctl vm.swappiness=10
+echo 3 | sudo tee /proc/sys/vm/drop_caches
+
+
+
+boost
+sudo apt-get update && sudo apt-get upgrade -y
+sudo apt-get update && sudo apt-get install build-essential
+#sudo apt-get install build-essential
+#sudo apt-get install linux-modules-extra-$(uname -r)
+#sudo apt-get install linux-image-extra-virtual
+# sudo apt install --reinstall linux-image-generic
+sudo apt install linux-modules-extra-$(uname -r) linux-image-extra-virtual 
+   
+sudo su
+cd /etc/init.d/
+cat /etc/init.d/*
+Find the file that starts with "systemd" (e.g., systemd-timesyncd.service)
+Uncomment it by replacing # with ! in the line below:
+sudo nano /etc/init.d/systemd-timesyncd.service
+Replace "SYSTEMD_DAEMON=true" with "SYSTEMD_DAEMON=false" to disable it
+Save and exit the file
+
+cd /etc/systemd/
+cat /etc/systemd/*
+Find the file that starts with "network" (e.g., network.target)
+Uncomment it by replacing # with ! in the line below
+sudo nano /etc/systemd/network/01-wireless.network
+Replace "Wireless=on" with "Wireless=off" to disable it
+
+Enable fast clock: 
+sudo timedatectl set-timezone America/Chicago
+sudo timedatectl set-timezone America/New_York
+sudo timedatectl set-timezone Europe/Berlin
+#sudo dpkg-reconfigure tzdata
+
+top, htop, or psutils
+pscpd
+sudo apt install putty-tools
+
+systemctl reboot -i
+
+
+
+sudo apt-get remove x
+sudo apt autoremove && sudo apt-get purge
+sudo snap remove thunderbird
+
+service --status-all
+
+
+#sudo nanopatch /etc/apt/sources.list.d/01-extra-devel.patch
+
+
+sudo apt-get install psutils
+sudo apt install putty-tools
+sudo apt install dstat
+df -h
+cat /proc/swaps
+free -m
+swapon -s
+
+
+-------------------------------------------------------------
+
+
+https://askubuntu.com/questions/79280/how-to-install-chrome-browser-properly-via-command-line
+https://wiki.ubuntuusers.de/Google_Chrome/
+
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+
+sudo dpkg -i ./google-chrome*.deb
+sudo apt-get install -f
+sudo apt autoremove
+
+
+chrome://history/ 	Browserverlauf einsehen.
+chrome://settings/ 	Einstellungen aufrufen.
+chrome://extensions/ 	Erweiterungen verwalten.
+chrome://terms/ 	Nutzungsbedingungen
+chrome://plugins 	Übersicht zu den installierten Erweiterungen.
+chrome://devices/ 	Geräte verwalten
+chrome://dns 	Übersicht zu aufgerufenen Links, um mittels DNS Prefetching die Ladezeiten zu verkürzen.
+chrome://cache 	Daten im Zwischenspeicher des Browsers.
+chrome://version 	Verwendete Version von Chrome
+chrome://help/ 	Hilfe aufrufen
+chrome://chrome-urls 	Über diese Adresse erhält man eine Übersicht zu allen verfügbaren Adressen des Browsers. 
+
+
+sudo apt install htop -y
+
+xrandr --listmonitors
+xrandr --current --verbose
+xrandr --current
+xrandr --output LVDS1 --brightness 0.5
+xrandr --output HDMI-2 --brightness 0.8
+xrandr --output <outputname> --gamma 0.5:1.0:1.0
+xrandr --output eDP1 --brightness 0.8
+xrandr --output DP-1-1  --brightness 1.2
+
+
+sudo nano /etc/default/grub
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash acpi_backlight=vendor"
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash acpi_backlight=native"
+sudo update-grub
+
+-------------------------------------------------------------
+
+
+sudo apt install mpv
+sudo apt install celluloid
+
+for i in *mp4; do ffprobe -i $i 2>&1 |  grep -i SAR; done
+for i in *mp4; do ffprobe -i $i 2>&1 |  grep -inH SAR; done
+
+#cpu
+for i in *.mp4; do ffmpeg -i $i  -vf scale=-2:480 -c:v libx264 -crf 26 -preset fast -c:a aac -b:a 96k -threads 8 output_$i.mp4; done
+
+#amd
+for i in *.mp4; do ffmpeg -hwaccel vaapi -hwaccel_output_format vaapi -i  $i -vf 'format=vaapi,hwupload;scale=-2:480' -c:v h264_vaapi -qp 25  output_$i.mp4; done
+
+#amd
+for i in *.mp4; do ffmpeg -hwaccel vaapi -hwaccel_output_format vaapi -i  $i -vf 'hwupload,scale_vaapi=w=-2:h=480:format=nv12' -c:v h264_vaapi -qp 25 -y output_$i.mp4; done
+
+#amd
+for i in *.mp4; do ffmpeg -hwaccel vaapi -hwaccel_output_format vaapi -i  $i -vf 'hwupload' -c:v h264_vaapi -qp 25 -y output_$i.mp4; done
+
+
+
+-------------------------------------------------------------
+
+sudo amdgpu-install
+sudo amdgpu-install -y --usecase=rocm,graphics --no-dkms
+sudo apt install amdgpu-dkms
+sudo apt install vainfo
+vainfo
+
+sudo reboot
+apt install mesa-va-drivers
+
+rpm -qa | rg rocm
+python3 -c "import torch; print(f'CUDA available: {torch.cuda.is_available()}'); print(f'Device: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else "None"}')"
+sudo apt install clinfo
+sudo lshw -C display
+lsmod | grep amd
+sudo lshw -c video
+dmesg | grep -i amdgpu
+lspci -nn | grep -E 'VGA|Display'
+sudo update-pciids
+
+
+https://support.zivid.com/en/latest/getting-started/software-installation/gpu/amd-driver-ubuntu.html
+https://linuxconfig.org/amd-radeon-ubuntu-20-04-driver-installation
+https://trac.ffmpeg.org/wiki/Hardware/VAAPI
+ 
+
+# For Ubuntu
+apt install mesa-va-drivers
+ffmpeg -i input.mp4 -c:v h264_amf -c:a copy output.mp4 
+ffmpeg -h encoder=h264_vaapi
+ffmpeg -h encoder=hevc_vaapi
+
+# AV1
+ffmpeg -hwaccel vaapi -hwaccel_output_format vaapi -i input.mp4 -vf 'format=vaapi,hwupload' -c:v av1_vaapi -q 160 output.mp4
+
+# H.265 alias HEVC
+ffmpeg -hwaccel vaapi -hwaccel_output_format vaapi -i input.mp4 -vf 'format=vaapi,hwupload' -c:v hevc_vaapi -qp 32 ~/output.mp4
+
+# H.264 alias AVC OK
+ffmpeg -hwaccel vaapi -hwaccel_output_format vaapi -i input.mp4 -vf 'format=vaapi,hwupload' -c:v h264_vaapi -qp 25 ~/output.mp4
+
+ffmpeg -vaapi_device /dev/dri/renderD129 -hwaccel vaapi -hwaccel_output_format vaapi -i H264.mp4 -vf 'format=vaapi,hwupload' -c:v av1_vaapi -q 130 -c:a copy AV1.mp4
+
+ffmpeg -hwaccel vaapi -hwaccel_output_format vaapi -vaapi_device /dev/dri/renderD128 -i "Torchwood 01x01 Everything Changes.mkv" -vcodec hevc_vaapi -vf format='nv12|vaapi,hwupload' -map 0 -c:a copy -c:s copy -qp 28 -bf 0 -preset medium -max_muxing_queue_size 2048 "Torchwood 01x01 Everything Changes-output.mkv"
+
+-------------------------------------------------------------
+
+rename 's/ /_/g' *
+
+
+-------------------------------------------------------------
+
+
+
+
+
+sudo pro status
+pro status --all
+sudo apt install grub-efi-amd64-bin grub-efi-amd64-signed 
+sudo apt install libnss-systemd libpam-systemd libsystemd0 libsystemd0:i386 libudev1 systemd systemd-sysv systemd-timesyncd udev
+
+sudo apt autoremove
+sudo apt update
+sudo apt full-upgrade
+mv ~/.local/share/keyrings/ ~/.local/share/keyringsbackup/
+rm -v ~/.local/share/keyrings/*.keyring
+
+sudo apt-get install gnome-keyring 
+auth optional pam_gnome_keyring.so
+session optional pam_gnome_keyring.so auto_start 
+
+mv ~/.gnome2/keyrings/login.keyring ~/.gnome2/keyrings/login.keyring.backup 
+rm ~/.gnome2/keyrings/login.keyring    # oder ggf. login.keyring.backup 
+
+sudo apt-get install libpam-gnome-keyring 
+
+------
+
+sudo apt install keepass2
+sudo apt install lmms
+sudo apt install gimp
+sudo apt install brightnessctl
+brightnessctl set 100%
+brightnessctl set 5%-
+
+xrandr --verbose
+xrandr --output DP-0 --brightness 0.5
+xrandr --output HMDI-0 --brightness 0.5
+sudo apt install xbacklight
+xbacklight -10
+xrandr -q | grep -w connected
+xrandr --output HDMI-2  --brightness 0.8
+xbacklight -get
+xbacklight -dec 10
+xbacklight -inc 10
+xrandr | grep " connected" | cut -f1 -d " "
+xrandr --output HDMI-2 --brightness 0.7
+
+sudo nano /etc/default/grub
+AMD_GPUBACKLIGHT=0
+sudo update-grub
+
+acpi_backlight=vendor
+acpi_backlight=video
+acpi_backlight=native
+
+acpi_backlight=vendor 
+acpi_backlight=native
+sudo update-grub
+
+sudo apt install ddccontrol
+sudo apt install gddccontrol
+
+sudo apt install inxi
+inxi -Fzxx
+
+amdgpu.backlight=0
+GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet splash acpi_backlight=video amdgpu.backlight=0"
+
+xrandr --output eDP --brightness 0.7
+cat /proc/cmdline
+
+ls /sys/class/backlight
+acpi_video0
+ls /sys/class/backlight/
+acpi_video0
+ls /sys/class/backlight/acpi_video0/brightness
+
+sudo apt install inotify-tools
+inotifywait -q -e modify /sys/class/backlight/amdgpu_bl0/brightness
+inotifywait -q -e modify /sys/class/backlight/acpi_video0/brightness
+
+ls /sys/class/backlight/acpi_video0/*brightness
+/sys/class/backlight/acpi_video0/actual_brightness
+/sys/class/backlight/acpi_video0/brightness
+/sys/class/backlight/acpi_video0/max_brightness
+cat /sys/class/backlight/acpi_video0/max_brightness
+echo 5 > /sys/class/backlight/acpi_video0/brightness
+
+
+https://rocm.docs.amd.com/projects/install-on-linux/en/docs-6.4.0/install/install-methods/amdgpu-installer/amdgpu-installer-ubuntu.html
+https://wiki.archlinux.org/title/Backlight
+
+
+
+
+#################################################
+amdgpu-install
+#################################################
+sudo apt install -y build-essential
+sudo apt update && sudo apt upgrade -y
+# sudo ./amdgpu-install --usecase=workstation -y
+
+sudo apt update
+wget https://repo.radeon.com/amdgpu-install/6.4/ubuntu/noble/amdgpu-install_6.4.60400-1_all.deb
+sudo apt install ./amdgpu-install_6.4.60400-1_all.deb
+sudo dpkg -i amdgpu-install_6.4.60400-1_all.deb
+sudo apt update
+sudo amdgpu-install --list-usecase
+sudo amdgpu-install --usecase=rocm --no-dkms
+sudo amdgpu-install --usecase=graphics,rocm --no-dkms
+sudo amdgpu-install --usecase=graphics --no-dkms
+
+
+
+for i in *.mp4; do ffmpeg -hwaccel vaapi -hwaccel_output_format vaapi -i  $i -vf 'hwupload,scale_vaapi=w=-2:h=480' -c:v h264_vaapi -qp 25 -y output_$i.mp4; done
+
+
+
+
