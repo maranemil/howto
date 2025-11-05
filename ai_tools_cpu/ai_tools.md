@@ -447,3 +447,11 @@ https://paraphrasetool.com/langs/paraphrasing-tool-romanian#ok
 https://smodin.io/de/text-automatisch-in-deutscher-sprache-umformulieren
 https://smodin.io/ro/sa-redenumeasca-automat-textul-in-limba-romana-gratuit#ok
 https://www.paraphrasing.io/ro/article-rewriter
+
+### image to html
+https://html.onlineviewer.net/
+https://github.com/abi/screenshot-to-code
+https://www.img2html.com/picture-to-html
+https://www.imagetotext.io/image-to-html
+https://products.aspose.app/words/conversion/image-to-html#
+https://www.yeschat.ai/gpts-2OToJUCJ7R-Image-to-HTML
