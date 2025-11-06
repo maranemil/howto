@@ -9,6 +9,13 @@ https://github.com/vuedo/vuedo					# https://vuejsfeed.com/
 https://github.com/LavaLite/cms
 https://github.com/ladybirdweb/faveo-helpdesk	# http://www.faveohelpdesk.com/
 https://github.com/timegridio/timegrid 			# https://timegrid.io/
+
+
+https://github.com/hubleto/erp
+https://laraveldaily.com/post/large-laravel-open-source-projects
+https://www.drupalarchitect.info/
+https://github.com/LaravelDaily/Large-Laravel-PHP-Project-Examples
+
 ```
 ```
 ############################################################################################################
