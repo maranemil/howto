@@ -1,0 +1,256 @@
+sudo unattended-upgrade -d --dry-run
+sudo unattended-upgrade -d # Idem --debug
+
+
+
+apt-get -s dist-upgrade | grep "^Inst"
+apt-get -s dist-upgrade |grep "^Inst" |grep -i securi 
+
+
+//////////////////
+
+install security updates only
+
+apt-get -s dist-upgrade | grep "^Inst" | grep -i securi | awk -F " " {'print $2'} | xargs apt-get install
+sudo apt list --upgradable | grep security |cut -d\/ -f1|xargs sudo apt-get install -y
+
+###################################################
+
+npm i -g @continuedev/cli
+npm r -g @continuedev/cli
+
+apt install npm
+npm i -g @continuedev/cli && cn "Explore this repo and provide a concise summary of it's contents"
+
+////////////////
+https://docs.docker.com/engine/install/linux-postinstall/
+https://tabby.tabbyml.com/docs/quick-start/installation/linux/
+https://tabby.tabbyml.com/docs/quick-start/installation/docker/
+https://hub.docker.com/r/ollama/ollama
+
+apt  install curl
+apt  install docker.io
+
+sudo groupadd docker
+sudo usermod -aG docker $USER
+
+
+sudo systemctl enable docker.service
+sudo systemctl enable containerd.service
+
+docker run hello-world
+
+
+
+docker run -d \
+  --name tabby \
+  --gpus all \
+  -p 8080:8080 \
+  -v $HOME/.tabby:/data \
+  registry.tabbyml.com/tabbyml/tabby \
+    serve \
+    --model StarCoder-1B \
+    --chat-model Qwen2-1.5B-Instruct \
+    --device cuda
+    
+    
+docker run -d \
+  --name tabby \
+  -p 8080:8080 \
+  -v $HOME/.tabby:/data \
+  registry.tabbyml.com/tabbyml/tabby \
+    serve \
+    --model StarCoder-1B \
+    --chat-model Qwen2-1.5B-Instruct
+ 
+ 
+docker run -d --name tabby -p 8080:8080 -v $HOME/.tabby:/data registry.tabbyml.com/tabbyml/tabby serve --model StarCoder-1B --chat-model Qwen2-1.5B-Instruct
+ 
+ 
+docker run --entrypoint /opt/tabby/bin/tabby-cpu -it -p 18080:8080 -v 
+docker exec  tabby  -it  /bin/bash
+ docker update -h
+
+ 
+ 
+ 
+docker-compose.yml
+
+version: '3.5'
+
+services:
+  tabby:
+    restart: always
+    image: registry.tabbyml.com/tabbyml/tabby
+    command: serve --model StarCoder-1B --chat-model Qwen2-1.5B-Instruct --device cuda
+    volumes:
+      - "$HOME/.tabby:/data"
+    ports:
+      - 8080:8080
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+              
+              
+# For CPU-only environments
+./tabby serve --model StarCoder-1B --chat-model Qwen2-1.5B-Instruct
+ 
+ 
+# For GPU-enabled environments (where DEVICE is cuda or vulkan)
+./tabby serve --model StarCoder-1B --chat-model Qwen2-1.5B-Instruct --device $DEVICE
+
+
+CPU
+docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+curl localhost:11434
+
+GPU
+docker run -d --gpus=all -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+
+
+AMD GPU
+docker run -d --device /dev/kfd --device /dev/dri -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama:rocm
+
+
+apt remove libreoffice*
+apt autoremove
+apt-get clean
+
+http://localhost:8080/
+http://0.0.0.0:8080/
+
+docker exec -it tabby /bin/bash
+
+
+docker rm -vf $(docker ps -aq)
+docker rmi -f $(docker images -aq)
+docker system prune -a --volumes
+docker system prune -a
+
+
+
+docker exec -it ollama /bin/bash
+docker update --cpus 2 ollama
+
+
+apt install tmux
+ollama pull gemma3:270m
+ollama pull qwen2.5-coder:0.5b
+ollama pull starcoder:1b
+ollama pull qwen2.5-coder:1.5b
+ollama pull qwen2.5-coder:3b
+ollama pull gemma3:1b
+ollama pull qwen2.5:0.5b
+ollama pull qwen2.5:1.5b
+
+
+curl localhost:11434
+
+name: My Local Config
+version: 0.0.1
+schema: v1
+models:
+  - uses: ollama/qwen2.5-coder-7b
+  - uses: ollama/gemma3:270m
+
+
+
+#ok 
+
+name: My Local Config
+version: 0.0.1
+schema: v1
+models:
+  - name: Autodetect
+    provider: ollama
+    model: AUTODETECT
+    roles:
+      - chat
+      - edit
+      - apply
+      - rerank
+      - autocomplete
+      
+
+
+https://docs.continue.dev/guides/ollama-guide
+https://code.visualstudio.com/docs/configure/custom-layout
+https://medium.com/@sagar.ingalagi/run-a-local-llm-in-vs-code-with-continue-dev-your-private-ai-coding-assistant-and-auto-complete-42595b9f2b61
+
+name: Local Assistant
+version: 1.0.0
+schema: v1
+
+models:
+  - name: Qwen2.5-Coder 3B
+    provider: ollama
+    model: qwen2.5-coder:3b
+    roles:
+      - chat
+      - edit
+      - apply
+
+  - name: Qwen2.5-Coder 1.5B (Autocomplete)
+    provider: ollama
+    model: qwen2.5-coder:1.5b
+    roles:
+      - autocomplete
+
+  - name: Autodetect
+    provider: ollama
+    model: AUTODETECT
+
+context:
+  - provider: code
+  - provider: docs
+  - provider: diff
+  - provider: terminal
+  - provider: problems
+  - provider: folder
+  - provider: codebase
+
+https://docs.docker.com/reference/cli/docker/container/export/
+https://www.geeksforgeeks.org/devops/export-and-import-docker-containers-and-images/
+https://docs.docker.com/reference/cli/docker/image/import/
+https://docs.docker.com/reference/cli/docker/container/create/
+
+image IO
+docker save -o <filename>.tar <image_name>
+docker load -i <filename>.tar
+docker images
+
+container IO
+docker export ollamalocalcpu > ollamalocalcpu_20251203.tar
+docker export --output="ollamalocalcpu_20251203.tar" ollamalocalcpu
+docker import ollamalocalcpu_20251203.tar ollamalocalcpu
+docker ps
+
+docker export <container_id> -o <filename>.tar
+docker import <filename>.tar <new_image_name>
+
+docker start ollamalocalcpu
+docker exec -it ollamalocalcpu /bin/bash
+
+
+
+
+
+https://docs.continue.dev/ide-extensions/chat/quick-start
+
+Start Fresh
+Press Cmd/Ctrl + L (VS Code) or Cmd/Ctrl + J (JetBrains) in an empty chat to start a new session.
+
+
+https://ollama.com/blog/python-javascript-libraries
+https://github.com/ollama/ollama-python/blob/main/README.md
+https://pypi.org/project/ollama/
+https://github.com/hidai25/eval-view
+https://github.com/ollama/ollama
+https://github.com/ollama/ollama-python
+https://github.com/chyok/ollama-gui#
+https://pypi.org/project/ollama-python/
+https://docs.ollama.com/integrations/n8n

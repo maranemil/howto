@@ -613,7 +613,9 @@ for i in $(ffmpeg -encoders| grep -w "V..." | cut -d ' ' -f 3); do ffmpeg -i inp
  14M Okt 26 20:10 output_vc2.mp4
  
 1x
-for i in *.mp4; do ffmpeg -i $i  -vf scale=-2:480 -c:v libx264 -crf 26 -preset fast -c:a aac -b:a 96k -threads 1 output_$i.mp4; done
+rename 's/ /_/g' *
+for i in *.mp4; do ffmpeg -i $i  -vf scale=-2:480 -c:v libx264 -crf 26 -preset superfast -c:a aac -b:a 96k -threads 2 output_$i.mp4; done
+
 3x
 for i in *.mp4; do ffmpeg -i $i  -vf scale=-2:480 -c:v libx264 -crf 36 -preset superfast -c:a aac -b:a 96k -threads 1 output_$i.mp4; done
 ~~~
