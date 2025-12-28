@@ -1270,3 +1270,7 @@ sudo chsh -s /usr/bin/bash $(whoami) # or sudo chsh -s /bin/bash $(whoami)
 # sudo dpkg-reconfigure dash
 # cat /etc/shells
 ~~~
+
+
+### get random line
+sort -R file.csv | head -n 1
