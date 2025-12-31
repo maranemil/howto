@@ -1,0 +1,285 @@
+
+
+
+##############################################
+ComfyUI
+##############################################
+
+https://github.com/comfyanonymous/ComfyUI
+https://docs.comfy.org/installation/manual_install#amd
+https://docs.comfy.org/installation/manual_install#linux
+https://docs.comfy.org/installation/desktop/linux
+https://www.comfy.org/download
+https://huggingface.co/Tongyi-MAI/Z-Image-Turbo
+
+
+git clone git@github.com:comfyanonymous/ComfyUI.git
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm6.0
+cd ComfyUI
+pip install -r requirements.txt
+python main.py
+
+----
+
+13GB + 20GB models 
+docker run --cpus=1.5 -it --name comfy -p 127.0.0.1:8188:8080 -v ./src:/app debian:latest  /bin/bash;
+
+apt install git
+git clone https://github.com/comfyanonymous/ComfyUI.git
+cd ComfyUI
+
+apt install python3-pip
+apt install python3.11-venv
+apt install python3-venv -y
+python3 -m venv pytorch_env
+source pytorch_env/bin/activate
+
+pip3 install torch torchvision --break-system-packages  #1GB
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu --break-system-packages
+
+
+pip install -r requirements.txt
+python main.py --cpu
+To see the GUI go to: http://127.0.0.1:8188
+
+docker ps --size
+
+----
+
+
+https://github.com/comfyanonymous/ComfyUI
+https://docs.comfy.org/installation/manual_install#amd
+https://docs.docker.com/engine/network/port-publishing/
+https://docs.docker.com/reference/cli/docker/network/create/
+
+docker run --cpus=1.5 -it --network=host --name comfy -p 127.0.0.1:8188:8080 -v ./src:/app debian:latest  /bin/bash;
+docker start comfy
+docker exec -ti comfy bash
+apt update
+
+
+apt install wget
+
+2gb - cpu 
+10min 512x512
+1min 256x256
+3min 360x360
+wget https://huggingface.co/Comfy-Org/stable-diffusion-v1-5-archive/resolve/main/v1-5-pruned-emaonly-fp16.safetensors
+
+In ComfyUI Steps is literally the number of steps it takes to generate your output
+
+In ComfyUI (and other AI image generators), CFG (Classifier-Free Guidance) Scale controls how strictly the AI follows your text prompt, acting as a "creativity vs. obedience" dial; a low CFG (e.g., 2-6) allows more artistic freedom/imagination, while a high CFG (e.g., 10+) forces tighter adherence to the prompt but risks artifacts or burnt-out details. It balances the prompt's influence against the model's inherent randomness to shape the final image. 
+
+
+17gb
+wget https://huggingface.co/Comfy-Org/flux1-schnell/resolve/main/flux1-schnell-fp8.safetensors?download=true
+https://huggingface.co/Comfy-Org/flux1-schnell/resolve/main/flux1-schnell-fp8.safetensors?download=true
+put it in your ComfyUI/models/checkpoints/ directory.
+
+10gb
+https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/main/sd_xl_base_1.0.safetensors?download=true
+https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0/resolve/main/sd_xl_refiner_1.0.safetensors?download=true
+
+ 
+6gb
+https://huggingface.co/stabilityai/sdxl-turbo/resolve/main/sd_xl_turbo_1.0_fp16.safetensors
+ 
+
+
+4gb
+https://huggingface.co/jiangchengchengNLP/qwen3-4b-fp8-scaled/tree/main
+https://huggingface.co/Tongyi-MAI/Z-Image-Turbo/tree/main/vae
+https://huggingface.co/Comfy-Org/z_image_turbo/tree/main/split_files/vae
+
+
+
+
+docker export comfy > comfy_20251229.tar
+docker export --output="comfy_20251229.tar" comfy
+docker import comfy_20251229.tar comfy
+
+
+
+#######################################################
+#  ComfyUI cli 
+#######################################################
+
+
+https://docs.comfy.org/troubleshooting/overview
+
+# Use CPU mode
+comfy launch -- --cpu
+ 
+# Low VRAM mode
+comfy launch -- --lowvram
+ 
+# Ultra-low VRAM mode
+comfy launch -- --novram
+ 
+# Enable model CPU offloading
+comfy launch -- --cpu-vae
+
+# Low VRAM mode (uses cpu for text encoder)
+python main.py --lowvram
+
+# CPU mode (very slow but works with any hardware, only use as absolute last resort)
+python main.py --cpu
+
+# Disable previews (saves VRAM and processing)
+python main.py --preview-method none
+
+# Use optimized attention mechanisms
+python main.py --use-pytorch-cross-attention
+python main.py --use-flash-attention
+
+# Async weight offloading
+python main.py --async-offload
+
+# Reserve specific VRAM amount for OS (in GB)
+python main.py --reserve-vram 2
+
+# Disable smart memory management
+python main.py --disable-smart-memory
+
+# Use different caching strategies
+python main.py --cache-none      # Less RAM usage, but slower
+python main.py --cache-lru 10    # Cache 10 results, faster
+python main.py --cache-classic   # Use the old style (aggressive) caching.
+
+
+# Update pip first
+python -m pip install --upgrade pip
+
+# Install dependencies
+pip install -r requirements.txt
+
+# For NVIDIA GPUs (CUDA 12.8)
+pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu128
+
+# For AMD GPUs (Linux only - ROCm 6.3)
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm6.3
+
+# Install stable ROCm PyTorch (6.3.1 at the time of writing)
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm6.3
+
+# For nightly builds (ROCm 6.4 at the time of writing), which might have performance improvements)
+pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/rocm6.4
+
+# Force CPU mode
+python main.py --cpu
+
+# With memory optimization
+python main.py --force-fp16 --cpu
+
+
+
+pip3 show torch
+pip3 show xformers
+
+VRAM management mode
+Options:
+auto: Automatically manages VRAM, allocating VRAM based on model size and requirements
+lowvram: Low VRAM mode, uses minimal VRAM, may affect generation quality
+normalvram: Standard VRAM mode, balances VRAM usage and performance
+highvram: High VRAM mode, uses more VRAM for better performance
+novram: No VRAM usage, runs entirely on system memory
+cpu: CPU-only mode, doesn’t use graphics card
+
+
+[--tls-certfile TLS_CERTFILE] [--enable-cors-header [ORIGIN]]
+               [--max-upload-size MAX_UPLOAD_SIZE]
+               [--base-directory BASE_DIRECTORY]
+               [--extra-model-paths-config PATH [PATH ...]]
+               [--output-directory OUTPUT_DIRECTORY]
+               [--temp-directory TEMP_DIRECTORY]
+               [--input-directory INPUT_DIRECTORY] [--auto-launch]
+               [--disable-auto-launch] [--cuda-device DEVICE_ID]
+               [--default-device DEFAULT_DEVICE_ID]
+               [--cuda-malloc | --disable-cuda-malloc]
+               [--force-fp32 | --force-fp16]
+               [--fp32-unet | --fp64-unet | --bf16-unet | --fp16-unet | --fp8_e4m3fn-unet | --fp8_e5m2-unet | --fp8_e8m0fnu-unet]
+               [--fp16-vae | --fp32-vae | --bf16-vae] [--cpu-vae]
+               [--fp8_e4m3fn-text-enc | --fp8_e5m2-text-enc | --fp16-text-enc | --fp32-text-enc | --bf16-text-enc]
+               [--force-channels-last] [--directml [DIRECTML_DEVICE]]
+               [--oneapi-device-selector SELECTOR_STRING]
+               [--disable-ipex-optimize] [--supports-fp8-compute]
+               [--preview-method [none,auto,latent2rgb,taesd]]
+               [--preview-size PREVIEW_SIZE]
+               [--cache-classic | --cache-lru CACHE_LRU | --cache-none | --cache-ram [CACHE_RAM]]
+               [--use-split-cross-attention | --use-quad-cross-attention | --use-pytorch-cross-attention | --use-sage-attention | --use-flash-attention]
+               [--disable-xformers]
+               [--force-upcast-attention | --dont-upcast-attention]
+               [--enable-manager]
+               [--disable-manager-ui | --enable-manager-legacy-ui]
+               [--gpu-only | --highvram | --normalvram | --lowvram | --novram | --cpu]
+               [--reserve-vram RESERVE_VRAM] [--async-offload [NUM_STREAMS]]
+               [--disable-async-offload] [--force-non-blocking]
+               [--default-hashing-function {md5,sha1,sha256,sha512}]
+               [--disable-smart-memory] [--deterministic] [--fast [FAST ...]]
+               [--disable-pinned-memory] [--mmap-torch-files] [--disable-mmap]
+               [--dont-print-server] [--quick-test-for-ci]
+               [--windows-standalone-build] [--disable-metadata]
+               [--disable-all-custom-nodes]
+               [--whitelist-custom-nodes WHITELIST_CUSTOM_NODES [WHITELIST_CUSTOM_NODES ...]]
+               [--disable-api-nodes] [--multi-user]
+               [--verbose [{DEBUG,INFO,WARNING,ERROR,CRITICAL}]]
+               [--log-stdout] [--front-end-version FRONT_END_VERSION]
+               [--front-end-root FRONT_END_ROOT]
+               [--user-directory USER_DIRECTORY]
+               [--enable-compress-response-body]
+               [--comfy-api-base COMFY_API_BASE] [--database-url DATABASE_URL]
+
+https://huggingface.co/sd2-community/stable-diffusion-2/tree/main
+https://civitai.com/models/62437/v1-5-pruned-emaonly
+https://huggingface.co/prithivMLmods/OpenSDI-SD2.1-SigLIP2/tree/main
+https://comfyui-wiki.com/en/resource/controlnet-models/controlnet-flux-1
+https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5/tree/main
+https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/Install-and-Run-on-AMD-GPUs
+https://github.com/AUTOMATIC1111/stable-diffusion-webui
+https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5/tree/main
+https://huggingface.co/stabilityai/sdxl-turbo/resolve/main/sd_xl_turbo_1.0_fp16.safetensors
+
+
+https://docs.comfy.org/tutorials/basic/text-to-image
+https://huggingface.co/stabilityai/sdxl-turbo/tree/main#
+https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/tree/main
+https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-0.9/tree/main
+https://huggingface.co/stabilityai/stable-diffusion-xl-base-0.9/tree/main
+https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0/tree/main
+https://huggingface.co/Comfy-Org/stable_diffusion_2.1_unclip_repackaged/tree/main
+https://huggingface.co/Comfy-Org/z_image_turbo/tree/main/split_files/diffusion_models#
+
+Z-Image-Turbo
+https://www.stablediffusiontutorials.com/2025/11/z-image-turbo.html
+https://huggingface.co/Tongyi-MAI/Z-Image-Turbo
+https://comfyanonymous.github.io/ComfyUI_examples/z_image/
+https://huggingface.co/Comfy-Org/z_image_turbo/blob/main/split_files/text_encoders/qwen_3_4b.safetensors
+https://huggingface.co/Comfy-Org/z_image_turbo/blob/main/split_files/diffusion_models/z_image_turbo_bf16.safetensors
+https://huggingface.co/Comfy-Org/z_image_turbo/blob/main/split_files/vae/ae.safetensors
+
+
+cd models/checkpoints/
+wget https://huggingface.co/stabilityai/sdxl-turbo/resolve/main/sd_xl_turbo_1.0_fp16.safetensors
+
+/ComfyUI/models/checkpoints# ls -la
+total 8858200
+drwxr-xr-x  2 root root       4096 Dec 31 15:11 .
+drwxr-xr-x 24 root root       4096 Dec 29 17:47 ..
+-rw-r--r--  1 root root          0 Dec 29 17:33 put_checkpoints_here
+-rw-r--r--  1 root root 6938081905 Dec 31 15:20 sd_xl_turbo_1.0_fp16.safetensors
+-rw-r--r--  1 root root 2132696762 Dec 29 19:02 v1-5-pruned-emaonly-fp16.safetensors
+
+
+
+
+Pruned Emaonly is for generating images, pruned is for further training models (creating new cpkt files). 
+
+
+python3 main.py --cpu --use-split-cross-attention
+python3 main.py --cpu --use-pytorch-cross-attention --fast
+python3 main.py --cpu --cpu-vae --auto-launch --fast
+
+https://github.com/ArdeniusAI/ComfyUI-cpu
+
+
+
