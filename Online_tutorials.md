@@ -743,3 +743,20 @@
 - https://www.youtube.com/watch?v=GlGpSQsS8uc
 - https://www.youtube.com/watch?v=0QUgvfuKvWU
 - https://www.youtube.com/watch?v=-Jyj4xlwss8
+
+#
+### misc
+
+- https://www.youtube.com/watch?v=r1vsfDMO-WE&list=PL8HmoRTjTSlEgS2GsFaDr9zDLC1xD9FZf  Python  Visually Explained
+- https://www.youtube.com/watch?v=IKANyuUn1rc&list=PL4KX3oEgJcfd7I5KmEnUF7cTVqrvCPRDj  Python Tutorials 2025
+
+- https://www.youtube.com/watch?v=FsEpxuHth7Y  AI Course for Beginners
+- https://www.youtube.com/watch?v=E0Hmnixke2g  All Machine Learning algorithms explained in 17 min
+- https://www.youtube.com/watch?v=NnYLzGMk8Tg  Can I Clone a $250M App Better Than a Pro Developer? (With No Code)
+- https://www.youtube.com/watch?v=1q8aq-zdG50  KOMPLETTER n8n KURS
+- https://www.youtube.com/watch?v=WKIjkxxNH0c  Build a Support Agent with Vercel AI SDK
+- https://www.youtube.com/watch?v=UIf-SlmMays  n8n Tutorial – Zero to Hero Course
+- https://www.youtube.com/watch?v=g-JgaoheyTo  Deploy an AI SaaS End To End
+- https://www.youtube.com/watch?v=PcbuKRNtCUc  Essential Machine Learning and AI Concepts Animated
+- https://www.youtube.com/watch?v=-9bo8HlSxwQ  CS50x 2026 - Artificial Intelligence
+- https://www.youtube.com/watch?v=CqGuzvh8uis  10 Community Nodes  in n8n
