@@ -367,4 +367,61 @@ https://www.digitalocean.com/community/tutorials/face-generation-with-dcgans
 
 
 
+#####################################################
+
+docker run --rm -it   --name  fedora fedora bash
+docker run  -it   --name  debian-stable-diffusion-webui debian bash
+
+git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui
+cd stable-diffusion-webui
+python3 -m venv venv
+source venv/bin/activate
+git config --global --add safe.directory /home/stable-diffusion-webui
+python3 -m pip install torch==2.1.2 torchvision==0.16.2 --extra-index-url https://download.pytorch.org/whl/cu121 
+pip install -r requirements.txt
+git clone --config core.filemode=false "https://github.com/AUTOMATIC1111/stable-diffusion-webui-assets.git" "/home/stable-diffusion-webui/repositories/stable-diffusion-webui-assets"
+git -C "/home/stable-diffusion-webui/repositories/stable-diffusion-webui-assets" fetch --refetch --no-auto-gc
+
+sudo useradd stabled
+adduser stabled sudo
+usermod -a -G sudo stabled
+sudo su stabled
+./webui.sh --skip-torch-cuda-test  --use-cpu all --no-half 
+
+https://hub.docker.com/r/universonic/stable-diffusion-webui
+
+# cpu
+docker run --rm -ti -p 8080:8080   --name stable-diffusion-webui -d universonic/stable-diffusion-webui
+docker run  -ti -p 8080:8080 --restart unless-stopped  --name stable-diffusion-webui -d universonic/stable-diffusion-webui
+
+docker exec -it stable-diffusion-webui bash
+./webui.sh --use-cpu 6
+
+https://hub.docker.com/r/siutin/stable-diffusion-webui-docker
+
+docker run -it --name sdw --network host  -v $(pwd)/models:/app/stable-diffusion-webui/models   -v $(pwd)/outputs:/app/stable-diffusion-webui/outputs   --rm siutin/stable-diffusion-webui-docker:latest-cpu   bash webui.sh --skip-torch-cuda-test --use-cpu all --precision full --no-half --share
+
+
+
+docker system prune
+docker system prune -a --volumes
+docker image prune
+docker image prune -a
+docker image prune -a --filter "until=24h"
+docker system prune --filter "until=24h"
+docker container prune
+docker container prune --force --filter "until=5m"
+docker container prune --force --filter "until=2017-01-04T13:10:00"
+
+
+# nvidia
+docker run --gpus all --restart unless-stopped -p 8080:8080 \
+  --name stable-diffusion-webui -d universonic/stable-diffusion-webui
+
+docker run --gpus all --restart unless-stopped -p 8080:8080 \
+  -v /my/own/datadir/extensions:/app/stable-diffusion-webui/extensions \
+  -v /my/own/datadir/models:/app/stable-diffusion-webui/models \
+  -v /my/own/datadir/outputs:/app/stable-diffusion-webui/outputs \
+  -v /my/own/datadir/localizations:/app/stable-diffusion-webui/localizations \
+  --name stable-diffusion-webui -d universonic/stable-diffusion-webui
 
