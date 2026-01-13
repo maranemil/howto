@@ -171,12 +171,12 @@
 | https://www.youtube.com/watch?v=TPMlZxRRaBQ | Tableau for Data Science and Data Visualization                          | 
 | https://www.youtube.com/watch?v=1Rs2ND1ryYc | CSS Tutorial - Zero to Hero (Complete Course)                            | 
 | https://www.youtube.com/watch?v=yK1uBHPdp30 | Operating Systems                                                        | 
- | https://www.youtube.com/watch?v=lenV5aVOMp8 | Full Stack Project with Vue.js and Flask                                 |
- | https://www.youtube.com/watch?v=I_xLMmNeLDY | The Ultimate Vue 3 Tutorial                                              |
- | https://www.youtube.com/watch?v=cBTWTTB1R3U | Login Registration Form Restful Api Using Spring boot Vue JS             |
- | https://www.youtube.com/watch?v=4Re7hZdsoOI | Full Laravel VueJS Tutorial: CRUD with Authentication                    |
- | https://www.youtube.com/watch?v=xTtL8E4LzTQ | Java Full Course for free (2025)                                         |
- | https://www.youtube.com/watch?v=rH3zE7VlIMs | Learn Git - The Full Course  by ThePrimeagen.                            |
+| https://www.youtube.com/watch?v=lenV5aVOMp8 | Full Stack Project with Vue.js and Flask                                 |
+| https://www.youtube.com/watch?v=I_xLMmNeLDY | The Ultimate Vue 3 Tutorial                                              |
+| https://www.youtube.com/watch?v=cBTWTTB1R3U | Login Registration Form Restful Api Using Spring boot Vue JS             |
+| https://www.youtube.com/watch?v=4Re7hZdsoOI | Full Laravel VueJS Tutorial: CRUD with Authentication                    |
+| https://www.youtube.com/watch?v=xTtL8E4LzTQ | Java Full Course for free (2025)                                         |
+| https://www.youtube.com/watch?v=rH3zE7VlIMs | Learn Git - The Full Course  by ThePrimeagen.                            |
 | https://www.youtube.com/watch?v=DZI0Zl-1JqQ | You Don’t Know Git - Edward Thomson                                      |
 | https://www.youtube.com/watch?v=dCLhUialKPQ | React JS 19 Full Course 2025                                             |
 | https://www.youtube.com/watch?v=BTfcnxXevm0 | full 10-Hour React Native Course                                         |
@@ -223,7 +223,7 @@
 | https://www.youtube.com/watch?v=Fn28yINqNfo  | Let's Learn .NET - C#   Full 2-hour course                        |
 | https://www.youtube.com/watch?v=KMsggpCaS10  | C# Crash Course  The Ultimate C Sharp .NET Tutorial for Beginners |
 | https://www.youtube.com/watch?v=J0FhV3dM80o  | Every single feature of C# in 10 minutes                          | 
-| https://www.youtube.com/watch?v=eIHKZfgddLM  | What is .NET?                .NET Core 101 [1 of 8]               |                                 
+| https://www.youtube.com/watch?v=eIHKZfgddLM  | What is .NET? .NET Core 101 1 of                                  |                         
 | https://www.youtube.com/watch?v=0QUgvfuKvWU  | C# Fundamentals for Beginners                                     | 
 | https://www.youtube.com/watch?v=QtiM87MV27w  | how to Build an ASP.NET Core MVC Web App                          | 
 
@@ -414,6 +414,7 @@
 | https://www.youtube.com/watch?v=U9T6YkEDkMo | React App                                                 |
 | https://www.youtube.com/watch?v=WTOnKNjiPWU | Learn JavaScript: Full-Stack From Scratch                 |
 | https://www.youtube.com/watch?v=s6KEnPfFpZw | Node.js Tutorial für Anfänger DE                          |
+| https://www.youtube.com/watch?v=VeNfHj6MhgA | Vue.js Crash Course 2025                                  |
 
 ### AWS
 
@@ -620,7 +621,10 @@
 | https://www.youtube.com/watch?v=yq0dSkA1vpM&list=PLLWMQd6PeGY1C3YLCyAUIDJrPS9S3WdLK         | WinForm vs WPF vs UWP vs Console                               | 
 | https://www.youtube.com/watch?v=5ZhlBJr95-4&list=PLLWMQd6PeGY1TU4qj0UW9iS28j5O-Iwa4         | Building a Sample API in C#                                    | 
 | https://www.youtube.com/watch?v=tFCZw-wZVtg&list=PLdo4fOcmZ0oWUrumb503vY3v6O3u3P4rW         | C# and .NET Development in VS Code for Beginners               | 
-|https://www.youtube.com/playlist?list=PLXV9Vh2jYcjbnv67sXNDJiO8MWLA3ZJKR| Generative AI |
+| https://www.youtube.com/playlist?list=PLXV9Vh2jYcjbnv67sXNDJiO8MWLA3ZJKR                    | Generative AI                                                  |
+| https://www.youtube.com/watch?v=r1vsfDMO-WE&list=PL8HmoRTjTSlEgS2GsFaDr9zDLC1xD9FZf         | Python  Visually Explained                                     |
+| https://www.youtube.com/watch?v=IKANyuUn1rc&list=PL4KX3oEgJcfd7I5KmEnUF7cTVqrvCPRDj         | Python Tutorials 2025                                          |
+
 
 
 ### Envato Tuts+
@@ -657,57 +661,67 @@
 ### AI Code Assistants
 
 
-| Link URL                                     | Title                                                       |
-|:---------------------------------------------|:------------------------------------------------------------|
-| https://www.youtube.com/watch?v=2dGlCXn2n8E  | App with Junie in WebStorm                                  | 
-| https://www.youtube.com/watch?v=54__1gK2K4U  | Junie and Kotlin in IntelliJ IDEA                           | 
-| https://www.youtube.com/watch?v=6JeaYWDyw54  | ULTIMATE Guide to ChatGPT 4o                                | 
-| https://www.youtube.com/watch?v=CJUbQ1QiBUY  | Building a REST API with GitHub Copilot                     | 
-| https://www.youtube.com/watch?v=Coot4TFTkN4  | MCP Servers in VS Code                                      |
-| https://www.youtube.com/watch?v=DaXQ5L7r7Lg  | Replit Agent                                                | 
-| https://www.youtube.com/watch?v=FByI3Xl846A  | how to build a team of AI Agents                            | 
-| https://www.youtube.com/watch?v=HdafI0t3sEY  | RAG vs. CAG                                                 | 
-| https://www.youtube.com/watch?v=JV3pL1_mn2M  | AI Engineering                                              | 
-| https://www.youtube.com/watch?v=NFSqoVjI54w  | AI Assistant in WebStorm                                    | 
-| https://www.youtube.com/watch?v=O8hQStVHTO0  | 36 ChatGPT Tips                                             | 
-| https://www.youtube.com/watch?v=OlJSTTof9mo  | Custom Voice AI Agent                                       | 
-| https://www.youtube.com/watch?v=QfJB9d0J3Iw  | Learn Claude AI                                             |
-| https://www.youtube.com/watch?v=V_0dNE-H2gw  | AI Locally in Minutes                                       |
-| https://www.youtube.com/watch?v=VePxCcF99w4  | Agent mode tools in VS Code                                 | 
-| https://www.youtube.com/watch?v=_5vD9QDlgDg  | How to Use Junie in PyCharm                                 | 
-| https://www.youtube.com/watch?v=b5xcWdzAB5c  | GitHub Copilot 101                                          | 
-| https://www.youtube.com/watch?v=hdhdEbOBKK8  | Let Me Code It For You Junie                                |
-| https://www.youtube.com/watch?v=jXp5D5ZnxGM  | GitHub Copilot in VS Code                                   |
-| https://www.youtube.com/watch?v=lTr06V9uyts  | JetBrains AI Assistant in PhpStorm                          | 
-| https://www.youtube.com/watch?v=lvQ-EC5afIA  | AI Agent with Semantic Kernel, MongoDB Atlas, C# and OpenAI | 
-| https://www.youtube.com/watch?v=oUGIcp2Iph0  | Meet Junie, the Coding Agent by JetBrains                   |
-| https://www.youtube.com/watch?v=oyKgaysS9_g  | How to Use Junie in IntelliJ IDEA                           | 
-| https://www.youtube.com/watch?v=p_XU79kegb0  | 9 Copilot Feature                                           | 
-| https://www.youtube.com/watch?v=sYepbevm8TY	 | GitHub Copilot agent                                        | 
-| https://www.youtube.com/watch?v=vdBxfFVXnc0  | GitHub Copilot in VS Code (2025)                            | 
-| https://www.youtube.com/watch?v=z1lVsLPXn2c  | AI Coding Agent  Junie                                      |
-| https://www.youtube.com/watch?v=zMSmhKDajKQ  | AI Assistant in IntelliJ IDEA                               | 
-| https://www.youtube.com/watch?v=zqVtHYFYQY8  | ChatGPT Tutorial 2025                                       | 
-| https://www.youtube.com/watch?v=r0c7RhMFcww  | AI Business in 6 Hours                                      | 
-| https://www.youtube.com/watch?v=VwC-fUpVLYY  | Tasks using YAML AI Agent Design Patterns                   | 
-| https://www.youtube.com/watch?v=rOTdkSSHBBc  | fully Functional MCP Server from Swagger Specs              |
-| https://www.youtube.com/watch?v=HBH4M43GcJQ  | Setup AI Agent Locally                                      | 
-| https://www.youtube.com/watch?v=AhPXGKG4RZ4  | Build AI Agents with Docker                                 | 
-| https://www.youtube.com/watch?v=ynhl8KjjS3Y  | Build Self-Learning AI Agents                               | 
-| https://www.youtube.com/watch?v=sv5FYDlTG3c  | MCP Server Build Tutorial                                   | 
-| https://www.youtube.com/watch?v=T76NbeTdDFA  | Gemini CLI in 6 Minutes                                     |
-| https://www.youtube.com/watch?v=KUCZe1xBKFM  | Introducing Gemini CLI                                      |
-| https://www.youtube.com/watch?v=ZWfZQa05C8s  | Gemini CLI                                                  |
-| https://www.youtube.com/watch?v=_lYjNPROdSU  | Google Gemini CLI Agent                                     |
-| https://www.youtube.com/watch?v=Cio7Bg7ODfQ  | Build Anything with MCP                                     | 
-| https://www.youtube.com/watch?v=DO91djWmudU  | Convert REST API to MCP Server using Spring AI              | 
-| https://www.youtube.com/watch?v=_d0duu3dED4  | Why Everyone’s Talking About MCP                            | 
-| https://www.youtube.com/watch?v=2716IUeCIQo  | Playwright MCP                                              | 
-| https://www.youtube.com/watch?v=FLpS7OfD5-s  | Why MCP really is a big deal                                | 
-| https://www.youtube.com/watch?v=TQsP_PlCY1I  | Build Anything with MCP Agents,                             | 
-| https://www.youtube.com/watch?v=L94WBLL0KjY  | Build Anything with MCP Agents                              | 
-| https://www.youtube.com/watch?v=WLvQCIUWebs  | 5 simple AI Agent                                           | 
-| https://www.youtube.com/watch?v=b7oUQJc-P5Y  | Intro to Agent Mode in Visual Studio                        | 
+| Link URL                                     | Title                                                               |
+|:---------------------------------------------|:--------------------------------------------------------------------|
+| https://www.youtube.com/watch?v=2dGlCXn2n8E  | App with Junie in WebStorm                                          | 
+| https://www.youtube.com/watch?v=54__1gK2K4U  | Junie and Kotlin in IntelliJ IDEA                                   | 
+| https://www.youtube.com/watch?v=6JeaYWDyw54  | ULTIMATE Guide to ChatGPT 4o                                        | 
+| https://www.youtube.com/watch?v=CJUbQ1QiBUY  | Building a REST API with GitHub Copilot                             | 
+| https://www.youtube.com/watch?v=Coot4TFTkN4  | MCP Servers in VS Code                                              |
+| https://www.youtube.com/watch?v=DaXQ5L7r7Lg  | Replit Agent                                                        | 
+| https://www.youtube.com/watch?v=FByI3Xl846A  | how to build a team of AI Agents                                    | 
+| https://www.youtube.com/watch?v=HdafI0t3sEY  | RAG vs. CAG                                                         | 
+| https://www.youtube.com/watch?v=JV3pL1_mn2M  | AI Engineering                                                      | 
+| https://www.youtube.com/watch?v=NFSqoVjI54w  | AI Assistant in WebStorm                                            | 
+| https://www.youtube.com/watch?v=O8hQStVHTO0  | 36 ChatGPT Tips                                                     | 
+| https://www.youtube.com/watch?v=OlJSTTof9mo  | Custom Voice AI Agent                                               | 
+| https://www.youtube.com/watch?v=QfJB9d0J3Iw  | Learn Claude AI                                                     |
+| https://www.youtube.com/watch?v=V_0dNE-H2gw  | AI Locally in Minutes                                               |
+| https://www.youtube.com/watch?v=VePxCcF99w4  | Agent mode tools in VS Code                                         | 
+| https://www.youtube.com/watch?v=_5vD9QDlgDg  | How to Use Junie in PyCharm                                         | 
+| https://www.youtube.com/watch?v=b5xcWdzAB5c  | GitHub Copilot 101                                                  | 
+| https://www.youtube.com/watch?v=hdhdEbOBKK8  | Let Me Code It For You Junie                                        |
+| https://www.youtube.com/watch?v=jXp5D5ZnxGM  | GitHub Copilot in VS Code                                           |
+| https://www.youtube.com/watch?v=lTr06V9uyts  | JetBrains AI Assistant in PhpStorm                                  | 
+| https://www.youtube.com/watch?v=lvQ-EC5afIA  | AI Agent with Semantic Kernel, MongoDB Atlas, C# and OpenAI         | 
+| https://www.youtube.com/watch?v=oUGIcp2Iph0  | Meet Junie, the Coding Agent by JetBrains                           |
+| https://www.youtube.com/watch?v=oyKgaysS9_g  | How to Use Junie in IntelliJ IDEA                                   | 
+| https://www.youtube.com/watch?v=p_XU79kegb0  | 9 Copilot Feature                                                   | 
+| https://www.youtube.com/watch?v=sYepbevm8TY	 | GitHub Copilot agent                                                | 
+| https://www.youtube.com/watch?v=vdBxfFVXnc0  | GitHub Copilot in VS Code (2025)                                    | 
+| https://www.youtube.com/watch?v=z1lVsLPXn2c  | AI Coding Agent  Junie                                              |
+| https://www.youtube.com/watch?v=zMSmhKDajKQ  | AI Assistant in IntelliJ IDEA                                       | 
+| https://www.youtube.com/watch?v=zqVtHYFYQY8  | ChatGPT Tutorial 2025                                               | 
+| https://www.youtube.com/watch?v=r0c7RhMFcww  | AI Business in 6 Hours                                              | 
+| https://www.youtube.com/watch?v=VwC-fUpVLYY  | Tasks using YAML AI Agent Design Patterns                           | 
+| https://www.youtube.com/watch?v=rOTdkSSHBBc  | fully Functional MCP Server from Swagger Specs                      |
+| https://www.youtube.com/watch?v=HBH4M43GcJQ  | Setup AI Agent Locally                                              | 
+| https://www.youtube.com/watch?v=AhPXGKG4RZ4  | Build AI Agents with Docker                                         | 
+| https://www.youtube.com/watch?v=ynhl8KjjS3Y  | Build Self-Learning AI Agents                                       | 
+| https://www.youtube.com/watch?v=sv5FYDlTG3c  | MCP Server Build Tutorial                                           | 
+| https://www.youtube.com/watch?v=T76NbeTdDFA  | Gemini CLI in 6 Minutes                                             |
+| https://www.youtube.com/watch?v=KUCZe1xBKFM  | Introducing Gemini CLI                                              |
+| https://www.youtube.com/watch?v=ZWfZQa05C8s  | Gemini CLI                                                          |
+| https://www.youtube.com/watch?v=_lYjNPROdSU  | Google Gemini CLI Agent                                             |
+| https://www.youtube.com/watch?v=Cio7Bg7ODfQ  | Build Anything with MCP                                             | 
+| https://www.youtube.com/watch?v=DO91djWmudU  | Convert REST API to MCP Server using Spring AI                      | 
+| https://www.youtube.com/watch?v=_d0duu3dED4  | Why Everyone’s Talking About MCP                                    | 
+| https://www.youtube.com/watch?v=2716IUeCIQo  | Playwright MCP                                                      | 
+| https://www.youtube.com/watch?v=FLpS7OfD5-s  | Why MCP really is a big deal                                        | 
+| https://www.youtube.com/watch?v=TQsP_PlCY1I  | Build Anything with MCP Agents,                                     | 
+| https://www.youtube.com/watch?v=L94WBLL0KjY  | Build Anything with MCP Agents                                      | 
+| https://www.youtube.com/watch?v=WLvQCIUWebs  | 5 simple AI Agent                                                   | 
+| https://www.youtube.com/watch?v=b7oUQJc-P5Y  | Intro to Agent Mode in Visual Studio                                | 
+| https://www.youtube.com/watch?v=FsEpxuHth7Y  | AI Course for Beginners                                             | 
+| https://www.youtube.com/watch?v=E0Hmnixke2g  | All Machine Learning algorithms explained in 17 min                 | 
+| https://www.youtube.com/watch?v=NnYLzGMk8Tg  | Can I Clone a $250M App Better Than a Pro Developer? (With No Code) | 
+| https://www.youtube.com/watch?v=1q8aq-zdG50  | COMPLETER n8n KURS                                                  | 
+| https://www.youtube.com/watch?v=WKIjkxxNH0c  | Build a Support Agent with Vercel AI SDK                            | 
+| https://www.youtube.com/watch?v=UIf-SlmMays  | n8n Tutorial – Zero to Hero Course                                  | 
+| https://www.youtube.com/watch?v=g-JgaoheyTo  | Deploy an AI SaaS End To End                                        | 
+| https://www.youtube.com/watch?v=PcbuKRNtCUc  | Essential Machine Learning and AI Concepts Animated                 | 
+| https://www.youtube.com/watch?v=-9bo8HlSxwQ  | CS50x 2026 - Artificial Intelligence                                | 
+| https://www.youtube.com/watch?v=CqGuzvh8uis  | 10 Community Nodes  in n8n                                          | 
 
 
 #
@@ -747,16 +761,5 @@
 #
 ### misc
 
-- https://www.youtube.com/watch?v=r1vsfDMO-WE&list=PL8HmoRTjTSlEgS2GsFaDr9zDLC1xD9FZf  Python  Visually Explained
-- https://www.youtube.com/watch?v=IKANyuUn1rc&list=PL4KX3oEgJcfd7I5KmEnUF7cTVqrvCPRDj  Python Tutorials 2025
 
-- https://www.youtube.com/watch?v=FsEpxuHth7Y  AI Course for Beginners
-- https://www.youtube.com/watch?v=E0Hmnixke2g  All Machine Learning algorithms explained in 17 min
-- https://www.youtube.com/watch?v=NnYLzGMk8Tg  Can I Clone a $250M App Better Than a Pro Developer? (With No Code)
-- https://www.youtube.com/watch?v=1q8aq-zdG50  KOMPLETTER n8n KURS
-- https://www.youtube.com/watch?v=WKIjkxxNH0c  Build a Support Agent with Vercel AI SDK
-- https://www.youtube.com/watch?v=UIf-SlmMays  n8n Tutorial – Zero to Hero Course
-- https://www.youtube.com/watch?v=g-JgaoheyTo  Deploy an AI SaaS End To End
-- https://www.youtube.com/watch?v=PcbuKRNtCUc  Essential Machine Learning and AI Concepts Animated
-- https://www.youtube.com/watch?v=-9bo8HlSxwQ  CS50x 2026 - Artificial Intelligence
-- https://www.youtube.com/watch?v=CqGuzvh8uis  10 Community Nodes  in n8n
+
