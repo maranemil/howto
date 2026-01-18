@@ -415,6 +415,8 @@
 | https://www.youtube.com/watch?v=WTOnKNjiPWU | Learn JavaScript: Full-Stack From Scratch                 |
 | https://www.youtube.com/watch?v=s6KEnPfFpZw | Node.js Tutorial für Anfänger DE                          |
 | https://www.youtube.com/watch?v=VeNfHj6MhgA | Vue.js Crash Course 2025                                  |
+| https://www.youtube.com/watch?v=wIyHSOugGGw | Every React Concept Explained in 12 Minutes               | 
+| https://www.youtube.com/watch?v=ek7hmv5PVV8 | PERN Admin Dashboard in 2026                              |
 
 ### AWS
 
@@ -722,6 +724,7 @@
 | https://www.youtube.com/watch?v=PcbuKRNtCUc  | Essential Machine Learning and AI Concepts Animated                 | 
 | https://www.youtube.com/watch?v=-9bo8HlSxwQ  | CS50x 2026 - Artificial Intelligence                                | 
 | https://www.youtube.com/watch?v=CqGuzvh8uis  | 10 Community Nodes  in n8n                                          | 
+| https://www.youtube.com/watch?v=B0TJC4lmzEM  | Advanced AI Agents                                                  |
 
 
 #
@@ -759,7 +762,20 @@
 - https://www.youtube.com/watch?v=-Jyj4xlwss8
 
 #
-### misc
+### Traversy Media
 
+- https://www.youtube.com/watch?v=VeNfHj6MhgA  Vue.js Crash Course
+- https://www.youtube.com/watch?v=mTz0GXj8NN0  Next.js Crash Course
+- https://www.youtube.com/watch?v=3dHNOWTI7H8  Angular Crash Course
+- https://www.youtube.com/watch?v=32M1al-Y6Ag  Node.js Crash Course
+- https://www.youtube.com/watch?v=CnH3kAXSrmU  Express Crash Course
+- https://www.youtube.com/watch?v=BUCiSSyIGGU  PHP For Beginners | 3+ Hour Crash Course
+- https://www.youtube.com/watch?v=JJmcL1N2KQs  Python Crash Course For Beginners
+- https://www.youtube.com/watch?v=3YW65K6LcIA  Flexbox Crash Course
+- https://www.youtube.com/watch?v=0xMQfnTU6oo  CSS Grid Crash Course
+- https://www.youtube.com/watch?v=9ylj9NR0Lcg  MySQL Crash Course | Learn SQL
+- https://www.youtube.com/watch?v=-56x56UppqQ  MongoDB Crash Course
+- https://www.youtube.com/watch?v=8TMQcRcBnW8  FastAPI Crash Course
+- https://www.youtube.com/watch?v=zI5ducyfyNc  NumPy in 40 Minutes
 
 

@@ -694,7 +694,7 @@ ssh-keygen -l -f ~/.ssh/id_rsa
 ```
 
 
-### Post-installation steps for Linux
+### docker Post-installation steps for Linux
 ```
 https://docs.docker.com/engine/install/linux-postinstall/
 
@@ -703,6 +703,7 @@ sudo groupadd docker
 sudo usermod -aG docker $USER
 sudo systemctl enable docker.service
 sudo systemctl enable containerd.service
+systemctl --user show-environment
 reboot
 ```
 
@@ -1276,4 +1277,12 @@ sudo chsh -s /usr/bin/bash $(whoami) # or sudo chsh -s /bin/bash $(whoami)
 ~~~
 sort -R file.csv | head -n 1
 sort -R file.csv | head -n 1 | cut -d "," -f 2-4
+~~~
+
+
+
+### get open ports
+~~~
+nmap --top-ports 50 -v localhost
+nmap --open -v localhost
 ~~~
