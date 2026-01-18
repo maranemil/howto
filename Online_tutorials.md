@@ -779,3 +779,12 @@
 - https://www.youtube.com/watch?v=zI5ducyfyNc  NumPy in 40 Minutes
 
 
+#
+### misc
+
+- https://www.youtube.com/watch?v=wIyHSOugGGw  Every React Concept Explained in 12 Minutes
+- https://www.youtube.com/watch?v=LOH1l-MP_9k  ALL React Hooks Explained in 12 Minutes
+- https://www.youtube.com/watch?v=DSjXjpWQYDw  BMI Calculator in React JS
+- https://www.youtube.com/watch?v=syK7yprJknM  OpenCode 
+- https://www.youtube.com/watch?v=g1k4U-mXF90  n8n Tutorial DE
+- https://www.youtube.com/watch?v=DO3wPYJKpxk  docker MCP Catalog 
