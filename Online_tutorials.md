@@ -777,6 +777,111 @@
 - https://www.youtube.com/watch?v=-56x56UppqQ  MongoDB Crash Course
 - https://www.youtube.com/watch?v=8TMQcRcBnW8  FastAPI Crash Course
 - https://www.youtube.com/watch?v=zI5ducyfyNc  NumPy in 40 Minutes
+- https://www.youtube.com/watch?v=bCpFbERgj7s  React Native Crash Course
+- https://www.youtube.com/watch?v=V0P3Opf-zUs  TTS & Translate App
+- https://www.youtube.com/watch?v=vA5TTz6BXhY  GitHub Crash Course 2025
+- https://www.youtube.com/watch?v=PyaSnpXssks  React Admin Crash Course 2025
+- https://www.youtube.com/watch?v=tL01EzN2-xA  Encore Crash Course
+- https://www.youtube.com/watch?v=fEDT4lWWe9g  Microservices Crash Course 
+- https://www.youtube.com/watch?v=LDB4uaJ87e0  react Crash Course
+- https://www.youtube.com/watch?v=EPaLg4U_K1o  Exploring React 19 Features
+- https://www.youtube.com/watch?v=CYH04BJzamo  Prisma Crash Course
+- https://www.youtube.com/watch?v=1YU83Lw58eo  Write A ChatGPT Chatbot With Node.js
+- https://www.youtube.com/watch?v=t7S0I78sloI  Build A RealTime Chat App With React & Appwrite Cloud
+- https://www.youtube.com/watch?v=R4AhvYORZRY  MERN Crash Course | JWT Authentication, 
+- https://www.youtube.com/watch?v=o_joulYVndM  ChatGPT Crash Course
+- https://www.youtube.com/watch?v=Y6KDk5iyrYE  Next.js 13 Crash Course 
+- https://www.youtube.com/watch?v=89NJdbYTgJ8  Vite Crash Course 
+- https://www.youtube.com/watch?v=uwAqEzhyjtw  Command Line Crash Course For Beginners
+- https://www.youtube.com/watch?v=BcLNfwF04Kw  graphQL Crash Course 
+- https://www.youtube.com/watch?v=r5iWCtfltso  Alpine.js Crash Course
+- https://www.youtube.com/watch?v=MYyJ4PuL4pY  Laravel From Scratch | 4+ Hour
+- https://www.youtube.com/watch?v=dFgzHOX84xQ  Tailwind Crash Course | Project From Scratch
+- https://www.youtube.com/watch?v=IZGNcSuwBZs  Webpack 5 Crash Course 
+- https://www.youtube.com/watch?v=2QQGWYe7IDU  MongoDB Crash Course 2022
+- https://www.youtube.com/watch?v=k2Zk5cbiZhg  React Router v6 Major Changes
+- https://www.youtube.com/watch?v=3TVy6GdtNuQ  Svelte Crash Course
+- https://www.youtube.com/watch?v=3dHNOWTI7H8  angular Crash Course
+- https://www.youtube.com/watch?v=MT-GJQIY3EU  Laravel 8 REST API With Sanctum Authentication
+- https://www.youtube.com/watch?v=qZXt1Aom3Cs  Vue JS Crash Course
+- https://www.youtube.com/watch?v=w7ejDZ8SWv8  React JS Crash Course
+- https://www.youtube.com/watch?v=MFh0Fd7BsjE  Laravel Crash Course
+- https://www.youtube.com/watch?v=_1xa8Bsho6A  Vanilla Node.js REST API | No Framework
+- https://www.youtube.com/watch?v=HRmdj-HpJyE  React Admin Crash Course
+- https://www.youtube.com/watch?v=E3NHd-PkLrQ  Realtime Chat App | React, GraphQL & Websockets
+- https://www.youtube.com/watch?v=KuaI6mphFNc  Deno & PostgreSQL 
+- https://www.youtube.com/watch?v=BHwgnGEhYG8  Python & MySQL Crash Course
+- https://www.youtube.com/watch?v=NHHhiqwcfRM  Deno Crash Course
+- https://www.youtube.com/watch?v=PCWaFLy3VUo  Web Components Crash Course
+- https://www.youtube.com/watch?v=nu5mdN2JIwM  Sass Crash Course
+- https://www.youtube.com/watch?v=5UsGnjPYxLU  Create Desktop Apps With Web Technologies - NW.js
+- https://www.youtube.com/watch?v=e1IyzVyrLSU  Python Django Crash Course
+- https://www.youtube.com/watch?v=oaJq1mQ3dFI  Redis Caching in Node.js
+- https://www.youtube.com/watch?v=-56x56UppqQ  MongoDB Crash Course
+- https://www.youtube.com/watch?v=UBOj6rqRUME  Tailwind CSS Crash Course
+- https://www.youtube.com/watch?v=uK2RnIzrQ0M  svelte Crash Course
+- https://www.youtube.com/watch?v=8jP4xpga6yY  Getting Started With Three.js
+- https://www.youtube.com/watch?v=ON3I5N3PZKs  Moment, BcryptJS, JWT Simple, Request
+- https://www.youtube.com/watch?v=iYM2zFP3Zn0  hTTP Crash Course & Exploration
+- https://www.youtube.com/watch?v=ltzlhAxJr74  Nuxt JS Crash Course
+- https://www.youtube.com/watch?v=9ylj9NR0Lcg  MySQL Crash Course | Learn SQL
+- https://www.youtube.com/watch?v=wqhNoDE6pb4  NestJS Crash Course
+- https://www.youtube.com/watch?v=5lVQgZzLMHc  Vuex Crash Course | State Management
+- https://www.youtube.com/watch?v=zF34dRivLOw  Rust Crash Course | Rustlang
+- https://www.youtube.com/watch?v=L72fhGm1tfE  Express JS Crash Course
+- https://www.youtube.com/watch?v=fBNz5xF-Kx4  Node.js Crash Course
+- https://www.youtube.com/watch?v=Fdf5aTYRW0E  Angular Crash Course (2019)
+- https://www.youtube.com/watch?v=pYhLEV-sRpY  Quick Wordpress Setup With Docker
+- https://www.youtube.com/watch?v=Wy9q22isx3U  Vue JS Crash Course (2019)
+- https://www.youtube.com/watch?v=PTZiDnuC86g  REST API With Flask & SQL Alchemy
+- https://www.youtube.com/watch?v=sBws8MSXN7A  React JS Crash Course (2019)
+- https://www.youtube.com/watch?v=bqn-sx0v-l0  node.js Rest API With Restify, Mongoose,
+- https://www.youtube.com/watch?v=SqrbIlUwR0U  Golang Crash Course
+- https://www.youtube.com/watch?v=pPy0GQJLZUM  Ruby On Rails In 60 Minutes
+- https://www.youtube.com/watch?v=SKXkC4SqtRk  GitHub Pages
+- https://www.youtube.com/watch?v=Kyx2PsuwomE  exploring Docker
+- https://www.youtube.com/watch?v=vDJpGenyHaA  javaScript OOP Crash Course 
+- https://www.youtube.com/watch?v=PoRJizFvM7s  async JS Crash Course - Callbacks, Promises, Async Await
+- https://www.youtube.com/watch?v=OEWXbpUMODk  pHP REST API From Scratch
+- https://www.youtube.com/watch?v=vBreXjkizgo  Vagrant Crash Course
+- https://www.youtube.com/watch?v=HlYFW2zaYQM  push Notifications Using Node.js 
+- https://www.youtube.com/watch?v=6YhqQ2ZW1sc  gatsby JS Crash Course
+- https://www.youtube.com/watch?v=ltzlhAxJr74  nuxt JS Crash Course
+- https://www.youtube.com/watch?v=t5ZedKnWX9E  Symfony 4 -
+- https://www.youtube.com/watch?v=3f5Q9wDePzY  Uploading Files to MongoDB With GridFS
+- https://www.youtube.com/watch?v=EildM6OMcoQ  PHP, MySQL & Stripe API Payment App
+- https://www.youtube.com/watch?v=DJ6PD_jBtU0  Full Stack Vue.js & Laravel
+- https://www.youtube.com/watch?v=g9_6KmiBISk  yarn Package Manager Crash Course
+- https://www.youtube.com/watch?v=IkOVe40Sy0U  Next.js Crash Course
+- https://www.youtube.com/watch?v=v0t42xBIYIs  React & Express Starter
+- https://www.youtube.com/watch?v=4pc6cgisbKE  laravel 5.5 API 
+- https://www.youtube.com/watch?v=sQUB039MG0I  CSS Variables Tutorial
+- https://www.youtube.com/watch?v=ERiwIGsaZN8  OctoberCMS
+- https://www.youtube.com/watch?v=iWUR04B42Hc  Babel & Webpack 
+- https://www.youtube.com/watch?v=D6esTdOLXh4  python Django Crash Course
+- https://www.youtube.com/watch?v=9Qzmri1WaaE  node.js Image Uploading With Multer
+- https://www.youtube.com/watch?v=jHDhaSSKmB0  nPM Crash Course
+- https://www.youtube.com/watch?v=kEW6f7Pilc4  PDO Crash Course (PHP)
+- https://www.youtube.com/watch?v=kN1Czs0m1SU  Build an Electron App in Under 60 Minutes
+- https://www.youtube.com/watch?v=0ik6X4DJKCc  JavaScript DOM Crash Course
+- https://www.youtube.com/watch?v=82hnvUYY6QA  AJAX Crash Course (Vanilla JavaScript)
+- https://www.youtube.com/watch?v=hQWRp-FdTpc  sSH Crash Course
+- https://www.youtube.com/watch?v=7r4xVDI2vho  jest Crash Course
+- https://www.youtube.com/watch?v=Oive66jrwBs  fetch API Introduction
+- https://www.youtube.com/watch?v=rmXVmfx3rNo  sass Workflow
+- https://www.youtube.com/watch?v=EN6Dx22cPRI  MySQL With Node.js
+- https://www.youtube.com/watch?v=1zkgdLZEdwM  Fake REST API with JSON-Server
+- https://www.youtube.com/watch?v=KhzGSHNhnbI  Angular In 60 Minutes
+- https://www.youtube.com/watch?v=9494-2E4riQ  Build A Meteor.js App In 45 Minutes
+- https://www.youtube.com/watch?v=IiPQYQT2-wg  Bulma CSS Framework Crash Course
+- https://www.youtube.com/watch?v=6g8G3YQtQt4  laravel To Shared Hosting The Easy Way
+- https://www.youtube.com/watch?v=GcFJjpMFJvI  C# .NET Application in 60 Minutes
+- https://www.youtube.com/watch?v=1rw9MfIleEg  Gulp JS Crash Course
+- https://www.youtube.com/watch?v=WoQTjJepDWM  Codeigniter PHP App
+- https://www.youtube.com/watch?v=lziuNMk_8eQ  Webpack Crash Course
+- https://www.youtube.com/watch?v=zRwy8gtgJ1A  Python Flask From Scratch
+- https://www.youtube.com/watch?v=9S-mphgE5fA  Node.js & Redis App From Scratch
+- https://www.youtube.com/watch?v=DBADrF0C2ls  vue js Translator App Using The Yandex API
 
 
 #
@@ -788,3 +893,19 @@
 - https://www.youtube.com/watch?v=syK7yprJknM  OpenCode 
 - https://www.youtube.com/watch?v=g1k4U-mXF90  n8n Tutorial DE
 - https://www.youtube.com/watch?v=DO3wPYJKpxk  docker MCP Catalog 
+
+#
+### Generative AI 
+
+- https://github.com/microsoft/AI-For-Beginners
+- https://learn.microsoft.com/en-us/shows/generative-ai-for-beginners/introduction-to-generative-ai-and-llms-generative-ai-for-beginners
+- https://learn.nvidia.com/courses/course-detail?course_id=course-v1:DLI+S-FX-07+V1- 
+- https://microsoft.github.io/generative-ai-for-beginners/#/
+- https://www.skills.google/paths/118
+- https://www.w3schools.com/gen_ai/
+- https://www.youtube.com/playlist?list=PLlrxD0HtieHj2nfK54c62lcs3-YSTx3Je 
+- https://www.youtube.com/playlist?list=PLmsFUfdnGr3zAgBMu4l1W713a0W__zAMl
+- https://www.youtube.com/watch?v=CEo_y9L2UFs
+- https://www.youtube.com/watch?v=k7HaeJs-N-o
+- https://www.youtube.com/watch?v=nJ25yl34Uqw
+- https://www.youtube.com/watch?v=uWUEmAsBK0k
