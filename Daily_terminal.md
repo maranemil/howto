@@ -427,6 +427,11 @@ python3 -m http.server 8888
 * pip list
 * pip3 list
 * aptitude search '~i!~M'
+
+# update snap packs
+# sudo snap refresh --list
+# snap refresh --time
+sudo killall snap-store &&  sudo snap refresh 
 ```
 
 ##### snap packages
