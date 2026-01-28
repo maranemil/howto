@@ -120,6 +120,7 @@
 | https://remaker.ai/face-swap-free/                                | Image face swap                      |
 | https://stabledifffusion.com/stable-diffusion-3-medium            | stable-diffusion-3-medium            |
 | https://huggingface.co/spaces/sczhou/CodeFormer                   | CodeFormer image Resizer             |
+| https://imgupscaler.com/                                          | image upscaler                       |
 
 
 ### voice

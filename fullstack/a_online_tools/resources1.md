@@ -1187,12 +1187,21 @@ https://paywallreader.com/
 - https://resnote.com/summarizer#transcript
 - https://youtubesummarizer.com/watch/#transcript
 
+
+------------------------------------------------------------------
+
+### YouTube get thumbnail
+
+
+http://www.get-youtube-thumbnail.com/
+
 ------------------------------------------------------------------
 
 ### ASCII-Emoticons
 
 ¯\_(ツ)_/¯
 https://emojicombos.com/ASCII-Emoticons
+https://emojidb.org/ascii-emoticons-emojis
 
 
 
