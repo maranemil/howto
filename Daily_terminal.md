@@ -483,6 +483,9 @@ sudo ls /var/lib/snapd/snapshots
 * sudo apt-get autoremove
 * sudo apt-get autoclean
 
+remove all old compiled kernels
+sudo apt autoremove --purge
+
 dpkg -l | grep linux-image
 sudo apt update && sudo apt autoclean && sudo apt autoremove
 
