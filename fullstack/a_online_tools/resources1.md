@@ -997,6 +997,17 @@ https://paywallreader.com/
 - https://www.tutorialspoint.com/java16/index.htm
 - https://wiki.selfhtml.org/wiki/HTML/Elemente
 
+
+------------------------------------------------------------------
+
+### Online Synth
+
+- https://www.gsn-lib.org/apps/cardboardsynth/index.html
+- https://sodaphonic.com/instruments/synth
+- https://midi.city/
+- https://www.tinysynth.uk/
+- https://virtualpiano.eu/
+
 ------------------------------------------------------------------
 
 ### Text translator

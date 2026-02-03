@@ -190,6 +190,10 @@
 - https://chatgpt.com/g/g-imyJKxg6n-informal-german-translator
 
 
+### PDF 2 TXT
+- https://github.com/docling-project/docling
+
+
 ### video
 
 | url                                                                            | type                  |
@@ -252,6 +256,9 @@
 |:--------------------------|:-----------------------|
 | https://www.lalal.ai/     | Lalal.ai voice remover | 
 | https://vocalremover.org/ | voice remover          |
+| https://voice.ai/tools/stem-splitter#ok | splitter |
+| https://samplab.com/audio-to-midi | audio-to-midi  |
+
 
 ### misc
 
@@ -398,7 +405,7 @@
 
 
 ### Image describe
-- https://imagedescriber.online/
+- https://imagedescriber.online/de
 - https://describepicture.cc/
 
 
