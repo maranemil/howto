@@ -1294,3 +1294,32 @@ sort -R file.csv | head -n 1 | cut -d "," -f 2-4
 nmap --top-ports 50 -v localhost
 nmap --open -v localhost
 ~~~
+
+
+### add ip4 to vbox
+~~~
+Note: If the VM only gets IPv6, disable IPv6 temporarily via GRUB_CMDLINE_LINUX_DEFAULT="ipv6.disable=1 quiet splash" in /etc/default/grub and reboot. This isolates whether IPv4 is blocked by IPv6 interference. 
+
+nmcli connection show
+For Linux VMs (e.g., Ubuntu):
+
+Use nmcli to set a static IP:
+sudo nmcli connection modify "UUID" IPv4.address "192.168.1.100/24"
+sudo nmcli connection modify "UUID" IPv4.gateway "192.168.1.1"
+sudo nmcli connection modify "UUID" IPv4.dns "8.8.8.8"
+sudo nmcli connection modify "UUID" IPv4.method manual
+sudo nmcli connection down "UUID"
+sudo nmcli connection up "UUID"
+
+Edit the file:
+sudo nano /etc/network/interfaces
+
+Replace the dhcp line with:
+auto eth0
+iface eth0 inet static
+    address 192.168.1.100
+    netmask 255.255.255.0
+    gateway 192.168.1.1
+    dns-nameservers 8.8.8.8 1.1.1.1
+
+~~~
