@@ -1323,3 +1323,17 @@ iface eth0 inet static
     dns-nameservers 8.8.8.8 1.1.1.1
 
 ~~~
+
+
+### stop tracker-miner
+~~~
+Temporary Solution: Kill the Process
+
+pkill tracker-miner-fs
+# Or if you have tracker3
+pkill tracker-miner-fs-3
+systemctl --user mask tracker-miner-fs-3.service tracker-extract-3.service tracker-writeback-3.service tracker-miner-fs-control-3.service tracker-xdg-portal-3.service
+
+tracker3 reset -s -r
+~~~
+
