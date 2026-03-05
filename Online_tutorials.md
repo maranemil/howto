@@ -725,10 +725,10 @@
 | https://www.youtube.com/watch?v=-9bo8HlSxwQ  | CS50x 2026 - Artificial Intelligence                                | 
 | https://www.youtube.com/watch?v=CqGuzvh8uis  | 10 Community Nodes  in n8n                                          | 
 | https://www.youtube.com/watch?v=B0TJC4lmzEM  | Advanced AI Agents                                                  |
-| https://www.youtube.com/watch?v=jyWbD_Tp-EA  | SIM using Ollama | 
-| https://www.youtube.com/watch?v=E4l91XKQSgw  | Local AI Agent With Python (Ollama, LangChain & RAG) | 
-| https://www.youtube.com/watch?v=ntDIxaeo3Wg  | Claude Code  | 
-| https://www.youtube.com/watch?v=3zSANOIBHYw  | Local AI Coding Workflow | 
+| https://www.youtube.com/watch?v=jyWbD_Tp-EA  | SIM using Ollama                                                    | 
+| https://www.youtube.com/watch?v=E4l91XKQSgw  | Local AI Agent With Python (Ollama, LangChain & RAG)                | 
+| https://www.youtube.com/watch?v=ntDIxaeo3Wg  | Claude Code                                                         | 
+| https://www.youtube.com/watch?v=3zSANOIBHYw  | Local AI Coding Workflow                                            | 
 
 
 #
