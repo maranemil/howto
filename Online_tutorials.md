@@ -729,6 +729,9 @@
 | https://www.youtube.com/watch?v=E4l91XKQSgw  | Local AI Agent With Python (Ollama, LangChain & RAG)                | 
 | https://www.youtube.com/watch?v=ntDIxaeo3Wg  | Claude Code                                                         | 
 | https://www.youtube.com/watch?v=3zSANOIBHYw  | Local AI Coding Workflow                                            | 
+| https://www.youtube.com/watch?v=st534T7-mdE  | The Ultimate Beginner’s Guide to OpenClaw                           | 
+| https://www.youtube.com/watch?v=tnsrnsy_Lus  | ClawdBot Full Tutorial                                              | 
+| https://www.youtube.com/watch?v=CcrC5zSv1iA  | LLM Fine-Tuning Course                                              | 
 
 
 #
