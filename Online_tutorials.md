@@ -626,8 +626,9 @@
 | https://www.youtube.com/playlist?list=PLXV9Vh2jYcjbnv67sXNDJiO8MWLA3ZJKR                    | Generative AI                                                  |
 | https://www.youtube.com/watch?v=r1vsfDMO-WE&list=PL8HmoRTjTSlEgS2GsFaDr9zDLC1xD9FZf         | Python  Visually Explained                                     |
 | https://www.youtube.com/watch?v=IKANyuUn1rc&list=PL4KX3oEgJcfd7I5KmEnUF7cTVqrvCPRDj         | Python Tutorials 2025                                          |
+| https://www.youtube.com/watch?v=fv9ii3W5htQ&list=PLHJns8WZXCdvaD7-xR7e5FJNW_6H9w-wC         | Introduction to Reverse Engineering                            |
 
-
+  
 
 ### Envato Tuts+
 
@@ -732,7 +733,8 @@
 | https://www.youtube.com/watch?v=st534T7-mdE  | The Ultimate Beginner’s Guide to OpenClaw                           | 
 | https://www.youtube.com/watch?v=tnsrnsy_Lus  | ClawdBot Full Tutorial                                              | 
 | https://www.youtube.com/watch?v=CcrC5zSv1iA  | LLM Fine-Tuning Course                                              | 
-
+| https://www.youtube.com/watch?v=6vPaitNQMGY  | OpenClaw 2.0                                                        | 
+   
 
 #
 ### csharp playlists
