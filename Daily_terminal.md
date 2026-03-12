@@ -1337,3 +1337,23 @@ systemctl --user mask tracker-miner-fs-3.service tracker-extract-3.service track
 tracker3 reset -s -r
 ~~~
 
+
+### update firmware
+~~~
+lspci
+lspci -vmmnn
+
+sudo fwupdmgr refresh 
+sudo fwupdmgr update
+
+Devices with no available firmware updates: 
+ • System Firmware
+ • UEFI Device Firmware
+ • UEFI dbx
+Devices with the latest available firmware version:
+ • KBG40ZMT128G TOSHIBA MEMORY
+
+sudo apt-get update && sudo apt-get dist-upgrade -f
+sudo fwupdmgr get-updates
+sudo rm -i /var/crash/*.crash
+~~~
