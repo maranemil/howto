@@ -1252,7 +1252,17 @@ sudo iptables -A INPUT -p tcp --dport 4000 -j ACCEPT
 
 #chk
 ss -lntu | grep :4000   
-netstat -na | grep :4000   
+netstat -na | grep :4000  
+
+
+sudo ufw allow ssh
+sudo ufw allow 22
+sudo ufw delete 22/tcp
+sudo ufw status
+sudo ufw status numbered
+sudo ufw status verbose
+sudo ufw show added
+sudo ufw reset
 ~~~
 
 
