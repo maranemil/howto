@@ -437,8 +437,15 @@
 - https://gitdiagram.com/
 - https://github.com/ahmedkhaleel2004/gitdiagram/blob/main/backend/app/prompts.py
 
+
 ### chat 
 - https://character.ai/
+
+
+### text enhancing
+- https://www.copy.ai/tools/linkedin-headline-generator
+- https://ahrefs.com/writing-tools/paragraph-rewriter
+- https://www.imagetotext.info/
 
 
 ### text format cleaner - remove bold italic
