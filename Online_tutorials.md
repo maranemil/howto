@@ -734,7 +734,13 @@
 | https://www.youtube.com/watch?v=tnsrnsy_Lus  | ClawdBot Full Tutorial                                              | 
 | https://www.youtube.com/watch?v=CcrC5zSv1iA  | LLM Fine-Tuning Course                                              | 
 | https://www.youtube.com/watch?v=6vPaitNQMGY  | OpenClaw 2.0                                                        | 
-   
+| https://www.youtube.com/watch?v=JepVi1tBNEE  | Agent Skills in VS Code                                             | 
+| https://www.youtube.com/watch?v=dutyOc_cAEU  | VS Code Agent Mode                                                  | 
+| https://www.youtube.com/watch?v=5NxGqnTazR8  | Ultimate Agent Mode                                                 | 
+| https://www.youtube.com/watch?v=PAgLzv1Lp1o  | Agent HQ for VS Code                                                | 
+| https://www.youtube.com/watch?v=J5KTpq7hVn4  | Multi-agent workflows in VS Code                                    | 
+| https://www.youtube.com/watch?v=VePxCcF99w4  | Agent mode tools in VS Code                                         | 
+
 
 #
 ### csharp playlists

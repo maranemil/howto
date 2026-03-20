@@ -229,6 +229,7 @@ https://github.com/debitbug/excalidraw-chrome-extension
 
 - https://app.diagrams.net/
 - https://cloud.smartdraw.com/
+- https://excalidraw.com/
 
 ------------------------------------------------------------------
 
