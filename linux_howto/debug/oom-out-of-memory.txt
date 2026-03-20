@@ -1,0 +1,105 @@
+#####################################
+# mem check
+#####################################
+
+su
+echo 3 > /proc/sys/vm/drop_caches
+
+sudo apt install pluma
+sudo pluma /etc/default/grub
+GRUB_GFXMODE=1024x768
+sudo update-grub2
+
+sudo apt update
+sudo apt install stress-ng -y
+
+free -m
+free -mh
+df -h
+
+ps aux --sort -%mem
+dmesg | grep oom
+grep oom /var/log/*  
+# Starting systemd-oomd.service - Userspace Out-Of-Memory (OOM) Killer...
+# Listening on systemd-oomd.socket - Userspace Out-Of-Memory (OOM) Killer Socket.
+
+sudo swapoff -a && swapon -a
+echo 3 | sudo tee /proc/sys/vm/drop_caches 
+
+dd if=/dev/zero of=bigfile bs=1M count=200
+ls -lh bigfile
+time cat bigfile > /dev/null
+
+sudo fallocate -l 4G /swapfile 
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+
+sudo fallocate -l 2G /extra.swap
+sudo chmod 0600 /extra.swap
+sudo mkswap /extra.swap
+sudo swapon /extra.swap
+
+#####################################
+# oom test
+#####################################
+
+// https://www.linuxatemyram.com/play.html
+// Example: Memory leak in c
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+int main(int argc, char** argv) {
+    int max = -1;
+    int mb = 0;
+    char* buffer;
+
+    if(argc > 1)
+        max = atoi(argv[1]);
+
+    while((buffer=malloc(1024*1024)) != NULL && mb != max) {
+        memset(buffer, 0, 1024*1024);
+        mb++;
+        printf("Allocated %d MB\n", mb);
+    }
+
+    return 0;
+}
+
+
+// https://last9.io/blog/what-is-oom/
+// Example: Memory leak in JavaScript
+function leakyFunction() {
+  let array = [];
+  setInterval(() => {
+    // Adding 10000 objects to array every second
+    // without ever cleaning them up
+    for (let i = 0; i < 10000; i++) {
+      array.push({
+        data: new Array(10000).fill('x')
+      });
+    }
+  }, 1000);
+}
+
+java -Xmx4g -jar myapplication.jar
+
+#####################################
+# https://github.com/rfjakob/earlyoom
+#####################################
+
+sudo apt install earlyoom
+systemctl enable earlyoom
+systemctl start earlyoom
+systemctl restart earlyoom
+
+/etc/default/earlyoom
+EARLYOOM_ARGS="-m 5 -r 60 --avoid '(^|/)(init|Xorg|ssh)$' --prefer '(^|/)(java|chromium)$'"
+
+
+sudo apt install nohang
+udo systemctl enable --now nohang-desktop.service
+
+
+
