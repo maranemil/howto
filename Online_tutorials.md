@@ -740,6 +740,8 @@
 | https://www.youtube.com/watch?v=PAgLzv1Lp1o  | Agent HQ for VS Code                                                | 
 | https://www.youtube.com/watch?v=J5KTpq7hVn4  | Multi-agent workflows in VS Code                                    | 
 | https://www.youtube.com/watch?v=VePxCcF99w4  | Agent mode tools in VS Code                                         | 
+| https://www.youtube.com/watch?v=brLhhkUqcn4  | Claude Code Essentials                                              |
+
 
 
 #
