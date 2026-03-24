@@ -1263,6 +1263,10 @@ sudo ufw status numbered
 sudo ufw status verbose
 sudo ufw show added
 sudo ufw reset
+
+GUI
+https://help.ubuntu.com/community/Gufw
+sudo apt-get install gufw
 ~~~
 
 
