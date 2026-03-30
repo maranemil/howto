@@ -819,6 +819,7 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook   -dNOPAUSE -
 ~~~
 sudo sysctl -w vm.swappiness=20
 echo 3 | sudo tee /proc/sys/vm/drop_caches
+for i in {1..5}; do  echo 3 | sudo tee /proc/sys/vm/drop_caches; done
 sudo systemctl reload-or-restart networkd-dispatcher.service
 ~~~
 
