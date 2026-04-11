@@ -742,6 +742,9 @@
 | https://www.youtube.com/watch?v=VePxCcF99w4  | Agent mode tools in VS Code                                         | 
 | https://www.youtube.com/watch?v=brLhhkUqcn4  | Claude Code Essentials                                              |
 | https://www.youtube.com/watch?v=wlpBCazAY9Q  | OpenClaw, GitHub Copilot, Claude Code, CodeRabbit                   |
+| https://www.youtube.com/watch?v=UAMAAoSPu8o  | All 35 Claude Code Concepts Explained |
+
+
 
 
 #
