@@ -448,6 +448,10 @@
 - https://www.imagetotext.info/
 
 
+### text profanity check
+- https://app.readable.com/text/profanity/
+
+
 ### text format cleaner - remove bold italic
 - https://yaytext.com/unstyle/
 
