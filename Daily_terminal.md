@@ -1372,3 +1372,14 @@ sudo apt-get update && sudo apt-get dist-upgrade -f
 sudo fwupdmgr get-updates
 sudo rm -i /var/crash/*.crash
 ~~~
+
+
+
+### investigate open port
+~~~
+netstat -tulp
+sudo lsof -i :35139
+sudo ufw status
+sudo netstat -tulpen | grep avahi
+sudo systemctl stop avahi-daemon
+~~~
