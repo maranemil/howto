@@ -658,7 +658,9 @@
 | https://www.youtube.com/watch?v=2piPpx_HB5U | This is Bootstrap 5                   |
 | https://www.youtube.com/watch?v=rLrgj6jJ5ug | How to Use Map, Filter,               |
 | https://www.youtube.com/watch?v=X1umyXgJsA0 | Learn Modern JavaScript Fundamentals  |
-| https://www.youtube.com/watch?v=JWhRMyyF7nc | Learn Angular A                       |     
+| https://www.youtube.com/watch?v=JWhRMyyF7nc | Learn Angular A                       |  
+| https://www.youtube.com/watch?v=C842vFY5kRo | System Design Course                  |
+| https://www.youtube.com/watch?v=XCifkDC0yXA | React Native Crash Course 2026        |
 
 
 ### AI Code Assistants
@@ -742,7 +744,8 @@
 | https://www.youtube.com/watch?v=VePxCcF99w4  | Agent mode tools in VS Code                                         | 
 | https://www.youtube.com/watch?v=brLhhkUqcn4  | Claude Code Essentials                                              |
 | https://www.youtube.com/watch?v=wlpBCazAY9Q  | OpenClaw, GitHub Copilot, Claude Code, CodeRabbit                   |
-| https://www.youtube.com/watch?v=UAMAAoSPu8o  | All 35 Claude Code Concepts Explained |
+| https://www.youtube.com/watch?v=UAMAAoSPu8o  | All 35 Claude Code Concepts Explained                               |
+| https://www.youtube.com/watch?v=n1sfrc-RjyM  | OpenClaw Full Tutorial for Beginners                                |
 
 
 
