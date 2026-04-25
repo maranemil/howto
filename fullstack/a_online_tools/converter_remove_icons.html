@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Icon Remover</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fontsource-inter/400.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fontsource-inter/600.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            padding: 32px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 140px;
+            padding: 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            resize: vertical;
+            transition: border-color 0.2s;
+            outline: none;
+            color: #1f2937;
+        }
+
+        textarea:focus {
+            border-color: #6366f1;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #6366f1;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #4f46e5;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .output-section {
+            margin-top: 24px;
+        }
+
+        .output-box {
+            width: 100%;
+            min-height: 140px;
+            padding: 14px;
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            color: #1f2937;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .stats {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        .stat-item {
+            background: #f3f4f6;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        .stat-item span {
+            font-weight: 600;
+            color: #6366f1;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: #1f2937;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 Icon Remover</h1>
+        <p class="subtitle">Paste text below and remove all emojis, symbols, and icons instantly.</p>
+
+        <label for="inputText">Input Text</label>
+        <textarea id="inputText" placeholder="Paste your text with emojis or icons here... 👋🎉✨"></textarea>
+
+        <div class="actions">
+            <button class="btn-primary" id="removeBtn">Remove Icons</button>
+            <button class="btn-secondary" id="copyBtn">Copy Result</button>
+            <button class="btn-secondary" id="clearBtn">Clear</button>
+        </div>
+
+        <div class="output-section">
+            <label>Cleaned Output</label>
+            <div class="output-box" id="outputBox">Your cleaned text will appear here...</div>
+            <div class="stats" id="stats"></div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">Copied to clipboard!</div>
+
+    <script>
+        const inputText = document.getElementById('inputText');
+        const outputBox = document.getElementById('outputBox');
+        const removeBtn = document.getElementById('removeBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const stats = document.getElementById('stats');
+        const toast = document.getElementById('toast');
+
+        const emojiRegex = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{FE00}-\u{FE0F}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{200D}\u{20E3}\u{231A}-\u{231B}\u{23E9}-\u{23F3}\u{23F8}-\u{23FA}\u{25AA}-\u{25AB}\u{25B6}\u{25C0}\u{25FB}-\u{25FE}]/gu;
+
+        function removeIcons(text) {
+            let cleaned = text.replace(emojiRegex, '');
+            cleaned = cleaned.replace(/\s+/g, ' ').trim();
+            return cleaned;
+        }
+
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        removeBtn.addEventListener('click', () => {
+            const input = inputText.value;
+            if (!input.trim()) {
+                showToast('Please enter some text first!');
+                return;
+            }
+            const cleaned = removeIcons(input);
+            outputBox.textContent = cleaned || 'No text remaining after removal.';
+
+            const removedCount = (input.replace(emojiRegex, '')).length;
+            const totalChars = input.length;
+            const iconsRemoved = totalChars - removedCount - (totalChars - input.replace(/\s+/g, ' ').trim().length);
+
+            const emojiMatches = input.match(emojiRegex);
+            const iconCount = emojiMatches ? emojiMatches.length : 0;
+
+            stats.innerHTML = `
+                <div class="stat-item">Characters: <span>${cleaned.length}</span></div>
+                <div class="stat-item">Icons Removed: <span>${iconCount}</span></div>
+            `;
+        });
+
+        copyBtn.addEventListener('click', () => {
+            const text = outputBox.textContent;
+            if (!text || text === 'Your cleaned text will appear here...') {
+                showToast('Nothing to copy!');
+                return;
+            }
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Copied to clipboard!');
+            }).catch(() => {
+                showToast('Failed to copy.');
+            });
+        });
+
+        clearBtn.addEventListener('click', () => {
+            inputText.value = '';
+            outputBox.textContent = 'Your cleaned text will appear here...';
+            stats.innerHTML = '';
+        });
+    </script>
+</body>
+</html>
+
