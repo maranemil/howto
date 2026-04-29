@@ -1202,6 +1202,18 @@ https://paywallreader.com/
 
 ------------------------------------------------------------------
 
+### Language Tools
+
+
+https://languagetool.org/de/rechtschreibpruefung-deutsch
+https://languagetool.org/
+https://www.deepl.com/en/translator
+https://ahrefs.com/writing-tools/paragraph-rewriter
+https://anythingtranslate.com/translators/informal-german-translator/
+
+
+------------------------------------------------------------------
+
 ### YouTube get thumbnail
 
 
@@ -1223,4 +1235,7 @@ B3    F#4
 https://www.onlinepianist.com/virtual-piano
 https://virtualpiano.net/
 https://virtualpiano.online/
+
+
+
 
