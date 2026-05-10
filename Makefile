@@ -1,0 +1,2 @@
+pull:
+	git pull --rebase
