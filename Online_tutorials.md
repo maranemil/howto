@@ -301,18 +301,20 @@
 
 ### PHP
 
-| Link URL                                    | Title                                 |
-|:--------------------------------------------|:--------------------------------------|
-| https://www.youtube.com/watch?v=HchMW8EhWPU | Building a Symfony 3 App              | 
-| https://www.youtube.com/watch?v=D9oIu6jiYLk | Laravel Airlock with Vue for SPA Auth |
-| https://www.youtube.com/watch?v=_z9nzEUgro4 | Laravel 6 Advanced Service Container  |
-| https://www.youtube.com/watch?v=98ChVWjI6KI | Laravel 6 Beginner - e5 - Controllers |
-| https://www.youtube.com/watch?v=Bo0guUbL5uo | Symfony PHP Framework Tutorial        |
-| https://www.youtube.com/watch?v=7PpJsho5aak | Laravel 7                             |
-| https://www.youtube.com/watch?v=OK_JCtrrv-c | PHP Programming Language Tutorial     |
-| https://www.youtube.com/watch?v=ImtZ5yENzgE | Laravel PHP Framework Tutorial        |
-| https://www.youtube.com/watch?v=NihZYkNpslE | PHP Tutorial 2020                     |
-
+| Link URL                                                                 | Title                                 |
+|:-------------------------------------------------------------------------|:--------------------------------------|
+| https://www.youtube.com/watch?v=HchMW8EhWPU                              | Building a Symfony 3 App              | 
+| https://www.youtube.com/watch?v=D9oIu6jiYLk                              | Laravel Airlock with Vue for SPA Auth |
+| https://www.youtube.com/watch?v=_z9nzEUgro4                              | Laravel 6 Advanced Service Container  |
+| https://www.youtube.com/watch?v=98ChVWjI6KI                              | Laravel 6 Beginner - e5 - Controllers |
+| https://www.youtube.com/watch?v=Bo0guUbL5uo                              | Symfony PHP Framework Tutorial        |
+| https://www.youtube.com/watch?v=7PpJsho5aak                              | Laravel 7                             |
+| https://www.youtube.com/watch?v=OK_JCtrrv-c                              | PHP Programming Language Tutorial     |
+| https://www.youtube.com/watch?v=ImtZ5yENzgE                              | Laravel PHP Framework Tutorial        |
+| https://www.youtube.com/watch?v=NihZYkNpslE                              | PHP Tutorial 2020                     |
+| https://www.youtube.com/playlist?list=PLr3d3QYzkw2xabQRUpcZ_IBk9W50M9pe- | Learn PHP The Right Way               |
+| https://phptherightway.com/                                              | PHP The Right Way                     |
+| https://laracasts.com/                                                   | Laracasts                             |
 
 ### Python
 
