@@ -181,6 +181,7 @@
 | https://www.youtube.com/watch?v=dCLhUialKPQ | React JS 19 Full Course 2025                                             |
 | https://www.youtube.com/watch?v=BTfcnxXevm0 | full 10-Hour React Native Course                                         |
 | https://www.youtube.com/watch?v=XUkNR-JfHwo | SaaS App Full Course 2025                                                |
+| https://www.youtube.com/watch?v=YH7ZbV-MFoU | Dynamic Programming                                                      |
 
 
 
@@ -242,18 +243,30 @@
 
 ### JAVA
 
-| Link URL                                    | Title                                               |
-|:--------------------------------------------|:----------------------------------------------------|
-| https://www.youtube.com/watch?v=e-Ew6IS5Edk | JAVA DESIGN PATTERNS                                | 
-| https://www.youtube.com/watch?v=grEKMHGYyns | Learn Java 8 - Full Tutorial for Beginners          |
-| https://www.youtube.com/watch?v=vtPkZShrvXQ | Spring Boot Tutorial for Beginners (Java Framework) |
-| https://www.youtube.com/watch?v=QS5ljM78FuM | What is Java                                        | 
-| https://www.youtube.com/watch?v=rPSL1alFIjI | Functional Programming in Java                      |
+| Link URL                                     | Title                                               |
+|:---------------------------------------------|:----------------------------------------------------|
+| https://www.youtube.com/watch?v=e-Ew6IS5Edk  | JAVA DESIGN PATTERNS                                | 
+| https://www.youtube.com/watch?v=grEKMHGYyns  | Learn Java 8 - Full Tutorial for Beginners          |
+| https://www.youtube.com/watch?v=vtPkZShrvXQ  | Spring Boot Tutorial for Beginners (Java Framework) |
+| https://www.youtube.com/watch?v=QS5ljM78FuM  | What is Java                                        | 
+| https://www.youtube.com/watch?v=rPSL1alFIjI  | Functional Programming in Java                      |
+| https://www.youtube.com/watch?v=FdXDtLJgS9w  | Spring Boot  DE                                     |
+| https://www.youtube.com/watch?v=59twysAveKI  | Spring Boot 4 Tutorial                              |
+| https://www.youtube.com/watch?v=Cw0J6jYJtzw  | Spring Boot 2025                                    |
+| https://www.youtube.com/watch?v=gJrjgg1KVL4  | Spring Boot Tutorial for Beginners 2025             |
+| https://www.youtube.com/watch?v=RCRQlz78wCg  | Ultimate Gradle Kotlin Tutorial                     |
+| https://www.youtube.com/watch?v=DoK3-9V5HRE  | right way to organise your code                     |
+| https://www.youtube.com/watch?v=La3Cp-O05eQ  | IntelliJ IDEA: Analyzing Dependencies Maven         |
+| https://www.youtube.com/watch?v=ExKq23bNABk	 | Apache Maven Tutorial                               |
+| https://www.youtube.com/watch?v=vZm0lHciFsQ	 | 	Java Unit Testing with JUnit                       |
+| https://www.youtube.com/watch?v=nqb9yAecM9Y	 | IntelliJ IDEA: Managing Dependencies Maven          |
+| 
+
 
 
 ### SQL
 
-| Link URL                                    | Title                                    |
+| Link URL                    |                 | Title                                    |
 |:--------------------------------------------|:-----------------------------------------|
 | https://www.youtube.com/watch?v=HXV3zeQKqGY | SQL Tutorial                             |
 | https://www.youtube.com/watch?v=-56x56UppqQ | MongoDB Crash Course                     |
@@ -748,6 +761,7 @@
 | https://www.youtube.com/watch?v=wlpBCazAY9Q  | OpenClaw, GitHub Copilot, Claude Code, CodeRabbit                   |
 | https://www.youtube.com/watch?v=UAMAAoSPu8o  | All 35 Claude Code Concepts Explained                               |
 | https://www.youtube.com/watch?v=n1sfrc-RjyM  | OpenClaw Full Tutorial for Beginners                                |
+| https://www.youtube.com/watch?v=4U2_edX7iiM  | n8n KI-AGENTEN DE                                                   |
 
 
 
