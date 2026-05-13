@@ -650,7 +650,7 @@
 | https://www.youtube.com/watch?v=r1vsfDMO-WE&list=PL8HmoRTjTSlEgS2GsFaDr9zDLC1xD9FZf         | Python  Visually Explained                                     |
 | https://www.youtube.com/watch?v=IKANyuUn1rc&list=PL4KX3oEgJcfd7I5KmEnUF7cTVqrvCPRDj         | Python Tutorials 2025                                          |
 | https://www.youtube.com/watch?v=fv9ii3W5htQ&list=PLHJns8WZXCdvaD7-xR7e5FJNW_6H9w-wC         | Introduction to Reverse Engineering                            |
-
+| https://www.youtube.com/watch?v=03D3xWArutU&list=PLI-F7ydFjNpC2lJ6UI-ZA2FnwR3fiP1IZ         | WPF Introduction                           |
   
 
 ### Envato Tuts+

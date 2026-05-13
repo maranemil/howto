@@ -1383,3 +1383,13 @@ sudo ufw status
 sudo netstat -tulpen | grep avahi
 sudo systemctl stop avahi-daemon
 ~~~
+
+
+
+### ubuntu alarm 
+```
+sleep 900 && notify-send "back to work"  # a long, 15-minute break
+sleep 16m ; mpg123 wake_up.mp3
+sleep 1m 30s && notify-send "back to work"   
+sleep 20m && touch alarm.txt && echo $(date +%s) >> alarm.txt && gedit  alarm.txt
+```

@@ -363,3 +363,26 @@ npm ls | grep @0
 
 
 
+
+ 
+#############################################
+Forward Proxy vs Reverse Proxy (Nginx ) vs Load Balancer (AWS  INGRESS Api gATEWAY)
+#############################################
+
+https://www.youtube.com/watch?v=xo5V9g9joFs
+https://www.youtube.com/watch?v=iInUBOVeBCc
+
+# node Proxy
+const express = require('express');
+const { createProxyMiddleware } = require('http-proxy-middleware');
+
+const app = express();
+
+// Proxy requests to another server
+app.use('/api', createProxyMiddleware({ 
+  target: 'http://backend-server.com', changeOrigin: true, pathRewrite: { *^/apt': '', }, 
+}));
+
+app.listen(3000, () => {
+  console.log('Reverse proxy server running on port 3000'); 
+});

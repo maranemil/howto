@@ -96,6 +96,7 @@ git pull
 git stash
 git pull
 git stash apply
+git stash pop
 
 git stash
 git switch branch
@@ -127,6 +128,27 @@ git merge dev
 ```
 
 
+
+### Git Worktree 
+
+```
+https://www.youtube.com/watch?v=s4BTvj1ZVLM
+
+git worktree add 
+git worktree list 
+git worktree remove 
+
+git worktree add  ../gitlens/main
+cd  ../gitlens/main
+git status
+vi README.md
+cd  ../../gitlens
+git status
+git worktree list 
+git worktree remove  ../gitlens/main
+```
+
+
 ### submodules
 ```
 git clone ---recursive main-repo
@@ -147,11 +169,3 @@ git config --global push.recurseSubmodules on-demand
 !/data/myfolder
 ```
 
-
-### ubuntu alarm 
-```
-sleep 900 && notify-send "back to work"  # a long, 15-minute break
-sleep 16m ; mpg123 wake_up.mp3
-sleep 1m 30s && notify-send "back to work"   
-sleep 20m && touch alarm.txt && echo $(date +%s) >> alarm.txt && gedit  alarm.txt
-```
