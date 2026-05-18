@@ -954,7 +954,27 @@
 - https://www.youtube.com/watch?v=DSjXjpWQYDw  BMI Calculator in React JS
 - https://www.youtube.com/watch?v=syK7yprJknM  OpenCode 
 - https://www.youtube.com/watch?v=g1k4U-mXF90  n8n Tutorial DE
-- https://www.youtube.com/watch?v=DO3wPYJKpxk  docker MCP Catalog 
+- https://www.youtube.com/watch?v=DO3wPYJKpxk  Docker MCP Catalog 
+- https://www.youtube.com/playlist?list=PL7Rswbug-FoYgtgo7BJBBXm5_5Y40RGDT	Spring Boot Tutorial Deutsch
+- https://www.youtube.com/playlist?list=PLwOF5UVsZWUjNR3roRK79QgBcKLyOX48I		.NET MAUI for Beginners
+- https://www.youtube.com/watch?v=rumfIg9qJ_Y	 .NET MAUI Tutorial for Beginners
+- https://www.youtube.com/watch?v=IaqoAgkqrB4	 Build your First Mobile App with .NET MAUI and C#
+- https://www.youtube.com/watch?v=DuNLR_NJv8U	 Learn .NET MAUI - Full Course for Beginners
+- https://www.youtube.com/watch?v=HNVaYYxmwLU  Open Models Coding Essentials 
+- https://www.youtube.com/watch?v=vVL6NFzr0Rg	 Every Data Structure
+- https://www.youtube.com/watch?v=x7u2c0DhWEU	 Think in JavaScript 
+- https://www.youtube.com/watch?v=Q7AYc2kECDI	 Build Mobile Apps with AI in 2026
+- https://www.youtube.com/watch?v=UngVdAsQEiU	 Best Local Agentic Coding Workflow- 
+- https://www.youtube.com/watch?v=59twysAveKI	 Spring Boot 4 Tutorial 
+- https://www.youtube.com/watch?v=gJrjgg1KVL4	 Spring Boot Tutorial for Beginners [2025]
+- https://www.youtube.com/watch?v=gh2_PhgZGsM	 Claude Code for Beginners Tutorial
+- https://www.youtube.com/watch?v=Cw0J6jYJtzw	 Spring Boot Tutorial for Beginners Full Course 2025
+- https://www.youtube.com/watch?v=fabAI1OKKww	 The complete guide to Agent Skills
+- https://www.youtube.com/watch?v=L5rFa68GGKE	 New Way to Supercharge AI Agents
+- https://www.youtube.com/watch?v=cxJRhdLzrkM	 Claude Code Full Course 2026
+- https://www.youtube.com/watch?v=-Jyj4xlwss8	 Learn how to write better C# code in 15 minutes  DEM515
+
+
 
 #
 ### Generative AI 
