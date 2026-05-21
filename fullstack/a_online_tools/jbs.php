@@ -3,6 +3,8 @@
 # http://phptester.net/
 
 $lnks = '
+https://www.reef-resourcing.com/jobboerse/
+https://www.remotely.de/alle-jobs
 https://apero.europersonal.com/karriere/apero-gmbh
 https://de.indeed.com/
 https://de.jobrapido.com/#
