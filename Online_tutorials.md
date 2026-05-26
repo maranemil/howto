@@ -961,6 +961,12 @@
 * https://www.youtube.com/watch?v=AT4dlBmUm68  React Query (TanStack) Full Course 2026
 * https://www.youtube.com/watch?v=YbRe4iIVYJk  ASP.NET Core Full Course For Beginners (.NET 10)
 * https://www.youtube.com/watch?v=BYL3PtzG-_I  Top 10 VS Code Features for .NET Developers
+* https://www.youtube.com/watch?v=QuvS_VLbGko  Spring Boot Tutorial - Crash Course
+* https://www.youtube.com/watch?v=QQEgIo4Juxg  Hermes
+* https://www.youtube.com/watch?v=2-ZqK1GVQ5U  Manus AI 
+* https://www.youtube.com/watch?v=k_D_C3ExypU  Build Your Own Claude Code 
+* https://www.youtube.com/watch?v=AT4dlBmUm68  React Query (TanStack) Full Course 2026
+
 
 #
 
