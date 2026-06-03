@@ -966,6 +966,7 @@
 * https://www.youtube.com/watch?v=2-ZqK1GVQ5U  Manus AI 
 * https://www.youtube.com/watch?v=k_D_C3ExypU  Build Your Own Claude Code 
 * https://www.youtube.com/watch?v=AT4dlBmUm68  React Query (TanStack) Full Course 2026
+* https://www.youtube.com/watch?v=rjjES5IsPdg  Docker Full Course 2026
 
 
 #
