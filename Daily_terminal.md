@@ -1,12 +1,13 @@
 ## Daily CMDs
 
 ### Check repo file Sizes
+
 ~~~~
 * find . -name '*' -size +1M -exec ls -lh {} \; | awk '{ print $9 ": " $5 }'
 ~~~~
 
+### Find files by date
 
-### Find files by date 
 ~~~~
 find . -type f  -name *.xm
 find . -maxdepth 5 -type f  -mtime -25 -name *.xm
@@ -20,8 +21,8 @@ find ~/ -name *.xm -type f -ctime -15
 find ~/ -type f -newermt 2015-05-16 | xargs ls -l
 ~~~~
 
-
 ### rename
+
 ```
 * // rename incremental 000 - 999
 * num=0; for i in *; do mv "$i" "$(printf '%04d' $num).${i#*.}"; ((num++)); done
@@ -43,6 +44,7 @@ num=0; for i in $(ls -d */); do mv "$i" "$(printf '%04d' $num)"; ((num++)); done
 ```
 
 ### rename remove file name spaces
+
 ```
 sudo apt install rename
 rename 's/ /_/g' *
@@ -108,6 +110,7 @@ tree
 ```
 
 ### Umount force
+
 ```
 sudo service nfs-kernel-server stop
 sudo umount -f ~/path
@@ -115,11 +118,13 @@ sudo umount -l -f ~/path
 ```
 
 ### Surf web
+
 ```bash
 lynx t3n.de -accept_all_cookies  -justify
 ```
 
-### List 
+### List
+
 ```
 > list first 30 folders
 * ll -t | head -30 
@@ -128,6 +133,7 @@ lynx t3n.de -accept_all_cookies  -justify
   ```
 
 ### Generate Random Pass Ubuntu
+
 ```
 * date +%s | sha256sum | base64 | head -c 24 ; echo "@%&";
 * date +%s | sha1sum | base64 | head -c 12; echo "@%&";
@@ -138,47 +144,47 @@ echo $((RANDOM % 300));
 
 ### Zipping Unzipping multiple Folders
 
-| cmd            | example                                        | 
-|----------------|------------------------------------------------| 
+| cmd            | example                                        |
+|----------------|------------------------------------------------|
 | unzip          | for z in *.zip; do unzip $z; done              |
 | zip folders    | for i in */; do zip -r "${i%/}.zip" "$i"; done |
 | zip only files | for i in *.*; do zip "${i}.zip" "$i"; done     |
 
+### Tar Untar
 
-### Tar Untar 
-
-
-|  cmd  | example                                        | 
-|:------|:-----------------------------------------------| 
+|  cmd  | example                                        |
+|:------|:-----------------------------------------------|
 | tar   | tar -czvf archive.tar.gz folderpath1           |
 | untar | tar -xzvf archive.tar.gz                       |
 
-
 ### Change date modified created file
+
 ```
  * -a = accessed / -m = modified / -t = timestamp
  ```
 
-| desc          | cmd                                             | 
-|:--------------|:------------------------------------------------| 
-| generate file | touch {1..19}.jpg                               | 
-| change date   | touch -d "October 31"  filename.txt             | 
-| change date   | touch -d '14:24' file.txt                       | 
-| change date   | touch -d "2 hours ago" filename                 | 
-
+| desc          | cmd                                             |
+|:--------------|:------------------------------------------------|
+| generate file | touch {1..19}.jpg                               |
+| change date   | touch -d "October 31"  filename.txt             |
+| change date   | touch -d '14:24' file.txt                       |
+| change date   | touch -d "2 hours ago" filename                 |
 
 ### Convert Imagick
+
 ```
 * for i in *.png; do convert "$i" "${i%.png}.jpg" && rm "$i" && echo "$i is converted."; done
 * for i in *.png; do convert "$i" "${i%.*}.jpg" ; done
 ```
 
 ### Timestamp
+
 ```
 * date +%s > 1552925792
 ```
 
 ### Users management
+
 ```
 # add user
 + sudo adduser newuser
@@ -222,14 +228,16 @@ sudo rm -r /home/username
 ```
 
 ### Hostname management
+
 ```
 + sudo nano /etc/hosts
 + sudo nano /etc/hostname
 ```
 
-###  [Manage SWAP]
+### [Manage SWAP]
 
 ##### Add temporary Swap file on Ubuntu 18.04
+
 ```
 * sudo fallocate -l 6G /swapfile2 && sudo chmod 600 /swapfile2 && sudo mkswap /swapfile2 && sudo swapon /swapfile2 && sudo sysctl vm.swappiness=20
 * sudo swapoff -a && sudo fallocate -l 4G /swapfile3 && sudo chmod 600 /swapfile3 && sudo mkswap /swapfile3 && sudo swapon /swapfile3 -a && swapon -s && swapon --show
@@ -237,6 +245,7 @@ sudo rm -r /home/username
 ```
 
 ##### Expand Swap file in Ubuntu to 4GB or more
+
 ```
 * sudo swapoff -a && sudo dd if=/dev/zero of=/swapfile bs=500M count=8 && sudo mkswap /swapfile && sudo swapon /swapfile -a && swapon -s && swapon --show 
 * echo "vm.swappiness=10" | sudo tee -a /etc/sysctl.conf
@@ -246,21 +255,23 @@ sudo rm -r /home/username
 
 ```
 
-####  [Manage RamDisk]
+#### [Manage RamDisk]
+
 ```
 * sudo mkdir /tmp/ramdisk
 * sudo chmod 777 /tmp/ramdisk
 ```
 
 ##### allocate 1G for the RAM disk
-```
-* sudo mount -t tmpfs -o size=1024m myramdisk /tmp/ramdisk	
-```
 
+```
+* sudo mount -t tmpfs -o size=1024m myramdisk /tmp/ramdisk 
+```
 
 ### [Clean and Boost OS]
 
 ##### Utiles Daily
+
 ```
 > chrome chromium light loading
 * /usr/lib/chromium-browser/chromium-browser --disable-new-tab-first-run --enable-user-scripts --flag-switches-begin  --disable-accelerated-2d-canvas --disable-gpu-vsync --disable-threaded-animation --disable-webgl --js-flags=--harmony  --flag-switches-end --disable-gpu-process-prelaunch --no-sandbox
@@ -297,11 +308,13 @@ journalctl -rn1000 > /tmp/journal.log
 journalctl -r | head -n 1000 > /tmp/journal.log
 
 ```
+
 ```
 * chromium --process-per-site
 * google-chrome 
 * brave 
 ```
+
 ```
 > chrome://flags
 * --no-sandbox --site-per-process --process-per-site --enable-low-end-device-mode --disk-cache-size=104857600
@@ -311,6 +324,7 @@ journalctl -r | head -n 1000 > /tmp/journal.log
 * firefox -no-remote -new-window -p sidekick  -new-instance -P 
 * firefox -no-remote -allow-downgrade -private -purgecaches -safe-mode -p sidekick -P
 ```
+
 ```
 > open multiple tabs 
 * Chromium:
@@ -321,6 +335,7 @@ journalctl -r | head -n 1000 > /tmp/journal.log
 * create online clickable list https://www.linkrr.com/
 * create online bookmark https://atkinsio.com/bookmarks-html-generator/
 ```
+
 ```
 > boost cpu
 * for i in {0..7}; do echo performance | sudo tee /sys/devices/system/cpu/cpu"$i"/cpufreq/scaling_governor ; done
@@ -331,6 +346,7 @@ journalctl -r | head -n 1000 > /tmp/journal.log
 ```
 
 ##### vm settings
+
 ```
 * sudo sysctl -w vm.swappiness=20
 * sudo sysctl -w vm.swappiness=20 && sudo sysctl vm.vfs_cache_pressure=50 && sudo sysctl -w net.ipv4.ip_forward=1
@@ -338,6 +354,7 @@ journalctl -r | head -n 1000 > /tmp/journal.log
 ```
 
 ##### wlan mtu
+
 ```
 * ip link show | grep mtu
 * sudo ip link set wlp3s0 mtu 1400 up
@@ -345,6 +362,7 @@ journalctl -r | head -n 1000 > /tmp/journal.log
 ```
 
 ##### Drop cache
+
 ```
 * cat /proc/sys/vm/swappiness
 * sync && echo 3 | sudo tee /proc/sys/vm/drop_caches
@@ -353,11 +371,13 @@ journalctl -r | head -n 1000 > /tmp/journal.log
 ```
 
 ##### DNS Flush networking
+
 ```
 * sudo /etc/init.d/dns-clean restart && sudo /etc/init.d/networking force-reload && sudo /etc/init.d/nscd restart && sudo service network-manager restart
 ```
 
 ##### Disable services
+
 ```
 * sudo service apache2 status
 * sudo update-rc.d -f apache2 disable
@@ -368,13 +388,14 @@ journalctl -r | head -n 1000 > /tmp/journal.log
 * sudo systemctl disable mysql
 ```
 
+##### clean DNS
 
-##### clean DNS 
 ```
 * sudo /etc/init.d/dns-clean reload && echo 2 | sudo tee /proc/sys/vm/drop_caches && sudo service network-manager reload 
 ```
 
-##### clear Browsers Cache Data 
+##### clear Browsers Cache Data
+
 ```
 * chrome://settings/clearBrowserData
 * ll ~/.cache/chromium/Default/
@@ -388,6 +409,7 @@ journalctl -r | head -n 1000 > /tmp/journal.log
 ```
 
 ##### stop Services
+
 ```
 * service --status-all
 * sudo service network-manager reload 
@@ -398,6 +420,7 @@ journalctl -r | head -n 1000 > /tmp/journal.log
 ```
 
 ##### Accessing local data on VM using python SimpleHTTPServer
+
 ```
 * python -m SimpleHTTPServer (deprecated python2)
 * python3 -m http.server 8888
@@ -416,6 +439,7 @@ python3 -m http.server 8888
 ```
 
 ##### list packages
+
 ```
 * dpkg --get-selections | grep -v deinstall
 * dpkg -l
@@ -435,6 +459,7 @@ sudo killall snap-store &&  sudo snap refresh
 ```
 
 ##### snap packages
+
 ```
 snap list
 
@@ -466,9 +491,8 @@ sudo ls /var/lib/snapd/snapshots
 
 ```
 
-
-
 ##### remove packages
+
 ```
 * dpkg -r <package> 
 * apt remove --purge <package> 
@@ -477,6 +501,7 @@ sudo ls /var/lib/snapd/snapshots
 ```
 
 ##### clean install update
+
 ```
 * https://wiki.ubuntuusers.de/apt/apt-get/
 * pip install --upgrade pip
@@ -492,6 +517,7 @@ sudo apt update && sudo apt autoclean && sudo apt autoremove
 ```
 
 ##### clean cache folder
+
 ```
 * sudo rm -rf .cache/pip/http/*
 * find ~/.cache/ -type f -atime +365 -delete
@@ -500,13 +526,15 @@ sudo apt update && sudo apt autoclean && sudo apt autoremove
 * ? ~/.local/lib/pythonX.X/site-packages
 ```
 
-#####  system  monitoring
+##### system  monitoring
+
 ```
 * gnome-system-monitor
 * baobab [GNOME Disk Usage Analyzer]
 ```
 
 ##### ubuntu optimisation - disable tracking and clear journalctl file
+
 ```
 * gsettings set org.freedesktop.Tracker.Miner.Files low-disk-space-limit 1
 * gsettings set org.freedesktop.Tracker.Miner.Files enable-monitors false
@@ -523,10 +551,10 @@ sudo apt update && sudo apt autoclean && sudo apt autoremove
 * sudo truncate -s0 error_log
 ```
 
-
 ### DNS Settings Google and Cloudflare
 
-### For IPv4:
+### For IPv4
+
 ```
 * nameserver 8.8.8.8,8.8.4.4,1.1.1.1,1.0.0.1
 
@@ -549,7 +577,8 @@ sudo resolvconf -u
 sudo nano /etc/resolv.conf
 ```
 
-#### For IPv6:
+#### For IPv6
+
 ```
 * nameserver 2001:4860:4860::8888,2001:4860:4860::8844,2606:4700:4700::1111,2606:4700:4700::1001
 ```
@@ -568,7 +597,7 @@ For IPv6: 2606:4700:4700::1111,2606:4700:4700::1001
 Quad9 is a free service that replaces your default ISP or enterprise Domain Name Server (DNS) configuration.
 DNS 9.9.9.9
 
-Via IPv4	
+Via IPv4 
 1.1.1.1
 1.0.0.1
 1.1.1.2
@@ -576,11 +605,11 @@ Via IPv4
 1.1.1.3
 1.0.0.3
 
-Via IPv6	
+Via IPv6 
 2606:4700:4700::1111
-2606:4700:4700::1001	
+2606:4700:4700::1001 
 2606:4700:4700::1112
-2606:4700:4700::1002	
+2606:4700:4700::1002 
 2606:4700:4700::1113
 2606:4700:4700::1003
 
@@ -594,8 +623,8 @@ https://developers.google.com/speed/public-dns/docs/using
 2001:4860:4860:0:0:0:0:8844
 ```
 
+#### Fast VM install
 
-#### Fast VM install 
 ```
 * sudo apt install vagrant
 
@@ -624,23 +653,26 @@ https://developers.google.com/speed/public-dns/docs/using
 * rm -r .vagrant
 ```
 
-
 ### Sync folders from drives
+
 ```
 * rsync --ignore-existing --recursive --progress /home/user/folder_sync/ /media/user/external_drive/folder_sync/
 ```
 
-### Generate Current Dir Structure 
+### Generate Current Dir Structure
+
 ```
 sudo snap install tree 
 sudo apt  install tree -y
 tree -Ld 3 > FolderStructure.txt
 ```
 
+######
+
+### Format json
 
 ######
-### Format json
-######
+
 ```
 compact json data
 jq . -c data.json > data_zip.json
@@ -649,8 +681,8 @@ prettify json data
 jq . data_zip.json > data.json
 ```
 
-
 ### Browser Plugins
+
 ```
 Ghostery
 Privacy Badger
@@ -659,8 +691,8 @@ DuckDuckGo
 NoScript
 ```
 
-
 ### Access localhost on remote server
+
 ```
 start locally [ python3 -m http.server.8080 with page index.html]
 go on [ localhost.run website ]
@@ -668,8 +700,8 @@ copy [ ssh -R 80:localhost:8080 nokey@localhost.run ] on local machine
 get link from temrinal and run it on browser
 ```
 
-
 ### Find string in files
+
 ```
 https://www.cyberciti.biz/faq/howto-use-grep-command-in-linux-unix/
 https://www.cyberciti.biz/faq/unix-linux-grep-include-file-pattern-recursive-example/
@@ -690,8 +722,8 @@ cd /usr && egrep -ir -w "String" # print first line
 cd /usr && egrep -iIrnH -w "String"
 ```
 
-
 ### generate new ssh key
+
 ```
 ssh-keygen -t rsa -b 4096 -C "somemail@outlook.com"
 eval "$(ssh-agent -s)"
@@ -701,8 +733,8 @@ ssh -vvv git@bitbucket.org -p 29420
 ssh-keygen -l -f ~/.ssh/id_rsa
 ```
 
-
 ### docker Post-installation steps for Linux
+
 ```
 https://docs.docker.com/engine/install/linux-postinstall/
 
@@ -716,6 +748,7 @@ reboot
 ```
 
 ### Install VBoxGuestAdditions iso
+
 ~~~shell
 reboot
 wget https://download.virtualbox.org/virtualbox/6.1.2/VBoxGuestAdditions_6.1.2.iso
@@ -726,14 +759,14 @@ yes
 reboot
 ~~~
 
-
 ### Install p7zip
+
 ~~~
 sudo apt-get install p7zip p7zip-full p7zip-rar
 ~~~
 
-
 ### move first 1000 files - split folder files in subfolders
+
 ~~~
 ls | wc -l
 mv -v `ls | head -5000` ./sub1
@@ -741,8 +774,8 @@ mv -v `ls | head -5000` ./sub1
 strace -vf ls -l 
 ~~~
 
-
 ### move files by odd number - par impair
+
 ~~~
 mkdir -p odd1 && for f in *[02468]*.jpeg; do mv "$f" odd1/"$f"; done
 mkdir -p odd2 && for f in *[13579]*.jpeg; do mv "$f" odd2/"$f"; done
@@ -751,9 +784,8 @@ for f in *[02468]*.jpeg; do echo "$f"; done
 for f in *[13579]*.jpeg; do echo "$f"; done
 ~~~
 
-
-
 ### Debian Ubuntu mirrors
+
 ~~~
 https://cdimage.kali.org/kali-2024.4/
 https://devuan-cd.bio.lmu.de/devuan_daedalus/installer-iso/
@@ -799,8 +831,8 @@ https://releases.ubuntu.com/noble/
 https://ftp.fau.de/ubuntu-releases/24.04.1/
 ~~~
 
-
 ### PDF Merge Ubuntu
+
 ~~~
 convert input1.jpg input1.pdf
 convert input2.jpg input2.pdf
@@ -814,8 +846,8 @@ gs -dQUIET -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=output.pdf *.pdf
 gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook   -dNOPAUSE -dQUIET -dBATCH -sOutputFile=output.pdf input.pdf
 ~~~
 
-
 ### after login
+
 ~~~
 sudo sysctl -w vm.swappiness=20
 echo 3 | sudo tee /proc/sys/vm/drop_caches
@@ -823,26 +855,28 @@ for i in {1..5}; do  echo 3 | sudo tee /proc/sys/vm/drop_caches; done
 sudo systemctl reload-or-restart networkd-dispatcher.service
 ~~~
 
-
 ### generate new file
+
 ~~~
 touch  web_journey/search_$(date +%s).txt
 ~~~
 
 ### clear swap
+
 ~~~
 sudo swapoff -a; sleep 15; sudo swapon -a 
 ~~~
 
 ### How to convert .webp images to .png on Linux
+
 ~~~
 sudo apt update
 sudo apt install webp
 for i in *.webp; do dwebp $i -o $i.out.png; done;
 ~~~
 
-
 ### clear swap chrome
+
 ~~~
 rm -rf ~/.cache/google-chrome/
 
@@ -903,11 +937,11 @@ Mozilla/5.0 (Windows NT 6.1; rv:16.0) Gecko/20100101 Firefox/16.0
 taskset -c 0,1 google-chrome --lang=en-US,en --disable-dev-shm-usage --block-new-web-contents --no-experiments --disable-default-apps --disable-notifications --log-level=1 --no-ping --disable-background-processes --disable-picture-in-picture --process-per-tab --purge-memory-button --disable-features=UseEcoQoSForBackgroundProcess --disable-histogram-customizer --disable-in-process-stack-traces --disable-low-end-device-mode --disable-low-res-tiling --disable-print-preview --disable-breakpad --noerrdialogs --use-fake-device-for-media-stream --disable-features=StreamScripting --new-window --aggressive-cache-discard --disable-notifications --disable-remote-playback-api --disable-shared-workers --disable-voice-input --enable-aggressive-domstorage-flushing --args --js-flags=--max_old_space_size=988 --ignore-gpu-blocklist --enable-zero-copy --enable-gpu-rasterization --enable-native-gpu-memory-buffers --enable-gpu-memory-buffer-video-frames
 
 
-
+google-chrome --disable-quick-access --disable-features=fast
 ~~~
 
+### grub-repair ***
 
-###  grub-repair ***
 ~~~
 https://help.ubuntu.com/community/Boot-Repair
 
@@ -915,7 +949,8 @@ sudo add-apt-repository ppa:yannubuntu/boot-repair && sudo apt update
 sudo apt install -y boot-repair && boot-repair
 ~~~
 
-###  boot-repair *** exfat ext3 ext4
+### boot-repair *** exfat ext3 ext4
+
 ~~~
 sudo lsblk -f
 
@@ -951,14 +986,13 @@ sudo e2fsck -b 8193 /dev/mmcblk0
 sudo e2fsck -b 32768 /dev/mmcblk0
 ~~~
 
-
-###  wget get files
+### wget get files
 
 ~~~
 wget --no-clobber --mirror -p -l1 --convert-links -P . --wait=2 --limit-rate=50K --user-agent="Mozilla/5.0 (Windows NT 6.3; WOW64; rv:40.0" <url>
 ~~~
 
-###  get ubuntu debian version
+### get ubuntu debian version
 
 ~~~
 cat /etc/debian_version
@@ -966,7 +1000,7 @@ lsb_release -a
 uname -r -a
 ~~~
 
-###  tasksel and taskset
+### tasksel and taskset
 
 ~~~
 sudo apt-get install tasksel
@@ -1058,7 +1092,7 @@ taskset -c 0,1 google-chrome --lang=en-US,en --disable-translate --disable-dev-s
 
 ~~~
 
-###  check and repair disk
+### check and repair disk
 
 ~~~
 
@@ -1092,14 +1126,14 @@ sudo apt install lsscsi
 lsscsi
 ~~~
 
-###  boot uefi update
+### boot uefi update
 
 ~~~
 sudo fwupdmgr update
 efibootmgr -v
 ~~~
 
-###  firefox alternative
+### firefox alternative
 
 ~~~
 sudo apt update && sudo apt install extrepo -y
@@ -1129,7 +1163,6 @@ apt list -i | grep docker
 sudo apt remove docker.io docker-compose
 ~~~
 
-
 ### when linux system was installed
 
 ~~~
@@ -1138,7 +1171,6 @@ stat --format=%w /
 stat /
 dumpe2fs /dev/sda1 | grep 'Filesystem created:'
 ~~~
-
 
 ### ulimit linux  
 
@@ -1240,7 +1272,6 @@ file locks                          (-x) unlimited
 
 ~~~
 
-
 ### open port  
 
 ~~~
@@ -1270,8 +1301,6 @@ https://help.ubuntu.com/community/Gufw
 sudo apt-get install gufw
 ~~~
 
-
-
 ### disable history  
 
 ~~~
@@ -1280,7 +1309,6 @@ history
 set -o history  #  re-enable history
 history -c
 ~~~
-
 
 ### fix bash call
 
@@ -1295,23 +1323,22 @@ sudo chsh -s /usr/bin/bash $(whoami) # or sudo chsh -s /bin/bash $(whoami)
 # cat /etc/shells
 ~~~
 
-
 ### get random line
+
 ~~~
 sort -R file.csv | head -n 1
 sort -R file.csv | head -n 1 | cut -d "," -f 2-4
 ~~~
 
-
-
 ### get open ports
+
 ~~~
 nmap --top-ports 50 -v localhost
 nmap --open -v localhost
 ~~~
 
-
 ### add ip4 to vbox
+
 ~~~
 Note: If the VM only gets IPv6, disable IPv6 temporarily via GRUB_CMDLINE_LINUX_DEFAULT="ipv6.disable=1 quiet splash" in /etc/default/grub and reboot. This isolates whether IPv4 is blocked by IPv6 interference. 
 
@@ -1339,8 +1366,8 @@ iface eth0 inet static
 
 ~~~
 
-
 ### stop tracker-miner
+
 ~~~
 Temporary Solution: Kill the Process
 
@@ -1352,8 +1379,8 @@ systemctl --user mask tracker-miner-fs-3.service tracker-extract-3.service track
 tracker3 reset -s -r
 ~~~
 
-
 ### update firmware
+
 ~~~
 lspci
 lspci -vmmnn
@@ -1373,9 +1400,8 @@ sudo fwupdmgr get-updates
 sudo rm -i /var/crash/*.crash
 ~~~
 
-
-
 ### investigate open port
+
 ~~~
 netstat -tulp
 sudo lsof -i :35139
@@ -1384,9 +1410,8 @@ sudo netstat -tulpen | grep avahi
 sudo systemctl stop avahi-daemon
 ~~~
 
+### ubuntu alarm
 
-
-### ubuntu alarm 
 ```
 sleep 900 && notify-send "back to work"  # a long, 15-minute break
 sleep 16m ; mpg123 wake_up.mp3
