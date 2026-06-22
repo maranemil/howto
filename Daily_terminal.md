@@ -1418,3 +1418,23 @@ sleep 16m ; mpg123 wake_up.mp3
 sleep 1m 30s && notify-send "back to work"   
 sleep 20m && touch alarm.txt && echo $(date +%s) >> alarm.txt && gedit  alarm.txt
 ```
+
+
+### ubuntu check temperature
+
+```
+powerprofilesctl list
+powerprofilesctl set power-saver
+powerprofilesctl
+powerprofilesctl set balanced
+
+sudo apt-get install lm-sensors 
+sudo sensors-detect
+sudo service kmod start
+
+sensors
+sensors amdgpu-pci-0500
+
+sudo apt-get install hddtemp
+sudo hddtemp /dev/sda     
+```

@@ -407,6 +407,9 @@
 ### Image describe
 - https://imagedescriber.online/de
 - https://describepicture.cc/
+- https://imagedescriber.cc/
+- https://describepicture.org/image-describer/
+
 
 
 ### Remove Image Background
