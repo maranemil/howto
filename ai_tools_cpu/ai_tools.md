@@ -121,6 +121,7 @@
 | https://stabledifffusion.com/stable-diffusion-3-medium            | stable-diffusion-3-medium            |
 | https://huggingface.co/spaces/sczhou/CodeFormer                   | CodeFormer image Resizer             |
 | https://imgupscaler.com/                                          | image upscaler                       |
+| https://igly.ai                                                   | AI image editor for background removal, inpainting, upscaling, and generative fill |
 
 
 ### voice
