@@ -1,0 +1,34 @@
+######################################################
+H.265/HEVC (HDR) - stackoverflow
+######################################################
+
+
+ffmpeg -i input.mp4 -vf "v360=input=fisheye:id_fov=180:output=equirect,colorspace=bt2020nc:bt2020:hlg" -c:v libx265 -pix_fmt yuv420p10le -strict unofficial output_360hdr.mp4
+
+
+ffmpeg -i help.mp4 -c:v libx264 -preset ultrafast -vf scale=iw*4:-1:flags=neighbor+bitexact+accurate_rnd+full_chroma_int+full_chroma_inp+print_info -y help4x.mp4
+
+
+ffmpeg -colorspace bt709 -i in.avi -b:v 8M -bufsize 16M -c:v libx264 -preset slow -c:a aac -b:a 384k -pix_fmt yuv420p -movflags +faststart out.mp4
+
+
+ffmpeg -i in.avi -c:v libx264 -preset slow -crf 18 -pix_fmt yuv420p -movflags +faststart out.mp4
+
+
+ffmpeg \
+-i input.mov \
+-c:v libx265 \
+-tag:v hvc1 \
+-crf 21 \
+-preset fast \
+-pix_fmt yuv420p10le \
+-x265-params "colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc:master-display=G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16450)L(10000000,10):max-cll=1000,400" \
+-c:a libfdk_aac \
+-b:a 128k \
+-ac 2 \
+-ar 44100 \
+-movflags +faststart \
+output.mp4
+
+
+remove -pix_fmt yuv420p10le and add -vf colorspace=all=bt2020:range=tv:format=yuv420p10.

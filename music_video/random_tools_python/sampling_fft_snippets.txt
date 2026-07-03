@@ -1,0 +1,440 @@
+
+
+Sine Wave Sampling
+
+# sampling a sine wave programmatically
+import numpy as np
+import matplotlib.pyplot as plt
+plt.style.use('ggplot')
+
+# sampling information
+Fs = 44100 # sample rate
+T = 1/Fs # sampling period
+t = 0.1 # seconds of sampling
+N = Fs*t # total points in signal
+
+# signal information
+freq = 100 # in hertz, the desired natural frequency
+omega = 2*np.pi*freq # angular frequency for sine waves
+
+t_vec = np.arange(N)*T # time vector for plotting
+y = np.sin(omega*t_vec)
+
+plt.plot(t_vec,y)
+plt.show()
+
+
+np.fft.fft(signal)
+
+# fourier transform and frequency domain
+#
+Y_k = np.fft.fft(y)[0:int(N/2)]/N # FFT function from numpy
+Y_k[1:] = 2*Y_k[1:] # need to take the single-sided spectrum only
+Pxx = np.abs(Y_k) # be sure to get rid of imaginary part
+
+f = Fs*np.arange((N/2))/N; # frequency vector
+
+# plotting
+fig,ax = plt.subplots()
+plt.plot(f,Pxx,linewidth=5)
+ax.set_xscale('log')
+ax.set_yscale('log')
+plt.ylabel('Amplitude')
+plt.xlabel('Frequency [Hz]')
+plt.show()
+
+
+
+https://makersportal.com/blog/2018/9/13/audio-processing-in-python-part-i-sampling-and-the-fast-fourier-transform?srsltid=AfmBOoqWSxZFMnxqc-rdi1TpzHz-Tlum8Pj6Lf4XIhtllXGVGFBzda0b
+
+
+-----------------------------------------------------------------------------
+
+
+
+
+
+
+what options do i have to transform an WAV sound file into a mathematical function with python
+
+
+https://mojan.ca/blogs/computational-mathematics/fourier-transforms-for-writing-sheet-music
+
+
+
+
+import numpy as np
+from scipy.io import wavfile
+from scipy.fftpack import fft, fftshift
+
+# 1. Load and Normalize
+sample_rate, data = wavfile.read('audio.wav')
+data = data.astype(float) / 32768.0  # Normalize 16-bit to [-1, 1]
+
+# 2. Fourier Transform (Frequency Domain)
+freq_spectrum = fft(data)
+freq_spectrum_shifted = fftshift(freq_spectrum)
+freqs = np.linspace(-sample_rate/2, sample_rate/2, len(data))
+
+# 3. Gabor Transform (Time-Frequency) - Conceptual Step
+# Requires sliding window FFT implementation for full Gabor output   
+
+---
+
+# import installed libraries
+from scipy.io import wavfile
+import matplotlib.pyplot as plt
+import numpy as np
+from IPython.display import clear_output
+from scipy.fftpack import fft, fftshift
+
+# read in sound file
+samplerate, data = wavfile.read('hbd_slow_speed.wav')
+
+# define sound metadata
+data_size = data.shape[0]
+song_length_seconds = data_size/samplerate
+
+# print sound metadata
+print("Data size:", data_size)
+print("Sample rate:", samplerate)
+print("Song length (seconds):", song_length_seconds, "seconds")
+
+
+# define domain in seconds
+time_domain = np.linspace(0, song_length_seconds, data_size)
+
+# plot sound wave
+plt.plot(time_domain, data)
+plt.xlabel("Time [s]")
+plt.ylabel("Amplitude")
+plt.show()
+
+
+#
+
+# define frequency domain
+freq_domain = np.linspace(-samplerate/2,samplerate/2,data_size)
+
+# fourier transform
+fourier_data = abs(fft(data))
+fourier_data_shift = fftshift(fourier_data)
+
+# plotting spectral content of sound wave
+plt.xlim([-5000, 5000])
+plt.xlabel("Frequency (Hz)")
+plt.ylabel("Amplitude")
+plt.plot(freq_domain, fourier_data_shift)
+plt.show()
+
+
+
+
+##
+
+results = []
+
+for i in [2.2, 4.25, 6, 8, 10, 11.8]:
+    clear_output(wait=True)
+    plt.xlim([0, 600])
+    gaussian = 11000*np.exp(-2*np.power(time_domain - i, 2))
+
+    gaussian_filtered = data*gaussian
+
+    fourier_data = abs(fft(gaussian_filtered))
+    fourier_data_shift = fftshift(fourier_data)
+
+    results.append(fourier_data_shift)
+    
+    plt.plot(freq_domain, fourier_data_shift)
+    plt.pause(1)
+
+
+https://docs.scipy.org/doc//scipy-1.8.0/reference/generated/scipy.io.wavfile.write.html
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.io.wavfile.read.html
+https://numpy.org/doc/2.3/reference/routines.fft.html
+https://stackoverflow.com/questions/2060628/reading-wav-files-in-python
+
+
+
+import math, wave, array
+
+# Settings
+data = array.array('h') # signed short integer (-32768 to 32767) data
+sampleRate = 44100      # of samples per second (standard)
+numChan    = 1          # of channels (1: mono, 2: stereo)
+dataSize   = 2          # 2 bytes from signed short integers (bit depth = 16)
+numSamples = 1024       # of samples per waveform
+numWaves   = 32         # of waveforms in wavetable
+pi         = math.pi    # the constant pi
+
+# Define wavetable as function of time 0 <= t < 1 
+# and interpolation parameter 0 <= x < 1
+def waves(t,x): # <-- edit this function
+    power = 1 + 0.02*math.exp(10*x)
+    sin_t = math.sin(2*pi*t)
+    return math.copysign(1,sin_t)*math.pow(math.fabs(sin_t),power)
+    
+# Loop through waveforms in wavetable
+for waveIndex in range(numWaves):
+    x = waveIndex / numWaves
+    
+    # Loop through samples in waveform
+    for sampleIndex in range(numSamples):
+        t = sampleIndex / numSamples
+        
+        # Append new sample to array
+        sample = 32767
+        sample *= waves(t,x)
+        data.append(int(sample))
+        
+# Generate .wav file
+f = wave.open('wavetable.wav', 'w')
+f.setparams((numChan, dataSize, sampleRate, numSamples*numWaves, "NONE", "Uncompressed"))
+f.writeframes(data.tostring())
+f.close()
+
+# Matplotlib script to visualize waveforms
+
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.widgets import Slider, Button, RadioButtons
+
+# Make Noise STO Variable Shape Output
+# (can copy and paste into other script above, remember to import numpy as np)
+def waves(t,x):
+    return np.piecewise(t,
+    [(t <= (1-x)/2) | (t >= (1+x)/2),
+     (t >  (1-x)/2) & (t <  (1+x)/2)],
+    [lambda t: np.cos(2*np.pi*t),
+     lambda t: (2/np.pi)*np.arcsin(np.sin(2*np.pi*t-(np.pi/2)))-2*(1-x)])
+
+# Powers of Sine
+'''
+def waves(t,x):
+    power = 1 + 0.02*np.exp(10*x)
+    sin_t = np.sin(2*np.pi*t)
+    return np.copysign(1,sin_t)*np.power(np.absolute(sin_t),power)
+'''
+
+fig, ax = plt.subplots()
+plt.subplots_adjust(left=0.25, bottom=0.25)
+t = np.arange(0.0, 1.0, 0.001)
+x = 0.5
+s = waves(t,x)
+l, = plt.plot(t, s, lw=2)
+ax.margins(x=0)
+axcolor = 'lightgoldenrodyellow'
+axparam = plt.axes([0.25, 0.1, 0.65, 0.03], facecolor=axcolor)
+sparam = Slider(axparam, 'x', 0, 1.0, valinit=0, valstep=0.01)
+
+def update(val):
+    x = sparam.val
+    l.set_ydata(waves(t,x))
+    fig.canvas.draw_idle()
+
+sparam.on_changed(update)
+plt.show()
+
+
+
+https://www.reddit.com/r/ableton/comments/cbk9or/python_script_to_create_custom_wavetables_based/
+
+
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+#fs is sampling frequency
+fs = 100.0
+time = np.linspace(0,10,int(10*fs),endpoint=False)
+
+#wave is the sum of sine wave(1Hz) and cosine wave(10 Hz)
+wave = np.sin(np.pi*time)+ np.cos(np.pi*time)
+#wave = np.exp(2j * np.pi * time )
+
+plt.plot(time, wave)
+plt.xlim(0,10)
+plt.xlabel("time (second)")
+plt.title('Original Signal in Time Domain')
+
+plt.show()
+   
+
+# Compute the one-dimensional discrete Fourier Transform.
+
+fft_wave = np.fft.fft(wave)
+
+# Compute the Discrete Fourier Transform sample frequencies.
+
+fft_fre = np.fft.fftfreq(n=wave.size, d=1/fs)
+
+plt.subplot(211)
+plt.plot(fft_fre, fft_wave.real, label="Real part")
+plt.xlim(-50,50)
+plt.ylim(-600,600)
+plt.legend(loc=1)
+plt.title("FFT in Frequency Domain")
+
+plt.subplot(212)
+plt.plot(fft_fre, fft_wave.imag,label="Imaginary part")
+plt.legend(loc=1)
+plt.xlim(-50,50)
+plt.ylim(-600,600)
+plt.xlabel("frequency (Hz)")
+
+plt.show()
+   
+
+
+--
+
+https://pythonnumericalmethods.studentorg.berkeley.edu/notebooks/chapter24.04-FFT-in-Python.html
+
+# FFT in Python
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+plt.style.use('seaborn-poster')
+%matplotlib inline
+
+# sampling rate
+sr = 2000
+# sampling interval
+ts = 1.0/sr
+t = np.arange(0,1,ts)
+
+freq = 1.
+x = 3*np.sin(2*np.pi*freq*t)
+
+freq = 4
+x += np.sin(2*np.pi*freq*t)
+
+freq = 7   
+x += 0.5* np.sin(2*np.pi*freq*t)
+
+plt.figure(figsize = (8, 6))
+plt.plot(t, x, 'r')
+plt.ylabel('Amplitude')
+
+plt.show()
+
+
+
+
+
+# FFT in Numpy
+
+
+from numpy.fft import fft, ifft
+
+X = fft(x)
+N = len(X)
+n = np.arange(N)
+T = N/sr
+freq = n/T 
+
+plt.figure(figsize = (12, 6))
+plt.subplot(121)
+
+plt.stem(freq, np.abs(X), 'b', \
+         markerfmt=" ", basefmt="-b")
+plt.xlabel('Freq (Hz)')
+plt.ylabel('FFT Amplitude |X(freq)|')
+plt.xlim(0, 10)
+
+plt.subplot(122)
+plt.plot(t, ifft(X), 'r')
+plt.xlabel('Time (s)')
+plt.ylabel('Amplitude')
+plt.tight_layout()
+plt.show()
+
+
+FFT in Scipy
+
+
+from scipy.fftpack import fft, ifft
+
+X = fft(x)
+
+plt.figure(figsize = (12, 6))
+plt.subplot(121)
+
+plt.stem(freq, np.abs(X), 'b', \
+         markerfmt=" ", basefmt="-b")
+plt.xlabel('Freq (Hz)')
+plt.ylabel('FFT Amplitude |X(freq)|')
+plt.xlim(0, 10)
+
+plt.subplot(122)
+plt.plot(t, ifft(X), 'r')
+plt.xlabel('Time (s)')
+plt.ylabel('Amplitude')
+plt.tight_layout()
+plt.show()
+
+https://www.geeksforgeeks.org/numpy/numpy-for-fast-fourier-transform-fft-analysis/
+https://stackoverflow.com/questions/70810666/how-to-interpret-the-results-of-the-discrete-fourier-transform-fft-in-python
+
+
+# Source - https://stackoverflow.com/a/70810667
+# Posted by Antoni Parellada, modified by community. See post 'Timeline' for change history
+# Retrieved 2026-06-30, License - CC BY-SA 4.0
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+N = 10000           # Sample points     
+T = 1/5000          # Spacing
+# Total duration N * T= 2
+t = np.linspace(0.0, N*T, N, endpoint=False) # Time: Vector of 10,000 elements from 0 to N*T=2.
+frequency = np.fft.fftfreq(t.size, d=T)      # Normalized Fourier frequencies in spectrum.
+
+f0 = 25             # Frequency of the sampled wave
+phi = np.pi/8       # Phase
+A = 50              # Amplitude
+
+s = A * np.cos(2 * np.pi * f0 * t + phi) # Signal
+
+S = np.fft.fft(s)   # Unnormalized FFT
+
+index = np.argmax(np.abs(S))
+print(S[index])
+magnitude = np.abs(S[index]) * 2/N
+freq_max = frequency[index]
+
+phase = np.arctan(np.imag(S[index])/np.real(S[index]))
+print(f"magnitude: {magnitude}, freq_max: {freq_max}, phase: {phase}")
+print(phi)
+
+fig, [ax1,ax2] = plt.subplots(nrows=2, ncols=1, figsize=(10, 5))
+ax1.plot(t,s, linewidth=0.5, linestyle='-', color='r', marker='o', markersize=1,markerfacecolor=(1, 0, 0, 0.1))  
+ax1.set_xlim([0, .31])
+ax1.set_ylim([-51,51])
+ax2.plot(frequency[0:N//2], 2/N * np.abs(S[0:N//2]), '.', color='xkcd:lightish blue', label='amplitude spectrum')
+plt.xlim([0, 100])
+plt.show()
+
+Re = np.real(S[index])
+Im = np.imag(S[index])
+
+s_recon = Re*2/N * np.cos(-2 * np.pi * freq_max * t) + abs(Im)*2/N * np.sin(-2 * np.pi * freq_max * t)
+
+fig = plt.figure(figsize=(10, 2.5))
+
+plt.xlim(0,0.3)
+plt.ylim(-51,51)
+plt.plot(t,s_recon, linewidth=0.5, linestyle='-', color='r', marker='o', markersize=1,markerfacecolor=(1, 0, 0, 0.1))  
+plt.show()
+
+s.all() == s_recon.all()
+
+
+
+
+
+
+
