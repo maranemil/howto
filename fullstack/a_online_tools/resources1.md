@@ -1212,6 +1212,16 @@ https://ahrefs.com/writing-tools/paragraph-rewriter
 https://anythingtranslate.com/translators/informal-german-translator/
 
 
+https://translate.glosbe.com/en-it
+https://www.online-translator.com/translation/english-italian?text=
+https://laratranslate.com/translate?text=
+https://translate.yandex.com/en/
+https://www.deepl.com/en/translator/l/it/en
+https://www.translate.eu/english/italian-english/
+https://translate.google.it/
+https://www.onlinetranslationpro.com/english-to-italian-translation
+
+
 ------------------------------------------------------------------
 
 ### YouTube get thumbnail
