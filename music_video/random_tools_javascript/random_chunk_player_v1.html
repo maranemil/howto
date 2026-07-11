@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WAV Chunk Shuffler</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/jetbrains-mono@latest/latin-400-normal.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0a0a14;
+    --bg-2: #12121f;
+    --bg-3: #1a1a2e;
+    --accent: #8b5cf6;
+    --accent-2: #ec4899;
+    --accent-3: #06b6d4;
+    --text: #e5e7eb;
+    --text-dim: #9ca3af;
+    --border: rgba(139, 92, 246, 0.2);
+    --success: #10b981;
+    --danger: #ef4444;
+  }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(139, 92, 246, 0.15), transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.1), transparent 40%);
+    padding: 24px;
+  }
+  .app {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+  }
+  header p {
+    color: var(--text-dim);
+    margin-top: 8px;
+    font-size: 0.95rem;
+  }
+  .drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: 16px;
+    padding: 48px 24px;
+    text-align: center;
+    background: var(--bg-2);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    margin-bottom: 24px;
+  }
+  .drop-zone:hover, .drop-zone.dragover {
+    border-color: var(--accent);
+    background: rgba(139, 92, 246, 0.05);
+    transform: translateY(-2px);
+  }
+  .drop-zone svg {
+    width: 48px;
+    height: 48px;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .drop-zone h3 {
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+  }
+  .drop-zone p {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+  }
+  .drop-zone input { display: none; }
+  .file-info {
+    display: none;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+  .file-info.active { display: block; }
+  .file-info span { color: var(--text); }
+  .file-info .divider { color: var(--border); margin: 0 10px; }
+  .waveform-wrap {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .waveform-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .waveform-header .current {
+    color: var(--accent-2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+  }
+  canvas#waveform {
+    width: 100%;
+    height: 160px;
+    display: block;
+    border-radius: 8px;
+    background: var(--bg);
+  }
+  .controls {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  button {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 12px 24px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--bg-2);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 120px;
+    justify-content: center;
+  }
+  button:hover:not(:disabled) {
+    background: var(--bg-3);
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+  button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  button.primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    border-color: transparent;
+    color: white;
+  }
+  button.primary:hover:not(:disabled) {
+    box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4);
+  }
+  button.danger {
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+  }
+  button.danger:hover:not(:disabled) {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: var(--danger);
+  }
+  .chunk-grid {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+  }
+  .chunk-grid-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .chunks {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 6px;
+    max-height: 280px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .chunks::-webkit-scrollbar { width: 6px; }
+  .chunks::-webkit-scrollbar-track { background: var(--bg); border-radius: 3px; }
+  .chunks::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .chunk {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .chunk.playing {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    border-color: transparent;
+    color: white;
+    font-weight: 700;
+    box-shadow: 0 0 16px rgba(139, 92, 246, 0.5);
+    transform: scale(1.05);
+  }
+  .chunk.played {
+    background: rgba(139, 92, 246, 0.1);
+    border-color: rgba(139, 92, 246, 0.3);
+    color: var(--accent);
+  }
+  .empty-state {
+    text-align: center;
+    padding: 32px;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+  .playing-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--success);
+    margin-right: 8px;
+    animation: pulse 1s infinite;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>🎲 WAV Chunk Shuffler</h1>
+    <p>Load a WAV file, split it into 1-second chunks, and play them in random order</p>
+  </header>
+
+  <label class="drop-zone" id="dropZone">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+    </svg>
+    <h3>Drop a WAV file here or click to browse</h3>
+    <p>Supports .wav files</p>
+    <input type="file" id="fileInput" accept=".wav,audio/wav,audio/x-wav">
+  </label>
+
+  <div class="file-info" id="fileInfo"></div>
+
+  <div class="waveform-wrap">
+    <div class="waveform-header">
+      <span>Waveform</span>
+      <span class="current" id="currentChunk">—</span>
+    </div>
+    <canvas id="waveform"></canvas>
+  </div>
+
+  <div class="controls">
+    <button class="primary" id="playBtn" disabled>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      Play
+    </button>
+    <button id="shuffleBtn" disabled>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+      Shuffle
+    </button>
+    <button class="danger" id="stopBtn" disabled>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12"/></svg>
+      Stop
+    </button>
+  </div>
+
+  <div class="chunk-grid">
+    <div class="chunk-grid-header">
+      <span>Playback Sequence</span>
+      <span id="sequenceInfo">—</span>
+    </div>
+    <div class="chunks" id="chunkGrid">
+      <div class="empty-state">Load a WAV file to see chunks</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// build a web app that can load a WAV file, split the file in 1 second chunks and play randomly this chunks as sequence
+// add a shuffle refresh button for Playback Sequence
+(() => {
+  const dropZone = document.getElementById('dropZone');
+  const fileInput = document.getElementById('fileInput');
+  const fileInfo = document.getElementById('fileInfo');
+  const canvas = document.getElementById('waveform');
+  const ctx = canvas.getContext('2d');
+  const playBtn = document.getElementById('playBtn');
+  const shuffleBtn = document.getElementById('shuffleBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const chunkGrid = document.getElementById('chunkGrid');
+  const currentChunkEl = document.getElementById('currentChunk');
+  const sequenceInfo = document.getElementById('sequenceInfo');
+
+  let audioCtx = null;
+  let audioBuffer = null;
+  let chunks = []; // {start, duration}
+  let sequence = []; // indices into chunks
+  let currentIdx = 0;
+  let isPlaying = false;
+  let currentSource = null;
+  let fileName = '';
+  let chunkDuration = 1; // seconds
+
+  // --- Drag & Drop ---
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('dragover');
+  });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  });
+  fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) handleFile(file);
+  });
+
+  async function handleFile(file) {
+    if (!file.name.toLowerCase().endsWith('.wav') && !file.type.includes('wav')) {
+      alert('Please upload a WAV file');
+      return;
+    }
+    stopPlayback();
+    fileName = file.name;
+
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    try {
+      const arrayBuf = await file.arrayBuffer();
+      audioBuffer = await audioCtx.decodeAudioData(arrayBuf);
+      buildChunks();
+      shuffle();
+      drawWaveform();
+      renderChunkGrid();
+      updateFileInfo();
+      playBtn.disabled = false;
+      shuffleBtn.disabled = false;
+    } catch (err) {
+      console.error(err);
+      alert('Failed to decode WAV file: ' + err.message);
+    }
+  }
+
+  function buildChunks() {
+    chunks = [];
+    const totalDuration = audioBuffer.duration;
+    let t = 0;
+    while (t < totalDuration) {
+      const dur = Math.min(chunkDuration, totalDuration - t);
+      // Skip very tiny trailing chunks (< 0.1s)
+      if (dur < 0.1 && chunks.length > 0) break;
+      chunks.push({ start: t, duration: dur });
+      t += chunkDuration;
+    }
+  }
+
+  function shuffle() {
+    sequence = chunks.map((_, i) => i);
+    // Fisher-Yates
+    for (let i = sequence.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [sequence[i], sequence[j]] = [sequence[j], sequence[i]];
+    }
+    currentIdx = 0;
+    renderChunkGrid();
+  }
+
+  function updateFileInfo() {
+    if (!audioBuffer) return;
+    fileInfo.classList.add('active');
+    fileInfo.innerHTML = `
+      <span>${fileName}</span>
+      <span class="divider">•</span>
+      ${audioBuffer.numberOfChannels} ch
+      <span class="divider">•</span>
+      ${audioBuffer.sampleRate} Hz
+      <span class="divider">•</span>
+      ${audioBuffer.duration.toFixed(2)}s
+      <span class="divider">•</span>
+      <span>${chunks.length} chunks</span>
+    `;
+  }
+
+  // --- Waveform Drawing ---
+  function drawWaveform() {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+    const W = rect.width;
+    const H = rect.height;
+
+    ctx.clearRect(0, 0, W, H);
+
+    if (!audioBuffer) return;
+
+    const data = audioBuffer.getChannelData(0);
+    const totalSamples = data.length;
+    const step = Math.max(1, Math.floor(totalSamples / W));
+
+    // Draw chunk background regions
+    const totalDuration = audioBuffer.duration;
+    const numChunks = chunks.length;
+
+    for (let i = 0; i < numChunks; i++) {
+      const chunk = chunks[i];
+      const x1 = (chunk.start / totalDuration) * W;
+      const x2 = ((chunk.start + chunk.duration) / totalDuration) * W;
+
+      // Alternate subtle background
+      if (i % 2 === 0) {
+        ctx.fillStyle = 'rgba(139, 92, 246, 0.04)';
+        ctx.fillRect(x1, 0, x2 - x1, H);
+      }
+
+      // Highlight currently playing chunk
+      if (isPlaying && sequence[currentIdx] === i) {
+        ctx.fillStyle = 'rgba(236, 72, 153, 0.15)';
+        ctx.fillRect(x1, 0, x2 - x1, H);
+      }
+    }
+
+    // Draw waveform
+    ctx.strokeStyle = 'rgba(139, 92, 246, 0.8)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let x = 0; x < W; x++) {
+      let min = 1, max = -1;
+      const start = Math.floor(x * step);
+      const end = Math.min(start + step, totalSamples);
+      for (let s = start; s < end; s++) {
+        const v = data[s];
+        if (v < min) min = v;
+        if (v > max) max = v;
+      }
+      const y1 = (1 - max) * H / 2;
+      const y2 = (1 - min) * H / 2;
+      ctx.moveTo(x, y1);
+      ctx.lineTo(x, y2);
+    }
+    ctx.stroke();
+
+    // Draw chunk dividers
+    ctx.strokeStyle = 'rgba(139, 92, 246, 0.3)';
+    ctx.setLineDash([3, 3]);
+    ctx.lineWidth = 1;
+    for (let i = 1; i < numChunks; i++) {
+      const x = (chunks[i].start / totalDuration) * W;
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, H);
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
+
+    // Time labels
+    ctx.fillStyle = 'rgba(156, 163, 175, 0.6)';
+    ctx.font = '10px "JetBrains Mono", monospace';
+    ctx.textAlign = 'left';
+    for (let i = 0; i <= numChunks; i++) {
+      const t = i * chunkDuration;
+      if (t > totalDuration) break;
+      const x = (t / totalDuration) * W;
+      ctx.fillText(t.toFixed(0) + 's', x + 2, H - 4);
+    }
+  }
+
+  window.addEventListener('resize', () => {
+    if (audioBuffer) drawWaveform();
+  });
+
+  // --- Chunk Grid ---
+  function renderChunkGrid() {
+    if (sequence.length === 0) {
+      chunkGrid.innerHTML = '<div class="empty-state">Load a WAV file to see chunks</div>';
+      sequenceInfo.textContent = '—';
+      return;
+    }
+    chunkGrid.innerHTML = '';
+    sequence.forEach((chunkIdx, seqPos) => {
+      const el = document.createElement('div');
+      el.className = 'chunk';
+      el.dataset.seqPos = seqPos;
+      el.textContent = chunkIdx + 1;
+      el.title = `Chunk ${chunkIdx + 1} (${chunks[chunkIdx].start.toFixed(1)}s - ${(chunks[chunkIdx].start + chunks[chunkIdx].duration).toFixed(1)}s)`;
+      chunkGrid.appendChild(el);
+    });
+    sequenceInfo.textContent = `${sequence.length} chunks in sequence`;
+    updateChunkHighlight();
+  }
+
+  function updateChunkHighlight() {
+    const items = chunkGrid.querySelectorAll('.chunk');
+    items.forEach((el, i) => {
+      el.classList.remove('playing', 'played');
+      if (isPlaying && i === currentIdx) {
+        el.classList.add('playing');
+        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else if (i < currentIdx) {
+        el.classList.add('played');
+      }
+    });
+  }
+
+  // --- Playback ---
+  playBtn.addEventListener('click', () => {
+    if (isPlaying) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    startPlayback();
+  });
+
+  stopBtn.addEventListener('click', stopPlayback);
+  shuffleBtn.addEventListener('click', () => {
+    const wasPlaying = isPlaying;
+    stopPlayback();
+    shuffle();
+    drawWaveform();
+    if (wasPlaying) startPlayback();
+  });
+
+  function startPlayback() {
+    if (chunks.length === 0) return;
+    isPlaying = true;
+    playBtn.disabled = true;
+    stopBtn.disabled = false;
+    playBtn.innerHTML = '<span class="playing-indicator"></span>Playing';
+    if (currentIdx >= sequence.length) currentIdx = 0;
+    playNextChunk();
+  }
+
+  function playNextChunk() {
+    if (!isPlaying) return;
+    if (currentIdx >= sequence.length) {
+      // Loop: reshuffle and play again
+      shuffle();
+      drawWaveform();
+    }
+    const chunkIdx = sequence[currentIdx];
+    const chunk = chunks[chunkIdx];
+
+    currentChunkEl.textContent = `▶ Chunk ${chunkIdx + 1} / ${chunks.length}  (${chunk.start.toFixed(1)}s - ${(chunk.start + chunk.duration).toFixed(1)}s)`;
+    updateChunkHighlight();
+    drawWaveform();
+
+    const source = audioCtx.createBufferSource();
+    source.buffer = audioBuffer;
+    source.connect(audioCtx.destination);
+    currentSource = source;
+
+    source.start(0, chunk.start, chunk.duration);
+
+    source.onended = () => {
+      if (!isPlaying) return;
+      currentIdx++;
+      playNextChunk();
+    };
+  }
+
+  function stopPlayback() {
+    isPlaying = false;
+    if (currentSource) {
+      try { currentSource.stop(); } catch (e) {}
+      currentSource = null;
+    }
+    currentIdx = 0;
+    playBtn.disabled = false;
+    stopBtn.disabled = true;
+    playBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Play';
+    currentChunkEl.textContent = '—';
+    updateChunkHighlight();
+    if (audioBuffer) drawWaveform();
+  }
+})();
+</script>
+</body>
+</html>
+

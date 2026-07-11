@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Audio FX Rack</title>
+    <!-- Tone.js for robust Web Audio API handling -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        :root {
+            --bg: #121212;
+            --panel: #1e1e1e;
+            --accent: #00ffcc;
+            --accent-dim: #00b38f;
+            --text: #e0e0e0;
+            --text-dim: #888;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+        }
+
+        .transport {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        button, .file-label {
+            background: var(--panel);
+            color: var(--accent);
+            border: 1px solid var(--accent-dim);
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        button:hover, .file-label:hover {
+            background: var(--accent);
+            color: var(--bg);
+            box-shadow: 0 0 15px var(--accent);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        input[type="file"] { display: none; }
+
+        canvas {
+            width: 100%;
+            max-width: 800px;
+            height: 150px;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .rack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .effect-card {
+            background: var(--panel);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .effect-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .effect-title {
+            font-size: 1.2rem;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .toggle input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #333;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider { background-color: var(--accent); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #333;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--accent);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0,255,204,0.5);
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: var(--accent);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        .loop-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 10px;
+        }
+
+        .loop-label {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Web Audio FX Rack</h1>
+    
+    <div class="transport">
+        <label for="fileInput" class="file-label">Choose WAV File</label>
+        <input type="file" id="fileInput" accept=".wav, audio/wav">
+        <button id="playBtn" disabled>Play</button>
+        <button id="stopBtn" disabled>Stop</button>
+        
+        <!-- Loop Toggle Added Here -->
+        <div class="loop-container">
+            <label class="toggle" style="margin: 0;">
+                <input type="checkbox" id="loopToggle">
+                <span class="slider"></span>
+            </label>
+            <span class="loop-label">Loop</span>
+        </div>
+    </div>
+
+    <canvas id="visualizer"></canvas>
+
+    <div class="rack">
+        <!-- EQ -->
+        <div class="effect-card">
+            <div class="effect-header">
+                <span class="effect-title">EQ (3-Band)</span>
+                <label class="toggle"><input type="checkbox" id="eqBypass" checked><span class="slider"></span></label>
+            </div>
+            <div class="control-group">
+                <div class="control-label"><span>Low</span><span id="eqLowVal">0 dB</span></div>
+                <input type="range" id="eqLow" min="-40" max="10" value="0" step="1">
+            </div>
+            <div class="control-group">
+                <div class="control-label"><span>Mid</span><span id="eqMidVal">0 dB</span></div>
+                <input type="range" id="eqMid" min="-40" max="10" value="0" step="1">
+            </div>
+            <div class="control-group">
+                <div class="control-label"><span>High</span><span id="eqHighVal">0 dB</span></div>
+                <input type="range" id="eqHigh" min="-40" max="10" value="0" step="1">
+            </div>
+        </div>
+
+        <!-- Phaser -->
+        <div class="effect-card">
+            <div class="effect-header">
+                <span class="effect-title">Phaser</span>
+                <label class="toggle"><input type="checkbox" id="phaserBypass" checked><span class="slider"></span></label>
+            </div>
+            <div class="control-group">
+                <div class="control-label"><span>Rate</span><span id="phaserRateVal">1.0 Hz</span></div>
+                <input type="range" id="phaserRate" min="0.1" max="10" value="1" step="0.1">
+            </div>
+            <div class="control-group">
+                <div class="control-label"><span>Depth</span><span id="phaserDepthVal">3.0</span></div>
+                <input type="range" id="phaserDepth" min="1" max="5" value="3" step="0.1">
+            </div>
+        </div>
+
+        <!-- Chorus -->
+        <div class="effect-card">
+            <div class="effect-header">
+                <span class="effect-title">Chorus</span>
+                <label class="toggle"><input type="checkbox" id="chorusBypass" checked><span class="slider"></span></label>
+            </div>
+            <div class="control-group">
+                <div class="control-label"><span>Rate</span><span id="chorusRateVal">1.5 Hz</span></div>
+                <input type="range" id="chorusRate" min="0.1" max="10" value="1.5" step="0.1">
+            </div>
+            <div class="control-group">
+                <div class="control-label"><span>Delay</span><span id="chorusDelayVal">15 ms</span></div>
+                <input type="range" id="chorusDelay" min="1" max="50" value="15" step="1">
+            </div>
+            <div class="control-group">
+                <div class="control-label"><span>Depth</span><span id="chorusDepthVal">0.7</span></div>
+                <input type="range" id="chorusDepth" min="0" max="1" value="0.7" step="0.05">
+            </div>
+        </div>
+
+        <!-- Delay -->
+        <div class="effect-card">
+            <div class="effect-header">
+                <span class="effect-title">Delay</span>
+                <label class="toggle"><input type="checkbox" id="delayBypass" checked><span class="slider"></span></label>
+            </div>
+            <div class="control-group">
+                <div class="control-label"><span>Time</span><span id="delayTimeVal">0.25 s</span></div>
+                <input type="range" id="delayTime" min="0.01" max="1.0" value="0.25" step="0.01">
+            </div>
+            <div class="control-group">
+                <div class="control-label"><span>Feedback</span><span id="delayFbVal">0.3</span></div>
+                <input type="range" id="delayFb" min="0" max="0.9" value="0.3" step="0.05">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Audio Context & Nodes Setup ---
+        const eq = new Tone.EQ3({ low: 0, mid: 0, high: 0 });
+        const phaser = new Tone.Phaser({ frequency: 1, octaves: 3, baseFrequency: 1000 });
+        const chorus = new Tone.Chorus({ frequency: 1.5, delayTime: 0.015, depth: 0.7, type: "sine" }).start();
+        const delay = new Tone.FeedbackDelay({ delayTime: 0.25, feedback: 0.3 });
+        
+        // Analyser for visualizer
+        const analyser = new Tone.Analyser('waveform', 1024);
+
+        // Player setup
+        const player = new Tone.Player({
+            onload: () => {
+                document.getElementById('playBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = false;
+            }
+        });
+
+        // Signal Chain: Player -> EQ -> Phaser -> Chorus -> Delay -> Analyser -> Speakers
+        player.chain(eq, phaser, chorus, delay, analyser, Tone.Destination);
+
+        // --- Visualizer Setup ---
+        const canvas = document.getElementById('visualizer');
+        const ctx = canvas.getContext('2d');
+        
+        function resizeCanvas() {
+            canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+            canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function draw() {
+            requestAnimationFrame(draw);
+            const width = canvas.offsetWidth;
+            const height = canvas.offsetHeight;
+            
+            ctx.fillStyle = '#0a0a0a';
+            ctx.fillRect(0, 0, width, height);
+            
+            const values = analyser.getValue();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#00ffcc';
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = '#00ffcc';
+            ctx.beginPath();
+            
+            const sliceWidth = width / values.length;
+            let x = 0;
+            for (let i = 0; i < values.length; i++) {
+                const v = values[i];
+                const y = (v + 1) / 2 * height; 
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+                x += sliceWidth;
+            }
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+        }
+        draw();
+
+        // --- UI Event Listeners ---
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const url = URL.createObjectURL(file);
+            player.load(url);
+        });
+
+        document.getElementById('playBtn').addEventListener('click', async () => {
+            await Tone.start(); // Required for browser autoplay policies
+            if (player.loaded) {
+                player.stop();
+                player.start(0); // Start from the beginning
+            }
+        });
+
+        document.getElementById('stopBtn').addEventListener('click', () => {
+            if (player.loaded) player.stop();
+        });
+
+        // Loop Toggle Binding
+        document.getElementById('loopToggle').addEventListener('change', (e) => {
+            player.loop = e.target.checked;
+        });
+
+        // Helper to bind sliders to Tone.js parameters
+        function bindSlider(id, valId, callback, suffix = '') {
+            const slider = document.getElementById(id);
+            const valDisplay = document.getElementById(valId);
+            slider.addEventListener('input', () => {
+                const val = parseFloat(slider.value);
+                valDisplay.textContent = val + suffix;
+                callback(val);
+            });
+        }
+
+        // EQ Bindings
+        bindSlider('eqLow', 'eqLowVal', v => eq.low.value = v, ' dB');
+        bindSlider('eqMid', 'eqMidVal', v => eq.mid.value = v, ' dB');
+        bindSlider('eqHigh', 'eqHighVal', v => eq.high.value = v, ' dB');
+
+        // Phaser Bindings
+        bindSlider('phaserRate', 'phaserRateVal', v => phaser.frequency.value = v, ' Hz');
+        bindSlider('phaserDepth', 'phaserDepthVal', v => phaser.octaves.value = v);
+
+        // Chorus Bindings
+        bindSlider('chorusRate', 'chorusRateVal', v => chorus.frequency.value = v, ' Hz');
+        bindSlider('chorusDelay', 'chorusDelayVal', v => chorus.delayTime.value = v / 1000, ' ms'); // Convert ms to seconds
+        bindSlider('chorusDepth', 'chorusDepthVal', v => chorus.depth.value = v);
+
+        // Delay Bindings
+        bindSlider('delayTime', 'delayTimeVal', v => delay.delayTime.value = v, ' s');
+        bindSlider('delayFb', 'delayFbVal', v => delay.feedback.value = v);
+
+        // Bypass Toggles (Using the 'wet' property for smooth click-free bypassing)
+        document.getElementById('eqBypass').addEventListener('change', (e) => eq.wet.value = e.target.checked ? 1 : 0);
+        document.getElementById('phaserBypass').addEventListener('change', (e) => phaser.wet.value = e.target.checked ? 1 : 0);
+        document.getElementById('chorusBypass').addEventListener('change', (e) => chorus.wet.value = e.target.checked ? 1 : 0);
+        document.getElementById('delayBypass').addEventListener('change', (e) => delay.wet.value = e.target.checked ? 1 : 0);
+
+    </script>
+</body>
+</html>
