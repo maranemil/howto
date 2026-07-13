@@ -459,8 +459,13 @@
 - https://yaytext.com/unstyle/
 
 
+### translate image
+- https://translate.yandex.com/en/ocr 
+
+
 ### image 2 text ocr
 - https://www.imagetotext.info/
+- https://www.imgocr.com/ 
 
 
 ### article-rewriter

@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WAV Segment Player</title>
+   
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #12121a;
+  --bg-card: #1a1a2e;
+  --bg-card-hover: #222240;
+  --accent: #7c3aed;
+  --accent-light: #a78bfa;
+  --accent-glow: rgba(124, 58, 237, 0.3);
+  --text-primary: #f0f0f5;
+  --text-secondary: #9090a8;
+  --border: #2a2a40;
+  --success: #10b981;
+  --warning: #f59e0b;
+}
+
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 900px;
+  width: 100%;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(
+    135deg,
+    var(--accent-light),
+    #ec4899,
+    var(--accent)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+}
+
+header p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 300;
+}
+
+.upload-zone {
+  border: 2px dashed var(--border);
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: var(--bg-secondary);
+  position: relative;
+  overflow: hidden;
+}
+
+.upload-zone::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at center,
+    var(--accent-glow),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.upload-zone:hover,
+.upload-zone.drag-over {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.upload-zone:hover::before,
+.upload-zone.drag-over::before {
+  opacity: 1;
+}
+
+.upload-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.upload-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--accent-light);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.upload-zone h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.upload-zone span {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  position: relative;
+  z-index: 1;
+}
+
+.upload-zone input {
+  display: none;
+}
+
+.file-info {
+  display: none;
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  border: 1px solid var(--border);
+}
+
+.file-info.visible {
+  display: block;
+  animation: fadeIn 0.4s ease;
+}
+
+.file-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.file-name {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.file-meta {
+  display: flex;
+  gap: 1.5rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.file-meta span {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.file-meta .dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.segments-container {
+  display: none;
+  margin-top: 2rem;
+}
+
+.segments-container.visible {
+  display: block;
+  animation: fadeIn 0.5s ease;
+}
+
+.segments-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.segments-header h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.segment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.segment-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.segment-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), #ec4899);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.segment-card.playing::after {
+  transform: scaleX(1);
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+.segment-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+.segment-card.playing {
+  border-color: var(--accent);
+  box-shadow: 0 0 30px var(--accent-glow);
+}
+
+.segment-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.segment-label {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.segment-time {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-family: "Courier New", monospace;
+  background: rgba(124, 58, 237, 0.1);
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+}
+
+.waveform-canvas {
+  width: 100%;
+  height: 60px;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.segment-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.play-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, var(--accent), #9333ea);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.play-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 20px var(--accent-glow);
+}
+
+.play-btn:active {
+  transform: scale(0.95);
+}
+
+.play-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: white;
+}
+
+.play-btn.stop-btn {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.progress-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), #ec4899);
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.05s linear;
+}
+
+.progress-text {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-align: right;
+  font-family: "Courier New", monospace;
+}
+
+.stop-all-btn {
+  padding: 0.5rem 1.25rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-family: "Inter", sans-serif;
+  transition: all 0.2s ease;
+}
+
+.stop-all-btn:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.loading {
+  display: none;
+  text-align: center;
+  padding: 2rem;
+}
+
+.loading.visible {
+  display: block;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.global-progress {
+  display: none;
+  margin-top: 1.5rem;
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border);
+}
+
+.global-progress.visible {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+.global-progress-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.global-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.global-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), #ec4899);
+  border-radius: 3px;
+  transition: width 0.2s ease;
+}
+
+@media (max-width: 640px) {
+  header h1 {
+    font-size: 1.75rem;
+  }
+
+  .segment-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .file-info-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+</style>
+
+
+</head>
+<body>
+
+
+ 
+  <div class="container">
+    <header>
+      <h1>WAV Segment Player</h1>
+      <p>Load a WAV file and play it in 20 equal segments</p>
+    </header>
+    <div class="upload-zone" id="uploadZone">
+      <div class="upload-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="17 8 12 3 7 8" />
+          <line x1="12" y1="3" x2="12" y2="15" />
+        </svg>
+      </div>
+      <h2>Drop your WAV file here</h2>
+      <span>or click to browse</span>
+      <input type="file" id="fileInput" accept=".wav,audio/wav,audio/x-wav">
+    </div>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p>Processing audio...</p>
+    </div>
+
+    <div class="file-info" id="fileInfo">
+      <div class="file-info-row">
+        <span class="file-name" id="fileName">—</span>
+        <div class="file-meta">
+          <span id="fileDuration">0s</span>
+          <span class="dot"></span>
+          <span id="fileSampleRate">44100 Hz</span>
+          <span class="dot"></span>
+          <span id="fileChannels">Stereo</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="global-progress" id="globalProgress">
+      <div class="global-progress-header">
+        <span>Building waveforms</span>
+        <span id="globalProgressText">0%</span>
+      </div>
+      <div class="global-progress-bar">
+        <div class="global-progress-fill" id="globalProgressFill" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <div class="segments-container" id="segmentsContainer">
+      <div class="segments-header">
+        <h2>Segments</h2>
+        <button class="stop-all-btn" id="stopAllBtn">■ Stop All</button>
+      </div>
+      <div class="segment-grid" id="segmentGrid"></div>
+    </div>
+  </div>
+
+
+  <script>
+    // const element = document.getElementById('myElement');
+//element?.classList.add('active');
+
+document.addEventListener("DOMContentLoaded", () => {
+  const element = document.getElementById("uploadZone");
+  if (element) {
+    element.classList.add("active");
+  }
+});
+
+const SEGMENT_COUNT = 20;
+let audioContext = null;
+let audioBuffer = null;
+let segmentBuffers = [];
+let activeSources = [];
+let activeSegmentIndex = -1;
+
+const uploadZone = document.getElementById("uploadZone");
+const fileInput = document.getElementById("fileInput");
+const loading = document.getElementById("loading");
+const fileInfo = document.getElementById("fileInfo");
+const fileName = document.getElementById("fileName");
+const fileDuration = document.getElementById("fileDuration");
+const fileSampleRate = document.getElementById("fileSampleRate");
+const fileChannels = document.getElementById("fileChannels");
+const segmentsContainer = document.getElementById("segmentsContainer");
+const segmentGrid = document.getElementById("segmentGrid");
+const stopAllBtn = document.getElementById("stopAllBtn");
+const globalProgress = document.getElementById("globalProgress");
+const globalProgressFill = document.getElementById("globalProgressFill");
+const globalProgressText = document.getElementById("globalProgressText");
+
+uploadZone.addEventListener("click", () => fileInput.click());
+
+uploadZone.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  uploadZone.classList.add("drag-over");
+});
+
+uploadZone.addEventListener("dragleave", () => {
+  uploadZone.classList.remove("drag-over");
+});
+
+uploadZone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  uploadZone.classList.remove("drag-over");
+  const files = e.dataTransfer.files;
+  if (files.length > 0) {
+    handleFile(files[0]);
+  }
+});
+
+fileInput.addEventListener("change", (e) => {
+  if (e.target.files.length > 0) {
+    handleFile(e.target.files[0]);
+  }
+});
+
+async function handleFile(file) {
+  if (!file.name.toLowerCase().endsWith(".wav")) {
+    alert("Please select a WAV file.");
+    return;
+  }
+
+  stopAllPlayback();
+
+  loading.classList.add("visible");
+  fileInfo.classList.remove("visible");
+  segmentsContainer.classList.remove("visible");
+  globalProgress.classList.remove("visible");
+  segmentGrid.innerHTML = "";
+
+  try {
+    if (!audioContext) {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    const arrayBuffer = await file.arrayBuffer();
+    audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+    const duration = audioBuffer.duration;
+    const channels = audioBuffer.numberOfChannels;
+    const sampleRate = audioBuffer.sampleRate;
+
+    fileName.textContent = file.name;
+    fileDuration.textContent = `${duration.toFixed(2)}s`;
+    fileSampleRate.textContent = `${sampleRate} Hz`;
+    fileChannels.textContent =
+      channels === 1 ? "Mono" : channels === 2 ? "Stereo" : `${channels}ch`;
+
+    fileInfo.classList.add("visible");
+
+    await buildSegments();
+  } catch (err) {
+    console.error(err);
+    alert("Error loading audio file. Please try another file.");
+  } finally {
+    loading.classList.remove("visible");
+  }
+}
+
+async function buildSegments() {
+  globalProgress.classList.add("visible");
+  segmentGrid.innerHTML = "";
+
+  const totalSamples = audioBuffer.length;
+  const samplesPerSegment = Math.floor(totalSamples / SEGMENT_COUNT);
+  const sampleRate = audioBuffer.sampleRate;
+  const channels = audioBuffer.numberOfChannels;
+
+  segmentBuffers = [];
+
+  for (let i = 0; i < SEGMENT_COUNT; i++) {
+    const startSample = i * samplesPerSegment;
+    const endSample =
+      i === SEGMENT_COUNT - 1 ? totalSamples : (i + 1) * samplesPerSegment;
+    const segmentLength = endSample - startSample;
+
+    const offlineCtx = new OfflineAudioContext(
+      channels,
+      segmentLength,
+      sampleRate
+    );
+    const segSource = offlineCtx.createBufferSource();
+    segSource.buffer = audioBuffer;
+    segSource.connect(offlineCtx.destination);
+
+    const startTime = startSample / sampleRate;
+    const duration = segmentLength / sampleRate;
+
+    segSource.start(0, startTime, duration);
+
+    const segBuffer = await offlineCtx.startRendering();
+    segmentBuffers.push(segBuffer);
+
+    const progress = ((i + 1) / SEGMENT_COUNT) * 100;
+    globalProgressFill.style.width = `${progress}%`;
+    globalProgressText.textContent = `${Math.round(progress)}%`;
+  }
+
+  createSegmentCards();
+
+  setTimeout(() => {
+    globalProgress.classList.remove("visible");
+  }, 500);
+
+  segmentsContainer.classList.add("visible");
+}
+
+function createSegmentCards() {
+  const segDuration = segmentBuffers[0] ? segmentBuffers[0].duration : 0;
+  const sampleRate = audioBuffer.sampleRate;
+  const totalSamples = audioBuffer.length;
+  const samplesPerSegment = Math.floor(totalSamples / SEGMENT_COUNT);
+
+  for (let i = 0; i < SEGMENT_COUNT; i++) {
+    const startSample = i * samplesPerSegment;
+    const endSample =
+      i === SEGMENT_COUNT - 1 ? totalSamples : (i + 1) * samplesPerSegment;
+    const startTime = startSample / sampleRate;
+    const endTime = endSample / sampleRate;
+
+    const card = document.createElement("div");
+    card.className = "segment-card";
+    card.id = `segment-${i}`;
+
+    card.innerHTML = `
+                    <div class="segment-top">
+                        <span class="segment-label">Segment ${i + 1}</span>
+                        <span class="segment-time">${formatTime(
+                          startTime
+                        )} — ${formatTime(endTime)}</span>
+                    </div>
+                    <canvas class="waveform-canvas" id="waveform-${i}" width="520" height="120"></canvas>
+                    <div class="segment-controls">
+                        <button class="play-btn" id="playBtn-${i}" onclick="toggleSegment(${i})">
+                            <svg viewBox="0 0 24 24" id="playIcon-${i}">
+                                <polygon points="5,3 19,12 5,21"/>
+                            </svg>
+                        </button>
+                        <div class="progress-container">
+                            <div class="progress-bar" id="progressBar-${i}" onclick="seekSegment(${i}, event)">
+                                <div class="progress-fill" id="progressFill-${i}"></div>
+                            </div>
+                            <div class="progress-text" id="progressText-${i}">0:00.0</div>
+                        </div>
+                    </div>
+                `;
+
+    segmentGrid.appendChild(card);
+
+    requestAnimationFrame(() => {
+      drawWaveform(i);
+    });
+  }
+}
+
+function drawWaveform(segIndex) {
+  const canvas = document.getElementById(`waveform-${segIndex}`);
+  if (!canvas) return;
+
+  const ctx = canvas.getContext("2d");
+  const buffer = segmentBuffers[segIndex];
+  if (!buffer) return;
+
+  const data = buffer.getChannelData(0);
+  const width = canvas.width;
+  const height = canvas.height;
+  const step = Math.ceil(data.length / width);
+
+  ctx.clearRect(0, 0, width, height);
+
+  ctx.fillStyle = "rgba(124, 58, 237, 0.15)";
+  ctx.fillRect(0, 0, width, height);
+
+  ctx.strokeStyle = "#a78bfa";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+
+  const mid = height / 2;
+
+  for (let x = 0; x < width; x++) {
+    let min = 1.0;
+    let max = -1.0;
+
+    for (let j = 0; j < step; j++) {
+      const datum = data[x * step + j];
+      if (datum !== undefined) {
+        if (datum < min) min = datum;
+        if (datum > max) max = datum;
+      }
+    }
+
+    const y1 = ((1 + min) / 2) * height;
+    const y2 = ((1 + max) / 2) * height;
+
+    ctx.moveTo(x, y1);
+    ctx.lineTo(x, y2);
+  }
+
+  ctx.stroke();
+
+  // Center line
+  ctx.strokeStyle = "rgba(167, 139, 250, 0.3)";
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(0, mid);
+  ctx.lineTo(width, mid);
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function toggleSegment(index) {
+  if (activeSegmentIndex === index) {
+    stopSegment(index);
+  } else {
+    stopAllPlayback();
+    playSegment(index);
+  }
+}
+
+function playSegment(index) {
+  if (!audioContext || !segmentBuffers[index]) return;
+
+  if (audioContext.state === "suspended") {
+    audioContext.resume();
+  }
+
+  const source = audioContext.createBufferSource();
+  source.buffer = segmentBuffers[index];
+  source.connect(audioContext.destination);
+
+  const card = document.getElementById(`segment-${index}`);
+  const btn = document.getElementById(`playBtn-${index}`);
+  const icon = document.getElementById(`playIcon-${index}`);
+
+  card.classList.add("playing");
+  activeSegmentIndex = index;
+
+  icon.innerHTML =
+    '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+  btn.classList.add("stop-btn");
+
+  source.start(0);
+  activeSources.push(source);
+
+  const startTime = audioContext.currentTime;
+  const duration = source.buffer.duration;
+
+  source.onended = () => {
+    card.classList.remove("playing");
+    btn.classList.remove("stop-btn");
+    icon.innerHTML = '<polygon points="5,3 19,12 5,21"/>';
+    if (activeSegmentIndex === index) {
+      activeSegmentIndex = -1;
+    }
+  };
+
+  // Animate progress
+  const intervalId = setInterval(() => {
+    const elapsed = audioContext.currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+
+    const progressFill = document.getElementById(`progressFill-${index}`);
+    const progressText = document.getElementById(`progressText-${index}`);
+
+    if (progressFill) progressFill.style.width = `${progress * 100}%`;
+    if (progressText) progressText.textContent = formatTime(elapsed);
+
+    if (progress >= 1) {
+      clearInterval(intervalId);
+      if (progressFill) progressFill.style.width = "0%";
+      if (progressText) progressText.textContent = "0:00.0";
+    }
+  }, 16);
+
+  // Store interval ID for cleanup
+  source._progressInterval = intervalId;
+}
+
+function stopSegment(index) {
+  const card = document.getElementById(`segment-${index}`);
+  const btn = document.getElementById(`playBtn-${index}`);
+  const icon = document.getElementById(`playIcon-${index}`);
+  const progressFill = document.getElementById(`progressFill-${index}`);
+  const progressText = document.getElementById(`progressText-${index}`);
+
+  //card.classList.remove('playing');
+  //btn.classList.remove('stop-btn');
+  //icon.innerHTML = '<polygon points="5,3 19,12 5,21"/>';
+
+  if (progressFill) progressFill.style.width = "0%";
+  if (progressText) progressText.textContent = "0:00.0";
+
+  if (activeSegmentIndex === index) {
+    activeSegmentIndex = -1;
+  }
+}
+
+function stopAllPlayback() {
+  activeSources.forEach((src) => {
+    try {
+      if (src._progressInterval) clearInterval(src._progressInterval);
+      src.onended = null;
+      src.stop();
+    } catch (e) {}
+  });
+  activeSources = [];
+  activeSegmentIndex = -1;
+
+  for (let i = 0; i < SEGMENT_COUNT; i++) {
+    stopSegment(i);
+  }
+}
+
+function seekSegment(index, event) {
+  if (activeSegmentIndex !== index) return;
+
+  const progressBar = document.getElementById(`progressBar-${index}`);
+  const rect = progressBar.getBoundingClientRect();
+  const ratio = Math.max(
+    0,
+    Math.min(1, (event.clientX - rect.left) / rect.width)
+  );
+
+  // Stop current and restart at position
+  const sourcesToStop = activeSources.filter(
+    (_, i) => i === 0 && activeSegmentIndex === index
+  );
+
+  // We need to restart the source at the seek position
+  // Simple approach: stop and replay from offset
+  const duration = segmentBuffers[index].duration;
+  const seekTime = ratio * duration;
+
+  // Stop current
+  activeSources.forEach((src) => {
+    try {
+      if (src._progressInterval) clearInterval(src._progressInterval);
+      src.onended = null;
+      src.stop();
+    } catch (e) {}
+  });
+  activeSources = [];
+
+  // Create new source from seek position
+  if (
+    audioContext &&
+    audioContext.state !== "running" &&
+    audioContext.state !== "suspended"
+  )
+    return;
+  if (audioContext && audioContext.state === "suspended") audioContext.resume();
+
+  const newSource = audioContext.createBufferSource();
+  newSource.buffer = segmentBuffers[index];
+  newSource.connect(audioContext.destination);
+
+  const card = document.getElementById(`segment-${index}`);
+  const btn = document.getElementById(`playBtn-${index}`);
+  const icon = document.getElementById(`playIcon-${index}`);
+
+  card.classList.add("playing");
+  activeSegmentIndex = index;
+
+  icon.innerHTML =
+    '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+  btn.classList.add("stop-btn");
+
+  newSource.start(0, seekTime);
+  activeSources.push(newSource);
+
+  const playStart = audioContext.currentTime;
+  const playDuration = duration - seekTime;
+
+  newSource.onended = () => {
+    card.classList.remove("playing");
+    btn.classList.remove("stop-btn");
+    icon.innerHTML = '<polygon points="5,3 19,12 5,21"/>';
+    if (activeSegmentIndex === index) {
+      activeSegmentIndex = -1;
+    }
+  };
+
+  const intervalId = setInterval(() => {
+    const elapsed = audioContext.currentTime - playStart;
+    const totalElapsed = seekTime + elapsed;
+    const progress = Math.min(totalElapsed / duration, 1);
+
+    const progressFill = document.getElementById(`progressFill-${index}`);
+    const progressText = document.getElementById(`progressText-${index}`);
+
+    if (progressFill) progressFill.style.width = `${progress * 100}%`;
+    if (progressText) progressText.textContent = formatTime(totalElapsed);
+
+    if (progress >= 1) {
+      clearInterval(intervalId);
+      if (progressFill) progressFill.style.width = "0%";
+      if (progressText) progressText.textContent = "0:00.0";
+    }
+  }, 16);
+
+  newSource._progressInterval = intervalId;
+}
+
+stopAllBtn.addEventListener("click", stopAllPlayback);
+
+function formatTime(seconds) {
+  if (isNaN(seconds) || seconds < 0) seconds = 0;
+  const mins = Math.floor(seconds / 60);
+  const secs = (seconds % 60).toFixed(1);
+  return `${mins}:${secs.padStart(4, "0")}`;
+}
+
+  </script>
+
+</body>
+
+</html>

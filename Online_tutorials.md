@@ -967,6 +967,10 @@
 * https://www.youtube.com/watch?v=k_D_C3ExypU  Build Your Own Claude Code 
 * https://www.youtube.com/watch?v=AT4dlBmUm68  React Query (TanStack) Full Course 2026
 * https://www.youtube.com/watch?v=rjjES5IsPdg  Docker Full Course 2026
+* https://www.youtube.com/watch?v=MSgoeuMqUmU&list=PLyzOVJj3bHQunmnnTXrNbZnBaCA-ieK4L    Introduction to the Shell
+* https://www.youtube.com/watch?v=uSkm-2eb4Xk  Learn AI Engineering From Zero in 2026
+* https://www.youtube.com/watch?v=4GtVeULrNks  React Native Full Stack Course 
+* https://www.youtube.com/watch?v=AZDSpS5v57w  AI Agents For Beginners – OpenClaw Case Study
 
 
 #

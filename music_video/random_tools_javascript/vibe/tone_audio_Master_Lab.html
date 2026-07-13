@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Master Lab — Tone.js Mastering</title>
+<script src="https://unpkg.com/tone@14.7.77/build/Tone.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    color: #e8e8f0;
+    min-height: 100vh;
+    padding: 30px 20px;
+  }
+  .container { max-width: 1430px; margin: 0 auto; }
+  h1 {
+    text-align: center;
+    font-size: 2.2em;
+    background: linear-gradient(90deg, #00c9ff, #92fe9d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .subtitle { text-align: center; color: #a0a0c0; margin-bottom: 30px; }
+
+  .panel {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 20px;
+  }
+
+  .file-zone {
+    /*border: 2px dashed rgba(255,255,255,0.2);*/
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .file-zone:hover { border-color: #00c9ff; background: rgba(0,201,255,0.05); }
+  .file-zone input { display: none; }
+
+  .controls {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  button {
+    background: linear-gradient(135deg, #00c9ff, #0072ff);
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,201,255,0.4); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  button.stop { background: linear-gradient(135deg, #ff416c, #ff4b2b); }
+  button.reset { background: linear-gradient(135deg, #667eea, #764ba2); }
+
+  .track-info {
+    margin-top: 15px;
+    text-align: center;
+    color: #92fe9d;
+    font-size: 0.95em;
+    min-height: 20px;
+  }
+
+  .master-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+  }
+  .knob-group {
+    background: rgba(0,0,0,0.3);
+    padding: 18px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .knob-group h3 {
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #92fe9d;
+    margin-bottom: 14px;
+  }
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .slider-row label {
+    font-size: 0.85em;
+    color: #c0c0d0;
+    min-width: 85px;
+  }
+  .slider-row input[type=range] {
+    flex: 1;
+    accent-color: #00c9ff;
+  }
+  .slider-row .value {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85em;
+    color: #00c9ff;
+    min-width: 60px;
+    text-align: right;
+  }
+
+  .meter-wrap {
+    background: rgba(0,0,0,0.4);
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+  }
+  .meter-bar {
+    height: 14px;
+    background: #111;
+    border-radius: 7px;
+    overflow: hidden;
+    position: relative;
+  }
+  .meter-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #00ff88 0%, #ffee00 70%, #ff3333 100%);
+    transition: width 0.05s linear;
+  }
+  .meter-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75em;
+    color: #888;
+    margin-top: 5px;
+  }
+  .meter-title {
+    font-size: 0.8em;
+    color: #a0a0c0;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🎚️ Master Lab</h1>
+  <p class="subtitle">Load a WAV file and shape it with a professional mastering chain</p>
+
+  <div class="panel">
+    <label class="file-zone" id="fileZone">
+      <input type="file" id="fileInput" accept="audio/wav,audio/x-wav,audio/mpeg,audio/mp3,audio/*">
+      <div style="font-size:1.2em;margin-bottom:8px;">📁 Click to load a WAV file</div>
+      <div style="color:#888;font-size:0.9em;">Supports WAV, MP3, OGG, M4A</div>
+    </label>
+    <div class="track-info" id="trackInfo"></div>
+    <div class="controls">
+      <button id="playBtn" disabled>▶ Play</button>
+      <button id="stopBtn" class="stop" disabled>■ Stop</button>
+      <button id="resetBtn" class="reset">↺ Reset Chain</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="master-grid">
+      <div class="knob-group">
+        <h3>🔊 Gain Stage</h3>
+        <div class="slider-row">
+          <label>Input Gain</label>
+          <input type="range" id="inputGain" min="-24" max="24" step="0.1" value="0">
+          <span class="value" id="inputGainVal">0 dB</span>
+        </div>
+        <div class="slider-row">
+          <label>Output Gain</label>
+          <input type="range" id="outputGain" min="-24" max="12" step="0.1" value="0">
+          <span class="value" id="outputGainVal">0 dB</span>
+        </div>
+      </div>
+
+      <div class="knob-group">
+        <h3>🎛️ EQ</h3>
+        <div class="slider-row">
+          <label>Low (Bass)</label>
+          <input type="range" id="eqLow" min="-12" max="12" step="0.1" value="0">
+          <span class="value" id="eqLowVal">0 dB</span>
+        </div>
+        <div class="slider-row">
+          <label>Mid</label>
+          <input type="range" id="eqMid" min="-12" max="12" step="0.1" value="0">
+          <span class="value" id="eqMidVal">0 dB</span>
+        </div>
+        <div class="slider-row">
+          <label>High (Air)</label>
+          <input type="range" id="eqHigh" min="-12" max="12" step="0.1" value="0">
+          <span class="value" id="eqHighVal">0 dB</span>
+        </div>
+      </div>
+
+      <div class="knob-group">
+        <h3>⚡ Dynamics</h3>
+        <div class="slider-row">
+          <label>Threshold</label>
+          <input type="range" id="compThresh" min="-60" max="0" step="0.5" value="-24">
+          <span class="value" id="compThreshVal">-24 dB</span>
+        </div>
+        <div class="slider-row">
+          <label>Ratio</label>
+          <input type="range" id="compRatio" min="1" max="20" step="0.1" value="4">
+          <span class="value" id="compRatioVal">4:1</span>
+        </div>
+        <div class="slider-row">
+          <label>Makeup</label>
+          <input type="range" id="compMakeup" min="0" max="18" step="0.1" value="0">
+          <span class="value" id="compMakeupVal">0 dB</span>
+        </div>
+      </div>
+
+      <div class="knob-group">
+        <h3>🛡️ Limiter</h3>
+        <div class="slider-row">
+          <label>Ceiling</label>
+          <input type="range" id="limCeiling" min="-12" max="0" step="0.1" value="-1">
+          <span class="value" id="limCeilingVal">-1.0 dB</span>
+        </div>
+        <div class="slider-row">
+          <label>Release</label>
+          <input type="range" id="limRelease" min="0.01" max="1" step="0.01" value="0.1">
+          <span class="value" id="limReleaseVal">100 ms</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="meter-wrap">
+      <div class="meter-title">
+        <span>Output Level</span>
+        <span id="dbReadout">-∞ dB</span>
+      </div>
+      <div class="meter-bar"><div class="meter-fill" id="meterFill"></div></div>
+      <div class="meter-labels"><span>-∞</span><span>-24</span><span>-12</span><span>-6</span><span>0</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// === Audio nodes ===
+let player = null;
+const inputGain   = new Tone.Gain(1);
+const eq          = new Tone.EQ3({ low: 0, mid: 0, high: 0 });
+const compGain    = new Tone.Gain(1);
+const compressor  = new Tone.Compressor({ threshold: -24, ratio: 4, attack: 0.003, release: 0.25 });
+const limiter     = new Tone.Limiter(-1);
+const outputGain  = new Tone.Gain(1);
+const meter       = new Tone.Meter({ smoothing: 0.8 });
+
+// Mastering chain: Player → InputGain → EQ → CompGain → Compressor → Limiter → OutputGain → Meter → Destination
+inputGain.chain(eq, compGain, compressor, limiter, outputGain, meter, Tone.Destination);
+
+// === DOM refs ===
+const fileInput   = document.getElementById('fileInput');
+const fileZone    = document.getElementById('fileZone');
+const trackInfo   = document.getElementById('trackInfo');
+const playBtn     = document.getElementById('playBtn');
+const stopBtn     = document.getElementById('stopBtn');
+const resetBtn    = document.getElementById('resetBtn');
+const meterFill   = document.getElementById('meterFill');
+const dbReadout   = document.getElementById('dbReadout');
+
+// === File loading ===
+fileInput.addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  await Tone.start();
+  trackInfo.textContent = `Loading: ${file.name}...`;
+
+  // Dispose previous player if any
+  if (player) { player.dispose(); }
+
+  const url = URL.createObjectURL(file);
+  player = new Tone.Player({
+    url: url,
+    onload: () => {
+      player.connect(inputGain);
+      trackInfo.textContent = `✓ ${file.name}  •  ${player.buffer.duration.toFixed(2)}s  •  ${file.size/1024|0} KB`;
+      playBtn.disabled = false;
+      stopBtn.disabled = false;
+    },
+    onerror: (err) => {
+      trackInfo.textContent = `✗ Failed to load file`;
+      console.error(err);
+    }
+  });
+});
+
+// === Transport controls ===
+playBtn.addEventListener('click', async () => {
+  await Tone.start();
+  if (!player || !player.loaded) return;
+  if (Tone.Transport.state === 'started') {
+    Tone.Transport.pause();
+    player.pause();
+    playBtn.textContent = '▶ Play';
+  } else {
+    if (player.state === 'stopped') player.start();
+    else player.start();
+    playBtn.textContent = '❚❚ Pause';
+  }
+});
+
+stopBtn.addEventListener('click', () => {
+  if (player) { player.stop(); }
+  Tone.Transport.stop();
+  playBtn.textContent = '▶ Play';
+});
+
+// === Slider wiring helper ===
+function wire(id, onChange) {
+  const el = document.getElementById(id);
+  const valEl = document.getElementById(id + 'Val');
+  const update = () => { valEl.textContent = onChange(parseFloat(el.value)); };
+  el.addEventListener('input', update);
+  update();
+  return el;
+}
+
+// Input Gain
+wire('inputGain', v => {
+  inputGain.gain.rampTo(Tone.dbToGain(v), 0.05);
+  return v.toFixed(1) + ' dB';
+});
+
+// Output Gain
+wire('outputGain', v => {
+  outputGain.gain.rampTo(Tone.dbToGain(v), 0.05);
+  return v.toFixed(1) + ' dB';
+});
+
+// EQ
+wire('eqLow',  v => { eq.low.value  = v; return v.toFixed(1) + ' dB'; });
+wire('eqMid',  v => { eq.mid.value  = v; return v.toFixed(1) + ' dB'; });
+wire('eqHigh', v => { eq.high.value = v; return v.toFixed(1) + ' dB'; });
+
+// Compressor
+wire('compThresh', v => {
+  compressor.threshold.rampTo(v, 0.05);
+  return v.toFixed(1) + ' dB';
+});
+wire('compRatio', v => {
+  compressor.ratio.value = v;
+  return v.toFixed(1) + ':1';
+});
+wire('compMakeup', v => {
+  compGain.gain.rampTo(Tone.dbToGain(v), 0.05);
+  return v.toFixed(1) + ' dB';
+});
+
+// Limiter
+wire('limCeiling', v => {
+  limiter.threshold.rampTo(v, 0.05);
+  return v.toFixed(1) + ' dB';
+});
+wire('limRelease', v => {
+  limiter.release = v;
+  return (v * 1000).toFixed(0) + ' ms';
+});
+
+// === Reset ===
+resetBtn.addEventListener('click', () => {
+  const defaults = {
+    inputGain: 0, outputGain: 0,
+    eqLow: 0, eqMid: 0, eqHigh: 0,
+    compThresh: -24, compRatio: 4, compMakeup: 0,
+    limCeiling: -1, limRelease: 0.1
+  };
+  for (const [id, val] of Object.entries(defaults)) {
+    const el = document.getElementById(id);
+    el.value = val;
+    el.dispatchEvent(new Event('input'));
+  }
+});
+
+// === Meter loop ===
+function updateMeter() {
+  const db = meter.getValue();
+  // meter.getValue() returns number or array
+  const dbVal = Array.isArray(db) ? db[0] : db;
+  // Map -60..0 dB to 0..100%
+  const pct = Math.max(0, Math.min(100, (dbVal + 60) * (100/60)));
+  meterFill.style.width = pct + '%';
+  dbReadout.textContent = isFinite(dbVal) ? dbVal.toFixed(1) + ' dB' : '-∞ dB';
+  requestAnimationFrame(updateMeter);
+}
+updateMeter();
+</script>
+</body>
+</html>

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tone.js FX Processor</title>
+  <!-- Load Tone.js from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+  <style>
+    :root {
+      --bg-color: #121212;
+      --panel-bg: #1e1e1e;
+      --accent: #00ffcc;
+      --accent-dim: #00b38f;
+      --text: #e0e0e0;
+      --text-dim: #888;
+      --border: #333;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    h1 {
+      color: var(--accent);
+      text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+      margin-bottom: 10px;
+      letter-spacing: 2px;
+    }
+
+    .transport {
+      display: flex;
+      gap: 15px;
+      margin: 20px 0;
+      align-items: center;
+      background: var(--panel-bg);
+      padding: 15px 25px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    button,
+    label.file-btn {
+      background: var(--accent-dim);
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+    }
+
+    button:hover,
+    label.file-btn:hover {
+      background: var(--accent);
+      box-shadow: 0 0 15px rgba(0, 255, 204, 0.6);
+    }
+
+    button:disabled {
+      background: #444;
+      color: #888;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    #fileInput {
+      display: none;
+    }
+
+    .fx-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      width: 100%;
+      max-width: 1200px;
+      margin-top: 20px;
+    }
+
+    .fx-panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .fx-panel h2 {
+      margin: 0 0 10px 0;
+      color: var(--accent);
+      font-size: 1.1rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .control {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .control-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    .control-header span:last-child {
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      background: #333;
+      border-radius: 3px;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      background: var(--accent);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 5px rgba(0, 255, 204, 0.8);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      background: var(--accent);
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+    }
+
+    .status {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      margin-top: 10px;
+      height: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>⚡ TONE.JS FX PROCESSOR</h1>
+
+  <div class="transport">
+    <label class="file-btn" for="fileInput">Choose WAV File</label>
+    <input type="file" id="fileInput" accept="audio/wav, audio/mpeg, audio/ogg">
+    <button id="playBtn" disabled>Play</button>
+    <button id="stopBtn" disabled>Stop</button>
+    <button id="resetBtn">Reset FX</button>
+  </div>
+
+  <div class="status" id="status">Load an audio file to begin...</div>
+
+  <div class="fx-grid">
+    <!-- Pitch Shift -->
+    <div class="fx-panel">
+      <h2>Pitch Shift</h2>
+      <div class="control">
+        <div class="control-header"><span>Pitch (Semitones)</span><span id="pitchVal">0</span></div>
+        <input type="range" id="pitch" min="-12" max="12" step="1" value="0">
+      </div>
+      <div class="control">
+        <div class="control-header"><span>Window Size</span><span id="windowVal">0.1</span></div>
+        <input type="range" id="windowSize" min="0.03" max="0.3" step="0.01" value="0.1">
+      </div>
+    </div>
+
+    <!-- 3D Panning -->
+    <div class="fx-panel">
+      <h2>3D Panner</h2>
+      <div class="control">
+        <div class="control-header"><span>Position X (Left/Right)</span><span id="panXVal">0</span></div>
+        <input type="range" id="panX" min="-10" max="10" step="0.1" value="0">
+      </div>
+      <div class="control">
+        <div class="control-header"><span>Position Z (Front/Back)</span><span id="panZVal">0</span></div>
+        <input type="range" id="panZ" min="-10" max="10" step="0.1" value="0">
+      </div>
+    </div>
+
+    <!-- Chorus -->
+    <div class="fx-panel">
+      <h2>Chorus</h2>
+      <div class="control">
+        <div class="control-header"><span>Frequency (Hz)</span><span id="chorusFreqVal">1.5</span></div>
+        <input type="range" id="chorusFreq" min="0.1" max="10" step="0.1" value="1.5">
+      </div>
+      <div class="control">
+        <div class="control-header"><span>Depth</span><span id="chorusDepthVal">0.5</span></div>
+        <input type="range" id="chorusDepth" min="0" max="1" step="0.01" value="0.5">
+      </div>
+      <div class="control">
+        <div class="control-header"><span>Mix (Wet)</span><span id="chorusWetVal">0.5</span></div>
+        <input type="range" id="chorusWet" min="0" max="1" step="0.01" value="0.5">
+      </div>
+    </div>
+
+    <!-- EQ -->
+    <div class="fx-panel">
+      <h2>3-Band EQ</h2>
+      <div class="control">
+        <div class="control-header"><span>Low (dB)</span><span id="eqLowVal">0</span></div>
+        <input type="range" id="eqLow" min="-24" max="24" step="1" value="0">
+      </div>
+      <div class="control">
+        <div class="control-header"><span>Mid (dB)</span><span id="eqMidVal">0</span></div>
+        <input type="range" id="eqMid" min="-24" max="24" step="1" value="0">
+      </div>
+      <div class="control">
+        <div class="control-header"><span>High (dB)</span><span id="eqHighVal">0</span></div>
+        <input type="range" id="eqHigh" min="-24" max="24" step="1" value="0">
+      </div>
+    </div>
+
+    <!-- Delay -->
+    <div class="fx-panel">
+      <h2>Delay</h2>
+      <div class="control">
+        <div class="control-header"><span>Delay Time (ms)</span><span id="delayTimeVal">250</span></div>
+        <input type="range" id="delayTime" min="10" max="1000" step="10" value="250">
+      </div>
+      <div class="control">
+        <div class="control-header"><span>Feedback</span><span id="delayFeedbackVal">0.3</span></div>
+        <input type="range" id="delayFeedback" min="0" max="0.9" step="0.01" value="0.3">
+      </div>
+      <div class="control">
+        <div class="control-header"><span>Mix (Wet)</span><span id="delayWetVal">0.4</span></div>
+        <input type="range" id="delayWet" min="0" max="1" step="0.01" value="0.4">
+      </div>
+    </div>
+
+    <!-- Reverb -->
+    <div class="fx-panel">
+      <h2>Reverb</h2>
+      <div class="control">
+        <div class="control-header"><span>Decay (Seconds)</span><span id="reverbDecayVal">2.0</span></div>
+        <input type="range" id="reverbDecay" min="0.1" max="10" step="0.1" value="2.0">
+      </div>
+      <div class="control">
+        <div class="control-header"><span>Mix (Wet)</span><span id="reverbWetVal">0.3</span></div>
+        <input type="range" id="reverbWet" min="0" max="1" step="0.01" value="0.3">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Tone.js Setup ---
+    const player = new Tone.Player();
+    const pitchShift = new Tone.PitchShift(0);
+    const panner3D = new Tone.Panner3D(0, 0, 0);
+    const chorus = new Tone.Chorus(1.5, 0.5, 0.5).start(); // LFO needs to be started
+    const eq = new Tone.EQ3(0, 0, 0);
+    const delay = new Tone.FeedbackDelay(0.1, 0.3);
+    const reverb = new Tone.Reverb(2);
+
+    // Signal Chain: Player -> Pitch -> 3D Pan -> Chorus -> EQ -> Delay -> Reverb -> Speakers
+    player.chain(pitchShift, panner3D, chorus, eq, delay, reverb, Tone.Destination);
+
+    // Set initial wet/dry for effects
+    delay.wet.value = 0.4;
+    delay.delayTime.value = 0.02;
+    reverb.wet.value = 0.3;
+
+    // --- UI Elements ---
+    const fileInput = document.getElementById('fileInput');
+    const playBtn = document.getElementById('playBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const status = document.getElementById('status');
+
+    // --- File Loading ---
+    fileInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      status.innerText = "Loading audio...";
+
+      try {
+        const url = URL.createObjectURL(file);
+        await player.load(url);
+        URL.revokeObjectURL(url);
+
+        status.innerText = `Loaded: ${file.name}`;
+        playBtn.disabled = false;
+        stopBtn.disabled = false;
+      } catch (err) {
+        status.innerText = "Error loading file.";
+        console.error(err);
+      }
+    });
+
+    // --- Transport Controls ---
+    playBtn.addEventListener('click', async () => {
+      await Tone.start();
+
+      if (player.state === 'stopped' || player.state === 'paused') {
+        player.start();
+        playBtn.innerText = "Pause";
+      } else {
+        player.pause();
+        playBtn.innerText = "Play";
+      }
+    });
+
+    stopBtn.addEventListener('click', () => {
+      player.stop();
+      playBtn.innerText = "Play";
+    });
+
+    // --- Bind UI to Tone.js Parameters ---
+    function bindSlider(sliderId, valueId, callback, format = (v) => v) {
+      const slider = document.getElementById(sliderId);
+      const display = document.getElementById(valueId);
+
+      slider.addEventListener('input', () => {
+        const val = parseFloat(slider.value);
+        display.innerText = format(val);
+        callback(val);
+      });
+    }
+
+    // Pitch Shift
+    bindSlider('pitch', 'pitchVal', (v) => pitchShift.pitch.value = v);
+    bindSlider('windowSize', 'windowVal', (v) => pitchShift.windowSize = v, (v) => v.toFixed(2));
+
+    // 3D Panner
+    bindSlider('panX', 'panXVal', (v) => panner3D.positionX.value = v);
+    bindSlider('panZ', 'panZVal', (v) => panner3D.positionZ.value = v);
+
+    // Chorus
+    bindSlider('chorusFreq', 'chorusFreqVal', (v) => chorus.frequency.value = v);
+    bindSlider('chorusDepth', 'chorusDepthVal', (v) => chorus.depth.value = v, (v) => v.toFixed(2));
+    bindSlider('chorusWet', 'chorusWetVal', (v) => chorus.wet.value = v, (v) => v.toFixed(2));
+
+    // EQ
+    bindSlider('eqLow', 'eqLowVal', (v) => eq.low.value = v);
+    bindSlider('eqMid', 'eqMidVal', (v) => eq.mid.value = v);
+    bindSlider('eqHigh', 'eqHighVal', (v) => eq.high.value = v);
+
+    // Delay
+    bindSlider('delayTime', 'delayTimeVal', (v) => delay.delayTime.value = v / 1000, (v) => v.toFixed(0));
+    bindSlider('delayFeedback', 'delayFeedbackVal', (v) => delay.feedback.value = v, (v) => v.toFixed(2));
+    bindSlider('delayWet', 'delayWetVal', (v) => delay.wet.value = v, (v) => v.toFixed(2));
+
+    // Reverb
+    bindSlider('reverbDecay', 'reverbDecayVal', (v) => reverb.decay = v, (v) => v.toFixed(1));
+    bindSlider('reverbWet', 'reverbWetVal', (v) => reverb.wet.value = v, (v) => v.toFixed(2));
+
+    // --- Reset Button ---
+    resetBtn.addEventListener('click', () => {
+      document.getElementById('pitch').value = 0;
+      document.getElementById('windowSize').value = 0.1;
+      document.getElementById('panX').value = 0;
+      document.getElementById('panZ').value = 0;
+      document.getElementById('chorusFreq').value = 1.5;
+      document.getElementById('chorusDepth').value = 0.5;
+      document.getElementById('chorusWet').value = 0.5;
+      document.getElementById('eqLow').value = 0;
+      document.getElementById('eqMid').value = 0;
+      document.getElementById('eqHigh').value = 0;
+      document.getElementById('delayTime').value = 250;
+      document.getElementById('delayFeedback').value = 0.3;
+      document.getElementById('delayWet').value = 0.4;
+      document.getElementById('reverbDecay').value = 2.0;
+      document.getElementById('reverbWet').value = 0.3;
+
+      document.querySelectorAll('input[type="range"]').forEach(el => {
+        el.dispatchEvent(new Event('input'));
+      });
+    });
+  </script>
+
+
+  <!-- The signal chain is now: Player -> PitchShift -> Panner3D -> Chorus -> EQ -> Delay -> Reverb -> Destination -->
+</body>
+
+</html>
