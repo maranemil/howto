@@ -1,165 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>Web Launchpad</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a15 100%);
-    color: #eee;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    user-select: none;
-  }
-  h1 {
-    font-size: 1.8rem;
-    margin-bottom: 4px;
-    letter-spacing: 2px;
-    background: linear-gradient(90deg, #ff4e50, #f9d423, #4eff7a, #4ec3ff, #c94eff);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-  .subtitle { font-size: 0.85rem; color: #888; margin-bottom: 18px; }
+  <meta charset="UTF-8">
+  <title>Web Launchpad</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-  .controls {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 18px;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .controls button {
-    background: #2a2a3e;
-    color: #eee;
-    border: 1px solid #444;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    transition: all 0.15s;
-  }
-  .controls button:hover { background: #3a3a52; border-color: #666; }
-  .controls button.stop { background: #5a1a1a; }
-  .controls button.stop:hover { background: #7a2a2a; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a15 100%);
+      color: #eee;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      user-select: none;
+    }
 
-  .volume-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #2a2a3e;
-    padding: 6px 12px;
-    border-radius: 6px;
-    border: 1px solid #444;
-  }
-  .volume-group input { width: 100px; }
-  .volume-group label { font-size: 0.8rem; color: #aaa; }
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 4px;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, #ff4e50, #f9d423, #4eff7a, #4ec3ff, #c94eff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
 
-  .launchpad {
-    background: linear-gradient(145deg, #1f1f2e, #14141f);
-    padding: 20px;
-    border-radius: 14px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
-    border: 1px solid #2a2a3a;
-  }
+    .subtitle {
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 18px;
+    }
 
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(8, 64px);
-    grid-template-rows: repeat(8, 64px);
-    gap: 8px;
-  }
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 18px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
 
-  .pad {
-    position: relative;
-    border-radius: 8px;
-    cursor: pointer;
-    background: #222233;
-    border: 1px solid #333344;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.03);
-    transition: transform 0.08s, box-shadow 0.1s;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: center;
-    padding-bottom: 6px;
-    overflow: hidden;
-  }
-  .pad:hover { transform: translateY(-1px); }
-  .pad:active { transform: translateY(1px); }
+    .controls button {
+      background: #2a2a3e;
+      color: #eee;
+      border: 1px solid #444;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.15s;
+    }
 
-  .pad.loaded {
-    background: var(--pad-color, #4a4a6a);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.4), 0 0 12px var(--pad-color, #4a4a6a);
-  }
-  .pad.playing {
-    background: #fff !important;
-    box-shadow: 0 0 30px #fff, 0 0 60px var(--pad-color, #fff);
-    transform: translateY(1px);
-  }
+    .controls button:hover {
+      background: #3a3a52;
+      border-color: #666;
+    }
 
-  .pad .key {
-    position: absolute;
-    top: 4px;
-    left: 6px;
-    font-size: 0.7rem;
-    color: rgba(255,255,255,0.5);
-    font-weight: bold;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-  }
-  .pad.loaded .key { color: rgba(0,0,0,0.6); text-shadow: none; }
+    .controls button.stop {
+      background: #5a1a1a;
+    }
 
-  .pad .name {
-    font-size: 0.6rem;
-    color: rgba(255,255,255,0.7);
-    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-    max-width: 90%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .pad.loaded .name { color: rgba(0,0,0,0.75); text-shadow: none; }
+    .controls button.stop:hover {
+      background: #7a2a2a;
+    }
 
-  .pad .empty-hint {
-    font-size: 1.4rem;
-    color: #444;
-    line-height: 1;
-  }
+    .volume-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #2a2a3e;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid #444;
+    }
 
-  .pad.dragover {
-    outline: 2px dashed #4eff7a;
-    outline-offset: -4px;
-  }
+    .volume-group input {
+      width: 100px;
+    }
 
-  .status {
-    margin-top: 16px;
-    font-size: 0.8rem;
-    color: #888;
-    text-align: center;
-    max-width: 600px;
-  }
-  .status kbd {
-    background: #2a2a3e;
-    padding: 2px 6px;
-    border-radius: 3px;
-    border: 1px solid #444;
-    font-size: 0.75rem;
-    color: #ddd;
-  }
+    .volume-group label {
+      font-size: 0.8rem;
+      color: #aaa;
+    }
 
-  @media (max-width: 640px) {
-    .grid { grid-template-columns: repeat(8, 44px); grid-template-rows: repeat(8, 44px); gap: 5px; }
-    .pad .key { font-size: 0.55rem; }
-    .pad .name { font-size: 0.5rem; }
-  }
-</style>
+    .launchpad {
+      background: linear-gradient(145deg, #1f1f2e, #14141f);
+      padding: 20px;
+      border-radius: 14px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      border: 1px solid #2a2a3a;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(8, 64px);
+      grid-template-rows: repeat(8, 64px);
+      gap: 8px;
+    }
+
+    .pad {
+      position: relative;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #222233;
+      border: 1px solid #333344;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.03);
+      transition: transform 0.08s, box-shadow 0.1s;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding-bottom: 6px;
+      overflow: hidden;
+    }
+
+    .pad:hover {
+      transform: translateY(-1px);
+    }
+
+    .pad:active {
+      transform: translateY(1px);
+    }
+
+    .pad.loaded {
+      background: var(--pad-color, #4a4a6a);
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4), 0 0 12px var(--pad-color, #4a4a6a);
+    }
+
+    .pad.playing {
+      background: #fff !important;
+      box-shadow: 0 0 30px #fff, 0 0 60px var(--pad-color, #fff);
+      transform: translateY(1px);
+    }
+
+    .pad .key {
+      position: absolute;
+      top: 4px;
+      left: 6px;
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.5);
+      font-weight: bold;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    }
+
+    .pad.loaded .key {
+      color: rgba(0, 0, 0, 0.6);
+      text-shadow: none;
+    }
+
+    .pad .name {
+      font-size: 0.6rem;
+      color: rgba(255, 255, 255, 0.7);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+      max-width: 90%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .pad.loaded .name {
+      color: rgba(0, 0, 0, 0.75);
+      text-shadow: none;
+    }
+
+    .pad .empty-hint {
+      font-size: 1.4rem;
+      color: #444;
+      line-height: 1;
+    }
+
+    .pad.dragover {
+      outline: 2px dashed #4eff7a;
+      outline-offset: -4px;
+    }
+
+    .status {
+      margin-top: 16px;
+      font-size: 0.8rem;
+      color: #888;
+      text-align: center;
+      max-width: 600px;
+    }
+
+    .status kbd {
+      background: #2a2a3e;
+      padding: 2px 6px;
+      border-radius: 3px;
+      border: 1px solid #444;
+      font-size: 0.75rem;
+      color: #ddd;
+    }
+
+    @media (max-width: 640px) {
+      .grid {
+        grid-template-columns: repeat(8, 44px);
+        grid-template-rows: repeat(8, 44px);
+        gap: 5px;
+      }
+
+      .pad .key {
+        font-size: 0.55rem;
+      }
+
+      .pad .name {
+        font-size: 0.5rem;
+      }
+    }
+  </style>
 </head>
+
 <body>
   <h1>⬢ WEB LAUNCHPAD</h1>
   <div class="subtitle">Click a pad to load a WAV · Click again to play · Drag &amp; drop WAVs onto pads</div>
@@ -179,248 +236,255 @@
   </div>
 
   <div class="status">
-    Keyboard: <kbd>1</kbd>–<kbd>8</kbd> top row · <kbd>Q</kbd><kbd>W</kbd><kbd>E</kbd><kbd>R</kbd><kbd>T</kbd><kbd>Y</kbd><kbd>U</kbd><kbd>I</kbd> · <kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><kbd>F</kbd><kbd>G</kbd><kbd>H</kbd><kbd>J</kbd><kbd>K</kbd> · <kbd>Z</kbd><kbd>X</kbd><kbd>C</kbd><kbd>V</kbd><kbd>B</kbd><kbd>N</kbd><kbd>M</kbd><kbd>,</kbd><br>
+    Keyboard: <kbd>1</kbd>–<kbd>8</kbd> top row ·
+    <kbd>Q</kbd><kbd>W</kbd><kbd>E</kbd><kbd>R</kbd><kbd>T</kbd><kbd>Y</kbd><kbd>U</kbd><kbd>I</kbd> ·
+    <kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><kbd>F</kbd><kbd>G</kbd><kbd>H</kbd><kbd>J</kbd><kbd>K</kbd> ·
+    <kbd>Z</kbd><kbd>X</kbd><kbd>C</kbd><kbd>V</kbd><kbd>B</kbd><kbd>N</kbd><kbd>M</kbd><kbd>,</kbd><br>
     Right-click a pad to clear it · Hold <kbd>Shift</kbd>+click to clear
   </div>
 
-<script>
-(() => {
-  const ROWS = 8, COLS = 8;
-  const grid = document.getElementById('grid');
-  const stopAllBtn = document.getElementById('stopAll');
-  const clearAllBtn = document.getElementById('clearAll');
-  const volumeSlider = document.getElementById('volume');
-  const volLabel = document.getElementById('volLabel');
+  <script>
+    (() => {
+      const ROWS = 8, COLS = 8;
+      const grid = document.getElementById('grid');
+      const stopAllBtn = document.getElementById('stopAll');
+      const clearAllBtn = document.getElementById('clearAll');
+      const volumeSlider = document.getElementById('volume');
+      const volLabel = document.getElementById('volLabel');
 
-  // Audio setup
-  let audioCtx = null;
-  let masterGain = null;
-  const activeSources = new Map(); // padIndex -> AudioBufferSourceNode
+      // Audio setup
+      let audioCtx = null;
+      let masterGain = null;
+      const activeSources = new Map(); // padIndex -> AudioBufferSourceNode
 
-  function initAudio() {
-    if (audioCtx) return;
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    masterGain = audioCtx.createGain();
-    masterGain.gain.value = parseFloat(volumeSlider.value);
-    masterGain.connect(audioCtx.destination);
-  }
-
-  volumeSlider.addEventListener('input', () => {
-    const v = parseFloat(volumeSlider.value);
-    volLabel.textContent = Math.round(v * 100) + '%';
-    if (masterGain) masterGain.gain.value = v;
-  });
-
-  // Pad colors (cycling rainbow for visual variety)
-  const COLORS = [
-    '#ff4e50', '#ff7a3d', '#f9d423', '#b8e84e', '#4eff7a',
-    '#4effd4', '#4ec3ff', '#6a7eff', '#a864ff', '#e84eff',
-    '#ff4ea8', '#ff6464', '#ffaa4e', '#e8ff4e', '#7aff4e',
-    '#4effaa'
-  ];
-
-  // Keyboard mapping (matches physical launchpad layout: bottom-to-top)
-  const KEY_MAP = [
-    ['z','x','c','v','b','n','m',','],   // row 7 (bottom)
-    ['a','s','d','f','g','h','j','k'],   // row 6
-    ['q','w','e','r','t','y','u','i'],   // row 5
-    ['1','2','3','4','5','6','7','8']    // row 8 (top)
-  ];
-  // Map keyboard row index -> grid row (visual: top row of keys = top row of grid)
-  // We'll assign: KEY_MAP[3] -> grid row 0, KEY_MAP[2] -> row 1, etc.
-
-  const keyToPad = {};
-  KEY_MAP.forEach((row, ki) => {
-    const gridRow = (ROWS - 1) - ki; // invert so top keys = top row
-    row.forEach((key, col) => {
-      keyToPad[key] = gridRow * COLS + col;
-    });
-  });
-
-  // Pad state
-  const pads = []; // { buffer, name, color, element }
-
-  function createPad(index) {
-    const pad = { buffer: null, name: '', color: COLORS[index % COLORS.length], element: null };
-    const el = document.createElement('div');
-    el.className = 'pad';
-    el.dataset.index = index;
-
-    const keyLabel = document.createElement('div');
-    keyLabel.className = 'key';
-    // find key for this pad
-    let keyChar = '';
-    for (const [k, idx] of Object.entries(keyToPad)) {
-      if (idx === index) { keyChar = k.toUpperCase(); break; }
-    }
-    keyLabel.textContent = keyChar;
-    el.appendChild(keyLabel);
-
-    const hint = document.createElement('div');
-    hint.className = 'empty-hint';
-    hint.textContent = '+';
-    el.appendChild(hint);
-
-    const nameEl = document.createElement('div');
-    nameEl.className = 'name';
-    el.appendChild(nameEl);
-
-    el.addEventListener('click', (e) => handlePadClick(index, e));
-    el.addEventListener('contextmenu', (e) => {
-      e.preventDefault();
-      clearPad(index);
-    });
-
-    // Drag & drop
-    el.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      el.classList.add('dragover');
-    });
-    el.addEventListener('dragleave', () => el.classList.remove('dragover'));
-    el.addEventListener('drop', (e) => {
-      e.preventDefault();
-      el.classList.remove('dragover');
-      const file = e.dataTransfer.files[0];
-      if (file) loadFileToPad(index, file);
-    });
-
-    pad.element = el;
-    pads[index] = pad;
-    grid.appendChild(el);
-  }
-
-  for (let i = 0; i < ROWS * COLS; i++) createPad(i);
-
-  function handlePadClick(index, event) {
-    initAudio();
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-
-    const pad = pads[index];
-
-    // Shift+click clears
-    if (event.shiftKey) {
-      clearPad(index);
-      return;
-    }
-
-    if (!pad.buffer) {
-      // Open file picker
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = 'audio/wav,audio/x-wav,audio/*';
-      input.onchange = () => {
-        const file = input.files[0];
-        if (file) loadFileToPad(index, file);
-      };
-      input.click();
-    } else {
-      playPad(index);
-    }
-  }
-
-  async function loadFileToPad(index, file) {
-    initAudio();
-    if (!file.type.startsWith('audio/') && !file.name.toLowerCase().endsWith('.wav')) {
-      alert('Please drop an audio file (WAV recommended).');
-      return;
-    }
-    try {
-      const arrayBuffer = await file.arrayBuffer();
-      const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer.slice(0));
-      const pad = pads[index];
-      pad.buffer = audioBuffer;
-      pad.name = file.name.replace(/\.[^/.]+$/, '').slice(0, 14);
-      pad.color = COLORS[index % COLORS.length];
-      renderPad(index);
-    } catch (err) {
-      console.error(err);
-      alert('Failed to decode audio: ' + err.message);
-    }
-  }
-
-  function renderPad(index) {
-    const pad = pads[index];
-    const el = pad.element;
-    el.classList.remove('loaded', 'playing');
-    el.style.setProperty('--pad-color', pad.color);
-
-    const hint = el.querySelector('.empty-hint');
-    const nameEl = el.querySelector('.name');
-
-    if (pad.buffer) {
-      el.classList.add('loaded');
-      hint.textContent = '';
-      nameEl.textContent = pad.name;
-    } else {
-      hint.textContent = '+';
-      nameEl.textContent = '';
-    }
-  }
-
-  function playPad(index) {
-    const pad = pads[index];
-    if (!pad.buffer || !audioCtx) return;
-
-    // Stop any currently playing on this pad (retrigger)
-    stopPad(index, true);
-
-    const source = audioCtx.createBufferSource();
-    source.buffer = pad.buffer;
-    source.connect(masterGain);
-    source.onended = () => {
-      if (activeSources.get(index) === source) {
-        activeSources.delete(index);
-        pad.element.classList.remove('playing');
+      function initAudio() {
+        if (audioCtx) return;
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        masterGain = audioCtx.createGain();
+        masterGain.gain.value = parseFloat(volumeSlider.value);
+        masterGain.connect(audioCtx.destination);
       }
-    };
-    source.start();
-    activeSources.set(index, source);
-    pad.element.classList.add('playing');
-  }
 
-  function stopPad(index, silent = false) {
-    const source = activeSources.get(index);
-    if (source) {
-      try { source.stop(); } catch (e) {}
-      activeSources.delete(index);
-    }
-    if (!silent) pads[index].element.classList.remove('playing');
-  }
+      volumeSlider.addEventListener('input', () => {
+        const v = parseFloat(volumeSlider.value);
+        volLabel.textContent = Math.round(v * 100) + '%';
+        if (masterGain) masterGain.gain.value = v;
+      });
 
-  function clearPad(index) {
-    stopPad(index);
-    const pad = pads[index];
-    pad.buffer = null;
-    pad.name = '';
-    renderPad(index);
-  }
+      // Pad colors (cycling rainbow for visual variety)
+      const COLORS = [
+        '#ff4e50', '#ff7a3d', '#f9d423', '#b8e84e', '#4eff7a',
+        '#4effd4', '#4ec3ff', '#6a7eff', '#a864ff', '#e84eff',
+        '#ff4ea8', '#ff6464', '#ffaa4e', '#e8ff4e', '#7aff4e',
+        '#4effaa'
+      ];
 
-  stopAllBtn.addEventListener('click', () => {
-    for (let i = 0; i < pads.length; i++) stopPad(i);
-  });
+      // Keyboard mapping (matches physical launchpad layout: bottom-to-top)
+      const KEY_MAP = [
+        ['z', 'x', 'c', 'v', 'b', 'n', 'm', ','],   // row 7 (bottom)
+        ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k'],   // row 6
+        ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i'],   // row 5
+        ['1', '2', '3', '4', '5', '6', '7', '8']    // row 8 (top)
+      ];
+      // Map keyboard row index -> grid row (visual: top row of keys = top row of grid)
+      // We'll assign: KEY_MAP[3] -> grid row 0, KEY_MAP[2] -> row 1, etc.
 
-  clearAllBtn.addEventListener('click', () => {
-    if (!confirm('Clear all pads?')) return;
-    for (let i = 0; i < pads.length; i++) clearPad(i);
-  });
+      const keyToPad = {};
+      KEY_MAP.forEach((row, ki) => {
+        const gridRow = (ROWS - 1) - ki; // invert so top keys = top row
+        row.forEach((key, col) => {
+          keyToPad[key] = gridRow * COLS + col;
+        });
+      });
 
-  // Keyboard input
-  window.addEventListener('keydown', (e) => {
-    if (e.repeat) return;
-    const key = e.key.toLowerCase();
-    const idx = keyToPad[key];
-    if (idx !== undefined) {
-      e.preventDefault();
-      initAudio();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      if (pads[idx].buffer) playPad(idx);
-    }
-  });
+      // Pad state
+      const pads = []; // { buffer, name, color, element }
 
-  // Unlock audio on first interaction (mobile/safari)
-  document.body.addEventListener('touchstart', initAudio, { once: true });
-  document.body.addEventListener('click', initAudio, { once: true });
-})();
-</script>
+      function createPad(index) {
+        const pad = { buffer: null, name: '', color: COLORS[index % COLORS.length], element: null };
+        const el = document.createElement('div');
+        el.className = 'pad';
+        el.dataset.index = index;
+
+        const keyLabel = document.createElement('div');
+        keyLabel.className = 'key';
+        // find key for this pad
+        let keyChar = '';
+        for (const [k, idx] of Object.entries(keyToPad)) {
+          if (idx === index) { keyChar = k.toUpperCase(); break; }
+        }
+        keyLabel.textContent = keyChar;
+        el.appendChild(keyLabel);
+
+        const hint = document.createElement('div');
+        hint.className = 'empty-hint';
+        hint.textContent = '+';
+        el.appendChild(hint);
+
+        const nameEl = document.createElement('div');
+        nameEl.className = 'name';
+        el.appendChild(nameEl);
+
+        el.addEventListener('click', (e) => handlePadClick(index, e));
+        el.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+          clearPad(index);
+        });
+
+        // Drag & drop
+        el.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          el.classList.add('dragover');
+        });
+        el.addEventListener('dragleave', () => el.classList.remove('dragover'));
+        el.addEventListener('drop', (e) => {
+          e.preventDefault();
+          el.classList.remove('dragover');
+          const file = e.dataTransfer.files[0];
+          if (file) loadFileToPad(index, file);
+        });
+
+        pad.element = el;
+        pads[index] = pad;
+        grid.appendChild(el);
+      }
+
+      for (let i = 0; i < ROWS * COLS; i++) createPad(i);
+
+      function handlePadClick(index, event) {
+        initAudio();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const pad = pads[index];
+
+        // Shift+click clears
+        if (event.shiftKey) {
+          clearPad(index);
+          return;
+        }
+
+        if (!pad.buffer) {
+          // Open file picker
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.accept = 'audio/wav,audio/x-wav,audio/*';
+          input.onchange = () => {
+            const file = input.files[0];
+            if (file) loadFileToPad(index, file);
+          };
+          input.click();
+        } else {
+          playPad(index);
+        }
+      }
+
+      async function loadFileToPad(index, file) {
+        initAudio();
+        if (!file.type.startsWith('audio/') && !file.name.toLowerCase().endsWith('.wav')) {
+          alert('Please drop an audio file (WAV recommended).');
+          return;
+        }
+        try {
+          const arrayBuffer = await file.arrayBuffer();
+          const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer.slice(0));
+          const pad = pads[index];
+          pad.buffer = audioBuffer;
+          pad.name = file.name.replace(/\.[^/.]+$/, '').slice(0, 14);
+          pad.color = COLORS[index % COLORS.length];
+          renderPad(index);
+        } catch (err) {
+          console.error(err);
+          alert('Failed to decode audio: ' + err.message);
+        }
+      }
+
+      function renderPad(index) {
+        const pad = pads[index];
+        const el = pad.element;
+        el.classList.remove('loaded', 'playing');
+        el.style.setProperty('--pad-color', pad.color);
+
+        const hint = el.querySelector('.empty-hint');
+        const nameEl = el.querySelector('.name');
+
+        if (pad.buffer) {
+          el.classList.add('loaded');
+          hint.textContent = '';
+          nameEl.textContent = pad.name;
+        } else {
+          hint.textContent = '+';
+          nameEl.textContent = '';
+        }
+      }
+
+      function playPad(index) {
+        const pad = pads[index];
+        if (!pad.buffer || !audioCtx) return;
+
+        // Stop any currently playing on this pad (retrigger)
+        stopPad(index, true);
+
+        const source = audioCtx.createBufferSource();
+        source.buffer = pad.buffer;
+        source.connect(masterGain);
+        source.onended = () => {
+          if (activeSources.get(index) === source) {
+            activeSources.delete(index);
+            pad.element.classList.remove('playing');
+          }
+        };
+        source.start();
+        activeSources.set(index, source);
+        pad.element.classList.add('playing');
+      }
+
+      function stopPad(index, silent = false) {
+        const source = activeSources.get(index);
+        if (source) {
+          try { source.stop(); } catch (e) { }
+          activeSources.delete(index);
+        }
+        if (!silent) pads[index].element.classList.remove('playing');
+      }
+
+      function clearPad(index) {
+        stopPad(index);
+        const pad = pads[index];
+        pad.buffer = null;
+        pad.name = '';
+        renderPad(index);
+      }
+
+      stopAllBtn.addEventListener('click', () => {
+        for (let i = 0; i < pads.length; i++) stopPad(i);
+      });
+
+      clearAllBtn.addEventListener('click', () => {
+        if (!confirm('Clear all pads?')) return;
+        for (let i = 0; i < pads.length; i++) clearPad(i);
+      });
+
+      // Keyboard input
+      window.addEventListener('keydown', (e) => {
+        if (e.repeat) return;
+        const key = e.key.toLowerCase();
+        const idx = keyToPad[key];
+        if (idx !== undefined) {
+          e.preventDefault();
+          initAudio();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          if (pads[idx].buffer) playPad(idx);
+        }
+      });
+
+      // Unlock audio on first interaction (mobile/safari)
+      document.body.addEventListener('touchstart', initAudio, { once: true });
+      document.body.addEventListener('click', initAudio, { once: true });
+    })();
+
+    // create an web audio tool that can load an wav files on different buttons like  a  Novation Launchpad 
+    // the loaded files should play in the loop
+  </script>
 </body>
+
 </html>
