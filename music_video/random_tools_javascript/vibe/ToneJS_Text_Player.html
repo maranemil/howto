@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tone.js Text-to-Music Player</title>
+    <!-- Load Tone.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #1e1e1e;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        h1 { margin-top: 0; font-size: 1.5rem; color: #4fc3f7; }
+
+        textarea {
+            width: 90%;
+            height: 150px;
+            background-color: #2c2c2c;
+            border: 1px solid #444;
+            color: #eee;
+            padding: 10px;
+            font-family: inherit;
+            border-radius: 6px;
+            resize: none;
+            margin-bottom: 1rem;
+        }
+
+        textarea:focus { outline: 2px solid #4fc3f7; }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        button {
+            background-color: #4fc3f7;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        button:hover { background-color: #29b6f6; }
+        button.secondary { background-color: #444; color: white; }
+        button.secondary:hover { background-color: #555; }
+
+        .instructions {
+            font-size: 0.8rem;
+            color: #888;
+            line-height: 1.4;
+            background: #252525;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        /* Simple visualizer area */
+        .visualizer {
+            width: 100%;
+            height: 50px;
+            background-color: #000;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            border-radius: 4px;
+        }
+        
+        /* The tone.draw visualizer requires a canvas element */
+        #canvasContainer {
+            display: none; /* Hidden until ready */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>ToneJS Text Player</h1>
+    
+    <!-- Visualizer Canvas -->
+    <div id="canvasContainer" style="width: 100%; height: 150px; background: #000; margin-bottom: 20px;"></div>
+
+    <textarea id="inputNotes" placeholder="Paste notes here...&#10;Example: C4 E4 G4&#10;or: A#3 C5 E5"></textarea>
+    
+    <div class="controls">
+        <button onclick="playMusic()">▶ Play</button>
+        <button class="secondary" onclick="stopMusic()">⏹ Stop</button>
+        <button class="secondary" onclick="clearText()">Empty</button>
+    </div>
+
+    <div class="instructions">
+        <strong>How to use:</strong><br>
+        Paste note names. Supports sharp (#), flat (b), and octaves.<br>
+        Example: <code>C4 C5 F#3 D4 E5</code><br>
+        Use spaces or newlines to separate notes.
+    </div>
+    
+    <audio id="audioContext" src=""></audio> <!-- Empty audio element required for Tone.js init -->
+</div>
+
+<script>
+    // --- 1. SETUP AUDIO CONTEXT ---
+    // We use the empty audio element to initialize the AudioContext 
+    // so we don't get blocked by browser autoplay policies immediately.
+    const input = document.getElementById('audioContext');
+    
+    let synth; // Our synthesizer
+    let drawingContext; // Context for Tone.Draw visualizer
+
+    async function init() {
+        await Tone.start(); // Browsers need this explicit call
+        
+        // Create a PolySynth (plays chords if you play "C E G")
+        synth = new Tone.PolySynth(Tone.Synth, {
+            oscillator: { type: "triangle" }, // "sine", "triangle", "square", or "sawtooth"
+            envelope: { attack: 0.1, decay: 0.1, sustain: 0.2, release: 2 }
+        }).toDestination();
+
+        // Setup Visualizer
+        const container = document.getElementById('canvasContainer');
+        const draw = new Tone.Draw({ destination: synth.output });
+        
+        if(container.style.display !== 'none'){
+            container.style.display = 'block';
+            await draw.toElement(container);
+            
+            // Make the canvas full screen for better visuals
+            Tone.Draw.setOptions({ destination: synth.output, width: 800 });
+        }
+
+        input.addEventListener('play', function() { 
+            // Ensure context starts when user interacts
+        });
+    }
+    
+    // Initialize on first load
+    window.addEventListener('load', init);
+
+
+    // --- 2. PARSING LOGIC ---
+    
+    function getMidiFromNote(noteName) {
+        const noteMap = {
+            'C': 0, 'C#': 1, 'Db': 1,
+            'D': 2, 'D#': 3, 'Eb': 3,
+            'E': 4, 'F': 5, 'F#': 6, 'Gb': 6,
+            'G': 7, 'G#': 8, 'Ab': 8,
+            'A': 9, 'A#': 10, 'Bb': 10,
+            'B': 11
+        };
+
+        // Clean input (remove whitespace)
+        let cleanName = noteName.replace(/\s/g, '');
+
+        // Check if it has an octave number (e.g., C4)
+        const isMidiNumber = /\d+$/.test(cleanName);
+        
+        if (isMidiNumber) {
+            // If input already includes a number like "C4" or "C5", we need to isolate the note name
+            let baseNote = cleanName.slice(0, -1); // Remove last char
+            let octave = parseInt(cleanName.slice(-1)); // Get last digit
+            
+            if (noteMap[baseNote] !== undefined) {
+                return noteMap[baseNote] + (octave * 12);
+            }
+        } else {
+            // If input is just "C", assume MIDI 60 (Middle C) or handle errors
+             // Simple logic: just check the map keys
+             if(noteMap[cleanName] !== undefined){
+                return noteMap[cleanName]; // Middle C range approx
+             }
+        }
+        return null;
+    }
+
+    // --- 3. PLAY FUNCTION ---
+
+    async function playMusic() {
+        const inputText = document.getElementById('inputNotes').value;
+        
+        if (!inputText) return alert("Please paste notes first!");
+
+        // Tone.Transport.start(); // Start the clock if needed (usually auto-starts after init)
+        
+        // We schedule the music relative to Tone.Transport now.
+        const currentTime = await Tone.now();
+
+        const noteStrings = inputText.split(/[\s\n]+/).filter(n => n); // Split by space/newline
+
+        for (let rawNote of noteStrings) {
+            const midi = getMidiFromNote(rawNote);
+
+            if (midi !== null) {
+                // We play the note 0.5 seconds in the future, relative to now.
+                synth.triggerAttackRelease(midi, "1n", Tone.now() + 0.1); 
+            }
+        }
+    }
+
+    function stopMusic() {
+        synth.releaseAll();
+        Tone.Transport.stop();
+    }
+
+    function clearText() {
+        document.getElementById('inputNotes').value = '';
+        const visualizer = new Tone.Draw({ destination: synth.output });
+        // clear canvas logic if needed, but draw handles clearing internally usually
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tone.js 3-Note Chord Trigger</title>
+    <!-- Load Tone.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    
+    <style>
+        body { font-family: system-ui, sans-serif; text-align: center; padding: 50px; background: #f4f4f4; }
+        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
+        button { 
+            padding: 15px 30px; font-size: 18px; cursor: pointer; border: none; border-radius: 5px; 
+            margin: 10px; transition: transform 0.1s; user-select: none;
+        }
+        button:active { transform: scale(0.95); }
+        
+        .btn-single { background-color: #3498db; color: white; }
+        .btn-chord { background-color: #e74c3c; color: white; font-weight: bold; box-shadow: 0 4px 0 #c0392b; }
+        
+        h1 { margin-top: 0; }
+        .note-display { margin-top: 20px; font-family: monospace; font-size: 1.2em; color: #555; min-height: 2em;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>PolySynth Trigger Demo</h1>
+    <p>This app uses the <strong>same function</strong> to play single notes or chords.</p>
+    
+    <div id="visual-feedback" class="note-display">Ready...</div>
+
+    <!-- Button 1: Plays a Chord (3 Notes) -->
+    <button class="btn-chord" id="playChordBtn" onclick="playChord()">PLAY C-Major CHORD</button>
+
+    <hr style="border: 0; border-top: 1px solid #eee;">
+    
+    <!-- Button 2: Single Notes (Individual triggers) -->
+    <button class="btn-single" onclick="playSingle('C4')">Play C4</button>
+    <button class="btn-single" onclick="playSingle('E4')">Play E4</button>
+    <button class="btn-single" onclick="playSingle('G4')">Play G4</button>
+    
+    <!-- Visualizer / Console -->
+    <small style="display:block; margin-top:20px; color:#999">
+        Try clicking the Red button to hear 3 notes at once.
+    </small>
+</div>
+
+<script>
+    // 1. Initialize Tone.js Context (Must happen on user click usually)
+    let ctx;
+    
+    document.body.addEventListener('click', function() {
+        if(!ctx) {
+            Tone.start().then(() => {
+                console.log("Audio enabled");
+            });
+        }
+    }, true);
+
+    // 2. Define Frequencies
+    const freqs = {
+        'C4': 261.63, 
+        'E4': 329.63, 
+        'G4': 392.00  
+    };
+
+    // 3. Create the PolySynth
+    const synth = new Tone.PolySynth(Tone.Synth, {
+        attack: 0.1,
+        decay: 1,
+        sustain: 0.5,
+        release: 2 // Long fade out for nice chords
+    }).toDestination();
+
+    // -----------------------------------------------------------
+    // CORE CONCEPT: Playing 3 notes simultaneously is just an Array!
+    // -----------------------------------------------------------
+
+    /**
+     * Function to play a single note
+     */
+    async function playSingle(noteName) {
+        updateDisplay(`Playing ${noteName}`);
+        
+        await synth.triggerAttackRelease(
+            freqs[noteName], // Frequency (e.g., 261.63Hz)
+            '4n'             // Duration (4 quarters / half note)
+        );
+    }
+
+    /**
+     * Function to play 3 notes simultaneously
+     * PASSING AN ARRAY HERE IS THE MAGIC PART
+     */
+    async function playChord() {
+        updateDisplay("Playing Chord: C - E - G");
+        
+        //await synth.triggerAttackRelease([261.63, 329.63, 392.00], '2n');
+        
+        await synth.triggerAttackRelease([
+            freqs['C4'],   // Note 1
+            freqs['E4'],   // Note 2
+            freqs['G4']    // Note 3
+        ], '2n');          // Duration
+        
+        // Optional: Clear display after a moment
+        setTimeout(() => updateDisplay("Playing Chord: C - E - G"), 100);
+    }
+
+    function updateDisplay(text) {
+        document.getElementById('visual-feedback').innerText = text;
+    }
+
+</script>
+</body>
+</html>

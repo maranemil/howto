@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circular Fifths Generator</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            --primary: #bb86fc;
+            --secondary: #03dac6;
+            --accent: #cf6679;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        h1 {
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .controls {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 15px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        select, button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        select {
+            background-color: #333;
+            color: white;
+            border: 1px solid #444;
+        }
+
+        button.play-btn {
+            background-color: var(--primary);
+            color: #000;
+            font-weight: bold;
+        }
+
+        button.play-btn:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        canvas {
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            background-color: #000;
+            margin-bottom: 20px;
+            cursor: crosshair;
+        }
+
+        .info-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            text-align: center;
+        }
+
+        .stat-box h3 {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-box span {
+            font-size: 2rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        #root-display { color: var(--secondary); }
+        #current-note-display { color: var(--primary); }
+        
+        /* Animation for the ring */
+        .ring-pulse {
+            animation: pulse 2s infinite ease-in-out;
+            position: absolute;
+            top: -10px; left: -10px; right: -10px; bottom: -10px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.1);
+            pointer-events: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.7; }
+            50% { transform: scale(1.1); opacity: 0.3; }
+            100% { transform: scale(0.95); opacity: 0.7; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Perfect Fifth Generator</h1>
+        <p style="color: var(--text-muted)">Navigate the Circle of Fifths loop</p>
+
+        <canvas id="musCanvas" width="400" height="400"></canvas>
+
+        <div class="controls">
+            <select id="root-select">
+                <option value="C">C Major / A Minor</option>
+                <option value="F#">F# Major / D# Minor</option>
+                <option value="Db">D♭ Major / B Minor</option>
+                <option value="B">B Major / G# Minor</option>
+                <option value="E">E Major / C# Minor</option>
+                <option value="A">A Major / F# Minor</option>
+                <option value="D">D Major / B Minor</option>
+            </select>
+
+            <div style="display:flex; flex-direction:column; align-items:center;">
+                <span style="font-size: 0.8rem; color:#666;">INTERVAL</span>
+                <button onclick="moveToNextFifth()">Next Fifth →</button>
+            </div>
+
+            <button class="play-btn" id="toggleBtn" onclick="toggleAutoPlay()">Auto Play</button>
+        </div>
+
+        <div class="info-panel">
+            <div class="stat-box">
+                <h3>Root Note</h3>
+                <span id="root-display">C</span>
+            </div>
+            <div class="stat-box">
+                <h3>Current Fifth</h3>
+                <span id="current-note-display">G</span>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // Configuration
+    const canvas = document.getElementById('musCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Musical Data
+    const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    const flatNotes = { 'C#':'Db', 'D#':'Eb', 'F#':'Gb', 'G#':'Ab' }; // Mapping sharps to flats
+    
+    let currentIndex = 0; // Start at C (0)
+    let isPlaying = false;
+    let animationId;
+
+    // Canvas Centering
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = 140;
+    
+    // Visual Elements setup
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const anglePerStep = (Math.PI * 2) / 12;
+
+        for (let i = 0; i < 12; i++) {
+            // Calculate position of the 5th note from center
+            // We draw a smaller circle inside.
+            
+            // Center coordinates adjusted to fit canvas
+            const x = centerX + Math.cos(i * anglePerStep) * (radius - 30);
+            const y = centerY + Math.sin(i * anglePerStep) * (radius - 30);
+
+            ctx.beginPath();
+            ctx.arc(x, y, 18, 0, Math.PI * 2);
+            ctx.fillStyle = i === currentIndex ? '#bb86fc' : '#444'; // Highlight current note
+            ctx.fill();
+            
+            // Draw connecting lines (visualizing the "web" of fifths)
+            if(i < 11) {
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                
+                // Next Fifth logic visually: draw line to next index in loop? 
+                // Or just connect neighbors. Let's just connect neighbors for clarity first.
+                const nextX = centerX + Math.cos((i+1) * anglePerStep) * (radius - 30);
+                const nextY = centerY + Math.sin((i+1) * anglePerStep) * (radius - 30);
+
+                ctx.lineTo(nextX, nextY);
+                ctx.strokeStyle = i === currentIndex ? '#bb86fc' : 'rgba(255,255,255,0.1)';
+                ctx.lineWidth = 4;
+                ctx.stroke();
+            }
+        }
+
+        // Draw the text labels outside the ring
+        for (let i = 0; i < 12; i++) {
+            const angle = i * anglePerStep - Math.PI / 2; // Start at top (12 o'clock)
+            const x = centerX + Math.cos(angle) * (radius + 35);
+            const y = centerY + Math.sin(angle) * (radius + 35);
+            
+            ctx.font = i === currentIndex ? 'bold 18px Arial' : '14px Arial';
+            ctx.fillStyle = '#fff';
+            ctx.fillText(notes[i], x, y);
+        }
+
+        // Draw center "Root" indicator
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 20, 0, Math.PI * 2);
+        ctx.strokeStyle = i === currentIndex ? '#cf6679' : '#333';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+        requestAnimationFrame(draw);
+    }
+
+    function updateText() {
+        const rootEl = document.getElementById('root-display');
+        const currentEl = document.getElementById('current-note-display');
+
+        rootEl.innerText = notes[currentIndex];
+        currentEl.innerText = notes[(currentIndex + 5) % 12]; // The note that is a 5th away
+    }
+
+    function moveToNextFifth() {
+        currentIndex++;
+        if (currentIndex >= 12) currentIndex = 0;
+        
+        updateText();
+        draw();
+    }
+
+    function toggleAutoPlay() {
+        const btn = document.getElementById('toggleBtn');
+        
+        if (isPlaying) {
+            isPlaying = false;
+            btn.innerText = "Auto Play";
+            btn.style.backgroundColor = "#bb86fc";
+            cancelAnimationFrame(animationId); // Stop current loop if running
+        } else {
+            isPlaying = true;
+            btn.innerText = "Stop";
+            btn.style.backgroundColor = "#cf6679";
+            
+            const intervalSpeed = 800; // ms between steps
+            
+            function loop() {
+                moveToNextFifth();
+                animationId = requestAnimationFrame(loop);
+            }
+            loop();
+        }
+    }
+
+    // Handle Select Change
+    document.getElementById('root-select').addEventListener('change', (e) => {
+        currentIndex = notes.indexOf(e.target.value);
+        if(currentIndex === -1) return; // Fallback if user types something weird
+        updateText();
+        draw();
+        
+        // Auto start on change for convenience
+        isPlaying = true;
+        document.getElementById('toggleBtn').innerText = "Stop";
+        document.getElementById('toggleBtn').style.backgroundColor = "#cf6679";
+    });
+
+    // Initial Render
+    updateText();
+    draw();
+
+</script>
+</body>
+</html>

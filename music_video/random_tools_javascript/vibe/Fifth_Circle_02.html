@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chromatone — Circle of Fifths Chord Generator</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-600-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/jetbrains-mono@latest/latin-400-normal.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0a0a0f;
+    --bg-2: #13131c;
+    --bg-3: #1c1c28;
+    --border: #2a2a3a;
+    --text: #e8e8f0;
+    --text-dim: #8888a0;
+    --accent: #ff6b35;
+    --accent-2: #f7c948;
+    --major: #4ecdc4;
+    --minor: #a78bfa;
+    --dim: #f87171;
+  }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image: 
+      radial-gradient(circle at 20% 10%, rgba(78, 205, 196, 0.08) 0%, transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(255, 107, 53, 0.08) 0%, transparent 40%);
+  }
+  header {
+    padding: 24px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(10, 10, 15, 0.8);
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .logo-mark {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    color: #000;
+    font-weight: 700;
+  }
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 13px;
+    font-weight: 400;
+  }
+  main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 32px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  @media (max-width: 960px) {
+    main { grid-template-columns: 1fr; }
+  }
+  .panel {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+  }
+  .panel-title {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+  .circle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 0;
+  }
+  svg#circle {
+    width: 100%;
+    max-width: 520px;
+    height: auto;
+  }
+  .note-segment {
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .note-segment:hover {
+    filter: brightness(1.3);
+  }
+  .note-segment.active {
+    filter: brightness(1.4) drop-shadow(0 0 8px currentColor);
+  }
+  .note-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    fill: #fff;
+    pointer-events: none;
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+  .key-label {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    fill: var(--text-dim);
+    pointer-events: none;
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+  .center-info {
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+  .center-root {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 36px;
+    fill: #fff;
+  }
+  .center-type {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    fill: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+  .chord-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .chord-btn {
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 4px;
+    cursor: pointer;
+    color: var(--text);
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-family: inherit;
+  }
+  .chord-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--major);
+    background: rgba(78, 205, 196, 0.08);
+  }
+  .chord-btn.playing {
+    background: rgba(78, 205, 196, 0.15);
+    border-color: var(--major);
+    box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
+  }
+  .chord-btn.minor:hover {
+    border-color: var(--minor);
+    background: rgba(167, 139, 250, 0.08);
+  }
+  .chord-btn.minor.playing {
+    background: rgba(167, 139, 250, 0.15);
+    border-color: var(--minor);
+    box-shadow: 0 0 20px rgba(167, 139, 250, 0.3);
+  }
+  .chord-btn.dim:hover {
+    border-color: var(--dim);
+    background: rgba(248, 113, 113, 0.08);
+  }
+  .chord-btn.dim.playing {
+    background: rgba(248, 113, 113, 0.15);
+    border-color: var(--dim);
+    box-shadow: 0 0 20px rgba(248, 113, 113, 0.3);
+  }
+  .chord-roman {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    font-weight: 400;
+  }
+  .chord-name {
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .chord-type-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .controls {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+  .btn {
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn:hover {
+    background: var(--border);
+    border-color: var(--text-dim);
+  }
+  .btn.primary {
+    background: linear-gradient(135deg, var(--accent), #ff8555);
+    border-color: transparent;
+    color: #000;
+  }
+  .btn.primary:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+  }
+  .btn.active {
+    background: var(--major);
+    color: #000;
+    border-color: transparent;
+  }
+  .progression-list {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    min-height: 48px;
+    padding: 12px;
+    background: var(--bg);
+    border-radius: 10px;
+    border: 1px dashed var(--border);
+  }
+  .prog-chip {
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: slideIn 0.3s ease;
+  }
+  .prog-chip .remove {
+    cursor: pointer;
+    color: var(--text-dim);
+    font-size: 16px;
+    line-height: 1;
+  }
+  .prog-chip .remove:hover { color: var(--dim); }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .empty-progression {
+    color: var(--text-dim);
+    font-size: 13px;
+    font-style: italic;
+    width: 100%;
+    text-align: center;
+    padding: 4px;
+  }
+  .presets {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .preset-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    transition: all 0.2s ease;
+  }
+  .preset-btn:hover {
+    color: var(--text);
+    border-color: var(--text-dim);
+  }
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .info-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+  }
+  .info-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+  .info-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .slider-row label {
+    font-size: 12px;
+    color: var(--text-dim);
+    min-width: 60px;
+  }
+  input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--bg);
+    height: 4px;
+    border-radius: 2px;
+    outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+  }
+  .slider-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    min-width: 50px;
+    text-align: right;
+  }
+  .visualizer {
+    height: 60px;
+    background: var(--bg);
+    border-radius: 10px;
+    margin-top: 12px;
+    overflow: hidden;
+    position: relative;
+  }
+  canvas#viz {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .footer-note {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 11px;
+    padding: 24px;
+    border-top: 1px solid var(--border);
+    margin-top: 32px;
+  }
+  .legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">♯</div>
+    <div>
+      <div>Chromatone</div>
+      <div class="subtitle">Circle of Fifths · Chord Generator</div>
+    </div>
+  </div>
+  <div class="subtitle" id="audioStatus">🔊 Click to enable audio</div>
+</header>
+
+<main>
+  <!-- LEFT: Circle of Fifths -->
+  <div class="panel">
+    <div class="panel-title">Circle of Fifths</div>
+    <div class="circle-container">
+      <svg id="circle" viewBox="-260 -260 520 520"></svg>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background: var(--major)"></div>Major</div>
+      <div class="legend-item"><div class="legend-dot" style="background: var(--minor)"></div>Minor</div>
+      <div class="legend-item"><div class="legend-dot" style="background: var(--dim)"></div>Diminished</div>
+    </div>
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-label">Key</div>
+        <div class="info-value" id="infoKey">C Major</div>
+      </div>
+      <div class="info-card">
+        <div class="info-label">Relative Minor</div>
+        <div class="info-value" id="infoRel">A minor</div>
+      </div>
+      <div class="info-card">
+        <div class="info-label">Scale</div>
+        <div class="info-value" id="infoScale">C D E F G A B</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Chords & Progression -->
+  <div class="panel">
+    <div class="panel-title">Diatonic Chords</div>
+    <div class="chord-grid" id="chordGrid"></div>
+    
+    <div class="panel-title" style="margin-top: 24px;">Progression Builder</div>
+    <div class="progression-list" id="progression">
+      <div class="empty-progression">Click chords above to build a progression</div>
+    </div>
+    
+    <div class="controls">
+      <button class="btn primary" id="playBtn">▶ Play Progression</button>
+      <button class="btn" id="stopBtn">■ Stop</button>
+      <button class="btn" id="clearBtn">✕ Clear</button>
+    </div>
+    
+    <div class="panel-title" style="margin-top: 20px;">Presets</div>
+    <div class="presets" id="presets"></div>
+    
+    <div class="slider-row">
+      <label>Tempo</label>
+      <input type="range" id="tempoSlider" min="40" max="200" value="90">
+      <span class="slider-val" id="tempoVal">90 BPM</span>
+    </div>
+    
+    <div class="slider-row">
+      <label>Waveform</label>
+      <div class="controls" style="margin: 0;">
+        <button class="btn active" data-wave="sine">Sine</button>
+        <button class="btn" data-wave="triangle">Triangle</button>
+        <button class="btn" data-wave="sawtooth">Saw</button>
+        <button class="btn" data-wave="square">Square</button>
+      </div>
+    </div>
+    
+    <div class="visualizer">
+      <canvas id="viz"></canvas>
+    </div>
+  </div>
+</main>
+
+<div class="footer-note">
+  Built with Web Audio API · Click anywhere to enable audio · Chromatone Chord Generator
+</div>
+
+<script>
+// ============ MUSIC DATA ============
+const NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const NOTE_NAMES_FLAT = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+// Circle of fifths order (major keys, clockwise)
+const CIRCLE_MAJOR = ['C','G','D','A','E','B','F#','Db','Ab','Eb','Bb','F'];
+const CIRCLE_MINOR = ['Am','Em','Bm','F#m','C#m','G#m','Ebm','Bbm','Fm','Cm','Gm','Dm'];
+
+// Semitone indices
+function noteIndex(name) {
+  const clean = name.replace('m','').replace('°','');
+  let idx = NOTES.indexOf(clean);
+  if (idx === -1) idx = NOTE_NAMES_FLAT.indexOf(clean);
+  return idx;
+}
+
+// Major scale intervals (semitones from root)
+const MAJOR_SCALE = [0, 2, 4, 5, 7, 9, 11];
+// Chord qualities for each degree: I, ii, iii, IV, V, vi, vii°
+const DEGREE_QUALITY = ['major','minor','minor','major','major','minor','dim'];
+const DEGREE_ROMAN = ['I','ii','iii','IV','V','vi','vii°'];
+
+function getScaleNotes(rootIdx) {
+  return MAJOR_SCALE.map(i => (rootIdx + i) % 12);
+}
+
+function getChordNotes(rootIdx, quality) {
+  if (quality === 'major') return [rootIdx, (rootIdx+4)%12, (rootIdx+7)%12];
+  if (quality === 'minor') return [rootIdx, (rootIdx+3)%12, (rootIdx+7)%12];
+  if (quality === 'dim')  return [rootIdx, (rootIdx+3)%12, (rootIdx+6)%12];
+  return [rootIdx];
+}
+
+function midiToFreq(midi) {
+  return 440 * Math.pow(2, (midi - 69) / 12);
+}
+
+// ============ AUDIO ENGINE ============
+let audioCtx = null;
+let masterGain = null;
+let analyser = null;
+let currentWave = 'sine';
+let activeOscillators = [];
+let isPlaying = false;
+let playTimeout = null;
+
+function initAudio() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = audioCtx.createGain();
+  masterGain.gain.value = 0.25;
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 512;
+  masterGain.connect(analyser);
+  analyser.connect(audioCtx.destination);
+  document.getElementById('audioStatus').textContent = '🔊 Audio enabled';
+}
+
+function stopAllSound() {
+  activeOscillators.forEach(o => {
+    try { o.stop(); } catch(e) {}
+  });
+  activeOscillators = [];
+}
+
+function playChord(notes, duration = 1.2) {
+  initAudio();
+  stopAllSound();
+  const now = audioCtx.currentTime;
+  notes.forEach((n, i) => {
+    // Play in a nice octave range
+    const midi = 48 + n; // C3 base
+    const freq = midiToFreq(midi);
+    
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = currentWave;
+    osc.frequency.value = freq;
+    
+    // ADSR envelope
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.3, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.2, now + 0.1);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+    
+    osc.connect(gain);
+    gain.connect(masterGain);
+    osc.start(now);
+    osc.stop(now + duration + 0.05);
+    activeOscillators.push(osc);
+    
+    // Add a second oscillator an octave up for richness
+    const osc2 = audioCtx.createOscillator();
+    const gain2 = audioCtx.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.value = freq * 2;
+    gain2.gain.setValueAtTime(0, now);
+    gain2.gain.linearRampToValueAtTime(0.08, now + 0.02);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + duration);
+    osc2.connect(gain2);
+    gain2.connect(masterGain);
+    osc2.start(now);
+    osc2.stop(now + duration + 0.05);
+    activeOscillators.push(osc2);
+  });
+}
+
+// ============ STATE ============
+let selectedKeyIdx = 0; // index into CIRCLE_MAJOR (C = 0)
+let progression = []; // [{name, roman, quality, notes}]
+
+// ============ CIRCLE SVG ============
+function buildCircle() {
+  const svg = document.getElementById('circle');
+  svg.innerHTML = '';
+  const R_OUTER = 240;
+  const R_INNER = 170;
+  const R_TEXT = 205;
+  const R_INNER_TEXT = 140;
+  const cx = 0, cy = 0;
+  
+  // Background rings
+  const bgOuter = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  bgOuter.setAttribute('cx', cx); bgOuter.setAttribute('cy', cy);
+  bgOuter.setAttribute('r', R_OUTER);
+  bgOuter.setAttribute('fill', 'none');
+  bgOuter.setAttribute('stroke', '#2a2a3a');
+  bgOuter.setAttribute('stroke-width', '1');
+  svg.appendChild(bgOuter);
+  
+  const bgInner = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  bgInner.setAttribute('cx', cx); bgInner.setAttribute('cy', cy);
+  bgInner.setAttribute('r', R_INNER);
+  bgInner.setAttribute('fill', 'none');
+  bgInner.setAttribute('stroke', '#2a2a3a');
+  bgInner.setAttribute('stroke-width', '1');
+  svg.appendChild(bgInner);
+  
+  // Segments for each note
+  for (let i = 0; i < 12; i++) {
+    const angle1 = (i * 30 - 90 - 15) * Math.PI / 180;
+    const angle2 = (i * 30 - 90 + 15) * Math.PI / 180;
+    const angleMid = (i * 30 - 90) * Math.PI / 180;
+    
+    // Outer segment (major)
+    const x1o = cx + R_OUTER * Math.cos(angle1);
+    const y1o = cy + R_OUTER * Math.sin(angle1);
+    const x2o = cx + R_OUTER * Math.cos(angle2);
+    const y2o = cy + R_OUTER * Math.sin(angle2);
+    const x1i = cx + R_INNER * Math.cos(angle1);
+    const y1i = cy + R_INNER * Math.sin(angle1);
+    const x2i = cx + R_INNER * Math.cos(angle2);
+    const y2i = cy + R_INNER * Math.sin(angle2);
+    
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    const d = `M ${x1i} ${y1i} L ${x1o} ${y1o} A ${R_OUTER} ${R_OUTER} 0 0 1 ${x2o} ${y2o} L ${x2i} ${y2i} A ${R_INNER} ${R_INNER} 0 0 0 ${x1i} ${y1i} Z`;
+    path.setAttribute('d', d);
+    
+    const hue = (i * 30) % 360;
+    const isActive = i === selectedKeyIdx;
+    path.setAttribute('fill', isActive ? `hsla(${hue}, 70%, 55%, 0.4)` : `hsla(${hue}, 50%, 30%, 0.15)`);
+    path.setAttribute('stroke', isActive ? `hsl(${hue}, 70%, 60%)` : `hsla(${hue}, 50%, 40%, 0.4)`);
+    path.setAttribute('stroke-width', isActive ? '2' : '1');
+    path.setAttribute('class', 'note-segment' + (isActive ? ' active' : ''));
+    path.setAttribute('data-idx', i);
+    path.style.color = `hsl(${hue}, 70%, 60%)`;
+    path.addEventListener('click', () => selectKey(i));
+    svg.appendChild(path);
+    
+    // Major note text
+    const tx = cx + R_TEXT * Math.cos(angleMid);
+    const ty = cy + R_TEXT * Math.sin(angleMid);
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', tx); text.setAttribute('y', ty);
+    text.setAttribute('class', 'note-text');
+    text.textContent = CIRCLE_MAJOR[i];
+    svg.appendChild(text);
+    
+    // Minor note text (inner ring)
+    const tx2 = cx + R_INNER_TEXT * Math.cos(angleMid);
+    const ty2 = cy + R_INNER_TEXT * Math.sin(angleMid);
+    const text2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text2.setAttribute('x', tx2); text2.setAttribute('y', ty2);
+    text2.setAttribute('class', 'key-label');
+    text2.textContent = CIRCLE_MINOR[i];
+    svg.appendChild(text2);
+  }
+  
+  // Center circle
+  const centerCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  centerCircle.setAttribute('cx', cx); centerCircle.setAttribute('cy', cy);
+  centerCircle.setAttribute('r', 90);
+  centerCircle.setAttribute('fill', '#0a0a0f');
+  centerCircle.setAttribute('stroke', '#2a2a3a');
+  svg.appendChild(centerCircle);
+  
+  // Center text
+  const centerRoot = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  centerRoot.setAttribute('x', cx); centerRoot.setAttribute('y', cy - 10);
+  centerRoot.setAttribute('class', 'center-root');
+  centerRoot.textContent = CIRCLE_MAJOR[selectedKeyIdx];
+  svg.appendChild(centerRoot);
+  
+  const centerType = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  centerType.setAttribute('x', cx); centerType.setAttribute('y', cy + 20);
+  centerType.setAttribute('class', 'center-type');
+  centerType.textContent = 'MAJOR';
+  svg.appendChild(centerType);
+}
+
+// ============ CHORD GRID ============
+function buildChordGrid() {
+  const grid = document.getElementById('chordGrid');
+  grid.innerHTML = '';
+  const rootIdx = noteIndex(CIRCLE_MAJOR[selectedKeyIdx]);
+  const scaleNotes = getScaleNotes(rootIdx);
+  
+  for (let deg = 0; deg < 7; deg++) {
+    const degreeRoot = scaleNotes[deg];
+    const quality = DEGREE_QUALITY[deg];
+    const roman = DEGREE_ROMAN[deg];
+    const chordNotes = getChordNotes(degreeRoot, quality);
+    const noteName = NOTES[degreeRoot];
+    const displayName = quality === 'minor' ? noteName + 'm' : quality === 'dim' ? noteName + '°' : noteName;
+    
+    const btn = document.createElement('button');
+    btn.className = 'chord-btn ' + quality;
+    btn.innerHTML = `
+      <div class="chord-roman">${roman}</div>
+      <div class="chord-name">${displayName}</div>
+      <div class="chord-type-label">${quality}</div>
+    `;
+    btn.addEventListener('click', () => {
+      playChord(chordNotes);
+      btn.classList.add('playing');
+      setTimeout(() => btn.classList.remove('playing'), 600);
+    });
+    btn.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      addToProgression(displayName, roman, quality, chordNotes);
+    });
+    btn.addEventListener('dblclick', () => {
+      addToProgression(displayName, roman, quality, chordNotes);
+    });
+    grid.appendChild(btn);
+  }
+}
+
+// ============ PROGRESSION ============
+function addToProgression(name, roman, quality, notes) {
+  progression.push({ name, roman, quality, notes });
+  renderProgression();
+}
+
+function renderProgression() {
+  const container = document.getElementById('progression');
+  if (progression.length === 0) {
+    container.innerHTML = '<div class="empty-progression">Click chords above to build a progression</div>';
+    return;
+  }
+  container.innerHTML = '';
+  progression.forEach((ch, i) => {
+    const chip = document.createElement('div');
+    chip.className = 'prog-chip';
+    chip.innerHTML = `<span>${ch.roman} ${ch.name}</span><span class="remove" data-i="${i}">×</span>`;
+    container.appendChild(chip);
+  });
+  container.querySelectorAll('.remove').forEach(el => {
+    el.addEventListener('click', (e) => {
+      const i = parseInt(e.target.dataset.i);
+      progression.splice(i, 1);
+      renderProgression();
+    });
+  });
+}
+
+function playProgression() {
+  if (progression.length === 0) return;
+  initAudio();
+  if (isPlaying) {
+    stopProgression();
+    return;
+  }
+  isPlaying = true;
+  document.getElementById('playBtn').textContent = '⏸ Pause';
+  document.getElementById('playBtn').classList.add('active');
+  let step = 0;
+  const bpm = parseInt(document.getElementById('tempoSlider').value);
+  const beatMs = 60000 / bpm;
+  
+  function nextStep() {
+    if (!isPlaying) return;
+    const ch = progression[step % progression.length];
+    playChord(ch.notes, (beatMs / 1000) * 0.9);
+    
+    // Highlight in progression
+    const chips = document.querySelectorAll('.prog-chip');
+    chips.forEach((c, i) => {
+      c.style.borderColor = i === (step % progression.length) ? 'var(--accent)' : '';
+      c.style.background = i === (step % progression.length) ? 'rgba(255, 107, 53, 0.15)' : '';
+    });
+    
+    step++;
+    playTimeout = setTimeout(nextStep, beatMs);
+  }
+  nextStep();
+}
+
+function stopProgression() {
+  isPlaying = false;
+  if (playTimeout) clearTimeout(playTimeout);
+  stopAllSound();
+  document.getElementById('playBtn').textContent = '▶ Play Progression';
+  document.getElementById('playBtn').classList.remove('active');
+  document.querySelectorAll('.prog-chip').forEach(c => {
+    c.style.borderColor = '';
+    c.style.background = '';
+  });
+}
+
+// ============ KEY SELECTION ============
+function selectKey(idx) {
+  initAudio();
+  selectedKeyIdx = idx;
+  progression = [];
+  buildCircle();
+  buildChordGrid();
+  renderProgression();
+  updateInfo();
+  
+  // Play the tonic chord
+  const rootIdx = noteIndex(CIRCLE_MAJOR[idx]);
+  playChord(getChordNotes(rootIdx, 'major'), 0.8);
+}
+
+function updateInfo() {
+  const root = CIRCLE_MAJOR[selectedKeyIdx];
+  const relMinor = CIRCLE_MINOR[selectedKeyIdx];
+  const rootIdx = noteIndex(root);
+  const scaleNotes = getScaleNotes(rootIdx);
+  const scaleStr = scaleNotes.map(n => NOTE_NAMES_FLAT[n] || NOTES[n]).join(' ');
+  
+  document.getElementById('infoKey').textContent = root + ' Major';
+  document.getElementById('infoRel').textContent = relMinor;
+  document.getElementById('infoScale').textContent = scaleStr;
+}
+
+// ============ PRESETS ============
+const PRESETS = {
+  'I - V - vi - IV': [0, 4, 5, 3],
+  'I - vi - IV - V': [0, 5, 3, 4],
+  'ii - V - I': [1, 4, 0],
+  'I - IV - V - I': [0, 3, 4, 0],
+  'vi - IV - I - V': [5, 3, 0, 4],
+  'I - V - vi - iii - IV - I - IV - V': [0, 4, 5, 2, 3, 0, 3, 4],
+  'Canon': [0, 4, 5, 1, 2, 0, 3, 4]
+};
+
+function buildPresets() {
+  const container = document.getElementById('presets');
+  Object.keys(PRESETS).forEach(name => {
+    const btn = document.createElement('button');
+    btn.className = 'preset-btn';
+    btn.textContent = name;
+    btn.addEventListener('click', () => {
+      const degrees = PRESETS[name];
+      const rootIdx = noteIndex(CIRCLE_MAJOR[selectedKeyIdx]);
+      const scaleNotes = getScaleNotes(rootIdx);
+      progression = degrees.map(deg => {
+        const degreeRoot = scaleNotes[deg];
+        const quality = DEGREE_QUALITY[deg];
+        const noteName = NOTES[degreeRoot];
+        const displayName = quality === 'minor' ? noteName + 'm' : quality === 'dim' ? noteName + '°' : noteName;
+        return {
+          name: displayName,
+          roman: DEGREE_ROMAN[deg],
+          quality,
+          notes: getChordNotes(degreeRoot, quality)
+        };
+      });
+      renderProgression();
+    });
+    container.appendChild(btn);
+  });
+}
+
+// ============ VISUALIZER ============
+const vizCanvas = document.getElementById('viz');
+const vizCtx = vizCanvas.getContext('2d');
+
+function resizeViz() {
+  const rect = vizCanvas.getBoundingClientRect();
+  vizCanvas.width = rect.width * window.devicePixelRatio;
+  vizCanvas.height = rect.height * window.devicePixelRatio;
+}
+resizeViz();
+window.addEventListener('resize', resizeViz);
+
+function drawViz() {
+  requestAnimationFrame(drawViz);
+  const w = vizCanvas.width;
+  const h = vizCanvas.height;
+  vizCtx.fillStyle = 'rgba(10, 10, 15, 0.3)';
+  vizCtx.fillRect(0, 0, w, h);
+  
+  if (!analyser) return;
+  const bufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
+  analyser.getByteFrequencyData(dataArray);
+  
+  const barWidth = (w / bufferLength) * 1.5;
+  let x = 0;
+  for (let i = 0; i < bufferLength; i++) {
+    const v = dataArray[i] / 255;
+    const barH = v * h;
+    const hue = (i / bufferLength) * 360;
+    vizCtx.fillStyle = `hsla(${hue}, 70%, 60%, ${0.5 + v * 0.5})`;
+    vizCtx.fillRect(x, h - barH, barWidth - 1, barH);
+    x += barWidth;
+  }
+}
+drawViz();
+
+// ============ EVENT HANDLERS ============
+document.getElementById('playBtn').addEventListener('click', playProgression);
+document.getElementById('stopBtn').addEventListener('click', stopProgression);
+document.getElementById('clearBtn').addEventListener('click', () => {
+  progression = [];
+  renderProgression();
+  stopProgression();
+});
+
+document.getElementById('tempoSlider').addEventListener('input', (e) => {
+  document.getElementById('tempoVal').textContent = e.target.value + ' BPM';
+});
+
+document.querySelectorAll('[data-wave]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-wave]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentWave = btn.dataset.wave;
+  });
+});
+
+// Enable audio on first interaction
+document.body.addEventListener('click', () => initAudio(), { once: true });
+
+// ============ INIT ============
+buildCircle();
+buildChordGrid();
+buildPresets();
+updateInfo();
+</script>
+
+</body>
+</html>
