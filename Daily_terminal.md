@@ -1410,6 +1410,18 @@ sudo netstat -tulpen | grep avahi
 sudo systemctl stop avahi-daemon
 ~~~
 
+### ubuntu uptime
+
+
+```
+uptime
+# 15:02:35 up 8 min,  1 user,  load average: 1,41, 1,13, 0,60
+who -b
+# Systemstart  2026-07-22 14:54
+```
+
+
+
 ### ubuntu alarm
 
 ```
