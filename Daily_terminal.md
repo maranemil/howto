@@ -759,6 +759,16 @@ yes
 reboot
 ~~~
 
+### split big files in chunks
+
+~~~
+
+split -b 1G -d bigfile bigfile-part
+cat bigfile-part* > bigfile
+
+~~~
+
+
 ### Install p7zip
 
 ~~~
