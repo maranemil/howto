@@ -74,6 +74,10 @@ https://www.yourfirm.de/#
 https://znapp.de/
 https://zuhausejobs.com/
 https://zutun.de/
+https://en.devjobs.de/jobs/search#
+https://jobtensor.com/Python-Jobs#
+https://jobs.heise.de/
+https://de.indeed.com/
 ';
 
 $lines = array_unique(preg_split("~\n~", $lnks));
