@@ -1141,6 +1141,21 @@ lsscsi
 ~~~
 sudo fwupdmgr update
 efibootmgr -v
+
+
+sudo ls /boot/efi/EFI/Boot/ 
+# bkpbootx64.efi	bootx64.efi  fbx64.efi	mmx64.efi
+sudo ls -lah /boot/efi/EFI/Boot/
+
+sudo rm /boot/efi/EFI/Boot/bkpbootx64.efi
+sudo fwupdmgr update
+
+fwupdmgr --help
+sudo mv /boot/efi/EFI/Boot/shimx64.efi ~/Documents
+$ sudo fwupdmgr update
+sudo update-grub
+sudo fwupdmgr refresh --force
+
 ~~~
 
 ### firefox alternative
