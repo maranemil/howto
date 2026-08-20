@@ -989,3 +989,19 @@
 * <https://www.youtube.com/watch?v=k7HaeJs-N-o>
 * <https://www.youtube.com/watch?v=nJ25yl34Uqw>
 * <https://www.youtube.com/watch?v=uWUEmAsBK0k>
+
+
+### Free Developer Websites Nobody Tells You About
+
++ https://www.youtube.com/watch?v=Q2D-rCyj2b0
++ 00:12 - devdocs.io
++ 00:44- explainshell.com
++ 01:00 - regexr.com
++ 01:27 - learngitbranching.js.org
++ 01:51 - visualgo.net
++ 02:21 - jsoncrack.com
++ 02:46 - transform.tools
++ 03:12 - excalidraw.com
++ 03:35 - hoppscotch.io
++ 03:57 - carbon.now.sh
+
