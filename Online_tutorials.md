@@ -1005,3 +1005,16 @@
 + 03:35 - hoppscotch.io
 + 03:57 - carbon.now.sh
 
+
+### Stanford CS329A Series Stanford CS329A Self-Improving AI Agents
+
+https://www.youtube.com/watch?v=a0iOk3xrHNc&list=PL3058ht9NqT1NG6Y663elpHSDh-AW1TIr
+https://www.youtube.com/watch?v=6YnLB0XbTnI&list=PLangBM27OtEA
+https://www.youtube.com/watch?v=6YnLB0XbTnI&list=PLaFnJEOGdzY8
+https://www.youtube.com/watch?v=6YnLB0XbTnI&list=PLQee6_HxjShg
+
+
+
+
+
+
