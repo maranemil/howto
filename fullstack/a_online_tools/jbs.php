@@ -48,7 +48,7 @@ https://www.jobilize.com/job/search/api?q=php&loc=DE&send=Find+Jobs
 https://www.jobs-in-ulm.de/
 https://www.jobsuche-bw.de/
 https://www.jobvector.de/
-https://www.jobware.de/jobs/it
+https://www.jobware.de/jobs/it#
 https://www.jobware.de/jobs/php
 https://www.kimeta.de/#
 https://www.kleinanzeigen.de/s-jobs/c102
@@ -78,6 +78,7 @@ https://en.devjobs.de/jobs/search#
 https://jobtensor.com/Python-Jobs#
 https://jobs.heise.de/
 https://de.indeed.com/
+https://stellenmarkt.stuttgarter-zeitung.de/#
 ';
 
 $lines = array_unique(preg_split("~\n~", $lnks));
