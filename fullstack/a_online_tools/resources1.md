@@ -1055,7 +1055,10 @@ https://paywallreader.com/
 ### Grammar check
 
 - https://www.germancorrector.com/
-- https://languagetool.org/spellchecking-german
+- https://languagetool.org/spellchecking-german#
+- https://www.onlinekorrektor.de/
+- https://rechtschreibpruefung24.de/
+
 
 ------------------------------------------------------------------
 
