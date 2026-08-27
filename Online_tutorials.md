@@ -971,6 +971,8 @@
 * https://www.youtube.com/watch?v=uSkm-2eb4Xk  Learn AI Engineering From Zero in 2026
 * https://www.youtube.com/watch?v=4GtVeULrNks  React Native Full Stack Course 
 * https://www.youtube.com/watch?v=AZDSpS5v57w  AI Agents For Beginners – OpenClaw Case Study
+* https://www.youtube.com/watch?v=legYz3Hk2rQ  DeepSeek Harness Agentic AI Crash Course
+
 
 
 #

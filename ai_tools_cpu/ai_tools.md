@@ -176,11 +176,17 @@
 - https://www.articlerewriter.net/
 
 
-### Text grammar-checker
+### Text grammar-checker and rewrite 
 - https://ahrefs.com/writing-tools/grammar-checker
 - https://mailmeteor.com/tools/ai-grammar-checker
 - https://quillbot.com/grammar-check
 - https://languagetool.org/
+- https://gramatik.ro/#ro
+- https://www.duplichecker.com/de/grammar-checker.php
+- https://isgen.ai/de/KI-Grammatikpr%C3%BCfung
+- https://ahrefs.com/writing-tools/paragraph-rewriter
+- https://anythingtranslate.com/translators/informal-german-translator/
+
 
 
 ### Text informal translators german
