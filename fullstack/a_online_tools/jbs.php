@@ -74,7 +74,7 @@ https://www.yourfirm.de/#
 https://znapp.de/
 https://zuhausejobs.com/
 https://zutun.de/
-------
+------WS-------
 https://en.devjobs.de/jobs/search#
 https://jobtensor.com/Python-Jobs#
 https://jobs.heise.de/
@@ -84,6 +84,16 @@ https://jobs.ingenieur.de/
 https://de.jooble.org/
 https://jobs.jobhub-online.de/
 https://www.stellenonline.de/
+------REMOTE------
+https://jobspresso.co/remote-work/
+https://landing.jobs/jobs
+https://remoteok.com/?location=region_EU
+https://www.workingnomads.com/remote-europe-jobs
+https://weworkremotely.com/
+https://europa.eu/eures/portal/jv-se/home?lang=en&pageCode=find_a_job
+https://remotive.com/
+https://nodesk.co/remote-jobs/
+
 ';
 
 $lines = array_unique(preg_split("~\n~", $lnks));
