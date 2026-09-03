@@ -80,6 +80,7 @@ https://jobtensor.com/Python-Jobs#
 https://jobs.heise.de/
 https://de.indeed.com/
 https://stellenmarkt.stuttgarter-zeitung.de/#
+https://europa.eu/eures/portal/jv-se/home?lang=en
 https://jobs.ingenieur.de/
 https://de.jooble.org/
 https://jobs.jobhub-online.de/
@@ -93,6 +94,7 @@ https://weworkremotely.com/
 https://europa.eu/eures/portal/jv-se/home?lang=en&pageCode=find_a_job
 https://remotive.com/
 https://nodesk.co/remote-jobs/
+https://euremotejobs.com/
 
 ';
 
