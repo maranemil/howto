@@ -972,7 +972,8 @@
 * https://www.youtube.com/watch?v=4GtVeULrNks  React Native Full Stack Course 
 * https://www.youtube.com/watch?v=AZDSpS5v57w  AI Agents For Beginners – OpenClaw Case Study
 * https://www.youtube.com/watch?v=legYz3Hk2rQ  DeepSeek Harness Agentic AI Crash Course
-
+* https://www.youtube.com/watch?v=KG1elPAPSnE  Dr. Adam Nahum | Bayesian critical points in classical lattice models
+* https://www.youtube.com/watch?v=c9nRxEy1kUY  How I Ship Faster Than 99% of Devs
 
 
 #
@@ -1010,13 +1011,17 @@
 
 ### Stanford CS329A Series Stanford CS329A Self-Improving AI Agents
 
-https://www.youtube.com/watch?v=a0iOk3xrHNc&list=PL3058ht9NqT1NG6Y663elpHSDh-AW1TIr
-https://www.youtube.com/watch?v=6YnLB0XbTnI&list=PLangBM27OtEA
-https://www.youtube.com/watch?v=6YnLB0XbTnI&list=PLaFnJEOGdzY8
-https://www.youtube.com/watch?v=6YnLB0XbTnI&list=PLQee6_HxjShg
+- https://www.youtube.com/watch?v=a0iOk3xrHNc&list=PL3058ht9NqT1NG6Y663elpHSDh-AW1TIr
+- https://www.youtube.com/watch?v=6YnLB0XbTnI&list=PLangBM27OtEA
+- https://www.youtube.com/watch?v=6YnLB0XbTnI&list=PLaFnJEOGdzY8
+- https://www.youtube.com/watch?v=6YnLB0XbTnI&list=PLQee6_HxjShg
 
+### Claude Certified Developer
 
-
-
+- https://www.youtube.com/watch?v=RheXq2HKJmY  Claude Certified Developer: Ep 01
+- https://www.youtube.com/watch?v=reDRM0tqhNs  Claude Certified Architect - Foundations
+- https://www.youtube.com/watch?v=rRrBbyv3ChM  Claude Tutorial for Beginners in 2026
+- https://www.youtube.com/watch?v=C2GpeepcmYs  Claude Code Crash Course For Developers
+- https://www.youtube.com/watch?v=IuyVVtr1uhY  Claude Code Tutorial - Build Apps 10x Faster with AI
 
 
