@@ -85,6 +85,7 @@ https://jobs.ingenieur.de/
 https://de.jooble.org/
 https://jobs.jobhub-online.de/
 https://www.stellenonline.de/
+https://www.experteer.de/
 ------REMOTE------
 https://jobspresso.co/remote-work/
 https://landing.jobs/jobs
@@ -95,6 +96,8 @@ https://europa.eu/eures/portal/jv-se/home?lang=en&pageCode=find_a_job
 https://remotive.com/
 https://nodesk.co/remote-jobs/
 https://euremotejobs.com/
+https://zuhausejobs.com/remote-php-jobs
+https://www.php-entwickler.de/jobs/remote
 
 ';
 
