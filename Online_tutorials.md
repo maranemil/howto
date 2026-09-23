@@ -974,6 +974,11 @@
 * https://www.youtube.com/watch?v=legYz3Hk2rQ  DeepSeek Harness Agentic AI Crash Course
 * https://www.youtube.com/watch?v=KG1elPAPSnE  Dr. Adam Nahum | Bayesian critical points in classical lattice models
 * https://www.youtube.com/watch?v=c9nRxEy1kUY  How I Ship Faster Than 99% of Devs
+* https://www.youtube.com/watch?v=BMYvfVk8Ar0  Hands-On Evolution of Deep Learning 
+* https://www.youtube.com/watch?v=C_1QKZAcJjk  Claude Certified Developer Foundations
+* https://www.youtube.com/watch?v=o3CX_Y59_74  OpenAI Codex Crash Course
+* https://www.youtube.com/watch?v=wY5pQOTsGaA  Deploy, Secure, and Automate Full-Stack Web Apps
+* https://www.youtube.com/watch?v=ug8W0sFiVJo  Hands-On Cybersecurity and Ethical Hacking 
 
 
 #
