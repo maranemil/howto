@@ -979,6 +979,7 @@
 * https://www.youtube.com/watch?v=o3CX_Y59_74  OpenAI Codex Crash Course
 * https://www.youtube.com/watch?v=wY5pQOTsGaA  Deploy, Secure, and Automate Full-Stack Web Apps
 * https://www.youtube.com/watch?v=ug8W0sFiVJo  Hands-On Cybersecurity and Ethical Hacking 
+* https://www.youtube.com/watch?v=114i2Kz-LZA  Stanford CME295 Transformers & LLMs Autumn 2026
 
 
 #
