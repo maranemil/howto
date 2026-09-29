@@ -188,7 +188,12 @@
 - https://ahrefs.com/writing-tools/paragraph-rewriter
 - https://anythingtranslate.com/translators/informal-german-translator/
 - https://textgens.com/niche-tools/romanian-grammar-checker/
+- https://languagetool.org/spellchecking-german
 
+
+
+### Lebenslauf optimiert
+- https://www.jobstep.io/de
 
 
 ### Text informal translators german
