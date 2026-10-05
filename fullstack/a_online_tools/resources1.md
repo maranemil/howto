@@ -576,35 +576,36 @@ https://maximelafarie.com/giphy-downloader/
 
 ### Online Web Tools General
 
-- http://codebeautify.org/htmlviewer/									- HTML Beautifier - Pretty Formatting
-- http://codebeautify.org/jsonviewer									- JSON Beautifier
-- http://codepad.org/													- PHP Tester ( and Perl, Python, Ruby)
-- http://codepen.io/pen/											- JS HTML CSS Tester
-- http://dabblet.com/												- JS HTML CSS Tester
-- http://fiddlesalad.com/less/										- JS HTML CSS Tester
+- https://codebeautify.org/remove-empty-lines   - Remove empty lines
+- http://codebeautify.org/htmlviewer/						- HTML Beautifier - Pretty Formatting
+- http://codebeautify.org/jsonviewer						- JSON Beautifier
+- http://codepad.org/													  - PHP Tester ( and Perl, Python, Ruby)
+- http://codepen.io/pen/											  - JS HTML CSS Tester
+- http://dabblet.com/												    - JS HTML CSS Tester
+- http://fiddlesalad.com/less/								  - JS HTML CSS Tester
 - http://html5snippet.net/											- HTML5 Tester
-- http://htmledit.squarefree.com/										- HTML Beautifier - Pretty Formating
-- http://ideone.com/													- Java PHP Perl Python, Ruby C++
-- http://jsapp.us/													- Node JS Tester
-- http://jsbeautifier.org/											    - JS Beautifier - Pretty Formatting
-- http://jsbeautifier.org/											    - JSON Beautifier
-- http://jsbin.com/?html,output										- JS Tester
+- http://htmledit.squarefree.com/								- HTML Beautifier - Pretty Formating
+- http://ideone.com/													  - Java PHP Perl Python, Ruby C++
+- http://jsapp.us/													    - Node JS Tester
+- http://jsbeautifier.org/											- JS Beautifier - Pretty Formatting
+- http://jsbeautifier.org/											- JSON Beautifier
+- http://jsbin.com/?html,output									- JS Tester
 - http://jsonformat.com/												- JSON Beautifier
-- http://jsonprettyprint.com/											- JSON Beautifier
-- http://jsonviewer.stack.hu/											- JSON Beautifier
-- http://labs.codecademy.com/#										- Python Ruby Tester
-- http://liveweave.com/												- JS HTML CSS Tester
-- http://pastebin.com/												- Share Code
-- http://phpfiddle.org/												- Profile PHP
-- http://phptester.net/												    - PHP Tester
-- http://phrogz.net/JS/d3-playground/#BlankDefault					- JS D3 Tester
-- http://pythex.org/												- REgex Tester
-- http://requestb.in/												- Inspect HTTP Requests Service
-- http://rubular.com/												- REgex Tester
-- http://sandbox.onlinephpfunctions.com/								- PHP Tester
-- http://scriptular.com/											- REgex Tester
-- http://sqlfiddle.com/												- SQL Tester
-- http://www.dirtymarkup.com/											- HTML Beautifier - Pretty Formatting
+- http://jsonprettyprint.com/										- JSON Beautifier
+- http://jsonviewer.stack.hu/										- JSON Beautifier
+- http://labs.codecademy.com/#									- Python Ruby Tester
+- http://liveweave.com/												  - JS HTML CSS Tester
+- http://pastebin.com/												  - Share Code
+- http://phpfiddle.org/												  - Profile PHP
+- http://phptester.net/												  - PHP Tester
+- http://phrogz.net/JS/d3-playground/#BlankDefault		- JS D3 Tester
+- http://pythex.org/												    - REgex Tester
+- http://requestb.in/												    - Inspect HTTP Requests Service
+- http://rubular.com/												    - REgex Tester
+- http://sandbox.onlinephpfunctions.com/				- PHP Tester
+- http://scriptular.com/											  - REgex Tester
+- http://sqlfiddle.com/												  - SQL Tester
+- http://www.dirtymarkup.com/										- HTML Beautifier - Pretty Formatting
 - http://www.freeformatter.com/html-formatter.html 				        - HTML Beautifier - Pretty Formatting
 - http://www.jsoneditoronline.org/									    - JSON Beautifier
 - http://www.landofcode.com/online-code-editor.php					- HTML VBScript  Tester
