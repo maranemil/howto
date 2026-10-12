@@ -980,7 +980,8 @@
 * https://www.youtube.com/watch?v=wY5pQOTsGaA  Deploy, Secure, and Automate Full-Stack Web Apps
 * https://www.youtube.com/watch?v=ug8W0sFiVJo  Hands-On Cybersecurity and Ethical Hacking 
 * https://www.youtube.com/watch?v=114i2Kz-LZA  Stanford CME295 Transformers & LLMs Autumn 2026
-
+* https://www.youtube.com/watch?v=bGALxRWI10A  Mobile App with Codex GPT-6 Astra
+* https://www.youtube.com/watch?v=nqK3oJ682mQ  Kotlin Course For Beginners 
 
 #
 
