@@ -982,6 +982,8 @@
 * https://www.youtube.com/watch?v=114i2Kz-LZA  Stanford CME295 Transformers & LLMs Autumn 2026
 * https://www.youtube.com/watch?v=bGALxRWI10A  Mobile App with Codex GPT-6 Astra
 * https://www.youtube.com/watch?v=nqK3oJ682mQ  Kotlin Course For Beginners 
+* https://www.youtube.com/watch?v=soTfFFIQQ8U  Design Software Systems
+* https://www.youtube.com/watch?v=P-UIf7V7gV0  TanStack Router Course
 
 #
 
