@@ -1026,6 +1026,7 @@ https://paywallreader.com/
 - https://itranslate.com/translate/english-united-states-to-english-united-kingdom
 - https://www.babelfish.de/
 - https://www.scribens.fr/index.htm
+- https://dict.zero-g.net/#q=Reverse
 
 - -----------------------------------------------------------------
 
