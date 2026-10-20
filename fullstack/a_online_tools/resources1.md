@@ -482,7 +482,7 @@ https://maximelafarie.com/giphy-downloader/
 - http://www.writephponline.com/ 		    # php
 - https://www.python.org/shell/ 		    # py
 - http://www.skulpt.org/ 			        # py
-- https://trinket.io/python 		        # py
+- https://coddy.tech/playground/python 		        # py
 - https://play.golang.org/ 		            # go lang
 - https://ideone.com/			            #
 - https://www.jdoodle.com/execute-perl-online
